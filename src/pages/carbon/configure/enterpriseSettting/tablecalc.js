@@ -13,7 +13,7 @@ export default function Index({tabledata={},enterpriseId}) {
   const {t} = useTranslation(['button', 'comm'])
   const [form] = Form.useForm()
   const ref = useRef()
-  const {categoryName, categoryNo,    subCategoryFactor=[], mark} = tabledata
+  const {categoryName, categoryNo,    subCategoryFactor=[], mark} = tabledata   // mark 1是直接显示，0是加上增删改
   
   let fixedrow ={categoryName,categoryNo,subCategoryName: `${categoryName}排放类型`,factorName: '计算因子类型',parameterValue: '数值', unit: '单位', option: t("comm:Operation")}  
   let formartData = [fixedrow]
@@ -182,7 +182,7 @@ const onAddOk = async () => {
 
  
 
-  const columns = [
+  const columns =mark == 0 ? [
     {
       title:categoryName,
       dataIndex: 'categoryName',
@@ -244,7 +244,7 @@ const onAddOk = async () => {
     },
    
      
-    {
+  {
       title: '操作',
       dataIndex: 'option',
       key: 'option',
@@ -254,14 +254,74 @@ const onAddOk = async () => {
         <CustLink text="delete"   type="danger" onClick={() => onDlete(record)} />
       </Space>
       :  t("comm:Operation")
-    }
+    } 
 
+  ] : [
+    {
+      title:categoryName,
+      dataIndex: 'categoryName',
+      key: 'categoryName',
+      width: 200,      
+      onCell: (_, index) => {      
+      if(index == 0) {
+       return  ({ rowSpan: categorySpan , style: {backgroundColor: "#e7effd"}})
+      }else {
+        return {rowSpan: 0}
+      }
+     
+    }
+    },
+    {
+      title: '排放类型',
+      dataIndex: 'subCategoryName',
+      key: 'subCategoryName',
+      align: 'center',
+      width: 150,
+      onCell:(record, index) => {
+        let {subCategoryName} = record || {}
+        if(index == 0) {
+          return {
+            style: {backgroundColor: "#e7effd"}
+          }
+        }else if(index > 0 ) {
+          return  subCategoryName ? {
+             rowSpan: record[subCategoryName]
+          }: {
+            rowSpan:0
+          }
+        } 
+         
+
+      } 
+    },
+    {
+      title: '计算因子',
+      dataIndex: 'factorName',
+      key: 'factorName',
+      align: 'factorName',
+      onCell: showOncell
+    },
+    {
+      
+      title: '数值',
+      dataIndex: 'parameterValue',
+      key: 'parameterValue',
+      align: 'center',
+      onCell: showOncell
+    },
+    {
+      title: '单位',
+      dataIndex: 'unit',
+      key: 'unit',
+      align: 'center',
+      onCell: showOncell
+    }
   ]
  
   
   return (
     <div>
-    <Usetable columns={columns} dataSource={formartData} showHeader={false}  summary={(pageData) =>{       
+  {mark == 0 ?  <Usetable columns={columns} dataSource={formartData} showHeader={false}  summary={(pageData) =>{       
       let {subCategoryName, categoryNo } = (Array.isArray(pageData) && pageData.length > 0) ? pageData[0] : {}
       return (
         <Table.Summary >
@@ -275,6 +335,8 @@ const onAddOk = async () => {
           </Table.Summary.Row>
         </Table.Summary>
       )}} />  
+      : <Usetable columns={columns} dataSource={formartData} showHeader={false}   />  
+}
      <CModal title="编辑计算因子" ref={ref} mold="cust" onOk={onOk} width={480}>
         <Form form={form}   preserve={false}>
            <Form.Item label={labelunit.label} name="parameterValue">

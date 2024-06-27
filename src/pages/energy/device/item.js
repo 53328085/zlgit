@@ -115,7 +115,7 @@ const Itembox = styled.div`
 export default function Item(props) {
   let {type, name, states=[], sns, address, e, e2, e3, e4, momE, yoyE, momE2, yoyE2, momE3, yoyE3, momE4, yoyE4, image} = props
   // 1，2，3 离线,正常，告警
-  console.log(image)
+  
   let index = states[0];
   const state = typeof index == "number" ? (['离线', '正常', '告警'][index-1] || '未知') : '未知';
   const bgColor = typeof index == "number" ? (['#666', '#096', '#ff4d4f'][index-1] || 'ff4d4f') : '#666';

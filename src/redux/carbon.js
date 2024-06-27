@@ -155,8 +155,8 @@ export const carbonSlice = apiSlice.injectEndpoints({
          
     }),
    deleteBoundary: build.mutation({ // 删除子项
-        query: (id) => ({
-            url: `Carbon/CarbonEmissionBoundary/DeleteCarbonBoundary?id=${id}`,
+        query: ({enterpriseId,id}) => ({
+            url: `Carbon/CarbonEmissionBoundary/DeleteCarbonBoundary?id=${id}&enterpriseId=${enterpriseId}`,
             method: 'DELETE',
         }),
         invalidatesTags: () => [{type: 'carbon', id: 'QueryCarbonBoundary'}],

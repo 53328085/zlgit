@@ -154,7 +154,7 @@ let {isSuccess: fsuc,  data: factorData, refetch, error}  = useCalcFactorQuery(e
    skip: !Number.isInteger(enterpriseId) || after
 })
 
-
+console.log(factorData)
 console.log(error)
  
 const getFactorData = (sucs, factorData) =>  {

@@ -4,7 +4,7 @@ import { useSelector, useDispatch } from 'react-redux'
 import { Select, Button, DatePicker, Form, Divider, message,Space } from 'antd'
 import {useLocation} from 'react-router-dom'
 import {DistributionRoomRuntime,distributionRoom, Area} from '@api/api.js'
-import {  getcurlRommid,setCurrentlevel, levelDefaultLabel,  getRoomId, roomId, selectcurlRommid, getcurlRommidl,setEnvironmentTime} from "@redux/systemconfig";
+import {  getcurlRommid,setCurrentlevel, levelDefaultLabel,  getRoomId, roomId, selectcurlRommid, getcurlRommidl} from "@redux/systemconfig";
 export default  memo(function Index(props) {
   const location = useLocation()
   let { state = {} } = location
@@ -13,7 +13,7 @@ export default  memo(function Index(props) {
   const roomIds = useSelector(roomId)
   const curid = useSelector(selectcurlRommid)
   const [RommId, setRoomId] = useState(curid)
-  let { showRoom = true } = props
+  let { showRoom = true, setDateVal } = props
   const dispacth = useDispatch();
   const projectId = useSelector(state => state.system.menus.projectId)
 
@@ -38,18 +38,13 @@ export default  memo(function Index(props) {
     dispacth(getcurlRommidl(v))
   }
   const [TimeSelect, setTimeSelect] = useState(true);
-  const [dateval, setDateVal] = useState(moment())
+  
   const changeTime = (time, option) => {
     setDateVal(time)
-    dispacth(setEnvironmentTime(option))
   }
 
   const getOnelevel = async () => {
-    if (nested != "environment") {
-      setTimeSelect(false)
-    } else {
-      setTimeSelect(true)
-    }
+  
     try {
       let { success, data, errMsg } = await Area.AreaList(projectId)
       if (success) {
@@ -112,15 +107,20 @@ export default  memo(function Index(props) {
 
 }, [isline])
 useEffect(() => {
-  dispacth(setEnvironmentTime(dateval))
-}, [dateval])
+  if (nested != "environment") {
+    setTimeSelect(false)
+  } else {
+    setTimeSelect(true)
+  }
+}, [nested])
 return (
   <div>
-          <div style={{position: "relative", backgroundColor: "#fff", display: 'flex', alignItems: 'center', padding: '7px 16px', border: '1px solid #d7d7d7', borderRadius: 4 }}>
+          <div style={{backgroundColor: "#fff", display: 'flex', alignItems: 'center', padding: '7px 16px', border: '1px solid #d7d7d7', borderRadius: 4 }}>
               <Form
                   form={form}
                   colon={false}
-                  layout="inline"                 
+                  layout="inline"  
+                  style={{flex: 1}}               
               >
                   <Form.Item label={levelName}   name="area" style={{ marginBottom: 0 }}>
                       <Select 
@@ -152,11 +152,13 @@ return (
                   }
                   </>
                   }
+                  {
+                    TimeSelect && <Form.Item label="日期" name="dataval" initialValue={moment()} style={{marginLeft: "auto"}}>
+                      <DatePicker size='middle'  onChange={changeTime}></DatePicker>
+                    </Form.Item>
+                  }
               </Form>
-              {TimeSelect && <Space style={{ position: "absolute", right: "16px" }}  >
-          <span>日期</span>
-          <DatePicker size='middle' value={dateval} onChange={changeTime}></DatePicker>
-        </Space>}
+            
           </div>
   </div>
 )

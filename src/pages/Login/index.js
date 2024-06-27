@@ -1,6 +1,7 @@
 import React, { useEffect,  memo, useRef, useState,  } from "react";
 import { useDispatch, useSelector,  } from "react-redux";
 import { useNavigate,} from "react-router-dom"; 
+ 
 import {
   loginByName, 
   clearToken, 
@@ -184,7 +185,7 @@ const CheckAuthorization = async (value, type=0, codekey, setLoading) => {
          let sider = siderRunMenus?.[ismenu.key]?.[0] 
          if(sider) { 
            let {key, label} = sider
-           jumpath = `/index/${menu.key}/${key}`
+           jumpath = `/index/${ismenu.key}/${key}`
            substate = {
              nested: key,
              title: label,

@@ -1,20 +1,20 @@
 import React, { useEffect, useMemo, useState, useRef } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
-import style from './style.module.less'
+ 
 import { Button, DatePicker, message, Space, Empty } from 'antd'
-
+import {useOutletContext} from 'react-router-dom'
 import Pagecount from '@com/pagecontent'
 import Titlelayout from '@com/titlelayout'
 import ItemCard from './itemCard'
 
 import { selectcurlRommid } from "@redux/systemconfig";
 import styled from 'styled-components'
-import moment from 'moment';
+ 
 import { DistributionRoomRuntime, distributionRoom } from '@api/api.js'
 import Chart from './Chart'
-import { drawEcharts } from "@com/useEcharts";
+ 
 import { isObject } from "@com/usehandler"
-import { MoneyCollectTwoTone } from '@ant-design/icons'
+ 
 
 const Mainbox = styled.div`
   flex: 1;
@@ -51,13 +51,13 @@ const Cardlist = styled.div`
 `
 
 export default function Index() {
-  const q = useSelector(state => state)
-  console.log(q, "1111");
+  const {dateval} = useOutletContext()
+
   const projectId = useSelector(state => state.system.menus.projectId)
   const roomId = useSelector(selectcurlRommid)
   const [htdata, setHtdata] = useState([])
   const [envi, setEnvi] = useState({})
-  const timeflag = useSelector(state => state.system.environmentTime)
+ 
   const {
     door,
     fire,
@@ -68,9 +68,9 @@ export default function Index() {
     water
   } = isObject(envi) ? envi : {};
   // const enviList = isObject(envi) ? Object.values(envi) : null
-  const EnvironmentTrend = async (time = moment(timeflag)) => {
+  const EnvironmentTrend = async () => {
     try {
-      const day = time.format('YYYY MM DD 00:00:00')
+      const day = dateval.format('YYYY MM DD 00:00:00')
       const { success, data, errMsg } = await DistributionRoomRuntime.EnvironmentTrend({ projectId, roomId, day })
       if (success && isObject(data)) {
         let { environmentVo = {}, htTrends = [] } = data
@@ -88,11 +88,11 @@ export default function Index() {
   }
 
   useEffect(() => {
-    if (Number.isInteger(roomId) && Number.isInteger(projectId) && timeflag) {
-      console.log(roomId, projectId, timeflag);
+    if (Number.isInteger(roomId) && Number.isInteger(projectId) && dateval) {
+     
       EnvironmentTrend()
     }
-  }, [roomId, projectId, timeflag])
+  }, [roomId, projectId, dateval])
   return (
     <Pagecount bgcolor="transparent" pd="0">
       <Mainbox>

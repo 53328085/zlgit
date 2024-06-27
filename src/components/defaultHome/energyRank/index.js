@@ -160,21 +160,7 @@ export default function DefaultHome(props){
   return (
          <Titlelayout title={<CustTransO text="EnergyConsumptionRankingthismonth" />} {...fs} style={{height: "200px"}}>
             <Divorder>
-
                 <Ichart {...option}/>
-              {/*   { state.rankList.length > 0 ? <div className='rank_item'>
-                    <div className='item_name' title={state.rankList[0].name}>{ state.rankList[0].name }</div>
-                    <div className='item_progress' style={{ width: '304px', backgroundColor:'#f03' }}>{ state.rankList[0].value + ' kWh' }</div>
-                </div> : null }
-                { state.rankList.length > 1 ? <div className='rank_item'>
-                    <div className='item_name' title={state.rankList[1].name}>{ state.rankList[1].name }</div>
-                    <div className='item_progress' style={{ width: '285px', backgroundColor:'#f66' }}>{ state.rankList[1].value + ' kWh' }</div>
-                </div> : null }
-                { state.rankList.length > 2 ? <div className='rank_item'>
-                    <div className='item_name' title={state.rankList[2].name}>{ state.rankList[2].name }</div>
-                    <div className='item_progress' style={{ width: '231px', backgroundColor:'#f90' }}>{ state.rankList[2].value + ' kWh' }</div>
-                </div> : null }
-            */}
             </Divorder>
          </Titlelayout>      
     

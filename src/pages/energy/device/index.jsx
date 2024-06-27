@@ -164,7 +164,7 @@ export default function Index() {
    } */
 
    try {
-    let {success, data, total} =await QueryElectric.query(params)
+    let {success, data, total} =await QueryElectric.query({...params})
     if (success && Array.isArray(data) && data.length >0) {
     
       let  imageKeys = data.map(d => d.imageKey)
@@ -211,12 +211,27 @@ export default function Index() {
  }, [params, areaId]) 
  const tbref = useRef();
  const onExport = useCallback(() => {
-    setParams({
+ 
+    return QueryElectric.query({
       ...params,
       pageNum: 1,
       pageSize: total,
-    })
-    return getData()
+    }).then(res => {
+      let { success, data, total } = res;
+      if (success) {
+        return {
+          list: Array.isArray(data) ? data : [],
+          total,
+        };
+      } else {
+        message.error(res.errMsg);
+        return {
+          list: [],
+          total: 0,
+        };
+      }
+
+    }).catch()
  }, [total])
  const Title =  (
       <CustTitle className="t">

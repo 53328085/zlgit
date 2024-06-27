@@ -19,7 +19,7 @@ const DesItem = styled(Descriptions)`
    padding: 0 16px;
   
    text-align: center;
-   min-width: 120px;
+  width:260px;
    background: transparent;
  }
  .ant-descriptions-item-content {
@@ -143,26 +143,26 @@ export default function pagecomp({data, params}) {
         <Main>
             <p  className='title'>3.电量监控</p> 
             <DesItem title=""  bordered size='small' column={1}>
-              <DesItem.Item label="最大电流发生时间">{data.iMaxTime}</DesItem.Item>
-              <DesItem.Item label="最大电流发生位置">{data.iMaxAddress}</DesItem.Item>
+              <DesItem.Item label="最大电流发生时间">{data.iMaxContent ? data.iMaxTime : null}</DesItem.Item>
+              <DesItem.Item label="最大电流发生位置">{data.iMaxContent ? data.iMaxAddress : null}</DesItem.Item>
               <DesItem.Item label="最大电流值">{data.iMaxContent}</DesItem.Item>
             </DesItem> 
             <p  className='title'>4.电压监控</p> 
             <DesItem title=""  bordered size='small' column={1}>
-              <DesItem.Item label="最大电压发生时间">{data.uMaxTime}</DesItem.Item>
-              <DesItem.Item label="最大电压发生位置">{data.uMaxAddress}</DesItem.Item>
+              <DesItem.Item label="最大电压发生时间">{data.uMaxContent ? data.uMaxTime : null}</DesItem.Item>
+              <DesItem.Item label="最大电压发生位置">{data.uMaxContent  ? data.uMaxAddress : null}</DesItem.Item>
               <DesItem.Item label="最大电压值">{data.uMaxContent}</DesItem.Item>
             </DesItem> 
             <p  className='title'>5.剩余电流监控</p> 
             <DesItem title=""  bordered size='small' column={1}>
-              <DesItem.Item label="最大剩余电流发生时间">{data.irMaxTime}</DesItem.Item>
-              <DesItem.Item label="最大剩余电流发生位置">{data.irMaxAddress}</DesItem.Item>
+              <DesItem.Item label="最大剩余电流发生时间">{data.irMaxContent ? data.irMaxTime : null}</DesItem.Item>
+              <DesItem.Item label="最大剩余电流发生位置">{data.irMaxContent ? data.irMaxAddress : null}</DesItem.Item>
               <DesItem.Item label="最大剩余电流值">{data.irMaxContent}</DesItem.Item>
             </DesItem> 
             <p  className='title'>6.温度监控</p> 
             <DesItem title=""  bordered size='small' column={1}>
-              <DesItem.Item label="最高温度发生时间">{data.tMaxTime}</DesItem.Item>
-              <DesItem.Item label="最高温度发生位置">{data.tMaxAddress}</DesItem.Item>
+              <DesItem.Item label="最高温度发生时间">{data.tMaxContent ? data.tMaxTime : null}</DesItem.Item>
+              <DesItem.Item label="最高温度发生位置">{data.tMaxContent ? data.tMaxAddress: null}</DesItem.Item>
               <DesItem.Item label="最高温度值">{data.tMaxContent}</DesItem.Item>
             </DesItem> 
         </Main>

@@ -245,7 +245,7 @@ useEffect(() => {
 
 const onDelOK = async() => {
    try {
-    let {success, errMsg} = await deleteSubItme(idRef.current).unwrap()
+    let {success, errMsg} = await deleteSubItme({id:idRef.current, enterpriseId}).unwrap()
     if(success) {
       i18success('delete')
        //message.warning("删除成功")

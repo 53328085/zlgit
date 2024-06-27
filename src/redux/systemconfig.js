@@ -114,7 +114,7 @@ const initialState = {
   deviceStyle: [], // 表计类型
   isGranary: false, // 演示国家粮仓用
   enterprise: {}, // 碳排 企业信息
-  environmentTime: {},//配电管理--环境监测时间
+
 }
  
 export const getWebsiteState = createAsyncThunk(
@@ -296,9 +296,7 @@ const system = createSlice({
         getEnterprise(state, {payload}) {        
           state.enterprise = payload
         },
-        setEnvironmentTime(state, {payload}) {        
-          state.environmentTime = payload
-        },
+  
 
     },
      extraReducers: {
@@ -453,7 +451,6 @@ export const {
     getDiscurlevel,
     setIntl,
     setIszhCN,
-    getEnterprise,
-    setEnvironmentTime
+    getEnterprise, 
 } = actions
 export default system.reducer

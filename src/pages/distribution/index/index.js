@@ -1,4 +1,5 @@
 import React, {useState, useEffect} from 'react'
+import moment from 'moment'
 import {Layout} from 'antd'
 import {Outlet} from 'react-router-dom'
 import Comhead from '../usehead/com'
@@ -17,6 +18,7 @@ export default function Index() {
  const showroute = {
   designerDistribution: ["line"]
  }
+ const [dateval, setDateVal] = useState(moment())
  const [showRoom, setShowroom] = useState(true) // 是否显示配电房选择框
  let show = !inpage.includes(nested) || showroute[primary]?.includes(nested)
  let style = show ? {
@@ -27,7 +29,9 @@ export default function Index() {
  }
  const context ={
    setInpage,
-   setShowroom
+   setShowroom,
+   dateval
+   
  }
  const sethandler = () => {
   if(primary == 'designerDistribution' && nested == 'room') {
@@ -52,7 +56,7 @@ export default function Index() {
     return (  
       <Content className='page--main'>
         <div style={style}>
-         { show && <Comhead showRoom={showRoom} /> }
+         { show && <Comhead showRoom={showRoom} setDateVal={setDateVal} /> }
            <Outlet context={context} />
         </div>
        </Content>
