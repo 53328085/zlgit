@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect,useCallback } from "react";
 import { nanoid } from "@reduxjs/toolkit";
-import { Image, Space, Tabs, Typography} from "antd";
+import { Image, Space, Tabs, Typography, Radio} from "antd";
 import styled from "styled-components";
 import {useOutletContext} from 'react-router-dom' 
 import { drawEcharts } from "@com/useEcharts";
@@ -11,6 +11,8 @@ import Titlelayout from "@com/titlelayout";
 import {numberformat} from '@com/usehandler'
 import Pagecount from "@com/pagecontent";
 import imgurl from "./icon";
+import Charttable from './chartTable'
+ 
 const {Text} = Typography
  
 
@@ -196,6 +198,15 @@ const Echartbox = styled.div`
    background-color: #fff;
    padding: 16px;
    border: 1px solid #d7d7d7;
+  display: flex;
+  flex-direction: column;
+  .model {
+    display: flex;
+    justify-content: flex-end;
+  }
+  .chart {
+    flex: 1;
+  }
 `
 const ElectricRight = styled.div`
    display: grid;
@@ -208,21 +219,24 @@ export default function Index() {
   //const projectId = useSelector(selectProjectId);
   const areaIds = useSelector(selectOneLevel);
   
-  let {exparams} = useOutletContext()
-  console.log(exparams)
+  let {exparams} = useOutletContext() 
   const [qverview, setOverview] = useState({}) 
   const [tabvalue, setTabvalue] = useState(1)  
   const {detail, total='', proportion, coalStandard, consume={}, analysisDes='', consumes=[], ...energyitem} = qverview;  
   let type = ['', '日', '月', '年'][exparams.type]
   let my = ['', '昨', '上', '去'][exparams.type]
 
- 
-  const Chartbox = ({data, op, type, my, tabvalue, datetype}) => {
-    console.log(datetype)
+  const [model, setModel] = useState(1)
+  const Chartbox = ({data, op, type, my, tabvalue, datetype}) => {   
     if(!op || !type || !my || data?.length < 1 ) return
+    console.log('chartbox')
     const ref = useRef()
-    const charw = () => {
-     try {
+    
+    const changeModel=(e)=>{
+       setModel(e.target.value)
+    }
+    
+   
       let {x =[], y=[], y1=[]} = data || {}
 
       let cost = ['',
@@ -245,8 +259,10 @@ export default function Index() {
       ["time", `今${type}(吨)`, `${my}${type}(吨)`],
       ["time", `今${type}(吨)`, `${my}${type}(吨)`],
     ]
-      let dimensions = ['', energy, cost ][op][tabvalue]      
-      let source = x.map((v, index) => ({time: v,[dimensions[1]]: y[index], [dimensions[2]]: y1[index]}))
+    let dimensions = ['', energy, cost ][op][tabvalue]      
+    let source = x.map((v, index) => ({time: v,[dimensions[1]]: y[index], [dimensions[2]]: y1[index]}))
+    const charw = () => {
+      try {
       drawEcharts(ref.current, {
         dataset: {dimensions, source},
         series: [{ type: "bar", barGap: "0%" }, { type: "bar", barGap: "0%" }],
@@ -258,10 +274,31 @@ export default function Index() {
   }
     useEffect(() => {
        charw()
-    }, [])
+    }, [model])
     return (
-      <Echartbox ref={ref}>
- 
+      <Echartbox>
+            <div className="model">
+               <Radio.Group
+                onChange={changeModel}
+                defaultValue={model}
+                buttonStyle="solid"
+              >
+                <Radio.Button
+                  style={{ width: "96px", marginLeft: 16, textAlign: "center" }}
+                  value={1}
+                >
+                  图表模式
+                </Radio.Button>
+                <Radio.Button
+                  style={{ width: "96px", textAlign: "center" }}
+                  value={2}
+                >
+                  表格模式
+                </Radio.Button>
+              </Radio.Group></div>
+            
+           {model == 1 ? <div className="chart" ref={ref}></div>
+           :  <Charttable source={source} type={exparams.type} tabvalue={tabvalue} /> }
       </Echartbox>
     )
 }
@@ -313,32 +350,7 @@ const EngItem = ({name, unit, periodValue, lastDayPeriodValue, lastMonthPeriodVa
   }
 const Energyitem = ({op}) => {
   
- /*   const getsub =useCallback((type) => {
-     switch(type) {
-       case 'electric':
-       return  op==1 ? '(kWh)' : '元'
-       case 'waterCold':
-       case 'waterHot':
-       case 'steam':
-       case 'gas':
-       return op==1 ? '(m³)' : '元'
-       case 'oil':
-        return op==1 ? '(吨)' : '元'
-       default:
-        return '(/)'
-     }
-
-
-   }, [op])
-   let items = []
-   for(let [key, value] of Object.entries(energyitem)) {
-      let obj = {
-         icon: key,
-         data: value,
-         sub: getsub(key)
-      }
-      items.push(obj)
-   } */
+ 
    let extra = [{
     lastMonthPeriodValue: "0.00",
     lastYearPeriodValue: "0.00",
@@ -566,10 +578,12 @@ const CoalStandard =({data={}, op, datetype}) => {
   }
   const ontabChange = (e) => {   
     setTabvalue(e)
+    setOverview([])
   }
   useEffect(() => {
     let values = Object.values(exparams)
-    if(values.length >= 5)   getData()
+    console.log(values)
+    if(values.length >= 5 && Number.isInteger(tabvalue))   getData()
   }, [tabvalue, exparams])
 
   const Title = ({ title, subtitle, jc }) => {
