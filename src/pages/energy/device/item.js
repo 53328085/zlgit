@@ -41,7 +41,7 @@ const Itembox = styled.div`
      outline: 1px solid #fff;
      outline-offset: 1px;
      display: grid;
-     grid-template-columns: 86px 120px 86px 86px;
+     grid-template-columns: 115px 91px 86px 86px;
      grid-template-rows: repeat(5, 1fr);
      div {
       display: flex;
@@ -133,23 +133,23 @@ export default function Item(props) {
            </div>
        </div>
        <div className='below' key={nanoid()}>
-           {["分类", "能耗(kwh)","同比", "环比"].map(e => <div className='title'>{e}</div>)}
+           {["分类", "读数","同比", "环比"].map(e => <div className='title'>{e}</div>)}
 
-           <div className='back' key={nanoid()}>总有功功率</div>
+           <div className='back' key={nanoid()}>总有功功率(kWh)</div>
            <div className='com bold' key={nanoid()}>{e}</div>
            <div className='com' key={nanoid()}>{numberformat(yoyE)}</div>
            <div className='com' key={nanoid()}>{numberformat(momE)}</div>
-           <div className='red' key={nanoid()}>A相电流</div>
+           <div className='red' key={nanoid()}>A相电流(A)</div>
            <div className='com bold' key={nanoid()}>{e2}</div>
            <div className='com' key={nanoid()}>{numberformat(yoyE2)}</div>
            <div className='com' key={nanoid()}>{numberformat(momE2)}</div>
 
-           <div className='yellow' key={nanoid()}>B相电流</div>
+           <div className='yellow' key={nanoid()}>B相电流(A)</div>
            <div className='com bold' key={nanoid()}>{e3}</div>
            <div className='com' key={nanoid()}>{numberformat(yoyE3)}</div>
            <div className='com' key={nanoid()}>{numberformat(momE3)}</div>
 
-           <div className='green' key={nanoid()}>C相电流</div>
+           <div className='green' key={nanoid()}>C相电流(A)</div>
            <div className='com bold' key={nanoid()}>{e4}</div>
            <div className='com' key={nanoid()}>{numberformat(yoyE4)}</div>
            <div className='com' key={nanoid()}>{numberformat(momE4)}</div>

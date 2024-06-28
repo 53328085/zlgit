@@ -133,17 +133,17 @@ export default function Index() {
     },
     {
       dataIndex: "e2",
-      title: "A相电流(kWh)",
+      title: "A相电流(A)",
       onHeaderCell: () => ({style:  headsty("#f33")})
     },
     {
       dataIndex: "e3",
-      title: "B相电流(kWh)",
+      title: "B相电流(A)",
       onHeaderCell: () => ({style:  headsty("#f90")})
     },
     {
       dataIndex: "e4",
-      title: "C相电流(kWh)",
+      title: "C相电流(A)",
       onHeaderCell: () => ({style:  headsty("#093")})
     }
 
