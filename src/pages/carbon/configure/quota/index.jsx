@@ -46,7 +46,7 @@ const columns = [
       title:  <CustTransO ns="comm" text="year" />,
       dataIndex: 'year',
       width: 180,
-      render: (text) => <>{text} <CustTransO ns="carbon" text="Carbonemissionl" param="(tCo2)" /></>
+      render: (text) => <>{text} <CustTransO ns="carbon" text="Carbonemissionl" param="(tCO2)" /></>
   },
  ...Array.from({length: 12}, ( index,i) => ({
     title: <CustTransO ns="comm" text={i+1}   />,     // i+1+'月',
@@ -92,7 +92,7 @@ const columnsT = [
       title: <CustTransO ns="comm" text="year" />,
       dataIndex: 'year',
       width: 180,
-      render: (text) => <Trans ns="carbon"  i18nKey="Carbontarget" >{{text}}碳排放目标值(tCo2)</Trans>
+      render: (text) => <Trans ns="carbon"  i18nKey="Carbontarget" >{{text}}碳排放目标值(tCO2)</Trans>
   },
  ...Array.from({length: 12}, ( index,i) => ({
     title: <CustTransO ns="comm" text={i+1}   />,  // i+1+'月',

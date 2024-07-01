@@ -35,7 +35,7 @@
   "importtip": "下载模板后录入数据，再导入上传数据",
   "modalTitle":"数据模板导入",
   "uploadtip": "将文件拖到此处，或<1>点击上传</1>",
-  "Carbontarget": "{{text}}碳排放目标值(tCo2)",
+  "Carbontarget": "{{text}}碳排放目标值(tCO2)",
   "total": "合计",
   "yearnodata": "{{year}}年无数据",
   "parkobjectives": "<0>园区目标分解测算</0>",

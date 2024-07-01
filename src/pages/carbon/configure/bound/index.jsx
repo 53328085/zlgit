@@ -12,6 +12,7 @@ import {CustButtonT, CustButton, i18warning, i18success, CustTransO} from "@com/
 import CModal from "@com/useModal"
 import TableT from  "./tabletmp"
 import CDraw from './draw'
+import {isObject} from '@com/usehandler'
 const {Text} = Typography
 const {TreeNode} = Tree;
 import {
@@ -125,7 +126,7 @@ export default function Index() {
   // const {id:enterpriseId} = useSelector(enterprise)
   const  enterpriseData = useSelector(enterprise)
   let  {enterpriseId } = enterpriseData
-  console.log(enterpriseData)
+ 
   const projectId = useSelector(selectProjectId)
   const [form] = Form.useForm()
   const [open, setOpen] = useState(false)
@@ -193,7 +194,7 @@ useEffect(() => {
     skip: !Number.isInteger(enterpriseId),
     
   })
-  console.log(error)
+ 
   useEffect(() => {
     if(boundaryData) {
       let {success, errMsg, data} = boundaryData
@@ -310,6 +311,19 @@ const onDelOK = async() => {
 
 // 配置
 
+  const getText = (id, obj) => {
+   
+    if(!isObject(obj)) return '';
+    if(id==obj.id) {
+      return obj.name
+    }else if(Array.isArray(obj.nodes) && obj.nodes.length >0) {
+        for(let nodeobj of obj.nodes) {
+          let name =  getText(id, nodeobj)         
+          if(name) return name;
+        }
+    }
+  }
+
    const [queryconfig] = carbonSlice.useLazyDataConfigQuery() // 获取边界数据资源配置
    const  [title, setTitle]=useState();
    const [dataconfig, setDataConfig] =useState([])
@@ -317,15 +331,19 @@ const onDelOK = async() => {
    const onConfig = async (item) => {
        try {
         let {id} = item
+       
         carbonBoundaryId.current = id;
      //   setParams({...params,carbonBoundaryId:id})
-        let txt= treeData.find((t) => t.id==1)?.name + '碳排放-数据源配置'
+        let title = getText(id,treeData[0])
+        
+        let txt= title + '碳排放-数据源配置'
         let {success, data, errMsg} = await queryconfig({enterpriseId, carbonBoundaryId:id, projectId}).unwrap();
+       
         setTitle(txt)
         setOpen(true)
         if(success && Array.isArray(data) && data.length > 0) {
         
-         setDataConfig(data)       
+         setDataConfig([...data])       
          data.forEach(e => {
            saveData.current[e.categoryName] = e
          })

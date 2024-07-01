@@ -47,7 +47,7 @@ export default function Index() {
    )
 } */
 
- /*  import React, { useEffect, useState,useMemo } from 'react'
+  import React, { useEffect, useState,useMemo } from 'react'
 import {useDispatch, useSelector} from 'react-redux'
  
 import { Area, ProjectList,ProjectSetting, BigScreen, eneryShift, Monitoring} from "@api/api.js"; 
@@ -56,22 +56,29 @@ import {useSubIndustryListQuery, useSaveItemsMutation,   useTestqQuery,
   useTestmMutation, carbonSlice} from "@redux/carbon.js"
 import {CustTransO, i18warning, i18t} from "@com/useButton"
 
-const Sign =({id, name}) => {
+const Sign =({id, label}) => {
   return (
     <div>
       <h1>id: {id}</h1>
-      <h2>name: {name}</h2>
+      <h2>label: {label}</h2>
     </div>
   )
 }
 const Com1 =() => {
   const [getline, {isLoading: loading}] = useTestmMutation();
-
-  let {data, isSuccess, isFetching, isLoading,error, isError, refetch} = useTestqQuery() 
-   
-  let selectdata =  carbonSlice.endpoints.Testq.select()
-  
- 
+  const [projectId, setProjectId] = useState(3)
+  let {data, isSuccess, isFetching, isLoading,error, isError, refetch} = useTestqQuery(projectId, {
+    skip: !Number.isInteger(projectId),
+    refetchOnMountOrArgChange: true
+  }) 
+  const onchange = (e) => {
+    let id = parseInt(e.target.value);
+    setProjectId(id);
+  }
+  console.log('isFetching:',isFetching) // 
+  console.log('isLoading:',isLoading)
+  console.log('isSuccess:',isSuccess)
+  console.log(data)
   let content;
   if(isLoading) {
     content = <div>isLoading</div>
@@ -80,14 +87,15 @@ const Com1 =() => {
   }else if(isError) {
     content =<div>{JSON.stringify(error)}</div>
   }else if(isSuccess) {
-    content = data.data?.map(d => <Sign {...d} key={d.id}/>)
+    content = data?.data?.menus?.map(d => <Sign {...d} key={d.id}/>)
   }
 
  
   let name = `zhuzl${Math.random()}`;
   return <div style={{height: "400px", overflowY: "auto"}}>
         <button onClick={() => getline(name)}>添加数据</button>
-        <button onClick={() => refetch('zhuzl')}>刷新数据</button>
+        <button onClick={refetch}>刷新数据</button>
+        <input type="number" onChange={onchange}></input>
        <h2>请求的数据</h2>
        <div >
         {content}
@@ -95,13 +103,7 @@ const Com1 =() => {
     </div>
 }
 
-const Com2=() => {
  
- 
-  return <div>
-       com2
-    </div>
-}
 export default function Index() {
    const [iscom1, setIscom1] = useState(true)
    const ids =  useSelector(selectIds)
@@ -115,8 +117,8 @@ export default function Index() {
     skip: false,
   }) 
   const sortedData = useMemo(() => {
-    if(!Array.isArray(data.data)) return []
-    const sorted = data.data.slice()
+    if(!Array.isArray(data?.data)) return []
+    const sorted = data?.data?.slice()
     sorted.sort((a, b) => a.subIndustryName.localeCompare(b.subIndustryName))
     return sorted
   }, [data])
@@ -143,7 +145,7 @@ export default function Index() {
     </div>
   )
 }
-   */
+ 
 
 // 测试各种组件
 /* import { Timeline } from 'antd';
@@ -160,370 +162,132 @@ const App = () => (
 export default App; */
 
 
-// 拓扑图 配电管理
-import React, { useEffect, useState, useRef, useMemo } from 'react'
-import { useSelector, useDispatch } from 'react-redux'
-import { selectcurlRommid } from "@redux/systemconfig";
-import Pagecount from '@com/pagecontent'
-import {Select, message, Spin, Space } from 'antd'
-import { useReactive } from "ahooks";
-import {useNavigate} from 'react-router-dom'
-import { DistributionRoomRuntime, distributionRoom, RuntimeHMI } from '@api/api.js'
-import styled from 'styled-components';
-import { Topology } from "@topology/core/src/core";
-import { register as registerFlow } from '@topology/flow-diagram'
-import {Cspin} from '@com/comstyled'
-import { isObject } from '@com/usehandler';
-import mqtt from 'mqtt'
+// 测试react API
+/* import React, {useState,memo,useMemo, useTransition} from 'react'
 
-// 左侧工具栏图标
-/* import '../../../assets/css/fonts/font/iconfont.css'
-import '../../../assets/css/font_2073009_u56zfo0voi/iconfont.css'
-import '../../../assets/css/font_2395018_pl6jy69tbjr/iconfont.css'
-import '../../../assets/css/font_4xgdsyqu0mh/iconfont.css'
-import '../../../assets/css/font_99x1os11gqi/iconfont.css'
-import '../../../assets/css/font_c44gejdj174/iconfont.css'
-import '../../../assets/css/font_ehfbe2lg8tb/iconfont.css'
-import '../../../assets/css/font_ugr1luq01xe/iconfont.css' */
-// 右侧图形库图标
-/* import '../../../assets/css/fonts/font/libs/iconfont.css'
-import '../../../assets/css/font_g4v09lxfde/iconfont.css'
-import '../../../assets/css/font_bz4csze2alg/iconfont.css' */
-
-const { Option } = Select;
-import {CustButton} from '@com/useButton'
-export default function Index() {
-  const ChartItem = styled.div`
-    position: absolute;
-    
-    top: 32px;
-    display: flex;
-    align-items: center;
-    width: 100%;
-    padding: 0 64px;
-    .chartitem{
-      width: 112px;
-      height: 36px;
-      line-height: 36px;
-      text-align: center;
-      color: #f2f2f2;
-      font-size: 14px;
-      border: 1px solid #f2f2f2;
-      border-radius: 2px;
-      margin-right: 16px;
-      cursor: pointer;
-    }
-    .activeItem{
-      background-color: #237ae4;
-    }
-  `
-
-  const { hostServer } = useSelector((state) => state.user);
-  // const hostServer = 'ws://10.5.25.182:4239/eiot/mqtt'
-
-  let canvas
-  const [newCanvas, setNewCanvas] = useState()
-  const canvasOptions = {}
-  const lineNames = ['curve', 'polyline', 'line']
-  const arrowTypes = ['', 'triangleSolid', 'triangle', 'diamondSolid', 'diamond', 'circleSolid', 'circle', 'line', 'lineUp', 'lineDown']
-
-  const navigate = useNavigate()
-  const dispatch = useDispatch()
-  const projectId = useSelector(state => state.system.menus.projectId)
- // const roomId = useSelector(selectcurlRommid)
- const roomId = 9
-  const state = useReactive({
-    spining: false,
-    chartList: [],
-    activeChart: 0,
-    getGuid: '',
-    client: {},
-    timer:null,
-  })
-
-
-  const getChartList = async (roomId) => {
-    const res = await DistributionRoomRuntime.ChartList(3, roomId)
-    if (res.success) {
-      if (Array.isArray(res.data) && res.data.length > 0) {
-        state.chartList = res.data
-        state.activeChart = res.data[0].id
-        getChartDetail(res.data[0].id)
-      } else {
-        state.chartList = []
-        state.activeChart = 0
-        if(newCanvas) {
-          newCanvas.open({})
-          newCanvas.render()
-        }else {
-          message.warning("没有数据")
-        }
-       /*  setTimeout(() => {
-          newCanvas.open({})
-          newCanvas.render()
-        }, 1000) */
-      }
-    }
-  }
-
-  const getChartDetail = async (id) => {
-    clearTimeout(state.timer)
-    state.spining = true
-    state.getGuid = guid()
-    registerFlow()
-  
-    const {success, data, errMsg} = await DistributionRoomRuntime.ChartDetails(projectId, id)
-    if (success) {
-       if(!isObject(data)) return  message.warning("没有数据")
-      let dateGroup = JSON.parse( data.dataGroup)
-      dateGroup.locked = 1
-      if(!canvas) {
-        canvas = new Topology('topology-canvas', canvasOptions)
-      }
-    
-        state.spining = false
-        canvas.open(dateGroup)
-        canvas.render()
-        canvas.fitView(16);
-        getMqtt()
-      
-    } else {
-   
-        state.spining = false
-        canvas.open({})
-        canvas.render()
-      message.error(errMsg)
-    }
-  }
-
-  const getMqtt = () => {
-    let options = {
-      clientId:
-        "HMI_" +
-        (((1 + Math.random()) * 0x10000) | 0).toString(16).substring(1),
-      username: "",
-      password: "",
-    }
-    state.client = mqtt.connect(hostServer, options)
-    let penArr = window.topology.pureData().pens
-    let devices = []
-    for (let i = 0; i < penArr.length; i++) {
-      if (penArr[i].tags.length > 1) {
-        devices.push(penArr[i].tags[0]);
-      }
-    }
-    devices = Array.from(new Set(devices));
-    let HMIDevices = [];
-    for (let i = 0; i < devices.length; i++) {
-      HMIDevices.push({
-        sn: devices[i],
-        points: [],
-      });
-      for (let j = 0; j < penArr.length; j++) {
-        if (penArr[j].tags.length > 1 && devices[i] == penArr[j].tags[0]) {
-          HMIDevices[i].points.push(penArr[j].tags[1]);
-        }
-      }
-    }
-
-    state.client.on("connect", e => {
-      state.client.subscribe(
-        "HMI",
-        { qos: 0 },
-        (error) => {
-          if (!error) {
-            console.log("订阅成功");
-            getHeart(HMIDevices);
-          } else {
-            console.log("订阅失败");
-          }
-        }
-      )
-    })
-    // 接收消息处理
-    state.client.on("message", (topic, message) => {
-      console.log('接所消息')
-      let mqttData = JSON.parse(message.toString());
- 
-      for (let key in mqttData.Points) {
-        // console.log(mqttData.DeviceId + "_" +key)
-        if (window.topology.find(mqttData.SN + "_" + key)) {
-          if (Array.isArray(window.topology.find(mqttData.SN + "_" + key))) {
-            let arrlist = window.topology.find(mqttData.SN + "_" + key)
-            arrlist.map(item => {
-              item.text = mqttData.Points[key].Value;
-            })
-
-          } else {
-            window.topology.find(mqttData.SN + "_" + key).text =
-              mqttData.Points[key].Value;
-          }
-        }
-        let value = mqttData.Points[key].Value;
-      }
-    
-      canvas.render();
-    });
-    // 断开发起重连
-    state.client.on("reconnect", (error) => {
-      console.log("正在重连:", error);
-    });
-    // 链接异常处理
-    state.client.on("error", (error) => {
-      console.log("连接失败:", error);
-    });
-
-  /*  setTimeout(() => {
-      getHeart(HMIDevices);
-    }, 100); */
-  }
-
-  const getHeart = (devices) => {
-  //  console.log(devices)
-    let params = {
-      projectId: projectId,
-      channel: state.getGuid,
-      devices
-    }
-    RuntimeHMI.onHerart(params).then(res => {
-      if(res.success){
-        state.timer = setTimeout(()=> {
-          getHeart(devices)
-        }, 120000)
-      }else{
-        message.error(res.errMsg)
-      }
-    }).catch(e => {
-      console.log(e)
-    })
-  }
-
-
-  const [contextmenu, setContextMenu] = useState({
-    left: null,
-    top: null,
-    bottom: null
-  })
-  const [props, setProps] = useState({
-    node: null, // 节点
-    line: null, // 连线
-    nodes: null,
-    multi: false, // 多个对象
-    expand: false,
-    locked: false
-  })
-  const [canvasData, setCanvasData] = useState({
-    lineName: 'polyline',
-    fromArrow: '',
-    toArrow: 'triangleSolid'
-  }) // 画布数据
-  const [TopologyData, setTopologyData] = useState({
-    grid: false, // 背景网格
-    locked: false, // 画布锁定
-    gridColor: 'rgba(242, 242, 242, 1)',
-    bkColor: 'rgba(255, 255, 255, 1)'
-  })
-  const [nodeTag, setNodeTag] = useState(false)
-  const [nodeType, setNodeType] = useState('设备绑定')
-  const [selectedNode, setSelectedNode] = useState()
-
-  const onDrag = (event, node) => {
-    // 解决浏览器手势插件命名冲突
-    event.dataTransfer.setData('Topology', JSON.stringify(node.data))
-  }
-  const onContextMenu = (event) => {
-    event.preventDefault()
-    event.stopPropagation()
-  }
-
-  const onMessage = (event, data) => {
-    
-    
-    if (event == 'nodeRightClick') {
-      // console.log(data.evs)
-      if (data.name == "text" || data.name == "rectangle") {
-        setContextMenu({
-          left: data.evs.x - 210 + 'px',
-          top: data.evs.y - 110 + 'px'
-        })
-        setNodeTag(true)
-        setSelectedNode(data)
-        setNodeType('数据绑定')
-      } else if (data.name == 'image') {
-        setContextMenu({
-          left: data.evs.x - 210 + 'px',
-          top: data.evs.y - 110 + 'px'
-        })
-        setNodeTag(true)
-        setSelectedNode(data)
-        setNodeType('设备绑定')
-      }
-    } else if(event == 'dblclick') {
-      console.log(data)
-       let {tags} = data
-       console.log(tags)
-        if(!Array.isArray(tags) || tags.length < 1) return
-       window.open(`/deviceDetail?sn=${tags[0]}`, "_blank")
-    }
-  }
-
-  const changeChart = id => {
-    state.activeChart = id
-    state.client.end()
-    getChartDetail(id)
-  }
-
-  const S4 = () => {
-    return (((1 + Math.random()) * 0x10000) | 0).toString(16).substring(1);
-  }
-
-  const guid = () => {
-    return (S4() + S4() + "-" + S4() + "-" + S4() + "-" + S4() + "-" + S4() + S4() + S4());
-  }
-  useEffect(() => {
-    canvas = new Topology('topology-canvas', canvasOptions)
-    canvas.render()
-    setNewCanvas(canvas)
-  }, [])
-
-
-  useEffect(() => {
-
-    if (roomId) {
-     
-     
-      getChartList(roomId)
-    }
-
-  }, [roomId])
- const mapref = useRef();
- const [isf, setIsf] = useState(false)
- const fullscreen = (e) => {
-
-   e.preventDefault();
-   e.stopPropagation();
-  
-   if(isf) {
-    document.exitFullscreen();
-   }else {
-    mapref.current.requestFullscreen()
-   }
-   setIsf(!isf)
- }
-
- useEffect(()=> {
-  return () => {
-   (typeof state?.client?.end == "function") && state?.client?.end();
-    console.log('卸载')
-  }
- }, [])
-
+const Test=memo(({data}) => {
+  const [isPending, startTransition] = useTransition();
   return (
-    <Cspin spinning={state.spining} tip="Loading...">
-      <div  style={{backgroundColor: "#eeeff3", flex: 1, display: 'flex'}}>
-        <div id="topology-canvas" style={{ position: 'relative', flex:1, backgroundColor: '#fff' }} onContextMenu={e => onContextMenu(e)} ref={mapref}> 
-        </div>
-      </div>
-    </Cspin>
+    <div>
+      <h3>{data}</h3>
+    </div>
+  )
+})
+const Test2=memo(({persons, age}) => {
+   
+ 
+  return (
+    <div>
+      <ul>
+        {persons.map(p => (<li>name:{p.name} age: {p.age}</li>))}
+      </ul>
+    </div>
+  )
+})
+const Per= ({p}) => {
+  return <li>name: {p.name}, age: {p.age} 时间：{p.time}</li>
+}
+function TabButton({ children, isActive, onClick }) {
+  if (isActive) {
+    return <b>{children}</b>
+  }
+  return (
+    <button onClick={() => {
+      onClick();
+    }}>
+      {children}
+    </button>
   )
 }
+function AboutTab() {
+  return (
+    <p>Welcome to my profile!</p>
+  );
+}
+
+const PostsTab = memo(function PostsTab() {
+  // 打印一次。真正变慢的地方在 SlowPost 内。
+  console.log('[ARTIFICIALLY SLOW] Rendering 500 <SlowPost />');
+
+  let items = [];
+  for (let i = 0; i < 500; i++) {
+    items.push(<SlowPost key={i} index={i} />);
+  }
+  return (
+    <ul className="items">
+      {items}
+    </ul>
+  );
+});
+
+function SlowPost({ index }) {
+  let startTime = performance.now();
+
+  while (performance.now() - startTime < 5) {
+    console.log(performance.now())
+  }
+
+  return (
+    <li className="item">
+      Post #{index + 1}
+    </li>
+  );
+}
+
+function ContactTab() {
+  return (
+    <>
+      <p>
+        You can find me online here:
+      </p>
+      <ul>
+        <li>admin@mysite.com</li>
+        <li>+123456789</li>
+      </ul>
+    </>
+  );
+}
+
+export default function Index() {
+  const [isPending, startTransition] = useTransition();
+  const [tab, setTab] = useState('about');
+
+  function selectTab(nextTab) {
+    console.log(nextTab)
+    startTransition(() => {
+      setTab(nextTab);
+    });
+  }
+
+  return (
+    <div>
+    <div style={{display: "flex", backgroundColor: "#ccc", height: "40px"}}>
+      <TabButton
+        isActive={tab === 'about'}
+        onClick={() => selectTab('about')}
+      >
+        About
+      </TabButton>
+      <TabButton
+        isActive={tab === 'posts'}
+        onClick={() => selectTab('posts')}
+      >
+        Posts (slow)
+      </TabButton>
+      <TabButton
+        isActive={tab === 'contact'}
+        onClick={() => selectTab('contact')}
+      >
+        Contact
+      </TabButton>
+      <hr />
+  
+    </div>
+    <div style={{width: "600px", height: "400px"}}>
+      {tab === 'about' && <AboutTab />}
+      {tab === 'posts' && <PostsTab />}
+      {tab === 'contact' && <ContactTab />}
+      </div>
+    </div>
+  );
+} */

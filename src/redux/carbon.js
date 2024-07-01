@@ -408,12 +408,16 @@ export const carbonSlice = apiSlice.injectEndpoints({
 
       // 测试用
       Testq: build.query({    
-        query: (name='') =>({
-            url:`/Monitor/LineManager/Query?projectId=1&type=1&areaId=1&lineName=${name}&culture=zh`,  
+        query: (projectId) =>({
+            url:`/General/User/QueryMenus?projectId=${projectId}&culture=zh`,  
             method: "GET",
-            transformResponse: (response, meta, arg) => response.data,
+           
         }),
-        providesTags: (result=[])=> ["test", ...result.map(r => ({type: 'test', id: r.id}))],
+       transformResponse: (response, meta, arg) =>  {
+        console.log(response)
+        return response
+       },
+     //   providesTags: (result=[])=> ["test", ...result.map(r => ({type: 'test', id: r.id}))],
        }), 
        Testm: build.mutation({  //  
         query: (content) => ({
@@ -444,7 +448,7 @@ export const carbonSlice = apiSlice.injectEndpoints({
 
 
 })
-console.log(carbonSlice)
+ 
 export const {
     useIndustryListQuery,
      useSubIndustryListQuery, 

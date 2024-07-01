@@ -1,4 +1,4 @@
-import React, {useState, useRef, useEffect} from 'react'
+import React, {useState, useRef, useEffect, useMemo} from 'react'
 import {useTranslation} from 'react-i18next'
 import styled from 'styled-components'
 import {Switch,Form, InputNumber, Radio, message} from 'antd'
@@ -19,12 +19,16 @@ export default function Index({tabledata,saveData,projectId,enterpriseId,display
   const {t} = useTranslation(['button', 'comm'])
   const [form] = Form.useForm()
   const ref = useRef()
-  const {categoryName, dataSubCategoryVos,categoryId} = tabledata
+  const {categoryName, dataSubCategoryVos=[],categoryId} = tabledata
   const rowspan = Array.isArray(dataSubCategoryVos) ?dataSubCategoryVos.length + 1 : 1
   const title = `编辑${categoryName}因子数值`;
   let fixedrow ={categoryName,subCategoryName:'参数类型', dataSource: '',  option: '', categoryId}   
-  const [datas, setDatas] =useState([fixedrow,...dataSubCategoryVos.map((c) => ({categoryName, categoryId,...c}))])
-
+  // const [datas, setDatas] =useState([fixedrow,...dataSubCategoryVos.map((c) => ({categoryName, categoryId,...c}))])
+  const datas = useMemo(() => {
+    return [fixedrow,...dataSubCategoryVos.map((c) => ({categoryName, categoryId,...c}))]
+  }, [dataSubCategoryVos])
+  console.log(datas)
+ 
  // 配置
  
  
@@ -49,7 +53,7 @@ export default function Index({tabledata,saveData,projectId,enterpriseId,display
      try {
       let newDatas = datas.slice().map(d => ({...d}))
       newDatas[index].dataSource= Number(v);
-      setDatas(newDatas)
+    //  setDatas(newDatas)
       console.log(newDatas)
       let arr = newDatas.slice(1).map(d => ({subCategoryId: d.subCategoryId, subCategoryName: d.subCategoryName, dataSource: d.dataSource}))
       saveData[categoryName]= {
@@ -68,7 +72,7 @@ export default function Index({tabledata,saveData,projectId,enterpriseId,display
       let value = form.getFieldValue('cur')      
       let newDatas = datas.slice().map(d => ({...d}))
       newDatas[indexref.current].carbonEmissionFactor = value;
-      setDatas(newDatas)
+     // setDatas(newDatas)
       saveData[categoryName]=newDatas.slice(1)
       ref.current.onCancel()
     } catch (error) {
@@ -109,7 +113,8 @@ export default function Index({tabledata,saveData,projectId,enterpriseId,display
       align: 'center',
       onCell: showOncell,
       render: (text, record,index) => {
-        return  index> 0 ?  <Radio.Group onChange={(e) => radioChange(e.target.value, index)} value={text} style={{display: 'flex', justifyContent: "space-around"}}>
+       
+        return  index> 0 ?  <Radio.Group onChange={(e) => radioChange(e.target.value, index)} defaultValue={text} style={{display: 'flex', justifyContent: "space-around"}}>
         <Radio value={2}>自动采集</Radio>
         <Radio value={1}>手动录入</Radio>
         <Radio value={0}>无数据录入</Radio>
