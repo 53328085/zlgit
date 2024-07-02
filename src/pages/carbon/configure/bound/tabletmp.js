@@ -25,8 +25,9 @@ export default function Index({tabledata,saveData,projectId,enterpriseId,display
   let fixedrow ={categoryName,subCategoryName:'参数类型', dataSource: '',  option: '', categoryId}   
   // const [datas, setDatas] =useState([fixedrow,...dataSubCategoryVos.map((c) => ({categoryName, categoryId,...c}))])
   const datas = useMemo(() => {
+    const {dataSubCategoryVos=[]} = tabledata
     return [fixedrow,...dataSubCategoryVos.map((c) => ({categoryName, categoryId,...c}))]
-  }, [dataSubCategoryVos])
+  }, [tabledata])
   console.log(datas)
  
  // 配置
@@ -113,7 +114,7 @@ export default function Index({tabledata,saveData,projectId,enterpriseId,display
       align: 'center',
       onCell: showOncell,
       render: (text, record,index) => {
-       
+         console.log(text)
         return  index> 0 ?  <Radio.Group onChange={(e) => radioChange(e.target.value, index)} defaultValue={text} style={{display: 'flex', justifyContent: "space-around"}}>
         <Radio value={2}>自动采集</Radio>
         <Radio value={1}>手动录入</Radio>

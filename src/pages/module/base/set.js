@@ -12,7 +12,7 @@ import {
 } from "antd";
 import styled from "styled-components";
 import moment from 'moment';
-
+import { SketchPicker } from 'react-color';
 import {ProjectSetting} from '@api/api.js'
 
 import Mapcom from "@com/useMap/indexset";
@@ -23,7 +23,7 @@ import Titlelayout from '@com/titlelayout'
 import {useSelector, useDispatch} from "react-redux";
 import {useTranslation} from 'react-i18next'
 import {manager, maintenance} from '@redux/user' //   布尔值  是否是 项目管理员， 运营人员；
-import {publishState, getCurrProjectInfo, currProject, iszhCN} from '@redux/systemconfig' // 布尔值 发布状态 
+import {publishState, getCurrProjectInfo, currProject, iszhCN, getThemeColor} from '@redux/systemconfig' // 布尔值 发布状态 
  
 import {SaveButton} from "@com/useButton"
 
@@ -193,12 +193,36 @@ const getVal = (key) => {
   }
 }
 
+const theme = {
+  themeColor: "#237a4e" , // 默认值 "#237ae4", 应用范围 页面中 自定义样式中包含"#237ae4", antd 组件、图表
+  menuBackgroundColorLeft: "#036", // meun* 应用范围头部菜单栏 
+ 
+  runAsider : ["#0b41c7", "#7662ff"], // 渐变色 起始颜色
+  desAsider: ["#039", "#033"], // 渐变色 起始颜色
+  
+}
+const CSketchPicker=({value, onChange}) => {
+  const dispatch = useDispatch();
+  const  onColorChange= (hex)=> {
+    dispatch(getThemeColor({primaryColor: hex}))
+    window.localStorage.setItem("CustThemeColor", hex)
+    onChange(hex)
+  }
+  return  <SketchPicker
+  presetColors={[value]}
+  disabled
+  color={value}
+  onChange={({ hex }) => {
+    onColorChange(hex);
+  }}
+/>
+}
 export default function ProjectSet({projectId}) {
   const dispatch = useDispatch(); 
   const ispublish = useSelector(publishState)
   const iszh = useSelector(iszhCN)
 
-  console.log(iszh)
+  
   const {t} = useTranslation("comm","common")
 
   const CurrProject = useSelector(currProject)
@@ -210,7 +234,7 @@ export default function ProjectSet({projectId}) {
   let defaultpage = [{label: t("common:ProjectOverview"), value: 0}, {label: t("common:OperationMonitoring"), value: 1}]
   const [homepage, setHomePage] =useState(defaultpage)
 
-  console.log(homepage);
+  
   const module = new Set([ // 布尔值转换成0, 1
      'safeEnabled',
     'distributionEnabled',
@@ -287,7 +311,12 @@ export default function ProjectSet({projectId}) {
     }
    
   }
-
+  const onColorChange = (hex) => {
+ 
+    
+    dispatch(getThemeColor({primaryColor: hex}))
+ 
+}
 
 
   const { Item } = Form;
@@ -326,7 +355,7 @@ const queryProjectInfo = async () => {
           homemenus.push(item)
         }
      })
-    console.log(bkmenus.current)
+   
     setHomePage([...defaultpage, ...homemenus])  
  
     for(let key of Object.keys(params)) {
@@ -485,6 +514,9 @@ useEffect(() => {
                 <Select options={homepage}>
                 </Select>
       </Item>
+   {/*    <Item label={t("common:Themecolor")}  name="themecolor" initialValue="#237ae4">
+        < CSketchPicker />
+      </Item> */}
       <Divider dashed  className="divider" />
       <Item label={t("common:EnergyType")}  > {/* className="type" */}
           <Dcheckbox>

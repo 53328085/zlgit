@@ -337,6 +337,8 @@ const onDelOK = async() => {
         let title = getText(id,treeData[0])
         
         let txt= title + '碳排放-数据源配置'
+        setDataConfig([])
+        saveData.current={}
         let {success, data, errMsg} = await queryconfig({enterpriseId, carbonBoundaryId:id, projectId}).unwrap();
        
         setTitle(txt)
