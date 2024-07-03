@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useMemo, memo} from "react";
-import {  useSelector} from "react-redux";
+import {  useSelector,useDispatch} from "react-redux";
 import {
   selectMemoPhone,
   memorizePhone,
@@ -18,6 +18,7 @@ import imgurl from "./icon";
 
 export default  memo(({onSubmit})=> {
   const {t} = useTranslation('login')
+    const dispatch = useDispatch();
     const { GetVerification } = Logapi;
     const [phoneform] = Form.useForm();
     let initPhone = useSelector(selectMemoPhone);

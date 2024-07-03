@@ -83,9 +83,10 @@ const splitarr = (arr) => {
   const form = Form.useFormInstance();
  
   const onChange = (v) => {
+    let num = Number.isFinite(v) ? v : 0
    
     try {
-      saveData[index]?.consumption.splice(i,1,v)
+      saveData[index]?.consumption.splice(i,1,num)
     } catch (error) {
       console.log(error)
     }
