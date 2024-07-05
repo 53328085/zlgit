@@ -510,7 +510,7 @@ useEffect(() => {
           </Dcheckbox>
      
       </Item>
-      <Item label={t("common:homepage")}  name="homeMenu">
+      <Item label={t("common:homepage")}  name="homeMenu" tooltip="重新进入项目后生效">
                 <Select options={homepage}>
                 </Select>
       </Item>

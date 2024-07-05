@@ -143,7 +143,7 @@ export default function Warncontent({ style,form, areaId }) {
                  initialValues={{
                     status:1,
                     warn:0,
-                    datetype:[moment(),moment()]
+                    datetype:[moment().subtract(7,'days'),moment()]
               
                  }}
                 >
