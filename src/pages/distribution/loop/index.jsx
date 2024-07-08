@@ -122,6 +122,8 @@ export default function Index() {
  
    
     const getLinePoint=async(RoomId,lineId)=>{
+       console.log('lineId', lineId)
+       if(!Number.isInteger(lineId)) return 
        const res =  await DistributionRoomRuntime.LineRuntimePoints(projectId,RoomId,lineId)
        if(res.success){
         if(res.data){
@@ -154,7 +156,8 @@ export default function Index() {
         getLinePoint(RoomId,selectRef.current.selectedKeys)
     }
     useEffect(()=>{
-         if(RoomId)  getLinePoint(RoomId,0);
+         console.log('RoomId', RoomId)
+         if(Array.isArray(RoomId))  getLinePoint(RoomId,0);
     },[RoomId])
 
     return (
