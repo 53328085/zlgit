@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState, useContext, createContext, useMemo } from 'react'
 import { useSelector } from 'react-redux'
 import {useTranslation} from 'react-i18next'
-import { Form, Row, Col, Select, Input, Divider, message, Typography, Space } from 'antd'
+import { Form, Row, Col, Select, Input, Divider, message, Typography, Space,InputNumber } from 'antd'
 import Comp from './comp'
 import Table from '@com/useTable'
 import Modal from '@com/useModal'
@@ -132,7 +132,7 @@ export default function Gateway({ deviceStyle, name }) {
     {
       title: '操作',
       dataIndex: 'options',
-      width: 136,
+     
       export:false,
       render: (text, record) => {
         return (
@@ -287,11 +287,12 @@ export default function Gateway({ deviceStyle, name }) {
   //确认倍率修改
   const factorOk=async()=>{
    
-    const formvalue = factorform.getFieldValue()
+    const {id,ct,pt} = factorform.getFieldValue()
     const res =  await  UpdateFactor({
       projectId,
-      id: formvalue.id,
-      factor:formvalue.factor
+      id,
+       ct,
+       pt,
     })
     if(res.success){
       message.success('修改成功')
@@ -678,9 +679,15 @@ let SetFactor=({FactorRef,name,factorform,...other})=>{
           <Form.Item label="设备名称" name="name" >
             <Input style={{width:240}} disabled/>
           </Form.Item>
-          <Form.Item label="倍率" name="factor">
+         {/*  <Form.Item label="倍率" name="factor">
            <Input style={{width:240}}/>
-          </Form.Item>
+          </Form.Item> */}
+          <Form.Item label="CT" name="ct">
+                  <InputNumber min={1} parser={value => parseInt(value)} style={{width: 240}} />
+               </Form.Item>
+               <Form.Item label="PT" name="pt">
+                  <InputNumber min={1} parser={value => parseInt(value)} style={{width: 240}} />
+               </Form.Item>
           <Form.Item label="  ">
             <Row style={{color:'#ff0000',fontSize:12}}>
             倍率=PT*CT！  

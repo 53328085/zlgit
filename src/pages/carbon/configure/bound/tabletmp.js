@@ -6,6 +6,7 @@ import Usetable from '@com/useTable'
 import {CustLink,} from '@com/useButton'
 import CModal from "@com/useModal"
 
+const {Item} =Form;
 const Tablebox = styled.div`
   flex:1;
   display: flex;
@@ -15,9 +16,10 @@ const Tablebox = styled.div`
   padding-top: 16px;
   overflow-y: auto;
 `
-export default function Index({tabledata,saveData,projectId,enterpriseId,displaydraw}) { 
+export default function Index({tabledata, projectId,enterpriseId,displaydraw}) { 
   const {t} = useTranslation(['button', 'comm'])
-  const [form] = Form.useForm()
+ // const [form] = Form.useForm()
+ const formtb = Form.useFormInstance();
   const ref = useRef()
   const {categoryName, dataSubCategoryVos=[],categoryId} = tabledata
   const rowspan = Array.isArray(dataSubCategoryVos) ?dataSubCategoryVos.length + 1 : 1
@@ -31,7 +33,16 @@ export default function Index({tabledata,saveData,projectId,enterpriseId,display
   console.log(datas)
  
  // 配置
- 
+ useEffect(() => {
+   console.log('tbform')
+   if(datas.length > 1) {
+      let tbdata = datas.slice(1);
+      tbdata.forEach(d => {
+        formtb.setFieldValue(d.subCategoryId, d.dataSource)
+      })
+   }
+
+ }, [datas])
  
   const onConfig = async (record, index) => {     
      let {categoryId,subCategoryId} = record
@@ -50,31 +61,14 @@ export default function Index({tabledata,saveData,projectId,enterpriseId,display
     form.setFieldValue('pre', record.carbonEmissionFactor);
     ref.current.onOpen()
   } */
-  const radioChange = (v, index) => {
-     try {
-      let newDatas = datas.slice().map(d => ({...d}))
-      newDatas[index].dataSource= Number(v);
-    //  setDatas(newDatas)
-      console.log(newDatas)
-      let arr = newDatas.slice(1).map(d => ({subCategoryId: d.subCategoryId, subCategoryName: d.subCategoryName, dataSource: d.dataSource}))
-      saveData[categoryName]= {
-       dataSubCategoryVos: arr,
-       categoryId, 
-       categoryName,
-      }
-     } catch (error) {
-       console.log(error)
-     }
-    
-  }
+
   const onOk = () => {
    
     try {
       let value = form.getFieldValue('cur')      
       let newDatas = datas.slice().map(d => ({...d}))
       newDatas[indexref.current].carbonEmissionFactor = value;
-     // setDatas(newDatas)
-      saveData[categoryName]=newDatas.slice(1)
+    
       ref.current.onCancel()
     } catch (error) {
       console.log(error)
@@ -114,12 +108,12 @@ export default function Index({tabledata,saveData,projectId,enterpriseId,display
       align: 'center',
       onCell: showOncell,
       render: (text, record,index) => {
-         console.log(text)
-        return  index> 0 ?  <Radio.Group onChange={(e) => radioChange(e.target.value, index)} defaultValue={text} style={{display: 'flex', justifyContent: "space-around"}}>
+        console.log(record)
+        return  index> 0 ?  <Item name={record.subCategoryId} initialValue={text} style={{marginBottom: '0px'}}><Radio.Group  style={{display: 'flex', justifyContent: "space-around"}}>
         <Radio value={2}>自动采集</Radio>
         <Radio value={1}>手动录入</Radio>
         <Radio value={0}>无数据录入</Radio>
-      </Radio.Group> : ''
+      </Radio.Group></Item> : ''
       }
     },
     {
@@ -127,7 +121,14 @@ export default function Index({tabledata,saveData,projectId,enterpriseId,display
       dataIndex: 'option',
       key: 'option',
       onCell: showOncell,
-      render: (_, record, index) => index>0 ? <CustLink text="configure" disabled={record.dataSource!==2} onClick={() => onConfig(record, index)} /> :  ''
+      render: (_, record, index) => index>0 ? <Item noStyle shouldUpdate>
+         {
+          ({getFieldValue}) => {
+            let disabeld = getFieldValue(record.subCategoryId)            
+            return <CustLink text="configure" disabled={disabeld!==2} onClick={() => onConfig(record, index)} />
+          }
+         }
+        </Item> :  ''
     }
 
   ]
@@ -136,7 +137,7 @@ export default function Index({tabledata,saveData,projectId,enterpriseId,display
   return (
     <div>
     <Usetable columns={columns} dataSource={datas} showHeader={false} />  
-     <CModal title={title} ref={ref} mold="cust" onOk={onOk} width={480}>
+     {/* <CModal title={title} ref={ref} mold="cust" onOk={onOk} width={480}>
         <Form form={form}   preserve={false}>
            <Form.Item label="原数值" name="pre">
                 <InputNumber min={0} style={{width: '100%'}} disabled/>
@@ -146,7 +147,7 @@ export default function Index({tabledata,saveData,projectId,enterpriseId,display
            </Form.Item>
         </Form>
 
-     </CModal>
+     </CModal> */}
     </div>
   )
 }

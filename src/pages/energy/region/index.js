@@ -107,6 +107,7 @@ const nf = new Intl.NumberFormat("en-US", {maximumFractionDigits: 2});
 export default function Index() {   
   let {exparams} = useOutletContext() 
   let {energytype, areaId, date, type:dateType,  projectId} = exparams 
+  
   const chartTitle = ["用电量 (kWh)", "用电量 (kWh)",'用水量 (m³)','用气量 (m³)'][energytype] || "用电量 (kWh)"
   const unit = ["kWh", "kWh","m³"][energytype] || "kWh"
   const [tableData, setTableData] = useState([])
@@ -172,8 +173,7 @@ export default function Index() {
    
    // const {area, date, type, meterType} = form.getFieldsValue() || {}
    // if(isNaN(type)) return;
-    console.log(exparams)
-    if(Object.values(exparams)?.length < 5) return;
+    
     let hander = ['',QueryEnergyAreaDay, QueryEnergyAreaMonth, QueryEnergyAreaYear][dateType]
     let time = getTime(date, dateType)  
     const querys = {
@@ -240,8 +240,11 @@ export default function Index() {
 
 
  useEffect(() => {
-   getData()
- }, [exparams]) 
+   if( Number.isInteger(energytype) && Number.isInteger(areaId) && date && Number.isInteger(dateType) && Number.isInteger(projectId)) {
+    getData()
+   }
+  
+ }, [energytype, areaId, date, dateType,  projectId]) 
  const Title =  (
       <CustTitle className="t">
         区域能耗趋势

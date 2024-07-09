@@ -153,11 +153,12 @@ function Draw({params}, ref) {
     const [sfrom]= Form.useForm()
     const [apiform] = Form.useForm()
     const {Item} = Form
-  
+    console.log('draw')
    // let {used, unused} = tabledata
    const [usedtb, setusedtable] = useState([])
    const [unusedtb, setUnusedtb] = useState([])
    const unusedtbbk = useRef()
+  
   
   
     const devices = useRef([]);
@@ -301,6 +302,7 @@ function Draw({params}, ref) {
           setUnusedtb(arr)
        }else {
         setUnusedtb(unusedtbbk.current || [])
+       
        }
        } catch (error) {
           console.log(error)
@@ -334,6 +336,7 @@ function Draw({params}, ref) {
 
       };
       const unselect = () => {
+        console.log('unselect')
         if(!devices.current) return
         let keys = devices.current.map(k => k.deviceSn)
         setUnusedtb([...unusedtb, ...devices.current])
@@ -346,17 +349,19 @@ function Draw({params}, ref) {
         undevices.current={}
       }
       const selected = (f) => {
-         if(!undevices.current) return
-         let keys = undevices.current.map(k => k.deviceSn)
-            
-            setusedtable([...usedtb, ...undevices.current])
+         console.log(undevices.current)
+         if(Array.isArray(undevices.current)&& undevices.current?.length >0) {
+         let keys = undevices.current.map(k => k.deviceSn)            
+            setusedtable([...usedtb, ...undevices.current]) // 已选中的设备表
             let undata = unusedtb.filter(t => !keys.includes(t.deviceSn))
-            setUnusedtb([...undata])
-            unusedtbbk.current = undata
+            setUnusedtb([...undata]) // 未选中的设备表
+            unusedtbbk.current = unusedtbbk.current.filter(t => !keys.includes(t.deviceSn))
+            console.log('selected', undata)
            // setSelectedRowKeys([...selectedRowKeys,...keys])
             setUnselectedRowKeys([])
             devices.current = {}
             undevices.current={}
+         }
       }
   return (
     <Drawerbox

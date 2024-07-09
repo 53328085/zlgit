@@ -173,7 +173,7 @@ export const carbonSlice = apiSlice.injectEndpoints({
             url: `Carbon/CarbonEmissionBoundary/QueryCarbonBoundaryDataConfig?enterpriseId=${enterpriseId}&carbonBoundaryId=${carbonBoundaryId}`,
             method: 'GET',
         }),
-        providesTags: (result, error, arg) => [{type: 'carbon', id: 'QueryCarbonBoundaryDataConfig'+arg.carbonBoundaryId+arg.subCategoryId}] // ['dataconfig']
+        providesTags: (result, error, arg) => [{type: 'carbon', id: 'QueryCarbonBoundaryDataConfig'}] // ['dataconfig']
     }),
      BoundaryConfig: build.query({ // 查询排放边界配置结构
         query: ({enterpriseId,carbonBoundaryId,subCategoryId,projectId}) => ({
@@ -214,7 +214,7 @@ export const carbonSlice = apiSlice.injectEndpoints({
             body: post,
             
         }),
-        invalidatesTags: (result, error, arg) =>  [{type: 'carbon', id: 'QueryCarbonBoundaryDataConfig'+arg.carbonBoundaryId+arg.subCategoryId}]
+        invalidatesTags: (result, error, arg) =>  [{type: 'carbon', id: 'QueryCarbonBoundaryDataConfig'}]
     }),
    
      //  数据录入

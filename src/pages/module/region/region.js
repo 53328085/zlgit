@@ -211,7 +211,7 @@ export default function Index({ projectId, level, CModal, name,  allLevel }) {
  
   const islngLat = fields?.find(item => item.type == 1);
   const address = useRef("");
-  const title = isAdd ? `${t("common:add")}${name}` : `${t("common:Edit")}${name}`; // 当前层级名称  defaultParams
+  const title = isAdd ? `新增${name}` : `编辑${name}`; // 当前层级名称  defaultParams
  
   let params = {
     //查询

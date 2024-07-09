@@ -129,6 +129,7 @@ export default function Index() {
  
   const projectId = useSelector(selectProjectId)
   const [form] = Form.useForm()
+  const [tbform] = Form.useForm()
   const [open, setOpen] = useState(false)
   const [params, setParams] = useState(null)
   let carbonBoundaryId = useRef()
@@ -327,7 +328,7 @@ const onDelOK = async() => {
    const [queryconfig] = carbonSlice.useLazyDataConfigQuery() // 获取边界数据资源配置
    const  [title, setTitle]=useState();
    const [dataconfig, setDataConfig] =useState([])
-   const saveData = useRef({}) // 点击 完成配置 时需要传递的数据
+ 
    const onConfig = async (item) => {
        try {
         let {id} = item
@@ -338,7 +339,7 @@ const onDelOK = async() => {
         
         let txt= title + '碳排放-数据源配置'
         setDataConfig([])
-        saveData.current={}
+         
         let {success, data, errMsg} = await queryconfig({enterpriseId, carbonBoundaryId:id, projectId}).unwrap();
        
         setTitle(txt)
@@ -346,13 +347,11 @@ const onDelOK = async() => {
         if(success && Array.isArray(data) && data.length > 0) {
         
          setDataConfig([...data])       
-         data.forEach(e => {
-           saveData.current[e.categoryName] = e
-         })
+       
          
         }else {
          setDataConfig([])
-         saveData.current={}
+        
          if(!success) i18warning(errMsg)
          // message.warning(errMsg || '数据出错')
         }
@@ -370,21 +369,18 @@ const onDelOK = async() => {
    
    const onfinsh = async () => {
     try {
-      if( Object.values(saveData.current).length == 0) {
-        setOpen(false)
-        return
-      }
+       const values = tbform.getFieldsValue();
+       console.dir(values)
+      
+   
       let params = {
         enterpriseId,
         carbonBoundaryId:carbonBoundaryId.current,
         post: []
       }
     
-      for(let value of Object.values(saveData.current)) {
-        let {dataSubCategoryVos} = value
-        let keys = dataSubCategoryVos.map(d => ({subCategoryId:d.subCategoryId, dataSource: d.dataSource}))
-        params.post = [...params.post, ...keys]
-
+      for(let [key, value] of Object.entries(values)) {
+        params.post.push( {subCategoryId: parseInt(key), dataSource: value})
       }
       let {success, errMsg} = await finshconfig(params).unwrap()
       if(success) {
@@ -394,7 +390,7 @@ const onDelOK = async() => {
         i18warning(errMsg)
        // message.warning(errMsg || '数据出错')
       }
-      saveData.current={};
+    
       setOpen(false)
 
     } catch (error) {
@@ -472,8 +468,11 @@ const renderTreeNodes = (data) => {
           </Titlelayout>
          {open && (<Titlelayout   title={Title} layout="flex"  key="right">
                        <Tablebox>
-                       {dataconfig.length > 0 ? dataconfig.map((e,index) => <TableT tabledata={e} key={e.categoryName}  displaydraw={displaydraw} saveData={saveData.current} projectId={projectId} enterpriseId={enterpriseId} /> ) 
-                       : <Empty />}
+                       
+                       {dataconfig.length > 0 ?  <Form form={tbform} component={false}> {dataconfig.map((e,index) => <TableT tabledata={e} key={e.categoryName}  displaydraw={displaydraw}   projectId={projectId} enterpriseId={enterpriseId} /> ) }</Form>
+                        
+                       : <Empty />
+                       }
                        </Tablebox>
           </Titlelayout>)
           }

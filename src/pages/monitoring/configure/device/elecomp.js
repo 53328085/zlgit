@@ -57,7 +57,6 @@ let Com = ({ form, deviceStyle }) => {
                     }
                 },]}>
                     <Input />
-                   
                 </Form.Item>
             ) : /* deviceStyle == 1 ?  (<Form.Item  noStyle   shouldUpdate={(prevValues, curValues) => prevValues.ct !== curValues.ct || prevValues.pt !== curValues.pt} > 
                      {
@@ -497,10 +496,10 @@ let EditCom = ({ form, coms, deviceStyle }) => {
     }, [form.getFieldsValue().commAddress])
     return (
         <>
-            {deviceStyle !== 13 && deviceStyle !== 14 && deviceStyle !== 1 ? (<Form.Item label="倍率" name="factor" rules={rules}>
+            {![1,13,14,12].includes(deviceStyle) ? (<Form.Item label="倍率" name="factor" rules={rules}>
                 <Input disabled />
                 
-            </Form.Item>) : deviceStyle == 1 ? <> <Form.Item label="CT" name="ct" initialValue={1}>
+            </Form.Item>) :  [1,12].includes(deviceStyle) ? <> <Form.Item label="CT" name="ct" initialValue={1}>
                   <InputNumber min={1} parser={value => parseInt(value)} style={{width: "100%"}} disabled />
                </Form.Item>
                <Form.Item label="PT" name="pt" initialValue={1}>
