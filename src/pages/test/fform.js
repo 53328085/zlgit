@@ -47,7 +47,7 @@ export default function Index() {
    )
 } */
 
-  import React, { useEffect, useState,useMemo } from 'react'
+/*   import React, { useEffect, useState,useMemo } from 'react'
 import {useDispatch, useSelector} from 'react-redux'
  
 import { Area, ProjectList,ProjectSetting, BigScreen, eneryShift, Monitoring} from "@api/api.js"; 
@@ -144,7 +144,7 @@ export default function Index() {
        {content}
     </div>
   )
-}
+} */
  
 
 // 测试各种组件
@@ -291,3 +291,23 @@ export default function Index() {
     </div>
   );
 } */
+
+import { useState } from 'react';
+import useInput from './useInput';
+export default function Index() {
+  const firstprops = useInput('zl')
+  const lastprops = useInput('zhu')
+  return (
+    <>
+      <label>
+        First name:
+        <input  {...firstprops} />
+      </label>
+      <label>
+        Last name:
+        <input  {...lastprops} />
+      </label>
+      <p><b>Good morning, {firstprops.value} {lastprops.value}.</b></p>
+    </>
+  );
+}

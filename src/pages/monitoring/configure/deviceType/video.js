@@ -396,12 +396,18 @@ let AddModal = (props) => {
     >
       <Row >
 
-        <Form.Item label="监控设备型号" name="category">
+        <Form.Item label="监控设备型号" >
+          <Space>
+            <Form.Item name="category" noStyle>
           <Select
             onChange={handleChange}
             options={selectOption}
             style={{ width: 240 }}
           ></Select>
+          </Form.Item>
+          <Form.Item name="description"><Input readOnly/>
+          </Form.Item>
+          </Space>
         </Form.Item>
         <Form.Item label="监控设备厂家" name="manufacturer">
           <Input style={{ width: 240 }} />

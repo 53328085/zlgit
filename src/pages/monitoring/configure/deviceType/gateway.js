@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef, forwardRef, useImperativeHandle, useCallback,useContext, useMemo } from 'react'
+import React, { useEffect, useState, useRef, forwardRef, useImperativeHandle, useCallback,useContext, useMemo, memo } from 'react'
 import {useTranslation} from 'react-i18next'
 import DeviceContent from './deviceContent'
 import style from './style.module.less'
@@ -12,7 +12,7 @@ import Modal from '@com/useModal'
 import cusContext from '@com/content'
 import {publishState} from '@redux/systemconfig'
 const { DeviceTypeManager: { GatewayCategory, AddCategory, QueryNotUsed, UpdateCategory, DeleteCategory } } = Monitoring;
-const {Link} = Typography
+const {Link, Text} = Typography
 export default function Gateway() {
   const {t} = useTranslation(['button'])
   const publish = useSelector(publishState)
@@ -388,32 +388,35 @@ export let AddModal =forwardRef((props, ref) => {
   const [imageUrl, setImageUrl] = useState(''); //上传的图片
   const [selectOptions, setSelectOptions] = useState([])//下拉选项
 
-   const open =  () => {
-    return new Promise(async(resolve, reject) =>{
-    const result = await QueryNotUsed(projectId)
-    const { success, data } = result;
-    form.setFieldValue('Upload', '')
-    setImageUrl("")
-    if (success && Array.isArray(data)) {
-   
-      if (data.length > 0) {
-        // ModalRef.current.onOpen()
-      
-        setSelectOptions(data)
-        form.setFieldsValue({
-          GatewayType: data[0]['category'],
-          ComNum: data[0]['com'],
-          Image: 'data:image/jpeg;base64,' + data[0]['imageBase64']
-        })
-        resolve(true)
-      } else {
-        message.warning('无可用网关新增!')
-        reject(false)
+   const open = async () => {
+    try {
+      const result = await QueryNotUsed(projectId)
+      const { success, data } = result;
+    //  form.setFieldValue('Upload', '')
+     // setImageUrl("")
+      if (success && Array.isArray(data)) {
+     
+        if (data.length > 0) {
+          // ModalRef.current.onOpen()
+        
+          setSelectOptions(data)
+          form.setFieldsValue({
+            GatewayType: data[0]['category'],
+            ComNum: data[0]['com'],
+            Image: 'data:image/jpeg;base64,' + data[0]['imageBase64']
+          })
+          return true
+        } else {
+          message.warning('无可用网关新增!')
+          return false
+        }
+  
       }
-
+    } catch (error) {
+      
     }
-    })
-    
+ 
+  
   }
   
   useEffect(()=>{
@@ -461,6 +464,7 @@ export let AddModal =forwardRef((props, ref) => {
       labelAlign='left'
       colon={false}
       form={form}
+      preserve={false}
     >
       <Form.Item
         label="网关型号"
@@ -470,13 +474,16 @@ export let AddModal =forwardRef((props, ref) => {
           showSearch
           style={{ width: 256 }}
           onChange={handleChange}
-          fieldNames={{
-            label: 'category',
-            value: 'category'
-          }}
-          options={selectOptions}
+         
+        //  options={selectOptions}
           filterOption={true}
-        />
+       >
+        {
+         selectOptions?.length> 0 &&  selectOptions.map(s => {
+          return <Select.Option value={s.category} key={s.category} ><Text>{s.category}</Text>&nbsp;<Text type="secondary">{s.description}</Text></Select.Option>
+        })
+        }
+       </Select>
       </Form.Item>
       <Form.Item
         label="串口个数"

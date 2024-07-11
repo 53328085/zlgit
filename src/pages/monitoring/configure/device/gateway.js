@@ -248,7 +248,7 @@ if(Number.isInteger(projectId)) {
       return
     }
     modalFormRef?.current?.onOpen()
-    addForm.setFieldsValue({
+ /*    addForm.setFieldsValue({
       area: '',
       address: '',
       remark: '',
@@ -257,7 +257,7 @@ if(Number.isInteger(projectId)) {
       pwd: '',
       name: '',
       heartInterval: ''
-    })
+    }) */
   }
   //打开批量导入窗口
   const multExport = () => {
@@ -820,7 +820,7 @@ let AddModalForm = ({ modalFormRef, addopts, addForm, usecategory, levelname,onO
           span: 6
         }}
         labelAlign='left'
-
+        preserve={false}
       >
         <Row gutter={16} className={style.customItem}>
           <Col span={10}>

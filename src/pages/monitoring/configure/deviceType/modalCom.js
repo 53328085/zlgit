@@ -225,6 +225,7 @@ let Count = ({ value, record, pointSource,setPointSource }) => {
   //新增设备类型
 export let AddModal = forwardRef(
     ({ addForm, dataSource, getDeviceQueryCategoryFull, defaultTableData=[],  isShow=true }, ref) => {
+      console.log(dataSource)
       const tableRef = useRef(null)
       const [tabledatas,setTabledatas]=useState([...defaultTableData]) 
       const handleChange = async (option) => {
@@ -250,7 +251,8 @@ export let AddModal = forwardRef(
         >
           <Row align='bottom'>
             <Col span={16}>
-              <Row style={{ marginBottom: 16 }}>
+              <Row style={{ marginBottom: 16 }} gutter={8}>
+                <Col>
                 <Form.Item label="设备型号" name="DeviceType">
                   <Select
                     showSearch
@@ -259,6 +261,12 @@ export let AddModal = forwardRef(
                     onChange={handleChange}
                   />
                 </Form.Item>
+                </Col>
+                <Col>
+                <Form.Item label="描述" name="description" >
+                  <Input readOnly /> 
+                </Form.Item>
+                </Col>
               </Row>
               <Row >
                 {/* <Col>

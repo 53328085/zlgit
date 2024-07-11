@@ -308,6 +308,7 @@ const onSureEditModal=async()=>{
         IsRead: data.realTimeReading,
         DefaulImg: `data:image/jpeg;base64,${data.imageBase64}`,
         ImageUpload: '',
+        description: data.description
         // Point:arr,
       })
       setIsAdd(true)

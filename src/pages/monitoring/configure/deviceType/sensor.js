@@ -295,6 +295,7 @@ if(publish){
         IsRead: data.realTimeReading,
         DefaulImg: `data:image/jpeg;base64,${data.imageBase64}`,
         ImageUpload: '',
+        description: data.description
       })
       setIsAdd(true)
     }

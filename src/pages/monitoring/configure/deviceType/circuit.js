@@ -278,7 +278,7 @@ const onSureEditModal=async()=>{
   const getDeviceQueryCategoryFull = async (category) => {
     let params = {
       projectId,
-      category,
+      category: encodeURIComponent(category),
     }
     const r = await DeviceQueryCategoryFull(params)
     if (r.success) {

@@ -16,30 +16,7 @@ const fs = {
 
 const Divorder = styled.div`
   height: 140px;
-  .rank_item{
-    display: flex;
-    align-items: center;
-    padding-top: 23px;
-    font-size: 14px;
-    color: #515151;
-    .item_name{
-        width: 92px;
-        line-height: 22px;
-        height: 22px;
-        margin-right: 6px;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        white-space: nowrap;
-    }
-    .item_progress{
-        height: 22px;
-        border-radius: 20px;
-        line-height: 20px;
-        color: #fff;
-        padding-left: 16px;
-    }
-  }
-  
+  display: flex;
 `
 
 export default function DefaultHome(props){
@@ -50,10 +27,18 @@ export default function DefaultHome(props){
             type: "bar",
              label: {
                 show: true,
-                align: "left",
+                position: [15, 5],            
+                color: "#fff",
+                formatter: (params) => {
+                  return params.value?.value+' kWh'
+                }
              },
+             barWidth: 20,
              itemStyle: {
-                borderRadius: 15
+                borderRadius: 9,    
+                color: (param)=> {
+                 return  ["#6d61e4","#23c2db","#237ae4"][param.dataIndex]
+                }
              }
             }],
         grid: {
@@ -78,6 +63,9 @@ export default function DefaultHome(props){
             },
             axisTick: {
                 show: false,
+            },
+            axisLable: {
+                align: "left"
             }
         },
         dataset: {

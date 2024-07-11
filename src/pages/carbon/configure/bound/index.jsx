@@ -469,7 +469,7 @@ const renderTreeNodes = (data) => {
          {open && (<Titlelayout   title={Title} layout="flex"  key="right">
                        <Tablebox>
                        
-                       {dataconfig.length > 0 ?  <Form form={tbform} component={false}> {dataconfig.map((e,index) => <TableT tabledata={e} key={e.categoryName}  displaydraw={displaydraw}   projectId={projectId} enterpriseId={enterpriseId} /> ) }</Form>
+                       {dataconfig.length > 0 ?  <Form form={tbform} component={false} preserve={false}> {dataconfig.map((e,index) => <TableT tabledata={e} key={e.categoryName}  displaydraw={displaydraw}   projectId={projectId} enterpriseId={enterpriseId} /> ) }</Form>
                         
                        : <Empty />
                        }
