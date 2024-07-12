@@ -1101,7 +1101,7 @@ export class SettingManage {
 export class Remote {
   static AllMeter = (data) =>server.post( `/Monitor/RuntimeRemote/Overview`,data); //查询设备
   static AllCallMeter = (data) =>server.post( `/Monitor/RuntimeRemote/Call`,data); //查询设备抄读
-  static SetResult = (data) =>server.post( `/Monitor/RuntimeRemote/SetResult`,data); //返回结果
+  static SetResult = (data,projectId) =>server.post( `/Monitor/RuntimeRemote/SetResult?projectId=${projectId}`,data); //返回结果
   static FindPowerProtect = (projectId) =>server.get(`/Monitor/RuntimeRemote/FindPowerProtect?projectId=${projectId}`); //获取保电方案简易列表
   static StartBatchValveTask = (data) => server.post(`/Monitor/RuntimeRemote/StartBatchValveTask`, data); //发起批量抄读阀门状态任务
   static BatchValveResponse = (data) =>server.post(`/Monitor/RuntimeRemote/BatchValveResponse`, data); //查询批量抄读阀门状态结果
@@ -1382,7 +1382,7 @@ export const Monitoring = {
   //系统日志
   RuntimeLog:{
     QueryOperationLogs: (data) => server.post(`/Monitor/RuntimeLog/QueryOperationLogs`, data),//操作日志
-    QueryDeviceLogs: (areaId,alike,data) => server.post(`/Monitor/RuntimeLog/QueryDeviceLogs?areaId=${areaId}&alike=${alike}`, data),//设备日志
+    QueryDeviceLogs: (areaId,alike,deviceStyle,data) => server.post(`/Monitor/RuntimeLog/QueryDeviceLogs?areaId=${areaId}&like=${alike}&deviceStyle=${deviceStyle}`, data),//设备日志
   },
   //运行报告
   RuntimeReport:{

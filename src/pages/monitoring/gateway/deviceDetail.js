@@ -3,6 +3,7 @@ import mqtt from 'mqtt'
 import styled from "styled-components";
 import style from './style.module.less'
 import { useSelector } from 'react-redux'
+import {useAntdTable} from 'ahooks'
 import imgurl from './images/index.js'
 import { Pagination, message, DatePicker, Button, Radio, Empty, Form, Input, Divider, Typography } from 'antd'
 import { SearchOutlined, CaretUpOutlined, CaretDownOutlined } from '@ant-design/icons';
@@ -14,8 +15,8 @@ import Titlelayout from '@com/titlelayout'
 import dayjs from 'dayjs';
 import customParseFormat from 'dayjs/plugin/customParseFormat';
 dayjs.extend(customParseFormat);
-import { selectProjectId, mixtitle, systemConfigInfo, currProject,} from '@redux/systemconfig.js'
-import {isObject} from "@com/usehandler"
+import { selectProjectId, mixtitle, systemConfigInfo, currProject,selectOneLevelDefaultId} from '@redux/systemconfig.js'
+import {isObject, disabledDate} from "@com/usehandler"
 import { selectUser } from '@redux/user.js'
 import Ichart  from '@com/useEcharts/Ichart';
 import Table from '@com/useTable'
@@ -33,7 +34,7 @@ const Textbox = styled(Text)`
    }
 
 `
-const deviceList = ['', '电表', '冷水表', '燃气表', '传感器', '变压器', '热水表', '蒸汽表', '煤炭表', '燃油表', '储能设备', '', '', '触点测温', '光纤测温']
+const deviceList = ['', '电表', '冷水表', '燃气表', '传感器', '变压器', '热水表', '蒸汽表', '煤炭表', '燃油表', '储能设备', '', '断路器', '触点测温', '光纤测温']
 
 const Chartbox = styled.div`
   display: grid;
@@ -122,8 +123,9 @@ export default function GatewayDetail(props) {
     const projectId = useSelector(selectProjectId)
     const enchtitle = useSelector(mixtitle)
     const {projectName,  logoImage  } = useSelector(currProject)
-   
-   
+    const areaId = useSelector(selectOneLevelDefaultId)
+
+  
     const {hostServer} = useSelector(selectUser)
     const channel="HMI_" + (((1 + Math.random()) * 0x10000) | 0).toString(16).substring(1)
 
@@ -134,7 +136,7 @@ export default function GatewayDetail(props) {
     //const mqtClient =mqtt.connect(hostServer, options)
     const {chineseTitle} = useSelector(systemConfigInfo)
     const { RangePicker } = DatePicker;
-    const { RuntimeDevice: { Detail, Current, HistoryTrend, HistoryTable, EnergyActuary, EnergyReport, AlarmPage } } = Monitoring
+    const { RuntimeDevice: { Detail, Current, HistoryTrend, HistoryTable, EnergyActuary, EnergyReport, AlarmPage } ,RuntimeLog} = Monitoring
     let [state, setstate] = useState(1)
     let [detail, setDetail] = useState({})
     const deviceStyle = detail?.deviceStyle;
@@ -176,7 +178,7 @@ export default function GatewayDetail(props) {
 
     // 水，电 ， 气；
     const isclude = [2,7].includes(deviceStyle); // 是否是水表
-    let showtab = ![4, 12].includes(deviceStyle)// 王建需求： 传感器 不显示 监控趋势， 能耗趋势。后续，断路器也不需要监控趋势
+    let showtab = ![4].includes(deviceStyle)// 王建需求： 传感器 不显示 监控趋势， 能耗趋势。
    
     //let dtlkeys = Number.isFinite(detail.state) ? ![2, 3].includes(detail.state) : true; // 0 离线
     let dtlkeys = false // 禅道任务 设备离线时能够查询历史数据 
@@ -227,11 +229,58 @@ export default function GatewayDetail(props) {
     // const disabledDate = (current) => {
     //     return current && current > dayjs().endOf('day');
     // };
+   let pday = moment().subtract(7, 'day'), cday=moment();
+   const [logparm, setLogparm] =useState({alike:'',deviceStyle: 12, start: pday.format("yyyy-MM-DD"), end: cday.format("yyyy-MM-DD")})
+   let [logdata, setLogData] = useState([])
+   const changelog = (v) => {
+     let [start, end] = v;     
+     setLogparm({...logparm, start: start.format('yyyy-MM-DD'), end: end.format('yyyy-MM-DD')})
+   }
+/*    const getLog= async () => {
+     try {
+        let {start, end, alike, deviceStyle} = logparm
+        let {success, data}=  await RuntimeLog.QueryDeviceLogs(areaId, alike, deviceStyle,{projectId, pageNum: 1, pageSize: 1200,start, end})
+        if(success && Array.isArray(data)) {
+            setLogData(data)
+        }
+     } catch (error) {
+        console.log(error)
+     }
+     
+   } */
+
+     const getLog= async ({current, pageSize}) => {
+        try {
+           let {start, end, alike, deviceStyle} = logparm
+           if(!alike) return
+           let {success, data, total}=  await RuntimeLog.QueryDeviceLogs(areaId, alike, deviceStyle,{projectId, pageNum: 1, pageSize: 1200,start, end})
+           if(success && Array.isArray(data)) {
+                return {
+                    list: data,
+                    total: total
+                }
+           }else {
+            return {
+                list: [],
+                total: 0
+            }
+           }
+        } catch (error) {
+           console.log(error)
+        }
+        
+      }
+    const {tableProps: logProps} = useAntdTable(getLog, {
+        defaultPageSize: 18,
+        refreshDeps: [logparm]
+    })
    
     const getData = () => {//设备详情
         return Current(projectId, sn).then(res => {
             let { success, data } = res
+            
             if (success) {
+               
                 setCurrent(data)
                 setdataList(data.fields)
             } else {
@@ -247,6 +296,12 @@ export default function GatewayDetail(props) {
                 if(data?.deviceStyle==2 || data?.deviceStyle==7) {
                     setreportTypeTime(2)
                 };
+                if(data?.deviceStyle == 12) {
+                    setLogparm({...logparm, alike: data.sn, deviceStyle: data.deviceStyle})
+                  //  logparm.alike = data.sn
+                  //  logparm.deviceStyle = data.deviceStyle
+                  //  getLog()
+                }
                 setDetail(data || {})
                
             } else {
@@ -752,9 +807,13 @@ export default function GatewayDetail(props) {
                             {/* <RangePicker
                                 format='YYYY-MM-DD HH:mm:ss' disabledDate={disabledDate} showTime onChange={onTimeOk} defaultValue={[moment(yesterday), moment(today)]} /> */}
                             <Button style={{ marginLeft: 16, width: 96, height: 32 }} type="primary" onClick={onSearch} icon={<SearchOutlined />} >查询</Button>
-                        </div> : (state == 3 || state == 12) ?  <div><div className={style.newTime}>
+                        </div> : (state == 3) ?  <div><div className={style.newTime}>
                             <img src={imgurl.time} className={style.time} ></img>
                             <p>数据最新更新时间：{current.lastSampleTime}</p>
+                        </div> </div> : (state==6) ? <div><div className={style.newTime}>
+                            <img src={imgurl.time} className={style.time} ></img>
+                            <p style={{paddingRight: '1em'}}>数据最新更新时间：{current.lastSampleTime}</p>
+                             <RangePicker format="YYYY-MM-DD"  defaultValue={[pday,cday]}  onChange={changelog} disabledDate={disabledDate}  />
                         </div> </div> : state == 4 ? <div className={style.newTime}>
                         <RangePicker format='YYYY-MM-DD HH:mm:ss'  showTime disabledDate={(cur) => cur && cur>=moment().endOf('day')} onChange={onTimeOkAlarm} defaultValue={[today,yesterday]} />
                         <Button style={{ marginLeft: 16, width: 96, height: 32 }} type="primary" onClick={onSearchAlarm} icon={<SearchOutlined />} >查询</Button>
@@ -868,7 +927,7 @@ export default function GatewayDetail(props) {
                                     <Pagination className={style.pageNumD} size="small" current={pageNum} total={totalalarm} pageSize={12} onChange={onChangePageLog} showSizeChanger={false}/>
                                 </div>
                             </div> : state ==6
-                             ? <Devicelog /> :
+                             ? <Devicelog logdata={logProps} /> :
                             (state==5|| state==6) &&  <Control Custmodal={Custmodal} sn={sn}  state={state} detail={detail} getDetailData={getDetailData}/>
                           
                            

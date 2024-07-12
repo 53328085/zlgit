@@ -10,29 +10,56 @@ const onCell =(_, index) => {
         }
     }
 }
-const columns = [
+const columnsLogD = [
     {
-        dataIndex: "time",
-        title: "时间",
-        key: 'time',
-        width:550,
-        onCell: onCell
+      title: '设备编号',
+      dataIndex: 'sn',
+      key: 'sn',
+      
     },
     {
-        dataIndex: "log",
-        title: "设备日志",
-        key: 'log',
-        onCell: onCell
-    }
-]
-const dataSource =[
-    {time: new Date().toLocaleTimeString(), log: '断路器合闸'},
-    {time: new Date().toLocaleTimeString(), log: '断路器开闸'},
-    {time: new Date().toLocaleTimeString(), log: '断路器开闸'}
-]
+      title: '设备类型',
+      dataIndex: 'meterType',
+      key: 'meterType',
+      
+    },
+    {
+      title: '设备型号',
+      dataIndex: 'category',
+      key: 'category',
+      id: 'id'
+    },
+ 
+    {
+      title: '安装地址',
+      dataIndex: 'address',
+      key: 'address',
+      
+    },
+    {
+        title: '描述',
+        dataIndex: 'content',
+        key: 'content',
+        
+      },
+    {
+      title: '操作时间',
+      dataIndex: 'time',
+      key: 'time',
+      
+    },
+    {
+      title: '操作者',
+      dataIndex: 'creator',
+      key: 'creator',
+      id: 'id'
+    },
+  ];
+ 
 
-export default function Index() {
+ 
+export default function Index({logdata={}}) {
   return (
-    <Usetable columns={columns}  dataSource={dataSource} istheme />
+    <Usetable columns={columnsLogD}  {...logdata} istheme onCell={onCell} />
   )
 }

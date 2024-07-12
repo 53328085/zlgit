@@ -88,6 +88,11 @@ export const CdatePicker = styled(DatePicker)`
 }
 `
 
+export  const disabledDate = (current) => {
+  return current && current > moment().endOf('day');
+};
+
+
 export const ComDatePicker = (props) => {
   const disabledDate = (current) => {
     return current && current < moment().endOf('day');

@@ -142,6 +142,7 @@ export default function Index(props) {
   };
 
   const addAlarmOk = async () => {
+    console.log(111)
     try {
       const values = await formInfo.validateFields();
       let data = {
@@ -212,7 +213,9 @@ export default function Index(props) {
         const params = { ...data };
         props.getValues(params);
       }
-    } catch (errorInfo) {}
+    } catch (errorInfo) {
+      console.log(errorInfo)
+    }
   };
   const handleCancel = () => {
     props.callBack();

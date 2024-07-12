@@ -1,9 +1,9 @@
 import React, { useState, useEffect, useRef, forwardRef, useImperativeHandle} from 'react'
 import { useSelector } from 'react-redux'
- 
+import moment from 'moment'
 import {useAntdTable} from 'ahooks'
-import {Remote} from '@api/api.js'
-import { Form, Button, Table, Select, message,  Divider, Space } from 'antd'
+import {Remote, Monitoring} from '@api/api.js'
+import { Form, Button, Table, Select, message,  Divider, Space, DatePicker } from 'antd'
  
 import Pagecount from '@com/pagecontent'
 import UserTable from '@com/useTable'
@@ -15,9 +15,9 @@ import styled from 'styled-components'
 import CModal from '@com/useModal'
  
 import { deepClone } from '@topology/core'
-import {Serach, Cdivider} from "@com/comstyled"
+import {Serach, Cdivider, disabledDate } from "@com/comstyled"
  
- 
+const { RuntimeLog: { QueryDeviceLogs } } = Monitoring
  
 const Mainbox = styled.div`
    display: flex;
@@ -25,6 +25,52 @@ const Mainbox = styled.div`
    flex: 1;
 
 `
+// 设备日志
+const columnsLogD = [
+    {
+      title: '设备编号',
+      dataIndex: 'sn',
+      key: 'sn',
+      
+    },
+    {
+      title: '设备类型',
+      dataIndex: 'meterType',
+      key: 'meterType',
+      
+    },
+    {
+      title: '设备型号',
+      dataIndex: 'category',
+      key: 'category',
+      id: 'id'
+    },
+ 
+    {
+      title: '安装地址',
+      dataIndex: 'address',
+      key: 'address',
+      
+    },
+    {
+        title: '描述',
+        dataIndex: 'content',
+        key: 'content',
+        
+      },
+    {
+      title: '操作时间',
+      dataIndex: 'time',
+      key: 'time',
+      
+    },
+    {
+      title: '操作者',
+      dataIndex: 'creator',
+      key: 'creator',
+      id: 'id'
+    },
+  ];
 
 export default function Index() {
     const [form] = Form.useForm()
@@ -46,7 +92,50 @@ export default function Index() {
     const [brakeC, setbrakeC] = useState(false)
     const [brakeResult, setbrakeResult] = useState(false)  
     const tableRefs= useRef() 
+    const [logparams, setLogparams] = useState({})
+   const onValuesChange=(_, value)=> {
+      setLogparams(value)
+   }
+    useEffect(() => {
+      if(value==3) {
+        setLogparams(form.getFieldsValue(true))
+      }
+    }, [value])
+    const getLogData = ({current, pageSize}) => {
+        if(value!=3) return
+        console.log(logparams)
+        let {time, alike, deviceStyle} =logparams
+        let [start, end] = time
+        let params ={pageNum: current, pageSize, projectId, start: start.format("yyyy-MM-DD"), end: end.format("yyyy-MM-DD") }
+        return QueryDeviceLogs(areaId, alike.trim(),deviceStyle, params).then(res => {
+         let {success, data, total} = res
+         
+         if(success && Array.isArray(data) && data.length > 0) {
+             console.log('suceess')
+            return {
+             list: data,
+             total,
+            }
+         }else {
+             return {
+                 list: [],
+                 total: 0,
+                }
+         }
+        }).catch(e => {
+         console.log(e)
+        })
+ 
+     }
    
+   const {tableProps:devieData} = useAntdTable(getLogData, {
+      defaultPageSize: 18,
+      refreshDeps: [areaId,value,logparams],
+   })
+
+
+
+
     const getData = ({current, pageSize}, form={}) => {
        let {alike, deviceStyle} = form
        
@@ -203,6 +292,11 @@ export default function Index() {
             label:"批量控制",
             key: 2,
 
+        },
+        {
+            label:"设备日志",
+            key: 3,
+
         }
     ]
     let dataProps = {
@@ -215,7 +309,7 @@ export default function Index() {
        <CustContext.Provider value={dataProps}>
         <Pagecount>
             <Mainbox>              
-                    <Form form={form}   layout='inline' initialValues={{deviceStyle: 0, alike: ''}}>
+                    <Form form={form}   layout='inline' initialValues={{deviceStyle: 0, alike: '', time: [moment().subtract(7, 'day'), moment()]}} onValuesChange={onValuesChange} >
                         <Space size={32}>
                         <Item name="deviceStyle" style={{marginBottom: '0px', marginRight: '0px'}}>
 
@@ -231,11 +325,12 @@ export default function Index() {
                             <Serach placeholder='请输入设备编号/安装地址' allowClear   size='middle' enterButton="查询" onSearch={submit} /> 
                              
                         </Item>
-                        <Divider type="vertical" style={{margin: '0px', height: '32px'}} dashed />
+                       {value == 3 && <Item name="time"><DatePicker.RangePicker disabledDate={disabledDate} format="YYYY-MM-DD" /></Item>}
+                       {value!=3 && <><Divider type="vertical" style={{margin: '0px', height: '32px'}} dashed />
                         <Space size={16}>
                         <Button size='middle' style={{ width: 96, height: 32, backgroundColor: '#F56C6C', border: 'none', color: '#fff',borderRadius:2 }} onClick={() => { changesetbrake(1) }}>分闸</Button>
                         <Button size='middle' style={{ width: 96, height: 32, backgroundColor: '#F56C6C', border: 'none', color: '#fff',borderRadius:2 }} onClick={() => { changesetbrake(2) }}>合闸</Button>
-                        </Space>
+                        </Space></>}
                         </Space>
                     </Form>
                     <Cdivider type="h" margin="16px 0" />
@@ -248,11 +343,14 @@ export default function Index() {
                           
                         }} bordered></UserTable>
                    
-                    </div> : <div style={{display: 'flex', flex: 1}}>
+                    </div> : value == 2 ? <div style={{display: 'flex', flex: 1}}>
                         <UserTable columns={columnsLog}   rowKey={columnsLog => columnsLog.sn} {...tableProps}  rowSelection={{
                             type: 'checkbox',
                             ...rowSelectionCheckbox,
                         }} bordered></UserTable>
+                    
+                    </div> : <div style={{display: 'flex', flex: 1}}>
+                        <UserTable columns={columnsLogD}     {...devieData}  ></UserTable>
                     
                     </div>}  
                
@@ -372,7 +470,7 @@ const MyTable = forwardRef(({ snList, projectId, dataSourceRead, changeDisabled,
                         if (snRemoteList.length == 0 && index == res.data.length - 1) {
                             changeDisabled()
                             resolve(dataSourceRead)
-                            Remote.SetResult(setResultInfoList).then((res) => { })
+                            Remote.SetResult(setResultInfoList, projectId).then((res) => { })
                         }
                     }
                 })
@@ -409,7 +507,7 @@ const MyTable = forwardRef(({ snList, projectId, dataSourceRead, changeDisabled,
                                                         status = false
                                                         changeDisabled()
                                                         resolve(dataSourceRead)
-                                                        Remote.SetResult(setResultInfoList).then((res) => { })
+                                                        Remote.SetResult(setResultInfoList,projectId).then((res) => { })
                                                     }
                                                 }
                                             })
@@ -472,7 +570,7 @@ const MyTable = forwardRef(({ snList, projectId, dataSourceRead, changeDisabled,
                                                                 status = false
                                                                 changeDisabled()
                                                                 resolve(dataSourceRead)
-                                                                Remote.SetResult(setResultInfoList).then((res) => { })
+                                                                Remote.SetResult(setResultInfoList, projectId).then((res) => { })
                                                             }
 
                                                         }
