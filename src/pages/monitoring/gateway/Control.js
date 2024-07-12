@@ -89,7 +89,7 @@ const Pending =forwardRef((props, ref) => {
 )
 export default function Control({sn,detail, state,  Custmodal, getDetailData}) { // status 状态 Close, Open
     
-    console.log(detail)
+    // console.log(detail)  // control: false 不让控制
     const projectId = useSelector(state => state.system.menus.projectId)
     const [form] = Form.useForm()
     const status =detail?.status['1']

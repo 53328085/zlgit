@@ -10,6 +10,7 @@ import Modal from '@com/useModal'
 import {DeleteModal,AddModal,EditModal} from './modalCom.js'
 import cusContext from '@com/content'
 import {publishState} from '@redux/systemconfig'
+import {isObject} from '@com/usehandler'
 import lodash from 'lodash';
 const { DeviceTypeManager: { UpdateDeviceCategory, DeviceQueryNotUsed, DeviceQueryCategoryFull,DeviceCategory, AddDeviceCategory,DeleteDeviceCategory} } = Monitoring;
 
@@ -267,10 +268,12 @@ const onSureEditModal=async()=>{
         setIsOpenModal(true)
       }else{
         setIsOpenModal(false)
-        setIsAdd(true)
+        
         ModalRef.current.onCancel()
       }
       
+    }else {
+      setIsOpenModal(false)
     }
   }
 
@@ -281,8 +284,10 @@ const onSureEditModal=async()=>{
       category: encodeURIComponent(category),
     }
     const r = await DeviceQueryCategoryFull(params)
-    if (r.success) {
-      const data = r.data
+    const data = r.data
+    if (r.success && isObject(data)) {
+     
+      
       const arr = data.points?.map((item, index) => ({
         index: index + 1,
         dataMark: item.name,
@@ -311,15 +316,20 @@ const onSureEditModal=async()=>{
         IsRead: data.realTimeReading,
         DefaulImg: `data:image/jpeg;base64,${data.imageBase64}`,
         ImageUpload: '',
+        description: data.description
+
         // Point:arr,
       })
       setIsAdd(true)
+    } else {
+      setIsAdd(false)
     }
 
   }
   //打开新增modal
   const open = async() => {
     if(!isAdd)return message.warning('无可用类型!')
+     
     if(isOpenModal){
       ModalRef.current.onOpen()
     }else{
@@ -382,7 +392,7 @@ const onSureEditModal=async()=>{
       isRuningPoint:it.watchPoint,
       secquence:it.dataOrder
     }))
-    console.log(addForm.getFieldsValue(), foRef.current.pointSource)
+   
     let params ={
       projectId,
       category:formValue.DeviceType,
@@ -438,7 +448,7 @@ const onSureEditModal=async()=>{
     dataSource,
     getDeviceQueryCategoryFull,
     defaultTableData,
-    isShow:false
+    isShow:true
   }
   let deviceProps = {
     value: 0,
@@ -460,7 +470,7 @@ const onSureEditModal=async()=>{
     editForm,
     ref:editFromRef,
     editDefaultTableData,
-    isShow:false
+    isShow:true
   }
   let editModalProps={
    ref:EditModalRef,

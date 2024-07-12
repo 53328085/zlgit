@@ -19,7 +19,7 @@ import {isObject} from "@com/usehandler"
 import { selectUser } from '@redux/user.js'
 import Ichart  from '@com/useEcharts/Ichart';
 import Table from '@com/useTable'
- 
+import Devicelog from './deviceLogs.js'
 import moment from "moment";
  
 import deviceDetail3 from './images/deviceDetail3.jpg'
@@ -115,7 +115,7 @@ const Chartin = (props) => {
 }
 export default function GatewayDetail(props) {
     let devess = useSelector(state => state.system.deviceStyle);
-    console.log(devess);
+    
     let location = useLocation()
     let [searchParams, setSearchParams] = useSearchParams()
     const sn = searchParams.get('sn')  
@@ -176,7 +176,7 @@ export default function GatewayDetail(props) {
 
     // 水，电 ， 气；
     const isclude = [2,7].includes(deviceStyle); // 是否是水表
-    let showtab = detail?.deviceStyle !== 4 // 王建需求： 传感器 不显示 监控趋势， 能耗趋势
+    let showtab = ![4, 12].includes(deviceStyle)// 王建需求： 传感器 不显示 监控趋势， 能耗趋势。后续，断路器也不需要监控趋势
    
     //let dtlkeys = Number.isFinite(detail.state) ? ![2, 3].includes(detail.state) : true; // 0 离线
     let dtlkeys = false // 禅道任务 设备离线时能够查询历史数据 
@@ -687,7 +687,11 @@ export default function GatewayDetail(props) {
     }, [dateValue, projectId, sn, reportTypeTime, trend, dtlkeys])
 
          
- 
+   // 断路器状态
+   const circuitState ={
+    "Close": '合闸',
+    'Open': '开闸'
+   }
     return (
         <div className={style.main}>
             <div className={style.head}>
@@ -724,8 +728,9 @@ export default function GatewayDetail(props) {
                          
                         </>
                         }
-                        <div className={state == 4 ? style.tabBoxW : style.tabBoxB} onClick={() => { onchangeTab(4) }}>告警记录</div>
-                      
+                       {deviceStyle!=12 && <div className={state == 4 ? style.tabBoxW : style.tabBoxB} onClick={() => { onchangeTab(4) }}>告警记录</div>}
+                       {deviceStyle==12 && <div className={state == 6 ? style.tabBoxW : style.tabBoxB} onClick={() => { onchangeTab(6) }}>设备日志</div>}
+                       
                         {detail.status && detail.status['1']  && <div className={state == 5 ? style.tabBoxW : style.tabBoxB} onClick={() => { onchangeTab(5) }}>远程控制</div>} 
                     </div>
                     {state == 1 ? <div><div className={style.newTime}>
@@ -747,7 +752,7 @@ export default function GatewayDetail(props) {
                             {/* <RangePicker
                                 format='YYYY-MM-DD HH:mm:ss' disabledDate={disabledDate} showTime onChange={onTimeOk} defaultValue={[moment(yesterday), moment(today)]} /> */}
                             <Button style={{ marginLeft: 16, width: 96, height: 32 }} type="primary" onClick={onSearch} icon={<SearchOutlined />} >查询</Button>
-                        </div> : state == 3 ?  <div><div className={style.newTime}>
+                        </div> : (state == 3 || state == 12) ?  <div><div className={style.newTime}>
                             <img src={imgurl.time} className={style.time} ></img>
                             <p>数据最新更新时间：{current.lastSampleTime}</p>
                         </div> </div> : state == 4 ? <div className={style.newTime}>
@@ -767,7 +772,7 @@ export default function GatewayDetail(props) {
                                     {dataList ? dataList.map((item, index) => {
                                         return <div key={index} className={style.itemBox}>
                                             <div className={style.itemHead}>{item.name}</div>
-                                            <div className={style.itemTail}>{item.value}</div>
+                                            <div className={style.itemTail}>{circuitState[item.value]|| item.value}</div>
                                         </div>
                                     }) : ''}
                                 </div>
@@ -862,7 +867,9 @@ export default function GatewayDetail(props) {
                                     <Table columns={columnsLog} dataSource={dataSourceLog} rowKey={columnsLog => columnsLog.id} className={style.alarmTable} hbc="#fff"></Table>
                                     <Pagination className={style.pageNumD} size="small" current={pageNum} total={totalalarm} pageSize={12} onChange={onChangePageLog} showSizeChanger={false}/>
                                 </div>
-                            </div> : <Control Custmodal={Custmodal} sn={sn}  state={state} detail={detail} getDetailData={getDetailData}/>
+                            </div> : state ==6
+                             ? <Devicelog /> :
+                            (state==5|| state==6) &&  <Control Custmodal={Custmodal} sn={sn}  state={state} detail={detail} getDetailData={getDetailData}/>
                           
                            
                             
