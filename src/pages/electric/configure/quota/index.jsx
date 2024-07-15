@@ -357,9 +357,12 @@ export default function Index() {
       align: "center",
       width: 80,
       render: (text) => {
+        console.log(text)
         return (
+        
           <>
-            {text === "Empty " ? (
+           {['', '越限告警','区间告警','变位告警','SOE告警','离线告警'][text] || ''}
+          {/*   {text === "Empty " ? (
               <span>-</span>
             ) : text === "Overrun" ? (
               <span>越限告警</span>
@@ -373,7 +376,7 @@ export default function Index() {
               <span>离线告警</span>
             ) : (
               ""
-            )}
+            )} */}
           </>
         );
       },
@@ -383,7 +386,9 @@ export default function Index() {
       key: "action",
       align: "center",
       width: 120,
-      render: (_, record) => (
+      render: (_, record) =>{
+       console.log(record)
+       return  (
         <Space size="middle">
           <span
             className={style.editText}
@@ -398,7 +403,7 @@ export default function Index() {
             {t("button:delete")}
           </span>
         </Space>
-      ),
+      )}
     },
   ];
   //删除告警配置
@@ -409,8 +414,11 @@ export default function Index() {
   };
   //编辑告警类型配置
   const [giveChildFormRecord, setGiveChildFormRecord] = useState({});
+ 
   const [editTypeId, setEditTypeId] = useState({});
   const editAlarmInfo = (record) => {
+   
+    console.log('record', record)
     setGiveChildFormRecord(record);
     setEditTypeId(record.Id);
     setAddAlarmEvent(true);

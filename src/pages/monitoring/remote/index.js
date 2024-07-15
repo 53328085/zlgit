@@ -105,6 +105,7 @@ export default function Index() {
         if(value!=3) return
         console.log(logparams)
         let {time, alike, deviceStyle} =logparams
+        if(!time) return
         let [start, end] = time
         let params ={pageNum: current, pageSize, projectId, start: start.format("yyyy-MM-DD"), end: end.format("yyyy-MM-DD") }
         return QueryDeviceLogs(areaId, alike.trim(),deviceStyle, params).then(res => {

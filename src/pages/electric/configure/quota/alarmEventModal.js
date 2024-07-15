@@ -18,8 +18,9 @@ import { useSelector } from "react-redux";
 import { selectProjectId } from "@redux/systemconfig.js";
 export default function Index(props) {
   const {t} = useTranslation(["button"])
-  const { AddAlarmEventGive, giveFormType, giveChildForm, giveModalTitle } =
-    props;
+  const { AddAlarmEventGive, giveFormType, giveChildForm, giveModalTitle } =    props;
+
+  console.log('giveChildForm',giveChildForm)
   const projectId = useSelector(selectProjectId);
   const [formInfo] = Form.useForm();
   const Item = Form.Item;
@@ -44,6 +45,7 @@ export default function Index(props) {
       id: 5,
       name: "离线告警",
     },
+   
   ];
   const conditionOptions = [
     {
@@ -142,7 +144,7 @@ export default function Index(props) {
   };
 
   const addAlarmOk = async () => {
-    console.log(111)
+    console.log('AlarmRule', AlarmRule)
     try {
       const values = await formInfo.validateFields();
       let data = {
@@ -224,6 +226,8 @@ export default function Index(props) {
 
   const changeAlarmType = (val) => {
      setDisabled(val==5)
+    // let name =  alarmList.find((a) => a.id==val)?.name || ''
+   //  formInfo.setFieldValue('Name', name)
      if(val==5) {
       formInfo.setFieldValue('PointIdentifier', 'Discon')
     }else {
@@ -290,7 +294,7 @@ export default function Index(props) {
             giveChildForm.AlarmCondition =
               alarmIntervalType[giveChildForm.AlarmCondition];
             setAlarmCondition(giveChildForm.AlarmCondition);
-            giveChildForm.AlarmRule = alarmType[giveChildForm.AlarmRule];
+           // giveChildForm.AlarmRule = alarmType[giveChildForm.AlarmRule];
           } else if (
             giveChildForm.AlarmCondition === "Greater" ||
             giveChildForm.AlarmCondition === "Less"
@@ -299,7 +303,7 @@ export default function Index(props) {
             giveChildForm.AlarmCondition =
               alarmOverrunType[giveChildForm.AlarmCondition];
             setCompareValue(giveChildForm.AlarmCondition);
-            giveChildForm.AlarmRule = alarmType[giveChildForm.AlarmRule];
+           // giveChildForm.AlarmRule = alarmType[giveChildForm.AlarmRule];
           } else if (
             giveChildForm.AlarmCondition === "Both" ||
             giveChildForm.AlarmCondition === "Alarm" ||
@@ -309,11 +313,11 @@ export default function Index(props) {
             giveChildForm.AlarmCondition =
               alarmSoeType[giveChildForm.AlarmCondition];
             setSoeValue(giveChildForm.AlarmCondition);
-            giveChildForm.AlarmRule = alarmType[giveChildForm.AlarmRule];
+           // giveChildForm.AlarmRule = alarmType[giveChildForm.AlarmRule];
           } else if (giveChildForm.AlarmCondition === "Empty") {
             giveChildForm.AlarmCondition =
               CommunicationType[giveChildForm.AlarmCondition];
-            giveChildForm.AlarmRule = alarmType[giveChildForm.AlarmRule];
+           // giveChildForm.AlarmRule = alarmType[giveChildForm.AlarmRule];
           }
           formInfo.setFieldsValue(giveChildForm);
           //变位事件
