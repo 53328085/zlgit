@@ -424,10 +424,12 @@ export let AddModal =forwardRef((props, ref) => {
   },[])
 
   const handleChange = (v, o) => {
-    console.log(o)
+    console.log(v);
+    console.log(selectOptions)
+    let {imageBase64, com} = selectOptions?.find(s => s.category == v) || {}
     form.setFieldsValue({
-      ComNum: o.com,
-      Image: `data:image/jpeg;base64,${o.imageBase64}`,
+      ComNum: com,
+      Image: `data:image/jpeg;base64,${imageBase64}`,
     })
   }
 
