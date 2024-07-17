@@ -112,7 +112,7 @@ export default function Index() {
   }
    const CTitle = (
     <div style={{display: 'flex', alignItems: "center", justifyContent: "space-between"}}>
-        <span><CustTransO ns="carbon" text="Carbonemissiondirection" /></span>
+        <span><CustTransO ns="carbon" text="Carbonemissiondirection" />（tCO₂）</span>
         <Space size={16}>
          <RangePicker defaultValue={dateRang} showTime disabledDate={disabledDate} onChange={onChange}  />  
          

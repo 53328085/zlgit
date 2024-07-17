@@ -24,7 +24,7 @@ const Treebox = styled.div`
        }
 `
  
-export default memo(function Index({areaId, setTreeId,  setLine, showline=true, datatype=NaN, energytype, sty={bordered: 'y', pv: '16px'}}) {
+export default memo(function Index({areaId, setTreeId,  setLine, showline=true, datatype=NaN, energytype, sty={bordered: 'y', pv: '16px'}, ...restprop}) {
   console.log(datatype)
   
   const [treeData,setTreeData] =useState([])
@@ -112,12 +112,12 @@ export default memo(function Index({areaId, setTreeId,  setLine, showline=true, 
               break
             
          }
-        console.log(arr)
+        
        
          setTreeData(data)  
          setCheckedKeys(arr);
          setTreeId(arr);
-         console.log(arr);
+        
         /*  if(name) {
              setTreeId(arr)
              setCheckedKeys(arr)
@@ -139,10 +139,9 @@ export default memo(function Index({areaId, setTreeId,  setLine, showline=true, 
     
   } 
  // 根据区域查询
- const onCheck = (ids=[]) => {
-     
-    setTreeId(ids)
-    setCheckedKeys(ids)
+ const onCheck = ({checked}) => {
+    setTreeId(checked)
+    setCheckedKeys(checked)
      
  } 
  // 树搜索
@@ -203,6 +202,7 @@ export default memo(function Index({areaId, setTreeId,  setLine, showline=true, 
           checkedKeys={checkedKeys}
           onCheck={onCheck}
           fieldNames={fieldNames}
+          checkStrictly
           />
         </Treebox>
         </Titlelayout>

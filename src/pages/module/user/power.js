@@ -266,8 +266,14 @@ export default function Account({ projectId, CModal }) {
   const queryProjectMaintenance = async () => {
     // 获取运维人员
     try {
-      let { success, data } = await QueryProjectMaintenance({ projectId });
-      success && Array.isArray(data) && setAdmin(data);
+      let { success, data, errMsg} = await QueryProjectMaintenance({ projectId });
+
+      if(success && Array.isArray(data)) {
+        setAdmin(data)
+      }else {
+         if(!success) message.warning(errMsg || '数据出错')
+         setAdmin([])
+      }
     } catch (error) {
       console.log(error);
     }
@@ -300,10 +306,13 @@ export default function Account({ projectId, CModal }) {
         queryProjectManager,
         queryProjectMaintenance,
       ][deltype]; // 查询 运营管理人员， 项目管理人员 , 运维人员
-      message.success("删除成功", 1, () => {
+      message.success('删除成功')
+      mref.current.onCancel();
+      handler();
+     /*  message.success("删除成功", 1, () => {
         handler();
         mref.current.onCancel();
-      });
+      }); */
     } catch (error) {
       console.log(error);
     }
@@ -337,7 +346,7 @@ export default function Account({ projectId, CModal }) {
       setInitialValues({
         ...initform,
         roletype: [{ name, id: type }],
-        initialValues: { ...item, RoleType: type },
+        initialValues: { ...item, mobile: '',RoleType: type },
       });
       setEdit(title);
     });

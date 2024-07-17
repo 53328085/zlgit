@@ -101,7 +101,7 @@ export class AreaSetting {
 export class DataGroups {
   static QueryDataGroups = () =>
     server.get(`/General/ProjectSetting/QueryDataGroups`); //  查询数据组名称
-  static InsertDataGroup = ({ name }) =>
+  static InsertDataGroup = (name) =>
     server.post(`/General/ProjectSetting/InsertDataGroup?name=${name}`); //  新增数据组名称
   static DeleteDataGroup = ({ id }) =>
     server.post(`/General/ProjectSetting/DeleteDataGroup?id=${id}`); //  删除数据组

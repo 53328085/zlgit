@@ -5,7 +5,7 @@ import styled from "styled-components";
 import { useSelector, useDispatch } from "react-redux";
 import {useNavigate, useLocation} from "react-router-dom"
 import { clearToken, selectUser, userRest, platformLang} from "@redux/user";
-import { configProject, comSetFirst, getJump, currentscreen, isGranary, configState, setIntl,setIszhCN, selectProjectId,getMenus, setMenus,menus} from "@redux/systemconfig";
+import { configProject, comSetFirst, getJump, currentscreen, isGranary,datascreen, configState, setIntl,setIszhCN, selectProjectId,getMenus, setMenus,menus} from "@redux/systemconfig";
 import moment from "moment";
 import {useTranslation, Trans, Translation} from 'react-i18next';
 import enUS from 'antd/es/locale/en_US';
@@ -153,7 +153,7 @@ export default function Log() {
   let dataScreen =setmenus?.find(i => i.key=='dataScreen')?.label //数据大屏
   let projectSet = setmenus?.find(i => i.key=='projectSet')?.label //项目设置
   let systemSet = setmenus?.find(i => i.key=='systemSet')?.label // 平台设置
-  const showscreen =  screenadr?.type==1 || screenadr?.type==2
+  //const showscreen =  screenadr?.type==1 || screenadr?.type==2
   const dispatch = useDispatch()
   const {name, roleType, mobile, userId} = useSelector(selectUser) || {};
   
@@ -163,6 +163,9 @@ export default function Log() {
   const comurl = useSelector(comSetFirst) 
   const config = useSelector(configState)
   const Langes = useSelector(platformLang)
+
+  const Datascreen = useSelector(datascreen)
+  const showscreen =  Datascreen?.bigScreenEnabled==1 || Datascreen?.bigScreenEnabled==2
   const Item = Form.Item
   const [form] = Form.useForm()
   const [mform] = Form.useForm()
@@ -181,7 +184,7 @@ export default function Log() {
   const account = () => {
     user.current.onOpen()
   }
-const onJump = useCallback(() => {  
+/* const onJump = useCallback(() => {  
    let {type, key, primary} = screenadr   
  
    if(type == 0) return ;
@@ -195,7 +198,21 @@ const onJump = useCallback(() => {
    }
   
   
-}, [screenadr, isgranary])
+}, [screenadr, isgranary]) */
+
+const onJump = useCallback(() => {  
+  let {bigScreenEnabled, bigScreenUrl} = Datascreen   
+
+  if(bigScreenEnabled == 0) return ;
+  if(!bigScreenUrl && type > 0) {
+   return  message.warn({content: '请配置大屏地址', duration: 0.5})
+   
+  }else {  
+   window.open(bigScreenUrl, '_blank')
+  }
+ 
+ 
+}, [Datascreen])
 
 
  // moment 语言环境设置 antd 组件国际化 中文 zh-cn, 英文 en， echart图表国际化 中文 ZH， 英文 EN， 页面中自定义的文字国际 i18 中文 zh-Cn, 英文 en 

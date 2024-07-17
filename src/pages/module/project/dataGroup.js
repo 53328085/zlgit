@@ -55,8 +55,8 @@ export default function Datagroupc({projectId, CModal}) {
    
    try {
      let data = await form.validateFields()
-     console.log(data)
-     let {success, errMsg} = type == 0 ? await InsertDataGroup(data) : await UpdateDataGroup({name: data.name, id: groupId})
+     let name = window.encodeURIComponent(data?.name?.trim())
+     let {success, errMsg} = type == 0 ? await InsertDataGroup(name) : await UpdateDataGroup({name, id: groupId})
      if (success) {
       let msg = ['新增字段成功', '编辑字段成功'][type]
        message.success(msg)

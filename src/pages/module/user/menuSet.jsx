@@ -141,6 +141,7 @@ const Tabsbox = styled(Tabs)`
       const [allSinderRunMenus, setAllSinderRunMenus] = useState({}) 
       const [AllDesignMenus, setAllDesignMenus] = useState([])
       const [allSinderDesignMenus, setallSinderDesignMenus] = useState({}) 
+      const [loading, setLoading] = useState(true)
      let exclude = [ '0101', '0103'];
        const queryUserMenus =  () => { 
         let f = !!projectId && !!userId
@@ -184,6 +185,8 @@ const Tabsbox = styled(Tabs)`
           }
          }).catch(e => {
             console.log(e)
+         }).finally(() => {
+          setLoading(false)
          });
          }
          useEffect(() => {
@@ -267,7 +270,7 @@ const Tabsbox = styled(Tabs)`
                   </Checkdiv>
            
 
-             { AllRunMenus.length == 0 ?  <Spin tip="Loading..."> </Spin> : AllRunMenus.map(m => <CheckboxList setIsall={setIsall} data={allSinderRunMenus[m.key]}   title={m.label} mod={m.key} key={m.key} type="run" />)}
+             { loading ?  <Spin tip="Loading..."> </Spin> : AllRunMenus.map(m => <CheckboxList setIsall={setIsall} data={allSinderRunMenus[m.key]}   title={m.label} mod={m.key} key={m.key} type="run" />)}
               
            
            
@@ -343,13 +346,13 @@ const Tabsbox = styled(Tabs)`
                  </Space>
           </CheckboxGroup>
       </Checkdiv>
-           { AllDesignMenus.length ==0 ?  <Spin tip="Loading..."></Spin> : AllDesignMenus.map(m => <CheckboxList setIsall={setIsall} data={allSinderDesignMenus[m.key]}  title={m.label} mod={m.key} type='design'/>)}
+           { loading ?  <Spin tip="Loading..."></Spin> : AllDesignMenus.map(m => <CheckboxList setIsall={setIsall} data={allSinderDesignMenus[m.key]}  title={m.label} mod={m.key} type='design'/>)}
            </>
           )
          }
   
-         const cachrun = useMemo(() => <Runcom />, [AllRunMenus, allSinderRunMenus])
-         const cachdes = useMemo(() => <Descom />, [AllDesignMenus, allSinderDesignMenus])
+         const cachrun = useMemo(() => <Runcom />, [AllRunMenus, allSinderRunMenus, loading])
+         const cachdes = useMemo(() => <Descom />, [AllDesignMenus, allSinderDesignMenus, loading])
          const items = role== 3 ? [
           {
           key: 'run',

@@ -13,6 +13,7 @@ import {CustButton} from '@com/useButton'
 import {custMsg} from '@com/usehandler'
 import {useTranslation} from "react-i18next"
 const Mainbox = styled.div`
+  flex:1;
   display: grid;
   grid-template-rows: 65px 1fr;
   row-gap: 16px;
@@ -123,7 +124,7 @@ const showModl = () => {
   setInitialValues({
     ...initform, 
     password: false,
-    initialValues: {...item, RoleType: '1'}})
+    initialValues: {...item,mobile: '', RoleType: '1'}})
 }) 
   mref.current.onOpen()
 
@@ -237,8 +238,8 @@ const showModl = () => {
             <Form.Item name="alike" label={t("common:AccountInquiry")}>
                 <Input.Search placeholder={t("common:NameOrMobile")} allowClear enterButton={t("common:Query")} style={{width: '550px'}} onSearch={submit}/>
             </Form.Item>
-            <Form.Item>
-                <CustButton style={{justifyContent: 'center'}} onClick={showModl}>+{t("button:new")}</CustButton>
+            <Form.Item style={{marginLeft: 'auto'}}>
+                <CustButton style={{justifyContent: 'center'}} onClick={showModl} src="new">{t("button:new")}</CustButton>
             </Form.Item>
         </Form>
      <UserTable columns={columns} {...tableProps} rowKey='id'/>

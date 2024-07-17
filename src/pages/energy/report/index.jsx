@@ -188,6 +188,8 @@ const typecols =[  // 分类能耗
 export default function Index() {
 
   let {exparams, setCustview} = useOutletContext() 
+
+  console.log(exparams)
  
   const levelname = useSelector(levelDefaultLabel)
   const [value, setvalue] = useState('0')
@@ -218,6 +220,7 @@ export default function Index() {
   const getTableData = ({ current, pageSize }) => {
   //  const row = Number(value);
    //  console.log(exparams)
+     console.log(treeId)
      if(Object.values(exparams).length <5 || !Array.isArray(treeId)) return;
       
      let hander =index < 3 ? [
@@ -332,7 +335,7 @@ export default function Index() {
       <CustContext.Provider value={dataProps} >
           <Pagecount showSearch={false} custserach={true}>
              <Contentbox>
-                <UserTree areaId={areaId}   setTreeId={setTreeId} setLine={setLine}   showline={value!='3'} datatype={value=='3' ? 0 : NaN} /> 
+                <UserTree areaId={areaId}   setTreeId={setTreeId} setLine={setLine}   showline={value!='3'} datatype={value=='3' ? 0 : NaN}   /> 
                 {
                   value == "1" ? <UserTable ref={tbref}  columns={concolumns} {...tableProps} key={value} scroll={{
                     scrollToFirstRowOnChange: true,

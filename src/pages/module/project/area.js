@@ -235,12 +235,10 @@ const queryarealevels = async () => {
   const editArea = async () => {
    
    try {
-      let values = await modalform.validateFields().then(res => res).catch(e => {
-        console.log(e)
-      })
+      let values = await modalform.validateFields() 
       if (!values) return
-      const {name} = values
-      const params = {...values, level: editlevel.current, projectId };
+      const {name, type} = values
+      const params = {name: window.encodeURIComponent(name),type, level: editlevel.current, projectId };
       let {success,errMsg} =  await UpdateAreaLevel(params)
     
       success && message.success({
@@ -262,13 +260,10 @@ const queryarealevels = async () => {
 }
   const addArea = async (type) => { 
    try { 
-     let values = await modalform.validateFields().then(res =>{
-        return res
-      }).catch(e => {
-        console.log(e)
-      })
+     let values = await modalform.validateFields()
       if (!values) return
-      const params = {...values, level: newlevel.current + 1, projectId };
+      let {name, type} = values
+      const params = {name: window.encodeURIComponent(name),type, level: newlevel.current + 1, projectId };
       let {success,errMsg} =  await InsertAreaLevel(params)
 
       
@@ -317,7 +312,7 @@ const closeArea = () => {
 
  const numberFormat = useCallback((number) =>  new Intl.NumberFormat('zh-Hans-CN-u-nu-hanidec').format(number), [projectId]) // 数字格式化
 
- const Addcust = useMemo(() => <Add title={title} ref={mref} form={modalform} CModal={CModal} onCancel={closeArea}  mold="cust" width={512}  onOk={onOk}  newlevel={newlevel}  />, [title, level])
+ const Addcust = useMemo(() => <Add title={title} ref={mref} form={modalform} CModal={CModal} onCancel={closeArea}  mold="cust" width={512}  onOk={onOk}  newlevel={newlevel} isAdd={isAdd}  />, [title, level])
 
   useEffect(() => {
      queryarealevels();
@@ -375,10 +370,10 @@ const closeArea = () => {
   )
 }
 
-const Add =React.forwardRef(({form,title, onOk, CModal, onCancel, newlevel}, ref) => {
+const Add =React.forwardRef(({form,title, onOk, CModal, onCancel, newlevel, isAdd}, ref) => {
    const {t} = useTranslation("common")
 
-  return  <CModal title={title} ref={ref}  mold="cust" width={512}  onOk={onOk} custft>
+  return  <CModal title={title} ref={ref}  mold="cust" width={512}  onOk={onOk} custft={isAdd}>
    <Form name="modalform"   form={form} initialValues={{
     type: 0
    }} preserve={false}>
