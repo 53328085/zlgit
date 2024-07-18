@@ -347,9 +347,8 @@ export default function Index({ projectId, level, CModal, name,  allLevel }) {
     // 列表查询
     if (isNaN(level)) return;
     
-    let value = form.getFieldsValue()
-    //setTopAreaId(value.topAreaId)
-    params = {...params, ...value } 
+    let {topAreaId=0, name} = form.getFieldsValue()    
+    params = {...params, name: window.encodeURIComponent(name), topAreaId } 
      Area.QueryByPage(params)
       .then((res) => {
         let { success, data, total } = res;
@@ -683,7 +682,10 @@ const beforeUpload = (file, fileList) => {
                 allowClear
                 enterButton={t("common:Query")}
                 style={{ width: "550px" }}
-                onSearch={getTableData}
+                onSearch={async (v) => {
+                  await form.setFieldValue(name, v)
+                   getTableData()
+                 }}
               />
             </Form.Item>
           )}
@@ -708,7 +710,10 @@ const beforeUpload = (file, fileList) => {
                   allowClear
                   enterButton={t("common:Query")}
                   style={{ width: "550px" }}
-                  onSearch={getTableData}
+                  onSearch={async (v) => {
+                    await form.setFieldValue(name, v)
+                     getTableData()
+                   }}
                 />
               </Form.Item>
             </>

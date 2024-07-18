@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef, forwardRef, useImperativeHandle,useContext } from 'react'
+import React, { useEffect, useState, useRef, forwardRef, useImperativeHandle,useContext, useMemo } from 'react'
 import { Button, Form, Input, Row, Col, Upload, Select, Switch, message, Divider } from 'antd';
 import WarningPng from '@imgs/warning.png'
 import Modal from '@com/useModal'
@@ -63,13 +63,15 @@ let Count = ({ value, record, pointSource,setPointSource }) => {
     const {updateTableRef} =useContext(cusContext)
  
     const [pointSource, setPointSource] = useState([...defaultTableData])
-    // console.log(updateTableRef,pointSource)
-    console.log('pointSource更新了',pointSource)
+    
     const tableDataRef =useRef()
     let checedList=[]
     defaultTableData?.forEach(it=>{if(it.watchPoint){checedList.push(it.index) }})
     const [siwtched, setSwitched] = useState([...checedList])
     const [tableParams, setTableParams] = useState({ current: 1, pageSize: 10 })
+    const TableParam = useMemo(() => {
+      return { current: 1, pageSize: defaultTableData?.length || 0, hideOnSinglePage: true}
+   }, [defaultTableData])
     tableDataRef.current = structuredClone(pointSource)
     const choosemes =()=>{
       let count =0;
@@ -209,12 +211,10 @@ let Count = ({ value, record, pointSource,setPointSource }) => {
         columns={columns}
         dataSource={pointSource}
         rowKey={record => (record.index +' '+ record.dataMark)}
-        pagination={tableParams}
-        onChange={
-          (page, pageSize) => {
-            setTableParams({ ...page })
-          }
-        }
+        pagination={TableParam}
+        scroll={{
+          y:546
+        }}
       ></Table>
     )
     
@@ -333,7 +333,9 @@ export let AddModal = forwardRef(
     defaultTableData?.forEach(it=>{if(it.watchPoint){checedList.push(it.index) }})
     const [siwtched, setSwitched] = useState([...checedList])
     const [tableParams, setTableParams] = useState({ current: 1, pageSize: 10 })
-    
+    const TableParam = useMemo(() => {
+      return { current: 1, pageSize: defaultTableData?.length || 0, hideOnSinglePage: true}
+   }, [defaultTableData])
     const choosemes =()=>{
       let count =0;
       tableDataRef.current?.forEach(it=>{
@@ -450,12 +452,10 @@ export let AddModal = forwardRef(
         columns={columns}
         dataSource={pointSource}
         rowKey={record => (record.index +' '+ record.dataMark)}
-        pagination={tableParams}
-        onChange={
-          (page, pageSize) => {
-            setTableParams({ ...page })
-          }
-        }
+        pagination={TableParam}
+        scroll={{
+          y:546
+        }}
       ></Table>
     )
     

@@ -104,11 +104,13 @@ export default function gateway({ deviceStyle }) {
       title: '所属网关',
       dataIndex: 'gatewayName',
       render: (text, record, index) => {
-        if (Array.isArray(gatewaylist)) {
+        if (Array.isArray(gatewaylist)&& gatewaylist?.length > 0) {
           const gatewayfilter = gatewaylist.filter(it => it.id === record.gatewayId)
           return (
-            <span>{gatewayfilter[0]['id']===0?'/':gatewayfilter[0].sn}</span>
+            <span>{ gatewayfilter?.length > 0  ? gatewayfilter[0]?.sn : '/'}</span>
           )
+        }else {
+           return <span>'/'</span>
         }
 
       }
@@ -463,7 +465,7 @@ export default function gateway({ deviceStyle }) {
         const arr = resp.data.map(it => ({ ...it }))
         setGatewaylist(() => ([{ sn: '(无)直连设备', id: 0 }, ...arr]));
       } else {
-        setDevicelist([{ sn: '(无)直连设备', id: 0 }]) // 修改需求提出者： 王建 ，理由： 有些电表是直连设备不需要网关（）
+        setGatewaylist([{ sn: '(无)直连设备', id: 0 }]) // 修改需求提出者： 王建 ，理由： 有些电表是直连设备不需要网关（）
       }
     } catch (e) { console.log(e) }
 
