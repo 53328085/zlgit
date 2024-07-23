@@ -8,7 +8,7 @@ import imgurl from './images/index.js'
 import { Pagination, message, DatePicker, Button, Radio, Empty, Form, Input, Divider, Typography } from 'antd'
 import { SearchOutlined, CaretUpOutlined, CaretDownOutlined } from '@ant-design/icons';
 import { useLocation, useSearchParams } from 'react-router-dom';
-import { Monitoring, RuntimeHMI} from '@api/api.js'
+import { Monitoring, RuntimeHMI, DeviceDtl} from '@api/api.js'
 import Custmodal from '@com/useModal'
 import { drawEcharts } from '@com/useEcharts'
 import Titlelayout from '@com/titlelayout'
@@ -315,6 +315,19 @@ export default function GatewayDetail(props) {
         }) 
     }
    
+       // 消除告警
+       const onCancle = async(sn) => {
+        try {
+         let {success, errMsg} =  await  DeviceDtl.IgnoreAlarm({projectId, sn})
+         if(!success) return message.warning(errMsg)
+          message.success('消除告警成功')  
+          getDetailData()    
+        } catch (error) {
+         
+        }
+       
+     }
+
     let paramsTrend = {
         sn,
         start: startTime,
@@ -771,6 +784,7 @@ export default function GatewayDetail(props) {
                         <div className={style.line}></div>
                         <p><span className={style.leftBottomSpan}>安装地址：</span></p>
                         <p><span>{detail.address}</span></p>
+                        {detail?.state ===3 &&  <Button type="primary" block danger onClick={() => onCancle(detail.sn)}>忽略告警告警</Button>}
                     </div>
                 </div>
                 <div className={style.right}>

@@ -729,6 +729,7 @@ export class DeviceDtl {
   static EnergyReport = (sn, type = 1) =>
     server.get(`/Meter/EnergyReport?sn=${sn}&type=${type}`); // 能耗报表
   static AlarmLog = (params) => server.post(`/Meter/AlarmLog`, params); // 能耗报表
+  static IgnoreAlarm =(data)=>server.post(`/Safe/SafeRuntime/IgnoreAlarm`, data)//年度报告
 }
 // 数据报表
 export class DataReport {
