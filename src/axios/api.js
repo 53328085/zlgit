@@ -9,7 +9,9 @@ export class Test {
 export class I18N {
   static GetsupportLanguages = () => server.get(`/Language/GetsupportLanguages`) // 
 }
-
+export class Editapi {  // 后期修改的一些接口
+  static FilterDeviceStyle= (projectId) => server.get(`/Monitor/RuntimeDevice/AllDeviceStyle?projectId=${projectId}`)  //
+}
 export class Login {
   static SystemConfig = (url) =>
     server.get(`/General/SystemConfig/GetSystemConfigInfo?url=${url}`);
@@ -1370,6 +1372,7 @@ export const Monitoring = {
     EnergyActuary: (projectId,sn) => server.get(`/Monitor/RuntimeDevice/EnergyActuary?projectId=${projectId}&sn=${sn}`),//
     EnergyReport: (data) => server.post(`/Monitor/RuntimeDevice/EnergyReport`, data),//
     AlarmPage: (data) => server.post(`/Monitor/RuntimeDevice/AlarmPage`, data),//
+    
   },
   //视频监控
   RuntimeCamera:{

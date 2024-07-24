@@ -5,11 +5,11 @@ import {useRequest} from 'ahooks'
 import styled from "styled-components";
 import {  ExportExcel,i18t, CustTransO} from '@com/useButton'
 import {useSelector, useDispatch} from 'react-redux'
-import {levelDefaultLabel,selectProjectId,selectshifts, selectOneLevelDefaultId, selectOneLevel, setCurrentlevel, deviceStyle, getThemeColor, themeColor, setIntl} from '@redux/systemconfig.js'
+import {levelDefaultLabel,selectProjectId,selectshifts, filterDeviceStyle,selectOneLevelDefaultId, selectOneLevel, setCurrentlevel, deviceStyle, getThemeColor, themeColor, setIntl} from '@redux/systemconfig.js'
 import moment from "moment"; 
 import 'moment/locale/zh-cn';
 const { RangePicker } = DatePicker;
-import {SiteManagerDesigner, PCSMonitorRuntime, StorageContainerDesigner} from '@api/api'
+import {SiteManagerDesigner, PCSMonitorRuntime, StorageContainerDesigner, Editapi} from '@api/api'
 import {Cdivider, Radiogroup} from '@com/comstyled'
 
 
@@ -73,7 +73,7 @@ export default function UseSerach(props) {
   const oneLevelDefaultId = useSelector(selectOneLevelDefaultId) // 选择后的值 
   let [AreaID, setAreaid] = useState(oneLevelDefaultId) 
   const levelone = useSelector(selectOneLevel)  
-   
+  const DeviceStyle = useSelector(filterDeviceStyle)  
   const areaName = levelone?.find(l => l.id == AreaID)?.name;
   props.setAreaName(areaName)
   let shifts = useSelector(selectshifts)
@@ -84,6 +84,16 @@ export default function UseSerach(props) {
   const [pcsoptions, setPcsoptions] = useState([])
   const [tankoptions, setTankoptions] = useState([])
   const deviceStyles = useSelector(deviceStyle)
+
+  const getDever =async () => {
+    try {
+      await Editapi.FilterDeviceStyle(projectId)
+    } catch (error) {
+      console.log(error)
+    }
+   
+ }
+ 
 
   const getopti = async() => { // 站点选择
     try {
@@ -111,14 +121,22 @@ export default function UseSerach(props) {
     }
    
   }
- useEffect(() => {
+ useEffect(() => {    
     if(!props.config?.isSite) return;
     if(Number.isInteger(AreaID) && Number.isInteger(projectId)) {
       getopti();
+     
     }
-   
+    
 
  }, [props.config?.isSite, AreaID, projectId])
+useEffect(()=> {
+  if(Number.isInteger(projectId)) {
+    getDever()
+  }
+  
+}, [projectId])
+
 
   const onChange = (e, option) => {  
       dispatch(setCurrentlevel(option))
@@ -264,9 +282,14 @@ const getPcs = async () => {
 
 
 // 表计类型
-const deviceStyleNode = (<Item name="deviceStyle" label="表计类型" initialValue={1}>
+const deviceStyleChange=(v) => {
+  window.localStorage.setItem('deviceStyle', v);
+}
+let stordevices = window.localStorage.getItem('deviceStyle');
+let initdeviceStyle = stordevices ? parseInt(stordevices) : DeviceStyle?.[0].deviceStyle
+const deviceStyleNode = (<Item name="deviceStyle" label="表计类型" initialValue={initdeviceStyle}>
 
-<Select options={deviceStyles} fieldNames={{label: "name", value: "deviceStyle"}} style={{width: '200px'}} ></Select>  
+<Select options={DeviceStyle} fieldNames={{label: "name", value: "deviceStyle"}} style={{width: '200px'}} onChange={deviceStyleChange}></Select>  
 </Item>)
 // 站点选择
   const site = (<Item name="stationName" label="站点"   >

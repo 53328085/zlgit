@@ -784,8 +784,9 @@ export default function GatewayDetail(props) {
                         <div className={style.line}></div>
                         <p><span className={style.leftBottomSpan}>安装地址：</span></p>
                         <p><span>{detail.address}</span></p>
-                        {detail?.state ===3 &&  <Button type="primary" block danger onClick={() => onCancle(detail.sn)}>忽略告警告警</Button>}
-                    </div>
+                       
+                    </div>                  
+                    {detail?.state ===3 &&  <Button type="primary" block danger onClick={() => onCancle(detail.sn)} style={{height: '48px'}}>忽略告警</Button>}
                 </div>
                 <div className={style.right}>
                     <div className={style.rightHead}>

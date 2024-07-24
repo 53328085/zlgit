@@ -92,7 +92,8 @@ export default function Index() {
 
   const [showRoom, setShowroom] = useState(true); // 是否显示配电房选择框
 
-  const [exparams, setexparams] = useState({ deviceStyle: 1 });
+ // const [exparams, setexparams] = useState({ deviceStyle: 1 });
+ const [exparams, setexparams] = useState({});
   const [areaName, setAreaName] = useState()
   const [config, setConfig] = useState({});
   const [custview, setCustview] = useState(undefined);

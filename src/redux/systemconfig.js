@@ -5,7 +5,7 @@ import {message} from 'antd'
 import zhCN from 'antd/es/locale/zh_CN'; 
 import {Login} from '../axios/api'
 import antdconfig from './theme' ; //   antd配置
-import { Area, ProjectList,ProjectSetting, BigScreen, eneryShift, Monitoring,Carbon, HomeRuntime} from "@api/api.js"; 
+import { Area, ProjectList,ProjectSetting, BigScreen, eneryShift, Monitoring,Carbon, HomeRuntime, Editapi} from "@api/api.js"; 
 import {isObject} from '@com/usehandler'
 import moment from 'moment';
 
@@ -114,7 +114,7 @@ const initialState = {
   deviceStyle: [], // 表计类型
   isGranary: false, // 演示国家粮仓用
   enterprise: {}, // 碳排 企业信息
-
+  filterDeviceStyle: [], // 运行态 运行监控 设备监测 表计类型
 }
  
 export const getWebsiteState = createAsyncThunk(
@@ -130,7 +130,8 @@ export const getWebsiteState = createAsyncThunk(
         //  Area.AreaList(id), // 配电管理运行状态下的一级下拉菜单
           AllDeviceStyle(), // 表计类型
           Carbon.QueryCarbonEnterprise(id), // 获取碳排企业信息
-          HomeRuntime.GetProjectInfo(id)
+          HomeRuntime.GetProjectInfo(id),
+          Editapi.FilterDeviceStyle(id), // 运行监控运行态，获取设备总类
          ] 
         let results = await Promise.allSettled(promises)
         return results
@@ -296,7 +297,9 @@ const system = createSlice({
         getEnterprise(state, {payload}) {        
           state.enterprise = payload
         },
-  
+        getFilterDeviceStyle(state, {payload}) {
+          state.filterDeviceStyle = payload
+        }
 
     },
      extraReducers: {
@@ -316,6 +319,7 @@ const system = createSlice({
                index == 4 && (state.deviceStyle = Array.isArray(data) ? data.filter(d => d.state==1) : [])
                index == 5 && (state.enterprise = data || {})
                index == 6 && (state.currProject = data || {})  //  获取项目当前信息
+               index == 7 && (state.filterDeviceStyle = data || [])
              }else{
                index== 0 && (state.onelevel=[])
                index == 2 && (state.publishState=NaN)
@@ -325,6 +329,7 @@ const system = createSlice({
                index == 4 && (state.deviceStyle = [])
                index == 5 && (state.enterprise = {})
                index == 6 && (state.currProject = {})
+               index == 7 && (state.filterDeviceStyle =[])
              }
           }
         })
@@ -422,7 +427,7 @@ export const intl = state => state.system.intl //国际化
 export const iszhCN = state => state.system.iszhCN // 是否中文
 export const enterprise = state => state.system.enterprise // 碳排企业信息
 export const Time = state => state.system.environmentTime // 碳排企业信息
-
+export const filterDeviceStyle = state => state.system.filterDeviceStyle?.filter(f => f.deviceStyle!=6)
 export const {
     configProject,
     getSetMenus,

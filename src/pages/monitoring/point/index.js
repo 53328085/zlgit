@@ -152,8 +152,7 @@ export default function Index(props) {
       }
     });
   };
-  let initparams = useRef();
-  console.log(initparams)
+  let initparams = useRef(); 
   const getOverviewData = ({ current, pageSize }, formData) => {
     if(!(isFinite(areaId) && isFinite(projectId))) return
     initparams.current = {
