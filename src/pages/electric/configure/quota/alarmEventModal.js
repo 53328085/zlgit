@@ -11,11 +11,14 @@ import {
   Space,
   InputNumber,
   message,
+  TimePicker,
+  Typography
 } from "antd";
 import {useTranslation} from 'react-i18next'
 import CModal from '@com/useModal'
 import { useSelector } from "react-redux";
 import { selectProjectId } from "@redux/systemconfig.js";
+const {Text} = Typography
 export default function Index(props) {
   const {t} = useTranslation(["button"])
   const { AddAlarmEventGive, giveFormType, giveChildForm, giveModalTitle } =    props;
@@ -144,9 +147,10 @@ export default function Index(props) {
   };
 
   const addAlarmOk = async () => {
-    console.log('AlarmRule', AlarmRule)
+    
     try {
       const values = await formInfo.validateFields();
+      console.log(values)
       let data = {
         projectId: projectId,
         name: values.Name,
@@ -156,6 +160,11 @@ export default function Index(props) {
         time: values.Time,
         enable: enable,
         alarmRule: AlarmRule,
+        HourEnable: values.HourEnable,
+        HourStart:values.HourEnable ? parseInt(values.HourRange[0].format('HH')) : 0,
+        HourEnd: values.HourEnable ? parseInt(values.HourRange[1].format('HH')) : 0,
+      
+
       };
       if (AlarmRule === 2) {
         //区间告警
@@ -260,11 +269,10 @@ export default function Index(props) {
   const enableChange = (value) => {
     setEnable(value);
   };
-  // useEffect(() => {
-  //   if (giveFormType === false) {
-  //     formInfo.resetFields(); //当新增时重置
-  //   }
-  // }, [AddAlarmEventGive]);
+  const [enabled, setEnabled] = useState(giveChildForm.HourEnable)
+  const onCheck =(v) => {
+    setEnabled(v)
+  }
 
   useEffect(() => {
     setAlarmCondition(alarmCondition);
@@ -338,6 +346,7 @@ export default function Index(props) {
       });
     }
   }, [giveFormType, giveChildForm, AddAlarmEventGive]);
+
   return (
     <div>
       <CModal
@@ -353,7 +362,7 @@ export default function Index(props) {
         mold="cust"
       >        
         <div className={style.addBody}>
-          <p className={style.titleModal}>基础配置</p>
+         
           <Form
             labelCol={{ flex: "110px" }}
             labelAlign="left"
@@ -361,82 +370,25 @@ export default function Index(props) {
             className={style.form}
             // size="small"
             form={formInfo}
+            layout="horizontal"
             name="addform"
             preserve={false}
           >
-            {giveModalTitle === "新增告警事件" ? (
-              <Space style={{ alignItems: "baseline" }}>
-                <Item
-                  name="Name"
-                  label="告警事件名称："
-                  rules={[{ required: true, message: "请输入告警事件名称" }]}
-                  style={{ width: 415, marginBottom: 24 }}
-                  initialValue={alarmList[0].name}
-                >
-                  <Input
-                    style={{ width: 290 }}
-                    placeholder="请输入告警事件名称"
-                  />
-                </Item>
-                <span style={{ marginLeft: 5, color: "#999" }}>(必填)</span>
-              </Space>
-            ) : (
-              <Item name="Name" label="告警事件名称：" style={{ width: 415, marginBottom: 24 }}>
-                <Input
-                  style={{ width: 290, border: "none" }}
-                  disabled
-                  placeholder="请输入告警事件名称"
+              <p className={style.titleModal}>告警全局设置</p>
+              <Space>
+              <Item
+                label="是否启用："
+                valuePropName="checked"
+                labelCol={{ flex: "103px" }}
+                style={{ width: 220 }}
+                name="Enable"
+              >
+                <Switch
+                  checkedChildren="是"
+                  unCheckedChildren="否"
+                  defaultChecked
+                  onChange={enableChange}
                 />
-              </Item>
-            )}
-            {giveModalTitle === "新增告警事件" ? (
-              <Space style={{ alignItems: "baseline" }}>
-                <Item
-                  label="数据标识："
-                  rules={[{ required: true, message: "请输入数据标识" }]}
-                  style={{ width: 415, marginBottom: 24 }}
-                  name="PointIdentifier"
-                  disabled={disabled}
-                >
-                  <Input
-                    style={{ width: 290 }}
-                    placeholder="若存在多个标识，请用'|'隔开"
-                  />
-                </Item>
-                <span style={{ marginLeft: 5, color: "#999" }}>(必填)</span>
-              </Space>
-            ) : (
-              <Item
-                label="数据标识："
-                rules={[{ required: true, message: "请输入数据标识" }]}
-                style={{ width: 415 }}
-                name="PointIdentifier"
-              >
-                <Input style={{ width: 290, border: "none" }} disabled />
-              </Item>
-            )}
-            <div className={style.divBox}>
-              <Item
-                label="告警等级："
-                labelCol={{ flex: "100px" }}
-                style={{ width: 305, marginLeft: 10 }}
-                name="Level"
-                initialValue={levelList[0].id ? levelList[0].id : 0}
-              >
-                <Select
-                  style={{ width: 110 }}
-                  key={level}
-                  // defaultValue={level}
-                  onChange={changeAlarmLevel}
-                >
-                  {levelList.map((item) => {
-                    return (
-                      <Select.Option key={item.id} value={item.id}>
-                        {item.name}
-                      </Select.Option>
-                    );
-                  })}
-                </Select>
               </Item>
               <Item
                 label="是否连续推送："
@@ -451,40 +403,113 @@ export default function Index(props) {
                   onChange={pushChange}
                 />
               </Item>
-            </div>
-            <div className={style.divBox}>
+              </Space>
+              <p className={style.titleModal}>告警生效时段</p>
+              <Space>
+              <Item
+                label="生效时段开关："
+                valuePropName="checked"
+                style={{ width: 220, marginBottom: 24 }}
+                initialValue={enabled}
+                name="HourEnable"
+
+              >
+                <Switch
+                  checkedChildren="开启"
+                  unCheckedChildren="关闭"
+                  onChange={onCheck}
+                />
+              </Item>
+               <Text type="danger">{enabled ? '选择时段生效' : '全天生效' }</Text>
+              </Space>
+             
+                <Item label="时段范围" name="HourRange" shouldUpdate={(pre, cur) => pre.HourEnable!==cur.HourEnable }>
+                  <TimePicker.RangePicker format="HH" disabled={!enabled} />
+                </Item>
+              <p className={style.titleModal}>基础配置</p>
+            {giveModalTitle === "新增告警事件" ? (
               <Space style={{ alignItems: "baseline" }}>
                 <Item
-                  label="持续时间≥："
-                  rules={[{ required: true, message: "请输入持续时间" }]}
-                  labelCol={{ flex: "110px" }}
-                  style={{ width: 220 }}
+                  name="Name"
+                  label="告警事件名称："
+                  rules={[{ required: true, message: "请输入告警事件名称" }]}
+                  style={{ width: 415, marginBottom: 24 }}
+                  initialValue={alarmList[0].name}
+                >
+                  <Input
+                    style={{ }}
+                    placeholder="请输入告警事件名称"
+                  />
+                </Item>
+                <span style={{ marginLeft: 5, color: "#999" }}>(必填)</span>
+              </Space>
+            ) : (
+              <Item name="Name" label="告警事件名称：" style={{ width: 415, marginBottom: 24 }}>
+                <Input
+                  style={{ border: "none" }}
+                  disabled
+                  placeholder="请输入告警事件名称"
+                />
+              </Item>
+            )}
+            {giveModalTitle === "新增告警事件" ? (
+              <div  style={{ alignItems: "baseline", display: 'flex' }}>
+                <Item
+                  label="数据标识："
+                  rules={[{ required: true, message: "请输入数据标识" }]}
+                  style={{ width: 415, marginBottom: 24 }}
+                  name="PointIdentifier"
+                  disabled={disabled}
+                >
+                  <Input
+                    style={{}}
+                    placeholder="若存在多个标识，请用'|'隔开"
+                  />
+                </Item>
+                <span style={{ marginLeft: 5, color: "#999" }}>(必填)</span>
+              </div>
+            ) : (
+              <Item
+                label="数据标识："
+                rules={[{ required: true, message: "请输入数据标识" }]}
+                style={{ width: 415 }}
+                name="PointIdentifier"
+              >
+                <Input style={{ border: "none" }} disabled />
+              </Item>
+            )}
+              <div style={{display: 'grid', gridTemplateColumns: "220px 1fr", columnGap: '16px'}}>
+              <Item
+                label="告警等级："           
+                name="Level" 
+                
+                initialValue={levelList[0].id ? levelList[0].id : 0}
+              ><Select
+                  key={level}
+                  onChange={changeAlarmLevel}
+                  style={{width: '100px'}}
+                >
+                  {levelList.map((item) => {
+                    return (
+                      <Select.Option key={item.id} value={item.id}>
+                        {item.name}
+                      </Select.Option>
+                    );
+                  })}
+                </Select>
+               </Item>
+               <div style={{display: 'flex', columnGap: 5, alignItems: 'center', height: '32px'}}>
+                <Item
+                  label="持续时间(秒)≥："
+                  rules={[{ required: true, message: "请输入持续时间" }]}                              
                   name="Time"
                   initialValue={300}
                 >
-                  {/* 使用precision，对输入的内容做保留0位小数处理 */}
-                  <InputNumber min="0" style={{ width: 110 }} precision={0} />
+                  <InputNumber min="0" precision={0} />
                 </Item>
-                秒
-                <span style={{ color: "#999", width: 42, display: "block" }}>
-                  (必填)
-                </span>
-              </Space>
-              <Item
-                label="是否启用："
-                valuePropName="checked"
-                labelCol={{ flex: "103px" }}
-                style={{ width: 220, marginLeft: 30 }}
-                name="Enable"
-              >
-                <Switch
-                  checkedChildren="是"
-                  unCheckedChildren="否"
-                  defaultChecked
-                  onChange={enableChange}
-                />
-              </Item>
-            </div>
+                <span style={{ color: "#999",  }}>(必填)</span>
+                </div>
+              </div>           
             <Divider dashed style={{ margin: 0 }} />
             <p className={style.titleModal}>告警规则</p>
             {giveModalTitle === "新增告警事件" ? (

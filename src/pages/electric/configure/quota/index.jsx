@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from "react";
 import style from "./style.module.less";
 import {useTranslation} from 'react-i18next'
 import { PlusOutlined } from "@ant-design/icons";
- 
+import moment from "moment";
 import {
   Button,
   Table,
@@ -357,7 +357,6 @@ export default function Index() {
       align: "center",
       width: 80,
       render: (text) => {
-        console.log(text)
         return (
         
           <>
@@ -419,7 +418,7 @@ export default function Index() {
   const editAlarmInfo = (record) => {
    
     console.log('record', record)
-    setGiveChildFormRecord(record);
+    setGiveChildFormRecord({...record, HourRange: [moment(record.HourStart, 'HH'), moment(record.HourEnd, 'HH')] });
     setEditTypeId(record.Id);
     setAddAlarmEvent(true);
     setNoDataInForm(false); //区分新增编辑
