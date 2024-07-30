@@ -177,7 +177,7 @@ const CheckAuthorization = async (value, type=0, codekey, setLoading) => {
        if (roleType == 1 || roleType == 2)  return navigate("/projectlist", {})
        if (roleType == 3 || roleType == 4) {     
          dispatch(getWebsiteState(projectId)) 
-         dispatch(configProject(false)) // 项目是否处于设计状态
+       //  dispatch(configProject(false)) // 项目是否处于设计状态
          let {runMenus,siderRunMenus, homeMenuNO} = await dispatch(getWebsiteMenu(projectId)).unwrap()
          let ismenu = runMenus?.find(item => item.no == homeMenuNO) || runMenus[0]  
          if(!ismenu) return message.error({content:  t("comm:NoSetMenu"), duration: 0.5})

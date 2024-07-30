@@ -43,7 +43,7 @@ let Com = ({ form, deviceStyle }) => {
     }, [form.getFieldsValue().commAddress])
     return (
         <>
-            {deviceStyle == 12 ? (
+           {/*  {deviceStyle == 12 ? (
                 <Form.Item label="倍率" name="factor" rules={[...rules,
                 {
                     validator: (_, value) => {
@@ -58,22 +58,9 @@ let Com = ({ form, deviceStyle }) => {
                 },]}>
                     <Input />
                 </Form.Item>
-            ) : /* deviceStyle == 1 ?  (<Form.Item  noStyle   shouldUpdate={(prevValues, curValues) => prevValues.ct !== curValues.ct || prevValues.pt !== curValues.pt} > 
-                     {
-                        ({getFieldsValue, setFieldValue}) => {
-                            const {ct, pt} = getFieldsValue();
-                            setFieldValue("factor", ct*pt);
-                            return (
-                                <Form.Item label="倍率" name="factor" initialValue={1} rules={rules}>
-                                  <Input readOnly />
-                               </Form.Item>
-                            )
-                        }
-                     } 
-                </Form.Item>
-            ) : */ null}
+            ) :  null} */}
              {
-                deviceStyle== 1 &&
+                (deviceStyle== 1 || deviceStyle==12) &&
                (<>
                <Form.Item label="CT" name="ct" initialValue={1}>
                   <InputNumber min={1} parser={value => parseInt(value)} style={{width: "100%"}} />

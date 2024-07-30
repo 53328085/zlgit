@@ -14,11 +14,13 @@ const Ciocn = (props) => {
 export default function Hmenu() { 
   const dispath = useDispatch()
   const navigate = useNavigate()
-  const {state} = useLocation()
-  let path = useResolvedPath()
-  console.log(path)
-  let paths = path.pathname.slice(1).split('/')
-  console.log(paths)
+  const location = useLocation()
+  const {state} = location
+
+ 
+ 
+  
+  
  // const [current, SetCurrent] = useState(state.primary)
 
   const current = useMemo(() => state?.primary, [state])
@@ -56,7 +58,7 @@ export default function Hmenu() {
     
      let item = menus.find(item => item?.key === key);   
 
-      console.log(item)
+    
       if (!item) return;
       const {nested, label, no} = item || {};  
      /*  if(key === 'designerProject' || key == 'runtimeProject' ) {
@@ -65,7 +67,7 @@ export default function Hmenu() {
         dispath(getJump(false))
       } */
    //   SetCurrent(key)  
-   console.log(nested, label, no)
+   
       let url, state;
       if(isconfig) {
          url = no === '0202' ? `/config/${key}` : `/config/${key}/${nested}`
@@ -79,6 +81,12 @@ export default function Hmenu() {
      
   }
  useEffect(() => {    
+    const {state, pathname} = location
+
+    const paths = pathname.slice(1).split('/')
+   
+    let isdes = paths?.[0]=='config'; // 是否设计态
+    dispath(configProject(isdes))
     if(state) {
       console.log(state)
       let {primary, jumpath, substate} = state
@@ -92,8 +100,7 @@ export default function Hmenu() {
        let primary = paths[1];
        let len = paths.length > 2;
        let nested = len ? paths[2] : ''
-       let isdes = primary.slice(0, 8)=='designer' // 是否设计态
-       dispath(configProject(isdes))
+    
        if(isdes) {
           url =  primary =='designerProject' ? `/config/${primary}` : `/config/${primary}/${nested}`
           let title = len ? siderdesignermenus[primary]?.find(item => item.key ==nested)?.label : designermenus[primary]?.label || ''
@@ -106,7 +113,7 @@ export default function Hmenu() {
       
        navigate(url, {state})
     }  
-   },[state]) 
+   },[location]) 
 
   return <Menu onClick={onSelect} selectedKeys={[current]} mode="horizontal" items={menus} className="headrmenu" />;
 

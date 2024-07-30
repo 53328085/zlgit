@@ -294,7 +294,7 @@ export default function Index() {
  const enterProject = async ({id, type, publishState}) => { // type 1是设计type 2是运行
    try {
      dispatch(getWebsiteState(id))
-     dispatch(configProject(type === 1))
+    // dispatch(configProject(type === 1))
      let {runMenus, designerMenus,siderRunMenus, siderDesignerMenus, homeMenuNO} = await dispatch(getWebsiteMenu(id)).unwrap()
     
      let menu;

@@ -276,7 +276,7 @@ const lngOk = () => {
     })
   }
   const back = () => {
-     dispatch(configProject(false));
+   //  dispatch(configProject(false));
      dispatch(getJump(true))
      navgite("/index/runtimeProject", {
       // state: { type: 'index',  primary: key,  index: true, title: label }

@@ -332,6 +332,7 @@ export default function Gateway({ deviceStyle, name }) {
   const addOk = async () => {
     addform.validateFields().then(async () => {
       const formvalue = addform.getFieldsValue()
+      console.log(formvalue)
       let params = {
         id: 0,
         projectId,
@@ -347,7 +348,9 @@ export default function Gateway({ deviceStyle, name }) {
         commPort: formvalue.commPort ? formvalue.commPort : 0,
         commProtocol: formvalue.commProtocol ? formvalue.commProtocol : 0,
         commAddress: formvalue.commAddress ? formvalue.commAddress : 0,
-        factor: formvalue.factor
+       // factor: formvalue.factor,
+        pt:formvalue.pt,
+        ct: formvalue.ct
       }
       const res = await AddElectric(params)
       if (res.success) {
