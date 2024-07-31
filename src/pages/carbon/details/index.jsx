@@ -54,7 +54,7 @@ export default function Index() {
       let url = window.URL.createObjectURL(blob); 
       let a = document.createElement("a");
       a.href = url;
-     // a.download = `排放监测计划模板.docx`;
+      a.download = `排放监测计划模板_${year}.docx`;
       document.body.appendChild(a);
       a.click();
      
