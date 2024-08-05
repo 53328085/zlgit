@@ -339,7 +339,7 @@ if(Number.isInteger(projectId)) {
   }
   //确认新增
   const addOk = async () => {
-    addForm.validateFields().then(async () => {
+  return  addForm.validateFields().then(async () => {
       const { area, category, address, sn, pwd, name, heartInterval, remark } = addForm.getFieldsValue()
       let params = {
         id: 0,
@@ -362,6 +362,8 @@ if(Number.isInteger(projectId)) {
       } else {
         message.error(errMsg)
       }
+    }).catch(e => {
+      return Promise.reject('出错了')
     })
 
   }

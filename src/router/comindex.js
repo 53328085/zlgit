@@ -10,6 +10,7 @@ import {
   getOnelevel,
   enterprise,
   selectProjectId,
+  setCurrentlevel,
   iszhCN
 } from "@redux/systemconfig.js";
 export default function Index() {
@@ -256,16 +257,18 @@ export default function Index() {
   useEffect(() => {  
     if (whole.includes(primary)) {
       let isin = onelevel.find((l) => l.id == 0);
-      if (!isin)
+      if (!isin) {
         dispatch(
           getOnelevel([
             { name: `${varlabel}(全部)`, id: 0, levelName: varlabel },
             ...onelevel,
           ])
         );
+        dispatch(setCurrentlevel( { name: `${varlabel}(全部)`, id: 0, levelName: varlabel }))
+      }
     } else {
       let level = onelevel.filter((l) => l.id != 0);
-       
+      dispatch(setCurrentlevel(level?.[0]))
       dispatch(getOnelevel([...level]));
     }
   }, [primary]);

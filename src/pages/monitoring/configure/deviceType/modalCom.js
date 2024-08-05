@@ -61,7 +61,10 @@ let Count = ({ value, record, pointSource,setPointSource }) => {
 //表格组件（新增）
   let TableForm = forwardRef(({ defaultTableData,tabledatas }, ref) => {
     const {updateTableRef} =useContext(cusContext)
- 
+    const TableParam = useMemo(() => {
+      return { current: 1, pageSize: defaultTableData?.length || 0, hideOnSinglePage: true}
+   }, [defaultTableData])
+    console.log(defaultTableData)
     const [pointSource, setPointSource] = useState([...defaultTableData])
     
     const tableDataRef =useRef()
@@ -69,9 +72,7 @@ let Count = ({ value, record, pointSource,setPointSource }) => {
     defaultTableData?.forEach(it=>{if(it.watchPoint){checedList.push(it.index) }})
     const [siwtched, setSwitched] = useState([...checedList])
     const [tableParams, setTableParams] = useState({ current: 1, pageSize: 10 })
-    const TableParam = useMemo(() => {
-      return { current: 1, pageSize: defaultTableData?.length || 0, hideOnSinglePage: true}
-   }, [defaultTableData])
+
     tableDataRef.current = structuredClone(pointSource)
     const choosemes =()=>{
       let count =0;
@@ -211,7 +212,7 @@ let Count = ({ value, record, pointSource,setPointSource }) => {
         columns={columns}
         dataSource={pointSource}
         rowKey={record => (record.index +' '+ record.dataMark)}
-        pagination={TableParam}
+        pagination={false}
         scroll={{
           y:546
         }}
@@ -225,7 +226,7 @@ let Count = ({ value, record, pointSource,setPointSource }) => {
   //新增设备类型
 export let AddModal = forwardRef(
     ({ addForm, dataSource, getDeviceQueryCategoryFull, defaultTableData=[],  isShow=true }, ref) => {
-      console.log(dataSource)
+   
       const tableRef = useRef(null)
       const [tabledatas,setTabledatas]=useState([...defaultTableData]) 
       const handleChange = async (option) => {
@@ -336,6 +337,7 @@ export let AddModal = forwardRef(
     const TableParam = useMemo(() => {
       return { current: 1, pageSize: defaultTableData?.length || 0, hideOnSinglePage: true}
    }, [defaultTableData])
+ 
     const choosemes =()=>{
       let count =0;
       tableDataRef.current?.forEach(it=>{
@@ -452,7 +454,7 @@ export let AddModal = forwardRef(
         columns={columns}
         dataSource={pointSource}
         rowKey={record => (record.index +' '+ record.dataMark)}
-        pagination={TableParam}
+        pagination={false}
         scroll={{
           y:546
         }}

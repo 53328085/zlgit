@@ -289,7 +289,7 @@ export default function gateway({ deviceStyle }) {
   }
   //确认新增
   const addOk = async () => {
-    addform.validateFields().then(async () => {
+  return  addform.validateFields().then(async () => {
       const formvalue = addform.getFieldsValue()
       let params = {
         id: 0,
@@ -320,7 +320,7 @@ export default function gateway({ deviceStyle }) {
         message.error(res.errMsg)
       }
     }).catch(e => {
-      console.log(e)
+      return Promise.reject('出错')
     })
 
 

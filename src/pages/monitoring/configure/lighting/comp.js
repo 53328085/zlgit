@@ -17,15 +17,16 @@ function Comp(props, ref) {
     const inpRef = useRef(inpvalue)
     inpRef.current = inpvalue
     const oneLevel = useSelector(state => state.system.onelevel)
-    const areaOptions = oneLevel.length > 0 ? useMemo(() => {
+   
+    const areaOptions = useMemo(() => {
          let isall = oneLevel.find(o => o.id ==0)
         if (!isall) {
-             [{ name: oneLevel[0].levelName+'(全部)', id: 0 }, ...oneLevel]
+         return  [{ name: oneLevel[0].levelName+'(全部)', id: 0 }, ...oneLevel]
         }else {
             return oneLevel
         }
-    }, [oneLevel]) : []
-
+    }, [oneLevel])
+  
     const {
         placeholder = '输入控制器编号/安装地址',
         inplabel = '设备查询',

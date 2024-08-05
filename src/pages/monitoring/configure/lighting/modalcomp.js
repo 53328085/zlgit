@@ -12,7 +12,9 @@ const {Dragger}=Upload
 //新增Modal
 export const Addmodal = ({addModalRef,areaList,addform=null,name="灯杆名称",title,levelname,...other}) => {
   
-   const areas = areaList?.filter(it=>it.id!==0)
+   const areas =useMemo(() => {
+    return areaList?.filter(it=>it.id!=0)
+   }, [areaList])   
    let list=[]
    for (let i=0; i<Array(6).length; i++){
     list.push({
@@ -22,7 +24,6 @@ export const Addmodal = ({addModalRef,areaList,addform=null,name="灯杆名称",
    }
     return (
         <Modal mold="cust" ref={addModalRef} {...other}   title={title} custft onOk={other.onOk} >
-         
             <Form
              colon={false}
              form={addform}
@@ -32,10 +33,11 @@ export const Addmodal = ({addModalRef,areaList,addform=null,name="灯杆名称",
             >
             <Row className={style.customItem}>
                 <Col flex={1}>
-                    <Form.Item label={levelname} name="areaId" >
-                        <Select 
+                    <Form.Item label={levelname} name="areaId" ><Select 
                         showSearch
-                        filterOption={(val, opts) => {
+                       filterOption={(val, opts) => {
+                          console.log(val);
+                          console.log(opts)
                           if (opts.name.includes(val)) {
                             return true
                           } else {
@@ -50,7 +52,6 @@ export const Addmodal = ({addModalRef,areaList,addform=null,name="灯杆名称",
                             areas
                         }
                         ></Select>
-                        
                     </Form.Item>
                     <Form.Item label="安装地址" name="address" >
                         <Input />

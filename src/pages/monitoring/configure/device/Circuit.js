@@ -330,7 +330,7 @@ export default function Gateway({ deviceStyle, name }) {
 
   //确认新增
   const addOk = async () => {
-    addform.validateFields().then(async () => {
+   return addform.validateFields().then(async () => {
       const formvalue = addform.getFieldsValue()
       console.log(formvalue)
       let params = {
@@ -360,11 +360,13 @@ export default function Gateway({ deviceStyle, name }) {
       } else {
         message.error(res.errMsg)
       }
+    }).catch(() => {
+      return Promise.reject('出错')
     })
   }
   //新增确认应用
   const onSure=()=>{
-    addform.validateFields().then(async () => {
+ return   addform.validateFields().then(async () => {
       setTransition("")
       setMaskTransitionName("")
       const formvalue = addform.getFieldsValue()
@@ -394,7 +396,7 @@ export default function Gateway({ deviceStyle, name }) {
         message.error(res.errMsg)
       }
     }).catch(()=>{
-
+       return Promise.reject('出错')
     })
   }
   //新增弹窗取消

@@ -159,7 +159,7 @@ export default function Control({sn,detail, state,  Custmodal, getDetailData}) {
              }
            }
            if (setResultInfo.current.status == 1 || step == 10) {
-            Remote.SetResult([setResultInfo.current]).then(() =>{})
+            Remote.SetResult([setResultInfo.current], projectId).then(() =>{})
            }
            
           
@@ -185,7 +185,7 @@ export default function Control({sn,detail, state,  Custmodal, getDetailData}) {
             onBatch({projectId,sns:[sn]})
         }else {
             setResultInfo.current.status = 2
-            Remote.SetResult([setResultInfo.current]).then().catch()
+            Remote.SetResult([setResultInfo.current], projectId).then().catch()
             pending.current.setPenging('操作失败')
         }
       }else {
@@ -221,7 +221,7 @@ export default function Control({sn,detail, state,  Custmodal, getDetailData}) {
                 
                }else {
                 setResultInfo.current.status = 2
-                Remote.SetResult([setResultInfo.current]).then().catch()
+                Remote.SetResult([setResultInfo.current], projectId).then().catch()
                 pending.current.setPenging('操作失败')
                }
 

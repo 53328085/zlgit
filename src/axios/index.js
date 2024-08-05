@@ -53,8 +53,7 @@ server.interceptors.response.use(
                
             })
         }
-        if (state == 401)  {
-           console.log(401)
+        if (state == 401)  {         
            message.warning({          
             content: '登录状态发生改变,请重新登录',
             onClose: () => {

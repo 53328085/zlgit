@@ -1,6 +1,12 @@
 import React, { useState, useEffect, useRef } from 'react'
+
 import style from './style.module.less'
+
 export default function Icard(props){
+    const statet = {
+        open: '开',
+        close: '关'
+    }
     return(
         <div className={style.cardItem} >
             <div className={style.cardImgBox}><img src={ props.img }  className={style.cardImg} alt={props.title}></img></div>
@@ -22,7 +28,7 @@ export default function Icard(props){
                         <p className={style.timeStyle}>{props.fields[2]?props.fields[2].name:''}</p><p className={style.timeValueStyle}>{props.fields[2]?props.fields[2].value:''}</p>
                     </div>
                     <div className={style.btnBoxStyle}>
-                        <p className={style.timeStyle}>{props.fields[3]?props.fields[3].name:''}</p><p className={style.timeValueStyle}>{props.fields[3]?props.fields[3].value:''}</p>
+                        <p className={style.timeStyle}>{props.fields[3]?props.fields[3].name:''}</p><p className={style.timeValueStyle}>{props.fields[3]?(statet[props.fields[3].value?.toLowerCase()]||props.fields[3].value):''}</p>
                     </div>
                 </div>
             </div>

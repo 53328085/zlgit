@@ -282,10 +282,12 @@ const getPcs = async () => {
 
 
 // 表计类型
+ let currdeviceStyle = `deviceStyle_${projectId}`
 const deviceStyleChange=(v) => {
-  window.localStorage.setItem('deviceStyle', v);
+ 
+  window.localStorage.setItem(currdeviceStyle, v);
 }
-let stordevices = window.localStorage.getItem('deviceStyle');
+let stordevices = window.localStorage.getItem(currdeviceStyle);
 let initdeviceStyle = stordevices ? parseInt(stordevices) : parseInt(DeviceStyle?.[0].deviceStyle)
 const deviceStyleNode = (<Item name="deviceStyle" label="表计类型" initialValue={initdeviceStyle}>
 
