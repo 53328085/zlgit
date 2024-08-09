@@ -356,7 +356,7 @@ export function PrintButton(props) {
   );
 }
 
-export function ExportExcel({tb, ...other}) {
+export function ExportExcel({tb,  single=false,...other}) {
   
  const onClick =useCallback(({key}) => {
       
@@ -373,7 +373,7 @@ export function ExportExcel({tb, ...other}) {
       
          
     },
-    {
+    single ? null : {
       key: '2',
       label: <Link> {i18.t('exportAll', {ns: "button"})}</Link>,
     

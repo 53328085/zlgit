@@ -25,10 +25,23 @@
     page-break-before: auto;
   }
   @page {
-    size:"auto"
-    
+    size:"auto";
+    margin: 1cm;
+  }
+  .printt {
+    font-size: 14px;
   }
 }
 
- 
+ .print {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: -1;
+  width: 764px;
+  padding: 10px;
+  border: 1px solid #ff7316;
+  height: max-content;
+
+ }
  

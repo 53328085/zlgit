@@ -11,36 +11,52 @@ import moment from 'moment'
  import bg from './bg.png'
 // 2 在线， 3 告警， 其他：失联  //   a4纸大小210mm×297mm
 const Mainbox = styled.div`
-    && {
-        @media  print {
+     @media  print {
+          overflow: hidden;
           background-color: #fff;
           border: none;
-          width: 100%;
+          position: absolute;
+          left: 50%;
+          transform: translateX(-50%);
+           width: 100%;
+          padding: 0px;
+          .frontp {
+            width: 100%;
+            height: 1123px;
+           
+            
+          }
+          .img {
+            bottom: 0;
+          }
+    
         }
-        @media print {
-          overflow: hidden;
-        }
+       
+      
         background-color: #f2f2f2;
         padding: 16px 32px;
         border: 1px solid #ccc;
-    //    height: 840px;
         overflow-y: auto;
-        display: grid;
-        height:  840px;
-      //  height: 840px;
+        display: flex;
+        flex-direction: column;
         row-gap: 32px;
         .front {
+        
           background-color: #fff;
           page-break-after: always;
-          height: 806px;
+         
+          min-height: 806px;
           display: flex;
           flex-direction: column;
-          position: relative;
+          justify-content: space-between;
+   
+        
           .frontcont {
             display: flex;
              flex: 1; 
              align-content: center;
              justify-content: center;
+             margin: 200px 0;
              .head {
               width: 432px;
               display: flex;
@@ -72,20 +88,14 @@ const Mainbox = styled.div`
           .title{ 
             display: flex;
             align-items: center; 
-            padding: 16px;
-            span {
-              color: #999;
-              font-size: 16px;
-              padding-left: 16px;
-            }
+            padding: 32px;
+            
            
           }
          .imgbox {
            background-color: var(--ant-primary-color);
          }
         }
-      
-       }
 `
  
 
@@ -119,7 +129,7 @@ export default  forwardRef(function Rightlayout(props, ref) {
                       }
                    </div>
                    </div>
-                   <Image src={bg} preview={false} ></Image>
+                   <img src={bg}  /> 
                </div>
                 
                   {props.children}

@@ -83,7 +83,7 @@ const create = async () => {
  
 const reactToPrintContent = useCallback(() => {
   return printRef;
-}, [loading])
+}, [loading, printRef])
 
 // 导出
 const downloadReport = (id) => {

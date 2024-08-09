@@ -1,7 +1,7 @@
 import React, { useState, useCallback} from 'react'
 
 import { Monitoring } from '@api/api'
-//import './index.less'
+ import './index.less'
 import Report from '@com/reportPrint'
 import Pagecom from './pagecomp' 
 import {selectProjectId} from '@redux/systemconfig.js'

@@ -258,6 +258,7 @@ const CheckAuthorization = async (value, type=0, codekey, setLoading) => {
             onOk={onOK}
             type="warn"
             mold="cust"
+            title="提示"
           >
             <p>{msg}</p>
           </CModal>
