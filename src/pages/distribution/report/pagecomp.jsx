@@ -42,7 +42,7 @@ const Transformer = ({data}) => {  // 1
       <DesItem.Item label="平均负荷率">{data.avgLoad}</DesItem.Item>     
       <DesItem.Item label="最大负荷率">{data.maxLoad}</DesItem.Item>  
       <DesItem.Item label="最大负荷率发生时间">{data.maxLoadTime}</DesItem.Item>  
-      <DesItem.Item label="运行状态">{data.state}</DesItem.Item>  
+      <DesItem.Item label="运行状态">{['', '离线','在线', '告警'][data.state]}</DesItem.Item>  
   </DesItem> 
 
  )
@@ -76,7 +76,7 @@ export default function pagecomp({data,index, params}) {
         // 图表 grid
         left: "0px",
         right: "0",
-        top: "0px",
+        top: "20px",
         bottom: "40px",
         containLabel: true,
       },

@@ -8,11 +8,12 @@ export const todosStore = {
     emitChange();
   },
   subscribe(listener) {
+    
     listeners = [...listeners, listener];
     console.log(listeners)
     return () => {
       listeners = listeners.filter(l => l !== listener);
-      console.log(listeners)
+      
     };
   },
   getSnapshot() {
@@ -21,8 +22,8 @@ export const todosStore = {
 };
 
 function emitChange() {
+
   for (let listener of listeners) {
-    console.log(listener)
     listener();
   }
 }
