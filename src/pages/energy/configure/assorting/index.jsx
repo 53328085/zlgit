@@ -13,7 +13,7 @@ export default function Index() {
   const projectId = useSelector(selectProjectId);
   const tabs = [
     {label: '电', key: 'electric'},
-    {label: '水', key: 'water'},
+    {label: '冷水', key: 'water'},
     {label: '燃气', key: 'gas'},
   ]
  const propsData ={

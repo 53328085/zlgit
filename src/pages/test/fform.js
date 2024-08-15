@@ -1,53 +1,113 @@
-import { useState, useSyncExternalStore,useEffect } from 'react';
-import { todosStore } from './todostore';
-function TodosApp() {
-  const todos = useSyncExternalStore(todosStore.subscribe, todosStore.getSnapshot);
+import { Tree } from 'antd';
+import React, { useState } from 'react';
+import {AccountBookFilled,CalculatorFilled} from '@ant-design/icons'
+const {DirectoryTree} = Tree
+const treeData = [
+  {
+    title: '0-0',
+    key: '0-0',
+    children: [
+      {
+        title: '0-0-0',
+        key: '0-0-0',
+        icon: <AccountBookFilled />,
+        children: [
+          {
+            title: '0-0-0-0',
+            key: '0-0-0-0',
+          },
+          {
+            title: '0-0-0-1',
+            key: '0-0-0-1',
+          },
+          {
+            title: '0-0-0-2',
+            key: '0-0-0-2',
+          },
+        ],
+      },
+      {
+        title: '0-0-1',
+        key: '0-0-1',
+        children: [
+          {
+            title: '0-0-1-0',
+            key: '0-0-1-0',
+          },
+          {
+            title: '0-0-1-1',
+            key: '0-0-1-1',
+          },
+          {
+            title: '0-0-1-2',
+            key: '0-0-1-2',
+          },
+        ],
+      },
+      {
+        title: '0-0-2',
+        key: '0-0-2',
+      },
+    ],
+  },
+  {
+    title: '0-1',
+    key: '0-1',
+    children: [
+      {
+        title: '0-1-0-0',
+        key: '0-1-0-0',
+      },
+      {
+        title: '0-1-0-1',
+        key: '0-1-0-1',
+      },
+      {
+        title: '0-1-0-2',
+        key: '0-1-0-2',
+      },
+    ],
+  },
+  {
+    title: '0-2',
+    key: '0-2',
+  },
+];
+const App = () => {
+  const [expandedKeys, setExpandedKeys] = useState(['0-0-0', '0-0-1']); //展开
+  const [checkedKeys, setCheckedKeys] = useState(['0-0-0-0', '0-0-0-2', '0-0-1']);
+  const [selectedKeys, setSelectedKeys] = useState([]);
+  const [autoExpandParent, setAutoExpandParent] = useState(true);
+  const onExpand = (expandedKeysValue) => {
+    console.log('onExpand', expandedKeysValue);
+    // if not set autoExpandParent to false, if children expanded, parent can not collapse.
+    // or, you can remove all expanded children keys.
+    setExpandedKeys(expandedKeysValue);
+    setAutoExpandParent(false);
+  };
+  const onCheck = (checkedKeysValue) => {
+    console.log('onCheck', checkedKeysValue);
+    setCheckedKeys(checkedKeysValue);
+  };
+  const onSelect = (selectedKeysValue, info) => {
+    console.log('onSelect', info);
+    setSelectedKeys(selectedKeysValue);
+  };
   return (
-    <>
-      <button onClick={() => todosStore.addTodo()}>Add todo</button>
-      <hr />
-      <ul>
-        {todos.map(todo => (
-          <li key={todo.id}>{todo.text}</li>
-        ))}
-      </ul>
-    </>
+    <Tree
+      checkable
+    
+      switcherIcon={<CalculatorFilled/>}
+      blockNode
+      onExpand={onExpand}
+      expandedKeys={expandedKeys}
+      autoExpandParent={autoExpandParent}
+      onCheck={onCheck}
+      checkedKeys={checkedKeys}
+      onSelect={onSelect}
+      selectedKeys={selectedKeys}
+      treeData={treeData}
+    />
   );
-}
-
-export default function Index() {
-  const [show, setShow] = useState(true);
-  console.log(location);
-  const changparams = () => {
- 
-   
- 
-    history.pushState({ page: 1 }, "title 1", "?page=1");
-  }
-  const onClick =() => {
-     setShow(!show)
-  }
-  useEffect(()=> {
-    window.onpopstate = function (event) {
-      alert(
-        "location: " +
-          document.location +
-          ", state: " +
-          JSON.stringify(event.state),
-      );
-    };
-  }, [])
-   return (
-    <div>
-      <h1>订阅外部store</h1>
-      <button onClick={changparams}>改变查询参数</button>
-      <button onClick={() => history.back()}>back</button>
-      <button onClick={() => history.go(-1)}>go</button>
-      <button onClick={() => history.forward()}>forward</button>
-      <div>
-        <button onClick={onClick}>切换</button>
-      </div>
-      {show && <TodosApp />}
-    </div>
-   )
-}
+};
+export default App;

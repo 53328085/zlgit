@@ -8,7 +8,7 @@ import {EnergyComprehensive} from "@api/api.js"
 import Titlelayout from "@com/titlelayout";
  import {useSelector} from 'react-redux'
  import {selectOneLevel} from '@redux/systemconfig.js'
-import {numberformat} from '@com/usehandler'
+import {numberformat, getTime} from '@com/usehandler'
 import Pagecount from "@com/pagecontent";
 import imgurl from "./icon";
 import Charttable from './chartTable'
@@ -220,6 +220,7 @@ export default function Index() {
   const areaIds = useSelector(selectOneLevel);
   
   let {exparams} = useOutletContext() 
+  const {areaId, date, type:dateType, shiftNo, view, projectId} = exparams  
   const [qverview, setOverview] = useState({}) 
   const [tabvalue, setTabvalue] = useState(1)  
   const {detail, total='', proportion, coalStandard, consume={}, analysisDes='', consumes=[], ...energyitem} = qverview;  
@@ -229,7 +230,7 @@ export default function Index() {
   const [model, setModel] = useState(1)
   const Chartbox = ({data, op, type, my, tabvalue, datetype}) => {   
     if(!op || !type || !my || data?.length < 1 ) return
-    console.log('chartbox')
+     
     const ref = useRef()
     
     const changeModel=(e)=>{
@@ -308,7 +309,7 @@ const EngItem = ({name, unit, periodValue, lastDayPeriodValue, lastMonthPeriodVa
   let my = ['', '昨', '上', '去'][datetype] 
   let lasttime = ['', lastDayPeriodValue, lastMonthPeriodValue, lastYearPeriodValue][datetype]
   let icon = name.indexOf("电")>-1 ? 'electric' : name.indexOf("水")>-1  ? 'water' : '';
-  console.log(icon)
+  
   return (
    <Titlelayout
    title={<Title title={name} subtitle={unit} jc={exparams.view} />}
@@ -533,7 +534,7 @@ const CoalStandard =({data={}, op, datetype}) => {
   const tabs = [
     { label: "综合能耗", key: 1, },
     { label: "电", key: 2,  },
-    { label: "用水", key: 3 },
+    { label: "冷水", key: 3 },
    /*  { label: "热力", key: 4 },
     { label: "气体燃料", key: 5 },
     { label: "液体燃料", key: 6 },
@@ -542,20 +543,13 @@ const CoalStandard =({data={}, op, datetype}) => {
   ];
 
 
-  const getData = async () => {    
-    const {areaId, date, type, shiftNo, view, projectId} = exparams  
+  const getData = async ({areaId, date,  dateType, shiftNo, view, projectId}) => {    
+   
     let id = areaId == 0 ? areaIds?.filter(a => a.id!=0)?.map(a => a.id) : [areaId];
-    let time;
-    if (type == 1)  {
-      time = date.format('YYYY-MM-DD')
-    } else if(type == 2) {
-      time = date.format('YYYY-MM') + '-01'
-
-    } else if(type == 3) {
-       time = date.format('YYYY')+ '-01-01'
-    }
+    let time = getTime(date, dateType);
+  
     const querys = {
-      type,
+      type: dateType,
       shiftNo,
       projectId,
       date: time
@@ -581,10 +575,11 @@ const CoalStandard =({data={}, op, datetype}) => {
     setOverview([])
   }
   useEffect(() => {
-    let values = Object.values(exparams)
-    console.log(values)
-    if(values.length >= 5 && Number.isInteger(tabvalue))   getData()
-  }, [tabvalue, exparams])
+     let f = [tabvalue, areaId,  dateType, shiftNo, view, projectId].every(v => Number.isInteger(v)) && date
+     if(f) {
+      getData({areaId, date, dateType, shiftNo, view, projectId})
+     } 
+  }, [tabvalue, areaId, date, dateType, shiftNo, view, projectId])
 
   const Title = ({ title, subtitle, jc }) => {
     return (

@@ -218,12 +218,23 @@ const liuqiuOption =(option) =>  {  // 水球图
 }
 
 const pieOption = ({ data = [], total = 0, radius= ["60%", "80%"],labelLine={},label={}, legend={},  grid={left: 0, right: 0, containLabel: true,}} = {}) =>{
-    
+  const primaryColor =store.getState()?.system?.themeColor?.primaryColor || "#237ae4"
+
+  const  color = [
+   primaryColor,
+   "#62D9AD",
+   "#5472B1",
+   "#23C2DB",
+   "#4A6FE2",
+   "#FED428",
+   "#FF974C",
+   "#E65A56",
+ ]
    
     
  return {
   // 饼图的设置 
- 
+  color,
   tooltip: {
     trigger: "item",
   },
@@ -324,8 +335,7 @@ export const drawEcharts = (
     })
   }
   const primaryColor =store.getState()?.system?.themeColor?.primaryColor || "#237ae4"
- // const {primaryColor} = useSelector(themeColor)
-  //console.log(primaryColor);
+
  const  color = [
   primaryColor,
   "#62D9AD",

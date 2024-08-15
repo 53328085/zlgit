@@ -96,30 +96,21 @@ export default function Index() {
   return (
     <Pagecount bgcolor="transparent" pd="0">
       <Mainbox>
-        {Array.isArray(htdata) && htdata.map(ht => <Chart data={ht} EnvironmentTrend={EnvironmentTrend} />)}
-
-        <Titlelayout title="配电房环境监测" layout="flex" bordered="n">
-
+      <Titlelayout title="配电房环境监测" layout="flex" bordered="n">
           <Cardlist>
-
-
-            {(Array.isArray(door) && door?.length > 0) ? door?.map(d => <ItemCard value={d.value} title={d.name} img="door" key={d.anme + d.value} />) : null}
-            {(Array.isArray(fire) && fire.length > 0) ? fire?.map(d => <ItemCard value={d.value} title={d.name} img="fire" />) : null}
-            {Array.isArray(ht) && ht?.map(d => <ItemCard tValue={d.tValue} hValue={d.hValue} title={d.name} ht="ht" img="temperature" />)}
-            {Array.isArray(noise) && noise?.map(d => <ItemCard value={d.value} title={d.name} img="nosie" />)}
-            {Array.isArray(smoke) && smoke?.map(d => <ItemCard value={d.value} title={d.name} img="smook" />)}
-            {Array.isArray(sF6) && sF6?.map(d => <ItemCard value={d.value} title={d.name} img="smook" />)}
-            {Array.isArray(water) && water?.map(d => <ItemCard value={d.value} title={d.name} img="water" />)}
-            {/*  <ItemCard title={'环境温度'} desc={envlist.temperature?'正常':'异常'} value={envlist.temperature} img="temperature"></ItemCard>
-          <ItemCard title={'环境湿度'} desc={envlist.humidness?'正常':'异常'} value={envlist.humidness} img="humidness"></ItemCard>
-          <ItemCard title={'水浸监测'} desc={envlist.water?'正常':'异常'} value={envlist.water} img="water"></ItemCard>
-          <ItemCard title={'烟感监测'} desc={envlist.smoke?'正常':'异常'} value={envlist.smoke} img="smook"></ItemCard>
-          <ItemCard title={'噪音监测'} desc={envlist.noise?'正常':'异常'} value={envlist.noise} img="nosie"></ItemCard>
-          <ItemCard title={'明火监测'} desc={envlist.fire?'正常':'异常'} value={envlist.fire} img="fire"></ItemCard>
-          <ItemCard title={'门禁监控'} desc={envlist.door?'正常':'异常'} value={envlist.door} img="door"></ItemCard> */}
+            {(Array.isArray(door) && door?.length > 0) ? door?.map(d => <ItemCard bgcolor="#cee3a6" value={d.value} title={d.name} img="door" key={d.anme + d.value} />) : null}
+            {(Array.isArray(fire) && fire.length > 0) ? fire?.map(d => <ItemCard bgcolor="#f8dadf" value={d.value} title={d.name} img="fire" />) : null}
+            {Array.isArray(ht) && ht?.map(d => <ItemCard bgcolor="#d3e4f5" tValue={d.tValue} hValue={d.hValue} title={d.name} ht="ht" img="temperature" />)}
+            {Array.isArray(noise) && noise?.map(d => <ItemCard bgcolor="#e2edbc" value={d.value} title={d.name} img="nosie" />)}
+            {Array.isArray(smoke) && smoke?.map(d => <ItemCard bgcolor="#fee6b4" value={d.value} title={d.name} img="smook" />)}
+            {Array.isArray(sF6) && sF6?.map(d => <ItemCard  value={d.value} title={d.name} img="smook" />)}
+            {Array.isArray(water) && water?.map(d => <ItemCard bgcolor="#bcddb0" value={d.value} title={d.name} img="water" />)}          
           </Cardlist>
 
         </Titlelayout>
+        {Array.isArray(htdata) && htdata.map(ht => <Chart data={ht} EnvironmentTrend={EnvironmentTrend} />)}
+
+       
       </Mainbox>
     </Pagecount>
   )

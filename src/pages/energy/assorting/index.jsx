@@ -11,12 +11,13 @@ import Pagecount from "@com/pagecontent";
 import {getTime} from '@com/usehandler'
 export default function Index() {
   let {exparams} = useOutletContext()
+  let {view, areaId, date, type:dateType, shiftNo, projectId} = exparams 
  // const projectId = useSelector(selectProjectId)
   const oneLevel = useSelector(selectOneLevel)
   const [showData, setShowData] = useState()
   //查询分类能耗
-  const getEnergyData = async () => {
-    let {view, areaId, date, type:dateType, shiftNo, projectId} = exparams 
+  const getEnergyData = async ({view, areaId, date, dateType, shiftNo, projectId}) => {
+  
     try {
       
      
@@ -64,9 +65,11 @@ export default function Index() {
 
 
   useEffect(() => {
-    let values = Object.values(exparams)  
-    if(values.length >= 5)   getEnergyData()
-  }, [exparams])
+    let f =  [view, areaId, dateType, shiftNo, projectId].every(v => Number.isInteger(v)) && date
+    if(f) {
+      getEnergyData({view, areaId, date, dateType, shiftNo, projectId})
+    } 
+  }, [view, areaId, date, dateType, shiftNo, projectId])
   return (
     <Pagecount bgcolor="transparent" pd="0">
       <Energy showData={showData} date={exparams.date} dateType={exparams.type} showType={exparams.view}/> 

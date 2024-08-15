@@ -133,7 +133,7 @@ export default function Index() {
       type: 3,
       legend: {
         type: "scroll",
-     
+        icon: "rect",
         bottom: 0,
         top: 'auto',
         itemGap: 5
@@ -169,7 +169,7 @@ export default function Index() {
 
   ]
 
-  const getData = () => {
+  const getData = ({energytype, areaId, date, dateType,  projectId}) => {
    
    // const {area, date, type, meterType} = form.getFieldsValue() || {}
    // if(isNaN(type)) return;
@@ -240,8 +240,9 @@ export default function Index() {
 
 
  useEffect(() => {
-   if( Number.isInteger(energytype) && Number.isInteger(areaId) && date && Number.isInteger(dateType) && Number.isInteger(projectId)) {
-    getData()
+   let f = [energytype, areaId, dateType,  projectId].every(v => Number.isInteger(v)) && date
+   if(f) {
+    getData({energytype, areaId, date, dateType,  projectId})
    }
   
  }, [energytype, areaId, date, dateType,  projectId]) 

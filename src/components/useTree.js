@@ -25,8 +25,8 @@ const Treebox = styled.div`
 `
  
 export default memo(function Index({areaId, setTreeId,  setLine, showline=true, datatype=NaN, energytype, sty={bordered: 'y', pv: '16px'}, ...restprop}) {
-  console.log(datatype)
-  
+ 
+  // datatype =0 或 =2
   const [treeData,setTreeData] =useState([])
   
   
@@ -36,19 +36,23 @@ export default memo(function Index({areaId, setTreeId,  setLine, showline=true, 
   const projectId = useSelector(selectProjectId)
   const [typeTree, setTypeTree] = useState(0)
   
-  const treekey = isFinite(datatype) ? 'id' :  typeTree == 0 ?  "areaId" : "id" ;
+ const treekey = datatype ===0  ? 'areaId' : datatype=== 2 ? 'id' :  typeTree == 0 ?  "areaId" : "id" ;
+
+ // const treekey =  typeTree == 0 ?  "areaId" : "id" ; 
   const [expandedKeys, setExpandedKeys] = useState([]);
  
-/*   const [preAreaId, setPreAreaId] = useState(areaId)
-  if(areaId !== preAreaId) {
-    setPreAreaId(areaId)
-    setTreeId([])
-  }
-  */
- let arr = []
+
+ let arr = [], expand = []
  const getId = (nodes, type, child='nodes') => {
      if(Array.isArray(nodes)) {
-        for(let node of nodes) {          
+        for(let node of nodes) {  
+           let {level, areaId,id} = node    
+           
+           if(level<=2 && treekey == 'areaId') {
+             expand.push(areaId)
+           }else if(treekey == 'id') {
+             expand.push(id)
+           }   
            arr.push(node[type])
            if(node[child] && Array.isArray(node[child]) && node[child]?.length > 0) {
              getId(node[child], type, child)
@@ -56,12 +60,15 @@ export default memo(function Index({areaId, setTreeId,  setLine, showline=true, 
         }
      }
  }
-
- const fieldNames=isNaN(datatype) ? {title:'name',key: treekey,children:'nodes'} : {title:'name',key: treekey,children:'childs'}
+ 
+const fieldNames=datatype===2 ?  {title:'name',key: treekey,children:'childs'} :{title:'name',key: treekey,children:'nodes'}
+//const fieldNames= {title:'name',key: treekey,children:'nodes'}  
+ console.group(fieldNames)
   //获取树的数据，0 网格, 1 线路, 2 公共能耗分类
  const getTreeData= async (name='')=>{
-    
-  let idx = isFinite(datatype) ? datatype : typeTree;
+ 
+  let idx = Number.isInteger(datatype) ? datatype : typeTree;
+  
   if( isFinite(datatype) && !energytype) return
     try {
        if(name!=keyword) setKeyword(name)
@@ -83,7 +90,7 @@ export default memo(function Index({areaId, setTreeId,  setLine, showline=true, 
       }
 
     ][idx]
-      console.log(params)
+       
       let hander = [ QuerySpaceTrees, LineManagerQuery, queryEnergyCategoryTree][idx]
     
      /*  if(lineType == "3") {
@@ -97,7 +104,7 @@ export default memo(function Index({areaId, setTreeId,  setLine, showline=true, 
 
       const {success, data, errMsg} = await hander(params)
       if(success && Array.isArray(data)){
-
+        console.log(idx)
          switch (idx) {
             case 0:
               getId(data, 'areaId');
@@ -113,9 +120,10 @@ export default memo(function Index({areaId, setTreeId,  setLine, showline=true, 
             
          }
         
-       
+         
          setTreeData(data)  
          setCheckedKeys(arr);
+         setExpandedKeys(expand)
          setTreeId(arr);
         
         /*  if(name) {
@@ -140,21 +148,25 @@ export default memo(function Index({areaId, setTreeId,  setLine, showline=true, 
   } 
  // 根据区域查询
  const onCheck = ({checked}) => {
+    console.log(checked)
     setTreeId(checked)
     setCheckedKeys(checked)
      
  } 
  // 树搜索
- const onExpand = (newExpandedKeys) => {
+ const onExpand = (newExpandedKeys, obj) => {
+ 
   setExpandedKeys(newExpandedKeys);
   
 };
 
   
   useEffect(()=>{
-     if(isNaN(areaId)) return;
-     // setTreeId([])
-     getTreeData()
+     let f = [areaId, projectId].every(v => Number.isInteger(v))
+     if(f) {
+      getTreeData()
+     }
+    
      
   },[areaId, typeTree, datatype, energytype, projectId])
    
@@ -195,9 +207,7 @@ export default memo(function Index({areaId, setTreeId,  setLine, showline=true, 
           <Tree 
           treeData={treeData} 
           checkable 
-          defaultExpandAll
-          
-          onExpand={onExpand}
+          onExpand={onExpand}        
           expandedKeys={expandedKeys}
           checkedKeys={checkedKeys}
           onCheck={onCheck}

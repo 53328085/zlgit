@@ -189,7 +189,7 @@ export default function Index() {
 
   let {exparams, setCustview} = useOutletContext() 
 
-  console.log(exparams)
+
  
   const levelname = useSelector(levelDefaultLabel)
   const [value, setvalue] = useState('0')
@@ -217,11 +217,11 @@ export default function Index() {
   const index = Number(value)
   const sheetName = tabs[index]?.label ?? 'sheet'
   let columns = [cols, [], timecols, typecols][index] // 
-  const getTableData = ({ current, pageSize }) => {
-  //  const row = Number(value);
-   //  console.log(exparams)
-     console.log(treeId)
-     if(Object.values(exparams).length <5 || !Array.isArray(treeId)) return;
+  const getTableData = ({ current, pageSize, areaId, projectId, type, date, energytype, treeId, index, line  }) => {
+     
+    let f = [areaId, projectId, type, energytype,index, line].every(v => Number.isInteger(v)) && Array.isArray(treeId) && date
+    console.log(f)
+    if(!f) return;
       
      let hander =index < 3 ? [
       [QueryByArea, QueryByLine], 
@@ -301,9 +301,9 @@ export default function Index() {
 
 
   }
-  const {tableProps} = useAntdTable(getTableData, {
+  const {tableProps} = useAntdTable((params) => getTableData({...params,areaId, projectId, type, date, energytype, treeId, index, line }), {
     defaultParams: [{current: 1, pageSize: 14}],
-    refreshDeps: [exparams, treeId, value, line]
+    refreshDeps: [areaId, projectId, type, date, energytype, treeId, index, line]
   })
 
   const CustView =(
@@ -335,7 +335,7 @@ export default function Index() {
       <CustContext.Provider value={dataProps} >
           <Pagecount showSearch={false} custserach={true}>
              <Contentbox>
-                <UserTree areaId={areaId}   setTreeId={setTreeId} setLine={setLine}   showline={value!='3'} datatype={value=='3' ? 0 : NaN}   /> 
+                <UserTree areaId={areaId} energytype={energytype}  setTreeId={setTreeId} setLine={setLine}   showline={value!='3'} datatype={value=='3' ? 0 : NaN}   /> 
                 {
                   value == "1" ? <UserTable ref={tbref}  columns={concolumns} {...tableProps} key={value} scroll={{
                     scrollToFirstRowOnChange: true,

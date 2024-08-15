@@ -32,7 +32,7 @@ export default function Index(props) {
 
    
     return (
-    <Titlelayout layout="flex" shadow="y" pl="0px" bl="none" title={<Text strong ellipsis={{tooltip: props.title}}>{props.title}</Text>}>
+    <Titlelayout layout="flex" bgcolor={props.bgcolor} bg="transparent"  pl="0px" bl="none" title={<Text strong ellipsis={{tooltip: props.title}}>{props.title}</Text>}>
             <Mainbox>
                 <div className="val">
                     {

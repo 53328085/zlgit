@@ -28,7 +28,8 @@ const Mainbox = styled.div`
     height: 732px;
    overflow-y: auto;
     .card{
-      width: 256px;
+    //  width: max-content;
+     column-gap: 4px;
       height: 48px;
       background-color: rgba(15, 34, 63, 0.8);
       border: 1px solid rgba(0, 153, 204, 1);
@@ -40,7 +41,7 @@ const Mainbox = styled.div`
         padding-left: 12px;
         display: inline-block;
         color: #fff;
-        width: 130px;
+      //  width: 130px;
       }
       .imgtip{
         display: flex;
@@ -128,7 +129,7 @@ export default function Index() {
     <div className='card'>
     <div className='imgtip'>
       <img src={src} alt="" />
-      <Text ellipsis={{tooltip: name}}>{name}</Text>
+     <Text ellipsis={{tooltip: name}}>{name}</Text>  
     </div>
   <div className='cardval'>{value}</div> 
   </div>
