@@ -129,8 +129,16 @@ export default function Index() {
     }
   })
  let poptions= useRef({
-      pieData: { data: [], total: '100%', radius: ["55%",  "70%"]},
+      pieData: { data: [], total: '100%', radius: ["40%",  "70%"], series: {
+        avoidLabelOverlap: false,
+        itemStyle: {
+          borderRadius: 10,
+          borderColor: '#fff',
+          borderWidth: 2
+        },
+      },},
       type: 3,
+      
       legend: {
         type: "scroll",
         icon: "rect",

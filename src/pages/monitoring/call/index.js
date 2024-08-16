@@ -252,7 +252,7 @@ export default function Index() {
                           })
                           setdataSourceRead(arrlist)
                           console.log(dataSourceRead,arrlist)
-                          Remote.SetResult(setResultInfoList).then((res) => {console.log(res) })
+                          Remote.SetResult(setResultInfoList, projectId).then((res) => {console.log(res) })
                         }
                       })
                     } else {

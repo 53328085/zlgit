@@ -88,7 +88,7 @@ let columns2 = [
     dataIndex: 'perce',
     key: 'perce',
     render: (_, recoder) => {
-        return recoder.all == 0 ? '0%' :  parseFloat(recoder.finish / recoder.all, 2)+"%"
+        return recoder.all == 0 ? '0%' :  parseFloat((recoder.finish / recoder.all)*100).toFixed(2)+"%"
     }
   },
 ]
@@ -113,7 +113,7 @@ let columns3= [
     dataIndex: 'perce',
     key: 'perce',
     render: (_, recoder) => {
-        return recoder.all == 0 ? '0%' :  parseFloat(recoder.finish / recoder.all, 2)+"%"
+        return recoder.all == 0 ? '0%' :  parseFloat((recoder.finish / recoder.all)*100).toFixed(2)+"%"
     }
   },
 ]

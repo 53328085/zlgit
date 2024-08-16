@@ -128,22 +128,22 @@ export default function Index() {
     },
     {
       dataIndex: "e",
-      title: "总有功功率(kWh)",
+      title: "总能耗(kWh)",
       onHeaderCell: () => ({style:  headsty("#000")})
     },
     {
       dataIndex: "e2",
-      title: "A相电流(A)",
+      title: "峰能耗(kWh)",
       onHeaderCell: () => ({style:  headsty("#f33")})
     },
     {
       dataIndex: "e3",
-      title: "B相电流(A)",
+      title: "平能耗(kWh)",
       onHeaderCell: () => ({style:  headsty("#f90")})
     },
     {
       dataIndex: "e4",
-      title: "C相电流(A)",
+      title: "谷能耗(kWh)",
       onHeaderCell: () => ({style:  headsty("#093")})
     }
 
