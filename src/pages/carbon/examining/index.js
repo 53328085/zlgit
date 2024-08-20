@@ -74,7 +74,7 @@ export default function Index() {
       color: "#248fff"
      }},
      {type: "bar", seriesLayoutBy: 'row', itemStyle: {
-      color: "#6fe392",
+      color: "#333399",
       
      }},
      {type: "bar", seriesLayoutBy: 'row', itemStyle: {

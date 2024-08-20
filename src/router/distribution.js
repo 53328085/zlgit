@@ -13,7 +13,11 @@ const Transformer = lazy(() => import("../pages/distribution/transformer"))
 const Contact= lazy(() => import("../pages/distribution/contact"))
 const Fibre= lazy(() => import("../pages/distribution/fibre"))
 
-
+const Monitor= lazy(() => import("../pages/distribution/monitor"))
+const Monitoring= lazy(() => import("../pages/distribution/monitoring"))
+const Statements= lazy(() => import("../pages/distribution/statements"))
+const Quality= lazy(() => import("../pages/distribution/quality"))
+const Tuality= lazy(() => import("../pages/distribution/ticket"))
 export let runtimeDistribution = {
     '010701': Summary,
     '010702': Map,
@@ -24,6 +28,11 @@ export let runtimeDistribution = {
     '010707': Contact,
     '010708': Fibre,
     '010709': Warning,
-    '010710': Report
+    '010710': Report,
+    '010711': Monitor, // 配电概述
+    '010712': Monitoring, // 配电概述
+    '010713': Statements, // 运行报表
+    '010714': Quality, // 电能质量
+    '010715': Tuality, // 工作票管理
 }
 
