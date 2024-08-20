@@ -88,7 +88,11 @@ export default function Index() {
     runtimeCarbonEmissionManager: [  //碳排管理
         "runtimeCarbonData",
         "runtimeCarbonExamine",
-    ]
+    ],
+    ledger: [  //台账管理
+      "deviceLedger",
+      "spareParts",
+  ]
   }); // 需要显示搜索的页面
 
   const [showRoom, setShowroom] = useState(true); // 是否显示配电房选择框
@@ -221,7 +225,7 @@ export default function Index() {
            setConfig({isAreaId: false, dateY: true });
            break;     
          case "runtimeCarbonData":
-            setConfig({isAreaId: false, isdate:true, shiftNo: true});
+            setConfig({isAreaId: false, isdate:true, shiftNo: true, dateType: 2});
             break;
         }
       }

@@ -16,7 +16,8 @@ const {DeviceTypeManager: {AllDeviceStyle} } = Monitoring
   const handlermenu = (Meundata,  id, homeMenuNO) => {
    
  let lang = window.localStorage.getItem('i18nextLng')?.slice(0, 2)?.toLowerCase() == 'zh' ? 'cn' : 'en'
- let data = Meundata.filter(d => d.languageName==lang);     
+ let data = Meundata.filter(d => d.languageName==lang);   
+   console.dir(data)  
     if(data?.length ==0) return message.warning("没有设置相应的菜单栏，请联系管理员")
     const setMenus = data.filter(m => ['0101', '0102', '0103'].includes(m.no));
     const runMenus = data.filter(m => m.parentNo == '01' && m.select == 1).filter(m => !['0101', '0102', '0103'].includes(m.no)) // 运行功能 菜单

@@ -85,7 +85,7 @@ const Tabsbox = styled(Tabs)`
  function Index({projectId, userId, role}, ref) {  
 
 
-    console.log(role)
+    
 
     const mref= useRef() 
     const   MenuNos  =  useRef({}) // 运行
@@ -101,6 +101,8 @@ const Tabsbox = styled(Tabs)`
         onOpen,
     })) 
     const saveMenu = async () => { 
+        console.log(MenuNos.current)
+        console.log(Dmenunos.current)
         const getno = (data) => {
           let include = ['0101', '0102', '0103', '0104'];
           let Nos = []
@@ -140,7 +142,10 @@ const Tabsbox = styled(Tabs)`
       const [AllRunMenus, setAllRunMenus] = useState([])    
       const [allSinderRunMenus, setAllSinderRunMenus] = useState({}) 
       const [AllDesignMenus, setAllDesignMenus] = useState([])
+
       const [allSinderDesignMenus, setallSinderDesignMenus] = useState({}) 
+      console.log(AllDesignMenus)
+      console.log(allSinderDesignMenus)
       const [loading, setLoading] = useState(true)
      let exclude = [ '0101', '0103'];
        const queryUserMenus =  () => { 

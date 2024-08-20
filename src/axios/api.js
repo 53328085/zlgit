@@ -277,6 +277,9 @@ export class QueryRunReport {
 }
 // 能源管理-- 园区图片（设计态）
 export class UpdateEnergyImage {
+  static savePoint = (parmas) =>
+    server.post(
+      `Energy/EnergyInfo/SaveImageBuildingCoordinate?projectId=1`, parmas); // 保存园区图片热点
   static update = (parmas) =>
     server.post(
       `/Energy/EnergyInfo/UpdateEnergyImage`, parmas
@@ -285,6 +288,7 @@ export class UpdateEnergyImage {
     server.get(
       `/Energy/EnergyInfo/QueryEnergyImage?projectId=${projectId}`, 
     );  
+    static AeraQueryAll=(projectId) => server.get(`/General/Area/QueryAll?projectId=${projectId}&level=2`)
 }
 
 
@@ -337,6 +341,10 @@ export class EnergyOverView {
     server.post(
       `/Energy/EnergyOverViewRuntime/QueryEnergyInfoOverview?projectId=${projectId}`
     );
+  static QueryImageBuilding = (projectId, buildingId) =>
+      server.get(
+        `Energy/EnergyOverViewRuntime/QueryImageBuilding?projectId=${projectId}&buildingId=${buildingId}`
+      ); 
 }
 // 能源管理--区域能耗
 export class EnergyArea {

@@ -120,6 +120,7 @@ const Allupdate =memo(({lists, total}) => {
      
       download()
     } catch (error) {
+      console.log(error)
       message.warning('导出出错！')
       
     }

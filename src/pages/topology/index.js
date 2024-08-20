@@ -232,7 +232,7 @@ export default function index() {
           left: data.evs.x - 210 + 'px',
           top: data.evs.y - 110 + 'px'
         })
-        // setNodeTag(true)
+        setNodeTag(true)
         setSelectedNode(data)
         setNodeType('设备绑定')
       }

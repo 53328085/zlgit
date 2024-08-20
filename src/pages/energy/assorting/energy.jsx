@@ -19,7 +19,7 @@ import imgurl from './imgs'
 import {getTime} from '@com/usehandler'
 const Boxchart = ({index, showType, data, date}) => {
  let istoday = date.format('YYYY-MM-DD') === moment().format('YYYY-MM-DD')
-  let color = ['#bdd2fd', '#99adba', '#ffc299', '#173f17']
+  let color = ['#bdd2fd', '#99adba', '#ffc299', '#99d699']
   const [options, setOptions] = useState({
     series: [{ type: "line",  seriesLayoutBy: 'row' }],  
     grid:{

@@ -135,21 +135,21 @@ export default function Item(props) {
        <div className='below' key={nanoid()}>
            {["分类", "读数","同比", "环比"].map(e => <div className='title'>{e}</div>)}
 
-           <div className='back' key={nanoid()}>总有功功率(kWh)</div>
+           <div className='back' key={nanoid()}>总能耗(kWh)</div>
            <div className='com bold' key={nanoid()}>{e}</div>
            <div className='com' key={nanoid()}>{numberformat(yoyE)}</div>
            <div className='com' key={nanoid()}>{numberformat(momE)}</div>
-           <div className='red' key={nanoid()}>峰能耗</div>
+           <div className='red' key={nanoid()}>峰能耗(kWh)</div>
            <div className='com bold' key={nanoid()}>{e2}</div>
            <div className='com' key={nanoid()}>{numberformat(yoyE2)}</div>
            <div className='com' key={nanoid()}>{numberformat(momE2)}</div>
 
-           <div className='yellow' key={nanoid()}>平能耗</div>
+           <div className='yellow' key={nanoid()}>平能耗(kWh)</div>
            <div className='com bold' key={nanoid()}>{e3}</div>
            <div className='com' key={nanoid()}>{numberformat(yoyE3)}</div>
            <div className='com' key={nanoid()}>{numberformat(momE3)}</div>
 
-           <div className='green' key={nanoid()}>谷能耗</div>
+           <div className='green' key={nanoid()}>谷能耗(kWh)</div>
            <div className='com bold' key={nanoid()}>{e4}</div>
            <div className='com' key={nanoid()}>{numberformat(yoyE4)}</div>
            <div className='com' key={nanoid()}>{numberformat(momE4)}</div>

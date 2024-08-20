@@ -327,7 +327,11 @@ const deviceStyleNode = (<Item name="deviceStyle" label="表计类型" initialVa
        let v = form.getFieldValue('energytype');
        if(v==3) form.setFieldValue('energytype', 1)
      }
-   
+    if(config.dateType) {
+      form.setFieldValue('type',config.dateType)
+    }else {
+      form.setFieldValue('type',1)
+    }
      props.setexparams({...form.getFieldsValue(true)})
    
   }, [props.config, projectId])

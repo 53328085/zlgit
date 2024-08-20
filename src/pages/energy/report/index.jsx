@@ -218,7 +218,7 @@ export default function Index() {
   const sheetName = tabs[index]?.label ?? 'sheet'
   let columns = [cols, [], timecols, typecols][index] // 
   const getTableData = ({ current, pageSize, areaId, projectId, type, date, energytype, treeId, index, line  }) => {
-     
+    console.log(pageSize)
     let f = [areaId, projectId, type, energytype,index, line].every(v => Number.isInteger(v)) && Array.isArray(treeId) && date
     console.log(f)
     if(!f) return;
@@ -313,7 +313,7 @@ export default function Index() {
     )
   const onExport =useCallback(() => {   
    
-    return  getTableData({current: 1, pageSize: total})
+    return  getTableData({current: 1, pageSize: total,areaId, projectId, type, date, energytype, treeId, index, line })
  }, [total, concolumns])
   
   let dataProps = {
