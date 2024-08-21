@@ -1,11 +1,12 @@
-import React, { useEffect, useState, memo } from "react";
+import React, { useEffect, useState, memo, useRef } from "react";
 
 
 import Titlelayout from "@com/titlelayout";
 import styled from "styled-components";
-import moment from "moment";
 import CustContext from "@com/content.js";
-import { Form, Image, Progress, Typography, Spin } from "antd";
+import moment from "moment";
+import { CloseOutlined } from "@ant-design/icons"
+import { Form, Image, Progress, Typography, Spin, Tag } from "antd";
 import imgurl from "./icon";
 import { EnergyOverView, UpdateEnergyImage, HomeRuntime, EnergyArea } from "@api/api.js";
 import { useSelector } from "react-redux";
@@ -13,6 +14,7 @@ import Ichart from '@com/useEcharts/Ichart';
 import Ctip from './Ctip'
 import Pagecount from "@com/pagecontent";
 import { Cspin } from "@com/comstyled"
+import { isObject } from "@com/usehandler"
 import {
   selectProjectId,
   selectOneLevelDefaultId,
@@ -22,6 +24,16 @@ const { QueryEnergyAreaMonth } = EnergyArea
 import { useRequest } from "ahooks";
 
 const { Paragraph, Text } = Typography;
+
+const Ctag = styled(Tag)`
+  &&{
+    position: absolute;
+    left: ${props => props.left + 'px'};
+    top: ${props => props.top + 12 + 'px'};
+    transform: translate(-50%, -50%);
+    cursor: pointer;
+  }
+`
 
 const Title = styled.div`
     &&{
@@ -146,19 +158,87 @@ const labels = {
   curMonthAvgPF: "月平均功率因素", //月平均功率因素
 };
 
-
+const TitP = styled.div`
+  && {
+    min-width: 176px;
+    min-height: 244px;
+    border: 1px solid #fff;
+    border-radius: 4px;
+    left: ${props => props.left + 'px'};
+    top: ${props => props.top + 32 + 'px'};
+    position: absolute;
+    transition: all 0.3s;
+    display: flex;
+    flex-direction: column;
+    .title {
+      background-color: #0c3;
+      color: #fff;
+      height: 24px;
+      padding: 2px 8px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .contentbox {
+      background-color: rgba(255,255,255,0.6);
+      padding: 16px 2px 16px 32px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      flex:1;
+      .content {
+        .key{
+          font-size: 14px;
+          line-height: 1;
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          padding-right: 16px;
+        }
+        .value{
+          font-size: 18px;
+          line-height: 1;
+        }
+      }
+    }
+  }
+`
 
 const Imgbg = memo(({ projectId, areaVos }) => {
   const [energyImage, setEnergyImage] = useState()
   const [spinning, setSpinning] = useState(false)
+  const [build, setBuild] = useState()
+  const [info, setInfo] = useState()
+  const getbuild = async ({ buildingId, x, y }) => {
+    try {
+      let { data, success } = await EnergyOverView.QueryImageBuilding(projectId, buildingId)
+      if (success && isObject(data)) {
+        setInfo({ ...data, x, y })
+      } else {
+        setInfo(null)
+      }
+    } catch (error) {
+
+    }
+
+  }
+  const map = build?.length > 0 ? build.map(l => <Ctag left={l.x} top={l.y} key={l.buildName} onClick={() => getbuild(l)} >{l.buildName}</Ctag>) : null
   const queryimg = async () => { //获取图片
     try {
       setSpinning(true)
       let { success, data } = await UpdateEnergyImage.query(projectId)
-      if (success && data) {
+      if (success && isObject(data)) {
+        let { fileImage, imageBuildingCoordinateVos } = data
+        if (Array.isArray(imageBuildingCoordinateVos) && imageBuildingCoordinateVos.length > 0) {
+          setBuild(imageBuildingCoordinateVos)
+        } else {
+          setBuild(null)
+        }
+
         setSpinning(false)
-        setEnergyImage(data.fileImage)
+        setEnergyImage(fileImage)
       } else {
+        setBuild(null)
         setSpinning(false)
       }
     } catch (error) {
@@ -173,7 +253,29 @@ const Imgbg = memo(({ projectId, areaVos }) => {
   return (
     <Cspin spinning={spinning} tip="图片下载中……">
       <div style={{ position: "relative", width: "1216px", height: "771px" }}>
-        <img src={energyImage || imgurl.engeryBg} style={{ objectFit: "cover", width: "100%", height: "100%" }} />
+        <img src={energyImage || imgurl.engeryBg} usemap="#building" style={{ objectFit: "cover", width: "100%", height: "100%" }} />
+        {map}
+        {info && <TitP left={info.x} top={info.y}>
+          <h5 className="title">{info.buildingName} <CloseOutlined onClick={() => setInfo(null)} /> </h5>
+          <div className="contentbox">
+            <div className="content">
+              <p className="key">今日能耗 <span>(kWh)</span></p>
+              <p className="value">{info.todayElectricity}</p>
+            </div>
+            <div className="content">
+              <p className="key">今日费用 <span>(元)</span></p>
+              <p className="value">{info.todayCost}</p>
+            </div>
+            <div className="content">
+              <p className="key">今日碳排<span>(kg)</span></p>
+              <p className="value">{info.todayCarbon}</p>
+            </div>
+            <div className="content">
+              <p className="key">实时功率<span>(kW)</span></p>
+              <p className="value">{info.curPower}</p>
+            </div>
+          </div>
+        </TitP>}
         <Ctip areaVos={areaVos} />
       </div>
     </Cspin>

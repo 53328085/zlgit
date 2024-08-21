@@ -19,7 +19,7 @@ import  {designerCommon} from "./designer/common";
 import  {runtimeCarbonEmissionManager} from "./carbon" // 碳排管理
 import  {runtimeStorage} from './storage' // 储能管理
 import  {runtimeQuota} from './quota'
-
+import {ledger} from './ledger.js'
  let runRoutes = {
   runtimeMonitor,
   runtimeEnergy,
@@ -31,7 +31,8 @@ import  {runtimeQuota} from './quota'
   designerCommon,
   runtimeCarbonEmissionManager,
   runtimeStorage,
-  runtimeQuota
+  runtimeQuota,
+  ledger
  }
 
 
@@ -100,7 +101,8 @@ const loginrouter =  [{
   '0111': Comindex,
   '0112': Comindex,
   '0113': Comindex,
-  '0114': Comindex
+  '0114': Comindex,
+  '0115': Comindex
 } 
 
  

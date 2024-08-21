@@ -2,15 +2,24 @@ import React, {useEffect, useRef, useState} from 'react'
  
 import styled from "styled-components";
 import {useSelector} from "react-redux";
-import {CustButtonT} from '@com/useButton'
+import {CustButtonT, CustButton} from '@com/useButton'
 import Cupload from "@com/useUpload.js" 
 import {selectProjectId} from '@redux/systemconfig.js'
-import { message  } from 'antd';
-import {UpdateEnergyImage} from '@api/api.js'
+import { message, Form, Input, InputNumber, Space, Divider, Button, Checkbox, Tag, Alert} from 'antd';
+import {UpdateEnergyImage } from '@api/api.js'
 import {Cspin} from "@com/comstyled"
+import {isObject} from '@com/usehandler'
+const Ctag = styled(Tag)`
+  &&{
+    position: absolute;
+    left: ${props => props.left+'px'};
+    top: ${props=> props.top+'px'};
+    transform: translate(-50%, -50%);
+  }
+`
 const Main = styled.div`
    display: grid;
-   grid-template-rows: 64px 1fr;
+   grid-template-rows: 64px 300PX auto  1fr;
    row-gap: 16px;
    .title {
       padding: 16px;
@@ -46,23 +55,59 @@ const Main = styled.div`
      width: 432px;
      margin-top: 16px;
    }
+   .setwrap {
+     display: flex;
+     column-gap: 16px;
+    .set {
+      position: relative;
+      padding: 0;
+      border: #237ae4;
+      flex-basis: 1368px;
+      height: 800px;
+      .img{
+         position: absolute;
+      }
+    }
+    .point {
+      flex: 1 0 294x;
+      overflow: auto;
+    }
+  }
 `
+ 
 export default function Index() {
+   const [form] = Form.useForm();
    const projectId = useSelector(selectProjectId)  
    const [energyImage, setEnergyImage]= useState('')
    const [loading, setLoading] = useState(false)
    const [spinning, setSpinning] = useState(false)
+   const [area, setArea] = useState([])
+   const [curarea, setCurarea] = useState(null)
+   const [list, setList] = useState([])
   const onChnage = (e) => {
      setEnergyImage(e)
   }
   const onSave =async () => {
     try {
         if(!energyImage) return message.warning("请选择图片")
-     let params = {
-        projectId,
-        energyImage,
-     }
+
      setLoading(true)
+     let imageBuildingCoordinate = []
+     let values =await form.validateFields();
+      
+     for(let [key, value] of Object.entries(values)) {
+        if(value.c && value.checked) {
+           let  [x, y] = value.c.split(',');
+           if(parseFloat(x) && parseFloat(y)) {
+            imageBuildingCoordinate.push({buildingId: key, x, y, r: value.r})
+           }
+        }
+     }
+     let params = {
+      projectId,
+      energyImage,
+      imageBuildingCoordinate,
+     }
      let {success,errMsg} = await UpdateEnergyImage.update(params)
      if(success) {
         message.success('保存成功')
@@ -73,45 +118,140 @@ export default function Index() {
         setLoading(false)
      }
     } catch (error) {
+        console.log(error)
         setLoading(false)
     }
     
   }
+  const getArea =async () => {
+   try {
+      let {success, data} =  await UpdateEnergyImage.AeraQueryAll(projectId)
+      if(success && Array.isArray(data)) {
+       setArea(data)
+      }else{
+       setArea([])
+      }
+   } catch (error) {
+      console.log(error)
+   }
 
+  }
   const query =async () => {
        try {
          setSpinning(true)
         let {success, data} = await  UpdateEnergyImage.query(projectId)
-        if(success) {
-            setEnergyImage(data)
+
+        if(success && isObject ) {
+            let {fileImage,imageBuildingCoordinateVos} = data;
+
+            setEnergyImage(fileImage)
+            if(Array.isArray(imageBuildingCoordinateVos)) {
+               imageBuildingCoordinateVos.forEach(i => {
+                   form.setFieldValue([i.buildingId, 'c'], [i.x, i.y].join(','));
+                   form.setFieldValue([i.buildingId, 'r'], i.r);
+                   form.setFieldValue([i.buildingId, 'checked'], true);
+               })
+               let checked = imageBuildingCoordinateVos.map(i => ({id: i.buildingId, name: i.buildName, top: i.y, left: i.x}))
+               setList(checked)
+            }
+          
             setSpinning(false)
         }else {
             setEnergyImage('')
             setSpinning(false)
         }
        } catch (error) {
+          console.log(error)
           setEnergyImage('')
           setSpinning(false)
        }
             
   }
+  const getPoint= (e) =>{
+    if(!Number.isInteger(curarea?.id)) return message.warning('请点击需要设置的区域')
+    let {offsetX, offsetY} = e.nativeEvent
+   let {id, name} = curarea
+     let tip = {
+        id,
+        name,
+        left: offsetX,
+        top: offsetY
+     }
+     let arr = [...list]
+     let index =  arr.findIndex(l => l.id == curarea.id)
+     
+    
+     if(index >=0) {
+       
+       arr.splice(index, 1, tip)
+       
+     }else {
+      arr = [...arr, tip]
+     }
+     console.log(arr)
+     setList(arr)
+     form.setFieldValue([curarea.id, 'c'], [offsetX, offsetY].join(','))
+     
+  }
+  const onset =(f, ar) => {
+    console.log(f)
+    if(f.target.checked) {
+      setCurarea(ar)
+    }else {
+      form.setFieldValue([ar.id, 'c'], null)
+    }
+  }
 
   useEffect(() => {
     if(!projectId) return
      query()
+     getArea()
   }, [projectId])
+  const msg =(<div style={{color: "#515151"}}>
+     <p>鼠标点击获取热点中心</p>
+     <p>默认热点半径40px,最小值16px,可以手动修改</p>
+  </div>)
   return (
      <Cspin spinning={spinning} tip="图片下载中……">
      <Main>
         <div className='title'>
             <span className='text'>园区图片</span>
-            <CustButtonT onClick={onSave} loading={loading} text="saveImage" />
+            <CustButton onClick={onSave} loading={loading} wh="auto">保存图片及热点</CustButton>
         </div>
         <div>
            <div className='imgbox'>
                 <Cupload wpx={1368} hpx={800} swpx={400} shpx={235} onChange={onChnage} maximum={800} value={energyImage}  /> 
            </div>
            <div className='tip'>（图片大小为: 1368*800 png或jpg 格式,不超过800KB）</div>
+        </div>
+        <Divider>设置图片热点区域</Divider>
+        <div className='setwrap'>
+         
+           <div className="set">
+              <img src={energyImage} onClick={getPoint} className='img' />
+              {list.map(l => <Ctag left={l.left} top={l.top} key={l.name}>{l.name}</Ctag>)}
+           </div>
+           <div className='point'>
+           <Form form={form}>
+             {
+               area.map(a => <Form.Item label={a.name} key={a.id}>
+                 <Space><Form.Item name={[a.id, 'c']}  noStyle>
+                     <Input style={{width: '80px'}} readOnly />
+                  </Form.Item>
+                  <Form.Item name={[a.id, 'r']} initialValue={40}  noStyle>
+                     <InputNumber min={16} />
+                  </Form.Item>
+                  <Form.Item name={[a.id, 'checked']} valuePropName="checked" noStyle>
+                  <Checkbox onChange={(f) =>onset(f,a) } />
+                  </Form.Item>  
+                  </Space>
+               </Form.Item>)
+             }
+             <Form.Item >
+                <Alert type="info" message={msg}></Alert>
+             </Form.Item>
+           </Form>
+           </div>
         </div>
      </Main>
      </Cspin>
