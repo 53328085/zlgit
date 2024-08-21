@@ -124,7 +124,7 @@ export default function Index(props) {
   ];
   
   const getData = () => {
-    // 表计状态
+    // 设备状态
     Statistics({
       projectId: projectId,
       areaId:  areaId,
@@ -139,7 +139,7 @@ export default function Index(props) {
     });
   };
   const getGatewayUsed = () => {
-    // 表计型号
+    // 设备型号
     QueryUsedDeviceCategory({
       projectId: projectId,
       deviceStyle: deviceStyle,
@@ -295,18 +295,18 @@ export default function Index(props) {
         >
           <Space size={64} split={<Cdivider />}>
             <Form.Item
-              label="表计查询"
+              label="设备查询"
               name="alike"
               style={{ marginBottom: 0 }}
             >
               <Serach
-                placeholder="输入设备名称/表计编号/安装地址"
+                placeholder="输入设备名称/设备编号/安装地址"
                 style={{ width: "340px" }}
                 onSearch={submit}
               />
             </Form.Item>
             <Form.Item
-              label="表计型号"
+              label="设备型号"
               name="category"
               style={{ marginBottom: 0 }}
             >
@@ -327,7 +327,7 @@ export default function Index(props) {
               </Select>
             </Form.Item>
             <Form.Item
-              label="表计状态"
+              label="设备状态"
               name="state"
               style={{ marginBottom: 0 }}
             >
