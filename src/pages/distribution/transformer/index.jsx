@@ -43,6 +43,11 @@ flex-direction: column;
     }
     
   }
+  .tablecss{
+    display:flex;
+    justify-content:space-between;
+    flex:1
+  }
 }
 .datastyle{
   flex: 1;
@@ -117,6 +122,30 @@ const chartOpt= {
    
   ]
 };
+const CustomTable =styled.div`
+  display:grid;
+  grid-template-rows:repeat(${props=>props.rows},33px);
+  grid-template-columns:repeat(${props=>props.cols/2},101px 121px);
+  .item1{
+    grid-column:1/${props=>props.cols+1};
+    background:#237ae4;
+    color:#fff;
+    text-align:center;
+    line-height:33px;
+  }
+  div{
+    border:1px solid #e4e4e4;
+    margin-right:-1px;
+    margin-bottom:-1px;
+    line-height:33px;
+    text-align:center
+  }
+  div:nth-child(2n){
+    background:#ecf5ff;
+    /* margin-left:-1px; */
+    width
+  }
+`
 export default function Index() {
   const projectId = useSelector(state => state.system.menus.projectId)  
   const chartRef =useRef()
@@ -233,7 +262,7 @@ export default function Index() {
             dataes['LoadPer'] =(parseFloat(it.value)/transInfo.current.capacity*100).toFixed(2)
           }
            })
-      
+        console.log(dataes)
         setTableData([dataes])
       }else{
         setTableData([])
@@ -451,7 +480,55 @@ export default function Index() {
             <MainDiv>
              <div className='trancss'>
              <TranCard  device={tabs[value]}/>
-             <UseTable columns={columns} bordered className={style.transformerTable} dataSource={tabledata}></UseTable>
+             {/* <UseTable columns={columns} bordered className={style.transformerTable} dataSource={tabledata}></UseTable> */}
+             <div className="tablecss">
+             <CustomTable rows={4} cols={2}>
+              <div className="item1">负荷状态</div>
+              <div>额定容量</div>
+              <div></div>
+              <div>视在功率</div>
+              <div></div>
+              <div>负载率</div>
+              <div></div>
+            </CustomTable>
+ 
+            <CustomTable rows={4} cols={4}>
+              <div className="item1">功率状态</div>
+              <div>有功功率</div>
+              <div></div>
+              <div>功率因数</div>
+              <div></div>
+              <div>无功功率</div>
+              <div></div>
+              <div>视在功率</div>
+              <div></div>
+              <div>单月最大需量</div>
+              <div></div>
+              <div>发生时间</div>
+              <div></div>
+            </CustomTable>
+            <CustomTable rows={4} cols={4}>
+              <div className="item1">电流/电压状态</div>
+              <div>A相电流</div>
+              <div></div>
+              <div>A相电压</div>
+              <div></div>
+              <div>B相电流</div>
+              <div></div>
+              <div>B相电压</div>
+              <div></div>
+              <div>C相电流</div>
+              <div></div>
+              <div>C相电压</div>
+              <div></div>
+            </CustomTable>
+            <CustomTable rows={2} cols={2}>
+              <div className="item1">风机状态</div>
+              <div>状态</div>
+              <div></div>
+            </CustomTable>
+             </div>
+            
              </div>
              <Divider dashed style={{borderColor:"#e4e4e4"}}></Divider>
              <Titlelayout title={<div style={{display: 'flex', alignItems: 'center', justifyContent: "space-between"}}>
