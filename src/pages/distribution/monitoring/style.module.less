@@ -1,0 +1,115 @@
+.transform{
+    width: 100%;
+    min-width: 1200px;
+    .transformheader{
+        background-color: #fff;
+        height: 48px;
+        line-height: 48px;
+        border: 1px solid #cccccc;
+        .areachoose{
+            padding: 0 16px;
+        }
+    }
+    .transformContent{
+        margin-top: 16px;
+        display: flex;
+        .transformList{
+            width:264px;
+            height: 950px;
+            background-color: #fff;
+            border: 1px solid #cccccc;
+            border-radius: 4px;
+        }
+        .chatrts{
+            width: 1400px;
+            margin-left: 16px;
+            .chartArea{
+                .totalCharts{
+                    height: 378px;
+                    width: 100%;
+                    background-color: #fff;
+                    margin-top:16px;
+                    .chartsheader{
+                        height: 32px;
+                        display: flex;
+                        justify-content: space-between;
+                        background-color: #237ae4;
+                        color: #fff;
+                        .totaltype{
+                            display: flex;
+                            height: inherit;
+                            align-items: center;
+                            .type{
+                                width:112px;
+                                text-align: center;
+                                height:100%;
+                                line-height:32px;
+                                border-left:1px solid #3399cc;
+                                border-right:1px solid #3399cc;
+                                margin-left:-1px;
+                                cursor: pointer;
+                            }
+                            .activetype{
+                                background-color: #003399;
+                                color: #fff;
+                            }
+                            .datetype{
+                                width: 86px;
+                               
+                            }
+                        }
+                    }
+                   
+                }
+            }
+        }
+        .table{
+            .transformerTable{
+                :global(.ant-empty-normal){
+                    margin: 0;
+                }
+                :global(th.ant-table-cell){
+                    background-color: #237ae4;
+                    color: #fff;
+                }
+            }
+        }
+    }
+}
+
+
+
+
+.card{
+    width: 232px;
+    height: 132px;
+    border: 1px solid #c9c9c9;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    background-color: #f6f6f6;
+    margin-right: 12px;
+    .title{
+        margin-left: 16px;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        .tag{
+            background-color: #009933;
+            color: #fff;
+            padding:0 3px;
+        }
+    }
+}
+.activecard{
+
+    background-color: #237ae4;
+    color: #fff;
+ 
+}
+.txtline{
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
