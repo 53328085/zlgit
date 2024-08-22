@@ -130,7 +130,7 @@ export default function Index() {
     config,
     setexparams,
     custview,
-    setAreaName
+    setAreaName,
   };
 
   const sethandler = () => {  
@@ -226,6 +226,16 @@ export default function Index() {
            break;     
          case "runtimeCarbonData":
             setConfig({isAreaId: false, isdate:true, shiftNo: true, dateType: 2});
+            break;
+        }
+      }
+      if(primary == "ledger") {
+        switch(nested) {
+          case "deviceLedger":
+           setConfig({recordBtn:false });
+           break;     
+         case "spareParts":
+            setConfig({recordBtn:true,custview: true });
             break;
         }
       }

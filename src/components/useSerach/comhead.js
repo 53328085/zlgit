@@ -1,6 +1,6 @@
-import React, {useState,  useEffect} from "react";
+import React, {useState,  useEffect,useRef} from "react";
 
-import { Form, Select,  Space, DatePicker, message,  Input,} from "antd";
+import { Form, Select,  Space, DatePicker, message,  Input, Button,} from "antd";
 import {useRequest} from 'ahooks' 
 import styled from "styled-components";
 import {  ExportExcel,i18t, CustTransO} from '@com/useButton'
@@ -47,7 +47,7 @@ export const AreaSelect = ({value, onChange, ...otherProps}) => {
 export default function UseSerach(props) {
   
   const isprodction =  process.env.NODE_ENV !== "production"
-  const {config={}, custview=null} = props  
+  const {config={}, custview=null,record=null} = props  
   const themcolor = useSelector(themeColor)   
   const [color, setColor] = useState(themcolor.primaryColor)
   const {isAreaId=true, gas=true} = config
@@ -226,6 +226,31 @@ const energytype = (
         <Select style={{ width: 112 }} options={energyoptions}></Select>
   </Item>
 )
+const modalRef= useRef()
+const getRecord=()=>{
+  modalRef.current.onOpen()
+}
+const [beiType,setBeiType]=useState(0)
+const [beiName,setBeiName]=useState(0)
+const changeType=(e)=>{
+  console.log(e)
+  setBeiType(e)
+}
+const changeName=(e)=>{
+  console.log(e)
+  setBeiName(e)
+}
+const [rangeTime,setRangeTime]=useState([])
+const changeTime=(dates, dateStrings)=>{
+  console.log(dates, dateStrings)
+  setRangeTime(dateStrings)
+}
+// 禁止选择今天的日期之前的日期
+const disabledDate = (current) => {
+  // Can not select days before today and today
+  return current && current > moment().endOf('day');
+};
+ 
 
 const getTank = async() => { // 初始化、 站点改变时 ; 储能柜
   if(!props.config.isTank) return;
@@ -373,9 +398,11 @@ const deviceStyleNode = (<Item name="deviceStyle" label="设备类型" initialVa
         {
           props.config?.dateR && carbonDateR // 碳排管理-- 碳排分析
         }
+        
         <Item noStyle name="projectId" initialValue={projectId}>
            <Input hidden />
         </Item>
+        
         {
           props.config.textloop && <Textloop />
         }
