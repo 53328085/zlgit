@@ -93,14 +93,15 @@ export default function Maincontent(props) {
      color: '#fff'
  }
  const onChange = (key) => {  
-    console.log(key)
+    
     setvalue(key)
     setDefaultTab(key)
     setSearchParams({item: key})
     navigate(`${pathName}?item=${key}`, {state: urlstate})
  }
 
-useEffect(() => {   
+useEffect(() => {  
+    
     let param = searchParams.get('item')
     
     let {pathname, state} = location
@@ -109,10 +110,13 @@ useEffect(() => {
     if(initialval &&param) {
         setSearchParams({item: initialval})
     }else if(param) {
-        setvalue(param)
+        if(setvalue) {
+            setvalue(param)
+        }
+        
         setDefaultTab(param)
     }
-}, [location.pathname])
+}, [location.pathname, setvalue])
  const TabsEl = () => {   
      if (!beTabs) return null    
      return (

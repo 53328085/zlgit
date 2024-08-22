@@ -38,7 +38,7 @@ const Boxdiv = styled(Card)`
     background-color: transparent;
   }
  .ant-card-body {
-  padding: 0;
+  padding: ${props => props.bodypad};
   display: ${props => props.layout || 'block'};
   flex-direction: ${props => props.dr || 'row'};
   & .flex {
@@ -49,7 +49,8 @@ const Boxdiv = styled(Card)`
 `
 Boxdiv.defaultProps = {
   bordered: 'y',
-  pv: '16px'
+  pv: '16px',
+  bodypad: '0px'
 }
 export default function Titlelayout({title='', children, ...other}) {
   return (
