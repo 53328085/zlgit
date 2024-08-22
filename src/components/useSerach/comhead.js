@@ -226,114 +226,6 @@ const energytype = (
         <Select style={{ width: 112 }} options={energyoptions}></Select>
   </Item>
 )
-const modalRef= useRef()
-const getRecord=()=>{
-  modalRef.current.onOpen()
-}
-const [beiType,setBeiType]=useState(0)
-const [beiName,setBeiName]=useState(0)
-const changeType=(e)=>{
-  console.log(e)
-  setBeiType(e)
-}
-const changeName=(e)=>{
-  console.log(e)
-  setBeiName(e)
-}
-const [rangeTime,setRangeTime]=useState([])
-const changeTime=(dates, dateStrings)=>{
-  console.log(dates, dateStrings)
-  setRangeTime(dateStrings)
-}
-// 禁止选择今天的日期之前的日期
-const disabledDate = (current) => {
-  // Can not select days before today and today
-  return current && current > moment().endOf('day');
-};
-const columns = [
-  {
-    title: '日期时间',
-    dataIndex: 'alarmTime',
-    key: 'alarmTime',
-    align: 'center'
-  },
-  {
-    title: '领用人',
-    dataIndex: 'level',
-    key: 'level',
-    align: 'center'
-  },
-  {
-    title: ' 备件名称',
-    dataIndex: 'alarmEvent',
-    key: 'alarmEvent',
-    align: 'center'
-  },
-  {
-    title: '备件类型',
-    dataIndex: 'name',
-    key: 'name',
-    align: 'center'
-  }, {
-    title: '操作',
-    dataIndex: 'name',
-    key: 'name',
-    align: 'center'
-  }, {
-    title: '数量',
-    dataIndex: 'name',
-    key: 'name',
-    align: 'center'
-  }, {
-    title: '备注',
-    dataIndex: 'name',
-    key: 'name',
-    align: 'center'
-  },
-]
-const [tabledata,setTabledata] = useState([{name:1}])
-const recordBtn = (
- <div>
-   <Item label=""  name="record" initialValue={1} style={{position: 'absolute', right: '135px'}}>
-        <Button type="primary" onClick={getRecord}>出入库记录</Button>
-  </Item>
-  <UseModal width={1469} height={697}
-  ref={modalRef}
-  mold = 'cust'
-  custft={false}
-  footer={false}
-  title="出入库记录"
-  closable
-  >
-      <div style={{margin:'16px 0',width:'1410px',height:'600px'}}>
-          <div style={{display: 'flex', flexWrap: 'nowrap', justifyContent: 'space-between',flexDirection: 'row',marginBottom: '16px'}}>
-           <div style={{display: 'flex', flexWrap: 'nowrap', flexDirection: 'row'}}>
-           <div style={{marginRight: '16px'}}>
-           <span style={{marginRight: '16px'}}>备件类型</span>
-            <Select style={{ width: 112 }} defaultValue={0} options={[
-              {deviceStyleName: '全部', id: 0},{deviceStyleName: '常用品', id: 1}
-            ]} fieldNames={{label: 'deviceStyleName', value: 'id'}} onChange={changeType}></Select>
-           </div>
-           <div> <span style={{marginRight: '16px'}}>备件名称</span>
-            <Select style={{ width: 112 }} defaultValue={0} options={[
-              {deviceStyleName: '全部', id: 0},{deviceStyleName: '绝缘靴', id: 1},{deviceStyleName: '绝缘手套', id: 2}
-            ]} fieldNames={{label: 'deviceStyleName', value: 'id'}} onChange={changeName}></Select></div>
-           </div>
-            <div>
-              <span style={{marginRight: '16px'}}>操作时间</span>
-              <RangePicker format='YYYY-MM-DD'   onChange={changeTime} disabledDate={disabledDate}/>
-            </div>
-          </div>
-          <Usetable 
-            hbg="#f0f9ff"
-            hbc="#515151"
-            columns={columns} 
-            dataSource={tabledata} 
-            />
-      </div>
-  </UseModal>
- </div>
-)
 
 const getTank = async() => { // 初始化、 站点改变时 ; 储能柜
   if(!props.config.isTank) return;
@@ -485,9 +377,9 @@ const deviceStyleNode = (<Item name="deviceStyle" label="设备类型" initialVa
         <Item noStyle name="projectId" initialValue={projectId}>
            <Input hidden />
         </Item>
-        {
+        {/* {
           props.config?.recordBtn&& recordBtn // 台账管理-备件管理
-        }
+        } */}
      {
         isprodction &&  (<Input type="color" value={color}
               style={{width: '80px', marginLeft: 'auto'}}

@@ -232,10 +232,10 @@ export default function Index() {
       if(primary == "ledger") {
         switch(nested) {
           case "deviceLedger":
-           setConfig({recordBtn:false });
+           setConfig({custview:false });
            break;     
          case "spareParts":
-            setConfig({recordBtn:true});
+            setConfig({custview:true});
             break;
         }
       }
