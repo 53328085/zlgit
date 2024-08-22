@@ -1,22 +1,11 @@
  
-import React, { useState, Fragment } from 'react';
+import React, { useState } from 'react';
 import {Typography} from 'antd'
 import {CaretRightOutlined} from '@ant-design/icons'
 import styled from 'styled-components';
 import { TextLoop } from "react-text-loop-next";
 import warn from './waring.svg'
-import Snk from './snker.png'
 const {Text} = Typography
-const Showbox =styled.div`
-    height: 48px;
-    padding: 0 8px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    background-color: #f00;
-    cursor: pointer;
-     
- `
 const Textscroll = styled.div`
   width: 538px;
   height: 48px;
@@ -26,19 +15,15 @@ const Textscroll = styled.div`
   padding: 0 6px 0px 8px ;
   overflow: hidden;
   column-gap: 8px;
- 
   .warning {
      background-color: #fff;
      display: flex;
      align-items: center;
-     column-gap: 8px;
+     column-gap: 16px;
      font-size: 16px;
      height: 32px;
-     padding: 0 4px 0 8px;
+     padding: 0 8px;
      color: #f00;
-     .ant-typography {
-        color: #f00;
-    }
      .img {
         width: 24px;
         height: 24px;
@@ -75,14 +60,12 @@ const App = ({num=2}) => {
         text: 'Ia电流越限,越限告警:[80,∞];Ia=263.60'
     }
    ]
-   const [show, setShow] = useState(true)
    return(
-        <Fragment>
-          {show ?
+    <div style={{margin: "30px"}}>
         <Textscroll>
              <div className='warning'>
                 <img src={warn} alt="" className='img' /> 
-                <Text ellipsis={{tooltip: num}}>告警({num})</Text>
+                <span>告警数({num})</span>
              </div>
              <TextLoop>
               {
@@ -91,11 +74,11 @@ const App = ({num=2}) => {
                     <Text ellipsis={{tooltip: d.text}}>{d.text}</Text>
                 </div>)
               }
-             </TextLoop>           
-             <CaretRightOutlined style={{color: "#fff", fontSize: '16px', cursor: "pointer", marginLeft: 'auto'}} onClick={() => setShow(false)} />            
+             </TextLoop>
+             <CaretRightOutlined style={{color: "#fff", fontSize: '16px', cursor: "pointer", marginLeft: 'auto'}} />
         </Textscroll>
-        : <Showbox  onClick={() =>setShow(true) }><img src={Snk} alt="" /> </Showbox> }
-        </Fragment>
+       
+    </div>
    )
 };
 export default App;
