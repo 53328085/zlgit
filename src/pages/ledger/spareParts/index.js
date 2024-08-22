@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect, useCallback, useMemo } from 'react'
 import styled from 'styled-components'
-import {  Space, Button, message ,InputNumber,Input  } from 'antd'
+import {  Space, Button, message ,InputNumber,Input,Select,DatePicker  } from 'antd'
 import { nanoid } from "@reduxjs/toolkit"
 import { selectcurlRommid, selectProjectId } from "@redux/systemconfig";
  
@@ -10,6 +10,8 @@ import { useSelector, useDispatch } from 'react-redux'
 import Pagecount from "@com/pagecontent";
 import UseModal from '@com/useModal'
 import { getInitialProps } from 'react-i18next';
+import {useOutletContext} from 'react-router-dom' 
+
 const Mainbox = styled.div`
     && {
       flex: 1;
@@ -56,7 +58,15 @@ const Mainbox = styled.div`
 
 `
 export default  function Index() {
+  let {setCustview} = useOutletContext()
+const { RangePicker } = DatePicker;
 
+    useEffect(() => {
+      setCustview(<Button style={{position:'absolute',right:'130px'}} type="primary" onClick={getRecord}>出入库记录</Button>);
+      return () => {
+        setCustview(undefined)
+      }
+     }, []) 
   const projectId = useSelector(selectProjectId)
   const roomId = useSelector(selectcurlRommid)
   const columns = [
@@ -186,6 +196,72 @@ export default  function Index() {
    }
 
   }
+  const modalRefRecord= useRef()
+const getRecord=()=>{
+  modalRefRecord.current.onOpen()
+}
+const [beiType,setBeiType]=useState(0)
+const [beiName,setBeiName]=useState(0)
+const changeType=(e)=>{
+  console.log(e)
+  setBeiType(e)
+}
+const changeName=(e)=>{
+  console.log(e)
+  setBeiName(e)
+}
+const [rangeTime,setRangeTime]=useState([])
+const changeTime=(dates, dateStrings)=>{
+  console.log(dates, dateStrings)
+  setRangeTime(dateStrings)
+}
+// 禁止选择今天的日期之前的日期
+const disabledDate = (current) => {
+  // Can not select days before today and today
+  return current && current > moment().endOf('day');
+};
+const columnsRecord = [
+  {
+    title: '日期时间',
+    dataIndex: 'alarmTime',
+    key: 'alarmTime',
+    align: 'center'
+  },
+  {
+    title: '领用人',
+    dataIndex: 'level',
+    key: 'level',
+    align: 'center'
+  },
+  {
+    title: ' 备件名称',
+    dataIndex: 'alarmEvent',
+    key: 'alarmEvent',
+    align: 'center'
+  },
+  {
+    title: '备件类型',
+    dataIndex: 'name',
+    key: 'name',
+    align: 'center'
+  }, {
+    title: '操作',
+    dataIndex: 'name',
+    key: 'name',
+    align: 'center'
+  }, {
+    title: '数量',
+    dataIndex: 'name',
+    key: 'name',
+    align: 'center'
+  }, {
+    title: '备注',
+    dataIndex: 'name',
+    key: 'name',
+    align: 'center'
+  },
+]
+const [tabledataRecord,setTabledataRecord] = useState([{name:1}])
   useEffect(() => {
     if(roomId) {
      // warnPage()
@@ -256,6 +332,41 @@ export default  function Index() {
                     </div>
                 </div>
             </UseModal>
+            <UseModal width={1469} height={697}
+  ref={modalRefRecord}
+  mold = 'cust'
+  custft={false}
+  footer={false}
+  title="出入库记录"
+  closable
+  >
+      <div style={{margin:'16px 0',width:'1410px',height:'600px'}}>
+          <div style={{display: 'flex', flexWrap: 'nowrap', justifyContent: 'space-between',flexDirection: 'row',marginBottom: '16px'}}>
+           <div style={{display: 'flex', flexWrap: 'nowrap', flexDirection: 'row'}}>
+           <div style={{marginRight: '16px'}}>
+           <span style={{marginRight: '16px'}}>备件类型</span>
+            <Select style={{ width: 112 }} defaultValue={0} options={[
+              {deviceStyleName: '全部', id: 0},{deviceStyleName: '常用品', id: 1}
+            ]} fieldNames={{label: 'deviceStyleName', value: 'id'}} onChange={changeType}></Select>
+           </div>
+           <div> <span style={{marginRight: '16px'}}>备件名称</span>
+            <Select style={{ width: 112 }} defaultValue={0} options={[
+              {deviceStyleName: '全部', id: 0},{deviceStyleName: '绝缘靴', id: 1},{deviceStyleName: '绝缘手套', id: 2}
+            ]} fieldNames={{label: 'deviceStyleName', value: 'id'}} onChange={changeName}></Select></div>
+           </div>
+            <div>
+              <span style={{marginRight: '16px'}}>操作时间</span>
+              <RangePicker format='YYYY-MM-DD'   onChange={changeTime} disabledDate={disabledDate}/>
+            </div>
+          </div>
+          <Usetable 
+            hbg="#f0f9ff"
+            hbc="#515151"
+            columns={columnsRecord} 
+            dataSource={tabledataRecord} 
+            />
+      </div>
+  </UseModal>
         </Titlelayout>
       </Mainbox>
       </Pagecount>
