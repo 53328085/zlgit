@@ -144,7 +144,7 @@ useEffect(()=> {
  }
  
 const dateselect = (
-  <Space size={16}>
+  <Space size={16} style={{marginLeft:'16px'}}>
   <Item   name="type" initialValue={1}>
      <Select style={{width: '80px'}}   options={[
       {value: 1, label: i18t("comm","day")},
@@ -281,7 +281,7 @@ const getPcs = async () => {
 }
 
 
-// 表计类型
+// 设备类型
  let currdeviceStyle = `deviceStyle_${projectId}`
 const deviceStyleChange=(v) => {
  
@@ -289,7 +289,7 @@ const deviceStyleChange=(v) => {
 }
 let stordevices = window.localStorage.getItem(currdeviceStyle);
 let initdeviceStyle = stordevices ? parseInt(stordevices) : parseInt(DeviceStyle?.[0].deviceStyle)
-const deviceStyleNode = (<Item name="deviceStyle" label="表计类型" initialValue={initdeviceStyle}>
+const deviceStyleNode = (<Item name="deviceStyle" label="设备类型" initialValue={initdeviceStyle}>
 
 <Select options={DeviceStyle} fieldNames={{label: "name", value: "deviceStyle"}} style={{width: '200px'}} onChange={deviceStyleChange}></Select>  
 </Item>)
