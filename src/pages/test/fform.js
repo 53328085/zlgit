@@ -1,113 +1,30 @@
-import { Tree } from 'antd';
-import React, { useState } from 'react';
-import {AccountBookFilled,CalculatorFilled} from '@ant-design/icons'
-const {DirectoryTree} = Tree
-const treeData = [
-  {
-    title: '0-0',
-    key: '0-0',
-    children: [
-      {
-        title: '0-0-0',
-        key: '0-0-0',
-        icon: <AccountBookFilled />,
-        children: [
-          {
-            title: '0-0-0-0',
-            key: '0-0-0-0',
-          },
-          {
-            title: '0-0-0-1',
-            key: '0-0-0-1',
-          },
-          {
-            title: '0-0-0-2',
-            key: '0-0-0-2',
-          },
-        ],
-      },
-      {
-        title: '0-0-1',
-        key: '0-0-1',
-        children: [
-          {
-            title: '0-0-1-0',
-            key: '0-0-1-0',
-          },
-          {
-            title: '0-0-1-1',
-            key: '0-0-1-1',
-          },
-          {
-            title: '0-0-1-2',
-            key: '0-0-1-2',
-          },
-        ],
-      },
-      {
-        title: '0-0-2',
-        key: '0-0-2',
-      },
-    ],
-  },
-  {
-    title: '0-1',
-    key: '0-1',
-    children: [
-      {
-        title: '0-1-0-0',
-        key: '0-1-0-0',
-      },
-      {
-        title: '0-1-0-1',
-        key: '0-1-0-1',
-      },
-      {
-        title: '0-1-0-2',
-        key: '0-1-0-2',
-      },
-    ],
-  },
-  {
-    title: '0-2',
-    key: '0-2',
-  },
-];
-const App = () => {
-  const [expandedKeys, setExpandedKeys] = useState(['0-0-0', '0-0-1']); //展开
-  const [checkedKeys, setCheckedKeys] = useState(['0-0-0-0', '0-0-0-2', '0-0-1']);
-  const [selectedKeys, setSelectedKeys] = useState([]);
-  const [autoExpandParent, setAutoExpandParent] = useState(true);
-  const onExpand = (expandedKeysValue) => {
-    console.log('onExpand', expandedKeysValue);
-    // if not set autoExpandParent to false, if children expanded, parent can not collapse.
-    // or, you can remove all expanded children keys.
-    setExpandedKeys(expandedKeysValue);
-    setAutoExpandParent(false);
+ 
+import React, { useState, useRef } from 'react';
+import {Typography} from 'antd'
+import {CaretRightOutlined} from '@ant-design/icons'
+import styled from 'styled-components';
+ import {renderAsync} from 'docx-preview'
+ 
+ //import 'jszip'
+const App = ({num=2}) => {
+    const [file, setFile] = useState(null);  
+  const ref=useRef()
+  const handleFileChange = (e) => {  
+    const file = e.target.files[0];  
+    if (file) {  
+      renderAsync(file, ref.current).then(res => {
+        console.log(res)
+      })
+    }  
   };
-  const onCheck = (checkedKeysValue) => {
-    console.log('onCheck', checkedKeysValue);
-    setCheckedKeys(checkedKeysValue);
-  };
-  const onSelect = (selectedKeysValue, info) => {
-    console.log('onSelect', info);
-    setSelectedKeys(selectedKeysValue);
-  };
-  return (
-    <Tree
-      checkable
-    
-      switcherIcon={<CalculatorFilled/>}
-      blockNode
-      onExpand={onExpand}
-      expandedKeys={expandedKeys}
-      autoExpandParent={autoExpandParent}
-      onCheck={onCheck}
-      checkedKeys={checkedKeys}
-      onSelect={onSelect}
-      selectedKeys={selectedKeys}
-      treeData={treeData}
-    />
-  );
+   
+   return(
+    <div style={{margin: "30px"}}>
+        <input type="file" accept=".docx" onChange={handleFileChange} />
+       <div id="doc" style={{width: "800px", height: '880px'}} ref={ref}></div>
+
+       
+    </div>
+   )
 };
 export default App;

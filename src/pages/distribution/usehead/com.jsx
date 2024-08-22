@@ -5,6 +5,7 @@ import { Select, Button, DatePicker, Form, Divider, message,Space } from 'antd'
 import {useLocation} from 'react-router-dom'
 import {DistributionRoomRuntime,distributionRoom, Area} from '@api/api.js'
 import {  getcurlRommid,setCurrentlevel, levelDefaultLabel,  getRoomId, roomId, selectcurlRommid, getcurlRommidl} from "@redux/systemconfig";
+import Textloop from '@com/textloop'
 export default  memo(function Index(props) {
   const location = useLocation()
   let { state = {} } = location
@@ -115,12 +116,12 @@ useEffect(() => {
 }, [nested])
 return (
   <div>
-          <div style={{backgroundColor: "#fff", display: 'flex', alignItems: 'center', padding: '7px 16px', border: '1px solid #d7d7d7', borderRadius: 4 }}>
+          <div style={{backgroundColor: "#fff", paddingLeft: '16px', border: '1px solid #d7d7d7', borderRadius: 4 }}>
               <Form
                   form={form}
                   colon={false}
                   layout="inline"  
-                  style={{flex: 1}}               
+                  style={{flex: 1,  display: 'flex', alignItems: 'center',}}               
               >
                   <Form.Item label={levelName}   name="area" style={{ marginBottom: 0 }}>
                       <Select 
@@ -157,6 +158,10 @@ return (
                       <DatePicker size='middle'  onChange={changeTime}></DatePicker>
                     </Form.Item>
                   }
+                  <Form.Item style={{marginLeft: 'auto', marginRight: 0}}>
+                  <Textloop />
+                  </Form.Item>
+                 
               </Form>
             
           </div>

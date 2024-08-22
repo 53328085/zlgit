@@ -1,6 +1,6 @@
-import React, {useState,  useEffect} from "react";
+import React, {useState,  useEffect,useRef} from "react";
 
-import { Form, Select,  Space, DatePicker, message,  Input,} from "antd";
+import { Form, Select,  Space, DatePicker, message,  Input, Button,} from "antd";
 import {useRequest} from 'ahooks' 
 import styled from "styled-components";
 import {  ExportExcel,i18t, CustTransO} from '@com/useButton'
@@ -11,7 +11,7 @@ import 'moment/locale/zh-cn';
 const { RangePicker } = DatePicker;
 import {SiteManagerDesigner, PCSMonitorRuntime, StorageContainerDesigner, Editapi} from '@api/api'
 import {Cdivider, Radiogroup} from '@com/comstyled'
-
+import Textloop from '@com/textloop'
 
 import Enery from "./enery";
 
@@ -47,7 +47,7 @@ export const AreaSelect = ({value, onChange, ...otherProps}) => {
 export default function UseSerach(props) {
   
   const isprodction =  process.env.NODE_ENV !== "production"
-  const {config={}, custview=null} = props  
+  const {config={}, custview=null,record=null} = props  
   const themcolor = useSelector(themeColor)   
   const [color, setColor] = useState(themcolor.primaryColor)
   const {isAreaId=true, gas=true} = config
@@ -226,7 +226,6 @@ const energytype = (
         <Select style={{ width: 112 }} options={energyoptions}></Select>
   </Item>
 )
-
 const getTank = async() => { // 初始化、 站点改变时 ; 储能柜
   if(!props.config.isTank) return;
   try {
@@ -373,9 +372,14 @@ const deviceStyleNode = (<Item name="deviceStyle" label="设备类型" initialVa
         {
           props.config?.dateR && carbonDateR // 碳排管理-- 碳排分析
         }
+        
         <Item noStyle name="projectId" initialValue={projectId}>
            <Input hidden />
         </Item>
+        
+        {/* {
+          props.config.textloop && <Textloop />
+        } */}
      {
         isprodction &&  (<Input type="color" value={color}
               style={{width: '80px', marginLeft: 'auto'}}
