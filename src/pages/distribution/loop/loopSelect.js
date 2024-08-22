@@ -8,47 +8,7 @@ export default forwardRef(
     const { Search } = Input;
 
       const [treeData, setTreeData] = useState([
-      //   {
-      //   title:'总出线1',
-      //   key:'1',
-      //   children:[{
-      //     title:'回路1-1',
-      //     key:'1-1',
-      //   },{
-      //       title:'回路1-2',
-      //       key:'1-2',
-      //       children:[{
-      //           title:'回路1-2-1',
-      //           key:'1-2-1',
-      //       },{
-      //           title:'回路1-2-2',
-      //           key:'1-2-2',
-      //       },{
-      //           title:'回路1-2-3',
-      //           key:'1-2-3',
-      //       }]
-      //   }]
-      // },{
-      //   title:'总出线2',
-      //   key:'2',
-      //   children:[{
-      //     title:'回路2-1',
-      //     key:'2-1',
-      //   },{
-      //       title:'回路2-2',
-      //       key:'2-2',
-      //       children:[{
-      //           title:'回路2-2-1',
-      //           key:'2-2-1',
-      //       },{
-      //           title:'回路2-2-2',
-      //           key:'2-2-2',
-      //       },{
-      //           title:'回路2-2-3',
-      //           key:'2-2-3',
-      //       }]
-      //   }]
-      // },
+    
     ])
     const [selectedKeys,setSelectedKeys] =useState([0])
       const onSelect=(selectedKeys,e)=>{
