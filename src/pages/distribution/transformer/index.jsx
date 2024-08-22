@@ -16,7 +16,7 @@ import  imgurl from '@imgs'
 import moment from 'moment'
  
 import Titlelayout from '@com/titlelayout' 
-
+ 
 const MainDiv =styled.div`
 background-color: #fff;
 flex: 1;
@@ -104,7 +104,7 @@ const chartOpt= {
       color:"#333"
     },
   },
-
+ 
   dataZoom:{
     type: 'inside',
     start:'50',
@@ -167,7 +167,7 @@ export default function Index() {
       value:7,
       label:'总功率因数'},
   ]
-
+ 
   const changeRadio=(e)=>{
     setPattern(e.target.value)
   }
@@ -216,12 +216,12 @@ export default function Index() {
       console.log(error)
     }
   }
-
+ 
   //变压器 表格数据
   const RuntimePoints =async(sn)=>{
     if(!sn) return;
     const res = await DistributionRoomRuntime.RuntimePoints(projectId,sn)
-
+ 
     if(res.success){
       if(res.data.data){
         const dataes = structuredClone(res.data)
@@ -364,7 +364,7 @@ export default function Index() {
   //导出echarts
    //导出图片
   const Export = () => {
-
+ 
     let myChart = initchartRef.current.getDataURL({
       type: "png",
       pixelRatio: 1, //放大2倍
@@ -373,7 +373,7 @@ export default function Index() {
     console.log()
     var img = new Image();
     img.src = myChart
-
+ 
     img.onload = function () {
       var canvas = document.createElement("canvas");
       canvas.width = img.width;
@@ -381,7 +381,7 @@ export default function Index() {
       var ctx = canvas.getContext("2d");
       ctx.drawImage(img, 0, 0);
       var dataURL = canvas.toDataURL("image/png");
-
+ 
       var a = document.createElement("a");
       // 创建一个单击事件
       var event = new MouseEvent("click");
@@ -393,7 +393,7 @@ export default function Index() {
       a.dispatchEvent(event);
     };
   }
-
+ 
   //数据导出
   const exportData=()=>{
     pattern ===1 &&Export()

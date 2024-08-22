@@ -385,6 +385,7 @@ const Energyitem = ({op}) => {
 const Electric = ({data, des, datetype}) => {
   let {lastDayPeriodValue,lastMonthPeriodValue,lastYearPeriodValue  } = data
   let timetype = ['', lastDayPeriodValue,lastMonthPeriodValue,lastYearPeriodValue][datetype]
+  let icon = tabvalue == 2 ? 'electric' : 'water';
   const pieref = useRef()
   useEffect(() => {
     drawEcharts(pieref.current, {
@@ -407,7 +408,7 @@ const Electric = ({data, des, datetype}) => {
       <Titlelayout title={<Title title={data?.name} />} key="electr" >
       <Engbox type={tabvalue}>
         <Image
-          src={imgurl.z08}
+          src={imgurl[icon]}
           preview={false}
           width={64}
           height={64}

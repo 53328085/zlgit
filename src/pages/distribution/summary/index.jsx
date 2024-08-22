@@ -1,12 +1,12 @@
 import React, { useEffect, useState,  } from 'react'
 import { useSelector } from 'react-redux'
 import {selectcurlRommid, selectProjectId, roomName } from "@redux/systemconfig";
-
+ 
 import styled from 'styled-components'
 import Pagecount from '@com/pagecontent'
-
+ 
 import {message ,Image, Typography } from 'antd'
-
+ 
  
 import { DistributionRoomRuntime } from '@api/api.js'
 import dimg from './icon/3dimg.png'
@@ -14,7 +14,7 @@ import imgurl from '@imgs'
 import {Cspin} from "@com/comstyled"
 import {isObject} from "@com/usehandler"
 const {Text} = Typography
-
+ 
 const Mainbox = styled.div`
   flex: 1;
   position: relative;
@@ -28,8 +28,7 @@ const Mainbox = styled.div`
     height: 732px;
    overflow-y: auto;
     .card{
-    //  width: max-content;
-     column-gap: 4px;
+      width: 256px;
       height: 48px;
       background-color: rgba(15, 34, 63, 0.8);
       border: 1px solid rgba(0, 153, 204, 1);
@@ -41,7 +40,7 @@ const Mainbox = styled.div`
         padding-left: 12px;
         display: inline-block;
         color: #fff;
-      //  width: 130px;
+        width: 130px;
       }
       .imgtip{
         display: flex;
@@ -72,16 +71,16 @@ const Mainbox = styled.div`
     }
   }
  `
-
-
-
-
-
-
+ 
+ 
+ 
+ 
+ 
+ 
 export default function Index() {
  
   const projectId = useSelector(selectProjectId)
-
+ 
   const roomId = useSelector(selectcurlRommid)
   const rname = useSelector(roomName)
   
@@ -129,7 +128,7 @@ export default function Index() {
     <div className='card'>
     <div className='imgtip'>
       <img src={src} alt="" />
-     <Text ellipsis={{tooltip: name}}>{name}</Text>  
+      <Text ellipsis={{tooltip: name}}>{name}</Text>
     </div>
   <div className='cardval'>{value}</div> 
   </div>
@@ -146,8 +145,8 @@ export default function Index() {
         <Mainbox >
           <div style={{flex: 1, alignItems: 'center', justifyContent: 'center', display: 'flex'}}>
         {/*   <img className='bgiamge' src={imgBg || dimg}></img> */}
-
-
+ 
+ 
         {/* door, fire, ht, noise, sF6, smoke, water */}
         <Image src={imgBg} preview={false} fallback={dimg} />
           </div>
@@ -156,7 +155,7 @@ export default function Index() {
              {rname}环境监控
             </div>
              
-
+ 
              {
               (ht && Array.isArray(ht)) ?  ht.map(t =>  <Custcard src={imgurl.temperature} name={t.name}  value={t.tValue}   />)  : null
              }
@@ -167,12 +166,12 @@ export default function Index() {
                (noise && Array.isArray(noise)) ?  noise.map(t =>  <Custcard src={imgurl.nosie} name={t.name}  value={t.value}   />)  : null
              }
        
-
+ 
             {(water && Array.isArray(water)) ? water.map(w =><Custcard src={imgurl.water} name={w.name}  value={w.value}   /> ) : null}
         
-
+ 
           {(sF6 && Array.isArray(sF6)) ? sF6.map(w =><Custcard src={imgurl.smook} name={w.name}  value={w.value}   /> ) : null}  
-
+ 
           {(smoke && Array.isArray(smoke)) ? smoke.map(w =><Custcard src={imgurl.smook} name={w.name}  value={w.value}   /> ) : null}  
    
           {(fire && Array.isArray(fire)) ? fire.map(w =><Custcard src={imgurl.fire} name={w.name}  value={w.value}   /> ) : null}  

@@ -31,7 +31,7 @@
     background-color: #fff;
     border: 1px solid rgb(215, 215, 215);
     border-radius: 4px;
-  //  margin-right: 16px;
+    //  margin-right: 16px;
     display: flex;
     align-items: center;
     justify-content: flex-start;
@@ -85,35 +85,39 @@
         }
 
         .btnStyle {
-            display: grid;
-            grid-template-columns: repeat(2, 200px);
-            grid-template-rows: repeat(1, 35px);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 380px;
 
             .btnBoxStyle {
                 display: flex;
                 flex-direction: row;
+                align-items: center;
+                justify-content: space-between;
+                border-radius: 93px;
+                width: 186px;
+                border: 1px solid rgb(215, 215, 215);
+                height: 24px;
+                border-radius: 40px;
+                background-color: rgba(0, 0, 51, 1);
+                color: #33FF00;
             }
 
             .timeStyle {
                 width: 80px;
                 height: 24px;
                 font-size: 12px;
-                background-color: var(--ant-primary-color);
                 color: #fff;
-                text-align: center;
                 line-height: 24px;
             }
 
             .timeValueStyle {
                 width: 100px;
                 height: 24px;
-                background-color: #fff;
-                color: #003366;
-                border: 1px solid rgb(215, 215, 215);
                 font-size: 14px;
-                text-align: right;
+                text-align: center;
                 line-height: 24px;
-                padding-right: 8px;
             }
         }
     }
@@ -178,7 +182,7 @@
     margin-right: 16px;
     bottom: 16px;
 
-    
+
 }
 
 /* .tableHead {
@@ -212,27 +216,26 @@
     display: flex;
     flex-direction: row;
     margin-bottom: 12px;
+    border-radius: 40px;
+    background-color: rgba(0, 0, 51, 1);
 
     .timeStyle {
         width: 80px;
         height: 24px;
         font-size: 12px;
-        background-color: var(--ant-primary-color);
         color: #fff;
-        text-align: center;
         line-height: 24px;
+        padding-left: 10px;
     }
 
     .timeValueStyle {
         width: 300px;
         height: 24px;
-        background-color: #fff;
-        color: #003366;
-        border: 1px solid rgb(215, 215, 215);
+        color: #33FF00;
         font-size: 14px;
         text-align: right;
         line-height: 24px;
-        padding-right: 8px;
+        padding-right: 10px;
     }
 }
 
@@ -253,7 +256,7 @@
             width: 200px;
             height: 62px;
             margin-right: 16px;
-           
+
         }
 
         p {
@@ -270,15 +273,15 @@
         padding: 16px;
         display: flex;
         flex-direction: row;
-       
+
 
         .left {
             width: 304px;
-           
+
             background-color: #fff;
             padding: 16px;
             margin-right: 16px;
-            overflow: auto;
+
             .leftHead {
                 display: flex;
                 flex-direction: row;
@@ -325,7 +328,8 @@
                     align-items: center;
                     justify-content: center;
                 }
-                .leftImgStateOff{
+
+                .leftImgStateOff {
                     width: 96px;
                     height: 32px;
                     background-color: #666;
@@ -338,7 +342,8 @@
                     align-items: center;
                     justify-content: center;
                 }
-                .leftImgStateAlarm{
+
+                .leftImgStateAlarm {
                     width: 96px;
                     height: 32px;
                     background-color: rgb(255, 77, 79);
@@ -355,11 +360,10 @@
 
             .leftBottom {
                 width: 272px;
-               // height: 620px;
+                // height: 620px;
                 border: 1px solid rgb(215, 215, 215);
                 padding: 16px;
                 margin-top: 16px;
-                margin-bottom: 48px;
 
                 p {
                     height: 32px;
@@ -382,11 +386,12 @@
 
         .right {
             width: 1568px;
-           
+
             background-color: #fff;
             position: relative;
             display: flex;
             flex-direction: column;
+
             .rightHead {
                 height: 40px;
                 background-color: #135ABD;
@@ -441,127 +446,144 @@
             }
 
             .tableBox {
-                padding:16px;
-                width: 100%; 
+                padding: 16px;
+                width: 100%;
                 overflow-y: scroll;
-                .dataHeader{
+
+                .dataHeader {
                     width: 1536px;
                     height: 36px;
-                    background-color:var(--ant-primary-color);
+                    background-color: var(--ant-primary-color);
                     padding: 0 16px;
                     color: #fff;
                     line-height: 36px;
                 }
-                .dataBottom{
+
+                .dataBottom {
                     display: grid;
-                    grid-template-columns: repeat(3,512px);
-                    .itemBox{
-                    display: flex;
-                    flex-direction: row;
-                    .itemHead{
-                        background-color: rgb(236,245,255);
-                        width: 260px;
-                        height: 36px;
-                        line-height: 36px;
-                        padding-left: 16px;
-                        text-align: left;
-                        border: 1px solid rgb(228,228,288);
-                        border-top: none;
-                        border-right: none;
-                        font-size: 14px;
-                        color: #333;
-                    }
-                    .itemTail{
-                        width: 252px;
-                        height: 36px;
-                        line-height: 36px;
-                        padding-right: 16px;
-                        text-align: right;
-                        border: 1px solid rgb(228,228,288);
-                        border-top: none;
-                        font-size: 14px;
-                        color: #333;
+                    grid-template-columns: repeat(3, 512px);
+
+                    .itemBox {
+                        display: flex;
+                        flex-direction: row;
+
+                        .itemHead {
+                            background-color: rgb(236, 245, 255);
+                            width: 260px;
+                            height: 36px;
+                            line-height: 36px;
+                            padding-left: 16px;
+                            text-align: left;
+                            border: 1px solid rgb(228, 228, 288);
+                            border-top: none;
+                            border-right: none;
+                            font-size: 14px;
+                            color: #333;
+                        }
+
+                        .itemTail {
+                            width: 252px;
+                            height: 36px;
+                            line-height: 36px;
+                            padding-right: 16px;
+                            text-align: right;
+                            border: 1px solid rgb(228, 228, 288);
+                            border-top: none;
+                            font-size: 14px;
+                            color: #333;
+                        }
                     }
                 }
-                }
-                .chartsBox{
+
+                .chartsBox {
                     width: 100%;
-                    .title{
+
+                    .title {
                         width: 100%;
                         display: flex;
                         flex-direction: row;
                         align-items: center;
-                        .blueLine{
+
+                        .blueLine {
                             height: 32px;
                             width: 4px;
                             background-color: var(--ant-primary-color);
                             margin-right: 16px;
                         }
-                        p{
+
+                        p {
                             color: #333;
                         }
                     }
-                    
+
                 }
-                div{
-                    .timeline{
+
+                div {
+                    .timeline {
                         margin: 16px 0;
                     }
                 }
-                
+
             }
-             
+
         }
     }
 }
-.energyHead{
+
+.energyHead {
     display: grid;
-    grid-template-columns: repeat(3,336px) 528px;
-    grid-template-rows: repeat(1,152px);
+    grid-template-columns: repeat(3, 336px) 528px;
+    grid-template-rows: repeat(1, 152px);
     height: 152px;
-    .dateData{
+
+    .dateData {
         width: 320px;
         height: 152px;
         background-color: rgba(242, 242, 242, 0.5);
-        border: 1px solid rgb(233,233,233);
+        border: 1px solid rgb(233, 233, 233);
         display: flex;
         flex-direction: column;
         align-items: center;
         justify-content: space-around;
-        p{
+
+        p {
             width: 256px;
             height: 19px;
             text-align: left;
             display: flex;
             justify-content: space-between;
         }
-        div{
+
+        div {
             width: 256px;
             height: 40px;
             background-color: #fff;
-            border: 1px solid rgb(215,215,215);
+            border: 1px solid rgb(215, 215, 215);
             padding-left: 16px;
             font-size: 28px;
             line-height: 40px;
         }
     }
-    .dateDataLast{
+
+    .dateDataLast {
         width: 528px;
         height: 152px;
         background-color: rgba(242, 242, 242, 0.5);
-        border: 1px solid rgb(233,233,233);
+        border: 1px solid rgb(233, 233, 233);
         display: flex;
         flex-direction: row;
         align-items: center;
         justify-content: space-around;
-        div{
+
+        div {
             width: 130px;
             height: 100px;
             display: flex;
             align-items: center;
             justify-content: space-around;
             flex-direction: column;
-            .rightImg{
+
+            .rightImg {
                 width: 68px;
                 min-height: 68px;
                 display: flex;
@@ -569,23 +591,27 @@
                 justify-content: center;
                 margin-bottom: 5px;
             }
-            p{
+
+            p {
                 height: 24px;
                 line-height: 24px;
             }
         }
     }
 }
-.chartHead{
+
+.chartHead {
     display: flex;
     flex-direction: row;
     justify-content: space-between;
     align-items: center;
-    .chartHeadRight{
+
+    .chartHeadRight {
         display: flex;
     }
 }
-.alarmTable{
+
+.alarmTable {
     :global(.ant-table-thead > tr > th) {
         background-color: #237AE4;
         text-align: center;
@@ -593,6 +619,20 @@
     }
 
     :global(.ant-table-tbody > tr > td) {
-       text-align: center;
+        text-align: center;
+    }
+}
+
+.pageNumD {
+    position: absolute;
+    bottom: 16px;
+    right: 16px;
+
+    :global(.ant-pagination-item-active) {
+        background-color: #237ae4 !important;
+
+        :global(a) {
+            color: #fff !important;
+        }
     }
 }

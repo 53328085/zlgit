@@ -82,10 +82,11 @@ const Tabsbox = styled(Tabs)`
  
 }
 `
+//1 系统管理员 (2 运营管理员 3 项目管理员, 4 运维人员) ； 2 =》 3 =》 4
  function Index({projectId, userId, role}, ref) {  
 
 
-    
+    console.log('role', role)
 
     const mref= useRef() 
     const   MenuNos  =  useRef({}) // 运行
@@ -101,10 +102,9 @@ const Tabsbox = styled(Tabs)`
         onOpen,
     })) 
     const saveMenu = async () => { 
-        console.log(MenuNos.current)
-        console.log(Dmenunos.current)
+        
         const getno = (data) => {
-          let include = ['0101', '0102', '0103', '0104'];
+          let include = ['0101', '0102', '0103', '0104'];  // 数据大屏，项目设置，平台设置， 项目概述  
           let Nos = []
             for(let [key, value] of Object.entries(data)) {
                if(Array.isArray(value) && value.length > 0) {
@@ -123,7 +123,7 @@ const Tabsbox = styled(Tabs)`
             let runnos = getno(MenuNos.current);
             let desnos = getno(Dmenunos.current)
             let paramsNos = role == 3  ? [...new Set([...runnos, ...desnos, '0102', '0104','0201', '020101', '020102','020103', '020104'])] 
-            : role == 4 ? [...new Set([...runnos, ...desnos, '0104'])] :
+            : role == 4 ? [...new Set([...runnos,  '0104'])] :
              [...new Set([...runnos, ...desnos])];
             let {success, errMsg} = await  User.SetMenus({projectId, userId}, paramsNos)
             success &&  custMsg({content: '保存成功', onClose: ()=> {
@@ -144,8 +144,7 @@ const Tabsbox = styled(Tabs)`
       const [AllDesignMenus, setAllDesignMenus] = useState([])
 
       const [allSinderDesignMenus, setallSinderDesignMenus] = useState({}) 
-      console.log(AllDesignMenus)
-      console.log(allSinderDesignMenus)
+      
       const [loading, setLoading] = useState(true)
      let exclude = [ '0101', '0103'];
        const queryUserMenus =  () => { 
@@ -167,25 +166,36 @@ const Tabsbox = styled(Tabs)`
                 let arr = data?.filter(m => m.parentNo == no);
                  if(exclude.includes(no)) {
                   sider[key] = [item]
+                  if(item.select == 1) {
+                    MenuNos.current[key] = [item.no]
+                  }
+                 
                 } else if(arr.length > 0) {
                   sider[key] = arr;
+                  MenuNos.current[key] = arr.filter(a => a.select== 1).map(m => m.no)
                 } 
              })
+             
              setAllSinderRunMenus({...sider})
 
-             console.log(designmenu)
+           
              designmenu.forEach(item => {
               let {no, key } = item  
               let arr = data?.filter(m => m.parentNo == no);
               if(no == '0202') {
                 design[key] = [item]
+                if(item.select == 1) {
+                  Dmenunos.current[key] = [item.no]
+                }
+               
               }else if(arr.length > 0) {
                 design[key] = arr
+                Dmenunos.current[key] = arr.filter(a => a.select== 1).map(m => m.no)
               }
               
                 
             })     
-            console.log(design)    
+              
             setallSinderDesignMenus({...design})
           }
          }).catch(e => {
@@ -233,9 +243,9 @@ const Tabsbox = styled(Tabs)`
           useEffect(() => { 
             let bools = Object.values(isall)
             if (bools?.length) {
-              console.log(bools)
+             
               let trues = bools.filter(f => !f) 
-              console.log(trues)
+             
               setIndeterminate(!!trues.length && bools.length > trues.length) 
               if(trues.length ==bools.length) setRunall(false)
 
@@ -316,9 +326,9 @@ const Tabsbox = styled(Tabs)`
           useEffect(() => { 
             let bools = Object.values(isall)
             if (bools?.length) {
-              console.log(bools)
+             
               let trues = bools.filter(f => !f) 
-              console.log(trues)
+              
               setIndeterminate(!!trues.length && bools.length > trues.length) 
               if(trues.length ==bools.length) setRunall(false)
               
