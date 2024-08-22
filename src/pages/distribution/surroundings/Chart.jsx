@@ -9,7 +9,7 @@ const Wrap=styled.div`
     display:flex;
     align-items:center;
     justify-content:center;
-    row-gap:16px;
+    column-gap:16px;
 `
 export default function Chart(props) {
 const {title=""} =props
