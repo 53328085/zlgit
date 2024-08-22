@@ -11,7 +11,7 @@ import 'moment/locale/zh-cn';
 const { RangePicker } = DatePicker;
 import {SiteManagerDesigner, PCSMonitorRuntime, StorageContainerDesigner, Editapi} from '@api/api'
 import {Cdivider, Radiogroup} from '@com/comstyled'
-
+import Textloop from '@com/textloop'
 
 import Enery from "./enery";
 
@@ -376,6 +376,9 @@ const deviceStyleNode = (<Item name="deviceStyle" label="设备类型" initialVa
         <Item noStyle name="projectId" initialValue={projectId}>
            <Input hidden />
         </Item>
+        {
+          props.config.textloop && <Textloop />
+        }
      {
         isprodction &&  (<Input type="color" value={color}
               style={{width: '80px', marginLeft: 'auto'}}

@@ -61,7 +61,6 @@ const App = ({num=2}) => {
     }
    ]
    return(
-    <div style={{margin: "30px"}}>
         <Textscroll>
              <div className='warning'>
                 <img src={warn} alt="" className='img' /> 
@@ -77,8 +76,6 @@ const App = ({num=2}) => {
              </TextLoop>
              <CaretRightOutlined style={{color: "#fff", fontSize: '16px', cursor: "pointer", marginLeft: 'auto'}} />
         </Textscroll>
-       
-    </div>
    )
 };
 export default App;
