@@ -169,35 +169,6 @@ export default function Index() {
             <HoverList keys={keys4}>直流屏监控</HoverList>
             <HoverList keys={keys5}>环境监控</HoverList>
           </div>
-          {/* <div className='cardList'>
-            <div className='card headtext'>
-             {rname}环境监控
-            </div>
-             
-
-             {
-              (ht && Array.isArray(ht)) ?  ht.map(t =>  <Custcard src={imgurl.temperature} name={t.name}  value={t.tValue}   />)  : null
-             }
-              {
-              (ht && Array.isArray(ht)) ?  ht.map(t =>  <Custcard src={imgurl.humidness} name={t.name}  value={t.hValue}   />)  : null
-             }
-             {
-               (noise && Array.isArray(noise)) ?  noise.map(t =>  <Custcard src={imgurl.nosie} name={t.name}  value={t.value}   />)  : null
-             }
-       
-
-            {(water && Array.isArray(water)) ? water.map(w =><Custcard src={imgurl.water} name={w.name}  value={w.value}   /> ) : null}
-        
-
-          {(sF6 && Array.isArray(sF6)) ? sF6.map(w =><Custcard src={imgurl.smook} name={w.name}  value={w.value}   /> ) : null}  
-
-          {(smoke && Array.isArray(smoke)) ? smoke.map(w =><Custcard src={imgurl.smook} name={w.name}  value={w.value}   /> ) : null}  
-   
-          {(fire && Array.isArray(fire)) ? fire.map(w =><Custcard src={imgurl.fire} name={w.name}  value={w.value}   /> ) : null}  
-         
-          {(door && Array.isArray(door)) ? door.map(w =><Custcard src={imgurl.door} name={w.name}  value={w.value}   /> ) : null}  
-            
-          </div> */}
         </Mainbox>
         </Cspin>
       </Pagecount>
@@ -237,6 +208,9 @@ const HoverDiv=styled.div`
         color:#00ff00
       }
     }
+    .line:hover{
+    background:rgb(102,51,255,.5);
+  }
   }
   &:hover{
     background:rgb(102,51,255);
@@ -246,7 +220,7 @@ const HoverDiv=styled.div`
   &:hover>.list{
     transform:scale(1,1);
     }
-
+ 
 `
 const HoverList=(props)=>{
   const {keys,values=[]} =props
@@ -258,7 +232,7 @@ const HoverList=(props)=>{
       <div className="list" >
           {
             keys.map((it,i)=>{
-              return( <div className="line">
+              return( <div className="line" key={i}>
                 <span>{it}</span>
                 <span>{values[i]}</span>
                </div>  )
