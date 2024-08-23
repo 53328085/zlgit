@@ -1,4 +1,4 @@
-import React from 'react'
+import React, {forwardRef} from 'react'
 import styled from 'styled-components'
 import play from './z3.png'
 const Box =styled.div`
@@ -6,6 +6,7 @@ const Box =styled.div`
      display: flex;
      flex-direction: column;
      row-gap: 16px;
+    
      .vide {
         width: 400px;
         height: 300px;
@@ -15,6 +16,7 @@ const Box =styled.div`
         justify-content: center;
         border: 1px solid #dedede;
         border-radius: 2px;
+        background-color: #237ae4;
         .img {
             cursor: pointer;
         }
@@ -33,10 +35,11 @@ const Box =styled.div`
 }
 `
 export default function Vide(props) {
+  console.log(props)
   return (
     <Box>
         <div className='vide'>
-            <img src={play} className='img' /> 
+            <img src={play} className='img'  onClick={() => props.onClick()} /> 
         </div>
         <div className='videInfo'>
             <p>{props.name}</p>

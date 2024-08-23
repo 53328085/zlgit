@@ -128,6 +128,9 @@ export class User {
   // -- 权限管理
   static QueryOperationManagers = ({ projectId }) =>
     server.get(`/General/User/QueryOperationManagers?projectId=${projectId}`); // 查询 运营管理员 已选择
+  static QueryAdmiMenus = ({ projectId, userId }) =>  server.get(
+    `/General/User/QueryManagerMenus?projectId=${projectId}&userId=${userId}` // 查询项目管理员菜单栏
+  );
   static InsertOperationManager = ({ projectId, userId }) =>
     server.post(
       `/General/User/InsertOperationManager?projectId=${projectId}&userId=${userId}`
@@ -229,6 +232,7 @@ export class Area {
     server.get(
       `/General/Area/QueryUnusedMeter?projectId=${projectId}&type=${type}&areaId=${areaId}&alike=${alike}`
     );
+
   static ConfigureMeter = (params = {}) =>
     server.post(`/General/Area/ConfigureMeter`, params);
  
