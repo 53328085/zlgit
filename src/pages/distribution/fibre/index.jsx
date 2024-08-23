@@ -239,7 +239,8 @@ export default function Index() {
   const roomId = useSelector(selectcurlRommid)
   const chartRef = useRef()
   const [activename,setActiveName]=useState('')
-  const chooseBox = (i,it) => {   
+  const chooseBox = (i,it) => { 
+    if(!it.sn)return  
     setActive(i)
     setActiveName('通道'+it.channel + " " +it.subfieldName)
   }
@@ -303,6 +304,10 @@ export default function Index() {
   } 
   //分区信息
   const QuerySinglePartitionsInfo=async(sn)=>{
+    if(!sn){
+      message.warning("请先绑定设备！")
+      return
+    }
     const res = await DistributionRoomRuntime.QuerySinglePartitionsInfo({
       projectId,
       sn,
