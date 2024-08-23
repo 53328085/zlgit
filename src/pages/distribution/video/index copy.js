@@ -22,30 +22,11 @@ import { isObject } from '@com/usehandler'
 import Titlelayout from '@com/titlelayout'
 import Pagecount from '@com/pagecontent'
 import { CustButton } from '@com/useButton'
-import Vide from './vide'
 const Mainbox = styled.div`
   flex: 1;
   display: flex;
-  flex-wrap: wrap;
-  gap: 16px;
-  .videwrap {
-     display: flex;
-     flex-direction: column;
-     row-gap: 16px;
-     .vide {
-        width: 400px;
-        height: 300px;
-        padding: 4px 8px;
-     }
-     .videInfo {
-       width: 400px;
-       height: 50px;
-       display: flex;
-       
-       align-items: center;
-       justify-content: center;
-     }
-  }
+  flex-direction: column;
+  row-gap: 16px;
   .data {
      flex:1;
      display: flex;
@@ -252,8 +233,8 @@ export default function Index() {
     refreshDeps: [projectId, roomId, alike]
   })
   //云监控
-let {dataSource} = tableProps
- console.log(dataSource)
+
+
 
   const disabledDate = current => current && current > moment().endOf('day')
 
@@ -285,9 +266,6 @@ let {dataSource} = tableProps
           themeData: themeData,
           handleError: (err) => {
             console.log(err)
-          },
-          handleCapturePicture: (res) => {
-            console.log(res)
           }
         })
         setbigplay(player.current)
@@ -611,13 +589,26 @@ let {dataSource} = tableProps
 
   return (
     <Pagecount bgcolor="transparent" pd="0">
+      <Mainbox>
+        <div id='cameraData' className="cameraData" key="h">
+          <CameraValue img={totalCamera} title={'监控总数'} value={statistics?.all ?? '0'}></CameraValue>
+          <CameraValue img={cloudCamera} title={'云监控'} value={statistics?.cloud ?? '0'}></CameraValue>
+          <CameraValue img={localCamera} title={'本地监控'} value={statistics?.local ?? '0'}></CameraValue>
+        </div>
+
         <Titlelayout layout="flex">
-           <Mainbox>
-              {
-               dataSource?.map(d => <Vide {...d} key={d.sn} />)
-              }
-           </Mainbox>
+          <div className='data'>
+            <div className='serach'>
+              <span>设备查询</span>
+              <Serach style={{ width: '320px' }} placeholder='请输入设备编号/安装地址' onSearch={setAlike}></Serach>
+
+            </div>
+            <Cdivider type="h" style={{ margin: "16px 0" }} />
+
+            <UseTable columns={columns}  {...tableProps} rowKey='name' />
+          </div>
         </Titlelayout>
+      </Mainbox>
       <Modal
         title={recordData?.address}
         centered
