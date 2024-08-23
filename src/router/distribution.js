@@ -5,7 +5,7 @@ const Summary = lazy(() => import("../pages/distribution/summary"))
 const Loop = lazy(() => import("../pages/distribution/loop"))
 const Map= lazy(() => import("../pages/distribution/map"))
 const Report = lazy(() => import("../pages/distribution/report"))
-const Surroundings= lazy(() => import("../pages/distribution/surroundings"))
+const Surroundings= lazy(() => import("../pages/distribution/surroundings/index.jsx"))
 //const Video = lazy(() => import("../pages/distribution/video"))
 const Video = lazy(() => import("../pages/distribution/video"))
 const Warning= lazy(() => import("../pages/distribution/warning"))
@@ -30,7 +30,7 @@ export let runtimeDistribution = {
     '010709': Warning,
     '010710': Report,
     '010711': Monitor, // 配电概述
-    '010712': Monitoring, // 配电概述
+    '010712': Monitoring, // 实时监测
     '010713': Statements, // 运行报表
     '010714': Quality, // 电能质量
     '010715': Tuality, // 工作票管理

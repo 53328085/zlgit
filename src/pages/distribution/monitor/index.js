@@ -143,7 +143,11 @@ export default function Index() {
   )
   }
   useEffect(() => {
-   if(Number.isInteger(roomId))  getEnvironment(roomId)
+   if(Number.isInteger(roomId)){
+    getEnvironment(roomId)
+   }  else{
+    setSpinging(false)
+   }
    
   }, [roomId, rname])
   return (
