@@ -24,6 +24,12 @@ const Main =styled.div`
         text-align: center;
         font-weight: bold;
       }
+      .content {
+        text-indent: 2em;
+        line-height: 1.5;
+        font-size: 14px;
+        letter-spacing: 1px;
+      }
    }
 
 `
@@ -145,25 +151,25 @@ export default function pagecomp({data}) {
             <p>编制日期：<span>年</span><span>月</span><span>日</span></p>
             <p style={{ textIndent: '2em' }}>根据国家发展和改革委员会发布的《中国食品、烟草及酒、饮料和精制茶生产企业温室气体排放核算方法与报告指南（试行）》，本报告主体核算了年度温室气体排放量，并填写了相关数据表格。现将有关情况报告如下：</p>
             <p>一、企业基本情况</p>
-              <Paragraph>{enterpriseInfo}</Paragraph>           
+              <p className='content'>{reptdata.enterpriseInfo}</p>           
          </Main> 
       </PageComp>
       <PageComp>
         <Main>
         <p>二、温室气体排放情况</p>
-        <Paragraph>{emissionFactorSource}</Paragraph>
+        <p className='content'>{reptdata.carbonEmissionState}</p>
         </Main>
       </PageComp>
       <PageComp>
         <Main>
         <p>三、活动水平数据及来源说明</p>
-        <Paragraph>{emissionFactorSource}</Paragraph>
+        <p className='content'>{reptdata.activityDataSource}</p>
         </Main>
       </PageComp>
       <PageComp>
         <Main>
         <p>四、排放因子数据及来源说明</p>
-        <Paragraph>{emissionFactorSource}</Paragraph>
+        <p className='content'>{reptdata.emissionFactorSource}</p>
         </Main>
       </PageComp>
       <PageComp>

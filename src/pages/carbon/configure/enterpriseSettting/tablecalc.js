@@ -202,7 +202,7 @@ const onAddOk = async () => {
       dataIndex: 'subCategoryName',
       key: 'subCategoryName',
       align: 'center',
-      width: 150,
+      width: 178,
       onCell:(record, index) => {
         let {subCategoryName} = record || {}
         if(index == 0) {
@@ -225,7 +225,8 @@ const onAddOk = async () => {
       dataIndex: 'factorName',
       key: 'factorName',
       align: 'factorName',
-      onCell: showOncell
+      onCell: showOncell,
+      width:270,
     },
     {
       
@@ -233,14 +234,16 @@ const onAddOk = async () => {
       dataIndex: 'parameterValue',
       key: 'parameterValue',
       align: 'center',
-      onCell: showOncell
+      onCell: showOncell,
+      width:125,
     },
     {
       title: '单位',
       dataIndex: 'unit',
       key: 'unit',
       align: 'center',
-      onCell: showOncell
+      onCell: showOncell,
+      width:280,
     },
    
      
@@ -276,7 +279,7 @@ const onAddOk = async () => {
       dataIndex: 'subCategoryName',
       key: 'subCategoryName',
       align: 'center',
-      width: 150,
+      width: 178,
       onCell:(record, index) => {
         let {subCategoryName} = record || {}
         if(index == 0) {
@@ -299,7 +302,8 @@ const onAddOk = async () => {
       dataIndex: 'factorName',
       key: 'factorName',
       align: 'factorName',
-      onCell: showOncell
+      onCell: showOncell,
+      width:386,
     },
     {
       
@@ -307,7 +311,8 @@ const onAddOk = async () => {
       dataIndex: 'parameterValue',
       key: 'parameterValue',
       align: 'center',
-      onCell: showOncell
+      onCell: showOncell,
+      width:160,
     },
     {
       title: '单位',
