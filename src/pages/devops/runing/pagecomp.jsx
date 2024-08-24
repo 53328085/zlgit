@@ -6,7 +6,7 @@ import Page from "@com/reportPrint/page"
 import Usetable from '@com/useTable'
 import {useSelector} from 'react-redux'
 import {currProject} from '@redux/systemconfig.js'
- 
+import fine from './fine.svg'
 const DesItem = styled(Descriptions)`
 && {
   margin-bottom: 24px;
@@ -30,6 +30,7 @@ const DesItem = styled(Descriptions)`
    color:#515151;
    font-size: 14px;
  }
+
 }
 }
 `
@@ -46,6 +47,20 @@ const Main =styled.div`
     .text {
       font-size: 16px;
       text-indent: 2em;
+    }
+    .fine {
+      display: flex;
+      width: 284px;
+      height: 64px;
+      align-items: center;
+      background: url(fine) var(--ant-primary-color);
+      background-position: 32px center;
+      font-size: 28px;
+      padding-left: 32px;
+      color: #fff;
+      img {
+        margin-right: 32px;
+      }
     }
    }
 
@@ -139,11 +154,18 @@ export default function pagecomp({data}) {
         <Usetable dataSource={[alarm]} columns={columns} size="small" title={() => <><p>2.告警事件统计</p><p style={{fontSize: "small",  marginTop: "12px"}}>本监测周期内经运维平台统计共发生-次告警，统计数据如下：</p></>} key="online" style={stye} flex="none" tfs="18px" hbg="#ecf5ff" hbc="#515151"></Usetable>
         <Usetable dataSource={[order]} columns={columns2} size="small" title={() => <><p>3.工单事件统计</p><p style={{fontSize: "small", marginTop: "12px"}}>本监测周期内经运维平台统计共生成-次工单，统计数据如下：</p></>} key="statistic" style={stye} flex="none" tfs="18px" hbg="#ecf5ff" hbc="#515151"></Usetable>
         <Usetable dataSource={[inspec]} columns={columns3} size="small" title={() => <><p>4.巡检任务统计</p><p style={{fontSize: "small", marginTop: "12px"}}>本监测周期内经运维平台统计共产生-次巡检任务，统计数据如下：</p></>} key="statistic" style={stye} flex="none" tfs="18px" hbg="#ecf5ff" hbc="#515151"></Usetable>                   
-        <p  className='title'>5.现场运维情况</p>    
-        <p>{
-          error > 0  ? `本周期内发现${error}个错误` : '本周期内，暂未发现缺陷。'
-          }</p>
+      
          </Main> 
+      </Page>
+      <Page key="b">
+        <Main>
+      <p  className='title'>5.现场运维情况</p>    
+       { error > 0  ? <p> 本周期内发现{error}个错误</p>
+          :  <div style={{display: 'flex', justifyContent: 'center', alignItems: 'flex-end',   padding: '64px 0px'}}>
+                <div className='fine'><img src={fine} height={48} /> <span>良好</span></div> 
+             </div> 
+             }
+             </Main>
       </Page>
       </>
   )
