@@ -18,7 +18,7 @@ export default function Index() {
   const location = useLocation();
   let { state = {} } = location;
   let { nested = "", primary } = state;
-  let whole = ["runtimeMonitor", "runtimeSafe", "runtimeEnergy", "runtimeStorage", "runtimeMaintenance","runtimeQuota"]; // 需要显示搜索 ***（全部）的模块
+  let whole = ["runtimeMonitor", "runtimeSafe", "runtimeEnergy", "runtimeStorage", "runtimeMaintenance", "runtimeQuota"]; // 需要显示搜索 ***（全部）的模块
   let include = {
     runtimeEnergy: ["area", "report"], // 模块里不需要显示全部的
     designerDistribution: ['room']
@@ -27,7 +27,7 @@ export default function Index() {
   const varlabel = useSelector(levelDefaultLabel);
   const projectId = useSelector(selectProjectId)
   const iszh = useSelector(iszhCN)
-  const {enterpriseId} = useSelector(enterprise)
+  const { enterpriseId } = useSelector(enterprise)
   const [inpage, setInpage] = useState({
     runtimeMonitor: [
       "monitor",
@@ -53,19 +53,19 @@ export default function Index() {
       "grading",
       "light",
       "region",
-    ], 
+    ],
     runtimeStorage: [ // 储能管理
       "station",
       "PCSMonitor", // pcs监控     
-     // "BMSMonitor",
-     "storageControl",
-     "consumeStatistics",
-     "earningsStatistics",
-     "chargingOrder",
-     "environment",
-     "alarmMessage",
-     "operationLog",
-    ],  
+      // "BMSMonitor",
+      "storageControl",
+      "consumeStatistics",
+      "earningsStatistics",
+      "chargingOrder",
+      "environment",
+      "alarmMessage",
+      "operationLog",
+    ],
     runtimeMaintenance: [ // 运维管理
       "summary",
       "alarm",
@@ -74,31 +74,31 @@ export default function Index() {
       "class",
       "chart"
     ],
-    runtimeQuota:[
+    runtimeQuota: [
       "runtimeParkQuota",
       "runtimeQuotaDetailed",
       "runtimeQuotaAlarms"
     ],
     // 设计态
     designerEnergy: [ // 能源管理
-       "price",
-       "norm",
-       "type",
+      "price",
+      "norm",
+      "type",
     ],
     runtimeCarbonEmissionManager: [  //碳排管理
-        "runtimeCarbonData",
-        "runtimeCarbonExamine",
+      "runtimeCarbonData",
+      "runtimeCarbonExamine",
     ],
     ledger: [  //台账管理
       "deviceLedger",
       "spareParts",
-  ]
+    ]
   }); // 需要显示搜索的页面
 
   const [showRoom, setShowroom] = useState(true); // 是否显示配电房选择框
 
- // const [exparams, setexparams] = useState({ deviceStyle: 1 });
- const [exparams, setexparams] = useState({});
+  // const [exparams, setexparams] = useState({ deviceStyle: 1 });
+  const [exparams, setexparams] = useState({});
   const [areaName, setAreaName] = useState()
   const [config, setConfig] = useState({});
   const [custview, setCustview] = useState(undefined);
@@ -106,16 +106,16 @@ export default function Index() {
 
   let style = showSerach
     ? {
-        flex: 1,
-        display: "grid",
-        gridTemplateRows: "48px 1fr",
-        rowGap: "16px",
-      }
+      flex: 1,
+      display: "grid",
+      gridTemplateRows: "48px 1fr",
+      rowGap: "16px",
+    }
     : {
-        display: "flex",
-        flex: 1,
-      };
-  const context =useMemo(() => ({
+      display: "flex",
+      flex: 1,
+    };
+  const context = useMemo(() => ({
     setInpage,
     setShowroom,
     setConfig,
@@ -125,7 +125,7 @@ export default function Index() {
     enterpriseId,
     projectId,
     iszh,
-  }), [exparams, areaName,enterpriseId,projectId, iszh]);
+  }), [exparams, areaName, enterpriseId, projectId, iszh]);
   const props = {
     config,
     setexparams,
@@ -133,7 +133,7 @@ export default function Index() {
     setAreaName,
   };
 
-  const sethandler = () => {  
+  const sethandler = () => {
     try {
       console.log(nested)
       if (primary == "runtimeMonitor" && nested == "point") {
@@ -144,11 +144,11 @@ export default function Index() {
       if (primary == "runtimeEnergy") {
         switch (nested) {
           case "area":
-          case "assorting":      
+          case "assorting":
             setConfig({ isview: true, isdate: true });
             break;
           case "range":
-            setConfig({ energytype: true, isdate: true });
+            setConfig({ energytype: true, isdate: true, custview: true });
             break;
           case "time":
             setConfig({ shiftNo: true, isdate: true }); // shiftNo: true 不显示
@@ -169,106 +169,106 @@ export default function Index() {
               shiftNo: true,
               isAreaId: false,
               gas: false,
-             
+
             });
             break;
           case "analysis":
             setConfig({ energytype: true, isdate: true });
             break;
           case "norm":
-            setConfig({custview: true});
+            setConfig({ custview: true });
             break;
           case "public":
             setConfig({ energytype: true, isdate: true });
             break;
           case "air":
           case "grading":
-          case "light":     
+          case "light":
             setConfig({ isview: true, isdate: true, shiftNo: true });
             break;
-           case "region":     
+          case "region":
             setConfig({ energytype: true, isdate: true, shiftNo: true, gas: false, });
-            break;  
+            break;
           default:
             setConfig({});
             break;
         }
       }
-      if(primary == "runtimeStorage") {
-         switch(nested) {
-           case "PCSMonitor":
-            setConfig({ isSite: true, isTank: true,  isPcs: true});
-            break; 
-           /*  case "BMSMonitor":
-              setConfig({ isSite: true});
-              break;   */
-           case "storageControl":
-            setConfig({ isSite: true, isPcs: true});
-            break;           
-            case "earningsStatistics":
-            case "environment":
-            case "consumeStatistics":  
-            case "station":
-            case "alarmMessage":
-            case "operationLog":
-                setConfig({ isSite: true});
-                break;   
-            default:
-              setConfig({});
-              break;
-         }
+      if (primary == "runtimeStorage") {
+        switch (nested) {
+          case "PCSMonitor":
+            setConfig({ isSite: true, isTank: true, isPcs: true });
+            break;
+          /*  case "BMSMonitor":
+             setConfig({ isSite: true});
+             break;   */
+          case "storageControl":
+            setConfig({ isSite: true, isPcs: true });
+            break;
+          case "earningsStatistics":
+          case "environment":
+          case "consumeStatistics":
+          case "station":
+          case "alarmMessage":
+          case "operationLog":
+            setConfig({ isSite: true });
+            break;
+          default:
+            setConfig({});
+            break;
+        }
       }
-    
-      if(primary == "runtimeCarbonEmissionManager") {
-        switch(nested) {
+
+      if (primary == "runtimeCarbonEmissionManager") {
+        switch (nested) {
           case "runtimeCarbonExamine":
-           setConfig({isAreaId: false, dateY: true });
-           break;     
-         case "runtimeCarbonData":
-            setConfig({isAreaId: false, isdate:true, shiftNo: true, dateType: 2});
+            setConfig({ isAreaId: false, dateY: true });
+            break;
+          case "runtimeCarbonData":
+            setConfig({ isAreaId: false, isdate: true, shiftNo: true, dateType: 2 });
             break;
         }
       }
-      if(primary == "ledger") {
-        switch(nested) {
+      if (primary == "ledger") {
+        switch (nested) {
           case "deviceLedger":
-           setConfig({custview:false });
-           break;     
-         case "spareParts":
-            setConfig({custview:true});
+            setConfig({ custview: false });
+            break;
+          case "spareParts":
+            setConfig({ custview: true });
             break;
         }
       }
-      if(primary == "runtimeMaintenance") {
+      if (primary == "runtimeMaintenance") {
 
         setConfig({});
       }
-      if(primary =="runtimeQuota"){
-        switch(nested){
+      if (primary == "runtimeQuota") {
+        switch (nested) {
           case "runtimeQuotaDetailed":
-          setConfig({custview: true});
-          break;     
+            setConfig({ custview: true });
+            break;
           case "runtimeQuotaAlarms":
-          setConfig({custview: true});
-          break;  
+            setConfig({ custview: true });
+            break;
         }
-        
+
       }
       // 设计态
-      if(primary == "designerEnergy") {
-        switch(nested) {
+      if (primary == "designerEnergy") {
+        switch (nested) {
           case "norm":
-           setConfig({ custview: true });
-           break;
+            setConfig({ custview: true });
+            break;
         }
-         
+
       }
 
       // custview
-    } catch (error) {}
+    } catch (error) { }
   };
 
-  useEffect(() => {  
+  useEffect(() => {
     if (whole.includes(primary)) {
       let isin = onelevel.find((l) => l.id == 0);
       if (!isin) {
@@ -278,7 +278,7 @@ export default function Index() {
             ...onelevel,
           ])
         );
-        dispatch(setCurrentlevel( { name: `${varlabel}(全部)`, id: 0, levelName: varlabel }))
+        dispatch(setCurrentlevel({ name: `${varlabel}(全部)`, id: 0, levelName: varlabel }))
       }
     } else {
       let level = onelevel.filter((l) => l.id != 0);
