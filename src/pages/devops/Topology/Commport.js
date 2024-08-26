@@ -23,7 +23,7 @@ const Mainbox = styled.div`
   color: #515151;
   .up {
     display: flex;
-    justify-content: space-between;
+    justify-content: flex-end;
     align-items: center;
     .upLeft {
         height: 30px;
@@ -305,11 +305,11 @@ export default function Commport({projectId,gateway:{gatewayId, name}, device={}
   return (
     <Mainbox len={com}>
         <div className='up'>
-            <div className='upLeft'>
+           {/*  <div className='upLeft'>
                 <div className='dotto'><b className='g'></b>&nbsp;正常</div>
                 <div className='dotto'><b className='r'></b>&nbsp;告警</div>
                 <div className='dotto'><b  className='b'></b>&nbsp;离线</div>
-           </div>
+           </div> */}
            <Button type="primary" onClick={() => back(true)}>返回</Button>
         </div>
        <div className='down'>
@@ -351,7 +351,7 @@ export default function Commport({projectId,gateway:{gatewayId, name}, device={}
                           category={item.sn}
                         />
                       </Link>)
-                      } <Pagination total={total} hideOnSinglePage style={{position: "absolute", bottom: "16px", right: '16px'}} onChange={onChange}  /> </>: <Empty />}
+                      } <Pagination total={total} pageSize={9} hideOnSinglePage style={{position: "absolute", bottom: "16px", right: '16px'}} onChange={onChange}  /> </>: <Empty />}
                       
          </div>
          </Spin>

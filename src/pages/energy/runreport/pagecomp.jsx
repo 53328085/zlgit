@@ -202,9 +202,9 @@ export default function pagecomp({data, params}) {
     option.current.dataset.source = []
    }
    if(td?.constructor==Object && td?.x?.length > 0) {
-    let {x,y,y1, y2,y3} = td
+    let {x,y1,y2, y3,y4} = td
      eoption.current.dataset.source = [
-        x, y,y1,y2,y3
+        x, y1,y2,y3,y4
      ]
   }else {
    eoption.current.dataset.source = []
