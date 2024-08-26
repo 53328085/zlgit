@@ -44,7 +44,6 @@ const Itemsty = styled.div`
         color: #fff;
       }
  }
-
 `
 const Item =({data}) => {
    return (
@@ -55,10 +54,10 @@ const Item =({data}) => {
           <p className='sub'>本月能耗(kWh)</p>
           <p className='num'><Text ellipsis={{tooltip: data.curMonthElectricConsume }}>{data.curMonthElectricConsume}</Text></p>
       </Itemsty>
-
+ 
    )
 }
-
+ 
 export default function Index({areaVos}) {
   if(!Array.isArray(areaVos) || areaVos?.length == 0)  return null;
   let n = areaVos?.length
