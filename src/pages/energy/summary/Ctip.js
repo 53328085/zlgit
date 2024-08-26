@@ -44,7 +44,6 @@ const Itemsty = styled.div`
         color: #fff;
       }
  }
- 
 `
 const Item =({data}) => {
    return (
