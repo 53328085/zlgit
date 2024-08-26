@@ -1,9 +1,19 @@
 import React, {useEffect, useState, useRef, useMemo} from 'react'
-import {message, Empty, Spin, Typography} from 'antd'
-import {EnergyFlowRuntime} from "@api/api"
+import {message, Empty, Spin, Typography,Pagination} from 'antd'
+import {EnergyFlowRuntime,Monitoring} from "@api/api"
+import {useAntdTable} from 'ahooks'
+import { Link } from "react-router-dom";
 import {Button} from 'antd'
  import styled from 'styled-components'
-const {QueryTopologyDeviceState} = EnergyFlowRuntime
+ import Icard from './card'
+ import {isObject} from '@com/usehandler'
+ import category from './icon/category.png'
+const {QueryTopologyDeviceState, OverviewFromGateway} = EnergyFlowRuntime
+const {
+  RuntimeDevice: {
+    CategoryImages,
+  }
+} = Monitoring;
 const {Text} = Typography
 const Mainbox = styled.div`
   flex: 1;
@@ -124,23 +134,31 @@ const Mainbox = styled.div`
       flex: 1;
       align-items: center;
       justify-content: center;
-      width: 1465px;
+      width: 1688px;
       height: 528px;
     
       overflow-y: auto;
     }
-    .downcenter {
+    .downcenter {  // 538,152
+        position: relative;
         border: 1px solid #237ae4;
         border-radius: 8px;
         background-color: #f2f2f2;
-        display: grid;
-        grid-template-columns: repeat(5, 248px);
-        grid-auto-rows: 48px;
+        display: flex;
+        flex-wrap: wrap;
+        gap:16px;
+        height: 568px;
+        width: 1680px;
+        padding: 16px;
+        align-content: flex-start;
+      /*   display: grid;
+        grid-template-columns: repeat(5, 538px);
+        grid-auto-rows: 152px;
         gap: 24px 32px;
         padding: 16px 32px;
         justify-content: center;
         height: 528px;
-        width: 1465px;
+        width: 1465px; */
         overflow-y: auto;
         .address {
         display: flex;
@@ -197,29 +215,81 @@ export default function Commport({projectId,gateway:{gatewayId, name}, device={}
  
   const [datas, setData] = useState([])
   const isdatas = datas?.length >0
+   
   const [acindex, setIndex] = useState(ids[0])
   const [loading, setLoading] = useState(false)
- 
+  const [total, setTotal] = useState(0)
 
-  const getData = async (commport) => {
+ const getGatewayImages =async (projectId,group, details) => {
+  //网关图片
+   try {
+    let {data, success} = await CategoryImages({ projectId, group}) 
+    if(success && Array.isArray(data) && data.length > 0) {
+      details.forEach(d => {
+            let {category} = d;
+            let bg = data.find(i => i.category == category)?.imageBase64;
+            if(bg) {
+              d.bg = bg;
+            }
+         })
+    } 
+    setData(details)
+   } catch (error) {
+     return error
+   }
+  
+};
+ 
+  const getData = async (commport, pageNum=1) => {
     try {
-        let {success, data} = await  QueryTopologyDeviceState({projectId, gatewayId, commport})
-        setLoading(false)
-        if(success) {
-          Array.isArray(data) ?  setData([...data]) : setData([])
+      //  let {success, data} = await  QueryTopologyDeviceState({projectId, gatewayId, commport})
+      setLoading(true)
+      let {success, data, total} = await  OverviewFromGateway({projectId, gatewayId, commport, pageNum, pageSize: 9})
+      
+        if(Number.isInteger(total)) {
+          setTotal(total)
+        }
+        if(success && isObject(data)) {
+          let {categories, details} = data
+        //  Array.isArray(details) ?  setData([...details]) : setData([])
+          if(Array.isArray(details) && details.length > 0) {
+            if(Array.isArray(categories) && categories.length > 0 ) {
+              try {
+                await getGatewayImages(projectId, categories, details)
+
+              } catch (error) {
+                
+              }
+             
+          
+           }else {
+              setData(details)
+           }
+           setLoading(false)
+        } else {
+          setLoading(false)
+          setData([])
+        }
+      
         }else {
+          setLoading(false)
             setData([])
         }
+      
     } catch (e) {
       setLoading(false)
     }
     
   }
+ 
   const detail = (id, index) => {
      setLoading(true)
     setIndex(id)
   
     getData(id)
+  }
+  const onChange =(page)=> {
+    getData(acindex, page)
   }
   useEffect(() => {
     if(ids.length< 1) {
@@ -255,12 +325,34 @@ export default function Commport({projectId,gateway:{gatewayId, name}, device={}
             {Array.from({length: com}, (v, i) => <span className={acindex ==(i+1)?  'arrowitem show' : 'arrowitem' }>&#8593;</span>)}
          </div>
          <Spin spinning={loading} delay={300}>
-         <div className={isdatas ? 'downcenter' : 'empty'}>
+      {/*    <div className={isdatas ? 'downcenter' : 'empty'}>
               {isdatas > 0 ? datas.map(d => 
               (<div className='address' key={d.sn}>
                  <div className={'state '+ ['b', 'b', 's', 'r'][d.state >3  ? 1 : d.state] }>{}</div>
                  <Text ellipsis={{tooltip: d.name}}>{d.name}</Text>
               </div>) ) : <Empty />}
+         </div> */}
+
+        <div className={isdatas ? 'downcenter' : 'empty'}>
+              {isdatas > 0 ? <>
+              {datas.map((item, index) =>  <Link
+                        to={`/deviceDetail?sn=${encodeURIComponent(item.sn)}&deviceStyle=${encodeURIComponent(item.deviceStyle)}`}
+                        target="_blank"
+                        key={item.sn}
+                      >
+                        <Icard
+                          img={item.bg || category }
+                          title={item.name}
+                          deviceStyle={item.deviceStyle}
+                          value={item.address}
+                          state={item.state}
+                          fields={item.fields}
+                          lastSampleTime={item.lastSampleTime}
+                          category={item.sn}
+                        />
+                      </Link>)
+                      } <Pagination total={total} hideOnSinglePage style={{position: "absolute", bottom: "16px", right: '16px'}} onChange={onChange}  /> </>: <Empty />}
+                      
          </div>
          </Spin>
        </div>

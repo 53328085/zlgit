@@ -150,8 +150,18 @@ const Tabsbox = styled(Tabs)`
        const queryUserMenus =  () => { 
         let f = !!projectId && !!userId
         if (!f)  return;
-         User.QueryUserMenus({projectId, userId}).then(res => {
-             let {success, data} = res
+        let handler = role == 3  ?  User.QueryAdmiMenus({projectId, userId}) : role == 4 ?  User.QueryUserMenus({projectId, userId}) : null
+        console.dir(handler)
+        if(!handler) return
+        setLoading(true)
+        handler.then(res => {
+          let data
+          let {success, data:menuData} = res
+          data = menuData;
+          if(role == 3) {
+            let {menus} = menuData
+            data = menus.filter(m => m.languageName=='cn')
+          }
              if (success && Array.isArray(data)) {
              //let runmenu = data.filter(m => m.parentNo == '01').filter(m => !exclude.includes(m.no))
              let runmenu = data.filter(m => m.parentNo == '01').filter(m => !['0102', '0104'].includes(m.no))

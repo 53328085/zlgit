@@ -11,8 +11,8 @@ import 'moment/locale/zh-cn';
 const { RangePicker } = DatePicker;
 import {SiteManagerDesigner, PCSMonitorRuntime, StorageContainerDesigner, Editapi} from '@api/api'
 import {Cdivider, Radiogroup} from '@com/comstyled'
-import UseModal from '@com/useModal'
-import Usetable from '@com/useTable'
+import Textloop from '@com/textloop'
+
 import Enery from "./enery";
 
 const { FindContainerList } = StorageContainerDesigner  //储能柜
@@ -74,6 +74,9 @@ export default function UseSerach(props) {
   let [AreaID, setAreaid] = useState(oneLevelDefaultId) 
   const levelone = useSelector(selectOneLevel)  
   const DeviceStyle = useSelector(filterDeviceStyle)  
+
+
+  console.log(DeviceStyle)
   const areaName = levelone?.find(l => l.id == AreaID)?.name;
   props.setAreaName(areaName)
   let shifts = useSelector(selectshifts)
@@ -211,10 +214,10 @@ const viewtype = (<Item name="view" initialValue={1} >
 }, {
   label: '水',
   value: 2
-}, {
+}, /* {
   label: '燃气',
   value: 3
-}] : [{
+} */] : [{
   label: '电',
   value: 1
 }, {
@@ -226,7 +229,6 @@ const energytype = (
         <Select style={{ width: 112 }} options={energyoptions}></Select>
   </Item>
 )
-
 const getTank = async() => { // 初始化、 站点改变时 ; 储能柜
   if(!props.config.isTank) return;
   try {
@@ -377,8 +379,9 @@ const deviceStyleNode = (<Item name="deviceStyle" label="设备类型" initialVa
         <Item noStyle name="projectId" initialValue={projectId}>
            <Input hidden />
         </Item>
+        
         {/* {
-          props.config?.recordBtn&& recordBtn // 台账管理-备件管理
+          props.config.textloop && <Textloop />
         } */}
      {
         isprodction &&  (<Input type="color" value={color}

@@ -1,7 +1,7 @@
 import React, {useMemo } from 'react'
 import {useOutletContext} from 'react-router-dom' 
 import styled from 'styled-components';
- 
+import { useSelector } from 'react-redux' 
 import Ichart  from '@com/useEcharts/Ichart';
 import { energyRanking } from '@api/api'
 import Pagecount from "@com/pagecontent";
@@ -22,12 +22,12 @@ const Mainbox = styled.div`
 `
 export default function Index() {
   let {exparams} = useOutletContext() 
-  let {areaId, date, energytype, type, shiftNo,projectId} = exparams;
-  
-  const getQuery =  (areaId, date, energytype, type, shiftNo,projectId) => {    
-  
-    let f = [areaId, energytype, type, shiftNo, projectId].every(key => Number.isInteger(key)) && date 
+  const projectId = useSelector(state => state.system.menus.projectId)
+  const getQuery =  () => {
    
+    let {areaId, date, energytype, type, shiftNo,} = exparams;
+    console.log(energytype)
+    let f = [areaId, date, energytype, type, shiftNo].some(key => isFinite(key)) && date 
     if(!f) return;
     let params = {
       projectId,
@@ -45,8 +45,8 @@ export default function Index() {
     })
 
   }
- const {data} = useRequest(() => getQuery(areaId, date, energytype, type, shiftNo,projectId), {
-   refreshDeps: [areaId, date, energytype, type, shiftNo,projectId]
+ const {data} = useRequest(getQuery, {
+   refreshDeps: [exparams, projectId]
  })
 
  const options = {

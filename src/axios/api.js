@@ -128,6 +128,9 @@ export class User {
   // -- 权限管理
   static QueryOperationManagers = ({ projectId }) =>
     server.get(`/General/User/QueryOperationManagers?projectId=${projectId}`); // 查询 运营管理员 已选择
+  static QueryAdmiMenus = ({ projectId, userId }) =>  server.get(
+    `/General/User/QueryManagerMenus?projectId=${projectId}&userId=${userId}` // 查询项目管理员菜单栏
+  );
   static InsertOperationManager = ({ projectId, userId }) =>
     server.post(
       `/General/User/InsertOperationManager?projectId=${projectId}&userId=${userId}`
@@ -229,6 +232,7 @@ export class Area {
     server.get(
       `/General/Area/QueryUnusedMeter?projectId=${projectId}&type=${type}&areaId=${areaId}&alike=${alike}`
     );
+
   static ConfigureMeter = (params = {}) =>
     server.post(`/General/Area/ConfigureMeter`, params);
  
@@ -1358,6 +1362,7 @@ export const Monitoring = {
   Runtime: {
     RuntimeStatistics: (data) => server.get(`/Monitor/Runtime/Statistics?projectId=${data.projectId}&areaId=${data.areaId}`),//设备统计
     RuntimeStatus: (data) => server.get(`/Monitor/Runtime/Status?projectId=${data.projectId}&areaId=${data.areaId}`),//在线情况
+    RuntimeStatus2: (data) => server.get(`/Monitor/Runtime/StatusGroup?projectId=${data.projectId}&areaId=${data.areaId}`),//在线情况
     RuntimeQueryMonthUsage: (data) => server.get(`/Monitor/Runtime/QueryMonthUsage?projectId=${data.projectId}&areaId=${data.areaId}&type=${data.type}`),//月用量
   },
   //网关检测
@@ -1821,6 +1826,10 @@ export class EnergyFlowRuntime {
     `Energy/EnergyFlowRuntime/QueryTopologyDeviceState?projectId=${projectId}&gatewayId=${gatewayId}&commport=${commport}`   
   );
 
+  static OverviewFromGateway = (params) =>  //查询网关通道列表
+  server.post(
+    `/Monitor/RuntimeDevice/OverviewFromGateway`, params
+  );
 }
  
 //损耗分析

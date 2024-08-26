@@ -137,7 +137,7 @@ export default function pagecomp({data, params}) {
   })
  
   let coption =useRef({      
-    series: [{ type: "bar",  seriesLayoutBy: 'row'}, { type: "bar",  seriesLayoutBy: 'row'}, { type: "bar",  seriesLayoutBy: 'row'}, { type: "bar",  seriesLayoutBy: 'row'}],  
+    series: [{ type: "bar",  seriesLayoutBy: 'row'}, { type: "bar",  seriesLayoutBy: 'row'}, { type: "bar",  seriesLayoutBy: 'row'},{ type: "bar",  seriesLayoutBy: 'row'}, { type: "bar",  seriesLayoutBy: 'row'}],  
     grid: {
       bottom: "60px"
     },
@@ -156,10 +156,11 @@ export default function pagecomp({data, params}) {
     dataset: {
       dimensions: [
         {name: '日期', type: 'time'},
+        {name: "总用电费"},
         {name: "尖时段电费"},
         {name: "峰时段电费"},
-        {name: "谷时段电费"},
         {name: "平时段电费"},
+        {name: "谷时段电费"},
       ],
       source: [
       ],
@@ -210,9 +211,9 @@ export default function pagecomp({data, params}) {
   }
 
   if(constD?.constructor==Object && constD?.x?.length > 0) {
-    let {x,y,y1, y2,y3} = constD
+    let {x,y,y1, y2,y3,y4} = constD
      coption.current.dataset.source = [
-        x, y,y1,y2,y3
+        x, y,y1,y2,y3,y4
      ]
   }else {
     coption.current.dataset.source = []

@@ -94,6 +94,7 @@ export default function Index({tabledata,saveData, enterpriseId}) {
       title:categoryName,
       dataIndex: 'categoryName',
       key: 'categoryName',
+      width:378,
       onCell: (_, index) => {      
       if(index == 0) {
        return  ({ rowSpan: subCategory?.length + 1 , style: {backgroundColor: "#e7effd"}})
@@ -108,6 +109,7 @@ export default function Index({tabledata,saveData, enterpriseId}) {
       dataIndex: 'subCategoryName',
       key: 'subCategoryName',
       align: 'center',
+      width: 378,
       onCell: showOncell
     },
     {
@@ -115,6 +117,7 @@ export default function Index({tabledata,saveData, enterpriseId}) {
       dataIndex: 'unit',
       key: 'unit',
       align: 'center',
+      width:204,
       onCell: showOncell
     },
    /*  {

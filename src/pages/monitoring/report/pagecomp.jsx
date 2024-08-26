@@ -1,11 +1,11 @@
  import styled from 'styled-components'
-import React from 'react'
+import React, {useRef} from 'react'
  import {Descriptions} from 'antd'
 import Page from "@com/reportPrint/page"
  
 import Usetable from '@com/useTable'
 import {useSelector} from 'react-redux'
-import {currProject} from '@redux/systemconfig.js'
+import {currProject,deviceStyle} from '@redux/systemconfig.js'
  
 const DesItem = styled(Descriptions)`
 && {
@@ -53,8 +53,8 @@ const Main =styled.div`
 let columns = [
   {
       title: '设备类型',
-      dataIndex: 'type',
-      key: 'type',
+      dataIndex: 'name',
+      key: 'name',
   },
   {
       title: '设备总数',
@@ -63,18 +63,18 @@ let columns = [
   },
   {
       title: '在线设备',
-      dataIndex: 'online',
-      key: 'online',
+      dataIndex: 'onlineCount',
+      key: 'onlineCount',
   },
   {
       title: '离线设备',
-      dataIndex: 'offline',
-      key: 'offline',
+      dataIndex: 'offlineCount',
+      key: 'offlineCount',
   },
   {
       title: '在线率',
-      dataIndex: 'rate',
-      key: 'rate',
+      dataIndex: 'onlineRate',
+      key: 'onlineRate',
       render: (text) => `${text}%`
   },
 ]
@@ -122,11 +122,39 @@ let columns2 = [
  
  
 export default function pagecomp({data}) {
-  let  reptdata= data?.constructor===Object ? data : {} ;
+  let  {allCount, statusItems}= data?.constructor===Object ? data : {} ;
+
   const {address, projectName} = useSelector(currProject)  
- 
- 
-  let counts =[
+  const DeviceStyle = useSelector(deviceStyle) 
+
+  let item = {}
+  statusItems?.forEach(e => {
+    item[e.meterType] = e.count;
+  }) 
+  item.total = allCount
+  let totals = [item];
+
+  let colums = statusItems?.map(s => {
+    if(s.meterType ==0) {
+      return {dataIndex: s.meterType, title: '网关', key:s.meterType }
+    }else {
+      let name = DeviceStyle?.find(d => d.deviceStyle == s.meterType)?.name;
+      if(name)    return {dataIndex: s.meterType, title: name, key:s.meterType }
+    }
+    
+  })
+  colums = [{dataIndex: 'total', title: '总数', key: 'total'}, ...colums]
+  let dataSource = statusItems?.map(s => {
+    if(s.meterType ==0) {
+      return {...s, name: '网关'}
+    }else {
+      let name = DeviceStyle?.find(d => d.deviceStyle == s.meterType)?.name;
+      if(name) return {...s, name}
+    }
+   
+  })
+  console.log(dataSource)
+/*   let counts =[
     {
         gatewayCount: reptdata.gatewayCount,
         electricMeterCount: reptdata.electricMeterCount,
@@ -140,8 +168,9 @@ let dataSource = [
   {type: '网关', count: reptdata.gatewayCount, online: reptdata.gatewayOnlineCount, offline: reptdata.gatewayOfflineCount, rate: reptdata.gatewayOnlineRate},
   {type: '电表', count: reptdata.electricMeterCount, online: reptdata.electricMeterOnlineCount, offline: reptdata.electricMeterOfflineCount, rate: reptdata.electricMeterOnlineRate},
   {type: '水表', count: reptdata.waterMeterCount, online: reptdata.waterMeterOnlineCount, offline: reptdata.waterMeterOfflineCount, rate: reptdata.waterMeterOnlineRate},
-  {type: '断路器', count: reptdata.breakerCount, online: reptdata.breakerOnlineCount, offline: reptdata.breakerOfflineCount, rate: reptdata.breakerOnlineRate}
-]
+  {type: '断路器', count: reptdata.breakerCount, online: reptdata.breakerOnlineCount, offline: reptdata.breakerOfflineCount, rate: reptdata.breakerOnlineRate},
+  {type: '传感器', count: reptdata.sensorOnlineCount, online: reptdata.sensorOnlineCount, offline: reptdata.sensorOfflineCount, rate: reptdata.sensorOnlineRate }
+] */
  const stye ={
   marginBottom: '32px',
  }
@@ -154,7 +183,7 @@ let dataSource = [
           <DesItem.Item label="项目名称" key="name">{projectName}</DesItem.Item>
           <DesItem.Item label="项目地址" key="address">{address}</DesItem.Item>
         </DesItem> 
-        <Usetable dataSource={counts} columns={columns2} size="small" title={() => "2.设备统计"} key="statistic" style={stye} flex="none" tfs="18px"></Usetable>
+        <Usetable dataSource={totals} columns={colums} size="small" title={() => "2.设备统计"} key="statistic" style={stye} flex="none" tfs="18px"></Usetable>
                             
         <Usetable dataSource={dataSource} columns={columns} size="small" title={() => "3.在线率统计"} key="online" style={stye} flex="none" tfs="18px"></Usetable>
          </Main> 
