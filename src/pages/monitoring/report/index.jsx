@@ -6,7 +6,7 @@ import Report from '@com/reportPrint'
 import Pagecom from './pagecomp' 
 import {selectProjectId} from '@redux/systemconfig.js'
 import {useSelector} from 'react-redux'
-const { Runtime: { RuntimeStatus } } = Monitoring
+const { Runtime: { RuntimeStatus2 } } = Monitoring
 export default function Index() {
   const [reportData, setData] = useState(null)
   const  [params, setType] = useState(null)
@@ -14,7 +14,7 @@ export default function Index() {
 
   const getData =useCallback(async (params) => { // 缺少 年， 月参数
     try {
-     let {success, data} = await RuntimeStatus({projectId: projectId, areaId: 0})
+     let {success, data} = await RuntimeStatus2({projectId: projectId, areaId: 0})
      if(success && data) {
        let datas = data?.constructor == Object ? data : {}
        setData({...datas})

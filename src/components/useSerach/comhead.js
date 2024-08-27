@@ -74,6 +74,9 @@ export default function UseSerach(props) {
   let [AreaID, setAreaid] = useState(oneLevelDefaultId) 
   const levelone = useSelector(selectOneLevel)  
   const DeviceStyle = useSelector(filterDeviceStyle)  
+
+
+  console.log(DeviceStyle)
   const areaName = levelone?.find(l => l.id == AreaID)?.name;
   props.setAreaName(areaName)
   let shifts = useSelector(selectshifts)
@@ -211,10 +214,10 @@ const viewtype = (<Item name="view" initialValue={1} >
 }, {
   label: '水',
   value: 2
-}, {
+}, /* {
   label: '燃气',
   value: 3
-}] : [{
+} */] : [{
   label: '电',
   value: 1
 }, {

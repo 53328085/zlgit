@@ -1825,6 +1825,10 @@ export class EnergyFlowRuntime {
     `Energy/EnergyFlowRuntime/QueryTopologyDeviceState?projectId=${projectId}&gatewayId=${gatewayId}&commport=${commport}`   
   );
 
+  static OverviewFromGateway = (params) =>  //查询网关通道列表
+  server.post(
+    `/Monitor/RuntimeDevice/OverviewFromGateway`, params
+  );
 }
  
 //损耗分析

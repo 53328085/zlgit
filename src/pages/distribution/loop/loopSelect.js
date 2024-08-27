@@ -1,8 +1,19 @@
 import React, {useState, useEffect,useRef, Fragment, forwardRef,useImperativeHandle} from 'react'
-import style from './style.module.less';
+
+import styled from 'styled-components';
 import {Input, Tree, message } from 'antd';
 import dashLine from '@imgs/line.png'
 import {DistributionRoomRuntime} from '@api/api.js'
+const Treewrap = styled.div`
+  display: flex;
+  flex-direction: column;
+  row-gap: 16px;
+  flex: 1;
+  .radioLine {
+            width: 225px;
+            height: 2px;
+        }
+`
 export default forwardRef(
   function Index({projectId,roomId,getLinePoint},ref){
     const { Search } = Input;
@@ -143,20 +154,19 @@ export default forwardRef(
         }
       })  
       return(
-        <div className={style.contentLeft}>
-            <div className={style.title}>回路选择</div>
+        <Treewrap>
           <Search
             placeholder="请输入关键字查询"
             size="middle"
             onChange={onSearch}
             style={{
               width: 224,
-              margin:'16px'
+             marginTop: 16
             }}
           />
-          <img src={dashLine} className={style.radioLine}></img>
+          <img src={dashLine} className="radioLine"></img>
           <Tree
-            style={{height:'636px',overflow:'auto',marginLeft:'12px'}}
+            style={{height:'636px',overflow:'auto'}}
             onExpand={onExpand}
             expandedKeys={expandedKeys}
             autoExpandParent={autoExpandParent}
@@ -165,7 +175,7 @@ export default forwardRef(
             defaultSelectedKeys={0}
             onSelect={onSelect}
           />
-        </div>
+        </Treewrap>
       )
 }
 ) 

@@ -22,7 +22,7 @@ const Solar = lazy(() => import("@pages/photovoltaic/configure/index")) //光伏
 const Storage = lazy(() => import("@pages/storage/configure/index"))
 const Comindex = lazy(() => import("../comindex"))
 const Quota = lazy(() => import("@pages/quota/configure/index"))
-
+const Ledger = lazy(() => import("@pages/ledger/configure/index"))
 
 import  {designerCommon} from './common'
 import  {designerMonitor} from './monitoring'
@@ -35,6 +35,7 @@ import  {storage} from './storage'
 import {designCarbonEmissionManage} from './carbon'
 import  {maintenance} from './devops'
 import {quota} from './quota'
+import {ledger} from './ledger'
  export const designerComponents = { 
   '0201': Common,
   '0202': Project,
@@ -47,7 +48,8 @@ import {quota} from './quota'
   '0209': Storage,
   '0210': Comindex,
   '0211': Devops,
-  '0212': Quota
+  '0212': Quota,
+  "0213": Ledger
 } 
 export const designerRoutes = {
   designerCommon,
@@ -60,7 +62,8 @@ export const designerRoutes = {
   storage,
   designCarbonEmissionManage,
   maintenance,
-  quota
+  quota,
+  ledger
 }
 
 
