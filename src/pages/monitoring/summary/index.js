@@ -6,6 +6,8 @@ import Icard from './card'
 import { useSelector } from 'react-redux'
 import imgurl from './images/index.js'
 import breaker from './images/breaker.png'
+import chu from './images/chu.svg'
+import guang from './images/guang.svg'
 import { Monitoring } from '@api/api.js'
 import Ichart from '@com/useEcharts/Ichart';
 import Titlelayout from '@com/titlelayout';
@@ -77,25 +79,25 @@ export default function Index() {
       name: '断路器',
     }, {
       meterType: 13,
-      imageUrl: imgurl.device,
+      imageUrl: chu,
       name: '触点测温',
     }, {
       meterType: 14,
-      imageUrl: imgurl.device,
+      imageUrl: guang,
       name: '光纤测温',
     }
   ]
 
-  let series = [{ type: "line" }]
-  const [eoptions, setEptions] = useState({   //用电量
-    series,
-    dataset: {}
-  })
+  // let series = [{ type: "line" }]
+  // const [eoptions, setEptions] = useState({   //用电量
+  //   series,
+  //   dataset: {}
+  // })
 
-  const [woptions, setWptions] = useState({   //用水量
-    series,
-    dataset: {}
-  })
+  // const [woptions, setWptions] = useState({   //用水量
+  //   series,
+  //   dataset: {}
+  // })
 
   let [allCount, setAllCount] = useState(0)
   const [MonitoringData, setMonitoringData] = useState([]);
