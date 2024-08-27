@@ -14,7 +14,7 @@ import { operation } from '@api/api'
 import zhanwei from '@imgs/zhanwei.png'
 import moment from 'moment'
 import {  ExportExcel, CustButton} from '@com/useButton'
-import { Cdivider } from "@com/comstyled";
+import { Cdivider, Cspin } from "@com/comstyled";
 import styled from 'styled-components';
 import style from './style.module.less'
 import Pagecount from '@com/pagecontent'
@@ -61,7 +61,7 @@ export default function Warncontent() {
     
     
     columns[0].render = (_,record,rowIndex)=>(<a style={{textDecoration:'underline'}} onClick={()=>{
-        setOrder(true);
+       // setOrder(true);
         orderSn.current=_
         getOrderDetail(record.id)
     }}>{_}</a>)
@@ -160,17 +160,26 @@ export default function Warncontent() {
       run()
     }
     //工单详情
+    const [loading, setLoading] = useState(false)
     const getOrderDetail= async(orderId)=>{
-        let param ={
-            projectId,
-            orderId
+        try {
+            setLoading(true)
+            let param ={
+                projectId,
+                orderId
+            }
+            const res = await operation.OrderDetail(param)
+            if(res.success){
+                setOrderdetail(res.data || {})
+                setOrder(true)
+            }else{
+                message.error(res.errMsg)
+            }
+            setLoading(false)
+        } catch (error) {
+            setLoading(false)
         }
-        const res = await operation.OrderDetail(param)
-        if(res.success){
-            setOrderdetail(res.data)
-        }else{
-            message.error(res.errMsg)
-        }
+   
        
     }
     const onExport=useCallback(()=>{
@@ -212,12 +221,14 @@ export default function Warncontent() {
               
           
                <div style={{display: 'flex', flex: 1}}>
+               <Cspin spinning={loading} tip="数据加载中">
                 <UserTable 
                 columns={columns} 
                 ref={tableRef}
                 onExport={onExport}
                 {...tableProps}
                 ></UserTable>
+                </Cspin>
               </div>
             <Modal
                 title={(<div style={{display:'flex',alignItems:'center',justifyContent:'space-between',fontSize:16,padding:16}}>

@@ -30,6 +30,11 @@ const Main =styled.div`
         font-size: 14px;
         letter-spacing: 1px;
       }
+      .date span {
+          display: inline-block;
+          padding-left: 4em;
+         
+      }
    }
 
 `
@@ -54,7 +59,8 @@ const Main =styled.div`
  
 export default function pagecomp({data}) {
   let  reptdata=isObject(data) ? data : {} ;
-  let {carbonCategoryReports=[], activityDataReports=[],emissionCalculationFactors=[],enterpriseInfo,emissionFactorSource } = reptdata
+  let {carbonCategoryReports=[], activityDataReports=[], activityDataReportRemark, carbonCategoryReportRemark, emissionCalculationFactorRemark, emissionCalculationFactors=[],enterpriseInfo,emissionFactorSource, modelTitile,modelDescription
+  } = reptdata
   const activityTable =  activityDataReports.map(e => {
     let {subCategoryActivityDatas=[], categoryName} = e
     let rowSpan = subCategoryActivityDatas.length
@@ -145,11 +151,11 @@ export default function pagecomp({data}) {
       <>
       <PageComp key="a"> 
         <Main> 
-            <p style={{ textAlign: 'center' }}>中国食品、烟草及酒、饮料和精制茶企业温室气体排放报告</p>
+            <p style={{ textAlign: 'center' }}>{modelTitile}</p>
             <p>报告主体（盖章）：</p>
             <p>报告年度：</p>
             <p>编制日期：<span>年</span><span>月</span><span>日</span></p>
-            <p style={{ textIndent: '2em' }}>根据国家发展和改革委员会发布的《中国食品、烟草及酒、饮料和精制茶生产企业温室气体排放核算方法与报告指南（试行）》，本报告主体核算了年度温室气体排放量，并填写了相关数据表格。现将有关情况报告如下：</p>
+            <p style={{ textIndent: '2em' }}>{modelDescription}</p>
             <p>一、企业基本情况</p>
               <p className='content'>{reptdata.enterpriseInfo}</p>           
          </Main> 
@@ -176,7 +182,7 @@ export default function pagecomp({data}) {
         <Main>
         <p>本报告真实、可靠，如报告中的信息与实际情况不符，本企业将承担相应的法律责任。</p>
             <p>法人（签字）：</p>
-            <p><span>年</span><span>月</span><span>日</span></p>
+            <p className='date'><span>年</span><span>月</span><span>日</span></p>
         </Main>
       </PageComp>
       <PageComp >
@@ -184,12 +190,21 @@ export default function pagecomp({data}) {
                     <p className='title'>附表1 报告主体二氧化碳排放量报告</p>
                     <p className='title'>附表2 报告主体活动水平数据</p>
                     <p className='title'>附表3 报告主体排放因子和计算系数</p>
+
+                    <p style={{
+                    fontSize: 15, fontWeight: 700,
+                    fontFamily: 'fangsong', marginTop: 15
+                  }}>{carbonCategoryReportRemark}</p>
                     <p className='title tbhead' style={{marginTop: "64px"}}>附表1 报告主体年二氧化碳排放报告</p>
                     <Usetable columns={corboncolumns} dataSource={carbonCategoryReports} showHeader={false} bordered /> 
                   </Main>
                 </PageComp>
                 <PageComp >
                    <Main>
+                   <p style={{
+                    fontSize: 15, fontWeight: 700,
+                    fontFamily: 'fangsong', marginTop: 15
+                  }}>{activityDataReportRemark}</p>
                      <p className='title tbhead'>附表2 活动水平数据表</p>
                      <Usetable columns={activityColumns} dataSource={activityTable}  showHeader={false}  />
                    </Main>
@@ -200,12 +215,7 @@ export default function pagecomp({data}) {
                   <p style={{
                     fontSize: 15, fontWeight: 700,
                     fontFamily: 'fangsong', marginTop: 15
-                  }}>*企业应自行添加未在表中列出但企业实际消耗的其他能源品种</p>
-
-                  <p style={{
-                    fontSize: 15, fontWeight: 700,
-                    fontFamily: 'fangsong'
-                  }}>** 企业应自行添加未在表中列出但企业实际消耗的其他碳酸盐原料品种</p>
+                  }}>{emissionCalculationFactorRemark}</p>
                   <p className='title tbhead'>附表3 排放因子和计算系数</p>
 
                   <Usetable columns={emissionColumns} dataSource={emissionTable}  showHeader={false}  />
