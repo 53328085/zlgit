@@ -34,10 +34,11 @@ const Cform = styled(Form)`
  
 
 const { Item } = Form;
-export const AreaSelect = ({value, onChange, ...otherProps}) => {
+export const AreaSelect = ({value, onChange, isall, ...otherProps}) => {
   const levelone = useSelector(selectOneLevel)
+  const options = isall ?  [isall, ...levelone] : levelone
    return (
-    <Select  {...otherProps} defaultValue={value} onChange={onChange} options={levelone} fieldNames={{label: 'name', value: 'id', options: 'options'}}>
+    <Select  {...otherProps} defaultValue={value} onChange={onChange} options={options} fieldNames={{label: 'name', value: 'id', options: 'options'}}>
          
     </Select>
    )
@@ -333,6 +334,9 @@ const deviceStyleNode = (<Item name="deviceStyle" label="设备类型" initialVa
       form.setFieldValue('type',config.dateType)
     }else {
       form.setFieldValue('type',1)
+    }
+    if(config.meterType) {
+      form.setFieldValue('deviceStyle',config.meterType)
     }
      props.setexparams({...form.getFieldsValue(true)})
    
