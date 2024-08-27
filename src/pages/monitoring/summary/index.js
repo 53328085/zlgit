@@ -97,7 +97,6 @@ export default function Index() {
     dataset: {}
   })
 
-  let [status, setStatus] = useState({})
   let [allCount, setAllCount] = useState(0)
   const [MonitoringData, setMonitoringData] = useState([]);
   const { Runtime: { RuntimeStatusGroup, RuntimeQueryMonthUsage } } = Monitoring
@@ -105,7 +104,6 @@ export default function Index() {
     return RuntimeStatusGroup({ projectId, areaId }).then(res => {
       let { success, data } = res
       if (success) {
-        setStatus(data.statusItems)
         setAllCount(data.allCount)
         setMonitoringData(data?.statusItems?.map((item1) => {
           let item2 = statusAttribute.find((item) => item.meterType == item1.meterType);
@@ -123,38 +121,37 @@ export default function Index() {
       console.log(e)
     })
   }
-  console.log(MonitoringData);
-  const getMonthUsage = (type) => {//月用量
-    return RuntimeQueryMonthUsage({ projectId, areaId, type }).then(res => {
-      let { success, data } = res
-      if (success) {
-        if (data) {
-          let { eleConsumes = [], waterConsumes = [] } = data
-          let edataset = {
-            dimensions: [
-              { name: 'name', type: 'time' },
-              { name: "value", displayName: '用电量(kWh)' },
-            ],
-            source: eleConsumes,
-          }
-          let wdataset = {
-            dimensions: [
-              { name: 'name', type: 'time' },
-              { name: 'value', displayName: '用水量(m³)' },
-            ],
-            source: waterConsumes,
-          }
-          setEptions({ ...eoptions, dataset: edataset, xAxis: { axisLabel: { interval: 'auto' } } })
-          setWptions({ ...woptions, dataset: wdataset, xAxis: { axisLabel: { interval: 'auto' } } })
-        }
+  // const getMonthUsage = (type) => {//月用量
+  //   return RuntimeQueryMonthUsage({ projectId, areaId, type }).then(res => {
+  //     let { success, data } = res
+  //     if (success) {
+  //       if (data) {
+  //         let { eleConsumes = [], waterConsumes = [] } = data
+  //         let edataset = {
+  //           dimensions: [
+  //             { name: 'name', type: 'time' },
+  //             { name: "value", displayName: '用电量(kWh)' },
+  //           ],
+  //           source: eleConsumes,
+  //         }
+  //         let wdataset = {
+  //           dimensions: [
+  //             { name: 'name', type: 'time' },
+  //             { name: 'value', displayName: '用水量(m³)' },
+  //           ],
+  //           source: waterConsumes,
+  //         }
+  //         setEptions({ ...eoptions, dataset: edataset, xAxis: { axisLabel: { interval: 'auto' } } })
+  //         setWptions({ ...woptions, dataset: wdataset, xAxis: { axisLabel: { interval: 'auto' } } })
+  //       }
 
-      } else {
-        message.error(res.errMsg)
-      }
-    }).catch(e => {
-      console.log(e)
-    })
-  }
+  //     } else {
+  //       message.error(res.errMsg)
+  //     }
+  //   }).catch(e => {
+  //     console.log(e)
+  //   })
+  // }
   const toDevicePage = (meterType) => {
     console.log(meterType, exparams);
     if (meterType == 6) {
@@ -181,7 +178,7 @@ export default function Index() {
   useEffect(() => {
     if (Number.isFinite(areaId) && Number.isFinite(projectId)) {
       getStatusData()
-      getMonthUsage(1)
+      // getMonthUsage(1)
     }
   }, [areaId, projectId])
   return (
@@ -193,9 +190,19 @@ export default function Index() {
             isShow={true} on={'在线'} off={'离线'} per={'在线率'} onValue={item.onlineCount}
             offValue={item.offlineCount} perValue={item.onlineRate} isRed={true} isGreen={true} isredE={false} after="%" key={item.meterType} />
           </div>))}
-
       </div>
-
+      {/* <div className={style.content}>
+        <Titlelayout title="月度用电量（kWh）" layout="flex" key="electric">
+          <div className='flex'>
+            <Ichart {...eoptions} />
+          </div>
+        </Titlelayout>
+        <Titlelayout title="月度用水量（(m³)）" layout="flex" key="water">
+          <div className='flex'>
+            <Ichart {...woptions} />
+          </div>
+        </Titlelayout>
+      </div> */}
     </Pagecount>
   )
 }
