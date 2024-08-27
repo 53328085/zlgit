@@ -170,7 +170,7 @@ export default function Index() {
     } else {
       navigate(`/index/runtimeMonitor/point`, {
         state: {
-          type: 'index', primary: 'runtimeMonitor', title: '设备监测', nested: 'point'
+          type: 'index', primary: 'runtimeMonitor', title: '设备监测', nested: 'point', meterType
         }
       })
     }
