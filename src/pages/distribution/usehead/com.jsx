@@ -116,7 +116,7 @@ useEffect(() => {
 }, [nested])
 return (
   <div>
-          <div style={{backgroundColor: "#fff", paddingLeft: '16px', border: '1px solid #d7d7d7', borderRadius: 4, height: '48px' }}>
+          <div style={{backgroundColor: "#fff", paddingLeft: '16px', border: '1px solid #d7d7d7', borderRadius: 4, height: '48px', display: 'flex'}}>
               <Form
                   form={form}
                   colon={false}
