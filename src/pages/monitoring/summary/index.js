@@ -11,22 +11,80 @@ import Ichart from '@com/useEcharts/Ichart';
 import Titlelayout from '@com/titlelayout';
 import { selectProjectId, selectOneLevelDefaultId } from '@redux/systemconfig.js'
 import Pagecount from '@com/pagecontent'
-const CardList = styled.div`
-   
-     display: grid;
-    grid-template-columns: repeat(4, 404px);
-    grid-template-rows: repeat(2, 124px);
-    row-gap: 20px;
-    justify-content: space-between;
-`
+import { useNavigate, useOutletContext } from "react-router-dom";
 export default function Index() {
+  const navigate = useNavigate();
   const projectId = useSelector(selectProjectId)
   let areaId = useSelector(selectOneLevelDefaultId)
+  let { exparams } = useOutletContext()
   // let [areaId, setAreaId] = useState(0)
-  let [statistics, setStatistics] = useState({})
-  let [status, setStatus] = useState({})
-
-
+  const statusAttribute = [
+    {
+      meterType: 0,
+      imageUrl: imgurl.gateway,
+      name: '网关',
+      // deviceCount: 0,
+      // onlineCount: 0,
+      // offlineCount: 0,
+      // onlineRate: '0%',
+    }, {
+      meterType: 1,
+      imageUrl: imgurl.ele,
+      name: '电表',
+    }, {
+      meterType: 2,
+      imageUrl: imgurl.water,
+      name: '冷水表',
+    }, {
+      meterType: 3,
+      imageUrl: imgurl.gas,
+      name: '燃气表',
+    }, {
+      meterType: 4,
+      imageUrl: imgurl.chuan,
+      name: '传感器',
+    }, {
+      meterType: 5,
+      imageUrl: imgurl.bian,
+      name: '变压器',
+    }, {
+      meterType: 6,
+      imageUrl: imgurl.monitor,
+      name: '监控',
+    }, {
+      meterType: 7,
+      imageUrl: imgurl.device,
+      name: '热水表',
+    }, {
+      meterType: 8,
+      imageUrl: imgurl.device,
+      name: '蒸汽',
+    }, {
+      meterType: 9,
+      imageUrl: imgurl.device,
+      name: '煤炭',
+    }, {
+      meterType: 10,
+      imageUrl: imgurl.device,
+      name: '燃油',
+    }, {
+      meterType: 11,
+      imageUrl: imgurl.device,
+      name: '储能设备',
+    }, {
+      meterType: 12,
+      imageUrl: breaker,
+      name: '断路器',
+    }, {
+      meterType: 13,
+      imageUrl: imgurl.device,
+      name: '触点测温',
+    }, {
+      meterType: 14,
+      imageUrl: imgurl.device,
+      name: '光纤测温',
+    }
+  ]
 
   let series = [{ type: "line" }]
   const [eoptions, setEptions] = useState({   //用电量
@@ -39,24 +97,25 @@ export default function Index() {
     dataset: {}
   })
 
-  const { Runtime: { RuntimeStatistics, RuntimeStatus, RuntimeQueryMonthUsage } } = Monitoring
-  const getData = () => {//设备统计
-    return RuntimeStatistics({ projectId, areaId }).then(res => {
-      let { success, data } = res
-      if (success) {
-        setStatistics(data)
-      } else {
-        message.error(res.errMsg)
-      }
-    }).catch(e => {
-      console.log(e)
-    })
-  }
+  let [status, setStatus] = useState({})
+  let [allCount, setAllCount] = useState(0)
+  const [MonitoringData, setMonitoringData] = useState([]);
+  const { Runtime: { RuntimeStatusGroup, RuntimeQueryMonthUsage } } = Monitoring
   const getStatusData = () => {//在线情况
-    return RuntimeStatus({ projectId, areaId }).then(res => {
+    return RuntimeStatusGroup({ projectId, areaId }).then(res => {
       let { success, data } = res
       if (success) {
-        setStatus(data)
+        setStatus(data.statusItems)
+        setAllCount(data.allCount)
+        setMonitoringData(data?.statusItems?.map((item1) => {
+          let item2 = statusAttribute.find((item) => item.meterType == item1.meterType);
+          return {
+            ...item1,
+            ...item2,
+          };
+
+        }))
+
       } else {
         message.error(res.errMsg)
       }
@@ -64,6 +123,7 @@ export default function Index() {
       console.log(e)
     })
   }
+  console.log(MonitoringData);
   const getMonthUsage = (type) => {//月用量
     return RuntimeQueryMonthUsage({ projectId, areaId, type }).then(res => {
       let { success, data } = res
@@ -95,9 +155,31 @@ export default function Index() {
       console.log(e)
     })
   }
+  const toDevicePage = (meterType) => {
+    console.log(meterType, exparams);
+    if (meterType == 6) {
+      navigate(`/index/runtimeMonitor/camera`, {
+        state: {
+          type: 'index', primary: 'runtimeMonitor', title: '视频监控', nested: 'camera'
+        }
+      })
+
+    } else if (meterType == 0) {
+      navigate(`/index/runtimeMonitor/gateway`, {
+        state: {
+          type: 'index', primary: 'runtimeMonitor', title: '网关监测', nested: 'gateway'
+        }
+      })
+    } else {
+      navigate(`/index/runtimeMonitor/point`, {
+        state: {
+          type: 'index', primary: 'runtimeMonitor', title: '设备监测', nested: 'point'
+        }
+      })
+    }
+  }
   useEffect(() => {
     if (Number.isFinite(areaId) && Number.isFinite(projectId)) {
-      getData()
       getStatusData()
       getMonthUsage(1)
     }
@@ -105,45 +187,15 @@ export default function Index() {
   return (
     <Pagecount pd="0" bgcolor="transparent">
       <div className={style.cardList}>
-        {statistics.deviceCount != 0 ? <Icard img={imgurl.device} title={'设备总数'} value={statistics.deviceCount} key="device" /> : null}
-        {statistics.sensorCount != 0 ? <Icard img={imgurl.chuan} title={'传感器数量'} value={statistics.sensorCount} key="chuan" /> : null}
-        {statistics.transformerCount != 0 ? <Icard img={imgurl.bian} title={'变压器数量'} value={statistics.transformerCount} key="bian" /> : null}
-        {statistics.onlineMonitorCount != 0 ? <Icard img={imgurl.monitor} title={'监控数量'} value={statistics.monitorCount}
-          isShow={true} on={'云监控'} off={'本地监控'} per={''} onValue={statistics.onlineMonitorCount}
-          offValue={statistics.localMonitorCount} key="monitor" />
-          : null}
-        {status.gatewayCount != 0 ? <Icard img={imgurl.gateway} title={'网关'} value={status.gatewayCount}
-          isShow={true} on={'网关在线'} off={'网关离线'} per={'在线率'} onValue={status.gatewayOnlineCount}
-          offValue={status.gatewayOfflineCount} perValue={status.gatewayOnlineRate} isRed={true} isGreen={true} isredE={false} after="%" key="gateway" />
-          : null}
-        {status.electricMeterCount != 0 ? <Icard img={imgurl.ele} title={'电表'} value={status.electricMeterCount}
-          isShow={true} on={'电表在线'} off={'电表离线'} per={'电表告警'} onValue={status.electricMeterOnlineCount}
-          offValue={status.electricMeterOfflineCount} perValue={status.electricMeterAlarmCount} isRed={true} isGreen={true} isredE={true} key="ele" />
-          : null}
-        {status.waterMeterCount != 0 ? <Icard img={imgurl.water} title={'水表'} value={status.waterMeterCount}
-          isShow={true} on={'水表在线'} off={'水表离线'} per={'在线率'} onValue={status.waterMeterOnlineCount}
-          offValue={status.waterMeterOfflineCount} perValue={status.waterMeterOnlineRate} isRed={true} isGreen={true} isredE={false} after="%" key="water" />
-          : null}
-        {status.breakerCount != 0 ? <Icard img={breaker} title={'断路器'} value={status.breakerCount}
-          isShow={true} on={'断路器在线'} off={'断路器离线'} per={'在线率'} onValue={status.breakerOnlineCount}
-          offValue={status.breakerOfflineCount} perValue={status.breakerOnlineRate} isRed={true} isGreen={true} isredE={false} after="%" key="breaker" />
-          : null}
-        {/*   <Icard img={imgurl.gas} title={'燃气表'} value={status.gasCount}
-          isShow={true} on={'燃气表在线'} off={'燃气表离线'} per={'在线率'} onValue={status.gasOnlineCount}
-          offValue={status.gasOfflineCount} perValue={status.gasOnlineRate} isRed={true} isGreen={true} isredE={false} after="%" /> */}
+        <Icard img={imgurl.device} title={'设备总数'} value={allCount} key="device" />
+        {MonitoringData.map((item) => (
+          <div onClick={() => toDevicePage(item.meterType)}><Icard img={item.imageUrl} title={item.name} value={item.count}
+            isShow={true} on={'在线'} off={'离线'} per={'在线率'} onValue={item.onlineCount}
+            offValue={item.offlineCount} perValue={item.onlineRate} isRed={true} isGreen={true} isredE={false} after="%" key={item.meterType} />
+          </div>))}
+
       </div>
-      {/* <div className={style.content}>
-        <Titlelayout title="月度用电量（kWh）" layout="flex" key="electric">
-          <div className='flex'>
-            <Ichart {...eoptions} />
-          </div>
-        </Titlelayout>
-        <Titlelayout title="月度用水量（(m³)）" layout="flex" key="water">
-          <div className='flex'>
-            <Ichart {...woptions} />
-          </div>
-        </Titlelayout>
-      </div> */}
+
     </Pagecount>
   )
 }
