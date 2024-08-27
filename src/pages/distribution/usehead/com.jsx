@@ -158,9 +158,9 @@ return (
                       <DatePicker size='middle'  onChange={changeTime}></DatePicker>
                     </Form.Item>
                   }
-                  <Form.Item style={{marginLeft: 'auto', marginRight: 0}}>
+                {/*   <Form.Item style={{marginLeft: 'auto', marginRight: 0}}>
                   <Textloop />
-                  </Form.Item>
+                  </Form.Item> */}
                  
               </Form>
             

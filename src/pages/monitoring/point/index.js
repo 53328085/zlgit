@@ -41,13 +41,7 @@ export default function Index(props) {
   let areaId = useSelector(selectOneLevelDefaultId);
   let {exparams} = useOutletContext()
   let {deviceStyle} = exparams
-  const  {state: {meterType}} = useLocation();
- useEffect(() => {
-  if(meterType) {
-    
-  }
 
- }, [meterType])
   // const [messageApi, contextHolder] = message.useMessage();
   const {
    
@@ -160,7 +154,8 @@ export default function Index(props) {
   };
   let initparams = useRef(); 
   const getOverviewData = ({ current, pageSize }, formData) => {
-    if(!(isFinite(areaId) && isFinite(projectId))) return
+    let f = [areaId, deviceStyle, projectId].every(s => Number.isInteger(s))
+    if(!f) return;
     initparams.current = {
       projectId,
       areaId,
