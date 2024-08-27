@@ -17,7 +17,7 @@ export default function Index() {
   const dispatch = useDispatch();
   const location = useLocation();
   let { state = {} } = location;
-  let { nested = "", primary } = state;
+  let { nested = "", primary, meterType } = state; // meterType 从运行监控 =》 运行监控 跳转到 运行监控-》 设备管理
   let whole = ["runtimeMonitor", "runtimeSafe", "runtimeEnergy", "runtimeStorage", "runtimeMaintenance", "runtimeQuota"]; // 需要显示搜索 ***（全部）的模块
   let include = {
     runtimeEnergy: ["area", "report"], // 模块里不需要显示全部的
@@ -137,7 +137,7 @@ export default function Index() {
     try {
       console.log(nested)
       if (primary == "runtimeMonitor" && nested == "point") {
-        if (!config.isdevsty) setConfig({ isdevsty: true });
+        if (!config.isdevsty) setConfig({ isdevsty: true, meterType });
       } else {
         setConfig({ isdevsty: false });
       }
