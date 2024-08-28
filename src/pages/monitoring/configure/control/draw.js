@@ -1,12 +1,12 @@
-import React, {useState, forwardRef, useImperativeHandle, useRef, useEffect} from 'react'
-import {Drawer, Select, Button, Typography, Space, Form, Input, message, Switch } from 'antd'
-import {   LeftOutlined, RightOutlined } from "@ant-design/icons";
+import React, { useState, forwardRef, useImperativeHandle, useRef, useEffect } from 'react'
+import { Drawer, Select, Button, Typography, Space, Form, Input, message, Switch } from 'antd'
+import { LeftOutlined, RightOutlined } from "@ant-design/icons";
 import styled from 'styled-components'
 import Titlelayout from '@com/titlelayout.js'
 import UserTable from "@com/useTable";
-import {AutoValve} from '@api/api'
-import {CustButtonT} from "@com/useButton"
-const {Paragraph} = Typography
+import { AutoValve } from '@api/api'
+import { CustButtonT } from "@com/useButton"
+const { Paragraph } = Typography
 
 const Inptserach = styled(Input.Search)`
   && {
@@ -73,6 +73,7 @@ const Drawerbox = styled(Drawer)`
           flex-direction: column;
           justify-content: space-between;
           padding: 32px 0;
+          text-align: center;
           > div {
             .ant-typography {
               color: #fff;
@@ -88,353 +89,354 @@ const Drawerbox = styled(Drawer)`
   }
 `;
 const deviceColumns = [
-    {
-        title: '设备编号',
-        dataIndex: 'sn',
-        key: 'sn',
-        align: 'center'
-    },
-    {
-        title: '设备名称',
-        dataIndex: 'name',
-        key: 'name',
-        align: 'center'
-    },
-    {
-        title: '安装位置',
-        dataIndex: 'address',
-        key: 'address',
-        align: 'center'
-    },
-    {
-        title: '是否启用',
-        dataIndex: 'status',
-        key: 'status',
-        align: 'center',
-        render: (_, record, index) => <Switch  checkedChildren="启用" unCheckedChildren="停用" defaultChecked={record.enabled} onChange={e => {
-          console.log(index)
-          record.enabled = Number(e)
-        }} />
-    },
+  {
+    title: '设备编号',
+    dataIndex: 'sn',
+    key: 'sn',
+    align: 'center'
+  },
+  {
+    title: '设备名称',
+    dataIndex: 'name',
+    key: 'name',
+    align: 'center'
+  },
+  {
+    title: '安装位置',
+    dataIndex: 'address',
+    key: 'address',
+    align: 'center'
+  },
+  {
+    title: '是否启用',
+    dataIndex: 'status',
+    key: 'status',
+    align: 'center',
+    render: (_, record, index) => <Switch checkedChildren="启用" unCheckedChildren="停用" defaultChecked={record.enabled} onChange={e => {
+      console.log(index)
+      record.enabled = Number(e)
+    }} />
+  },
 ]
 
 const unselectdevice = [
   {
+    title: '设备编号',
+    dataIndex: 'sn',
+    key: 'sn',
+
+  },
+  {
+    title: '设备名称',
+    dataIndex: 'name',
+    key: 'name',
+
+  },
+  {
+    title: '安装位置',
+    dataIndex: 'address',
+    key: 'address',
+
+  }
+]
+function Draw({ params }, ref) {
+  const [open, setOpen] = useState(false)
+  const [sfrom] = Form.useForm()
+  const { Item } = Form
+  let { projectId, planId } = params || {}
+  // let {used, unused} = tabledata
+  const [usedtb, setusedtable] = useState([])
+  const [unusedtb, setUnusedtb] = useState([])
+  const unusedtbbk = useRef()
+  const deviceColumns = [
+    {
       title: '设备编号',
       dataIndex: 'sn',
       key: 'sn',
-     
-  },
-  {
+      align: 'center'
+    },
+    {
       title: '设备名称',
       dataIndex: 'name',
       key: 'name',
-      
-  },
-  {
+      align: 'center'
+    },
+    {
       title: '安装位置',
       dataIndex: 'address',
       key: 'address',
-     
-  }
-]
-function Draw({params}, ref) {
-    const [open, setOpen] = useState(false)
-    const [sfrom]= Form.useForm()
-    const {Item} = Form
-    let {projectId, planId} = params || {}
-   // let {used, unused} = tabledata
-   const [usedtb, setusedtable] = useState([])
-   const [unusedtb, setUnusedtb] = useState([])
-   const unusedtbbk = useRef()
-   const deviceColumns = [
-    {
-        title: '设备编号',
-        dataIndex: 'sn',
-        key: 'sn',
-        align: 'center'
+      align: 'center'
     },
     {
-        title: '设备名称',
-        dataIndex: 'name',
-        key: 'name',
-        align: 'center'
-    },
-    {
-        title: '安装位置',
-        dataIndex: 'address',
-        key: 'address',
-        align: 'center'
-    },
-    {
-        title: '是否启用',
-        dataIndex: 'status',
-        key: 'status',
-        align: 'center',
-        render: (_, record, index) => <Switch  checkedChildren="启用" unCheckedChildren="停用" defaultChecked={record.enabled} onChange={e => {
-          let arr = usedtb.map((el, i) => {
-              if(index == i) {
-                el.enabled = Number(e);
-                 return el
-              }else {
-                return el
-              }
+      title: '是否启用策略',
+      dataIndex: 'status',
+      key: 'status',
+      align: 'center',
+      render: (_, record, index) => <Switch checkedChildren="启用" unCheckedChildren="停用" defaultChecked={record.enabled} onChange={e => {
+        let arr = usedtb.map((el, i) => {
+          if (index == i) {
+            el.enabled = Number(e);
+            return el
+          } else {
+            return el
+          }
 
-          })
-          setusedtable([...arr])
-        }} />
+        })
+        setusedtable([...arr])
+      }} />
     },
-]
-    const getData = async () =>{
-        try {
-        let {success, data, errMsg} =   await AutoValve.GetDeviceConfigure(params)
-        if(success) {
-           if(data?.constructor ==Object) {
-             let {unused, used} = data
-             setUnusedtb(unused)
-             setusedtable(used)
-             unusedtbbk.current = unused
-           }else {
-            setUnusedtb([])
-            setusedtable([])
-           }
-        }else {
-            setUnusedtb([])
-            setusedtable([])
-            message.warning(errMsg || "数据出错")
+  ]
+  const getData = async () => {
+    try {
+      let { success, data, errMsg } = await AutoValve.GetDeviceConfigure(params)
+      if (success) {
+        if (data?.constructor == Object) {
+          let { unused, used } = data
+          setUnusedtb(unused)
+          setusedtable(used)
+          unusedtbbk.current = unused
+        } else {
+          setUnusedtb([])
+          setusedtable([])
         }
-        } catch (error) {
-            
-        }
-       
-    }
-  
-    const devices = useRef([]);
-    const undevices = useRef([])
-    useEffect(() => {
-      if(params)   getData()
-    }, [params])
-    const drawClose = () => {   
-        setOpen(false);
-        sfrom.resetFields()
-      };
-    const drawOpen = () => {
-        setOpen(true)
-    }
-    const onSave =async () => {
-        if(  !planId || !projectId) return
-        let post = {
-            planId,
-            projectId,
-            device:  usedtb.map(t => ({sn: t.sn, enabled: Number(t.enabled)}))
-        }
-     let {success, errMsg} = await  AutoValve.ConfigureDevice(post)
-     if(success) {
-        message.success('保存成功')
-        getData()
-     }else {
+      } else {
+        setUnusedtb([])
+        setusedtable([])
         message.warning(errMsg || "数据出错")
-     }
-    }
-    useImperativeHandle(ref, () => ({
-        drawClose,
-        drawOpen,
-    }))
-   
-    const changeUnselected = (v) => {
-       try {
-        if (v != 0) {
-          let arr = unusedtbbk.current?.filter(i => v == i.deviceStyle ) || []
-          setUnusedtb(arr)
-        }else {
-          setUnusedtb(unusedtbbk.current || [])
-        }
-       } catch (error) {
-        
-       }
-     
-      };
-      let keys = unselectdevice.map(i => i.key)
-     const onSerach = (v) => {
+      }
+    } catch (error) {
 
-       try {
-        if(v) {
-          let value = v.trim().toLowerCase()
-          let arr = [];
-          unusedtbbk.current.forEach(i => {
-            let f = [];
-             for(let key of keys) {
-              f.push(i[key]?.toLowerCase().includes(value))
-             }
-             if(f.includes(true)) {
-              arr.push(i)
-             }
-          })
-          setUnusedtb(arr)
-       }else {
+    }
+
+  }
+
+  const devices = useRef([]);
+  const undevices = useRef([])
+  useEffect(() => {
+    if (params) getData()
+  }, [params])
+  const drawClose = () => {
+    setOpen(false);
+    sfrom.resetFields()
+  };
+  const drawOpen = () => {
+    setOpen(true)
+  }
+  const onSave = async () => {
+    if (!planId || !projectId) return
+    let post = {
+      planId,
+      projectId,
+      device: usedtb.map(t => ({ sn: t.sn, enabled: Number(t.enabled) }))
+    }
+    let { success, errMsg } = await AutoValve.ConfigureDevice(post)
+    if (success) {
+      message.success('保存成功')
+      getData()
+    } else {
+      message.warning(errMsg || "数据出错")
+    }
+  }
+  useImperativeHandle(ref, () => ({
+    drawClose,
+    drawOpen,
+  }))
+
+  const changeUnselected = (v) => {
+    try {
+      if (v != 0) {
+        let arr = unusedtbbk.current?.filter(i => v == i.deviceStyle) || []
+        setUnusedtb(arr)
+      } else {
         setUnusedtb(unusedtbbk.current || [])
-       }
-       } catch (error) {
-          
-       }
-       
-
+      }
+    } catch (error) {
 
     }
-      const setb = useRef()
-      const untb = useRef()
-      const [selectedRowKeys, setSelectedRowKeys] = useState([]) // 已选中的设备
-      const [unselectedRowKeys, setUnselectedRowKeys] = useState([]) // 未选中的设备
-      const rowSelection = { // 已选中的设备
-        selectedRowKeys,
-        onChange: (selectedRowKeys, selectedRows, info) => {
-           devices.current = selectedRows;
-           setSelectedRowKeys([...selectedRowKeys])
-           
-        },
-      };
-      const unrowSelection = { // 未选中的设备
-        selectedRowKeys: unselectedRowKeys,
-        onChange: (selectedRowKeys, selectedRows, info) => {
-           undevices.current = selectedRows;
-           setUnselectedRowKeys([...selectedRowKeys])
-           
-        },
 
-      };
-      const unselect = () => {
-        if(!devices.current) return
-        let keys = devices.current.map(k => k.id)
-        setUnusedtb([...unusedtb, ...devices.current])
-        let data = usedtb.filter(t => !keys.includes(t.id))
-        setusedtable([...data])
-        setUnselectedRowKeys([])
-        devices.current = {}
-        undevices.current={}
+  };
+  let keys = unselectdevice.map(i => i.key)
+  const onSerach = (v) => {
+
+    try {
+      if (v) {
+        let value = v.trim().toLowerCase()
+        let arr = [];
+        unusedtbbk.current.forEach(i => {
+          let f = [];
+          for (let key of keys) {
+            f.push(i[key]?.toLowerCase().includes(value))
+          }
+          if (f.includes(true)) {
+            arr.push(i)
+          }
+        })
+        setUnusedtb(arr)
+      } else {
+        setUnusedtb(unusedtbbk.current || [])
       }
-      const selected = (f) => {
-         if(!undevices.current) return
-         let keys = undevices.current.map(k => k.id)
-            
-           setusedtable([...usedtb, ...undevices.current])
-            let undata = unusedtb.filter(t => !keys.includes(t.id))
-            setUnusedtb([...undata])
-            setSelectedRowKeys([])
-            devices.current = {}
-           undevices.current={}
-      }
+    } catch (error) {
+
+    }
+
+
+
+  }
+  const setb = useRef()
+  const untb = useRef()
+  const [selectedRowKeys, setSelectedRowKeys] = useState([]) // 已选中的设备
+  const [unselectedRowKeys, setUnselectedRowKeys] = useState([]) // 未选中的设备
+  const rowSelection = { // 已选中的设备
+    selectedRowKeys,
+    onChange: (selectedRowKeys, selectedRows, info) => {
+      devices.current = selectedRows;
+      setSelectedRowKeys([...selectedRowKeys])
+
+    },
+  };
+  const unrowSelection = { // 未选中的设备
+    selectedRowKeys: unselectedRowKeys,
+    onChange: (selectedRowKeys, selectedRows, info) => {
+      undevices.current = selectedRows;
+      setUnselectedRowKeys([...selectedRowKeys])
+
+    },
+
+  };
+  const unselect = () => {
+    if (!devices.current) return
+    let keys = devices.current.map(k => k.id)
+    setUnusedtb([...unusedtb, ...devices.current])
+    let data = usedtb.filter(t => !keys.includes(t.id))
+    setusedtable([...data])
+    setUnselectedRowKeys([])
+    devices.current = {}
+    undevices.current = {}
+  }
+  const selected = (f) => {
+    if (!undevices.current) return
+    let keys = undevices.current.map(k => k.id)
+
+    setusedtable([...usedtb, ...undevices.current])
+    let undata = unusedtb.filter(t => !keys.includes(t.id))
+    setUnusedtb([...undata])
+    setSelectedRowKeys([])
+    devices.current = {}
+    undevices.current = {}
+  }
   return (
     <Drawerbox
-    onClose={drawClose}
-     open={open}
-     width={1688}
-    closable={false}
-    maskClosable={false}
-    contentWrapperStyle={{margingRight: '16px'}}
+      onClose={drawClose}
+      open={open}
+      width={1688}
+      closable={false}
+      maskClosable={false}
+      contentWrapperStyle={{ margingRight: '16px' }}
 
-    destroyOnClose
-  >
-    <Titlelayout title="选中设备">
-       
+      destroyOnClose
+    >
+      <Titlelayout title="选中设备">
+
         <UserTable
           columns={deviceColumns}
           rowSelection={rowSelection}
           dataSource={usedtb}
-          rowKey="id" 
-          ref= {setb}
+          rowKey="id"
+          ref={setb}
           scroll={{
             y: 696
           }}
+          style={{ marginTop: '16px' }}
         />
-     
-      
-    </Titlelayout> 
-    <div className="optab">
-      <div style={{display: 'flex', flexDirection: 'column', justifyContent: 'center'}}>
-        <Paragraph>选择设备</Paragraph>
-        <div style={{display: 'flex', justifyContent:"space-between", padding: "0 16px"}}>
-          <Button
-            type="primary"
-            icon={<LeftOutlined style={{ fontSize: "18px",marginRight: "8px" }} />}
-            onClick={selected}
-          ></Button>
-          <Button
-            type="primary"
-            icon={<RightOutlined style={{ fontSize: "18px" }} />}
-            onClick={unselect}
-          ></Button>
+
+
+      </Titlelayout>
+      <div className="optab">
+        <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+          <Paragraph>选择设备</Paragraph>
+          <div style={{ display: 'flex', justifyContent: "space-between", padding: "0 16px" }}>
+            <Button
+              type="primary"
+              icon={<LeftOutlined style={{ fontSize: "18px", marginRight: "8px" }} />}
+              onClick={selected}
+            ></Button>
+            <Button
+              type="primary"
+              icon={<RightOutlined style={{ fontSize: "18px" }} />}
+              onClick={unselect}
+            ></Button>
+          </div>
+        </div>
+
+        <div>
+          <CustButtonT
+            block
+            style={{ marginBottom: "16px", height: "40px" }}
+            onClick={onSave}
+            wh="100%"
+            text="save"
+          />
+
+
+          <CustButtonT block onClick={drawClose} text="Cancel" type="default" sylte={{ height: '40px' }} wh="100%" />
+
         </div>
       </div>
-      
-      <div>
-       <CustButtonT
-          block
-          style={{ marginBottom: "16px", height: "40px" }}
-          onClick={onSave}
-          wh="100%"
-          text="save"
-        />
-          
-       
-        <CustButtonT block onClick={drawClose}   text="Cancel" type="default" sylte={{height: '40px'}} wh="100%" />
-      
-      </div>
-    </div>
-    <Titlelayout title="未选中的设备">
-    <div className="unselected">
-      
-      <Form
-        form={sfrom}
-        initialValues={{
-          type: "0",
-        }}
-      >
-        <Space size={16}>
-          <Item label="设备类型" name="type">
-            <Select
-              style={{ width: "112px" }}
-              onChange={changeUnselected}
-              options={[
-                {
-                  value: "0",
-                  label: "全部类型",
-                },
-                {
-                  value: "1",
-                  label: "电表",
-                },
-                {
-                  value: "2",
-                  label: "水表",
-                },
-                {
-                  value: "3",
-                  label: "燃气表",
-                },
-              ]}
-            ></Select>
-          </Item>
-          <Item name="alike" label="设备搜索">
-            <Inptserach
-              allowClear
-              placeholder="请输入设备编号/安装地址"
-              onSearch={onSerach}
-            />
-          </Item>
-        </Space>
-      </Form>
-      <UserTable
-        columns={unselectdevice}
-        rowSelection={unrowSelection}
-        dataSource={unusedtb}
-        scroll={{y: 696}}
-        ref={untb}
-        rowKey="id"
-      />
-      </div>
+      <Titlelayout title="未选中的设备">
+        <div className="unselected">
+
+          <Form
+            form={sfrom}
+            initialValues={{
+              type: "0",
+            }}
+          >
+            <Space size={16}>
+              <Item label="设备类型" name="type">
+                <Select
+                  style={{ width: "112px" }}
+                  onChange={changeUnselected}
+                  options={[
+                    {
+                      value: "0",
+                      label: "全部类型",
+                    },
+                    {
+                      value: "1",
+                      label: "电表",
+                    },
+                    {
+                      value: "2",
+                      label: "水表",
+                    },
+                    {
+                      value: "3",
+                      label: "燃气表",
+                    },
+                  ]}
+                ></Select>
+              </Item>
+              <Item name="alike" label="设备搜索">
+                <Inptserach
+                  allowClear
+                  placeholder="请输入设备编号/安装地址"
+                  onSearch={onSerach}
+                />
+              </Item>
+            </Space>
+          </Form>
+          <UserTable
+            columns={unselectdevice}
+            rowSelection={unrowSelection}
+            dataSource={unusedtb}
+            scroll={{ y: 696 }}
+            ref={untb}
+            rowKey="id"
+          />
+        </div>
       </Titlelayout>
-     
-  </Drawerbox>
+
+    </Drawerbox>
   )
 }
 export default forwardRef(Draw)

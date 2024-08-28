@@ -1,7 +1,7 @@
 import React, { useCallback, useState,useRef } from 'react'
 
 import {useAntdTable} from 'ahooks'
-import { Input, Space ,message,Timeline,Modal, Typography } from 'antd';
+import { Input, Space ,message,Timeline,Modal, Typography, Image } from 'antd';
 import {useOutletContext} from 'react-router-dom'
 import UserTable from '@com/useTable'
 import BlueColumn from '@com/bluecolumn'
@@ -279,9 +279,9 @@ let DispatchComp=({order,setOrder,orderdetail=null,orderSn=""})=>{
             <div style={{ minHeight: 100 }}>
                 <div style={{fontWeight:'bold',color:orderdetail?.state>2?'#000':'#ccc'}}>到达现场</div>
                 {orderdetail?.arriveImages?.map((it,index)=>{
-                    return   <img src={it} style={{ width: 124, height: 80, marginTop: 12, marginRight: 16 }} key={index}></img>
+                    return   <Image src={it} style={{ width: 124, height: 80, marginTop: 12, marginRight: 16 }} key={index} preview={true}></Image>
                 })}
-                {!orderdetail?.arriveImages&&(<img src={zhanwei} style={{ width: 124, height: 80, marginTop: 12, marginRight: 16 }}></img>)}
+                {!orderdetail?.arriveImages&&(<Image src={zhanwei} style={{ width: 124, height: 80, marginTop: 12, marginRight: 16 }} preview={true}></Image>)}
             </div>
            
         </Timeline.Item>
@@ -289,10 +289,10 @@ let DispatchComp=({order,setOrder,orderdetail=null,orderSn=""})=>{
             <div style={{fontWeight:'bold',color:orderdetail?.state>3?'#000':'#ccc'}}>故障处理</div>
             {
                 orderdetail?.processImages?.map((it,index)=>{
-                    return  <img src={it} style={{ width: 124, height: 80, marginTop: 12, marginRight: 16 }}></img>
+                    return  <Image src={it} style={{ width: 124, height: 80, marginTop: 12, marginRight: 16 }} preview={true}></Image>
                 })
             }
-            {!orderdetail?.processImages&&(<img src={zhanwei} style={{ width: 124, height: 80, marginTop: 12, marginRight: 16 }}></img>)}
+            {!orderdetail?.processImages&&(<Image src={zhanwei} style={{ width: 124, height: 80, marginTop: 12, marginRight: 16 }} preview={true}></Image>)}
 
             <div style={{padding:'12px 0',color:orderdetail?.state>3?'#000':'#ccc'}}>处理详情描述:</div>
             <div>

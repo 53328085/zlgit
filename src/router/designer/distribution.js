@@ -14,13 +14,13 @@ const WorkTicket = lazy(() => import("@pages/distribution/configure/index/workTi
 export let designerDistribution = {
     '020501': Room,
     '020502': Topology,
-  //  '020503': LineManage, // 回路管理
+   // '020503': LineManage, // 回路管理
     '020504': TransformerManage,
     '020505': MonitorManage,
     '020506': SensorManage,
     '020507': ContactManage,
     '020508': FibrtManage,
-     '020509': LineManage, // 线路管理
+    '020509': LineManage, // 线路管理
     '020510': Device, // 配电房设备管理
     '020511': WorkTicket, // 工作票管理
 }

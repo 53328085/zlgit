@@ -533,7 +533,8 @@ const controlcolumns = [
         }}
         headerStyle={{
           backgroundColor: '#f2f2f2',
-          padding: '32px 32px 0 32px'
+          padding: '32px 32px 0 32px',
+          borderBottom:'none'
         }}
         closable={false}
 
