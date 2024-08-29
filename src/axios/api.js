@@ -1361,6 +1361,7 @@ export const Monitoring = {
   //运行监控
   Runtime: {
     RuntimeStatus: (data) => server.get(`/Monitor/Runtime/Status?projectId=${data.projectId}&areaId=${data.areaId}`),
+    RuntimeStatus2: (data) => server.get(`/Monitor/Runtime/StatusGroup?projectId=${data.projectId}&areaId=${data.areaId}`),//在线情况(运行报告)
     RuntimeStatistics: (data) => server.get(`/Monitor/Runtime/Statistics?projectId=${data.projectId}&areaId=${data.areaId}`),//设备统计
     RuntimeStatusGroup: (data) => server.get(`/Monitor/Runtime/StatusGroup?projectId=${data.projectId}&areaId=${data.areaId}`),//在线情况
     RuntimeQueryMonthUsage: (data) => server.get(`/Monitor/Runtime/QueryMonthUsage?projectId=${data.projectId}&areaId=${data.areaId}&type=${data.type}`),//月用量

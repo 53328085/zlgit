@@ -9,6 +9,7 @@ import {  getOnelevel,  selectOneLevel, setCurrentlevel, getcurlRommid} from "@r
 export default function Index() {
    const location = useLocation()
    const dispatch = useDispatch();
+   const [custview, setCustview] = useState(undefined);
    let {state={}} = location
    const onelevels = useSelector(selectOneLevel)
    let {nested = '', primary} = state;
@@ -30,8 +31,13 @@ export default function Index() {
  const context ={
    setInpage,
    setShowroom,
-   dateval
-   
+   dateval,
+   setCustview,
+ }
+ const props = {
+  showRoom,
+  setDateVal,
+  custview,
  }
  const sethandler = () => {
   if(primary == 'designerDistribution' && nested == 'room') {
@@ -39,7 +45,13 @@ export default function Index() {
     let level = onelevels.filter((l) => l.id != 0);
     dispatch(getOnelevel([...level]));
     dispatch(setCurrentlevel(level[0] || []))
-   }else {
+   }else if(primary == 'ledger' && nested == 'deviceLedger') {
+    setShowroom(false)
+    let level = onelevels.filter((l) => l.id != 0);
+    dispatch(getOnelevel([...level]));
+    dispatch(setCurrentlevel(level[0] || []))
+   }
+   else {
     setShowroom(true)
    } 
 }
@@ -56,7 +68,7 @@ export default function Index() {
     return (  
       <Content className='page--main'>
         <div style={style}>
-         { show && <Comhead showRoom={showRoom} setDateVal={setDateVal} /> }
+         { show && <Comhead  {...props} /> }
            <Outlet context={context} />
         </div>
        </Content>
