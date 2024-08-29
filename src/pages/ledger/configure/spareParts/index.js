@@ -55,22 +55,13 @@ export default function Index() {
 
   const onChange = (value) => {
       setareaId(value)
-      if(editModal)
-      return
-      getData()
   }
   const onChangeRoom = (value) => {
       setdefalutroom(value)
-      if(editModal)
-      return
-      getData()
   }
 
   const onChangeType = (value) => {
       setdefalutType(value)
-      if(editModal)
-      return
-      getData()
   }
   const getRoomList = () => {
     distributionRoom.RoomList(projectId, areaId).then(res => {
@@ -147,11 +138,13 @@ export default function Index() {
       ),
     },
   ]
+  const [spareId,setspareId]=useState(0)
+
   const setDelete = (it) => {
     console.log(it)
+    setspareId(it.id)
     setDeleteModal(true)
   }
-  const [spareId,setspareId]=useState(0)
   const setEdit = (it) => {
     console.log(it)
     setspareId(it.id)
@@ -161,21 +154,25 @@ export default function Index() {
     setdefalutType(1)
   }
   const [pageInfo, setpageInfo] = useState({
-    pageNum: 1,
+    current: 1,
     pageSize: 10,
     total: 0
   })
   const [tabledata, setTabledata] = useState([])
   const changePage = (page, pageSize) => {
-    setpageInfo({
-      pageNum: page.current,
-      pageSize: page.pageSize,
-      total: page.total
-    })
-    getData()
+    console.log(page)
+    setpageInfo(page)
   }
   const deleteOk = () => {
-    setDeleteModal(false)
+    SpareParts.DeleteSpareParts({projectId,sparePartsId:spareId}).then(res=>{
+      if(res.success){
+        message.success('删除成功')
+        handleDelete()
+        getData()
+      }else{
+        message.error(res.errMsg)
+      }
+    })
   }
   const handleDelete = () => {
     setDeleteModal(false)
@@ -196,7 +193,7 @@ export default function Index() {
       })
     }else{
       let id=spareId
-      post.user.id = id
+      post.id = id
       console.log(post)
       SpareParts.UpdateSpareParts(projectId,post).then(res=>{
         if(res.success){
@@ -220,14 +217,14 @@ export default function Index() {
 const getData=()=>{
   let params={
     projectId,areaId,roomId:defalutroom,type:defalutType,
-    pageNum:pageInfo.pageNum,
+    pageNum:pageInfo?.current,
     pageSize:pageInfo.pageSize
   }
   SpareParts.QuerySparePartsList(params).then(res=>{
     if(res.success){
       setTabledata(res.data)
       setpageInfo({
-        pageNum: res.page,
+        current: res.pageNum,
         pageSize: res.pageSize,
         total: res.total
       })
@@ -242,7 +239,7 @@ const getData=()=>{
   }, [projectId, areaId])
   useEffect(() => {
     getData()
-  }, [])
+  }, [areaId,defalutroom,defalutType,pageInfo.current])
   return (
     <Pagecont bgcolor="transparent" pd="0" >
       <Title>
@@ -250,7 +247,7 @@ const getData=()=>{
       </Title>
       <Content>
         <div style={{ marginBottom: '16px' }}>
-          <Select style={{ width: '264px' }} options={allOptions} value={0} onChange={onChange}
+          <Select style={{ width: '264px' }} options={allOptions} value={areaId} onChange={onChange}
             fieldNames={{ label: 'name', value: 'id', options: 'options' }}>
           </Select>
           <Divider style={{ margin: '0px 32px', height: '32px' }} type="vertical" />
@@ -268,11 +265,7 @@ const getData=()=>{
           hbc="#515151"
           columns={columns}
           dataSource={tabledata}
-          pagination={{
-            current: pageInfo.pageNum,
-            pageSize: pageInfo.pageSize,
-            total: pageInfo.total
-          }}
+          pagination={pageInfo}
           onChange={changePage}
         />
         <CModal title="删除" open={deleteModal} onOk={deleteOk} onCancel={handleDelete} width={512} mold="cust" type="warn" closable={false}>

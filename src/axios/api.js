@@ -2220,14 +2220,14 @@ static QueryCarbonEmissionCalculationFactor= (enterpriseId) =>
  export class SpareParts {
   static QuerySparePartsList= (data) =>   
       server.post(`Ledger/SpareParts/QuerySparePartsList?projectId=${data.projectId}&areaId=${data.areaId}&roomId=${data.roomId}&type=${data.type}&pageNum=${data.pageNum}&pageSize=${data.pageSize}`)//台账管理备件信息表格
-  static DeleteSpareParts= (projectId,sparePartsId) =>   
+  static DeleteSpareParts= ({projectId,sparePartsId}) =>   
       server.post(`Ledger/SpareParts/DeleteSpareParts?projectId=${projectId}&sparePartsId=${sparePartsId}`)//删除
   static AddSpareParts= (projectId,data) =>   
       server.post(`Ledger/SpareParts/AddSpareParts?projectId=${projectId}`,data)//新增
   static UpdateSpareParts= (projectId,data) =>   
       server.post(`Ledger/SpareParts/UpdateSpareParts?projectId=${projectId}`,data)//编辑
-  static SparePartsController= (projectId,areaId,roomId) =>   
-      server.post(`Ledger/SparePartsRuntime/SparePartsController?projectId=${projectId}&areaId=${areaId}&roomId=${roomId}`)//查询库存状态信息
+  static SparePartsController= (data) =>   
+      server.post(`Ledger/SparePartsRuntime/QuerySpareParts?projectId=${data.projectId}&areaId=${data.areaId}&roomId=${data.roomId}&pageNum=${data.pageNum}&pageSize=${data.pageSize}`)//查询库存状态信息
   static InAndOutStorage= (projectId,sparePartsId,operate,count,remark) =>   
       server.post(`Ledger/SparePartsRuntime/InAndOutStorage?projectId=${projectId}&sparePartsId=${sparePartsId}&operate=${operate}&count=${count}&remark=${remark}`)//领用或入库（operate 0-领用 1-入库
   static QuerySparePartsType= (projectId,areaId,roomId) =>   
