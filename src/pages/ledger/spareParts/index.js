@@ -62,7 +62,6 @@ export default  function Index() {
   const projectId = useSelector(selectProjectId)
   const areaId = useSelector(selectOneLevelDefaultId)
 const { RangePicker } = DatePicker;
-const [roomList, setroomList] = useState([])
 const [defalutroom, setdefalutroom] = useState(0)
 
 
@@ -73,7 +72,7 @@ const [defalutroom, setdefalutroom] = useState(0)
         setCustview(undefined)
       }
      }, []) 
-  // const roomId = useSelector(selectcurlRommid)
+   const roomId = useSelector(selectcurlRommid)
   const columns = [
     {
       title: '备件名称',
@@ -202,15 +201,17 @@ const [defalutroom, setdefalutroom] = useState(0)
 
   }
   const modalRefRecord= useRef()
+const [nameList,setnameList]=useState([])
+
 const getRecord=()=>{
   modalRefRecord.current.onOpen()
-  // SpareParts.QuerySparePartsType(projectId,areaId,roomId).then(res=>{
-  //   if(res.success){
-  //     setroomList(res.data)
-  //   }else{
-  //     message.error(res.errMsg)
-  //   }
-  // })
+  SpareParts.QuerySparePartsName(projectId,areaId,roomId||1).then(res=>{
+    if(res.success){
+      setnameList(res.data)
+    }else{
+      message.error(res.errMsg)
+    }
+  })
 }
 const [typeList1, settypeList1] = useState([
   { id: 0, name: '全部类型' },
@@ -367,9 +368,7 @@ const [tabledataRecord,setTabledataRecord] = useState([{name:1}])
             <Select style={{ width: 112 }} defaultValue={0} options={typeList1} fieldNames={{label: 'name', value: 'id'}} onChange={changeType}></Select>
            </div>
            <div> <span style={{marginRight: '16px'}}>备件名称</span>
-            <Select style={{ width: 112 }} defaultValue={0} options={[
-              {deviceStyleName: '全部', id: 0},{deviceStyleName: '绝缘靴', id: 1},{deviceStyleName: '绝缘手套', id: 2}
-            ]} fieldNames={{label: 'deviceStyleName', value: 'id'}} onChange={changeName}></Select></div>
+            <Select style={{ width: 112 }} defaultValue={0} options={nameList} onChange={changeName}></Select></div>
            </div>
             <div>
               <span style={{marginRight: '16px'}}>操作时间</span>
