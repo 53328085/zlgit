@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef} from 'react'
-import { Form, Modal, Collapse, DatePicker, Radio, Button, Input, Table, Space, message, Pagination, } from 'antd'
+import { Form, Modal, Collapse, DatePicker, Radio, Button, Input, Table, Space, message, Pagination,Divider } from 'antd'
 import styled from 'styled-components'
 import { useAntdTable, useRequest, useReactive } from 'ahooks'
 import { useSelector } from 'react-redux'
@@ -23,6 +23,29 @@ import Titlelayout from '@com/titlelayout'
 import Pagecount from '@com/pagecontent'
 import { CustButton } from '@com/useButton'
 import Vide from './vide'
+
+const TotalDiv = styled.div`
+  z-index: 1;
+  position: absolute;
+  left: 574px;
+  top: 0;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  .totalTitle{
+    margin-left: 24px;
+    font-size: 14px;
+    color: #515151;
+    display: flex;
+    align-items: center;
+    .totalData{
+      font-size: 18px;
+      color: #000;
+      margin: 0 8px;
+    }
+  }
+`
+
 const Mainbox = styled.div`
   flex: 1;
   display: flex;
@@ -222,6 +245,7 @@ export default function Index() {
   }//云监控云台控制
 
   const [cameras, setCameras] =useState([])
+  const [totalValue, setTotalValue] = useState(0)
   const getCameraPage = ({ current, pageSize }) => {
     if (!(isFinite(projectId) && isFinite(roomId))) return
     let params = {
@@ -236,8 +260,10 @@ export default function Index() {
       if (success) {
         if(Array.isArray(data)) {
           setCameras(data)
+          setTotalValue(data.length)
         }else {
           setCameras([])
+          setTotalValue(0)
         }
         return {
           list: Array.isArray(data) ? data : [],
@@ -245,6 +271,7 @@ export default function Index() {
         }
       } else {
         setCameras([])
+        setTotalValue(0)
         return {
           list: [],
           total: 0
@@ -629,8 +656,15 @@ export default function Index() {
   }
 
   return (
-    <Pagecount bgcolor="transparent" pd="0">
+    <>
+      <TotalDiv>
+        <Divider dashed type="vertical" style={{ borderColor: "#999", height: '30px' }}></Divider>
+        <div className='totalTitle'>监控总数<span className='totalData'>{ totalValue }</span>台</div>
+      </TotalDiv>
+    <Pagecount  bgcolor="transparent" pd="0">
+      
         <Titlelayout layout="flex">
+          
            <Mainbox>
               {
                cameras?.map(d => <Vide {...d} key={d.sn} onClick={() => showCameraDialog(d)} />)
@@ -780,5 +814,6 @@ export default function Index() {
         </div>
       </Modal>
     </Pagecount>
+    </>
   )
 }

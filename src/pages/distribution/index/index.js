@@ -22,7 +22,7 @@ export default function Index() {
  const [showRoom, setShowroom] = useState(true) // 是否显示配电房选择框
  let show = !inpage.includes(nested) || showroute[primary]?.includes(nested)
  let style = show ? {
-  flex: 1, display: "grid", gridTemplateRows: "48px 1fr", rowGap: "16px"
+  flex: 1, display: "grid", gridTemplateRows: "48px 1fr", rowGap: "16px", position:"relative"
  }: {
   display: 'flex',
   flex: 1,

@@ -371,7 +371,7 @@ useEffect(() => {
 
   return (
     <CustContext.Provider value={{ form }}>
-      <Pagecount bgcolor="transparent" pd="0px">       
+      <Pagecount bgcolor="transparent" pd="0px" showserach="1">       
         <Mainbox>
           <Titlelayout title={'今日告警'} {...fs}>
             <Warnbox>
