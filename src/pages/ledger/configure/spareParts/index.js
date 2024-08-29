@@ -7,6 +7,7 @@ import { selectProjectId, selectOneLevel } from '@redux/systemconfig.js'
 import { SpareParts,distributionRoom } from '@api/api.js'
 import Usetable from '@com/useTable'
 import CModal from '@com/useModal'
+import { use } from 'i18next';
 const Title = styled.div`
     &&{
      border: 1px solid #d7d7d7;
@@ -54,13 +55,22 @@ export default function Index() {
 
   const onChange = (value) => {
       setareaId(value)
+      if(editModal)
+      return
+      getData()
   }
   const onChangeRoom = (value) => {
       setdefalutroom(value)
+      if(editModal)
+      return
+      getData()
   }
 
   const onChangeType = (value) => {
       setdefalutType(value)
+      if(editModal)
+      return
+      getData()
   }
   const getRoomList = () => {
     distributionRoom.RoomList(projectId, areaId).then(res => {
@@ -141,8 +151,10 @@ export default function Index() {
     console.log(it)
     setDeleteModal(true)
   }
+  const [spareId,setspareId]=useState(0)
   const setEdit = (it) => {
     console.log(it)
+    setspareId(it.id)
     apiform.setFieldsValue(it)
     setEditModal(true)
     setCtitle('编辑')
@@ -156,10 +168,11 @@ export default function Index() {
   const [tabledata, setTabledata] = useState([])
   const changePage = (page, pageSize) => {
     setpageInfo({
-      pageNum: page,
-      pageSize: pageSize,
-      total: 100
+      pageNum: page.current,
+      pageSize: page.pageSize,
+      total: page.total
     })
+    getData()
   }
   const deleteOk = () => {
     setDeleteModal(false)
@@ -182,6 +195,9 @@ export default function Index() {
         }
       })
     }else{
+      let id=spareId
+      post.user.id = id
+      console.log(post)
       SpareParts.UpdateSpareParts(projectId,post).then(res=>{
         if(res.success){
           message.success('编辑成功')
@@ -202,7 +218,12 @@ export default function Index() {
     setCtitle('新增')
   }
 const getData=()=>{
-  SpareParts.QuerySparePartsList(projectId,areaId,defalutroom,defalutType).then(res=>{
+  let params={
+    projectId,areaId,roomId:defalutroom,type:defalutType,
+    pageNum:pageInfo.pageNum,
+    pageSize:pageInfo.pageSize
+  }
+  SpareParts.QuerySparePartsList(params).then(res=>{
     if(res.success){
       setTabledata(res.data)
       setpageInfo({
@@ -221,7 +242,7 @@ const getData=()=>{
   }, [projectId, areaId])
   useEffect(() => {
     getData()
-  }, [areaId,defalutroom, defalutType])
+  }, [])
   return (
     <Pagecont bgcolor="transparent" pd="0" >
       <Title>

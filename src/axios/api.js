@@ -2218,8 +2218,8 @@ static QueryCarbonEmissionCalculationFactor= (enterpriseId) =>
  /* Carbon/CarbonEmissionCalculationFactor/QueryCarbonEmissionCalculationFactor?enterpriseId */
 //台账管理
  export class SpareParts {
-  static QuerySparePartsList= (projectId,areaId,roomId,type) =>   
-      server.post(`Ledger/SpareParts/QuerySparePartsList?projectId=${projectId}&areaId=${areaId}&roomId=${roomId}&type=${type}`)//台账管理备件信息表格
+  static QuerySparePartsList= (data) =>   
+      server.post(`Ledger/SpareParts/QuerySparePartsList?projectId=${data.projectId}&areaId=${data.areaId}&roomId=${data.roomId}&type=${data.type}&pageNum=${data.pageNum}&pageSize=${data.pageSize}`)//台账管理备件信息表格
   static DeleteSpareParts= (projectId,sparePartsId) =>   
       server.post(`Ledger/SpareParts/DeleteSpareParts?projectId=${projectId}&sparePartsId=${sparePartsId}`)//删除
   static AddSpareParts= (projectId,data) =>   
