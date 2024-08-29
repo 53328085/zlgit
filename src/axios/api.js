@@ -2216,3 +2216,24 @@ static QueryCarbonEmissionCalculationFactor= (enterpriseId) =>
       server.get(`Carbon/CarbonEmissionCalculationFactor/QueryCarbonEmissionCalculationFactor?enterpriseId=${enterpriseId}`)   
 }
  /* Carbon/CarbonEmissionCalculationFactor/QueryCarbonEmissionCalculationFactor?enterpriseId */
+//台账管理
+ export class SpareParts {
+  static QuerySparePartsList= (projectId,areaId,roomId,type) =>   
+      server.post(`Ledger/SpareParts/QuerySparePartsList?projectId=${projectId}&areaId=${areaId}&roomId=${roomId}&type=${type}`)//台账管理备件信息表格
+  static DeleteSpareParts= (projectId,sparePartsId) =>   
+      server.post(`Ledger/SpareParts/DeleteSpareParts?projectId=${projectId}&sparePartsId=${sparePartsId}`)//删除
+  static AddSpareParts= (projectId,data) =>   
+      server.post(`Ledger/SpareParts/AddSpareParts?projectId=${projectId}`,data)//新增
+  static UpdateSpareParts= (projectId,data) =>   
+      server.post(`Ledger/SpareParts/UpdateSpareParts?projectId=${projectId}`,data)//编辑
+  static SparePartsController= (projectId,areaId,roomId) =>   
+      server.post(`Ledger/SparePartsRuntime/SparePartsController?projectId=${projectId}&areaId=${areaId}&roomId=${roomId}`)//查询库存状态信息
+  static InAndOutStorage= (projectId,sparePartsId,operate,count,remark) =>   
+      server.post(`Ledger/SparePartsRuntime/InAndOutStorage?projectId=${projectId}&sparePartsId=${sparePartsId}&operate=${operate}&count=${count}&remark=${remark}`)//领用或入库（operate 0-领用 1-入库
+  static QuerySparePartsType= (projectId,areaId,roomId) =>   
+      server.post(`Ledger/SparePartsRuntime/QuerySparePartsType?projectId=${projectId}&areaId=${areaId}&roomId=${roomId}`)//获取备件类型
+  static QuerySparePartsName= (projectId,areaId,roomId) =>   
+      server.post(`Ledger/SparePartsRuntime/QuerySparePartsName?projectId=${projectId}&areaId=${areaId}&roomId=${roomId}`)//获取备件名称
+  static QueryInventoryRecord= (projectId,type,name,startDate,endDate) =>   
+      server.post(`Ledger/SparePartsRuntime/QueryInventoryRecord?projectId=${projectId}&type=${type}&name=${name}&startDate=${startDate}&endDate=${endDate}`)//出入库记录查询
+ }

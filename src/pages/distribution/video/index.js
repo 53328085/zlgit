@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef} from 'react'
-import { Form, Modal, Collapse, DatePicker, Radio, Button, Input, Table, Space, message, Pagination, } from 'antd'
+import { Form, Modal, Collapse, DatePicker, Radio, Button, Input, Table, Space, message, Pagination,Divider } from 'antd'
 import styled from 'styled-components'
 import { useAntdTable, useRequest, useReactive } from 'ahooks'
 import { useSelector } from 'react-redux'
@@ -22,11 +22,36 @@ import { isObject } from '@com/usehandler'
 import Titlelayout from '@com/titlelayout'
 import Pagecount from '@com/pagecontent'
 import { CustButton } from '@com/useButton'
+import Vide from './vide'
+
+const TotalDiv = styled.div`
+  z-index: 1;
+  position: absolute;
+  left: 574px;
+  top: 0;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  .totalTitle{
+    margin-left: 24px;
+    font-size: 14px;
+    color: #515151;
+    display: flex;
+    align-items: center;
+    .totalData{
+      font-size: 18px;
+      color: #000;
+      margin: 0 8px;
+    }
+  }
+`
 const Mainbox = styled.div`
   flex: 1;
   display: flex;
-  flex-direction: column;
-  row-gap: 16px;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  /* flex-direction: column;
+  row-gap: 16px; */
   .data {
      flex:1;
      display: flex;
@@ -202,6 +227,8 @@ export default function Index() {
     })
   }//云监控云台控制
 
+  const [cameras, setCameras] =useState([])
+  const [totalValue, setTotalValue] = useState(0)
 
   const getCameraPage = ({ current, pageSize }) => {
     if (!(isFinite(projectId) && isFinite(roomId))) return
@@ -215,11 +242,21 @@ export default function Index() {
     return DistributionRoomRuntime.CameraPage(params).then(res => {
       let { success, data } = res
       if (success) {
+        if(Array.isArray(data)) {
+          setCameras(data)
+          setTotalValue(data.length)
+        }else {
+          setCameras([])
+          setTotalValue(0)
+        }
         return {
           list: Array.isArray(data) ? data : [],
           total: Array.isArray(data) ? data.length : 0
         }
       } else {
+        setCameras([])
+        setTotalValue(0)
+
         return {
           list: [],
           total: 0
@@ -588,27 +625,23 @@ export default function Index() {
   }
 
   return (
-    <Pagecount bgcolor="transparent" pd="0">
-      <Mainbox>
-        <div id='cameraData' className="cameraData" key="h">
-          <CameraValue img={totalCamera} title={'监控总数'} value={statistics?.all ?? '0'}></CameraValue>
-          <CameraValue img={cloudCamera} title={'云监控'} value={statistics?.cloud ?? '0'}></CameraValue>
-          <CameraValue img={localCamera} title={'本地监控'} value={statistics?.local ?? '0'}></CameraValue>
-        </div>
 
+    <>
+      <TotalDiv>
+        <Divider dashed type="vertical" style={{ borderColor: "#999", height: '30px' }}></Divider>
+        <div className='totalTitle'>监控总数<span className='totalData'>{ totalValue }</span>台</div>
+      </TotalDiv>
+    <Pagecount  bgcolor="transparent" pd="0">
         <Titlelayout layout="flex">
-          <div className='data'>
-            <div className='serach'>
-              <span>设备查询</span>
-              <Serach style={{ width: '320px' }} placeholder='请输入设备编号/安装地址' onSearch={setAlike}></Serach>
+          
+           <Mainbox>
+              {
+               cameras?.map(d => <Vide {...d} key={d.sn} onClick={() => showCameraDialog(d)} />)
+              }
+           </Mainbox>
 
-            </div>
-            <Cdivider type="h" style={{ margin: "16px 0" }} />
 
-            <UseTable columns={columns}  {...tableProps} rowKey='name' />
-          </div>
         </Titlelayout>
-      </Mainbox>
       <Modal
         title={recordData?.address}
         centered
@@ -752,5 +785,6 @@ export default function Index() {
         </div>
       </Modal>
     </Pagecount>
+    </>
   )
 }
