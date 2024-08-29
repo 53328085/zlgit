@@ -23,7 +23,7 @@ flex-direction: column;
   .ant-table-container{
     .ant-table-thead{
       .ant-table-cell {
-        padding: 4px 4px;
+        padding: ${props => props.pd || '4px 4px'} ;
         background-color: ${props => props.istheme ? props.theme.primaryColor : props.hbg};
         color: ${props => props.hbc || ((props.istheme || props.hbg) ? '#fff' : '#515151')};
       }
@@ -31,7 +31,7 @@ flex-direction: column;
     .ant-table-tbody {
       .ant-table-row{
         .ant-table-cell {
-          padding: 4px 4px;
+          padding: ${props => props.pd || '4px 4px'} ;
         }
       }
     }
