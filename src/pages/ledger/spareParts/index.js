@@ -1,9 +1,9 @@
 import React, { useState, useRef, useEffect, useCallback, useMemo } from 'react'
 import styled from 'styled-components'
-import {  Space, Button, message ,InputNumber,Input,Select,DatePicker  } from 'antd'
+import {  Space, Button, message ,InputNumber,Input,Select,DatePicker,Divider   } from 'antd'
 import { nanoid } from "@reduxjs/toolkit"
-import { selectcurlRommid, selectProjectId } from "@redux/systemconfig";
- 
+import { selectcurlRommid, selectProjectId,selectOneLevelDefaultId } from "@redux/systemconfig";
+import { SpareParts,distributionRoom } from '@api/api.js'
 import Titlelayout from '@com/titlelayout'
 import Usetable from '@com/useTable'
 import { useSelector, useDispatch } from 'react-redux'
@@ -59,16 +59,21 @@ const Mainbox = styled.div`
 `
 export default  function Index() {
   let {setCustview} = useOutletContext()
+  const projectId = useSelector(selectProjectId)
+  const areaId = useSelector(selectOneLevelDefaultId)
 const { RangePicker } = DatePicker;
+const [roomList, setroomList] = useState([])
+const [defalutroom, setdefalutroom] = useState(0)
+
 
     useEffect(() => {
-      setCustview(<Button style={{position:'absolute',right:'130px'}} type="primary" onClick={getRecord}>出入库记录</Button>);
+      setCustview(
+      <Button style={{position:'absolute',right:'130px'}} type="primary" onClick={getRecord}>出入库记录</Button>);
       return () => {
         setCustview(undefined)
       }
      }, []) 
-  const projectId = useSelector(selectProjectId)
-  const roomId = useSelector(selectcurlRommid)
+  // const roomId = useSelector(selectcurlRommid)
   const columns = [
     {
       title: '备件名称',
@@ -177,7 +182,7 @@ const { RangePicker } = DatePicker;
       projectId,
       pageNum:pageInfo.pageNum ,
       pageSize: pageInfo.pageSize,
-      roomId,
+      roomId:defalutroom,
     }
    const resp =  await  DistributionRoomRuntime.WarningPage(params)
    if(resp.success){
@@ -199,7 +204,21 @@ const { RangePicker } = DatePicker;
   const modalRefRecord= useRef()
 const getRecord=()=>{
   modalRefRecord.current.onOpen()
+  // SpareParts.QuerySparePartsType(projectId,areaId,roomId).then(res=>{
+  //   if(res.success){
+  //     setroomList(res.data)
+  //   }else{
+  //     message.error(res.errMsg)
+  //   }
+  // })
 }
+const [typeList1, settypeList1] = useState([
+  { id: 0, name: '全部类型' },
+  { id: 1, name: '通用件/标准件' },
+  { id: 2, name: '易损件' },
+  { id: 3, name: '电气备件' },
+  { id: 4, name: '关键备件' },
+])
 const [beiType,setBeiType]=useState(0)
 const [beiName,setBeiName]=useState(0)
 const changeType=(e)=>{
@@ -263,14 +282,14 @@ const columnsRecord = [
 ]
 const [tabledataRecord,setTabledataRecord] = useState([{name:1}])
   useEffect(() => {
-    if(roomId) {
+    if(defalutroom) {
      // warnPage()
     }
 
-  }, [roomId,JSON.stringify(pageInfo) ])
+  }, [defalutroom,JSON.stringify(pageInfo) ])
 
   return (
-    <Pagecount bgcolor="transparent" pd="0">
+    <Pagecount pd="0"   showserach={false} custserach>
       <Mainbox>       
         <Titlelayout title="" layout="flex">
             <Usetable 
@@ -345,9 +364,7 @@ const [tabledataRecord,setTabledataRecord] = useState([{name:1}])
            <div style={{display: 'flex', flexWrap: 'nowrap', flexDirection: 'row'}}>
            <div style={{marginRight: '16px'}}>
            <span style={{marginRight: '16px'}}>备件类型</span>
-            <Select style={{ width: 112 }} defaultValue={0} options={[
-              {deviceStyleName: '全部', id: 0},{deviceStyleName: '常用品', id: 1}
-            ]} fieldNames={{label: 'deviceStyleName', value: 'id'}} onChange={changeType}></Select>
+            <Select style={{ width: 112 }} defaultValue={0} options={typeList1} fieldNames={{label: 'name', value: 'id'}} onChange={changeType}></Select>
            </div>
            <div> <span style={{marginRight: '16px'}}>备件名称</span>
             <Select style={{ width: 112 }} defaultValue={0} options={[

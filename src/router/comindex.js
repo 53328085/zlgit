@@ -91,7 +91,7 @@ export default function Index() {
     ],
     ledger: [  //台账管理
       "deviceLedger",
-      "spareParts",
+      "spareParts","ledgerManagement","spareParts"
     ]
   }); // 需要显示搜索的页面
 
@@ -235,7 +235,13 @@ export default function Index() {
             setConfig({ custview: false });
             break;
           case "spareParts":
-            setConfig({ custview: true });
+            setConfig({ custview: true,isAreaId:true });
+            break;
+            case "ledgerManagement":
+            setConfig({ custview: false });
+            break;
+            case "spareParts":
+            setConfig({ custview: false });
             break;
         }
       }
