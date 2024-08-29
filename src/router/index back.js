@@ -63,7 +63,7 @@ const lazyLoad = (moduleName) => {
   return <Module />;
 }
 
-const loginrouter =  [{
+const login =  [{
   path: "/login",
   element: <Login />
   }]

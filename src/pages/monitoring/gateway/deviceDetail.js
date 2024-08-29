@@ -86,7 +86,7 @@ const Chartin = (props) => {
            dataset: {
              dimensions,
              source,
-             sourceHeader: true,
+             sourceHeader: false,
            },
            series,
            dataZoom: {

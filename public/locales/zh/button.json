@@ -41,6 +41,7 @@
   "addMasterNode": "新增主节点",
   "keyEquipment": "重点设备",
   "addKeyEquipment": "新增重点设备",
+  "addEquipment":"新增设备",
   "deleteShiftPlan": "删除班次方案",
   "editShift": "编辑班次",
   "saveImage": "保存图片",

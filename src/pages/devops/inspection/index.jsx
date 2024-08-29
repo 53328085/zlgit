@@ -14,7 +14,7 @@ import moment from 'moment'
 import { useForm } from 'antd/lib/form/Form';
 import { ExportExcel, CustButton } from '@com/useButton'
 import  CModal from "@com/useModal"
-import { Cdivider } from "@com/comstyled";
+import { Cdivider, Cspin } from "@com/comstyled";
 import styled from 'styled-components';
 import style from './style.module.less'
 import Pagecount from '@com/pagecontent'
@@ -165,13 +165,15 @@ export default function Warncontent() {
         }
     }
 
-
+    const [loading, setLoading] = useState(false)
     const getInspectionDetail = async (inspectionId) => {
         try {
+            setLoading(true)
             let param = {
                 projectId,
                 inspectionId
             }
+           
             const res = await operation.InspectionDetail(param)
             if (res.success) {
                 setOrderdetail(res.data || {})
@@ -179,7 +181,9 @@ export default function Warncontent() {
             } else {
                 message.error(res.errMsg)
             }
+            setLoading(false)
         } catch (error) {
+            setLoading(false)
             console.log(error)
         }
 
@@ -233,6 +237,7 @@ export default function Warncontent() {
 
             </Form>
             <div style={{ display: 'flex', flex: 1}}>
+                <Cspin spinning={loading} tip="数据加载中">
                 <UserTable
                     columns={columns}                    
                     {...tableProps}
@@ -241,6 +246,7 @@ export default function Warncontent() {
                     ref={tableRef}
                     onExport={onExport}
                 ></UserTable>
+                </Cspin>
             </div>
             <CModal
                 title={(<div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', fontSize: 16, color: "#515151" }}>

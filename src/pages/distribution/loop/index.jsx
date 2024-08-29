@@ -27,10 +27,21 @@ column-gap: 16px;
     padding: 16px ;
     width: 100% ;
     background-color: #fff;
+    border: 1px solid #d7d7d7;
+    border-radius: 4px;
    .ctitle{
      display: flex;
      justify-content: space-between;
      height: 32px;
+     margin-bottom: 16px;
+     .title {
+        display: inline-flex;
+        height: 32px;
+        padding-left: 16px;
+        border-left: 4px solid ${props => props.theme.primaryColor};
+        align-items: center;
+        color: #515151;
+     }
    }
 }
 `
@@ -186,16 +197,7 @@ export default function Index() {
          console.log('RoomId', RoomId)
          if(Array.isArray(RoomId))  getLinePoint(RoomId,0);
     },[RoomId])
-   const Ctitle =(
-<div style={{display: 'flex',alignItems: 'center', justifyContent: 'space-between'}}>
-                    <span>详细参数</span>
-                    <Space size={4}>
-                        <span style={{paddingRight:40,fontSize:16}}>参量采集时间 :{time}</span>
-                        <CustButtonT onClick={() => refresh()} src="refresh" text="refresh" /> 
-                        <ExportExcel tb={tableRef}/>
-                    </Space>
-                </div>
-   )
+ 
     return (
         <Pagecount bgcolor="transparent" pd="0">
             <Mainbox>
@@ -203,8 +205,15 @@ export default function Index() {
                 <LoopSelect   projectId={projectId} roomId={RoomId} ref={selectRef} getLinePoint={getLinePoint}></LoopSelect>
                 </Titlelayout>
               
-                <div className='tbwrap' title={Ctitle} >
-                  
+                <div className='tbwrap'  >
+                    <div className='ctitle'>
+                    <span className='title'>详细参数</span>
+                    <Space size={4}>
+                        <span style={{paddingRight:40,fontSize:16}}>参量采集时间 :{time}</span>
+                        <CustButtonT onClick={() => refresh()} src="refresh" text="refresh" /> 
+                        <ExportExcel tb={tableRef}/>
+                    </Space>
+                    </div>
                   
                     <UseTable 
                     hbg="#f0f9ff" 

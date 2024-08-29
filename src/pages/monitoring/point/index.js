@@ -18,7 +18,7 @@ import {
   Space,
 } from "antd";
 
-import { Link, useOutletContext} from "react-router-dom";
+import { Link, useOutletContext, useLocation} from "react-router-dom";
 import { useAntdTable } from "ahooks";
 import styled from "styled-components";
 import style from "./style.module.less";
@@ -41,7 +41,7 @@ export default function Index(props) {
   let areaId = useSelector(selectOneLevelDefaultId);
   let {exparams} = useOutletContext()
   let {deviceStyle} = exparams
- 
+
   // const [messageApi, contextHolder] = message.useMessage();
   const {
    
@@ -154,7 +154,8 @@ export default function Index(props) {
   };
   let initparams = useRef(); 
   const getOverviewData = ({ current, pageSize }, formData) => {
-    if(!(isFinite(areaId) && isFinite(projectId))) return
+    let f = [areaId, deviceStyle, projectId].every(s => Number.isInteger(s))
+    if(!f) return;
     initparams.current = {
       projectId,
       areaId,

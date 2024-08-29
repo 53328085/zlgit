@@ -8,15 +8,33 @@ const Mainbox = styled.div`
   grid-template-rows: 48px 1fr ;
   row-gap: 16px;
   
+ .title {
+  display: flex;
+  padding-left: 16px;
+  align-items: center;
+  background-color: #fff;
+  border: 1px solid #d7d7d7;
+  border-radius: 4px;
+  .ct {
+    padding-left: 16px;
+    border-left: 4px solid ${props => props.theme.primaryColor};
+    display: inline-flex;
+    height: 32px;
+    color: #515151;
+  }
  
+
+  
+ }
 `
 export default function Index() { 
 
   return (
     <Pagecount bgcolor="transparent" pd="0">
       <Mainbox>
-          <Titlelayout title="全国碳市场行情"  key="title" pv="0 16px">
-          </Titlelayout>
+          <div  className='title' >
+            <span className='ct'>全国碳市场行情</span>
+          </div>
           <Titlelayout   layout="flex" key="chart">
           <iframe frameborder="0" width="1080" height="810" scrolling="no" src="http://k.tanjiaoyi.com/wz_chart.html"></iframe>
           </Titlelayout>

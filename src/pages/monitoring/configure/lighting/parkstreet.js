@@ -81,7 +81,7 @@ export default function Parkstreet({areaList,levelname}) {
       return (
         <Space size={32}>
         <Link onClick={() => { onEdit(record) }}>{t("button:edit")}</Link>
-        <Link onClick={() => { onDelete(record) }}>{t("button:delete")}</Link>
+        <Link type="danger" onClick={() => { onDelete(record) }}>{t("button:delete")}</Link>
       </Space>
       )
     }

@@ -41,6 +41,7 @@
   "addMasterNode": "Add master node",
   "keyEquipment": "Key equipment",
   "addKeyEquipment": "Added key equipment",
+  "addEquipment":"Added  equipment",
   "deleteShiftPlan": "Delete shift plan",
   "editShift": "Edit shift",
   "saveImage": "Save Image",
