@@ -45,30 +45,13 @@ const TotalDiv = styled.div`
     }
   }
 `
-
 const Mainbox = styled.div`
   flex: 1;
   display: flex;
+  justify-content: space-between;
   flex-wrap: wrap;
-  gap: 16px;
-  .videwrap {
-     display: flex;
-     flex-direction: column;
-     row-gap: 16px;
-     .vide {
-        width: 400px;
-        height: 300px;
-        padding: 4px 8px;
-     }
-     .videInfo {
-       width: 400px;
-       height: 50px;
-       display: flex;
-       
-       align-items: center;
-       justify-content: center;
-     }
-  }
+  /* flex-direction: column;
+  row-gap: 16px; */
   .data {
      flex:1;
      display: flex;
@@ -246,6 +229,7 @@ export default function Index() {
 
   const [cameras, setCameras] =useState([])
   const [totalValue, setTotalValue] = useState(0)
+
   const getCameraPage = ({ current, pageSize }) => {
     if (!(isFinite(projectId) && isFinite(roomId))) return
     let params = {
@@ -272,6 +256,7 @@ export default function Index() {
       } else {
         setCameras([])
         setTotalValue(0)
+
         return {
           list: [],
           total: 0
@@ -281,9 +266,11 @@ export default function Index() {
 
   }
   const { tableProps } = useAntdTable(getCameraPage, {
-    defaultPageSize: 100,
+    defaultPageSize: 10,
     refreshDeps: [projectId, roomId, alike]
   })
+  //云监控
+
 
 
   const disabledDate = current => current && current > moment().endOf('day')
@@ -316,8 +303,7 @@ export default function Index() {
           themeData: themeData,
           handleError: (err) => {
             console.log(err)
-          },
-         
+          }
         })
         setbigplay(player.current)
         }, 100)
@@ -325,31 +311,14 @@ export default function Index() {
   }
 
   //关闭视频监控弹窗
-  const handleCancel = async () => {
-    try {
-       player.current.capturePicture('bgimg', (r) =>  {
-        let sn = recordData.sn
-        let index =  cameras.findIndex(c => c.sn == sn);
-        let camera = cameras.find(c => c.sn ==sn)
-        if(index > -1 && camera) {
-
-          let arr = cameras.splice(index, 1, {...camera, ...r})
-          setCameras(arr)
-        }
-      }).then((res) => {
-        console.log(res)
-        setisModal(false)
-      })
-
-      
-   
-   
+  const handleCancel = () => {
+    setisModal(false)
+    // player.current.stop()
+    // player.current.destroy()
+    // player.current=null
+    //  setLocalModal(false)
     bigplay.stop()
-    } catch (error) {
-      console.log(error)
-    }
-    
-    
+    // play.play()
   }
 
   //摄像头展示数据
@@ -656,13 +625,13 @@ export default function Index() {
   }
 
   return (
+
     <>
       <TotalDiv>
         <Divider dashed type="vertical" style={{ borderColor: "#999", height: '30px' }}></Divider>
         <div className='totalTitle'>监控总数<span className='totalData'>{ totalValue }</span>台</div>
       </TotalDiv>
     <Pagecount  bgcolor="transparent" pd="0">
-      
         <Titlelayout layout="flex">
           
            <Mainbox>
@@ -670,6 +639,8 @@ export default function Index() {
                cameras?.map(d => <Vide {...d} key={d.sn} onClick={() => showCameraDialog(d)} />)
               }
            </Mainbox>
+
+
         </Titlelayout>
       <Modal
         title={recordData?.address}

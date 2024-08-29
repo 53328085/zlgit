@@ -115,8 +115,8 @@ export default function pagecomp({data, params}) {
         {name: '日期', type: 'time'},
         {name: "尖电量度"},
         {name: "峰电量度"},
-        {name: "谷电量度"},
         {name: "平电量度"},
+        {name: "谷电量度"},
       ],
       source: [
       ],

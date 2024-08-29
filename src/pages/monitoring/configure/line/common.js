@@ -1,12 +1,12 @@
 import React, { useEffect, useState, useRef, forwardRef, useImperativeHandle, Fragment, useMemo } from 'react'
 import { useSelector } from 'react-redux'
-import {useTranslation} from "react-i18next"
+import { useTranslation } from "react-i18next"
 import { Divider, Select, Tree, Row, Col, Input, Form, message, Space, Table, Button, Typography } from 'antd'
- 
+
 import commonstyle from './commonstyle.module.less'
 import Modal from '@com/useModal';
 import BlueColumn from '@com/bluecolumn'
-import {CustButton} from "@com/useButton"
+import { CustButton } from "@com/useButton"
 import { Monitoring } from '@api/api'
 import Mask from '@com/mask'
 // import Table from '@com/useTable'
@@ -22,10 +22,10 @@ const { LineManager: {
     ConfigureMeter
 } } = Monitoring
 
- const {Link} = Typography
- 
+const { Link } = Typography
+
 export default function Common({ type }) {
-    const {t} = useTranslation(["button"])
+    const { t } = useTranslation(["button"])
     const [tdata, setTdata] = useState([])
     const [areaOpts, setAreaOpts] = useState([])
     const [open, setOpen] = useState(false)
@@ -34,7 +34,7 @@ export default function Common({ type }) {
     const [selform] = Form.useForm()
     const projectId = useSelector(state => state.system.menus.projectId)
     const publish = useSelector(publishState)
-    const oneLevel = useSelector(state=>state.system.onelevel)
+    const oneLevel = useSelector(state => state.system.onelevel)
     const addmianRef = useRef()
     const setforwardRef = useRef()
     const titlelinecss = {
@@ -71,8 +71,8 @@ export default function Common({ type }) {
     }
     //确认新增主线
     const addmianline = async () => {
-        const  name = addmianform.getFieldsValue().mainname?.trim();
-        if(!name) return message.warning("名字不能为空")
+        const name = addmianform.getFieldsValue().mainname?.trim();
+        if (!name) return message.warning("名字不能为空")
         let params = {
             id: 0,
             projectId,
@@ -85,7 +85,7 @@ export default function Common({ type }) {
         if (res.success) {
             message.success("新增主线成功")
             getLineManagerQuery()
-          //  addmianRef.current.onCancel()
+            //  addmianRef.current.onCancel()
         } else {
             message.error(res.errMsg)
         }
@@ -109,10 +109,10 @@ export default function Common({ type }) {
     }
     //打开新增主线窗口
     const addMainLine = () => {
-        if(oneLevel.length == 0){
+        if (oneLevel.length == 0) {
             message.warning('请新增园区!')
-            return 
-          }
+            return
+        }
         addmianRef.current.onOpen()
     }
     //打开配置抽屉
@@ -128,7 +128,7 @@ export default function Common({ type }) {
     //获取线路数据
     const gettablelineData = async (tree = '') => {
         let areaId = selform.getFieldsValue().area
-        if(!areaId) return
+        if (!areaId) return
         try {
             let params = {
                 projectId,
@@ -155,9 +155,9 @@ export default function Common({ type }) {
             }
 
         } catch (error) {
-            
+
         }
-       
+
     }
     //关闭抽屉
     const closeDrawer = () => {
@@ -191,53 +191,53 @@ export default function Common({ type }) {
         treelist
     }
     return (
-            <div style={{ height: '100%', position: 'relative', overflow: 'hidden', }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                    <Form form={selform}>
-                        <Form.Item name="area">
-                            <Select 
-                             showSearch
-                             filterOption={(val,opts)=>{
-                                if(opts.name.includes(val)){
+        <div style={{ height: '100%', position: 'relative', overflow: 'hidden', }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                <Form form={selform}>
+                    <Form.Item name="area">
+                        <Select
+                            showSearch
+                            filterOption={(val, opts) => {
+                                if (opts.name.includes(val)) {
                                     return true
-                                }else{
+                                } else {
                                     return false
-                                }        
+                                }
                             }}
-                             style={{ width: 264 }} 
-                             options={areaOpts} 
-                             fieldNames={{ label: 'name', value: 'id' }} 
-                             onChange={changeSelection}></Select>
-                        </Form.Item>
-                    </Form>
-                    {publish ? null : <CustButton onClick={addMainLine} wh="auto">{t("button:newMainLine")}</CustButton>}
+                            style={{ width: 264 }}
+                            options={areaOpts}
+                            fieldNames={{ label: 'name', value: 'id' }}
+                            onChange={changeSelection}></Select>
+                    </Form.Item>
+                </Form>
+                {publish ? null : <CustButton onClick={addMainLine} wh="auto">{t("button:newMainLine")}</CustButton>}
 
-                </div>
-                <Divider style={{ borderColor: '#d7d7d7', margin: '0 0 16px 0' }} dashed></Divider>
-                <div style={{ display: 'flex', margin: '16px 0 24px 0' }}>
-                    <div style={{ ...titlelinecss, width: 416, paddingLeft: 24 }}>线路图</div>
-                    <div style={{ ...titlelinecss, width: 48, margin: '0 16px' }}>设备数</div>
-                    <div style={{ ...titlelinecss, width: 208, textAlign: 'center' }}>操作</div>
-                </div>
-                
-                <div style={{height: "600px", overflow: "auto"}}>  
+            </div>
+            <Divider style={{ borderColor: '#d7d7d7', margin: '0 0 16px 0' }} dashed></Divider>
+            <div style={{ display: 'flex', margin: '16px 0 24px 0' }}>
+                <div style={{ ...titlelinecss, width: 416, paddingLeft: 24 }}>线路图</div>
+                <div style={{ ...titlelinecss, width: 48, margin: '0 16px', textAlign: 'center' }}>设备数</div>
+                <div style={{ ...titlelinecss, width: 208, textAlign: 'center' }}>操作</div>
+            </div>
+
+            <div style={{ height: "600px", overflow: "auto" }}>
                 <Tree
                     className={commonstyle.treeclass}
                     selectable={false}
                     defaultExpandAll
                     treeData={tdata}
                 />
-                </div>
-                <AddMianMianModal {...addmianprops}></AddMianMianModal>
-              <Mask task={open}> <SetLine {...setprops}></SetLine></Mask> 
             </div>
+            <AddMianMianModal {...addmianprops}></AddMianMianModal>
+            <Mask task={open}> <SetLine {...setprops}></SetLine></Mask>
+        </div>
     )
 }
 
 //树节点
 let Treeline = forwardRef(
     ({ tree, alldata, openDrawer, getLineManagerQuery, selform, type }, ref) => {
-        const {t} =useTranslation(['button'])
+        const { t } = useTranslation(['button'])
         const [addform] = Form.useForm()
         const [editform] = Form.useForm()
         const addmodalRef = useRef()
@@ -245,7 +245,7 @@ let Treeline = forwardRef(
         const delmodalRef = useRef()
         const projectId = useSelector(state => state.system.menus.projectId)
         const publish = useSelector(publishState)
-     
+
         //打开新增窗口
         const openAdd = (tree, alldata) => {
             addform.setFieldsValue({ linename: '' })
@@ -255,7 +255,7 @@ let Treeline = forwardRef(
         //确认新增线路
         const addOk = async () => {
             const name = addform.getFieldsValue().linename?.trim()
-            if(!name) return message.warning("名字不能为空")
+            if (!name) return message.warning("名字不能为空")
             let params = {
                 id: tree.id,
                 projectId,
@@ -266,7 +266,7 @@ let Treeline = forwardRef(
             }
             const res = await LineManagerAdd(params)
             if (res.success) {
-             //   addmodalRef.current.onCancel()
+                //   addmodalRef.current.onCancel()
                 message.success('新增线路成功')
                 getLineManagerQuery()
             } else {
@@ -282,7 +282,7 @@ let Treeline = forwardRef(
         //确认编辑
         const editOk = async () => {
             const name = editform.getFieldsValue().linename?.trim()
-            if(!name) return message.warning("名字不能为空")
+            if (!name) return message.warning("名字不能为空")
             let params = {
                 id: tree.id,
                 projectId,
@@ -362,7 +362,7 @@ let Treeline = forwardRef(
                         <div className={commonstyle.numcss}>
                             {tree.deviceCount}
                         </div>
-                        <Space size={16} style={{ width:208,justifyContent:publish?'center':'none' }}>
+                        <Space size={16} style={{ width: 208, justifyContent: publish ? 'center' : 'none' }}>
                             {publish ? null : <>
                                 <Link onClick={() => { openAdd(tree, alldata) }}>{t("button:new")}</Link>
                                 <Link onClick={() => { openEdit(tree) }}>{t("button:edit")}</Link>
@@ -402,7 +402,7 @@ let AddMianMianModal = forwardRef(({ addmianRef, addmianform, onOk, ...other }) 
     )
 })
 //新增线路
-let AddModal = forwardRef(({ addmodalRef, addform,onOk, ...other }) => {
+let AddModal = forwardRef(({ addmodalRef, addform, onOk, ...other }) => {
     return (
         <Modal mold='cust' ref={addmodalRef} onOk={onOk} {...other} custft title="新增线路">
             {/* <BlueColumn name="新增线路" styled={{ padding: '24px 0px' }}></BlueColumn> */}
@@ -421,7 +421,7 @@ let EditModal = ({ editmodalRef, editform, ...other }) => {
     return (
         <Modal mold='cust' ref={editmodalRef} {...other} title="编辑线路">
             {/* <BlueColumn name="编辑线路" styled={{ padding: '24px 0px' }}></BlueColumn> */}
-          
+
             <Form
                 form={editform}
             >
@@ -436,7 +436,7 @@ let EditModal = ({ editmodalRef, editform, ...other }) => {
 let DeleteModal = ({ delmodalRef, name = '', content = '', ...other }) => {
     return (
         <Modal mold='cust' ref={delmodalRef} {...other} className={commonstyle.DelModal} title={name} type='warn'>
-               {content}
+            {content}
         </Modal>
     )
 }
@@ -468,7 +468,7 @@ let SetLine = forwardRef(({ open, closeDrawer, getLineManagerQuery, treelist }, 
         width: 68,
         height: 46,
     }
- 
+
     //关闭抽屉
     const close = () => {
         closeDrawer()
@@ -531,18 +531,18 @@ let SetLine = forwardRef(({ open, closeDrawer, getLineManagerQuery, treelist }, 
     }
     //未选择to总表
     const summaryToLeft = () => {
-           
-       /*  if (selectedRows.length !== 1 || summaryMeter.length === 1) {
-            message.warning('总表最多为一条')
-            return
-        } */
+
+        /*  if (selectedRows.length !== 1 || summaryMeter.length === 1) {
+             message.warning('总表最多为一条')
+             return
+         } */
         if (dataSource.length <= 0) {
             message.warning('请至少选择一项!')
             return
         }
         const arr = dataSource.filter(it => !selectedRowKeys.includes(it.id))
         const unarr = copydataSource.filter(it => !selectedRowKeys.includes(it.id))
-        setSummaryMeter([...summaryMeter,...selectedRows])
+        setSummaryMeter([...summaryMeter, ...selectedRows])
         setDataSource([...arr])
         setCopydataSource([...unarr])
         setSelectedRowKeys([])
@@ -612,7 +612,7 @@ let SetLine = forwardRef(({ open, closeDrawer, getLineManagerQuery, treelist }, 
         setSearchValue
     }))
     return (
-        <div style={{position: 'absolute', width: 1686, height: 755, top: '50%', left: '200px', transform: 'translateY(-50%)', background: "#003366", padding: 32, display: 'flex' }}>
+        <div style={{ position: 'absolute', width: 1686, height: 755, top: '50%', left: '200px', transform: 'translateY(-50%)', background: "#003366", padding: 32, display: 'flex' }}>
             <div style={{ position: 'relative', width: 692 }}>
                 <div style={{ marginBottom: 32, background: "#ffffff", padding: 16, height: 259 }} key="up" >
                     <BlueColumn name="线路总表" styled={{ marginBottom: 16 }}></BlueColumn>
@@ -624,7 +624,7 @@ let SetLine = forwardRef(({ open, closeDrawer, getLineManagerQuery, treelist }, 
                         scroll={{ y: "100%" }}
                         size={'small'}
                         rowKey={record => record.id}
-                        style={{height: 139 }}
+                        style={{ height: 139 }}
                         dataSource={summaryMeter}
                     ></Table>
                 </div>
@@ -647,23 +647,23 @@ let SetLine = forwardRef(({ open, closeDrawer, getLineManagerQuery, treelist }, 
                 {publish ? null : <>
                     <div style={{ marginTop: 21 }}>
                         <div style={{ color: '#fff', marginBottom: 16 }}>选择线路总表</div>
-                         <Space size={16}>
-                            <Button type='primary' icon={<LeftOutlined/>}   onClick={summaryToLeft} style={btncss} /> 
-                            <Button type='primary' icon={<RightOutlined/>}  onClick={summaryToRight} style={btncss} /> 
-                         </Space>
+                        <Space size={16}>
+                            <Button type='primary' icon={<LeftOutlined />} onClick={summaryToLeft} style={btncss} />
+                            <Button type='primary' icon={<RightOutlined />} onClick={summaryToRight} style={btncss} />
+                        </Space>
                     </div>
                     <div style={{ marginTop: 150 }}>
                         <div style={{ color: '#fff', marginBottom: 16 }}>选择线路分表</div>
                         <Space size={16}>
-                            <Button type="primary" style={btncss}   onClick={subToLeft} icon={<LeftOutlined/>} /> 
-                            <Button type="primary" style={btncss}  onClick={subToRight}  icon={<RightOutlined/>}  /> 
+                            <Button type="primary" style={btncss} onClick={subToLeft} icon={<LeftOutlined />} />
+                            <Button type="primary" style={btncss} onClick={subToRight} icon={<RightOutlined />} />
                         </Space>
                     </div>
                 </>}
 
-                <div style={{marginTop:publish?560:0}}>
+                <div style={{ marginTop: publish ? 560 : 0 }}>
                     {publish ? null : <Button style={{ marginTop: 200, marginBottom: 16, height: "40px" }} type="primary" block onClick={saveConfig}>保存</Button>}
-                    <Button style={{height: "40px"}} block onClick={close}>关闭</Button>
+                    <Button style={{ height: "40px" }} block onClick={close}>关闭</Button>
                 </div>
             </div>
             <div style={{ position: 'relative', width: 714 }}>
