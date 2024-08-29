@@ -14,7 +14,7 @@ export default  memo(function Index(props) {
   const roomIds = useSelector(roomId)
   const curid = useSelector(selectcurlRommid)
   const [RommId, setRoomId] = useState(curid)
-  let { showRoom = true, setDateVal } = props
+  let { showRoom = true, setDateVal, custview } = props
   const dispacth = useDispatch();
   const projectId = useSelector(state => state.system.menus.projectId)
 
@@ -157,6 +157,12 @@ return (
                     TimeSelect && <Form.Item label="日期" name="dataval" initialValue={moment()} style={{marginLeft: "auto"}}>
                       <DatePicker size='middle'  onChange={changeTime}></DatePicker>
                     </Form.Item>
+                  }
+                  {
+                   custview && <Form.Item style={{marginLeft: 'auto'}}>
+                        {custview}
+                    </Form.Item>
+                   
                   }
                 {/*   <Form.Item style={{marginLeft: 'auto', marginRight: 0}}>
                   <Textloop />

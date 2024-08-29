@@ -1680,7 +1680,13 @@ export class distributionRoom {
   static updateChart = (data) => server.post(`Distribution/DistributionRoom/UpdateChart`, data)  
   static deleteChart = (projectId, id) => server.delete(`Distribution/DistributionRoom/DeleteChart?projectId=${projectId}&id=${id}`)  
   static RoomList =(projectId,areaId)=>server.get(`/Distribution/DistributionRoom/RoomList`,{params:{projectId,areaId}})
-  static getEquipmentList = (projectId, areaId) => server.get(`Distribution/DistributionRoom/GetEquipmentList?projectId=${projectId}&areaId=${areaId}`) 
+  static getEquipmentList = (projectId, areaId) => server.get(`Distribution/DistributionRoom/GetEquipmentList?projectId=${projectId}&areaId=${areaId}`)
+  static GetCommanders = (params) => server.get(`Distribution/DistributionWorkTicket/GetCommanders`, {params}) 
+  static AddCommander = (params, projectId) => server.post(`Distribution/DistributionWorkTicket/AddCommander?projectId=${projectId}`,params) //新增负责人
+  static UpdateCommander = (params) => server.get(`Distribution/DistributionWorkTicket/UpdateCommander`, {params}) // 编辑负责人
+  static DelCommander = (params) => server.delete(`Distribution/DistributionWorkTicket/DelCommander`, {params}) // 删除负责人
+
+
 }
  
 //配电房设备
