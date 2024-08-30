@@ -96,7 +96,7 @@ const CModal = styled(Modal)`
       bottom: clientHeight - (targetRect.bottom - uiData.y),
     });
   };
-  const {onCancel: close, custft=false, onOk,title, bodyStyle, warnimg = true, ...rest} = props
+  const {onCancel: close, custft=false, onOk,title, bodyStyle, warnimg = true,apply="apply", ...rest} = props
   const formref = useRef()
   const onCancel = () => {
     setOpen(false)
@@ -114,7 +114,7 @@ const CModal = styled(Modal)`
         
         setCurrbtn(1)
         onOk()
-       }} key="apply" >{t('apply')}</Button> ,
+       }} key="apply" >{t(apply)}</Button> ,
        <Button type="primary" loading={currbtn == 2 && loading} key="ok" onClick={() => {
         setCurrbtn(2)
         onOk().then(() => {

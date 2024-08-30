@@ -291,7 +291,7 @@ const deviceStyleChange=(v) => {
   window.localStorage.setItem(currdeviceStyle, v);
 }
 let stordevices = window.localStorage.getItem(currdeviceStyle);
-let initdeviceStyle = stordevices ? parseInt(stordevices) : parseInt(DeviceStyle?.[0].deviceStyle)
+let initdeviceStyle = stordevices ? parseInt(stordevices) : parseInt(DeviceStyle?.[0]?.deviceStyle)
 const deviceStyleNode = (<Item name="deviceStyle" label="设备类型" initialValue={initdeviceStyle}>
 
 <Select options={DeviceStyle} fieldNames={{label: "name", value: "deviceStyle"}} style={{width: '200px'}} onChange={deviceStyleChange}></Select>  

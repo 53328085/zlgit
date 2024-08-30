@@ -312,7 +312,7 @@ export const drawEcharts = (
         custSeries = {
             smooth:true, 
             showSymbol: false,
-            areaStyle: {},
+          //  areaStyle: {},
             ...series,
         }
     }else if(series.type == 'bar'){

@@ -1685,7 +1685,17 @@ export class distributionRoom {
   static AddCommander = (params, projectId) => server.post(`Distribution/DistributionWorkTicket/AddCommander?projectId=${projectId}`,params) //新增负责人
   static UpdateCommander = (params) => server.get(`Distribution/DistributionWorkTicket/UpdateCommander`, {params}) // 编辑负责人
   static DelCommander = (params) => server.delete(`Distribution/DistributionWorkTicket/DelCommander`, {params}) // 删除负责人
+  static GetReviewers = (params) => server.get(`Distribution/DistributionWorkTicket/GetReviewers`, {params}) // 查询审核人
+  static ConfigReviewer = (body,params) => server.post(`Distribution/DistributionWorkTicket/ConfigReviewer`,body, {params}) // 查询审核人
+  static GetMembers = (params) => server.get(`Distribution/DistributionWorkTicket/GetMembers`,  {params}) // 查询成员
 
+  static AddMember = (params) => server.get(`Distribution/DistributionWorkTicket/AddMember`,  {params}) // 新增成员
+  static UpdateMember = (params) => server.get(`Distribution/DistributionWorkTicket/UpdateMember`,  {params}) // 编辑成员
+  static DelMember = (params) => server.delete(`Distribution/DistributionWorkTicket/DelMember`,  {params}) // 编辑成员
+
+  static GetTeams = (params) => server.get(`Distribution/DistributionWorkTicket/GetTeams`,  {params}) // 查询班组
+  static GetConfigTeamMembers = (params) => server.get(`Distribution/DistributionWorkTicket/GetConfigTeamMembers`,  {params}) //  编辑时 查询班组成员
+  static AddAndUpdateTeam = (body,params) => server.post(`Distribution/DistributionWorkTicket/AddAndUpdateTeam`, body, {params}) //新增/编辑班组
 
 }
  
