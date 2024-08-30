@@ -139,11 +139,25 @@ export default function Index({projectId, areaId}) {
     const [isaddT, setIsaddT] = useState(true) // 新增或编辑
     const ttitle = isaddT ? '新增' : '编辑'
     const teamRef = useRef()
+    const teamRecod = useRef()
     const undevices = useRef([])
  const devices = useRef([])
  const [selectedRowKeys, setSelectedRowKeys] = useState([]) // 班组成员
  const [unselectedRowKeys, setUnselectedRowKeys] = useState([]) // 可选人员
- 
+ const tdref = useRef()
+ const getTeams = async ()=> {
+    try {
+      let {success, data} = await distributionRoom.GetTeams({projectId, areaId, alike: ''})
+      if(success && Array.isArray(data)) {
+        setTeams(data)
+      }else {
+        setTeams([])
+      }
+    } catch {
+        
+    }
+   
+}
 const addTeam= async () => {
     try {
         setIsaddT(true)
@@ -164,11 +178,12 @@ const addTeam= async () => {
 const editTeam =async (record) => {
     try {
         setIsaddT(false)
-        let {success, data} = await  getMembers();
+        let {success, data} = await distributionRoom.GetConfigTeamMembers({projectId, teamId: record.id})
+       
         if(success) {
-            let selected = data.filter(d => record?.memberIds?.includes(d.id))
-            setusedtable(selected)
-            setUnusedtb(data)
+           
+            setusedtable(Array.isArray(data?.config) ? data.config : [])
+            setUnusedtb(Array.isArray(data?.noConfig) ? data.noConfig : [])
             form.setFieldsValue({...record})
             teamRef.current.onOpen()
         } else {
@@ -179,6 +194,20 @@ const editTeam =async (record) => {
     }
  
     
+}
+const delTeam = (record) => {
+    teamRecod.current = record;
+    tdref.current.onOpen();
+}
+const tDelok =async() => {
+   let {success, errMsg} = await  distributionRoom.DelTeam({projectId, id: teamRecod.current?.id})
+   if(success) {
+     i18success('delete')
+     tdref.current.onCancel()
+     getTeams()
+   }else {
+     i18warning(errMsg)
+   }
 }
 
  const rowSelection = { // 班组成员
@@ -227,26 +256,8 @@ const editTeam =async (record) => {
         undevices.current={}
   }
     const [form] = Form.useForm()
-    const getTeams = async ()=> {
-        try {
-          let {success, data} = await distributionRoom.GetTeams({projectId, areaId, alike: ''})
-          if(success && Array.isArray(data)) {
-            setTeams(data)
-          }else {
-            setTeams([])
-          }
-        } catch {
-            
-        }
-       
-    }
-   const GetConfigTeamMembers = async ()=> {
-     try {
-        await distributionRoom.GetConfigTeamMembers
-     } catch (error) {
-        
-     }
-   }
+
+  
    const teamonOk = async () => {
     try {
         if(usedtb?.length <1) return message.warning('没有班组成员')
@@ -292,7 +303,7 @@ const editTeam =async (record) => {
             width: 196,
             render: (_, record) => <Space size={32}>
                 <CustLink text="edit"  onClick={() =>editTeam(record) } /> 
-                <CustLink text="delete" type="danger" onClick={() => delMember(record)} /> 
+                <CustLink text="delete" type="danger" onClick={() => delTeam(record)} /> 
                 </Space>
         }
     ]
@@ -325,7 +336,7 @@ const editTeam =async (record) => {
          <Usetable columns={columns} rowKey="id" dataSource={members} hbg="#ecf5ff" hbc="#515151" pd="8px 4px" title={() =>  <CustButton onClick={addmember} ghost>新增成员</CustButton>}></Usetable>
          </div>
          </div>
-         <Usetable columns={columns2} dataSource={teams} hbg="#ecf5ff" hbc="#515151" pd="8px 4px" title={() =>  <CustButton onClick={addTeam} ghost>新建班组</CustButton>}></Usetable>
+         <Usetable columns={columns2} rowKey="id" dataSource={teams} hbg="#ecf5ff" hbc="#515151" pd="8px 4px" title={() =>  <CustButton onClick={addTeam} ghost>新建班组</CustButton>}></Usetable>
          <CModal title={atitle} ref={aref} onOk={monOk}   width={585}   mold="cust" custft={isadd} apply="adding">
              <Form form={aform} layout="vertical" preserve={false} requiredMark="optional">
                 <Form.Item label="成员姓名" name="name" rules={[{required: true}]} normalize={value => value?.trim()}>
@@ -345,6 +356,9 @@ const editTeam =async (record) => {
          </CModal>
          <CModal title="删除"  ref={dref} onOk={mDelok}  width={512} type="warn" mold="cust">
          是否要删除成员？
+      </CModal>
+      <CModal title="删除提示"  ref={tdref} onOk={tDelok}  width={512} type="warn" mold="cust">
+      是否要删除该班组？
       </CModal>
       <CModal title={ttitle} ref={teamRef} onOk={teamonOk}   width={998}   mold="cust" custft={isaddT} apply="adding" >
         <Mdbox>

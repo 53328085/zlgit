@@ -1696,7 +1696,7 @@ export class distributionRoom {
   static GetTeams = (params) => server.get(`Distribution/DistributionWorkTicket/GetTeams`,  {params}) // 查询班组
   static GetConfigTeamMembers = (params) => server.get(`Distribution/DistributionWorkTicket/GetConfigTeamMembers`,  {params}) //  编辑时 查询班组成员
   static AddAndUpdateTeam = (body,params) => server.post(`Distribution/DistributionWorkTicket/AddAndUpdateTeam`, body, {params}) //新增/编辑班组
-
+  static DelTeam = (params) => server.delete(`Distribution/DistributionWorkTicket/DelTeam`,  {params}) //新增/编辑班组
 }
  
 //配电房设备
