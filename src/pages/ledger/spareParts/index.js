@@ -2,7 +2,7 @@ import React, { useState, useRef, useEffect, useCallback, useMemo } from 'react'
 import styled from 'styled-components'
 import {  Space, Button, message ,InputNumber,Input,Select,DatePicker,Divider   } from 'antd'
 import { nanoid } from "@reduxjs/toolkit"
-import { selectcurlRommid, selectProjectId,selectOneLevelDefaultId } from "@redux/systemconfig";
+import { selectdiscurlevel, selectProjectId,selectOneLevelDefaultId,selectcurlRommid } from "@redux/systemconfig";
 import { SpareParts,distributionRoom } from '@api/api.js'
 import Titlelayout from '@com/titlelayout'
 import Usetable from '@com/useTable'
@@ -61,50 +61,52 @@ export default  function Index() {
   let {setCustview} = useOutletContext()
   const projectId = useSelector(selectProjectId)
   const areaId = useSelector(selectOneLevelDefaultId)
+  const roomId = useSelector(selectcurlRommid)
 const { RangePicker } = DatePicker;
 const [defalutroom, setdefalutroom] = useState(0)
-
-
     useEffect(() => {
       setCustview(
-      <Button style={{position:'absolute',right:'130px'}} type="primary" onClick={getRecord}>出入库记录</Button>);
+      <Button  type="primary" onClick={getRecord}>出入库记录</Button>);
       return () => {
         setCustview(undefined)
       }
      }, []) 
-   const roomId = useSelector(selectcurlRommid)
   const columns = [
     {
       title: '备件名称',
-      dataIndex: 'alarmTime',
-      key: 'alarmTime',
-      align: 'center'
-    },
-    {
-      title: '备件类型',
-      dataIndex: 'level',
-      key: 'level',
-      align: 'center'
-    },
-    {
-      title: ' 当前库存量',
-      dataIndex: 'alarmEvent',
-      key: 'alarmEvent',
-      align: 'center'
-    },
-    {
-      title: '库存最低标准',
       dataIndex: 'name',
       key: 'name',
       align: 'center'
     },
     {
+      title: '备件类型',
+      key: 'type',
+      align: 'center',
+      render: (_, record) => (
+        <Space size="middle">
+          <span>{record.type==1?'通用件/标准件':record.type==2?'易损件':record.type==3?'电气备件':'关键备件'}</span>
+        </Space>
+      ),
+    },
+    {
+      title: ' 当前库存量',
+      dataIndex: 'currentCount',
+      key: 'currentCount',
+      align: 'center'
+    },
+    {
+      title: '库存最低标准',
+      dataIndex: 'minimumCount',
+      key: 'minimumCount',
+      align: 'center'
+    },
+    {
       title: '库存状态',
-      key: 'address',
+      key: 'inventoryStatus',
       align: 'center',
       render: (text, record) => {
-         return (text===1?<div style={{display:'flex',alignItems:'center',justifyContent:'center'}}><div style={{width:16,height: 16,backgroundColor:'rgb(244,67,54)',borderRadius:'50%',marginRight:16 }}></div><span>库存量低</span></div>
-         :<div style={{display:'flex',alignItems:'center',justifyContent:'center'}}><div style={{width:16,height: 16,backgroundColor:'rgb(2,219,114)',borderRadius:'50%',marginRight:16 }}></div><span>库存正常</span></div>)
+         return (text==='库存量低'?<div style={{display:'flex',alignItems:'center',justifyContent:'center'}}><div style={{width:16,height: 16,backgroundColor:'rgb(244,67,54)',borderRadius:'50%',marginRight:16 }}></div><span>{text}</span></div>
+         :<div style={{display:'flex',alignItems:'center',justifyContent:'center'}}><div style={{width:16,height: 16,backgroundColor:'rgb(2,219,114)',borderRadius:'50%',marginRight:16 }}></div><span>{text}</span></div>)
          
     }
     },
@@ -126,7 +128,9 @@ const [defalutroom, setdefalutroom] = useState(0)
   const [num,setNum] = useState('')
   const [remark1,setRemark1] = useState('')
   const [num1,setNum1] = useState('')
+  const [id,setId] = useState('')
   const getOut=(record)=>{
+    setId(record.id)
     modalRef.current.onOpen()
   }
   const dispatchOrderOk =()=>{
@@ -136,6 +140,7 @@ const [defalutroom, setdefalutroom] = useState(0)
     modalRef.current.onCancel()
   }
   const getIn=(record)=>{
+    setId(record.id)
     modalRef1.current.onOpen()
   }
   const dispatchOrderOk1 =()=>{
@@ -160,30 +165,27 @@ const [defalutroom, setdefalutroom] = useState(0)
     console.log('changed', event.target.value);
     setRemark1(event.target.value)
   };
-  const [tabledata,setTabledata] = useState([1,2,3])
+  const [tabledata,setTabledata] = useState([])
   
   const [pageInfo,setPageInfo] =useState({
-    pageNum:1,
+    current:1,
     pageSize:10,
     total:0
   })
 
   const changePage=(page,pageSize)=>{
-    setPageInfo({
-      pageNum:page.current,
-      pageSize:page.pageSize,
-      total:page.total
-    })
+    setPageInfo(page)
   }
 
   const warnPage =async () => {
     let params = {
       projectId,
-      pageNum:pageInfo.pageNum ,
+      pageNum:pageInfo.current ,
       pageSize: pageInfo.pageSize,
-      roomId:defalutroom,
+      roomId,
+      areaId
     }
-   const resp =  await  DistributionRoomRuntime.WarningPage(params)
+   const resp =  await  SpareParts.SparePartsController(params)
    if(resp.success){
       if(Array.isArray(resp.data)){
         setTabledata(resp.data)
@@ -191,7 +193,7 @@ const [defalutroom, setdefalutroom] = useState(0)
         setTabledata([])
       } 
       setPageInfo({
-        pageNum:resp.pageNum,
+        current:resp.pageNum,
         pageSize:resp.pageSize,
         total:resp.total,
       })
@@ -205,7 +207,7 @@ const [nameList,setnameList]=useState([])
 
 const getRecord=()=>{
   modalRefRecord.current.onOpen()
-  SpareParts.QuerySparePartsName(projectId,areaId,roomId||1).then(res=>{
+  SpareParts.QuerySparePartsName(projectId,areaId,roomId).then(res=>{
     if(res.success){
       setnameList(res.data)
     }else{
@@ -288,6 +290,11 @@ const [tabledataRecord,setTabledataRecord] = useState([{name:1}])
     }
 
   }, [defalutroom,JSON.stringify(pageInfo) ])
+  useEffect(() => {
+    console.log(roomId)
+    warnPage()
+
+  }, [projectId,areaId,roomId,pageInfo.current])
 
   return (
     <Pagecount pd="0"   showserach={false} custserach>
@@ -297,13 +304,8 @@ const [tabledataRecord,setTabledataRecord] = useState([{name:1}])
             hbg="#f0f9ff"
             hbc="#515151"
             columns={columns} 
-            rowKey={nanoid()} 
             dataSource={tabledata} 
-            pagination={{
-              current:pageInfo.pageNum,
-              pageSize:pageInfo.pageSize,
-              total:pageInfo.total
-            }}
+            pagination={pageInfo}
             onChange={changePage}
             />
             <UseModal 
