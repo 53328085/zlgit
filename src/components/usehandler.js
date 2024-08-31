@@ -136,3 +136,36 @@ export  const Statebox = styled.div`
           return window.encodeURIComponent(text?.trim())
        }
     }
+    export const filterProps = {
+      showSearch: true,
+      optionFilterProp: 'children',
+      filterOption(input, option) {
+        try {
+          let values = Object.values(option) 
+          return  values.some(v => {
+            if(typeof v == 'string') {
+              return v?.toLowerCase()?.includes(input?.toLowerCase())
+            }else if(typeof v == 'number')
+             return  v==input
+          })
+        } catch (error) {
+           console.log(error)
+        }
+      
+      },
+      filterSort(a, b){
+        try {
+          let value1 = Object.values(a)[0];
+          let value2 = Object.values(b)[0];
+          if(typeof value1 == 'string' && typeof value2 == 'string') {
+            return  value1.toLowerCase().localeCompare(value2.toLowerCase())
+          }else if(typeof value1 == 'number' && typeof value2 == 'number') {
+            return value1 > value2
+          }
+        } catch (error) {
+          
+        }
+  
+       
+    }
+    }

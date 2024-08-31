@@ -11,6 +11,7 @@ import 'moment/locale/zh-cn';
 const { RangePicker } = DatePicker;
 import {SiteManagerDesigner, PCSMonitorRuntime, StorageContainerDesigner, Editapi} from '@api/api'
 import {Cdivider, Radiogroup} from '@com/comstyled'
+import {filterProps} from '@com/usehandler'
 import Textloop from '@com/textloop'
 
 import Enery from "./enery";
@@ -77,7 +78,7 @@ export default function UseSerach(props) {
   const DeviceStyle = useSelector(filterDeviceStyle)  
 
 
-  console.log(DeviceStyle)
+  
   const areaName = levelone?.find(l => l.id == AreaID)?.name;
   props.setAreaName(areaName)
   let shifts = useSelector(selectshifts)
@@ -294,7 +295,7 @@ let stordevices = window.localStorage.getItem(currdeviceStyle);
 let initdeviceStyle = stordevices ? parseInt(stordevices) : parseInt(DeviceStyle?.[0]?.deviceStyle)
 const deviceStyleNode = (<Item name="deviceStyle" label="设备类型" initialValue={initdeviceStyle}>
 
-<Select options={DeviceStyle} fieldNames={{label: "name", value: "deviceStyle"}} style={{width: '200px'}} onChange={deviceStyleChange}></Select>  
+<Select options={DeviceStyle} fieldNames={{label: "name", value: "deviceStyle"}} style={{width: '200px'}} onChange={deviceStyleChange} {...filterProps}></Select>  
 </Item>)
 // 站点选择
   const site = (<Item name="stationName" label="站点"   >
@@ -306,7 +307,7 @@ const deviceStyleNode = (<Item name="deviceStyle" label="设备类型" initialVa
 </Item>)
 // pcs选择
   const pcs = (<Item name="pcsId" label="PCS" >
-              <Select options={pcsoptions} fieldNames={{label: 'sn', value: 'id'}} style={{width: '264px'}} ></Select>  
+              <Select options={pcsoptions} fieldNames={{label: 'sn', value: 'id'}} style={{width: '264px'}} {...filterProps}></Select>  
              </Item>)
 
 
