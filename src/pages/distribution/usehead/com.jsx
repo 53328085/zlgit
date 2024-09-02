@@ -6,6 +6,7 @@ import {useLocation} from 'react-router-dom'
 import {DistributionRoomRuntime,distributionRoom, Area} from '@api/api.js'
 import {  getcurlRommid,setCurrentlevel, levelDefaultLabel,  getRoomId, roomId, selectcurlRommid, getcurlRommidl} from "@redux/systemconfig";
 import Textloop from '@com/textloop'
+import {filterProps} from '@com/usehandler'
 export default  memo(function Index(props) {
   const location = useLocation()
   let { state = {} } = location
@@ -26,6 +27,7 @@ export default  memo(function Index(props) {
   // const [roomId, setRoomId] = useState()
   const [form] = Form.useForm()
   const changeArea = (v, option) => {
+   
     dispacth(setCurrentlevel(option))
 
     showRoom && getRoomList(v)
@@ -53,6 +55,7 @@ export default  memo(function Index(props) {
           setOnelevel(data)
           form.setFieldValue("area", data[0].id)
           getRoomList(data[0].id)
+          dispacth(setCurrentlevel(data[0]))
         } else {
           form.setFieldsValue({
             areaId: null,
@@ -60,12 +63,12 @@ export default  memo(function Index(props) {
           })
           setOnelevel([])
           setRoomList([])
-
+          dispacth(setCurrentlevel({}))
           message.warning("没有设置园区")
         }
       } else {
         message.warning(errMsg || "数据出错")
-
+        dispacth(setCurrentlevel({}))
         form.setFieldsValue({
           areaId: null,
           roomId: null
@@ -121,7 +124,8 @@ return (
                   form={form}
                   colon={false}
                   layout="inline"  
-                  style={{flex: 1,  display: 'flex', alignItems: 'center',}}               
+                  style={{flex: 1,  display: 'flex', alignItems: 'center',}} 
+                                
               >
                   <Form.Item label={levelName}   name="area" style={{ marginBottom: 0 }}>
                       <Select 
@@ -140,7 +144,9 @@ return (
                           fieldNames={{ label: 'name', value: 'id' }}
                           style={{ width: 240 }}
                           placeholder="请选择配电房"
-                          onChange={lchangeRomme}></Select>
+                          onChange={lchangeRomme}
+                          {...filterProps}
+                          ></Select>
                   </Form.Item>
                   : <Form.Item name="roomId"  >
                   <Select
@@ -164,9 +170,9 @@ return (
                     </Form.Item>
                    
                   }
-                {/*   <Form.Item style={{marginLeft: 'auto', marginRight: 0}}>
+                 <Form.Item style={{marginLeft: 'auto', marginRight: 0}}>
                   <Textloop />
-                  </Form.Item> */}
+                  </Form.Item>  
                  
               </Form>
             

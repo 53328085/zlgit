@@ -12,6 +12,18 @@ export class I18N {
 export class Editapi {  // 后期修改的一些接口
   static FilterDeviceStyle= (projectId) => server.get(`/Monitor/RuntimeDevice/AllDeviceStyle?projectId=${projectId}`)  //
 }
+export class WorkTicketRuntime {  //  运行态工作票
+  static GetWorkTickets= (projectId) => server.get(`/Distribution/DistributionWorkTicketRuntime/GetWorkTickets`, {params})  // 查询
+  static GetCommanderList= (params) => server.get(`/Distribution/DistributionWorkTicketRuntime/GetCommanderList`, {params})  // 查询负责人列表
+  static GetReviewerList= (params) => server.get(`/Distribution/DistributionWorkTicketRuntime/GetReviewerList`, {params})  // 查询审核人列表
+  static GetTeamList= (params) => server.get(`/Distribution/DistributionWorkTicketRuntime/GetTeamList`, {params})  // 查询班组列表
+  static GetTeamMemberList= (params) => server.get(`/Distribution/DistributionWorkTicketRuntime/GetTeamMemberList`, {params}) // 查询班组成员
+  static AddWorkTicket= (body,params) => server.post(`Distribution/DistributionWorkTicketRuntime/AddWorkTicket`,body, {params}) // 添加工作票
+
+
+
+
+}
 export class Login {
   static SystemConfig = (url) =>
     server.get(`/General/SystemConfig/GetSystemConfigInfo?url=${url}`);

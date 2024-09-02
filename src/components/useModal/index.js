@@ -32,7 +32,7 @@ const CModal = styled(Modal)`
     }
   }
   .ant-modal-body {
-    padding: 0 32px 32px 32px;
+    padding: ${props => props.bdpd || '0 32px 32px 32px'} ;
   }
   .ant-modal-footer {
     border-top: none;
