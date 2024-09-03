@@ -95,7 +95,7 @@ const Chartin = (props) => {
            xAxis: {
              axisLabel: {
                 formatter: (value, index) => {
-                    return moment(value, "YYYY-MM-DD hh:mm:ss").format("hh:mm")
+                    return moment(value, "YYYY-MM-DD HH:mm:ss").format("HH:mm")
                 },
                 interval: "auto"
              },
