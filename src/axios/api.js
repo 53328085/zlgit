@@ -12,6 +12,18 @@ export class I18N {
 export class Editapi {  // 后期修改的一些接口
   static FilterDeviceStyle= (projectId) => server.get(`/Monitor/RuntimeDevice/AllDeviceStyle?projectId=${projectId}`)  //
 }
+export class WorkTicketRuntime {  //  运行态工作票
+  static GetWorkTickets= (params) => server.get(`/Distribution/DistributionWorkTicketRuntime/GetWorkTickets`, {params})  // 查询
+  static GetCommanderList= (params) => server.get(`/Distribution/DistributionWorkTicketRuntime/GetCommanderList`, {params})  // 查询负责人列表
+  static GetReviewerList= (params) => server.get(`/Distribution/DistributionWorkTicketRuntime/GetReviewerList`, {params})  // 查询审核人列表
+  static GetTeamList= (params) => server.get(`/Distribution/DistributionWorkTicketRuntime/GetTeamList`, {params})  // 查询班组列表
+  static GetTeamMemberList= (params) => server.get(`/Distribution/DistributionWorkTicketRuntime/GetTeamMemberList`, {params}) // 查询班组成员
+  static AddWorkTicket= (body,params) => server.post(`Distribution/DistributionWorkTicketRuntime/AddWorkTicket`,body, {params}) // 添加工作票
+
+
+
+
+}
 export class Login {
   static SystemConfig = (url) =>
     server.get(`/General/SystemConfig/GetSystemConfigInfo?url=${url}`);
@@ -1685,8 +1697,18 @@ export class distributionRoom {
   static AddCommander = (params, projectId) => server.post(`Distribution/DistributionWorkTicket/AddCommander?projectId=${projectId}`,params) //新增负责人
   static UpdateCommander = (params) => server.get(`Distribution/DistributionWorkTicket/UpdateCommander`, {params}) // 编辑负责人
   static DelCommander = (params) => server.delete(`Distribution/DistributionWorkTicket/DelCommander`, {params}) // 删除负责人
+  static GetReviewers = (params) => server.get(`Distribution/DistributionWorkTicket/GetReviewers`, {params}) // 查询审核人
+  static ConfigReviewer = (body,params) => server.post(`Distribution/DistributionWorkTicket/ConfigReviewer`,body, {params}) // 查询审核人
+  static GetMembers = (params) => server.get(`Distribution/DistributionWorkTicket/GetMembers`,  {params}) // 查询成员
 
+  static AddMember = (params) => server.get(`Distribution/DistributionWorkTicket/AddMember`,  {params}) // 新增成员
+  static UpdateMember = (params) => server.get(`Distribution/DistributionWorkTicket/UpdateMember`,  {params}) // 编辑成员
+  static DelMember = (params) => server.delete(`Distribution/DistributionWorkTicket/DelMember`,  {params}) // 编辑成员
 
+  static GetTeams = (params) => server.get(`Distribution/DistributionWorkTicket/GetTeams`,  {params}) // 查询班组
+  static GetConfigTeamMembers = (params) => server.get(`Distribution/DistributionWorkTicket/GetConfigTeamMembers`,  {params}) //  编辑时 查询班组成员
+  static AddAndUpdateTeam = (body,params) => server.post(`Distribution/DistributionWorkTicket/AddAndUpdateTeam`, body, {params}) //新增/编辑班组
+  static DelTeam = (params) => server.delete(`Distribution/DistributionWorkTicket/DelTeam`,  {params}) //新增/编辑班组
 }
  
 //配电房设备
