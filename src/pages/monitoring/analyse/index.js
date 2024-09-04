@@ -29,23 +29,6 @@ export default function Index() {
   const [baseLine, setBaseLine] = useState([])
   const [unit, setUnit] = useState('单位')
   const [baseLineValue, setBaseLineValue] = useState(); // 初始化状态
-  const [boptions, setOptions] = useState({
-    series: [],  
-    grid: { 
-      left: "0px",
-      right: "0",
-      top: "30px",
-      bottom: "0px",
-      containLabel: true,
-    },
-    legend: {
-      top: 0,  
-    },
-    dataset: {
-      dimensions: [],
-      source: []
-    }
-  })
   const comparisonType = [
     {
       value: 1,
