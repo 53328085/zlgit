@@ -13,12 +13,12 @@ export class Editapi {  // 后期修改的一些接口
   static FilterDeviceStyle = (projectId) => server.get(`/Monitor/RuntimeDevice/AllDeviceStyle?projectId=${projectId}`)  //
 }
 export class WorkTicketRuntime {  //  运行态工作票
-  static GetWorkTickets = (projectId) => server.get(`/Distribution/DistributionWorkTicketRuntime/GetWorkTickets`, { params })  // 查询
-  static GetCommanderList = (params) => server.get(`/Distribution/DistributionWorkTicketRuntime/GetCommanderList`, { params })  // 查询负责人列表
-  static GetReviewerList = (params) => server.get(`/Distribution/DistributionWorkTicketRuntime/GetReviewerList`, { params })  // 查询审核人列表
-  static GetTeamList = (params) => server.get(`/Distribution/DistributionWorkTicketRuntime/GetTeamList`, { params })  // 查询班组列表
-  static GetTeamMemberList = (params) => server.get(`/Distribution/DistributionWorkTicketRuntime/GetTeamMemberList`, { params }) // 查询班组成员
-  static AddWorkTicket = (body, params) => server.post(`Distribution/DistributionWorkTicketRuntime/AddWorkTicket`, body, { params }) // 添加工作票
+  static GetWorkTickets= (params) => server.get(`/Distribution/DistributionWorkTicketRuntime/GetWorkTickets`, {params})  // 查询
+  static GetCommanderList= (params) => server.get(`/Distribution/DistributionWorkTicketRuntime/GetCommanderList`, {params})  // 查询负责人列表
+  static GetReviewerList= (params) => server.get(`/Distribution/DistributionWorkTicketRuntime/GetReviewerList`, {params})  // 查询审核人列表
+  static GetTeamList= (params) => server.get(`/Distribution/DistributionWorkTicketRuntime/GetTeamList`, {params})  // 查询班组列表
+  static GetTeamMemberList= (params) => server.get(`/Distribution/DistributionWorkTicketRuntime/GetTeamMemberList`, {params}) // 查询班组成员
+  static AddWorkTicket= (body,params) => server.post(`Distribution/DistributionWorkTicketRuntime/AddWorkTicket`,body, {params}) // 添加工作票
 
 
 
@@ -2252,23 +2252,42 @@ export class Carbon {
 }
 /* Carbon/CarbonEmissionCalculationFactor/QueryCarbonEmissionCalculationFactor?enterpriseId */
 //台账管理
-export class SpareParts {
-  static QuerySparePartsList = (data) =>
-    server.post(`Ledger/SpareParts/QuerySparePartsList?projectId=${data.projectId}&areaId=${data.areaId}&roomId=${data.roomId}&type=${data.type}&pageNum=${data.pageNum}&pageSize=${data.pageSize}`)//台账管理备件信息表格
-  static DeleteSpareParts = ({ projectId, sparePartsId }) =>
-    server.post(`Ledger/SpareParts/DeleteSpareParts?projectId=${projectId}&sparePartsId=${sparePartsId}`)//删除
-  static AddSpareParts = (projectId, data) =>
-    server.post(`Ledger/SpareParts/AddSpareParts?projectId=${projectId}`, data)//新增
-  static UpdateSpareParts = (projectId, data) =>
-    server.post(`Ledger/SpareParts/UpdateSpareParts?projectId=${projectId}`, data)//编辑
-  static SparePartsController = (data) =>
-    server.post(`Ledger/SparePartsRuntime/QuerySpareParts?projectId=${data.projectId}&areaId=${data.areaId}&roomId=${data.roomId}&pageNum=${data.pageNum}&pageSize=${data.pageSize}`)//查询库存状态信息
-  static InAndOutStorage = (projectId, sparePartsId, operate, count, remark) =>
-    server.post(`Ledger/SparePartsRuntime/InAndOutStorage?projectId=${projectId}&sparePartsId=${sparePartsId}&operate=${operate}&count=${count}&remark=${remark}`)//领用或入库（operate 0-领用 1-入库
-  static QuerySparePartsType = (projectId, areaId, roomId) =>
-    server.post(`Ledger/SparePartsRuntime/QuerySparePartsType?projectId=${projectId}&areaId=${areaId}&roomId=${roomId}`)//获取备件类型
-  static QuerySparePartsName = (projectId, areaId, roomId) =>
-    server.post(`Ledger/SparePartsRuntime/QuerySparePartsName?projectId=${projectId}&areaId=${areaId}&roomId=${roomId}`)//获取备件名称
-  static QueryInventoryRecord = (projectId, type, name, startDate, endDate) =>
-    server.post(`Ledger/SparePartsRuntime/QueryInventoryRecord?projectId=${projectId}&type=${type}&name=${name}&startDate=${startDate}&endDate=${endDate}`)//出入库记录查询
-}
+ export class SpareParts {
+  static QuerySparePartsList= (data) =>   
+      server.post(`Ledger/SpareParts/QuerySparePartsList?projectId=${data.projectId}&areaId=${data.areaId}&roomId=${data.roomId}&type=${data.type}&pageNum=${data.pageNum}&pageSize=${data.pageSize}`)//台账管理备件信息表格
+  static DeleteSpareParts= ({projectId,sparePartsId}) =>   
+      server.post(`Ledger/SpareParts/DeleteSpareParts?projectId=${projectId}&sparePartsId=${sparePartsId}`)//删除
+  static AddSpareParts= (projectId,data) =>   
+      server.post(`Ledger/SpareParts/AddSpareParts?projectId=${projectId}`,data)//新增
+  static UpdateSpareParts= (projectId,data) =>   
+      server.post(`Ledger/SpareParts/UpdateSpareParts?projectId=${projectId}`,data)//编辑
+  static SparePartsController= (data) =>   
+      server.post(`Ledger/SparePartsRuntime/QuerySpareParts?projectId=${data.projectId}&areaId=${data.areaId}&roomId=${data.roomId}&pageNum=${data.pageNum}&pageSize=${data.pageSize}`)//查询库存状态信息
+  static InAndOutStorage= ({projectId,sparePartsId,operate,count,remark}) =>   
+      server.post(`Ledger/SparePartsRuntime/InAndOutStorage?projectId=${projectId}&sparePartsId=${sparePartsId}&operate=${operate}&count=${count}&remark=${remark}`)//领用或入库（operate 0-领用 1-入库
+  static QuerySparePartsType= (projectId,areaId,roomId) =>   
+      server.post(`Ledger/SparePartsRuntime/QuerySparePartsType?projectId=${projectId}&areaId=${areaId}&roomId=${roomId}`)//获取备件类型
+  static QuerySparePartsName= (projectId,areaId,roomId) =>   
+      server.post(`Ledger/SparePartsRuntime/QuerySparePartsName?projectId=${projectId}&areaId=${areaId}&roomId=${roomId}`)//获取备件名称
+  static QueryInventoryRecord= ({projectId,type,name,startDate,endDate}) =>   
+      server.post(`Ledger/SparePartsRuntime/QueryInventoryRecord?projectId=${projectId}&type=${type}&name=${name}&startDate=${startDate}&endDate=${endDate}`)//出入库记录查询
+  static QueryLedgerTree= (projectId,areaId,name) =>   
+      server.post(`Ledger/DeviceLedgerRuntime/QueryLedgerTree?projectId=${projectId}&areaId=${areaId}&name=${name}`)//树形结构展示
+  static QueryLedger= (projectId,ledgerId) =>   
+      server.post(`Ledger/DeviceLedgerRuntime/QueryLedger?projectId=${projectId}&ledgerId=${ledgerId}`)//根据Id获取台账信息
+  static QueryLedgerList= (data) =>   
+      server.post(`Ledger/DeviceLedger/QueryLedgerList?projectId=${data.projectId}&areaId=${data.areaId}&deviceType=${data.deviceType}&pageNum=${data.pageNum}&pageSize=${data.pageSize}`)//台账列表
+  static DeleteLedger= (projectId,ledgerId) =>   
+      server.post(`Ledger/DeviceLedger/DeleteLedger?projectId=${projectId}&ledgerId=${ledgerId}`)//删除
+  static AddLedger= (projectId,data) =>   
+      server.post(`Ledger/DeviceLedger/AddLedger?projectId=${projectId}`,data)//新增
+  static UpdateLedger= (projectId,data,ledgerId) =>   
+      server.post(`Ledger/DeviceLedger/UpdateLedger?projectId=${projectId}&ledgerId=${ledgerId}`,data)//编辑
+  static SelectDevice= ({projectId,areaId,deviceType}) =>   
+      server.post(`Ledger/DeviceLedger/SelectDevice?projectId=${projectId}&areaId=${areaId}&deviceType=${deviceType}`)//设备列表
+  static GetDeviceInfo= ({projectId,deviceId}) =>   
+      server.post(`Ledger/DeviceLedger/GetDeviceInfo?projectId=${projectId}&deviceId=${deviceId}`)//设备基础信息
+  static QueryLedgerById= ({projectId,ledgerId}) =>   
+      server.post(`Ledger/DeviceLedger/QueryLedgerById?projectId=${projectId}&ledgerId=${ledgerId}`)//根据Id获取台账信息
+ }//GetDeviceInfo(int projectId, int deviceId)
+ 

@@ -29,23 +29,17 @@ export let wcolumns = [
 export let scolumns = [
     {
       title: '安全措施',
-      dataIndex: 'securityMeasures',
-      key: 'securityMeasures',
+      dataIndex: 'field1',
+      key: 'field1',
       align: 'center'
     },
    
 ]
 export let ncolumns = [
     {
-      title: '工作地点保留带电部分或注意事项\n（由工作票签发人填写）',
+      title: <div style={{display: 'flex', flexDirection: "column"}}><span>工作地点保留带电部分或注意事项</span><span> (由工作票签发人填写)</span></div>,
       dataIndex: 'field1',
       key: 'field1',
       align: 'center'
     },
-    {
-        title: '补充工作地点保留带电部分和安全措施\n（由工作许可人填写）',
-        dataIndex: 'field2',
-        key: 'field1',
-        align: 'center'
-      },
 ]
