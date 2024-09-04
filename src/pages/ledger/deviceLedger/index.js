@@ -1,11 +1,14 @@
 import React, { useState, useRef, useEffect, useCallback, useMemo } from 'react'
 import styled from 'styled-components'
 import { Space, Button, message, Input, Divider, Tree, Select, Image } from 'antd'
-import { selectcurlRommid, selectProjectId } from "@redux/systemconfig";
+import { selectcurlRommid, selectProjectId,selectOneLevelDefaultId } from "@redux/systemconfig";
 import Titlelayout from '@com/titlelayout'
 import { useSelector, useDispatch } from 'react-redux'
 import Pagecount from "@com/pagecontent";
+import { SpareParts, distributionRoom } from '@api/api.js'
 import { SearchOutlined } from '@ant-design/icons'
+import Cempty from '@com/useEmpty'
+
 const Mainbox = styled.div`
     && {
       flex: 1;
@@ -75,89 +78,45 @@ const Mainbox = styled.div`
       }
 `
 export default function Index() {
-
+  const areaId = useSelector(selectOneLevelDefaultId)
   const projectId = useSelector(selectProjectId)
   const roomId = useSelector(selectcurlRommid)
-  const [treeData, setTreeData] = useState([
-    {
-      title: '1#配电室',
-      key: '0',
-      children: [
-        {
-          title: '变压器',
-          key: '0-1',
-        },
-        {
-          title: '中置柜',
-          key: '0-2',
-        },
-        {
-          title: '开关柜',
-          key: '0-3',
-        }, {
-          title: '直流系统',
-          key: '0-4',
-        },
-      ],
-    },
-  ])
-  const [selectedId, setSelectedId] = useState()
-  const onSelect = (e) => {
-    console.log(e[0])
-    setSelectedId(e[0])
+  const [treeData, setTreeData] = useState([])
+  const [selectedInfo, setSelectedInfo] = useState()
+  const [selectedKeys, setSelectedKeys] = useState([]);
+  const [deviceInfo, setDeviceInfo] = useState([])
+  const getQueryLedger=(id)=>{
+    SpareParts.QueryLedger(projectId, id).then(res=>{
+      if(res.success){
+        setDeviceInfo(res.data)
+      }else{
+        message.error(res.errMsg)
+      }
+    })
   }
-  const [deviceList, setDeviceList] = useState([
-    { value: 0, label: '1#变压器' },
-    { value: 1, label: '2#变压器' },
-    { value: 2, label: '3#变压器' },
-    { value: 3, label: '4#变压器' },
-    { value: 4, label: '5#变压器' },
-    { value: 5, label: '6#变压器' },
-  ])
-  const [deviceName, setDeviceName] = useState()
-  const changeDevice = (e) => {
-    console.log(e)
-    setDeviceName(e)
+  const onSelect = (selectedKeys, info) => {
+    console.log(selectedKeys, info.node)
+    setSelectedInfo(info.node)
+    setSelectedKeys(selectedKeys)
+    getQueryLedger(info.node.value)
   }
-  const [deviceInfo, setDeviceInfo] = useState([{
-    label: '变压器',
-    data: [
-      {
-        label: '设备名称',
-        data: '1',
-        unit:''
-      }, {
-        label: '设备编号',
-        data: '2',
-        unit:''
-      }, {
-        label: '规格型号',
-        data: '3',
-        unit:''
-      }, {
-        label: '设备类型',
-        data: '4',
-        unit:''
-      },
-    ]
-  }, {
-    label: '温度控制器',
-    data: [
-      {
-        label: '厂家',
-        data: '1',
-        unit:''
-      }, {
-        label: '规格型号',
-        data: '2',
-        unit:'qq'
-      },
-    ]
-  }])
+
+  const [name,setName]=useState('')
+  const onChangeName=(e)=>{
+    setName(e.target.value)
+  }
+  const getDeviceInfo = () => {
+    SpareParts.QueryLedgerTree(projectId, areaId,name).then(res=>{
+      if(res.success){
+        setTreeData(res.data)
+      }else{
+        message.error(res.errMsg)
+      }
+    })
+  }
   useEffect(() => {
-
-
-  }, [])
+    getDeviceInfo()
+  }, [projectId, areaId])
 
   return (
     <Pagecount bgcolor="transparent" pd="0">
@@ -171,36 +130,63 @@ export default function Index() {
                   width: '100%', marginTop: '16px'
                 }}
               >
-                <Input defaultValue="" placeholder="请输入关键字查询" />
+                <Input value={name} placeholder="请输入关键字查询" onChange={onChangeName}/>
                 <div style={{
                   width: '54px', height: '31px', backgroundColor: '#f5f7fa', border: '1px solid #d2d2d2', display: 'flex',
                   alignItems: 'center', justifyContent: 'center'
-                }}><SearchOutlined style={{ fontSize: '20px', color: '#b4b5b6' }} /></div>
+                }} onClick={getDeviceInfo}><SearchOutlined style={{ fontSize: '20px', color: '#b4b5b6' }} /></div>
               </Space.Compact>
               <Divider dashed style={{ marginTop: '16px', marginBottom: '16px' }} />
               <Tree
                 treeData={treeData}
                 defaultExpandParent
-                selectedKeys={selectedId}
+                selectedKeys={selectedKeys}
                 onSelect={onSelect}
-                fieldNames={{ title: 'title', key: "key", children: 'children' }}
+                fieldNames={{ title: 'title', key: "value", children: 'children' }}
               />
             </div>
           </Titlelayout>
 
           <div className='right'>
-            <Select style={{ width: 230 }} defaultValue={0} value={deviceName} options={deviceList} onChange={changeDevice}></Select>
-            <Divider dashed style={{ marginTop: '16px', marginBottom: '16px' }} />
+            <p style={{width:'231px',textAlign:'center'}}>{selectedInfo?.title}</p>
+            {/* <Divider dashed style={{ marginTop: '16px', marginBottom: '16px' }} /> */}
             <div className='chart'>
               <div style={{ width: '231px', height: '240px', border: '1px solid #d2d2d2', display: 'flex', alignItems: 'center', justifyContent: 'center', marginTop: '16px' }}>
-                <Image src="https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png" width={180} />
+                {deviceInfo&&deviceInfo.image?<Image src={deviceInfo.image} width={180} />:
+                <Cempty tip='暂无数据'/>}
               </div>
               <div className='chartRight'>
-
-                {deviceInfo.map(item => {
-                  return <div>
-                    <Divider dashed style={{ width: '100%' }}>{item.label}</Divider>
-                    <div  className='deviceBox'>{item.data.map(it => {
+              <Divider dashed style={{ width: '100%' }}>{deviceInfo?.typeName||''}</Divider>
+              <div  className='deviceBox'>
+              <div className='deviceItem'>
+                        <span style={{width:'120px'}}>设备名称</span>
+                        <div className='deviceValue'>
+                          <span>{deviceInfo?.deviceName}</span>
+                          <span></span>
+                        </div>
+              </div>
+              <div className='deviceItem'>
+                        <span style={{width:'120px'}}>设备编号</span>
+                        <div className='deviceValue'>
+                          <span>{deviceInfo?.sn}</span>
+                          <span></span>
+                        </div>
+              </div>
+              <div className='deviceItem'>
+                        <span style={{width:'120px'}}>规格型号</span>
+                        <div className='deviceValue'>
+                          <span>{deviceInfo?.category}</span>
+                          <span></span>
+                        </div>
+              </div>
+              <div className='deviceItem'>
+                        <span style={{width:'120px'}}>设备类型</span>
+                        <div className='deviceValue'>
+                          <span>{deviceInfo?.typeName}</span>
+                          <span></span>
+                        </div>
+              </div>
+              {deviceInfo?.data&&deviceInfo.data[0]?.data?.length>0?deviceInfo?.data[0]?.data.map(it => {
                       return <div className='deviceItem'>
                         <span style={{width:'120px'}}>{it.label}</span>
                         <div className='deviceValue'>
@@ -208,9 +194,25 @@ export default function Index() {
                           <span>{it.unit}</span>
                         </div>
                       </div>
+                    }):null}
+              </div>
+              
+                {deviceInfo?.data&&deviceInfo.data.slice(1)?.length>0?deviceInfo?.data.slice(1).map(item => {
+                  return <div>
+                    <Divider dashed style={{ width: '100%' }}>{item.label}</Divider>
+                    <div  className='deviceBox'>{item.data.map(it => {
+                      return <div className='deviceItem'>
+                        <span style={{width:'120px'}}>{it.label}</span>
+                        <div className='deviceValue'>
+                          {it.label=='最后一次维护时间'?<span>{it.data.slice(0,10)}</span>:
+                          it.label=='维护详情'?<span style={{overflowX:'auto'}}>{it.data}</span>:
+                          <span>{it.data}</span>}
+                          <span>{it.unit}</span>
+                        </div>
+                      </div>
                     })}</div>
                   </div>
-                })}
+                }):null}
               </div>
             </div>
 

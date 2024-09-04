@@ -12,6 +12,18 @@ export class I18N {
 export class Editapi {  // 后期修改的一些接口
   static FilterDeviceStyle= (projectId) => server.get(`/Monitor/RuntimeDevice/AllDeviceStyle?projectId=${projectId}`)  //
 }
+export class WorkTicketRuntime {  //  运行态工作票
+  static GetWorkTickets= (params) => server.get(`/Distribution/DistributionWorkTicketRuntime/GetWorkTickets`, {params})  // 查询
+  static GetCommanderList= (params) => server.get(`/Distribution/DistributionWorkTicketRuntime/GetCommanderList`, {params})  // 查询负责人列表
+  static GetReviewerList= (params) => server.get(`/Distribution/DistributionWorkTicketRuntime/GetReviewerList`, {params})  // 查询审核人列表
+  static GetTeamList= (params) => server.get(`/Distribution/DistributionWorkTicketRuntime/GetTeamList`, {params})  // 查询班组列表
+  static GetTeamMemberList= (params) => server.get(`/Distribution/DistributionWorkTicketRuntime/GetTeamMemberList`, {params}) // 查询班组成员
+  static AddWorkTicket= (body,params) => server.post(`Distribution/DistributionWorkTicketRuntime/AddWorkTicket`,body, {params}) // 添加工作票
+
+
+
+
+}
 export class Login {
   static SystemConfig = (url) =>
     server.get(`/General/SystemConfig/GetSystemConfigInfo?url=${url}`);
@@ -1361,6 +1373,7 @@ export const Monitoring = {
   //运行监控
   Runtime: {
     RuntimeStatus: (data) => server.get(`/Monitor/Runtime/Status?projectId=${data.projectId}&areaId=${data.areaId}`),
+    RuntimeStatus2: (data) => server.get(`/Monitor/Runtime/StatusGroup?projectId=${data.projectId}&areaId=${data.areaId}`),//在线情况(运行报告)
     RuntimeStatistics: (data) => server.get(`/Monitor/Runtime/Statistics?projectId=${data.projectId}&areaId=${data.areaId}`),//设备统计
     RuntimeStatusGroup: (data) => server.get(`/Monitor/Runtime/StatusGroup?projectId=${data.projectId}&areaId=${data.areaId}`),//在线情况
     RuntimeQueryMonthUsage: (data) => server.get(`/Monitor/Runtime/QueryMonthUsage?projectId=${data.projectId}&areaId=${data.areaId}&type=${data.type}`),//月用量
@@ -1681,7 +1694,23 @@ export class distributionRoom {
   static updateChart = (data) => server.post(`Distribution/DistributionRoom/UpdateChart`, data)  
   static deleteChart = (projectId, id) => server.delete(`Distribution/DistributionRoom/DeleteChart?projectId=${projectId}&id=${id}`)  
   static RoomList =(projectId,areaId)=>server.get(`/Distribution/DistributionRoom/RoomList`,{params:{projectId,areaId}})
-  static getEquipmentList = (projectId, areaId) => server.get(`Distribution/DistributionRoom/GetEquipmentList?projectId=${projectId}&areaId=${areaId}`) 
+  static getEquipmentList = (projectId, areaId) => server.get(`Distribution/DistributionRoom/GetEquipmentList?projectId=${projectId}&areaId=${areaId}`)
+  static GetCommanders = (params) => server.get(`Distribution/DistributionWorkTicket/GetCommanders`, {params}) 
+  static AddCommander = (params, projectId) => server.post(`Distribution/DistributionWorkTicket/AddCommander?projectId=${projectId}`,params) //新增负责人
+  static UpdateCommander = (params) => server.get(`Distribution/DistributionWorkTicket/UpdateCommander`, {params}) // 编辑负责人
+  static DelCommander = (params) => server.delete(`Distribution/DistributionWorkTicket/DelCommander`, {params}) // 删除负责人
+  static GetReviewers = (params) => server.get(`Distribution/DistributionWorkTicket/GetReviewers`, {params}) // 查询审核人
+  static ConfigReviewer = (body,params) => server.post(`Distribution/DistributionWorkTicket/ConfigReviewer`,body, {params}) // 查询审核人
+  static GetMembers = (params) => server.get(`Distribution/DistributionWorkTicket/GetMembers`,  {params}) // 查询成员
+
+  static AddMember = (params) => server.get(`Distribution/DistributionWorkTicket/AddMember`,  {params}) // 新增成员
+  static UpdateMember = (params) => server.get(`Distribution/DistributionWorkTicket/UpdateMember`,  {params}) // 编辑成员
+  static DelMember = (params) => server.delete(`Distribution/DistributionWorkTicket/DelMember`,  {params}) // 编辑成员
+
+  static GetTeams = (params) => server.get(`Distribution/DistributionWorkTicket/GetTeams`,  {params}) // 查询班组
+  static GetConfigTeamMembers = (params) => server.get(`Distribution/DistributionWorkTicket/GetConfigTeamMembers`,  {params}) //  编辑时 查询班组成员
+  static AddAndUpdateTeam = (body,params) => server.post(`Distribution/DistributionWorkTicket/AddAndUpdateTeam`, body, {params}) //新增/编辑班组
+  static DelTeam = (params) => server.delete(`Distribution/DistributionWorkTicket/DelTeam`,  {params}) //新增/编辑班组
 }
  
 //配电房设备
@@ -2219,3 +2248,43 @@ static QueryCarbonEmissionCalculationFactor= (enterpriseId) =>
       server.get(`Carbon/CarbonEmissionCalculationFactor/QueryCarbonEmissionCalculationFactor?enterpriseId=${enterpriseId}`)   
 }
  /* Carbon/CarbonEmissionCalculationFactor/QueryCarbonEmissionCalculationFactor?enterpriseId */
+//台账管理
+ export class SpareParts {
+  static QuerySparePartsList= (data) =>   
+      server.post(`Ledger/SpareParts/QuerySparePartsList?projectId=${data.projectId}&areaId=${data.areaId}&roomId=${data.roomId}&type=${data.type}&pageNum=${data.pageNum}&pageSize=${data.pageSize}`)//台账管理备件信息表格
+  static DeleteSpareParts= ({projectId,sparePartsId}) =>   
+      server.post(`Ledger/SpareParts/DeleteSpareParts?projectId=${projectId}&sparePartsId=${sparePartsId}`)//删除
+  static AddSpareParts= (projectId,data) =>   
+      server.post(`Ledger/SpareParts/AddSpareParts?projectId=${projectId}`,data)//新增
+  static UpdateSpareParts= (projectId,data) =>   
+      server.post(`Ledger/SpareParts/UpdateSpareParts?projectId=${projectId}`,data)//编辑
+  static SparePartsController= (data) =>   
+      server.post(`Ledger/SparePartsRuntime/QuerySpareParts?projectId=${data.projectId}&areaId=${data.areaId}&roomId=${data.roomId}&pageNum=${data.pageNum}&pageSize=${data.pageSize}`)//查询库存状态信息
+  static InAndOutStorage= ({projectId,sparePartsId,operate,count,remark}) =>   
+      server.post(`Ledger/SparePartsRuntime/InAndOutStorage?projectId=${projectId}&sparePartsId=${sparePartsId}&operate=${operate}&count=${count}&remark=${remark}`)//领用或入库（operate 0-领用 1-入库
+  static QuerySparePartsType= (projectId,areaId,roomId) =>   
+      server.post(`Ledger/SparePartsRuntime/QuerySparePartsType?projectId=${projectId}&areaId=${areaId}&roomId=${roomId}`)//获取备件类型
+  static QuerySparePartsName= (projectId,areaId,roomId) =>   
+      server.post(`Ledger/SparePartsRuntime/QuerySparePartsName?projectId=${projectId}&areaId=${areaId}&roomId=${roomId}`)//获取备件名称
+  static QueryInventoryRecord= ({projectId,type,name,startDate,endDate}) =>   
+      server.post(`Ledger/SparePartsRuntime/QueryInventoryRecord?projectId=${projectId}&type=${type}&name=${name}&startDate=${startDate}&endDate=${endDate}`)//出入库记录查询
+  static QueryLedgerTree= (projectId,areaId,name) =>   
+      server.post(`Ledger/DeviceLedgerRuntime/QueryLedgerTree?projectId=${projectId}&areaId=${areaId}&name=${name}`)//树形结构展示
+  static QueryLedger= (projectId,ledgerId) =>   
+      server.post(`Ledger/DeviceLedgerRuntime/QueryLedger?projectId=${projectId}&ledgerId=${ledgerId}`)//根据Id获取台账信息
+  static QueryLedgerList= (data) =>   
+      server.post(`Ledger/DeviceLedger/QueryLedgerList?projectId=${data.projectId}&areaId=${data.areaId}&deviceType=${data.deviceType}&pageNum=${data.pageNum}&pageSize=${data.pageSize}`)//台账列表
+  static DeleteLedger= (projectId,ledgerId) =>   
+      server.post(`Ledger/DeviceLedger/DeleteLedger?projectId=${projectId}&ledgerId=${ledgerId}`)//删除
+  static AddLedger= (projectId,data) =>   
+      server.post(`Ledger/DeviceLedger/AddLedger?projectId=${projectId}`,data)//新增
+  static UpdateLedger= (projectId,data,ledgerId) =>   
+      server.post(`Ledger/DeviceLedger/UpdateLedger?projectId=${projectId}&ledgerId=${ledgerId}`,data)//编辑
+  static SelectDevice= ({projectId,areaId,deviceType}) =>   
+      server.post(`Ledger/DeviceLedger/SelectDevice?projectId=${projectId}&areaId=${areaId}&deviceType=${deviceType}`)//设备列表
+  static GetDeviceInfo= ({projectId,deviceId}) =>   
+      server.post(`Ledger/DeviceLedger/GetDeviceInfo?projectId=${projectId}&deviceId=${deviceId}`)//设备基础信息
+  static QueryLedgerById= ({projectId,ledgerId}) =>   
+      server.post(`Ledger/DeviceLedger/QueryLedgerById?projectId=${projectId}&ledgerId=${ledgerId}`)//根据Id获取台账信息
+ }//GetDeviceInfo(int projectId, int deviceId)
+ 

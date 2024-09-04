@@ -313,6 +313,7 @@ export const drawEcharts = (
             smooth:true, 
             showSymbol: false,
             areaStyle: {},
+          
             ...series,
         }
     }else if(series.type == 'bar'){
@@ -327,7 +328,7 @@ export const drawEcharts = (
   }else if(series.constructor == Array) {
     custSeries = series.map(s => {
         if(s.type == "line") {
-            return ({smooth:true,  areaStyle: {}, showSymbol: false, ...s, })
+            return ({smooth:true,  areaStyle: {}, showSymbol: false,   stack: 'Total', ...s, })
         }else if(s.type == "bar") {
             return ({barGap: 0, ...s,})
         }else {
