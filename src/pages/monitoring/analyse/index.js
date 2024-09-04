@@ -17,27 +17,35 @@ const disabledDate = (current) => {
   return current && current > moment().endOf('day');
 }
 const {
-  DeviceManager: {
-    QueryByPageElectric,
-    AeraQueryAll,
-    QueryListGateWay,
-    QueryUsedDeviceCategory,
-    QueryPlanList,
-    AddElectric,
-    UpdateElectric,
-    UpdateFactor,
-    DeleteElectric,
-    ImportElectric,
-    OneLevel
+  ComparativeAnalysis: {
+    QueryCompareDevice,
+    HistoryCompare
   }
 } = Monitoring
 export default function Index() {
   const projectId = useSelector(state => state.system.menus.projectId)
   const [form] = Form.useForm();
-  const [typeSelected, setTypeSelected] = useState()
+  const [typeSelected, setTypeSelected] = useState(1)
   const [baseLine, setBaseLine] = useState([])
   const [unit, setUnit] = useState('单位')
   const [baseLineValue, setBaseLineValue] = useState(); // 初始化状态
+  const [boptions, setOptions] = useState({
+    series: [],  
+    grid: { 
+      left: "0px",
+      right: "0",
+      top: "30px",
+      bottom: "0px",
+      containLabel: true,
+    },
+    legend: {
+      top: 0,  
+    },
+    dataset: {
+      dimensions: [],
+      source: []
+    }
+  })
   const comparisonType = [
     {
       value: 1,
@@ -68,6 +76,7 @@ export default function Index() {
 
   }
   const onChangeBaseLine = (val) => {
+    if (Sns.length < 2) return message.warning('请至少选择两个设备进行对比分析！')
     setBaseLine(val)
     console.log(baseLine, val);
   }
@@ -75,8 +84,16 @@ export default function Index() {
   const onChangeBaseLineValue = (newValue) => {
     setBaseLineValue(newValue); // 更新状态
   };
-  const onChangeTime = (val) => {
-    // setBaseLine(val)
+  let dataToday = moment().format('YYYY-MM-DD')
+  let [startTime, setstartTime] = useState(moment().startOf('day').format('YYYY-MM-DD'))
+  let [endTime, setendTime] = useState(dataToday)
+  // setBaseLine(val)
+  const onChangeTime = (date = [], dataString) => {
+    let f = dataString.some(d => d);
+    if (!f) return
+    setstartTime(dataString[0])
+    setendTime(dataString[1])
+    setValue(date)
   }
 
   const [transTag, setTransTag] = useState(false)
@@ -111,59 +128,92 @@ export default function Index() {
       subTitle: '选择需要对比的设备',
       unknownTitle: '未选中的设备',
     })
-    let params = {
-      projectId,
-      pageNum: 1,
-      areaId: 0,
-      alike: '',
-      customerType: 0
-    }
-    const resp = await QueryByPageElectric(params)
+    const resp = await QueryCompareDevice(projectId, 0, '')
     if (resp.success && Array.isArray(resp.data)) {
       setUnknownTable(resp.data || [])
 
     } else {
 
     }
-    setTransTag('open')
+    setTransTag(true)
 
   }
-
+  const [Sns, setSns] = useState([])
   const getSaveValue = values => {
-    let Sns = []
+    let snData = []
+
     values.subData.map(item => {
-      Sns.push(item.sn)
+      snData.push(item.sn)
     })
-    let params = {
-      EnergyStructureId: structureId,
-      Sns
-    }
-    configEnergyStructure(projectId, params).then(res => {
-      if (res.success) {
-        messageContent('success', '能源节点配置成功!')
-        setTransTag(false)
-        setTimeout(() => { setDeleteDom(false) }, 600)
-      } else {
-        messageContent('error', res.errMsg)
-      }
-    })
+    setSns(snData)
+    // let params = {
+    //   EnergyStructureId: structureId,
+    //   Sns
+    // }
+    // configEnergyStructure(projectId, params).then(res => {
+    //   if (res.success) {
+    //     messageContent('success', '对比的设备已选择')
+    //     setTransTag(false)
+    //     setTimeout(() => { setDeleteDom(false) }, 600)
+    //   } else {
+    //     messageContent('error', res.errMsg)
+    //   }
+    // })
   }
   const getCloseValue = params => {
     setTransTag(false)
-    setTimeout(() => { setDeleteDom(false) }, 600)
+    setTimeout(() => { setDeleteDom(false) }, 1000)
   }
   const analysisRef = useRef(null)
   const onSetcontrast = () => {
     console.log(baseLine, '2222baseLine');
+    if (Sns.length < 2) return message.warning('请至少选择两个设备进行对比分析！')
     if (!typeSelected) {
-      return message.error('请选择对比数据')
+      return message.warning('请选择对比数据')
     } else {
       console.log(baseLine, '1111baseLine', baseLineValue);
       if (baseLine.length != 0) {
         if (baseLineValue == undefined) {
-          return message.error('请填写对比基准线具体数值')
+          return message.warning('请填写对比基准线具体数值')
         }
       }
+    }
+
+    console.log(Sns, 'subTable');
+    let params = {
+      projectId,
+      Type: typeSelected,
+      Sns,
+      Start: startTime,
+      End: endTime
+    }
+    HistoryCompare(params).then(res => {
+      let { success, data } = res
+      if (success) {
+        setdataSourceLog(data)
+        settotalalarm(res.total)
+      } else {
+        message.error(res.errMsg)
+      }
+    })
+    let markLineData = {
+      yAxis: `${baseLineValue}`,
+      lineStyle: {
+        type: "line",
+        color: "red",
+        width: 2,
+      },
+      label: {
+        show: true,// 确保标签显示设置为true
+        //将警示值放在哪个位置，三个值“start”,"middle","end"  开始  中点 结束
+        position: "start",
+        color: "white",
+        backgroundColor: 'red',
+        fontSize: 12,
+        padding: 5, // 文字内边距
+        lineHeight: 20, // 文字行高
+        formatter: `${baseLineValue}` + `${unit}`,
+      },
     }
     if (baseLine.length != 0 && baseLineValue != undefined) {
       drawEcharts(analysisRef.current, {
@@ -171,28 +221,7 @@ export default function Index() {
         series: [{
           type: "line", areaStyle: null, showSymbol: true,
           markLine: {
-            data: [
-              //第一条线
-              {
-                yAxis: `${baseLineValue}`,
-                lineStyle: {
-                  type: "line",
-                  color: "red",
-                  width: 2,
-                },
-                label: {
-                  show: true,// 确保标签显示设置为true
-                  //将警示值放在哪个位置，三个值“start”,"middle","end"  开始  中点 结束
-                  position: "start",
-                  color: "white",
-                  backgroundColor: 'red',
-                  fontSize: 12,
-                  padding: 5, // 文字内边距
-                  lineHeight: 20, // 文字行高
-                  formatter: `${baseLineValue}` + `${unit}`,
-                },
-              },
-            ],
+            data: markLineData
           }
         }, {
           type: "line", areaStyle: null, showSymbol: true,
@@ -260,6 +289,7 @@ export default function Index() {
 
 
   }, [])
+  const [dates, setDates] = useState([moment().startOf('day'), moment()]);
   return (
 
     <Titlelayout title='对比分析'>
@@ -303,13 +333,20 @@ export default function Index() {
             </div>
           </Form.Item>
           <Form.Item label="请选择日期范围" name="time" style={{ marginBottom: 0 }}>
-            <RangePicker onChange={onChangeTime} format="YYYY-MM-DD" style={{ width: '320px' }} disabledDate={disabledDate} />
+            <RangePicker
+              value={dates || value}
+              onChange={onChangeTime}
+              onCalendarChange={(val) => setDates(val)}
+              disabledDate={disabledDate}
+              defaultValue={[moment().startOf('day'), moment()]}
+              format="YYYY-MM-DD"
+              style={{ width: '320px' }} />
             <Button type="primary" style={{ marginLeft: '16px' }} onClick={() => onSetcontrast()}>对比分析</Button>
           </Form.Item >
         </Space>
       </Form>
       <Mask task={transTag}>
-        <UseTransfer transferTitle={transferTitle} columns={columns} subTable={subTable} unknownTable={unknownTable} saveValue={getSaveValue} closeValue={getCloseValue}></UseTransfer>
+        {transTag && <UseTransfer transferTitle={transferTitle} columns={columns} subTable={subTable} unknownTable={unknownTable} saveValue={getSaveValue} closeValue={getCloseValue}></UseTransfer>}
 
       </Mask>
       <div style={{ width: "100%", marginTop: '16px', height: '90%' }} ref={analysisRef}>
