@@ -1426,6 +1426,8 @@ export class operation {
 // static  OrderStatistics=(data)=>server.post(`/Maintenance/MaintenanceRuntime/OrderStatistics`, data)//运行报告
  static  InspectionStatistics=({projectId, areaId})=>server.get(`/Maintenance/MaintenanceRuntime/InspectionStatistics?projectId=${projectId}&areaId=${areaId}`)//运行报告
  static  InspectionErrorCounter=({projectId, areaId})=>server.get(`/Maintenance/MaintenanceRuntime/InspectionErrorCounter?projectId=${projectId}&areaId=${areaId}`)//运行报告
+ static  OrderPageList=(data)=>server.post(`/Maintenance/MaintenanceRuntime/OrderPageList`,data)//工单查询(新)
+ static  OrderListDetail=(data)=>server.get(`/Maintenance/MaintenanceRuntime/OrderListDetail`,{params:data})//工单详情(新)
 }
 //运维管理(设计)
 export class operationDesigin{
@@ -1786,6 +1788,8 @@ export class DistributionRoomRuntime{
   static QueryFibreTempilWarningRecords=(params)=>server.post(`/Distribution/DistributionRoomRuntime/QueryGXCWWarningRecords`,params)
 
   static Report =(params)=>server.post(`/Distribution/DistributionRoomRuntime/Report`, params)  // 报告
+
+  static OverviewInfo=(params)=>server.get(`Distribution/DistributionHighRuntime/OverviewInfo`,{params})
 }
 //能源流向
 export class EnergyFlowRuntime {

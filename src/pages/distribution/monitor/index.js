@@ -5,7 +5,7 @@ import {selectcurlRommid, selectProjectId, roomName } from "@redux/systemconfig"
 import styled from 'styled-components'
 import Pagecount from '@com/pagecontent'
 
-import {message ,Image, Typography } from 'antd'
+import {message ,Image, Typography ,Collapse } from 'antd'
 
  
 import { DistributionRoomRuntime } from '@api/api.js'
@@ -130,7 +130,19 @@ export default function Index() {
      }
     
   }
- 
+  const OverviewInfo=async (roomId)=>{
+    try {
+      const res = await  DistributionRoomRuntime.OverviewInfo({projectId, roomId})
+      if(res.success){
+
+      }else{
+        message.error(res.errMsg)
+      }
+    } catch (error) {
+      console.log(error)
+    }
+    
+  }
   const Custcard = ({src, value, name}) => {
   return(
     <div className='card'>
@@ -145,6 +157,7 @@ export default function Index() {
   useEffect(() => {
    if(Number.isInteger(roomId)){
     getEnvironment(roomId)
+    OverviewInfo(roomId)
    }  else{
     setSpinging(false)
    }
@@ -228,9 +241,11 @@ const HoverList=(props)=>{
   return (
   
     <HoverDiv>
+       <Collapse >
       {props.children}
       <div className="list" >
-          {
+       
+        {
             keys.map((it,i)=>{
               return( <div className="line" key={i}>
                 <span>{it}</span>
@@ -239,6 +254,8 @@ const HoverList=(props)=>{
             })
           }
       </div>
+      </Collapse>
+         
     </HoverDiv>
     
  

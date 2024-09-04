@@ -90,7 +90,7 @@ export default function Warncontent() {
             areaId,
             state:status
         }
-      return operation.OrderPage(params.current).then(res => {
+      return operation.OrderPageList(params.current).then(res => {
           const {success, data, total=0, errMsg} = res
           setTotal(total)
           let f = Array.isArray(data);
@@ -168,7 +168,7 @@ export default function Warncontent() {
                 projectId,
                 orderId
             }
-            const res = await operation.OrderDetail(param)
+            const res = await operation.OrderListDetail(param)
             if(res.success){
                 setOrderdetail(res.data || {})
                 setOrder(true)
@@ -185,7 +185,7 @@ export default function Warncontent() {
     const onExport=useCallback(()=>{
         params.current.pageSize = total
         params.current.pageNum = 1
-        return  operation.OrderPage(params.current).then(res => {
+        return  operation.OrderPageList(params.current).then(res => {
             let {success, data, total} = res
             if (success) {
                 return {
@@ -253,7 +253,7 @@ export default function Warncontent() {
                         <div style={{ minHeight: 50,fontWeight:'bold' }} >平台派单</div>
                     </Timeline.Item>
                     <Timeline.Item label={orderdetail?.state!==1?orderdetail?.confirmTime:null} dot={orderdetail?.state!==1?<CompleteIcon />:<UnCompleteIcon/>} className={style.timeline}>
-                        <div style={{ minHeight: 50 }}><span style={{paddingRight:64,fontWeight:'bold',color:orderdetail?.state!==1?'#000':'#ccc'}}>派单确认</span>{orderdetail?.operator}</div>
+                        <div style={{ minHeight: 50 }}><span style={{paddingRight:64,fontWeight:'bold',color:orderdetail?.state!==1?'#000':'#ccc'}}>派单确认</span>{orderdetail?.operator}/{orderdetail?.mobile}</div>
                     </Timeline.Item>
                     <Timeline.Item label={orderdetail?.state>2?orderdetail?.arriveTime:null} dot={orderdetail?.state>2?<CompleteIcon />:<UnCompleteIcon/>} className={style.timeline}>
                         <div style={{ minHeight: 100 }}>
