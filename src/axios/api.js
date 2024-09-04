@@ -1428,24 +1428,26 @@ export const Monitoring = {
 }
 //运维管理(运行)
 export class operation {
-  static AlarmCurrent = (data) => server.get(`/Maintenance/MaintenanceRuntime/AlarmCurrent`, { params: data })//获取当前告警
-  static AlarmMonth = (data) => server.get(`/Maintenance/MaintenanceRuntime/AlarmMonth`, { params: data })//获取本月告警
-  static MonthOrderStatistics = (data) => server.get(`/Maintenance/MaintenanceRuntime/MonthOrderStatistics`, { params: data })//获取本月订单
-  static InspectionStatistics = (data) => server.get(`/Maintenance/MaintenanceRuntime/InspectionStatistics`, { params: data })//巡检任务
-  static InspectionStatisticsTime = (params) => server.post(`/Maintenance/MaintenanceRuntime/InspectionStatisticsTime`, params)//巡检任务
-  static MonthOrderTrend = (data) => server.get(`/Maintenance/MaintenanceRuntime/MonthOrderTrend`, { params: data })//本月派单
-  static MonthAlarmTrend = (data) => server.get(`/Maintenance/MaintenanceRuntime/MonthAlarmTrend`, { params: data })//本月告警事件
-  static AlarmPage = (data) => server.post(`/Maintenance/MaintenanceRuntime/AlarmPage`, data)//告警信息
-  static DispachOrder = (data) => server.get(`/Maintenance/MaintenanceRuntime/DispachOrder`, { params: data })//派单
-  static OrderPage = (data) => server.post(`/Maintenance/MaintenanceRuntime/OrderPage`, data)//工单查询
-  static OrderStatistics = (data) => server.post(`/Maintenance/MaintenanceRuntime/OrderStatistics`, data)//订单查询
-  static OrderDetail = (data) => server.get(`/Maintenance/MaintenanceRuntime/OrderDetail`, { params: data })//工单详情
-  static InspectionPage = (data) => server.post(`/Maintenance/MaintenanceRuntime/InspectionPage`, data)//巡检
-  static InspectionDetail = (data) => server.get(`/Maintenance/MaintenanceRuntime/InspectionDetail`, { params: data })//巡检详细
-  static AlarmStatistics = (data) => server.post(`/Maintenance/MaintenanceRuntime/AlarmStatistics`, data)//运行报告
-  // static  OrderStatistics=(data)=>server.post(`/Maintenance/MaintenanceRuntime/OrderStatistics`, data)//运行报告
-  static InspectionStatistics = ({ projectId, areaId }) => server.get(`/Maintenance/MaintenanceRuntime/InspectionStatistics?projectId=${projectId}&areaId=${areaId}`)//运行报告
-  static InspectionErrorCounter = ({ projectId, areaId }) => server.get(`/Maintenance/MaintenanceRuntime/InspectionErrorCounter?projectId=${projectId}&areaId=${areaId}`)//运行报告
+ static  AlarmCurrent = (data)=>server.get(`/Maintenance/MaintenanceRuntime/AlarmCurrent`,{params:data})//获取当前告警
+ static  AlarmMonth = (data)=>server.get(`/Maintenance/MaintenanceRuntime/AlarmMonth`,{params:data})//获取本月告警
+ static  MonthOrderStatistics =(data)=>server.get(`/Maintenance/MaintenanceRuntime/MonthOrderStatistics`,{params:data})//获取本月订单
+ static  InspectionStatistics = (data)=>server.get(`/Maintenance/MaintenanceRuntime/InspectionStatistics`,{params:data})//巡检任务
+ static  InspectionStatisticsTime = (params)=>server.post(`/Maintenance/MaintenanceRuntime/InspectionStatisticsTime`, params)//巡检任务
+ static  MonthOrderTrend =(data)=>server.get(`/Maintenance/MaintenanceRuntime/MonthOrderTrend`,{params:data})//本月派单
+ static  MonthAlarmTrend =(data)=>server.get(`/Maintenance/MaintenanceRuntime/MonthAlarmTrend`,{params:data})//本月告警事件
+ static  AlarmPage=(data)=>server.post(`/Maintenance/MaintenanceRuntime/AlarmPage`,data)//告警信息
+ static  DispachOrder=(data)=>server.get(`/Maintenance/MaintenanceRuntime/DispachOrder`,{params:data})//派单
+ static  OrderPage=(data)=>server.post(`/Maintenance/MaintenanceRuntime/OrderPage`,data)//工单查询
+ static  OrderStatistics=(data)=>server.post(`/Maintenance/MaintenanceRuntime/OrderStatistics`,data)//订单查询
+ static  OrderDetail=(data)=>server.get(`/Maintenance/MaintenanceRuntime/OrderDetail`,{params:data})//工单详情
+ static  InspectionPage=(data)=>server.post(`/Maintenance/MaintenanceRuntime/InspectionPage`,data)//巡检
+ static  InspectionDetail=(data)=>server.get(`/Maintenance/MaintenanceRuntime/InspectionDetail`,{params:data})//巡检详细
+ static  AlarmStatistics=(data)=>server.post(`/Maintenance/MaintenanceRuntime/AlarmStatistics`, data)//运行报告
+// static  OrderStatistics=(data)=>server.post(`/Maintenance/MaintenanceRuntime/OrderStatistics`, data)//运行报告
+ static  InspectionStatistics=({projectId, areaId})=>server.get(`/Maintenance/MaintenanceRuntime/InspectionStatistics?projectId=${projectId}&areaId=${areaId}`)//运行报告
+ static  InspectionErrorCounter=({projectId, areaId})=>server.get(`/Maintenance/MaintenanceRuntime/InspectionErrorCounter?projectId=${projectId}&areaId=${areaId}`)//运行报告
+ static  OrderPageList=(data)=>server.post(`/Maintenance/MaintenanceRuntime/OrderPageList`,data)//工单查询(新)
+ static  OrderListDetail=(data)=>server.get(`/Maintenance/MaintenanceRuntime/OrderListDetail`,{params:data})//工单详情(新)
 }
 //运维管理(设计)
 export class operationDesigin {
@@ -1821,7 +1823,9 @@ export class DistributionRoomRuntime {
   static QueryAlarmType = () => server.get(`/Distribution/DistributionRoomRuntime/QueryAlarmType`)
   static QueryFibreTempilWarningRecords = (params) => server.post(`/Distribution/DistributionRoomRuntime/QueryGXCWWarningRecords`, params)
 
-  static Report = (params) => server.post(`/Distribution/DistributionRoomRuntime/Report`, params)  // 报告
+  static Report =(params)=>server.post(`/Distribution/DistributionRoomRuntime/Report`, params)  // 报告
+
+  static OverviewInfo=(params)=>server.get(`Distribution/DistributionHighRuntime/OverviewInfo`,{params})
 }
 //能源流向
 export class EnergyFlowRuntime {
