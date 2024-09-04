@@ -27,7 +27,7 @@ export default function Index() {
   const [form] = Form.useForm();
   const [typeSelected, setTypeSelected] = useState(1)
   const [baseLine, setBaseLine] = useState([])
-  const [unit, setUnit] = useState('单位')
+  const [unit, setUnit] = useState('kWh')
   const [baseLineValue, setBaseLineValue] = useState(); // 初始化状态
   const comparisonType = [
     {
@@ -173,13 +173,12 @@ export default function Index() {
     HistoryCompare(params).then(res => {
       let { success, data } = res
       if (success) {
-        setdataSourceLog(data)
-        settotalalarm(res.total)
+
       } else {
         message.error(res.errMsg)
       }
     })
-    let markLineData = {
+    let markLineData = [{
       yAxis: `${baseLineValue}`,
       lineStyle: {
         type: "line",
@@ -197,7 +196,7 @@ export default function Index() {
         lineHeight: 20, // 文字行高
         formatter: `${baseLineValue}` + `${unit}`,
       },
-    }
+    }]
     if (baseLine.length != 0 && baseLineValue != undefined) {
       drawEcharts(analysisRef.current, {
         dataset: datasetContrast,
