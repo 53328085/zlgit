@@ -52,17 +52,20 @@ import TransformerNum from "@com/defaultHome/transformerNum" // TransformerNum �
 
 
 import Inspection from "@com/defaultHome/inspection" // Inspection 本月巡检
+import Roomnum from '@com/defaultHome/roomNum' // 变电站数量
+import RoomCapacity from '@com/defaultHome/roomCapacity' // 总额度容量
+import Roomload from '@com/defaultHome/roomload' // 实时负荷
+import Loadlate from "@com/defaultHome/loadlate" // 负荷率
+// Roomnum, RoomCapacity, Roomload, Loadlate
 
-// TodayElectricity 今日用电量  TransformerTotal 变压器总负荷 TransformerNum 变压器数量 
-
-
+import {isObject} from '@com/usehandler'
 import RGL, { WidthProvider } from 'react-grid-layout'
 const ReactGridLayout = WidthProvider(RGL);
 import './configure/style.css';
 import './index.css';
 import { message } from 'antd';
 
-
+const {GetDistributionInfo} = HomeRuntime
 
 export default function Index() {
   const lang = useSelector(intl)
@@ -80,7 +83,19 @@ export default function Index() {
   const projectId = useSelector(selectProjectId)
  
   const { QueryUISummary } = UISummary
-
+  const [distribution, setDistribution] = useState({})
+  const getDistributionInfo = async() => {
+     try {
+      let {success, data}  =  await GetDistributionInfo(projectId)
+      if(success && isObject(data)) {
+        setDistribution(data)
+      }else {
+        setDistribution({})
+      }
+     } catch (error) {
+        console.log(error)
+     }
+  }
   const getData = async () => {
     try {
        let {success, data} = await RuntimeStatus({projectId: projectId,areaId: 0})
@@ -97,6 +112,7 @@ export default function Index() {
    useEffect(() => {
      if(projectId) {
       getData()
+      getDistributionInfo()
      // dispatch(getWebsiteState(projectId))
     }
    }, [projectId])
@@ -174,7 +190,7 @@ export default function Index() {
         {i.indexOf('本月巡检') != -1 ? <Inspection type={'runtTime'} state={data}></Inspection> : null} 
 
         { i.indexOf('月度能耗') != -1 ? <EnergyTrend type={'runtTime'}></EnergyTrend> : null }         
-        { i.indexOf('实时负荷率') != -1 ? <RealLoad type={'runtTime'}></RealLoad> : null }
+        { i.substring(0, end)==('实时负荷率') ? <RealLoad type={'runtTime'}></RealLoad> : null }
         { i.indexOf('告警分布') != -1 ? <WarningSpread type={'runtTime'}></WarningSpread> : null }
         { i.indexOf('分时电量分析') != -1 ? <ElectricAnalysis type={'runtTime'}></ElectricAnalysis> : null }
         { i.indexOf('总充电量') != -1 ? <TotalCharge type={'runtTime'}></TotalCharge> : null }
@@ -189,10 +205,14 @@ export default function Index() {
         { i.indexOf('站点soc') != -1 ? <SocData type={'runtTime'}></SocData> : null }
         {i.indexOf('能耗排名') != -1 ? <EnergyRanking type={'runtTime'}></EnergyRanking> : null}
         { i.indexOf('分类能耗') != -1 ? <EnergyProportion type={'runtTime'}></EnergyProportion> : null }
+        {i.indexOf('变配电站数量')!= -1 ? <Roomnum type={'runtTime'} {...distribution} /> : null}
+        {i.indexOf('总额度容量')!= -1 ? <RoomCapacity type={'runtTime'} {...distribution} /> : null}
+        {i.substring(0, end)==('实时负荷')? <Roomload type={'runtTime'} {...distribution} /> : null}
+        {i.substring(0, end)==('负荷率') ? <Loadlate type={'runtTime'} {...distribution} /> : null}
       </div>
     )
   }
-  
+ // Roomnum, RoomCapacity, Roomload, Loadlate
 /*   const GetProjectInfo=async()=>{
    
     try {

@@ -19,9 +19,11 @@ export class WorkTicketRuntime {  //  运行态工作票
   static GetTeamList= (params) => server.get(`/Distribution/DistributionWorkTicketRuntime/GetTeamList`, {params})  // 查询班组列表
   static GetTeamMemberList= (params) => server.get(`/Distribution/DistributionWorkTicketRuntime/GetTeamMemberList`, {params}) // 查询班组成员
   static AddWorkTicket= (body,params) => server.post(`Distribution/DistributionWorkTicketRuntime/AddWorkTicket`,body, {params}) // 添加工作票
+  
+  static GetWrokTicketState= (params) => server.get(`Distribution/DistributionWorkTicketRuntime/GetWrokTicketState`,{params}) // 获取工作票详情
 
-
-
+  static ExamineWorkTicket= (params) => server.get(`Distribution/DistributionWorkTicketRuntime/ExamineWorkTicket`,{params}) // 审核工作票
+  static UploadWorkTicket= (body,params) => server.post(`Distribution/DistributionWorkTicketRuntime/UploadWorkTicket`,body, {params}) // 审核工作票
 
 }
 export class Login {
@@ -2123,7 +2125,7 @@ export class HomeRuntime {
 
    static GetTransformerLoad = (projectId) => server.get(`/Home/HomeRuntime/GetTransformerLoad?projectId=${projectId}`)//配电房监测（变压器数量）
  
-
+   static GetDistributionInfo = (projectId) => server.get(`Home/HomeRuntime/GetDistributionInfo?projectId=${projectId}`)//配电房监测（变压器数量）
 }
 // 碳排 
 export class Carbon {

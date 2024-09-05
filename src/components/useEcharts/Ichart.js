@@ -20,6 +20,7 @@ const contidtion = (a) => {
     return f;
 }
 export default function Ichart(props={}) {
+   console.log(props)
   const ref = useRef()
  // const langch = useSelector(intl)
   let {dataset={}, type=1, pieData, custoption, tip=''} = props
