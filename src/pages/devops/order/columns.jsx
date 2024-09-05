@@ -43,6 +43,15 @@ const flexcss ={
         key: 'createTime',
       },
       {
+        title:"响应时长",
+        dataIndex:"responseTime",
+        key:"responseTime",
+      },{
+        title:"处理时长",
+        dataIndex:"processingTime",
+        key:"processingTime",
+      },
+      {
         title: '状态',
         dataIndex: 'state',
         key: 'state',
