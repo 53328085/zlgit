@@ -52,6 +52,10 @@ import TransformerTotal from "@com/defaultHome/transformerTotal" // TransformerT
 import TransformerNum from "@com/defaultHome/transformerNum" // TransformerNum 变压器数量
 
 import Inspection from "@com/defaultHome/inspection" // Inspection 本月巡检
+import RoomNum from '@com/defaultHome/roomNum' // 变配电站数量（个）
+import RoomCapacity from '@com/defaultHome/roomCapacity' // 总额度容量
+import Roomload from '@com/defaultHome/roomload' // 实时负荷
+import Loadlate from "@com/defaultHome/loadlate" // 负荷率
 import {useTranslation} from "react-i18next"
 // TodayElectricity 今日用电量  TransformerTotal 变压器总负荷 TransformerNum 变压器数量  Inspection 本月巡检
 
@@ -99,7 +103,10 @@ import deviceConfig from '@imgs/device_config.png'
 import chooperConfig from '@imgs/chooper_config.png'
 import energyPercent from '@imgs/energyProportion.png'
 import inspection from './itemImgs/inspection.svg' // 本月工单
-
+import loadratev from './itemImgs/loadlate.svg'
+import roomnumv from './itemImgs/roomnum.svg'
+import capacityv from './itemImgs/capacity.svg'
+import roomloadv from './itemImgs/roomload.svg'
 import transformerTota from './itemImgs/transformerTotal.svg' // 变压器总负荷
 
 import { useRequest } from 'ahooks';
@@ -198,9 +205,13 @@ export default function Index() {
     { img: humiture, itemName: '温湿度监控', draggable: false },   */
     { img: transformerTota, itemName: '变压器总负荷', draggable: false },// transformerTota
     { img: gatewayConfig, itemName: '触点测温', draggable: true },    
-    { img: chooperConfig, itemName: '光纤测温', draggable: true },
+    { img: chooperConfig, itemName: '光纤测温', draggable: true }, 
+    { img: roomnumv, itemName: '变配电站数量', draggable: true }, 
+    { img: capacityv, itemName: '总额度容量', draggable: true }, 
+    { img: roomloadv, itemName: '实时负荷', draggable: true }, 
+    { img: loadratev, itemName: '负荷率', draggable: true }, 
   ]
-
+ 
   // 能耗统计
 
   const energyItems = [
@@ -388,6 +399,10 @@ export default function Index() {
         {i.indexOf('站点soc') != -1 ? <SocData></SocData> : null}
         {i.indexOf('能耗排名') != -1 ? <EnergyRanking></EnergyRanking> : null}
         {i.indexOf('分类能耗') != -1 ? <EnergyProportion></EnergyProportion> : null}
+        {i.indexOf('变配电站数量') != -1 ? <RoomNum></RoomNum> : null}
+        {i.indexOf('总额度容量')!= -1 ? <RoomCapacity type={'runtTime'}  /> : null}
+        {i.substring(0, end)==('实时负荷')? <Roomload type={'runtTime'}  /> : null}
+        {i.substring(0, end)==('负荷率') ? <Loadlate type={'runtTime'}   /> : null} 
       </div>
     )
   }
@@ -396,7 +411,12 @@ export default function Index() {
   }
 
  // TodayElectricity 今日用电量  TransformerTotal 变压器总负荷 TransformerNum 配电房监测  Inspection 本月巡检
-
+ let layouts =[
+  '告警分布','本月巡检','配电房监测','变压器总负荷',
+  '今日用电量','月度能耗','公司信息','今日告警','本月工单', '告警信息','能耗排名','分类能耗',
+  '用电量','用水量','用燃气量','碳排放量','网关信息',
+  '电表信息','变配电站数量','总额度容量','实时负荷','负荷率','断路器信息','传感器信息','变压器信息','触点测温','光纤测温'
+]
   const onAddlayout = (xValue, yValue) => {
     let newlayout;
     let time = new Date()
@@ -412,9 +432,10 @@ export default function Index() {
       })
       setlayoutItem(newlayout)
       setNewCounter(newCounter + 1);
-    } else if (classOfName == '告警分布' || classOfName == '本月巡检' || classOfName == '配电房监测' || classOfName == '变压器总负荷' || classOfName == '今日用电量' || classOfName == '月度能耗' || classOfName == '公司信息' || classOfName == '今日告警' || classOfName == '本月工单' || classOfName == '告警信息' || classOfName == '能耗排名' || classOfName == '分类能耗' ||
+    } else if(layouts.includes(classOfName)) /* (classOfName == '告警分布' || classOfName == '本月巡检' || classOfName == '配电房监测' || classOfName == '变压器总负荷' 
+      || classOfName == '今日用电量' || classOfName == '月度能耗' || classOfName == '公司信息' || classOfName == '今日告警' || classOfName == '本月工单' || classOfName == '告警信息' || classOfName == '能耗排名' || classOfName == '分类能耗' ||
       classOfName == '用电量' || classOfName == '用水量' || classOfName == '用燃气量' || classOfName == '碳排放量' || 
-      classOfName == '网关信息' || classOfName == '电表信息' || classOfName == '断路器信息' || classOfName == '传感器信息' || classOfName == '变压器信息' || classOfName == '触点测温' || classOfName == '光纤测温') {
+      classOfName == '网关信息' || classOfName == '电表信息' ||  classOfName == '变配电站数量' || classOfName == '断路器信息' || classOfName == '传感器信息' || classOfName == '变压器信息' || classOfName == '触点测温' || classOfName == '光纤测温') */ {
       newlayout = layoutItem.concat({
         i: classOfName + '_' + Date.now(),
         x: xValue,

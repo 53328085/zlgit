@@ -395,7 +395,10 @@ export default  forwardRef(function Addticket({type, projectId, areaId,switchHou
         {
           type ==2 && <>
            <div className='subtitle' >8. 补充安全措施 (工作许可人填写)</div>
-           <Form.Item name="SupplementSafetyMeasure" rules={rules}>
+           <Form.Item name="SupplementSafetyMeasure" rules={[{
+          required: true,
+          message: "请添加补充安全措施"
+        }]}>
             <Input.TextArea rows={4} placeholder='若没有则填"无"， 不得空白'/>
            </Form.Item>
            <div className='subtitle' >9.  确认本工作票 1~8 项</div>

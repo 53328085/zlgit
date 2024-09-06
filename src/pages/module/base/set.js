@@ -514,9 +514,7 @@ useEffect(() => {
                 <Select options={homepage}>
                 </Select>
       </Item>
-   {/*    <Item label={t("common:Themecolor")}  name="themecolor" initialValue="#237ae4">
-        < CSketchPicker />
-      </Item> */}
+     
       <Divider dashed  className="divider" />
       <Item label={t("common:EnergyType")}  > {/* className="type" */}
           <Dcheckbox>
@@ -553,6 +551,9 @@ useEffect(() => {
           }}
         />
       </Item>
+      <Item label={t("common:Themecolor")}  name="themeColor" initialValue="#237ae4">
+        < CSketchPicker />
+      </Item> 
       </div>
       <div className="rightlayout">
       <div className='upload'> 

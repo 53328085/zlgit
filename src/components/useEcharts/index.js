@@ -219,7 +219,7 @@ const liuqiuOption =(option) =>  {  // 水球图
 
 const pieOption = ({ data = [], total = 0, radius= ["60%", "80%"],labelLine={},label={}, legend={},series={},  grid={left: 0, right: 0, containLabel: true,}} = {}) =>{
   const primaryColor =store.getState()?.system?.themeColor?.primaryColor || "#237ae4"
-  console.log(radius)
+  
   const  color = [
    primaryColor,
    "#62D9AD",
@@ -297,7 +297,7 @@ export const drawEcharts = (
     ...rest
   } = {}
 ) => {  
-  console.dir(pieData)
+  
   if (!dom) return
   if(type == 0) return message.warning("图表类型错误")
   const {locale} =store.getState()?.system?.intl  // 国际化语言
