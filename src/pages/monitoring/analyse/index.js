@@ -116,7 +116,7 @@ export default function Index() {
       setUnknownTable(resp.data || [])
 
     } else {
-
+      message.error(resp.errMsg)
     }
     setTransTag(true)
 
@@ -124,28 +124,16 @@ export default function Index() {
   const [Sns, setSns] = useState([])
   const getSaveValue = values => {
     let snData = []
+    console.log(values)
 
     values.subData.map(item => {
       snData.push(item.sn)
     })
     setSns(snData)
-    // let params = {
-    //   EnergyStructureId: structureId,
-    //   Sns
-    // }
-    // configEnergyStructure(projectId, params).then(res => {
-    //   if (res.success) {
-    //     messageContent('success', '对比的设备已选择')
-    //     setTransTag(false)
-    //     setTimeout(() => { setDeleteDom(false) }, 600)
-    //   } else {
-    //     messageContent('error', res.errMsg)
-    //   }
-    // })
   }
   const getCloseValue = params => {
     setTransTag(false)
-    setTimeout(() => { setDeleteDom(false) }, 1000)
+
   }
   const analysisRef = useRef(null)
   const onSetcontrast = () => {
@@ -173,11 +161,57 @@ export default function Index() {
     HistoryCompare(params).then(res => {
       let { success, data } = res
       if (success) {
+        let dimensions = ['time']
+        let source = []
+        let datalist = []
+        data.map(item => {
+          if (item.data) {
+            for (let i = 0; i < item.data.length; i++) {
+              dimensions.push(item.sn + '_' + item.data[i].point)
+              source.push(item.data[i].data)
+            }
+          }
+        })
+        console.log(dimensions, source)
+
+        if (source.length > 0) {
+          
+          for (let i = 0; i < source[0].length; i++) {
+            let item = {}
+            dimensions.map((val, index) => {
+              if (val == 'time') {
+                item[val] = source[0][i].time
+              } else {
+                item[val] = source[index - 1][i] ?  source[index - 1][i].value: ''
+              }
+            })
+            datalist.push(item)
+          }
+        }
+        console.log(datalist)
+        let seriesList = []
+        for(let i = 0 ; i < dimensions.length - 1; i++){
+          seriesList.push({
+            type: "line", areaStyle: null, showSymbol: true,
+          })
+        }
+        
+
+        drawEchartData({
+          dimensions,
+          source: datalist
+        }, seriesList)
 
       } else {
         message.error(res.errMsg)
       }
     })
+
+
+
+  }
+
+  const drawEchartData = (dataset, seriesList) => {
     let markLineData = [{
       yAxis: `${baseLineValue}`,
       lineStyle: {
@@ -198,16 +232,20 @@ export default function Index() {
       },
     }]
     if (baseLine.length != 0 && baseLineValue != undefined) {
+      seriesList[0].markLine = {
+        data: markLineData
+      }
       drawEcharts(analysisRef.current, {
-        dataset: datasetContrast,
-        series: [{
-          type: "line", areaStyle: null, showSymbol: true,
-          markLine: {
-            data: markLineData
-          }
-        }, {
-          type: "line", areaStyle: null, showSymbol: true,
-        }],
+        dataset: dataset,
+        series: seriesList,
+        // series: [{
+        //   type: "line", areaStyle: null, showSymbol: true,
+        //   markLine: {
+        //     data: markLineData
+        //   }
+        // }, {
+        //   type: "line", areaStyle: null, showSymbol: true,
+        // }],
         grid: {
           top: '30px',
           left: 30,
@@ -225,12 +263,17 @@ export default function Index() {
       })
     } else {
       drawEcharts(analysisRef.current, {
-        dataset: datasetContrast,
-        series: [{
-          type: "line", areaStyle: null, showSymbol: true,
-        }, {
-          type: "line", areaStyle: null, showSymbol: true,
-        }],
+        dataset: dataset,
+        series: seriesList,
+        // series: [{
+        //   type: "line", areaStyle: null, showSymbol: true,
+        // }, {
+        //   type: "line", areaStyle: null, showSymbol: true,
+        // }, {
+        //   type: "line", areaStyle: null, showSymbol: true,
+        // }, {
+        //   type: "line", areaStyle: null, showSymbol: true,
+        // }],
         grid: {
           top: '30px',
           left: 0,
@@ -247,26 +290,25 @@ export default function Index() {
         }
       })
     }
-
-
   }
-  const datasetContrast = {
-    dimensions: ["time", "实时辐射", "实时功率"],
-    source: [
-      { time: "1", "实时辐射": 5600, "实时功率": 9600 },
-      { time: "2", "实时辐射": 4600, "实时功率": 3644 },
-      { time: "3", "实时辐射": 3600, "实时功率": 4644 },
-      { time: "4", "实时辐射": 5611, "实时功率": 9655 },
-      { time: "5", "实时辐射": 5644, "实时功率": 3677 },
-      { time: "6", "实时辐射": 4677, "实时功率": 3633 },
-      { time: "7", "实时辐射": 3688, "实时功率": 4655 },
-      { time: "8", "实时辐射": 5088, "实时功率": 2644 },
-      { time: "9", "实时辐射": 6677, "实时功率": 2641 },
-      { time: "10", "实时辐射": 5866, "实时功率": 5641 },
-      { time: "11", "实时辐射": 4677, "实时功率": 7645 },
-      { time: "12", "实时辐射": 1877, "实时功率": 2645 },
-    ],
-  };
+
+  // const datasetContrast = {
+  //   dimensions: ["time", "实时辐射", "实时功率"],
+  //   source: [
+  //     { time: "1", "实时辐射": 5600, "实时功率": 9600 },
+  //     { time: "2", "实时辐射": 4600, "实时功率": 3644 },
+  //     { time: "3", "实时辐射": 3600, "实时功率": 4644 },
+  //     { time: "4", "实时辐射": 5611, "实时功率": 9655 },
+  //     { time: "5", "实时辐射": 5644, "实时功率": 3677 },
+  //     { time: "6", "实时辐射": 4677, "实时功率": 3633 },
+  //     { time: "7", "实时辐射": 3688, "实时功率": 4655 },
+  //     { time: "8", "实时辐射": 5088, "实时功率": 2644 },
+  //     { time: "9", "实时辐射": 6677, "实时功率": 2641 },
+  //     { time: "10", "实时辐射": 5866, "实时功率": 5641 },
+  //     { time: "11", "实时辐射": 4677, "实时功率": 7645 },
+  //     { time: "12", "实时辐射": 1877, "实时功率": 2645 },
+  //   ],
+  // };
   useEffect(() => {
 
 
