@@ -184,7 +184,7 @@ export default function index(props) {
 
         props.saveValue({
             subData,
-            // unknownData,
+            unknownCopy,
         })
         props.closeValue('close');
         // props.subTable = subData
