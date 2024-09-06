@@ -37,7 +37,7 @@ export default function Index() {
   }
   const Com={
     "0": <Run lineIds={lineIds} projectId={projectId} />,
-    "1": <Electric />,
+    "1": <Electric lineIds={lineIds} projectId={projectId} />,
     // "2": <Power />
   }[value]
   return (

@@ -148,7 +148,7 @@ const fieldNames=datatype===2 ?  {title:'name',key: treekey,children:'childs'} :
   } 
  // 根据区域查询
  const onCheck = ({checked}) => {
-    console.log(checked)
+    
     setTreeId(checked)
     setCheckedKeys(checked)
      
@@ -186,7 +186,7 @@ const fieldNames=datatype===2 ?  {title:'name',key: treekey,children:'childs'} :
   const onChange = (e) => {
     setKeyword(e.target.value)
   }
-  console.log('render')
+  
   return (
   
         <Titlelayout key="line" layout="flex" bordered={sty.bordered} pv={sty.pv}>

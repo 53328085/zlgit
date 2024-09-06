@@ -20,6 +20,8 @@ export default forwardRef(
   function Index({getLinePoint, projectId},ref){
     
     const roomId = useSelector(selectcurlRommid)
+   
+    
     const { Search } = Input;
 
       const [treeData, setTreeData] = useState([
@@ -27,7 +29,7 @@ export default forwardRef(
     ])
     const [selectedKeys,setSelectedKeys] =useState([0])
       const onCheck=(selectedKeys,e)=>{
-        console.log(selectedKeys)
+        
         setSelectedKeys(selectedKeys)
         getLinePoint(selectedKeys)
       }
@@ -179,7 +181,8 @@ export default forwardRef(
             expandedKeys={expandedKeys}
             autoExpandParent={autoExpandParent}
             treeData={loop(treeData)}
-            selectedKeys={selectedKeys}
+           // selectedKeys={selectedKeys}
+           checkedKeys={selectedKeys}
             defaultSelectedKeys={0}
             onCheck={onCheck}
           />

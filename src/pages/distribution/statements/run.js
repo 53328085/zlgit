@@ -142,7 +142,7 @@ export default function Run({projectId, lineIds}) {
     })
     return {...obj, ...rest}
   })
-  console.log(tableData)
+ 
   const CusTitle =(
    <Ctitle> <span>详细参数</span>
         <Space><span className='time'>参量采集时间：2020-09-03 09:35:21</span><CustButtonT text="refresh"   />   <ExportExcel single={true} tb={tbref}  /></Space> 
@@ -157,7 +157,7 @@ export default function Run({projectId, lineIds}) {
        sheetName="运行报表"
        scroll={{
                     scrollToFirstRowOnChange: true, 
-                     y: 470
+                     y: 550
                    }
                   }></UseTable>
      </Titlelayout>
