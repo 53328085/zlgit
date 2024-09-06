@@ -4,7 +4,7 @@ import { useSelector, useDispatch } from 'react-redux'
 import { Select, Button, DatePicker, Form, Divider, message,Space } from 'antd'
 import {useLocation} from 'react-router-dom'
 import {DistributionRoomRuntime,distributionRoom, Area} from '@api/api.js'
-import {  getcurlRommid,setCurrentlevel, levelDefaultLabel,  getRoomId, roomId, selectcurlRommid, getcurlRommidl} from "@redux/systemconfig";
+import {  getcurlRommid,setCurrentlevel, levelDefaultLabel,  getRoomId, roomId, selectcurlRommid,selectcurlRommidl, getcurlRommidl} from "@redux/systemconfig";
 import Textloop from '@com/textloop'
 import {filterProps} from '@com/usehandler'
 export default  memo(function Index(props) {
@@ -14,6 +14,8 @@ export default  memo(function Index(props) {
   let isline = primary == "runtimeDistribution" && nested == "line"
   const roomIds = useSelector(roomId)
   const curid = useSelector(selectcurlRommid)
+  const curidl = useSelector(selectcurlRommidl)
+  //const roomid =  isline ? curidl : curid
   const [RommId, setRoomId] = useState(curid)
   let { showRoom = true, setDateVal, custview } = props
   const dispacth = useDispatch();
@@ -24,7 +26,7 @@ export default  memo(function Index(props) {
   const levelName = useSelector(levelDefaultLabel) || '园区'
 
   const [roomlist, setRoomList] = useState([])
-  // const [roomId, setRoomId] = useState()
+ 
   const [form] = Form.useForm()
   const changeArea = (v, option) => {
    
@@ -154,6 +156,7 @@ return (
                       fieldNames={{ label: 'name', value: 'id' }}
                       style={{ width: 240 }}
                       placeholder="请选择配电房"
+                      {...filterProps}
                       onChange={changeRomme}></Select>
                    </Form.Item>
                   }
@@ -171,7 +174,7 @@ return (
                    
                   }
                  <Form.Item style={{marginLeft: 'auto', marginRight: 0}}>
-                  <Textloop />
+                  <Textloop projectId={projectId} roomId={curid} />
                   </Form.Item>  
                  
               </Form>

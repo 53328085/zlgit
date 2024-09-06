@@ -180,7 +180,7 @@ export default  forwardRef(function Addticket({type, projectId, areaId,switchHou
      try {
       let values = uform.getFieldValue(nameref.current)??[]
       let newval = await iform.validateFields()
-      console.log(values)
+     
       if(addval) {
         uform.setFieldValue(nameref.current,[...values, newval])
       }else {
