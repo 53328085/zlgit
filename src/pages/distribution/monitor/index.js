@@ -241,7 +241,7 @@ const HoverList=(props)=>{
   return (
   
     <HoverDiv>
-       <Collapse >
+       {/* <Collapse > */}
       {props.children}
       <div className="list" >
        
@@ -254,7 +254,7 @@ const HoverList=(props)=>{
             })
           }
       </div>
-      </Collapse>
+      {/* </Collapse> */}
          
     </HoverDiv>
     
