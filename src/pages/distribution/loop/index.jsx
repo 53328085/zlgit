@@ -50,7 +50,7 @@ export default function Index() {
     
     const projectId = useSelector(state => state.system.menus.projectId)
     const curid = useSelector(selectcurlRommidl)
-    const roomIds = useSelector(roomId)
+    const roomIds = useSelector(roomId)    
    //  const roomId = [curid]
     const  RoomId = useMemo(() => {
        return  curid==0 ? roomIds?.filter(r => r.id!=0).map(m => m.id) : [curid]

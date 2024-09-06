@@ -13,11 +13,11 @@ export default function Icard(props) {
             <div className={style.ItemValue}>
                 <div className={style.valueTitle}><span>{props.title}</span><span>SN:{props.category}</span></div>
                 <div className={style.valueTitle} style={{ color: '#333', fontWeight: 'normal' }}><sapn>{props.value}</sapn>
-                    {/* <span>{props.lastSampleTime}</span> */}
+                     <span>{props.lastSampleTime}</span>  
                 </div>
-                {/*  <div className={style.btnBoxStyle}>
+             {/*  <div className={style.btnBoxStyle}>
                         <p className={style.timeStyle}>更新时间</p><p className={style.timeValueStyle}>{props.lastSampleTime}</p>
-               </div>  */}
+               </div> */}
                 <div className={style.btnStyle}>
 
                     <div className={style.btnBoxStyle}>

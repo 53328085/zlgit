@@ -1,9 +1,11 @@
-import React, {useRef} from 'react'
+import React, {useRef, useEffect} from 'react'
 import Titlelayout from '@com/titlelayout'
+import {useRequest} from 'ahooks'
 import {Space} from 'antd'
+import styled from 'styled-components'
 import UseTable from '@com/useTable'
 import {ExportExcel, CustButtonT, ExportButton} from "@com/useButton"
-import styled from 'styled-components'
+import {DistributionRoomRuntime} from '@api/api.js'
 const Ctitle = styled.div`
   && {
     display: flex;
@@ -15,16 +17,23 @@ const Ctitle = styled.div`
     }
   }
 `
+const Type ={
+  1: '分表',
+  2: '总表'
+}
 const columns =[
     {
      title: '回路名称',
-     dataIndex: 'name',
-     key: 'name',
+     dataIndex: 'lineName',
+     key: 'lineName',
     },
     {
         title: '总分表',
-        dataIndex: 'total',
-        key: 'total',
+        dataIndex: 'type',
+        key: 'type',
+        render(text) {
+          return <span>{Type[text]}</span>
+        }
        },
        {
         title: '设备编号',
@@ -36,18 +45,18 @@ const columns =[
         children: [
             {
                 title: 'Ua(v)',
-                dataIndex: 'ua',
-                key: 'ua',
+                dataIndex: 'Ua',
+                key: 'Ua',
                },
                {
                 title: 'Ub(v)',
-                dataIndex: 'ub',
-                key: 'ub',
+                dataIndex: 'Ub',
+                key: 'Ub',
                },
                {
                 title: 'Uc(v)',
-                dataIndex: 'uc',
-                key: 'uc',
+                dataIndex: 'Uc',
+                key: 'Uc',
                },
         ]
        },
@@ -56,33 +65,33 @@ const columns =[
         children: [
             {
                 title: 'Ia(v)',
-                dataIndex: 'ia',
-                key: 'ia',
+                dataIndex: 'Ia',
+                key: 'Ia',
                },
                {
                 title: 'Ib(v)',
-                dataIndex: 'ib',
-                key: 'ib',
+                dataIndex: 'Ib',
+                key: 'Ib',
                },
                {
                 title: 'Ic(v)',
-                dataIndex: 'ic',
-                key: 'ic',
+                dataIndex: 'Ic',
+                key: 'Ic',
                },
         ]
        },
        {
         title: '功率因数',
-        dataIndex: 'power',
-        key: 'power',
+        dataIndex: 'phsA',
+        key: 'phsA',
        },
        {
         title: '总有功功率',
         children: [
             {
                 title: '(kW)',
-                dataIndex: 'kw',
-                key: 'kw',
+                dataIndex: 'Pa',
+                key: 'Pa',
                },
          ]
        },
@@ -91,8 +100,8 @@ const columns =[
         children: [
             {
                 title: '(kVar)',
-                dataIndex: 'kVar',
-                key: 'kVar',
+                dataIndex: 'Q',
+                key: 'Q',
                },
          ]
        },
@@ -101,14 +110,39 @@ const columns =[
         children: [
             {
                 title: '(kWh)',
-                dataIndex: 'kWh',
-                key: 'kWh',
+                dataIndex: 'EP',
+                key: 'EP',
                },
          ]
        },
 ]
-export default function Run() {
+export default function Run({projectId, lineIds}) {
   const tbref=useRef()
+  const getData =async() => {
+      try {
+        if(!Number.isInteger(parseInt(projectId)) && !Array.isArray(lineIds)) return
+        let {success, data} =await DistributionRoomRuntime.RLineRuntimePoints({projectId, lineIds})
+        if(success && Array.isArray(data)) {
+          return data
+        }else {
+          return []
+        }
+      } catch (error) {
+        return Promise.reject(error)
+      }
+  } 
+  const {data, run, loading} = useRequest(getData, {
+    refreshDeps: [projectId, lineIds]
+  })
+  const  tableData = data?.map(({data,...rest}) =>  {
+    let obj = {}
+    data?.forEach(d => {
+      let {alias, value} = d
+       obj[alias] = value
+    })
+    return {...obj, ...rest}
+  })
+  console.log(tableData)
   const CusTitle =(
    <Ctitle> <span>详细参数</span>
         <Space><span className='time'>参量采集时间：2020-09-03 09:35:21</span><CustButtonT text="refresh"   />   <ExportExcel single={true} tb={tbref}  /></Space> 
@@ -116,11 +150,11 @@ export default function Run() {
   )
   return (
      <Titlelayout title={CusTitle} layout="flex" bordered="none" pv="0" bodypad="16px 0 0 0" >
-       <UseTable columns={columns} dataSource={[]} 
+       <UseTable columns={columns} dataSource={tableData} 
        hbg="#ecf5ff"
        hbc="#515151"
        ref={tbref}
-       sheetName="运行参数"
+       sheetName="运行报表"
        scroll={{
                     scrollToFirstRowOnChange: true, 
                      y: 470

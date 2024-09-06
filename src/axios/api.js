@@ -11,6 +11,7 @@ export class I18N {
 }
 export class Editapi {  // 后期修改的一些接口
   static FilterDeviceStyle = (projectId) => server.get(`/Monitor/RuntimeDevice/AllDeviceStyle?projectId=${projectId}`)  //
+  static AlarmList = (body,params) => server.post(`/Distribution/DistributionRoomRuntime/AlarmList`, body,{params})
 }
 export class WorkTicketRuntime {  //  运行态工作票
   static GetWorkTickets= (params) => server.get(`/Distribution/DistributionWorkTicketRuntime/GetWorkTickets`, {params})  // 查询
@@ -23,7 +24,7 @@ export class WorkTicketRuntime {  //  运行态工作票
   static GetWrokTicketState= (params) => server.get(`Distribution/DistributionWorkTicketRuntime/GetWrokTicketState`,{params}) // 获取工作票详情
 
   static ExamineWorkTicket= (params) => server.get(`Distribution/DistributionWorkTicketRuntime/ExamineWorkTicket`,{params}) // 审核工作票
-  static UploadWorkTicket= (body,params) => server.post(`Distribution/DistributionWorkTicketRuntime/UploadWorkTicket`,body, {params}) // 审核工作票
+  static UploadWorkTicket= (body,params) => server.post(`Distribution/DistributionWorkTicketRuntime/UploadWorkTicket`,body, {params}) // 上传工作票
 
 }
 export class Login {
@@ -1661,6 +1662,7 @@ export class eneryShift {
 }
 
 export class distributionRoom {
+ 
   static queryPageRoom = (projectId, areaId, pageNum, pageSize) =>
     server.post(
       `Distribution/DistributionRoom/RoomPage`, { projectId, areaId, pageNum, pageSize }
@@ -1774,6 +1776,18 @@ export class DistributionMeter {
 }
 
 export class DistributionRoomRuntime {
+  static GetLineTree = (params) =>
+    server.get(
+      `Distribution/DistributionHighRuntime/LineTree`, {params}   // 运行报表左边树
+    );
+    static RLineRuntimePoints = (body) =>
+      server.post(
+        `Distribution/DistributionHighRuntime/LineRuntimePoints`, body   // 运行报表 -- 运行报表
+      );
+      static ExtremumReport = (body) =>
+        server.post(
+          `Distribution/DistributionHighRuntime/ExtremumReport`, body   // 运行报表 -- 电力极值报表
+        );
   static GetEnvironment = (projectId, roomId) => {
     return server.get(`/Distribution/DistributionRoomRuntime/GetEnvironment`, { params: { projectId, roomId } })
   };

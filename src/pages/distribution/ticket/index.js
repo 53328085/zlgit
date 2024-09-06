@@ -3,11 +3,11 @@ import styled from 'styled-components'
  
 import { Image, Form, Space, Button, Input, Select, Upload,Typography,   Timeline, message } from 'antd'
  
- 
+import {useRequest} from 'ahooks'
 import { selectcurlRommid, selectProjectId, selectOneLevelDefaultId } from "@redux/systemconfig";
 import {selectUser} from "@redux/user"
  
-import Titlelayout from '@com/titlelayout'
+ 
 import Usetable from '@com/useTable'
 import {WorkTicketRuntime} from '@api/api'
 import { ExportExcel, CustButton } from '@com/useButton'
@@ -68,6 +68,20 @@ const CTimeline = styled(Timeline)`
   }
 
 `
+const Exmain = styled.div`
+   height: 920px;
+   overflow: auto;
+   display: flex;
+   flex-direction: column;
+   .docbox {
+     flex: 1;
+   }
+   .op {
+     height: 48px;
+     display: flex;
+     justify-content: center;
+   }
+`
 const options = [
   {label: '全部工作票', value: 0},
   {label: '第一种工作票', value: 1},
@@ -89,9 +103,10 @@ export default function Index() {
   }
   const onChange = (e) => {
     setType(e)
-    getWorkTickets(e)
+    
   }
-  const getWorkTickets = async(type=0) => {
+  const getWorkTickets = async() => {
+    if(![projectId, areaId, roomId].every(e => Number.isInteger(parseInt(e)))) return
      try {
       let params = {
         projectId,
@@ -101,21 +116,25 @@ export default function Index() {
       }
       let {success, data} = await WorkTicketRuntime.GetWorkTickets(params)
       if(success && Array.isArray(data)) {
-          setDatas(data)
+          return  data
       }else {
-        setDatas([])
+         return  []
       }
      } catch (error) {
        console.log(error)
      }
   } 
+  const {data, loading,   refresh} = useRequest(getWorkTickets, {
+    refreshDeps:[projectId,areaId, roomId, type] 
+  })
+   
  //  获取工作票详情
  const ticketRef =useRef()
  const [orderdetail, setOrderdetail] = useState({})
  const orderNo = useRef()
  const getWrokTicketState = async ({id,no}) => {
     try {
-      console.log(no)
+      
       let {success, data, errMsg} =  await WorkTicketRuntime.GetWrokTicketState({projectId, id})
       if(success && isObject(data)) {
         orderNo.current = no
@@ -145,16 +164,73 @@ export default function Index() {
       upref.current.onOpen()
  }
  const onImportOk =async() => {
-   const formData =new FormData()
-   formData.append("images",files.current[0]);
-    await WorkTicketRuntime.UploadWorkTicket(formData, {id:idref.current,projectId, userId})
- }
-  useEffect(() => {
-       if([projectId, areaId, roomId].every(e => Number.isInteger(parseInt(e))))  {
-        getWorkTickets()
+  try {
+    const formData =new FormData()
+    
+  files.current.forEach((f,index) => {
+     let {name} = f
+     formData.append("images",files.current[index]);
+    })
+    
+    let {success, errMsg} =  await WorkTicketRuntime.UploadWorkTicket(formData, {id:idref.current,projectId, userId})
+    if(success) {
+     message.success('上传成功')
+     upref.current.onCancel()
+     refresh()
+    }else {
+      message.warning(errMsg || '上传出错')
+    }
+  } catch (error) {
+    console.log(error)
+  }
+
+   }
+
+   // 审核工作票
+   const eidref = useRef()
+   const exref = useRef()
+   const docbox = useRef()
+   const bkref = useRef()
+   const [bkform] =Form.useForm();
+
+   const examineWorkTicket =(id) => {
+      eidref.current = id
+      exref.current.onOpen()
+   }
+   const onback =() => {
+      bkref.current.onOpen()
+   }
+   const onExamine =async (res) => { // 审核工作票
+    try {
+      if(res == 0) {
+        let remark =await bkform.validateFields()
+        console.log(remark)
+      }
+      let params ={
+        id: eidref.current,
+        res,
+        remark: '',
+        projectId,
+        userId,
+
        }
-   
-  }, [projectId, areaId, roomId ])
+      let {success, errMsg} =  await WorkTicketRuntime.ExamineWorkTicket(params)
+      if(success) {
+        let msg=['打回成功',"审核通过", ][res]
+        message.success(msg)
+        exref.current.onCancel()
+        refresh()
+      }else {
+        message.warning(errMsg || '数据出错')
+      }
+    } catch (error) {
+       console.log(error)
+    }
+
+   }
+
+
+ 
   const addprops ={
      type,
      areaId,
@@ -195,7 +271,13 @@ export default function Index() {
       title: '任务内容',
       dataIndex: 'address',
       key: 'address',
-      align: 'center'
+      align: 'center',
+      render(text, record) {
+        return <Space>
+          <Link underline onClick={() => getWrokTicketState(record)}>查看工作票</Link>
+         {record.state ==2 && <Link underline onClick={() => getWrokTicketState(record)}>打印工作票</Link>}
+          </Space>
+      }
     },
     {
       title: '创建人',
@@ -234,10 +316,10 @@ export default function Index() {
       align: 'center',
       render(_,record) {
         return <Space>
-           <CustButton ghost onClick={() => uploadWorkTicket(record.id)}>上传工作票</CustButton>
-         {/*   {record?.state ==0 && <CustButton ghost>工作票审核</CustButton>}
-           {record?.state ==1 && <CustButton ghost>上传工作票</CustButton>}
-           {record?.state ==2 && <CustButton ghost>已完成</CustButton>} */}
+           
+          {record?.state ==0 && <CustButton ghost onClick={() => examineWorkTicket(record.id)}>工作票审核</CustButton>}
+           {record?.state ==1 && <CustButton ghost onClick={() => uploadWorkTicket(record.id)}>上传工作票</CustButton>}
+           {record?.state ==2 && <CustButton >已完成</CustButton>} 
         </Space>
       }
     },
@@ -255,7 +337,7 @@ export default function Index() {
           <CustButton wh="auto" ghost onClick={() =>onAdd(2)}>新增第二种工作票</CustButton>
         </Space>
       </div>
-       <Usetable columns={columns}  dataSource={datas} hbg="#d3e4fa"  hbc="#515151"  pd="8px 4px" /> 
+       <Usetable columns={columns}  dataSource={data} hbg="#d3e4fa"  hbc="#515151"  pd="8px 4px" loading={loading} /> 
        <Addticket ref={addref} {...addprops} />
        {/* state: 0 创建工作票 1 工作票审核 2 工作票完成并上传  */}
        <CModal
@@ -315,7 +397,30 @@ export default function Index() {
         {/* <a style={{ color: '#237ae4', textDecoration: 'underline', fontSize: 16 }} onClick={(e) => { e.stopPropagation() }} href={link}>下载模板</a> */}
       </Dragger>  
     </CModal>
-        </Mainbox>
+     <CModal mold='cust' ref={exref} width={1664} height={1080} title="审核工作票"   footer={null}>
+       <Exmain>
+        <div className="docbox" ref={docbox}></div>
+        <div className="op">
+            <Space size={32}>
+            <CustButton ghost onClick={() => exref.current.onCancel()}>取消</CustButton>
+              <CustButton ghost onClick={onback}>打回</CustButton>
+              <CustButton onClick={() => onExamine(1)}>审核通过</CustButton>
+            </Space>
+        </div>
+       </Exmain>
+       <CModal mold='cust' ref={bkref} width={585}    title="打回" onOk={() =>onExamine(0)}  >
+        <Form form={bkform} preserve={false} layout="vertical">
+           <Form.Item label="工作票打回原因" name="remark" rules={[{
+            required: true,
+            message: '请输入原因'
+           }]}>
+           <Input.TextArea rows={4} showCount /> 
+           </Form.Item>
+        </Form>
+        
+       </CModal>
+     </CModal>
+   </Mainbox>
     </Pagecount>
   )
 }

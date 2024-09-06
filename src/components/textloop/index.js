@@ -1,9 +1,10 @@
  
-import React, { useState, Fragment } from 'react';
+import React, { useState, Fragment, useEffect, useMemo } from 'react';
 import {Typography} from 'antd'
 import {CaretRightOutlined} from '@ant-design/icons'
 import styled from 'styled-components';
 import { TextLoop } from "react-text-loop-next";
+import {Editapi} from '@api/api'
 import warn from './waring.svg'
 import Snk from './snker.png'
 const {Text} = Typography
@@ -60,22 +61,41 @@ const Textscroll = styled.div`
   }
  
 `
-const App = ({num=2}) => {
-   const arr =[
-    {
-        date: '2024-08-16 10:00:00',
-        text: '传感器离线告警,传感器离线告警,通讯告警:[离线];Discon=1'
-    },
-    {
-        date: '2024-07-25 21:31:00',
-        text: '传感器离线告警,通讯告警:[离线];Discon=1'
-    },
-    {
-        date: '2024-05-08 12:50:01',
-        text: 'Ia电流越限,越限告警:[80,∞];Ia=263.60'
-    }
-   ]
+const App = ({projectId, roomId}) => {
+   const [arr, setArr]=useState([])
+   console.log(arr)
+   const num = arr?.length ?? ''
    const [show, setShow] = useState(true)
+
+   const CTextLoop = useMemo(() => {
+    if(arr.length > 0) {
+     return <TextLoop>
+      {arr.map((d,i) => (<div className='scroll' style={{backgroundColor: i%2==0 ? "#ff4848" : 'transparent' }} key={d.warningTime} >
+            <Text>{d.warningTime}</Text>
+            <Text ellipsis={{tooltip: d.alarmEvent}}>{d.alarmEvent}</Text>
+        </div>))
+      }
+        </TextLoop>
+    }
+   }, [arr])
+   const getAramlist =async () => {
+      try {
+        let {success, data}  = await Editapi.AlarmList({},{projectId,roomId})
+        if(success && Array.isArray(data)) {
+          setArr(data)
+        }else {
+          setArr([])
+        }
+      } catch (error) {
+        
+      }
+   }
+   useEffect(() => {
+    if([projectId, roomId].every(n => Number.isInteger(parseInt(n)))) {
+       getAramlist()
+    }
+    
+   }, [projectId, roomId])
    return(
         <Fragment>
           {show ?
@@ -84,14 +104,18 @@ const App = ({num=2}) => {
                 <img src={warn} alt="" className='img' /> 
                 <Text ellipsis={{tooltip: num}}>告警({num})</Text>
              </div>
-             <TextLoop>
+              {CTextLoop}
+       {/*       <TextLoop>
               {
-                arr.map((d,i) => <div className='scroll' style={{backgroundColor: i%2==0 ? "#ff4848" : 'transparent' }}>
-                    <Text>{d.date}</Text>
-                    <Text ellipsis={{tooltip: d.text}}>{d.text}</Text>
-                </div>)
+           arr.map((d,i) => {
+                console.log(d.warningTime)
+                return (<div className='scroll' style={{backgroundColor: i%2==0 ? "#ff4848" : 'transparent' }} key={d.warningTime} >
+                    <Text>{d.warningTime}</Text>
+                    <Text ellipsis={{tooltip: d.alarmEvent}}>{d.alarmEvent}</Text>
+                </div>) })
+              
               }
-             </TextLoop>           
+             </TextLoop>  */}          
              <CaretRightOutlined style={{color: "#fff", fontSize: '16px', cursor: "pointer", marginLeft: 'auto'}} onClick={() => setShow(false)} />            
         </Textscroll>
         : <Showbox  onClick={() =>setShow(true) }><img src={Snk} alt="" /> </Showbox> }

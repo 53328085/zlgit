@@ -14,7 +14,7 @@ const WorkTicket = lazy(() => import("@pages/distribution/configure/index/workTi
 export let designerDistribution = {
     '020501': Room,
     '020502': Topology,
-   // '020503': LineManage, // 回路管理
+    '020503': LineManage, // 回路管理
     '020504': TransformerManage,
     '020505': MonitorManage,
     '020506': SensorManage,

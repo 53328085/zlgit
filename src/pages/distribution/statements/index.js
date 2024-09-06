@@ -1,11 +1,13 @@
 import React, {useState} from 'react'
+import {useSelector} from 'react-redux'
 import Pagecount from '@com/pagecontent' 
 import styled from 'styled-components'
 import Titlelayout from '@com/titlelayout'
 import CustContext from '@com/content.js'
 import Run from './run' // 运行报表
 import Electric from './electric'
-import Power from './power'
+import Lookselect from './loopSelect'
+// import Power from './power'
 const Mainbox = styled.div`
  && {
    flex:1;
@@ -17,27 +19,32 @@ const Mainbox = styled.div`
 
 `
 export default function Index() {
+  const projectId = useSelector(state => state.system.menus.projectId)
   const [value, setvalue] = useState('0')
+  const [lineIds, setLineIds] = useState([])
   const tabs = [
     { key: '0', label: '运行报表' },
     { key: '1', label: '电力极值报表' },
-    { key: '2', label: '平均功率报表' },
   ]
   let dataProps = {
     value,
     setvalue,
     tabs,
   }
+  const getLinePoint =(keys) => {
+      console.log(keys)
+      setLineIds([...keys])
+  }
   const Com={
-    "0": <Run />,
+    "0": <Run lineIds={lineIds} projectId={projectId} />,
     "1": <Electric />,
-    "2": <Power />
+    // "2": <Power />
   }[value]
   return (
     <Pagecount bgcolor="transparent" pd="0">
       <Mainbox>
    <Titlelayout title="回路选择">
-
+      <Lookselect getLinePoint={getLinePoint} projectId={projectId} />
    </Titlelayout>
    <CustContext.Provider value={dataProps} >
      <Pagecount>
