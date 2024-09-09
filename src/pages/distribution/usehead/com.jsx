@@ -8,16 +8,16 @@ import {  getcurlRommid,setCurrentlevel, levelDefaultLabel,  getRoomId, roomId, 
 import Textloop from '@com/textloop'
 import {filterProps} from '@com/usehandler'
 export default  memo(function Index(props) {
-  const location = useLocation()
-  let { state = {} } = location
-  let { nested = '', primary } = state;
+  const {state} = useLocation()
+  
+  let { nested = '', primary} = state|| {};
   let isline = primary == "runtimeDistribution" && nested == "line"
   const roomIds = useSelector(roomId)
   const curid = useSelector(selectcurlRommid)
   const curidl = useSelector(selectcurlRommidl)
   //const roomid =  isline ? curidl : curid
   const [RommId, setRoomId] = useState(curid)
-  let { showRoom = true, setDateVal, custview } = props
+  let { showRoom = true, showArea=true, setDateVal, custview } = props
   const dispacth = useDispatch();
   const projectId = useSelector(state => state.system.menus.projectId)
 
@@ -129,14 +129,14 @@ return (
                   style={{flex: 1,  display: 'flex', alignItems: 'center',}} 
                                 
               >
-                  <Form.Item label={levelName}   name="area" style={{ marginBottom: 0 }}>
+                {showArea &&  <Form.Item label={levelName}   name="area" style={{ marginBottom: 0 }}>
                       <Select 
                       style={{ width: 200 }} 
                       options={oneLevel} 
                       fieldNames={{ label: 'name', value: 'id' }} 
                       onChange={changeArea}                      
                       ></Select>
-                  </Form.Item>
+                  </Form.Item>}
                   {showRoom && <><Form.Item>
                       <Divider dashed type="vertical" style={{ borderColor: "#999", height: '30px' }}></Divider>
                   </Form.Item>
@@ -168,7 +168,7 @@ return (
                     </Form.Item>
                   }
                   {
-                   custview && <Form.Item style={{marginLeft: 'auto'}}>
+                   custview && <Form.Item style={{marginLeft: 'auto', ...custview?.custsty}}>
                         {custview}
                     </Form.Item>
                    

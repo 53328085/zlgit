@@ -7,15 +7,13 @@ import styled from "styled-components";
 import moment from "moment";
 import {useRequest} from 'ahooks'
 import {DistributionRoomRuntime} from '@api/api.js'
-const Ctitle = styled.div`
+const Mainbox = styled.div`
   && {
     display: flex;
-    justify-content: space-between;
-    align-items: center;
-    .time {
-      padding-right: 64px;
-      color: #515151;
-    }
+    flex-direction: column;
+    row-gap: 16px;
+    width: 1370px;
+    background-color: #fff;
   }
 `;
  
@@ -71,7 +69,7 @@ const colfn =(name, key) => ({
       key: key+"Avg",
       width: 75,
       render(text) {
-        <span>{text?.toFixd(2)}</span>
+       return <span>{text ? Number.parseFloat(text)?.toFixed(2) : null}</span>
       }
     },
   ],
@@ -85,7 +83,7 @@ export default function Electric({lineIds, projectId}) {
     try {
       if(!Number.isInteger(parseInt(projectId))&& !Array.isArray(lineIds)) return
       let values =await form.validateFields()
-      values.Day = values.TimeType == 1 ? values.Day.format("YYYY-MM-DD") : values.Day.format('m')
+      values.Day = values.TimeType == 1 ? values.Day.format("YYYY-MM-DD") : values.Day.format('YYYY-MM')
       let body ={
         lineIds,
         projectId,
@@ -163,6 +161,7 @@ export default function Electric({lineIds, projectId}) {
           {
              ({getFieldValue}) => {
                let key = getFieldValue('TimeType')
+               console.log(key)
                let type = {
                 1: 'date',
                 2: 'month'
@@ -173,13 +172,13 @@ export default function Electric({lineIds, projectId}) {
                }[key]
                console.log(info)
                return <Form.Item name="Day" initialValue={moment()}>
-               <DatePicker type={type} placeholder={info} style={{width: 220}}></DatePicker>
+               <DatePicker picker={type} placeholder={info} style={{width: 220}}></DatePicker>
                </Form.Item>
              }
             }
         </Form.Item>
         <Form.Item noStyle>
-        <CustButtonT text="search" src="search" onClick={getData} />
+        <CustButtonT text="search" src="search" onClick={() => run()} />
         </Form.Item>
         </Space>
       </Space>
@@ -188,23 +187,18 @@ export default function Electric({lineIds, projectId}) {
     </Form>
   );
   return (
-    <Titlelayout
-      title={CusTitle}
-      layout="flex"
-      bordered="none"
-      pv="0"
-      bodypad="16px 0 0 0"
-      bl="none"
-    >
+    <Mainbox>
+       {CusTitle }
       <UseTable
+      loading={loading}
         columns={columns}
         dataSource={tableData}
         hbg="#ecf5ff"
         hbc="#515151"
         ref={tbref}
         sheetName="电力极值报表"
-        scroll={{ y: 470, x: "calc(700px + 50%)" }}
+        scroll={{ y: 680, x: 1376 }}
       ></UseTable>
-    </Titlelayout>
+    </Mainbox>
   );
 }

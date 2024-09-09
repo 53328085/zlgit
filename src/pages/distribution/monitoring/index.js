@@ -3,6 +3,7 @@ import { Select ,Space,Divider,DatePicker,Radio, Button, message } from 'antd'
 import styled from 'styled-components'
 import {useSelector,  } from 'react-redux'
 import { selectcurlRommid } from "@redux/systemconfig";
+import {useOutletContext} from 'react-router-dom'
 import style from './style.module.less'
 import TranCard from './transcard'
 import UseTable from '@com/useTable'
@@ -143,7 +144,7 @@ const CustomTable =styled.div`
   div:nth-child(2n){
     background:#ecf5ff;
     /* margin-left:-1px; */
-    width
+    //width
   }
 `
 export default function Index() {
@@ -152,7 +153,7 @@ export default function Index() {
   const roomId = useSelector(selectcurlRommid)
   const [pattern,setPattern]=useState(1)
   const [tabs,setTabs] =useState([])
- 
+  const {setCustview} = useOutletContext()
   const [value, setvalue] =useState(0)
   const [tabledata,setTableData]=useState([])
   const [type,setType] =useState(1)
@@ -163,6 +164,22 @@ export default function Index() {
   const chartsRef =useRef()
   const tableRef=useRef()
   const initchartRef =useRef()
+  const [deviceStyle, setDeviceStyle] = useState(5)
+  const devicechange=(e) => {
+    setDeviceStyle(e)
+  }
+  const custoptions = (<Select value={deviceStyle} style={{width: 200}} options={[
+    {label: '变压器',value: 5},
+    {label: '直流屏',value: 15},
+    {label: '出线柜',value: 16}
+
+  ]} onChange={devicechange}></Select>)
+  useEffect(() => {
+    setCustview(custoptions)
+    return()=> {
+      setCustview(null)
+    }
+  })
   const transInfo =useRef({
     capacity:null
   })
@@ -231,7 +248,28 @@ export default function Index() {
     return tooLate || tooEarly ||(current && current > moment().endOf('day'))
     
   }
- 
+
+  // 查询配电房设备
+
+  const getDeviceList =async() => {
+    try {
+      let body ={
+        projectId,
+        roomId,
+        deviceStyle
+      }
+    await   DistributionRoomRuntime.DeviceList(body)
+    } catch (error) {
+      
+    }
+   
+  }
+  useEffect(() => {
+    if([projectId, roomId].every(n => Number.isInteger(parseInt(n)))) {
+       getDeviceList()
+    }
+
+  }, [projectId, roomId])
   //单个变压器信息
   const TransformerOne=async()=>{
     try {

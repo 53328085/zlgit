@@ -65,6 +65,7 @@ const Comindex = lazy(() => import("./comindex"))
 
 const Topologytest = lazy(() => import("../pages/topology/test"))
 const DetailIndicators = lazy(() => import("../pages/quota/detailIndicators/index.jsx"))
+const Loopname = lazy(() => import("../pages/distribution/statements/loopname.js"))
 import {designerComponents,  designerRoutes} from "./designer";
  
  
@@ -86,7 +87,7 @@ const loginrouter =  [{
  function RedirectIndex({Com}) { // 路由守卫
  // const {token} = useSelector(selectUser) || {}; 
   const islog =window.sessionStorage.getItem("chintwulian")
-  console.log(islog)
+  
   return islog ? (<Com />) : (<Navigate to="/" />)  
  }
 
@@ -185,6 +186,10 @@ const loginrouter =  [{
     {
       path:"/detailIndicators",
       element:<DetailIndicators/>
+    },
+    {
+      path: "/index/runtimeDistribution/statements/:loopname",
+      element: <Loopname />
     },
    {
     path: '*',
