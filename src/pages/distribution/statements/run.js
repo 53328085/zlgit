@@ -7,6 +7,7 @@ import styled from 'styled-components'
 import UseTable from '@com/useTable'
 import {ExportExcel, CustButtonT, ExportButton} from "@com/useButton"
 import {DistributionRoomRuntime} from '@api/api.js'
+import moment from 'moment'
 
  
 const Ctitle = styled.div`
@@ -14,9 +15,11 @@ const Ctitle = styled.div`
     display: flex;
     justify-content: space-between;
     align-items: center;
+    
     .time{
         padding-right: 64px;
         color: #515151;
+        font-size: 16px;
     }
   }
 `
@@ -25,17 +28,16 @@ const Type ={
   2: '总表'
 }
 
-export default function Run({projectId, lineIds, setLoop}) {
+export default function Run({projectId, lineIds}) {
   const {pathname,state} = useLocation()
   console.log(state)
   const navigate = useNavigate() 
   const tbref=useRef()
   const jump =({sn,lineName}) => {    
-       let serach = encodeURIComponent(lineName)    
-       navigate(`${pathname}?lineName=${serach}`, {state: {...state, lineName: true}})
-      setLoop({ 
-        sn,
-      })
+       let serach = encodeURIComponent(lineName)   
+        
+       navigate(`${pathname}?lineName=${serach}&sn=${encodeURIComponent(sn)}`, {state: {...state}})
+     
      
   }
   const getData =async() => {
@@ -65,7 +67,7 @@ export default function Run({projectId, lineIds, setLoop}) {
  
   const CusTitle =(
    <Ctitle> <span>详细参数</span>
-        <Space><span className='time'>参量采集时间：2020-09-03 09:35:21</span><CustButtonT text="refresh"   />   <ExportExcel single={true} tb={tbref}  /></Space> 
+        <Space><span className='time'> 参量采集时间：{moment().format('yyyy-MM-DD HH:mm:ss')}</span><CustButtonT text="refresh"   />   <ExportExcel single={true} tb={tbref}  /></Space> 
     </Ctitle>
   )
   const columns =[
@@ -83,6 +85,7 @@ export default function Run({projectId, lineIds, setLoop}) {
         title: '总分表',
         dataIndex: 'type',
         key: 'type',
+        width: 60,
         render(text) {
           return <span>{Type[text]}</span>
         }
@@ -146,6 +149,7 @@ export default function Run({projectId, lineIds, setLoop}) {
         title: '功率因数',
         dataIndex: 'phsA',
         key: 'phsA',
+        width: 80,
        },
        {
         title: '总有功功率',

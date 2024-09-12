@@ -10,11 +10,11 @@ import {selectUser} from "@redux/user"
  
 import Usetable from '@com/useTable'
 import {WorkTicketRuntime} from '@api/api'
-import { ExportExcel, CustButton } from '@com/useButton'
+import { ExportExcel, CustButton, CustButtonT } from '@com/useButton'
 import { useSelector, useDispatch } from 'react-redux'
 import CModal from '@com/useModal'
 import { CompleteIcon, UnCompleteIcon} from './completeicon'
- 
+import  {renderAsync} from 'docx-preview'
 import Pagecount from "@com/pagecontent";
 import Addticket from './addticket'
  
@@ -97,6 +97,8 @@ export default function Index() {
   const addref = useRef()
   const [type, setType] = useState(0)
   const [datas, setDatas] = useState([])
+  const [ischeck, setIscheck] = useState(false) //审核或查看工作票
+  const optitle = ischeck ? '审核工作票' : "查看工作票"
   const onAdd =(t) => {
     setType(t)
     addref.current.onOpen()
@@ -105,6 +107,7 @@ export default function Index() {
     setType(e)
     
   }
+  
   const getWorkTickets = async() => {
     if(![projectId, areaId, roomId].every(e => Number.isInteger(parseInt(e)))) return
      try {
@@ -192,10 +195,35 @@ export default function Index() {
    const docbox = useRef()
    const bkref = useRef()
    const [bkform] =Form.useForm();
+   const [open, setOpen]  = useState(false)
+ 
+ 
+   const examineWorkTicket =async({id, no}) => {
+      try {
+        setIscheck(true)
+        let params ={
+          projectId,
+          areaId,
+          no
+        }
+        let res = await WorkTicketRuntime.GetWrokTicketWrold(params)
+        let blob = new Blob([res], {
+          // type: "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+          type: "application/msword"
+         });
+         eidref.current = id
+         setOpen(true)
+         setTimeout(() => {
+          renderAsync(blob,docbox.current).then().catch(e => {
+            console.log(e)
+          })
+         }, 20)
 
-   const examineWorkTicket =(id) => {
-      eidref.current = id
-      exref.current.onOpen()
+      } catch (error) {
+        
+      }
+
+     
    }
    const onback =() => {
       bkref.current.onOpen()
@@ -218,7 +246,8 @@ export default function Index() {
       if(success) {
         let msg=['打回成功',"审核通过", ][res]
         message.success(msg)
-        exref.current.onCancel()
+        setOpen(false)
+      //  exref.current.onCancel()
         refresh()
       }else {
         message.warning(errMsg || '数据出错')
@@ -229,7 +258,51 @@ export default function Index() {
 
    }
 
+// 查看工作票\下载打印工作票
+const testref = useRef()
+const getWrokTicketWrold = async({no}, type) => {
+  try {
+  setIscheck(false)
+  let params ={
+    projectId,
+    areaId,
+    no
+  }
+  let res = await WorkTicketRuntime.GetWrokTicketWrold(params)
+  let blob = new Blob([res], {
+    // type: "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+    type: "application/msword"
+   });
+  if(type == 1) {
+    setOpen(true)
+    setTimeout(() => {
+      renderAsync(blob,docbox.current).then().catch(e => {
+        console.log(e)
+      })
+     }, 20)
 
+
+  }else if(type ==2) {
+    let a = document.createElement('a');
+    let url = window.URL.createObjectURL(blob);
+    a.href = url;
+    a.click();
+    a.remove();
+
+  }
+
+
+   
+  
+
+
+ 
+ 
+       
+} catch (error) {
+    console.log(error)
+}
+}
  
   const addprops ={
      type,
@@ -264,7 +337,7 @@ export default function Index() {
       key: 'no',
       align: 'center',
       render(text, record) {
-        return <Link underline onClick={() => getWrokTicketState(record)}>{text}</Link>
+        return <Space><Link underline onClick={() => getWrokTicketState(record)}>{text}</Link></Space> 
       }
     },
     {
@@ -274,8 +347,8 @@ export default function Index() {
       align: 'center',
       render(text, record) {
         return <Space>
-          <Link underline onClick={() => getWrokTicketState(record)}>查看工作票</Link>
-         {record.state ==2 && <Link underline onClick={() => getWrokTicketState(record)}>打印工作票</Link>}
+          <Link underline onClick={() => getWrokTicketWrold(record, 1)}>查看工作票</Link>
+         {record.state ==2 && <Link underline onClick={() => getWrokTicketWrold(record, 2)}>下载打印工作票</Link>}
           </Space>
       }
     },
@@ -317,7 +390,7 @@ export default function Index() {
       render(_,record) {
         return <Space>
            
-          {record?.state ==0 && <CustButton ghost onClick={() => examineWorkTicket(record.id)}>工作票审核</CustButton>}
+          {record?.state ==0 && <CustButton ghost onClick={() => examineWorkTicket(record)}>工作票审核</CustButton>}
            {record?.state ==1 && <CustButton ghost onClick={() => uploadWorkTicket(record.id)}>上传工作票</CustButton>}
            {record?.state ==2 && <CustButton >已完成</CustButton>} 
         </Space>
@@ -397,14 +470,15 @@ export default function Index() {
         {/* <a style={{ color: '#237ae4', textDecoration: 'underline', fontSize: 16 }} onClick={(e) => { e.stopPropagation() }} href={link}>下载模板</a> */}
       </Dragger>  
     </CModal>
-     <CModal mold='cust' ref={exref} width={1664} height={1080} title="审核工作票"   footer={null}>
+     <CModal mold='cust' open={open} ref={exref} width={1664} height={1080} title={optitle}   footer={null}>
        <Exmain>
         <div className="docbox" ref={docbox}></div>
         <div className="op">
             <Space size={32}>
-            <CustButton ghost onClick={() => exref.current.onCancel()}>取消</CustButton>
-              <CustButton ghost onClick={onback}>打回</CustButton>
-              <CustButton onClick={() => onExamine(1)}>审核通过</CustButton>
+            <CustButtonT ghost text="cancel"  onClick={() => setOpen(false)} /> 
+            
+          {ischeck &&  <><CustButton ghost onClick={onback}>打回</CustButton>
+              <CustButton onClick={() => onExamine(1)}>审核通过</CustButton> </>}
             </Space>
         </div>
        </Exmain>
@@ -417,10 +491,13 @@ export default function Index() {
            <Input.TextArea rows={4} showCount /> 
            </Form.Item>
         </Form>
-        
        </CModal>
      </CModal>
+     
+
+    
    </Mainbox>
+  
     </Pagecount>
   )
 }

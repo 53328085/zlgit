@@ -4,6 +4,7 @@ import {Tabs} from 'antd'
 import CustContext from '../content'
 
 import styled from 'styled-components'
+import server from '../../axios'
 const Tabsbox = styled(Tabs)`
   .ant-tabs-nav {
     margin-bottom: 0px;
@@ -80,7 +81,8 @@ PageContentMain.defaultProps = {
 export default function Maincontent(props) {
  const [searchParams, setSearchParams] = useSearchParams()
  
- const location = useLocation()
+ const clocation = useLocation()
+ let search = clocation.search ? new URLSearchParams(clocation.search) :  new URLSearchParams()
  const navigate = useNavigate()
  const {tabs, value, setvalue, tabwidth, tabgap, initialval=''} = useContext(CustContext) || {}
  const beTabs = useMemo(() => Array.isArray(tabs) && tabs.length > 0, [tabs])
@@ -96,15 +98,21 @@ export default function Maincontent(props) {
     
     setvalue(key)
     setDefaultTab(key)
-    setSearchParams({item: key})
-    navigate(`${pathName}?item=${key}`, {state: urlstate})
+   
+   // setSearchParams({item: key})
+   if(search.has('item')) {
+      search.set('item', key)
+   }else{
+     search.append('item', key)
+   }
+    navigate(`${pathName}?${search.toString()}`, {state: urlstate})
  }
 
 useEffect(() => {  
     
-    let param = searchParams.get('item')
+    let param = search.get('item')
     
-    let {pathname, state} = location
+    let {pathname, state} = clocation
     setPathName(pathname)
     setUrlstate((s) => ({...s, ...state}))
     if(initialval &&param) {
@@ -116,7 +124,7 @@ useEffect(() => {
         
         setDefaultTab(param)
     }
-}, [location.pathname, setvalue])
+}, [clocation.pathname, setvalue])
  const TabsEl = () => {   
      if (!beTabs) return null    
      return (

@@ -4,103 +4,35 @@ import Pagecount from '@com/pagecontent'
 import styled from 'styled-components'
 import Titlelayout from '@com/titlelayout'
 import CustContext from '@com/content.js'
-import {useRequest} from 'ahooks'
+ import {useLocation, useNavigate} from 'react-router-dom'
 import {Space, Typography, DatePicker} from 'antd'
- 
+import Ichart  from '@com/useEcharts/Ichart';
 import UseTable from '@com/useTable'
- 
+import {isObject} from '@com/usehandler'
 import {DistributionRoomRuntime} from '@api/api.js'
 import moment from 'moment'
+import {CustButtonT} from '@com/useButton'
 const Loopmain = styled.div`
-  display: flex;
+  display: grid;
   flex: 1;
-  flex-direction: column;
+  grid-template-rows: 305px 1fr;
   row-gap: 16px;
 `
-const columns =[
-    
-        
-       {
-        title: '电压',
-        children: [
-            {
-                title: 'Ua(v)',
-                dataIndex: 'Ua',
-                key: 'Ua',
-               },
-               {
-                title: 'Ub(v)',
-                dataIndex: 'Ub',
-                key: 'Ub',
-               },
-               {
-                title: 'Uc(v)',
-                dataIndex: 'Uc',
-                key: 'Uc',
-               },
-        ]
-       },
-       {
-        title: '电流',
-        children: [
-            {
-                title: 'Ia(v)',
-                dataIndex: 'Ia',
-                key: 'Ia',
-               },
-               {
-                title: 'Ib(v)',
-                dataIndex: 'Ib',
-                key: 'Ib',
-               },
-               {
-                title: 'Ic(v)',
-                dataIndex: 'Ic',
-                key: 'Ic',
-               },
-        ]
-       },
-       {
-        title: '功率因数',
-        dataIndex: 'phsA',
-        key: 'phsA',
-       },
-       {
-        title: '总有功功率',
-        children: [
-            {
-                title: '(kW)',
-                dataIndex: 'Pa',
-                key: 'Pa',
-               },
-         ]
-       },
-       {
-        title: '总无功功率',
-        children: [
-            {
-                title: '(kVar)',
-                dataIndex: 'Q',
-                key: 'Q',
-               },
-         ]
-       },
-       {
-        title: '总能耗',
-        children: [
-            {
-                title: '(kWh)',
-                dataIndex: 'EP',
-                key: 'EP',
-               },
-         ]
-       },
-]
-const { RangePicker } = DatePicker;
-export default function Index({projectId,sn}) {
+ 
+ 
+export default function Index({projectId}) {
     const [value, setvalue] = useState('1')
-    const [sdate, setSdate] = useState([moment().subtract(7, 'day'), moment()])
-    const {setCustview} = useOutletContext()
+ 
+    const [tabledata,setTableData]=useState([])
+    const [columns,setColumns] = useState([])
+    const {setCustview, dateval} = useOutletContext() 
+    const [loading, setLoading] = useState(false)
+    const navigate = useNavigate()
+    const clocation = useLocation()
+     
+    const {search, state, pathname} = clocation || {}
+    const sn = new URLSearchParams(search)?.get('sn')
+    
     const tabs = [
         { key: '1', label: '电压' },
         { key: '2', label: '电流' },
@@ -108,68 +40,151 @@ export default function Index({projectId,sn}) {
         { key: '4', label: '有功功率' },
         { key: '5', label: '无功功率' },
         { key: '6', label: '视在功率' },
-       
+        { key: '8', label: '总能耗' },
       ]
     let dataProps = {
         value,
         setvalue,
         tabs,
       }
-      const [dates, setDates] = useState(null);
-      const [dvalue, setValued] = useState(null);
-      const disabledDate = (current) => {
-        console.log(dates)
-       // console.log(dates[0].format("YYYY-MM-DD"), dates[1].format("YYYY-MM-DD"))
-        if (!dates) {
-          return false;
-        }
-        const tooLate = dates[0] && current.diff(dates[0], 'days') < 7;
-        const tooEarly = dates[1] && dates[1].diff(current, 'days') > 7;
-        return !!tooEarly || !!tooLate;
-      };
-      const onOpenChange = (open) => {
-        if (open) {
-          setDates([null, null]);
-        } else {
-          setDates(null);
-        }
-      };
-   
+      
+     
+      const params = useRef()
+      const onRefresh =() => {
+        if(!params.current) return
+        getData(params.current)
+        getTbdata(params.current)
+      }
+     const onBack=() => {
+       navigate(pathname, {state})
+     }
   const custview = (
-    <RangePicker
-    value={dates || dvalue}
-    disabledDate={disabledDate}
-    onCalendarChange={(val) => setDates(val)}
-    onChange={(val) => setValued(val)}
-    onOpenChange={onOpenChange}
-    onBlur={() => console.log('blur has been triggered')}
-  />
+   <div style={{flex:1,display: 'flex', justifyContent: "flex-end",paddingRight: '16px'}}>  
+  <Space size={16}><CustButtonT text="refresh" onClick={onRefresh}  ghost />< CustButtonT text="back" onClick={onBack} /></Space>
+  </div>
   )
-  const getData =async() => {
-      try {
-        if(!Number.isInteger(parseInt(projectId)) && !sn && !dvalue) return
-         let [start, end] = dvalue
-         let params ={
-            projectId,
-            sn,
-            type: parseInt(value),
-            start: start.format('yyyy-MM-DD'),
-            end: end.format('yyyy-MM-DD')
-         }
-        let {success, data} =await DistributionRoomRuntime.HistoryTrend(params)
-        if(success && Array.isArray(data)) {
-          return data
+  const [treand, setTreand] = useState({
+    lineData: [],
+    group: ''
+  })
+  const {lineData } = treand
+  const getTbdata = async(body) => {
+    try {
+      setLoading(true)
+      let {success, data} = await DistributionRoomRuntime.HistoryTableH(body)
+      if(success && isObject(data)) {
+        let {data:tbdata, header} = data
+        if(Array.isArray(header)) {
+           let cols = header.map(h =>({
+               title: h.display,
+               dataIndex: h.name,
+               key: h.name
+           }))
+           setColumns(cols)
         }else {
-          return []
+           setColumns([])
+        }
+        if(Array.isArray(tbdata)) {
+          setTableData(tbdata)
+        }else {
+          setTableData([])
+        }
+     }else {
+       setColumns([])
+       setTableData([])
+     }
+    } catch (error) {
+        
+    }finally{
+      setLoading(false)
+    }
+  }
+  const getData =async(body) => {
+      try {
+         
+        let {success, data} =await DistributionRoomRuntime.HistoryTrend(body)
+        if(success && Array.isArray(data) && data.length >0) {
+          let {data:lineData, group} =data[0]
+          setTreand({
+            lineData: Array.isArray(lineData) ? lineData : [],
+            group
+          })
+          
+        }else {
+          setTreand({
+            lineData: [],
+            group: ''
+          })
         }
       } catch (error) {
         return Promise.reject(error)
       }
   } 
-  const {data, run, loading} = useRequest(getData, {
-    refreshDeps: [projectId, sn, value, dates,dvalue]
-  })
+
+  useEffect(() => {
+    
+    if(!Number.isInteger(parseInt(projectId)) && !sn &&  dateval) return
+  
+         params.current ={
+            projectId,
+            sn: encodeURIComponent(sn),
+            type: parseInt(value),
+            start: dateval.startOf('day').format('yyyy-MM-DD HH:mm:ss'),
+            end: dateval.endOf('day').format('yyyy-MM-DD HH:mm:ss')
+         }
+    getData(params.current)
+    getTbdata(params.current)
+
+  },[projectId, sn, value, dateval] )
  
+  const points = useRef([])
+ 
+  const lineOption ={   // 耗趋势图表
+    series: Array(lineData?.length).fill({ type: "line",  seriesLayoutBy: 'row', stack: 'total' }),  
+    grid: { 
+      left: "0px",
+      right: "0",
+      top: "30px",
+      bottom: "0px",
+      containLabel: true,
+    },
+    legend: {
+        top: 0,
+        icon: 'rect',
+        itemHeight: 2,
+        itemWidth: 12,
+        itemGap: 20,
+    },
+    dataset: {
+      dimensions: ['time',...lineData.map(d => d.point)],
+      source:  (() => {
+        let source=[]
+        lineData?.forEach((d, index) => {
+          let {point, data} = d;
+          points.current.push(point)
+          if(index == 0) {
+            source.push(data.map(t => t.time));
+            source.push(data.map(t => t.value))
+          }else {
+           source.push(data.map(t => t.value))
+          }
+        })
+        return source
+      })()
+    },
+    xAxis: {
+      axisLabel: {
+         formatter: (value, index) => {
+             return moment(value, "YYYY-MM-DD HH:mm:ss").format("HH:mm")
+         },
+         interval: "auto"
+      },
+    
+
+    }
+  }
+ 
+  
   useEffect(() => {
     setCustview(custview)
     return () => {
@@ -179,24 +194,25 @@ export default function Index({projectId,sn}) {
  
  
   return (
-    <Loopmain>
-          <CustContext.Provider value={dataProps} >
-    
-    <Pagecount>
-      
-    </Pagecount>
    
-   </CustContext.Provider>
-       <UseTable columns={columns} dataSource={[]} loading={loading}
+    <CustContext.Provider value={dataProps} >
+    <Pagecount>
+    <Loopmain>
+      <Ichart {...lineOption} />
+      <UseTable columns={columns} dataSource={tabledata}  loading={loading}
        hbg="#ecf5ff"
        hbc="#515151"
-      
        scroll={{
                     scrollToFirstRowOnChange: true, 
                      y: 550
                    }
                   }></UseTable>
+      </Loopmain>
+    </Pagecount>
+   
+   </CustContext.Provider>
+     
     
-     </Loopmain>
+   
   )
 }

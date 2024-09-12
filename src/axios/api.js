@@ -20,6 +20,16 @@ export class Editapi {
     });
 }
 export class WorkTicketRuntime {
+  //  word 文档
+  static GetWrokTicketWrold = (params) =>
+    server.get(`/Distribution/DistributionWorkTicketRuntime/GetWrokTicketWrold`, {
+       params,
+      
+       headers: {
+        "Content-Type": "application/json;charset=UTF-8;application/msword",
+      },
+      responseType: "arraybuffer",
+    });
   //  运行态工作票
   static GetWorkTickets = (params) =>
     server.get(`/Distribution/DistributionWorkTicketRuntime/GetWorkTickets`, {
@@ -2052,9 +2062,9 @@ export class operationDesigin {
     server.delete(`/Maintenance/MaintenanceDesigner/DeleteInspectionPlan`, {
       params: data,
     }); //删除巡检计划
-  static QueryDeviceList = (data) =>
+  static QueryDeviceList = (params) =>
     server.get(`/Maintenance/MaintenanceDesigner/QueryDeviceList`, {
-      params: data,
+      params,
     }); //获取未选，已选设备
   static ConfigureDevice = (data) =>
     server.post(`/Maintenance/MaintenanceDesigner/ConfigureDevice`, data); //保存设备
@@ -2644,19 +2654,25 @@ export class DistributionRoomRuntime {
   static HistoryTrend = (body) =>
     server.post(
       `Distribution/DistributionHighRuntime/HistoryTrend`,
-      body // 运行报表 -- 回路详情
+      body // 运行报表 -- 回路详情, 实时监测 --数据趋势
     );
-  static HistoryTrend = (body) =>
-    server.post(
-      `Distribution/DistributionHighRuntime/HistoryTrend`,
-      body // 运行报表 -- 回路详情
-    );
+   
 
     static DeviceList = (params) =>
       server.get(
         `Distribution/DistributionHighRuntime/DeviceList`,{params}
           // 实时监测 -- 查询配电房设备
       );
+      static RuntimePointsH = (params) =>
+        server.get(
+          `Distribution/DistributionHighRuntime/RuntimePoints`,{params}
+            // 实时监测 -- 查询设备实时值
+        );
+        static HistoryTableH = (body) =>
+          server.post(
+            `Distribution/DistributionHighRuntime/HistoryTable`,body
+              // 实时监测 -- 查询设备实时值
+          );
   static GetEnvironment = (projectId, roomId) => {
     return server.get(`/Distribution/DistributionRoomRuntime/GetEnvironment`, {
       params: { projectId, roomId },

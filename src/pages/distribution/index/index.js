@@ -8,17 +8,19 @@ import { useDispatch, useSelector} from "react-redux";
  
 
 import {  getOnelevel,  selectOneLevel, setCurrentlevel, getcurlRommid} from "@redux/systemconfig.js";
+import server from '../../../axios'
 export default function Index() {
    const location = useLocation()
  
    
    const dispatch = useDispatch();
    const [custview, setCustview] = useState(undefined);
-   const {state} = location || {}
+   const {state, search} = location || {}
    const onelevels = useSelector(selectOneLevel)
-   let {nested = '', primary, lineName} = state || {};
-   //let show = nested !== 'report'
- console.log('lineName', lineName)
+   let {nested = '', primary,} = state || {};
+   
+ let lineName = new URLSearchParams(search)?.get('lineName')
+ 
  const [inpage, setInpage] = useState(['report', 'room'])
  const showroute = {
   designerDistribution: ["line"]
@@ -57,11 +59,10 @@ export default function Index() {
     dispatch(getOnelevel([...level]));
     dispatch(setCurrentlevel(level[0] || []))
    }else if(primary == 'runtimeDistribution' && nested == 'statements' && lineName) {
-     console.log("~~~~~~~~~~~~", lineName)
+    
     setShowroom(false)
     setShowarea(false)
-   }
-   else {
+   }  else {
     setShowarea(true)
     setShowroom(true)
    } 
@@ -69,7 +70,7 @@ export default function Index() {
   useEffect(() => {
     sethandler()
    
-}, [nested, primary])
+}, [nested, primary, lineName])
  useEffect(() => {
   return () => {
     dispatch(getcurlRommid(null))

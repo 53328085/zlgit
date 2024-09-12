@@ -23,13 +23,11 @@ export default function Index() {
   const projectId = useSelector(state => state.system.menus.projectId)
   const [value, setvalue] = useState('0')
   const [lineIds, setLineIds] = useState([])
-  const {state} = useLocation()
-  console.log('state', state)
-  const {lineName} = state || {}
+  const {search} = useLocation()
+  
+  const lineName = new URLSearchParams(search)?.get('lineName')
  
-  const [loop, setLoop] = useState({
-   sn: ''
-  })
+  console.log('lineName', lineName)
  
   const tabs = [
     { key: '0', label: '运行报表' },
@@ -41,17 +39,17 @@ export default function Index() {
     tabs,
   }
   const getLinePoint =(keys) => {
-      console.log(keys)
+     
       setLineIds([...keys])
   }
   const Com={
-    "0": <Run lineIds={lineIds} projectId={projectId} setLoop={setLoop} />,
+    "0": <Run lineIds={lineIds} projectId={projectId}   />,
     "1": <Electric lineIds={lineIds} projectId={projectId} />,
     // "2": <Power />
   }[value]
   return (
     <Pagecount bgcolor="transparent" pd="0 0 16px 0">
-      <Mainbox style={{display: !lineName ? 'flex': 'none'}}>
+      <Mainbox style={{display: !!lineName ? 'none' : 'flex'}}>
    <div title="回路选择">
       <Lookselect getLinePoint={getLinePoint} projectId={projectId} />
    </div>
@@ -65,7 +63,7 @@ export default function Index() {
     
    </Mainbox>
    {
-     lineName && <Loopname sn={loop.sn} projectId={projectId} />
+     lineName && <Loopname  projectId={projectId} />
    }
     </Pagecount>
    

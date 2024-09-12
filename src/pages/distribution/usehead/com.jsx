@@ -7,10 +7,11 @@ import {DistributionRoomRuntime,distributionRoom, Area} from '@api/api.js'
 import {  getcurlRommid,setCurrentlevel, levelDefaultLabel,  getRoomId, roomId, selectcurlRommid,selectcurlRommidl, getcurlRommidl} from "@redux/systemconfig";
 import Textloop from '@com/textloop'
 import {filterProps} from '@com/usehandler'
-export default  memo(function Index(props) {
-  const {state} = useLocation()
+export default   function Index(props) {
+  const {state, search} = useLocation()
   
   let { nested = '', primary} = state|| {};
+  const lineName = new URLSearchParams(search)?.get('lineName')
   let isline = primary == "runtimeDistribution" && nested == "line"
   const roomIds = useSelector(roomId)
   const curid = useSelector(selectcurlRommid)
@@ -113,12 +114,12 @@ export default  memo(function Index(props) {
 
 }, [isline])
 useEffect(() => {
-  if (nested != "environment") {
-    setTimeSelect(false)
-  } else {
+  if (nested == "environment" || lineName ) {
     setTimeSelect(true)
+  } else {
+    setTimeSelect(false)
   }
-}, [nested])
+}, [nested, lineName])
 return (
   <div>
           <div style={{backgroundColor: "#fff", paddingLeft: '16px', border: '1px solid #d7d7d7', borderRadius: 4, height: '48px', display: 'flex'}}>
@@ -162,17 +163,18 @@ return (
                   }
                   </>
                   }
+                 
                   {
                     TimeSelect && <Form.Item label="日期" name="dataval" initialValue={moment()} style={{marginLeft: "auto"}}>
                       <DatePicker size='middle'  onChange={changeTime}></DatePicker>
                     </Form.Item>
                   }
                   {
-                   custview && <Form.Item style={{marginLeft: 'auto', ...custview?.custsty}}>
-                        {custview}
-                    </Form.Item>
-                   
+                   custview && <Form.Item noStyle>
+                      {custview}
+                   </Form.Item>
                   }
+
                  <Form.Item style={{marginLeft: 'auto', marginRight: 0}}>
                   <Textloop projectId={projectId} roomId={curid} />
                   </Form.Item>  
@@ -182,4 +184,4 @@ return (
           </div>
   </div>
 )
-})
+}

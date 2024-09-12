@@ -63,7 +63,7 @@ const Textscroll = styled.div`
 `
 const App = ({projectId, roomId}) => {
    const [arr, setArr]=useState([])
-   console.log(arr)
+ 
    const num = arr?.length ?? ''
    const [show, setShow] = useState(true)
 
