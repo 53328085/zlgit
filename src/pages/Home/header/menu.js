@@ -88,7 +88,7 @@ export default function Hmenu() {
     let isdes = paths?.[0]=='config'; // 是否设计态
     dispath(configProject(isdes))
     if(state) {
-      console.log(state)
+    
       let {primary, jumpath, substate} = state
       dispath(getJump(['designerProject', 'runtimeProject'].includes(primary)))    
       if(jumpath && substate) {

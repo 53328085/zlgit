@@ -269,12 +269,13 @@ const getWrokTicketWrold = async({no}, type) => {
     no
   }
   let res = await WorkTicketRuntime.GetWrokTicketWrold(params)
-  let blob = new Blob([res], {
-    // type: "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-    type: "application/msword"
-   });
+
   if(type == 1) {
     setOpen(true)
+    let blob = new Blob([res], {
+      // type: "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+      type: "application/msword"
+     });
     setTimeout(() => {
       renderAsync(blob,docbox.current).then().catch(e => {
         console.log(e)
@@ -283,6 +284,9 @@ const getWrokTicketWrold = async({no}, type) => {
 
 
   }else if(type ==2) {
+    let blob = new Blob([res], {
+      type: "application/vnd.openxmlformats-officedocument.wordprocessingml.document", 
+     });
     let a = document.createElement('a');
     let url = window.URL.createObjectURL(blob);
     a.href = url;

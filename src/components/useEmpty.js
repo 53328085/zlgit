@@ -4,7 +4,7 @@ import img from './empty.jpg'
 export default function Index(props) {
   let tip = props.tip ?? ''
   return (
-    <div style={{flex: 1,display: 'flex', justifyContent: 'center', alignItems: 'center'}}>
+    <div style={{flex: 1,display: 'flex', justifyContent: 'center', alignItems: 'center', backgroundColor: props.bgcolor}}>
         <Empty 
           image={img}
           description={tip}

@@ -1,15 +1,31 @@
 import React, { useState, useMemo, useEffect, useRef, forwardRef, useImperativeHandle, memo } from 'react'
 import moment from 'moment'
+import styled from 'styled-components'
 import { useSelector, useDispatch } from 'react-redux'
 import { Select, Button, DatePicker, Form, Divider, message,Space } from 'antd'
 import {useLocation} from 'react-router-dom'
 import {DistributionRoomRuntime,distributionRoom, Area} from '@api/api.js'
 import {  getcurlRommid,setCurrentlevel, levelDefaultLabel,  getRoomId, roomId, selectcurlRommid,selectcurlRommidl, getcurlRommidl} from "@redux/systemconfig";
 import Textloop from '@com/textloop'
+import Devicelist from './devicelist'
 import {filterProps} from '@com/usehandler'
+import {Cdivider} from '@com/comstyled'
+const Mainbox =styled.div`
+&& {
+  background-color:#fff;
+   padding-left: 16px;
+   border: 1px solid #d7d7d7;
+   border-radius: 4px;
+    height: 48px;
+     display: flex;
+     .ant-form-inline .ant-form-item {
+       margin-right: 0px;
+     }
+}
+`
 export default   function Index(props) {
   const {state, search} = useLocation()
-  
+ 
   let { nested = '', primary} = state|| {};
   const lineName = new URLSearchParams(search)?.get('lineName')
   let isline = primary == "runtimeDistribution" && nested == "line"
@@ -18,7 +34,8 @@ export default   function Index(props) {
   const curidl = useSelector(selectcurlRommidl)
   //const roomid =  isline ? curidl : curid
   const [RommId, setRoomId] = useState(curid)
-  let { showRoom = true, showArea=true, setDateVal, custview } = props
+  let { showRoom = true, showArea=true, setDateVal, custview, deviceStyle,
+    setDeviceStyle, } = props
   const dispacth = useDispatch();
   const projectId = useSelector(state => state.system.menus.projectId)
 
@@ -43,7 +60,7 @@ export default   function Index(props) {
   const lchangeRomme = (v) => {
     dispacth(getcurlRommidl(v))
   }
-  const [TimeSelect, setTimeSelect] = useState(true);
+  
   
   const changeTime = (time, option) => {
     setDateVal(time)
@@ -113,23 +130,40 @@ export default   function Index(props) {
   }
 
 }, [isline])
-useEffect(() => {
+/* useEffect(() => {
   if (nested == "environment" || lineName ) {
     setTimeSelect(true)
   } else {
     setTimeSelect(false)
   }
-}, [nested, lineName])
+}, [nested, lineName]) */
+const timeroute = ["environment", "quality"]  // 显示时间的路由
+
+const showDate = (nested &&  timeroute.includes(nested)) || lineName
+const showDeviceStyle = nested && nested =='monitoring'
+const showDevlist = nested && nested == 'quality'
+const onValuesChange = (_, allValues) => {      
+    
+  props.setexparams({...allValues})
+}
+useEffect(() => {
+  if(nested && Number.isInteger(parseInt(projectId))) {
+    props.setexparams({...form.getFieldsValue(true)})
+  }
+ 
+
+}, [nested, projectId])
 return (
   <div>
-          <div style={{backgroundColor: "#fff", paddingLeft: '16px', border: '1px solid #d7d7d7', borderRadius: 4, height: '48px', display: 'flex'}}>
+          <Mainbox>
               <Form
                   form={form}
                   colon={false}
                   layout="inline"  
                   style={{flex: 1,  display: 'flex', alignItems: 'center',}} 
-                                
+                  onValuesChange={onValuesChange}             
               >
+                <Space split={ <Cdivider />} size={64}>
                 {showArea &&  <Form.Item label={levelName}   name="area" style={{ marginBottom: 0 }}>
                       <Select 
                       style={{ width: 200 }} 
@@ -138,9 +172,7 @@ return (
                       onChange={changeArea}                      
                       ></Select>
                   </Form.Item>}
-                  {showRoom && <><Form.Item>
-                      <Divider dashed type="vertical" style={{ borderColor: "#999", height: '30px' }}></Divider>
-                  </Form.Item>
+                  {showRoom && <> 
                  {isline ? <Form.Item name="roomIdl" initialValue={0} >
                       <Select
                           options={[{name: '全部配电房', id: 0},...roomIds]}
@@ -163,12 +195,26 @@ return (
                   }
                   </>
                   }
-                 
                   {
-                    TimeSelect && <Form.Item label="日期" name="dataval" initialValue={moment()} style={{marginLeft: "auto"}}>
+                    showDevlist &&<Devicelist roomId={curid} projectId={projectId} /> 
+                  }
+                  {
+                    showDate && <Form.Item label="日期" name="dateval" initialValue={moment()}>
                       <DatePicker size='middle'  onChange={changeTime}></DatePicker>
                     </Form.Item>
                   }
+                  {
+                    showDeviceStyle && <Form.Item name="deviceStyle" initialValue={deviceStyle}>
+                      <Select  style={{width: 200}} 
+                      labelInValue={true}
+                      options={[
+                        {label: '变压器',value: 5},
+                        {label: '直流屏',value: 15},
+                        {label: '出线柜',value: 16}
+                      ]} onChange={(v) => setDeviceStyle(v)} ></Select>
+                    </Form.Item>
+                  }
+                  </Space>
                   {
                    custview && <Form.Item noStyle>
                       {custview}
@@ -181,7 +227,7 @@ return (
                  
               </Form>
             
-          </div>
+          </Mainbox>
   </div>
 )
 }

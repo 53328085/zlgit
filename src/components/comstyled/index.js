@@ -549,8 +549,8 @@ export const Cdivider = ({
    }
  
 }
-export   const Radiogroup = styled(Radio.Group)`
-  && {
+export  const Radiogroup = styled(Radio.Group)`
+  && {    
     .ant-radio-button-wrapper.ant-radio-button-wrapper-in-form-item {
       width: ${props => props.wh || '96px'};
       text-align: center;
@@ -563,4 +563,13 @@ export   const Radiogroup = styled(Radio.Group)`
     }
   }
 
+`
+export  const RadiogroupB = styled(Radio.Group)`
+ && {
+  .ant-radio-button-wrapper {
+      width: ${props => props.wh || '96px'};
+      text-align: center;
+      
+    }
+ }
 `

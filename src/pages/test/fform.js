@@ -1,59 +1,36 @@
 import { Button, Modal, Space } from 'antd';
-import React, { createContext } from 'react';
+import React, { createContext, useEffect } from 'react';
+import {useSearchParams, useLocation, useNavigate} from 'react-router-dom'
 const ReachableContext = createContext(null);
-const UnreachableContext = createContext(null);
-const config = {
-  title: 'Use Hook!',
-  content: (
-    <>
-      <ReachableContext.Consumer>{(name) => `Reachable: ${name}!`}</ReachableContext.Consumer>
-      <br />
-      <UnreachableContext.Consumer>{(name) => `Unreachable: ${name}!`}</UnreachableContext.Consumer>
-    </>
-  ),
-};
+ 
 const App = () => {
-  const [modal, contextHolder] = Modal.useModal();
+  const {serach, pathname} = useLocation()
+  const navigate = useNavigate()
+  const urlserach = new URLSearchParams(serach)
+ 
+ useEffect(() => {
+  urlserach.append('name', 'zz')
+  urlserach.set('job', 'web')
+  navigate(`${pathname}?${urlserach.toString()}`) 
+ }, [])
+ 
+ 
+  const onUP =() => {
+    let obj ={};
+     urlserach.append('name', 'dfdfasdfa')
+     urlserach.set('job', 'adfasdf')
+     navigate(`${pathname}?${urlserach.toString()}`) 
+  }
+ const onJUMP =() => {
+    urlserach.set('age', 45)
+    navigate(`${pathname}?${urlserach.toString()}`) 
+ }
+ 
   return (
-    <ReachableContext.Provider value="Light">
-      <Space>
-        <Button
-          onClick={() => {
-            modal.confirm({
-              title: '确认'
-            });
-          }}
-        >
-          Confirm
-        </Button>
-        <Button
-          onClick={() => {
-            modal.warning(config);
-          }}
-        >
-          Warning
-        </Button>
-        <Button
-          onClick={() => {
-            modal.info(config);
-          }}
-        >
-          Info
-        </Button>
-        <Button
-          onClick={() => {
-            modal.error(config);
-          }}
-        >
-          Error
-        </Button>
-      </Space>
-      {/* `contextHolder` should always be placed under the context you want to access */}
-      {contextHolder}
-
-      {/* Can not access this context since `contextHolder` is not in it */}
-      <UnreachableContext.Provider value="Bamboo" />
-    </ReachableContext.Provider>
-  );
+    <div>
+      <button onClick={onUP}>serch</button>
+      <button onClick={onJUMP}>age</button>
+    </div>
+  )
 };
 export default App;

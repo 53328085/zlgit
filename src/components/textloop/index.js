@@ -1,5 +1,5 @@
  
-import React, { useState, Fragment, useEffect, useMemo } from 'react';
+import React, { useState, Fragment, useEffect, useMemo, memo } from 'react';
 import {Typography} from 'antd'
 import {CaretRightOutlined} from '@ant-design/icons'
 import styled from 'styled-components';
@@ -61,7 +61,7 @@ const Textscroll = styled.div`
   }
  
 `
-const App = ({projectId, roomId}) => {
+const App = memo(({projectId, roomId}) => {
    const [arr, setArr]=useState([])
  
    const num = arr?.length ?? ''
@@ -121,5 +121,5 @@ const App = ({projectId, roomId}) => {
         : <Showbox  onClick={() =>setShow(true) }><img src={Snk} alt="" /> </Showbox> }
         </Fragment>
    )
-};
+});
 export default App;

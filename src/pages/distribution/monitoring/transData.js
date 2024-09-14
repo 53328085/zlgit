@@ -33,7 +33,7 @@ const Box = styled.div`
 `
 const CustomTable =styled.div`
   display:grid;
-  grid-template-rows:repeat(${props=>props.rows},1fr);
+  grid-template-rows:repeat(${props=>props.rows}, ${props => props.rows>2 ? '1fr' : '32px'});
   grid-template-columns:repeat(${props=>props.cols/2},101px 121px);
   .item1{
     grid-column:1/${props=>props.cols+1};
@@ -59,8 +59,9 @@ const CustomTable =styled.div`
  
 export default function Index({device, projectId}) {
  
-  const [data, setData] = useState({})
- 
+  const [point, setPoint] = useState({})
+  const [runstate, setRunstate] = useState()
+  const stateText = Number.isInteger(parseInt(runstate)) ?  {2: '最佳经济运行状态'}[runstate] : ''
   const runtimePoints = async () => {
     try {
       let {sn} = device 
@@ -69,12 +70,24 @@ export default function Index({device, projectId}) {
          projectId,
          sn
       }
-      console.log(params)
+      
       let {success, data} = await   DistributionRoomRuntime.RuntimePointsH(params)
       if(success && isObject(data)) {
-        setData(data)
+        let {state} = data
+        setRunstate(state)
+        if(Array.isArray(data.data)) {
+          let obj = {}
+          data.data.forEach(d => {
+            obj[d.name] =d
+          })
+          setPoint(obj)
+        }else {
+          setPoint({})
+        }
+      
       }else {
-        setData({})
+        setRunstate(null)
+        setPoint({})
       }
     } catch (error) {
       
@@ -93,54 +106,54 @@ export default function Index({device, projectId}) {
           <img src={transform} />
           <div className='info'>
             <span>{device?.label}</span>
-            <span>{data.sn}</span>
-            <div className='tag'>最佳经济运行状态</div>
+            <span>{device?.sn}</span>
+            <div className='tag'>{stateText}</div>
           </div>
        </div>
        <CustomTable rows={4} cols={2}>
               <div className="item1">负荷状态</div>
-              <div>额定容量</div>
-              <div></div>
-              <div>视在功率</div>
-              <div></div>
-              <div>负载率</div>
-              <div></div>
+              <div>{point['Load']?.description}</div>
+              <div>{point['Load']?.display}</div>
+              <div>{point['TotW']?.description}</div>
+              <div>{point['TotW']?.display}</div>
+              <div>{point['TotVar']?.description}</div>
+              <div>{point['TotVar']?.display}</div>
             </CustomTable>
  
-            <CustomTable rows={4} cols={4}>
+            <CustomTable rows={4} cols={2}>
               <div className="item1">功率状态</div>
-              <div>有功功率</div>
-              <div></div>
-              <div>功率因数</div>
-              <div></div>
-              <div>无功功率</div>
-              <div></div>
-              <div>视在功率</div>
-              <div></div>
-              <div>单月最大需量</div>
-              <div></div>
-              <div>发生时间</div>
-              <div></div>
+              <div>{point['TotVA']?.description}</div>
+              <div>{point['TotVA']?.display}</div>
+              <div>{point['TotPF']?.description}</div>
+              <div>{point['TotPF']?.display}</div>
+              <div>{point['SupWh']?.description}</div>
+              <div>{point['SupWh']?.display}</div>
+            {/*   <div>{point['Load']?.description}</div>
+              <div>{point['Load']?.display}</div>
+              <div>{point['TotW']?.description}</div>
+              <div>{point['TotW']?.display}</div>
+              <div>{point['TotVar']?.description}</div>
+              <div>{point['TotVar']?.display}</div> */}
             </CustomTable>
             <CustomTable rows={4} cols={4}>
               <div className="item1">电流/电压状态</div>
-              <div>A相电流</div>
-              <div></div>
-              <div>A相电压</div>
-              <div></div>
-              <div>B相电流</div>
-              <div></div>
-              <div>B相电压</div>
-              <div></div>
-              <div>C相电流</div>
-              <div></div>
-              <div>C相电压</div>
-              <div></div>
+              <div>{point['Ia']?.description}</div>
+              <div>{point['Ia']?.display}</div>
+              <div>{point['Ua']?.description}</div>
+              <div>{point['Ua']?.display}</div>
+              <div>{point['Ib']?.description}</div>
+              <div>{point['Ib']?.display}</div>             
+              <div>{point['Ub']?.description}</div>
+              <div>{point['Ub']?.display}</div>
+              <div>{point['Ic']?.description}</div>
+              <div>{point['Ic']?.display}</div>
+              <div>{point['Uc']?.description}</div>
+              <div>{point['Uc']?.display}</div>
             </CustomTable>
             <CustomTable rows={2} cols={2}>
               <div className="item1">风机状态</div>
               <div>状态</div>
-              <div></div>
+              <div>{point['Fan']?.display}</div>
             </CustomTable>
     </Box>
   )

@@ -19,6 +19,43 @@ export class Editapi {
       params,
     });
 }
+
+// 电能质量
+export class PowerQuality{
+  static DeviceList = (params) =>
+    server.get(`Distribution/DistributionPowerQuality/DeviceList`, { 
+      params,
+    }); // 查询设备
+
+    static WTJC = (body) =>
+      server.post(`Distribution/DistributionPowerQuality/WTJC`, body); // 电能质量稳态检查
+
+    static XBPP = (body) =>
+      server.post(`Distribution/DistributionPowerQuality/XBPP`, body); // 谐波频谱
+    static WTQXTrend = (body) =>
+      server.post(`Distribution/DistributionPowerQuality/WTQXTrend`, body); // 电能质量-稳态曲线图形模式
+    static WTQXTable = (body) =>
+      server.post(`Distribution/DistributionPowerQuality/WTQXTable`, body); // 电能质量-稳态曲线数据模式
+    static WTQXExtremum = (body) =>
+      server.post(`Distribution/DistributionPowerQuality/WTQXExtremum`, body); // 电能质量-稳态曲线最值分析
+    static XBQXTrend = (body) =>
+      server.post(`Distribution/DistributionPowerQuality/XBQXTrend`, body); // 电能质量-谐波曲线图形模式
+    static XBQXTable = (body) =>
+      server.post(`Distribution/DistributionPowerQuality/XBQXTable`, body); // 电能质量-谐波曲线数据模式
+    static XBQXExtremum = (body) =>
+      server.post(`Distribution/DistributionPowerQuality/XBQXExtremum`, body); // 电能质量-谐波曲线最值分析
+    static FHQX = (body) =>
+      server.post(`Distribution/DistributionPowerQuality/FHQX`, body); // 电能质量-负荷曲线
+    static ZTFX = (body) =>
+      server.post(`Distribution/DistributionPowerQuality/ZTFX`, body); // 电能质量-暂态分析
+    static SOE = (body) =>
+      server.post(`Distribution/DistributionPowerQuality/SOE`, body); // 电能质量-SOE事件
+    static DNZLFX = (body) =>
+      server.post(`Distribution/DistributionPowerQuality/DNZLFX`, body); // 电能质量-电能质量分析
+    static DNZLZL = (body) =>
+      server.post(`Distribution/DistributionPowerQuality/DNZLZL`, body); // 电能质量-电能质量治理
+}
+
 export class WorkTicketRuntime {
   //  word 文档
   static GetWrokTicketWrold = (params) =>

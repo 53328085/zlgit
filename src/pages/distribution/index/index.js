@@ -20,7 +20,7 @@ export default function Index() {
    let {nested = '', primary,} = state || {};
    
  let lineName = new URLSearchParams(search)?.get('lineName')
- 
+ const [deviceStyle, setDeviceStyle] = useState({label: '变压器',value: 5})
  const [inpage, setInpage] = useState(['report', 'room'])
  const showroute = {
   designerDistribution: ["line"]
@@ -28,6 +28,7 @@ export default function Index() {
  const [dateval, setDateVal] = useState(moment())
  const [showRoom, setShowroom] = useState(true) // 是否显示配电房选择框
  const [showArea, setShowarea] = useState(true)
+ const [exparams, setexparams] = useState({});
  let show = !inpage.includes(nested) || showroute[primary]?.includes(nested)
  let style = show ? {
   flex: 1, display: "grid", gridTemplateRows: "48px 1fr", rowGap: "16px", position:"relative"
@@ -40,12 +41,17 @@ export default function Index() {
    setShowroom,
    dateval,
    setCustview,
+   deviceStyle,
+   exparams
  }
  const props = {
   showRoom,
   showArea,
   setDateVal,
   custview,
+  deviceStyle,
+  setDeviceStyle,
+  setexparams,
  }
  const sethandler = () => {
   if(primary == 'designerDistribution' && nested == 'room') {

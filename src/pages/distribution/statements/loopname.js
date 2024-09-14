@@ -170,7 +170,8 @@ export default function Index({projectId}) {
           }
         })
         return source
-      })()
+      })(),
+      sourceHeader: false
     },
     xAxis: {
       axisLabel: {

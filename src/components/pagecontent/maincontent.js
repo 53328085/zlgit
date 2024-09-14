@@ -79,17 +79,18 @@ PageContentMain.defaultProps = {
     bgcolor: "#fff"
 }
 export default function Maincontent(props) {
- const [searchParams, setSearchParams] = useSearchParams()
+    const [searchParams, setSearchParams] = useSearchParams()
  
- const clocation = useLocation()
- let search = clocation.search ? new URLSearchParams(clocation.search) :  new URLSearchParams()
- const navigate = useNavigate()
- const {tabs, value, setvalue, tabwidth, tabgap, initialval=''} = useContext(CustContext) || {}
- const beTabs = useMemo(() => Array.isArray(tabs) && tabs.length > 0, [tabs])
- //const {tabs, value, setvalue} = props
- const [defaultTab, setDefaultTab] = useState(value)
- const [pathName, setPathName] = useState()
- const [urlstate, setUrlstate] = useState()
+    const location = useLocation()
+   
+    
+    const navigate = useNavigate()
+    const {tabs, value, setvalue, tabwidth, tabgap, initialval=null} = useContext(CustContext) || {}
+    const beTabs = useMemo(() => Array.isArray(tabs) && tabs.length > 0, [tabs])
+    //const {tabs, value, setvalue} = props
+    const [defaultTab, setDefaultTab] = useState(value)
+    const [pathName, setPathName] = useState()
+    const [urlstate, setUrlstate] = useState()
  const tabstyl = {
      background: '#237ae4',
      color: '#fff'
@@ -98,33 +99,52 @@ export default function Maincontent(props) {
     
     setvalue(key)
     setDefaultTab(key)
-   
-   // setSearchParams({item: key})
-   if(search.has('item')) {
-      search.set('item', key)
-   }else{
-     search.append('item', key)
-   }
-    navigate(`${pathName}?${search.toString()}`, {state: urlstate})
+    let {search} = location || {}
+    console.log(location)
+    let query =search ? new URLSearchParams(search) : new URLSearchParams()
+    console.log('query', query)
+    if(query?.has('item')) {
+        query?.set('item', key)
+    }else {
+        query?.append('item', key)
+    }
+  
+  
+  navigate(`${pathName}?${query.toString()}`, {state: urlstate})
  }
 
-useEffect(() => {  
+useEffect(() => {   
     
-    let param = search.get('item')
-    
-    let {pathname, state} = clocation
+    let {pathname, state, search} = location
+    let query =search ? new URLSearchParams(search) : new URLSearchParams()
+    let isItem = query.has('item')
+    let param = query.get('item')
     setPathName(pathname)
     setUrlstate((s) => ({...s, ...state}))
-    if(initialval &&param) {
-        setSearchParams({item: initialval})
-    }else if(param) {
-        if(setvalue) {
-            setvalue(param)
-        }
+   
+    
+   
+    if((Number.isInteger(parseInt(initialval)) || initialval) &&isItem) {
+         let obj = {}
+         for(let [key, val] of query?.entries()) {
+            obj[key] = val
+         }
+         obj['item'] = initialval
         
-        setDefaultTab(param)
+        setvalue(initialval)
+        setDefaultTab(initialval)
+        setSearchParams({...obj})
+        // console.log(query)
+       // setSearchParams(query)
+    }else if(param) {
+        console.log('param', param)
+        if(setvalue && tabs?.length > 0) {
+            setvalue(param)
+            setDefaultTab(param)
+        }      
+       
     }
-}, [clocation.pathname, setvalue])
+}, [location.pathname, setvalue, initialval])
  const TabsEl = () => {   
      if (!beTabs) return null    
      return (
