@@ -274,7 +274,7 @@ const getWrokTicketWrold = async({no}, type) => {
     setOpen(true)
     let blob = new Blob([res], {
       // type: "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-      type: "application/msword"
+      type: "application/msword" // doc
      });
     setTimeout(() => {
       renderAsync(blob,docbox.current).then().catch(e => {
@@ -285,7 +285,7 @@ const getWrokTicketWrold = async({no}, type) => {
 
   }else if(type ==2) {
     let blob = new Blob([res], {
-      type: "application/vnd.openxmlformats-officedocument.wordprocessingml.document", 
+      type: "application/vnd.openxmlformats-officedocument.wordprocessingml.document",  // docx
      });
     let a = document.createElement('a');
     let url = window.URL.createObjectURL(blob);

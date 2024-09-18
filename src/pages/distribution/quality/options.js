@@ -108,3 +108,42 @@ export const paramOpt = {
       },
     ],
   }
+
+  export  const xbqxoption = [
+   
+      {
+        label: '电流谐波',
+        value: 1,
+      },
+      {
+        label: '电压谐波',
+        value: 2,
+      },
+      {
+        label: '相电流不平衡分析',
+        value: 3,
+      },
+      {
+        label: '三相电压不平衡分析',
+        value: 4,
+      },
+  ]
+  export  const dnzlfxoption = [
+   
+    {
+      label: '电压报表',
+      value: 1,
+    },
+    {
+      label: '电流报表',
+      value: 2,
+    },
+    {
+      label: '电能质量报表',
+      value: 3,
+    },
+    {
+      label: '暂态电压数据统计报表',
+      value: 4,
+    },
+]

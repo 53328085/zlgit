@@ -1,15 +1,18 @@
-import React , {useEffect, useState} from 'react'
-import {nanoid} from '@reduxjs/toolkit'
-import {useOutletContext} from 'react-router-dom'
-import styled from 'styled-components'
+import React , {useState} from 'react' 
+import {useOutletContext} from 'react-router-dom' 
 import Pagecount from '@com/pagecontent' 
-import CustContext from '@com/content.js'
- 
+import CustContext from '@com/content.js' 
 import {useSelector,  } from 'react-redux'
 import { selectcurlRommid , selectProjectId} from "@redux/systemconfig";
 import Wtjc from './wtjc'
 import Xbpp from './xbpp'
 import Wtqx from './wtqx'
+import Qbqx from './xbqx'
+import Fhqx from './fhqx'
+import Ztfx from './ztfx'
+import Soe from './soe'
+import Dnzlfx from './dnzlfx'
+import Dnzlzl from './dnzlzl'
 export default function Index() {
   const {exparams} = useOutletContext()
   const {sn, dateval} = exparams || {}
@@ -35,7 +38,13 @@ export default function Index() {
   const Com = {
     0: Wtjc,
     1: Xbpp,
-    2: Wtqx
+    2: Wtqx,
+    3: Qbqx,
+    4: Fhqx,
+    5: Ztfx,
+    6: Soe,
+    7: Dnzlfx,
+    8: Dnzlzl
   }[value]
 
 

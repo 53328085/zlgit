@@ -814,7 +814,7 @@ export default function GatewayDetail(props) {
                                 disabledDate={disabledDate}
                                 onCalendarChange={(val) => setDates(val)}
                                 onChange={onTimeOk}
-                                onOpenChange={onOpenChange}
+                            //    onOpenChange={onOpenChange}
                                 defaultValue={[moment().startOf('day'), moment()]}
                                 format='YYYY-MM-DD HH:mm:ss'
                                 showTime

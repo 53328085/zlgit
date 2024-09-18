@@ -8,7 +8,7 @@ import UserTable from "@com/useTable";
 import {PowerQuality} from "@api/api"
 import { isObject } from '@com/usehandler';
 import {RadiogroupB} from '@com/comstyled'
-import {patterns, groupOpt, paramOpt} from './options'
+import {patterns, xbqxoption} from './options'
 import {wtqxcolumns} from './columns'
 const Mainbox = styled.div`
   flex: 1;
@@ -111,8 +111,8 @@ export default function Index({projectId, day, sn}) {
   const [form] = Form.useForm()
   const [datas, setDatas] = useState({})
   const [pattern, setPattern] = useState(1)
-  const [elopt, setElopt] = useState(1)
-  const paramOption = paramOpt[elopt]
+ 
+ 
   const [wtcolumn, setWtcolumns] = useState([])
   const [wtData, setWtdata] = useState([])
   const islen = arrlen(datas)
@@ -130,15 +130,14 @@ export default function Index({projectId, day, sn}) {
           setMloading(true)
         }
 
-       let {group, param} =await form.validateFields()
-     
+       let {group} =await form.validateFields()
+       console.log(group)
        const body ={
         1: {
         projectId,
         sn,
         day: day.format("yyyy-MM-DD"),
-        group,
-        param
+        group
        },
        2: {
         projectId,
@@ -152,9 +151,9 @@ export default function Index({projectId, day, sn}) {
        }
       }[pattern]
       const method ={
-        1: 'WTQXTrend',
-        2: 'WTQXTable',
-        3: 'WTQXExtremum'
+        1: 'XBQXTrend',
+        2: 'XBQXTable',
+        3: 'XBQXExtremum'
       }[pattern]
       let {success, data} = await  PowerQuality[method](body)
       if(pattern == 1) {
@@ -240,16 +239,11 @@ export default function Index({projectId, day, sn}) {
   return (
     <Mainbox>
        <div className='op' key={nanoid()}>
-          {pattern == 1 ? <Form form={form} layout="inline" onValuesChange={onValuesChange}>
+        <Form form={form} layout="inline" onValuesChange={onValuesChange}>
              <Form.Item name="group" initialValue={1}>
-              <Select style={{width: 150}} options={groupOpt} onChange={(v) => setElopt(v)}></Select>
-              </Form.Item>
-             <Form.Item name="param" label="参数" initialValue={1}>
-              <Select style={{width:200}} options={paramOption}></Select>
+              <Select style={{width:200}} options={xbqxoption}></Select>
               </Form.Item>
           </Form>
-          : pattern == 2  ? <div className='title'>电流谐波分析</div> : <div className='title'>电流谐波分析最值分析</div>
-        }
           <RadiogroupB      optionType="button" options={patterns}
            buttonStyle="solid" value={pattern} onChange={onChange} />
        </div>

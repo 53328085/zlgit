@@ -1,3 +1,5 @@
+import moment from "moment"
+
 export const columns = [{
         title: '',
         dataIndex: 'type',
@@ -177,21 +179,24 @@ export const wtqxcolumns= [ // 稳态曲线
 
     {
         title: '参数',
-        dataIndex: 'param',
-        key: 'param',
+        dataIndex: 'Name',
+        key: 'Name',
     },
     {
         title: '最大值',
         children:[
              {
                 title: '数值',
-                dataIndex: 'Thd_Max',
-                key: 'Thd_Max',
+                dataIndex: 'Max',
+                key: 'Max',
            },
            {
             title: '发生时间',
-            dataIndex: 'Thd_MaxTime',
-            key: 'Thd_MaxTime',
+            dataIndex: 'MaxTime',
+            key: 'MaxTime',
+            render(text) {
+                return text && <span>{(moment(text, 'YYYY-MM-DD HH:mm:ss').format("HH:mm"))}</span>
+            }
          }
        ]
        
@@ -201,20 +206,216 @@ export const wtqxcolumns= [ // 稳态曲线
         children:[
              {
                 title: '数值',
-                dataIndex: 'Thd_Max',
-                key: 'Thd_Max',
+                dataIndex: 'Min',
+                key: 'Min',
            },
            {
             title: '发生时间',
-            dataIndex: 'Thd_MaxTime',
-            key: 'Thd_MaxTime',
+            dataIndex: 'MinTime',
+            key: 'MinTime',
+            render(text) {
+                return text && <span>{(moment(text, 'YYYY-MM-DD HH:mm:ss').format("HH:mm"))}</span>
+            }
          }
        ]
        
     },
     {
-        title: '视在(kVA)',
-        dataIndex: 'sz',
-        key: 'sz',
+        title: '平均值',
+        dataIndex: 'Avg',
+        key: 'Avg',
     },
+]
+export const ztfxcolumns = [ // 暂态分析
+
+    {
+        title: '站点名称',
+        dataIndex: 'station',
+        key: 'station',
+    },
+    {
+        title: '动作时间',
+        dataIndex: 'time',
+        key: 'time',
+        render(text) {
+            return text && <span>{(moment(text, 'YYYY-MM-DD HH:mm:ss').format("HH:mm"))}</span>
+        }
+    },
+    {
+        title: '仪表编号',
+        dataIndex: 'deviceSn',
+        key: 'deviceSn',
+    },
+    {
+        title: '仪表名称',
+        dataIndex: 'deviceName',
+        key: 'deviceName',
+    },
+    {
+        title: '事件名称',
+        dataIndex: 'eventName',
+        key: 'eventName',
+    },
+    {
+        title: '事件属性',
+        dataIndex: 'eventProperty',
+        key: 'eventProperty',
+    },
+    {
+        title: '事件参数值',
+        dataIndex: 'eventValue',
+        key: 'eventValue',
+    },
+    {
+        title: '幅值 (%)',
+        dataIndex: 'rate',
+        key: 'rate',
+    },
+    {
+        title: '曲线分析',
+        dataIndex: 'qxfx',
+        key: 'qxfx',
+    },
+]
+
+export const soecolumns = [ // SOE事件  
+    {
+        title: '动作时间',
+        dataIndex: 'time',
+        key: 'time',
+        render(text) {
+            return text && <span>{(moment(text, 'YYYY-MM-DD HH:mm:ss').format("HH:mm"))}</span>
+        }
+    },
+    {
+        title: '仪表编号',
+        dataIndex: 'deviceSn',
+        key: 'deviceSn',
+    },
+    {
+        title: '仪表名称',
+        dataIndex: 'deviceName',
+        key: 'deviceName',
+    },
+    {
+        title: '事件名称',
+        dataIndex: 'eventName',
+        key: 'eventName',
+    },
+    {
+        title: '事件属性',
+        dataIndex: 'eventProperty',
+        key: 'eventProperty',
+    },
+    {
+        title: '事件参数值',
+        dataIndex: 'eventValue',
+        key: 'eventValue',
+    },
+]
+
+export const dnzlfxcolumns= [ // 电能质量分析
+
+    {
+        title: '参数',
+        dataIndex: 'name',
+        key: 'name',
+    },
+    {
+        title: 'A相',
+        children:[
+             {
+                title: '最大值',
+                dataIndex: 'a_Max',
+                key: 'a_Max',
+           },
+           {
+            title: '平均值',
+            dataIndex: 'a_Avg',
+            key: 'a_Avg',
+          },
+          {
+            title: '最小值',
+            dataIndex: 'a_Min',
+            key: 'a_Min',
+          },
+          {
+            title: '95%值',
+            dataIndex: 'a_P95',
+            key: 'a_P95',
+          },
+          {
+            title: '结论',
+            dataIndex: 'a_Result',
+            key: 'a_Result',
+          },
+       ]
+       
+    },
+    {
+        title: 'B相',
+        children:[
+             {
+                title: '最大值',
+                dataIndex: 'b_Max',
+                key: 'b_Max',
+           },
+           {
+            title: '平均值',
+            dataIndex: 'b_Avg',
+            key: 'b_Avg',
+          },
+          {
+            title: '最小值',
+            dataIndex: 'b_Min',
+            key: 'b_Min',
+          },
+          {
+            title: '95%值',
+            dataIndex: 'b_P95',
+            key: 'b_P95',
+          },
+          {
+            title: '结论',
+            dataIndex: 'b_Result',
+            key: 'b_Result',
+          },
+       ]
+       
+    },
+    {
+        title: 'C相',
+        children:[
+             {
+                title: '最大值',
+                dataIndex: 'c_Max',
+                key: 'c_Max',
+           },
+           {
+            title: '平均值',
+            dataIndex: 'c_Avg',
+            key: 'c_Avg',
+          },
+          {
+            title: '最小值',
+            dataIndex: 'c_Min',
+            key: 'c_Min',
+          },
+          {
+            title: '95%值',
+            dataIndex: 'c_P95',
+            key: 'c_P95',
+          },
+          {
+            title: '结论',
+            dataIndex: 'c_Result',
+            key: 'c_Result',
+          },
+       ]
+       
+    },
+    {
+        title: "国标值",
+        dataIndex: 'world'
+    }
 ]
