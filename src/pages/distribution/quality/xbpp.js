@@ -110,21 +110,24 @@ export default function Index({projectId, day, sn}) {
     
 
     },
-    title: {      
+    /* title: {      
       left: 'center',
       textStyle: {
         fontWeight: "border",
-        fontSize: 30,
+        fontSize: 60,
         color: "#62b9df"
       }
-    },
+    }, */
   }
   const barOptionU= { // 电压
     ...cption,
     title: {
-      ...cption.title,
+      left: "center",
       text:"谐波电压",
+      textStyle:{
+        color: "#0a8dcd"
       
+      }
     },
     dataset: {
       dimensions: hasU ? ["time",...uData?.map(u => u.name)] : [],
@@ -135,9 +138,12 @@ export default function Index({projectId, day, sn}) {
   const barOptionI= { // 电流
     ...cption,
     title: {
-      ...cption.title,
+      left: "center",
       text:"谐波电流",
+      textStyle:{
+        color: "#0a8dcd"
       
+      }
     },
     dataset: {
       dimensions: hasI ? ["time",...iData?.map(u => u.name)] : [],

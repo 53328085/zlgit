@@ -91,12 +91,12 @@ export default function Index({projectId, day, sn}) {
     grid: { 
       left: "0px",
       right: "0",
-      top: "38px",
+      top: "48px",
       bottom: "30px",
       containLabel: true,
     },
     legend: {
-        top: 16,
+        top: 26,
         icon: 'circle',
         itemHeight: 12,
         itemWidth: 12,
@@ -113,22 +113,18 @@ export default function Index({projectId, day, sn}) {
     
 
     },
-    title: {      
-      left: 'center',
-      textStyle: {
-        fontWeight: "border",
-        fontSize: 30,
-        color: "#62b9df"
-      }
-    },
+   
   }
   const barOptionU= { // 实时负荷曲线
     ...cption,
     series:  Array(uData?.length).fill({type: "line",  seriesLayoutBy: 'row', stack: 'Total',}),
     title: {
-      ...cption.title,
+      left: "center",
       text:"实时负荷曲线",
+      textStyle:{
+        color: "#2596d0"
       
+      }
     },
     dataset: {
       dimensions: hasU ? ["time",...uData?.map(u => u.point)] : [],
@@ -140,9 +136,12 @@ export default function Index({projectId, day, sn}) {
     ...cption,
     series:  Array(iData?.length).fill({type: "line",  seriesLayoutBy: 'row', stack: 'Total',}),
     title: {
-      ...cption.title,
+      left: "center",
       text:"日负荷曲线",
+      textStyle:{
+        color: "#2596d0"
       
+      }
     },
     dataset: {
       dimensions: hasI ? ["time",...iData?.map(u => u.point)] : [],

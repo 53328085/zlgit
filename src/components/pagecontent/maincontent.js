@@ -100,9 +100,9 @@ export default function Maincontent(props) {
     setvalue(key)
     setDefaultTab(key)
     let {search} = location || {}
-    console.log(location)
+  
     let query =search ? new URLSearchParams(search) : new URLSearchParams()
-    console.log('query', query)
+   
     if(query?.has('item')) {
         query?.set('item', key)
     }else {
@@ -136,8 +136,7 @@ useEffect(() => {
         setSearchParams({...obj})
         // console.log(query)
        // setSearchParams(query)
-    }else if(param) {
-        console.log('param', param)
+    }else if(param) {       
         if(setvalue && tabs?.length > 0) {
             setvalue(param)
             setDefaultTab(param)

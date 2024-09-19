@@ -6,7 +6,7 @@ import enUS from 'antd/es/locale/en_US'; // 国际化时使用
 import zhCN from 'antd/es/locale/zh_CN';
 import moment from 'moment';
 import 'moment/locale/zh-cn';
- 
+import {detectZoom} from '@com/usehandler' 
 moment.locale('zhCN');
 
 import Loading from './pages/Loading';
@@ -36,7 +36,10 @@ function App() {
    
   }
   ) */
-
+ useEffect(() => {
+  const m = detectZoom();
+ // document.body.style.zoom = 100 / Number(m);
+ },[])
  
   return   (
  <CustConfig> 

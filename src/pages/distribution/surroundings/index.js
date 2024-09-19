@@ -108,7 +108,7 @@ export default function Index() {
           </Cardlist>
 
         </Titlelayout>
-        {Array.isArray(htdata) && htdata.map(ht => <Chart data={ht} EnvironmentTrend={EnvironmentTrend} />)}
+        {Array.isArray(htdata) && htdata.map((htd, index) => <Chart data={htd} ht={ht[index]}  />)}
 
        
       </Mainbox>

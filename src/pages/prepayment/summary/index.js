@@ -34,7 +34,7 @@ let {
 const Mainbox = styled.div`
   display: grid;
   color: #515151;
-  grid-template-rows: 48px 176px 304px 267px;
+  grid-template-rows:48px 176px minmax(304px, 1fr)  minmax(267px, 1fr);
   row-gap: 16px;
   grid-template-columns: 1fr;
   flex: 1;

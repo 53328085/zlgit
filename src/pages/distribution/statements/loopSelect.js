@@ -24,6 +24,7 @@ const Treewrap = styled.div`
     height: 32px;
     border-left: 2px solid ${props => props.theme.primaryColor};
     padding-left: 16px;
+    line-height: 32px;
   }
   .radioLine {
     width: 225px;

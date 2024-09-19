@@ -14,7 +14,9 @@ const Mainbox = styled.div`
    flex:1;
    display: flex;
    column-gap: 16px;
-   
+  .treewrap {
+    background-color: #fff;
+  }
  }
 
 `
@@ -27,7 +29,7 @@ export default function Index() {
   
   const lineName = new URLSearchParams(search)?.get('lineName')
  
-  console.log('lineName', lineName)
+  
  
   const tabs = [
     { key: '0', label: '运行报表' },
@@ -48,9 +50,9 @@ export default function Index() {
     // "2": <Power />
   }[value]
   return (
-    <Pagecount bgcolor="transparent" pd="0 0 16px 0">
+    <Pagecount bgcolor="transparent" pd="0 0 0 0">
       <Mainbox style={{display: !!lineName ? 'none' : 'flex'}}>
-   <div title="回路选择">
+   <div className='treewrap'>
       <Lookselect getLinePoint={getLinePoint} projectId={projectId} />
    </div>
    <CustContext.Provider value={dataProps} >

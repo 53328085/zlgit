@@ -382,13 +382,13 @@ export const drawEcharts = (
       
       ...restxAxis,
     },
-    legend: {
+    legend: legend.data ? {...legend} : {
     //  top: 0,
-
+      
       icon: 'rect',
       itemHeight: 8,
       itemWidth: 8,
-      itemGap: 20,
+      itemGap: 20,  
      
       ...legend
     },  
@@ -446,8 +446,7 @@ export const drawEcharts = (
       : type == 3
       ? pieOption({...pieData, grid, legend})
       : {};  */
-      
-      
+    
   if(rest.custoption) {
     chart.setOption({...rest.custoption}, true); //桑基图
   }else {

@@ -22,7 +22,7 @@ const Mainbox = styled.div`
   && {
     flex: 1;
     display: grid;
-    grid-template-rows: 92px 472px 208px;
+    grid-template-rows: 92px minmax(472px,1fr) 208px;
     row-gap: 16px;
     .flexuse {
       display: grid;
@@ -43,7 +43,7 @@ const Mainbox = styled.div`
       
     }
     .tablebox {
-      flex: 1;
+      flex:1;
       display: flex;
       padding-top: 16px;
       flex-direction: column;

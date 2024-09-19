@@ -19,7 +19,7 @@ const Mainbox = styled.div`
   grid-template-columns: 880px 1fr;
   column-gap: 16px;
   justify-content: flex-end;
-  height:823px;
+  flex:1;
   .left {   
     display: grid;
     grid-template-rows: 60px 1fr ;
@@ -31,7 +31,7 @@ const Mainbox = styled.div`
   }
   .rigth {
     display: grid;
-    grid-template-columns: repeat(3, 248px);
+    grid-template-columns: repeat(3, 1fr);
     grid-template-rows: 160px 320px 1fr;
     gap: 16px;
     .mc {

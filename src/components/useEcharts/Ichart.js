@@ -1,11 +1,12 @@
 import React, {useEffect, useRef} from 'react'
 import {useSelector} from "react-redux"
+import {isObject} from '@com/usehandler'
 import {drawEcharts} from './index'
 import {intl} from "@redux/systemconfig"
 import Cempty from '@com/useEmpty'
 const contidtion = (a) => {
    
-    const b  =  Array.isArray(a) || Object.prototype.toString.call(a).slice(8,-1)==="Object"
+    const b  =  Array.isArray(a) || isObject(a)
     if(!b) return false;
     let f;
     if(Array.isArray(a)) {  // 二维数组/数组对象
@@ -14,7 +15,7 @@ const contidtion = (a) => {
       f = isAry || isobj
 
     }
-    if(Object.prototype.toString.call(a).slice(8,-1)==="Object") { // 对象
+    if(isObject(a)) { // 对象
       f = Object.values(a).length > 0
     }
     return f;
@@ -26,7 +27,7 @@ export default function Ichart(props={}) {
   let {dataset={}, type=1, pieData, custoption, tip=''} = props
    
   let typechart = custoption?.type || type
-  
+ 
   let info = `${tip} 暂无数据` 
   useEffect(() => {
     if(typechart == 1 && contidtion(dataset?.source)) {

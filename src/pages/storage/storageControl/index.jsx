@@ -15,6 +15,7 @@ const Contentbox = styled.div`
   display: grid;
   grid-template-rows: 48px 1fr;
   row-gap: 16px;
+  flex: 1;
   .info {
     background-color: #000033;
     color:#fff;

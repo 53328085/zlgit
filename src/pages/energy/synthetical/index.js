@@ -20,7 +20,7 @@ const Laybox = styled.div`
   display: grid;
   flex: 1;
   &.zonghe {
-   grid-template-rows: 512px 272px;
+   grid-template-rows: minmax(512px, 1fr) 272px;
    row-gap: 16px;
   .up {
     display: grid;
@@ -29,7 +29,7 @@ const Laybox = styled.div`
     overflow: hidden;
     .upleft {
       display: grid;
-      grid-template-rows: 40px 472px ;
+      grid-template-rows: 40px minmax(472px, 1fr);
     }
   }
   .down { 
@@ -210,7 +210,7 @@ const Echartbox = styled.div`
 `
 const ElectricRight = styled.div`
    display: grid;
-   grid-template-rows: ${props => props.type == 2 ? '200px 440px 128px' : '656px 128px'} ;
+   grid-template-rows: ${props => props.type == 2 ? '200px minmax(440px, 1fr) 128px' : 'minmax(656px, 1fr)  128px'} ;
    row-gap: 16px;
    
 `
@@ -443,9 +443,9 @@ const Electric = ({data, des, datetype}) => {
       ></div>
     </Titlelayout>
    }
-      <Titlelayout title="能耗分析" key="analysis">
-        <div style={{flex: 1, display:'flex', alignItems: 'center', height: '100%'}}>
-         <Space size={8}><span style={{color: "#0c6", fontSize: '18px'}}>&#9673;</span><span style={{color: '#515151'}}>{des}</span></Space>
+      <Titlelayout title="能耗分析" key="analysis" layout="flex">
+        <div style={{flex: 1, display:'flex'   }}>
+         <div> <span style={{color: "#0c6", fontSize: '18px'}}>&#9673;</span><span style={{color: '#515151'}}>{des}</span></div>
         </div>
       </Titlelayout>
     </ElectricRight>

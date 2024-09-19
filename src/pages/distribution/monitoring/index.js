@@ -1,5 +1,5 @@
-import React, { useState, useRef ,useMemo, useEffect } from 'react'
-import { Select ,Space,Divider,DatePicker,Radio, Button, message } from 'antd'
+import React, { useState,   useEffect } from 'react'
+ 
 import styled from 'styled-components'
 import {useSelector,  } from 'react-redux'
 import { selectcurlRommid } from "@redux/systemconfig";
@@ -9,10 +9,11 @@ import CustContext from '@com/content.js'
  
  
 import {DistributionRoomRuntime } from '@api/api.js'
-import  imgurl from '@imgs'
-import moment from 'moment'
+ 
 import CEmpty from '@com/useEmpty.js'
 import Transform from './transData.js'
+import Panel from './panelData.js'
+import Outlet from './outlet.js'
 import Chartbox from './chartbox.js'
 const Mainbox=styled.div`
 &&{
@@ -39,7 +40,7 @@ export default function Index() {
  
   const [tabs,setTabs] =useState([])
   const {deviceStyle} = useOutletContext()
-
+console.log(tabs)
    const {label:deviceName, value:deviceVal} = deviceStyle
   const [value, setvalue] =useState(0)
 
@@ -80,16 +81,30 @@ export default function Index() {
         setTabs(items)
         
       }else {
-        setTabs([])
-      
-      
+      //  setTabs([]) 先注释
+        console.log(deviceVal)
+        if(deviceVal == 15) { // 假数据
+          setTabs([{
+            key:0,
+            label: '直流屏'
+          }])
+        }else if(deviceVal == 16) {
+          setTabs([{
+            key:0,
+            label: '出线柜'
+          }])
+        }
       }
     } catch (error) {
        
     }
    
   }
- 
+  const Com ={
+    5: Transform,
+    15: Panel,
+    16: Outlet,
+  }[deviceVal] ??  CEmpty 
  
   useEffect(() => {
     if([projectId, roomId, deviceVal].every(n => Number.isInteger(parseInt(n)))) {
@@ -110,7 +125,7 @@ export default function Index() {
             <Pagecount pd="0"> 
             <Mainbox>
                <div className='upbox'>
-                   <Transform  {...transprop} />
+                   <Com  {...transprop} />
                </div>
                <Chartbox {...transprop}  />
             </Mainbox>
