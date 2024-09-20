@@ -2432,6 +2432,14 @@ export class energyQuota {
       `Energy/EnergyQuotaDesigner/UpdateRoomQuotas?projectId=${projectId}`,
       data
     );
+  static QueryParkList = (params) =>
+      server.get(
+        `Quota/ParkQuotaRuntime/QueryParkList`,{params}       
+  );
+  static QueryParkQuota = (params) =>
+    server.get(
+      `Quota/ParkQuotaRuntime/QueryParkQuota`,{params}       
+);
 }
 
 //能源结构

@@ -1,7 +1,7 @@
 /*  能耗定额 */
 import {lazy} from 'react'
 
-const ParkQuota = lazy(() => import("../pages/quota/parkQuota.jsx"))
+const ParkQuota = lazy(() => import("../pages/quota/parkQuota/index.jsx"))
 const QuotaAlarms = lazy(() => import("../pages/quota/quotaAlarms.jsx"))
 const QuotaDetail= lazy(() => import("../pages/quota/quotaDetail.jsx"))
 

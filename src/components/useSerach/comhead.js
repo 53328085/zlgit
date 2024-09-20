@@ -388,12 +388,12 @@ const deviceStyleNode = (<Item name="deviceStyle" label="设备类型" initialVa
         {/* {
           props.config.textloop && <Textloop />
         } */}
-     {
+   {/*   {
         isprodction &&  (<Input type="color" value={color}
               style={{width: '80px', marginLeft: 'auto'}}
               onChange={onColorChange}
             /> )   
-       } 
+       }  */}
     </Cform>
   
     
