@@ -75,7 +75,7 @@ export default function Index() {
       "chart"
     ],
     runtimeQuota: [
-      "runtimeParkQuota",
+    //  "runtimeParkQuota", 园区是专门的接口
       "runtimeQuotaDetailed",
       "runtimeQuotaAlarms"
     ],

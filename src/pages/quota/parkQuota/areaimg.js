@@ -36,7 +36,7 @@ const Numbox = styled.div`
     }
   }
 `
-export default memo(({projectId, areaVos=[],  parkNum, 
+export default memo(({projectId, areaAnnualQuota=[],  parkNum, 
     structureNum,
     roomNum}) => {
     const [energyImage, setEnergyImage]= useState()
@@ -92,7 +92,7 @@ export default memo(({projectId, areaVos=[],  parkNum,
     return    (
       <Cspin spinning={spinning} tip="图片下载中……">
       <div style={{position: "relative"}}>
-          <img src={energyImage || enerbg}  usemap="#building"  />
+          <img src={energyImage || enerbg}   style={{width: "1368px", height: "800px"}}  />
           <Numbox>
              <p><span>园区</span><span>{parkNum}</span></p>
              <p><span>建筑物</span><span>{structureNum}</span></p>
@@ -120,7 +120,7 @@ export default memo(({projectId, areaVos=[],  parkNum,
                 </div>
             </div>
             </TitP>}
-          <Ctip areaVos={areaVos} />
+          <Ctip areaVos={areaAnnualQuota} />
       </div>
       </Cspin>
       )

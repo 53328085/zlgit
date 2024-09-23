@@ -44,43 +44,53 @@ const Rankbox=styled.div`
 `
 const CProgress = styled(Progress)`
  && {
-  .ant-progress-show-info .ant-progress-outer {
-    margin-right: 0;
-    padding-right: 0;
+  .ant-progress-show-info{
+    .ant-progress-outer {
+      margin-right: 0;
+      padding-right: 0;
+    }
+  
    
 
   }
   .ant-progress-text {
     position: absolute;
     left: 2em;
-    top: 4px;
+    top: 5px;
     font-size: 14px;
-    color:#fff;
+    color: ${props => props.percent >= 18 ? '#fff' : '#515151'};
   }
 }
 `
-export default function Index({ parkAnnualQuota,
-    areaAnnualQuota, 
+export default function Index({ parkAnnualQuota=[],  
     quotaRemainRanking}) {
     const { t } = useTranslation("quota")
     const [quotaWarning, setQuotaWarning] = useState(20);
+    const park = Array.isArray(parkAnnualQuota) ? parkAnnualQuota : []
   return (
     <Rankbox>
          <Titlelayout title={t("TotalAnnualQuota")}>
-          <div className="totalNum"><span><span>1800,000</span></span> <span className='sub'>(kWh)</span></div>
-          <div className='nameinfo' ><span>正泰物联</span><span>800,000 kWh</span> </div>
-          <CProgress   percent={50}
-            strokeColor='rgba(0, 204, 51, 1)' trailColor='#ebeef5' strokeWidth={20}   />
+          {
+            park.map(p => ( 
+              <>
+            <div className="totalNum" key={p?.quotaAreaId}>
+             <span>{p?.areaQuotaValue}</span> <span className='sub'>(kWh)</span></div>
+            <div className='nameinfo' ><span>{p?.areaName}</span><span>剩余：{p?.areaRemainValue} kWh</span> </div>
+            <CProgress   percent={parseFloat(p?.areaRemainRate)}
+              strokeColor={p.status==1 ?'rgba(255, 0, 0, 1)': 'rgba(0, 204, 51, 1)'} trailColor='#ebeef5' strokeWidth={20}   /></>)
+            )
+         
+          }
         </Titlelayout>
         <Titlelayout title={t("QuotaSurplusRanking")} layout="flex" >
             <div className='rankwrap'>
           <div className='ranklist'>
           {
             quotaRemainRanking?.map((item, index) => (
-              <div    key={index}>
-                <div className='nameinfo'><span>{item.name}</span><span>剩余：{item.num} kWh</span> </div>
-                <CProgress   percent={item.percent}
-                  strokeColor={`${item.percent > quotaWarning ? 'rgba(0, 204, 51, 1)' : 'rgba(255, 0, 0, 1)'}`} trailColor='#ebeef5' strokeWidth={20}   />
+              <div    key={item.quotaAreaId}>
+                <div className='nameinfo'><span>{item.areaName}</span><span>剩余：{item.areaRemainValue} kWh</span> </div>
+                <CProgress   percent={parseFloat(item?.areaRemainRate)}
+                  strokeColor={item.status ==0 ?  'rgba(0, 204, 51, 1)' : 'rgba(255, 0, 0, 1)' } trailColor='#ebeef5' strokeWidth={20}   />
               </div>
             ))}
             </div>

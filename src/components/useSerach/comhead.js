@@ -75,9 +75,8 @@ export default function UseSerach(props) {
   const oneLevelDefaultId = useSelector(selectOneLevelDefaultId) // 选择后的值 
   let [AreaID, setAreaid] = useState(oneLevelDefaultId) 
   const levelone = useSelector(selectOneLevel)  
-  const DeviceStyle = useSelector(filterDeviceStyle)  
-
-
+  //const DeviceStyle = useSelector(filterDeviceStyle)  
+ const [DeviceStyle, setDeviceStyle] = useState([])
   
   const areaName = levelone?.find(l => l.id == AreaID)?.name;
   props.setAreaName(areaName)
@@ -89,10 +88,27 @@ export default function UseSerach(props) {
   const [pcsoptions, setPcsoptions] = useState([])
   const [tankoptions, setTankoptions] = useState([])
   const deviceStyles = useSelector(deviceStyle)
-
+ let currdeviceStyle = `deviceStyle_${projectId}`
   const getDever =async () => {
     try {
-      await Editapi.FilterDeviceStyle(projectId)
+      let stordevices = window.localStorage.getItem(currdeviceStyle);
+      let initdeviceStyle = parseInt(stordevices)
+    
+       let {success, data} =  await Editapi.FilterDeviceStyle(projectId)
+       if(success && Array.isArray(data) && data.length >0) {
+        let filte = data.filter(d => d.deviceStyle!=6)
+        setDeviceStyle(filte)
+        if(initdeviceStyle && filte.find(d => d.deviceStyle == initdeviceStyle))  {
+          form.setFieldValue('deviceStyle', initdeviceStyle)
+        }else {
+          form.setFieldValue('deviceStyle', filte[0].deviceStyle)
+        }
+       }else {
+        form.setFieldValue('deviceStyle',null)
+         if(!success) return 
+         if(filte?.length ==0) message.warning('没有设置设备')
+       }
+       props.setexparams({...form.getFieldsValue(true)})
     } catch (error) {
       console.log(error)
     }
@@ -136,11 +152,11 @@ export default function UseSerach(props) {
 
  }, [props.config?.isSite, AreaID, projectId])
 useEffect(()=> {
-  if(Number.isInteger(projectId)) {
+  if(Number.isInteger(projectId) && props.config?.isdevsty) {
     getDever()
   }
   
-}, [projectId])
+}, [projectId, props.config?.isdevsty])
 
 
   const onChange = (e, option) => {  
@@ -286,14 +302,13 @@ const getPcs = async () => {
 
 
 // 设备类型
- let currdeviceStyle = `deviceStyle_${projectId}`
+
 const deviceStyleChange=(v) => {
  
   window.localStorage.setItem(currdeviceStyle, v);
 }
-let stordevices = window.localStorage.getItem(currdeviceStyle);
-let initdeviceStyle = stordevices ? parseInt(stordevices) : parseInt(DeviceStyle?.[0]?.deviceStyle)
-const deviceStyleNode = (<Item name="deviceStyle" label="设备类型" initialValue={initdeviceStyle}>
+
+const deviceStyleNode = (<Item name="deviceStyle" label="设备类型"  >
 
 <Select options={DeviceStyle} fieldNames={{label: "name", value: "deviceStyle"}} style={{width: '200px'}} onChange={deviceStyleChange} {...filterProps}></Select>  
 </Item>)

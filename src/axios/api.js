@@ -2440,7 +2440,28 @@ export class energyQuota {
     server.get(
       `Quota/ParkQuotaRuntime/QueryParkQuota`,{params}       
 );
+ 
+
 }
+// 定额管理 设计态
+export class QuotaManage { 
+  static QueryQuotaAreaTree = (projectId) => server.get(`Quota/QuotaManage/QueryQuotaAreaTree?projectId=${projectId}`) //   查询项目区域树
+  static AddQuotaArea = (params) => server.post(`Quota/QuotaManage/AddQuotaArea`, params) //   新增区域
+  static UpdateQuotaArea = ({projectId,quotaAreaId,name }) => server.post(`Quota/QuotaManage/UpdateQuotaArea?projectId=${projectId}&quotaAreaId=${quotaAreaId}&name=${name}`) //   编辑区域名称
+  
+  static DeleteQuotaArea = ({projectId,quotaAreaId}) => server.delete(`Quota/QuotaManage/DeleteQuotaArea?projectId=${projectId}&quotaAreaId=${quotaAreaId}`) //   删除区域名称
+  
+  static QueryQuotaAreaConfig = ({projectId,quotaAreaId}) => server.get(`Quota/QuotaManage/QueryQuotaAreaConfig?projectId=${projectId}&quotaAreaId=${quotaAreaId}`) //   查询区域能耗定额和负责人
+
+  static SaveQuotaAreaConfig = (data) => server.post(`Quota/QuotaManage/SaveQuotaAreaConfig`, data) // 配置区域能耗定额和负责人
+
+  static QueryQuotaAreaDeviceConfig = ({projectId,quotaAreaId}) => server.get(`Quota/QuotaManage/QueryQuotaAreaDeviceConfig?projectId=${projectId}&quotaAreaId=${quotaAreaId}`) // 查询区域绑定设备
+
+  static SaveQuotaAreaDeviceConfig = (params) => server.post(`Quota/QuotaManage/SaveQuotaAreaDeviceConfig`, params) // 为区域绑定设备
+  static QueryProjectQuotaWarn=(projectId)=>server.get(`Quota/QuotaWarn/QueryProjectQuotaWarn?projectId=${projectId}`)//查询项目定额能耗
+  static SaveProjectQuotaWarn=(data)=>server.post(`Quota/QuotaWarn/SaveProjectQuotaWarn`,data)//保存项目定额能耗
+}
+
 
 //能源结构
 export class energyStructure {

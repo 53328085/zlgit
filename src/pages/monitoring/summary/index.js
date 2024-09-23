@@ -187,7 +187,7 @@ export default function Index() {
     <Pagecount pd="0" bgcolor="transparent">
       <div className={style.cardList}>
         <Icard img={imgurl.device} title={'设备总数'} value={allCount} key="device" />
-        {MonitoringData.map((item) => (
+        {MonitoringData?.map((item) => (
           <div onClick={() => toDevicePage(item.meterType)}><Icard img={item.imageUrl} title={item.name} value={item.count}
             isShow={true} on={'在线'} off={'离线'} per={'在线率'} onValue={item.onlineCount}
             offValue={item.offlineCount} perValue={item.onlineRate} isRed={true} isGreen={true} isredE={false} after="%" key={item.meterType} />

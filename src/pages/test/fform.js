@@ -1,20 +1,39 @@
 import { Button, Modal, Space, Input } from 'antd';
-import styled from 'styled-components';
+import styled,{keyframes} from 'styled-components';
 import React, { createContext, useEffect, useRef, useState } from 'react';
 import {useSearchParams, useLocation, useNavigate} from 'react-router-dom'
 import { textSpanContainsTextSpan } from 'typescript';
 const ReachableContext = createContext(null);
+import BScroll from 'better-scroll'
+const scroll = keyframes`
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(800px);
+  }
+`
 const Flexbox = styled.div`
 && {
   display: flex;
-  flex-flow: column wrap;
-  height: 600px;
-  align-content: stretch;
-  row-gap: 16px;
+  width: 800px; 
+  column-gap: 16px;
+// animation:  ${scroll} 3s infinite;
   .item {
-    flex: 1 1 300px;
-    margin-right: 16px;
-    border: 1px solid #dedede;
+    width: 200px;
+    height: 50px;
+    display: flex;
+    align-content: center;
+    background-color: brown;
+
+  }
+  .content {
+    display: flex;
+    flex-direction: column;
+    width: 200px;
+    .s {
+      height: 100px;
+    }
   }
 }
 `
@@ -38,13 +57,22 @@ const App = () => {
   "操作了。如果你有一个折行的多条 flex 项目的 flex 容器，",
   "然后你可能想使用 align-content 来控制每行之间空间的分配，在这种特定的场景叫做packing flex lines"
   ]
- 
+  const ref = useRef()
+  useEffect(() => {
+     const scroll = new BScroll(ref.current,{
+      scrollX: true,
+      scrollY: false
+     })
+  })
   return (
-    <div>
-      <Flexbox>{
-        texts.map(t => <div className='item'>{t}</div>)
-}</Flexbox>
-    </div>
+    <Flexbox>
+       <div className='content' ref={ref}>
+          {
+            texts.map(t => <div className='s'>{t}</div>)
+          }
+       </div>
+   
+    </Flexbox>
   )
 };
 export default App;

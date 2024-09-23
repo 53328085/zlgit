@@ -1,7 +1,9 @@
-import React from 'react'
+import React, { useEffect, useState, useRef } from 'react'
 import BlueColumn from '@com/bluecolumn'
 import styled from 'styled-components';
 import {Divider,InputNumber ,Switch  } from "antd";
+import { useSelector } from 'react-redux'
+import { QuotaManage } from '@api/api.js'
 const WrapDiv = styled.div`
 width:640px;
 height:160px;
@@ -20,18 +22,68 @@ padding:16px;
 }
 `
 export default function QuotaWarning() {
+  const projectId = useSelector(state => state.system.menus.projectId)
+  const [dataList,setDataList]=useState({})
+
+  const getData=()=>{
+    QuotaManage.QueryProjectQuotaWarn(projectId).then(res=>{
+      let { success, data } = res
+      if(success){
+        setDataList(data)
+      }else{
+        message.error(res.errMsg)
+      }
+    })
+  }
+  const onChange=(value)=>{
+    setDataList({...dataList,quotaThreshold:value})
+    let params={
+      projectId:projectId,
+      quotaThreshold:value,
+      enable:dataList.enable
+    }
+    QuotaManage.SaveProjectQuotaWarn(params).then(res=>{
+      let { success, data } = res
+      if(success){
+        getData()
+        message.success('保存成功')
+      }else{
+        message.error(res.errMsg)
+      }
+    })
+  }
+  const changeSwitch=(value)=>{
+    setDataList({...dataList,enable:value?1:0})
+    let params={
+      projectId:projectId,
+      quotaThreshold:dataList.quotaThreshold,
+      enable:value?1:0
+    }
+    QuotaManage.SaveProjectQuotaWarn(params).then(res=>{
+      let { success, data } = res
+      if(success){
+        getData()
+        message.success('保存成功')
+      }else{
+        message.error(res.errMsg)
+      }
+    })
+  }
+  useEffect(() => {
+    getData()
+  }, [projectId])
   return (
     <div>
       <WrapDiv >
         <BlueColumn name="定额预警" />
         <Divider dashed style={{margin: '16px 0',borderColor: 'rgb(215 215 215)'}}></Divider>
         <div className="fl">
-          <div>能耗剩余&nbsp;&le; &nbsp;
-            <InputNumber 
-            formatter={value => `${value}%`}
-            parser={value => value?.replace('%', '')} 
-            defaultValue={0} keyboard /></div>
-          <div>是否预警 &nbsp;<Switch className="sw" checkedChildren="是" unCheckedChildren="否"/></div>
+          <div style={{display:'flex',alignItems:'center'}}>{'能耗剩余<='}
+            <InputNumber  addonAfter={'%'} style={{width:'120px',marginLeft:'16px'}}
+            value={dataList?.energyRemain} keyboard step='0.1' min="0" onChange={onChange}
+            max="100" stringMode/></div>
+          <div>是否预警 &nbsp;<Switch className="sw" checkedChildren="是" unCheckedChildren="否"
+           checked={dataList?.enable} onChange={changeSwitch}/></div>
           </div>
        
       </WrapDiv>
