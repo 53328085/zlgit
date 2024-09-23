@@ -99,13 +99,16 @@
 
 // 定额详细
 .quotaDetailContent {
+    flex:1;
+    display: grid;
+    grid-template-rows: 48px 1fr;
+    row-gap: 16px;
     .cardData {
-        width: 100%;
         display: grid;
         align-items: center;
         grid-template-columns: repeat(3, 550px);
         grid-template-rows: repeat(4, 176px);
-        row-gap: 16px;
+        gap:16px;
         justify-content: space-between;
 
         .cardBox {
@@ -182,6 +185,8 @@
                         display: flex;
                         align-items: center;
                         justify-content: space-between;
+                        column-gap: 16px;
+                        
                     }
 
                 }
@@ -191,7 +196,8 @@
     }
 
     .listData {
-        height: 752px;
+        display: flex;
+        align-content: space-between; 
     }
 }
 

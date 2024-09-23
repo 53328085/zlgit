@@ -100,8 +100,11 @@ export default function ParkQuota() {
  }, [projectId, parkAreaId])
  
 useEffect(() => {
-  getParklist({projectId, parkAreaId:0})
-}, [])
+  if(Number.isInteger(parseInt(projectId))) {
+    getParklist({projectId, parkAreaId:0})
+  }
+ 
+}, [projectId])
 
  
   return (

@@ -2434,8 +2434,20 @@ export class energyQuota {
     );
   static QueryParkList = (params) =>
       server.get(
-        `Quota/ParkQuotaRuntime/QueryParkList`,{params}       
+        `Quota/ParkQuotaRuntime/QueryParkList`,{params}       // 获取项目园区列表
   );
+  static QueryStructureList = (params) =>
+    server.get(
+      `Quota/QuotaDetailRuntime/QueryStructureList`,{params}       // 获取园区下建筑列表
+);
+static QueryRoomQuota = (params) =>
+  server.get(
+    `Quota/QuotaDetailRuntime/QueryRoomQuota`,{params}       // 获取房间定额信息
+);
+static QueryRoomQuotaDetail = (params) =>
+  server.get(
+    `Quota/QuotaDetailRuntime/QueryRoomQuotaDetail`,{params}       // 获取房间详细信息
+);
   static QueryParkQuota = (params) =>
     server.get(
       `Quota/ParkQuotaRuntime/QueryParkQuota`,{params}       

@@ -18,7 +18,7 @@ export default function Index() {
   const location = useLocation();
   let { state = {} } = location;
   let { nested = "", primary, meterType } = state; // meterType 从运行监控 =》 运行监控 跳转到 运行监控-》 设备管理
-  let whole = ["runtimeMonitor", "runtimeSafe", "runtimeEnergy", "runtimeStorage", "runtimeMaintenance", "runtimeQuota"]; // 需要显示搜索 ***（全部）的模块
+  let whole = ["runtimeMonitor", "runtimeSafe", "runtimeEnergy", "runtimeStorage", "runtimeMaintenance"]; // 需要显示搜索 ***（全部）的模块
   let include = {
     runtimeEnergy: ["area", "report"], // 模块里不需要显示全部的
     designerDistribution: ['room']
@@ -74,11 +74,11 @@ export default function Index() {
       "class",
       "chart"
     ],
-    runtimeQuota: [
-    //  "runtimeParkQuota", 园区是专门的接口
+ /*    runtimeQuota: [
+      "runtimeParkQuota", //园区是专门的接口
       "runtimeQuotaDetailed",
-      "runtimeQuotaAlarms"
-    ],
+     "runtimeQuotaAlarms"
+    ], */
     // 设计态
     designerEnergy: [ // 能源管理
       "price",
@@ -249,7 +249,7 @@ export default function Index() {
 
         setConfig({});
       }
-      if (primary == "runtimeQuota") {
+     /*  if (primary == "runtimeQuota") {
         switch (nested) {
           case "runtimeQuotaDetailed":
             setConfig({ custview: true });
@@ -259,7 +259,7 @@ export default function Index() {
             break;
         }
 
-      }
+      } */
       // 设计态
       if (primary == "designerEnergy") {
         switch (nested) {
