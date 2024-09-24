@@ -2452,8 +2452,15 @@ static QueryRoomQuotaDetail = (params) =>
     server.get(
       `Quota/ParkQuotaRuntime/QueryParkQuota`,{params}       
 );
+static QueryStructureWarn = (params) =>   // 获取园区下全部建筑告警数量
+  server.get(
+    `Quota/QuotaWarnRuntime/QueryStructureWarn`,{params}       
+);
+static QueryRoomWarn = (params) =>   // 获取建筑下全部房间告警信息
+  server.get(
+    `Quota/QuotaWarnRuntime/QueryRoomWarn`,{params}       
+ );
  
-
 }
 // 定额管理 设计态
 export class QuotaManage { 

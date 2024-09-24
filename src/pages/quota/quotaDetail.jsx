@@ -1,8 +1,9 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react'
-import { useOutletContext } from 'react-router-dom'
+ 
 import { Space, Radio, Select, Progress, Form } from 'antd';
 import { useAntdTable } from "ahooks";
 import styled from 'styled-components';
+import {useLocation, useNavigate, Link} from 'react-router-dom'
 import { ExportExcel } from '@com/useButton'
 import style from './style.module.less'
 import Usetable from '@com/useTable'
@@ -36,12 +37,15 @@ export default function QuotaDetail() {
   
   const [isCard, setisCard] = useState(true); //卡片模式true或列表模式false
   const projectId = useSelector(selectProjectId)
-  let { setCustview } = useOutletContext()
-  const [pageLog, setpageLog] = useState(1)
-  let [totalLog, setTotalLog] = useState(0)
+  const clocation = useLocation()
+  const navigate = useNavigate()
+  console.log(clocation)
+  const {search: query,pathname, state} = clocation
+ 
+ 
   const [form] = Form.useForm();
   const { t } = useTranslation("quota")
-  const [quotaWarning,setQuotaWarning]=useState(20);
+  
   const columns = [
     {
       title: t("RoomName"),
@@ -72,10 +76,10 @@ export default function QuotaDetail() {
       dataIndex: 'areaRemainRate',
       key: 'areaRemainRate',
       align: 'center',
-      render: (percent) => <Progress
+      render: (percent, record) => <Progress
         percent={parseFloat(percent)}
         trailColor='#ebeef5'
-        strokeColor={`${percent > quotaWarning ? 'rgba(0, 204, 51, 1)' : 'rgba(255, 0, 0, 1)'}`}
+        strokeColor={`${record.status == 0 ? 'rgba(0, 204, 51, 1)' : 'rgba(255, 0, 0, 1)'}`}
         style={{ width: 200 }} />
     },
     {
@@ -84,8 +88,8 @@ export default function QuotaDetail() {
       key: 'status',
       align: 'center',
       render: (status) => <div>
-        <span style={{ width: 8, height: 8, borderRadius: "50%", display: "inline-block", backgroundColor: `${status == 1 ? 'rgba(0, 204, 51, 1)' : 'rgba(255, 0, 0, 1)'}` }}></span>
-        <span style={{ marginLeft: 10, color: `${status == 1 ? 'rgba(0, 204, 51, 1)' : 'rgba(255, 0, 0, 1)'}` }}>{status == 1 ? t("Normal") : t("Alarm")}</span>
+        <span style={{ width: 8, height: 8, borderRadius: "50%", display: "inline-block", backgroundColor: `${status == 0 ? 'rgba(0, 204, 51, 1)' : 'rgba(255, 0, 0, 1)'}` }}></span>
+        <span style={{ marginLeft: 10, color: `${status ==0 ? 'rgba(0, 204, 51, 1)' : 'rgba(255, 0, 0, 1)'}` }}>{status == 0 ? t("Normal") : t("Alarm")}</span>
       </div>
     },
   ]
@@ -160,8 +164,16 @@ const getStructure = async() => {
  const changeTab = (val) => {
   setModelType(val.target.value)
   setisCard(val.target.value == 'card' ? true : false);
+  navigate(`${pathname}?type=${val.target.value}`, {state})
+  
  
 }; 
+useEffect(() => {
+   const val = new URLSearchParams(query).get('type') 
+   setisCard(val=='card')
+   setModelType(val)
+}, [])
+const [total, setTotal] = useState()
 const geRoomData = async ({current, pageSize}, formData) => {
   
   try {
@@ -176,6 +188,7 @@ const geRoomData = async ({current, pageSize}, formData) => {
         projectId,
       }
       let {success, data,total} = await  energyQuota.QueryRoomQuota(params)
+      setTotal(Number.isInteger(total) ? total : 0)
       if(success && Array.isArray(data) && data?.length >0 ) {
         return {
           list: data,
@@ -183,27 +196,8 @@ const geRoomData = async ({current, pageSize}, formData) => {
         }
       }else {
          return {
-          list: [
-            {
-              "quotaAreaId": 9,
-              "areaName": "正泰物联温州园区 1号楼 102房间",
-              "areaQuotaValue": 2400,
-              "areaConsumptionValue": 6,
-              "areaRemainValue": 2394,
-              "areaRemainRate": "99.75%",
-              "status": 0
-            },
-            {
-              "quotaAreaId": 8,
-              "areaName": "正泰物联温州园区 1号楼 101房间",
-              "areaQuotaValue": 1800,
-              "areaConsumptionValue": 0,
-              "areaRemainValue": 1800,
-              "areaRemainRate": "100.00%",
-              "status": 0
-            }
-          ],
-          total: 2
+          list: [],
+          total: 0
          }
       }
     }
@@ -220,6 +214,42 @@ const { tableProps, search, run } = useAntdTable(geRoomData, {
 });
 
 const { submit } = search;
+
+const onExport = useCallback(async () => {
+  try {
+   let {parkAreaId,quotaAreaId,order} = await form.validateFields()
+   let params ={
+     pageNum:1,
+     pageSize: total,
+     parkAreaId,
+     quotaAreaId,
+     order,
+     projectId,
+   }
+   return  energyQuota.QueryRoomQuota(params).then(res => {
+    let {success, total, data} = res
+    if(success && Array.isArray(data) && data?.length >0 ) {
+      return {
+        list: data,
+        total
+      }
+    }else {
+       return {
+        list: [],
+        total: 0
+       }
+    }
+   })
+  
+   
+
+
+
+  } catch (error) {
+    console.log(error)
+  }
+}, [total])
+
   const CustView = (
       <Search>
         <Form layout="inline" form={form}>
@@ -245,7 +275,7 @@ const { submit } = search;
             optionType="button"
           >
           </Radio.Group>
-          <ExportExcel disabled={isCard} tb={tableLoadRef} />
+          <ExportExcel disabled={isCard} tb={tableLoadRef}  />          
         </Space>
       </Search>
 
@@ -265,9 +295,7 @@ const { submit } = search;
 
     }
   }
-  const onExport = useCallback(() => {
-
-  }, [totalLog])
+  
   const toDetailIndicators = () => {
     window.open('/detailIndicators', '_blank')
   }
@@ -281,10 +309,10 @@ const { submit } = search;
         <div className={style.cardData}>
           {
             tableProps?.dataSource?.map((item) => (
-              <div className={style.cardBox} key={item.quotaAreaId} onClick={() => toDetailIndicators()}>
+              <Link to={`/detailIndicators?quotaAreaId=${item.quotaAreaId}&type=1&projectId=${projectId}`} target="_blank" key={item.quotaAreaId}> <div className={style.cardBox} key={item.quotaAreaId} >
                 <div className={style.cardTop}>
                   <span>{item.areaName}</span>
-                  <span className={`${item.status == 1 ? style.normalStatus : style.LowStatus}`} >{item.status == 1 ? t("NormalEnergyConsumption") : t("InsufficientMargin")}</span>
+                  <span className={`${item.status == 0 ? style.normalStatus : style.LowStatus}`} >{item.status == 0 ? t("NormalEnergyConsumption") : t("InsufficientMargin")}</span>
                 </div>
                 <div className={style.cardCenter}>
                   <img src={energyImg} className={style.energyImg} />
@@ -304,19 +332,19 @@ const { submit } = search;
                     
                         <Progress
                           percent={parseFloat(item.areaRemainRate)}
-                          className={`${item.percent > quotaWarning ? '' : 'progressColor'}`}
+                          className={`${item.status ==0 ? '' : 'progressColor'}`}
                           trailColor='#ebeef5'
-                          strokeColor={`${item.percent > quotaWarning ? 'rgba(0, 204, 51, 1)' : 'rgba(255, 0, 0, 1)'}`}
+                          strokeColor={`${item.status ==0 ? 'rgba(0, 204, 51, 1)' : 'rgba(255, 0, 0, 1)'}`}
                          
                           strokeWidth={15} />
                     </div> </div>
                 </div>
-              </div>
+              </div></Link>
             ))}
         </div>
       ) : (
         <div className={style.listData}>        
-          <Usetable columns={columns} ref={tableLoadRef}  {...tableProps} hbg="#ecf5ff" hbc="#515151" rowKey={columns => columns.id} />
+          <Usetable columns={columns} ref={tableLoadRef}  {...tableProps} hbg="#ecf5ff" hbc="#515151" rowKey={columns => columns.id} onExport={onExport} />
         </div>
       )}
      {isCard &&  <CPagination style={{ marginLeft: 'auto', width: 'fit-content' }} size="small" onChange={changepage}   {...tableProps.pagination} showSizeChanger={false} />}

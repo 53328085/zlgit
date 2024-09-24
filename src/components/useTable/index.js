@@ -113,6 +113,7 @@ const Allupdate =memo(({lists, total}) => {
  const downloadAll = async () => {     
     try { 
       let {list, total} = await onExport()
+      console.log(list)
       flushSync(() => {
         setLists(list)
         setTotal(total)

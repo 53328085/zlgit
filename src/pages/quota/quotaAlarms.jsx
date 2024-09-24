@@ -1,22 +1,32 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react'
-import { useOutletContext } from 'react-router-dom'
+ 
 import { Space, Radio, Select, Progress, Pagination, Form } from 'antd';
 import { useAntdTable } from "ahooks";
+import styled from 'styled-components';
+import { useTranslation } from "react-i18next"
 import { ExportExcel } from '@com/useButton'
+import {useLocation, useNavigate, Link} from 'react-router-dom'
 import style from './style.module.less'
-import Usetable from '@com/useTable'
+ 
 import energyImg from '../quota/icon/energyImg.svg'
 import alarmIcon from '../quota/icon/alarmIcon.png'
 import alarmSelectedIcon from '../quota/icon/alarmSelectedIcon.svg'
 
-import styled from 'styled-components'
+ 
 import { useSelector } from 'react-redux'
 import { CPagination } from "@com/comstyled";
 import { CaretRightOutlined } from '@ant-design/icons';
 import { selectProjectId } from '@redux/systemconfig.js'
 
-import { useTranslation } from "react-i18next"
 
+import {energyQuota} from '@api/api'
+import { isObject } from '@com/usehandler';
+const Mainbox = styled.div`
+  display: grid;
+  grid-template-rows: 48px 1fr;
+  flex: 1;
+  row-gap: 16px;
+`
 const ProgressBoX = styled.div`
 .progressColor{
   .ant-progress-text{
@@ -25,204 +35,223 @@ const ProgressBoX = styled.div`
   
 }
 `
-
+const Search = styled.div`
+  display: flex;
+  height: 48px;
+  align-items: center;
+  justify-content: space-between;
+  background-color: #fff;
+  border-radius: 4px;
+  padding: 0 16px;
+  
+`
 export default function QuotaAlarms() {
-  const tableLoadRef = useRef();
+  const {pathname,state} = useLocation()
+  const navigate = useNavigate()
+  
   const [activeTab, setActiveTab] = useState(0)
-  const [isCard, setisCard] = useState(true); //卡片模式true或列表模式false
+  
   const projectId = useSelector(selectProjectId)
-  let { setCustview } = useOutletContext()
-  // console.log(setCustview, '-----props');
-  const [pageLog, setpageLog] = useState(1)
-  let [totalLog, setTotalLog] = useState(0)
+  
+   
+   
   const [form] = Form.useForm();
   const { t } = useTranslation("quota")
-  const [quotaWarning,setQuotaWarning]=useState(20);
-  const columns = [
-    {
-      title: t("RoomName"),
-      dataIndex: 'address',
-      key: 'address',
-      align: 'center',
-      render: (text, record) => (
-        <span>{record.address != '' ? record.address : '/'}-{record.floor != '' ? record.floor : '/'}-{record.house != '' ? record.house : '/'}</span>
-      ),
-    },
-    {
-      title: t("EnergyConsumptionQuota") + ' (kWh)',
-      dataIndex: 'quota',
-      key: 'quota',
-      align: 'center',
-    },
-    {
-      title: t("UsedEnergyConsumption") + ' (kWh)',
-      dataIndex: 'useQuota',
-      key: 'useQuota',
-      align: 'center'
-    },
-    {
-      title: t("RemainingEnergyConsumption") + ' (kWh)',
-      dataIndex: 'residueQuota',
-      key: 'residueQuota',
-      align: 'center'
-    },
-    {
-      title: t("RatioOfRemainingEnergyConsumption"),
-      dataIndex: 'percent',
-      key: 'percent',
-      align: 'center',
-      render: (percent) => <Progress
-        percent={percent}
-        trailColor='#ebeef5'
-        strokeColor={`${percent > quotaWarning ? 'rgba(0, 204, 51, 1)' : 'rgba(255, 0, 0, 1)'}`}
-        style={{ width: 200 }} />
-    },
-  ]
+ 
 
-  const quotaDetailed = [
-    {
-      address: "正泰物联",
-      floor: "",
-      house: "105",
-      quota: "2000",
-      useQuota: "400",
-      residueQuota: "1600",
-      percent: quotaWarning
-    },
-    {
-      address: "正泰物联",
-      floor: "2号楼",
-      house: "102",
-      quota: "2000",
-      useQuota: "600",
-      residueQuota: "1400",
-      percent: 10
-    },
-    {
-      address: "正泰物联",
-      floor: "1号楼",
-      house: "105",
-      quota: "2000",
-      useQuota: "400",
-      residueQuota: "1600",
-      percent: 10
-    },
-    {
-      address: "正泰物联",
-      floor: "2号楼",
-      house: "102",
-      quota: "2000",
-      useQuota: "600",
-      residueQuota: "1400",
-      percent: 8
-    },
-    {
-      address: "正泰物联",
-      floor: "2号楼",
-      house: "102",
-      quota: "2000",
-      useQuota: "600",
-      residueQuota: "1400",
-      percent: 17
-    },
-    {
-      address: "正泰物联",
-      floor: "2号楼",
-      house: "102",
-      quota: "2000",
-      useQuota: "600",
-      residueQuota: "1400",
-      percent: 0.9
-    }]
-  const alarmAllData = [
-    {
-      id: 0,
-      address: "全部告警",
-      num: 15
-    }, {
-      id: 1,
-      address: "1号楼",
-      num: 2
-    }, {
-      id: 2,
-      address: "2号楼",
-      num: 5
-    }, {
-      id: 3,
-      address: "3号楼",
-      num: 7
-    }, {
-      id: 4,
-      address: "4号楼",
-      num: 1
-    },
-  ]
-  const buildOptions = [{ value: 0, label: t('Whole') }, { value: 1, label: '1号楼' }, { value: 2, label: '2号楼' }]
-
-  const showSortOptions = [{ value: 1, label: t('PercentageOrder') }, { value: 2, label: t('PercentageReverseOrder') }, { value: 3, label: t('Order') }, { value: 4, label: t('ReverseOrder') }]
+  
+ 
   const [modeltype, setModelType] = useState('card')
-  const [buildSelected, setBuildSelected] = useState(0)
-  const [showSortSelected, setShowSortSelected] = useState(1)
-  const CustView = ({ isCard }) => {
-    return (
-      <>
-        <Form layout="inline">
-          <Form.Item name="build">
-            <Select options={buildOptions} defaultValue={buildSelected} style={{ width: 188, marginLeft: 16 }} onChange={handleBuildChange}></Select>
-          </Form.Item>
-          <Form.Item name="percent">
-            <Select options={showSortOptions} defaultValue={showSortSelected} style={{ width: 188, marginLeft: 16 }} onChange={handleShowSortChange}></Select>
-          </Form.Item>
-        </Form>
-        {/* <Item  name='areaId' >
-        <Select  options={opts}  fieldNames={{label: 'name', value: 'id', options: 'options'}}></Select>
-    </Item> */}
-        <Space size={16} style={{ marginLeft: "auto" }}>
-          <Radio.Group
-            onChange={changeTab}
-            buttonStyle="solid"
-            options={[{ label: t("CardMode"), value: 'card' }, { label: t("ListMode"), value: 'list' }]}
-            value={modeltype}
-            optionType="button"
-          >
-          </Radio.Group>
-          <ExportExcel disabled={isCard} tb={tableLoadRef} />
+  const [park, setPark] = useState([])
+  const [structure, setStructure] = useState([])
+  const [alarmAllData, setAlarmAllData] = useState([])
+  
+  const QueryStructureWarn =async () => { // 告警建筑
+    let {parkAreaId,structureAreaId} = await form.validateFields()
+    try {
+      let params ={
+        parkAreaId,
+        structureAreaId,
+        projectId
+      }
+     let {success, data} = await energyQuota.QueryStructureWarn(params)
+     if(success &&  isObject(data)) {
+       let {quotaAreaWarnVos, parkWarnNum} = data
+       if(Array.isArray(quotaAreaWarnVos) && quotaAreaWarnVos?.length >0) {
+        setAlarmAllData([{
+          "quotaAreaId": 0,
+          "name": "全部告警",
+          "warnNum": parkWarnNum
+        }, ...quotaAreaWarnVos])
+       }else {
+        setAlarmAllData([])
+       }
+      
+     }else {
+       setAlarmAllData([])
+     }
+    } catch (error) {
+      
+    }
+    
+  }
+ const onValuesChange =() => { 
+  QueryStructureWarn()
+ }
+  const getParklist = async() => {
+    try {
+     let {success, data, errMsg} = await energyQuota.QueryParkList({projectId, parkAreaId:0})
+     if(success && Array.isArray(data) && data?.length >0) {
+        setPark([{name: '全部园区', quotaAreaId: 0},...data])
+        return Promise.resolve(true)
+     }else {
+      
+       if(data?.length === 0 )  message.warning('没有设置园区')
+         setPark([])  
+       setStructure([])
+       setAlarmAllData([])
+        return Promise.reject('没有数据')
+         
+     }
+    } catch (error) {
+     
+    }
+  }
+const getStructure = async() => {
+    try {
+      let params ={
+        parkAreaId:0,
+        structureAreaId:0,
+        projectId
+      }
+    let {success, data} = await  energyQuota.QueryStructureList(params)
+    if(success && Array.isArray(data)&& data?.length >0) {
+      setStructure([{quotaAreaId:0,name: '全部建筑'}, ...data])
+      QueryStructureWarn()
+    }else {
+      setStructure([])
+      setAlarmAllData([])
+      if(data?.length === 0 )return message.warning('没有设置建筑')
+     
+    }
+    } catch (error) {
+      
+    }
+}
+
+
+
+ useEffect(() => {
+  if(Number.isInteger(parseInt(projectId))) {
+    try {
+      getParklist().then(getStructure)
+     
+    } catch (error) {
+      
+    }
+    
+  }
+
+ }, [projectId])
+ const options = [
+  {label: '按剩余量百分比顺序', value: 1},
+  {label: '按剩余量百分比倒序', value: 2},
+  {label: '按剩余量顺序', value: 3},
+  {label: '按剩余量倒序', value: 4},
+ ]
+ const fieldNames ={
+  label: 'name',
+  value: 'quotaAreaId'
+ }
+ 
+ const geRoomData = async ({current, pageSize}, formData) => {
+   
+   try {
+     if(Array.isArray(alarmAllData) && alarmAllData?.length > 0 && Number.isInteger(parseInt(projectId))) {
+       let {parkAreaId,order} = formData
+       let params ={
+         pageNum:current,
+         pageSize,
+         parkAreaId,
+         structureAreaId:activeTab,
+         order,
+         projectId,
+       }
+       let {success, data,total} = await  energyQuota.QueryRoomQuota(params)
+       
+       if(success && Array.isArray(data) && data?.length >0 ) {
+         return {
+           list: data,
+           total
+         }
+       }else {
+          return {
+           list: [],
+           total: 0
+          }
+       }
+     }
+  
+   } catch (error) {
+     console.log(error)
+   }
+  
+ }
+ const { tableProps, search, run } = useAntdTable(geRoomData, { 
+   form,
+   defaultPageSize: 12,
+   refreshDeps: [projectId,alarmAllData, activeTab],
+ });
+ 
+ const { submit } = search;
+ 
+ 
+const changeTab = (val) => {
+  let value = val.target.value
+  setModelType(value)
+  if(value=="list") {
+    navigate(`/index/runtimeQuota/runtimeQuotaDetailed?type=list`, {state: {title: '定额详细', nested: 'runtimeQuotaDetailed', primary: 'runtimeQuota'}})
+  }
+ 
+}; 
+  const CustView = (
+    <Search>
+      <Form layout="inline" form={form} onValuesChange={onValuesChange}>
+        <Space>
+        <Form.Item name="parkAreaId" initialValue={0}>
+          <Select options={park}   style={{ width: 188}} fieldNames={fieldNames} onChange={submit} ></Select>
+        </Form.Item>
+        <Form.Item name="structureAreaId" initialValue={0}>
+          <Select options={structure} style={{ width: 188}} fieldNames={fieldNames} onChange={submit}></Select>
+        </Form.Item>
+        <Form.Item name="order" initialValue={1}>
+          <Select options={options} style={{ width: 188}} onChange={submit} ></Select>
+        </Form.Item>
         </Space>
-      </>
+      </Form>
+ 
+      <Space size={16} style={{ marginLeft: "auto" }}>
+        <Radio.Group
+          onChange={changeTab}
+          buttonStyle="solid"
+          options={[{ label: t("CardMode"), value: 'card' }, { label: t("ListMode"), value: 'list' }]}
+          value={modeltype}
+          optionType="button"
+        >
+        </Radio.Group>
+              
+      </Space>
+    </Search>
 
-    )
-  }
+  )
   const changeAlarm = values => {
-    if (activeTab == values.id) return;
-    setActiveTab(values.id)
+    if (activeTab == values.quotaAreaId) return;
+    setActiveTab(values.quotaAreaId)
   }
-  let paramsLog = {
-    projectId: projectId,
-    pageNum: pageLog,
-    pageSize: 3,
-  }
-  const getOverviewData = ({ current, pageSize }, formData) => {
-  }
+ 
 
-  const { tableProps, search: hanlder, run } = useAntdTable(getOverviewData, {
-    form,
-    defaultPageSize: 3,
-    refreshDeps: [projectId],
-  });
 
-  const { submit } = hanlder;
-  const changeTab = (val) => {
-    setModelType(val.target.value)
-    setisCard(val.target.value == 'card' ? true : false);
-    //  getOverviewData()
-  }; //切换卡片列表模式
 
-  const handleBuildChange = (val) => {
-    setBuildSelected(val)
-  }
-  const handleShowSortChange = (val) => {
-    setShowSortSelected(val)
-  }
   const changepage = (current, pageSize) => {
     try {
       let values = form.getFieldsValue();
@@ -231,47 +260,42 @@ export default function QuotaAlarms() {
 
     }
   }
-  const onExport = useCallback(() => {
-
-  }, [totalLog])
-  const toDetailIndicators = () => {
-    window.open('/detailIndicators', '_blank')
+ 
+  const toDetailIndicators = (quotaAreaId) => {
+   
+    window.open(`/detailIndicators?quotaAreaId=${quotaAreaId}&type=1&projectId=${projectId}`, '_blank')
   }
-  useEffect(() => {
-    setCustview(<CustView isCard={isCard} />);
-    return () => {
-      setCustview(undefined)
-    }
-  }, [isCard])
-  useEffect(() => {
-  }, [, projectId, pageLog, paramsLog.pageSize])
+ 
+ 
   return (
+    <Mainbox>
+      {CustView}
     <div className={style.quotaAlarmsContent}>
       <div className={style.AlarmsContent}>
         <div className={style.AlarmsContentLeft}>
           {alarmAllData.map((item, index) => (
-            <div className={style.Alarmsitem} onClick={() => changeAlarm(item)} style={{ color: activeTab == item.id ? '#fff' : '', background: activeTab == item.id ? '#ff3333' : '', border: activeTab == item.id ? 'none' : '' }}>
+            <div className={style.Alarmsitem} onClick={() => changeAlarm(item)} style={{ color: activeTab == item.quotaAreaId ? '#fff' : '', background: activeTab == item.quotaAreaId ? '#ff3333' : '', border: activeTab == item.quotaAreaId? 'none' : '' }}>
               <div className={style.Alarmsadress}>
-                {activeTab == item.id ? <img src={alarmSelectedIcon} className={style.alarmIcon} /> :
+                {activeTab == item.quotaAreaId ? <img src={alarmSelectedIcon} className={style.alarmIcon} /> :
                   <img src={alarmIcon} className={style.alarmIcon} />}
-                {item.id == 0 ? t("AllAlarms") : item.address}
+                {item.quotaAreaId == 0 ? t("AllAlarms") : item.name}
               </div>
               <div className={style.Alarmsnum}>
-                {t("QuotaAlarm")} <span className={style.num}>{item.num}</span>
-                <CaretRightOutlined className={style.rightIcon} style={{ color: activeTab == item.id ? '#fff' : '#ccc' }} />
+                {t("QuotaAlarm")} <span className={style.num}>{item.warnNum}</span>
+                <CaretRightOutlined className={style.rightIcon} style={{ color: activeTab == item.quotaAreaId ? '#fff' : '#ccc' }} />
               </div>
 
             </div>
           ))}
         </div>
         <div className={style.AlarmsContentRight}>
-          {isCard ? (
+          
             <div className={style.cardData}>
               {
-                quotaDetailed.map((item, index) => (
-                  <div className={style.cardBox} key={index} onClick={() => toDetailIndicators()}>
+                tableProps?.dataSource?.map((item, index) => (
+                <Link to={`/detailIndicators?quotaAreaId=${item.quotaAreaId}&type=1&projectId=${projectId}`} target="_blank" key={item.quotaAreaId}>  <div className={style.cardBox}   >
                     <div className={style.cardTop}>
-                      <span>{item.address}  {item.floor}  {item.house}</span>
+                      <span>{item.areaName}</span>
                       <span className={style.LowStatus} >{t("InsufficientMargin")}</span>
                     </div>
                     <div className={style.cardCenter}>
@@ -283,33 +307,29 @@ export default function QuotaAlarms() {
                           <span>{t("Surplus")} (kWh)</span>
                         </div>
                         <div className={style.num}>
-                          <span>{item.quota}</span>
-                          <span>{item.useQuota}</span>
-                          <span>{item.residueQuota}</span>
+                          <span>{item.areaQuotaValue}</span>
+                          <span>{item.areaConsumptionValue}</span>
+                          <span>{item.areaRemainValue}</span>
                         </div>
                         <div className={style.percent}>
-                          <span>{t("RemainingEnergyConsumption")}</span>
-                          <ProgressBoX>
-                            <Progress
-                              percent={item.percent}
-                              className={`${item.percent > quotaWarning ? '' : 'progressColor'}`}
-                              trailColor='#ebeef5'
-                              strokeColor={`${item.percent > quotaWarning ? 'rgba(0, 204, 51, 1)' : 'rgba(255, 0, 0, 1)'}`}
-                              style={{ marginLeft: 10, width: 170 }}
-                              strokeWidth={15} /></ProgressBoX>
-                        </div> </div>
+                      <div style={{flex:'1 0 auto'}}>{t("RemainingEnergyConsumption")}</div>
+                        <Progress
+                          percent={parseFloat(item.areaRemainRate)}
+                          className={`${item.status ==0 ? '' : 'progressColor'}`}
+                          trailColor='#ebeef5'
+                          strokeColor={`${item.status ==0 ? 'rgba(0, 204, 51, 1)' : 'rgba(255, 0, 0, 1)'}`}
+                         
+                          strokeWidth={15} />
+                    </div></div>
                     </div>
-                  </div>
+                  </div></Link>
                 ))}
             </div>
-          ) : (
-            <div className={style.listData}>
-              <Usetable columns={columns} ref={tableLoadRef} dataSource={quotaDetailed} hbg="#ecf5ff" hbc="#515151" rowKey={columns => columns.title} />
-            </div>
-          )}
+         
           <CPagination style={{ marginLeft: 'auto', width: 'fit-content' }} size="small" onChange={changepage}   {...tableProps.pagination} showSizeChanger={false} />
         </div>
       </div>
     </div>
+    </Mainbox>
   )
 }
