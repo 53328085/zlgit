@@ -640,8 +640,10 @@ const getvalidate = (start, end, type, choosedate) => {
   }
   
   useEffect(() => {
+    if(Number.isInteger(parseInt(areaId))) {
     getPlans()
     QueryStrategyList()
+    }
     //QueryPcsList()
   }, [areaId])
   return (

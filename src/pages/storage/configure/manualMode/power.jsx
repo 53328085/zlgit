@@ -59,6 +59,7 @@ export default function Manual({projectId,  areaId, CModal}) {
  
   // UpdateSiteOnOffGrid
   const queryruntimesetting = () => {
+    if(![projectId, areaId].every(d => Number.isInteger(parseInt(d)))) return;
     return StorageParameterSetupDesigner.QuerySetup(projectId, areaId).then(res => {
          let {success, data, errMsg} = res
          if (success) {
@@ -72,7 +73,8 @@ export default function Manual({projectId,  areaId, CModal}) {
   }
 
   const pid = useRef()
- const {loading, run} = useRequest(queryruntimesetting, {    
+ const {loading, run} = useRequest(queryruntimesetting, { 
+    refreshDeps: [projectId, areaId],   
     onSuccess: (data) => {
         let {id, antiReflux, demandControl, ...init} = data
         pid.current = id

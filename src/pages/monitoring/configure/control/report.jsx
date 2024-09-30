@@ -405,7 +405,7 @@ const controlcolumns = [
    ] 
 
  const QueryReports =  ({current, pageSize}) => {   
-   
+   if(![areaId, projectId].every(d => Number.isInteger(parseInt(d)))) return;
   
     let params = {
       pageNum: current,

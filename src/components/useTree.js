@@ -63,13 +63,13 @@ export default memo(function Index({areaId, setTreeId,  setLine, showline=true, 
  
 const fieldNames=datatype===2 ?  {title:'name',key: treekey,children:'childs'} :{title:'name',key: treekey,children:'nodes'}
 //const fieldNames= {title:'name',key: treekey,children:'nodes'}  
- console.group(fieldNames)
+ 
   //获取树的数据，0 网格, 1 线路, 2 公共能耗分类
  const getTreeData= async (name='')=>{
  
   let idx = Number.isInteger(datatype) ? datatype : typeTree;
   
-  if( isFinite(datatype) && !energytype) return
+  if( Number.isInteger(datatype) && !energytype) return
     try {
        if(name!=keyword) setKeyword(name)
       let params =[{

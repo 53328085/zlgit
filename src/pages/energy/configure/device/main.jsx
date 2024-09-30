@@ -78,8 +78,11 @@ export default function Index ({projectId, areaId}) {
     
   }
   useEffect(() => {
+   if([areaId, projectId].every(d => Number.isInteger(parseInt(d)))) {
     getTreeData()
-  }, [areaId])
+   }
+   
+  }, [areaId, projectId])
   
 
  

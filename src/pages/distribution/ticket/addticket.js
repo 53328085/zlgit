@@ -82,7 +82,7 @@ export default  forwardRef(function Addticket({type, projectId, areaId,switchHou
        if(success && Array.isArray(data)) {
           uform.setFieldValue('TeamMember',  data)
        }else{
-         setMember([])
+        // setMember([])
         uform.setFieldValue('TeamMember', [])
        }
       } catch{
@@ -124,7 +124,7 @@ export default  forwardRef(function Addticket({type, projectId, areaId,switchHou
         if(Array.isArray(res) && res?.length >0) {
             getMemberList(res[0].id)
         }else{
-            setMember([])
+          //  setMember([])
         }
     })
   }, [projectId, areaId])

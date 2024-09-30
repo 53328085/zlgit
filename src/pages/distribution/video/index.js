@@ -139,7 +139,7 @@ export default function Index() {
   }
 
   const getStatistics = () => {
-    if (!(isFinite(projectId) && isFinite(roomId))) return
+    if (!(Number.isInteger(parseInt(projectId)) && Number.isInteger(parseInt(roomId)))) return
     return DistributionRoomRuntime.CameraSummary(projectId, roomId).then((res) => {
       let { success, data } = res
       if (success && data) {
@@ -231,7 +231,7 @@ export default function Index() {
   const [totalValue, setTotalValue] = useState(0)
 
   const getCameraPage = ({ current, pageSize }) => {
-    if (!(isFinite(projectId) && isFinite(roomId))) return
+    if (!(Number.isInteger(parseInt(projectId)) && Number.isInteger(parseInt(roomId)))) return
     let params = {
       projectId,
       pageNum: current,

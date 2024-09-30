@@ -17,10 +17,12 @@ function Comp(props, ref) {
     const inpRef = useRef(inpvalue)
     inpRef.current = inpvalue
     const oneLevel = useSelector(state => state.system.onelevel)
-   
+
     const areaOptions = useMemo(() => {
+         
          let isall = oneLevel.find(o => o.id ==0)
-        if (!isall) {
+       
+        if (!isall && oneLevel.length > 0) {
          return  [{ name: oneLevel[0].levelName+'(全部)', id: 0 }, ...oneLevel]
         }else {
             return oneLevel
