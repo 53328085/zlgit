@@ -191,7 +191,8 @@ const system = createSlice({
     name: 'system',
     initialState,
     reducers: {
-        getCurrProjectInfo(state, {payload}) { // 当前项目信息
+        getCurrProjectInfo(state, {payload}) { // 当前项目信息 
+            state.themeColor.primaryColor= payload.themeColor,
             state.currProject = payload   
         },
         configProject(state, {payload}) { // 项目是否处于设计状态     
@@ -279,7 +280,7 @@ const system = createSlice({
           state.curlRommidl = payload
         },
         getSystemconfiginfo(state, {payload}) {
-           console.log(payload)
+          // console.log(payload)
            state.systemConfigInfo = payload ?? {}
         },
         systemConfigRest(state, actions) {
@@ -319,7 +320,11 @@ const system = createSlice({
           //  index == 4 && (state.disonlevel = Array.isArray(data) ? data : [])
                index == 4 && (state.deviceStyle = Array.isArray(data) ? data.filter(d => d.state==1) : [])
                index == 5 && (state.enterprise = data || {})
-               index == 6 && (state.currProject = data || {})  //  获取项目当前信息
+               if(index == 6) {
+                state.currProject = data
+                state.themeColor.primaryColor = data?.themeColor || "#237ae4"
+               }
+             
                index == 7 && (state.filterDeviceStyle = data || [])
              }else{
                index== 0 && (state.onelevel=[])

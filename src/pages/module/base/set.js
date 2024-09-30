@@ -338,6 +338,7 @@ export default function ProjectSet({projectId}) {
 
     //imgProject: '',
     projectImage: '',
+    themeColor: '#237ae4',
     homeMenu: 0,
   };  
  

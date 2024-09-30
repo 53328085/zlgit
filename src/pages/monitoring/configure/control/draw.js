@@ -233,6 +233,7 @@ function Draw({ params }, ref) {
     if (success) {
       message.success('保存成功')
       getData()
+      drawClose()
     } else {
       message.warning(errMsg || "数据出错")
     }

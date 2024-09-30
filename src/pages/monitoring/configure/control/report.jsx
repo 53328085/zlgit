@@ -140,7 +140,7 @@ const controlcolumns = [
      },
      {
       title: '启用策略',
-      dataIndex: 'status',     
+      dataIndex: 'enabled',     
       align: 'center',
       render: (text) => text ? <span>启用</span> : <span style={{color: "f00"}}>停用</span>
 
@@ -233,10 +233,20 @@ const controlcolumns = [
             } 
            </Item>
         
-     <Form.Item label="执行分闸" name="autoOpenTime" rules={rules}>
-       <TimePicker  format="HH:mm"   style={{width: "200px"}} placeholder='执行分闸时间' />
+     <Form.Item label="执行分闸" name="autoOpenTime" rules={[
+    {
+      required: true,
+      message: '请选择执行分闸时间'
+    }
+  ]}>
+       <TimePicker  format="HH:mm"   style={{width: "200px"}} placeholder='执行分闸时间'  />
      </Form.Item>
-     <Form.Item label="执行合闸" name="autoCloseTime" rules={rules}>
+     <Form.Item label="执行合闸" name="autoCloseTime" rules={[
+    {
+      required: true,
+      message: '请选择执行合闸时间'
+    }
+  ]}>
        <TimePicker format="HH:mm"   style={{width: "200px"}} placeholder='执行合闸时间' />
      </Form.Item>
      <Form.Item label="备注" name="remark">
@@ -491,6 +501,8 @@ const controlcolumns = [
      
      } catch (error) {
         console.log(error)
+        return Promise.reject(error)
+       
      }
   }, [isAdd])
 
