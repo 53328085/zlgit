@@ -21,10 +21,18 @@ import Ichart  from '@com/useEcharts/Ichart';
    color: #515151;
  }
   .box {
-   width: 50px;
-   height: 50px;
-   border: 1px solid #ff7313;
-   border-radius: 50%;;
+   width: 150px;
+   height: 150px;
+   border: 4px solid #ff7313;
+   overflow: auto;
+   padding: 16px;
+   position: relative;
+   .circle {
+      height: 30px;
+      width: 30px;
+      border: 1px solid #237ae4;
+      border-radius: 50%;
+   }
     
   }
  `
@@ -42,6 +50,8 @@ export default function Index() {
  const ref=useRef()
   
  const tbref = useRef()
+ const cref = useRef()
+ const hid = useRef()
   
 const [num, setNum] = useState(100)
 
@@ -105,6 +115,20 @@ const getclass = () => {
     console.log(sty.fontSize)
   
 }
+  const onOffset = () => {
+      const el = ref.current
+        const rl = cref.current;
+    
+         let x = (el.clientWidth / 2) - (rl.offsetWidth / 2) + 'px';
+         let y = (el.clientHeight / 2) -  (rl.offsetHeight / 2) + 'px';
+         console.log(x)
+         console.log(y)
+         rl.style.cssText = `position:absolute ;top:${y};left: ${x} `
+         console.log(rl.offsetTop)
+         console.log(rl.offsetLeft)
+     // console.log(el.scrollHeight - el.scrollTop - el.clientHeight )
+      
+  }
   
     return (
       <Mainbox>
@@ -114,7 +138,9 @@ const getclass = () => {
       <Button onClick={getNum}>info</Button>
       <Button onClick={clone}>克隆</Button>
       <Button onClick={getclass}>Class</Button>
+      <Button onClick={onOffset}>offset</Button>
       </Space>
+      <main style={{position: 'relative'}}>
          <table ref={tbref} id="tablezl">
             <caption>员工信息表</caption>
             
@@ -137,17 +163,13 @@ const getclass = () => {
                   <td>滨江</td>
                </tr>
             </tbody>
-           
-         </table>
-         <div>前一个元素节点</div>
-            前一个节点 
+           </table>
+      
             <div className="box" data-name-age="zhuzl,46" id="mz" style={{color: "#237ae4", fontSize: "16px"}} onMouseDown={onMouseDown} onMouseOver={onMouseOver} onClick={onClick} ref={ref}>{/* 注释的内容 */}
-               文本节点
-                <span hidden>马来人</span>
+                <div className="circle" ref={cref}></div>
             </div>
-             后一个节点
-             <div>后一个元素节点</div>
-            <p style={{color: "#ff7313"}}>node节点</p>
+            <div style={{width: 0, height: 0, display: 'none'}} ref={hid}>隐藏的元素</div>
+            </main>
 
         {/* 注释也是节点 */}
        </Mainbox>
