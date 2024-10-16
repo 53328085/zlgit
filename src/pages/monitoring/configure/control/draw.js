@@ -2,10 +2,13 @@ import React, { useState, forwardRef, useImperativeHandle, useRef, useEffect } f
 import { Drawer, Select, Button, Typography, Space, Form, Input, message, Switch } from 'antd'
 import { LeftOutlined, RightOutlined } from "@ant-design/icons";
 import styled from 'styled-components'
+import {useSelector} from 'react-redux'
 import Titlelayout from '@com/titlelayout.js'
 import UserTable from "@com/useTable";
 import { AutoValve } from '@api/api'
 import { CustButtonT } from "@com/useButton"
+import {filterDeviceStyle} from '@redux/systemconfig'
+import Devicestyle from "@com/useSerach/devicestyle"
 const { Paragraph } = Typography
 
 const Inptserach = styled(Input.Search)`
@@ -140,11 +143,12 @@ const unselectdevice = [
   }
 ]
 function Draw({ params }, ref) {
+  const deviceStyle = useSelector(filterDeviceStyle)
   const [open, setOpen] = useState(false)
   const [sfrom] = Form.useForm()
   const { Item } = Form
   let { projectId, planId } = params || {}
-  // let {used, unused} = tabledata
+   
   const [usedtb, setusedtable] = useState([])
   const [unusedtb, setUnusedtb] = useState([])
   const unusedtbbk = useRef()
@@ -244,6 +248,7 @@ function Draw({ params }, ref) {
   }))
 
   const changeUnselected = (v) => {
+    console.log(v)
     try {
       if (v != 0) {
         let arr = unusedtbbk.current?.filter(i => v == i.deviceStyle) || []
@@ -389,34 +394,22 @@ function Draw({ params }, ref) {
           <Form
             form={sfrom}
             initialValues={{
-              type: "0",
+              deviceStyle: 0,
             }}
           >
             <Space size={16}>
-              <Item label="设备类型" name="type">
+              <div style={{width: "200px"}}>
+              <Devicestyle projectId={projectId} itemprops={{label: "设备类型"}} onchange={changeUnselected} all={true}  />
+              </div>
+             {/*  <Item label="设备类型" name="type">
                 <Select
                   style={{ width: "112px" }}
                   onChange={changeUnselected}
-                  options={[
-                    {
-                      value: "0",
-                      label: "全部类型",
-                    },
-                    {
-                      value: "1",
-                      label: "电表",
-                    },
-                    {
-                      value: "2",
-                      label: "水表",
-                    },
-                    {
-                      value: "3",
-                      label: "燃气表",
-                    },
-                  ]}
+                  fieldNames={{value: "deviceStyle", label: "name"}}
+                  options={ deviceStyle?.length > 0 ? [{deviceStyle:0 , name: "全部类型"}, ...deviceStyle] : []}
+               
                 ></Select>
-              </Item>
+              </Item> */}
               <Item name="alike" label="设备搜索">
                 <Inptserach
                   allowClear

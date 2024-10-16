@@ -9,6 +9,7 @@ import Titlelayout from '@com/titlelayout'
 import Usetable from '@com/useTable'
 import {RunAutoValve} from '@api/api'
 import {Serach, Cdivider} from "@com/comstyled"
+import {isObject} from "@com/usehandler"
 const {Paragraph, Link} = Typography
 const {Item} = Form
 
@@ -119,8 +120,8 @@ const controlcolumns = [
     dataIndex: 'status',   
     align: 'center',
     render: (text) => {     
-      return  Number(text) === 1 ? "开闸" : "合闸"
-     // return text['1'] === 'Open' ? "开闸" : "合闸"
+    //  return  Number(text) === 1 ? "开闸" : "合闸"
+     return isObject(text) ? text['1'] === 'Open' ? "开闸" : "合闸" : null
     }
   },
   {

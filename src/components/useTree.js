@@ -80,7 +80,7 @@ const fieldNames=datatype===2 ?  {title:'name',key: treekey,children:'childs'} :
       {
         projectId,
         areaId,
-        type:0,
+        type:energytype,
         lineName: name
       },
       {

@@ -114,7 +114,7 @@ function Index({ projectId, userId, onupdate }, ref) {
       data?.filter((d) => d.select == 1)?.map((d) => d.id)
     );
     const [allSelect] = useState(() => data.map((d) => d.id) || []);
-    const [indeterminate, setIndeterminate] = useState(data.find(i => i.select == 1));
+    const [indeterminate, setIndeterminate] = useState(data?.filter((d) => d.select == 1)?.length === data.length ? false :  data.find(i => i.select == 1));
     const [checkAll, setCheckAll] = useState(
       () => data.length === checkedList.length
     );
