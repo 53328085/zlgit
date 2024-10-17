@@ -5,7 +5,7 @@ import styled from 'styled-components'
 
 import { energyShare, Monitoring, EnergyPublicRuntime } from '@api/api'
 import {selectProjectId,selectOneLevel} from '@redux/systemconfig.js'
-import { message,Input,Tree, Radio } from 'antd'
+import { message,Input,Tree, Radio,Checkbox } from 'antd'
  
 import Titlelayout from "@com/titlelayout";
  
@@ -16,7 +16,7 @@ const {LineManagerQuery} = Monitoring.LineManager // 线路查询
 const {queryEnergyCategoryTree} = EnergyPublicRuntime
 const Treebox = styled.div`
        display: grid;
-       grid-template-rows: ${(props) => props.showline == "false" ? '32px 1fr' : '32px 32px 556px'};
+       grid-template-rows: ${(props) => props.showline == "false" ? '32px 32px 1fr' : '32px 32px 32px 556px'};
        row-gap: 16px;
        flex: 1;
        .ant-tree{
@@ -40,7 +40,22 @@ export default memo(function Index({areaId, setTreeId,  setLine, showline=true, 
 
  // const treekey =  typeTree == 0 ?  "areaId" : "id" ; 
   const [expandedKeys, setExpandedKeys] = useState([]);
- 
+  let treeIdRef = useRef([])
+  const [indeterminate, setIndeterminate] = useState(false);
+  const [checked, setChecked] = useState(false)
+ const allSelected = ({target: {checked}}) => {
+    
+    if(checked) {
+      setCheckedKeys(treeIdRef.current)
+      setTreeId(treeIdRef.current)
+      setChecked(true)
+    }else {
+      setCheckedKeys([])
+      setTreeId([])
+      setChecked(false)
+    }
+    setIndeterminate(false)
+ }
 
  let arr = [], expand = []
  const getId = (nodes, type, child='nodes') => {
@@ -65,6 +80,7 @@ const fieldNames=datatype===2 ?  {title:'name',key: treekey,children:'childs'} :
 //const fieldNames= {title:'name',key: treekey,children:'nodes'}  
  
   //获取树的数据，0 网格, 1 线路, 2 公共能耗分类
+
  const getTreeData= async (name='')=>{
  
   let idx = Number.isInteger(datatype) ? datatype : typeTree;
@@ -121,6 +137,9 @@ const fieldNames=datatype===2 ?  {title:'name',key: treekey,children:'childs'} :
          }
         
          
+         treeIdRef.current = arr
+         setIndeterminate(false)
+         setChecked(true)
          setTreeData(data)  
          setCheckedKeys(arr);
          setExpandedKeys(expand)
@@ -135,6 +154,7 @@ const fieldNames=datatype===2 ?  {title:'name',key: treekey,children:'childs'} :
          }
        */
       }else{
+        treeIdRef.current = []
         setTreeData([]) 
         setCheckedKeys([])
        // message.error(errMsg || '数据出错')
@@ -148,9 +168,11 @@ const fieldNames=datatype===2 ?  {title:'name',key: treekey,children:'childs'} :
   } 
  // 根据区域查询
  const onCheck = ({checked}) => {
-    
+    let f = checked?.length > 0 && checked?.length < treeIdRef.current?.length
+    setIndeterminate(f)
     setTreeId(checked)
     setCheckedKeys(checked)
+    setChecked(checked?.length === treeIdRef.current?.length)
      
  } 
  // 树搜索
@@ -204,15 +226,18 @@ const fieldNames=datatype===2 ?  {title:'name',key: treekey,children:'childs'} :
           onChange={onChange}
           onSearch={getTreeData}
           />
+          <Checkbox   onChange={allSelected} indeterminate={indeterminate} checked={checked}>全部选中</Checkbox>
           <Tree 
           treeData={treeData} 
           checkable 
+        
           onExpand={onExpand}        
           expandedKeys={expandedKeys}
           checkedKeys={checkedKeys}
           onCheck={onCheck}
           fieldNames={fieldNames}
           checkStrictly
+          indeterminate={indeterminate}
           />
         </Treebox>
         </Titlelayout>

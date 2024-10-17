@@ -29,6 +29,7 @@ export default function Common({ type }) {
     const [tdata, setTdata] = useState([])
     const [areaOpts, setAreaOpts] = useState([])
     const [open, setOpen] = useState(false)
+    const [lineName, setLineName] = useState('')
     const [treelist, setTreeList] = useState([])
     const [addmianform] = Form.useForm()
     const [selform] = Form.useForm()
@@ -116,8 +117,8 @@ export default function Common({ type }) {
         addmianRef.current.onOpen()
     }
     //打开配置抽屉
-    const openDrawer = (tree) => {
-        console.log('tree', tree)
+    const openDrawer = (tree,name) => {
+       setLineName(name)
         setOpen(true)
         setTreeList(tree)
         //setforwardRef.current.setSelectedRowKeys([])
@@ -188,7 +189,8 @@ export default function Common({ type }) {
         ref: setforwardRef,
         getLineManagerQuery,
         gettablelineData,
-        treelist
+        treelist,
+        lineName
     }
     return (
         <div style={{ height: '100%', position: 'relative', overflow: 'hidden', }}>
@@ -288,7 +290,7 @@ let Treeline = forwardRef(
                 projectId,
                 name: encodeURIComponent(name),
             }
-            console.log(params)
+           
             const res = await LineManagerUpdate(params)
             if (res.success) {
                 message.success('编辑成功')
@@ -299,8 +301,9 @@ let Treeline = forwardRef(
             }
         }
         //打开配置窗口
-        const opneSet = () => {
-            openDrawer(tree)
+        const opneSet = (name) => {
+            openDrawer(tree,name)
+            
 
         }
         //关闭配置窗口
@@ -367,7 +370,7 @@ let Treeline = forwardRef(
                                 <Link onClick={() => { openAdd(tree, alldata) }}>{t("button:new")}</Link>
                                 <Link onClick={() => { openEdit(tree) }}>{t("button:edit")}</Link>
                             </>}
-                            <Link onClick={() => { opneSet() }}>{t("button:configure")}</Link>
+                            <Link onClick={() => { opneSet(tree.name) }}>{t("button:configure")}</Link>
                             {
                                 publish ? null : <Link type="danger" onClick={() => { openDel(tree) }}>{t("button:delete")}</Link>
                             }
@@ -442,7 +445,7 @@ let DeleteModal = ({ delmodalRef, name = '', content = '', ...other }) => {
 }
 
 //配置线路
-let SetLine = forwardRef(({ open, closeDrawer, getLineManagerQuery, treelist }, ref) => {
+let SetLine = forwardRef(({ open,lineName, closeDrawer, getLineManagerQuery, treelist }, ref) => {
     const publish = useSelector(publishState)
     const { Search } = Input;
     const [dataSource, setDataSource] = useState([])//未选data
@@ -613,6 +616,9 @@ let SetLine = forwardRef(({ open, closeDrawer, getLineManagerQuery, treelist }, 
     }))
     return (
         <div style={{ position: 'absolute', width: 1686, height: 755, top: '50%', left: '200px', transform: 'translateY(-50%)', background: "#003366", padding: 32, display: 'flex' }}>
+           <div style={{position: "absolute", top: "4px", color: "#fff", fontSize: '16px'}}>
+                        {lineName}
+            </div>
             <div style={{ position: 'relative', width: 692 }}>
                 <div style={{ marginBottom: 32, background: "#ffffff", padding: 16, height: 259 }} key="up" >
                     <BlueColumn name="线路总表" styled={{ marginBottom: 16 }}></BlueColumn>
