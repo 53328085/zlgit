@@ -42,15 +42,15 @@ import {message} from 'antd'
   
 
   const addmarker = (latlng, text='') => {
-      map.clearOverLays()
+      map?.clearOverLays()
      let marker = new  T.Marker(latlng);
      let label = new T.Label({
       text,
       position: latlng,
       offset: new T.Point(-9, 0),
      })
-     map.addOverLay(marker);
-     map.addOverLay(label)
+     map?.addOverLay(marker);
+     map?.addOverLay(label)
   } 
  
   const addInfo = (str, text='') => {
@@ -61,7 +61,7 @@ import {message} from 'antd'
       let infoWin = new T.InfoWindow(text, {offset:new T.Point(0,0),closeButton:false, ...infoconfig});
     //  infoWin.setLngLat(latlng);     
      
-      map.addOverLay(marker);
+      map?.addOverLay(marker);
      // map.addOverLay(infoWin)
      marker.addEventListener("mouseover", function() {
       
@@ -108,24 +108,26 @@ import {message} from 'antd'
   }
  
   const mapClick = (res) =>  {  
-    
+    try {
     if(res.getStatus() == 0 && res.addressComponent) {
       
       let {addressComponent,  location: {lon, lat},} = res
-      console.log(res)
+      
       let {city, province, county, address, address_distance,road='', poi='', poi_position='',poi_distance='',} = addressComponent
       
       let custaddress = city + county + road + poi
      // console.log(custaddress);
      
       setAaddress && setAaddress({lng: lon, lat, address: custaddress,  province, city, district: county, street: address, streetNumber:address_distance})
-      map.clearOverLays();
+      map?.clearOverLays();
       addmarker(new T.LngLat(lon, lat), custaddress)
     }else {
 
       setAaddress && setAaddress({})
     }
-   
+  } catch (error) {
+      console.log(error)
+  }
   }
   useImperativeHandle(ref, () => ({
     serachMap: serachMap 

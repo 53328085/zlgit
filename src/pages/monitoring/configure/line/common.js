@@ -2,16 +2,17 @@ import React, { useEffect, useState, useRef, forwardRef, useImperativeHandle, Fr
 import { useSelector } from 'react-redux'
 import { useTranslation } from "react-i18next"
 import { Divider, Select, Tree, Row, Col, Input, Form, message, Space, Table, Button, Typography } from 'antd'
-
+import {useAntdTable} from 'ahooks'
 import commonstyle from './commonstyle.module.less'
 import Modal from '@com/useModal';
 import BlueColumn from '@com/bluecolumn'
 import { CustButton } from "@com/useButton"
 import { Monitoring } from '@api/api'
 import Mask from '@com/mask'
-// import Table from '@com/useTable'
+  import Ctable from '@com/useTable'
 import { LeftOutlined, RightOutlined } from '@ant-design/icons';
 import { publishState } from '@redux/systemconfig'
+import { Serach } from "@com/comstyled";
 const { LineManager: {
     AeraQueryAll,
     LineManagerQuery,
@@ -19,7 +20,8 @@ const { LineManager: {
     LineManagerUpdate,
     LineManagerDelete,
     QueryUnusedMeter,
-    ConfigureMeter
+    ConfigureMeter,
+    LineDevicePage
 } } = Monitoring
 
 const { Link } = Typography
@@ -43,6 +45,54 @@ export default function Common({ type }) {
         height: 32,
         lineHeight: '32px',
     }
+    // 查询已接入的表
+    let areaId = Form.useWatch('area', selform)
+    const [lineform] = Form.useForm()
+    const linecolumns = [
+        { title: '设备编号', dataIndex: 'sn', align: "center", width: 201 },
+        { title: '设备名称', dataIndex: 'name', align: "center", width: 201 },
+        { title: '安装地址', dataIndex: 'address', align: "center", },
+
+    ]
+   
+    const linedevicePage = async({current, pageSize},formdata) => {
+        try {
+            console.log(formdata)
+            let {alike} = formdata
+            if ([projectId, areaId].every(d => Number.isInteger(d))) {
+                let params = {
+                    projectId,
+                    areaId,
+                    alike,
+                    pageNum: current,
+                    pageSize,
+                }
+              let {success,errMsg, data, total} =  await LineDevicePage(params)
+              if(success && Array.isArray(data) && data?.length > 0) {
+                 return {
+                    list: data,
+                    total
+                 }
+              }else {
+                if(!success) message.warning(errMsg || "数据出错")
+                return {
+                    list: [],
+                    total: 0
+                }
+              }
+            }
+        } catch (error) {
+            console.log(error)
+        }
+       
+
+    }
+  const {tableProps, search} = useAntdTable(linedevicePage, {
+    form:lineform,
+    defaultPageSize: 14,
+    refreshDeps: [projectId, areaId]
+  })
+ const {submit:linesubmit} = search
     //查询区域
     const getAeraQueryAll = async () => {
         const res = await AeraQueryAll(projectId)
@@ -194,6 +244,7 @@ export default function Common({ type }) {
     }
     return (
         <div style={{ height: '100%', position: 'relative', overflow: 'hidden', }}>
+
             <div style={{ display: 'flex', justifyContent: 'space-between' }}>
                 <Form form={selform}>
                     <Form.Item name="area">
@@ -216,6 +267,8 @@ export default function Common({ type }) {
 
             </div>
             <Divider style={{ borderColor: '#d7d7d7', margin: '0 0 16px 0' }} dashed></Divider>
+            <div style={{display: 'flex', columnGap: "32px"}}>
+                <div style={{overflow: "auto"}}>
             <div style={{ display: 'flex', margin: '16px 0 24px 0' }}>
                 <div style={{ ...titlelinecss, width: 416, paddingLeft: 24 }}>线路图</div>
                 <div style={{ ...titlelinecss, width: 48, margin: '0 16px', textAlign: 'center' }}>设备数</div>
@@ -229,6 +282,22 @@ export default function Common({ type }) {
                     defaultExpandAll
                     treeData={tdata}
                 />
+            </div>
+            </div>
+            <div style={{display: 'flex',flex:1, flexDirection: "column", columnGap: '16px', paddingTop: "16px"}}>
+              <Form form={lineform} layout='line' >
+                 <Form.Item name="alike">
+                 <Serach
+                    size="middle"
+                    placeholder="输入编号/设备地址/设备名称"
+                    style={{ width: "340px" }}
+                    allowClear
+                    onSearch={linesubmit}
+                  />
+                 </Form.Item>
+              </Form>
+              <Ctable columns={linecolumns} {...tableProps}></Ctable>
+            </div>
             </div>
             <AddMianMianModal {...addmianprops}></AddMianMianModal>
             <Mask task={open}> <SetLine {...setprops}></SetLine></Mask>
