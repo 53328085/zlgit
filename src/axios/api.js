@@ -1859,7 +1859,9 @@ export const Monitoring = {
   //线路管理
   LineManager: {
     LineDevicePage: (params) =>
-      server.post(`/Monitor/LineManager/LineDevicePage`, {params}), //获取已接入的表
+      server.post(`/Monitor/LineManager/LineDevicePage`,params), //获取已接入的表
+    RemoveUsedMeter: (params) =>
+      server.post(`/Monitor/LineManager/RemoveUsedMeter`,params), //解绑
     AeraQueryAll: (projectId) =>
       server.get(`/General/Area/QueryAll?projectId=${projectId}&level=1`), //获取区域
     LineManagerQuery: ({ projectId, type, areaId, lineName = "" }) =>

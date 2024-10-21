@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useRef, forwardRef, useImperativeHandle, Fragment, useMemo } from 'react'
 import { useSelector } from 'react-redux'
 import { useTranslation } from "react-i18next"
-import { Divider, Select, Tree, Row, Col, Input, Form, message, Space, Table, Button, Typography } from 'antd'
+import { Divider, Select, Tree, Row, Col, Input, Form, message, Space, Table, Button, Typography,Popconfirm  } from 'antd'
 import {useAntdTable} from 'ahooks'
 import commonstyle from './commonstyle.module.less'
 import Modal from '@com/useModal';
@@ -21,7 +21,8 @@ const { LineManager: {
     LineManagerDelete,
     QueryUnusedMeter,
     ConfigureMeter,
-    LineDevicePage
+    LineDevicePage,
+    RemoveUsedMeter
 } } = Monitoring
 
 const { Link } = Typography
@@ -49,16 +50,26 @@ export default function Common({ type }) {
     let areaId = Form.useWatch('area', selform)
     const [lineform] = Form.useForm()
     const linecolumns = [
-        { title: '设备编号', dataIndex: 'sn', align: "center", width: 201 },
-        { title: '设备名称', dataIndex: 'name', align: "center", width: 201 },
-        { title: '安装地址', dataIndex: 'address', align: "center", },
-
+        { title: '设备编号', dataIndex: 'deviceSn', align: "center",kye: 'deviceSn',  },
+        { title: '设备名称', dataIndex: 'deviceName', align: "center",key: 'deviceName',  },
+        { title: '线路名称', dataIndex: 'lineName', align: "center",key: 'lineName'  },
+        { title: '安装地址', dataIndex: 'deviceAddress',key: "deviceAddress", align: "center", },
+        { title: '总分表', dataIndex: 'subSummary',key: "subSummary", align: "center",render: (text) => {
+            return text == 0 ? '总表' : text ==1  ? "分表" : null
+        }},
+        { title: '操作', dataIndex: 'deviceAddress',key: "deviceAddress", align: "center", 
+           render: (_, record) => { 
+          //  return    <Link onClick={() => ononConfirm(record)}>解绑</Link> 
+          return <Popconfirm title="是否确认解绑" onConfirm={() => ononConfirm(record)} ><Link>解绑</Link></Popconfirm>
+           }
+        },
     ]
+    
    
     const linedevicePage = async({current, pageSize},formdata) => {
         try {
             console.log(formdata)
-            let {alike} = formdata
+            let {alike=''} = formdata
             if ([projectId, areaId].every(d => Number.isInteger(d))) {
                 let params = {
                     projectId,
@@ -87,12 +98,33 @@ export default function Common({ type }) {
        
 
     }
-  const {tableProps, search} = useAntdTable(linedevicePage, {
+  const {tableProps, search, params, run} = useAntdTable(linedevicePage, {
     form:lineform,
     defaultPageSize: 14,
     refreshDeps: [projectId, areaId]
   })
+  console.log(params)
  const {submit:linesubmit} = search
+ const ononConfirm =async ({deviceSn}) => {
+   try {
+    if(!Number.isInteger(projectId)) return message.warning("没有项目id")
+    let body ={
+      projectId, 
+      sn: deviceSn
+    }
+   let {success, errMsg} =  await  RemoveUsedMeter(body)
+   if(success) {
+     message.success('解绑成功')
+     let formdata = lineform.getFieldsValue()
+     console.log(formdata)
+    run({...params[0]}, formdata)
+   }else {
+     message.warning(errMsg || "数据出错")
+   }
+   } catch (error) {
+    console.log(error)
+   }
+ }
     //查询区域
     const getAeraQueryAll = async () => {
         const res = await AeraQueryAll(projectId)
@@ -286,7 +318,7 @@ export default function Common({ type }) {
             </div>
             <div style={{display: 'flex',flex:1, flexDirection: "column", columnGap: '16px', paddingTop: "16px"}}>
               <Form form={lineform} layout='line' >
-                 <Form.Item name="alike">
+                 <Form.Item name="alike" initialValue=''>
                  <Serach
                     size="middle"
                     placeholder="输入编号/设备地址/设备名称"
