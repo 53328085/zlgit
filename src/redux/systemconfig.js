@@ -192,7 +192,7 @@ const system = createSlice({
     initialState,
     reducers: {
         getCurrProjectInfo(state, {payload}) { // 当前项目信息 
-            state.themeColor.primaryColor= payload.themeColor,
+            state.themeColor.primaryColor= typeof payload.themeColor !=="string"  ? "#237ae4" : payload.themeColor ,
             state.currProject = payload   
         },
         configProject(state, {payload}) { // 项目是否处于设计状态     
