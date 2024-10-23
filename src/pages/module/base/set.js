@@ -362,7 +362,10 @@ const queryProjectInfo = async () => {
     for(let key of Object.keys(params)) {
       if (key == 'validStageTime' && data[key]) {
          params[key] = moment(data[key]);
-      } else {
+      } else if(key == 'themeColor') {
+        params[key] = data[key] || "#237ae4"
+      }
+      else {
          params[key] = data[key];
       }
     }
