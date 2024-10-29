@@ -46,8 +46,8 @@ const Chartbox = styled.div`
 // 2,7
 const Chartin = (props) => {
     let {group, data, deviceStyle} = props
-    console.log(data)
-    if(!group) return <Empty />
+    
+    if(!group || !Array.isArray(data) || data.length == 0) return <Empty description={group ? `${group}暂无数据` : null} />
 
     let title = {
         EC: '电流(A)',
@@ -56,13 +56,12 @@ const Chartin = (props) => {
        EP: '电压(V)',
        TP: '温度(℃)'
     }[group] || '未知'
-    let isempty = !Array.isArray(data) || data.length ==0
+    
      
    
   
     let ref = useRef()
-    useEffect(() => {
-        if(isempty) return
+    useEffect(() => { 
         let dimensions=["time"]
         let source = []        
          let series=  Array(data.length).fill({
@@ -106,8 +105,7 @@ const Chartin = (props) => {
     }, [data])
     return (
         <Titlelayout title={title} layout="flex" pd={0} bordered="n">
-           <div style={{flex: 1}} ref={ref}>
-             {isempty && <Empty />}
+           <div style={{flex: 1}} ref={ref}> 
            </div>
         </Titlelayout>
     )
