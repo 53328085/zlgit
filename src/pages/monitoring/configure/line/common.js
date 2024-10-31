@@ -1,15 +1,15 @@
 import React, { useEffect, useState, useRef, forwardRef, useImperativeHandle, Fragment, useMemo } from 'react'
 import { useSelector } from 'react-redux'
 import { useTranslation } from "react-i18next"
-import { Divider, Select, Tree, Row, Col, Input, Form, message, Space, Table, Button, Typography,Popconfirm  } from 'antd'
-import {useAntdTable} from 'ahooks'
+import { Divider, Select, Tree, Row, Col, Input, Form, message, Space, Table, Button, Typography, Popconfirm } from 'antd'
+import { useAntdTable } from 'ahooks'
 import commonstyle from './commonstyle.module.less'
 import Modal from '@com/useModal';
 import BlueColumn from '@com/bluecolumn'
 import { CustButton } from "@com/useButton"
 import { Monitoring } from '@api/api'
 import Mask from '@com/mask'
-  import Ctable from '@com/useTable'
+import Ctable from '@com/useTable'
 import { LeftOutlined, RightOutlined } from '@ant-design/icons';
 import { publishState } from '@redux/systemconfig'
 import { Serach } from "@com/comstyled";
@@ -50,26 +50,27 @@ export default function Common({ type }) {
     let areaId = Form.useWatch('area', selform)
     const [lineform] = Form.useForm()
     const linecolumns = [
-        { title: '设备编号', dataIndex: 'deviceSn', align: "center",kye: 'deviceSn',  },
-        { title: '设备名称', dataIndex: 'deviceName', align: "center",key: 'deviceName',  },
-        { title: '线路名称', dataIndex: 'lineName', align: "center",key: 'lineName'  },
-        { title: '安装地址', dataIndex: 'deviceAddress',key: "deviceAddress", align: "center", },
-        { title: '总分表', dataIndex: 'subSummary',key: "subSummary", align: "center",render: (text) => {
-            return text == 0 ? '总表' : text ==1  ? "分表" : null
-        }},
-        { title: '操作', dataIndex: 'deviceAddress',key: "deviceAddress", align: "center", 
-           render: (_, record) => { 
-          //  return    <Link onClick={() => ononConfirm(record)}>解绑</Link> 
-          return <Popconfirm title="是否确认解绑" onConfirm={() => ononConfirm(record)} ><Link>解绑</Link></Popconfirm>
-           }
+        { title: '设备编号', dataIndex: 'deviceSn', align: "center", kye: 'deviceSn', },
+        { title: '设备名称', dataIndex: 'deviceName', align: "center", key: 'deviceName', },
+        { title: '线路名称', dataIndex: 'lineName', align: "center", key: 'lineName' },
+        { title: '安装地址', dataIndex: 'deviceAddress', key: "deviceAddress", align: "center", },
+        {
+            title: '总分表', dataIndex: 'subSummary', key: "subSummary", align: "center", render: (text) => {
+                return text == 0 ? '分表' : text == 1 ? "总表" : null
+            }
+        },
+        {
+            title: '操作', dataIndex: 'deviceAddress', key: "deviceAddress", align: "center",
+            render: (_, record) => {
+                //  return    <Link onClick={() => ononConfirm(record)}>解绑</Link> 
+                return <Popconfirm title="是否确认解绑" onConfirm={() => ononConfirm(record)} ><Link>解绑</Link></Popconfirm>
+            }
         },
     ]
-    
-   
-    const linedevicePage = async({current, pageSize},formdata) => {
+    const linedevicePage = async ({ current, pageSize }, formdata) => {
         try {
-            console.log(formdata)
-            let {alike=''} = formdata
+            console.log(current, pageSize, formdata, "------")
+            let { alike = '' } = formdata
             if ([projectId, areaId].every(d => Number.isInteger(d))) {
                 let params = {
                     projectId,
@@ -77,54 +78,57 @@ export default function Common({ type }) {
                     alike,
                     pageNum: current,
                     pageSize,
+                    meterType: type
                 }
-              let {success,errMsg, data, total} =  await LineDevicePage(params)
-              if(success && Array.isArray(data) && data?.length > 0) {
-                 return {
-                    list: data,
-                    total
-                 }
-              }else {
-                if(!success) message.warning(errMsg || "数据出错")
-                return {
-                    list: [],
-                    total: 0
+                let { success, errMsg, data, total } = await LineDevicePage(params)
+                if (success && Array.isArray(data) && data?.length > 0) {
+                    return {
+                        list: data,
+                        total
+                    }
+
+                } else {
+                    if (!success) message.warning(errMsg || "数据出错")
+                    return {
+                        list: [],
+                        total: 0
+                    }
                 }
-              }
             }
         } catch (error) {
             console.log(error)
         }
-       
+
 
     }
-  const {tableProps, search, params, run} = useAntdTable(linedevicePage, {
-    form:lineform,
-    defaultPageSize: 14,
-    refreshDeps: [projectId, areaId]
-  })
-  console.log(params)
- const {submit:linesubmit} = search
- const ononConfirm =async ({deviceSn}) => {
-   try {
-    if(!Number.isInteger(projectId)) return message.warning("没有项目id")
-    let body ={
-      projectId, 
-      sn: deviceSn
+    const { tableProps, search, params, refresh, run } = useAntdTable(linedevicePage, {
+        form: lineform,
+        defaultPageSize: 14,
+        refreshDeps: [projectId, areaId]
+    })
+    console.log(params)
+    const { submit: linesubmit } = search
+    const ononConfirm = async ({ deviceSn }) => {
+        try {
+            if (!Number.isInteger(projectId)) return message.warning("没有项目id")
+            let body = {
+                projectId,
+                sn: deviceSn
+            }
+            let { success, errMsg } = await RemoveUsedMeter(body)
+            if (success) {
+                message.success('解绑成功')
+                let formdata = lineform.getFieldsValue()
+                console.log(formdata)
+                getLineManagerQuery()
+                run({ ...params[0] }, formdata)
+            } else {
+                message.warning(errMsg || "数据出错")
+            }
+        } catch (error) {
+            console.log(error)
+        }
     }
-   let {success, errMsg} =  await  RemoveUsedMeter(body)
-   if(success) {
-     message.success('解绑成功')
-     let formdata = lineform.getFieldsValue()
-     console.log(formdata)
-    run({...params[0]}, formdata)
-   }else {
-     message.warning(errMsg || "数据出错")
-   }
-   } catch (error) {
-    console.log(error)
-   }
- }
     //查询区域
     const getAeraQueryAll = async () => {
         const res = await AeraQueryAll(projectId)
@@ -199,8 +203,8 @@ export default function Common({ type }) {
         addmianRef.current.onOpen()
     }
     //打开配置抽屉
-    const openDrawer = (tree,name) => {
-       setLineName(name)
+    const openDrawer = (tree, name) => {
+        setLineName(name)
         setOpen(true)
         setTreeList(tree)
         //setforwardRef.current.setSelectedRowKeys([])
@@ -272,7 +276,8 @@ export default function Common({ type }) {
         getLineManagerQuery,
         gettablelineData,
         treelist,
-        lineName
+        lineName,
+        refresh
     }
     return (
         <div style={{ height: '100%', position: 'relative', overflow: 'hidden', }}>
@@ -299,37 +304,37 @@ export default function Common({ type }) {
 
             </div>
             <Divider style={{ borderColor: '#d7d7d7', margin: '0 0 16px 0' }} dashed></Divider>
-            <div style={{display: 'flex', columnGap: "32px"}}>
-                <div style={{overflow: "auto"}}>
-            <div style={{ display: 'flex', margin: '16px 0 24px 0' }}>
-                <div style={{ ...titlelinecss, width: 416, paddingLeft: 24 }}>线路图</div>
-                <div style={{ ...titlelinecss, width: 48, margin: '0 16px', textAlign: 'center' }}>设备数</div>
-                <div style={{ ...titlelinecss, width: 208, textAlign: 'center' }}>操作</div>
-            </div>
+            <div style={{ display: 'flex', columnGap: "32px" }}>
+                <div style={{ overflow: "auto" }}>
+                    <div style={{ display: 'flex', margin: '16px 0 24px 0' }}>
+                        <div style={{ ...titlelinecss, width: 416, paddingLeft: 24 }}>线路图</div>
+                        <div style={{ ...titlelinecss, width: 48, margin: '0 16px', textAlign: 'center' }}>设备数</div>
+                        <div style={{ ...titlelinecss, width: 208, textAlign: 'center' }}>操作</div>
+                    </div>
 
-            <div style={{ height: "600px", overflow: "auto" }}>
-                <Tree
-                    className={commonstyle.treeclass}
-                    selectable={false}
-                    defaultExpandAll
-                    treeData={tdata}
-                />
-            </div>
-            </div>
-            <div style={{display: 'flex',flex:1, flexDirection: "column", columnGap: '16px', paddingTop: "16px"}}>
-              <Form form={lineform} layout='line' >
-                 <Form.Item name="alike" initialValue=''>
-                 <Serach
-                    size="middle"
-                    placeholder="输入编号/设备地址/设备名称"
-                    style={{ width: "340px" }}
-                    allowClear
-                    onSearch={linesubmit}
-                  />
-                 </Form.Item>
-              </Form>
-              <Ctable columns={linecolumns} {...tableProps}></Ctable>
-            </div>
+                    <div style={{ height: "600px", overflow: "auto" }}>
+                        <Tree
+                            className={commonstyle.treeclass}
+                            selectable={false}
+                            defaultExpandAll
+                            treeData={tdata}
+                        />
+                    </div>
+                </div>
+                <div style={{ display: 'flex', flex: 1, flexDirection: "column", columnGap: '16px', paddingTop: "16px" }}>
+                    <Form form={lineform} layout='line' >
+                        <Form.Item name="alike" initialValue=''>
+                            <Serach
+                                size="middle"
+                                placeholder="输入编号/设备地址/设备名称"
+                                style={{ width: "340px" }}
+                                allowClear
+                                onSearch={linesubmit}
+                            />
+                        </Form.Item>
+                    </Form>
+                    <Ctable columns={linecolumns} {...tableProps}></Ctable>
+                </div>
             </div>
             <AddMianMianModal {...addmianprops}></AddMianMianModal>
             <Mask task={open}> <SetLine {...setprops}></SetLine></Mask>
@@ -391,7 +396,7 @@ let Treeline = forwardRef(
                 projectId,
                 name: encodeURIComponent(name),
             }
-           
+
             const res = await LineManagerUpdate(params)
             if (res.success) {
                 message.success('编辑成功')
@@ -403,8 +408,8 @@ let Treeline = forwardRef(
         }
         //打开配置窗口
         const opneSet = (name) => {
-            openDrawer(tree,name)
-            
+            openDrawer(tree, name)
+
 
         }
         //关闭配置窗口
@@ -546,7 +551,7 @@ let DeleteModal = ({ delmodalRef, name = '', content = '', ...other }) => {
 }
 
 //配置线路
-let SetLine = forwardRef(({ open,lineName, closeDrawer, getLineManagerQuery, treelist }, ref) => {
+let SetLine = forwardRef(({ open, lineName, closeDrawer, getLineManagerQuery, treelist, refresh }, ref) => {
     const publish = useSelector(publishState)
     const { Search } = Input;
     const [dataSource, setDataSource] = useState([])//未选data
@@ -635,6 +640,7 @@ let SetLine = forwardRef(({ open,lineName, closeDrawer, getLineManagerQuery, tre
     }
     //未选择to总表
     const summaryToLeft = () => {
+        summaryMeter
 
         /*  if (selectedRows.length !== 1 || summaryMeter.length === 1) {
              message.warning('总表最多为一条')
@@ -685,6 +691,7 @@ let SetLine = forwardRef(({ open,lineName, closeDrawer, getLineManagerQuery, tre
             message.success('线路配置成功')
             closeDrawer()
             getLineManagerQuery()
+            refresh()
         } else {
             message.error(resp.errMsg)
         }
@@ -717,8 +724,8 @@ let SetLine = forwardRef(({ open,lineName, closeDrawer, getLineManagerQuery, tre
     }))
     return (
         <div style={{ position: 'absolute', width: 1686, height: 755, top: '50%', left: '200px', transform: 'translateY(-50%)', background: "#003366", padding: 32, display: 'flex' }}>
-           <div style={{position: "absolute", top: "4px", color: "#fff", fontSize: '16px'}}>
-                        {lineName}
+            <div style={{ position: "absolute", top: "4px", color: "#fff", fontSize: '16px' }}>
+                {lineName}
             </div>
             <div style={{ position: 'relative', width: 692 }}>
                 <div style={{ marginBottom: 32, background: "#ffffff", padding: 16, height: 259 }} key="up" >
@@ -728,7 +735,7 @@ let SetLine = forwardRef(({ open,lineName, closeDrawer, getLineManagerQuery, tre
                         pagination={false}
                         rowSelection={{ selectedRowKeys: summaryRowKeys, onChange: summarySelectChange }}
                         columns={columns}
-                        scroll={{ y: "100%" }}
+                        scroll={{ y: 130 }}
                         size={'small'}
                         rowKey={record => record.id}
                         style={{ height: 139 }}
