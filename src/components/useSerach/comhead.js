@@ -178,8 +178,10 @@ const dateselect = (
 
   <Item noStyle  shouldUpdate={(pre,cur) => pre.type!=cur.type}  >
       {
-        ({getFieldValue}) => {
+        ({getFieldValue,setFieldValue}) => {
+          
           let type = ['date', 'date', 'month', 'year'][getFieldValue('type')] 
+          console.log('type', type)
          return (
           <Item name="date" initialValue={moment(new Date(), 'YYYY-MM-DD')}> 
              <DatePicker  picker={type}   style={{width: '160px'}} />

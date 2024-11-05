@@ -93,15 +93,15 @@ export default function Index() {
   const roomId = useSelector(selectcurlRommid)
   const rname = useSelector(roomName)
 
-  const state = useReactive({
+    const state = useReactive({
     dcScreen: [],
     environmentVo: {},
     imgBg: '',
     roomDevice: {},
     roomStatus: {},
     transformer: []
-  })
-
+  })  
+  
   const init = {
     door: [],
     fire: [],
@@ -144,13 +144,14 @@ export default function Index() {
     try {
       const res = await DistributionRoomRuntime.OverviewInfo({ projectId, roomId })
       if (res.success) {
-        if (res.data) {
+        if (isObject(res.data)) {
+         
           state.dcScreen = res.data.dcScreen
           state.environmentVo = res.data.environmentVo
           state.imgBg = res.data.imgBg
           state.roomDevice = res.data.roomDevice
           state.roomStatus = res.data.roomStatus
-          state.transformer = res.data.transformer
+          state.transformer = res.data.transformer 
         }
       } else {
         message.error(res.errMsg)
@@ -190,7 +191,7 @@ export default function Index() {
 
 
             {/* door, fire, ht, noise, sF6, smoke, water */}
-            <Image src={imgBg} preview={false} fallback={dimg} />
+            <Image src={imgBg || dimg} preview={false}   />
           </div>
           <div className='cardlocal'>
             {/* <HoverList keys={keys1} values={['10/0.4',1,64.25,100,350,12]}>配电房概述</HoverList>
@@ -260,8 +261,8 @@ export default function Index() {
               变压器监控
               <div className="list" >
                 <Collapse accordion expandIconPosition="end" ghost>
-                  {
-                    state.transformer.map((item, index) =>{
+                   {
+                    state.transformer?.map((item, index) =>{
                       return (
                         <Collapse.Panel header={item.name} key={index}>
                           <div className="line">
@@ -315,7 +316,7 @@ export default function Index() {
                         </Collapse.Panel>
                       )
                     })
-                  }
+                  } 
                 </Collapse>
               </div>
             </HoverDiv>
@@ -324,7 +325,7 @@ export default function Index() {
               <div className="list" >
                 <Collapse accordion expandIconPosition="end" ghost>
                   {
-                    state.dcScreen.map((item, index) =>{
+                    state.dcScreen?.map((item, index) =>{
                       return (
                         <Collapse.Panel header={item.name} key={index}>
                           <div className="line">
@@ -351,29 +352,60 @@ export default function Index() {
                         </Collapse.Panel>
                       )
                     })
-                  }
+                  }  
                 </Collapse>
               </div>
             </HoverDiv>
             <HoverDiv>
               环境监控
               <div className="list" >
-                <div className="line">
+                 {
+                  (Array.isArray(state.environmentVo.ht) && state.environmentVo?.ht.length > 0) ?
+                  state.environmentVo?.ht.map(h => (
+                   <div className="line">
                   <span>温度</span>
-                  <span>{state.environmentVo.ht || '-'}</span>
-                </div>
+                  <span>{h.tValue}</span>
+                   </div>
+                   
+                  ))
+                  :  <div className="line">
+                  <span>温度</span>
+                  <span> '-'</span>
+                </div>  
+                 } 
+                  {
+                  (Array.isArray(state.environmentVo.ht) && state.environmentVo?.ht.length > 0) ?
+                  state.environmentVo?.ht.map(h => ( 
+                   <div className="line">
+                  <span>湿度</span>
+                  <span>{h.hValue}</span>
+                   </div> 
+                  ))
+                  :  
                 <div className="line">
                   <span>湿度</span>
-                  <span>{state.environmentVo.sF6 || '-'}</span>
+                  <span> '-'</span>
                 </div>
+                
+                 } 
                 <div className="line">
                   <span>噪音</span>
                   <span>{state.environmentVo.noise || '-'}</span>
                 </div>
-                <div className="line">
+                {
+                  (Array.isArray(state.environmentVo.water) && state.environmentVo.water?.length > 0) ?
+                  state.environmentVo.water?.map(w => (
+                    <div className="line">
+                    <span>水浸</span>
+                    <span>{w.value}</span>
+                  </div>
+                  ))
+                  :  <div className="line">
                   <span>水浸</span>
-                  <span>{state.environmentVo.water || '-'}</span>
+                  <span>{ '-'}</span>
                 </div>
+                }
+               
                 <div className="line">
                   <span>烟感</span>
                   <span>{state.environmentVo.smoke || '-'}</span>
