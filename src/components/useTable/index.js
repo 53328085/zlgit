@@ -71,6 +71,7 @@ flex-direction: column;
   const [total, setTotal] = useState(0)
   const tempref = useRef();
   const {t} = useTranslation("comm")
+  console.log(props.dataSource)
   const TableTemp =memo(() => {  
   
     return createPortal(

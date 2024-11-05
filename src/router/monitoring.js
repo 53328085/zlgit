@@ -33,6 +33,7 @@ const Call = lazy(() => import("../pages/monitoring/call"))
 const Control= lazy(() => import("../pages/monitoring/control"))
 
 const Analyse= lazy(() => import("../pages/monitoring/analyse"))
+const Ianalyse=lazy(()=>import("../pages/monitoring/ianalyse"))
  export let runtimeMonitor = {
     '010501': Summary,
     '010502': Gateway,
@@ -43,4 +44,5 @@ const Analyse= lazy(() => import("../pages/monitoring/analyse"))
     '010507': Report,
      '010508': Control,
      '010509': Analyse, // 对比分析
+     '010510':Ianalyse
  }
