@@ -222,7 +222,9 @@ export default function Index() {
             let count = [1, 2, 3,4,5,6,7,8,9,10,11,12]
             let arr = []
             let resData = []
+            let resDataAll =[]
             let status = true
+            setdataSourceRead([])
             count.map((item, index) => {
               console.log(index)
               setTimeout(() => {
@@ -236,6 +238,7 @@ export default function Index() {
                       data.map((item, index) => {
                         if (item.isOk  && item.errorCode == 0) {
                           resData.push(item)
+                          resDataAll.push(item)
                           setResultInfoList[index].status = 1
                         } else {
                           
@@ -247,7 +250,7 @@ export default function Index() {
                           setLoading(false)
                           status = false
                           let arrlist = []
-                          resData.map(item => {
+                          resDataAll.map(item => {
                             arrlist.push({ ...JSON.parse(item.data), sn: item.sn })
                           })
                           setdataSourceRead(arrlist)

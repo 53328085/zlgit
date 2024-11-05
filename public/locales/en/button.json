@@ -67,5 +67,7 @@
   "carbonplan": "Fill in the carbon emission monitoring plan",
   "uploadfiles": "upload files",
   "back": "Back",
+  "moveUp":"Move Up",
+  "moveDown":"Move Down",
   "z": ""
 }

@@ -67,5 +67,7 @@
   "carbonplan": "碳排放监测计划填报",
   "uploadfiles": "上传文件",
   "back": "返回",
+  "moveUp":"向上移动",
+  "moveDown":"向下移动",
   "z": ""
 }
