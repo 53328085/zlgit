@@ -88,6 +88,14 @@ key: 'gap',
   title:"偏差告警值",
   dataIndex:"deviationValue",
   key:"deviationValue"
+},{
+  title:"最大值",
+  dataIndex:"maxval",
+  key:"maxval"
+},{
+  title:"最小值",
+  dataIndex:"minval",
+  key:"minval"
 }]
 export default function index() {
   const projectId = useSelector((state) => state.system.menus.projectId);
@@ -141,18 +149,19 @@ export default function index() {
   }  
 
   const rowCount = matrix.length;  
-  const colCount = matrix[0].length;  
+  const colCount = matrix[0].length-1;  
   const maxValues = new Array(colCount).fill(Number.NEGATIVE_INFINITY); // 初始化辅助数组  
-
+  const maxValSn = new Array(colCount).fill(Number.NEGATIVE_INFINITY);
   // 遍历二维数组  
   for (let i = 0; i < rowCount; i++) {  
       for (let j = 0; j < colCount; j++) {  
           if (matrix[i][j] > maxValues[j]) {  
-              maxValues[j] = matrix[i][j]; // 更新最大值  
+              maxValues[j] = matrix[i][j]; // 更新最大值 
+              maxValSn[j] =  matrix[i][colCount+1]
           }  
       }  
   }  
-
+  // console.log(maxValSn)
   return maxValues;
   }
   const getMinArr=(matrix)=> {  
@@ -161,18 +170,21 @@ export default function index() {
     }  
   
     const rowCount = matrix.length;  
-    const colCount = matrix[0].length;  
+    const colCount = matrix[0].length-1;  
     const minValues = new Array(colCount).fill(Number.POSITIVE_INFINITY); // 初始化辅助数组为正无穷大  
-  
+    const minValSn = new Array(colCount).fill(Number.POSITIVE_INFINITY);
+    console.log(matrix,colCount)
     // 遍历二维数组  
     for (let i = 0; i < rowCount; i++) {  
         for (let j = 0; j < colCount; j++) {  
             if (matrix[i][j] < minValues[j]) {  
-                minValues[j] = matrix[i][j]; // 更新最小值  
+                minValues[j] = matrix[i][j]; // 更新最小值 
+                minValSn[j] =  matrix[i][colCount+1]
+             
             }  
         }  
     }  
-  
+    // console.log(minValSn)
     return minValues;  
 }  
   const HistoryCompares = async () => {
@@ -211,6 +223,7 @@ export default function index() {
           }
          //item.data.forEach(it=>{ compareArr.push(it.data.map(i=>i.value))})
          compareArr.push(item.data[0]["data"].map(it=>(it.value))) 
+         compareArr[index].push(item.sn)
         })
         // console.log(compareArr)
         const maxarr = getMaxArr(compareArr)
@@ -227,7 +240,9 @@ export default function index() {
                 ...resp.data[0].data[0].data[index],
                 point:resp.data[0].data[0].point,
                 gap,
-                deviationValue:state.devices[0].deviationValue
+                deviationValue:state.devices[0].deviationValue,
+                maxval:item,
+                minval:minarr[index]
               })
             }
            }else if(radioVal=="2"){
@@ -236,7 +251,9 @@ export default function index() {
                 ...resp.data[0].data[0].data[index],
                 point:resp.data[0].data[0].point,
                 gap,
-                deviationValue:state.devices[1].deviationValue
+                deviationValue:state.devices[1].deviationValue,
+                maxval:item,
+                minval:minarr[index]
               })
             }
            }else if(radioVal=="3"){
@@ -245,7 +262,9 @@ export default function index() {
                 ...resp.data[0].data[0].data[index],
                 point:resp.data[0].data[0].point,
                 gap,
-                deviationValue:state.devices[2].deviationValue
+                deviationValue:state.devices[2].deviationValue,
+                maxval:item,
+                minval:minarr[index]
               })
             }
            }else if(radioVal=="4"){
@@ -254,7 +273,9 @@ export default function index() {
                 ...resp.data[0].data[0].data[index],
                 point:resp.data[0].data[0].point,
                 gap,
-                deviationValue:state.devices[3].deviationValue
+                deviationValue:state.devices[3].deviationValue,
+                maxval:item,
+                minval:minarr[index]
               })
             }
            }
@@ -324,7 +345,7 @@ export default function index() {
       <Charts>
        {state.chartsOpts.series.length>0?<Icharts custoption={state.chartsOpts}></Icharts>:null} 
       </Charts>
-      <Modal ref={ModalRef} mold = 'cust' title="偏差告警" onOk={()=>{ModalRef.current.onCancel()}}>
+      <Modal ref={ModalRef} mold = 'cust' title="偏差告警" onOk={()=>{ModalRef.current.onCancel()}} width={800}>
       <Table dataSource={state.tableData} columns={columns} pagination={{pageSize:state.pageSize,current:state.current,total:state.alltableData.length,onChange:changePage,onShowSizeChange:onShowSizeChange}}  ></Table>
       </Modal>
     </Titlelayout>
