@@ -10,6 +10,7 @@ import Icharts from "@com/useEcharts/Ichart.js";
 import {CustButton} from "@com/useButton"
 import Modal from "@com/useModal"
 import Table from "@com/useTable"
+import warn from "./warn.png"
 const BtnWrap = styled(Radio.Group)`
   .ant-radio-button-wrapper {
     width: 113px;
@@ -60,7 +61,7 @@ let markLine = {
   label: {
     show: true,
     position: 'insideMiddle',
-    formatter: '{c}'+"Kwh"
+    formatter: '{c}'
   },
   data: [
     {
@@ -112,6 +113,7 @@ export default function index() {
   const state = useReactive({
     devices: [],
     snGroup: [],
+    timeType:1,
     chartsOpts: {
       type: 5,
       ...option,
@@ -134,10 +136,12 @@ export default function index() {
       if (resp.data) {
         state.devices = resp.data.items;
         state.snGroup = resp.data.snGroup;
+        state.timeType = resp.data.timeType
         // HistoryCompares(state.snGroup)
       } else {
         state.devices = [];
         state.snGroup = [];
+        state.timeType =1
       }
     } else {
       message.error("获取设备信息失败!");
@@ -149,15 +153,15 @@ export default function index() {
   }  
 
   const rowCount = matrix.length;  
-  const colCount = matrix[0].length-1;  
+  const colCount = matrix[0].length;  
   const maxValues = new Array(colCount).fill(Number.NEGATIVE_INFINITY); // 初始化辅助数组  
-  const maxValSn = new Array(colCount).fill(Number.NEGATIVE_INFINITY);
+  // const maxValSn = new Array(colCount).fill(Number.NEGATIVE_INFINITY);
   // 遍历二维数组  
   for (let i = 0; i < rowCount; i++) {  
       for (let j = 0; j < colCount; j++) {  
           if (matrix[i][j] > maxValues[j]) {  
               maxValues[j] = matrix[i][j]; // 更新最大值 
-              maxValSn[j] =  matrix[i][colCount+1]
+              // maxValSn[j] =  matrix[i][colCount+1]
           }  
       }  
   }  
@@ -170,16 +174,16 @@ export default function index() {
     }  
   
     const rowCount = matrix.length;  
-    const colCount = matrix[0].length-1;  
+    const colCount = matrix[0].length;  
     const minValues = new Array(colCount).fill(Number.POSITIVE_INFINITY); // 初始化辅助数组为正无穷大  
-    const minValSn = new Array(colCount).fill(Number.POSITIVE_INFINITY);
+    // const minValSn = new Array(colCount).fill(Number.POSITIVE_INFINITY);
     console.log(matrix,colCount)
     // 遍历二维数组  
     for (let i = 0; i < rowCount; i++) {  
         for (let j = 0; j < colCount; j++) {  
             if (matrix[i][j] < minValues[j]) {  
                 minValues[j] = matrix[i][j]; // 更新最小值 
-                minValSn[j] =  matrix[i][colCount+1]
+                // minValSn[j] =  matrix[i][colCount+1]
              
             }  
         }  
@@ -187,13 +191,29 @@ export default function index() {
     // console.log(minValSn)
     return minValues;  
 }  
+  const getTime =()=>{
+     
+      if(state.timeType==1){
+       let date =   moment().format('YYYY-MM-DD ')
+        return {start:date+"00:00:00",end:date+"23:59:59"}
+      }else if(state.timeType==2){
+        let date = moment().subtract(7, 'days').format('YYYY-MM-DD ')
+        return {start:date+"00:00:00",end:moment().format('YYYY-MM-DD ')+"23:59:59"}
+      }else if(state.timeType==3){
+        let date = moment().subtract(31, 'days').format('YYYY-MM-DD ');
+        return {start:date+"00:00:00",end:moment().format('YYYY-MM-DD ')+"23:59:59"}
+      }
+      return null
+  }
   const HistoryCompares = async () => {
+    const timer =  getTime()
+    console.log(timer)
     const params = {
       projectId,
       type: radioVal,
       sNs: state.snGroup,
-      start: dates[0],
-      end: dates[1],
+      start:  timer.start,
+      end: timer.end,
     };
     console.log(params);
     const resp = await HistoryCompare(params);
@@ -203,12 +223,16 @@ export default function index() {
         state.chartsOpts.xAxis.data=resp.data[0]["data"][0]["data"].map(it=>it.time)
         if(radioVal=="1"){
           markLine.data[0]["yAxis"]= state.devices[0]["lineValue"]
+          markLine.label.formatter=(params)=>`${params.value}kWh`
         }else if(radioVal=="2"){
           markLine.data[0]["yAxis"]= state.devices[1]["lineValue"]
+           markLine.label.formatter=(params)=>`${params.value}W`
         }else if(radioVal=="3"){
           markLine.data[0]["yAxis"]= state.devices[2]["lineValue"]
+           markLine.label.formatter=(params)=>`${params.value}A`
         }else if(radioVal=="4"){
           markLine.data[0]["yAxis"]= state.devices[3]["lineValue"]
+           markLine.label.formatter=(params)=>`${params.value}V`
         }
         let compareArr=[] 
         resp.data.forEach((item,index)=>{
@@ -223,17 +247,18 @@ export default function index() {
           }
          //item.data.forEach(it=>{ compareArr.push(it.data.map(i=>i.value))})
          compareArr.push(item.data[0]["data"].map(it=>(it.value))) 
-         compareArr[index].push(item.sn)
+        //  compareArr[index].push(item.sn)
         })
         // console.log(compareArr)
         const maxarr = getMaxArr(compareArr)
         const minarr = getMinArr(compareArr)
-        // console.log(maxarr,minarr)
+        console.log(maxarr,minarr,radioVal)
         state.alltableData=[]
         state.tableData =[]
  
           maxarr.forEach((item,index)=>{
-           const gap =  Math.abs(item-minarr[index]).toFixed(2)
+           const gap =  (((item-minarr[index])/item)*100).toFixed(2)
+           console.log(gap)
            if(radioVal=="1"){
             if(gap-state.devices[0].deviationValue>0){
               state.alltableData.push({
@@ -326,8 +351,20 @@ export default function index() {
     </Space>
     
   );
+  const Warn =()=>{
+    if(radioVal==1&&state.devices[0]?.deviation==0 ){
+      return null
+    }else if(radioVal==2&&state.devices[1]?.deviation==0 ){
+      return null
+    }else if(radioVal==3&&state.devices[2]?.deviation==0 ){
+      return null
+    }else if(radioVal==4&&state.devices[3]?.deviation==0 ){
+      return null
+    }
+    return (<img src={warn} onClick={warnDetail}></img>)
+  }
   return (
-    <Titlelayout title="智能分析" extra={DatePick}>
+    <Titlelayout title="智能分析" extra={ (<Warn/>)}>
       <Divider dashed style={{ borderColor: "#d7d7d7" }}></Divider>
       <BtnWrap
         defaultValue="a"

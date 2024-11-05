@@ -176,12 +176,19 @@ export default function index(props) {
         });
     };
     const handleSave = () => {
-        console.log(subData.length);
+        console.log(subData);
         if (subData.length < 2) return messageApi.open({
             type: 'warning',
             content: '请至少选择两个设备进行对比分析！',
         })
+       const sns =  subData.map(item=>item.sn)
 
+       if( new Set(sns).size !== sns.length){
+        return messageApi.open({
+            type: 'warning',
+            content: '设备编号相同，请重选！',
+        })
+       }
         props.saveValue({
             subData,
             unknownCopy,
