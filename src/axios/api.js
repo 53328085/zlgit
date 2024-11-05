@@ -2025,7 +2025,8 @@ export const Monitoring = {
         `/Monitor/RuntimeDevice/AllDeviceStyle?projectId=${projectId}`
       ),
     HistoryCompare: (data) =>
-      server.post(`/Monitor/RuntimeDevice/HistoryCompare`, data), //对比分析
+      // server.post(`/Monitor/RuntimeDevice/HistoryCompare`, data), //对比分析
+      server.post(`/Monitor/Compare/HistoryCompare`, data), //对比分析
   },
   IAnalyse:{
     Configure:(data)=>  server.post(`/Monitor/Compare/Configure`,data),
