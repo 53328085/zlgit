@@ -29,7 +29,6 @@ export default function Index() {
 
   let { exparams, setCustview } = useOutletContext()
   let { areaId, projectId, type, date, energytype, shiftNo } = exparams
-  console.log(exparams, "---exparams")
   const pageTotal = useRef()
 
 
@@ -63,7 +62,6 @@ export default function Index() {
       date: time,
       selectIds: treeId
     }
-    console.log(params, "---params")
     const index = Number(line)
     const handler = [queryByBuilding, queryByLine][index]
     return handler(current, pageSize, params).then(res => {

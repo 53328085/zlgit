@@ -6,7 +6,6 @@ import { Serach, Cdivider, Borderleft } from "@com/comstyled"
 import moment from 'moment'
 import { Select, DatePicker, InputNumber, Checkbox, Radio, Pagination, message, Space, Form, Button } from "antd";
 
-import { useOutletContext } from 'react-router-dom'
 import { Monitoring } from '@api/api.js'
 
 import Mask from '@com/mask.jsx'
@@ -137,12 +136,10 @@ export default function Index() {
   }
   const analysisRef = useRef(null)
   const onSetcontrast = () => {
-    console.log(baseLine, '2222baseLine');
     if (Sns.length < 2) return message.warning('请至少选择两个设备进行对比分析！')
     if (!typeSelected) {
       return message.warning('请选择对比数据')
     } else {
-      console.log(baseLine, '1111baseLine', baseLineValue);
       if (baseLine.length != 0) {
         if (baseLineValue == undefined) {
           return message.warning('请填写对比基准线具体数值')
@@ -150,7 +147,6 @@ export default function Index() {
       }
     }
 
-    console.log(Sns, 'subTable');
     let params = {
       projectId,
       Type: typeSelected,
@@ -175,14 +171,14 @@ export default function Index() {
         console.log(dimensions, source)
 
         if (source.length > 0) {
-          
+
           for (let i = 0; i < source[0].length; i++) {
             let item = {}
             dimensions.map((val, index) => {
               if (val == 'time') {
                 item[val] = source[0][i].time
               } else {
-                item[val] = source[index - 1][i] ?  source[index - 1][i].value: ''
+                item[val] = source[index - 1][i] ? source[index - 1][i].value : ''
               }
             })
             datalist.push(item)
@@ -190,12 +186,12 @@ export default function Index() {
         }
         console.log(datalist)
         let seriesList = []
-        for(let i = 0 ; i < dimensions.length - 1; i++){
+        for (let i = 0; i < dimensions.length - 1; i++) {
           seriesList.push({
-            type: "line", areaStyle: null, showSymbol: true,
+            type: "line", areaStyle: null, smooth: true,stack:null
           })
         }
-        
+
 
         drawEchartData({
           dimensions,
@@ -238,20 +234,15 @@ export default function Index() {
       drawEcharts(analysisRef.current, {
         dataset: dataset,
         series: seriesList,
-        // series: [{
-        //   type: "line", areaStyle: null, showSymbol: true,
-        //   markLine: {
-        //     data: markLineData
-        //   }
-        // }, {
-        //   type: "line", areaStyle: null, showSymbol: true,
-        // }],
         grid: {
           top: '30px',
           left: 30,
           right: 0,
           bottom: '30px',
           containLabel: true,
+        },
+        tooltip: {
+          trigger: "axis"
         },
         legend: {
           top: 0,
@@ -265,21 +256,15 @@ export default function Index() {
       drawEcharts(analysisRef.current, {
         dataset: dataset,
         series: seriesList,
-        // series: [{
-        //   type: "line", areaStyle: null, showSymbol: true,
-        // }, {
-        //   type: "line", areaStyle: null, showSymbol: true,
-        // }, {
-        //   type: "line", areaStyle: null, showSymbol: true,
-        // }, {
-        //   type: "line", areaStyle: null, showSymbol: true,
-        // }],
         grid: {
           top: '30px',
           left: 0,
           right: 0,
           bottom: '30px',
           containLabel: true,
+        },
+        tooltip: {
+          trigger: "axis"
         },
         legend: {
           top: 0,
