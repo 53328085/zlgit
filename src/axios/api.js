@@ -2031,7 +2031,7 @@ export const Monitoring = {
   IAnalyse:{
     Configure:(data)=>  server.post(`/Monitor/Compare/Configure`,data),
     CompareQuery:(projectId)=>server.get(`/Monitor/Compare/Query?projectId=${projectId}`),
-    HistoryCompare:(data)=>server.post(`Monitor/Compare/HistoryCompare`,data)
+    HistoryCompare:(data)=>server.post(`Monitor/Compare/HistoryCompareSmart`,data)
   }
 };
 

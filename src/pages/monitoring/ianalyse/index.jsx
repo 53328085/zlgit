@@ -45,7 +45,7 @@ dataZoom: [
       type: 'inside', // 内置缩放  
       xAxisIndex: 0, // 指定x轴索引  
       start: 0, // 起始位置（可以根据需要调整）  
-      end: 50 // 结束位置（可以根据需要调整）  
+      end: 100 // 结束位置（可以根据需要调整）  
   }  
 ],
   grid: {
@@ -66,7 +66,7 @@ let markLine = {
   data: [
     {
       name: '阈值',
-      yAxis:300
+ 
     }
   ],
   lineStyle: {
@@ -78,25 +78,21 @@ const columns=[{
   dataIndex: 'time',
   key: 'time',
 },
-{title: '测点',
-dataIndex: 'point',
-key: 'point',
+{title: '最大测点',
+dataIndex: 'maxSNPointValue',
+key: 'maxSNPointValue',
 },
-{title: '实际偏差值',
-dataIndex: 'gap',
-key: 'gap',
+{title: '最小测点',
+  dataIndex: 'minSNPointValue',
+  key: 'minSNPointValue',
+},
+{title: '实际偏差',
+dataIndex: 'curDeviation',
+key: 'curDeviation',
 },{
-  title:"偏差告警值",
-  dataIndex:"deviationValue",
-  key:"deviationValue"
-},{
-  title:"最大值",
-  dataIndex:"maxval",
-  key:"maxval"
-},{
-  title:"最小值",
-  dataIndex:"minval",
-  key:"minval"
+  title:"偏差告警",
+  dataIndex:"setDeviation",
+  key:"setDeviation"
 }]
 export default function index() {
   const projectId = useSelector((state) => state.system.menus.projectId);
@@ -215,99 +211,112 @@ export default function index() {
       start:  timer.start,
       end: timer.end,
     };
-    console.log(params);
     const resp = await HistoryCompare(params);
     if (resp.success) {
-      if (resp.data) {
+      if (resp.data.snData) {
+        markLine.data[0]["yAxis"]=""
+        markLine.label={}
         state.chartsOpts.series=[]
-        state.chartsOpts.xAxis.data=resp.data[0]["data"][0]["data"].map(it=>it.time)
-        if(radioVal=="1"){
+        state.chartsOpts.xAxis.data=resp.data.snData[0]["data"][0]["data"].map(it=>it.time)
+
+        if(radioVal=="1" && state.devices[0]["line"]==1){
+
           markLine.data[0]["yAxis"]= state.devices[0]["lineValue"]
           markLine.label.formatter=(params)=>`${params.value}kWh`
-        }else if(radioVal=="2"){
+        }else if(radioVal=="2" && state.devices[1]["line"]==1){
+          console.log(markLine)
+  
           markLine.data[0]["yAxis"]= state.devices[1]["lineValue"]
            markLine.label.formatter=(params)=>`${params.value}W`
-        }else if(radioVal=="3"){
+        }else if(radioVal=="3" && state.devices[2]["line"]==1){
+
           markLine.data[0]["yAxis"]= state.devices[2]["lineValue"]
            markLine.label.formatter=(params)=>`${params.value}A`
-        }else if(radioVal=="4"){
+        }else if(radioVal=="4" && state.devices[3]["line"]==1){
+
           markLine.data[0]["yAxis"]= state.devices[3]["lineValue"]
            markLine.label.formatter=(params)=>`${params.value}V`
         }
+ 
         let compareArr=[] 
-        resp.data.forEach((item,index)=>{
+        resp.data.snData.forEach((item,index)=>{
           if(item.data.length>1){
            item.data.forEach(it=>{
               state.chartsOpts.series.push({
-                data:it.data.map(i=> (i["value"])), type: "line", smooth: true,name:item["sn"]+it["point"],markLine
+                data:it.data.map(i=> (i["value"])), type: "line", smooth: true,name:item["sn"]+"-"+it["point"],markLine
               } )
           })
           }else{
-            state.chartsOpts.series.push({data:item.data[0]["data"].map(it=>it.value),type: "line", smooth: true,name:item["sn"],markLine}) 
+            state.chartsOpts.series.push({data:item.data[0]["data"].map(it=>it.value),type: "line", smooth: true,name:item["sn"]+"-"+item.data[0]["point"],markLine}) 
           }
-         //item.data.forEach(it=>{ compareArr.push(it.data.map(i=>i.value))})
+
          compareArr.push(item.data[0]["data"].map(it=>(it.value))) 
-        //  compareArr[index].push(item.sn)
+          console.log(state.chartsOpts.series)
         })
-        // console.log(compareArr)
-        const maxarr = getMaxArr(compareArr)
-        const minarr = getMinArr(compareArr)
-        console.log(maxarr,minarr,radioVal)
-        state.alltableData=[]
-        state.tableData =[]
+
+        // const maxarr = getMaxArr(compareArr)
+        // const minarr = getMinArr(compareArr)
+        // console.log(maxarr,minarr,radioVal)
+        // state.alltableData=[]
+        // state.tableData =[]
  
-          maxarr.forEach((item,index)=>{
-           const gap =  (((item-minarr[index])/item)*100).toFixed(2)
-           console.log(gap)
-           if(radioVal=="1"){
-            if(gap-state.devices[0].deviationValue>0){
-              state.alltableData.push({
-                ...resp.data[0].data[0].data[index],
-                point:resp.data[0].data[0].point,
-                gap,
-                deviationValue:state.devices[0].deviationValue,
-                maxval:item,
-                minval:minarr[index]
-              })
-            }
-           }else if(radioVal=="2"){
-            if(gap-state.devices[1].deviationValue>0){
-              state.alltableData.push({
-                ...resp.data[0].data[0].data[index],
-                point:resp.data[0].data[0].point,
-                gap,
-                deviationValue:state.devices[1].deviationValue,
-                maxval:item,
-                minval:minarr[index]
-              })
-            }
-           }else if(radioVal=="3"){
-            if(gap-state.devices[2].deviationValue>0){
-              state.alltableData.push({
-                ...resp.data[0].data[0].data[index],
-                point:resp.data[0].data[0].point,
-                gap,
-                deviationValue:state.devices[2].deviationValue,
-                maxval:item,
-                minval:minarr[index]
-              })
-            }
-           }else if(radioVal=="4"){
-            if(gap-state.devices[3].deviationValue>0){
-              state.alltableData.push({
-                ...resp.data[0].data[0].data[index],
-                point:resp.data[0].data[0].point,
-                gap,
-                deviationValue:state.devices[3].deviationValue,
-                maxval:item,
-                minval:minarr[index]
-              })
-            }
-           }
-          })
-          console.log(state.alltableData)
-          state.tableData = state.alltableData.slice(0, state.pageSize)
-          console.log(state.tableData)
+        //   maxarr.forEach((item,index)=>{
+        //    const gap =  (((item-minarr[index])/item)*100).toFixed(2)
+        //    console.log(gap)
+        //    if(radioVal=="1"){
+        //     if(gap-state.devices[0].deviationValue>0){
+        //       state.alltableData.push({
+        //         ...resp.data[0].data[0].data[index],
+        //         point:resp.data[0].data[0].point,
+        //         gap,
+        //         deviationValue:state.devices[0].deviationValue,
+        //         maxval:item,
+        //         minval:minarr[index]
+        //       })
+        //     }
+        //    }else if(radioVal=="2"){
+        //     if(gap-state.devices[1].deviationValue>0){
+        //       state.alltableData.push({
+        //         ...resp.data[0].data[0].data[index],
+        //         point:resp.data[0].data[0].point,
+        //         gap,
+        //         deviationValue:state.devices[1].deviationValue,
+        //         maxval:item,
+        //         minval:minarr[index]
+        //       })
+        //     }
+        //    }else if(radioVal=="3"){
+        //     if(gap-state.devices[2].deviationValue>0){
+        //       state.alltableData.push({
+        //         ...resp.data[0].data[0].data[index],
+        //         point:resp.data[0].data[0].point,
+        //         gap,
+        //         deviationValue:state.devices[2].deviationValue,
+        //         maxval:item,
+        //         minval:minarr[index]
+        //       })
+        //     }
+        //    }else if(radioVal=="4"){
+        //     if(gap-state.devices[3].deviationValue>0){
+        //       state.alltableData.push({
+        //         ...resp.data[0].data[0].data[index],
+        //         point:resp.data[0].data[0].point,
+        //         gap,
+        //         deviationValue:state.devices[3].deviationValue,
+        //         maxval:item,
+        //         minval:minarr[index]
+        //       })
+        //     }
+        //    }
+        //   })
+        
+          if(resp.data.compareDeviation){
+            state.alltableData =resp.data.compareDeviation
+            console.log(state.alltableData)
+            state.tableData = state.alltableData.slice(0, state.pageSize)
+          }
+         
+         
     
         
       } else {
@@ -359,6 +368,8 @@ export default function index() {
     }else if(radioVal==3&&state.devices[2]?.deviation==0 ){
       return null
     }else if(radioVal==4&&state.devices[3]?.deviation==0 ){
+      return null
+    }else if(!state.alltableData || state.alltableData.length==0){
       return null
     }
     return (<img src={warn} onClick={warnDetail}></img>)

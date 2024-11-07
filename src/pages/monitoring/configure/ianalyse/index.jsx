@@ -37,7 +37,7 @@ const options = [
   { value: 3, label: "最近30天" },
 ];
 const styobj = { width: 140 };
-const titleList = ["用电量对比", "功率对比", "电流对比", "电压对比"];
+const titleList = ["电量对比", "功率对比", "电流对比", "电压对比"];
 const columns = [
   {
     align: "center",
@@ -92,18 +92,20 @@ export default function Index() {
       unknownTitle: "所有设备",
     });
     const resp = await QueryCompareDevice(projectId, 0, "");
-    console.log("执行啦")
+    console.log("执行啦");
     if (resp.success && Array.isArray(resp.data)) {
-      if(state.snGroup.length>0){
-        const subData  = resp.data.filter(item=>state.snGroup.includes(item.sn))
-        const unknownTable = resp.data.filter(item=>!state.snGroup.includes(item.sn))
-        setSubTable(subData)
-        setUnknownTable(unknownTable)
-      }else{
+      if (state.snGroup.length > 0) {
+        const subData = resp.data.filter((item) =>
+          state.snGroup.includes(item.sn)
+        );
+        const unknownTable = resp.data.filter(
+          (item) => !state.snGroup.includes(item.sn)
+        );
+        setSubTable(subData);
+        setUnknownTable(unknownTable);
+      } else {
         setUnknownTable(resp.data || []);
       }
-     
-     
     } else {
       message.error(resp.errMsg);
     }
@@ -128,20 +130,20 @@ export default function Index() {
     const resp = await CompareQuery(projectId);
     if (resp.success) {
       if (resp.data) {
-        let items = resp.data.items
-        state.lines.forEach((item,index)=>{
-          if(index+1 == items[index]["compareType"]){
-            item.checkedName=items[index]["state"]?true:false
-            item.checkBaseLine=items[index]["line"]?true:false
-            item.baseLineVal=items[index]["lineValue"]
-            item.checkWarnVal=items[index]["deviation"]?true:false
-            item.warnVal=items[index]["deviationValue"]
+        let items = resp.data.items;
+        state.lines.forEach((item, index) => {
+          if (index + 1 == items[index]["compareType"]) {
+            item.checkedName = items[index]["state"] ? true : false;
+            item.checkBaseLine = items[index]["line"] ? true : false;
+            item.baseLineVal = items[index]["lineValue"];
+            item.checkWarnVal = items[index]["deviation"] ? true : false;
+            item.warnVal = items[index]["deviationValue"];
           }
-        })
-        setTimetype(resp.data.timeType)
+        });
+        setTimetype(resp.data.timeType);
         // state.devices = resp.data.items;
         state.snGroup = resp.data.snGroup;
-        setSns( resp.data.snGroup)
+        setSns(resp.data.snGroup);
         // state.timeType = resp.data.timeType;
         // HistoryCompares(state.snGroup)
       } else {
@@ -190,11 +192,12 @@ export default function Index() {
       //   setTimetype(1);
       // setSns([]);
       message.success("配置成功!");
-      GetSns()
+      GetSns();
     } else {
       message.error(resp.errMsg);
     }
   };
+  const unit=["kWh","W","A","V"]
   const SetLine = titleList.map((item, index) => {
     return (
       <SetDiv>
@@ -202,9 +205,18 @@ export default function Index() {
         <div className="line">
           <Checkbox
             checked={state.lines[index]["checkedName"]}
-            onChange={(e) =>
-              (state.lines[index]["checkedName"] = e.target.checked)
-            }
+            onChange={(e) => {
+              state.lines[index]["checkedName"] = e.target.checked;
+              if (!e.target.checked) {
+                state.lines[index] = {
+                  checkedName: false,
+                  checkBaseLine: false,
+                  baseLineVal: "",
+                  checkWarnVal: false,
+                  warnVal: "",
+                };
+              }
+            }}
           >
             {item}
           </Checkbox>
@@ -224,7 +236,7 @@ export default function Index() {
                 </Checkbox>
                 <Input
                   type="number"
-                  addonAfter="kWh"
+                  addonAfter={unit[index]}
                   style={styobj}
                   value={state.lines[index]["baseLineVal"]}
                   onChange={(e) => {
@@ -268,9 +280,9 @@ export default function Index() {
       </SetDiv>
     );
   });
-  useEffect(()=>{
-    GetSns()
-  },[])
+  useEffect(() => {
+    GetSns();
+  }, []);
   return (
     <Titlelayout title="智能分析配置">
       <Divider dashed style={{ borderColor: "#d7d7d7" }}></Divider>
