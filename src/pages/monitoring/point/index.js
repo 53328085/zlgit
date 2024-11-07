@@ -211,11 +211,13 @@ export default function Index(props) {
             overView?.details?.map((item, index) => {
               data.map((items, indexs) => {
                 if (data[indexs].category == item.category) {
-                  imgList.push(data[indexs].imageBase64);
+                  //imgList.push(data[indexs].imageBase64);
+                  imgList.push(data[indexs]);
                 } else {
                 }
               });
             });
+            console.log(imgList)
             setimageList(imgList);
           }
         } else {
@@ -396,11 +398,12 @@ export default function Index(props) {
                         to={`/deviceDetail?sn=${encodeURIComponent(item.sn)}&deviceStyle=${encodeURIComponent(deviceStyle)}`}
                         target="_blank"
                       >
+                      
                         <Icard
                           img={
-                            imageList[index]
-                              ? imageList[index]
-                              : imgurl.category
+                            !imageList[index] ?imgurl.category: (imageList[index].openImageBase64 && item.status["1"]=="Open")?
+                           "data:image/jpeg;base64,"+imageList[index].openImageBase64:imageList[index].closeImageBase64 && item.status["1"]=="Close"?
+                           "data:image/jpeg;base64,"+imageList[index].closeImageBase64:imageList[index].imageBase64
                           }
                           title={item.name}
                           deviceStyle={deviceStyle}

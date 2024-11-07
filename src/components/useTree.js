@@ -81,7 +81,6 @@ export default memo(function Index({ areaId, setTreeId, setLine, showline = true
   //获取树的数据，0 网格, 1 线路, 2 公共能耗分类
 
   const getTreeData = async (name = '') => {
-    console.log(energytype, "----energytype")
     let idx = Number.isInteger(datatype) ? datatype : typeTree;
 
     if (Number.isInteger(datatype) && !energytype) return

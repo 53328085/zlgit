@@ -1925,6 +1925,7 @@ export const Monitoring = {
       ), //网关详情
     Children: (data) => server.post(`/Monitor/RuntimeGateway/Children`, data), //网关子设备
     Log: (data) => server.post(`/Monitor/RuntimeGateway/Log`, data), //日志
+    RTGCall:(data)=>server.post(`/Monitor/RuntimeGateway/RTGCall`,data)
   },
   RuntimeDevice: {
     Statistics: (data) =>
@@ -2007,18 +2008,33 @@ export const Monitoring = {
   },
   //对比分析
   ComparativeAnalysis: {
+    // QueryCompareDevice: (projectId, type, alike) =>
+    //   server.post(
+    //     `/Monitor/RuntimeDevice/QueryCompareDevice?projectId=${projectId}&type=${type}&alike=${alike}`
+    //   ), //
     QueryCompareDevice: (projectId, type, alike) =>
-      server.post(
-        `/Monitor/RuntimeDevice/QueryCompareDevice?projectId=${projectId}&type=${type}&alike=${alike}`
-      ), //
+        server.post(
+          `/Monitor/Compare/QueryCompareDevice`,{
+            meterType:type,
+            alike,
+            projectId
+          }
+        ), 
     AllDeviceStyle: (projectId) =>
       server.get(
         `/Monitor/RuntimeDevice/AllDeviceStyle?projectId=${projectId}`
       ),
     HistoryCompare: (data) =>
-      server.post(`/Monitor/RuntimeDevice/HistoryCompare`, data), //对比分析
+      // server.post(`/Monitor/RuntimeDevice/HistoryCompare`, data), //对比分析
+      server.post(`/Monitor/Compare/HistoryCompare`, data), //对比分析
   },
+  IAnalyse:{
+    Configure:(data)=>  server.post(`/Monitor/Compare/Configure`,data),
+    CompareQuery:(projectId)=>server.get(`/Monitor/Compare/Query?projectId=${projectId}`),
+    HistoryCompare:(data)=>server.post(`Monitor/Compare/HistoryCompare`,data)
+  }
 };
+
 //运维管理(运行)
 export class operation {
   static AlarmCurrent = (data) =>
