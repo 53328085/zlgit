@@ -117,7 +117,8 @@ export default function index() {
     alltableData:[],
     tableData:[],
     current:1,
-    pageSize:10
+    pageSize:10,
+    disabled: false
   });
   const changeBtn = (e) => {
     setRadioVal(e.target.value);
@@ -133,13 +134,16 @@ export default function index() {
         state.devices = resp.data.items;
         state.snGroup = resp.data.snGroup;
         state.timeType = resp.data.timeType
+        state.disabled = false
         // HistoryCompares(state.snGroup)
       } else {
         state.devices = [];
         state.snGroup = [];
         state.timeType =1
+        state.disabled = true
       }
     } else {
+      state.disabled = true
       message.error("获取设备信息失败!");
     }
   };
@@ -375,7 +379,7 @@ export default function index() {
     return (<img src={warn} onClick={warnDetail}></img>)
   }
   return (
-    <Titlelayout title="智能分析" extra={ (<Warn/>)}>
+    <Titlelayout title="智能分析" extra={!state.disabled ? (<Warn/>) : null}>
       <Divider dashed style={{ borderColor: "#d7d7d7" }}></Divider>
       <BtnWrap
         defaultValue="a"
@@ -384,6 +388,7 @@ export default function index() {
         style={{ width: 452 }}
         onChange={changeBtn}
         value={radioVal}
+        disabled={state.disabled}
       >
         <Radio.Button value="1" disabled={state.devices[0]?.state==0}>用电量对比</Radio.Button>
         <Radio.Button value="2" disabled={state.devices[1]?.state==0}>功率对比</Radio.Button>

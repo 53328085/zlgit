@@ -34,6 +34,7 @@ import {
 import Table from "@com/useTable";
 import { Serach, Cdivider,  CPagination} from "@com/comstyled";
 import Pagecount from "@com/pagecontent";
+ 
 export default function Index(props) {
   const tableLoadRef = useRef();
   const projectId = useSelector(selectProjectId);
@@ -386,12 +387,14 @@ export default function Index(props) {
         {isCard ? (
           <div className={style.cardBox}>
             {tableProps?.dataSource?.length > 0 ?
-                tableProps?.dataSource.map((item, index) => {
-                  let status =
+                tableProps?.dataSource.map((item, index) => { // state 1, 离线 2 在线 3 告警; states 
+                /*   let status =
                     Object.prototype.toString.call(item.status) ===
                     "[object Object]"
                       ? item.status[1]
-                      : "";
+                      : ""; */
+                  let imgbase =(Array.isArray(imageList) && imageList?.length > 0) ? imageList?.find(i => i.category == item.category) : null
+                  let {closeImageBase64, imageBase64, openImageBase64} = imgbase ?? {}
                   return (
                     <div key={index}>
                       <Link
@@ -401,9 +404,9 @@ export default function Index(props) {
                       
                         <Icard
                           img={
-                            !imageList[index] ?imgurl.category: (imageList[index].openImageBase64 && item.status["1"]=="Open")?
-                           "data:image/jpeg;base64,"+imageList[index].openImageBase64:imageList[index].closeImageBase64 && item.status["1"]=="Close"?
-                           "data:image/jpeg;base64,"+imageList[index].closeImageBase64:imageList[index].imageBase64
+                            !imgbase ? imgurl.category: (openImageBase64 && item.status?.["1"]=="Open")?
+                           "data:image/jpeg;base64,"+openImageBase64: (closeImageBase64 && item.status?.["1"]=="Close")?
+                           "data:image/jpeg;base64,"+closeImageBase64:  (imageBase64 || imgurl.category)
                           }
                           title={item.name}
                           deviceStyle={deviceStyle}
