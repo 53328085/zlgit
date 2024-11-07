@@ -3,10 +3,16 @@ import React, { useState, useEffect, useRef } from 'react'
 import style from './style.module.less'
 
 export default function Icard(props) {
-    const statet = {
+    let daluq = props.deviceStyle == 12;
+    const statet =daluq ? {
+        open: '开闸',
+        close: '合闸'
+    } :{
         open: '开',
         close: '关'
     }
+  
+
     return (
         <div className={style.cardItem} >
             <div className={style.cardImgBox}><img src={props.img} className={style.cardImg} alt={props.title}></img></div>
@@ -29,8 +35,12 @@ export default function Icard(props) {
                     <div className={style.btnBoxStyle}>
                         <p className={style.timeStyle}>{props.fields[2] ? props.fields[2].name : ''}</p><p className={style.timeValueStyle}>{props.fields[2] ? props.fields[2].value : ''}</p>
                     </div>
-                    <div className={style.btnBoxStyle}>
-                        <p className={style.timeStyle}>{props.fields[3] ? props.fields[3].name : ''}</p><p className={style.timeValueStyle}>{props.fields[3] ? (statet[props.fields[3].value?.toLowerCase()] || props.fields[3].value) : ''}</p>
+                     <div className={style.btnBoxStyle}>
+                         
+                            <p className={style.timeStyle}>{props.fields[3] ? props.fields[3].name : ''}</p><p className={style.timeValueStyle} style={{color: props?.fields[3]?.value== 'Close'? "#f00":"#3f0" }}>{
+                                props.fields[3] ? (statet[props.fields[3].value?.toLowerCase()] || props.fields[3].value) : ''
+                            }</p>
+                       
                     </div>
                 </div>
             </div>

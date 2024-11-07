@@ -405,8 +405,8 @@ export default function Index(props) {
                         <Icard
                           img={
                             !imgbase ? imgurl.category: (openImageBase64 && item.status?.["1"]=="Open")?
-                           "data:image/jpeg;base64,"+openImageBase64: (closeImageBase64 && item.status?.["1"]=="Close")?
-                           "data:image/jpeg;base64,"+closeImageBase64:  (imageBase64 || imgurl.category)
+                           openImageBase64: (closeImageBase64 && item.status?.["1"]=="Close")?
+                           closeImageBase64:  (imageBase64 || imgurl.category)
                           }
                           title={item.name}
                           deviceStyle={deviceStyle}

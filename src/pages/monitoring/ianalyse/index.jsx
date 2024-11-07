@@ -126,7 +126,7 @@ export default function index() {
   const changeDate = (dates, dateStrings) => {
     setDates(dateStrings);
   };
-
+  console.log(state.disabled)
   const GetSns = async () => {
     const resp = await CompareQuery(projectId);
     if (resp.success) {
@@ -379,7 +379,7 @@ export default function index() {
     return (<img src={warn} onClick={warnDetail}></img>)
   }
   return (
-    <Titlelayout title="智能分析" extra={!state.disabled ? (<Warn/>) : null}>
+    <Titlelayout title="智能分析" extra={ state.disabled ? null : (<Warn/>)}>
       <Divider dashed style={{ borderColor: "#d7d7d7" }}></Divider>
       <BtnWrap
         defaultValue="a"
