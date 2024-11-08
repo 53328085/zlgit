@@ -66,8 +66,8 @@ export default function Index() {
   const onChangeBaseLineValue = (newValue) => {
     setBaseLineValue(newValue); // 更新状态
   };
-  let dataToday = moment().format('YYYY-MM-DD')
-  let [startTime, setstartTime] = useState(moment().startOf('day').format('YYYY-MM-DD'))
+  let dataToday = moment().format('YYYY-MM-DD HH:mm:ss')
+  let [startTime, setstartTime] = useState(moment().startOf('day').format('YYYY-MM-DD HH:mm:ss'))
   let [endTime, setendTime] = useState(dataToday)
   // setBaseLine(val)
   const onChangeTime = (date = [], dataString) => {
