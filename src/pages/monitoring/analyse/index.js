@@ -36,10 +36,10 @@ export default function Index() {
       value: 2,
       label: "功率对比"
     }, {
-      value: 3,
+      value: 4,
       label: "电压对比"
     }, {
-      value: 4,
+      value: 3,
       label: "电流对比"
     },
   ]
@@ -50,10 +50,10 @@ export default function Index() {
       setUnit('kWh')
     } else if (val == 2) {
       setUnit('kW')
-    } else if (val == 3) {
-      setUnit('V')
-    } else if (val == 4) {
+    } else if (val == 3) {A
       setUnit('A')
+    } else if (val == 4) {
+      setUnit('V')
     }
 
   }
