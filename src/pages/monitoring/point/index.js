@@ -35,7 +35,7 @@ import {
 import Table from "@com/useTable";
 import { Serach, Cdivider,  CPagination} from "@com/comstyled";
 import Pagecount from "@com/pagecontent";
- 
+const channel = new BroadcastChannel('my-channel')
 export default function Index(props) {
   const tableLoadRef = useRef();
   const projectId = useSelector(selectProjectId);
@@ -66,7 +66,7 @@ export default function Index(props) {
   const [isCard, setisCard] = useState(true); //卡片模式true或列表模式false
   let [total, setTotal] = useState(0);
   let [imageList, setimageList] = useState([]);
-  const channel = new BroadcastChannel('my-channel')
+ 
   channel.onmessage = (event) => {
     console.log('Received message:', event);
     event.data&&getGatewayImages()
