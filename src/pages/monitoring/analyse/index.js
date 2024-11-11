@@ -50,7 +50,7 @@ export default function Index() {
       setUnit('kWh')
     } else if (val == 2) {
       setUnit('kW')
-    } else if (val == 3) {A
+    } else if (val == 3) {
       setUnit('A')
     } else if (val == 4) {
       setUnit('V')
