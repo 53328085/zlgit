@@ -40,11 +40,13 @@ export default function Index({ projectId, areaId }) {
     {
       dataIndex: "op",
       title: "操作",
-      render: (_, record,Index) => (<Space size={32}><Link underline onClick={() => settingClick(record.id, record.name)}>{t("button:configure")}</Link><Link underline onClick={() => edit(record)}>{t("button:edit")}</Link>
-        {/* <Link underline onClick={() => moveUpClick(record)}>{t("button:moveUp")}</Link>
-        <Link underline onClick={() => moveDownClick(record)}>{t("button:moveDown")}</Link> */}
-        <Link underline type="danger" onClick={() => deleteRecord(record.id)}>{t("button:delete")}</Link>
-      </Space>)
+      width: "400px",
+      render: (_, record, index) => (<Space size={32}><Link underline onClick={() => settingClick(record.id, record.name)}>{t("button:configure")}</Link><Link underline onClick={() => edit(record)}>{t("button:edit")}</Link>
+        {/* {index > 0 ? <Link underline onClick={() => moveUpClick(record, index)}>{t("button:moveUp")}</Link> : null}
+        {index > -1 && index < treeData.length - 1 ? < Link underline onClick={() => moveDownClick(record, index)}>{t("button:moveDown")}</Link> : null} */}
+        < Link underline type="danger" onClick={() => deleteRecord(record.id)
+        }> {t("button:delete")}</Link >
+      </Space >)
     },
   ]
 
@@ -122,13 +124,22 @@ export default function Index({ projectId, areaId }) {
     setDeleteId(id)
     dref.current.onOpen()
   }
-  const moveUpClick = (record) => {
-    console.log(record)
-
+  const moveUpClick = (record, index) => {
+    if (index > 0) {
+      const newRows = [...treeData];
+      const [movedRow] = newRows.splice(index, 1);
+      newRows.splice(index - 1, 0, movedRow);
+      console.log(newRows);
+      setTreeData(newRows);
+    }
   }
-  const moveDownClick = (record) => {
-    console.log(record)
-
+  const moveDownClick = (record, index) => {
+    if (index < treeData.length - 1) {
+      const newRows = [...treeData];
+      const [movedRow] = newRows.splice(index, 1);
+      newRows.splice(index + 1, 0, movedRow);
+      setTreeData(newRows);
+    }
   }
   const onOk = async () => {
     try {
