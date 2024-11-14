@@ -5,7 +5,8 @@ import {Form, Input, message, Button, Divider, Descriptions} from 'antd'
 import {Remote } from '@api/api.js'
 import redwarn from '@imgs/redwarn.png'
 import {CustButton} from '@com/useButton'
- import {useSelector} from "react-redux"
+ import { useSelector, useDispatch } from "react-redux";
+ import {setDeviceState} from "@redux/systemconfig"
 const Cdescriptions = styled(Descriptions)`
   && {
     .ant-descriptions-row .ant-descriptions-item-label{
@@ -88,7 +89,7 @@ const Pending =forwardRef((props, ref) => {
 }
 )
 export default function Control({sn,detail, state,  Custmodal, getDetailData}) { // status 状态 Close, Open
-    
+    const dispatch = useDispatch()
     // console.log(detail)  // control: false 不让控制
     const projectId = useSelector(state => state.system.menus.projectId)
     const [form] = Form.useForm()
@@ -100,8 +101,10 @@ export default function Control({sn,detail, state,  Custmodal, getDetailData}) {
     const info = useRef()
     const pending = useRef()
     let title = ['合闸提示', '分闸提示'][optype]
-   
+  
     const onCtrol = (type) => {
+       
+       
         setOptype(type)
         control.current.onOpen()
         //setOpen(true)
@@ -116,6 +119,7 @@ export default function Control({sn,detail, state,  Custmodal, getDetailData}) {
         let {success, data, errMsg} = await Remote.BatchValveStatus(param)       
         if(success && Array.isArray(data) && data.length >0) {          
            let item = data[0]
+         
            if(status == 'Open') { // 合闸
             console.log('Open')
              if (item['status'][0]=='Close' || item['status'][1] == 'Close') {
@@ -124,6 +128,7 @@ export default function Control({sn,detail, state,  Custmodal, getDetailData}) {
                 
               // setStatus('Close')
                 pending.current.setPenging('操作成功')
+                channel.postMessage(true);
                 
              }else if(item['status'][0]!=='Close' || item['status'][1] !== 'Close' ) {
               
@@ -144,6 +149,7 @@ export default function Control({sn,detail, state,  Custmodal, getDetailData}) {
               
                // setStatus('Open')
                 pending.current.setPenging('操作成功')
+                channel.postMessage(true);
                 setResultInfo.current.status = 1
              }else if(item['status'][0]!=='Open' || item['status'][1] !== 'Open' ) {
                console.log('Open')
@@ -196,7 +202,7 @@ export default function Control({sn,detail, state,  Custmodal, getDetailData}) {
     }
    
   }
-
+  const channel = new BroadcastChannel('my-channel')
    const onOk = async () => {  //第一步
     //setPenging('操作中请稍后……')
     control.current.onCancel()
@@ -204,6 +210,8 @@ export default function Control({sn,detail, state,  Custmodal, getDetailData}) {
   //  pending.current.setPenging('操作中请稍后……')
    // setOpen(false)
    // setResult(true)
+   
+ 
     try {
         let res = {};
         if(optype == 0) {
@@ -212,6 +220,8 @@ export default function Control({sn,detail, state,  Custmodal, getDetailData}) {
             res = await  Remote.Open({projectId,sns:[sn]})
         }
         if(res.success) {
+            // dispatch(setDeviceState(true))
+            
             if(Array.isArray(res.data) && res.data.length > 0) {
                let {errorCode, id,sn} = res.data[0];
                setResultInfo.current.id = id

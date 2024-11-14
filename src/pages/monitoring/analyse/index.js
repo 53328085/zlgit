@@ -36,10 +36,10 @@ export default function Index() {
       value: 2,
       label: "功率对比"
     }, {
-      value: 3,
+      value: 4,
       label: "电压对比"
     }, {
-      value: 4,
+      value: 3,
       label: "电流对比"
     },
   ]
@@ -51,9 +51,9 @@ export default function Index() {
     } else if (val == 2) {
       setUnit('kW')
     } else if (val == 3) {
-      setUnit('V')
-    } else if (val == 4) {
       setUnit('A')
+    } else if (val == 4) {
+      setUnit('V')
     }
 
   }
@@ -66,8 +66,8 @@ export default function Index() {
   const onChangeBaseLineValue = (newValue) => {
     setBaseLineValue(newValue); // 更新状态
   };
-  let dataToday = moment().format('YYYY-MM-DD')
-  let [startTime, setstartTime] = useState(moment().startOf('day').format('YYYY-MM-DD'))
+  let dataToday = moment().format('YYYY-MM-DD HH:mm:ss')
+  let [startTime, setstartTime] = useState(moment().startOf('day').format('YYYY-MM-DD HH:mm:ss'))
   let [endTime, setendTime] = useState(dataToday)
   // setBaseLine(val)
   const onChangeTime = (date = [], dataString) => {

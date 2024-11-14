@@ -67,6 +67,7 @@ const {DeviceTypeManager: {AllDeviceStyle} } = Monitoring
 
 
 const initialState = {
+    deviceState:false,
     siteConfig: antdconfig,
     themeColor:  {
       primaryColor: '#237AE4'
@@ -301,6 +302,10 @@ const system = createSlice({
         },
         getFilterDeviceStyle(state, {payload}) {
           state.filterDeviceStyle = payload
+        },
+        setDeviceState(state,{payload}){
+          console.log(payload)
+          state.deviceState = payload
         }
 
     },
@@ -370,6 +375,7 @@ const system = createSlice({
  
 
 const {actions} = system
+export const deviceState = state=>state.system.deviceState
 export const recordNo = state => state.system.recordNo
 export const menus  = state => state.system.menus
 export const runMenus  = state => state.system.menus?.runMenus 
@@ -463,5 +469,6 @@ export const {
     setIntl,
     setIszhCN,
     getEnterprise, 
+    setDeviceState,
 } = actions
 export default system.reducer

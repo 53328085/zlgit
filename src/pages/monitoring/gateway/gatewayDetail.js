@@ -188,6 +188,7 @@ export default function GatewayDetail(props) {
     const resp = await RTGCall({ProjectId:projectId ,Sn:search.sn})
     if(resp.success){
       message.success("召读设备成功!")
+      getChildrenData();
     }else{
       message.error(resp.errMsg||"召读设备失败!")
     }
