@@ -435,6 +435,20 @@ export class UpdateEnergyImage {
     server.get(`/General/Area/QueryAll?projectId=${projectId}&level=2`);
 }
 
+// 能源管理-- 能耗排名（设计态）
+export class EnergyRankingDesign {
+  static QueryAllLevelSetting = (projectId) =>
+    server.get(
+      `Energy/EnergyRankingDesign/QueryAllLevelSetting?projectId=${projectId}`,
+    ); // 获得区能耗设置信息
+  static QueryDeviceSetting = (projectId) =>
+    server.get(`/Energy/EnergyRankingDesign/QueryDeviceSetting?projectId=${projectId}`);//获得设备能耗设置信息
+  static UpdateDeviceSetting = (projectId,rankConut,leaderboardCount) =>
+    server.get(`/Energy/EnergyRankingDesign/UpdateDeviceSetting?projectId=${projectId}&rankCount=${rankConut}&leaderboardCount=${leaderboardCount}`);//编辑设备能耗展示设置
+  static UpdateAreaLevelSetting = (projectId,data) =>
+    server.post(`/Energy/EnergyRankingDesign/UpdateAreaLevelSetting?projectId=${projectId}`,data);//编辑区域显示设置
+}
+
 // 能源管理--重点设备 -- 设计态
 export class DesElectric {
   static queryDrive = (
@@ -2259,6 +2273,15 @@ export class energyRanking {
     ); //获取班次
   static Query = (data) =>
     server.post(`/Energy/EnergyRankingRuntime/Query`, data); //能耗排名
+
+    static QueryEnergyRankByArea = (data) =>
+    server.get(`/Energy/EnergyRankingRuntime/QueryEnergyRankByArea?projectId=${data.projectId}&start=${data.start}&end=${data.end}`); //能耗排名按区域
+
+    static QueryAreaSetting = (projectId) =>
+    server.get(`/Energy/EnergyRankingRuntime/QueryAreaSetting?projectId=${projectId}`); //获取区域列表
+
+    static QueryEnergyRankByDevice = (data,params) =>
+    server.post(`/Energy/EnergyRankingRuntime/QueryEnergyRankByDevice?projectId=${data.projectId}&start=${data.start}&end=${data.end}`,params); //能耗排名按设备
 }
 //分时能耗
 export class energyShare {
@@ -2933,6 +2956,13 @@ export class EnergyFlowRuntime {
   static OverviewFromGateway = (
     params //查询网关通道列表
   ) => server.post(`/Monitor/RuntimeDevice/OverviewFromGateway`, params);
+
+  static QueryConsumeRankByDevice = (
+    { projectId, meterType, dayMonthYear,date } //能耗排名
+  ) =>
+    server.get(
+      `Energy/EnergyFlowRuntime/QueryConsumeRankByDevice?projectId=${projectId}&meterType=${meterType}&dayMonthYear=${dayMonthYear}&date=${date}`
+    );
 }
 
 //损耗分析
