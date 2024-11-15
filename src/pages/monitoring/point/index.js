@@ -29,12 +29,13 @@ import { ExportExcel } from "@com/useButton";
 import {
   selectProjectId,
   selectOneLevelDefaultId,
+  deviceState
 } from "@redux/systemconfig.js";
 
 import Table from "@com/useTable";
 import { Serach, Cdivider,  CPagination} from "@com/comstyled";
 import Pagecount from "@com/pagecontent";
- 
+const channel = new BroadcastChannel('my-channel')
 export default function Index(props) {
   const tableLoadRef = useRef();
   const projectId = useSelector(selectProjectId);
@@ -42,7 +43,7 @@ export default function Index(props) {
   let areaId = useSelector(selectOneLevelDefaultId);
   let {exparams} = useOutletContext()
   let {deviceStyle} = exparams
-
+  const dstate = useSelector(deviceState)
   // const [messageApi, contextHolder] = message.useMessage();
   const {
    
@@ -65,8 +66,13 @@ export default function Index(props) {
   const [isCard, setisCard] = useState(true); //卡片模式true或列表模式false
   let [total, setTotal] = useState(0);
   let [imageList, setimageList] = useState([]);
-  
-
+ 
+  channel.onmessage = (event) => {
+    console.log('Received message:', event);
+    event.data&&getGatewayImages()
+    event.data&&submit()
+    
+  };
 
  
   
@@ -284,6 +290,9 @@ export default function Index(props) {
       run({ current, pageSize }, values);
     } catch (error) {}
   };
+  useEffect(()=>{
+    console.log("dstate",dstate)
+  },[dstate])
   return (
     <Pagecount>
       <div className="flexcol">
