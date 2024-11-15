@@ -83,7 +83,7 @@ export default function Index() {
     designerEnergy: [ // 能源管理
       "price",
       "norm",
-      "type",
+      "type","energyRank"
     ],
     runtimeCarbonEmissionManager: [  //碳排管理
       "runtimeCarbonData",
@@ -148,7 +148,7 @@ export default function Index() {
             setConfig({ isview: true, isdate: true });
             break;
           case "range":
-            setConfig({ energytype: true, isdate: true, custview: true });
+            setConfig({ energytype: false, isdate: false, custview: true ,isAreaId: false,});
             break;
           case "time":
             setConfig({ shiftNo: true, isdate: true }); // shiftNo: true 不显示
@@ -169,7 +169,7 @@ export default function Index() {
               shiftNo: true,
               isAreaId: false,
               gas: false,
-
+              custview: true ,
             });
             break;
           case "analysis":
@@ -265,6 +265,9 @@ export default function Index() {
         switch (nested) {
           case "norm":
             setConfig({ custview: true });
+            break;
+            case "energyRank":
+            setConfig({isAreaId:false,custview: true });
             break;
         }
 
