@@ -49,19 +49,24 @@ const imgs = [first, second, third, fourth, fifth ]
   const changeType = e => {
     setType(e.target.value)
   }
-  const CustView = (
-  <Form.Item name="viewType" >
-     <Radio.Group defaultValue="a" buttonStyle="solid" onChange={changeType}>
+  const CustView =({v}) => { 
+    const form = Form.useFormInstance()
+    useEffect(()=>{
+      form.setFieldValue('viewType',v)
+    }, [v])
+    return(
+  <Form.Item name="viewType" initialValue="a" >
+     <Radio.Group defaultValue="a" buttonStyle="solid" >
          <Radio.Button value="a">能源流向</Radio.Button>
          <Radio.Button value="b">能耗排名</Radio.Button>
        </Radio.Group>
 </Form.Item>
-  )
+  )}
   
   useEffect(() => {
-    setCustview(CustView);
+    setCustview(< CustView v={Type} />);
     return () => {
-      setCustview(undefined)
+      setCustview(null)
     }
   }, [Type])
 
