@@ -37,7 +37,7 @@ function App() {
   }
   ) */
  useEffect(() => {
-  const m = detectZoom();
+ // const m = detectZoom();
  // document.body.style.zoom = 100 / Number(m);
  },[])
  

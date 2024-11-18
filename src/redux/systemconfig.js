@@ -70,7 +70,10 @@ const initialState = {
     deviceState:false,
     siteConfig: antdconfig,
     themeColor:  {
-      primaryColor: '#237AE4'
+      primaryColor: '#237AE4',
+      menusbgcolor: '',
+      menusactive: '',
+      menusborder: ''
     },
     intl: {
       lang: zhCN,
