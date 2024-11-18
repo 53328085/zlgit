@@ -239,7 +239,7 @@ const controlcolumns = [
       message: '请选择执行分闸时间'
     }
   ]}>
-       <TimePicker  format="HH:mm"   style={{width: "200px"}} placeholder='执行分闸时间'  />
+       <TimePicker  format="HH:mm" minuteStep={15}  style={{width: "200px"}} placeholder='执行分闸时间'  />
      </Form.Item>
      <Form.Item label="执行合闸" name="autoCloseTime" rules={[
     {
@@ -247,7 +247,7 @@ const controlcolumns = [
       message: '请选择执行合闸时间'
     }
   ]}>
-       <TimePicker format="HH:mm"   style={{width: "200px"}} placeholder='执行合闸时间' />
+       <TimePicker format="HH:mm" minuteStep={15}  style={{width: "200px"}} placeholder='执行合闸时间' />
      </Form.Item>
      <Form.Item label="备注" name="remark">
        <Input />
