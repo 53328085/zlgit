@@ -46,9 +46,6 @@ const imgs = [first, second, third, fourth, fifth ]
   let [searchParams] = useSearchParams()
   const isfull = searchParams.get('full')  
   const [Type,setType]=useState('a')
-  const changeType = e => {
-    setType(e.target.value)
-  }
   const CustView =({v}) => { 
     const form = Form.useFormInstance()
     useEffect(()=>{
@@ -280,7 +277,7 @@ const getRankData = async () => {
     return (
       <Pagecount  pd="0px">   
       {/* title={ (!isfull) && <CustButton onClick={full} style={{marginLeft: "auto" }}>全屏显示</CustButton>} pv={isfull? "0px" : "16px"}   layout="flex" bl="none" dr="column" */}
-      {Type=='a'?<Titlelayout title={<div style={{height:'32px',display:'flex',flexDirection:'row',alignItems:'center'}}><p style={{lineHeight:'32px'}}>能源流向</p> <CustButton onClick={full} style={{marginLeft: "auto" }}>全屏显示</CustButton></div>} layout="flex" >
+      {exparams.viewType=='a'?<Titlelayout title={<div style={{height:'32px',display:'flex',flexDirection:'row',alignItems:'center'}}><p style={{lineHeight:'32px'}}>能源流向</p> <CustButton onClick={full} style={{marginLeft: "auto" }}>全屏显示</CustButton></div>} layout="flex" >
           {isfull && <Headcom />}
           <div style={{display: 'flex', flex:1,  alignItems: 'center',justifyContent: 'center',}} ref={mapref}>
                <Ichart  custoption={options}   />

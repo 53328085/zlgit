@@ -215,9 +215,17 @@ export default function Index() {
   }
   const imgs = [first, second, third, fourth, fifth]
 
-  const CustView = (
-    <>
-      <Form.Item name="sortA" label="能耗排名" style={{ marginLeft: 'auto', marginRight: '16px' }}>
+  const CustView =({v,d}) => { 
+    const form = Form.useFormInstance()
+    useEffect(()=>{
+      form.setFieldValue('viewType',v)
+    }, [v])
+    useEffect(()=>{
+      form.setFieldValue('dateC',d)
+    }, [d])
+    return(
+      <>
+      <Form.Item name="sortA" initialValue="a" label="能耗排名" style={{ marginLeft: 'auto', marginRight: '16px' }}>
         <Radio.Group defaultValue="a" buttonStyle="solid" onChange={changeType}>
           <Radio.Button value="a">按区域</Radio.Button>
           <Radio.Button value="b">按设备</Radio.Button>
@@ -231,23 +239,22 @@ export default function Index() {
           onChange={(val) => handleSortChange(item,val)}></Select></Form.Item>
         }) : null}
       
-      <Form.Item name="dateC" label="日期选择">
+      <Form.Item name="dateC" initialValue={dateRang} label="日期选择">
         <RangePicker format="YYYY-MM-DD" defaultValue={dateRang} onChange={changeDate} disabledDate={disabledDate} />
       </Form.Item>
     </>
-
-  )
-
+  )}
+  
   useEffect(() => {
-    setCustview(CustView);
+    setCustview(< CustView v={Type} d={dateRang} />);
     return () => {
-      setCustview(undefined)
+      setCustview(null)
     }
   }, [Type])
   return (
     <Pagecount bgcolor="transparent" pd="0">
       <Main>
-        {Type == 'a' ? <Mainbox>
+        {exparams.sortA == 'a' ? <Mainbox>
           {dataList.map((item, index) => {
             return (<Titlelayout title={item.name} layout="flex" style={{ marginBottom: '16px', maxHeight: '520px' }} key={index}>
               <div className='chart'>
@@ -263,7 +270,7 @@ export default function Index() {
             </div>
           </Titlelayout>
         </Mainbox>}
-        {Type == 'a' ? <MainboxRight>
+        {exparams.sortA == 'a' ? <MainboxRight>
           {dataList.map((item, index) => {
             return (<Titlelayout title={item.name + '用能排行榜'} layout="flex" style={{ marginBottom: '16px', height: 'auto', maxHeight: '520px' }} key={index}>
               <div className='chart'>
@@ -289,7 +296,7 @@ export default function Index() {
         </MainboxRight> : <MainboxRight>
           <Titlelayout title='设备用能排行榜' layout="flex" style={{ width: '580px', height: '800px' }} >
             <div className='chart'>
-              {deviceList.consumeRank.length > 0 ? deviceList.consumeRank.slice(0, deviceList.leaderboardCount).map((items, indexs) => {
+              {deviceList?.consumeRank?.length > 0 ? deviceList.consumeRank.slice(0, deviceList.leaderboardCount).map((items, indexs) => {
                   return <div style={{
                     width: '548px', height: '72px', display: 'flex', justifyContent: 'space-between', alignItems: 'center',
                     backgroundColor: '#f4f8ff', padding: '0 16px', marginBottom: '16px'
