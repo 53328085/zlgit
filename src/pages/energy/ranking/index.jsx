@@ -191,7 +191,7 @@ export default function Index() {
       if (res.success) {
         //setAreaList(res.data)
         setDeviceList(res.data)
-        setOptionsDevice({...{ ...optionsDevice, dataset: { ...dataset, source: res.data?.consumeRank } }})
+        setOptionsDevice({...{ ...optionsDevice, dataset: { ...dataset, source: res.data?.consumeRank.slice(0, res.data.rankCount) } }})
       } else {
         message.error(res.errMsg)
       }
@@ -258,7 +258,7 @@ export default function Index() {
           {dataList.map((item, index) => {
             return (<Titlelayout title={item.name} layout="flex" style={{ marginBottom: '16px', maxHeight: '520px' }} key={index}>
               <div className='chart'>
-                <Ichart {...{ ...optionsRank, dataset: { ...dataset, source: item.consumeRank } }} />
+                <Ichart {...{ ...optionsRank, dataset: { ...dataset, source: item.consumeRank.slice(0, item.rankCount) } }} />
               </div>
             </Titlelayout>)
           })

@@ -208,7 +208,7 @@ const getRankData = async () => {
       setRankData(data.consumeRank.slice(0,data.leaderboardCount))
       let dataset = {
         dimensions:  [{name: "name"}, {name: "value", displayName: "能耗"}],
-        source:data.consumeRank,
+        source:data.consumeRank.slice(0, data.rankCount),
       }
     
       setOptionsRank({...optionsRank, dataset})
