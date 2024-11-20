@@ -32,7 +32,14 @@ const Mainbox = styled.div`
   overflow-y: auto;
   .chart {
     width: 100%;
-    height: auto;
+    height: 500px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .chart1 {
+    width: 100%;
+    height: 727px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -46,7 +53,7 @@ const MainboxRight = styled.div`
   overflow-y: auto;
   .chart {
     width: 100%;
-    height: auto;
+    height: 500px;
     max-height: 520px;
     display: flex;
     align-items: center;
@@ -191,7 +198,7 @@ export default function Index() {
       if (res.success) {
         //setAreaList(res.data)
         setDeviceList(res.data)
-        setOptionsDevice({...{ ...optionsDevice, dataset: { ...dataset, source: res.data?.consumeRank.slice(0, res.data.rankCount) } }})
+        setOptionsDevice({...{ ...optionsDevice, dataset: { ...dataset, source: res.data?.consumeRank.slice(0, res.data.rankCount).reverse() } }})
       } else {
         message.error(res.errMsg)
       }
@@ -240,7 +247,7 @@ export default function Index() {
         }) : null}
       
       <Form.Item name="dateC" initialValue={dateRang} label="日期选择">
-        <RangePicker format="YYYY-MM-DD" defaultValue={dateRang} onChange={changeDate} disabledDate={disabledDate} />
+        <RangePicker format="YYYY-MM-DD" defaultValue={dateRang}  disabledDate={disabledDate} />
       </Form.Item>
     </>
   )}
@@ -256,23 +263,23 @@ export default function Index() {
       <Main>
         {exparams.sortA == 'a' ? <Mainbox>
           {dataList.map((item, index) => {
-            return (<Titlelayout title={item.name} layout="flex" style={{ marginBottom: '16px', maxHeight: '520px' }} key={index}>
+            return (<Titlelayout title={item.name} layout="flex" style={{ marginBottom: '16px', height: '520px' }} key={index}>
               <div className='chart'>
-                <Ichart {...{ ...optionsRank, dataset: { ...dataset, source: item.consumeRank.slice(0, item.rankCount) } }} />
+                <Ichart {...{ ...optionsRank, dataset: { ...dataset, source: item.consumeRank.slice(0, item.rankCount).reverse() } }} />
               </div>
             </Titlelayout>)
           })
           }
         </Mainbox> : <Mainbox>
           <Titlelayout title='设备能耗排名' layout="flex" style={{ width: '1072px', height: '800px' }} >
-            <div className='chart'>
+            <div className='chart1'>
               <Ichart {...optionsDevice} />
             </div>
           </Titlelayout>
         </Mainbox>}
         {exparams.sortA == 'a' ? <MainboxRight>
           {dataList.map((item, index) => {
-            return (<Titlelayout title={item.name + '用能排行榜'} layout="flex" style={{ marginBottom: '16px', height: 'auto', maxHeight: '520px' }} key={index}>
+            return (<Titlelayout title={item.name + '用能排行榜'} layout="flex" style={{ marginBottom: '16px', height: '520px' }} key={index}>
               <div className='chart'>
                 {item.consumeRank.length > 0 ? item.consumeRank.slice(0, item.leaderboardCount).map((items, indexs) => {
                   return <div style={{
@@ -281,8 +288,8 @@ export default function Index() {
                   }} key={indexs}>
                     <img src={imgs[indexs]} style={{ width: '40px', height: '50px' }} />
                     <div>
-                      <p>一级区域名称</p>
                       <p>{items.name}</p>
+                      <p>{items.value}</p>
                     </div>
                     <div>
                       <p>区域内占比</p>
@@ -303,8 +310,8 @@ export default function Index() {
                   }} key={indexs}>
                     <img src={imgs[indexs]} style={{ width: '40px', height: '50px' }} />
                     <div>
-                      <p>一级区域名称</p>
                       <p>{items.name}</p>
+                      <p>{items.value}</p>
                     </div>
                     <div>
                       <p>区域内占比</p>
