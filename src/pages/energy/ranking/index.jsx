@@ -72,9 +72,9 @@ export default function Index() {
 
   const getQuery = () => {
     let params = {
-      projectId, 
-      start: exparams.dateC?exparams.dateC[0].format('YYYY-MM-DD'):dateRang[0].format('YYYY-MM-DD'), 
-      end:exparams.dateC?exparams.dateC[1].format('YYYY-MM-DD'):dateRang[1].format('YYYY-MM-DD')
+      projectId,
+      start: exparams.dateC ? exparams.dateC[0].format('YYYY-MM-DD') : dateRang[0].format('YYYY-MM-DD'),
+      end: exparams.dateC ? exparams.dateC[1].format('YYYY-MM-DD') : dateRang[1].format('YYYY-MM-DD')
     }
     energyRanking.QueryEnergyRankByArea(params).then(res => {
       if (res.success) {
@@ -88,7 +88,7 @@ export default function Index() {
   }
   useEffect(() => {
     getQuery()
-  }, [projectId,exparams.dateC])
+  }, [projectId, exparams.dateC])
 
   const dataset = {
     source: [],
@@ -136,18 +136,21 @@ export default function Index() {
     setType(e.target.value)
   }
   const [areaList, setAreaList] = useState([])
+  const [areaList1, setAreaList1] = useState([])
   const [areaListChoose, setAreaListChoose] = useState([])
   const getAreaList = () => {
     energyRanking.QueryAreaSetting(projectId).then(res => {
       if (res.success) {
         setAreaList(res.data)
-        let list=[]
-        res.data.map((item,index)=>{
-          let it={
-            level:'',areaId:''
+        setAreaList1(res.data)
+        let list = []
+        res.data.map((item, index) => {
+          let it = {
+            level: '', areaId: ''
           }
-          it.level=item.level
-          it.areaId=item.areaList[0]?.id||0
+          it.level = item.level
+          item.areaList.unshift({ id: 0, name: '全部', parentId: 0 })
+          it.areaId = item.areaList[0]?.id || 0
           list.push(it)
         })
         console.log(list)
@@ -187,18 +190,17 @@ export default function Index() {
       source: [],
     }
   })
-  const [deviceList, setDeviceList]=useState({})
+  const [deviceList, setDeviceList] = useState({})
   const getDeviceList = () => {
     let data = {
-      projectId, 
-      start: exparams.dateC?exparams.dateC[0].format('YYYY-MM-DD'):dateRang[0].format('YYYY-MM-DD'),
-      end: exparams.dateC?exparams.dateC[1].format('YYYY-MM-DD'):dateRang[1].format('YYYY-MM-DD'), 
+      projectId,
+      start: exparams.dateC ? exparams.dateC[0].format('YYYY-MM-DD') : dateRang[0].format('YYYY-MM-DD'),
+      end: exparams.dateC ? exparams.dateC[1].format('YYYY-MM-DD') : dateRang[1].format('YYYY-MM-DD'),
     }
-    energyRanking.QueryEnergyRankByDevice(data,areaListChoose).then(res => {
+    energyRanking.QueryEnergyRankByDevice(data, areaListChoose).then(res => {
       if (res.success) {
-        //setAreaList(res.data)
         setDeviceList(res.data)
-        setOptionsDevice({...{ ...optionsDevice, dataset: { ...dataset, source: res.data?.consumeRank.slice(0, res.data.rankCount).reverse() } }})
+        setOptionsDevice({ ...{ ...optionsDevice, dataset: { ...dataset, source: res.data?.consumeRank.slice(0, res.data.rankCount).reverse() } } })
       } else {
         message.error(res.errMsg)
       }
@@ -206,58 +208,83 @@ export default function Index() {
   }
   useEffect(() => {
     getDeviceList()
-  }, [projectId,JSON.stringify(exparams)])
+  }, [projectId, JSON.stringify(exparams)])
   const disabledDate = (current) => {
     return current && current > moment().endOf('day');
   };
-  const handleSortChange = (item,val) => {
-    console.log(item,val)
-    //setSortSelected(val)
-    areaListChoose.forEach(items=>{
-      if(items.level==item.level){
-        items.areaId=val
+  const [sortSelected, setSortSelected] = useState('')
+  const handleSortChange = (item, val) => {
+    setSortSelected(new Date().getTime())
+    const filteredList = filterAreaList(areaList1, item, val);
+    setAreaList(filteredList)
+    areaListChoose.forEach((items) => {
+      if (items.level == item.level) {
+        items.areaId = val
       }
       setAreaListChoose(areaListChoose)
     })
   }
+  const filterAreaList = (areaList, list, val) => {
+    console.log(areaList, list, val);
+    return areaList.map(item => {
+      if (item.level == list.level + 1) {
+        const filteredChildren = (val != 0) ? item.areaList.filter(its => {
+          return its.parentId === val || its.parentId == 0;
+        }) : item.areaList
+        console.log(filteredChildren);
+        // 如果过滤后的子列表为空，则不保留当前 item
+        if (filteredChildren.length === 0) {
+          return null;
+        }
+
+        return {
+          ...item,
+          areaList: filteredChildren
+        };
+      } else {
+        return item;
+      }
+    }).filter(Boolean); // 过滤掉 null 值
+  };
   const imgs = [first, second, third, fourth, fifth]
 
-  const CustView =({v,d}) => { 
+  const CustView = ({ v, d }) => {
     const form = Form.useFormInstance()
-    useEffect(()=>{
-      form.setFieldValue('viewType',v)
+    useEffect(() => {
+      form.setFieldValue('sortA', v)
     }, [v])
-    useEffect(()=>{
-      form.setFieldValue('dateC',d)
+    useEffect(() => {
+      form.setFieldValue('dateC', d)
     }, [d])
-    return(
+    return (
       <>
-      <Form.Item name="sortA" initialValue="a" label="能耗排名" style={{ marginLeft: 'auto', marginRight: '16px' }}>
-        <Radio.Group defaultValue="a" buttonStyle="solid" onChange={changeType}>
-          <Radio.Button value="a">按区域</Radio.Button>
-          <Radio.Button value="b">按设备</Radio.Button>
-        </Radio.Group>
-      </Form.Item>
-      
-        {Type == 'b' ? areaList.map((item,index) => {
-          return <Form.Item name={"areaL"+index}>
-            <Select options={item.areaList} fieldNames={{ label: 'name', value: 'id' }} 
-          defaultValue={item.areaList[0]?.id} style={{ width: 120, marginRight: '16px' }} 
-          onChange={(val) => handleSortChange(item,val)}></Select></Form.Item>
+        <Form.Item name="sortA" initialValue="a" label="能耗排名" style={{ marginLeft: 'auto', marginRight: '16px' }}>
+          <Radio.Group defaultValue="a" buttonStyle="solid" onChange={changeType}>
+            <Radio.Button value="a">按区域</Radio.Button>
+            <Radio.Button value="b">按设备</Radio.Button>
+          </Radio.Group>
+        </Form.Item>
+
+        {Type == 'b' ? areaList?.map((item, index) => {
+          return <Form.Item name={"areaL" + index}>
+            <Select options={item.areaList} fieldNames={{ label: 'name', value: 'id' }}
+              defaultValue={item.areaList[0]?.id}  style={{ width: 120, marginRight: '16px' }}
+              onChange={(val) => handleSortChange(item, val)}></Select></Form.Item>
         }) : null}
-      
-      <Form.Item name="dateC" initialValue={dateRang} label="日期选择">
-        <RangePicker format="YYYY-MM-DD" defaultValue={dateRang}  disabledDate={disabledDate} />
-      </Form.Item>
-    </>
-  )}
-  
+
+        <Form.Item name="dateC" initialValue={dateRang} label="日期选择">
+          <RangePicker format="YYYY-MM-DD" defaultValue={dateRang} disabledDate={disabledDate} />
+        </Form.Item>
+      </>
+    )
+  }
+
   useEffect(() => {
     setCustview(< CustView v={Type} d={dateRang} />);
     return () => {
       setCustview(null)
     }
-  }, [Type])
+  }, [Type, sortSelected])
   return (
     <Pagecount bgcolor="transparent" pd="0">
       <Main>
@@ -304,21 +331,21 @@ export default function Index() {
           <Titlelayout title='设备用能排行榜' layout="flex" style={{ width: '580px', height: '800px' }} >
             <div className='chart'>
               {deviceList?.consumeRank?.length > 0 ? deviceList.consumeRank.slice(0, deviceList.leaderboardCount).map((items, indexs) => {
-                  return <div style={{
-                    width: '548px', height: '72px', display: 'flex', justifyContent: 'space-between', alignItems: 'center',
-                    backgroundColor: '#f4f8ff', padding: '0 16px', marginBottom: '16px'
-                  }} key={indexs}>
-                    <img src={imgs[indexs]} style={{ width: '40px', height: '50px' }} />
-                    <div>
-                      <p>{items.name}</p>
-                      <p>{items.value}</p>
-                    </div>
-                    <div>
-                      <p>区域内占比</p>
-                      <p>{items.percent}</p>
-                    </div>
+                return <div style={{
+                  width: '548px', height: '72px', display: 'flex', justifyContent: 'space-between', alignItems: 'center',
+                  backgroundColor: '#f4f8ff', padding: '0 16px', marginBottom: '16px'
+                }} key={indexs}>
+                  <img src={imgs[indexs]} style={{ width: '40px', height: '50px' }} />
+                  <div>
+                    <p>{items.name}</p>
+                    <p>{items.value}</p>
                   </div>
-                }) : <Cempty />}
+                  <div>
+                    <p>区域内占比</p>
+                    <p>{items.percent}</p>
+                  </div>
+                </div>
+              }) : <Cempty />}
             </div>
           </Titlelayout>
         </MainboxRight>}
