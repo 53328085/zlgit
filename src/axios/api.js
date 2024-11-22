@@ -2279,7 +2279,8 @@ export class energyRanking {
 
     static QueryAreaSetting = (projectId) =>
     server.get(`/Energy/EnergyRankingRuntime/QueryAreaSetting?projectId=${projectId}`); //获取区域列表
-
+    static QueryAreaSettingTrees = (projectId) =>
+    server.get(`/Energy/EnergyRankingRuntime/QueryAreaSettingTrees?projectId=${projectId}`); //获取区域列表
     static QueryEnergyRankByDevice = (data,params) =>
     server.post(`/Energy/EnergyRankingRuntime/QueryEnergyRankByDevice?projectId=${data.projectId}&start=${data.start}&end=${data.end}`,params); //能耗排名按设备
 }
