@@ -1,100 +1,24 @@
-import { Form, Input, InputNumber, Popconfirm, Table, Typography } from 'antd';
-import React, { useState } from 'react';
-const originData = [];
-for (let i = 0; i < 100; i++) {
-  originData.push({
-    key: i.toString(),
-    name: `Edrward ${i}`,
-    age: 32,
-    address: `London Park no. ${i}`,
-  });
+import React, {useState} from 'react'
+import { SketchPicker,PhotoshopPicker,ChromePicker,CirclePicker,SwatchesPicker } from 'react-color';
+export default function Index() {
+  const[color, setColor] =useState("#237ae4")
+  const onChangeComplete=(v)=>{
+    let {hex}=v;
+    setColor(hex)
+  }
+  const onSwatchHover=(a,b)=>{
+    console.log(a)
+    console.log(b)
+  }
+  const[isd, setIsd] =useState(false)
+  const onClick=(e)=>{
+    setIsd(true)
+    e.preventDefault()
+  }
+  return (
+    <div>
+      <input type='color' onClick={onClick} />
+      {isd ?<SketchPicker color={color} onChangeComplete={onChangeComplete}    presetColors={[{color:"#237ae4", title: "主题色"}]}  /> :  null};
+    </div>
+  )
 }
-const EditableCell = ({
- 
-  dataIndex,
-  title,
-
-  record,
-  index,
-  children,
-  ...restProps
-}) => {
-  return (
-    <td {...restProps}>
-        <Form.Item
-          name={dataIndex}
-          style={{
-            margin: 0,
-          }}
-          rules={[
-            {
-              required: true,
-              message: `Please Input ${title}!`,
-            },
-          ]}
-        >{<Input />}
-        </Form.Item>
-    </td>
-  );
-};
-const App = () => {
-  const [form] = Form.useForm();
-  const [data, setData] = useState(originData);
-  const [editingKey, setEditingKey] = useState('');
-  const isEditing = (record) => record.key === editingKey;
-
-
-  const columns = [
-    {
-      title: 'name',
-      dataIndex: 'name',
-      width: '25%',
-      editable: true,
-    },
-    {
-      title: 'age',
-      dataIndex: 'age',
-      width: '15%',
-      editable: true,
-    },
-    {
-      title: 'address',
-      dataIndex: 'address',
-      width: '40%',
-      editable: true,
-    },
-   
-  ];
-  const mergedColumns = columns.map((col) => {
-    if (!col.editable) {
-      return col;
-    }
-    return {
-      ...col,
-      onCell: (record) => ({
-        record,
-      
-        dataIndex: col.dataIndex,
-        title: col.title,
-        
-      }),
-    };
-  });
-  return (
-    <Form form={form} component={false}>
-      <Table
-        components={{
-          body: {
-            cell: EditableCell,
-          },
-        }}
-        bordered
-        dataSource={data}
-        columns={mergedColumns}
-        rowClassName="editable-row"
-       
-      />
-    </Form>
-  );
-};
-export default App;

@@ -291,9 +291,7 @@ export default function ProjectSet({projectId}) {
 
   const chChnage =(value) => {
     let {target: {checked, id}} = value
-    console.log(value)
-    console.log(checked)
-    console.log(homepage)
+   
     let homeMenu = form.getFieldValue('homeMenu')
     console.log(homeMenu)
     if(checked) {
