@@ -9,7 +9,7 @@ import imgurl from './icon/index.js'
  
 const Ciocn = (props) => {
   const url = props.url || imgurl['0104H']
-  return <Image src={url} width={36} preview={false} style={{height: '36px'}} /> 
+  return <Image src={url}  preview={false} style={{height: '100%', width: "100%"}} /> 
 }
 export default function Hmenu() { 
   const dispath = useDispatch()

@@ -69,11 +69,12 @@ const {DeviceTypeManager: {AllDeviceStyle} } = Monitoring
 const initialState = {
     deviceState:false,
     siteConfig: antdconfig,
-    themeColor:  {
+    themeColor:  {  // 可配置对象，不只是颜色属性。名字为保证稳定性不改
       primaryColor: '#237AE4',
       menusbgcolor: '',
       menusactive: '',
-      menusborder: ''
+      menusborder: '',
+      maxwidth:'1900px' // 屏幕适配最大尺寸
     },
     intl: {
       lang: zhCN,

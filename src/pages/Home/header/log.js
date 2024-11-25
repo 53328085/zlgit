@@ -71,6 +71,11 @@ const Idiv = styled.div`
   padding-bottom: 4px;
   background-repeat: no-repeat;
   background-position: top 4px center;
+  @media screen and (max-width: 1900px) {
+       width: 58px;
+       border-right: none;
+       font-size: 12px;
+     }
   &:last-child {
     border-right: none;
   }
@@ -119,6 +124,9 @@ const Triangle = styled.div`
      border-width: 30px;
      border-style: solid;
      border-color: transparent #135abd transparent transparent;
+     @media screen and (max-width:1900px) {
+        display: none;
+     }
 `;
 const Cipt = styled(Input)`
   && {
