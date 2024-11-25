@@ -1737,6 +1737,8 @@ export const Monitoring = {
       server.get(`/General/Area/OneLevel?projectId=${projectId}&level=1`), //获取1级区域名
     QueryByPageElectric: (data) =>
       server.post(`/Monitor/Device/QueryByPageElectric`, data), //获取电表
+      QueryByPageHotWater: (data) =>
+      server.post(`/Monitor/Device/QueryByPageHotWater`, data), //获取热水表
     QueryByPage: (data) => server.post(`/Monitor/Device/QueryByPage`, data),
     QueryByPageGateWay: (data) =>
       server.post(`/Monitor/Gateway/QueryByPage`, data), //获取网关
@@ -1759,12 +1761,19 @@ export const Monitoring = {
     QueryPlanList: (projectId) =>
       server.get(`/Safe/Alarm/QueryPlanList?projectId=${projectId}`), //告警计划
     AddElectric: (data) => server.post(`/Monitor/Device/AddElectric`, data), //新增电表
+    AddHotWater: (data) => server.post(`/Monitor/Device/AddHotWater`, data), //新增热水表
     UpdateElectric: (data) =>
       server.post(`/Monitor/Device/UpdateElectric`, data), //更新电表
+      UpdateHotWater: (data) =>
+      server.post(`/Monitor/Device/UpdateHotWater`, data), //更新电表
     UpdateFactor: (data) => server.post(`/Monitor/Device/UpdateFactor`, data), //更新倍率
     DeleteElectric: (data) =>
       server.delete(
         `/Monitor/Device/DeleteElectric?projectId=${data.projectId}&sn=${data.sn}`
+      ), //删除电表
+      DeleteHotWater: (data) =>
+      server.delete(
+        `/Monitor/Device/DeleteHotWater?projectId=${data.projectId}&sn=${data.sn}`
       ), //删除电表
     QueryByPageWater: (data) =>
       server.post(`/Monitor/Device/QueryByPageWater`, data), //查询水表
@@ -2279,7 +2288,8 @@ export class energyRanking {
 
     static QueryAreaSetting = (projectId) =>
     server.get(`/Energy/EnergyRankingRuntime/QueryAreaSetting?projectId=${projectId}`); //获取区域列表
-
+    static QueryAreaSettingTrees = (projectId) =>
+    server.get(`/Energy/EnergyRankingRuntime/QueryAreaSettingTrees?projectId=${projectId}`); //获取区域列表
     static QueryEnergyRankByDevice = (data,params) =>
     server.post(`/Energy/EnergyRankingRuntime/QueryEnergyRankByDevice?projectId=${data.projectId}&start=${data.start}&end=${data.end}`,params); //能耗排名按设备
 }

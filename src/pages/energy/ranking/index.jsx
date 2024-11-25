@@ -8,7 +8,7 @@ import Pagecount from "@com/pagecontent";
 import Titlelayout from '@com/titlelayout';
 import { getTime } from '@com/usehandler'
 import { useRequest } from 'ahooks'
-import { Select, Form, Radio, DatePicker, Divider, message } from 'antd'
+import { Select, Form, Radio, DatePicker, Divider, message,Cascader } from 'antd'
 import moment from "moment";
 import first from './img/first.png'
 import second from './img/second.png'
@@ -16,6 +16,7 @@ import third from './img/third.png'
 import fourth from './img/fourth.png'
 import fifth from './img/fifth.png'
 import Cempty from '@com/useEmpty'
+import { use } from 'i18next';
 const { RangePicker } = DatePicker;
 const Main = styled.div`
   display: flex;
@@ -136,25 +137,61 @@ export default function Index() {
     setType(e.target.value)
   }
   const [areaList, setAreaList] = useState([])
+  const [options,setoptions]=useState([])
+  const [aList,setaList]=useState([])
   const [areaList1, setAreaList1] = useState([])
-  const [areaListChoose, setAreaListChoose] = useState([])
+  const [areaListChoose, setAreaListChoose] = useState([{ areaId: 0,level:1 }])
+  const addAllOption = (data) => {
+    data.forEach(item => {
+    if(item.childs && item.childs.length > 0)
+     {console.log(item.childs)
+      item.childs.unshift({ areaId: 0, name: '全部', childs: [],level:item.level+1 });
+      if (item.childs && item.childs.length > 0) {
+        addAllOption(item.childs);
+      }}
+    });
+  };
   const getAreaList = () => {
-    energyRanking.QueryAreaSetting(projectId).then(res => {
+    // energyRanking.QueryAreaSetting(projectId).then(res => {
+    //   if (res.success) {
+    //     setAreaList(res.data)
+    //     setAreaList1(res.data)
+    //     let list = []
+    //     res.data.map((item, index) => {
+    //       let it = {
+    //         level: '', areaId: ''
+    //       }
+    //       it.level = item.level
+    //       item.areaList.unshift({ id: 0, name: '全部', parentId: 0 })
+    //       it.areaId = item.areaList[0]?.id || 0
+    //       list.push(it)
+    //     })
+    //     console.log(list)
+    //     setAreaListChoose(list)
+    //   } else {
+    //     message.error(res.errMsg)
+    //   }
+    // })
+    energyRanking.QueryAreaSettingTrees(projectId).then(res => {
       if (res.success) {
-        setAreaList(res.data)
-        setAreaList1(res.data)
-        let list = []
-        res.data.map((item, index) => {
-          let it = {
-            level: '', areaId: ''
-          }
-          it.level = item.level
-          item.areaList.unshift({ id: 0, name: '全部', parentId: 0 })
-          it.areaId = item.areaList[0]?.id || 0
-          list.push(it)
-        })
-        console.log(list)
-        setAreaListChoose(list)
+        const modifiedData = res.data.map(item => ({
+          ...item,
+          childs: [...item.childs]
+        }));
+        addAllOption(modifiedData);
+        setoptions(modifiedData);
+        console.log(modifiedData)
+        // let list = [];
+        // modifiedData.map((item, index) => {
+        //   let it = {
+        //     level: '', areaId: ''
+        //   };
+        //   it.level = item.level;
+        //   it.areaId = item.childs[0]?.id || 0;
+        //   list.push(it);
+        // });
+        // console.log(list);
+        // setAreaListChoose(list);
       } else {
         message.error(res.errMsg)
       }
@@ -213,16 +250,33 @@ export default function Index() {
     return current && current > moment().endOf('day');
   };
   const [sortSelected, setSortSelected] = useState('')
-  const handleSortChange = (item, val) => {
-    setSortSelected(new Date().getTime())
-    const filteredList = filterAreaList(areaList1, item, val);
-    setAreaList(filteredList)
-    areaListChoose.forEach((items) => {
-      if (items.level == item.level) {
-        items.areaId = val
+  const handleSortChange = (val,select) => {
+    console.log(val,select)
+    setaList(val)
+    let list=[]
+      if(select){
+        select.map(it=>{
+          let items={areaId:0,level:0}
+          items.level=it.level
+          items.areaId=it.areaId
+          list.push(items)
+        })
+        console.log(list)
+        setAreaListChoose(list)
+      }else{
+        list.push({areaId:0,level:1})
+        setAreaListChoose(list)
       }
-      setAreaListChoose(areaListChoose)
-    })
+      //setAreaListChoose(areaListChoose)
+    // setSortSelected(new Date().getTime())
+    // const filteredList = filterAreaList(areaList1, item, val);
+    // setAreaList(filteredList)
+    // areaListChoose.forEach((items) => {
+    //   if (items.level == item.level) {
+    //     items.areaId = val
+    //   }
+    //   setAreaListChoose(areaListChoose)
+    // })
   }
   const filterAreaList = (areaList, list, val) => {
     console.log(areaList, list, val);
@@ -248,11 +302,14 @@ export default function Index() {
   };
   const imgs = [first, second, third, fourth, fifth]
 
-  const CustView = ({ v, d }) => {
+  const CustView = ({ v, d,l }) => {
     const form = Form.useFormInstance()
     useEffect(() => {
       form.setFieldValue('sortA', v)
     }, [v])
+    useEffect(() => {
+      form.setFieldValue('areaL', l)
+    }, [l])
     useEffect(() => {
       form.setFieldValue('dateC', d)
     }, [d])
@@ -265,12 +322,20 @@ export default function Index() {
           </Radio.Group>
         </Form.Item>
 
-        {Type == 'b' ? areaList?.map((item, index) => {
-          return <Form.Item name={"areaL" + index}>
-            <Select options={item.areaList} fieldNames={{ label: 'name', value: 'id' }}
-              defaultValue={item.areaList[0]?.id}  style={{ width: 120, marginRight: '16px' }}
-              onChange={(val) => handleSortChange(item, val)}></Select></Form.Item>
-        }) : null}
+        {Type == 'b' ? 
+        // areaList?.map((item, index) => {
+        //   return <Form.Item name={"areaL" + index}>
+        //     <Select options={item.areaList} fieldNames={{ label: 'name', value: 'id' }}
+        //       defaultValue={item.areaList[0]?.id}  style={{ width: 120, marginRight: '16px' }}
+        //       onChange={(val) => handleSortChange(item, val)}></Select></Form.Item>
+        // })
+        <Form.Item name="areaL" initialValue={aList}>
+        <Cascader options={options} style={{ width: 200,marginRight:'16px' }} fieldNames={{
+          label: 'name',
+          value: 'areaId',
+          children: 'childs',
+        }} onChange={(val,select) => handleSortChange(val,select)} placeholder="请选择区域"/></Form.Item>
+         : null}
 
         <Form.Item name="dateC" initialValue={dateRang} label="日期选择">
           <RangePicker format="YYYY-MM-DD" defaultValue={dateRang} disabledDate={disabledDate} />
@@ -280,11 +345,11 @@ export default function Index() {
   }
 
   useEffect(() => {
-    setCustview(< CustView v={Type} d={dateRang} />);
+    setCustview(< CustView v={Type} d={dateRang} l={aList}/>);
     return () => {
       setCustview(null)
     }
-  }, [Type, sortSelected])
+  }, [Type,areaListChoose ])
   return (
     <Pagecount bgcolor="transparent" pd="0">
       <Main>
