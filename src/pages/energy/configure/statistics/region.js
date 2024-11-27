@@ -704,6 +704,10 @@ const getSelected = async ({areaId, type=devietype}) => {
                       value: "3",
                       label: "燃气表",
                     },
+                    {
+                      value: "12",
+                      label: "断路器",
+                    },
                   ]}
                 />
               </Item>

@@ -255,6 +255,7 @@ export default function index (props) {
                         <Select.Option  value={1}>电表</Select.Option>
                         <Select.Option  value={2}>水表</Select.Option>
                         <Select.Option  value={3}>燃气表</Select.Option>
+                        <Select.Option  value={12}>断路器</Select.Option>
                     </Select>
                     <div style={{ width:0, height: 32, margin: '0 32px', borderLeft:'1px dashed #ddd' }}></div>
                     <span style={{marginRight: 16}}>设备搜索</span>

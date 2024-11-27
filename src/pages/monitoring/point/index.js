@@ -44,6 +44,7 @@ export default function Index(props) {
   let {exparams} = useOutletContext()
   let {deviceStyle} = exparams
   const dstate = useSelector(deviceState)
+  console.log(deviceStyle,"----deviceStyle--exparams")
   // const [messageApi, contextHolder] = message.useMessage();
   const {
    
@@ -273,6 +274,7 @@ export default function Index(props) {
 
   useEffect(() => {
     if (Number.isFinite(areaId) && Number.isFinite(deviceStyle) && Number.isFinite(projectId)) {
+      console.log(deviceStyle,"----deviceStyle")
       getData();
       getGatewayUsed();
     }
