@@ -3,7 +3,7 @@ import { useSelector, useDispatch } from "react-redux";
 import { nanoid } from "@reduxjs/toolkit";
 import { useNavigate } from "react-router-dom";
 import {useTranslation} from "react-i18next"
-import styled from "styled-components";
+import styled, {css} from "styled-components";
 import moment from "moment";
 import {
   Space,
@@ -38,7 +38,7 @@ import Custmodal from "@com/useModal";
 import {Circle} from '@com/useIcon'
  
 import Projectform from './projectform'
-import { configProject, getMenus, getshifts, getOnelevel, getpublishState, systemConfigInfo, getJump, iszhCN, getWebsiteState, getWebsiteMenu } from "@redux/systemconfig";
+import { configProject, getMenus, getshifts, getOnelevel, getpublishState, systemConfigInfo, getJump, iszhCN, getWebsiteState, getWebsiteMenu, adaptation} from "@redux/systemconfig";
  
 import UseTabel from '@com/useTable'
 import Account from "./account";
@@ -75,6 +75,10 @@ const CustTable = styled(Table)`
   }
   
 ` 
+const btsty = css`
+  height: 32px;
+  font-size: 12px;
+`
 const CustBtn = styled(Button)`
   max-width: ${(props) => props.width || "144px"};
   height: 40px;
@@ -86,6 +90,7 @@ const CustBtn = styled(Button)`
   align-items: center;
   padding-top:0px;
   padding-bottom: 0px;
+  ${props => props.laptop ? btsty : null}
   .anticon + span {
     margin-left: ${(props) => props.mgl || "16px"};
   }
@@ -107,6 +112,16 @@ const CutSerachBt = styled(CustBtn)`
     border-color: none;
   } */
 `;
+const maisty=css`
+  padding: 16px;
+  grid-template-rows: 60px 1fr;
+  row-gap: 16px;
+`
+const cnsty=css`
+  font-size: 20px;
+        height: 20px;
+        line-height: 20px;
+        `
 const Mainbox = styled.div`
   background-image: linear-gradient(#003399, #000000);
   padding: 32px;
@@ -116,32 +131,33 @@ const Mainbox = styled.div`
   row-gap: 32px;
   color: #fff;
  // min-height: 780px;
-  min-width:1440px;
+//  min-width:1440px;
   overflow: auto;
+  ${props => props.laptop ? maisty : ''}
   .title {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding-bottom: 32px;
+    padding-bottom: ${props => props.laptop ? "8px" : "32px"};
     border-bottom: 1px solid #476297;
     .name {
       display: flex;
       flex-direction: column;
-      justify-content: space-between;
+      justify-content: space-around;
       .ch {
         color: #fff;
-        font-size: 36px;
-        height: 46px;
-        line-height: 46px;
+        font-size:${props=> props.laptop ? "20px" : "36px"};
+       
+       
       }
       .en {
         color: rgba(255, 255, 255, 0.6);
-        font-size: 16px;
+        font-size: ${props=> props.laptop ? "14px" : "16px"};
         font-style: italic;
       }
     }
     .loginName {
-      font-size: 20px;
+      font-size: ${props=> props.laptop ? "14px" : "20px"};
       color: #f2f2f2;
     }
     .exit {
@@ -246,6 +262,7 @@ const { RangePicker } = DatePicker
 export default function Index() {
  const {t} = useTranslation(["comm","platformcig"])
   const iszh = useSelector(iszhCN)
+  const {laptop} = useSelector(adaptation) || {}
   const navigate = useNavigate();
   const dispatch = useDispatch();
    
@@ -401,12 +418,13 @@ export default function Index() {
       align: "center",
       render: (text, record) => (
         <Space size={32}>
-          <CustBtn  width={iszh ? null : "auto"}  icon={<SettingOutlined style={{ fontSize: "20px" }}  />} onClick={() => enterProject({id: record.id, type: 1, publishState: record.publishState
+          <CustBtn  width={iszh ? null : "auto"} laptop={laptop}  icon={laptop? null : <SettingOutlined style={{ fontSize: "20px" }}  />} onClick={() => enterProject({id: record.id, type: 1, publishState: record.publishState
 })}>
             {t("platformcig:ProjectConfiguration")}
           </CustBtn>
           <CustBtn
-            icon={<DesktopOutlined style={{ fontSize: "20px" }} />}
+            laptop={laptop}
+            icon={laptop ? null : <DesktopOutlined style={{ fontSize: "20px" }} />}
             onClick={() =>
               enterProject({id: record.id, type: 2, publishState: record.publishState
               })
@@ -458,7 +476,7 @@ export default function Index() {
   });
 
 tableProps.pagination.position = ["bottomCenter"] // 底部居中
-tableProps.pagination.size="default" // 页码大小默认
+tableProps.pagination.size=laptop ? "small" : "default" // 页码大小默认
   const { submit } = search;
 
   const { chineseTitle, englishTitle, systemLogoImage } = useSelector(systemConfigInfo);
@@ -590,7 +608,7 @@ const closeModl = () => {
 
   return (
       
-      <Mainbox>
+      <Mainbox laptop={laptop}>
         <div className="title">
           <Space size={32}>
             <Image
@@ -599,7 +617,7 @@ const closeModl = () => {
                   ? "data:image/png;base64," + systemLogoImage
                   : Chintlog
               }
-              height={68}
+              height={ laptop ? 54 : 68}
               preview={false}
             ></Image>
             <div className="name">
@@ -610,10 +628,10 @@ const closeModl = () => {
             </div>
           </Space>
           <Space size={32}>
-            <UserOutlined style={{ color: "#fff", fontSize: "32px" }} />
+            <UserOutlined style={{ color: "#fff", fontSize: laptop ? "22px" : "32px" }} />
             <span className="loginName">{name}</span>
             <PoweroffOutlined
-              style={{ fontSize: "30px", cursor: "pointer" }}
+              style={{ fontSize: laptop ? "22px" : "30px", cursor: "pointer" }}
               className="exit"
               onClick={() => onShow()}
             />
@@ -704,6 +722,7 @@ const closeModl = () => {
             rowClassName="rowclass"
             rowKey="id"
             bordered={true}
+            size={laptop ? "small" : "default"}
           >
            
           </CustTable>

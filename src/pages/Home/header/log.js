@@ -1,11 +1,11 @@
 import React, {useRef,  useCallback, useState, useEffect} from "react";
 import { Dropdown, Space, Form, Input, message, Typography, Radio } from "antd";
  
-import styled from "styled-components";
+import styled, {css} from "styled-components";
 import { useSelector, useDispatch } from "react-redux";
 import {useNavigate, useLocation} from "react-router-dom"
 import { clearToken, selectUser, userRest, platformLang} from "@redux/user";
-import { configProject, comSetFirst, getJump, currentscreen, isGranary,datascreen, configState, setIntl,setIszhCN, selectProjectId,getMenus, setMenus,menus} from "@redux/systemconfig";
+import { configProject, comSetFirst, getJump, currentscreen, isGranary,datascreen, configState, setIntl,setIszhCN, selectProjectId,getMenus, setMenus,menus,adaptation} from "@redux/systemconfig";
 import moment from "moment";
 import {useTranslation, Trans, Translation} from 'react-i18next';
 import enUS from 'antd/es/locale/en_US';
@@ -61,6 +61,10 @@ const Ldiv = styled.div`
   border-bottom: 1px solid #036;
   border-top: 1px solid #036;
 `;
+
+let style = css`width: 58px;
+       border-right: none;
+       font-size: 12px;`
 const Idiv = styled.div`
   border-right: 1px solid rgba(255, 255, 255, 0.3);
   height: inherit;
@@ -71,11 +75,7 @@ const Idiv = styled.div`
   padding-bottom: 4px;
   background-repeat: no-repeat;
   background-position: top 4px center;
-  @media screen and (max-width: 1900px) {
-       width: 58px;
-       border-right: none;
-       font-size: 12px;
-     }
+  ${props => props.laptop ? style : null}
   &:last-child {
     border-right: none;
   }
@@ -86,6 +86,36 @@ const Idiv = styled.div`
   }
   span {
     line-height: 1;
+  }
+  &.Idiv1{
+    background-image: url(${imgurl['31N']});
+  &:hover {
+    background-image: url(${imgurl['31H']});
+  }
+  }
+  &.Idiv2 {
+    background-image: url(${imgurl['32N']});
+  &:hover {
+    background-image: url(${imgurl['32H']});
+  }
+  }
+  &.Idiv3{
+    background-image: url(${imgurl['33N']});
+  &:hover {
+    background-image: url(${imgurl['33H']});
+  }
+  }
+  &.Idiv4{
+    background-image: url(${imgurl['34N']});
+  &:hover {
+    background-image: url(${imgurl['34H']});
+  }
+  }
+  &.Idiv5{
+    background-image: url(${imgurl['35N']});
+  &:hover {
+    background-image: url(${imgurl['35H']});
+  }
   }
 `;
 const Idiv1 = styled(Idiv)`
@@ -124,9 +154,8 @@ const Triangle = styled.div`
      border-width: 30px;
      border-style: solid;
      border-color: transparent #135abd transparent transparent;
-     @media screen and (max-width:1900px) {
-        display: none;
-     }
+     display: ${props => props.laptop ? "none" : 'block'};
+    
 `;
 const Cipt = styled(Input)`
   && {
@@ -158,6 +187,8 @@ export default function Log() {
   const  isgranary = useSelector(isGranary)
   const setmenus = useSelector(setMenus)
   const allmenus = useSelector(menus)
+  const adap =useSelector(adaptation) || {}
+  console.log("laptop",adap)
   let dataScreen =setmenus?.find(i => i.key=='dataScreen')?.label //数据大屏
   let projectSet = setmenus?.find(i => i.key=='projectSet')?.label //项目设置
   let systemSet = setmenus?.find(i => i.key=='systemSet')?.label // 平台设置
@@ -378,30 +409,30 @@ const lngOk = () => {
 
   return (
     <Cdiv>
-      <Triangle />
+      <Triangle laptop={adap.laptop} />
       <Ldiv>
         {
           config ? 
-          (<Idiv5 onClick={back}>
+          (<Idiv laptop={adap.laptop} className="Idiv5" onClick={back}>
             <span> 返回</span>
-          </Idiv5>)
+          </Idiv>)
           :
         <>
-      { isgranary ? <Idiv1 onClick={() => window.open('http://10.5.7.60:4242/ses', '_blank')}>
+      { isgranary ? <Idiv laptop={adap.laptop} className="Idiv1"  onClick={() => window.open('http://10.5.7.60:4242/ses', '_blank')}>
           <span> {dataScreen}</span>
-        </Idiv1> : showscreen  &&  <Idiv1 onClick={onJump}>
+        </Idiv> : showscreen  &&  <Idiv laptop={adap.laptop} className="Idiv1" onClick={onJump}>
           <span> {dataScreen}</span>
-        </Idiv1>
+        </Idiv>
         }
  
  
  
-        { roleType < 4 ? (<Idiv4 onClick={onConfigure}> 
+        { roleType < 4 ? (<Idiv laptop={adap.laptop} className="Idiv4"  onClick={onConfigure}> 
           <span>{projectSet}</span>
-        </Idiv4>):null}
-        { roleType < 3 ? (<Idiv2 onClick={projectcfg}>
+        </Idiv>):null}
+        { roleType < 3 ? (<Idiv  Idiv laptop={adap.laptop} className="Idiv2" onClick={projectcfg}>
           <span>{systemSet}</span>
-        </Idiv2>):null}
+        </Idiv>):null}
         </>
         }
         <Dropdown
@@ -413,11 +444,11 @@ const lngOk = () => {
       } 
        
         overlayClassName="custDropdown">
-        <Idiv3>
+        <Idiv Idiv laptop={adap.laptop} className="Idiv3">
           
             <span>{name}</span>
           
-        </Idiv3>
+        </Idiv>
         </Dropdown> 
      
        

@@ -69,12 +69,17 @@ const {DeviceTypeManager: {AllDeviceStyle} } = Monitoring
 const initialState = {
     deviceState:false,
     siteConfig: antdconfig,
+    adaptation: { // 屏幕适配
+      laptop: false, // 笔记本屏幕(max-device-width:1536px)<=1536px
+   
+      ratio43:true,  // 屏幕比例 4:3
+    }, 
     themeColor:  {  // 可配置对象，不只是颜色属性。名字为保证稳定性不改
       primaryColor: '#237AE4',
       menusbgcolor: '',
       menusactive: '',
       menusborder: '',
-      maxwidth:'1900px' // 屏幕适配最大尺寸
+      
     },
     intl: {
       lang: zhCN,
@@ -310,8 +315,13 @@ const system = createSlice({
         setDeviceState(state,{payload}){
           console.log(payload)
           state.deviceState = payload
-        }
+        },
+       setadaptation(state, {payload}){
+          let {adaptation}= state
+          console.log(payload)
+          state.adaptation ={...adaptation, ...payload}
 
+       }
     },
      extraReducers: {
       [getWebsiteState.fulfilled]: (state, action) => {
@@ -444,6 +454,7 @@ export const iszhCN = state => state.system.iszhCN // 是否中文
 export const enterprise = state => state.system.enterprise // 碳排企业信息
 export const Time = state => state.system.environmentTime // 碳排企业信息
 export const filterDeviceStyle = state => state.system.filterDeviceStyle?.filter(f => f.deviceStyle!=6)
+export const adaptation = state => state.system.adaptation
 export const {
     configProject,
     getSetMenus,
@@ -474,5 +485,6 @@ export const {
     setIszhCN,
     getEnterprise, 
     setDeviceState,
+    setadaptation
 } = actions
 export default system.reducer
