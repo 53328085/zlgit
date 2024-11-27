@@ -170,6 +170,8 @@ export default function Index() {
         }
       })
     } else {
+       let currdeviceStyle = `deviceStyle_${projectId}`
+      window.localStorage.setItem(currdeviceStyle, meterType);
       navigate(`/index/runtimeMonitor/point`, {
         state: {
           type: 'index', primary: 'runtimeMonitor', title: '设备监测', nested: 'point', meterType

@@ -4,7 +4,7 @@ import styled from 'styled-components'
 import Copyright from './Copyright'
 import style from './index.module.less'
 import {useSelector} from 'react-redux'
-import {  configState } from "@redux/systemconfig";
+import {  configState,adaptation } from "@redux/systemconfig";
 //import Logbg from './logBg.png'
 //const Logbg = lazy(() => import("./logBg.png"))
 const { Header, Footer, Sider, Content } = Layout;
@@ -12,7 +12,8 @@ const { Header, Footer, Sider, Content } = Layout;
 const Csider = styled(Sider)`
   background-image: ${props => props.isconfig=='true'? 
   `linear-gradient(180deg, rgba(0, 51, 153, 1) 0%, rgba(0, 51, 153, 1) 0%, rgba(0, 51, 51, 1) 100%, rgba(0, 51, 51, 1) 100%)`
-   : `linear-gradient(180deg, #0b41c7 0%,  #7662ff 100%)`}
+   : `linear-gradient(180deg, #0b41c7 0%,  #7662ff 100%)`};
+   width: ${props => props.laptop ? '160px' : "200px"} ;
 `
 const Logheaer = styled(Header)`
 && {
@@ -56,9 +57,11 @@ export function DefaultLayout(props) { // 默认首页
 }
 export function ProjectLayout(props) { // 项目内容
   const isconfig = useSelector(configState).toString()
+  const {laptop} = useSelector(adaptation)
+  console.log('taptop',laptop)
   return (
     <Layout className={style.pagelayout}>
-     <Csider isconfig={isconfig}>{props.custsider}</Csider>
+     <Csider isconfig={isconfig} laptop={laptop}>{props.custsider}</Csider>
     <Layout>
       <Header className={style.header}>{props.custheader}</Header>
      

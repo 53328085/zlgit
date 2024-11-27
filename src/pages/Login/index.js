@@ -24,7 +24,7 @@ import Listitem from "./Listitem";
 import Username from "./Username";
 import Phonelog from "./Phonelog";
 import Copyright from './Copyright'
- 
+import {media} from '@com/usehandler' 
 const Loginpage =  styled.div`
   display: flex;
   flex:1;
@@ -32,6 +32,8 @@ const Loginpage =  styled.div`
   position: relative;
   background-image: ${props => `url(${props.bgImg})`};
   background-size: cover;
+  
+
 `
 const CTabs = styled(Tabs)`
    && {

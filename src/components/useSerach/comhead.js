@@ -354,6 +354,7 @@ const deviceStyleNode = (<Item name="deviceStyle" label="设备类型"  >
       form.setFieldValue('type',1)
     }
     if(config.meterType) {
+      console.log('config.meterType', config.meterType)
       form.setFieldValue('deviceStyle',config.meterType)
     }
      props.setexparams({...form.getFieldsValue(true)})
