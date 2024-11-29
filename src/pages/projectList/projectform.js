@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useImperativeHandle, forwardRef, useRef} from "react";
+import {useSelector} from "react-redux"
 import moment from 'moment';
 import {
   Form,
@@ -10,31 +11,47 @@ import {
   
 } from "antd";
 import {useTranslation} from 'react-i18next'
-import styled from "styled-components";
+import styled, {css} from "styled-components";
 import Mapcom from "@com/useMap/indexset";
 import projectlog from "@imgs/chintlog.png";
 import projectimg from "@imgs/projectimg.png";
 import Upload from '@com/useUpload'
 import {Comipt, Comtext, CdatePicker} from "@com/comstyled"
- 
- 
+import { adaptation} from "@redux/systemconfig";
+ const formsty=css`
+ grid-template-rows: repeat(12, 24px);
+ gap: 16px 32px;
+ `
+ const lablesty=css`
+ flex-basis: 85px;
+ padding-right: 5px;
+ `
 const Formbox = styled(Form)`
   display: grid;
   grid-template-columns: 1fr 1fr;
   grid-template-rows: repeat(10, 36px);
   gap: 16px 128px;
   grid-auto-flow: column;
+  ${props => props.laptop ? formsty : ''}
   .ant-form-item {
     margin-bottom: 0px;
+    .ant-input{
+      font-size: ${props => props.laptop ? "12px" : "14px"};
+    }
   }
   .ant-form-item-label {
-   flex-basis: 100px;
+    flex-basis: 100px;
     padding-right: 10px;
-  
+    ${props => props.laptop ? lablesty : null};
+    label {
+      font-size: ${props => props.laptop ? "12px" : "14px"};
+    }
+    
+    
   }
 
   .remark {
-    grid-row: 7 / 10;
+    grid-row: ${props => props.laptop ? "9 / 12" : "7 / 10" } ;
   }
   /* .upload {
     grid-row: 4 / 7;
@@ -46,19 +63,19 @@ const Formbox = styled(Form)`
    
   } */
   .upload {
-    grid-row: 4 / 7;
+    grid-row: ${props => props.laptop ? "4 / 9" : "4 / 7" } ;
     display: grid;
     grid-template-columns: 1fr 1fr;
     column-gap: 16px;
     .ant-form-item-row {
-       height: 140px;
+      // height: 140px;
       }
     .ant-form-item-control-input-content {
         display: grid;
         grid-template-rows: 116px 1fr;
         row-gap: 8px;
-        width: 200px;
-        height: 140px;
+      //  width: 200px;
+      //  height: 140px;
         .img {
           border: 1px dotted #dedede;
           display: flex;
@@ -120,6 +137,7 @@ const imgToBase = (url) => {
  
 }
  function Set(props, ref) {
+  const {laptop} = useSelector(adaptation)
   const [form] = Form.useForm();
   const { Item } = Form;
   const {t} = useTranslation("comm")
@@ -228,9 +246,9 @@ const imgToBase = (url) => {
       form={form}
       initialValues={params}
       labelAlign="left"
-      size="middle"
+      size={laptop ? "small" : "middle"}
       colon={false}
-
+      laptop={laptop}
     >
       <Item label={t("ProjectID")}>
         <Input placeholder={t("systemID")} disabled />
@@ -267,7 +285,7 @@ const imgToBase = (url) => {
            </div>
            <Info>{t("sizeofpicture", {size: '212*32'})}</Info>
          </Item>
-         <Item label={t("Projectpicture")}   required>
+         <Item label={t("Projectpicture")} labelCol={laptop ? {flex:"5em"} :{flex: "100px"}}   required>
            <div className="img">
             <Item nostyle  name="imgProject" rules={
               [
@@ -277,7 +295,7 @@ const imgToBase = (url) => {
               }
              ]
            }>
-            <Upload wpx={248} hpx={168} swpx={200} shpx={116} getfile={setImgProject} /> 
+            <Upload wpx={248} hpx={168} swpx={laptop ? 150 : 200} shpx={116} getfile={setImgProject} /> 
             </Item>
            </div>
            <Info>{t("sizeofpicture", {size: '248*168'})}</Info>
@@ -292,7 +310,7 @@ const imgToBase = (url) => {
       <Item label={t("Projectremark")} name="remark" className="remark">
         <Input.TextArea   placeholder={t("99words")} maxLength={99} style={{height: "140px"}} />
       </Item>
-      <Item label={t("ProjectAddress")} labelCol={{flex:"166px"}} className="address" name="address" tooltip={t("mapgetit")}>
+      <Item label={t("ProjectAddress")} labelCol={{flex: laptop ? "85px" : "166px"}} className="address" name="address" tooltip={t("mapgetit")}>
        {/*  <Item noStyle>
           <Cascader
             options={options}
@@ -308,7 +326,7 @@ const imgToBase = (url) => {
         </Item> */} 
           <Input placeholder={t("detailedaddress")} onChange={onInput} /> 
       </Item>
-      <Item label={t("longitudeatitude")} labelCol={{flex:"166px"}} className="lnglat" tooltip={t("mapgetit")}>
+      <Item label={t("longitudeatitude")} labelCol={{flex: laptop? "85px" :"166px"}} className="lnglat" tooltip={t("mapgetit")}>
         <Row gutter={16}>
           <Col span={12}>
             <Item name="lng" rules={[

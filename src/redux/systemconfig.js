@@ -76,11 +76,27 @@ const initialState = {
     }, 
     themeColor:  {  // 可配置对象，不只是颜色属性。名字为保证稳定性不改
       primaryColor: '#237AE4',
-      menusbgcolor: '',
-      menusactive: '',
-      menusborder: '',
-      
-    },
+      errorColor: '#ff4d4f',
+      warningColor: '#faad14',
+      successColor: '#52c41a',
+      infoColor: '#1890ff',
+      menusbgcolor: '#003366',
+      menusbgcolorR: '#135abd',
+      menusbgcolorRA: '#3988e7',
+      menusbgcolorRfont: '#fff',
+      menusbgcolorRborder: '#fff',
+      menusfontcolor: "#b2c1d1",
+      menusactive: '#1c62b6',
+      menusborder: '#00ff66',
+      menusactivefontcolor: '#fff',
+      runasiderstart:"#0b41c7",
+      runasiderend:"#7662ff",
+      desasiderstart:"#039",
+      desasiderend:"#033",
+      asiderfontcolor: "#fff",
+      asiderfontcolorA: "#3f0",
+      asiderbgcolorA:"#3333cc"
+    },    
     intl: {
       lang: zhCN,
       locale: 'zh-cn'
@@ -202,7 +218,7 @@ const system = createSlice({
     initialState,
     reducers: {
         getCurrProjectInfo(state, {payload}) { // 当前项目信息 
-            state.themeColor.primaryColor= typeof payload.themeColor !=="string"  ? "#237ae4" : payload.themeColor ,
+           // state.themeColor.primaryColor= typeof payload.themeColor !=="string"  ? "#237ae4" : payload.themeColor ,
             state.currProject = payload   
         },
         configProject(state, {payload}) { // 项目是否处于设计状态     
@@ -274,8 +290,10 @@ const system = createSlice({
             state.isGranary = payload
            // return Object.assign({}, state, {isGranary: actions.payload})
          },
-        getThemeColor(state, {payload}) {         
-           state.themeColor =payload;
+        getThemeColor(state, {payload}) {   
+           console.log(payload)
+           let {themeColor} = state      
+           state.themeColor ={...themeColor, ...payload};
           
         },
         getRoomId(state,{payload}){

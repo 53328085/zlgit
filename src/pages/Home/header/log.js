@@ -54,19 +54,19 @@ const Cdiv = styled.div`
 `;
 const Ldiv = styled.div`
   height: inherit;
-  background-color: #135abd;
+  background-color:  ${props => props.theme.menusbgcolorR || '#135abd'};
   display: flex;
   align-items: center;
   justify-content: flex-end;
-  border-bottom: 1px solid #036;
-  border-top: 1px solid #036;
+  border-bottom: 1px solid ${props => props.theme.menusbgcolor || '#036'};
+  border-top: 1px solid ${props => props.theme.menusbgcolor || '#036'};
 `;
 
 let style = css`width: 58px;
        border-right: none;
        font-size: 12px;`
 const Idiv = styled.div`
-  border-right: 1px solid rgba(255, 255, 255, 0.3);
+  border-right: 1px solid ${props => props.theme.menusbgcolorRborder || '#fff'}; //rgba(255, 255, 255, 0.3);
   height: inherit;
   width: 112px;
   display: flex;
@@ -80,12 +80,13 @@ const Idiv = styled.div`
     border-right: none;
   }
   &:hover {
-    background-color: #3988e7;
+    background-color:${props => props.theme.menusbgcolorRA || '#3988e7'} ;
     cursor: pointer;
     border-right: 1px solid rgba(255, 255, 255, 0.1);
   }
   span {
     line-height: 1;
+    color: ${props => props.theme.menusbgcolorRfont || '#fff'};
   }
   &.Idiv1{
     background-image: url(${imgurl['31N']});
@@ -118,42 +119,13 @@ const Idiv = styled.div`
   }
   }
 `;
-const Idiv1 = styled(Idiv)`
-  background-image: url(${imgurl['31N']});
-  &:hover {
-    background-image: url(${imgurl['31H']});
-  }
-`;
-const Idiv2 = styled(Idiv)`
-  background-image: url(${imgurl['32N']});
-  &:hover {
-    background-image: url(${imgurl['32H']});
-  }
-`;
-const Idiv3 = styled(Idiv)`
-  background-image: url(${imgurl['33N']});
-  &:hover {
-    background-image: url(${imgurl['33H']});
-  }
-`;
-const Idiv4 = styled(Idiv)`
-  background-image: url(${imgurl['34N']});
-  &:hover {
-    background-image: url(${imgurl['34H']});
-  }
-`;
-const Idiv5 = styled(Idiv)`
-  background-image: url(${imgurl['35N']});
-  &:hover {
-    background-image: url(${imgurl['35H']});
-  }
-`;
+
 const Triangle = styled.div`
     width: 0; 
      height: 0;
      border-width: 30px;
      border-style: solid;
-     border-color: transparent #135abd transparent transparent;
+     border-color: transparent  ${props => props.theme.menusbgcolorR || '#135abd'} transparent transparent;
      display: ${props => props.laptop ? "none" : 'block'};
     
 `;
@@ -444,7 +416,7 @@ const lngOk = () => {
       } 
        
         overlayClassName="custDropdown">
-        <Idiv Idiv laptop={adap.laptop} className="Idiv3">
+        <Idiv  laptop={adap.laptop} className="Idiv3">
           
             <span>{name}</span>
           

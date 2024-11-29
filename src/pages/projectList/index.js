@@ -38,7 +38,7 @@ import Custmodal from "@com/useModal";
 import {Circle} from '@com/useIcon'
  
 import Projectform from './projectform'
-import { configProject, getMenus, getshifts, getOnelevel, getpublishState, systemConfigInfo, getJump, iszhCN, getWebsiteState, getWebsiteMenu, adaptation} from "@redux/systemconfig";
+import { systemConfigInfo, getJump, iszhCN, getWebsiteState, getWebsiteMenu, adaptation} from "@redux/systemconfig";
  
 import UseTabel from '@com/useTable'
 import Account from "./account";
@@ -81,7 +81,7 @@ const btsty = css`
 `
 const CustBtn = styled(Button)`
   max-width: ${(props) => props.width || "144px"};
-  height: 40px;
+  height: ${props => props.laptop ? "32px" : "40px"} ;
   background-color: ${(props) => props.bgColor || "rgba(0,51,255, 0.6)"};
   border-color: #0066cc;
   color: #fff;
@@ -107,6 +107,7 @@ const CutSerachBt = styled(CustBtn)`
   color:#fff !important;
   border:none;
   background-color: #0030ca;
+  height: ${props => props.laptop ? "32px" : "40px"} ;
 /*   &:hover, &:focus {
     background-color: #0033ff;
     border-color: none;
@@ -122,6 +123,10 @@ const cnsty=css`
         height: 20px;
         line-height: 20px;
         `
+const thsty=css`
+font-size: 14px;
+height: 36px;
+`
 const Mainbox = styled.div`
   background-image: linear-gradient(#003399, #000000);
   padding: 32px;
@@ -170,7 +175,7 @@ const Mainbox = styled.div`
   }
   .maincontent {
     display: grid;
-    grid-template-rows: 42px 1fr;
+    grid-template-rows: ${props => props.laptop ? "32px 1fr" : "42px 1fr"} ;
     row-gap: 32px;
     height: calc(100vh - 165px);
     .serach {
@@ -198,7 +203,7 @@ const Mainbox = styled.div`
         margin-left: auto;
       }
       .ant-form-item-control-input-content {
-      height: 40px;
+      height:${props => props.laptop ? "32px" : "40px"};
     }
     }
     .ant-table-wrapper {
@@ -217,13 +222,13 @@ const Mainbox = styled.div`
       background-color: transparent;
 
       color: #fff;
-      font-size: 16px;
+      font-size: ${props => props.laptop ? "12px" : "16px"};
       
       .ant-table-tbody > tr.rowclass > td {
         border-color: #2b4576;
         padding-top: 0px;
         padding-bottom: 0px;
-        height: 56px;
+        height: ${props => props.laptop ? "42px" : "56px"}; 
         border-color: #2b4576;
        
         //border-right-color: #2b4475;
@@ -243,7 +248,7 @@ const Mainbox = styled.div`
         border-color: #2b4576 !important;
         height: 40px;
         padding: 0px;
-       
+        ${props => props.laptop ? thsty : null}
       }
     }
   }
@@ -424,7 +429,7 @@ export default function Index() {
           </CustBtn>
           <CustBtn
             laptop={laptop}
-            icon={laptop ? null : <DesktopOutlined style={{ fontSize: "20px" }} />}
+            icon={laptop ? null : <DesktopOutlined style={{ fontSize: laptop?"16px": "20px" }} />}
             onClick={() =>
               enterProject({id: record.id, type: 2, publishState: record.publishState
               })
@@ -656,8 +661,9 @@ const closeModl = () => {
                    style={{ width: "500px" }}
                    allowClear
                    onSearch={submit}
-                 
+                   laptop={laptop}
                    enterButton={ <CutSerachBt
+                   laptop={laptop}
                     width="98px"                  
                     icon={
                       <SearchOutlined
@@ -674,9 +680,9 @@ const closeModl = () => {
                 <Cselect
                   placeholder={t("comm:projectStatus")}
                   w="200px"
-                  h="42px"
+                  h={laptop ? "32px" :"42px"}
                   onChange={submit}
-                  size="large"
+                  size={laptop ? "small" : "large"}
                 >
                   {options.map((o) => (
                     <Option value={o.value} key={nanoid()}>
@@ -690,16 +696,17 @@ const closeModl = () => {
             <Item noStyle>
               {  roleType == 2 &&    <CustBtn
                   onClick={showproject}
+                  laptop={laptop}
                   icon={
                     <PlusCircleOutlined
-                      style={{ color: "#fff", fontSize: "24px" }}
+                      style={{ color: "#fff", fontSize:  laptop ? "16px" : "24px" }}
                     />
                   }
                 >
                  {t("comm:newproject")}
                 </CustBtn>
                }
-                 {  roleType == 1 &&    <CustBtn width={iszh ? null : "auto"}
+                 {  roleType == 1 &&    <CustBtn  laptop={laptop} width={iszh ? null : "auto"}
                   onClick={devOps}
                 >
                    {t("platformcig:OperationsAdministratorManagement")}
@@ -709,7 +716,7 @@ const closeModl = () => {
               <Item noStyle>
                   <CustBtn
                   onClick={opRecord}
-                   
+                  laptop={laptop}
                    >
                   {t("platformcig:OperationRecord")}
                 </CustBtn>
@@ -722,6 +729,7 @@ const closeModl = () => {
             rowClassName="rowclass"
             rowKey="id"
             bordered={true}
+            laptop={laptop}
             size={laptop ? "small" : "default"}
           >
            
@@ -746,7 +754,7 @@ const closeModl = () => {
         title={t("comm:newproject")}
         ref={formmodal}
         onOk={onSubmit}        
-        width={1366} 
+        width={laptop ? 1000 : 1366} 
         mold="cust"     
         
       >
@@ -757,7 +765,7 @@ const closeModl = () => {
       <Custmodal
         title={<div style={{display: 'flex', justifyContent: 'space-between'}}><span>{t("platformcig:ProjectOperationHistory")}</span> <Button style={{width: '92px'}} type="primary" onClick={opclose}>{t("comm:Close")}</Button></div>}
         ref={opref} 
-        width={1424} 
+        width={laptop ? 1000 : 1424} 
         mold="cust"   
         footer={null}
       >
@@ -769,7 +777,7 @@ const closeModl = () => {
       <Custmodal
         title={t("platformcig:OperationAdministratorAccountManagement")}
         ref={operRef} 
-        width={1080} 
+        width={laptop ? 840 : 1080} 
         onOk={closeModl}
         mold="cust"  
       //  footer={<Space><Button onClick={closeModl}>取消</Button><Button type="primary" onClick={closeModl}>确认</Button></Space>}
