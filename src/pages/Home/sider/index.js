@@ -60,7 +60,7 @@ const Cmenu = styled(Menu)`
     color:  ${props => props.theme.asiderfontcolor || "#fff"};
    }
    .ant-menu-item.ant-menu-item-selected{    
-      background-color:${props => props.theme.asiderbgcolorA || "#3333cc"} ;
+      background-color:${props => props.theme.asiderbgcolorA || "#33c"} ;
       ${props => props.laptop ? sty : ''}     
       .ant-menu-title-content, .custicon {
         color: ${props => props.theme.asiderfontcolorA || "#33FF00"};

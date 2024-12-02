@@ -6,6 +6,7 @@ import { useSelector, useDispatch } from "react-redux";
 import {useNavigate, useLocation} from "react-router-dom"
 import { clearToken, selectUser, userRest, platformLang} from "@redux/user";
 import { configProject, comSetFirst, getJump, currentscreen, isGranary,datascreen, configState, setIntl,setIszhCN, selectProjectId,getMenus, setMenus,menus,adaptation} from "@redux/systemconfig";
+
 import moment from "moment";
 import {useTranslation, Trans, Translation} from 'react-i18next';
 import enUS from 'antd/es/locale/en_US';
@@ -17,7 +18,7 @@ import CModal from "@com/useModal"
 import imgurl from "./icon";
 import lg from './icon/lg.svg'
 import {pwdValidator, phoneValidator} from '@pages/rule.js'
-import {Login} from '@api/api' 
+import {Login,CustTheme} from '@api/api' 
 import {CustButton} from '@com/useButton'
 import {handlermenu} from "@com/usehandler"
 const {Text} = Typography 
@@ -160,7 +161,7 @@ export default function Log() {
   const setmenus = useSelector(setMenus)
   const allmenus = useSelector(menus)
   const adap =useSelector(adaptation) || {}
-  console.log("laptop",adap)
+ 
   let dataScreen =setmenus?.find(i => i.key=='dataScreen')?.label //数据大屏
   let projectSet = setmenus?.find(i => i.key=='projectSet')?.label //项目设置
   let systemSet = setmenus?.find(i => i.key=='systemSet')?.label // 平台设置
@@ -210,7 +211,22 @@ export default function Log() {
   
   
 }, [screenadr, isgranary]) */
+const getcurTheme= async(userId, projectId)=> {
+  try {
+    let {success, data} = await CustTheme.QueryTheme(projectId)
+    await CustTheme.GetUserTheme(userId)
+  } catch (error) {
+    
+  }
+}
 
+useEffect(()=> {
+  if(Number.isInteger(userId) && Number.isInteger(projectId)){
+    getcurTheme(userId, projectId)
+    
+  }
+
+}, [userId, projectId])
 const onJump = useCallback(() => {  
   let {bigScreenEnabled, bigScreenUrl} = Datascreen   
 

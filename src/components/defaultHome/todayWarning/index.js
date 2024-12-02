@@ -11,7 +11,7 @@ import { useReactive } from 'ahooks';
 const Mainbox = styled.div`
   position: relative;
   display: grid;
-  grid-template-columns: 1fr 248px;
+  grid-template-columns: 112px auto;
  column-gap: 16px;
  height: 142px;
  align-items: center;
@@ -142,8 +142,6 @@ export default function DefaultHome(props){
          <Titlelayout title={t("overview:AlarmOfToday")} {...fs} style={{height: "200px"}}>
         <Mainbox>
           <div style={{width: '112px', height: '112px'}} ref={ref}>
-              {/* <DemoLiquid></DemoLiquid> */}
-              
           </div>
           <div className='alarm'>
              <div>

@@ -3,19 +3,17 @@ import React, { useState, useEffect, useMemo, useRef } from "react";
 import {
   Form,
   Input,
-  DatePicker,
-  Select,
-  Switch, 
+  InputNumber,
   Divider,
-  Checkbox,
   Space,
   message,
-  Alert,
   Typography,
+  Tag,
+  theme
 } from "antd";
 import styled from "styled-components";
 
-import {ProjectSetting} from '@api/api.js'
+import {ProjectSetting,CustTheme} from '@api/api.js'
 
 import Mapcom from "@com/useMap/indexset";
 //import useMap from "@com/useMap/useInitMap"
@@ -29,7 +27,18 @@ import {publishState, getCurrProjectInfo, currProject, iszhCN, selectProjectId, 
  
 import {SaveButton, CustButton} from "@com/useButton" ;
 import Ccolor from './custColor';
+import { name } from "file-loader";
 const {Text, Link} =Typography
+const { Item } = Form;
+const Ctag=styled(Tag)`
+ &&{
+  font-size: 14px;
+  padding: 0 16px;
+  &:hover{
+    cursor: pointer;
+  }
+ }
+`
  const Formbox = styled(Form)`
   display: grid;
   grid-template-columns: 500px 500px;
@@ -88,72 +97,138 @@ export default function Index() {
   const ispublish = useSelector(publishState)
   const iszh = useSelector(iszhCN)
   const projectId= useSelector(selectProjectId)
-  
+  const [themes, setThemes] = useState([])
   const {t} = useTranslation("comm","common")
-
+  console.log(themes)
   const CurrProject = useSelector(currProject)
 
   const {QueryProjectInfo, SaveProjectInfo} = ProjectSetting
   const [form] = Form.useForm();
 
-
-  
-
- 
-
-
-
-
-
-
-
-  const { Item } = Form;
-
- 
-const onFinish = async (values) => {
+  const refid = useRef() // 保存时的ID
+ const currtheme = useRef()
+const getTheme = async()=>{
   try {
-    for(let b of module) {
-      values[b] = Number(values[b])
+    let {success, data, errMsg} = await  CustTheme.QueryTheme(projectId)
+    if(success && Array.isArray(data) && data.length >0 ){
+      let datas = data.map(d => ({...d, context: JSON.parse(d.context)}))
+      let formdata
+      if(!Number.isInteger(refid.current)) { // 页面初始化时      
+        formdata = datas[0]
+      }else if(refid.current ==0){ // 新增时
+       formdata =datas.reduce((c,p)=> {
+           return c.id > p.id ? c : p
+       }, {id: 0})
+      }else if(refid.current > 0){ // 编辑时
+        formdata = datas.find(d => d.id == refid.id)
+      }
+      console.log(formdata)
+      currtheme.current = formdata;
+      dispatch(getThemeColor(formdata.context))
+      form.setFieldsValue({id: formdata.id, name: formdata.name, ...formdata.context})
+      setThemes(datas)
+
+    }else{
+      setThemes([])
+      currtheme.current(null)
+      if(!success) message.warning(errMsg || "数据出错")
     }
-    values['validStageTime'] = values['validStageTime'].format('YYYY-MM-DD HH:mm:ss')
-   let params = {...initial, ...values};
-   console.log(params)
-   let {success, errMsg} = await SaveProjectInfo(params)
-   
-   if(success) {
-    queryProjectInfo()
-    message.success(t("comm:savesuccessfully"))
-   }else {
-    message.error(errMsg || t("comm:dataerr"))
-   }
+  } catch (error) {
+    console.log(error)
+  }
  
+}
+
+
+const onSave =async () => { // 保存
+  try {
+    let {id, name, ...params} = await form.validateFields()
+    refid.current=id;
+    let obj = {id, name, context: JSON.stringify(params)};
+   
+    let {success, errMsg} =  await  CustTheme.UpdateTheme(projectId, [obj])
+    if(success){
+      message.success("保存成功")
+      getTheme()
+    }else{
+      message.warning(errMsg || "数据出错")
+    }
+
+
+  } catch (error) {
+    console.log(error)
+  }
+  
+}
+const onrest=()=>{
+  try {
+    if(refid!=0 && themes?.length>0 && currtheme ){
+      let formdata = currtheme.current
+     
+      dispatch(getThemeColor(formdata.context))
+      form.setFieldsValue({id: formdata.id, name: formdata.name, ...formdata.context})
+  
+    }
+  } catch (error) {
+    console.log(error)
+  }
+}
+const onadd =()=> {
+  form.resetFields()
+  dispatch(getThemeColor(form.getFieldsValue()))
+}
+const selectTheme =(id)=> {
+  try {
+    let formdata = themes.find(t => t.id ==id)
+    dispatch(getThemeColor(formdata.context))
+    form.setFieldsValue({id: formdata.id, name: formdata.name, ...formdata.context})
+    refid.current=id;
+  
   } catch (error) {
     
   }
+
+}
+const ondelete=async ()=> {
+
+   try {
+    if(!Number.isInteger(refid.current)) return message.warning("没有选择方案")
+    let params ={
+      projectId,
+      themeId: refid.current
+    }
+    console.log(params)
+    let {success,errMsg}=await  CustTheme.DeleteTheme(params)
+    if(success){
+      message.success("删除成功")
+      refid.current=undefined
+      getTheme()
+    }else{
+message.warning(errMsg|| "数据出错")
+    }
+   } catch (error) {
     
+   }
 }
-const onSave = () => {
-  form.submit()
-}
-const onrest=()=>{
-  form.resetFields()
-  dispatch(getThemeColor(form.getFieldsValue()))
- 
-}
-/* useEffect(() => {
-  queryProjectInfo(); 
-}, [projectId]) */
+ useEffect(() => {
+  getTheme(); 
+}, [projectId]) 
  
   return (
     <Titlelayout title={<div style={{display: 'flex', justifyContent: "space-between", alignItems: 'center'}}>
-      <span>网站设计</span>  <Space size={32}><CustButton onClick={onrest} ghost>恢复默认值</CustButton><SaveButton onClick={onSave} isicon={false} /></Space></div>}>
+      <span>网站设计</span>  <Space size={32}>
+        <CustButton onClick={onrest} ghost>恢复默认值</CustButton>
+        <CustButton onClick={onadd}>新增</CustButton>
+     <SaveButton onClick={onSave} isicon={false} />
+     <CustButton onClick={ondelete} type="default" danger>删除</CustButton>
+     </Space></div>}>
     <Formbox
       form={form}   
       labelAlign="left"
       size="middle"
       scrollToFirstError={true}
       disabled={ispublish}
-      onFinish={onFinish}
+     
      
       validateMessages={
        { required: "缺少'${label}' 数据"}
@@ -162,7 +237,7 @@ const onrest=()=>{
     >
       <div className="leftlayout" >
         <div className="row">
-        <Item label="方案名称" name="name"   required={[
+        <Item label="方案名称" name="name" initialValue={null}  required={[
           {
             required: true
           }
@@ -182,13 +257,13 @@ const onrest=()=>{
         <Item name="errorColor" initialValue="#ff4d4f" noStyle>
         <Ccolor name="errorColor" />
         </Item>
-        <Text type="danger">应用于ant-design错误信息显示,其他需要错误色的元素</Text>
+        <Text type="danger">应用于ant-design错误信息,删除提示,其他需要错误色的元素</Text>
       </Item>
       <Item label="警告色">
         <Item name="warningColor" initialValue="#faad14" noStyle>
         <Ccolor name="warningColor" />
         </Item>
-        <Text type="warning">应用于ant-design警告信息显示,其他需要警告色的元素</Text>
+        <Text type="warning">应用于ant-design警告信息,其他需要警告色的元素</Text>
       </Item>
       <Item label="成功色">
         <Item name="successColor" initialValue="#52c41a" noStyle>
@@ -197,7 +272,7 @@ const onrest=()=>{
         <Text type="success">应用于ant-design成功信息显示,其他需要成功色的元素</Text>
       </Item>
       <Divider dashed  className="divider" />
-      <Item label="模块菜单栏背景色"  name="menusbgcolor" initialValue="#036">
+      <Item label="模块菜单栏背景色"  name="menusbgcolor" initialValue="#003366">
       <Ccolor name="menusbgcolor" />
       </Item>
       <Item label="模块菜单栏字体色"  name="menusfontcolor" initialValue="#b2c1d1">
@@ -207,10 +282,10 @@ const onrest=()=>{
       <Item label="当前模块背景色"  name="menusactive" initialValue="#1c62b6">
       <Ccolor name="menusactive" />
       </Item>
-      <Item label="当前模块下边框线颜色"  name="menusborder" initialValue="#0f6">
+      <Item label="当前模块下边框线颜色"  name="menusborder" initialValue="#00ff66">
       <Ccolor name="menusborder" />
       </Item>
-      <Item label="当前模块字体颜色"  name="menusactivefontcolor" initialValue="#fff">
+      <Item label="当前模块字体颜色"  name="menusactivefontcolor" initialValue="#ffffff">
       <Ccolor name="menusactivefontcolor" />
       </Item>
       <Item label="右边模块菜单栏背景色"  name="menusbgcolorR" initialValue="#135abd">
@@ -219,10 +294,10 @@ const onrest=()=>{
       <Item label="右边模块菜单栏活动色"  name="menusbgcolorRA" initialValue="#3988e7">
       <Ccolor name="menusbgcolorRA" />
       </Item>
-      <Item label="右边模块字体颜色"  name="menusbgcolorRfont" initialValue="#fff">
+      <Item label="右边模块字体颜色"  name="menusbgcolorRfont" initialValue="#ffffff">
       <Ccolor name="menusbgcolorRfont" />
       </Item>
-      <Item label="右边模块分隔线颜色"  name="menusbgcolorRborder" initialValue="#fff">
+      <Item label="右边模块分隔线颜色"  name="menusbgcolorRborder" initialValue="#ffffff">
       <Ccolor name="menusbgcolorRborder" />
       </Item>
       
@@ -250,13 +325,19 @@ const onrest=()=>{
       <Item label="当前侧边栏字体颜色"  name="asiderfontcolorA" initialValue="#3f0">
       <Ccolor name="asiderfontcolorA" />
       </Item>
-      <Item label="当前侧边栏背景色"  name="asiderbgcolorA" initialValue="#3333cc">
-      <Ccolor name="asiderbgcolorA" />
+      <Item label="当前侧边栏背景色"  name="asiderbgcolorA" initialValue="#33c">
+        <Ccolor name="asiderbgcolorA" />
       </Item>
-      <Item label="已有方案"  name="schemes" >
-       
+      <Item label="已有方案"    >
+        <div style={{display: "flex", rowGap: "8px", flexWrap: "wrap"}}>
+        {
+         themes?.length > 0 ?  themes?.map?.(t => <Ctag key={t.id} color={t?.context?.primaryColor} onClick={() => selectTheme(t.id)}>{t.name}</Ctag>): null
+        }
+        </div>
       </Item>
-      
+      <Item   name="id" noStyle initialValue={0} >
+          <Input hidden></Input>
+       </Item>
       </div>
 
     </Formbox>

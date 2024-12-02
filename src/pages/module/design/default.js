@@ -19,4 +19,5 @@ export default {
     desasiderend:["#033"],
     asiderfontcolor: ["#fff"],
     asiderfontcolorA: ["#3f0"],
+    asiderbgcolorA:["#3333cc"],
 }
