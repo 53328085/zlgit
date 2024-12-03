@@ -244,14 +244,14 @@ export default function index() {
  
         let compareArr=[] 
         resp.data.snData.forEach((item,index)=>{
-          if(item.data.length>1){
+          if(item?.data?.length>1){
            item.data.forEach(it=>{
               state.chartsOpts.series.push({
-                data:it.data.map(i=> (i["value"])), type: "line", smooth: true,name:item["sn"]+"-"+it["point"],markLine
+                data:it.data.map(i=> (i["value"])), type: "line", smooth: true,name:item["name"]+"-"+it["point"],markLine
               } )
           })
           }else{
-            state.chartsOpts.series.push({data:item.data[0]["data"].map(it=>it.value),type: "line", smooth: true,name:item["sn"]+"-"+item.data[0]["point"],markLine}) 
+            state.chartsOpts.series.push({data:item.data[0]["data"].map(it=>it.value),type: "line", smooth: true,name:item["name"]+"-"+item.data[0]["point"],markLine}) 
           }
 
          compareArr.push(item.data[0]["data"].map(it=>(it.value))) 

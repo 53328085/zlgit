@@ -78,8 +78,9 @@ function Index({ projectId, userId, onupdate }, ref) {
    
     for(let [key, data] of Object.entries(MenuNos)) {
       if(data?.length == 0) {
-        return message.warning(info[key])
-        // return custMsg({success: false, content: info[key]})
+        // return message.warning(info[key])
+         custMsg({success: false, content: info[key]})
+         continue
        }
 
        let params = null

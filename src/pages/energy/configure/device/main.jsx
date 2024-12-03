@@ -21,7 +21,7 @@ export default function Index({ projectId, areaId }) {
 
 
 
-  const { queryDrive, insertDrive, updateDrive, deleteDrive, queryDriveConfig, queryDriveUnconfig, conifgDrive, QueryImage } = DesElectric
+  const { queryDrive, insertDrive, updateDrive, deleteDrive, queryDriveConfig, queryDriveUnconfig, conifgDrive, QueryImage, deviceSorting } = DesElectric
 
   const tbcolumns = [
     {
@@ -42,10 +42,11 @@ export default function Index({ projectId, areaId }) {
       title: "操作",
       width: "400px",
       render: (_, record, index) => (<Space size={32}><Link underline onClick={() => settingClick(record.id, record.name)}>{t("button:configure")}</Link><Link underline onClick={() => edit(record)}>{t("button:edit")}</Link>
-        {/* {index > 0 ? <Link underline onClick={() => moveUpClick(record, index)}>{t("button:moveUp")}</Link> : null}
-        {index > -1 && index < treeData.length - 1 ? < Link underline onClick={() => moveDownClick(record, index)}>{t("button:moveDown")}</Link> : null} */}
+
         < Link underline type="danger" onClick={() => deleteRecord(record.id)
         }> {t("button:delete")}</Link >
+        {index > 0 ? <Link underline onClick={() => moveUpClick(record, index)}>{t("button:moveUp")}</Link> : null}
+        {index > -1 && index < treeData.length - 1 ? < Link underline onClick={() => moveDownClick(record, index)}>{t("button:moveDown")}</Link> : null}
       </Space >)
     },
   ]
@@ -107,6 +108,23 @@ export default function Index({ projectId, areaId }) {
     setParentId(0)
     setIsAdd(true)
     aref.current.onOpen()
+  }
+  const deviceSortingBtn = () => {
+    //设备排序保存
+    let params = treeData.map((item, indexValue) => {
+      return { ...item, index: indexValue + 1 };
+    })
+    console.log(params)
+    deviceSorting({ projectId }, params).then(res => {
+      if (res.success) {
+        message.success('设备排序成功!')
+        getTreeData()
+      } else {
+        message.warning(res.errMsg)
+      }
+    }).catch(error => {
+      console.log(error)
+    })
   }
   const edit = ({ id, name, address, imgsrc }) => {
     console.log(id)
@@ -317,7 +335,9 @@ export default function Index({ projectId, areaId }) {
 
       <Titlelayout layout="flex" title={<div style={{ display: 'flex', alignItems: "center", justifyContent: "space-between" }}>
         <span>重点设备</span>
-        <CustButton wh="auto" onClick={() => addMain()}>{t("button:addKeyEquipment")}</CustButton>
+        <div style={{ display: 'flex' }}>
+          <CustButton wh="auto" onClick={() => addMain()}>{t("button:addKeyEquipment")}</CustButton>
+          <CustButton style={{ marginLeft: "16px" }} wh="auto" onClick={() => deviceSortingBtn()}>{t("button:sorting")}</CustButton></div>
       </div>}>
         <div style={{ flex: 1, paddingTop: "16px" }}>
           <UseTable columns={tbcolumns} dataSource={treeData}></UseTable>
