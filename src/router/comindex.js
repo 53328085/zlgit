@@ -18,7 +18,8 @@ export default function Index() {
   const location = useLocation();
   let { state = {} } = location;
   let { nested = "", primary, meterType } = state; // meterType 从运行监控 =》 运行监控 跳转到 运行监控-》 设备管理
-  let whole = ["runtimeMonitor", "runtimeSafe", "runtimeEnergy", "runtimeStorage", "runtimeMaintenance", "runtimeQuota"]; // 需要显示搜索 ***（全部）的模块
+  console.log('meterType',meterType)
+  let whole = ["runtimeMonitor", "runtimeSafe", "runtimeEnergy", "runtimeStorage", "runtimeMaintenance"]; // 需要显示搜索 ***（全部）的模块
   let include = {
     runtimeEnergy: ["area", "report"], // 模块里不需要显示全部的
     designerDistribution: ['room']
@@ -74,16 +75,16 @@ export default function Index() {
       "class",
       "chart"
     ],
-    runtimeQuota: [
-      "runtimeParkQuota",
+ /*    runtimeQuota: [
+      "runtimeParkQuota", //园区是专门的接口
       "runtimeQuotaDetailed",
-      "runtimeQuotaAlarms"
-    ],
+     "runtimeQuotaAlarms"
+    ], */
     // 设计态
     designerEnergy: [ // 能源管理
       "price",
       "norm",
-      "type",
+      "type","energyRank"
     ],
     runtimeCarbonEmissionManager: [  //碳排管理
       "runtimeCarbonData",
@@ -136,9 +137,9 @@ export default function Index() {
   const sethandler = () => {
     try {
       console.log(nested)
-      if (primary == "runtimeMonitor" && nested == "point") {
+      if (primary == "runtimeMonitor" && nested == "point") {      
         if (!config.isdevsty) setConfig({ isdevsty: true, meterType });
-      } else {
+      } else {      
         setConfig({ isdevsty: false });
       }
       if (primary == "runtimeEnergy") {
@@ -148,7 +149,7 @@ export default function Index() {
             setConfig({ isview: true, isdate: true });
             break;
           case "range":
-            setConfig({ energytype: true, isdate: true, custview: true });
+            setConfig({ energytype: false, isdate: false, custview: true ,isAreaId: false,});
             break;
           case "time":
             setConfig({ shiftNo: true, isdate: true }); // shiftNo: true 不显示
@@ -169,7 +170,7 @@ export default function Index() {
               shiftNo: true,
               isAreaId: false,
               gas: false,
-
+              custview: true ,
             });
             break;
           case "analysis":
@@ -249,7 +250,7 @@ export default function Index() {
 
         setConfig({});
       }
-      if (primary == "runtimeQuota") {
+     /*  if (primary == "runtimeQuota") {
         switch (nested) {
           case "runtimeQuotaDetailed":
             setConfig({ custview: true });
@@ -259,12 +260,15 @@ export default function Index() {
             break;
         }
 
-      }
+      } */
       // 设计态
       if (primary == "designerEnergy") {
         switch (nested) {
           case "norm":
             setConfig({ custview: true });
+            break;
+            case "energyRank":
+            setConfig({isAreaId:false,custview: true });
             break;
         }
 

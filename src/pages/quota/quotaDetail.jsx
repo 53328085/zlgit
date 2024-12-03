@@ -1,16 +1,29 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react'
-import { useOutletContext } from 'react-router-dom'
+ 
 import { Space, Radio, Select, Progress, Form } from 'antd';
 import { useAntdTable } from "ahooks";
+import styled from 'styled-components';
+import {useLocation, useNavigate, Link} from 'react-router-dom'
 import { ExportExcel } from '@com/useButton'
 import style from './style.module.less'
 import Usetable from '@com/useTable'
 import energyImg from '../quota/icon/energyImg.svg'
-import styled from 'styled-components'
+ 
 import { useSelector } from 'react-redux'
 import { CPagination } from "@com/comstyled";
 import { selectProjectId } from '@redux/systemconfig.js'
 import { useTranslation } from "react-i18next"
+import {energyQuota} from "@api/api"
+const Search = styled.div`
+  display: flex;
+  height: 48px;
+  align-items: center;
+  justify-content: space-between;
+  background-color: #fff;
+  border-radius: 4px;
+  padding: 0 16px;
+  
+`
 const ProgressBoX = styled.div`
 .progressColor{
   .ant-progress-text{
@@ -21,51 +34,52 @@ const ProgressBoX = styled.div`
 `
 export default function QuotaDetail() {
   const tableLoadRef = useRef();
+  
   const [isCard, setisCard] = useState(true); //卡片模式true或列表模式false
   const projectId = useSelector(selectProjectId)
-  let { setCustview } = useOutletContext()
-  const [pageLog, setpageLog] = useState(1)
-  let [totalLog, setTotalLog] = useState(0)
+  const clocation = useLocation()
+  const navigate = useNavigate()
+  console.log(clocation)
+  const {search: query,pathname, state} = clocation
+ 
+ 
   const [form] = Form.useForm();
   const { t } = useTranslation("quota")
-  const [quotaWarning,setQuotaWarning]=useState(20);
+  
   const columns = [
     {
       title: t("RoomName"),
-      dataIndex: 'address',
-      key: 'address',
+      dataIndex: 'areaName',
+      key: 'areaName',
       align: 'center',
-      render: (text, record) => (
-        <span>{record.address != '' ? record.address : '/'}-{record.floor != '' ? record.floor : '/'}-{record.house != '' ? record.house : '/'}</span>
-      ),
     },
     {
       title: t("EnergyConsumptionQuota") + ' (kWh)',
-      dataIndex: 'quota',
-      key: 'quota',
+      dataIndex: 'areaQuotaValue',
+      key: 'areaQuotaValue',
       align: 'center',
     },
     {
       title: t("UsedEnergyConsumption") + ' (kWh)',
-      dataIndex: 'useQuota',
-      key: 'useQuota',
+      dataIndex: 'areaConsumptionValue',
+      key: 'areaConsumptionValue',
       align: 'center'
     },
     {
       title: t("RemainingEnergyConsumption") + ' (kWh)',
-      dataIndex: 'residueQuota',
-      key: 'residueQuota',
+      dataIndex: 'areaRemainValue',
+      key: 'areaRemainValue',
       align: 'center'
     },
     {
       title: t("RatioOfRemainingEnergyConsumption"),
-      dataIndex: 'percent',
-      key: 'percent',
+      dataIndex: 'areaRemainRate',
+      key: 'areaRemainRate',
       align: 'center',
-      render: (percent) => <Progress
-        percent={percent}
+      render: (percent, record) => <Progress
+        percent={parseFloat(percent)}
         trailColor='#ebeef5'
-        strokeColor={`${percent > quotaWarning ? 'rgba(0, 204, 51, 1)' : 'rgba(255, 0, 0, 1)'}`}
+        strokeColor={`${record.status == 0 ? 'rgba(0, 204, 51, 1)' : 'rgba(255, 0, 0, 1)'}`}
         style={{ width: 200 }} />
     },
     {
@@ -74,99 +88,184 @@ export default function QuotaDetail() {
       key: 'status',
       align: 'center',
       render: (status) => <div>
-        <span style={{ width: 8, height: 8, borderRadius: "50%", display: "inline-block", backgroundColor: `${status == 1 ? 'rgba(0, 204, 51, 1)' : 'rgba(255, 0, 0, 1)'}` }}></span>
-        <span style={{ marginLeft: 10, color: `${status == 1 ? 'rgba(0, 204, 51, 1)' : 'rgba(255, 0, 0, 1)'}` }}>{status == 1 ? t("Normal") : t("Alarm")}</span>
+        <span style={{ width: 8, height: 8, borderRadius: "50%", display: "inline-block", backgroundColor: `${status == 0 ? 'rgba(0, 204, 51, 1)' : 'rgba(255, 0, 0, 1)'}` }}></span>
+        <span style={{ marginLeft: 10, color: `${status ==0 ? 'rgba(0, 204, 51, 1)' : 'rgba(255, 0, 0, 1)'}` }}>{status == 0 ? t("Normal") : t("Alarm")}</span>
       </div>
     },
   ]
 
-  const quotaDetailed = [
-    {
-      id: 1,
-      address: "正泰物联",
-      floor: "",
-      house: "105",
-      status: 1,
-      quota: "2000",
-      useQuota: "400",
-      residueQuota: "1600",
-      percent: 80
-    },
-    {
-      id: 2,
-      address: "正泰物联",
-      floor: "2号楼",
-      house: "102",
-      status: 2,
-      quota: "2000",
-      useQuota: "600",
-      residueQuota: "1400",
-      percent: 10
-    },
-    {
-      id: 3,
-      address: "正泰物联",
-      floor: "1号楼",
-      house: "105",
-      status: 1,
-      quota: "2000",
-      useQuota: "400",
-      residueQuota: "1600",
-      percent: 80
-    },
-    {
-      id: 4,
-      address: "正泰物联",
-      floor: "2号楼",
-      house: "102",
-      status: 1,
-      quota: "2000",
-      useQuota: "600",
-      residueQuota: "1400",
-      percent: 80
-    },
-    {
-      id: 5,
-      address: "正泰物联",
-      floor: "2号楼",
-      house: "102",
-      status: 2,
-      quota: "2000",
-      useQuota: "600",
-      residueQuota: "1400",
-      percent: 7
-    },
-    {
-      id: 6,
-      address: "正泰物联",
-      floor: "2号楼",
-      house: "102",
-      status: 1,
-      quota: "2000",
-      useQuota: "600",
-      residueQuota: "1400",
-      percent: 80
-    }]
-  const buildOptions = [{ value: 0, label: t('Whole') }, { value: 1, label: '1号楼' }, { value: 2, label: '2号楼' }]
-
-  const showSortOptions = [{ value: 1, label: t('PercentageOrder') }, { value: 2, label:  t('PercentageReverseOrder') }, { value: 3, label:  t('Order') }, { value: 4, label:  t('ReverseOrder') }]
+  
+ 
   const [modeltype, setModelType] = useState('card')
-  const [buildSelected, setBuildSelected] = useState(0)
-  const [showSortSelected, setShowSortSelected] = useState(1)
-  const CustView = ({ isCard }) => {
-    return (
-      <>
-        <Form layout="inline">
-          <Form.Item name="build">
-            <Select options={buildOptions} defaultValue={buildSelected} style={{ width: 188, marginLeft: 16 }} onChange={handleBuildChange}></Select>
+ 
+ 
+  const [park, setPark] = useState([])
+  const [structure, setStructure] = useState([])
+ 
+  const getParklist = async() => {
+    try {
+     let {success, data, errMsg} = await energyQuota.QueryParkList({projectId, parkAreaId:0})
+     if(success && Array.isArray(data) && data?.length >0) {
+        setPark([{name: '全部园区', quotaAreaId: 0},...data])
+        return Promise.resolve(true)
+     }else {
+      
+       if(data?.length === 0 )  message.warning('没有设置园区')
+         setPark([])  
+        return Promise.reject('没有数据')
+         
+     }
+    } catch (error) {
+     
+    }
+  }
+const getStructure = async() => {
+    try {
+      let params ={
+        parkAreaId:0,
+        structureAreaId:0,
+        projectId
+      }
+    let {success, data} = await  energyQuota.QueryStructureList(params)
+    if(success && Array.isArray(data)&& data?.length >0) {
+      setStructure([{quotaAreaId:0,name: '全部建筑'}, ...data])
+     
+    }else {
+      setStructure([])
+      if(data?.length === 0 )return message.warning('没有设置建筑')
+     
+    }
+    } catch (error) {
+      
+    }
+}
+ useEffect(() => {
+  if(Number.isInteger(parseInt(projectId))) {
+    try {
+      getParklist().then(getStructure)
+     
+    } catch (error) {
+      
+    }
+    
+  }
+
+ }, [projectId])
+ const options = [
+  {label: '按剩余量百分比顺序', value: 1},
+  {label: '按剩余量百分比倒序', value: 2},
+  {label: '按剩余量顺序', value: 3},
+  {label: '按剩余量倒序', value: 4},
+ ]
+ const fieldNames ={
+  label: 'name',
+  value: 'quotaAreaId'
+ }
+ const changeTab = (val) => {
+  setModelType(val.target.value)
+  setisCard(val.target.value == 'card' ? true : false);
+  navigate(`${pathname}?type=${val.target.value}`, {state})
+  
+ 
+}; 
+useEffect(() => {
+   const val = new URLSearchParams(query).get('type') 
+   setisCard(val=='card')
+   setModelType(val)
+}, [])
+const [total, setTotal] = useState()
+const geRoomData = async ({current, pageSize}, formData) => {
+  
+  try {
+    if(Array.isArray(structure) && structure?.length > 0 && Number.isInteger(parseInt(projectId))) {
+      let {parkAreaId,quotaAreaId,order} = formData
+      let params ={
+        pageNum:current,
+        pageSize,
+        parkAreaId,
+        quotaAreaId,
+        order,
+        projectId,
+      }
+      let {success, data,total} = await  energyQuota.QueryRoomQuota(params)
+      setTotal(Number.isInteger(total) ? total : 0)
+      if(success && Array.isArray(data) && data?.length >0 ) {
+        return {
+          list: data,
+          total
+        }
+      }else {
+         return {
+          list: [],
+          total: 0
+         }
+      }
+    }
+ 
+  } catch (error) {
+    console.log(error)
+  }
+ 
+}
+const { tableProps, search, run } = useAntdTable(geRoomData, { 
+  form,
+  defaultPageSize: 12,
+  refreshDeps: [projectId,structure],
+});
+
+const { submit } = search;
+
+const onExport = useCallback(async () => {
+  try {
+   let {parkAreaId,quotaAreaId,order} = await form.validateFields()
+   let params ={
+     pageNum:1,
+     pageSize: total,
+     parkAreaId,
+     quotaAreaId,
+     order,
+     projectId,
+   }
+   return  energyQuota.QueryRoomQuota(params).then(res => {
+    let {success, total, data} = res
+    if(success && Array.isArray(data) && data?.length >0 ) {
+      return {
+        list: data,
+        total
+      }
+    }else {
+       return {
+        list: [],
+        total: 0
+       }
+    }
+   })
+  
+   
+
+
+
+  } catch (error) {
+    console.log(error)
+  }
+}, [total])
+
+  const CustView = (
+      <Search>
+        <Form layout="inline" form={form}>
+          <Space>
+          <Form.Item name="parkAreaId" initialValue={0}>
+            <Select options={park}   style={{ width: 188}} fieldNames={fieldNames} onChange={submit} ></Select>
           </Form.Item>
-          <Form.Item name="percent">
-            <Select options={showSortOptions} defaultValue={showSortSelected} style={{ width: 188, marginLeft: 16 }} onChange={handleShowSortChange}></Select>
+          <Form.Item name="quotaAreaId" initialValue={0}>
+            <Select options={structure} style={{ width: 188}} fieldNames={fieldNames} onChange={submit}></Select>
           </Form.Item>
+          <Form.Item name="order" initialValue={1}>
+            <Select options={options} style={{ width: 188}} onChange={submit} ></Select>
+          </Form.Item>
+          </Space>
         </Form>
-        {/* <Item  name='areaId' >
-        <Select  options={opts}  fieldNames={{label: 'name', value: 'id', options: 'options'}}></Select>
-    </Item> */}
+   
         <Space size={16} style={{ marginLeft: "auto" }}>
           <Radio.Group
             onChange={changeTab}
@@ -176,39 +275,18 @@ export default function QuotaDetail() {
             optionType="button"
           >
           </Radio.Group>
-          <ExportExcel disabled={isCard} tb={tableLoadRef} />
+          <ExportExcel disabled={isCard} tb={tableLoadRef}  />          
         </Space>
-      </>
+      </Search>
 
     )
-  }
-  let paramsLog = {
-    projectId: projectId,
-    pageNum: pageLog,
-    pageSize: 3,
-  }
+ 
 
-  const getOverviewData = ({ current, pageSize }, formData) => {
-  }
-  const { tableProps, search: hanlder, run } = useAntdTable(getOverviewData, {
-    form,
-    defaultPageSize: 3,
-    refreshDeps: [projectId],
-  });
 
-  const { submit } = hanlder;
-  const changeTab = (val) => {
-    setModelType(val.target.value)
-    setisCard(val.target.value == 'card' ? true : false);
-    //  getOverviewData()
-  }; //切换卡片列表模式
 
-  const handleBuildChange = (val) => {
-    setBuildSelected(val)
-  }
-  const handleShowSortChange = (val) => {
-    setShowSortSelected(val)
-  }
+
+
+ 
   const changepage = (current, pageSize) => {
     try {
       let values = form.getFieldsValue();
@@ -217,33 +295,24 @@ export default function QuotaDetail() {
 
     }
   }
-  const onExport = useCallback(() => {
-
-  }, [totalLog])
+  
   const toDetailIndicators = () => {
     window.open('/detailIndicators', '_blank')
   }
-  useEffect(() => {
-    setCustview(<CustView isCard={isCard} />);
-    return () => {
-      setCustview(undefined)
-    }
-  }, [isCard])
-  useEffect(() => {
-    // getData();
-
-  }, [, projectId, pageLog, paramsLog.pageSize])
+ 
+ 
 
   return (
     <div className={style.quotaDetailContent}>
+       {CustView}
       {isCard ? (
         <div className={style.cardData}>
           {
-            quotaDetailed.map((item, index) => (
-              <div className={style.cardBox} key={index} onClick={() => toDetailIndicators()}>
+            tableProps?.dataSource?.map((item) => (
+              <Link to={`/detailIndicators?quotaAreaId=${item.quotaAreaId}&type=1&projectId=${projectId}`} target="_blank" key={item.quotaAreaId}> <div className={style.cardBox} key={item.quotaAreaId} >
                 <div className={style.cardTop}>
-                  <span>{item.address}  {item.floor}  {item.house}</span>
-                  <span className={`${item.status == 1 ? style.normalStatus : style.LowStatus}`} >{item.status == 1 ? t("NormalEnergyConsumption") : t("InsufficientMargin")}</span>
+                  <span>{item.areaName}</span>
+                  <span className={`${item.status == 0 ? style.normalStatus : style.LowStatus}`} >{item.status == 0 ? t("NormalEnergyConsumption") : t("InsufficientMargin")}</span>
                 </div>
                 <div className={style.cardCenter}>
                   <img src={energyImg} className={style.energyImg} />
@@ -254,32 +323,31 @@ export default function QuotaDetail() {
                       <span>{t("Surplus")} (kWh)</span>
                     </div>
                     <div className={style.num}>
-                      <span>{item.quota}</span>
-                      <span>{item.useQuota}</span>
-                      <span>{item.residueQuota}</span>
+                      <span>{item.areaQuotaValue}</span>
+                      <span>{item.areaConsumptionValue}</span>
+                      <span>{item.areaRemainValue}</span>
                     </div>
                     <div className={style.percent}>
-                      <span>{t("RemainingEnergyConsumption")}</span>
-                      <ProgressBoX>
+                      <div style={{flex:'1 0 auto'}}>{t("RemainingEnergyConsumption")}</div>
+                    
                         <Progress
-                          percent={item.percent}
-                          className={`${item.percent > quotaWarning ? '' : 'progressColor'}`}
+                          percent={parseFloat(item.areaRemainRate)}
+                          className={`${item.status ==0 ? '' : 'progressColor'}`}
                           trailColor='#ebeef5'
-                          strokeColor={`${item.percent > quotaWarning ? 'rgba(0, 204, 51, 1)' : 'rgba(255, 0, 0, 1)'}`}
-                          style={{ marginLeft: 40, width: 170 }}
-                          strokeWidth={15} /></ProgressBoX>
+                          strokeColor={`${item.status ==0 ? 'rgba(0, 204, 51, 1)' : 'rgba(255, 0, 0, 1)'}`}
+                         
+                          strokeWidth={15} />
                     </div> </div>
                 </div>
-              </div>
+              </div></Link>
             ))}
         </div>
       ) : (
-        <div className={style.listData}>
-          {/* {...tableProps} */}
-          <Usetable columns={columns} ref={tableLoadRef} dataSource={quotaDetailed} hbg="#ecf5ff" hbc="#515151" rowKey={columns => columns.id} />
+        <div className={style.listData}>        
+          <Usetable columns={columns} ref={tableLoadRef}  {...tableProps} hbg="#ecf5ff" hbc="#515151" rowKey={columns => columns.id} onExport={onExport} />
         </div>
       )}
-      <CPagination style={{ marginLeft: 'auto', width: 'fit-content' }} size="small" onChange={changepage}   {...tableProps.pagination} showSizeChanger={false} />
+     {isCard &&  <CPagination style={{ marginLeft: 'auto', width: 'fit-content' }} size="small" onChange={changepage}   {...tableProps.pagination} showSizeChanger={false} />}
     </div >
   )
 }

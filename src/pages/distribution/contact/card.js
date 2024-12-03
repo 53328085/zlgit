@@ -46,9 +46,9 @@ export default function Icard(props) {
                     <div className={style.btnBoxStyle}>
                         <p className={style.timeStyle}>{props.fields[2] ? props.fields[2].name : ''}</p><p className={style.timeValueStyle}>{props.fields[2] ? props.fields[2].value : ''}</p>
                     </div>
-                    <div className={style.btnBoxStyle}>
+                   {props.fields?.[3] && <div className={style.btnBoxStyle}>
                         <p className={style.timeStyle}>{props.fields[3] ? props.fields[3].name : ''}</p><p className={style.timeValueStyle}>{props.fields[3] ? props.fields[3].value : ''}</p>
-                    </div>
+                    </div>}
                 </div>
             </div>
             {props.state == 2 ? <div className={style.state}>正常</div> : props.state == 1 ? <div className={style.stateOff}>失联</div> : <div className={style.stateAlarm}>告警</div>}

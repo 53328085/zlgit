@@ -46,8 +46,8 @@ const Chartbox = styled.div`
 // 2,7
 const Chartin = (props) => {
     let {group, data, deviceStyle} = props
-    console.log(data)
-    if(!group) return <Empty />
+    
+    if(!group || !Array.isArray(data) || data.length == 0) return <Empty description={group ? `${group}暂无数据` : null} />
 
     let title = {
         EC: '电流(A)',
@@ -56,13 +56,12 @@ const Chartin = (props) => {
        EP: '电压(V)',
        TP: '温度(℃)'
     }[group] || '未知'
-    let isempty = !Array.isArray(data) || data.length ==0
+    
      
    
   
     let ref = useRef()
-    useEffect(() => {
-        if(isempty) return
+    useEffect(() => { 
         let dimensions=["time"]
         let source = []        
          let series=  Array(data.length).fill({
@@ -106,8 +105,7 @@ const Chartin = (props) => {
     }, [data])
     return (
         <Titlelayout title={title} layout="flex" pd={0} bordered="n">
-           <div style={{flex: 1}} ref={ref}>
-             {isempty && <Empty />}
+           <div style={{flex: 1}} ref={ref}> 
            </div>
         </Titlelayout>
     )
@@ -117,9 +115,11 @@ const Chartin = (props) => {
 export default function GatewayDetail(props) {
     let devess = useSelector(state => state.system.deviceStyle);
     
-    let location = useLocation()
-    let [searchParams, setSearchParams] = useSearchParams()
-    const sn = searchParams.get('sn')  
+    let location = useLocation() 
+   // let [searchParams, setSearchParams] = useSearchParams()
+    const sn = new URLSearchParams(location.search).get('sn')
+   
+   // const sn = searchParams.get('sn')  
     const projectId = useSelector(selectProjectId)
     const enchtitle = useSelector(mixtitle)
     const {projectName,  logoImage  } = useSelector(currProject)
@@ -276,7 +276,7 @@ export default function GatewayDetail(props) {
     })
    
     const getData = () => {//设备详情
-        return Current(projectId, sn).then(res => {
+        return Current(projectId, encodeURIComponent(sn)).then(res => {
             let { success, data } = res
             
             if (success) {
@@ -289,7 +289,7 @@ export default function GatewayDetail(props) {
         })
     }
     const getDetailData = () => {//设备详情
-        return Detail(projectId, sn).then(res => {
+        return Detail(projectId, encodeURIComponent(sn)).then(res => {
             let { success, data } = res
             if (success) {
                 
@@ -362,7 +362,7 @@ export default function GatewayDetail(props) {
         })
     }
     const getEnergyTrend = () => {//
-        return EnergyActuary(projectId, sn).then(res => {    // getEnergyTrend getData projectId, sn   detail
+        return EnergyActuary(projectId, encodeURIComponent(sn)).then(res => {    // getEnergyTrend getData projectId, sn   detail
             let { success, data } = res
             if (success) {
                 setactuary(data || {})
@@ -814,7 +814,7 @@ export default function GatewayDetail(props) {
                                 disabledDate={disabledDate}
                                 onCalendarChange={(val) => setDates(val)}
                                 onChange={onTimeOk}
-                                onOpenChange={onOpenChange}
+                            //    onOpenChange={onOpenChange}
                                 defaultValue={[moment().startOf('day'), moment()]}
                                 format='YYYY-MM-DD HH:mm:ss'
                                 showTime

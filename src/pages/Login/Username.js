@@ -47,6 +47,8 @@ export default memo(function({onSubmit}){
       } catch (error) {
         keyvalue.current = null
          setCodeUrl(null)
+      }finally{
+        userform.setFieldValue("code","")
       }
         
    }
@@ -65,8 +67,8 @@ export default memo(function({onSubmit}){
         labelWrap
         form={userform}
         name="login"
-        onFinish={(value) => {         
-          onSubmit(value, 0, keyvalue.current, setLoading)
+        onFinish={(value) => {       
+          onSubmit(value, 0, keyvalue.current, setLoading ,getCode)
         }}       
         initialValues={{
           name: userName,

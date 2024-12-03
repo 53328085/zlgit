@@ -1,106 +1,29 @@
-import React , {useState} from 'react'
-import {nanoid} from '@reduxjs/toolkit'
-import styled from 'styled-components'
+import React , {useState} from 'react' 
+import {useOutletContext} from 'react-router-dom' 
 import Pagecount from '@com/pagecontent' 
-import CustContext from '@com/content.js'
-import {Cdivider} from '@com/comstyled'
-import svgurl from '@svgs'
-import UserTable from "@com/useTable";
-const Mainbox = styled.div`
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  row-gap: 16px;
-  padding: 16px;
-  .item {
-    display: grid;
-    grid-template-columns: 1fr 334px;
-    grid-template-rows: 30px auto;
-    gap: 16px 32px;
-    padding-bottom: 32px;
-    border-bottom: 1px dotted #d7d7d7;
-    .title {
-      display: flex;
-      align-items: center;
-      column-gap: 16px;
-      font-size: 16px;
-    }
-  }
-`
-const  columns = [
-   {
-      title: '',
-      dataIndex: 'type',
-      key: 'type',
-      width: 80,
-    },
-    {
-      title: '有效值（V）',
-      dataIndex: 'a',
-      key: 'a',
-    },
-    {
-      title: '波动（v）',
-      dataIndex: 'b',
-      key: 'b',
-    },
-    {
-      title: '波动频次(次/min)',
-      dataIndex: 'c',
-      key: 'c',
-    },
-    {
-      title: '偏差(%)',
-      dataIndex: 'd',
-      key: 'd',
-    },
-    {
-      title: '短闪变',
-      dataIndex: 'e',
-      key: 'e',
-    },
-    {
-      title: '长闪变',
-      dataIndex: 'f',
-      key: 'f',
-    },
-    {
-      title: '总谐波畸变率 (%)',
-      dataIndex: 'g',
-      key: 'g',
-    },
-    {
-      title: '奇次谐波总畸变率 (%)',
-      dataIndex: 'h',
-      key: 'h',
-    },
-    {
-      title: '偶次谐波总畸变率 (%)',
-      dataIndex: 'i',
-      key: 'i',
-    },
-  ]
-
-  const  columns2 = [
-    {
-       title: '',
-       dataIndex: 'type',
-       key: 'type',
-       width: 80,
-     },
-     {
-       title: '有效值（V）',
-       dataIndex: 'a',
-       key: 'a',
-     },
-     {
-       title: '不平衡度 (%)',
-       dataIndex: 'b',
-       key: 'b',
-     },
-    ]
+import CustContext from '@com/content.js' 
+import {useSelector,  } from 'react-redux'
+import { selectcurlRommid , selectProjectId} from "@redux/systemconfig";
+import Wtjc from './wtjc'
+import Xbpp from './xbpp'
+import Wtqx from './wtqx'
+import Qbqx from './xbqx'
+import Fhqx from './fhqx'
+import Ztfx from './ztfx'
+import Soe from './soe'
+import Dnzlfx from './dnzlfx'
+import Dnzlzl from './dnzlzl'
 export default function Index() {
+  const {exparams} = useOutletContext()
+  const {sn, dateval} = exparams || {}
+  const projectId = useSelector(selectProjectId)  
+  const roomId = useSelector(selectcurlRommid)
   const [value, setvalue] = useState('0')
+  const propsdata ={
+     sn, 
+     projectId,
+     day:dateval
+  }
   const tabs = [
     { key: '0', label: '稳态检测' },
     { key: '1', label: '谐波频谱' },
@@ -112,6 +35,19 @@ export default function Index() {
     { key: '7', label: '电能质量分析' },
     { key: '8', label: '电能质量治理' },
   ]
+  const Com = {
+    0: Wtjc,
+    1: Xbpp,
+    2: Wtqx,
+    3: Qbqx,
+    4: Fhqx,
+    5: Ztfx,
+    6: Soe,
+    7: Dnzlfx,
+    8: Dnzlzl
+  }[value]
+
+
   const dataProps = {
     value,
     setvalue,
@@ -120,26 +56,7 @@ export default function Index() {
   return (
     <CustContext.Provider value={dataProps} >
     <Pagecount>
-      <Mainbox>
-        <div className='item' key="ec">
-          <div className='title' key={nanoid()}>
-                <img src={svgurl.ec} />
-                电压
-          </div>
-          <div className='title' key={nanoid()}>
-                <img src={svgurl.ec} />
-                电压
-          </div>
-          <div key={nanoid()}>
-               <UserTable columns={columns} dataSource={[]} istheme="theme" ></UserTable>
-          </div>
-          
-          <div key={nanoid()}>
-               <UserTable columns={columns2} dataSource={[]} istheme="theme" ></UserTable>
-          </div>
-          </div>
-          
-      </Mainbox>
+      <Com  {...propsdata}/>
     </Pagecount>
     </CustContext.Provider>
   )

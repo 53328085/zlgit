@@ -143,7 +143,7 @@ export default function pagecomp({data}) {
     }
     
   })
-  colums = [{dataIndex: 'total', title: '总数', key: 'total'}, ...colums]
+  colums =Array.isArray(colums) ? [{dataIndex: 'total', title: '总数', key: 'total'}, ...colums] : []
   let dataSource = statusItems?.map(s => {
     if(s.meterType ==0) {
       return {...s, name: '网关'}
@@ -152,8 +152,8 @@ export default function pagecomp({data}) {
       if(name) return {...s, name}
     }
    
-  })
-  console.log(dataSource)
+  })??[]
+  
 /*   let counts =[
     {
         gatewayCount: reptdata.gatewayCount,

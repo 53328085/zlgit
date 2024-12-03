@@ -1,12 +1,12 @@
 import React, {Suspense, useEffect} from 'react'
 import {BrowserRouter} from 'react-router-dom'
-import {useSelector} from 'react-redux'
+import {useSelector,useDispatch} from 'react-redux'
 import {ThemeProvider} from 'styled-components'
 import enUS from 'antd/es/locale/en_US'; // 国际化时使用
 import zhCN from 'antd/es/locale/zh_CN';
 import moment from 'moment';
 import 'moment/locale/zh-cn';
- 
+import {detectZoom} from '@com/usehandler' 
 moment.locale('zhCN');
 
 import Loading from './pages/Loading';
@@ -14,11 +14,11 @@ import EL from './router'
 import ErrorBoundary from './ErrorBoundary';
 //import useConfig from './antdconfig';\
 import {ConfigProvider} from 'antd'
-import {themeColor, intl} from "@redux/systemconfig";
+import {themeColor, intl,setadaptation} from "@redux/systemconfig";
 import CustConfig from './custConfig';
 import { clearToken} from "@redux/user";
 function App() {
-   
+  const dispatch = useDispatch()
   const theme = useSelector(themeColor)
 /*   const theme = useSelector(themeColor)
  
@@ -36,7 +36,40 @@ function App() {
    
   }
   ) */
+  let {width, height} = window.screen
+  let ratio = width / height
+  let mqString =window.matchMedia(`(max-device-width:1536px)`);
+ 
+  let ratiostr =window.matchMedia(`(device-aspect-ratio:4/3)`);
+  const updatePixelRatio = (e) => {
+    dispatch(setadaptation({laptop: e.matches}))
+  };
+ 
+const updateratio=(e)=>{
+ 
+  dispatch(setadaptation({ratio43: e.matches}))
+}
+ 
+ useEffect(() => {
+  
 
+  if(width<=1536){
+    dispatch(setadaptation({laptop: true}))
+
+  }else{
+    dispatch(setadaptation({laptop: false}))
+  }
+
+  dispatch(setadaptation({ratio43: ratio==(4/3)}))
+ 
+mqString.addEventListener("change", updatePixelRatio)
+ratiostr.addEventListener("change", updateratio)
+ return()=>{
+ mqString.removeEventListener("change", updatePixelRatio)
+ ratiostr.removeEventListener("change",updateratio)
+}
+
+ }, [width, height])
  
   return   (
  <CustConfig> 

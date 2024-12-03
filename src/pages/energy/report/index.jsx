@@ -314,7 +314,7 @@ export default function Index() {
   const onExport =useCallback(() => {   
    
     return  getTableData({current: 1, pageSize: total,areaId, projectId, type, date, energytype, treeId, index, line })
- }, [total, concolumns])
+ }, [total, concolumns, type, date,energytype,areaId, treeId, index, line])
   
   let dataProps = {
     value,

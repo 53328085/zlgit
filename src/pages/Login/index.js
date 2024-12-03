@@ -24,7 +24,7 @@ import Listitem from "./Listitem";
 import Username from "./Username";
 import Phonelog from "./Phonelog";
 import Copyright from './Copyright'
- 
+import {media} from '@com/usehandler' 
 const Loginpage =  styled.div`
   display: flex;
   flex:1;
@@ -32,6 +32,8 @@ const Loginpage =  styled.div`
   position: relative;
   background-image: ${props => `url(${props.bgImg})`};
   background-size: cover;
+  
+
 `
 const CTabs = styled(Tabs)`
    && {
@@ -134,7 +136,7 @@ function UserLog() {
 
  }
 
-const CheckAuthorization = async (value, type=0, codekey, setLoading) => {
+const CheckAuthorization = async (value, type=0, codekey, setLoading,getCode) => {
     let {success, data} = await LoginApi.CheckAuthorization()
     if(success) {
         let {code, message:msg} = data  // 0 成功, 1 注册, 2 等待处理提示
@@ -150,12 +152,12 @@ const CheckAuthorization = async (value, type=0, codekey, setLoading) => {
         }else if(code==2) {
           message.success(msg) //处理中
         }else if(code == 0) {  // 成功
-          onSubmit(value, type, codekey, setLoading)
+          onSubmit(value, type, codekey, setLoading,getCode)
         }
     }
 }
  
- let onSubmit = async (value, type=0, codekey, setLoading) => {  
+ let onSubmit = async (value, type=0, codekey, setLoading,getCode) => {  
    
    try {   
     setLoading && setLoading(true) 
@@ -199,6 +201,7 @@ const CheckAuthorization = async (value, type=0, codekey, setLoading) => {
     }else {
       dispatch(getPassword(''))
       setLoading &&   setLoading(false) 
+      getCode()
      return message.warning(errMsg || t("comm:DataError"));
     }
    } catch (error) {

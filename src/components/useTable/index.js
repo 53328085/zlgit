@@ -71,6 +71,7 @@ flex-direction: column;
   const [total, setTotal] = useState(0)
   const tempref = useRef();
   const {t} = useTranslation("comm")
+  console.log(props.dataSource)
   const TableTemp =memo(() => {  
   
     return createPortal(
@@ -113,6 +114,7 @@ const Allupdate =memo(({lists, total}) => {
  const downloadAll = async () => {     
     try { 
       let {list, total} = await onExport()
+      console.log(list)
       flushSync(() => {
         setLists(list)
         setTotal(total)

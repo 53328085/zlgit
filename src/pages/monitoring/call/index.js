@@ -1,16 +1,16 @@
-import React, { useState,  useRef} from 'react'
-import { useSelector} from 'react-redux'
+import React, { useState, useRef } from 'react'
+import { useSelector } from 'react-redux'
 import { useAntdTable } from 'ahooks'
-import {  Remote} from '@api/api.js'
-import { Form,  Button,  Select, message,  Spin ,Space} from 'antd' 
+import { Remote } from '@api/api.js'
+import { Form, Button, Select, message, Spin, Space } from 'antd'
 import styled from 'styled-components'
 import Pagecount from '@com/pagecontent'
 import UserTable from '@com/useTable'
 import CustContext from '@com/content.js'
-import { selectProjectId, selectOneLevelDefaultId, deviceStyle } from '@redux/systemconfig.js'
-import {CustButton} from '@com/useButton'
+import { selectProjectId, selectOneLevelDefaultId, deviceStyle, filterDeviceStyle } from '@redux/systemconfig.js'
+import { CustButton } from '@com/useButton'
 import CModal from '@com/useModal'
-import {Serach, Cdivider} from "@com/comstyled"
+import { Serach, Cdivider } from "@com/comstyled"
 
 
 const Mainbox = styled.div`
@@ -21,11 +21,11 @@ const Mainbox = styled.div`
 `
 export default function Index() {
   const projectId = useSelector(selectProjectId)
-  const deviceStyles = useSelector(deviceStyle)
-  const areaId = useSelector(selectOneLevelDefaultId);      
+  const deviceStyles = useSelector(filterDeviceStyle)
+  const areaId = useSelector(selectOneLevelDefaultId);
   const [value, setvalue] = useState('1')
   let [dataSourceRead, setdataSourceRead] = useState([])
-  let [DataSourceReadR, setDataSourceReadR] = useState([]) 
+  let [DataSourceReadR, setDataSourceReadR] = useState([])
   const tableRef = useRef()
   tableRef.current = DataSourceReadR
   // let [alike, setalike] = useState('')
@@ -33,37 +33,37 @@ export default function Index() {
   let [readout, setreadout] = useState(false)
   // const [selectTableList, setselectTableList] = useState([])
   const [loading, setLoading] = useState(false);
-  const tableRefs= useRef()
+  const tableRefs = useRef()
 
   const [form] = Form.useForm()
-    const {Item} = Form
-    const getData = ({current, pageSize}, form={}) => {
-       let {alike, deviceStyle} = form
-       let params ={pageNum: current, pageSize, projectId, areaId, gatewayId: 0, state: 0,category: '', deviceStyle, alike}
-       return Remote.AllCallMeter(params).then(res => {
-        let {success, data, total} = res
-        if(success && Array.isArray(data) && data.length > 0) {
-           return {
-            list: data,
-            total,
-           }
-        }else {
-            return {
-                list: [],
-                total: 0,
-               }
+  const { Item } = Form
+  const getData = ({ current, pageSize }, form = {}) => {
+    let { alike, deviceStyle } = form
+    let params = { pageNum: current, pageSize, projectId, areaId, gatewayId: 0, state: 0, category: '', deviceStyle, alike }
+    return Remote.AllCallMeter(params).then(res => {
+      let { success, data, total } = res
+      if (success && Array.isArray(data) && data.length > 0) {
+        return {
+          list: data,
+          total,
         }
-       }).catch(e => {
-        console.log(e)
-       })
+      } else {
+        return {
+          list: [],
+          total: 0,
+        }
+      }
+    }).catch(e => {
+      console.log(e)
+    })
 
-    }
-   const {tableProps, search} = useAntdTable(getData, {
+  }
+  const { tableProps, search } = useAntdTable(getData, {
     form,
     defaultPageSize: 18,
     refreshDeps: [areaId]
-   })
-   const {submit} = search
+  })
+  const { submit } = search
 
 
   const columnsLog = [
@@ -123,12 +123,12 @@ export default function Index() {
     {
       title: 'C相电压(V)',
       dataIndex: 'Uc',
-  
+
     },
     {
       title: 'A相电流(A)',
       dataIndex: 'Ia',
- 
+
     },
     {
       title: 'B相电流(A)',
@@ -158,7 +158,7 @@ export default function Index() {
       console.log(`selectedRowKeys: ${selectedRowKeys}`, 'selectedRows: ', selectedRows);
       // setselectTableListRadio(selectedRows)
       // setselectTableList(selectedRows)
-      tableRefs.current=selectedRows
+      tableRefs.current = selectedRows
       if (selectedRows[0].status == 1) {
         setIsClick(true)
       } else {
@@ -172,7 +172,7 @@ export default function Index() {
       console.log(`selectedRowKeys: ${selectedRowKeys}`, 'selectedRows: ', selectedRows);
       // setselectTableListCheckbox(selectedRows)
       // setselectTableList(selectedRows)
-      tableRefs.current=selectedRows
+      tableRefs.current = selectedRows
       if (selectedRowKeys.length > 0) {
         selectedRows.map(item => {
           if (item.status == 1) {
@@ -187,9 +187,9 @@ export default function Index() {
     },
   }
 
-   const changeReadout = () => {
+  const changeReadout = () => {
     snList = []
-    if (tableRefs.current&&tableRefs.current.length > 0) {
+    if (tableRefs.current && tableRefs.current.length > 0) {
       tableRefs.current.map((item, index) => {
         snList.push(item.sn)
       })
@@ -198,7 +198,7 @@ export default function Index() {
       Sns: snList,
       ProjectId: projectId
     }
-    if (tableRefs.current&&tableRefs.current.length > 0) {
+    if (tableRefs.current && tableRefs.current.length > 0) {
       setLoading(true)
       Remote.StartCalling(parmas).then(res => {
         let { success, data } = res
@@ -219,10 +219,12 @@ export default function Index() {
             }
           })
           if (isOkList.length > 0) {
-            let count = [1, 2, 3,4,5,6,7,8,9,10,11,12]
+            let count = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]
             let arr = []
             let resData = []
+            let resDataAll = []
             let status = true
+            setdataSourceRead([])
             count.map((item, index) => {
               console.log(index)
               setTimeout(() => {
@@ -234,11 +236,12 @@ export default function Index() {
                       resData = []
                       isOkList = []
                       data.map((item, index) => {
-                        if (item.isOk  && item.errorCode == 0) {
+                        if (item.isOk && item.errorCode == 0) {
                           resData.push(item)
+                          resDataAll.push(item)
                           setResultInfoList[index].status = 1
                         } else {
-                          
+
                           isOkList.push({ sn: item.sn, taskNo: item.taskNo })
                         }
                         console.log(arr, resData)
@@ -247,12 +250,12 @@ export default function Index() {
                           setLoading(false)
                           status = false
                           let arrlist = []
-                          resData.map(item => {
+                          resDataAll.map(item => {
                             arrlist.push({ ...JSON.parse(item.data), sn: item.sn })
                           })
                           setdataSourceRead(arrlist)
-                          console.log(dataSourceRead,arrlist)
-                          Remote.SetResult(setResultInfoList, projectId).then((res) => {console.log(res) })
+                          console.log(dataSourceRead, arrlist)
+                          Remote.SetResult(setResultInfoList, projectId).then((res) => { console.log(res) })
                         }
                       })
                     } else {
@@ -263,7 +266,7 @@ export default function Index() {
                   })
                 }
 
-              }, 5000*index)
+              }, 5000 * index)
 
             })
 
@@ -278,81 +281,83 @@ export default function Index() {
     } else {
       message.error('请先选择设备！')
     }
-  }  
+  }
   const tabs = [
     {
-        label:"单表抄读",
-        key: 1,
+      label: "单表抄读",
+      key: 1,
 
     },
     {
-        label:"批量抄读",
-        key: 2,
+      label: "批量抄读",
+      key: 2,
 
     }
-]
-let dataProps = {
+  ]
+  let dataProps = {
     value,
     setvalue,
     tabs,
   }
+  // 设置initialValues之前检查options数组是否有数据
+  const initialValues = deviceStyles.length > 0 ? { deviceStyle: deviceStyles[0].deviceStyle, alike: '' } : {};
   return (
     <CustContext.Provider value={dataProps}>
       <Pagecount>
-    <Spin tip="正在抄读，请稍候……" size="large" spinning={loading}>
-    <Mainbox>   
-       
-                    <Form form={form}  layout='inline' initialValues={{deviceStyle: 1, alike: ''}}>
-                        <Space size={64}  split={<Cdivider />}>
-                        <Item name="deviceStyle" style={{marginBottom: '0px', marginRight: '0px'}}>
-                        <Select
-                           style={{width: "128px"}}
-                            fieldNames={{label: "name", value: "deviceStyle"}}
-                            onChange={submit}
-                            options={deviceStyles}
-                        />
-                        </Item>
-                       
-                        <Item name="alike" label="设备查询" style={{marginBottom: '0px', marginRight: '0px'}}>
-                            <Serach placeholder='请输入设备编号/安装地址'  style={{width: '370px'}}  size='middle'   onSearch={submit} /> 
-                             
-                        </Item>
-                        
-                         <Item> 
-                          <CustButton onClick={changeReadout}>实时抄读</CustButton>
-                       {/*  <Button size='middle' disabled={isClick} style={{ width: 96, height: 32, backgroundColor: '#237AE4', color: '#fff',borderRadius:2 }} onClick={() => { changeReadout() }}>实时抄读</Button> */}
-                         </Item>
-                        </Space>
-                    </Form>
-                    <Cdivider type="h" margin="16px 0" />
-                    {value == '1' ? <div style={{display: 'flex', flex: 1}}>
-                        <UserTable columns={columnsLog}   rowKey={columnsLog => columnsLog.sn} {...tableProps}  rowSelection={{
-                            type: 'radio',  
-                            ...rowSelectionRadio,
-                          
-                        }} bordered></UserTable>
-                   
-                    </div> : <div style={{display: 'flex', flex: 1}}>
-                        <UserTable columns={columnsLog}   rowKey={columnsLog => columnsLog.sn}  {...tableProps}  rowSelection={{
-                            type: 'checkbox',
-                            ...rowSelectionCheckbox,
-                        }} bordered></UserTable>
-                     
-                    </div>}
-        <CModal
-          title="实时抄读"
-          open={readout}
-          onCancel={() => { setreadout(false) }}
-          mold="cust"
-          width={1218}         
-          footer={[<Button type='primary' style={{ width: 96, height: 36 }} onClick={() => { setreadout(false) }}>关闭</Button>]}
-        >
-          <UserTable  columns={realcolumns} dataSource={dataSourceRead} rowKey={realcolumns => realcolumns.sn} ></UserTable>
+        <Spin tip="正在抄读，请稍候……" size="large" spinning={loading}>
+          <Mainbox>
 
-        </CModal>
-      </Mainbox>
-    </Spin>
-    </Pagecount>
+            <Form form={form} layout='inline' initialValues={initialValues}>
+              <Space size={64} split={<Cdivider />}>
+                <Item name="deviceStyle" style={{ marginBottom: '0px', marginRight: '0px' }}>
+                  <Select
+                    style={{ width: "128px" }}
+                    fieldNames={{ label: "name", value: "deviceStyle" }}
+                    onChange={submit}
+                    options={deviceStyles}
+                  />
+                </Item>
+
+                <Item name="alike" label="设备查询" style={{ marginBottom: '0px', marginRight: '0px' }}>
+                  <Serach placeholder='请输入设备编号/安装地址' style={{ width: '370px' }} size='middle' onSearch={submit} />
+
+                </Item>
+
+                <Item>
+                  <CustButton onClick={changeReadout}>实时抄读</CustButton>
+                  {/*  <Button size='middle' disabled={isClick} style={{ width: 96, height: 32, backgroundColor: '#237AE4', color: '#fff',borderRadius:2 }} onClick={() => { changeReadout() }}>实时抄读</Button> */}
+                </Item>
+              </Space>
+            </Form>
+            <Cdivider type="h" margin="16px 0" />
+            {value == '1' ? <div style={{ display: 'flex', flex: 1 }}>
+              <UserTable columns={columnsLog} rowKey={columnsLog => columnsLog.sn} {...tableProps} rowSelection={{
+                type: 'radio',
+                ...rowSelectionRadio,
+
+              }} bordered></UserTable>
+
+            </div> : <div style={{ display: 'flex', flex: 1 }}>
+              <UserTable columns={columnsLog} rowKey={columnsLog => columnsLog.sn}  {...tableProps} rowSelection={{
+                type: 'checkbox',
+                ...rowSelectionCheckbox,
+              }} bordered></UserTable>
+
+            </div>}
+            <CModal
+              title="实时抄读"
+              open={readout}
+              onCancel={() => { setreadout(false) }}
+              mold="cust"
+              width={1218}
+              footer={[<Button type='primary' style={{ width: 96, height: 36 }} onClick={() => { setreadout(false) }}>关闭</Button>]}
+            >
+              <UserTable columns={realcolumns} dataSource={dataSourceRead} rowKey={realcolumns => realcolumns.sn} ></UserTable>
+
+            </CModal>
+          </Mainbox>
+        </Spin>
+      </Pagecount>
     </CustContext.Provider>
   )
 }

@@ -1,5 +1,5 @@
 import React, {useState, useEffect} from 'react'
-import styled from 'styled-components'
+import styled, {css} from 'styled-components'
 import {message} from 'antd'
 import {getOnelevel} from '@redux/systemconfig.js'
 import { useDispatch} from 'react-redux'
@@ -169,3 +169,41 @@ export  const Statebox = styled.div`
        
     }
     }
+    export const detectZoom = () => {
+      let ratio = 0,
+        screen = window.screen,
+        ua = navigator.userAgent.toLowerCase();
+      if (window.devicePixelRatio !== undefined) {
+        ratio = window.devicePixelRatio;
+      } else if (~ua.indexOf('msie')) {
+        if (screen.deviceXDPI && screen.logicalXDPI) {
+          ratio = screen.deviceXDPI / screen.logicalXDPI;
+        }
+      } else if (
+        window.outerWidth !== undefined &&
+        window.innerWidth !== undefined
+      ) {
+        ratio = window.outerWidth / window.innerWidth;
+      }
+      if (ratio) {
+        ratio = Math.round(ratio * 100);
+      }
+      return ratio;
+    }
+
+
+   
+    export const media = {  
+      desktop:(...args)=>
+      { 
+       return css`@media screen and (min-device-width:1537px) and (max-device-width:1920px){
+         ${css(...args)}
+       }`
+       },
+      laptop:(...args)=>{ // 笔记本缩放适配125%，150%，175%
+      return  css`@media screen  and (max-device-width:1536px){
+         ${css(...args)}
+     
+       }`
+       }
+      }

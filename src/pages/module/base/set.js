@@ -193,14 +193,7 @@ const getVal = (key) => {
   }
 }
 
-const theme = {
-  themeColor: "#237a4e" , // 默认值 "#237ae4", 应用范围 页面中 自定义样式中包含"#237ae4", antd 组件、图表
-  menuBackgroundColorLeft: "#036", // meun* 应用范围头部菜单栏 
- 
-  runAsider : ["#0b41c7", "#7662ff"], // 渐变色 起始颜色
-  desAsider: ["#039", "#033"], // 渐变色 起始颜色
-  
-}
+
 const CSketchPicker=({value, onChange}) => {
   const dispatch = useDispatch();
   const  onColorChange= (hex)=> {
@@ -291,9 +284,7 @@ export default function ProjectSet({projectId}) {
 
   const chChnage =(value) => {
     let {target: {checked, id}} = value
-    console.log(value)
-    console.log(checked)
-    console.log(homepage)
+   
     let homeMenu = form.getFieldValue('homeMenu')
     console.log(homeMenu)
     if(checked) {
@@ -338,6 +329,7 @@ export default function ProjectSet({projectId}) {
 
     //imgProject: '',
     projectImage: '',
+    themeColor: '#237ae4',
     homeMenu: 0,
   };  
  
@@ -361,7 +353,10 @@ const queryProjectInfo = async () => {
     for(let key of Object.keys(params)) {
       if (key == 'validStageTime' && data[key]) {
          params[key] = moment(data[key]);
-      } else {
+      } else if(key == 'themeColor') {
+        params[key] = data[key] || "#237ae4"
+      }
+      else {
          params[key] = data[key];
       }
     }
@@ -551,9 +546,9 @@ useEffect(() => {
           }}
         />
       </Item>
-      <Item label={t("common:Themecolor")}  name="themeColor" initialValue="#237ae4">
+     {/*  <Item label={t("common:Themecolor")}  name="themeColor" initialValue="#237ae4">
         < CSketchPicker />
-      </Item> 
+      </Item>  */}
       </div>
       <div className="rightlayout">
       <div className='upload'> 

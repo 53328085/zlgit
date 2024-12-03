@@ -3,12 +3,12 @@ import { useDispatch } from "react-redux";
 import {Menu, Image} from 'antd'
 import {useNavigate, useLocation} from 'react-router-dom'
 import {useSelector} from 'react-redux'
-import styled from 'styled-components'
-import style from './style.module.less'
+import styled, {css} from 'styled-components'
+// import style from './style.module.less'
 import Title from '../header/title'
-import {  configState, siderDesignerMenus, siderRunMenus, getisDistribution} from "@redux/systemconfig";
+import {  configState, siderDesignerMenus, siderRunMenus, getisDistribution, adaptation} from "@redux/systemconfig";
 import imgurl from './icon';
- 
+
 const Micon = () => {
    return <span className="custicon">&#9673;</span>
 }
@@ -37,6 +37,9 @@ const Sdiv = styled.div`
     grid-template-rows: 64px 158px 1fr;
     height: inherit;
 `
+const sty = css`
+height: 28px;line-height: 28px; font-size: 12px;
+`
 const Cmenu = styled(Menu)`
    background: none;
    && {
@@ -49,21 +52,27 @@ const Cmenu = styled(Menu)`
      padding-left: 32px;
      display: flex;
      align-items: center;
+     ${props => props.laptop ? sty : ''}
+    
    }
    .custicon {
-    font-size: 16px;
-    color:#fff;
+    font-size: ${props => props.laptop ? "14px" : "16px"};
+    color:  ${props => props.theme.asiderfontcolor || "#fff"};
    }
    .ant-menu-item.ant-menu-item-selected{    
-      background-color: #3333cc;
+      background-color:${props => props.theme.asiderbgcolorA || "#33c"} ;
+      ${props => props.laptop ? sty : ''}     
       .ant-menu-title-content, .custicon {
-        color:#33FF00;
+        color: ${props => props.theme.asiderfontcolorA || "#33FF00"};
       }
     }
    .ant-menu-title-content {
-     color:#fff;
+     color: ${props => props.theme.asiderfontcolor || "#fff"};;
      display: inline-block;   
      padding-left: 32px;
+     ${props => props.laptop ? sty : ''}
+  
+    
    }
 `
 /*   siderRunMenus: null, // 项目 sider
@@ -77,7 +86,7 @@ export default function Sider() {
   const config = useSelector(configState)
   const siderRunMenu = useSelector(siderRunMenus)
   const siderDesignerMenu = useSelector(siderDesignerMenus)
-   
+  const {laptop} = useSelector(adaptation)
   const dispatch = useDispatch()
   
   const [key, Setkey] = useState('')
@@ -97,7 +106,6 @@ export default function Sider() {
     try {
     
       let state = location.state || {}    
-      console.log(state)
       let {nested, primary } = state;
     //  console.log(state,location)
       dispatch(getisDistribution(primary === 'runtimeDistribution'))
@@ -130,7 +138,7 @@ export default function Sider() {
     <Sdiv> 
        <Title/>
        <Showimg/>
-       <Cmenu  onClick={onSelect} selectedKeys={[key]} items={menus} className={style.custmenu}></Cmenu>
+       <Cmenu laptop={laptop} onClick={onSelect} selectedKeys={[key]} items={menus} ></Cmenu>
     </Sdiv>
   )
 }

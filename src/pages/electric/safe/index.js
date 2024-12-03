@@ -15,10 +15,11 @@ import { safeElectric } from '@api/api'
 import {  selectOneLevelDefaultId } from '@redux/systemconfig.js'
 import moment from 'moment'
 const Mainbox = styled.div`
+  flex: 1;
   display: grid;
   color: #515151;
   grid-template-columns: 1fr 432px 784px;
-  grid-template-rows: 384px 400px;
+  grid-template-rows: minmax(384px, 1fr) minmax(400px, 1fr);
   gap: 16px;
   justify-content: flex-end;
   .down {
@@ -370,8 +371,8 @@ useEffect(() => {
 
 
   return (
-    <CustContext.Provider value={{ form }}>
-      <Pagecount bgcolor="transparent" pd="0px" showserach="1">       
+    
+      <Pagecount bgcolor="transparent" pd="0px">       
         <Mainbox>
           <Titlelayout title={'今日告警'} {...fs}>
             <Warnbox>
@@ -513,7 +514,7 @@ useEffect(() => {
           <AlarmRank bref={bref} areaId={areaId} />
         </Mainbox>
       </Pagecount>
-    </CustContext.Provider>
+    
   )
 }
 

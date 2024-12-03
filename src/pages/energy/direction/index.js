@@ -9,9 +9,14 @@ import {getTime} from '@com/usehandler'
 import Titlelayout from '@com/titlelayout'
 import {CustButton} from '@com/useButton'
 import Ichart  from '@com/useEcharts/Ichart';
- 
+import { Select, Form ,Radio,DatePicker,Divider, message } from 'antd'
+import first from '../ranking/img/first.png'
+import second from '../ranking/img/second.png'
+import third from '../ranking/img/third.png'
+import fourth from '../ranking/img/fourth.png'
+import fifth from '../ranking/img/fifth.png'
 
-const {queryElectric, queryWater} = EnergyFlowRuntime
+const {queryElectric, queryWater,QueryConsumeRankByDevice} = EnergyFlowRuntime
  
  
 const Headcom = memo(() => {
@@ -31,14 +36,36 @@ const Headcom = memo(() => {
  
  
 export default function Index() {   
-  let {exparams={}} = useOutletContext() || {}
+  let {exparams={},setCustview} = useOutletContext() || {}
+  console.log('exparams', exparams)
+const imgs = [first, second, third, fourth, fifth ]
   
   const levelone = useSelector(selectOneLevel)
   const areaId = levelone.map(a => a.id);
 
   let [searchParams] = useSearchParams()
   const isfull = searchParams.get('full')  
+  const [Type,setType]=useState('a')
+  const CustView =({v}) => { 
+    const form = Form.useFormInstance()
+    useEffect(()=>{
+      form.setFieldValue('viewType',v)
+    }, [v])
+    return(
+  <Form.Item name="viewType" initialValue="a" >
+     <Radio.Group defaultValue="a" buttonStyle="solid" >
+         <Radio.Button value="a">能源流向</Radio.Button>
+         <Radio.Button value="b">能耗排名</Radio.Button>
+       </Radio.Group>
+</Form.Item>
+  )}
   
+  useEffect(() => {
+    setCustview(< CustView v={Type} />);
+    return () => {
+      setCustview(null)
+    }
+  }, [Type])
 
  const [options, setOptions] = useState({
   tooltip: {
@@ -137,15 +164,71 @@ export default function Index() {
      
      
   }
- 
+  const [rankData, setRankData] = useState([])
+  
+  const [optionsRank, setOptionsRank] = useState({
+    series: [{ type: "bar"}],  
+    grid:{
+      left: "0px",
+      right: "0",
+      top: "0px",
+      bottom: "35px",
+      containLabel: true,
+    },
+    legend: {
+      bottom: "5px",
+    },
+    xAxis: {
+      type: 'value',
+     
+    },
+    yAxis: {
+      type: 'category',
+      axisTick: {
+        show: false
+      },   
+    },
+    dataset: {}
+  })
+const getRankData = async () => {
+  let store={};
+    if(isfull) {
+     store = JSON.parse(window.localStorage.getItem('exparams'))
+    }
+   
+    let {type, date, projectId, energytype} =isfull ? store : exparams
+    let params  = {
+      projectId,meterType:energytype,
+      dayMonthYear:type,
+      date: getTime(moment(date), type)
+    }
+  try {
+    let {success,data,errMsg}=await QueryConsumeRankByDevice(params)
+    if(success){
+      setRankData(data.consumeRank.slice(0,data.leaderboardCount))
+      let dataset = {
+        dimensions:  [{name: "name"}, {name: "value", displayName: "能耗"}],
+        source:data.consumeRank.slice(0, data.rankCount).reverse(),
+      }
+    
+      setOptionsRank({...optionsRank, dataset})
+    }else{
+      message.error(errMsg)
+    }
+  }catch (error) {
+     console.log(error) 
+  }
+  }
   useEffect(() => {
     if(Object.values(exparams).length <4 ) return
     window.localStorage.setItem('exparams', JSON.stringify(exparams))
     getData()
+    getRankData()
   }, [exparams])
   useEffect(()=> {
      if(isfull) {
       getData()
+      getRankData()
      }
   }, [isfull])
    const full = () => {
@@ -193,12 +276,36 @@ export default function Index() {
    }, [options, isfull])
     return (
       <Pagecount  pd="0px">   
-      <Titlelayout title={ (!isfull) && <CustButton onClick={full} style={{marginLeft: "auto" }}>全屏显示</CustButton>} pv={isfull? "0px" : "16px"}   layout="flex" bl="none" dr="column">
+      {/* title={ (!isfull) && <CustButton onClick={full} style={{marginLeft: "auto" }}>全屏显示</CustButton>} pv={isfull? "0px" : "16px"}   layout="flex" bl="none" dr="column" */}
+      {exparams.viewType=='a'?<Titlelayout title={<div style={{height:'32px',display:'flex',flexDirection:'row',alignItems:'center'}}><p style={{lineHeight:'32px'}}>能源流向</p> <CustButton onClick={full} style={{marginLeft: "auto" }}>全屏显示</CustButton></div>} layout="flex" >
           {isfull && <Headcom />}
           <div style={{display: 'flex', flex:1,  alignItems: 'center',justifyContent: 'center',}} ref={mapref}>
                <Ichart  custoption={options}   />
           </div>
-       </Titlelayout>
+       </Titlelayout>:
+       <Titlelayout title='能耗排名' layout="flex" >
+       <div style={{display: 'flex',flexDirection:'row',  alignItems: 'start',justifyContent: 'space-between',}} >
+            <div style={{width:'1028px',height:'100%',padding:'16px 0'}}>
+            <Ichart {...optionsRank}  />
+            </div>
+            <div className="chart">
+           {rankData.map((item,index)=>{
+                return <div style={{width: '588px',height: '88px',display: 'flex',justifyContent: 'space-between',alignItems: 'center',
+                backgroundColor: '#f4f8ff',padding: '0 16px',marginBottom: '16px'}}>
+                  <img src={imgs[index]} key={index} style={{width: '40px',height: '50px'}}/>
+                  <div>
+                    <p>设备名称</p>
+                    <p>{item.name}</p>
+                  </div>
+                  <div>
+                    <p>能耗占比</p>
+                    <p>{item.percent}</p>
+                  </div>
+                </div>
+              })}
+           </div>
+       </div>
+    </Titlelayout>}
       </Pagecount>
     )
 }

@@ -54,6 +54,9 @@
     background-size: 100% 100%;
     position: relative;
     overflow: hidden;
+    &:hover {
+        outline: 2px solid var(--ant-primary-color);
+    }
     .warning {
         width: 14px;
         height: 14px;
@@ -247,14 +250,12 @@
     grid-template-rows: repeat(4, 152px);
     row-gap: 16px;
     justify-content: space-between;
+   
 }
 
 .pageNum {
-    position: absolute;
-    right: 0;
-    margin-right: 16px;
-    bottom: 0px;
- 
+   margin-left: auto;
+   margin-top: auto;
 }
 
 .tableHead {

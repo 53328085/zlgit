@@ -15,21 +15,22 @@ import {publishState} from '@redux/systemconfig'
 const {Link} = Typography
 const {
   DeviceManager: {
-    QueryByPageElectric,
+    QueryByPageHotWater,
     AeraQueryAll,
     QueryListGateWay,
     QueryUsedDeviceCategory,
     QueryPlanList,
-    AddElectric,
-    UpdateElectric,
+    AddHotWater,
+    UpdateHotWater,
     UpdateFactor,
-    DeleteElectric,
+    DeleteHotWater,
     ImportElectric,
     OneLevel
   }
 } = Monitoring
 
 export default function gateway({ deviceStyle, name }) {
+  console.log(name)//热水表
   const {t} =useTranslation(["button"])
   const publish = useSelector(publishState)
   const [selectopts, setSelectopts] = useState([])
@@ -137,7 +138,7 @@ export default function gateway({ deviceStyle, name }) {
         return (
           <Space>
             <Link onClick={() => { onEdit(record) }}>{t("button:edit")}</Link>
-            <Link onClick={() => { onFactor(record) }}>{t("button:accompanyRate")}</Link>
+            {/* <Link onClick={() => { onFactor(record) }}>{t("button:accompanyRate")}</Link> */}
             <Link type="danger" onClick={() => { onDelete(record) }}>{t("button:delete")}</Link>
           </Space>
         )
@@ -191,7 +192,7 @@ export default function gateway({ deviceStyle, name }) {
         commAddress,
         factor
       }
-      const resp = await UpdateElectric(params)
+      const resp = await UpdateHotWater(params)
       if(resp.success){
         message.success("更新成功")
         EditModalFormRef?.current?.onCancel()
@@ -236,7 +237,7 @@ export default function gateway({ deviceStyle, name }) {
         commAddress,
         factor
       }
-      const resp = await UpdateElectric(params)
+      const resp = await UpdateHotWater(params)
 
       if(resp.success){
         message.success("应用成功")
@@ -257,7 +258,7 @@ export default function gateway({ deviceStyle, name }) {
   }
   //确认删除
   const delOk=async()=>{
-    const {success,errMsg} = await DeleteElectric({
+    const {success,errMsg} = await DeleteHotWater({
       projectId,
       sn:encodeURIComponent(delid.current),
     })
@@ -347,7 +348,7 @@ export default function gateway({ deviceStyle, name }) {
         commAddress: formvalue.commAddress ? formvalue.commAddress : 0,
         factor: formvalue.factor
       }
-      const res = await AddElectric(params)
+      const res = await AddHotWater(params)
       if (res.success) {
         message.success('新增成功!')
       //  modalFormRef?.current?.onCancel()
@@ -382,7 +383,7 @@ export default function gateway({ deviceStyle, name }) {
         commAddress: formvalue.commAddress ? formvalue.commAddress : 0,
         factor:Number(formvalue.factor) 
       }
-      const res = await AddElectric(params)
+      const res = await AddHotWater(params)
      
       if (res.success) {
         message.success('应用成功!')
@@ -469,7 +470,7 @@ export default function gateway({ deviceStyle, name }) {
   }
   //获取电表列表
   const getQueryByPageElectric = async (curpage=0,pageSize=0,id, like,customerType) => {
-    if (deviceStyle!=12) return; // 断路器用电表的接口
+    if (deviceStyle!=7) return; // 断路器用电表的接口
     setLoading(true)
     let params = {
       projectId,
@@ -481,7 +482,7 @@ export default function gateway({ deviceStyle, name }) {
       alike: like ? like : '',
       customerType:customerType?customerType:0
     }
-    const resp = await QueryByPageElectric(params)
+    const resp = await QueryByPageHotWater(params)
     setLoading(false)
     setPage({
       ...page,
@@ -512,7 +513,7 @@ export default function gateway({ deviceStyle, name }) {
         customerType:compRef.current.energyVal?compRef.current.energyVal:0
       }
      
-      const resp = await QueryByPageElectric(params)
+      const resp = await QueryByPageHotWater(params)
       if(resp.success){
         resolve({list:resp.data?resp.data:[],total:resp.total})
       }else{
@@ -643,7 +644,7 @@ export default function gateway({ deviceStyle, name }) {
 
       
       <MultImport {...ImportProps}></MultImport>
-      <DeleteModal DelModalRef={DelModalRef} name="删除提示" content="是否确认删除电表？" onOk={delOk}></DeleteModal>
+      <DeleteModal DelModalRef={DelModalRef} name="删除提示" content="是否确认删除热水表？" onOk={delOk}></DeleteModal>
       {EditModalComp}
       {/* <MyContext.Provider value={{ addopts, gatewaylist:gatewayRef.current, devicelist:deviceRef.current, alarmopts:alarmoptsRef.current, form: editform, deviceStyle,levelname }}>
         <EditModalForm {...EditModalFormProps}></EditModalForm>

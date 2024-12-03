@@ -21,7 +21,7 @@ const disabledDate = (current) => {
 const Mainbox = styled.div`
     && {
        display: grid;
-       grid-template-rows: 110px 673px;
+       grid-template-rows: 110px minmax(673px, 1fr);
        row-gap: 16px; 
        flex: 1;
        color:#515151;

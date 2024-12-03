@@ -1,30 +1,44 @@
- 
-import React, { useState, useRef } from 'react';
-import {Typography} from 'antd'
-import {CaretRightOutlined} from '@ant-design/icons'
-import styled from 'styled-components';
- import {renderAsync} from 'docx-preview'
- 
- //import 'jszip'
-const App = ({num=2}) => {
-    const [file, setFile] = useState(null);  
-  const ref=useRef()
-  const handleFileChange = (e) => {  
-    const file = e.target.files[0];  
-    if (file) {  
-      renderAsync(file, ref.current).then(res => {
-        console.log(res)
-      })
-    }  
-  };
-   
-   return(
-    <div style={{margin: "30px"}}>
-        <input type="file" accept=".docx" onChange={handleFileChange} />
-       <div id="doc" style={{width: "800px", height: '880px'}} ref={ref}></div>
+import React from 'react';
+import { Responsive as ResponsiveGridLayout, WidthProvider } from 'react-grid-layout';
+import 'react-grid-layout/css/styles.css';
+import 'react-resizable/css/styles.css';
+import Titlelayout from '@com/titlelayout';
+const ResponsiveReactGridLayout = WidthProvider(ResponsiveGridLayout);
 
-       
-    </div>
-   )
+const layouts = {
+  lg: [
+    { i: 'a', x: 0, y: 0, w: 2, h: 2 },
+    { i: 'b', x: 2, y: 0, w: 4, h: 2 },
+    { i: 'c', x: 4, y: 0, w: 6, h: 2 },
+    { i: 'd', x: 6, y: 0, w: 8, h: 2 },
+  ],
+  md: [
+     
+  ],
+  // 其他断点布局配置...
 };
-export default App;
+
+const breakpoints = {
+  lg: 1536, // 
+  md: 1024,
+  
+};
+
+const MyResponsiveGrid = () => (
+  <ResponsiveReactGridLayout
+    className="global_dashboard_layout"
+    layouts={layouts}
+    breakpoints={breakpoints}
+    cols={{ lg: 8, md: 4 }}
+    rowHeight={200}
+    isDraggable={true}
+    isResizable={true}
+  >
+    <div key="a">A</div>
+    <div key="b">B</div>
+    <div key="c">C</div>
+   
+  </ResponsiveReactGridLayout>
+);
+
+export default MyResponsiveGrid;

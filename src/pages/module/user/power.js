@@ -33,6 +33,7 @@ import { custMsg } from "@com/usehandler";
 //import Drawerdata from './drawerdata'
 import Dataset from "./dataSet.jsx";
 import Menuset from "./menuSet.jsx";
+import {isObject} from '@com/usehandler'
 import {useTranslation} from "react-i18next"
 const { Title, Text, Link } = Typography;
 const { Option } = Select;
@@ -56,7 +57,7 @@ const Mainbox = styled.div`
   row-gap: 16px;
 
   div.admin {
-    padding: 16px 0;
+    padding-top: 16px;
     display: grid;
     grid-auto-rows: minmax(32px, auto);
     row-gap: 16px;
@@ -112,7 +113,7 @@ const Abutton = styled(CustButton).attrs({
   
 })`
   && {
-    padding: 0px;
+    padding: 0px 8px;
     width: auto;
   }
 `;
@@ -430,30 +431,39 @@ export default function Account({ projectId, CModal }) {
     queryProjectManager();
     queryProjectMaintenance();
   }, [projectId]);
- const RenderItem = ({ data }) => {
-    return data.map((field, index) => (
+ const RenderItem = ({field}) => {
+    let [form] = Form.useForm()
+    useEffect(() => {
+      if(isObject(field)) {
+         let {validStageTime, ...reset} = field
+         form.setFieldsValue({...reset})
+         form.setFieldValue("validStageTime",moment(
+           validStageTime,
+          "YYYY-MM-DD HH:mm:ss"
+        ).format("YYYY/MM/DD"))
+      }
+
+    }, [field])
+    return  (
+      <Form form={form}>
       <div
         className="admin"
         style={{ flex: 1, borderBottom: "none" }}
         key={nanoid()}
       >
         <div className="item">
-          <Item name={[index, "name"]} noStyle initialValue={field.name} >
+          <Item name="name" noStyle   >
             <Input size="middle"  />
           </Item>
-          <Item name={[index, "nickName"]} noStyle initialValue={field.nickName} >
+          <Item name="nickName" noStyle   >
             <Input size="middle" />
           </Item>
-          <Item name={[index, "mobile"]} noStyle initialValue={field.mobile}>
+          <Item name="mobile" noStyle >
             <Input size="middle"  />
           </Item>
-          <Item name={[index, "validStageTime"]} noStyle  initialValue={moment(
-                field.validStageTime,
-                "YYYY-MM-DD HH:mm:ss"
-              ).format("YYYY/MM/DD")}>
+          <Item name="validStageTime" noStyle >
             <Input
               size="middle"
-             
             />
           </Item>
           <Item noStyle>
@@ -471,12 +481,13 @@ export default function Account({ projectId, CModal }) {
         </div>
         <Space size={8} wrap>
           <Text>{defaultLabel}权限</Text>{" "}
-          {field.areaAuthority?.map((item) => (
+          {field?.areaAuthority?.map((item) => (
             <Ctag key={nanoid()}>{item.name}</Ctag>
           ))}
         </Space>
       </div>
-    ));
+      </Form>
+    );
   };
 
   const addcmodal = useMemo(() =>  <Custmodl
@@ -625,9 +636,13 @@ export default function Account({ projectId, CModal }) {
             <Text>{t("common:ValidityPeriod")}</Text>
           </div>
 
-          <Form layout="inline" readOnly>
-            {admin?.length > 0 && <RenderItem data={admin} />}
-          </Form>
+          
+            {
+            admin?.length > 0 ?
+             admin.map(f => <RenderItem field={f} key={nanoid()} />) 
+             : null
+            }
+          
         </div>
       ) : null}
 

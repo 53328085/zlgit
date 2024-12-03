@@ -5,19 +5,26 @@ import { Select, Button, DatePicker, Form, Divider, message, Input, Timeline, Ty
 import { DistributionRoomRuntime, distributionRoom } from '@api/api.js'
 
 import UseTable from '@com/useTable'
-import styled from 'styled-components'
+import styled, {keyframes} from 'styled-components'
 import BlueColumn from '@com/bluecolumn'
 import time from './time.png'
 import { drawEcharts } from "@com/useEcharts";
 import { selectProjectId, selectcurlRommid } from '@redux/systemconfig.js'
 import { useReactive } from 'ahooks'
 import UseModal from '@com/useModal' 
-
+import  Ichart from '@com/useEcharts/Ichart' 
 import moment from 'moment';
 import Titlelayout from '@com/titlelayout'
 import Pagecount from "@com/pagecontent";
 const {Paragraph} = Typography
-
+const activecss = keyframes`
+   0%{
+        background-color: #ff6666;
+      }
+      100%{
+        background-color:#ff9494; 
+      }
+`
 const Pt = styled(Paragraph)`
   && {
     margin-bottom: 0px;
@@ -28,18 +35,18 @@ const WrapDiv = styled.div`
   display: grid;
   gap: 16px;
   grid-template-columns: 1fr 323px;
-  grid-template-rows: 352px 432px;
+  grid-template-rows: minmax(352px,1fr) minmax(432px, 1fr);
   grid-template-areas:
   "a c"
   "b c";
-  @keyframes activecss {
+ /*  @keyframes activecss {
       0%{
         background-color: #ff6666;
       }
       100%{
         background-color:#ff9494; 
       }
-    }
+    } */
   .griditem{
     background-color: #fff;
     border: 1px solid RGB(215,215,215);
@@ -76,7 +83,7 @@ const WrapDiv = styled.div`
         background-color: #ecf5ff;
       }
       .active{  // 报警
-        animation: activecss .8s linear infinite;
+        animation: ${activecss} .8s linear infinite;
         outline: 1px solid #cc0000;
         color:#fff;
       }
@@ -88,6 +95,13 @@ const WrapDiv = styled.div`
         background-color: #ccc;
         color: #333
       }
+      .active.box.current {
+        outline: none;
+        color:#fff;
+        .ant-typography {
+          color:#fff;
+        }
+      }
     }
     }
     
@@ -95,14 +109,15 @@ const WrapDiv = styled.div`
   }
   .griditem2{
     grid-area: b;
-    .head{
-      display: flex;
-      justify-content: space-between;
-      .headtime{
+    .headtime{
         display: flex;
         align-items: center;
         
       }
+    .head{
+      display: flex;
+      justify-content: space-between;
+    
       .time{
           width: 96px;
           justify-content: space-around;
@@ -136,7 +151,7 @@ const WrapDiv = styled.div`
               border:1px solid #00a633;
             }
             .waring{
-              animation: activecss .8s linear infinite;
+              animation: ${activecss} .8s linear infinite;
               border: 1px solid #cc0000;
              }
              .unknown {
@@ -147,6 +162,7 @@ const WrapDiv = styled.div`
       }
     }
     .chart{
+       display: flex;
        flex: 1;
        padding-left: 12px;
     }
@@ -292,7 +308,7 @@ export default function Index() {
         channelInfo.warnlist=[]
         channelInfo.typeopts=[]
         setChannel([])
-        initchart()
+       // initchart()
       }
     }else{
       message.error(errMsg)
@@ -322,6 +338,31 @@ export default function Index() {
     }else{
       message.error(res.errMsg)
     }
+  }
+  const lineoption ={
+    dataset: {
+      dimensions: [
+        {
+          name: 'x',
+          displayName: '时间'
+        },
+        {
+          name: 'y',
+          displayName: '光纤测点温度'
+        }
+      ],
+       source: Array.isArray(channelInfo.info?.tempData) ? channelInfo.info?.tempData : [],
+
+     },
+   
+     xAxis: {
+      axisLabel: {
+         formatter: (value, index) => {
+             return moment(value, "YYYY-MM-DD HH:mm:ss").format("HH:mm")
+         }
+      }
+    },
+     series: [{type: 'line', smooth:true, showSymbol: false,}]
   }
   const initchart =()=>{
 
@@ -354,7 +395,7 @@ export default function Index() {
        
     })
 
-
+ 
 
     /* const chartdom = echarts.init(chartRef.current)
     if(channelInfo.info.tempData){
@@ -457,9 +498,9 @@ export default function Index() {
   }, [roomId, projectId])
  
  
-  useEffect(()=>{
+/*   useEffect(()=>{
     channelInfo.info.tempData && initchart()
-  },[channelInfo.info.tempData])
+  },[channelInfo.info.tempData]) */
   useEffect(()=>{
     QueryAlarmType()
     
@@ -505,8 +546,8 @@ export default function Index() {
         <Titlelayout className='griditem2' title={<div style={{display: 'flex', alignItems: 'center', justifyContent: 'space-between'}}>
             <span>{activename}</span>
              <div className='headtime'>
-               <span className='headtime time'><img src={time} alt="" /> 更新时间： </span>
-              <span>{channelInfo.info.updateTime}</span>
+                <img src={time} alt="" /> 
+                <span>&nbsp;更新时间： {channelInfo.info.updateTime}</span>
              </div>
           </div>}>          
           <div className='content'>
@@ -555,7 +596,9 @@ export default function Index() {
                 </Item>
               </Form>
             </div>
-            <div className='chart' ref={chartRef}></div>
+            <div className='chart' ref={chartRef}>
+               <Ichart {...lineoption}/>
+            </div>
           </div>
         </Titlelayout>
         <Titlelayout className='griditem3' layout="flex" title={<div style={{display: 'flex', alignItems: 'center', justifyContent: 'space-between'}}>

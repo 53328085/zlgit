@@ -133,7 +133,7 @@ export default function Index() {
   const allOptions = allOption ? [allOption, ...levelone] : levelone;
   // const [roomList, setroomList] = useState([])
   const [areaId, setareaId] = useState(0)
-  const [areaIdIn, setareaIdIn] = useState(levelone[0].id)
+  const [areaIdIn, setareaIdIn] = useState(levelone[0]?.id)
   const [defalutType, setdefalutType] = useState(1)
   const [defalutTypeOut, setdefalutTypeOut] = useState(0)
   // const [defalutroom, setdefalutroom] = useState()
@@ -151,7 +151,11 @@ export default function Index() {
     })
   }//新增页面设备列表
   useEffect(() => {
-    SelectDevice()
+    console.log(areaIdIn)
+    if([areaIdIn, defalutType].every(d => Number.isInteger(parseInt(d)))) {
+      SelectDevice()
+    }
+    
   }, [areaIdIn, defalutType])
   const onChangeDevice = (value) => {
     setdeviceValue(value)
@@ -664,7 +668,10 @@ export default function Index() {
     })
   }
   useEffect(() => {
-    getData()
+    if([projectId, areaId, defalutTypeOut, pageInfo.current].every(d => Number.isInteger(parseInt(d)))) {
+      getData()
+    }
+   
   }, [areaId, defalutTypeOut, pageInfo.current])
   return (
     <Pagecont bgcolor="transparent" pd="0" >

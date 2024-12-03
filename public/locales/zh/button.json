@@ -66,5 +66,8 @@
   "Templatedownload": "模板下载",
   "carbonplan": "碳排放监测计划填报",
   "uploadfiles": "上传文件",
+  "back": "返回",
+  "moveUp":"上移一行",
+  "moveDown":"下移一行",
   "z": ""
 }

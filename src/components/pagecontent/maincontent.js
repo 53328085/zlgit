@@ -4,6 +4,7 @@ import {Tabs} from 'antd'
 import CustContext from '../content'
 
 import styled from 'styled-components'
+import server from '../../axios'
 const Tabsbox = styled(Tabs)`
   .ant-tabs-nav {
     margin-bottom: 0px;
@@ -78,16 +79,18 @@ PageContentMain.defaultProps = {
     bgcolor: "#fff"
 }
 export default function Maincontent(props) {
- const [searchParams, setSearchParams] = useSearchParams()
+    const [searchParams, setSearchParams] = useSearchParams()
  
- const location = useLocation()
- const navigate = useNavigate()
- const {tabs, value, setvalue, tabwidth, tabgap, initialval=''} = useContext(CustContext) || {}
- const beTabs = useMemo(() => Array.isArray(tabs) && tabs.length > 0, [tabs])
- //const {tabs, value, setvalue} = props
- const [defaultTab, setDefaultTab] = useState(value)
- const [pathName, setPathName] = useState()
- const [urlstate, setUrlstate] = useState()
+    const location = useLocation()
+   
+    
+    const navigate = useNavigate()
+    const {tabs, value, setvalue, tabwidth, tabgap, initialval=null} = useContext(CustContext) || {}
+    const beTabs = useMemo(() => Array.isArray(tabs) && tabs.length > 0, [tabs])
+    //const {tabs, value, setvalue} = props
+    const [defaultTab, setDefaultTab] = useState(value)
+    const [pathName, setPathName] = useState()
+    const [urlstate, setUrlstate] = useState()
  const tabstyl = {
      background: '#237ae4',
      color: '#fff'
@@ -96,27 +99,51 @@ export default function Maincontent(props) {
     
     setvalue(key)
     setDefaultTab(key)
-    setSearchParams({item: key})
-    navigate(`${pathName}?item=${key}`, {state: urlstate})
+    let {search} = location || {}
+  
+    let query =search ? new URLSearchParams(search) : new URLSearchParams()
+   
+    if(query?.has('item')) {
+        query?.set('item', key)
+    }else {
+        query?.append('item', key)
+    }
+  
+  
+  navigate(`${pathName}?${query.toString()}`, {state: urlstate})
  }
 
-useEffect(() => {  
+useEffect(() => {   
     
-    let param = searchParams.get('item')
-    
-    let {pathname, state} = location
+    let {pathname, state, search} = location
+    let query =search ? new URLSearchParams(search) : new URLSearchParams()
+    let isItem = query.has('item')
+    let param = query.get('item')
     setPathName(pathname)
     setUrlstate((s) => ({...s, ...state}))
-    if(initialval &&param) {
-        setSearchParams({item: initialval})
-    }else if(param) {
-        if(setvalue) {
-            setvalue(param)
-        }
+   
+    
+   
+    if((Number.isInteger(parseInt(initialval)) || initialval) &&isItem) {
+         let obj = {}
+         for(let [key, val] of query?.entries()) {
+            obj[key] = val
+         }
+         obj['item'] = initialval
         
-        setDefaultTab(param)
+        setvalue(initialval)
+        setDefaultTab(initialval)
+        setSearchParams({...obj})
+        // console.log(query)
+       // setSearchParams(query)
+    }else if(param) {       
+        if(setvalue && tabs?.length > 0) {
+            setvalue(param)
+            setDefaultTab(param)
+        }      
+       
     }
-}, [location.pathname, setvalue])
+}, [location.pathname, setvalue, initialval])
  const TabsEl = () => {   
      if (!beTabs) return null    
      return (

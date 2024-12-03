@@ -1,5 +1,5 @@
  
-import React, { useState, Fragment, useEffect, useMemo } from 'react';
+import React, { useState, Fragment, useEffect, useMemo, memo } from 'react';
 import {Typography} from 'antd'
 import {CaretRightOutlined} from '@ant-design/icons'
 import styled from 'styled-components';
@@ -9,7 +9,7 @@ import warn from './waring.svg'
 import Snk from './snker.png'
 const {Text} = Typography
 const Showbox =styled.div`
-    height: 48px;
+    height: 46px;
     padding: 0 8px;
     display: flex;
     justify-content: center;
@@ -20,7 +20,7 @@ const Showbox =styled.div`
  `
 const Textscroll = styled.div`
   width: 538px;
-  height: 48px;
+  height: 46px;
   background-color: #f00;
   display: flex;
   align-items: center;
@@ -47,7 +47,7 @@ const Textscroll = styled.div`
   }
   .scroll {
     width: 353px;
-    height: 48px;
+    height: 46px;
     display: flex;
     flex-direction: column;
     
@@ -61,9 +61,9 @@ const Textscroll = styled.div`
   }
  
 `
-const App = ({projectId, roomId}) => {
+const App = memo(({projectId, roomId}) => {
    const [arr, setArr]=useState([])
-   console.log(arr)
+   const isdiplay = arr?.length > 0
    const num = arr?.length ?? ''
    const [show, setShow] = useState(true)
 
@@ -97,29 +97,22 @@ const App = ({projectId, roomId}) => {
     
    }, [projectId, roomId])
    return(
-        <Fragment>
+         <Fragment>
+       {isdiplay ? <div>
           {show ?
         <Textscroll>
              <div className='warning'>
                 <img src={warn} alt="" className='img' /> 
                 <Text ellipsis={{tooltip: num}}>告警({num})</Text>
              </div>
-              {CTextLoop}
-       {/*       <TextLoop>
-              {
-           arr.map((d,i) => {
-                console.log(d.warningTime)
-                return (<div className='scroll' style={{backgroundColor: i%2==0 ? "#ff4848" : 'transparent' }} key={d.warningTime} >
-                    <Text>{d.warningTime}</Text>
-                    <Text ellipsis={{tooltip: d.alarmEvent}}>{d.alarmEvent}</Text>
-                </div>) })
-              
-              }
-             </TextLoop>  */}          
+              {CTextLoop} 
              <CaretRightOutlined style={{color: "#fff", fontSize: '16px', cursor: "pointer", marginLeft: 'auto'}} onClick={() => setShow(false)} />            
         </Textscroll>
         : <Showbox  onClick={() =>setShow(true) }><img src={Snk} alt="" /> </Showbox> }
+        </div>
+        : null
+}
         </Fragment>
    )
-};
+});
 export default App;

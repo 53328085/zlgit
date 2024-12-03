@@ -23,9 +23,9 @@ export default function Index() {
   ]
   return (
     <CustContext.Provider value={dataProps}>
-   <div style={{ overflow: 'hidden' ,width:'100%',height:873}}>
+   <div style={{ overflow: 'hidden' ,width:'100%',height:873 }}>
         <Pagecount>
-        {Coms[Number(value)]}
+          {Coms[Number(value)]}
         </Pagecount>
     </div> 
     </CustContext.Provider>

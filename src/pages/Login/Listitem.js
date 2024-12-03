@@ -84,7 +84,7 @@ export default memo(function Listitem({logtitle, englishTitle, literal}) {
             const { englishTitle="Integrated Energy Service Platform", literal, title, chineseTitle } = data;
             
           
-            let enchtitle = (title ?? 'NIS6000') + ' '+ (chineseTitle ?? '正泰综合能源服务平台');
+            let enchtitle = title  + ' '+ chineseTitle ;
             document.title = enchtitle
             setTitle({
                englishTitle,
@@ -92,7 +92,7 @@ export default memo(function Listitem({logtitle, englishTitle, literal}) {
                enchtitle
             })
             dispatch(getSystemconfiginfo(data)) 
-            dispatch(getThemeColor({primaryColor: data.themeColor || "#237ae4"})) 
+          //  dispatch(getThemeColor({primaryColor: data.themeColor || "#237ae4"}))  主题颜色通过项目信息获取
        }else {
             dispatch(getSystemconfiginfo({}))
        }

@@ -20,7 +20,7 @@ const {Text} = Typography
 const Mainbox =styled.div`
   flex:1;
   display: grid;
-  grid-template-rows: 112px 400px 320px;
+  grid-template-rows: 112px minmax(400px, 1fr) minmax(320px, 1fr);
   row-gap: 16px;
   overflow: hidden;
   .custTitle {
@@ -47,7 +47,7 @@ const Mainbox =styled.div`
     display: grid;
     grid-template-columns: 1216px 448px;
     column-gap: 16px;
-    height: 320px;
+   // height: 320px;
       .wrap {
         margin-top: 16px;
         height: 254px;
@@ -373,7 +373,7 @@ if(classSuc) {
            <Card title={<CustTransO ns="carbon" text="indirecte" param="(tCO₂)" />} bgcolor='#660099'   value={Quota.indirectEmission} yoy={Quota.indirectEmissionPercent} key="e" />
       </div>
       <div className='center' key="center">
-         <Image src={projectImg.current} height={400} preview={false} fallback={imgsrcs['carbon']}  />
+         <Image src={projectImg.current} style={{height: "100%"}} preview={false} fallback={imgsrcs['carbon']}  />
         {/*   <Titlelayout title={Ctitle} layout="flex" key="real">
             <div className='chart'>
                 <Ichart {...roption} /> 

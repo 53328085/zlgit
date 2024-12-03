@@ -392,7 +392,7 @@ export default function Index(props) {
             ></Table>
           </div>
         )}
-     { isCard && <CPagination style={{marginLeft: 'auto'}} size="small"  onChange={changepage}   {...tableProps.pagination} showSizeChanger={false}/>  }
+     { isCard && <CPagination style={{marginLeft: 'auto', marginTop: "auto"}} size="small"  onChange={changepage}   {...tableProps.pagination} showSizeChanger={false}/>  }
       </div>
     </Pagecount>
   );

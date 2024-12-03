@@ -29,11 +29,13 @@ import { ExportExcel } from "@com/useButton";
 import {
   selectProjectId,
   selectOneLevelDefaultId,
+  deviceState
 } from "@redux/systemconfig.js";
 
 import Table from "@com/useTable";
 import { Serach, Cdivider,  CPagination} from "@com/comstyled";
 import Pagecount from "@com/pagecontent";
+const channel = new BroadcastChannel('my-channel')
 export default function Index(props) {
   const tableLoadRef = useRef();
   const projectId = useSelector(selectProjectId);
@@ -41,7 +43,7 @@ export default function Index(props) {
   let areaId = useSelector(selectOneLevelDefaultId);
   let {exparams} = useOutletContext()
   let {deviceStyle} = exparams
-
+  const dstate = useSelector(deviceState)
   // const [messageApi, contextHolder] = message.useMessage();
   const {
    
@@ -64,8 +66,13 @@ export default function Index(props) {
   const [isCard, setisCard] = useState(true); //卡片模式true或列表模式false
   let [total, setTotal] = useState(0);
   let [imageList, setimageList] = useState([]);
-  
-
+ 
+  channel.onmessage = (event) => {
+    console.log('Received message:', event);
+    event.data&&getGatewayImages()
+    event.data&&submit()
+    
+  };
 
  
   
@@ -211,11 +218,13 @@ export default function Index(props) {
             overView?.details?.map((item, index) => {
               data.map((items, indexs) => {
                 if (data[indexs].category == item.category) {
-                  imgList.push(data[indexs].imageBase64);
+                  //imgList.push(data[indexs].imageBase64);
+                  imgList.push(data[indexs]);
                 } else {
                 }
               });
             });
+            console.log(imgList)
             setimageList(imgList);
           }
         } else {
@@ -281,6 +290,9 @@ export default function Index(props) {
       run({ current, pageSize }, values);
     } catch (error) {}
   };
+  useEffect(()=>{
+    console.log("dstate",dstate)
+  },[dstate])
   return (
     <Pagecount>
       <div className="flexcol">
@@ -384,23 +396,26 @@ export default function Index(props) {
         {isCard ? (
           <div className={style.cardBox}>
             {tableProps?.dataSource?.length > 0 ?
-                tableProps?.dataSource.map((item, index) => {
-                  let status =
+                tableProps?.dataSource.map((item, index) => { // state 1, 离线 2 在线 3 告警; states 
+                /*   let status =
                     Object.prototype.toString.call(item.status) ===
                     "[object Object]"
                       ? item.status[1]
-                      : "";
+                      : ""; */
+                  let imgbase =(Array.isArray(imageList) && imageList?.length > 0) ? imageList?.find(i => i.category == item.category) : null
+                  let {closeImageBase64, imageBase64, openImageBase64} = imgbase ?? {}
                   return (
                     <div key={index}>
                       <Link
                         to={`/deviceDetail?sn=${encodeURIComponent(item.sn)}&deviceStyle=${encodeURIComponent(deviceStyle)}`}
                         target="_blank"
                       >
+                      
                         <Icard
                           img={
-                            imageList[index]
-                              ? imageList[index]
-                              : imgurl.category
+                            !imgbase ? imgurl.category: (openImageBase64 && item.status?.["1"]=="Open")?
+                           openImageBase64: (closeImageBase64 && item.status?.["1"]=="Close")?
+                           closeImageBase64:  (imageBase64 || imgurl.category)
                           }
                           title={item.name}
                           deviceStyle={deviceStyle}
@@ -442,7 +457,7 @@ export default function Index(props) {
         )}
         {isCard && (
           <CPagination
-            style={{ marginLeft: "auto" }}
+            style={{ marginLeft: "auto", marginTop: "auto" }}
             size="small"
             onChange={changepage}          
             {...tableProps.pagination}

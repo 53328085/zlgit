@@ -20,6 +20,7 @@ import '../../assets/css/font_99x1os11gqi/iconfont.css'
 import '../../assets/css/font_c44gejdj174/iconfont.css'
 import '../../assets/css/font_ehfbe2lg8tb/iconfont.css'
 import '../../assets/css/font_ugr1luq01xe/iconfont.css'
+import '../../assets/css/font_nilhyhwpjm9/iconfont.css'
 // 右侧图形库图标
 import '../../assets/css/fonts/font/libs/iconfont.css'
 import '../../assets/css/font_g4v09lxfde/iconfont.css'
@@ -214,8 +215,8 @@ export default function index() {
   const [nodeType, setNodeType] = useState('设备绑定')
   const [selectedNode, setSelectedNode] = useState()
   const onMessage = (event, data) => {
-    // console.log(event)
-     
+    // console.log(data)
+    //  console.log(Tools)
     if (event == 'nodeRightClick') {
       console.log(data)
       // console.log(data.evs)

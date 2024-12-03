@@ -18,10 +18,13 @@
         height: 64px;
         color: #b2c1d1;
         border-bottom: 2px solid transparent;
+       
+      
      //   background-color: #1c62b6 ;      
      //   transition: all 0.3s;
         .ant-image {
             height: 36px;
+            width: 36px;
             line-height: 36px;
         }
         &::after {
@@ -47,6 +50,21 @@
         }
     }
   }
+  @media screen  and (max-device-width:1536px) {
+    font-size: 12px;
+    display: flex;
+     column-gap: 2px;;
+    .ant-menu-item.custsubmenu{
+        width: auto;
+        padding: 4px 2px;
+        .ant-image {
+            height: 28px;
+            width: 28px;
+            line-height: 28px;
+        }
+    }
+    
+ }
 }
 .wrap {
     .react-draggable {

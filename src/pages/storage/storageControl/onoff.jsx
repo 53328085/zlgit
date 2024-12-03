@@ -10,7 +10,7 @@ const {Item} = Form
 const Mainbox = styled.div`
     && {
        display: grid;
-       grid-template-rows: 680px;
+     //  grid-template-rows: 680px;
        row-gap: 16px;
        padding-bottom: 16px;
        flex: 1;

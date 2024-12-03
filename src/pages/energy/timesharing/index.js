@@ -19,6 +19,7 @@ const {LineManagerQuery} = Monitoring.LineManager // 线路查询
  
 const Mainbox = styled.div`
   && {
+    flex:1;
     display: grid;
     grid-template-columns: 296px 952px 1fr;
     column-gap: 16px;

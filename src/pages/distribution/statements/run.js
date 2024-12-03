@@ -1,19 +1,25 @@
 import React, {useRef, useEffect} from 'react'
+import {useNavigate, Link, useLocation} from 'react-router-dom'
 import Titlelayout from '@com/titlelayout'
 import {useRequest} from 'ahooks'
-import {Space} from 'antd'
+import {Space, Typography} from 'antd'
 import styled from 'styled-components'
 import UseTable from '@com/useTable'
 import {ExportExcel, CustButtonT, ExportButton} from "@com/useButton"
 import {DistributionRoomRuntime} from '@api/api.js'
+import moment from 'moment'
+
+ 
 const Ctitle = styled.div`
   && {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    
     .time{
         padding-right: 64px;
         color: #515151;
+        font-size: 16px;
     }
   }
 `
@@ -21,16 +27,65 @@ const Type ={
   1: '分表',
   2: '总表'
 }
-const columns =[
+
+export default function Run({projectId, lineIds}) {
+  const {pathname,state} = useLocation()
+  console.log(state)
+  const navigate = useNavigate() 
+  const tbref=useRef()
+  const jump =({sn,lineName}) => {    
+       let serach = encodeURIComponent(lineName)   
+        
+       navigate(`${pathname}?lineName=${serach}&sn=${encodeURIComponent(sn)}`, {state: {...state}})
+     
+     
+  }
+  const getData =async() => {
+      try {
+        if(!Number.isInteger(parseInt(projectId)) && !Array.isArray(lineIds)) return
+        let {success, data} =await DistributionRoomRuntime.RLineRuntimePoints({projectId, lineIds})
+        if(success && Array.isArray(data)) {
+          return data
+        }else {
+          return []
+        }
+      } catch (error) {
+        return Promise.reject(error)
+      }
+  } 
+  const {data, run, loading} = useRequest(getData, {
+    refreshDeps: [projectId, lineIds]
+  })
+  const  tableData = data?.map(({data,...rest}) =>  {
+    let obj = {}
+    data?.forEach(d => {
+      let {alias, value} = d
+       obj[alias] = value
+    })
+    return {...obj, ...rest}
+  })
+ 
+  const CusTitle =(
+   <Ctitle> <span>详细参数</span>
+        <Space><span className='time'> 参量采集时间：{moment().format('yyyy-MM-DD HH:mm:ss')}</span><CustButtonT text="refresh"   />   <ExportExcel single={true} tb={tbref}  /></Space> 
+    </Ctitle>
+  )
+  const columns =[
     {
      title: '回路名称',
      dataIndex: 'lineName',
      key: 'lineName',
+     render(text, record) {
+     return <Typography.Link  onClick={() => jump(record)}>
+        {text} 
+      </Typography.Link>
+     }
     },
     {
         title: '总分表',
         dataIndex: 'type',
         key: 'type',
+        width: 60,
         render(text) {
           return <span>{Type[text]}</span>
         }
@@ -39,6 +94,16 @@ const columns =[
         title: '设备编号',
         dataIndex: 'sn',
         key: 'sn',
+        render(sn){
+
+        return  <Link  to={{
+          pathname: "/deviceDetail",
+          search: `?sn=${encodeURIComponent(sn)}`,
+        }}
+        target="_blank">
+          {sn} 
+        </Link>
+        }
        },
        {
         title: '电压',
@@ -84,6 +149,7 @@ const columns =[
         title: '功率因数',
         dataIndex: 'phsA',
         key: 'phsA',
+        width: 80,
        },
        {
         title: '总有功功率',
@@ -116,41 +182,9 @@ const columns =[
          ]
        },
 ]
-export default function Run({projectId, lineIds}) {
-  const tbref=useRef()
-  const getData =async() => {
-      try {
-        if(!Number.isInteger(parseInt(projectId)) && !Array.isArray(lineIds)) return
-        let {success, data} =await DistributionRoomRuntime.RLineRuntimePoints({projectId, lineIds})
-        if(success && Array.isArray(data)) {
-          return data
-        }else {
-          return []
-        }
-      } catch (error) {
-        return Promise.reject(error)
-      }
-  } 
-  const {data, run, loading} = useRequest(getData, {
-    refreshDeps: [projectId, lineIds]
-  })
-  const  tableData = data?.map(({data,...rest}) =>  {
-    let obj = {}
-    data?.forEach(d => {
-      let {alias, value} = d
-       obj[alias] = value
-    })
-    return {...obj, ...rest}
-  })
- 
-  const CusTitle =(
-   <Ctitle> <span>详细参数</span>
-        <Space><span className='time'>参量采集时间：2020-09-03 09:35:21</span><CustButtonT text="refresh"   />   <ExportExcel single={true} tb={tbref}  /></Space> 
-    </Ctitle>
-  )
   return (
      <Titlelayout title={CusTitle} layout="flex" bordered="none" pv="0" bodypad="16px 0 0 0" >
-       <UseTable columns={columns} dataSource={tableData} 
+       <UseTable columns={columns} dataSource={tableData} loading={loading}
        hbg="#ecf5ff"
        hbc="#515151"
        ref={tbref}

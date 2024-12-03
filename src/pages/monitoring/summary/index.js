@@ -154,8 +154,7 @@ export default function Index() {
   //     console.log(e)
   //   })
   // }
-  const toDevicePage = (meterType) => {
-    console.log(meterType, exparams);
+  const toDevicePage = (meterType) => {   
     if (meterType == 6) {
       navigate(`/index/runtimeMonitor/camera`, {
         state: {
@@ -170,6 +169,8 @@ export default function Index() {
         }
       })
     } else {
+       let currdeviceStyle = `deviceStyle_${projectId}`
+      window.localStorage.setItem(currdeviceStyle, meterType);
       navigate(`/index/runtimeMonitor/point`, {
         state: {
           type: 'index', primary: 'runtimeMonitor', title: '设备监测', nested: 'point', meterType
@@ -187,7 +188,7 @@ export default function Index() {
     <Pagecount pd="0" bgcolor="transparent">
       <div className={style.cardList}>
         <Icard img={imgurl.device} title={'设备总数'} value={allCount} key="device" />
-        {MonitoringData.map((item) => (
+        {MonitoringData?.map((item) => (
           <div onClick={() => toDevicePage(item.meterType)}><Icard img={item.imageUrl} title={item.name} value={item.count}
             isShow={true} on={'在线'} off={'离线'} per={'在线率'} onValue={item.onlineCount}
             offValue={item.offlineCount} perValue={item.onlineRate} isRed={true} isGreen={true} isredE={false} after="%" key={item.meterType} />

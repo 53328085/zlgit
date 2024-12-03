@@ -288,7 +288,7 @@ export default function Index(props) {
   }
   return (
     <Pagecount>    
-      <div className={style.bottom} style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
+      <div className={style.bottom} style={{ flex: 1, display: 'flex', flexDirection: 'column', rowGap: '16px', }}>
         <div className={style.bottomTab}>
           <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}><span>触点查询</span><Serach placeholder='输入设备编号/安装地址'   style={{ width: '260px', marginLeft: 16 }}  onSearch={onChangeValue} />
             
@@ -328,7 +328,7 @@ export default function Index(props) {
             {/* <Button style={{ width: 80, backgroundColor: '#F5F7FA', color: '#515151', marginLeft: 16 }} size="middle" disabled={isCard} onClick={() => { exportExecel() }}>导出</Button> */}
           </Space>
         </div>
-        <Cdivider type="h" margin="16px 0" />
+        <Cdivider type="h" margin="0px" />
         {isCard ? <div className={style.cardBox}>
           {overView.details != null ? overView.details.map((item, index) => {
             let status = Object.prototype.toString.call(item.status) === '[object Object]' ? item.status[1] : ''
