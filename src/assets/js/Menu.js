@@ -12386,6 +12386,19 @@ export const normal = [
         }
     },
     {
+        "name": "断路器",
+        "icon": "iconfont icon-_duanluqi",
+        "data": {
+            "rect": {
+                "width": 100,
+                "height": 100
+            },
+            "name": "image",
+            "iconFamily": "iconfont",
+            "icon":"\ue632"
+        }
+    },
+    {
         "name": "低压断路器",
         "icon": "iconfont icon-diyaduanluqi",
         "data": {
