@@ -66,15 +66,15 @@ export default function Index() {
   const onChangeBaseLineValue = (newValue) => {
     setBaseLineValue(newValue); // 更新状态
   };
-  let dataToday = moment().format('YYYY-MM-DD HH:mm:ss')
-  let [startTime, setstartTime] = useState(moment().startOf('day').format('YYYY-MM-DD HH:mm:ss'))
+  let dataToday = moment().format('YYYY-MM-DD 23:59:59')
+  let [startTime, setstartTime] = useState(moment().startOf('day').format('YYYY-MM-DD 00:00:00'))
   let [endTime, setendTime] = useState(dataToday)
   // setBaseLine(val)
   const onChangeTime = (date = [], dataString) => {
     let f = dataString.some(d => d);
     if (!f) return
-    setstartTime(dataString[0])
-    setendTime(dataString[1])
+    setstartTime(dataString[0] + ' 00:00:00 ')
+    setendTime(dataString[1] + ' 23:59:59')
     setValue(date)
   }
 
@@ -188,7 +188,7 @@ export default function Index() {
         let seriesList = []
         for (let i = 0; i < dimensions.length - 1; i++) {
           seriesList.push({
-            type: "line", areaStyle: null, smooth: true,stack:null
+            type: "line", areaStyle: null, smooth: true, stack: null
           })
         }
 
@@ -235,10 +235,9 @@ export default function Index() {
         dataset: dataset,
         series: seriesList,
         grid: {
-          top: '30px',
-          left: 30,
-          right: 0,
-          bottom: '30px',
+          top:"10%",
+          left: "3%",
+          right: "3%",
           containLabel: true,
         },
         tooltip: {
@@ -257,10 +256,9 @@ export default function Index() {
         dataset: dataset,
         series: seriesList,
         grid: {
-          top: '30px',
-          left: 0,
-          right: 0,
-          bottom: '30px',
+          top:"10%",
+          left: "3%",
+          right: "3%",
           containLabel: true,
         },
         tooltip: {
@@ -277,23 +275,6 @@ export default function Index() {
     }
   }
 
-  // const datasetContrast = {
-  //   dimensions: ["time", "实时辐射", "实时功率"],
-  //   source: [
-  //     { time: "1", "实时辐射": 5600, "实时功率": 9600 },
-  //     { time: "2", "实时辐射": 4600, "实时功率": 3644 },
-  //     { time: "3", "实时辐射": 3600, "实时功率": 4644 },
-  //     { time: "4", "实时辐射": 5611, "实时功率": 9655 },
-  //     { time: "5", "实时辐射": 5644, "实时功率": 3677 },
-  //     { time: "6", "实时辐射": 4677, "实时功率": 3633 },
-  //     { time: "7", "实时辐射": 3688, "实时功率": 4655 },
-  //     { time: "8", "实时辐射": 5088, "实时功率": 2644 },
-  //     { time: "9", "实时辐射": 6677, "实时功率": 2641 },
-  //     { time: "10", "实时辐射": 5866, "实时功率": 5641 },
-  //     { time: "11", "实时辐射": 4677, "实时功率": 7645 },
-  //     { time: "12", "实时辐射": 1877, "实时功率": 2645 },
-  //   ],
-  // };
   useEffect(() => {
 
 

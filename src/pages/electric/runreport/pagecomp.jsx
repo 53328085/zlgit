@@ -141,7 +141,7 @@ export default function pagecomp({data, params}) {
       </Page>
       <Page key="b">
         <Main>
-            <p  className='title'>3.电量监控</p> 
+            <p  className='title'>3.电流监控</p> 
             <DesItem title=""  bordered size='small' column={1}>
               <DesItem.Item label="最大电流发生时间">{data.iMaxContent ? data.iMaxTime : null}</DesItem.Item>
               <DesItem.Item label="最大电流发生位置">{data.iMaxContent ? data.iMaxAddress : null}</DesItem.Item>

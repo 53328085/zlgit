@@ -522,6 +522,15 @@ export class DesElectric {
       `Energy/EnergyImportantDesigner/ConfigImportmantDeviceSns?projectId=${projectId}&importantDeviceId=${id}`,
       params
     );
+    
+  static deviceSorting = (
+    { projectId},
+    params // 设置设备位置排序
+  ) =>
+    server.post(
+      `Energy/EnergyImportantDesigner/UpdateImportmantDevicesIndex?projectId=${projectId}`,
+      params
+    );
 }
 
 // 能源管理--能源概述
@@ -2551,9 +2560,9 @@ export class QuotaManage {
 
 //能源结构
 export class energyStructure {
-  static queryEnergyStructure = (projectId, areaId, name) =>
+  static queryEnergyStructure = (projectId, areaId, name, energyType) =>
     server.get(
-      `Energy/EnergyStructureDesigner/QueryEnergyStructure?projectId=${projectId}&areaId=${areaId}&name=${name}`
+      `Energy/EnergyStructureDesigner/QueryEnergyStructure?projectId=${projectId}&areaId=${areaId}&name=${name}&energyType=${energyType}`
     );
   static addEnergyStructure = (projectId, data) =>
     server.post(
@@ -2571,9 +2580,9 @@ export class energyStructure {
       `Energy/EnergyStructureDesigner/ConfigEnergyStructure?projectId=${projectId}`,
       data
     );
-  static queryEnergyStructureConfig = (projectId, energyStructureId, areaId) =>
+  static queryEnergyStructureConfig = (projectId, energyStructureId, areaId, energyType) =>
     server.get(
-      `Energy/EnergyStructureDesigner/QueryEnergyStructureConfig?projectId=${projectId}&energyStructureId=${energyStructureId}&areaId=${areaId}`
+      `Energy/EnergyStructureDesigner/QueryEnergyStructureConfig?projectId=${projectId}&energyStructureId=${energyStructureId}&areaId=${areaId}&energyType=${energyType}`
     );
 }
 
