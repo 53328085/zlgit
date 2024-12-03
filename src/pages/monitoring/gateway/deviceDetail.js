@@ -34,6 +34,22 @@ const Textbox = styled(Text)`
    }
 
 `
+const Ctitlec = styled.div`  // detail?.state == 2 ? style.leftImgState : detail.state == 3 ? style.leftImgStateAlarm : style.leftImgStateOff
+&&{
+    width: 96px;
+    height: 32px;
+    background-color: ${props => props.state==2 ? props.theme.successColor : props.state == 3 ? props.theme.errorColor : "#666" };
+    border: none;
+   // border: 1px solid rgb(0, 204, 0);
+    color: #fff;
+    position: absolute;
+    top: 16px;
+    right: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+`
 const deviceList = ['', '电表', '冷水表', '燃气表', '传感器', '变压器', '热水表', '蒸汽表', '煤炭表', '燃油表', '储能设备', '', '断路器', '触点测温', '光纤测温']
 
 const Chartbox = styled.div`
@@ -772,7 +788,7 @@ export default function GatewayDetail(props) {
                         <p>设备详情</p></div>
                     <div className={style.leftImgBox}>
                         <img src={detail?.imageBase64 ? detail?.imageBase64 : imgurl.category} className={style.leftImg} ></img>
-                        <div className={detail?.state == 2 ? style.leftImgState : detail.state == 3 ? style.leftImgStateAlarm : style.leftImgStateOff}>{detail.state == 2 ? '设备在线' : detail.state == 3 ? '设备告警' : '设备离线'}</div>
+                        <Ctitlec state={detail?.state}>{detail.state == 2 ? '设备在线' : detail.state == 3 ? '设备告警' : '设备离线'}</Ctitlec>
                     </div>
                     <div className={style.leftBottom}>
                         <p><span className={style.leftBottomSpan}>设备类型：</span><Textbox ellipsis={{tooltip: deviceList[detail.deviceStyle]}}>{deviceList[detail.deviceStyle] || ''}</Textbox></p>
@@ -933,12 +949,12 @@ export default function GatewayDetail(props) {
                                       <Ichart {...boptions}/>
                                     </div></div> : trend === 2 ? <div>
                                     <Table ref={tableLoadRef} columns={columnsTrend} dataSource={energyReport.Data} scroll={{ y: 475, }}
-                                        rowKey={columnsTrend => columnsTrend.id} style={{ marginTop: 16 }} className={style.alarmTable} hbc="#fff"></Table>
+                                        rowKey={columnsTrend => columnsTrend.id} style={{ marginTop: 16 }}  hbc="#fff"></Table>
                                 </div> : ''}
                             </div> : state== 4 ? <div>
                                 <img src={imgurl.line} style={{ width: 1537, height: 2, marginTop: -16, marginBottom: 16 }} ></img>
                                 <div>
-                                    <Table columns={columnsLog} dataSource={dataSourceLog} rowKey={columnsLog => columnsLog.id} className={style.alarmTable} hbc="#fff"></Table>
+                                    <Table columns={columnsLog} dataSource={dataSourceLog} rowKey={columnsLog => columnsLog.id} istheme="theme"   hbc="#fff"></Table>
                                     <Pagination className={style.pageNumD} size="small" current={pageNum} total={totalalarm} pageSize={12} onChange={onChangePageLog} showSizeChanger={false}/>
                                 </div>
                             </div> : state ==6

@@ -4,7 +4,7 @@ import {useDispatch} from "react-redux";
 import { SketchPicker } from 'react-color';
 import {CloseOutlined} from "@ant-design/icons"
 import {getThemeColor} from '@redux/systemconfig'  
-import defaultcolor from "./default"
+import defaultcolor from "@com/defaultcolor"
 export default function Index({value, onChange, name})  {
     const dispatch = useDispatch()
     const [show, setShow]=useState(false)

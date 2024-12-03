@@ -14,7 +14,7 @@ const Cheader =styled(Header)`
   display: flex;
     align-items: center;
     padding: 0px;
-    background-color: ${props => props.theme.menusbgcolor || '#036'};
+    background-color: ${props => props.theme.menusbgcolor || '#003366'};
  }
 `
 
@@ -59,7 +59,7 @@ export function DefaultLayout(props) { // 默认首页
   }
   return (
     <Layout className={style.pagelayout}>
-      <Header className={style.header}>{props.custheader}</Header>
+      <Cheader className={style.header}>{props.custheader}</Cheader>
       <Content className={style.content}>{props.children}</Content>
     </Layout>
   )

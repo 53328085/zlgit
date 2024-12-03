@@ -65,7 +65,7 @@ const imgs = [first, second, third, fourth, fifth ]
     return () => {
       setCustview(null)
     }
-  }, [Type])
+  }, [Type]) 
 
  const [options, setOptions] = useState({
   tooltip: {

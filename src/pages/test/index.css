@@ -74,4 +74,19 @@
    right: 1em;
    font-weight: bold;
  }
+ .item {
+   display: inline-block;
+   overflow: hidden;
+ }
+ .logo {
+   width: 30px;
+   height: 30px;
+   filter: drop-shadow(10px 10px);
+ }
+ 
+ .logo:hover {
+   width: 30px;
+   height: 30px;
+   filter: drop-shadow(100px 0 0 #ffffff);
+ }
  

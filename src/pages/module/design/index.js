@@ -27,7 +27,7 @@ import {publishState, getCurrProjectInfo, currProject, iszhCN, selectProjectId, 
  
 import {SaveButton, CustButton} from "@com/useButton" ;
 import Ccolor from './custColor';
-import { name } from "file-loader";
+
 const {Text, Link} =Typography
 const { Item } = Form;
 const Ctag=styled(Tag)`

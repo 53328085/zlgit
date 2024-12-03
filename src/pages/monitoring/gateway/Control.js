@@ -6,7 +6,7 @@ import {Remote } from '@api/api.js'
 import redwarn from '@imgs/redwarn.png'
 import {CustButton} from '@com/useButton'
  import { useSelector, useDispatch } from "react-redux";
- import {setDeviceState} from "@redux/systemconfig"
+ import {setDeviceState,themeColor} from "@redux/systemconfig"
 const Cdescriptions = styled(Descriptions)`
   && {
     .ant-descriptions-row .ant-descriptions-item-label{
@@ -27,7 +27,7 @@ const Cdescriptions = styled(Descriptions)`
       }
       &:last-of-type {
         span {
-          color: #237ae4;
+          color:  ${props => props.theme.primaryColor};
         }
       }
     }
@@ -92,6 +92,7 @@ export default function Control({sn,detail, state,  Custmodal, getDetailData}) {
     const dispatch = useDispatch()
     // console.log(detail)  // control: false 不让控制
     const projectId = useSelector(state => state.system.menus.projectId)
+    const {primaryColor,errorColor} =useSelector(themeColor)
     const [form] = Form.useForm()
     const status =detail?.status['1']
  
@@ -317,7 +318,7 @@ export default function Control({sn,detail, state,  Custmodal, getDetailData}) {
            disabled={status=="Close" || !detail.control}
            imgh="40px"
            style={{...btstyle, 
-            backgroundColor: status=="Open"&&detail.control ? "#237ae4" : '#f2f2f2',
+            backgroundColor: status=="Open"&&detail.control ? primaryColor : '#f2f2f2',
             color: status=="Open"&&detail.control ? "#fff" : '#ccc'
              }}>远程合闸</CustButton>
         <CustButton onClick={() => onCtrol(1)}
@@ -325,7 +326,7 @@ export default function Control({sn,detail, state,  Custmodal, getDetailData}) {
            disabled={status=="Open" ||!detail.control}
            imgh="40px"
            style={{...btstyle, 
-            backgroundColor: status=="Close"&&detail.control ? "#ff5757" : '#f2f2f2',
+            backgroundColor: status=="Close"&&detail.control ? errorColor : '#f2f2f2',
             color: status=="Close"&&detail.control ? "#fff" : '#ccc'
             }}>远程分闸</CustButton>
       </div>

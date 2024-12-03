@@ -1,4 +1,5 @@
 import { React, useState, useEffect } from "react";
+import styled from "styled-components";
 import style from "./style.module.less";
 import { useSelector } from "react-redux";
 import imgurl from "./images/index.js";
@@ -15,6 +16,24 @@ import {
 
 import Table from "@com/useTable";
 const { Text } = Typography;
+
+
+const Ctitlec = styled.div`  // detail?.state == 2 ? style.leftImgState : detail.state == 3 ? style.leftImgStateAlarm : style.leftImgStateOff
+&&{
+    width: 96px;
+    height: 32px;
+    background-color: ${props => props.state==2 ? props.theme.successColor : props.state == 3 ? props.theme.errorColor : "#666" };
+    border: none;
+   // border: 1px solid rgb(0, 204, 0);
+    color: #fff;
+    position: absolute;
+    top: 16px;
+    right: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+`
 export default function GatewayDetail(props) {
   const { projectName, logoImage } = useSelector(currProject);
   let location = useLocation();
@@ -229,21 +248,15 @@ export default function GatewayDetail(props) {
               }
               className={style.leftImg}
             ></img>
-            <div
-              className={
-                detail.state == 3
-                  ? style.leftImgStateAlarm
-                  : detail.state == 2
-                  ? style.leftImgState
-                  : style.leftImgStateOff
-              }
+            <Ctitlec
+              state={detail.state}
             >
               {detail.state == 3
                 ? "网关告警"
                 : detail.state == 2
                 ? "网关在线"
                 : "网关失联"}
-            </div>
+            </Ctitlec>
           </div>
           <div className={style.leftBottom}>
             <p>

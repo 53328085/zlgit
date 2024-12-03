@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
+import styled from "styled-components";
 import style from './style.module.less'
 import { Topology } from "@topology/core/src/core";
 import { register as registerFlow } from '@topology/flow-diagram'
@@ -30,6 +31,17 @@ import FileSaver from 'file-saver'
 import { distributionRoom, DistributionRoomRuntime } from '@api/api.js'
 import { useReactive } from "ahooks";
 const {Text} = Typography
+
+const Custoptionbg = styled.div`
+  display: grid;
+  width: 480px;
+  grid-template-columns: repeat(3, 1fr);
+  column-gap: 8px; 
+  padding: 4px;
+  background-color: ${props => props.theme.primaryColor};
+  color: #fff;
+
+`
 export default function index() {
   let location = useLocation()
   const {projectName,  logoImage  } = useSelector(currProject)
@@ -1013,11 +1025,11 @@ export default function index() {
                   state.deviceList?.length > 0 ?
                     <>
                     <Select.Option disabled>
-                    <div className={style.custoptionbg} >
+                    <Custoptionbg >
                         <span>设备名称</span>
                         <span>设备编号</span>
                         <span>设备地址</span>
-                    </div>
+                    </Custoptionbg>
                     </Select.Option>
                     { state.deviceList.map((option) => {
                      return (                      

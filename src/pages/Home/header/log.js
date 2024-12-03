@@ -1,11 +1,11 @@
 import React, {useRef,  useCallback, useState, useEffect} from "react";
 import { Dropdown, Space, Form, Input, message, Typography, Radio } from "antd";
- 
+import {} from "@ant-design/icons"
 import styled, {css} from "styled-components";
 import { useSelector, useDispatch } from "react-redux";
 import {useNavigate, useLocation} from "react-router-dom"
 import { clearToken, selectUser, userRest, platformLang} from "@redux/user";
-import { configProject, comSetFirst, getJump, currentscreen, isGranary,datascreen, configState, setIntl,setIszhCN, selectProjectId,getMenus, setMenus,menus,adaptation} from "@redux/systemconfig";
+import { configProject, comSetFirst, getJump, currentscreen, isGranary,datascreen, configState, setIntl,setIszhCN, selectProjectId,getMenus, setMenus,menus,adaptation,getThemeColor} from "@redux/systemconfig";
 
 import moment from "moment";
 import {useTranslation, Trans, Translation} from 'react-i18next';
@@ -20,7 +20,7 @@ import lg from './icon/lg.svg'
 import {pwdValidator, phoneValidator} from '@pages/rule.js'
 import {Login,CustTheme} from '@api/api' 
 import {CustButton} from '@com/useButton'
-import {handlermenu} from "@com/usehandler"
+import {handlermenu,isObject} from "@com/usehandler"
 const {Text} = Typography 
 const Lngdiv = styled.div`
   display: flex;
@@ -59,15 +59,15 @@ const Ldiv = styled.div`
   display: flex;
   align-items: center;
   justify-content: flex-end;
-  border-bottom: 1px solid ${props => props.theme.menusbgcolor || '#036'};
-  border-top: 1px solid ${props => props.theme.menusbgcolor || '#036'};
+  border-bottom: 1px solid ${props => props.theme.menusbgcolor || '#003366'};
+  border-top: 1px solid ${props => props.theme.menusbgcolor || '#003366'};
 `;
 
 let style = css`width: 58px;
        border-right: none;
        font-size: 12px;`
 const Idiv = styled.div`
-  border-right: 1px solid ${props => props.theme.menusbgcolorRborder || '#fff'}; //rgba(255, 255, 255, 0.3);
+  border-right: 1px solid ${props => props.theme.menusbgcolorRborder || '#ffffff'}; //rgba(255, 255, 255, 0.3);
   height: inherit;
   width: 112px;
   display: flex;
@@ -87,7 +87,7 @@ const Idiv = styled.div`
   }
   span {
     line-height: 1;
-    color: ${props => props.theme.menusbgcolorRfont || '#fff'};
+    color: ${props => props.theme.menusbgcolorRfont || '#ffffff'};
   }
   &.Idiv1{
     background-image: url(${imgurl['31N']});
@@ -161,7 +161,13 @@ export default function Log() {
   const setmenus = useSelector(setMenus)
   const allmenus = useSelector(menus)
   const adap =useSelector(adaptation) || {}
- 
+  const inita=[
+    {label: '账户管理', key:"mg"},
+    {label: '语言切换', key:"lng"},
+    {label: '退出系统', key:"exit"},
+  ]
+  const [items, setItems] = useState(inita)
+  const [themes, setThemes] = useState([])
   let dataScreen =setmenus?.find(i => i.key=='dataScreen')?.label //数据大屏
   let projectSet = setmenus?.find(i => i.key=='projectSet')?.label //项目设置
   let systemSet = setmenus?.find(i => i.key=='systemSet')?.label // 平台设置
@@ -211,10 +217,45 @@ export default function Log() {
   
   
 }, [screenadr, isgranary]) */
+
+// &#8730;
 const getcurTheme= async(userId, projectId)=> {
   try {
     let {success, data} = await CustTheme.QueryTheme(projectId)
-    await CustTheme.GetUserTheme(userId)
+    let datalen = Array.isArray(data) && data.length> 0 && success ;
+    let item =[];
+   /*  if(success && datalen){
+        setThemes(data)
+        let item=  data.map(d => ({label: d.name, key: d.id}))
+        setItems([...inita, ...item])
+    }else{
+      setItems(inita)
+    } */
+    let {success:suc, data:themedata} = await CustTheme.GetUserTheme(userId)
+    let {themeId} = themedata || {}
+    if(suc && themeId && datalen){
+      try {
+        let theme = data.find(d => d.id == themeId)?.context
+        let themeobj = JSON.parse(theme)
+        if(theme &&  isObject(themeobj)){
+          dispatch(getThemeColor(themeobj))
+        }
+        item=  data.map(d => ({label: d.id==themeId ? <span style={{color:isObject(themeobj) ? themeobj.primaryColor : "",fontWeight: "bolder" }}>{d.name}</span> : d.name, key: d.id}))
+      } catch (error) {
+        
+      }
+     
+    }else if(datalen){
+        let thobj = JSON.parse(datalen[0].context)
+        if(isObject(thobj)){
+          dispatch(getThemeColor(thobj))
+        }
+        item=  data.map((d,idx) => ({label: idx==0 ? <span style={{color:isObject(thobj) ? thobj.primaryColor : "", fontWeight: "bolder" }}>{d.name}</span> : d.name, key: d.id})) 
+    }else {
+       item =[];
+    }
+    setItems([...inita, ...item])
+
   } catch (error) {
     
   }
@@ -262,6 +303,7 @@ const lngOk = () => {
     i18n.changeLanguage(lngval)
      
    const lngmenus =  handlermenu(allmenus.fullmenu, lngval=='zh' ? 'cn' : lngval)
+  
    dispatch(getMenus({...lngmenus,projectId}))
     lref.current.onCancel();
   } catch (error) {
@@ -269,15 +311,32 @@ const lngOk = () => {
   }
    // navgite('/')
 }
-
+const settheme = async (themeId) => {
+  try {
+    let params ={
+      themeId,
+      userId
+     }
+    let {success} = await  CustTheme.SetUserTheme(params)
+    if(success){
+       /* let obj= themes.find(t =>t.id==themeId)?.context
+       if(obj && isObject(JSON.parse(obj))){
+        dispatch(getThemeColor(JSON.parse(obj)))
+       } */
+        getcurTheme(userId, projectId)
+    }
+  } catch (error) {
+    
+  }
+   
+}
  
-  const items = [
-    {label: '账户管理', key:"mg"},
-    {label: '语言切换', key:"lng"},
-    {label: '退出系统', key:"exit"},
-  ]
+
   const onClick = ({key}) => {
-      if(key == 'mg') {
+      if(Number.isInteger(parseInt(key))){
+        settheme(key)
+
+      }else if(key == 'mg') {
         account()
       }else if(key == 'exit') {
         onExit()

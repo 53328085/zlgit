@@ -57,17 +57,17 @@ const Cmenu = styled(Menu)`
    }
    .custicon {
     font-size: ${props => props.laptop ? "14px" : "16px"};
-    color:  ${props => props.theme.asiderfontcolor || "#fff"};
+    color:  ${props => props.theme.asiderfontcolor || "#ffffff"};
    }
    .ant-menu-item.ant-menu-item-selected{    
-      background-color:${props => props.theme.asiderbgcolorA || "#33c"} ;
+      background-color:${props => props.theme.asiderbgcolorA || "#3333cc"} ;
       ${props => props.laptop ? sty : ''}     
       .ant-menu-title-content, .custicon {
         color: ${props => props.theme.asiderfontcolorA || "#33FF00"};
       }
     }
    .ant-menu-title-content {
-     color: ${props => props.theme.asiderfontcolor || "#fff"};;
+     color: ${props => props.theme.asiderfontcolor || "#ffffff"};;
      display: inline-block;   
      padding-left: 32px;
      ${props => props.laptop ? sty : ''}
