@@ -163,7 +163,7 @@ export default function Index() {
         data.map(item => {
           if (item.data) {
             for (let i = 0; i < item.data.length; i++) {
-              dimensions.push(item.sn + '_' + item.data[i].point)
+              dimensions.push(item.name + '_' + item.data[i].point)
               source.push(item.data[i].data)
             }
           }

@@ -254,7 +254,7 @@ const getcurTheme= async(userId, projectId)=> {
     }else {
        item =[];
     }
-    setItems([...inita, ...item])
+    // setItems([...inita, ...item])
 
   } catch (error) {
     
