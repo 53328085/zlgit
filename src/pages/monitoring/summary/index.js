@@ -154,8 +154,7 @@ export default function Index() {
   //     console.log(e)
   //   })
   // }
-  const toDevicePage = (meterType) => {
-    console.log(meterType, exparams);
+  const toDevicePage = (meterType) => {   
     if (meterType == 6) {
       navigate(`/index/runtimeMonitor/camera`, {
         state: {

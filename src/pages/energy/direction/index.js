@@ -66,7 +66,7 @@ export default function Index() {
     return () => {
       setCustview(null)
     }
-  }, [Type])
+  }, [Type]) 
 
   const [options, setOptions] = useState({
     tooltip: {

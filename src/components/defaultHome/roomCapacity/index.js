@@ -9,13 +9,16 @@ const Divorder = styled.div`
   display: flex;
   align-items: center;
   height: 50px;
-  padding: 0 16px 0 20px;
-  column-gap: 32px;
+  justify-content: center;
+  flex: 1;
+//  padding: 0 16px 0 20px;
+   column-gap: 8px;
+   overflow: hidden;
   .card_icon{
     display: flex;
     font-size: 32px;
     align-items: center;
-    width: 120px;
+    max-width: 120px;
   }
   
   .details{
@@ -26,6 +29,7 @@ const Divorder = styled.div`
      color: #333;
      align-items: center;
      height: 50px;
+     flex: 1;
      .item{ 
        display: flex;
        column-gap: 8px;

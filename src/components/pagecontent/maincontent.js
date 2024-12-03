@@ -18,7 +18,7 @@ const Tabsbox = styled(Tabs)`
         background-color: #fff;  
         transition: none;
         &:hover {
-            background-color: var(--ant-primary-color);
+            background-color: ${props => props.theme.primaryColor || "#237ae4" };
             color: #fff;
             transition: all 0.3s;
         }
@@ -30,7 +30,7 @@ const Tabsbox = styled(Tabs)`
         }
     }
     .ant-tabs-tab.ant-tabs-tab-active {
-        background-color: var(--ant-primary-color);
+        background-color: ${props => props.theme.primaryColor || "#237ae4" };
        
         .ant-tabs-tab-btn {
             color:#fff;

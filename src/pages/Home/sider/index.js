@@ -4,7 +4,7 @@ import {Menu, Image} from 'antd'
 import {useNavigate, useLocation} from 'react-router-dom'
 import {useSelector} from 'react-redux'
 import styled, {css} from 'styled-components'
-import style from './style.module.less'
+// import style from './style.module.less'
 import Title from '../header/title'
 import {  configState, siderDesignerMenus, siderRunMenus, getisDistribution, adaptation} from "@redux/systemconfig";
 import imgurl from './icon';
@@ -57,17 +57,17 @@ const Cmenu = styled(Menu)`
    }
    .custicon {
     font-size: ${props => props.laptop ? "14px" : "16px"};
-    color:#fff;
+    color:  ${props => props.theme.asiderfontcolor || "#ffffff"};
    }
    .ant-menu-item.ant-menu-item-selected{    
-      background-color: #3333cc;
+      background-color:${props => props.theme.asiderbgcolorA || "#3333cc"} ;
       ${props => props.laptop ? sty : ''}     
       .ant-menu-title-content, .custicon {
-        color:#33FF00;
+        color: ${props => props.theme.asiderfontcolorA || "#33FF00"};
       }
     }
    .ant-menu-title-content {
-     color:#fff;
+     color: ${props => props.theme.asiderfontcolor || "#ffffff"};;
      display: inline-block;   
      padding-left: 32px;
      ${props => props.laptop ? sty : ''}
@@ -138,7 +138,7 @@ export default function Sider() {
     <Sdiv> 
        <Title/>
        <Showimg/>
-       <Cmenu laptop={laptop} onClick={onSelect} selectedKeys={[key]} items={menus} className={style.custmenu}></Cmenu>
+       <Cmenu laptop={laptop} onClick={onSelect} selectedKeys={[key]} items={menus} ></Cmenu>
     </Sdiv>
   )
 }

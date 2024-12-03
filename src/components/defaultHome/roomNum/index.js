@@ -14,16 +14,16 @@ const Divorder = styled.div`
   height: 64px;
   justify-content: space-around;
   .card_icon{
-    margin-left: 25px;
+   // margin-left: 25px;
     width: 64px;
     height: 64px;
-    margin-right: 16px;
+   // margin-right: 16px;
   }
   
   .details{
      display: flex;
      border-left: 4px solid ${props => props.theme.primaryColor};
-     width: 200px;
+     //width: 200px;
      height: 64px;
      font-size: 16px;
      color: #333;

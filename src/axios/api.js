@@ -19,6 +19,20 @@ export class Editapi {
       params,
     });
 }
+// 主题配色
+export  class CustTheme {
+  static UpdateTheme = (projectId,body) =>
+    server.post(`Energy/Theme/UpdateTheme?projectId=${projectId}`, body); // 新增或更新主题
+  static QueryTheme = (projectId) =>
+    server.get(`Energy/Theme/QueryTheme?projectId=${projectId}`); // 获取项目下的主题
+  static SetUserTheme = (params) =>
+    server.get(`Energy/Theme/SetUserTheme`, {params}); // 设置用户的主题
+  static GetUserTheme = (userId) =>
+    server.get(`Energy/Theme/GetUserTheme?userId=${userId}`); // 获取用户设置的主题
+
+  static DeleteTheme = (params) =>
+    server.get(`Energy/Theme/DeleteTheme`, {params}); //删除主题
+}
 
 // 电能质量
 export class PowerQuality{
