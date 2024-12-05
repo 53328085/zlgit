@@ -4,6 +4,7 @@ import {createPortal} from 'react-dom'
 import style from './style.module.less'
 export default function Msk(props) {
   let {task} = props
+  let {maskBack}= props
 /*   const style = {
     position: 'absolute',
     left: 0,
@@ -14,6 +15,6 @@ export default function Msk(props) {
     zIndex: 1978,
   } */
   // return  createPortal(<div className={`${style.mask} ${task ? style.startAnimation : style.endAnimation}` }>{props.children}</div>, document.body )
-  return (<div className={`${style.mask} ${task ? style.startAnimation : style.endAnimation}` }>{props.children}</div>)
+  return (<div className={`${maskBack==undefined?style.mask:style.noneMask} ${task ? style.startAnimation : style.endAnimation}` }>{props.children}</div>)
 
 }

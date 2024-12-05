@@ -5,7 +5,7 @@ import style from './style.module.less'
 export default function Icard(props) {
     let daluq = props.deviceStyle == 12;
     const statet =daluq ? {
-        open: '开闸',
+        open: '分闸',
         close: '合闸'
     } :{
         open: '开',

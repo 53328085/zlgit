@@ -120,8 +120,8 @@ const controlcolumns = [
     dataIndex: 'status',   
     align: 'center',
     render: (text) => {     
-    //  return  Number(text) === 1 ? "开闸" : "合闸"
-     return isObject(text) ? text['1'] === 'Open' ? "开闸" : "合闸" : null
+    //  return  Number(text) === 1 ? "分闸" : "合闸"
+     return isObject(text) ? text['1'] === 'Open' ? "分闸" : "合闸" : null
     }
   },
   {
