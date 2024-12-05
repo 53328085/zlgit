@@ -4,6 +4,6 @@ const Quota = lazy(() => import("@pages/electric/configure/quota"))
 const Rules = lazy(() => import("@pages/electric/configure/safetyRules")) 
 export let designerSafe = {
     '020401': Quota,
-    // '020401': Rules,
+    '020402': Rules,
 }
 

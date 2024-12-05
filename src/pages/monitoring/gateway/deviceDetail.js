@@ -774,7 +774,7 @@ export default function GatewayDetail(props) {
    // 断路器状态
    const circuitState ={
     "Close": '合闸',
-    'Open': '开闸'
+    'Open': '分闸'
    }
     return (
         <div className={style.main}>

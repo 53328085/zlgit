@@ -32,6 +32,7 @@ const Laybox = styled.div`
   border-top: 1px dotted #d7d7d7;
   grid-template-rows: 1fr 24px;
   row-gap: 16px;
+
   .card {
     flex: 1;
     display: grid;
@@ -317,7 +318,7 @@ export default function Index() {
   }
 
 
-  const items = <div>  {areaId != 0 && !showAll ?
+  const items = <div style={{ height: '630px',overflowY:'scroll' }}>  {areaId != 0 && !showAll ?
     <div className="card">{tableData.map(d => <Citem  {...d} key={nanoid()} />)} </div> :
     <div>{tableDataAll.map(d => <CitemAll  {...d} key={nanoid()} />)}</div>
   }</div>
@@ -340,7 +341,7 @@ export default function Index() {
         <UserSearch></UserSearch>
 
         <Titlelayout title={Title} layout="flex">
-          <Laybox  >
+          <Laybox >
 
             {
               mode == 1 ? items : <UseTable dataSource={tableData} columns={columns} key={nanoid()} ref={tbref} sheetName="重点设备" onExport={onExport} />

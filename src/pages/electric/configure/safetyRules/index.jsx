@@ -3,7 +3,7 @@ import { useSelector } from 'react-redux'
 import Pagecount from '@com/pagecontent'
 import { selectProjectId } from '@redux/systemconfig.js'
 import CustContext from '@com/content.js'
-import BreakerShort from './breakerShort'
+import breakerShort from './breakerShort'
 
 export default function Index() {
     const [value, setvalue] = useState('electric')
@@ -17,7 +17,7 @@ export default function Index() {
         setvalue
     }
     const ProjectCom = {
-        electric: BreakerShort
+        electric: breakerShort
     }
     const [tag, setTag] = useState('')
     const getFromChild = val => {
