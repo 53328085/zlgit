@@ -1,17 +1,39 @@
-import React, { useRef, useEffect } from 'react'
+import React, { useRef, useEffect, useContext } from 'react'
 import { useSelector } from 'react-redux'
 import { selectProjectId } from '@redux/systemconfig.js'
-import styled from 'styled-components';
+import styled, {css} from 'styled-components';
 import Titlelayout from '@com/titlelayout';
 import { useReactive } from 'ahooks';
 import { message } from 'antd';
 import { Monitoring } from '@api/api.js'
 import {CustTransO} from "@com/useButton"
 import deviceRuntime from '@imgs/device_runtime.png'
-
+import Context from "@com/content"
+const sty = css`
+ margin-top: 16px;
+ flex: 1;
+ align-items: stretch;
+ .totalCount{
+  flex: auto;
+    justify-content: space-evenly;
+  .count_title{
+        line-height: 14px;
+    }
+  .count_val{
+        font-size: 16px;
+        line-height: 16px;
+        color: #515151;
+    }
+ }
+ .details{
+  width: auto;
+   flex: auto;
+   padding: 8px;
+ }
+`
 const Divorder = styled.div`
   display: flex;
-  align-items: center;
+ // align-items: center;
   margin-top: 30px;
   .card_icon{
     margin-left: 25px;
@@ -50,7 +72,7 @@ const Divorder = styled.div`
         justify-content: space-between;
     }
   }
-  
+  ${props => props.laptop ? sty : null}
 `
 
 const fs = {
@@ -60,6 +82,7 @@ const fs = {
 }
 
 export default function DefaultHome(props) {
+  const {laptop} =useContext(Context)
   let {state={}, type} = props
    if(type !=="runtTime") {
      state={}
@@ -67,8 +90,8 @@ export default function DefaultHome(props) {
 
   return (
     <Titlelayout title={<CustTransO  text="MeterInformation" />} {...fs} style={{height: "200px"}}>
-      <Divorder>
-        <img src={ deviceRuntime } className='card_icon'></img>
+      <Divorder laptop={laptop}>
+       {laptop ? null : <img src={ deviceRuntime } className='card_icon'></img>} 
         <div className='totalCount'>
             <span className='count_title'><CustTransO  text="Metertotal" /></span>
             <span className='count_val'>{ state.electricMeterCount }</span>

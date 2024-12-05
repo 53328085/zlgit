@@ -6,10 +6,11 @@ import {CustTransO} from "@com/useButton"
 import Context from "@com/content"
 
 import gatewayRuntime from '../cdcw.svg'
-import { layout } from '@topology/layout';
+
 const sty = css`
  margin-top: 16px;
  flex: 1;
+ align-items: stretch;
  .totalCount{
   flex: auto;
     justify-content: space-evenly;
@@ -82,7 +83,7 @@ const fs = {
 export default function DefaultHome(props) {
   let {state={}, type} = props
   const {laptop} =useContext(Context)
-  console.log("laptop", laptop)
+ 
   if(!type) {
     state = {}
   }

@@ -1,5 +1,5 @@
-import React, { useState,useEffect } from 'react'
- 
+import React, { useState,useEffect, useContext } from 'react'
+import Context from "@com/content"
 import styled from 'styled-components';
 import companyImg from '@imgs/projectimg.png'
 import Titlelayout from '@com/titlelayout' 
@@ -13,7 +13,7 @@ const MainBox = styled.div`
 //border-radius: 4px;
 //padding: 16px;
 display: grid;
-grid-template-columns: min-content 1fr;
+grid-template-columns: ${props => props.laptop ? "1fr" : "min-content 1fr"} ;
 gap: 8px;
 align-items: stretch;
  flex: 1;
@@ -54,6 +54,7 @@ align-items: stretch;
 
 export default function DefaultHome(props) {
    let {currproject, type, Trans } = props
+   const {laptop} =useContext(Context)
    const [state, setState] =useState({
     projectName: '项目名称',
     deviceNum: 0,
@@ -76,7 +77,7 @@ export default function DefaultHome(props) {
  
   return (
     <Titlelayout layout="flex" shadow="y" style={{height: "200px"}}>
-    <MainBox>
+    <MainBox laptop={laptop}>
       <div className='company'>
         <Borderleft>{state.projectName}</Borderleft>
         <div className='dataItem'>
@@ -97,7 +98,7 @@ export default function DefaultHome(props) {
         </div>
       </div>
       <div>
-       <img src={ state.projectImage ? state.projectImage : companyImg}  className='img' /> 
+      {laptop ? null : <img src={ state.projectImage ? state.projectImage : companyImg}  className='img' /> } 
       
       </div>
     </MainBox>
