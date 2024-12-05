@@ -35,7 +35,7 @@ const {Text} = Typography
 
 const Custoptionbg = styled.div`
   display: grid;
-  width: 480px;
+  //width: 480px;
   grid-template-columns: repeat(3, 1fr);
   column-gap: 8px; 
   padding: 4px;
@@ -138,6 +138,7 @@ export default function index() {
           console.log(state.chartData)
           let dateGroup = JSON.parse(res.data.dataGroup)
 
+          console.log(dateGroup)
           canvas.data.grid = dateGroup.grid
           canvas.data.gridColor = dateGroup.gridColor ? dateGroup.gridColor : null
           canvas.data.bkColor = dateGroup.bkColor ? dateGroup.bkColor : null
@@ -148,6 +149,7 @@ export default function index() {
             state.spining = false
             canvas.open(dateGroup)
             canvas.render()
+            canvas.fitView(16);
           }, 1000)
         } else {
           message.error(res.errMsg)

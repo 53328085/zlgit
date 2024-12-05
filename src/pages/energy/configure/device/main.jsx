@@ -19,6 +19,7 @@ export default function Index({ projectId, areaId }) {
   const [form] = Form.useForm()
   const Item = Form.Item
 
+  console.log(areaId, "-----")
 
 
   const { queryDrive, insertDrive, updateDrive, deleteDrive, queryDriveConfig, queryDriveUnconfig, conifgDrive, QueryImage, deviceSorting } = DesElectric
@@ -160,11 +161,11 @@ export default function Index({ projectId, areaId }) {
     }
   }
   const onOk = async () => {
+    console.log("点击ok--111", areaId)
     try {
       const { name, address, imageKey } = await form.validateFields();
       let params = {
         name: encodeURIComponent(name),
-        parentId,
         areaId,
         projectId,
         address: encodeURIComponent(address),
@@ -173,7 +174,7 @@ export default function Index({ projectId, areaId }) {
         insertDrive(params, { image: imageKey }).then(res => {
           if (res.success) {
             message.success('新增重点设备成功!')
-
+            console.log("点击ok--222", areaId)
           } else {
             message.warning(res.errMsg)
 
@@ -315,7 +316,7 @@ export default function Index({ projectId, areaId }) {
         <Item label="设备安装位置" name='address' normalize={v => v.trim()} rules={[{ required: true, message: '请输入地址' }]}>
           <Input style={{ width: '315px' }} placeholder={'请输入地址'} allowClear></Input>
         </Item>
-        <Item label="缩略图" >
+        <Item label="缩略图" required >
           <div style={imgsty} >
             <Item noStyle name="imageKey" rules={[
               {
@@ -329,7 +330,7 @@ export default function Index({ projectId, areaId }) {
         </Item>
       </Form>
     </div>
-  </Custmodl>, [modalTitle])
+  </Custmodl>, [modalTitle, areaId])
   return (
     <div style={{ flex: 1, display: 'flex', flexDirection: "column" }}>
 
