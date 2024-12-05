@@ -1,4 +1,4 @@
-import React, { useRef, useEffect, useState } from 'react'
+import React, { useRef, useEffect, useState, useContext } from 'react'
 import { useSelector } from 'react-redux'
 import { selectProjectId, iszhCN } from '@redux/systemconfig.js'
 import styled from 'styled-components';
@@ -7,6 +7,7 @@ import Titlelayout from '@com/titlelayout';
 
 import transformerNum from '../transformerNum.svg'
 import { HomeRuntime } from '@api/api.js'
+import Context from "@com/content"
 const Divorder = styled.div`
   display: flex;
   align-items: center;
@@ -54,7 +55,7 @@ export default function DefaultHome(props) {
    const {t} = useTranslation(["overview", "comm"])
    const projectId = useSelector(selectProjectId)
    const iscn = useSelector(iszhCN)
-   console.log("iscn", iscn)
+   const {laptop} =useContext(Context)
    const getData = async () => {
       try {
        let {success, data} = await HomeRuntime.RoomInfo(projectId)
@@ -73,8 +74,8 @@ export default function DefaultHome(props) {
    }, [projectId])
   return (
     <Titlelayout title={t("overview:Numberoftransformers")} {...fs} style={{height: '200px'}}>
-      <Divorder>
-        <img src={ transformerNum } className='card_icon'></img>
+      <Divorder laptop={laptop}>
+      {laptop ? null : <img src={ transformerNum } className='card_icon'></img>}  
         
         <div className='details'>
             <div className='detail_item'>
