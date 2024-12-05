@@ -49,7 +49,7 @@ const Cradio = styled(Radio)`
 `
 const Cdiv = styled.div`
   display: flex;
-  height: 62px;
+  height: inherit;
   overflow: hidden;
   align-items: center;
 `;
@@ -59,15 +59,16 @@ const Ldiv = styled.div`
   display: flex;
   align-items: center;
   justify-content: flex-end;
-  border-bottom: 1px solid ${props => props.theme.menusbgcolor || '#003366'};
-  border-top: 1px solid ${props => props.theme.menusbgcolor || '#003366'};
+ // border-bottom: 1px solid ${props => props.theme.menusbgcolor || '#003366'};
+ // border-top: 1px solid ${props => props.theme.menusbgcolor || '#003366'};
 `;
 
 let style = css`width: 58px;
        border-right: none;
        font-size: 12px;`
 const Idiv = styled.div`
-  border-right: 1px solid ${props => props.theme.menusbgcolorRborder || '#ffffff'}; //rgba(255, 255, 255, 0.3);
+  
+//  border-right: 1px solid ${props => props.theme.menusbgcolorRborder || '#ffffff'};  
   height: inherit;
   width: 112px;
   display: flex;
@@ -76,6 +77,17 @@ const Idiv = styled.div`
   padding-bottom: 4px;
   background-repeat: no-repeat;
   background-position: top 4px center;
+  position: relative;
+  &:not(:last-of-type):after{
+    content: '';
+    position: absolute;
+    top:2px;
+    bottom: 2px;
+    right: 0px;
+    width: 1px;
+    display: block;
+    background-color: ${props => props.theme.menusbgcolorRborder || '#ffffff'} ;
+  }
   ${props => props.laptop ? style : null}
   &:last-child {
     border-right: none;
@@ -489,7 +501,6 @@ const settheme = async (themeId) => {
          placement="bottom" 
         trigger={['click']
       } 
-       
         overlayClassName="custDropdown">
         <Idiv  laptop={adap.laptop} className="Idiv3">
           
