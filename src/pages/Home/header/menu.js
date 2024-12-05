@@ -31,7 +31,7 @@ font-size: 12px;
               height: 28px;
               width: 28px;
               line-height: 28px;
-            overflow: hidden;
+              overflow: hidden;
               .shadow {
               transform: translateX(-28px);
               filter: drop-shadow(28px 0 0  ${props => props.theme.menusactivefontcolor || '#ffffff'});
@@ -46,7 +46,7 @@ font-size: 12px;
         .logo {
               height: 28px;
               width: 28px;
-              line-height: 286px;
+              line-height: 28px;
               overflow: hidden;
               .shadow {
               transform: translateX(-28px);
@@ -139,21 +139,7 @@ const Cmenu = styled(Menu)`
     }
   }
   ${props => props.laptop ? msty : ''}
-/*   @media screen  and (max-device-width:1536px) {
-    font-size: 12px;
-    display: flex;
-     column-gap: 2px;;
-    .ant-menu-item{
-        width: auto;
-        padding: 4px 2px;
-        .ant-image {
-            height: 28px;
-            width: 28px;
-            line-height: 28px;
-        }
-    }
-    
- } */
+
 }
 `
 /* const Ciocn = (props) => {

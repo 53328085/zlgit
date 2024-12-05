@@ -237,7 +237,7 @@ message.warning(errMsg|| "数据出错")
     >
       <div className="leftlayout" >
         <div className="row">
-        <Item label="方案名称" name="name" initialValue={null}  required={[
+        <Item label="方案名称" name="name"   rules={[
           {
             required: true
           }
