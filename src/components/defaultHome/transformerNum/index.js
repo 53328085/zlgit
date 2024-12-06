@@ -1,13 +1,31 @@
 import React, { useRef, useEffect, useState, useContext } from 'react'
 import { useSelector } from 'react-redux'
 import { selectProjectId, iszhCN } from '@redux/systemconfig.js'
-import styled from 'styled-components';
+import styled, {css} from 'styled-components';
 import Titlelayout from '@com/titlelayout';
  import {useTranslation} from 'react-i18next';
 
 import transformerNum from '../transformerNum.svg'
 import { HomeRuntime } from '@api/api.js'
 import Context from "@com/content"
+
+const sty = css`
+ margin-top: 16px;
+ flex: 1;
+ .details{
+  flex: auto;
+  .detail_item {
+      flex: 1;
+       font-size: 14px;
+       span:nth-child(2) {
+         font-size: 20px;
+       }
+       span:last-child {
+         font-size: 16px;
+       }
+     }
+ }
+`
 const Divorder = styled.div`
   display: flex;
   align-items: center;
@@ -38,13 +56,14 @@ const Divorder = styled.div`
        }
      }
   }
-  
+  ${props => props.laptop ? sty : null}
 `
 
 const fs = {
   hv: '24px',
   fc: '#333',
-  shadow: "y"
+  shadow: "y",
+  layout: 'flex'
 }
 
 export default function DefaultHome(props) {
