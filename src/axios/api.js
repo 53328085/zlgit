@@ -3229,6 +3229,12 @@ export class AlarmManagement {
     server.post(`Safe/Alarm/UpdateAlarmEventSOE`, data);
   static UpdateAlarmEventCommunication = (data) =>
     server.post(`Safe/Alarm/UpdateAlarmEventCommunication`, data);
+  static QueryValvseDevicePage = (data) =>
+    server.post(`Safe/AlarmValveDevice/QueryValveDevicePage`, data);
+  static SetAlarmValveDevice = (data) =>
+    server.post(`Safe/AlarmValveDevice/SetAlarmValveDevice`, data);
+  static GetAlarmValveDevice = (projectId, alarmId) =>
+    server.get(`Safe/AlarmValveDevice/GetAlarmValveDevice?projectId=${projectId}&alarmId=${alarmId}`);
 }
 export class StorageEnvironmentRuntime {
 
@@ -3239,7 +3245,7 @@ export class DeviceRuler {
     server.get(
       `/Safe/DeviceRuler/QueryBrokerShortcircuit?projectId=${projectId}`
     );
-    static SetBrokerShortcircuit = (data) =>
+  static SetBrokerShortcircuit = (data) =>
     server.post(`/Safe/DeviceRuler/SetBrokerShortcircuit`, data);
 }
 
