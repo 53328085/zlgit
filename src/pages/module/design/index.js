@@ -218,8 +218,8 @@ message.warning(errMsg|| "数据出错")
     <Titlelayout title={<div style={{display: 'flex', justifyContent: "space-between", alignItems: 'center'}}>
       <span>网站设计</span>  <Space size={32}>
         <CustButton onClick={onrest} ghost>恢复默认值</CustButton>
-        <CustButton onClick={onadd}>新增</CustButton>
-     <SaveButton onClick={onSave} isicon={false} />
+        <CustButton onClick={onadd}>新增方案</CustButton>
+     <CustButton onClick={onSave} isicon={false} >保存方案</CustButton>
      <CustButton onClick={ondelete} type="default" danger>删除</CustButton>
      </Space></div>}>
     <Formbox
