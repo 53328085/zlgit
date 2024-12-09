@@ -1,0 +1,16 @@
+{
+  "id": "",
+  "name": "",
+  "font_family": "iconfont",
+  "css_prefix_text": "icon-",
+  "description": "",
+  "glyphs": [
+    {
+      "icon_id": "40343772",
+      "name": "_断路器",
+      "font_class": "_duanluqi",
+      "unicode": "e632",
+      "unicode_decimal": 58930
+    }
+  ]
+}

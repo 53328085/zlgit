@@ -8,7 +8,7 @@ import { Form, Button, Table, Select, message,  Divider, Space, DatePicker } fro
 import Pagecount from '@com/pagecontent'
 import UserTable from '@com/useTable'
 import CustContext from '@com/content.js'
-import { selectProjectId, selectOneLevelDefaultId, deviceStyle} from '@redux/systemconfig.js'
+import { selectProjectId, selectOneLevelDefaultId, deviceStyle, filterDeviceStyle} from '@redux/systemconfig.js'
   
 import styled from 'styled-components'
  
@@ -76,7 +76,9 @@ export default function Index() {
     const [form] = Form.useForm()
     const {Item} = Form
     const projectId = useSelector(selectProjectId)
-    const deviceStyles = useSelector(deviceStyle)
+    // const deviceStyles = useSelector(deviceStyle)
+    
+    const deviceStyles = useSelector(filterDeviceStyle)
     const areaId = useSelector(selectOneLevelDefaultId);      
     const [value, setvalue] = useState('1')
     const [DataSourceReadR, setDataSourceReadR] = useState()

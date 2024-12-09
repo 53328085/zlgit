@@ -2,14 +2,153 @@ import React, {useState, useMemo, useEffect} from "react";
 import {useNavigate, useLocation, useResolvedPath} from 'react-router-dom'
 import { useDispatch, useSelector } from "react-redux";
 import { Menu, Image } from "antd";
-import './style.less'
-import {getJump, runMenus, designerMenus, siderDesignerMenus, siderRunMenus, configState, configProject} from '@redux/systemconfig'
+import styled, {css} from "styled-components";
+//import './style.less'
+import {getJump, runMenus, designerMenus, siderDesignerMenus, siderRunMenus, configState, configProject,adaptation} from '@redux/systemconfig'
 import useJump from "./useJump";
-import imgurl from './icon/index.js'
- 
-const Ciocn = (props) => {
+//import imgurl from './icon/index.js'
+import svgurl from './icon/svg'
+const msty =css`
+font-size: 12px;
+    display: flex;
+     column-gap: 2px;;
+    .ant-menu-item{
+        width: auto;
+        padding: 4px 2px;
+        .logo {
+            height: 28px;
+            width: 28px;
+            line-height: 28px;
+            overflow: hidden;
+            .shadow {
+              transform: translateX(-28px);
+              filter: drop-shadow(28px 0 0  ${props => props.theme.menusfontcolor || '#b2c1d1'})
+            }
+           
+        }
+        &:hover, &:active {
+          .logo {
+              height: 28px;
+              width: 28px;
+              line-height: 28px;
+              overflow: hidden;
+              .shadow {
+              transform: translateX(-28px);
+              filter: drop-shadow(28px 0 0  ${props => props.theme.menusactivefontcolor || '#ffffff'});
+            }
+        }
+    }
+    }
+    .ant-menu-item.ant-menu-item-selected {
+        background-color: ${props => props.theme.menusactive || '#1c62b6'};
+        border-bottom: 2px solid ${props => props.theme.menusborder || '#00ff66'};
+        color:${props => props.theme.menusactivefontcolor || '#ffffff'};
+        .logo {
+              height: 28px;
+              width: 28px;
+              line-height: 28px;
+              overflow: hidden;
+              .shadow {
+              transform: translateX(-28px);
+              filter: drop-shadow(28px 0 0  ${props => props.theme.menusactivefontcolor || '#ffffff'});
+            }
+           
+        }
+    }
+
+`
+const Cmenu = styled(Menu)`
+&&{
+  background-color: transparent;
+    border-bottom: none;
+    flex: 1;
+  //  overflow-x: auto;
+    .ant-menu-item.ant-menu-item-selected {
+        background-color: ${props => props.theme.menusactive || '#1c62b6'};
+        border-bottom: 2px solid ${props => props.theme.menusborder || '#00ff66'};
+        color:${props => props.theme.menusactivefontcolor || '#ffffff'};
+        .logo {
+              height: 36px;
+              width: 36px;
+              line-height: 36px;
+              overflow: hidden;
+              .shadow {
+              transform: translateX(-36px);
+              filter: drop-shadow(36px 0 0  ${props => props.theme.menusactivefontcolor || '#ffffff'});
+            }
+           
+        }
+    }
+    .ant-menu-item{
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        align-items: center;
+        width: 100px;
+        padding: 4px 0; 
+        height: 64px;
+        color: ${props => props.theme.menusfontcolor || '#b2c1d1'};
+        border-bottom: 2px solid transparent;
+        
+      
+     //   background-color: #1c62b6 ;      
+     //   transition: all 0.3s;
+        .logo {
+            height: 36px;
+            width: 36px;
+            line-height: 36px;
+            overflow: hidden;
+            .shadow {
+              transform: translateX(-36px);
+              filter: drop-shadow(36px 0 0  ${props => props.theme.menusfontcolor || '#b2c1d1'});
+            }
+            
+        }
+        &::after {
+            right: 0px;
+            left: 0px;
+            border-bottom: none;
+        }
+     /*    &:nth-of-type(:first-of-type) {
+          border-right: 1px solid #ffffff;
+        } */
+        &:hover, &:active {
+            background-color: ${props => props.theme.menusactive || '#1c62b6'} ;
+            color:${props => props.theme.menusactivefontcolor || '#ffffff'};
+            border-bottom: 2px solid  ${props => props.theme.menusborder || '#00ff66'};
+            bottom: 0px;
+            .logo {
+              height: 36px;
+              width: 36px;
+              line-height: 36px;
+            overflow: hidden;
+              .shadow {
+              transform: translateX(-36px);
+              filter: drop-shadow(36px 0 0  ${props => props.theme.menusactivefontcolor || '#ffffff'});
+            }
+           
+        }
+        }
+    .ant-menu-title-content {
+        margin-left: 0px;
+        line-height: 1;
+        text-align: center;
+        a {
+            color: #ffffff;
+        }
+    }
+  }
+  ${props => props.laptop ? msty : ''}
+
+}
+`
+/* const Ciocn = (props) => {
   const url = props.url || imgurl['0104H']
-  return <Image src={url} width={36} preview={false} style={{height: '36px'}} /> 
+  return <Image src={url}  preview={false} style={{height: '100%', width: "100%"}} /> 
+} */
+const Ciocn = (props) => {
+  const url = props.url || svgurl['0104']
+  return <div className="logo"><img src={url}  className="shadow" style={{height: '100%', width: "100%"}} /></div> 
 }
 export default function Hmenu() { 
   const dispath = useDispatch()
@@ -26,7 +165,7 @@ export default function Hmenu() {
   const current = useMemo(() => state?.primary, [state])
   
   const isconfig = useSelector(configState)
-  
+  const {laptop} =useSelector(adaptation) ||{}
   const  runmenus = useSelector(runMenus)
   const siderrunmenus = useSelector(siderRunMenus)
   const designermenus = useSelector(designerMenus)
@@ -37,7 +176,7 @@ export default function Hmenu() {
     no: item.no,
     label: item.label,
     key: item.key,
-    icon: <Ciocn url={current == item.key ? imgurl[`${item.no}H`] : imgurl[`${item.no}N`]} />,
+    icon: <Ciocn url={svgurl[item.no]} />,
     className: 'custsubmenu',
     danger: true,
     nested: siderrunmenus[item.key]?.length > 0 ?  siderrunmenus[item.key][0]?.['key'] : ''
@@ -46,7 +185,7 @@ export default function Hmenu() {
    no: item.no,
    label: item.label,
    key: item.key,
-   icon: <Ciocn url={current == item.key ? imgurl[`${item.no}H`] : imgurl[`${item.no}N`]} />,
+   icon: <Ciocn url={svgurl[item.no]} />,
    className: 'custsubmenu',
    danger: true,
    nested: siderdesignermenus[item.key]?.length > 0 ?  siderdesignermenus[item.key][0]?.['key'] : ''
@@ -115,7 +254,7 @@ export default function Hmenu() {
     }  
    },[location]) 
 
-  return <Menu onClick={onSelect} selectedKeys={[current]} mode="horizontal" items={menus} className="headrmenu" />;
+  return <Cmenu laptop={laptop} onClick={onSelect} selectedKeys={[current]} mode="horizontal" items={menus}   />;
 
 
 }

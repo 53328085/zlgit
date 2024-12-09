@@ -4,7 +4,7 @@ html, body {
     padding: 0;
     height: 100vh;
     width: 100%;
-    min-width:1920px; //页面缩放
+ //   min-width:1920px;  
     display: flex;
     font-size: 14px;
     overflow: auto; // 屏幕缩放150%、200%时需要滚动条
@@ -20,7 +20,9 @@ html, body {
     flex-direction: column;
     flex:1;
 }
-
+@media (pointer: coarse) {
+  /* 在触摸屏设备上应用的样式 */
+}
 /* 屏幕分辨率放大为 150 */ /* 缩放数值需要根据效果调试 */
 /* @media (-webkit-min-device-pixel-ratio: 1.5), (min-resolution: 120dpi) {
   #root{
@@ -150,4 +152,5 @@ body *::-webkit-scrollbar-thumb {
  
 :root {
   --main-bg-color: #ff7313;
+  --max-width:1900px;
 }

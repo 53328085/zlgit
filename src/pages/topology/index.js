@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
+import styled from "styled-components";
 import style from './style.module.less'
 import { Topology } from "@topology/core/src/core";
 import { register as registerFlow } from '@topology/flow-diagram'
@@ -20,6 +21,7 @@ import '../../assets/css/font_99x1os11gqi/iconfont.css'
 import '../../assets/css/font_c44gejdj174/iconfont.css'
 import '../../assets/css/font_ehfbe2lg8tb/iconfont.css'
 import '../../assets/css/font_ugr1luq01xe/iconfont.css'
+import '../../assets/css/font_nilhyhwpjm9/iconfont.css'
 // 右侧图形库图标
 import '../../assets/css/fonts/font/libs/iconfont.css'
 import '../../assets/css/font_g4v09lxfde/iconfont.css'
@@ -30,6 +32,17 @@ import FileSaver from 'file-saver'
 import { distributionRoom, DistributionRoomRuntime } from '@api/api.js'
 import { useReactive } from "ahooks";
 const {Text} = Typography
+
+const Custoptionbg = styled.div`
+  display: grid;
+  //width: 480px;
+  grid-template-columns: repeat(3, 1fr);
+  column-gap: 8px; 
+  padding: 4px;
+  background-color: ${props => props.theme.primaryColor};
+  color: #fff;
+
+`
 export default function index() {
   let location = useLocation()
   const {projectName,  logoImage  } = useSelector(currProject)
@@ -125,6 +138,7 @@ export default function index() {
           console.log(state.chartData)
           let dateGroup = JSON.parse(res.data.dataGroup)
 
+          console.log(dateGroup)
           canvas.data.grid = dateGroup.grid
           canvas.data.gridColor = dateGroup.gridColor ? dateGroup.gridColor : null
           canvas.data.bkColor = dateGroup.bkColor ? dateGroup.bkColor : null
@@ -135,6 +149,7 @@ export default function index() {
             state.spining = false
             canvas.open(dateGroup)
             canvas.render()
+            canvas.fitView(16);
           }, 1000)
         } else {
           message.error(res.errMsg)
@@ -214,8 +229,8 @@ export default function index() {
   const [nodeType, setNodeType] = useState('设备绑定')
   const [selectedNode, setSelectedNode] = useState()
   const onMessage = (event, data) => {
-    // console.log(event)
-     
+    // console.log(data)
+    //  console.log(Tools)
     if (event == 'nodeRightClick') {
       console.log(data)
       // console.log(data.evs)
@@ -1013,11 +1028,11 @@ export default function index() {
                   state.deviceList?.length > 0 ?
                     <>
                     <Select.Option disabled>
-                    <div className={style.custoptionbg} >
+                    <Custoptionbg >
                         <span>设备名称</span>
                         <span>设备编号</span>
                         <span>设备地址</span>
-                    </div>
+                    </Custoptionbg>
                     </Select.Option>
                     { state.deviceList.map((option) => {
                      return (                      

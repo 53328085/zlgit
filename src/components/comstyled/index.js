@@ -108,7 +108,7 @@ export const Iptserach = styled(Search)`
  .ant-input-affix-wrapper {
     background-color: transparent !important;
     border: none;
-    height: 40px;
+    height: ${props => props.laptop ? "32px" : "40px"};
    
  }
  .ant-input-group-addon {
@@ -170,6 +170,7 @@ export const Cselect = styled(Select)`
  }
  }
 
+ 
  &:not(.ant-select-customize-input) .ant-select-selector {
     background-color: transparent;
     border: 1px solid #8091b2;
@@ -177,9 +178,12 @@ export const Cselect = styled(Select)`
     overflow: hidden;
     width: ${props => props.w || 'auto'};
     height: ${props => props.h || 'auto'} !important ;
+    .ant-select-selection-item{
+      line-height: ${props => props.h} !important;
+    }
     &:focus, &:hover {    
     border-color: #1f83fe !important;
-    
+  
   }
  }
 `
@@ -277,8 +281,8 @@ export const Cradiogroup = styled(Radio.Group)`
   }
   .ant-radio-button-wrapper-checked.ant-radio-button-wrapper {
     color:#fff;
-    background-color: #237ae4;
-    border-color: #237ae4;
+    background-color:  ${props => props.theme.primaryColor || "#237ae4" };
+    border-color: ${props => props.theme.primaryColor || "#237ae4" };
   }
  
  

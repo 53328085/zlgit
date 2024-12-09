@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
-import styled from 'styled-components'
-import style from './style.module.less'
+import styled, {css} from 'styled-components'
+
 import { message } from 'antd'
 import Icard from './card'
 import { useSelector } from 'react-redux'
@@ -9,17 +9,131 @@ import breaker from './images/breaker.png'
 import chu from './images/chu.svg'
 import guang from './images/guang.svg'
 import { Monitoring } from '@api/api.js'
-import Ichart from '@com/useEcharts/Ichart';
-import Titlelayout from '@com/titlelayout';
-import { selectProjectId, selectOneLevelDefaultId } from '@redux/systemconfig.js'
+
+import { selectProjectId, selectOneLevelDefaultId, adaptation } from '@redux/systemconfig.js'
 import Pagecount from '@com/pagecontent'
 import { useNavigate, useOutletContext } from "react-router-dom";
+import Bgi from "./images/bgi.png"
+const sty =css`
+grid-template-columns: repeat(auto-fill, minmax(304px, 1fr));
+`
+const Mainbox =styled.div`
+display: grid;
+grid-template-columns: repeat(auto-fill, minmax(404px, 1fr));
+    justify-content: space-between;
+   
+gap: 16px;
+${props=> props.laptop ? sty : null}
+.cardItem{
+      // width: 404px;
+       height: 124px;
+        background-color: #fff;
+        border: 1px solid rgb(215, 215, 215);
+        border-radius: 4px;
+        display: flex;
+        align-items: center;
+        justify-content: flex-start;
+        background-image: url(${Bgi});
+        background-size: 100% 100%;
+        position: relative;
+        cursor: pointer;
+        padding: 12px 12px 12px 24px;
+        column-gap: 12px;
+        .cardImgBox{
+            width: 64px;
+            height: 64px;
+         
+            background-color: #237ae4; // var(--ant-primary-color) ;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .cardImg{
+            width: 40px;
+            // height: 40px;
+            // border: 2px solid #fff;
+            // margin-left: 24px;
+            // background-color: #237ae4;
+            //  border-radius: 50%;
+        }
+        .ItemValue{
+            flex: auto;
+            text-align: left;
+            .valueTitle{
+                font-size: 14px;
+                color: #333;
+            }
+            .valueData{
+                //margin-top: 10px;
+                font-size: 28px;
+                color: #515151;
+            }
+        }
+        .boxCard{
+            flex: auto;
+            height: 112px;
+           
+            background-color: rgba(242, 242, 242, 0.75);
+            border: 1px solid rgb(228,228,228);
+            display: flex;
+           
+            justify-content: space-around;
+            flex-direction: column;
+            padding: 16px;
+            p{
+               
+                display: flex;
+            align-items: center;
+            justify-content: space-between;
+            }
+        }
+    }
+    .orderData{
+        width: 400px;
+        height: 96px;
+        background-color: #fff;
+        border: 1px solid rgb(215, 215, 215);
+        border-radius: 4px;
+        display: flex;
+        align-items: center;
+        .orderItem{
+            width: 133px;
+            height: 85px;
+            border-right: 1px dashed #d7d7d7;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            &:nth-child(3){
+                border: none;
+            }
+            .itemTitle{
+                font-size: 14px;
+                color: #333;
+            }
+            .waitOrder, .duringOrder, .waitInspection{
+                background-repeat: no-repeat;
+                background-size: 100% 100%;
+                width: 48px;
+                height: 48px;
+                line-height: 48px;
+                text-align: center;
+                font-size: 24px;
+                color: #fff;
+                margin-top: 10px;
+            }
+        }
+    }
+
+`
+
 export default function Index() {
   const navigate = useNavigate();
   const projectId = useSelector(selectProjectId)
   let areaId = useSelector(selectOneLevelDefaultId)
-  let { exparams } = useOutletContext()
-  // let [areaId, setAreaId] = useState(0)
+  let {laptop} = useSelector(adaptation)
+
+
   const statusAttribute = [
     {
       meterType: 0,
@@ -88,16 +202,7 @@ export default function Index() {
     }
   ]
 
-  // let series = [{ type: "line" }]
-  // const [eoptions, setEptions] = useState({   //用电量
-  //   series,
-  //   dataset: {}
-  // })
-
-  // const [woptions, setWptions] = useState({   //用水量
-  //   series,
-  //   dataset: {}
-  // })
+  
 
   let [allCount, setAllCount] = useState(0)
   const [MonitoringData, setMonitoringData] = useState([]);
@@ -123,39 +228,8 @@ export default function Index() {
       console.log(e)
     })
   }
-  // const getMonthUsage = (type) => {//月用量
-  //   return RuntimeQueryMonthUsage({ projectId, areaId, type }).then(res => {
-  //     let { success, data } = res
-  //     if (success) {
-  //       if (data) {
-  //         let { eleConsumes = [], waterConsumes = [] } = data
-  //         let edataset = {
-  //           dimensions: [
-  //             { name: 'name', type: 'time' },
-  //             { name: "value", displayName: '用电量(kWh)' },
-  //           ],
-  //           source: eleConsumes,
-  //         }
-  //         let wdataset = {
-  //           dimensions: [
-  //             { name: 'name', type: 'time' },
-  //             { name: 'value', displayName: '用水量(m³)' },
-  //           ],
-  //           source: waterConsumes,
-  //         }
-  //         setEptions({ ...eoptions, dataset: edataset, xAxis: { axisLabel: { interval: 'auto' } } })
-  //         setWptions({ ...woptions, dataset: wdataset, xAxis: { axisLabel: { interval: 'auto' } } })
-  //       }
-
-  //     } else {
-  //       message.error(res.errMsg)
-  //     }
-  //   }).catch(e => {
-  //     console.log(e)
-  //   })
-  // }
-  const toDevicePage = (meterType) => {
-    console.log(meterType, exparams);
+  
+  const toDevicePage = (meterType) => {   
     if (meterType == 6) {
       navigate(`/index/runtimeMonitor/camera`, {
         state: {
@@ -170,6 +244,8 @@ export default function Index() {
         }
       })
     } else {
+       let currdeviceStyle = `deviceStyle_${projectId}`
+      window.localStorage.setItem(currdeviceStyle, meterType);
       navigate(`/index/runtimeMonitor/point`, {
         state: {
           type: 'index', primary: 'runtimeMonitor', title: '设备监测', nested: 'point', meterType
@@ -185,14 +261,15 @@ export default function Index() {
   }, [areaId, projectId])
   return (
     <Pagecount pd="0" bgcolor="transparent">
-      <div className={style.cardList}>
+      <Mainbox laptop={laptop}>
         <Icard img={imgurl.device} title={'设备总数'} value={allCount} key="device" />
         {MonitoringData?.map((item) => (
-          <div onClick={() => toDevicePage(item.meterType)}><Icard img={item.imageUrl} title={item.name} value={item.count}
+          <div onClick={() => toDevicePage(item.meterType)}>
+            <Icard img={item.imageUrl} title={item.name} value={item.count}
             isShow={true} on={'在线'} off={'离线'} per={'在线率'} onValue={item.onlineCount}
             offValue={item.offlineCount} perValue={item.onlineRate} isRed={true} isGreen={true} isredE={false} after="%" key={item.meterType} />
           </div>))}
-      </div>
+      </Mainbox>
       {/* <div className={style.content}>
         <Titlelayout title="月度用电量（kWh）" layout="flex" key="electric">
           <div className='flex'>

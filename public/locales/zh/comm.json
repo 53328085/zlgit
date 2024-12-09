@@ -25,6 +25,7 @@
     "time": "时间",
     "date": "日期",
     "day":"日",
+    "week": "周",
     "year":"年{{param}}",
     "month": "月{{param}}",
     "NotConfirmed":"未确认",

@@ -1,11 +1,33 @@
-import React from 'react'
+import React, {useContext} from 'react'
 
-import styled from 'styled-components';
+import styled, {css} from 'styled-components';
 import Titlelayout from '@com/titlelayout';
 
 import {useTranslation} from "react-i18next"
 import gatewayRuntime from '../sensor.svg'
-
+import Context from "@com/content"
+const sty = css`
+ margin-top: 16px;
+ flex: 1;
+ align-items: stretch;
+ .totalCount{
+  flex: auto;
+    justify-content: space-evenly;
+  .count_title{
+        line-height: 14px;
+    }
+  .count_val{
+        font-size: 16px;
+        line-height: 16px;
+        color: #515151;
+    }
+ }
+ .details{
+  width: auto;
+   flex: auto;
+   padding: 8px;
+ }
+`
 const Divorder = styled.div`
   display: flex;
   align-items: center;
@@ -47,7 +69,7 @@ const Divorder = styled.div`
         justify-content: space-between;
     }
   }
-  
+  ${props => props.laptop ? sty : null}
 `
 
 const fs = {
@@ -57,6 +79,7 @@ const fs = {
 }
 
 export default function DefaultHome(props) {
+  const {laptop} =useContext(Context)
   const {t} = useTranslation("overview")
   let {state={}, type} = props
   if(type !=="runtTime") {
@@ -65,8 +88,8 @@ export default function DefaultHome(props) {
 
   return (
     <Titlelayout title={t("SensorInformation")} {...fs} style={{height: "200px"}}>
-      <Divorder>
-        <img src={ gatewayRuntime } className='card_icon'></img>
+      <Divorder laptop={laptop}>
+       {laptop ? null : <img src={ gatewayRuntime } className='card_icon'></img>} 
         <div className='totalCount'>
             <span className='count_title'>{t("total")}</span>
             <span className='count_val'>{ state.sensorCount }</span>

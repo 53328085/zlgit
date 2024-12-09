@@ -24,6 +24,7 @@
   "Cancel": "取消",
   "edit": "编辑",
   "modify": "修改",
+  "association":"关联",
   "accompanyRate": "倍率",
   "parametersSentDown": "参数下发",
   "newMainLine": "新增主线",
@@ -69,5 +70,6 @@
   "back": "返回",
   "moveUp":"上移一行",
   "moveDown":"下移一行",
+  "sorting":"保存设备排序",
   "z": ""
 }

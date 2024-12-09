@@ -1,11 +1,12 @@
 import React, {useRef,  useCallback, useState, useEffect} from "react";
 import { Dropdown, Space, Form, Input, message, Typography, Radio } from "antd";
- 
-import styled from "styled-components";
+import {} from "@ant-design/icons"
+import styled, {css} from "styled-components";
 import { useSelector, useDispatch } from "react-redux";
 import {useNavigate, useLocation} from "react-router-dom"
 import { clearToken, selectUser, userRest, platformLang} from "@redux/user";
-import { configProject, comSetFirst, getJump, currentscreen, isGranary,datascreen, configState, setIntl,setIszhCN, selectProjectId,getMenus, setMenus,menus} from "@redux/systemconfig";
+import { configProject, comSetFirst, getJump, currentscreen, isGranary,datascreen, configState, setIntl,setIszhCN, selectProjectId,getMenus, setMenus,menus,adaptation,getThemeColor} from "@redux/systemconfig";
+
 import moment from "moment";
 import {useTranslation, Trans, Translation} from 'react-i18next';
 import enUS from 'antd/es/locale/en_US';
@@ -17,9 +18,9 @@ import CModal from "@com/useModal"
 import imgurl from "./icon";
 import lg from './icon/lg.svg'
 import {pwdValidator, phoneValidator} from '@pages/rule.js'
-import {Login} from '@api/api' 
+import {Login,CustTheme} from '@api/api' 
 import {CustButton} from '@com/useButton'
-import {handlermenu} from "@com/usehandler"
+import {handlermenu,isObject} from "@com/usehandler"
 const {Text} = Typography 
 const Lngdiv = styled.div`
   display: flex;
@@ -48,21 +49,26 @@ const Cradio = styled(Radio)`
 `
 const Cdiv = styled.div`
   display: flex;
-  height: 62px;
+  height: inherit;
   overflow: hidden;
   align-items: center;
 `;
 const Ldiv = styled.div`
   height: inherit;
-  background-color: #135abd;
+  background-color:  ${props => props.theme.menusbgcolorR || '#135abd'};
   display: flex;
   align-items: center;
   justify-content: flex-end;
-  border-bottom: 1px solid #036;
-  border-top: 1px solid #036;
+ // border-bottom: 1px solid ${props => props.theme.menusbgcolor || '#003366'};
+ // border-top: 1px solid ${props => props.theme.menusbgcolor || '#003366'};
 `;
+
+let style = css`width: 58px;
+       border-right: none;
+       font-size: 12px;`
 const Idiv = styled.div`
-  border-right: 1px solid rgba(255, 255, 255, 0.3);
+  
+//  border-right: 1px solid ${props => props.theme.menusbgcolorRborder || '#ffffff'};  
   height: inherit;
   width: 112px;
   display: flex;
@@ -71,54 +77,70 @@ const Idiv = styled.div`
   padding-bottom: 4px;
   background-repeat: no-repeat;
   background-position: top 4px center;
+  position: relative;
+  &:not(:last-of-type):after{
+    content: '';
+    position: absolute;
+    top:2px;
+    bottom: 2px;
+    right: 0px;
+    width: 1px;
+    display: block;
+    background-color: ${props => props.theme.menusbgcolorRborder || '#ffffff'} ;
+  }
+  ${props => props.laptop ? style : null}
   &:last-child {
     border-right: none;
   }
   &:hover {
-    background-color: #3988e7;
+    background-color:${props => props.theme.menusbgcolorRA || '#3988e7'} ;
     cursor: pointer;
     border-right: 1px solid rgba(255, 255, 255, 0.1);
   }
   span {
     line-height: 1;
+    color: ${props => props.theme.menusbgcolorRfont || '#ffffff'};
   }
-`;
-const Idiv1 = styled(Idiv)`
-  background-image: url(${imgurl['31N']});
+  &.Idiv1{
+    background-image: url(${imgurl['31N']});
   &:hover {
     background-image: url(${imgurl['31H']});
   }
-`;
-const Idiv2 = styled(Idiv)`
-  background-image: url(${imgurl['32N']});
+  }
+  &.Idiv2 {
+    background-image: url(${imgurl['32N']});
   &:hover {
     background-image: url(${imgurl['32H']});
   }
-`;
-const Idiv3 = styled(Idiv)`
-  background-image: url(${imgurl['33N']});
+  }
+  &.Idiv3{
+    background-image: url(${imgurl['33N']});
   &:hover {
     background-image: url(${imgurl['33H']});
   }
-`;
-const Idiv4 = styled(Idiv)`
-  background-image: url(${imgurl['34N']});
+  }
+  &.Idiv4{
+    background-image: url(${imgurl['34N']});
   &:hover {
     background-image: url(${imgurl['34H']});
   }
-`;
-const Idiv5 = styled(Idiv)`
-  background-image: url(${imgurl['35N']});
+  }
+  &.Idiv5{
+    background-image: url(${imgurl['35N']});
   &:hover {
     background-image: url(${imgurl['35H']});
   }
+  }
 `;
+
 const Triangle = styled.div`
     width: 0; 
      height: 0;
      border-width: 30px;
      border-style: solid;
-     border-color: transparent #135abd transparent transparent;
+     border-color: transparent  ${props => props.theme.menusbgcolorR || '#135abd'} transparent transparent;
+     display: ${props => props.laptop ? "none" : 'block'};
+    
 `;
 const Cipt = styled(Input)`
   && {
@@ -150,6 +172,14 @@ export default function Log() {
   const  isgranary = useSelector(isGranary)
   const setmenus = useSelector(setMenus)
   const allmenus = useSelector(menus)
+  const adap =useSelector(adaptation) || {}
+  const inita=[
+    {label: '账户管理', key:"mg"},
+    {label: '语言切换', key:"lng"},
+    {label: '退出系统', key:"exit"},
+  ]
+  const [items, setItems] = useState(inita)
+  const [themes, setThemes] = useState([])
   let dataScreen =setmenus?.find(i => i.key=='dataScreen')?.label //数据大屏
   let projectSet = setmenus?.find(i => i.key=='projectSet')?.label //项目设置
   let systemSet = setmenus?.find(i => i.key=='systemSet')?.label // 平台设置
@@ -200,6 +230,56 @@ export default function Log() {
   
 }, [screenadr, isgranary]) */
 
+// &#8730;
+const getcurTheme= async(userId, projectId)=> {
+  try {
+    let {success, data} = await CustTheme.QueryTheme(projectId)
+    let datalen = Array.isArray(data) && data.length> 0 && success ;
+    let item =[];
+   /*  if(success && datalen){
+        setThemes(data)
+        let item=  data.map(d => ({label: d.name, key: d.id}))
+        setItems([...inita, ...item])
+    }else{
+      setItems(inita)
+    } */
+    let {success:suc, data:themedata} = await CustTheme.GetUserTheme(userId)
+    let {themeId} = themedata || {}
+    if(suc && themeId && datalen){
+      try {
+        let theme = data.find(d => d.id == themeId)?.context
+        let themeobj = JSON.parse(theme)
+        if(theme &&  isObject(themeobj)){
+          dispatch(getThemeColor(themeobj))
+        }
+        item=  data.map(d => ({label: d.id==themeId ? <span style={{color:isObject(themeobj) ? themeobj.primaryColor : "",fontWeight: "bolder" }}>{d.name}</span> : d.name, key: d.id}))
+      } catch (error) {
+        
+      }
+     
+    }else if(datalen){
+        let thobj = JSON.parse(datalen[0].context)
+        if(isObject(thobj)){
+          dispatch(getThemeColor(thobj))
+        }
+        item=  data.map((d,idx) => ({label: idx==0 ? <span style={{color:isObject(thobj) ? thobj.primaryColor : "", fontWeight: "bolder" }}>{d.name}</span> : d.name, key: d.id})) 
+    }else {
+       item =[];
+    }
+    setItems([...inita, ...item])
+
+  } catch (error) {
+    
+  }
+}
+
+useEffect(()=> {
+  if(Number.isInteger(userId) && Number.isInteger(projectId)){
+    getcurTheme(userId, projectId)
+    
+  }
+
+}, [userId, projectId])
 const onJump = useCallback(() => {  
   let {bigScreenEnabled, bigScreenUrl} = Datascreen   
 
@@ -235,6 +315,7 @@ const lngOk = () => {
     i18n.changeLanguage(lngval)
      
    const lngmenus =  handlermenu(allmenus.fullmenu, lngval=='zh' ? 'cn' : lngval)
+  
    dispatch(getMenus({...lngmenus,projectId}))
     lref.current.onCancel();
   } catch (error) {
@@ -242,15 +323,32 @@ const lngOk = () => {
   }
    // navgite('/')
 }
-
+const settheme = async (themeId) => {
+  try {
+    let params ={
+      themeId,
+      userId
+     }
+    let {success} = await  CustTheme.SetUserTheme(params)
+    if(success){
+       /* let obj= themes.find(t =>t.id==themeId)?.context
+       if(obj && isObject(JSON.parse(obj))){
+        dispatch(getThemeColor(JSON.parse(obj)))
+       } */
+        getcurTheme(userId, projectId)
+    }
+  } catch (error) {
+    
+  }
+   
+}
  
-  const items = [
-    {label: '账户管理', key:"mg"},
-    {label: '语言切换', key:"lng"},
-    {label: '退出系统', key:"exit"},
-  ]
+
   const onClick = ({key}) => {
-      if(key == 'mg') {
+      if(Number.isInteger(parseInt(key))){
+        settheme(key)
+
+      }else if(key == 'mg') {
         account()
       }else if(key == 'exit') {
         onExit()
@@ -370,30 +468,30 @@ const lngOk = () => {
 
   return (
     <Cdiv>
-      <Triangle />
+      <Triangle laptop={adap.laptop} />
       <Ldiv>
         {
           config ? 
-          (<Idiv5 onClick={back}>
+          (<Idiv laptop={adap.laptop} className="Idiv5" onClick={back}>
             <span> 返回</span>
-          </Idiv5>)
+          </Idiv>)
           :
         <>
-      { isgranary ? <Idiv1 onClick={() => window.open('http://10.5.7.60:4242/ses', '_blank')}>
+      { isgranary ? <Idiv laptop={adap.laptop} className="Idiv1"  onClick={() => window.open('http://10.5.7.60:4242/ses', '_blank')}>
           <span> {dataScreen}</span>
-        </Idiv1> : showscreen  &&  <Idiv1 onClick={onJump}>
+        </Idiv> : showscreen  &&  <Idiv laptop={adap.laptop} className="Idiv1" onClick={onJump}>
           <span> {dataScreen}</span>
-        </Idiv1>
+        </Idiv>
         }
  
  
  
-        { roleType < 4 ? (<Idiv4 onClick={onConfigure}> 
+        { roleType < 4 ? (<Idiv laptop={adap.laptop} className="Idiv4"  onClick={onConfigure}> 
           <span>{projectSet}</span>
-        </Idiv4>):null}
-        { roleType < 3 ? (<Idiv2 onClick={projectcfg}>
+        </Idiv>):null}
+        { roleType < 3 ? (<Idiv  Idiv laptop={adap.laptop} className="Idiv2" onClick={projectcfg}>
           <span>{systemSet}</span>
-        </Idiv2>):null}
+        </Idiv>):null}
         </>
         }
         <Dropdown
@@ -403,13 +501,12 @@ const lngOk = () => {
          placement="bottom" 
         trigger={['click']
       } 
-       
         overlayClassName="custDropdown">
-        <Idiv3>
+        <Idiv  laptop={adap.laptop} className="Idiv3">
           
             <span>{name}</span>
           
-        </Idiv3>
+        </Idiv>
         </Dropdown> 
      
        

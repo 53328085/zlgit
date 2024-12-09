@@ -1,4 +1,4 @@
-import React, { useState, useRef, useMemo, useEffect } from 'react'
+import React, { useState, useRef, useMemo, useEffect, useCallback } from 'react'
 import { Button, message, Form, Input, Typography, Space, Image } from 'antd';
 import { useTranslation } from 'react-i18next'
 import Custmodl from '@com/useModal'
@@ -19,9 +19,10 @@ export default function Index({ projectId, areaId }) {
   const [form] = Form.useForm()
   const Item = Form.Item
 
+  console.log(areaId, "-----")
 
 
-  const { queryDrive, insertDrive, updateDrive, deleteDrive, queryDriveConfig, queryDriveUnconfig, conifgDrive, QueryImage } = DesElectric
+  const { queryDrive, insertDrive, updateDrive, deleteDrive, queryDriveConfig, queryDriveUnconfig, conifgDrive, QueryImage, deviceSorting } = DesElectric
 
   const tbcolumns = [
     {
@@ -42,10 +43,11 @@ export default function Index({ projectId, areaId }) {
       title: "操作",
       width: "400px",
       render: (_, record, index) => (<Space size={32}><Link underline onClick={() => settingClick(record.id, record.name)}>{t("button:configure")}</Link><Link underline onClick={() => edit(record)}>{t("button:edit")}</Link>
-        {/* {index > 0 ? <Link underline onClick={() => moveUpClick(record, index)}>{t("button:moveUp")}</Link> : null}
-        {index > -1 && index < treeData.length - 1 ? < Link underline onClick={() => moveDownClick(record, index)}>{t("button:moveDown")}</Link> : null} */}
+
         < Link underline type="danger" onClick={() => deleteRecord(record.id)
         }> {t("button:delete")}</Link >
+        {index > 0 ? <Link underline onClick={() => moveUpClick(record, index)}>{t("button:moveUp")}</Link> : null}
+        {index > -1 && index < treeData.length - 1 ? < Link underline onClick={() => moveDownClick(record, index)}>{t("button:moveDown")}</Link> : null}
       </Space >)
     },
   ]
@@ -108,6 +110,23 @@ export default function Index({ projectId, areaId }) {
     setIsAdd(true)
     aref.current.onOpen()
   }
+  const deviceSortingBtn = () => {
+    //设备排序保存
+    let params = treeData.map((item, indexValue) => {
+      return { ...item, index: indexValue + 1 };
+    })
+    console.log(params)
+    deviceSorting({ projectId }, params).then(res => {
+      if (res.success) {
+        message.success('设备排序成功!')
+        getTreeData()
+      } else {
+        message.warning(res.errMsg)
+      }
+    }).catch(error => {
+      console.log(error)
+    })
+  }
   const edit = ({ id, name, address, imgsrc }) => {
     console.log(id)
     setModalTitle('编辑重点设备')
@@ -142,11 +161,12 @@ export default function Index({ projectId, areaId }) {
     }
   }
   const onOk = async () => {
+    
+  
     try {
       const { name, address, imageKey } = await form.validateFields();
       let params = {
         name: encodeURIComponent(name),
-        parentId,
         areaId,
         projectId,
         address: encodeURIComponent(address),
@@ -155,7 +175,7 @@ export default function Index({ projectId, areaId }) {
         insertDrive(params, { image: imageKey }).then(res => {
           if (res.success) {
             message.success('新增重点设备成功!')
-
+            console.log("点击ok--222", areaId)
           } else {
             message.warning(res.errMsg)
 
@@ -297,7 +317,7 @@ export default function Index({ projectId, areaId }) {
         <Item label="设备安装位置" name='address' normalize={v => v.trim()} rules={[{ required: true, message: '请输入地址' }]}>
           <Input style={{ width: '315px' }} placeholder={'请输入地址'} allowClear></Input>
         </Item>
-        <Item label="缩略图" >
+        <Item label="缩略图" required >
           <div style={imgsty} >
             <Item noStyle name="imageKey" rules={[
               {
@@ -311,13 +331,15 @@ export default function Index({ projectId, areaId }) {
         </Item>
       </Form>
     </div>
-  </Custmodl>, [modalTitle])
+  </Custmodl>, [modalTitle, areaId])
   return (
     <div style={{ flex: 1, display: 'flex', flexDirection: "column" }}>
 
       <Titlelayout layout="flex" title={<div style={{ display: 'flex', alignItems: "center", justifyContent: "space-between" }}>
         <span>重点设备</span>
-        <CustButton wh="auto" onClick={() => addMain()}>{t("button:addKeyEquipment")}</CustButton>
+        <div style={{ display: 'flex' }}>
+          <CustButton wh="auto" onClick={() => addMain()}>{t("button:addKeyEquipment")}</CustButton>
+          <CustButton style={{ marginLeft: "16px" }} wh="auto" onClick={() => deviceSortingBtn()}>{t("button:sorting")}</CustButton></div>
       </div>}>
         <div style={{ flex: 1, paddingTop: "16px" }}>
           <UseTable columns={tbcolumns} dataSource={treeData}></UseTable>

@@ -7,7 +7,10 @@ import moment from 'moment'
 import { Select, DatePicker, InputNumber, Checkbox, Radio, Pagination, message, Space, Form, Button } from "antd";
 
 import { Monitoring } from '@api/api.js'
+import {
 
+  adaptation
+} from "@redux/systemconfig.js";
 import Mask from '@com/mask.jsx'
 import UseTransfer from './transfer';
 import { drawEcharts } from "@com/useEcharts"
@@ -23,6 +26,7 @@ const {
 } = Monitoring
 export default function Index() {
   const projectId = useSelector(state => state.system.menus.projectId)
+  const {laptop} = useSelector(adaptation)
   const [form] = Form.useForm();
   const [typeSelected, setTypeSelected] = useState(1)
   const [baseLine, setBaseLine] = useState([])
@@ -66,15 +70,15 @@ export default function Index() {
   const onChangeBaseLineValue = (newValue) => {
     setBaseLineValue(newValue); // 更新状态
   };
-  let dataToday = moment().format('YYYY-MM-DD HH:mm:ss')
-  let [startTime, setstartTime] = useState(moment().startOf('day').format('YYYY-MM-DD HH:mm:ss'))
+  let dataToday = moment().format('YYYY-MM-DD 23:59:59')
+  let [startTime, setstartTime] = useState(moment().startOf('day').format('YYYY-MM-DD 00:00:00'))
   let [endTime, setendTime] = useState(dataToday)
   // setBaseLine(val)
   const onChangeTime = (date = [], dataString) => {
     let f = dataString.some(d => d);
     if (!f) return
-    setstartTime(dataString[0])
-    setendTime(dataString[1])
+    setstartTime(dataString[0] + ' 00:00:00 ')
+    setendTime(dataString[1] + ' 23:59:59')
     setValue(date)
   }
 
@@ -163,7 +167,7 @@ export default function Index() {
         data.map(item => {
           if (item.data) {
             for (let i = 0; i < item.data.length; i++) {
-              dimensions.push(item.sn + '_' + item.data[i].point)
+              dimensions.push(item.name + '_' + item.data[i].point)
               source.push(item.data[i].data)
             }
           }
@@ -188,7 +192,7 @@ export default function Index() {
         let seriesList = []
         for (let i = 0; i < dimensions.length - 1; i++) {
           seriesList.push({
-            type: "line", areaStyle: null, smooth: true,stack:null
+            type: "line", areaStyle: null, smooth: true, stack: null
           })
         }
 
@@ -235,10 +239,9 @@ export default function Index() {
         dataset: dataset,
         series: seriesList,
         grid: {
-          top: '30px',
-          left: 30,
-          right: 0,
-          bottom: '30px',
+          top:"10%",
+          left: "3%",
+          right: "3%",
           containLabel: true,
         },
         tooltip: {
@@ -257,10 +260,9 @@ export default function Index() {
         dataset: dataset,
         series: seriesList,
         grid: {
-          top: '30px',
-          left: 0,
-          right: 0,
-          bottom: '30px',
+          top:"10%",
+          left: "3%",
+          right: "3%",
           containLabel: true,
         },
         tooltip: {
@@ -277,23 +279,6 @@ export default function Index() {
     }
   }
 
-  // const datasetContrast = {
-  //   dimensions: ["time", "实时辐射", "实时功率"],
-  //   source: [
-  //     { time: "1", "实时辐射": 5600, "实时功率": 9600 },
-  //     { time: "2", "实时辐射": 4600, "实时功率": 3644 },
-  //     { time: "3", "实时辐射": 3600, "实时功率": 4644 },
-  //     { time: "4", "实时辐射": 5611, "实时功率": 9655 },
-  //     { time: "5", "实时辐射": 5644, "实时功率": 3677 },
-  //     { time: "6", "实时辐射": 4677, "实时功率": 3633 },
-  //     { time: "7", "实时辐射": 3688, "实时功率": 4655 },
-  //     { time: "8", "实时辐射": 5088, "实时功率": 2644 },
-  //     { time: "9", "实时辐射": 6677, "实时功率": 2641 },
-  //     { time: "10", "实时辐射": 5866, "实时功率": 5641 },
-  //     { time: "11", "实时辐射": 4677, "实时功率": 7645 },
-  //     { time: "12", "实时辐射": 1877, "实时功率": 2645 },
-  //   ],
-  // };
   useEffect(() => {
 
 
@@ -304,12 +289,13 @@ export default function Index() {
     <Titlelayout title='对比分析'>
       <Cdivider type="h" margin="16px 0" />
       <Form
-        layout="line"
+        layout={laptop ? "vertical" : "line"}
         form={form}
+        
         style={{
           display: "flex",
           flexDirection: "row",
-          alignItems: "center",
+          alignItems: "flex-end",
         }}
         initialValues={{
           alike: '',
@@ -317,12 +303,12 @@ export default function Index() {
           state: 0
         }}
       >
-        <Space size={64} split={<Cdivider />}  >
+        <Space size={laptop ? 16 : 64} split={laptop ? "" :<Cdivider />} align="end"  >
           <Form.Item name="button" style={{ marginBottom: 0 }}>
             <Button type='primary' ghost onClick={() => onSetDevices()}>请选择要对比的设备</Button>
           </Form.Item>
           <Form.Item label="选择对比数据" name="type" style={{ marginBottom: 0 }}>
-            <Select placeholder='请选择对比项目' options={comparisonType} defaultValue={typeSelected} style={{ width: 188, marginLeft: 16 }} onChange={onChangeType}></Select>
+            <Select placeholder='请选择对比项目' options={comparisonType} defaultValue={typeSelected}   onChange={onChangeType}></Select>
           </Form.Item>
           <Form.Item name="line" style={{ marginBottom: 0 }} >
             <div style={{ display: 'flex', alignItems: 'center' }}>
@@ -330,14 +316,14 @@ export default function Index() {
                 <Checkbox value="selected">对比基准线</Checkbox>
               </Checkbox.Group>
               <div style={{ display: 'flex', alignItems: 'center', position: 'relative' }}>
-                <InputNumber style={{ width: '100%' }} value={baseLineValue} onChange={onChangeBaseLineValue} />
-                <p style={{
+                <InputNumber   value={baseLineValue} onChange={onChangeBaseLineValue} addonAfter={unit} />
+                {/* <p style={{
                   width: '60px', textAlign: 'center',
                   height: '30px', lineHeight: '30px', background: '#f2f2f2',
                   color: '#afa7a7', position: 'absolute', right: '1px'
                 }}>
                   {unit}
-                </p>
+                </p> */}
               </div>
             </div>
           </Form.Item>
@@ -349,9 +335,11 @@ export default function Index() {
               disabledDate={disabledDate}
               defaultValue={[moment().startOf('day'), moment()]}
               format="YYYY-MM-DD"
-              style={{ width: '320px' }} />
-            <Button type="primary" style={{ marginLeft: '16px' }} onClick={() => onSetcontrast()}>对比分析</Button>
+              style={{ width: laptop ? '220px' : '320px' }} />
           </Form.Item >
+          <Form.Item noStyle>
+          <Button type="primary"   onClick={() => onSetcontrast()}>对比分析</Button>
+          </Form.Item>
         </Space>
       </Form>
       <Mask task={transTag}>

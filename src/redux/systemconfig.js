@@ -69,12 +69,34 @@ const {DeviceTypeManager: {AllDeviceStyle} } = Monitoring
 const initialState = {
     deviceState:false,
     siteConfig: antdconfig,
-    themeColor:  {
+    adaptation: { // 屏幕适配
+      laptop: false, // 笔记本屏幕(max-device-width:1536px)<=1536px
+   
+      ratio43:true,  // 屏幕比例 4:3
+    }, 
+    themeColor:  {  // 可配置对象，不只是颜色属性。名字为保证稳定性不改
       primaryColor: '#237AE4',
-      menusbgcolor: '',
-      menusactive: '',
-      menusborder: ''
-    },
+      errorColor: '#ff4d4f',
+      warningColor: '#faad14',
+      successColor: '#52c41a',
+      infoColor: '#1890ff',
+      menusbgcolor: '#003366',
+      menusbgcolorR: '#135abd',
+      menusbgcolorRA: '#3988e7',
+      menusbgcolorRfont: '#fff',
+      menusbgcolorRborder: '#fff',
+      menusfontcolor: "#b2c1d1",
+      menusactive: '#1c62b6',
+      menusborder: '#00ff66',
+      menusactivefontcolor: '#fff',
+      runasiderstart:"#0b41c7",
+      runasiderend:"#7662ff",
+      desasiderstart:"#039",
+      desasiderend:"#033",
+      asiderfontcolor: "#fff",
+      asiderfontcolorA: "#3f0",
+      asiderbgcolorA:"#3333cc"
+    },    
     intl: {
       lang: zhCN,
       locale: 'zh-cn'
@@ -196,7 +218,7 @@ const system = createSlice({
     initialState,
     reducers: {
         getCurrProjectInfo(state, {payload}) { // 当前项目信息 
-            state.themeColor.primaryColor= typeof payload.themeColor !=="string"  ? "#237ae4" : payload.themeColor ,
+           // state.themeColor.primaryColor= typeof payload.themeColor !=="string"  ? "#237ae4" : payload.themeColor ,
             state.currProject = payload   
         },
         configProject(state, {payload}) { // 项目是否处于设计状态     
@@ -268,8 +290,10 @@ const system = createSlice({
             state.isGranary = payload
            // return Object.assign({}, state, {isGranary: actions.payload})
          },
-        getThemeColor(state, {payload}) {         
-           state.themeColor =payload;
+        getThemeColor(state, {payload}) {   
+           console.log(payload)
+           let {themeColor} = state      
+           state.themeColor ={...themeColor, ...payload};
           
         },
         getRoomId(state,{payload}){
@@ -309,8 +333,13 @@ const system = createSlice({
         setDeviceState(state,{payload}){
           console.log(payload)
           state.deviceState = payload
-        }
+        },
+       setadaptation(state, {payload}){
+          let {adaptation}= state
+          console.log(payload)
+          state.adaptation ={...adaptation, ...payload}
 
+       }
     },
      extraReducers: {
       [getWebsiteState.fulfilled]: (state, action) => {
@@ -443,6 +472,7 @@ export const iszhCN = state => state.system.iszhCN // 是否中文
 export const enterprise = state => state.system.enterprise // 碳排企业信息
 export const Time = state => state.system.environmentTime // 碳排企业信息
 export const filterDeviceStyle = state => state.system.filterDeviceStyle?.filter(f => f.deviceStyle!=6)
+export const adaptation = state => state.system.adaptation
 export const {
     configProject,
     getSetMenus,
@@ -473,5 +503,6 @@ export const {
     setIszhCN,
     getEnterprise, 
     setDeviceState,
+    setadaptation
 } = actions
 export default system.reducer

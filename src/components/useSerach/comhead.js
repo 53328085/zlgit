@@ -50,23 +50,11 @@ export default function UseSerach(props) {
   
   const isprodction =  process.env.NODE_ENV !== "production"
   const {config={}, custview=null,record=null} = props  
-  const themcolor = useSelector(themeColor)   
-  const [color, setColor] = useState(themcolor.primaryColor)
-  const {isAreaId=true, gas=true} = config
+ 
+  const {isAreaId=true, gas=true, daterang='day'} = config
   const dispatch = useDispatch()
  
-  const onColorChange = (e) => {
-       let val = e.target.value;
-       setColor(val)
-       
-       dispatch(getThemeColor({primaryColor: val}))
-    
-     /*  ConfigProvider.config({
-        theme: {
-          primaryColor: val
-        }
-      }) */
-  }
+
 
 
   const [form] = Form.useForm()
@@ -163,15 +151,19 @@ useEffect(()=> {
       dispatch(setCurrentlevel(option))
       setAreaid(e)
  }
- 
+ let dateoption = daterang=='week' ? [
+  {value: 1, label: i18t("comm","week")},
+  {value: 2, label: i18t("comm","month")},
+  {value: 3, label: i18t("comm","year")},
+ ] :[
+  {value: 1, label: i18t("comm","day")},
+  {value: 2, label: i18t("comm","month")},
+  {value: 3, label: i18t("comm","year")},
+ ]
 const dateselect = (
   <Space size={16} style={{marginLeft:'16px'}}>
   <Item   name="type" initialValue={1}>
-     <Select style={{width: '80px'}}   options={[
-      {value: 1, label: i18t("comm","day")},
-      {value: 2, label: i18t("comm","month")},
-      {value: 3, label: i18t("comm","year")},
-     ]}
+     <Select style={{width: '80px'}}   options={dateoption}
     
      ></Select>
   </Item>
@@ -180,8 +172,9 @@ const dateselect = (
       {
         ({getFieldValue,setFieldValue}) => {
           
-          let type = ['date', 'date', 'month', 'year'][getFieldValue('type')] 
-          console.log('type', type)
+          let type =(daterang=='week' ? ['week', 'week', 'month', 'year'] : ['date', 'date', 'month', 'year'])[getFieldValue('type')] 
+         
+         
          return (
           <Item name="date" initialValue={moment(new Date(), 'YYYY-MM-DD')}> 
              <DatePicker  picker={type}   style={{width: '160px'}} />
@@ -354,6 +347,7 @@ const deviceStyleNode = (<Item name="deviceStyle" label="设备类型"  >
       form.setFieldValue('type',1)
     }
     if(config.meterType) {
+      console.log('config.meterType', config.meterType)
       form.setFieldValue('deviceStyle',config.meterType)
     }
      props.setexparams({...form.getFieldsValue(true)})
@@ -405,12 +399,7 @@ const deviceStyleNode = (<Item name="deviceStyle" label="设备类型"  >
         {/* {
           props.config.textloop && <Textloop />
         } */}
-   {/*   {
-        isprodction &&  (<Input type="color" value={color}
-              style={{width: '80px', marginLeft: 'auto'}}
-              onChange={onColorChange}
-            /> )   
-       }  */}
+ 
     </Cform>
   
     

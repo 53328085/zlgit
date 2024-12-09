@@ -6,11 +6,11 @@ import Draggable  from "react-draggable";
 import Useform from "./useform";
 import redwarn from '@imgs/redwarn.png'
 //const theme =(type) =>   `4px solid ${custCorle[type]}`
-const theme = (props) => props.type == 'warn' ? `#ff4d4f` : props.theme.primaryColor
+const theme = (props) => props.type == 'warn' ? props.theme.errorColor : props.theme.primaryColor
 const custCorle =(props) => {
  return {
   normal: props.theme.primaryColor,
-  warn: "#ff4d4f",
+  warn: props.theme.errorColor,
  // dark: "#fff"
  }[props.type]
 }
