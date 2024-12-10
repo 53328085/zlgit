@@ -3,7 +3,7 @@ import style from './configure/style.module.less';
 import _ from 'lodash'
 import { useRequest } from 'ahooks'; 
 import {useSelector,useDispatch} from 'react-redux'
-import {selectProjectId,getCurrProjectInfo,currProject, getWebsiteState, intl,adaptation} from '@redux/systemconfig.js'
+import {selectProjectId,getCurrProjectInfo,currProject, getWebsiteState, intl,adaptation,themeColor} from '@redux/systemconfig.js'
 import { UISummary, Monitoring,HomeRuntime} from '@api/api.js'
 import { useReactive } from 'ahooks';
 import {CustTransO} from "@com/useButton"
@@ -72,7 +72,7 @@ export default function Index() {
   const lang = useSelector(intl)
   const currproject = useSelector(currProject)
   const {laptop} = useSelector(adaptation) || {}
-  
+  const {previewrbgcolor} =useSelector(themeColor)
 
   const { RuntimeStatus } = Monitoring.Runtime
   const [layoutItem, setlayoutItem] = useState([])
@@ -211,9 +211,9 @@ export default function Index() {
 
 
   return (
-    <div className={style.mainContent} style={{backgroundColor:'#135abd'}}>
+    <div className={style.mainContent} >
       <Context.Provider value={{laptop}}>
-      <ReactGridLayout layout={layoutItem} {...defaultProps} >
+      <ReactGridLayout layout={layoutItem} {...defaultProps} style={{backgroundColor: previewrbgcolor || '#135abd'}}>
         {_.map( layoutItem, el =>createElement(el) )} 
       </ReactGridLayout>
       </Context.Provider>

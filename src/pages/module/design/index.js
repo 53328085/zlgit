@@ -313,20 +313,24 @@ message.warning(errMsg|| "数据出错")
       <Item label="运行态侧边栏结束色"  name="runasiderend" initialValue="#7662ff">
       <Ccolor name="runasiderend" />
       </Item>
-      <Item label="设计态侧边栏起始色"  name="desasiderstart" initialValue="#039">
+      <Item label="设计态侧边栏起始色"  name="desasiderstart" initialValue="#003399">
       <Ccolor name="desasiderstart" />
       </Item>
-      <Item label="设计态侧边栏结束色"  name="desasiderend" initialValue="#033">
+      <Item label="设计态侧边栏结束色"  name="desasiderend" initialValue="#003333">
       <Ccolor name="desasiderend" />
       </Item>
-      <Item label="侧边栏字体颜色"  name="asiderfontcolor" initialValue="#fff">
+      <Item label="侧边栏字体颜色"  name="asiderfontcolor" initialValue="#ffffff">
       <Ccolor name="asiderfontcolor" />
       </Item>
-      <Item label="当前侧边栏字体颜色"  name="asiderfontcolorA" initialValue="#3f0">
+      <Item label="当前侧边栏字体颜色"  name="asiderfontcolorA" initialValue="#33ff00">
       <Ccolor name="asiderfontcolorA" />
       </Item>
-      <Item label="当前侧边栏背景色"  name="asiderbgcolorA" initialValue="#33c">
+      <Item label="当前侧边栏背景色"  name="asiderbgcolorA" initialValue="#3333cc">
         <Ccolor name="asiderbgcolorA" />
+      </Item>
+      <Divider dashed  className="divider" />
+      <Item label="项目概述背景色"  name="previewrbgcolor" initialValue="#135abd">
+        <Ccolor name="previewrbgcolor" />
       </Item>
       <Item label="已有方案"    >
         <div style={{display: "flex", rowGap: "8px", flexWrap: "wrap"}}>

@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useRef } from 'react'
 import { NavLink, useLocation, useNavigate } from "react-router-dom";
 import Titlelayout from '@com/titlelayout'
-import styled from 'styled-components'
+import styled, {css} from 'styled-components'
 import Pagecount from '@com/pagecontent'
 import CustContext from '@com/content.js'
 import { Form, Image, Progress, Timeline, Select, Divider, Space, DatePicker, message } from 'antd'
@@ -12,16 +12,20 @@ import first from '../imgs/first.png'
 import second from '../imgs/second.png'
 import third from '../imgs/third.png'
 import { safeElectric } from '@api/api'
-import {  selectOneLevelDefaultId } from '@redux/systemconfig.js'
+import {  selectOneLevelDefaultId,adaptation } from '@redux/systemconfig.js'
 import moment from 'moment'
+const sty= css`
+ grid-auto-rows: auto;
+`
 const Mainbox = styled.div`
   flex: 1;
   display: grid;
   color: #515151;
-  grid-template-columns: 1fr 432px 784px;
+  grid-template-columns: ${props => props.laptop ? "1fr 1fr" :"1fr 432px 784px"} ;
   grid-template-rows: minmax(384px, 1fr) minmax(400px, 1fr);
   gap: 16px;
   justify-content: flex-end;
+  ${props => props.laptop ? sty : null}
   .down {
     
       display: grid;
@@ -172,6 +176,7 @@ export default function Index() {
    }
  }
 `
+const {laptop} = useSelector(adaptation)
   const [form] = Form.useForm()
   const bref = useRef(null)
   const pref = useRef(null)
@@ -373,7 +378,7 @@ useEffect(() => {
   return (
     
       <Pagecount bgcolor="transparent" pd="0px">       
-        <Mainbox>
+        <Mainbox laptop={laptop}>
           <Titlelayout title={'今日告警'} {...fs}>
             <Warnbox>
               <div style={{ width: '148px', height: '148px' }} ref={warnref}>

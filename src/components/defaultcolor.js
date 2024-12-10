@@ -20,4 +20,5 @@ export default {
     asiderfontcolor: ["#ffffff"],
     asiderfontcolorA: ["#33ff00"],
     asiderbgcolorA:["#3333cc"],
+    previewrbgcolor:["#135abd"],
 }

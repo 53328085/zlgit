@@ -95,7 +95,8 @@ const initialState = {
       desasiderend:"#033",
       asiderfontcolor: "#fff",
       asiderfontcolorA: "#3f0",
-      asiderbgcolorA:"#3333cc"
+      asiderbgcolorA:"#3333cc",
+      previewrbgcolor:"#135abd" , // 项目概览背景色
     },    
     intl: {
       lang: zhCN,
@@ -142,6 +143,7 @@ const initialState = {
   isGranary: false, // 演示国家粮仓用
   enterprise: {}, // 碳排 企业信息
   filterDeviceStyle: [], // 运行态 运行监控 设备监测 表计类型
+  sidershow: true,
 }
  
 export const getWebsiteState = createAsyncThunk(
@@ -336,9 +338,13 @@ const system = createSlice({
         },
        setadaptation(state, {payload}){
           let {adaptation}= state
-          console.log(payload)
+         
           state.adaptation ={...adaptation, ...payload}
 
+       },
+       getsidershow(state, {payload}){
+        console.log(payload);
+         state.sidershow=payload;
        }
     },
      extraReducers: {
@@ -473,6 +479,7 @@ export const enterprise = state => state.system.enterprise // 碳排企业信息
 export const Time = state => state.system.environmentTime // 碳排企业信息
 export const filterDeviceStyle = state => state.system.filterDeviceStyle?.filter(f => f.deviceStyle!=6)
 export const adaptation = state => state.system.adaptation
+export const sidershow = state => state.system.sidershow
 export const {
     configProject,
     getSetMenus,
@@ -503,6 +510,7 @@ export const {
     setIszhCN,
     getEnterprise, 
     setDeviceState,
-    setadaptation
+    setadaptation,
+    getsidershow,
 } = actions
 export default system.reducer
