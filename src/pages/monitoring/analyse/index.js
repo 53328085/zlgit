@@ -7,7 +7,10 @@ import moment from 'moment'
 import { Select, DatePicker, InputNumber, Checkbox, Radio, Pagination, message, Space, Form, Button } from "antd";
 
 import { Monitoring } from '@api/api.js'
+import {
 
+  adaptation
+} from "@redux/systemconfig.js";
 import Mask from '@com/mask.jsx'
 import UseTransfer from './transfer';
 import { drawEcharts } from "@com/useEcharts"
@@ -23,6 +26,7 @@ const {
 } = Monitoring
 export default function Index() {
   const projectId = useSelector(state => state.system.menus.projectId)
+  const {laptop} = useSelector(adaptation)
   const [form] = Form.useForm();
   const [typeSelected, setTypeSelected] = useState(1)
   const [baseLine, setBaseLine] = useState([])
@@ -285,12 +289,13 @@ export default function Index() {
     <Titlelayout title='对比分析'>
       <Cdivider type="h" margin="16px 0" />
       <Form
-        layout="line"
+        layout={laptop ? "vertical" : "line"}
         form={form}
+        
         style={{
           display: "flex",
           flexDirection: "row",
-          alignItems: "center",
+          alignItems: "flex-end",
         }}
         initialValues={{
           alike: '',
@@ -298,12 +303,12 @@ export default function Index() {
           state: 0
         }}
       >
-        <Space size={64} split={<Cdivider />}  >
+        <Space size={laptop ? 16 : 64} split={laptop ? "" :<Cdivider />} align="end"  >
           <Form.Item name="button" style={{ marginBottom: 0 }}>
             <Button type='primary' ghost onClick={() => onSetDevices()}>请选择要对比的设备</Button>
           </Form.Item>
           <Form.Item label="选择对比数据" name="type" style={{ marginBottom: 0 }}>
-            <Select placeholder='请选择对比项目' options={comparisonType} defaultValue={typeSelected} style={{ width: 188, marginLeft: 16 }} onChange={onChangeType}></Select>
+            <Select placeholder='请选择对比项目' options={comparisonType} defaultValue={typeSelected}   onChange={onChangeType}></Select>
           </Form.Item>
           <Form.Item name="line" style={{ marginBottom: 0 }} >
             <div style={{ display: 'flex', alignItems: 'center' }}>
@@ -311,14 +316,14 @@ export default function Index() {
                 <Checkbox value="selected">对比基准线</Checkbox>
               </Checkbox.Group>
               <div style={{ display: 'flex', alignItems: 'center', position: 'relative' }}>
-                <InputNumber style={{ width: '100%' }} value={baseLineValue} onChange={onChangeBaseLineValue} />
-                <p style={{
+                <InputNumber   value={baseLineValue} onChange={onChangeBaseLineValue} addonAfter={unit} />
+                {/* <p style={{
                   width: '60px', textAlign: 'center',
                   height: '30px', lineHeight: '30px', background: '#f2f2f2',
                   color: '#afa7a7', position: 'absolute', right: '1px'
                 }}>
                   {unit}
-                </p>
+                </p> */}
               </div>
             </div>
           </Form.Item>
@@ -330,9 +335,11 @@ export default function Index() {
               disabledDate={disabledDate}
               defaultValue={[moment().startOf('day'), moment()]}
               format="YYYY-MM-DD"
-              style={{ width: '320px' }} />
-            <Button type="primary" style={{ marginLeft: '16px' }} onClick={() => onSetcontrast()}>对比分析</Button>
+              style={{ width: laptop ? '220px' : '320px' }} />
           </Form.Item >
+          <Form.Item noStyle>
+          <Button type="primary"   onClick={() => onSetcontrast()}>对比分析</Button>
+          </Form.Item>
         </Space>
       </Form>
       <Mask task={transTag}>

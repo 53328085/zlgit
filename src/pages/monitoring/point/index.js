@@ -20,7 +20,7 @@ import {
 
 import { Link, useOutletContext, useLocation} from "react-router-dom";
 import { useAntdTable } from "ahooks";
-import styled from "styled-components";
+import styled, {css} from "styled-components";
 import style from "./style.module.less";
 import Icard from "./card";
 import imgurl from "./images/index.js";
@@ -29,13 +29,220 @@ import { ExportExcel } from "@com/useButton";
 import {
   selectProjectId,
   selectOneLevelDefaultId,
-  deviceState
+  deviceState,
+  adaptation
 } from "@redux/systemconfig.js";
 
 import Table from "@com/useTable";
 import { Serach, Cdivider,  CPagination} from "@com/comstyled";
+import bgi from "./images/bgi.png"
 import Pagecount from "@com/pagecontent";
 const channel = new BroadcastChannel('my-channel')
+const sty =css`
+grid-template-columns: repeat(auto-fill, minmax(438px, 1fr));
+gap: 16px;
+  flex: 1;
+  .cardItem{
+    .cardImg {
+      width: 98px;
+      height: 98px;
+    }
+  }
+  
+
+ 
+`
+const Cardbox=styled.div`
+ display: grid;
+    grid-template-columns: repeat(3, 538px);
+    grid-template-rows: repeat(4, 152px);
+    row-gap: 16px;
+    justify-content: space-between;
+ 
+    .cardItem {
+  //  width: 538px;
+    height: 152px;
+    background-color: #fff;
+    border: 1px solid rgb(215, 215, 215);
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background-image: url(${bgi});
+    background-size: 100% 100%;
+    position: relative;
+    overflow: hidden;
+    .warning {
+        width: 14px;
+        height: 14px;
+        background-color: #08bf00;
+       // border: 1px solid rgba(0,0,0,0.2);
+        border-radius: 50%;
+        position: absolute;
+        top: 8px;
+        left: 8px;
+        animation: flicker 600ms  infinite linear;
+    }
+    .warningred {
+        width: 14px;
+        height: 14px;
+        background-color: #f13c3c;
+      //  border: 1px solid rgba(0,0,0,0.2);
+        border-radius: 50%;
+        position: absolute;
+        top: 8px;
+        left: 8px;
+        animation: flicker 600ms  infinite linear;
+    }
+  /*   .cardImgBox {
+        width: 128px;
+        height: 128px;
+      
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    } */
+
+    .cardImg {
+        width: 128px;
+        height: 128px;
+        // margin-left: 24px;
+        // background-color: #237ae4;
+    }
+
+    .ItemValue {
+      
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        justify-content: space-around;
+
+        .valueTitle {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-size: 14px;
+            color: #000;
+            font-weight: 700;
+            text-align: left;
+            width: 96%;
+            span{
+                width: 183px;
+            }
+        }
+
+        .valueData {
+            //margin-top: 10px;
+            font-size: 14px;
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .btnStyle {
+            display: grid;
+            grid-template-columns: repeat(2, 200px);
+            grid-template-rows: repeat(2, 35px);
+            margin-top: 10px;
+
+            .btnBoxStyle {
+                display: flex;
+                flex-direction: row;
+                align-items: center;
+                justify-content: space-between;
+                border-radius: 93px;
+                width: 186px;
+                border: 1px solid rgb(215, 215, 215);
+                height: 24px;
+                padding-left: 10px;
+                padding-right: 10px;
+                border-radius: 40px;
+                background-color: rgba(0, 0, 51, 1);
+                color: #33FF00;
+            }
+
+            .timeStyle {
+                width: 95px;
+                height: 22px;
+                font-size: 12px;
+                color: #fff;
+                line-height: 22px;
+                border-radius: 40px;
+
+                z-index: 10;
+            }
+
+          
+        }
+    }
+
+    .boxCard {
+        width: 200px;
+        height: 112px;
+        position: absolute;
+        right: 5px;
+        background-color: rgba(242, 242, 242, 0.75);
+        border: 1px solid rgb(228, 228, 228);
+        display: flex;
+        align-items: center;
+        justify-content: space-around;
+        flex-direction: column;
+        padding: 16px;
+
+        p {
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+    }
+
+    .state {
+        position: absolute;
+        top: 4px;
+        right: -18px;
+        transform: rotate(45deg);
+        background-color: rgb(0, 153, 102);
+        color: #fff;
+        width: 65px;
+        text-align: center;
+        font-size: 14px;
+    }
+
+    .stateOff {
+        position: absolute;
+        top: 4px;
+        right: -18px;
+        transform: rotate(45deg);
+        background-color: rgb(0102, 102, 102);
+        color: #fff;
+        width: 65px;
+        text-align: center;
+        font-size: 14px;
+    }
+    .stateAlarm{
+        position: absolute;
+        top: 4px;
+        right: -18px;
+        transform: rotate(45deg);
+        background-color: rgb(255, 77, 79);
+        color: #fff;
+        width: 65px;
+        text-align: center;
+        font-size: 14px;
+    }
+}
+
+    .btnBoxStyle {
+    display: flex;
+    flex-direction: row;
+    margin-bottom: 12px;
+
+   
+}
+${props=> props.laptop ? sty : null}
+  
+`
+
 export default function Index(props) {
   const tableLoadRef = useRef();
   const projectId = useSelector(selectProjectId);
@@ -44,7 +251,7 @@ export default function Index(props) {
   let {exparams} = useOutletContext()
   let {deviceStyle} = exparams
   const dstate = useSelector(deviceState)
-  console.log(deviceStyle,"----deviceStyle--exparams")
+  let {laptop} = useSelector(adaptation)
   // const [messageApi, contextHolder] = message.useMessage();
   const {
    
@@ -299,16 +506,16 @@ export default function Index(props) {
     <Pagecount>
       <div className="flexcol">
         <Form
-          layout="line"
+          layout={laptop ? "vertical" : "line"}
           form={form}
-          style={{ display: "flex", justifyContent: "space-between" }}
+          style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end" }}
           initialValues={{
             alike: '',
             category: '',
             state: 0
           }}
         >
-          <Space size={64} split={<Cdivider />}>
+          <Space size={laptop ? 16 : 64} split={laptop ? "" :<Cdivider />} >
             <Form.Item
               label="设备查询"
               name="alike"
@@ -316,7 +523,7 @@ export default function Index(props) {
             >
               <Serach
                 placeholder="输入设备名称/设备编号/安装地址"
-                style={{ width: "340px" }}
+                style={{ width: laptop ? "280px" : "340px" }}
                 onSearch={submit}
               />
             </Form.Item>
@@ -327,7 +534,7 @@ export default function Index(props) {
             >
               <Select              
                 style={{
-                  width: 200,
+                  width: laptop ? 180 : 200,
                 }}
                 onChange={submit}
               >
@@ -348,7 +555,7 @@ export default function Index(props) {
             >
               <Select
                 style={{
-                  width: 200,
+                  width: laptop ? 100 : 200,
                 }}
                 onChange={submit}
                 options={[
@@ -372,7 +579,7 @@ export default function Index(props) {
               />
             </Form.Item>
           </Space>
-          <Space size={16} style={{ marginLeft: "auto" }}>
+          <Space size={laptop ? 8 :16} style={{ marginLeft: "auto" }}>
             <Radio.Group
               onChange={changeTab}
               defaultValue="card"
@@ -396,7 +603,7 @@ export default function Index(props) {
         </Form>
         <Cdivider type="h" margin="16px 0" />
         {isCard ? (
-          <div className={style.cardBox}>
+          <Cardbox laptop={laptop}>
             {tableProps?.dataSource?.length > 0 ?
                 tableProps?.dataSource.map((item, index) => { // state 1, 离线 2 在线 3 告警; states 
                 /*   let status =
@@ -432,7 +639,7 @@ export default function Index(props) {
                   );
                 })
               : ""}
-          </div>
+          </Cardbox>
         ) : (
             <Table
               columns={columns}

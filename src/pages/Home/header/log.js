@@ -21,6 +21,7 @@ import {pwdValidator, phoneValidator} from '@pages/rule.js'
 import {Login,CustTheme} from '@api/api' 
 import {CustButton} from '@com/useButton'
 import {handlermenu,isObject} from "@com/usehandler"
+import svgurl from './icon/svg'
 const {Text} = Typography 
 const Lngdiv = styled.div`
   display: flex;
@@ -65,20 +66,46 @@ const Ldiv = styled.div`
 
 let style = css`width: 58px;
        border-right: none;
-       font-size: 12px;`
-const Idiv = styled.div`
-  
-//  border-right: 1px solid ${props => props.theme.menusbgcolorRborder || '#ffffff'};  
-  height: inherit;
-  width: 112px;
-  display: flex;
-  justify-content: center;
-  align-items: end;
-  padding-bottom: 4px;
-  background-repeat: no-repeat;
-  background-position: top 4px center;
-  position: relative;
-  &:not(:last-of-type):after{
+       font-size: 12px;
+       .logo {
+              height: 28px;
+              width: 28px;
+              line-height: 28px;
+              overflow: hidden;
+              .shadow {
+              transform: translateX(-28px);
+              filter: drop-shadow(28px 0 0  ${props => props.theme.menusbgcolorRfont || '#ffffff'});
+            }
+           
+        }
+    &:hover {
+      .logo {
+              height: 28px;
+              width: 28px;
+              line-height: 28px;
+              overflow: hidden;
+              .shadow {
+              transform: translateX(-28px);
+              filter: drop-shadow(28px 0 0  ${props => props.theme.menusbgcolorRA || '#3988e7'});
+            }
+           
+        }
+    }
+       `
+
+
+const Logbox = styled.div`
+  &&{
+    height: inherit;
+    width: 112px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+    padding: 4px 0;
+    position: relative;
+    cursor: pointer;
+    &:not(:last-of-type)::after{
     content: '';
     position: absolute;
     top:2px;
@@ -88,51 +115,49 @@ const Idiv = styled.div`
     display: block;
     background-color: ${props => props.theme.menusbgcolorRborder || '#ffffff'} ;
   }
-  ${props => props.laptop ? style : null}
-  &:last-child {
-    border-right: none;
-  }
+    span {
+      line-height: 1;
+      color: ${props => props.theme.menusbgcolorRfont || '#ffffff'};
+      &:hover{
+        line-height: 1;
+       color: ${props => props.theme.menusbgcolorRA || '#3988e7'}
+      }
+    }
+    .logo {
+              height: 36px;
+              width: 36px;
+              line-height: 36px;
+              overflow: hidden;
+              .shadow {
+              transform: translateX(-36px);
+              filter: drop-shadow(36px 0 0  ${props => props.theme.menusbgcolorRfont || '#ffffff'});
+            }
+           
+        }
   &:hover {
-    background-color:${props => props.theme.menusbgcolorRA || '#3988e7'} ;
-    cursor: pointer;
-    border-right: 1px solid rgba(255, 255, 255, 0.1);
-  }
-  span {
-    line-height: 1;
-    color: ${props => props.theme.menusbgcolorRfont || '#ffffff'};
-  }
-  &.Idiv1{
-    background-image: url(${imgurl['31N']});
-  &:hover {
-    background-image: url(${imgurl['31H']});
-  }
-  }
-  &.Idiv2 {
-    background-image: url(${imgurl['32N']});
-  &:hover {
-    background-image: url(${imgurl['32H']});
-  }
-  }
-  &.Idiv3{
-    background-image: url(${imgurl['33N']});
-  &:hover {
-    background-image: url(${imgurl['33H']});
-  }
-  }
-  &.Idiv4{
-    background-image: url(${imgurl['34N']});
-  &:hover {
-    background-image: url(${imgurl['34H']});
-  }
-  }
-  &.Idiv5{
-    background-image: url(${imgurl['35N']});
-  &:hover {
-    background-image: url(${imgurl['35H']});
-  }
-  }
-`;
+      .logo {
+              height: 36px;
+              width: 36px;
+              line-height: 36px;
+              overflow: hidden;
+              .shadow {
+              transform: translateX(-36px);
+              filter: drop-shadow(36px 0 0  ${props => props.theme.menusbgcolorRA || '#3988e7'});
+            }
+           
+        }
+        span {
+       color: ${props => props.theme.menusbgcolorRA || '#3988e7'}
+    }
+    }
 
+    ${props => props.laptop ? style : null}
+  }
+`
+const Ciocn = (props) => {
+  const url = props.url || svgurl['0104']
+  return <div className="logo"><img src={url}  className="shadow" style={{height: '100%', width: "100%"}} /></div> 
+}
 const Triangle = styled.div`
     width: 0; 
      height: 0;
@@ -179,7 +204,7 @@ export default function Log() {
     {label: '退出系统', key:"exit"},
   ]
   const [items, setItems] = useState(inita)
-  const [themes, setThemes] = useState([])
+  
   let dataScreen =setmenus?.find(i => i.key=='dataScreen')?.label //数据大屏
   let projectSet = setmenus?.find(i => i.key=='projectSet')?.label //项目设置
   let systemSet = setmenus?.find(i => i.key=='systemSet')?.label // 平台设置
@@ -236,13 +261,7 @@ const getcurTheme= async(userId, projectId)=> {
     let {success, data} = await CustTheme.QueryTheme(projectId)
     let datalen = Array.isArray(data) && data.length> 0 && success ;
     let item =[];
-   /*  if(success && datalen){
-        setThemes(data)
-        let item=  data.map(d => ({label: d.name, key: d.id}))
-        setItems([...inita, ...item])
-    }else{
-      setItems(inita)
-    } */
+
     let {success:suc, data:themedata} = await CustTheme.GetUserTheme(userId)
     let {themeId} = themedata || {}
     if(suc && themeId && datalen){
@@ -439,7 +458,7 @@ const settheme = async (themeId) => {
     const ponOk = async() => { 
       try {
        let {oldPwd, pwd} = await pform.validateFields()
-       console.log(mobile)
+      
        let  param= {
           projectId,
           userId ,
@@ -472,26 +491,31 @@ const settheme = async (themeId) => {
       <Ldiv>
         {
           config ? 
-          (<Idiv laptop={adap.laptop} className="Idiv5" onClick={back}>
+          (<Logbox laptop={adap.laptop}  onClick={back}>
+            <Ciocn url={svgurl['back']} />
             <span> 返回</span>
-          </Idiv>)
+          </Logbox>)
           :
         <>
-      { isgranary ? <Idiv laptop={adap.laptop} className="Idiv1"  onClick={() => window.open('http://10.5.7.60:4242/ses', '_blank')}>
+      { isgranary ? <Logbox laptop={adap.laptop}  onClick={() => window.open('http://10.5.7.60:4242/ses', '_blank')}>
+      <Ciocn url={svgurl['screen']} />
           <span> {dataScreen}</span>
-        </Idiv> : showscreen  &&  <Idiv laptop={adap.laptop} className="Idiv1" onClick={onJump}>
+        </Logbox> : showscreen  &&  <Logbox laptop={adap.laptop}  onClick={onJump}>
+        <Ciocn url={svgurl['screen']} />
           <span> {dataScreen}</span>
-        </Idiv>
+        </Logbox>
         }
  
  
  
-        { roleType < 4 ? (<Idiv laptop={adap.laptop} className="Idiv4"  onClick={onConfigure}> 
+        { roleType < 4 ? (<Logbox laptop={adap.laptop}    onClick={onConfigure}> 
+          <Ciocn url={svgurl['set']} />
           <span>{projectSet}</span>
-        </Idiv>):null}
-        { roleType < 3 ? (<Idiv  Idiv laptop={adap.laptop} className="Idiv2" onClick={projectcfg}>
+        </Logbox>):null}
+        { roleType < 3 ? (<Logbox  Idiv laptop={adap.laptop}   onClick={projectcfg}>
+          <Ciocn url={svgurl['platform']} />
           <span>{systemSet}</span>
-        </Idiv>):null}
+        </Logbox>):null}
         </>
         }
         <Dropdown
@@ -502,11 +526,10 @@ const settheme = async (themeId) => {
         trigger={['click']
       } 
         overlayClassName="custDropdown">
-        <Idiv  laptop={adap.laptop} className="Idiv3">
-          
+        <Logbox  laptop={adap.laptop}>
+        <Ciocn url={svgurl['user']} />
             <span>{name}</span>
-          
-        </Idiv>
+        </Logbox>
         </Dropdown> 
      
        

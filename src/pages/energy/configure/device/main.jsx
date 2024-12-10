@@ -1,4 +1,4 @@
-import React, { useState, useRef, useMemo, useEffect } from 'react'
+import React, { useState, useRef, useMemo, useEffect, useCallback } from 'react'
 import { Button, message, Form, Input, Typography, Space, Image } from 'antd';
 import { useTranslation } from 'react-i18next'
 import Custmodl from '@com/useModal'
@@ -161,7 +161,8 @@ export default function Index({ projectId, areaId }) {
     }
   }
   const onOk = async () => {
-    console.log("点击ok--111", areaId)
+    
+  
     try {
       return form.validateFields().then(async () => {
       const { name, address, imageKey } = await form.validateFields();

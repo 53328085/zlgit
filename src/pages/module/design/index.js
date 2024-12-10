@@ -218,8 +218,8 @@ message.warning(errMsg|| "数据出错")
     <Titlelayout title={<div style={{display: 'flex', justifyContent: "space-between", alignItems: 'center'}}>
       <span>网站设计</span>  <Space size={32}>
         <CustButton onClick={onrest} ghost>恢复默认值</CustButton>
-        <CustButton onClick={onadd}>新增</CustButton>
-     <SaveButton onClick={onSave} isicon={false} />
+        <CustButton onClick={onadd}>新增方案</CustButton>
+     <CustButton onClick={onSave} isicon={false} >保存方案</CustButton>
      <CustButton onClick={ondelete} type="default" danger>删除</CustButton>
      </Space></div>}>
     <Formbox
@@ -313,20 +313,36 @@ message.warning(errMsg|| "数据出错")
       <Item label="运行态侧边栏结束色"  name="runasiderend" initialValue="#7662ff">
       <Ccolor name="runasiderend" />
       </Item>
-      <Item label="设计态侧边栏起始色"  name="desasiderstart" initialValue="#039">
+      <Item label="设计态侧边栏起始色"  name="desasiderstart" initialValue="#003399">
       <Ccolor name="desasiderstart" />
       </Item>
-      <Item label="设计态侧边栏结束色"  name="desasiderend" initialValue="#033">
+      <Item label="设计态侧边栏结束色"  name="desasiderend" initialValue="#003333">
       <Ccolor name="desasiderend" />
       </Item>
-      <Item label="侧边栏字体颜色"  name="asiderfontcolor" initialValue="#fff">
+      <Item label="侧边栏字体颜色"  name="asiderfontcolor" initialValue="#ffffff">
       <Ccolor name="asiderfontcolor" />
       </Item>
-      <Item label="当前侧边栏字体颜色"  name="asiderfontcolorA" initialValue="#3f0">
+      <Item label="当前侧边栏字体颜色"  name="asiderfontcolorA" initialValue="#33ff00">
       <Ccolor name="asiderfontcolorA" />
       </Item>
-      <Item label="当前侧边栏背景色"  name="asiderbgcolorA" initialValue="#33c">
+      <Item label="当前侧边栏背景色"  name="asiderbgcolorA" initialValue="#3333cc">
         <Ccolor name="asiderbgcolorA" />
+      </Item>
+      <Divider dashed  className="divider" />
+      <Item label="项目概述背景色"  name="previewrbgcolor" initialValue="#135abd">
+        <Ccolor name="previewrbgcolor" />
+      </Item>
+      <Item label="网关详情页标题背景色"  name="gatewayheardcolor" initialValue="#003366">
+        <Ccolor name="gatewayheardcolor" />
+      </Item>
+      <Item label="网关详情页背景色"  name="gatewaybgcolor" initialValue="#135abd">
+        <Ccolor name="gatewaybgcolor" />
+      </Item>
+      <Item label="设备详情页标题背景色"  name="deviceheardcolor" initialValue="#003366">
+        <Ccolor name="deviceheardcolor" />
+      </Item>
+      <Item label="设备详情页背景色"  name="devicebgcolor" initialValue="#135abd">
+        <Ccolor name="devicebgcolor" />
       </Item>
       <Item label="已有方案"    >
         <div style={{display: "flex", rowGap: "8px", flexWrap: "wrap"}}>
