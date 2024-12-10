@@ -1,30 +1,30 @@
-import React, {useEffect, useState, useRef, useMemo, useCallback} from 'react'
+import React, { useEffect, useState, useRef, useMemo, useCallback } from 'react'
 import Pagecount from '@com/pagecontent'
-import styled, {createGlobalStyle} from 'styled-components'
-import {Form, Space,Button, Tree, Input, Typography, Empty} from 'antd'
-import {useSelector} from 'react-redux'
-import {selectProjectId, enterprise} from '@redux/systemconfig'
+import styled, { createGlobalStyle } from 'styled-components'
+import { Form, Space, Button, Tree, Input, Typography, Empty } from 'antd'
+import { useSelector } from 'react-redux'
+import { selectProjectId, enterprise } from '@redux/systemconfig'
 import { cloneDeep } from 'lodash';
-import {Carbon} from '@api/api'
+import { Carbon } from '@api/api'
 import Titlelayout from "@com/titlelayout"
-import {TreeBtnN, TreeBtnW} from "@com/useButton"
-import {CustButtonT, CustButton, i18warning, i18success, CustTransO} from "@com/useButton"
+import { TreeBtnN, TreeBtnW } from "@com/useButton"
+import { CustButtonT, CustButton, i18warning, i18success, CustTransO } from "@com/useButton"
 import CModal from "@com/useModal"
-import TableT from  "./tabletmp"
+import TableT from "./tabletmp"
 import CDraw from './draw'
-import {isObject} from '@com/usehandler'
-const {Text} = Typography
-const {TreeNode} = Tree;
+import { isObject } from '@com/usehandler'
+const { Text } = Typography
+const { TreeNode } = Tree;
 import {
-  useBoundaryTreeQuery, 
-  useAddCarbonBoundaryMutation, 
+  useBoundaryTreeQuery,
+  useAddCarbonBoundaryMutation,
   useUpdateBoundaryMutation,
   useDeleteBoundaryMutation,
   useBoundaryConfigQuery,
   useSetConfigDataMutation,
   carbonSlice
 } from "@redux/carbon"
- 
+
 
 const GlobalStyles = createGlobalStyle`
      .ant-tree-switcher-leaf-line:after {
@@ -116,41 +116,41 @@ const Triangled = styled.div`
   border: 6px solid  transparent;
   border-top-color: ${props => props.theme.primaryColor} ;
 `
-const Triangler= styled.div`
+const Triangler = styled.div`
 width: 0;
 height: 0;
 border: 6px solid  transparent;
 border-left-color: ${props => props.theme.primaryColor} ;
 `
-export default function Index() { 
+export default function Index() {
   // const {id:enterpriseId} = useSelector(enterprise)
-  const  enterpriseData = useSelector(enterprise)
-  let  {enterpriseId } = enterpriseData
- 
+  const enterpriseData = useSelector(enterprise)
+  let { enterpriseId } = enterpriseData
+
   const projectId = useSelector(selectProjectId)
   const [form] = Form.useForm()
   const [tbform] = Form.useForm()
   const [open, setOpen] = useState(false)
   const [params, setParams] = useState(null)
   let carbonBoundaryId = useRef()
-  const [mTitle, setMtitle] =useState()
+  const [mTitle, setMtitle] = useState()
   const [expandedKeys, setExpandedKeys] = useState([])
- 
+
   const drawref = useRef()
-  
-  const displaydraw=(params) => {
-     setParams({...params, carbonBoundaryId: carbonBoundaryId.current})
-     drawref.current.drawOpen()
-  } 
+
+  const displaydraw = (params) => {
+    setParams({ ...params, carbonBoundaryId: carbonBoundaryId.current })
+    drawref.current.drawOpen()
+  }
 
   // 查询树
-const expandkeys = []
-const getKeys = (data) => {
-   if(Array.isArray(data) && data.length > 0) {
+  const expandkeys = []
+  const getKeys = (data) => {
+    if (Array.isArray(data) && data.length > 0) {
       data.forEach((d) => {
         expandkeys.push(d.id.toString())
-       
-        if(d.nodes) {
+
+        if (d.nodes) {
           getKeys(d.nodes)
         }
 
@@ -159,341 +159,343 @@ const getKeys = (data) => {
 
 
 
-   }
+    }
 
-}
-
- const [treeData, setTreeData] = useState([]) 
-/* const getTreeData = async () => {
-  try {
-   let {success, data, errMsg} = await  Carbon.QueryCarbonBoundary(enterpriseId)
-   if(success && Array.isArray(data) && data.length) {
-      setTreeData(data)
-      getKeys(data)
-      setExpandedKeys([...expandkeys])
-   }else {
-    if(!success) message.warning(errMsg || '数据出错')
-     setTreeData([])
-     setExpandedKeys([])
-   }
-
-  } catch (error) {
-    
   }
 
-
-}
-
-useEffect(() => {
-  if(Number.isInteger(enterpriseId)) {
-    getTreeData()
-  }
-
-}, [enterpriseId]) */
- 
-  const {isSuccess,refetch, data:boundaryData, error } = useBoundaryTreeQuery(enterpriseId, {
-    skip: !Number.isInteger(enterpriseId),
-    
-  })
- 
-  useEffect(() => {
-    if(boundaryData) {
-      let {success, errMsg, data} = boundaryData
-      if(success && Array.isArray(data) && data.length) {
+  const [treeData, setTreeData] = useState([])
+  /* const getTreeData = async () => {
+    try {
+     let {success, data, errMsg} = await  Carbon.QueryCarbonBoundary(enterpriseId)
+     if(success && Array.isArray(data) && data.length) {
         setTreeData(data)
         getKeys(data)
         setExpandedKeys([...expandkeys])
      }else {
-      if(!success) i18warning(errMsg)
+      if(!success) message.warning(errMsg || '数据出错')
        setTreeData([])
        setExpandedKeys([])
      }
-    }
-    
-  }, [boundaryData])
   
+    } catch (error) {
+      
+    }
+  
+  
+  }
+  
+  useEffect(() => {
+    if(Number.isInteger(enterpriseId)) {
+      getTreeData()
+    }
+  
+  }, [enterpriseId]) */
+
+  const { isSuccess, refetch, data: boundaryData, error } = useBoundaryTreeQuery(enterpriseId, {
+    skip: !Number.isInteger(enterpriseId),
+
+  })
+
+  useEffect(() => {
+    if (boundaryData) {
+      let { success, errMsg, data } = boundaryData
+      if (success && Array.isArray(data) && data.length) {
+        setTreeData(data)
+        getKeys(data)
+        setExpandedKeys([...expandkeys])
+      } else {
+        if (!success) i18warning(errMsg)
+        setTreeData([])
+        setExpandedKeys([])
+      }
+    }
+
+  }, [boundaryData])
+
   // 新增 编辑 删除子项
- 
+
   const [addedit, setAddedit] = useState(true)
-  const [saveSubItem] =useAddCarbonBoundaryMutation() // 新增
+  const [saveSubItem] = useAddCarbonBoundaryMutation() // 新增
   const [editSubItem] = useUpdateBoundaryMutation() // 编辑
   const [deleteSubItme] = useDeleteBoundaryMutation() // 删除
   const parentIdRef = useRef({})
-  const mref=useRef()
+  const mref = useRef()
   const addSubitem = (id) => {
-     parentIdRef.current = id
-     setMtitle('新增碳排放边界分类子项')
-     setAddedit(true)
-     mref.current.onOpen()
+    parentIdRef.current = id
+    setMtitle('新增碳排放边界分类子项')
+    setAddedit(true)
+    mref.current.onOpen()
 
   }
-  const editSubitem = (id,name) => {
-   
+  const editSubitem = (id, name) => {
+
     parentIdRef.current = id
-    form.setFieldValue('name',name);
+    form.setFieldValue('name', name);
     setMtitle('编辑碳排放边界分类子项')
     setAddedit(false)
     mref.current.onOpen()
 
- }
+  }
 
- const idRef = useRef()
- const wref = useRef()
- const onDelete = async (id) => {
-     idRef.current = id
-     wref.current.onOpen()
-  
- }
+  const idRef = useRef()
+  const wref = useRef()
+  const onDelete = async (id) => {
+    idRef.current = id
+    wref.current.onOpen()
 
-const onDelOK = async() => {
-   try {
-    let {success, errMsg} = await deleteSubItme({id:idRef.current, enterpriseId}).unwrap()
-    if(success) {
-      i18success('delete')
-       //message.warning("删除成功")
-     //  getTreeData()
-       wref.current.onCancel()
-     }else {
-      i18warning(errMsg)
-      // message.warning(errMsg || "数据出错")
-     } 
-   } catch (error) {
-     console.log(error)
-   }
+  }
 
-}
-
- const onOk = async () => {
+  const onDelOK = async () => {
     try {
-      let {name} = await form.validateFields()
-      let id= parentIdRef.current
-   
-      if(addedit) {
-        let params ={
-          name,
-          parentId: id,
-          enterpriseId,
-        }
-         let {success, errMsg} = await saveSubItem(params).unwrap()
-          if(success) {
-          
-          //  getTreeData()
-          //  message.success("保存成功")
-          i18success('save')
-           
-          }else {
+      let { success, errMsg } = await deleteSubItme({ id: idRef.current, enterpriseId }).unwrap()
+      if (success) {
+        i18success('delete')
+        //message.warning("删除成功")
+        //  getTreeData()
+        wref.current.onCancel()
+      } else {
+        i18warning(errMsg)
+        // message.warning(errMsg || "数据出错")
+      }
+    } catch (error) {
+      console.log(error)
+    }
+
+  }
+
+  const onOk = async () => {
+    try {
+      return form.validateFields().then(async () => {
+        let { name } = await form.validateFields()
+        let id = parentIdRef.current
+
+        if (addedit) {
+          let params = {
+            name,
+            parentId: id,
+            enterpriseId,
+          }
+          let { success, errMsg } = await saveSubItem(params).unwrap()
+          if (success) {
+
+            //  getTreeData()
+            //  message.success("保存成功")
+            i18success('save')
+
+          } else {
             i18warning(errMsg)
             //message.warning(errMsg || '数据出错')
           }
-      }else {
-        let post ={
-          id,
-          name: encodeURIComponent(name),
-          enterpriseId,
+        } else {
+          let post = {
+            id,
+            name: encodeURIComponent(name),
+            enterpriseId,
+          }
+
+          let { success, errMsg } = await editSubItem(post).unwrap()
+          if (success) {
+            i18success('modify')
+            mref.current.onCancel()
+            //  message.success("修改成功")
+            //  getTreeData()
+          } else {
+            i18warning(errMsg)
+            // message.warning(errMsg || '数据出错')
+          }
         }
-       
-        let {success, errMsg} = await editSubItem(post).unwrap()
-        if(success) {
-          i18success('modify')
-          mref.current.onCancel()
-        //  message.success("修改成功")
-        //  getTreeData()
-        }else {
-          i18warning(errMsg)
-          // message.warning(errMsg || '数据出错')
-        }
-      }
+      })
     } catch (error) {
-       console.log(error)
+      console.log(error)
     }
-   
 
- }
 
-// 配置
+  }
+
+  // 配置
 
   const getText = (id, obj) => {
-   
-    if(!isObject(obj)) return '';
-    if(id==obj.id) {
+
+    if (!isObject(obj)) return '';
+    if (id == obj.id) {
       return obj.name
-    }else if(Array.isArray(obj.nodes) && obj.nodes.length >0) {
-        for(let nodeobj of obj.nodes) {
-          let name =  getText(id, nodeobj)         
-          if(name) return name;
-        }
+    } else if (Array.isArray(obj.nodes) && obj.nodes.length > 0) {
+      for (let nodeobj of obj.nodes) {
+        let name = getText(id, nodeobj)
+        if (name) return name;
+      }
     }
   }
 
-   const [queryconfig] = carbonSlice.useLazyDataConfigQuery() // 获取边界数据资源配置
-   const  [title, setTitle]=useState();
-   const [dataconfig, setDataConfig] =useState([])
- 
-   const onConfig = async (item) => {
-       try {
-        let {id} = item
-       
-        carbonBoundaryId.current = id;
-     //   setParams({...params,carbonBoundaryId:id})
-        let title = getText(id,treeData[0])
-        
-        let txt= title + '碳排放-数据源配置'
-        setDataConfig([])
-         
-        let {success, data, errMsg} = await queryconfig({enterpriseId, carbonBoundaryId:id, projectId}).unwrap();
-       
-        setTitle(txt)
-        setOpen(true)
-        if(success && Array.isArray(data) && data.length > 0) {
-        
-         setDataConfig([...data])       
-       
-         
-        }else {
-         setDataConfig([])
-        
-         if(!success) i18warning(errMsg)
-         // message.warning(errMsg || '数据出错')
-        }
-       } catch (error) {
-         console.log(error)
-       }
-      
-      
-       
-   }
+  const [queryconfig] = carbonSlice.useLazyDataConfigQuery() // 获取边界数据资源配置
+  const [title, setTitle] = useState();
+  const [dataconfig, setDataConfig] = useState([])
 
-   // 完成配置
-
-   const [finshconfig, {isLoading: isfinsh}] =useSetConfigDataMutation()
-   
-   const onfinsh = async () => {
+  const onConfig = async (item) => {
     try {
-       const values = tbform.getFieldsValue();
-       console.dir(values)
-      
-   
+      let { id } = item
+
+      carbonBoundaryId.current = id;
+      //   setParams({...params,carbonBoundaryId:id})
+      let title = getText(id, treeData[0])
+
+      let txt = title + '碳排放-数据源配置'
+      setDataConfig([])
+
+      let { success, data, errMsg } = await queryconfig({ enterpriseId, carbonBoundaryId: id, projectId }).unwrap();
+
+      setTitle(txt)
+      setOpen(true)
+      if (success && Array.isArray(data) && data.length > 0) {
+
+        setDataConfig([...data])
+
+
+      } else {
+        setDataConfig([])
+
+        if (!success) i18warning(errMsg)
+        // message.warning(errMsg || '数据出错')
+      }
+    } catch (error) {
+      console.log(error)
+    }
+
+
+
+  }
+
+  // 完成配置
+
+  const [finshconfig, { isLoading: isfinsh }] = useSetConfigDataMutation()
+
+  const onfinsh = async () => {
+    try {
+      const values = tbform.getFieldsValue();
+      console.dir(values)
+
+
       let params = {
         enterpriseId,
-        carbonBoundaryId:carbonBoundaryId.current,
+        carbonBoundaryId: carbonBoundaryId.current,
         post: []
       }
-    
-      for(let [key, value] of Object.entries(values)) {
-        params.post.push( {subCategoryId: parseInt(key), dataSource: value})
+
+      for (let [key, value] of Object.entries(values)) {
+        params.post.push({ subCategoryId: parseInt(key), dataSource: value })
       }
-      let {success, errMsg} = await finshconfig(params).unwrap()
-      if(success) {
+      let { success, errMsg } = await finshconfig(params).unwrap()
+      if (success) {
         i18success('save')
-       // message.success('保存成功')
-      }else {
+        // message.success('保存成功')
+      } else {
         i18warning(errMsg)
-       // message.warning(errMsg || '数据出错')
+        // message.warning(errMsg || '数据出错')
       }
-    
+
       setOpen(false)
 
     } catch (error) {
       console.log(error)
     }
-     
 
-   }
 
-   // end
+  }
 
-   const Title = useMemo(() => (<div style={{display: 'flex', justifyContent: "space-between", alignItems: "center"}}>
-   <span>{title}</span>
-   <CustButtonT text="Completeconfiguration" ns="button" wh="auto" loading={isfinsh} onClick={onfinsh} /> 
-  </div>), [title,open])
+  // end
 
-const renderTreeNodes = (data) => {
-  data = cloneDeep(data);
-  let nodeArr = data.map((item) => {
-    let valName = cloneDeep(item.name);
-    let {name, id, nodes,parentId} = item   
-   
+  const Title = useMemo(() => (<div style={{ display: 'flex', justifyContent: "space-between", alignItems: "center" }}>
+    <span>{title}</span>
+    <CustButtonT text="Completeconfiguration" ns="button" wh="auto" loading={isfinsh} onClick={onfinsh} />
+  </div>), [title, open])
+
+  const renderTreeNodes = (data) => {
+    data = cloneDeep(data);
+    let nodeArr = data.map((item) => {
+      let valName = cloneDeep(item.name);
+      let { name, id, nodes, parentId } = item
+
       item.name = (
-        <div style={{display:"flex", justifyContent:"space-between", alignItems: "center"}}>
-        {parentId === 0 ? <CustButton wh="auto"  style={{borderRadius: '4px'}}>{item.name}</CustButton> :  <Custtitle>{item.name}</Custtitle>}
-        <Space size={16}>
-        <TreeBtnN text="addSubitem" wh="auto" onClick={() => addSubitem(id,valName)} key="add" />
-        <TreeBtnN text="edit" key="edit" onClick={() => editSubitem(id,valName)} />
-        {parentId!==0 && <TreeBtnW text="delete" key="delete" onClick={() => onDelete(id)} />}
-        <TreeBtnN text="configure" key="configure" onClick={() => onConfig(item)} />
-        </Space>
-      </div>
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+          {parentId === 0 ? <CustButton wh="auto" style={{ borderRadius: '4px' }}>{item.name}</CustButton> : <Custtitle>{item.name}</Custtitle>}
+          <Space size={16}>
+            <TreeBtnN text="addSubitem" wh="auto" onClick={() => addSubitem(id, valName)} key="add" />
+            <TreeBtnN text="edit" key="edit" onClick={() => editSubitem(id, valName)} />
+            {parentId !== 0 && <TreeBtnW text="delete" key="delete" onClick={() => onDelete(id)} />}
+            <TreeBtnN text="configure" key="configure" onClick={() => onConfig(item)} />
+          </Space>
+        </div>
       )
-      if(item.nodes){
-          return (
-              <TreeNode title={item.name} key={item.id} dataRef={item}>
-                  {renderTreeNodes(item.nodes)}
-              </TreeNode>
-          )
+      if (item.nodes) {
+        return (
+          <TreeNode title={item.name} key={item.id} dataRef={item}>
+            {renderTreeNodes(item.nodes)}
+          </TreeNode>
+        )
       }
       return <TreeNode title={item.name} key={item.id}></TreeNode>
-  })
-  return nodeArr;
-}
+    })
+    return nodeArr;
+  }
 
-  const custitem =(item) => {
-    let {name, id, nodes,parentId} = item   
-    if(Array.isArray(nodes) && nodes.length >0) {
-       custitem(nodes)
-     }
-    return   (
-      <div style={{display:"flex", justifyContent:"space-between", alignItems: "center"}} key={id}>
-        {parentId === 0 ? <CustButton wh="auto">{name}</CustButton> :  <Custtitle>{name}</Custtitle>}
+  const custitem = (item) => {
+    let { name, id, nodes, parentId } = item
+    if (Array.isArray(nodes) && nodes.length > 0) {
+      custitem(nodes)
+    }
+    return (
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }} key={id}>
+        {parentId === 0 ? <CustButton wh="auto">{name}</CustButton> : <Custtitle>{name}</Custtitle>}
         <Space size={16}>
-        <TreeBtnN text="addSubitem" wh="auto" onClick={() => addSubitem(item)} key="add" />
-        <TreeBtnN text="edit" key="edit" onClick={() => editSubitem(item)} />
-        {parentId!==0 && <TreeBtnW text="delete" key="delete" onClick={() => onDelete(id)} />}
-        <TreeBtnN text="configure" key="configure" onClick={() => onConfig(item)} />
+          <TreeBtnN text="addSubitem" wh="auto" onClick={() => addSubitem(item)} key="add" />
+          <TreeBtnN text="edit" key="edit" onClick={() => editSubitem(item)} />
+          {parentId !== 0 && <TreeBtnW text="delete" key="delete" onClick={() => onDelete(id)} />}
+          <TreeBtnN text="configure" key="configure" onClick={() => onConfig(item)} />
         </Space>
       </div>
     )
   }
   return (
     <Pagecount bgcolor="transparent" pd="0">
-    
-    <Mainbox >
-      <GlobalStyles/>
-         <Titlelayout title="排放单元结构" layout="flex" key="left">
-       {treeData?.length > 0 ?   (<CTree showIcon switcherIcon={(AntTreeNodeProps) => {
-        let {expanded} = AntTreeNodeProps
-        return  expanded ? <Triangled/> : <Triangler/>
-       }} height={654} defaultExpandedKeys={expandedKeys} showLine blockNode selectable={false}>{renderTreeNodes(treeData)}</CTree>): null
-       }
-          
-          </Titlelayout>
-         {open && (<Titlelayout   title={Title} layout="flex"  key="right">
-                       <Tablebox>
-                       
-                       {dataconfig.length > 0 ?  <Form form={tbform} component={false} preserve={false}> {dataconfig.map((e,index) => <TableT tabledata={e} key={e.categoryName}  displaydraw={displaydraw}   projectId={projectId} enterpriseId={enterpriseId} /> ) }</Form>
-                        
-                       : <Empty />
-                       }
-                       </Tablebox>
-          </Titlelayout>)
+
+      <Mainbox >
+        <GlobalStyles />
+        <Titlelayout title="排放单元结构" layout="flex" key="left">
+          {treeData?.length > 0 ? (<CTree showIcon switcherIcon={(AntTreeNodeProps) => {
+            let { expanded } = AntTreeNodeProps
+            return expanded ? <Triangled /> : <Triangler />
+          }} height={654} defaultExpandedKeys={expandedKeys} showLine blockNode selectable={false}>{renderTreeNodes(treeData)}</CTree>) : null
           }
-       </Mainbox>  
-       <CModal title={mTitle} ref={mref} mold="cust" onOk={onOk} width={480} custft={addedit}>
-        <Form form={form}   preserve={false}>
-           <Form.Item label="边界子项名称" name="name"
-           normalize={value => value.trim()}
+
+        </Titlelayout>
+        {open && (<Titlelayout title={Title} layout="flex" key="right">
+          <Tablebox>
+
+            {dataconfig.length > 0 ? <Form form={tbform} component={false} preserve={false}> {dataconfig.map((e, index) => <TableT tabledata={e} key={e.categoryName} displaydraw={displaydraw} projectId={projectId} enterpriseId={enterpriseId} />)}</Form>
+
+              : <Empty />
+            }
+          </Tablebox>
+        </Titlelayout>)
+        }
+      </Mainbox>
+      <CModal title={mTitle} ref={mref} mold="cust" onOk={onOk} width={480} custft={addedit}>
+        <Form form={form} preserve={false}>
+          <Form.Item label="边界子项名称" name="name"
+            normalize={value => value.trim()}
             rules={[{
               required: true,
-           }]}>
-                 <Input  allowClear />
-           </Form.Item>
-            
+            }]}>
+            <Input allowClear />
+          </Form.Item>
+
         </Form>
 
-     </CModal>
-     <CModal title="删除碳排放边界名称" onOk={onDelOK} mold="cust" type="warn" ref={wref}>
-         是否要删除选中的碳排放边界名称？
-     </CModal>
-     <CDraw ref={drawref} params={params} />
+      </CModal>
+      <CModal title="删除碳排放边界名称" onOk={onDelOK} mold="cust" type="warn" ref={wref}>
+        是否要删除选中的碳排放边界名称？
+      </CModal>
+      <CDraw ref={drawref} params={params} />
     </Pagecount>
   )
 }

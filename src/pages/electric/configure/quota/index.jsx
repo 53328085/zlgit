@@ -48,7 +48,7 @@ export default function Index() {
     UpdateAlarmEventSOE,
     UpdateAlarmEventCommunication,
     CopyPlan,
-    QueryValvseDevicePage,
+    QueryValveDevicePage,
     GetAlarmValveDevice
   } = AlarmManagement;
   const projectId = useSelector(selectProjectId);
@@ -634,6 +634,30 @@ export default function Index() {
     setTransTag(false)
   }
 
+
+  const columnsAssociation = [
+    {
+      align: "center",
+      title: "设备编号",
+      dataIndex: "sn",
+      key: "sn",
+    }, {
+      align: "center",
+      title: "设备名称",
+      dataIndex: "name",
+      key: "name",
+    }, {
+      align: "center",
+      title: "安装地址",
+      dataIndex: "address",
+      key: "address",
+    },{
+      align: "center",
+      title: "设备型号",
+      dataIndex: "category",
+      key: "category",
+    },
+  ]
   //关联告警配置
   const associationAlarmInfo = async (record) => {
     console.log(record)
@@ -644,7 +668,7 @@ export default function Index() {
       noalarmOpenTitle: '消警时设备（开）',
       noalarmCloseTitle: '消警时设备（关）',
     })
-    const resp = await QueryValvseDevicePage({ projectId })
+    const resp = await QueryValveDevicePage({ projectId })
     if (resp.success && Array.isArray(resp.data)) {
       setUnknownTable(resp.data || [])
     } else {
@@ -653,7 +677,6 @@ export default function Index() {
 
     const resNo = await GetAlarmValveDevice(projectId, record.Id)
     if (resNo.success && Array.isArray(resNo.data)) {
-      setUnknownTable(resNo.data || [])
       setAlarmOpenData([])
       setAlarmCloseTable([])
       setNoalarmOpenTable([])
@@ -831,7 +854,7 @@ export default function Index() {
         ></AlarmEventModal>
 
         <Mask task={transTag}>
-          {transTag && <UseTransfer transferTitle={transferTitle} columns={columns}
+          {transTag && <UseTransfer transferTitle={transferTitle} columns={columnsAssociation}
             alarmOpenTable={alarmOpenTable} alarmCloseTable={alarmCloseTable} noalarmOpenTable={noalarmOpenTable} noalarmCloseTable={noalarmCloseTable} unknownTable={unknownTable} saveValue={getSaveValue} closeValue={getCloseValue}></UseTransfer>}
         </Mask>
       </Titlelayout>

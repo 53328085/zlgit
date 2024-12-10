@@ -163,6 +163,7 @@ export default function Index({ projectId, areaId }) {
   const onOk = async () => {
     console.log("点击ok--111", areaId)
     try {
+      return form.validateFields().then(async () => {
       const { name, address, imageKey } = await form.validateFields();
       let params = {
         name: encodeURIComponent(name),
@@ -197,7 +198,7 @@ export default function Index({ projectId, areaId }) {
           aref.current.onCancel()
         })
       }
-
+    })
     } catch (e) {
 
     }
@@ -304,7 +305,7 @@ export default function Index({ projectId, areaId }) {
     if (!!value) {
       return Promise.resolve();
     }
-    return Promise.reject(new Error('项目Log必须上传'));
+    return Promise.reject(new Error('设备图片必须上传'));
 
   }
   const addmodal = useMemo(() => <Custmodl title={modalTitle} ref={aref} custft={isAdd} mold="cust" width={512} onOk={onOk}>
