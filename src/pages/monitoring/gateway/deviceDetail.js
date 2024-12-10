@@ -27,6 +27,18 @@ import deviceDetail3 from './images/deviceDetail3.jpg'
 import Control from './Control'
  
 const {Text} = Typography
+const Mainbox =  styled.div`
+&&{
+  background-color: ${props => props.theme.devicebgcolor || "#135abd"};
+  .leftImgBox,.rightHead {
+    background-color: ${props => props.theme.devicebgcolor || "#135abd"};
+  }
+  .head{
+    background-color: ${props => props.theme.deviceheardcolor || "#003366"};
+  }
+  
+}
+`
 const Textbox = styled(Text)`
    && {
     color: #666;
@@ -777,8 +789,8 @@ export default function GatewayDetail(props) {
     'Open': '分闸'
    }
     return (
-        <div className={style.main}>
-            <div className={style.head}>
+        <Mainbox className={style.main}>
+            <div className={style.head + " head"}>
                 <img src={logoImage || imgurl.logo} className={style.headImg} ></img>
                 <p>{projectName}综合能源服务平台</p>
             </div>
@@ -786,7 +798,7 @@ export default function GatewayDetail(props) {
                 <div className={style.left}>
                     <div className={style.leftHead}><div className={style.leftHeadLine} ></div>
                         <p>设备详情</p></div>
-                    <div className={style.leftImgBox}>
+                    <div className={style.leftImgBox+ " leftImgBox"}>
                         <img src={detail?.imageBase64 ? detail?.imageBase64 : imgurl.category} className={style.leftImg} ></img>
                         <Ctitlec state={detail?.state}>{detail.state == 2 ? '设备在线' : detail.state == 3 ? '设备告警' : '设备离线'}</Ctitlec>
                     </div>
@@ -805,7 +817,7 @@ export default function GatewayDetail(props) {
                     {detail?.state ===3 &&  <Button type="primary" block danger onClick={() => onCancle(detail.sn)} style={{height: '48px'}}>忽略告警</Button>}
                 </div>
                 <div className={style.right}>
-                    <div className={style.rightHead}>
+                    <div className={style.rightHead+ " rightHead"}>
                         <div className={state == 1 ? style.tabBoxW : style.tabBoxB} onClick={() => { onchangeTab(1) }}>实时数据</div>
                       {showtab && 
                          <> 
@@ -968,6 +980,6 @@ export default function GatewayDetail(props) {
                     </div>
                 </div>
             </div>
-        </div>
+        </Mainbox>
     )
 }

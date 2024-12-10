@@ -97,6 +97,10 @@ const initialState = {
       asiderfontcolorA: "#3f0",
       asiderbgcolorA:"#3333cc",
       previewrbgcolor:"#135abd" , // 项目概览背景色
+      gatewayheardcolor:"#003366" , // 网关详情页标题色
+      gatewaybgcolor:"#135abd", // 网关详情页背景色
+      deviceheardcolor:"#003366" , // 设备详情页标题色
+      devicebgcolor:"#135abd", // 设备详情页背景色
     },    
     intl: {
       lang: zhCN,

@@ -332,6 +332,18 @@ message.warning(errMsg|| "数据出错")
       <Item label="项目概述背景色"  name="previewrbgcolor" initialValue="#135abd">
         <Ccolor name="previewrbgcolor" />
       </Item>
+      <Item label="网关详情页标题背景色"  name="gatewayheardcolor" initialValue="#003366">
+        <Ccolor name="gatewayheardcolor" />
+      </Item>
+      <Item label="网关详情页背景色"  name="gatewaybgcolor" initialValue="#135abd">
+        <Ccolor name="gatewaybgcolor" />
+      </Item>
+      <Item label="设备详情页标题背景色"  name="deviceheardcolor" initialValue="#003366">
+        <Ccolor name="deviceheardcolor" />
+      </Item>
+      <Item label="设备详情页背景色"  name="devicebgcolor" initialValue="#135abd">
+        <Ccolor name="devicebgcolor" />
+      </Item>
       <Item label="已有方案"    >
         <div style={{display: "flex", rowGap: "8px", flexWrap: "wrap"}}>
         {

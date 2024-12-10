@@ -21,4 +21,8 @@ export default {
     asiderfontcolorA: ["#33ff00"],
     asiderbgcolorA:["#3333cc"],
     previewrbgcolor:["#135abd"],
+    gatewayheardcolor:["#003366"],
+    gatewaybgcolor:["#135abd"],
+    deviceheardcolor:["#003366"],
+    devicebgcolor:["#135abd"]
 }
