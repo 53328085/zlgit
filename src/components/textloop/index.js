@@ -19,7 +19,7 @@ const Showbox =styled.div`
      
  `
 const Textscroll = styled.div`
-  width: 538px;
+  width: ${props => props.laptop ? "438px" : "538px"};
   height: 46px;
   background-color: #f00;
   display: flex;
@@ -46,7 +46,7 @@ const Textscroll = styled.div`
      }
   }
   .scroll {
-    width: 353px;
+    width: ${props => props.laptop ? "300px" : "353px"};
     height: 46px;
     display: flex;
     flex-direction: column;
@@ -61,7 +61,7 @@ const Textscroll = styled.div`
   }
  
 `
-const App = memo(({projectId, roomId}) => {
+const App = memo(({projectId, roomId,laptop}) => {
    const [arr, setArr]=useState([])
    const isdiplay = arr?.length > 0
    const num = arr?.length ?? ''
@@ -100,7 +100,7 @@ const App = memo(({projectId, roomId}) => {
          <Fragment>
        {isdiplay ? <div>
           {show ?
-        <Textscroll>
+        <Textscroll laptop={laptop}>
              <div className='warning'>
                 <img src={warn} alt="" className='img' /> 
                 <Text ellipsis={{tooltip: num}}>告警({num})</Text>
