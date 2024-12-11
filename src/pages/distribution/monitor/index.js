@@ -24,6 +24,8 @@ const Mainbox = styled.div`
     left:16px;
     top:16px;
     display:flex;
+    column-gap: 16px;
+    width: 100%;
    }
   .cardList{
     position: absolute;
@@ -429,11 +431,12 @@ export default function Index() {
 }
 
 const HoverDiv = styled.div`
-  width:257px;
+//  width:257px;
+  flex: 0 1 257px;
   height:43px;
   background:#1b3b64;
   color:#fff;
-  margin-right:16px;
+ // margin-right:16px;
   text-align:center;
   line-height:43px;
   position:relative;
