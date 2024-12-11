@@ -6,34 +6,40 @@ import { Table, Input, message, Select, Space } from "antd";
 import { LeftOutlined, RightOutlined } from '@ant-design/icons'
 import { cloneDeep } from "lodash";
 import { CustButton } from '@com/useButton'
-import { Monitoring } from '@api/api.js'
-const { ComparativeAnalysis: { AllDeviceStyle, QueryCompareDevice } } = Monitoring
+import { AlarmManagement } from "@api/api.js";
 export default function index(props) {
     console.log(props);
+    const { SetAlarmValveDevice } = AlarmManagement;
     const projectId = useSelector(state => state.system.menus.projectId)
     const { t } = useTranslation(["button"])
     const [messageApi, contextHolder] = message.useMessage();
     const { Search } = Input
     const columns = props.columns
+    const columnsLeft = props.columnsLeft
     const [alarmOpenData, setAlarmOpenData] = useState([])
-    const [alarmOpenCopy, setAlarmOpenCopy] = useState([])
+    const [leftSelectCopy1, setleftSelectCopy1] = useState([])
     const [alarmCloseData, setAlarmloseData] = useState([])
-    const [alarmloseCopy, setAlarmloseCopy] = useState([])
+    const [leftSelectCopy2, setleftSelectCopy2] = useState([])
     const [noalarmOpenData, setNoalarmOpenData] = useState([])
-    const [noalarmOpenCopy, setNoalarmOpenCopy] = useState([])
+    const [leftSelectCopy3, setleftSelectCopy3] = useState([])
     const [noalarmloseData, setNoalarmloseData] = useState([])
-    const [noalarmloseCopy, setNoalarmloseCopy] = useState([])
-    const [unknownData, setUnknownData] = useState([])
+    const [leftSelectCopy4, setleftSelectCopy4] = useState([])
+    const [unknownData, setUnknownData] = useState(props.unknownTable)
     const [unknownCopy, setUnknownCopy] = useState([])
+    const [rightSelect, setrRightSelect] = useState([])
     useEffect(() => {
-        let subArr = cloneDeep(props.subTable)
-        setAlarmOpenData(subArr)
-        setAlarmOpenCopy(subArr)
-        let unknownArr = cloneDeep(props.unknownTable)
-        setUnknownData(unknownArr)
-        setUnknownCopy(unknownArr)
+        // let subArr = cloneDeep(props.subTable)
+        // setAlarmOpenData(subArr)
+        // setAlarmOpenCopy(subArr)
+        // let unknownArr = cloneDeep(props.unknownTable)
+        // setUnknownData(unknownArr)
+        // setUnknownCopy(unknownArr)
         setType(0)
-        setSearchUnknown('')
+        // setSearchUnknown('')
+        setAlarmOpenData(props.alarmOpenTable)
+        setAlarmloseData(props.alarmCloseTable)
+        setNoalarmOpenData(props.noalarmOpenTable)
+        setNoalarmloseData(props.noalarmCloseTable)
     }, [props])
 
     const [devices, setDevies] = useState([])
@@ -63,53 +69,53 @@ export default function index(props) {
 
 
     }
-    const [selectedRowKeys, setSelectedRowKeys] = useState([]);
-    // const [selectedSubKeys, setSelectedSubKeys] = useState([]);
-    const [selectedLeftOpenKeys, setSelectedLeftOpenKeys] = useState([]);
-    const [selectedLeftCloseKeys, setSelectedLeftCloseKeys] = useState([]);
-    const [selectedNoLeftOpenKeys, setSelectedNoLeftOpenKeys] = useState([]);
-    const [selectedNoLeftCloseKeys, setSelectedNoLeftCloseKeys] = useState([]);
-    const onLeftSelect1 = (newSelectedRowKeys) => {
-        setSelectedLeftOpenKeys(newSelectedRowKeys);
-    };
-    const onLeftSelect2 = (newSelectedRowKeys) => {
-        setSelectedLeftCloseKeys(newSelectedRowKeys);
-    };
-    
-    const onLeftSelect3 = (newSelectedRowKeys) => {
-        setSelectedNoLeftOpenKeys(newSelectedRowKeys);
-    };
-    
-    const onLeftSelect4 = (newSelectedRowKeys) => {
-        setSelectedNoLeftCloseKeys(newSelectedRowKeys);
-    };
+    const [selectedRightKeys, setSelectedRightKeys] = useState([]);
+    const [selectedLeft1, setSelectedLeft1] = useState([]);
+    const [selectedLeft2, setSelectedLeft2] = useState([]);
+    const [selectedLeft3, setSelectedLeft3] = useState([]);
+    const [selectedLeft4, setSelectedLeft4] = useState([]);
     const onRight = (newSelectedRowKeys) => {
-        //   console.log(newSelectedRowKeys)
-        setSelectedRowKeys(newSelectedRowKeys);
+        console.log(newSelectedRowKeys)
+        setSelectedRightKeys(newSelectedRowKeys);
+    };
+    const onleftSelect1 = (newSelectedRowKeys) => {
+        console.log("---newSelectedRowKeys", newSelectedRowKeys)
+        setSelectedLeft1(newSelectedRowKeys);
+    };
+    const onleftSelect2 = (newSelectedRowKeys) => {
+        setSelectedLeft2(newSelectedRowKeys);
+    };
+
+    const onleftSelect3 = (newSelectedRowKeys) => {
+        setSelectedLeft3(newSelectedRowKeys);
+    };
+
+    const onleftSelect4 = (newSelectedRowKeys) => {
+        setSelectedLeft4(newSelectedRowKeys);
     };
     const rightKeys = {
-        selectedRowKeys,
+        selectedRowKeys: selectedRightKeys,
         onChange: onRight,
     };
 
     const leftOpenKeys = {
-        selectedRowKeys: selectedLeftOpenKeys,
-        onChange: onLeftSelect1,
+        selectedRowKeys: selectedLeft1,
+        onChange: onleftSelect1,
     };
     const leftCloseKeys = {
-        selectedRowKeys: selectedLeftCloseKeys,
-        onChange: onLeftSelect2,
+        selectedRowKeys: selectedLeft2,
+        onChange: onleftSelect2,
     };
     const leftNoOpenKeys = {
-        selectedRowKeys: selectedNoLeftOpenKeys,
-        onChange: onLeftSelect3,
+        selectedRowKeys: selectedLeft3,
+        onChange: onleftSelect3,
     };
     const leftNoCloseKeys = {
-        selectedRowKeys: selectedNoLeftCloseKeys,
-        onChange: onLeftSelect4,
+        selectedRowKeys: selectedLeft4,
+        onChange: onleftSelect4,
     };
-    const unknownToSub = () => {
-        if (selectedRowKeys.length == 0) {
+    const unknownToSub = (seleced) => {
+        if (selectedRightKeys.length == 0) {
             messageApi.open({
                 type: 'warning',
                 content: '请至少选择一个设备！',
@@ -119,9 +125,8 @@ export default function index(props) {
             let arr = [...unknownData];
             let arr2 = [];
             let copyArr = [...unknownCopy];
-
-            console.log(selectedRowKeys)
-            selectedRowKeys.forEach(id => {
+            console.log(selectedRightKeys)
+            selectedRightKeys.forEach(id => {
                 let idx = arr.findIndex(a => a.id == id);
                 if (idx > -1) {
                     let item = arr.splice(idx, 1);
@@ -129,29 +134,47 @@ export default function index(props) {
                     arr2.push(...item)
                 }
             })
-
-            /*  for(let i =0;i< arr.length;i++){
-                 for(let j = 0;j<selectedRowKeys.length;j++){
-                     if(arr[i].id == selectedRowKeys[j]){
-                         for(let x = 0;x< copyArr.length;x++){
-                             if(arr[i].id == copyArr[x].id){
-                                 copyArr.splice(x, 1)
-                             }
-                         }
-                         arr2.push(arr[i])
-                         arr.splice(i,1)
-                         
-                     }
-                 }
-             } */
-            console.log(arr2);
-            //  setAlarmOpenData(alarmOpenData.concat(arr2));
-            // setAlarmOpenCopy(alarmOpenCopy.concat(arr2));
-            setAlarmOpenData([...arr2, ...alarmOpenData])
-            setAlarmOpenCopy([...arr2, ...alarmOpenCopy])
-            setUnknownData([...arr]);
+            console.log(arr2, alarmOpenData);
+            if (seleced == 1) {
+                let list1 = arr2.filter((item) => {
+                    return !alarmOpenData.some((ele) => ele.id === item.id);
+                });
+                let list2 = list1.filter((item) => {
+                    return !alarmCloseData.some((ele) => ele.id === item.id);
+                });
+                console.log(list1, list2)
+                setAlarmOpenData([...alarmOpenData, ...list2])
+                setleftSelectCopy1([...leftSelectCopy1, ...list2])
+            } else if (seleced == 2) {
+                let list1 = arr2.filter((item) => {
+                    return !alarmOpenData.some((ele) => ele.id === item.id);
+                });
+                let list2 = list1.filter((item) => {
+                    return !alarmCloseData.some((ele) => ele.id === item.id);
+                });
+                setAlarmloseData([...alarmCloseData, ...list2])
+                setleftSelectCopy2([...leftSelectCopy2, ...list2])
+            } else if (seleced == 3) {
+                let list1 = arr2.filter((item) => {
+                    return !noalarmOpenData.some((ele) => ele.id === item.id);
+                });
+                let list2 = list1.filter((item) => {
+                    return !noalarmloseData.some((ele) => ele.id === item.id);
+                });
+                setNoalarmOpenData([...noalarmOpenData, ...list2])
+                setleftSelectCopy3([...leftSelectCopy3, ...list2])
+            } else if (seleced == 4) {
+                let list1 = arr2.filter((item) => {
+                    return !noalarmOpenData.some((ele) => ele.id === item.id);
+                });
+                let list2 = list1.filter((item) => {
+                    return !noalarmloseData.some((ele) => ele.id === item.id);
+                });
+                setNoalarmloseData([...noalarmloseData, ...list2])
+                setleftSelectCopy4([...leftSelectCopy4, ...list2])
+            }
             setUnknownCopy([...copyArr]);
-            setSelectedRowKeys([])
+            setSelectedRightKeys([])
         }
     }
     const subToUnknown = () => {
@@ -174,27 +197,11 @@ export default function index(props) {
                     arr2.push(...item)
                 }
             })
-            /*  for(let i =0;i< arr.length;i++){
-                 for(let j = 0;j<selectedSubKeys.length;j++){
-                     if(arr[i].id == selectedSubKeys[j]){
-                         for(let x = 0;x< copyArr.length;x++){
-                             console.log(copyArr[x])
-                             if(arr[i].id == copyArr[x].id){
-                                 copyArr.splice(x, 1)
-                             }
-                         }
-                         arr2.push(arr[i])
-                         arr.splice(i,1)
-                     }
-                 }
-             } */
-            //  setUnknownData(unknownData.concat(arr2));
-            //  setUnknownCopy(unknownCopy.concat(arr2));
             setUnknownData([...arr2, ...unknownData]);
             setUnknownCopy([...arr2, ...unknownCopy]);
             setAlarmOpenData([...arr])
             setAlarmOpenCopy([...copyArr])
-            setSelectedSubKeys([])
+            setSelectedRightKeys([])
         }
     }
 
@@ -207,19 +214,47 @@ export default function index(props) {
             content,
         });
     };
-    const handleSave = () => {
-        console.log(alarmOpenData.length);
-        if (alarmOpenData.length < 2) return messageApi.open({
-            type: 'warning',
-            content: '请至少选择两个设备进行对比分析！',
-        })
-
-        props.saveValue({
-            alarmOpenData,
-            unknownCopy,
-        })
-        props.closeValue('close');
-        // props.subTable = alarmOpenData
+    const handleSave = async () => {
+        let ItemValveDtos = []
+        alarmOpenData.map((item1) => {
+            return ItemValveDtos.push({
+                AlarmState: 1,
+                ValveDeviceSn: item1.sn,
+                ValveState: 1,
+            });
+        });
+        alarmCloseData.map((item1) => {
+            return ItemValveDtos.push({
+                AlarmState: 1,
+                ValveDeviceSn: item1.sn,
+                ValveState: 2,
+            });
+        });
+        noalarmOpenData.map((item1) => {
+            return ItemValveDtos.push({
+                AlarmState: 2,
+                ValveDeviceSn: item1.sn,
+                ValveState: 1,
+            });
+        });
+        noalarmloseData.map((item1) => {
+            return ItemValveDtos.push({
+                AlarmState: 2,
+                ValveDeviceSn: item1.sn,
+                ValveState: 2,
+            });
+        });
+        let params = {
+            projectId: projectId,
+            AlarmId: props.planItemId,
+            ItemValveDtos: ItemValveDtos,
+        }
+        console.log(params)
+        // return
+        const res = await SetAlarmValveDevice(params)
+        if (res.success) {
+            message.success("告警关联设备成功")
+        }
     }
     let tag = columns[0].key;
 
@@ -295,13 +330,6 @@ export default function index(props) {
             setUnknownData([...arr]);
         }
     }
-    const toBottomLeft = (selected) => {
-
-    }
-
-    const toBottomRight = (selected) => {
-
-    }
     useEffect(() => {
         getType();
     }, [])
@@ -321,9 +349,10 @@ export default function index(props) {
                             </div>
                         </div>
                         <div className={style.actions}>
+                            <span className={style.tip}> 选择告警时启用设备</span>
                             <Space size={16}>
-                                <CustButton icon={<LeftOutlined />} style={{ height: "46px", width: "68px" }} onClick={toBottomLeft(1)}></CustButton>
-                                <CustButton icon={<RightOutlined />} style={{ height: "46px", width: "68px" }} onClick={toBottomRight(1)}></CustButton>
+                                <CustButton icon={<LeftOutlined />} style={{ height: "46px", width: "68px" }} onClick={() => unknownToSub(1)}></CustButton>
+                                <CustButton icon={<RightOutlined />} style={{ height: "46px", width: "68px" }} onClick={() => subToUnknown(1)}></CustButton>
                             </Space>
                         </div>
                     </div>
@@ -331,13 +360,14 @@ export default function index(props) {
                         <div className={style.otherSubTable}>
                             <div className={style.publicTitle}>{props.transferTitle.alarmCloseTitle}</div>
                             <div>
-                                <Table bordered dataSource={alarmOpenData} columns={columns} size='middle' rowKey='id' pagination={false} scroll={{ y: 90 }} rowSelection={leftCloseKeys}></Table>
+                                <Table bordered dataSource={alarmCloseData} columns={columns} size='middle' rowKey='id' pagination={false} scroll={{ y: 90 }} rowSelection={leftCloseKeys}></Table>
                             </div>
                         </div>
                         <div className={style.actions}>
+                            <span className={style.tip}>选择告警时禁用设备</span>
                             <Space size={16}>
-                                <CustButton icon={<LeftOutlined />} style={{ height: "46px", width: "68px" }} onClick={toBottomLeft(2)}></CustButton>
-                                <CustButton icon={<RightOutlined />} style={{ height: "46px", width: "68px" }} onClick={toBottomRight(2)}></CustButton>
+                                <CustButton icon={<LeftOutlined />} style={{ height: "46px", width: "68px" }} onClick={() => unknownToSub(2)}></CustButton>
+                                <CustButton icon={<RightOutlined />} style={{ height: "46px", width: "68px" }} onClick={() => subToUnknown(2)}></CustButton>
                             </Space>
                         </div>
                     </div>
@@ -345,13 +375,14 @@ export default function index(props) {
                         <div className={style.otherSubTable}>
                             <div className={style.publicTitle}>{props.transferTitle.noalarmOpenTitle}</div>
                             <div>
-                                <Table bordered dataSource={alarmOpenData} columns={columns} size='middle' rowKey='id' pagination={false} scroll={{ y: 90 }} rowSelection={leftNoOpenKeys}></Table>
+                                <Table bordered dataSource={noalarmOpenData} columns={columns} size='middle' rowKey='id' pagination={false} scroll={{ y: 90 }} rowSelection={leftNoOpenKeys}></Table>
                             </div>
                         </div>
                         <div className={style.actions}>
+                            <span className={style.tip}>选择消警时启用设备</span>
                             <Space size={16}>
-                                <CustButton icon={<LeftOutlined />} style={{ height: "46px", width: "68px" }} onClick={toBottomLeft(3)}></CustButton>
-                                <CustButton icon={<RightOutlined />} style={{ height: "46px", width: "68px" }} onClick={toBottomRight(3)}></CustButton>
+                                <CustButton icon={<LeftOutlined />} style={{ height: "46px", width: "68px" }} onClick={() => unknownToSub(3)}></CustButton>
+                                <CustButton icon={<RightOutlined />} style={{ height: "46px", width: "68px" }} onClick={() => subToUnknown(3)}></CustButton>
                             </Space>
                         </div>
                     </div>
@@ -359,13 +390,14 @@ export default function index(props) {
                         <div className={style.otherSubTable}>
                             <div className={style.publicTitle}>{props.transferTitle.noalarmCloseTitle}</div>
                             <div>
-                                <Table bordered dataSource={alarmOpenData} columns={columns} size='middle' rowKey='id' pagination={false} scroll={{ y: 90 }} rowSelection={leftNoCloseKeys}></Table>
+                                <Table bordered dataSource={noalarmloseData} columns={columns} size='middle' rowKey='id' pagination={false} scroll={{ y: 90 }} rowSelection={leftNoCloseKeys}></Table>
                             </div>
                         </div>
                         <div className={style.actions}>
+                            <span className={style.tip}>选择消警时禁用设备</span>
                             <Space size={16}>
-                                <CustButton icon={<LeftOutlined />} style={{ height: "46px", width: "68px" }} onClick={toBottomLeft(4)}></CustButton>
-                                <CustButton icon={<RightOutlined />} style={{ height: "46px", width: "68px" }} onClick={toBottomRight(4)}></CustButton>
+                                <CustButton icon={<LeftOutlined />} style={{ height: "46px", width: "68px" }} onClick={() => unknownToSub(4)}></CustButton>
+                                <CustButton icon={<RightOutlined />} style={{ height: "46px", width: "68px" }} onClick={() => subToUnknown(4)}></CustButton>
                             </Space>
                         </div>
                     </div>
@@ -395,9 +427,8 @@ export default function index(props) {
                 </div>
 
                 <div className={style.btn}>
-                    <CustButton onClick={handleSave} style={{ height: "46px" }} >{t("button:save")}</CustButton>
-                    <CustButton type="default" style={{ height: "46px", marginLeft: "16px" }} onClick={() => handleClose()}>{t("button:cancel")}</CustButton>
-                </div>
+                    <CustButton type="default" style={{ height: "46px" }} onClick={() => handleClose()}>{t("button:cancel")}</CustButton>
+                    <CustButton onClick={handleSave} style={{ height: "46px", marginLeft: "16px" }} >{t("button:save")}</CustButton></div>
             </div>
         </div>
 
