@@ -14,7 +14,6 @@ const ItemAll = styled.div`
 flex: 1;
 display: grid;
 grid-template-columns: repeat(4, 394px);
-height:316px;
 row-gap: 16px;
 //   gap: 16px;
 justify-content: space-between;   
@@ -131,54 +130,53 @@ const Itembox = styled.div`
 
 
 export default function Item(props) {
-    console.log(props)
-    // 1，2，3 离线,正常，告警
-    let { areaName, value } = props
-    // const state = typeof index == "number" ? (['离线', '正常', '告警'][index - 1] || '未知') : '未知';
-    // const bgColor = typeof index == "number" ? (['#666', '#096', '#ff4d4f'][index - 1] || 'ff4d4f') : '#666';
-    return (
-        <ItemAll>
-            <div className='levelName' key={nanoid()}>{areaName}</div>
-            <div className='level'>
-                {value.map(item =>
-                    <div >
-                        <Itembox>
-                            {/* <Statebox top="13px" right="-20px" width="85px" bgColor={bgColor}>{state}</Statebox> */}
-                            <div className='upper' key={nanoid()}>
-                                <div className='pic' key={nanoid()}>
-                                    <Image src={item.image} preview={false} ></Image>
-                                </div>
-                                <div className='info' key={nanoid()}>
-                                    <Paragraph ellipsis={{ tooltip: item.name }}>{item.name}</Paragraph>
-                                    <Paragraph ellipsis={{ tooltip: item.sns, rows: 2 }}>SN:{item.sns}</Paragraph>
-                                    <Paragraph ellipsis={{ tooltip: item.address, rows: 3 }}>{item.address}</Paragraph>
-                                    <Paragraph ellipsis={{ tooltip: item.areaName }}>{item.areaName}</Paragraph>
-                                </div>
-                            </div>
-                            <div className='below' key={nanoid()}>
-                                {["分类", "读数", "同比", "环比"].map(e => <div className='title'>{e}</div>)}
+  console.log(props,"---props")
+  // 1，2，3 离线,正常，告警
+  // let { areaName } = props
+  // const state = typeof index == "number" ? (['离线', '正常', '告警'][index - 1] || '未知') : '未知';
+  // const bgColor = typeof index == "number" ? (['#666', '#096', '#ff4d4f'][index - 1] || 'ff4d4f') : '#666';
+  return (
+    <ItemAll>
+      <div className='levelName' key={nanoid()}>{props[0].areaName}</div>
+      <div className='level'>
+        {Object.values(props).map(item =>
+          <Itembox>
+            {/* <Statebox top="13px" right="-20px" width="85px" bgColor={bgColor}>{state}</Statebox> */}
+            <div className='upper' key={nanoid()}>
+              <div className='pic' key={nanoid()}>
+                <Image src={item.image} preview={false} ></Image>
+              </div>
+              <div className='info' key={nanoid()}>
+                <Paragraph ellipsis={{ tooltip: item.name }}>{item.name}</Paragraph>
+                <Paragraph ellipsis={{ tooltip: item.sns, rows: 2 }}>SN:{item.sns}</Paragraph>
+                <Paragraph ellipsis={{ tooltip: item.address, rows: 3 }}>{item.address}</Paragraph>
+                <Paragraph ellipsis={{ tooltip: item.areaName }}>{item.areaName}</Paragraph>
+              </div>
+            </div>
+            <div className='below' key={nanoid()}>
+              {["分类", "读数", "同比", "环比"].map(e => <div className='title'>{e}</div>)}
 
-                                <div className='back' key={nanoid()}>总能耗(kWh)</div>
-                                <div className='com bold' key={nanoid()}>{item.e}</div>
-                                <div className='com' key={nanoid()}>{numberformat(item.yoyE)}</div>
-                                <div className='com' key={nanoid()}>{numberformat(item.momE)}</div>
-                                <div className='red' key={nanoid()}>峰能耗(kWh)</div>
-                                <div className='com bold' key={nanoid()}>{item.e2}</div>
-                                <div className='com' key={nanoid()}>{numberformat(item.yoyE2)}</div>
-                                <div className='com' key={nanoid()}>{numberformat(item.momE2)}</div>
+              <div className='back' key={nanoid()}>总能耗(kWh)</div>
+              <div className='com bold' key={nanoid()}>{item.e}</div>
+              <div className='com' key={nanoid()}>{numberformat(item.yoyE)}</div>
+              <div className='com' key={nanoid()}>{numberformat(item.momE)}</div>
+              <div className='red' key={nanoid()}>峰能耗(kWh)</div>
+              <div className='com bold' key={nanoid()}>{item.e2}</div>
+              <div className='com' key={nanoid()}>{numberformat(item.yoyE2)}</div>
+              <div className='com' key={nanoid()}>{numberformat(item.momE2)}</div>
 
-                                <div className='yellow' key={nanoid()}>平能耗(kWh)</div>
-                                <div className='com bold' key={nanoid()}>{item.e3}</div>
-                                <div className='com' key={nanoid()}>{numberformat(item.yoyE3)}</div>
-                                <div className='com' key={nanoid()}>{numberformat(item.momE3)}</div>
+              <div className='yellow' key={nanoid()}>平能耗(kWh)</div>
+              <div className='com bold' key={nanoid()}>{item.e3}</div>
+              <div className='com' key={nanoid()}>{numberformat(item.yoyE3)}</div>
+              <div className='com' key={nanoid()}>{numberformat(item.momE3)}</div>
 
-                                <div className='green' key={nanoid()}>谷能耗(kWh)</div>
-                                <div className='com bold' key={nanoid()}>{item.e4}</div>
-                                <div className='com' key={nanoid()}>{numberformat(item.yoyE4)}</div>
-                                <div className='com' key={nanoid()}>{numberformat(item.momE4)}</div>
-                            </div>
-                        </Itembox>
-                    </div>)}</div>
-        </ItemAll>
-    )
+              <div className='green' key={nanoid()}>谷能耗(kWh)</div>
+              <div className='com bold' key={nanoid()}>{item.e4}</div>
+              <div className='com' key={nanoid()}>{numberformat(item.yoyE4)}</div>
+              <div className='com' key={nanoid()}>{numberformat(item.momE4)}</div>
+            </div>
+          </Itembox>
+        )}</div>
+    </ItemAll>
+  )
 }

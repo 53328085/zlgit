@@ -14,24 +14,7 @@ export default function index(props) {
     const { t } = useTranslation(["button"])
     const [messageApi, contextHolder] = message.useMessage();
     const { Search } = Input
-    const columns = [
-        {
-            align: "center",
-            title: "设备编号",
-            dataIndex: "sn",
-            key: "sn",
-        }, {
-            align: "center",
-            title: "设备名称",
-            dataIndex: "name",
-            key: "name",
-        }, {
-            align: "center",
-            title: "安装地址",
-            dataIndex: "address",
-            key: "address",
-        },
-    ]
+    const columns = props.columns
     const [alarmOpenData, setAlarmOpenData] = useState([])
     const [alarmOpenCopy, setAlarmOpenCopy] = useState([])
     const [alarmCloseData, setAlarmloseData] = useState([])
@@ -81,15 +64,50 @@ export default function index(props) {
 
     }
     const [selectedRowKeys, setSelectedRowKeys] = useState([]);
-    const onSelectChange = (newSelectedRowKeys) => {
+    // const [selectedSubKeys, setSelectedSubKeys] = useState([]);
+    const [selectedLeftOpenKeys, setSelectedLeftOpenKeys] = useState([]);
+    const [selectedLeftCloseKeys, setSelectedLeftCloseKeys] = useState([]);
+    const [selectedNoLeftOpenKeys, setSelectedNoLeftOpenKeys] = useState([]);
+    const [selectedNoLeftCloseKeys, setSelectedNoLeftCloseKeys] = useState([]);
+    const onLeftSelect1 = (newSelectedRowKeys) => {
+        setSelectedLeftOpenKeys(newSelectedRowKeys);
+    };
+    const onLeftSelect2 = (newSelectedRowKeys) => {
+        setSelectedLeftCloseKeys(newSelectedRowKeys);
+    };
+    
+    const onLeftSelect3 = (newSelectedRowKeys) => {
+        setSelectedNoLeftOpenKeys(newSelectedRowKeys);
+    };
+    
+    const onLeftSelect4 = (newSelectedRowKeys) => {
+        setSelectedNoLeftCloseKeys(newSelectedRowKeys);
+    };
+    const onRight = (newSelectedRowKeys) => {
         //   console.log(newSelectedRowKeys)
         setSelectedRowKeys(newSelectedRowKeys);
     };
-    const rowSelection = {
+    const rightKeys = {
         selectedRowKeys,
-        onChange: onSelectChange,
+        onChange: onRight,
     };
 
+    const leftOpenKeys = {
+        selectedRowKeys: selectedLeftOpenKeys,
+        onChange: onLeftSelect1,
+    };
+    const leftCloseKeys = {
+        selectedRowKeys: selectedLeftCloseKeys,
+        onChange: onLeftSelect2,
+    };
+    const leftNoOpenKeys = {
+        selectedRowKeys: selectedNoLeftOpenKeys,
+        onChange: onLeftSelect3,
+    };
+    const leftNoCloseKeys = {
+        selectedRowKeys: selectedNoLeftCloseKeys,
+        onChange: onLeftSelect4,
+    };
     const unknownToSub = () => {
         if (selectedRowKeys.length == 0) {
             messageApi.open({
@@ -136,15 +154,6 @@ export default function index(props) {
             setSelectedRowKeys([])
         }
     }
-
-    const [selectedSubKeys, setSelectedSubKeys] = useState([]);
-    const onSelectSub = (newSelectedRowKeys) => {
-        setSelectedSubKeys(newSelectedRowKeys);
-    };
-    const subSelection = {
-        selectedRowKeys: selectedSubKeys,
-        onChange: onSelectSub,
-    };
     const subToUnknown = () => {
         if (selectedSubKeys.length == 0) {
             messageApi.open({
@@ -237,7 +246,7 @@ export default function index(props) {
                 setUnknownData([...unknownCopy]);
             } else {
                 unknownCopy.map(item => {
-                    if (item.meterType == type) {
+                    if (item.deviceStyle == type) {
                         arr.push(item)
                     }
                 })
@@ -248,7 +257,7 @@ export default function index(props) {
                 if (item[tag].indexOf(value) != -1 || item.address.indexOf(value) != -1) {
                     if (type == 0) {
                         arr.push(item)
-                    } else if (type != 0 && item.meterType == type) {
+                    } else if (type != 0 && item.deviceStyle == type) {
                         arr.push(item)
                     }
                 }
@@ -274,7 +283,8 @@ export default function index(props) {
             }
         } else {
             unknownCopy.map(item => {
-                if (item.meterType == value) {
+                console.log(value)
+                if (item.deviceStyle == value) {
                     if (searchUnknown == '') {
                         arr.push(item)
                     } else if (searchUnknown != '' && (item[tag].indexOf(searchUnknown) != -1 || item.address.indexOf(searchUnknown) != -1)) {
@@ -293,7 +303,7 @@ export default function index(props) {
 
     }
     useEffect(() => {
-        // getType();
+        getType();
     }, [])
     useEffect(() => {
         // getDevices()
@@ -307,7 +317,7 @@ export default function index(props) {
                         <div className={style.otherSubTable}>
                             <div className={style.publicTitle}>{props.transferTitle.alarmOpenTitle}</div>
                             <div>
-                                <Table bordered dataSource={alarmOpenData} columns={columns} size='middle' rowKey='id' pagination={false} scroll={{ y: 500 }} rowSelection={subSelection}></Table>
+                                <Table bordered dataSource={alarmOpenData} columns={columns} size='middle' rowKey='id' pagination={false} scroll={{ y: 90 }} rowSelection={leftOpenKeys}></Table>
                             </div>
                         </div>
                         <div className={style.actions}>
@@ -321,7 +331,7 @@ export default function index(props) {
                         <div className={style.otherSubTable}>
                             <div className={style.publicTitle}>{props.transferTitle.alarmCloseTitle}</div>
                             <div>
-                                <Table bordered dataSource={alarmOpenData} columns={columns} size='middle' rowKey='id' pagination={false} scroll={{ y: 500 }} rowSelection={subSelection}></Table>
+                                <Table bordered dataSource={alarmOpenData} columns={columns} size='middle' rowKey='id' pagination={false} scroll={{ y: 90 }} rowSelection={leftCloseKeys}></Table>
                             </div>
                         </div>
                         <div className={style.actions}>
@@ -335,7 +345,7 @@ export default function index(props) {
                         <div className={style.otherSubTable}>
                             <div className={style.publicTitle}>{props.transferTitle.noalarmOpenTitle}</div>
                             <div>
-                                <Table bordered dataSource={alarmOpenData} columns={columns} size='middle' rowKey='id' pagination={false} scroll={{ y: 500 }} rowSelection={subSelection}></Table>
+                                <Table bordered dataSource={alarmOpenData} columns={columns} size='middle' rowKey='id' pagination={false} scroll={{ y: 90 }} rowSelection={leftNoOpenKeys}></Table>
                             </div>
                         </div>
                         <div className={style.actions}>
@@ -349,7 +359,7 @@ export default function index(props) {
                         <div className={style.otherSubTable}>
                             <div className={style.publicTitle}>{props.transferTitle.noalarmCloseTitle}</div>
                             <div>
-                                <Table bordered dataSource={alarmOpenData} columns={columns} size='middle' rowKey='id' pagination={false} scroll={{ y: 500 }} rowSelection={subSelection}></Table>
+                                <Table bordered dataSource={alarmOpenData} columns={columns} size='middle' rowKey='id' pagination={false} scroll={{ y: 90 }} rowSelection={leftNoCloseKeys}></Table>
                             </div>
                         </div>
                         <div className={style.actions}>
@@ -360,6 +370,8 @@ export default function index(props) {
                         </div>
                     </div>
                 </div>
+            </div>
+            <div className={style.right}>
                 <div className={style.rightTable}>
                     <div className={style.publicTitle}>{props.transferTitle.unknownTitle}</div>
                     <div className={style.searchInput}>
@@ -372,26 +384,22 @@ export default function index(props) {
                             options={devices}
                             fieldNames={{ label: "name", value: "deviceStyle" }}
                         >
-                            {/* <Select.Option value={0}>全部类型</Select.Option>
-                        <Select.Option value={1}>电表</Select.Option>
-                        <Select.Option value={2}>水表</Select.Option>
-                        <Select.Option value={3}>燃气表</Select.Option> */}
                         </Select>
                         <div style={{ width: 0, height: 32, margin: '0 32px', borderLeft: '1px dashed #ddd' }}></div>
                         <span style={{ marginRight: 16 }}>设备搜索</span>
                         <Search placeholder="请输入设备编号/安装地址" style={{ width: 256 }} enterButton onSearch={onSearchUnknown}></Search>
                     </div>
                     <div>
-                        <Table bordered dataSource={unknownData} columns={columns} size='middle' rowKey='id' pagination={false} scroll={{ y: 500 }} rowSelection={rowSelection}></Table>
+                        <Table bordered dataSource={unknownData} columns={columns} size='middle' rowKey='id' pagination={false} scroll={{ y: 600 }} rowSelection={rightKeys}></Table>
                     </div>
                 </div>
-            </div>
-            <div>
-                <Space size={16} direction="vertical">
-                    <CustButton onClick={handleSave} style={{ height: "46px", width: "100%" }} >{t("button:save")}</CustButton>
-                    <CustButton type="default" style={{ height: "46px", width: "100%" }} onClick={() => handleClose()}>{t("button:cancel")}</CustButton>
-                </Space>
+
+                <div className={style.btn}>
+                    <CustButton onClick={handleSave} style={{ height: "46px" }} >{t("button:save")}</CustButton>
+                    <CustButton type="default" style={{ height: "46px", marginLeft: "16px" }} onClick={() => handleClose()}>{t("button:cancel")}</CustButton>
+                </div>
             </div>
         </div>
+
     )
 }
