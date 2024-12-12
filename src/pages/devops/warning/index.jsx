@@ -117,7 +117,7 @@ export default function Index() {
   let dispatchId;
 
   //获取告警信息
-
+  const [pageNum, setPageNum] = useState(0)
   const params = useRef({
     projectId,
     pageNum: 1,
@@ -127,6 +127,8 @@ export default function Index() {
   })
   const getAlarmPage = ({ current, pageSize }) => {
     if (!condition) return
+    console.log(current)
+    setPageNum(current)
     params.current = {
       projectId,
       pageNum: current,
@@ -171,7 +173,7 @@ export default function Index() {
     if (res.success) {
       modalRef.current.onCancel()
       message.success('派单成功！')
-      getAlarmPage()
+      getAlarmPage(pageNum)
     } else {
       message.error(res.errMsg)
     }

@@ -6,16 +6,16 @@ import { Table, Input, message, Select, Space } from "antd";
 import { LeftOutlined, RightOutlined } from '@ant-design/icons'
 import { cloneDeep } from "lodash";
 import { CustButton } from '@com/useButton'
-import { AlarmManagement } from "@api/api.js";
+import { AlarmManagement, Monitoring } from "@api/api.js";
 export default function index(props) {
     console.log(props);
     const { SetAlarmValveDevice } = AlarmManagement;
+    const { ComparativeAnalysis: { AllDeviceStyle } } = Monitoring
     const projectId = useSelector(state => state.system.menus.projectId)
     const { t } = useTranslation(["button"])
     const [messageApi, contextHolder] = message.useMessage();
     const { Search } = Input
     const columns = props.columns
-    const columnsLeft = props.columnsLeft
     const [alarmOpenData, setAlarmOpenData] = useState([])
     const [leftSelectCopy1, setleftSelectCopy1] = useState([])
     const [alarmCloseData, setAlarmloseData] = useState([])
@@ -25,17 +25,10 @@ export default function index(props) {
     const [noalarmloseData, setNoalarmloseData] = useState([])
     const [leftSelectCopy4, setleftSelectCopy4] = useState([])
     const [unknownData, setUnknownData] = useState(props.unknownTable)
-    const [unknownCopy, setUnknownCopy] = useState([])
-    const [rightSelect, setrRightSelect] = useState([])
+    const [unknownCopy, setUnknownCopy] = useState(props.unknownTable)
     useEffect(() => {
-        // let subArr = cloneDeep(props.subTable)
-        // setAlarmOpenData(subArr)
-        // setAlarmOpenCopy(subArr)
-        // let unknownArr = cloneDeep(props.unknownTable)
-        // setUnknownData(unknownArr)
-        // setUnknownCopy(unknownArr)
         setType(0)
-        // setSearchUnknown('')
+        setSearchUnknown('')
         setAlarmOpenData(props.alarmOpenTable)
         setAlarmloseData(props.alarmCloseTable)
         setNoalarmOpenData(props.noalarmOpenTable)
@@ -58,40 +51,27 @@ export default function index(props) {
             setDevies([]);
         }
     }
-    const getDevices = async () => {
-
-        console.log(projectId, type, alarmOpenData);
-        const resp = await QueryCompareDevice(projectId, type, searchUnknown)
-        if (resp.success && Array.isArray(resp.data)) {
-            setUnknownData(resp.data)
-        }
-
-
-
-    }
     const [selectedRightKeys, setSelectedRightKeys] = useState([]);
     const [selectedLeft1, setSelectedLeft1] = useState([]);
     const [selectedLeft2, setSelectedLeft2] = useState([]);
     const [selectedLeft3, setSelectedLeft3] = useState([]);
     const [selectedLeft4, setSelectedLeft4] = useState([]);
-    const onRight = (newSelectedRowKeys) => {
-        console.log(newSelectedRowKeys)
-        setSelectedRightKeys(newSelectedRowKeys);
+    const onRight = (keys) => {
+        setSelectedRightKeys(keys);
     };
-    const onleftSelect1 = (newSelectedRowKeys) => {
-        console.log("---newSelectedRowKeys", newSelectedRowKeys)
-        setSelectedLeft1(newSelectedRowKeys);
+    const onleftSelect1 = (keys) => {
+        setSelectedLeft1(keys);
     };
-    const onleftSelect2 = (newSelectedRowKeys) => {
-        setSelectedLeft2(newSelectedRowKeys);
+    const onleftSelect2 = (keys) => {
+        setSelectedLeft2(keys);
     };
 
-    const onleftSelect3 = (newSelectedRowKeys) => {
-        setSelectedLeft3(newSelectedRowKeys);
+    const onleftSelect3 = (keys) => {
+        setSelectedLeft3(keys);
     };
 
-    const onleftSelect4 = (newSelectedRowKeys) => {
-        setSelectedLeft4(newSelectedRowKeys);
+    const onleftSelect4 = (keys) => {
+        setSelectedLeft4(keys);
     };
     const rightKeys = {
         selectedRowKeys: selectedRightKeys,
@@ -173,36 +153,104 @@ export default function index(props) {
                 setNoalarmloseData([...noalarmloseData, ...list2])
                 setleftSelectCopy4([...leftSelectCopy4, ...list2])
             }
-            setUnknownCopy([...copyArr]);
-            setSelectedRightKeys([])
+            // setUnknownCopy([...copyArr]);
         }
     }
-    const subToUnknown = () => {
-        if (selectedSubKeys.length == 0) {
-            messageApi.open({
-                type: 'warning',
-                content: '请先选择设备！',
-            })
-            return;
-        } else {
-            let arr = [...alarmOpenData];
-            let arr2 = [];
-            let copyArr = [...alarmOpenCopy]
-            console.log(selectedSubKeys)
-            selectedSubKeys.forEach(id => {
-                let idx = arr.findIndex(a => a.id == id);
-                if (idx > -1) {
-                    let item = arr.splice(idx, 1);
-                    copyArr.splice(idx, 1)
-                    arr2.push(...item)
-                }
-            })
-            setUnknownData([...arr2, ...unknownData]);
-            setUnknownCopy([...arr2, ...unknownCopy]);
-            setAlarmOpenData([...arr])
-            setAlarmOpenCopy([...copyArr])
-            setSelectedRightKeys([])
+    const subToUnknown = (seleced) => {
+        if (seleced == 1) {
+            if (selectedLeft1.length == 0) {
+                messageApi.open({
+                    type: 'warning',
+                    content: '请至少选择一个设备！',
+                })
+                return;
+            } else {
+                let arr = [...alarmOpenData];
+                let arr2 = [];
+                let copyArr = [...leftSelectCopy1]
+                console.log(selectedLeft1)
+                selectedLeft1.forEach(id => {
+                    let idx = arr.findIndex(a => a.id == id);
+                    if (idx > -1) {
+                        let item = arr.splice(idx, 1);
+                        copyArr.splice(idx, 1)
+                        arr2.push(...item)
+                    }
+                })
+                setAlarmOpenData([...arr])
+                setleftSelectCopy1([...copyArr])
+            }
+        } else if (seleced == 2) {
+            if (selectedLeft2.length == 0) {
+                messageApi.open({
+                    type: 'warning',
+                    content: '请至少选择一个设备！',
+                })
+                return;
+            } else {
+                let arr = [...alarmCloseData];
+                let arr2 = [];
+                let copyArr = [...leftSelectCopy2]
+                selectedLeft2.forEach(id => {
+                    let idx = arr.findIndex(a => a.id == id);
+                    if (idx > -1) {
+                        let item = arr.splice(idx, 1);
+                        copyArr.splice(idx, 1)
+                        arr2.push(...item)
+                    }
+                })
+                setAlarmloseData([...arr])
+                setleftSelectCopy2([...copyArr])
+            }
+
+        } else if (seleced == 3) {
+            if (selectedLeft3.length == 0) {
+                messageApi.open({
+                    type: 'warning',
+                    content: '请至少选择一个设备！',
+                })
+                return;
+            } else {
+                let arr = [...noalarmOpenData];
+                let arr2 = [];
+                let copyArr = [...leftSelectCopy3]
+                console.log(selectedLeft3)
+                selectedLeft3.forEach(id => {
+                    let idx = arr.findIndex(a => a.id == id);
+                    if (idx > -1) {
+                        let item = arr.splice(idx, 1);
+                        copyArr.splice(idx, 1)
+                        arr2.push(...item)
+                    }
+                })
+                setNoalarmOpenData([...arr])
+                setleftSelectCopy3([...copyArr])
+            }
+        } else if (seleced == 4) {
+            if (selectedLeft4.length == 0) {
+                messageApi.open({
+                    type: 'warning',
+                    content: '请至少选择一个设备！',
+                })
+                return;
+            } else {
+                let arr = [...noalarmloseData];
+                let arr2 = [];
+                let copyArr = [...leftSelectCopy4]
+                console.log(selectedLeft4)
+                selectedLeft4.forEach(id => {
+                    let idx = arr.findIndex(a => a.id == id);
+                    if (idx > -1) {
+                        let item = arr.splice(idx, 1);
+                        copyArr.splice(idx, 1)
+                        arr2.push(...item)
+                    }
+                })
+                setNoalarmloseData([...arr])
+                setleftSelectCopy4([...copyArr])
+            }
         }
+
     }
 
     const handleClose = () => {
@@ -253,24 +301,16 @@ export default function index(props) {
         // return
         const res = await SetAlarmValveDevice(params)
         if (res.success) {
+
+            setSelectedLeft1([])
+            setSelectedLeft2([])
+            setSelectedLeft3([])
+            setSelectedLeft4([])
+            setSelectedRightKeys([])
             message.success("告警关联设备成功")
         }
     }
     let tag = columns[0].key;
-
-    const onSearchSub = (value) => {
-        let arr = [];
-        if (value == '') {
-            setAlarmOpenData([...alarmOpenCopy]);
-        } else {
-            alarmOpenCopy.map(item => {
-                if (item[tag].indexOf(value) != -1 || item.address.indexOf(value) != -1) {
-                    arr.push(item)
-                }
-            })
-            setAlarmOpenData([...arr]);
-        }
-    }
     const [searchUnknown, setSearchUnknown] = useState('')
     const onSearchUnknown = (value) => {
         let arr = [];
@@ -304,6 +344,7 @@ export default function index(props) {
     const [type, setType] = useState(0)
     const changeType = (value) => {
         setType(value)
+        console.log(value, unknownData)
         let arr = [];
         if (value == 0) {
             if (searchUnknown == '') {

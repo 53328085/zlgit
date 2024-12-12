@@ -150,7 +150,7 @@ const Cardbox=styled.div`
                 align-items: center;
                 justify-content: space-between;
                 border-radius: 93px;
-                width: 186px;
+                width: 196px;
                 border: 1px solid rgb(215, 215, 215);
                 height: 24px;
                 padding-left: 10px;

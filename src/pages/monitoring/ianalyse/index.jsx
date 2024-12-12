@@ -151,12 +151,12 @@ export default function index() {
     }
   };
   const getMaxArr = (matrix) => {
-    if (matrix.length === 0 || matrix[0].length === 0) {
+    if (matrix.length === 0 || matrix?.[0].length === 0) {
       return []; // 如果矩阵为空，返回空数组  
     }
 
     const rowCount = matrix.length;
-    const colCount = matrix[0].length;
+    const colCount = matrix?.[0]?.length;
     const maxValues = new Array(colCount).fill(Number.NEGATIVE_INFINITY); // 初始化辅助数组  
     // const maxValSn = new Array(colCount).fill(Number.NEGATIVE_INFINITY);
     // 遍历二维数组  
@@ -172,12 +172,12 @@ export default function index() {
     return maxValues;
   }
   const getMinArr = (matrix) => {
-    if (matrix.length === 0 || matrix[0].length === 0) {
+    if (matrix.length === 0 || matrix?.[0].length === 0) {
       return []; // 如果矩阵为空，返回空数组  
     }
 
     const rowCount = matrix.length;
-    const colCount = matrix[0].length;
+    const colCount = matrix?.[0]?.length;
     const minValues = new Array(colCount).fill(Number.POSITIVE_INFINITY); // 初始化辅助数组为正无穷大  
     // const minValSn = new Array(colCount).fill(Number.POSITIVE_INFINITY);
     console.log(matrix, colCount)
@@ -224,29 +224,29 @@ export default function index() {
         markLine.data[0]["yAxis"] = ""
         markLine.label = {}
         state.chartsOpts.series = []
-        state.chartsOpts.xAxis.data = resp.data.snData[0]["data"][0]["data"].map(it => it.time)
+        state.chartsOpts.xAxis.data = resp?.data?.snData?.[0]["data"]?.[0]["data"].map(it => it.time)
 
-        if (radioVal == "1" && state.devices[0]["line"] == 1) {
+        if (radioVal == "1" && state?.devices?.[0]["line"] == 1) {
 
-          markLine.data[0]["yAxis"] = state.devices[0]["lineValue"]
+          markLine.data[0]["yAxis"] = state?.devices?.[0]["lineValue"]
           markLine.label.formatter = (params) => `${params.value}kWh`
-        } else if (radioVal == "2" && state.devices[1]["line"] == 1) {
+        } else if (radioVal == "2" && state?.devices?.[1]["line"] == 1) {
           console.log(markLine)
 
-          markLine.data[0]["yAxis"] = state.devices[1]["lineValue"]
+          markLine.data[0]["yAxis"] = state?.devices?.[1]["lineValue"]
           markLine.label.formatter = (params) => `${params.value}W`
-        } else if (radioVal == "3" && state.devices[2]["line"] == 1) {
+        } else if (radioVal == "3" && state?.devices?.[2]["line"] == 1) {
 
-          markLine.data[0]["yAxis"] = state.devices[2]["lineValue"]
+          markLine.data[0]["yAxis"] = state?.devices?.[2]["lineValue"]
           markLine.label.formatter = (params) => `${params.value}A`
-        } else if (radioVal == "4" && state.devices[3]["line"] == 1) {
+        } else if (radioVal == "4" && state?.devices?.[3]["line"] == 1) {
 
-          markLine.data[0]["yAxis"] = state.devices[3]["lineValue"]
+          markLine.data[0]["yAxis"] = state?.devices?.[3]["lineValue"]
           markLine.label.formatter = (params) => `${params.value}V`
         }
 
         let compareArr = []
-        resp.data.snData.forEach((item, index) => {
+        resp?.data.snData.forEach((item, index) => {
           if (item?.data?.length > 1) {
             item.data.forEach(it => {
               state.chartsOpts.series.push({
@@ -254,10 +254,10 @@ export default function index() {
               })
             })
           } else {
-            state.chartsOpts.series.push({ data: item.data[0]["data"].map(it => it.value), type: "line", smooth: true, name: item["name"] + "-" + item.data[0]["point"], markLine })
+            state.chartsOpts.series.push({ data: item?.data?.[0]["data"].map(it => it.value), type: "line", smooth: true, name: item["name"] + "-" + item?.data?.[0]["point"], markLine })
           }
 
-          compareArr.push(item.data[0]["data"].map(it => (it.value)))
+          compareArr.push(item?.data?.[0]["data"].map(it => (it.value)))
           console.log(state.chartsOpts.series)
         })
 
