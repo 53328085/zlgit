@@ -1,5 +1,7 @@
 import React, { useState, useRef, useEffect, useCallback } from "react";
 import { useSelector } from "react-redux";
+import Usetable from '@com/useTable'
+import CModal from "@com/useModal"
 import Titlelayout from "@com/titlelayout";
 import {
   Input,
@@ -17,13 +19,14 @@ import UseTransfer from "./transfer.js";
 import Mask from "@com/mask.jsx";
 import { Monitoring } from "@api/api.js";
 import { CustButton } from "@com/useButton";
+import { use } from "i18next";
 const WrapDiv = styled.div`
-  width: 740px;
+  width: 100%;
   display: flex;
   justify-content: space-between;
 `;
 const SetDiv = styled.div`
-  width: 740px;
+  width: 100%;
   .line {
     display: flex;
     align-items: center;
@@ -60,36 +63,120 @@ const columns = [
 ];
 const {
   ComparativeAnalysis: { QueryCompareDevice, HistoryCompare },
-  IAnalyse: { Configure, CompareQuery },
+  IAnalyse: { Configure, CompareQuery, DeleteComparePlan,UpdateComparePlan },
 } = Monitoring;
 
 export default function Index() {
+  const projectId = useSelector((state) => state.system.menus.projectId);
   const state = useReactive({
-    lines: Array(4)
+    items: Array(4)
       .fill(null)
-      .map(() => ({
-        checkedName: false,
-        checkBaseLine: false,
-        baseLineVal: "",
-        checkWarnVal: false,
-        warnVal: "",
+      .map((index) => ({
+        compareType: 0,
+        state: 0,
+        line: 0,
+        lineValue: 0,
+        deviation: 0,
+        deviationValue: 0,
       })),
-    devices: [],
     snGroup: [],
     timeType: 1,
+    projectId: projectId,
+    groupName: ''
   });
-  const projectId = useSelector((state) => state.system.menus.projectId);
+
   const [subTable, setSubTable] = useState([]);
   const [transferTitle, setTransferTitle] = useState({});
   const [unknownTable, setUnknownTable] = useState([]);
-  const [Sns, setSns] = useState([]);
+  //const [Sns, setSns] = useState([]);
   const [transTag, setTransTag] = useState(false);
-  const [timeType, setTimetype] = useState(1);
+  //const [timeType, setTimetype] = useState(1);
+  const [tabledata, setTabledata] = useState([])
+  const [title, settitle] = useState('新增对比分析')
+  const ref = useRef()
+  const wref = useRef()
+  const [planId, setPlanId] = useState()
+  const [pageInfo, setPageInfo] = useState({
+    current: 1,
+    pageSize: 10,
+    total: 0
+  })
 
+  const changePage = (page, pageSize) => {
+    setPageInfo(page)
+  }
+  const openModal = () => {
+    ref.current.onOpen()
+    state.groupName = `第${tabledata.length + 1}组`
+    state.items.forEach((item, index) => {
+      item.compareType = index + 1
+    })
+    console.log(state)
+  }
+  const onOk = async () => {
+    console.log(state)
+    if (state.snGroup.length == 0) return message.error('请选择对比设备')
+    if(title=='新增对比分析'){
+      const res = await Configure(state)
+    if (res.success) {
+      message.success('新增成功')
+      ref.current.onCancel()
+      GetSns()
+        (state.items = Array(4)
+          .fill(null)
+          .map(() => ({
+            state: 0,
+            line: 0,
+            lineValue: 0,
+            deviation: 0,
+            deviationValue: 0,
+          }))),
+        state.snGroup = []
+      state.timeType = 1
+    } else {
+      message.error(res.errMsg)
+    }
+    }else{
+      let params={...state,planId}
+      const res = await UpdateComparePlan(params)
+    if (res.success) {
+        (state.items = Array(4)
+          .fill(null)
+          .map(() => ({
+            state: 0,
+            line: 0,
+            lineValue: 0,
+            deviation: 0,
+            deviationValue: 0,
+          }))),
+        state.snGroup = []
+      state.timeType = 1
+      GetSns()
+      message.success('修改成功')
+      ref.current.onCancel()
+    } else {
+      message.error(res.errMsg)
+    }
+    }
+  }
+  const handleCancel = () => {
+      (state.items = Array(4)
+        .fill(null)
+        .map(() => ({
+          state: 0,
+          line: 0,
+          lineValue: 0,
+          deviation: 0,
+          deviationValue: 0,
+        }))),
+      state.snGroup = []
+    state.timeType = 1
+    ref.current.onCancel()
+  }
   const onSetDevices = async () => {
     setTransferTitle({
       subTitle: "选择需要对比的设备",
-      unknownTitle: "所有设备",
+      unknownTitle: "未选中的设备",
     });
     const resp = await QueryCompareDevice(projectId, 0, "");
     console.log("执行啦");
@@ -118,118 +205,133 @@ export default function Index() {
     values.subData.map((item) => {
       snData.push(item.sn);
     });
-    setSns(snData);
+    state.snGroup = snData;
+    //setSns(snData);
+    ref.current.onOpen()
   };
   const getCloseValue = (params) => {
     setTransTag(false);
+    ref.current.onOpen()
   };
-  const selectDate = (v) => {
-    setTimetype(v);
-  };
+  // const selectDate = (v) => {
+  //   setTimetype(v);
+  // };
+
   const GetSns = async () => {
     const resp = await CompareQuery(projectId);
     if (resp.success) {
       if (resp.data) {
-        let items = resp.data.items;
-        state.lines.forEach((item, index) => {
-          if (index + 1 == items[index]["compareType"]) {
-            item.checkedName = items[index]["state"] ? true : false;
-            item.checkBaseLine = items[index]["line"] ? true : false;
-            item.baseLineVal = items[index]["lineValue"];
-            item.checkWarnVal = items[index]["deviation"] ? true : false;
-            item.warnVal = items[index]["deviationValue"];
+        const mergedData = resp.data.reduce((acc, curr) => {
+          const existingIndex = acc.findIndex(item => item.planId === curr.planId);
+          if (existingIndex !== -1) {
+            acc[existingIndex].items = [...acc[existingIndex].items, ...curr.items];
+            acc[existingIndex].snGroup = [...new Set([...acc[existingIndex].snGroup, ...curr.snGroup])];
+          } else {
+            acc.push(curr);
           }
-        });
-        setTimetype(resp.data.timeType);
-        // state.devices = resp.data.items;
-        state.snGroup = resp.data.snGroup;
-        setSns(resp.data.snGroup);
+          return acc;
+        }, []);
+        console.log(mergedData, 189)
+        setTabledata(mergedData)
+        // let items = mergedData.items;
+        // state.items.forEach((item, index) => {
+        //   if (index + 1 == items[index]["compareType"]) {
+        //     item.state = items[index]["state"] ? 1 : 0;
+        //     item.line = items[index]["line"] ? 1 : 0;
+        //     item.lineValue = items[index]["lineValue"];
+        //     item.deviation = items[index]["deviation"] ? 1 : 0;
+        //     item.deviationValue = items[index]["deviationValue"];
+        //   }
+        // });
+        //setTimetype(resp.data.timeType);
+        //state.snGroup = resp.data.snGroup;
+        //setSns(resp.data.snGroup);
         // state.timeType = resp.data.timeType;
         // HistoryCompares(state.snGroup)
-      } else {
-        state.devices = [];
-        state.snGroup = [];
-        state.timeType = 1;
       }
+      //  else {
+      //   state.snGroup = [];
+      //   state.timeType = 1;
+      // }
     } else {
-      message.error("获取设备信息失败!");
+      message.error(resp.errMsg || "数据出错");
     }
   };
-  const save = async () => {
-    if (Sns.length == 0) {
-      message.error("请选择对比设备!");
-      return;
-    }
+  // const save = async () => {
+  //   if (Sns.length == 0) {
+  //     message.error("请选择对比设备!");
+  //     return;
+  //   }
 
-    const items = state.lines.map((item, index) => {
-      return {
-        compareType: index + 1,
-        state: item.checkedName ? 1 : 0,
-        line: item.checkBaseLine ? 1 : 0,
-        lineValue: item.baseLineVal ? item.baseLineVal : 0,
-        deviation: item.checkWarnVal ? 1 : 0,
-        deviationValue: item.warnVal ? item.warnVal : 0,
-      };
-    });
+  //   const items = state.items.map((item, index) => {
+  //     return {
+  //       compareType: index + 1,
+  //       state: item.state ? 1 : 0,
+  //       line: item.line ? 1 : 0,
+  //       lineValue: item.lineValue ? item.lineValue : 0,
+  //       deviation: item.deviation ? 1 : 0,
+  //       deviationValue: item.deviationValue ? item.deviationValue : 0,
+  //     };
+  //   });
 
-    const params = {
-      projectId,
-      timeType,
-      snGroup: Sns,
-      items,
-    };
-    const resp = await Configure(params);
-    if (resp.success) {
-      // (state.lines = Array(4)
-      //   .fill(null)
-      //   .map(() => ({
-      //     checkedName: false,
-      //     checkBaseLine: false,
-      //     baseLineVal: "",
-      //     checkWarnVal: false,
-      //     warnVal: "",
-      //   }))),
-      //   setTimetype(1);
-      // setSns([]);
-      message.success("配置成功!");
-      GetSns();
-    } else {
-      message.error(resp.errMsg);
-    }
-  };
-  const unit=["kWh","W","A","V"]
+  //   const params = {
+  //     projectId,
+  //     timeType,
+  //     snGroup: Sns,
+  //     items,
+  //   };
+  //   const resp = await Configure(params);
+  //   if (resp.success) {
+  //     // (state.items = Array(4)
+  //     //   .fill(null)
+  //     //   .map(() => ({
+  //     //     state: false,
+  //     //     line: false,
+  //     //     lineValue: "",
+  //     //     deviation: false,
+  //     //     deviationValue: "",
+  //     //   }))),
+  //     //   setTimetype(1);
+  //     // setSns([]);
+  //     message.success("配置成功!");
+  //     GetSns();
+  //   } else {
+  //     message.error(resp.errMsg);
+  //   }
+  // };
+  const unit = ["kWh", "W", "A", "V"]
   const SetLine = titleList.map((item, index) => {
     return (
       <SetDiv>
         <Divider dashed style={{ borderColor: "#d7d7d7" }}></Divider>
         <div className="line">
           <Checkbox
-            checked={state.lines[index]["checkedName"]}
+            checked={state.items[index]["state"]}
             onChange={(e) => {
-              state.lines[index]["checkedName"] = e.target.checked;
+              state.items[index]["state"] = e.target.checked ? 1 : 0;
               if (!e.target.checked) {
-                state.lines[index] = {
-                  checkedName: false,
-                  checkBaseLine: false,
-                  baseLineVal: "",
-                  checkWarnVal: false,
-                  warnVal: "",
+                state.items[index] = {
+                  state: 0,
+                  line: 0,
+                  lineValue: 0,
+                  deviation: 0,
+                  deviationValue: 0,
                 };
               }
             }}
           >
             {item}
           </Checkbox>
-          {state.lines[index]["checkedName"] ? (
+          {state.items[index]["state"] ? (
             <>
               <Space size={45}>
                 <Checkbox
-                  checked={state.lines[index]["checkBaseLine"]}
+                  checked={state.items[index]["line"]}
                   onChange={(e) => {
                     if (!e.target.checked) {
-                      state.lines[index]["baseLineVal"] = "";
+                      state.items[index]["lineValue"] = 0;
                     }
-                    state.lines[index]["checkBaseLine"] = e.target.checked;
+                    state.items[index]["line"] = e.target.checked ? 1 : 0;
                   }}
                 >
                   基准线
@@ -238,10 +340,10 @@ export default function Index() {
                   type="number"
                   addonAfter={unit[index]}
                   style={styobj}
-                  value={state.lines[index]["baseLineVal"]}
+                  value={state.items[index]["lineValue"]}
                   onChange={(e) => {
-                    if (state.lines[index]["checkBaseLine"]) {
-                      state.lines[index]["baseLineVal"] = e.target.value;
+                    if (state.items[index]["line"]) {
+                      state.items[index]["lineValue"] = e.target.value;
                     } else {
                       message.warning("请先勾选基准线");
                     }
@@ -250,12 +352,12 @@ export default function Index() {
               </Space>
               <Space size={20}>
                 <Checkbox
-                  checked={state.lines[index]["checkWarnVal"]}
+                  checked={state.items[index]["deviation"]}
                   onChange={(e) => {
                     if (!e.target.checked) {
-                      state.lines[index]["warnVal"] = "";
+                      state.items[index]["deviationValue"] = "";
                     }
-                    state.lines[index]["checkWarnVal"] = e.target.checked;
+                    state.items[index]["deviation"] = e.target.checked ? 1 : 0;
                   }}
                 >
                   偏差告警≥
@@ -264,10 +366,10 @@ export default function Index() {
                   type="number"
                   addonAfter="%"
                   style={styobj}
-                  value={state.lines[index]["warnVal"]}
+                  value={state.items[index]["deviationValue"]}
                   onChange={(e) => {
-                    if (state.lines[index]["checkWarnVal"]) {
-                      state.lines[index]["warnVal"] = e.target.value;
+                    if (state.items[index]["deviation"]) {
+                      state.items[index]["deviationValue"] = e.target.value;
                     } else {
                       message.warning("请先勾偏差告警!");
                     }
@@ -283,34 +385,122 @@ export default function Index() {
   useEffect(() => {
     GetSns();
   }, []);
+  const columnsList = [
+    {
+      title: '',
+      render: (_, record, index) => (
+        <Space size="middle">
+          {index + 1}
+        </Space>
+      ),
+      key: 'index',
+      align: 'center'
+    },
+    {
+      title: '组合名称',
+      dataIndex: 'groupName',
+      key: 'groupName',
+      align: 'center'
+    },
+    {
+      title: '操作',
+      key: 'action',
+      align: 'center',
+      render: (_, record) => (
+        <Space size="middle">
+          <Button type='primary' ghost onClick={() => editPlan(record)}>编辑</Button>
+          <Button type='danger' ghost onClick={() => deletePlan(record)}>删除</Button>
+        </Space>
+      ),
+    },
+  ]
+  
+  const deletePlan = (record) => {
+    console.log(record)
+    setPlanId(record.planId)
+    wref.current.onOpen()
+  }
+  const onDelOK = async () => {
+    const res = await DeleteComparePlan(projectId, planId)
+    if (res.success) {
+      message.success("删除成功")
+      wref.current.onCancel()
+      GetSns()
+    } else {
+      message.error(res.errMsg)
+    }
+  }
+  const editPlan = (record) => {
+    console.log(record)
+    setPlanId(record.planId)
+    ref.current.onOpen()
+    settitle("编辑对比分析")
+    state.items = record.items
+    state.groupName = record.groupName
+    state.snGroup = record.snGroup
+    state.timeType = record.timeType
+    console.log(state)
+  }
   return (
     <Titlelayout title="智能分析配置">
       <Divider dashed style={{ borderColor: "#d7d7d7" }}></Divider>
       <WrapDiv>
         <Space>
-          <span>选择对比设备</span>
-          <Button type="primary" onClick={onSetDevices}>
-            请选择要对比的设备
+          {/* onSetDevices选择设备 */}
+          <Button type="primary" onClick={openModal}>
+            新增对比组合
           </Button>
         </Space>
-        <Space>
-          <span>选择对比周期</span>
-          <Select
-            options={options}
-            style={{ width: 160 }}
-            onChange={selectDate}
-            value={timeType}
-          ></Select>
-        </Space>
       </WrapDiv>
-      {SetLine}
       <WrapDiv>
         {" "}
         <Divider dashed style={{ borderColor: "#d7d7d7" }}></Divider>
       </WrapDiv>
       <WrapDiv style={{ justifyContent: "end" }}>
-        <CustButton onClick={save}>保存</CustButton>
+        <Usetable
+          columns={columnsList}
+          dataSource={tabledata}
+          pagination={pageInfo}
+          onChange={changePage}
+        />
       </WrapDiv>
+      <CModal title={title} ref={ref} mold="cust" onOk={onOk} onCancel={handleCancel} width={780}>
+        <div style={{ width: "100%", display: "flex", alignItems: "center", marginBottom: "16px", flexDirection: "row" }}>
+          <span style={{ marginRight: "11px" }}>对比组合名称</span>
+          <Input
+            style={{ width: "621px" }}
+            value={state.groupName}
+            onChange={(e) => {
+              state.groupName = e.target.value;
+            }}
+          />
+        </div>
+        <div>
+          <div style={{ width: '100%', display: "flex", alignItems: "center", marginBottom: "16px", flexDirection: "row", justifyContent: 'space-between' }}>
+            <div>
+              <span style={{ marginRight: "11px" }}>选择对比设备</span>
+              <Button type="primary" ghost style={{ width: '200px' }} onClick={() => {
+                setTransTag(true); ref.current.onCancel(); onSetDevices()
+              }}>请选择要对比的设备</Button>
+            </div>
+            <div>
+              <span style={{ marginRight: "11px" }}>选择对比周期</span>
+              <Select
+                style={{ width: "160px" }} options={options}
+                value={state.timeType}
+                onChange={(e) => {
+                  state.timeType = e;
+                }}
+              >
+              </Select>
+            </div>
+          </div>
+        </div>
+        {SetLine}
+      </CModal>
+      <CModal title="删除提示" onOk={onDelOK} mold="cust" type="warn" ref={wref}>
+        是否要删除该对比组合？
+      </CModal>
       <Mask task={transTag}>
         <UseTransfer
           transferTitle={transferTitle}
