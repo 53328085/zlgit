@@ -289,7 +289,7 @@ export default function index() {
                   type: "line", 
                   smooth: true, 
                   name: item["name"] + "-" + it["point"],
-                  markLine:{
+                  markLine:dataList[b].items[params[b].type-1].line!=0?{
                     symbol: ['none', 'none'],
                     label: {
                       show: true,
@@ -305,7 +305,7 @@ export default function index() {
                     lineStyle: {
                       color: '#f00'
                     }
-                  }
+                  }:{}
                 })
               })
             }
