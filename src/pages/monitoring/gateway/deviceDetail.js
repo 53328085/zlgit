@@ -25,9 +25,10 @@ import moment from "moment";
 
 import deviceDetail3 from './images/deviceDetail3.jpg'
 import Control from './Control'
-
-const { Text } = Typography
-const Mainbox = styled.div`
+import { min } from "lodash";
+ 
+const {Text} = Typography
+const Mainbox =  styled.div`
 &&{
   background-color: ${props => props.theme.devicebgcolor || "#135abd"};
   .leftImgBox,.rightHead {
@@ -94,18 +95,20 @@ const Chartin = (props) => {
         let series = Array(data.length).fill({
             type: "line",
             seriesLayoutBy: 'row',
-        })
-
-        data.forEach((d, index) => {
-            let { point, data } = d;
-            dimensions.push(point)
-            if (index == 0) {
-                source.push(data.map(t => t.time));
-                source.push(data.map(t => t.value))
-            } else {
-                source.push(data.map(t => t.value))
-            }
-        })
+            areaStyle:null,
+            stack:null
+           })       
+      
+         data.forEach((d,index) => {
+           let {point, data} = d;
+           dimensions.push(point)
+           if(index == 0) {
+             source.push(data.map(t => t.time));
+             source.push(data.map(t => t.value))
+           }else {
+            source.push(data.map(t => t.value))
+           }
+        })  
 
 
         drawEcharts(ref.current, {
@@ -126,8 +129,16 @@ const Chartin = (props) => {
                     interval: "auto"
                 },
 
-
+           },
+           yAxis: { // 万工、老梁的方案
+            min: function(value) {
+                return value.min -10;
+              },
+            max: function(value){
+                return value.max + 10;
             }
+           }
+         
         })
     }, [data])
     return (

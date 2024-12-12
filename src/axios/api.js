@@ -2076,9 +2076,12 @@ export const Monitoring = {
   },
   IAnalyse: {
     Configure: (data) => server.post(`/Monitor/Compare/Configure`, data),
+    UpdateComparePlan: (data) => server.post(`/Monitor/Compare/UpdateComparePlan`, data),
     CompareQuery: (projectId) => server.get(`/Monitor/Compare/Query?projectId=${projectId}`),
+    QueryPlanList: (projectId) => server.get(`/Monitor/Compare/QueryPlanList?projectId=${projectId}`),
+    DeleteComparePlan: (projectId,planId) => server.get(`/Monitor/Compare/DeleteComparePlan?projectId=${projectId}&planId=${planId}`),
     HistoryCompare: (data) => server.post(`Monitor/Compare/HistoryCompareSmart`, data)
-  }
+  }//
 };
 
 //运维管理(运行)

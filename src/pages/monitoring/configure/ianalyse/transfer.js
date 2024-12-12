@@ -168,6 +168,8 @@ export default function index(props) {
 
     const handleClose = () => {
         props.closeValue('close');
+        setSearchknown('')
+        setSearchUnknown('')
     }
     const messageContent = (type, content) => {
         messageApi.open({
@@ -194,9 +196,12 @@ export default function index(props) {
             unknownCopy,
         })
         props.closeValue('close');
+        setSearchknown('')
+        setSearchUnknown('')
         // props.subTable = subData
     }
     let tag = columns[0].key;
+    const [searchknown, setSearchknown] = useState('')
 
     const onSearchSub = (value) => {
         let arr = [];
@@ -284,7 +289,8 @@ export default function index(props) {
                     <div className={style.publicTitle}>{props.transferTitle.subTitle}</div>
                     <div className={style.searchInput}>
                         <span style={{ marginRight: 16 }}>设备搜索</span>
-                        <Search placeholder="请输入设备编号/安装地址" style={{ width: 256 }} enterButton onSearch={onSearchSub}></Search>
+                        <Search placeholder="请输入设备编号/安装地址" value={searchknown} onChange={(e) => setSearchknown(e.target.value)}
+                         style={{ width: 256 }} enterButton onSearch={onSearchSub}></Search>
                     </div>
                     <div>
                         <Table bordered dataSource={subData} columns={columns} size='middle' rowKey='id' pagination={false} scroll={{ y: 500 }} rowSelection={subSelection}></Table>
@@ -320,7 +326,8 @@ export default function index(props) {
                     </Select>
                     <div style={{ width: 0, height: 32, margin: '0 32px', borderLeft: '1px dashed #ddd' }}></div>
                     <span style={{ marginRight: 16 }}>设备搜索</span>
-                    <Search placeholder="请输入设备编号/安装地址" style={{ width: 256 }} enterButton onSearch={onSearchUnknown}></Search>
+                    <Search placeholder="请输入设备编号/安装地址" value={searchUnknown} onChange={(e) => setSearchUnknown(e.target.value)}
+                     style={{ width: 256 }} enterButton onSearch={onSearchUnknown}></Search>
                 </div>
                 <div>
                     <Table bordered dataSource={unknownData} columns={columns} size='middle' rowKey='id' pagination={false} scroll={{ y: 500 }} rowSelection={rowSelection}></Table>
