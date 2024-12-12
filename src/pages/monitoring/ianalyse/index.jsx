@@ -198,12 +198,12 @@ export default function index() {
     }
   };
   const getMaxArr = (matrix) => {
-    if (matrix.length === 0 || matrix[0].length === 0) {
+    if (matrix.length === 0 || matrix?.[0].length === 0) {
       return []; // 如果矩阵为空，返回空数组  
     }
 
     const rowCount = matrix.length;
-    const colCount = matrix[0].length;
+    const colCount = matrix?.[0]?.length;
     const maxValues = new Array(colCount).fill(Number.NEGATIVE_INFINITY); // 初始化辅助数组  
     // const maxValSn = new Array(colCount).fill(Number.NEGATIVE_INFINITY);
     // 遍历二维数组  
@@ -219,12 +219,12 @@ export default function index() {
     return maxValues;
   }
   const getMinArr = (matrix) => {
-    if (matrix.length === 0 || matrix[0].length === 0) {
+    if (matrix.length === 0 || matrix?.[0].length === 0) {
       return []; // 如果矩阵为空，返回空数组  
     }
 
     const rowCount = matrix.length;
-    const colCount = matrix[0].length;
+    const colCount = matrix?.[0]?.length;
     const minValues = new Array(colCount).fill(Number.POSITIVE_INFINITY); // 初始化辅助数组为正无穷大  
     // const minValSn = new Array(colCount).fill(Number.POSITIVE_INFINITY);
     console.log(matrix, colCount)

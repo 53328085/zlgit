@@ -5,6 +5,7 @@ import { PlusOutlined } from "@ant-design/icons";
 import moment from "moment";
 import Mask from '@com/mask.jsx'
 import UseTransfer from './transfer';
+import { ExportExcel } from '@com/useButton'
 import {
   Button,
   Table,
@@ -405,12 +406,12 @@ export default function Index() {
             >
               {t("button:delete")}
             </span>
-            {/* <span
+            <span
               className={style.editText}
               onClick={() => associationAlarmInfo(record)}
             >
               {t("button:association")}
-            </span> */}
+            </span>
           </Space>
         )
       }
@@ -658,32 +659,6 @@ export default function Index() {
       key: "category",
     },
   ]
-  const columnsLeft = [
-    // {
-    //   align: "center",
-    //   title: "设备编号",
-    //   dataIndex: "valveDeviceSn",
-    //   key: "valveDeviceSn",
-    // }, 
-    // {
-    //   align: "center",
-    //   title: "设备名称",
-    //   dataIndex: "valveDeviceSn",
-    //   key: "valveDeviceSn",
-    // }, 
-    // {
-    //   align: "center",
-    //   title: "安装地址",
-    //   dataIndex: "valveDeviceAddress",
-    //   key: "valveDeviceAddress",
-    // }
-    // , {
-    //   align: "center",
-    //   title: "设备型号",
-    //   dataIndex: "category",
-    //   key: "category",
-    // },
-  ]
   const [planItemId, setPlanItemId] = useState();
   //关联告警配置
   const associationAlarmInfo = async (record) => {
@@ -721,7 +696,7 @@ export default function Index() {
       setAlarmCloseTable(left2)
       setNoalarmOpenTable(left3)
       setNoalarmCloseTable(left4)
-      console.log(left1,alarmOpenTable)
+      console.log(left1, alarmOpenTable)
     } else {
       message.error(resp.errMsg)
     }
@@ -746,14 +721,25 @@ export default function Index() {
       <Titlelayout title="告警管理" layout="flex" dr="column">
         <Divider style={{ margin: "16px 0" }} />
         {ispublish ? null : (
-          <Button
-            type="primary"
-            style={{ width: "110px" }}
-            icon={<PlusOutlined />}
-            onClick={() => showAdd()}
-          >
-            新增方案
-          </Button>
+          <div style={{ display: 'flex', justifyContent: "space-between", alignItems: "center" }}>
+            <Button
+              type="primary"
+              icon={<PlusOutlined />}
+              onClick={() => showAdd()}
+            >
+              新增方案
+            </Button>
+            {/* <div style={{ display: 'flex', alignItems: "center" }}>
+              <Button
+                type="primary"
+                style={{ width: "96px", marginRight: "16px" }}
+                onClick={() => showAdd()}
+              >
+                导入方案
+              </Button>
+              <ExportExcel tb={tableRef} />
+            </div> */}
+          </div>
         )}
         <Usetable
           style={{ marginTop: "16px" }}
@@ -895,7 +881,7 @@ export default function Index() {
         ></AlarmEventModal>
 
         <Mask task={transTag}>
-          {transTag && <UseTransfer transferTitle={transferTitle} columns={columnsAssociation} columnsLeft={columnsLeft} planItemId={planItemId}
+          {transTag && <UseTransfer transferTitle={transferTitle} columns={columnsAssociation} planItemId={planItemId}
             alarmOpenTable={alarmOpenTable} alarmCloseTable={alarmCloseTable} noalarmOpenTable={noalarmOpenTable} noalarmCloseTable={noalarmCloseTable} unknownTable={unknownTable} saveValue={getSaveValue} closeValue={getCloseValue}></UseTransfer>}
         </Mask>
       </Titlelayout>

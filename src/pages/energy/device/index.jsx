@@ -158,7 +158,7 @@ export default function Index() {
     }
 
   ]
-  columns[2].title = levelname
+  // columns[2].title = levelname
   const [mode, setMode] = useState(1)
   const [showAll, setshowAll] = useState(false)
   const sortClass = sortData => {
