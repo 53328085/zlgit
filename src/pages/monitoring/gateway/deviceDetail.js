@@ -25,6 +25,7 @@ import moment from "moment";
  
 import deviceDetail3 from './images/deviceDetail3.jpg'
 import Control from './Control'
+import { min } from "lodash";
  
 const {Text} = Typography
 const Mainbox =  styled.div`
@@ -95,6 +96,8 @@ const Chartin = (props) => {
          let series=  Array(data.length).fill({
             type: "line",
             seriesLayoutBy: 'row',
+            areaStyle:null,
+            stack:null
            })       
       
          data.forEach((d,index) => {
@@ -128,7 +131,16 @@ const Chartin = (props) => {
              },
            
 
+           },
+           yAxis: { // 万工、老梁的方案
+            min: function(value) {
+                return value.min -10;
+              },
+            max: function(value){
+                return value.max + 10;
+            }
            }
+         
         })
     }, [data])
     return (
