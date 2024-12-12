@@ -9,6 +9,7 @@
     border: 1px solid #d7d7d7;
     border-radius: 4px;
     padding: 16px;
+
     .contentTitle {
       height: 32px;
       padding-left: 16px;
@@ -19,21 +20,25 @@
       display: flex;
       justify-content: space-between;
     }
+
     .line {
       margin: 16px 0;
       height: 2px;
+
       .lineImg {
         margin-top: -24px;
         width: 100%;
         height: 2px;
       }
     }
+
     .editText {
       color: var(--ant-primary-color);
       font-size: 14px;
       text-decoration: underline;
       cursor: pointer;
     }
+
     .deleteText {
       color: #f33;
       font-size: 14px;
@@ -42,8 +47,10 @@
     }
   }
 }
+
 .addModal {
- /*  :global {
+
+  /*  :global {
     .ant-modal-footer {
       border: none;
       padding-right: 32px;
@@ -62,24 +69,29 @@
     padding-left: 12px;
   } */
   .addBody {
-   // margin-top: 32px;
+
+    // margin-top: 32px;
     .addForm {
       width: 300px;
     }
+
     p {
       margin: 10px 0px;
     }
+
     .addAlarm {
       color: var(--ant-primary-color);
       border: 1px dashed var(--ant-primary-color);
       margin-top: 32px;
     }
+
     .titleModal {
       font-family: "微软雅黑 Bold", "微软雅黑 Regular", "微软雅黑";
       font-weight: 700;
       font-style: normal;
       font-size: 16px;
     }
+
     .addSourceTypeTable {
       .editText {
         color: var(--ant-primary-color);
@@ -87,6 +99,7 @@
         text-decoration: underline;
         cursor: pointer;
       }
+
       .deleteText {
         color: #f33;
         font-size: 14px;
@@ -94,6 +107,7 @@
         cursor: pointer;
       }
     }
+
     .form {
       .divBox {
         display: flex;
@@ -106,9 +120,11 @@
         //   }
         // }
       }
+
       .ant-form-item {
         margin-bottom: 24px;
       }
+
       .qujianLi,
       .lessThan,
       .qujianwai,
@@ -116,29 +132,34 @@
         display: flex;
         justify-content: flex-start;
         position: relative;
+
         .title {
           padding: 40px 20px 0 5px;
           text-align: left;
           font-size: 14px;
           display: inline-block;
         }
+
         .content {
           margin-top: 20px;
           display: flex;
           justify-content: flex-start;
           align-items: center;
           position: relative;
+
           .outer {
             width: 100px;
             height: 50px;
             border-bottom: 2px dashed #00cc00;
             color: #00cc00;
             text-align: center;
+
             span {
               display: inline-block;
               padding-top: 10px;
             }
           }
+
           .inner {
             width: 130px;
             height: 50px;
@@ -146,11 +167,13 @@
             color: #ff0000;
             text-align: center;
             background-color: #ffe6e6;
+
             span {
               display: inline-block;
               padding-top: 10px;
             }
           }
+
           .innerWaiLeft {
             width: 120px;
             height: 50px;
@@ -160,11 +183,13 @@
             color: #ff0000;
             text-align: center;
             background-color: #ffe6e6;
+
             span {
               display: inline-block;
               padding-top: 10px;
             }
           }
+
           .innerWaiRight {
             width: 120px;
             height: 50px;
@@ -174,23 +199,27 @@
             color: #ff0000;
             text-align: center;
             background-color: #ffe6e6;
+
             span {
               display: inline-block;
               padding-top: 10px;
             }
           }
+
           .low {
             position: absolute;
             top: 50px;
             left: 90px;
             color: #ff0000;
           }
+
           .high {
             position: absolute;
             top: 50px;
             left: 220px;
             color: #ff0000;
           }
+
           .lt {
             border: none;
             border-bottom: 2px solid #ff0000;
@@ -200,11 +229,13 @@
             color: #ff0000;
             text-align: center;
             background-color: #ffe6e6;
+
             span {
               display: inline-block;
               padding-top: 10px;
             }
           }
+
           .ltAlarm {
             border: none;
             border-bottom: 2px solid #ff0000;
@@ -214,22 +245,26 @@
             color: #ff0000;
             text-align: center;
             background-color: #ffe6e6;
+
             span {
               display: inline-block;
               padding-top: 10px;
             }
           }
+
           .gt {
             width: 170px;
             height: 50px;
             border-bottom: 2px dashed #00cc00;
             color: #00cc00;
             text-align: center;
+
             span {
               display: inline-block;
               padding-top: 10px;
             }
           }
+
           .critical {
             left: 179px;
             position: absolute;
@@ -244,6 +279,7 @@
 }
 
 .deleteModal {
+
   /* :global {
     .ant-modal-footer {
       border: none;
@@ -262,6 +298,7 @@
     line-height: 32px;
     padding-left: 12px;
   }
+
   .deleteBody {
     margin-top: 43px;
     margin-left: 20px;
@@ -269,6 +306,7 @@
     align-items: center;
     font-size: 16px;
     color: #333;
+
     .warnIcon {
       width: 42px;
       height: 42px;
@@ -276,32 +314,59 @@
     }
   }
 }
+
 //关联告警弹窗
 
-.transferContent{
+.transferContent {
   width: 1680px;
-  height: 760px;
+  height: 880px;
   background-color: #003366;
-  padding: 32px;
-  // display: flex;
+  padding: 16px 32px;
+  display: flex;
+  justify-content: space-between;
   position: absolute;
-  top:50%;
+  top: 50%;
   transform: translate(200px, -50%);
 }
-.left{
+
+.left {
   display: flex;
-  flex-direction: column;
+  justify-content: space-between;
+
+  // flex-direction: column;
+  .leftTable {
+    display: flex;
+    flex-direction: column;
+
+    .left1 {
+      display: flex;
+    }
+
+    .left2 {
+      display: flex;
+    }
+
+    .left3 {
+      display: flex;
+    }
+
+    .left4 {
+      display: flex;
+    }
+  }
 }
-.publicTitle{
-  height: 32px;
+
+.publicTitle {
+  height: 25px;
   padding-left: 16px;
-  margin-bottom: 16px;
-  line-height: 32px;
+  margin-bottom: 10px;
+  line-height: 25px;
   font-size: 14px;
   color: #333;
   border-left: 4px solid var(--ant-primary-color);
 }
-.mainTable{
+
+.mainTable {
   width: 692px;
   height: 182px;
   padding: 16px;
@@ -309,7 +374,8 @@
   border-radius: 2px;
   margin-bottom: 32px;
 }
-.subTable{
+
+.subTable {
   width: 692px;
   height: 472px;
   padding: 16px;
@@ -317,106 +383,138 @@
   border-radius: 2px;
   margin-bottom: 32px;
 }
-.otherSubTable{
+
+.otherSubTable {
   width: 692px;
-  height: 696px;
-  padding: 16px;
+  height: 200px;
+  padding: 10px;
   background-color: #fff;
   border-radius: 2px;
-  margin-bottom: 32px;
+  margin-bottom: 16px;
 }
-.searchInput{
+
+.searchInput {
   margin-bottom: 16px;
   display: flex;
   align-items: center;
 }
-.actions{
+
+.actions {
   padding: 0 32px;
   display: flex;
   flex-direction: column;
   justify-content: space-evenly;
   align-items: stretch;
-  .firstButton{
-      margin-top: 64px;
+
+  .tip {
+    color: #fff;
+    text-align: center;
   }
-  .secondButton{
-      margin-top: 182px;
-      display: flex;
-      justify-content: space-between;
+
+  .firstButton {
+    margin-top: 64px;
   }
-  .leftButton{
-      display: inline-block;
-      width: 68px;
-      height: 46px;
+
+  .secondButton {
+    margin-top: 182px;
+    display: flex;
+    justify-content: space-between;
+  }
+
+  .leftButton {
+    display: inline-block;
+    width: 68px;
+    height: 46px;
+    background-color: var(--ant-primary-color);
+    border-radius: 4px;
+    cursor: pointer;
+    color: #fff;
+    font-size: 20px;
+    line-height: 46px;
+    text-align: center;
+
+    &:hover {
+      background-color: rgba(64, 158, 255, 1);
+    }
+  }
+
+  .rightButton {
+    display: inline-block;
+    width: 68px;
+    height: 46px;
+    margin-left: 10px;
+    background-color: var(--ant-primary-color);
+    border-radius: 4px;
+    cursor: pointer;
+    color: #fff;
+    font-size: 20px;
+    line-height: 46px;
+    text-align: center;
+
+    &:hover {
+      background-color: rgba(64, 158, 255, 1);
+    }
+  }
+
+  .finalButton {
+    margin-top: 180px;
+
+    .saveButton {
+      width: 146px;
+      height: 40px;
       background-color: var(--ant-primary-color);
       border-radius: 4px;
       cursor: pointer;
       color: #fff;
-      font-size: 20px;
-      line-height: 46px;
+      font-size: 14px;
+      line-height: 40px;
       text-align: center;
-      &:hover{
-          background-color: rgba(64, 158, 255, 1);
+
+      &:hover {
+        background-color: rgba(64, 158, 255, 1);
       }
-  }
-  .rightButton{
-      display: inline-block;
-      width: 68px;
-      height: 46px;
-      margin-left:10px;
-      background-color: var(--ant-primary-color);
+    }
+
+    .closeButton {
+      margin-top: 16px;
+      width: 146px;
+      height: 40px;
+      background-color: #fff;
       border-radius: 4px;
       cursor: pointer;
-      color: #fff;
-      font-size: 20px;
-      line-height: 46px;
+      color: #212121;
+      font-size: 14px;
+      line-height: 40px;
       text-align: center;
-      &:hover{
-          background-color: rgba(64, 158, 255, 1);
+
+      &:hover {
+        opacity: 0.5;
       }
-  }
-  .finalButton{
-      margin-top: 180px;
-      .saveButton{
-          width: 146px;
-          height: 40px;
-          background-color: var(--ant-primary-color);
-          border-radius: 4px;
-          cursor: pointer;
-          color: #fff;
-          font-size: 14px;
-          line-height: 40px;
-          text-align: center;
-          &:hover{
-              background-color: rgba(64, 158, 255, 1);
-          } 
-      }
-      .closeButton{
-          margin-top: 16px;
-          width: 146px;
-          height: 40px;
-          background-color: #fff;
-          border-radius: 4px;
-          cursor: pointer;
-          color: #212121;
-          font-size: 14px;
-          line-height: 40px;
-          text-align: center;
-          &:hover{
-              opacity: 0.5;
-          } 
-      }
+    }
   }
 }
-.rightTable{
+
+.right {
+  display: flex;
+  flex-direction: column;
+
+  .btn {
+    display: flex;
+    align-items: center;
+    justify-content: end;
+    margin-top: 16px;
+  }
+}
+
+.rightTable {
   width: 714px;
-  height: 696px;
+  height: 780px;
   border-radius: 2px;
   padding: 16px;
   background-color: #fff;
 }
 
-.mask{
+.mask {
   position: absolute;
   left: 0;
   top: 0;

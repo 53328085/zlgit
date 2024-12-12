@@ -170,6 +170,9 @@ const loginrouter =  [{
    {
      path: '/zltest',
      element: <Fform/>, 
+     loader: async (params)=> {
+        await   console.log('params',params)
+     }
    },
   
    {

@@ -74,18 +74,35 @@ export default function Index() {
       if (success && data.constructor == Object) {
 
         const { link = [] } = data
+        let arr = []
+        let sources = Array.from(new Set([...link.map(i => i.source)]))
 
-        let source = link.map(i => i.source)
-        let target = link.map(i => i.target)
-        let nodes = Array.from(new Set([...source, ...target])).map(name => ({ name }))
+
+
+        sources.forEach(s => {
+          let depth = link.filter(l => l.source == s).map(d => d.target)
+
+          arr = [...arr, s, ...depth]
+
+        })
+
+        let datas = Array.from(new Set([...arr])).map(name => ({ name }))
         let links = link.map(l => ({ ...l, value: parseFloat(l.value) }))
         setOptions({
           ...options,
           series: [
             {
               ...options.series[0],
-              data: nodes,
+              data: datas,
               links,
+              label: {
+                fontSize: 10
+              },
+              nodeAlign: "left",
+              nodeGap: 12,
+              lineStyle: {
+                color: "source"
+              }
             }
           ]
         })

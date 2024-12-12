@@ -452,15 +452,15 @@ export default function index() {
 
   );
   const Warn = () => {
-    if (radioVal == 1 && state.devices[0]?.deviation == 0) {
+    if (radioVal == 1 && state.devices?.[0]?.deviation == 0) {
       return null
-    } else if (radioVal == 2 && state.devices[1]?.deviation == 0) {
+    } else if (radioVal == 2 && state.devices?.[1]?.deviation == 0) {
       return null
-    } else if (radioVal == 3 && state.devices[2]?.deviation == 0) {
+    } else if (radioVal == 3 && state.devices?.[2]?.deviation == 0) {
       return null
-    } else if (radioVal == 4 && state.devices[3]?.deviation == 0) {
+    } else if (radioVal == 4 && state.devices?.[3]?.deviation == 0) {
       return null
-    } else if (!state.alltableData || state.alltableData.length == 0) {
+    } else if (!state.alltableData || state.alltableData?.length == 0) {
       return null
     }
     return (<img src={warn} onClick={warnDetail}></img>)
@@ -513,10 +513,10 @@ export default function index() {
         value={radioVal}
         disabled={state.disabled}
       >
-        <Radio.Button value="1" disabled={item?.items.state == 0}>用电量对比</Radio.Button>
-        <Radio.Button value="2" disabled={item?.items.state == 0}>功率对比</Radio.Button>
-        <Radio.Button value="3" disabled={item?.items.state == 0}>电流对比</Radio.Button>
-        <Radio.Button value="4" disabled={item?.items.state == 0}>电压对比</Radio.Button>
+        <Radio.Button value="1" disabled={state.devices?.[0]?.state == 0}>用电量对比</Radio.Button>
+        <Radio.Button value="2" disabled={state.devices?.[1]?.state == 0}>功率对比</Radio.Button>
+        <Radio.Button value="3" disabled={state.devices?.[2]?.state == 0}>电流对比</Radio.Button>
+        <Radio.Button value="4" disabled={state.devices?.[3]?.state == 0}>电压对比</Radio.Button>
       </BtnWrap>
       <Charts>
         {state.chartsOpts.series.length > 0 ? <Icharts custoption={state.chartsOpts}></Icharts> : null}

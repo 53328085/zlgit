@@ -1,12 +1,12 @@
 import React, { useEffect, useState, useRef, useMemo } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
-import { selectcurlRommid } from "@redux/systemconfig";
+import { selectcurlRommid,adaptation } from "@redux/systemconfig";
 import Pagecount from '@com/pagecontent'
 import {Select, message, Spin, Space } from 'antd'
 import { useReactive } from "ahooks";
 import {useNavigate} from 'react-router-dom'
 import { DistributionRoomRuntime, distributionRoom, RuntimeHMI } from '@api/api.js'
-import styled from 'styled-components';
+import styled, {css} from 'styled-components';
 import { Topology } from "@topology/core/src/core";
 import { register as registerFlow } from '@topology/flow-diagram'
 import {Cspin} from '@com/comstyled'
@@ -28,6 +28,9 @@ import '../../../assets/css/font_bz4csze2alg/iconfont.css'
 
 const { Option } = Select;
 import {CustButton} from '@com/useButton'
+const sty = css`
+ padding: 0 16px;
+`
 export default function Index() {
   const ChartItem = styled.div`
     position: absolute;
@@ -37,24 +40,15 @@ export default function Index() {
     align-items: center;
     width: 100%;
     padding: 0 64px;
-    .chartitem{
-      width: 112px;
-      height: 36px;
-      line-height: 36px;
-      text-align: center;
-      color: #f2f2f2;
-      font-size: 14px;
-      border: 1px solid #f2f2f2;
-      border-radius: 2px;
-      margin-right: 16px;
-      cursor: pointer;
-    }
-    .activeItem{
-      background-color: #237ae4;
-    }
+    gap: 16px;
+    flex-wrap: wrap;
+    align-content: flex-start;
+    ${props => props.laptop ? sty : null}
+  
   `
 
   const { hostServer } = useSelector((state) => state.user);
+  const {laptop} = useSelector(adaptation)
   // const hostServer = 'ws://10.5.25.182:4239/eiot/mqtt'
 
   let canvas
@@ -341,12 +335,12 @@ export default function Index() {
     <Cspin spinning={state.spining} tip="Loading...">
       <div  style={{backgroundColor: "#eeeff3", flex: 1, display: 'flex'}}>
         <div id="topology-canvas" style={{ position: 'relative', flex:1, backgroundColor: '#fff' }} onContextMenu={e => onContextMenu(e)} ref={mapref}>
-          <ChartItem>
-            <Space size={16}>
+          <ChartItem laptop={laptop}>
+          
             {state.chartList.map((item, index) => {
               return <CustButton ghost={state.activeChart == item.id ? false : true} wh="112px" style={{borderColor: "#fff"}} key={index} onClick={() => changeChart(item.id)}>{item.name}</CustButton>
             })}
-           </Space>
+         
            {(state.chartList?.length > 0) && <CustButton   style={{marginLeft: "auto"}} onClick={fullscreen}>{isf ? '退出全屏' : '全屏显示'}</CustButton>}
           </ChartItem>
          

@@ -16,7 +16,18 @@ import {
 
 import Table from "@com/useTable";
 const { Text } = Typography;
-
+const Mainbox =  styled.div`
+&&{
+  background-color: ${props => props.theme.gatewaybgcolor || "#135abd"};
+  .leftImgBox,.rightHead {
+    background-color: ${props => props.theme.gatewaybgcolor || "#135abd"};
+  }
+  .head{
+    background-color: ${props => props.theme.gatewayheardcolor || "#003366"};
+  }
+  
+}
+`
 
 const Ctitlec = styled.div`  // detail?.state == 2 ? style.leftImgState : detail.state == 3 ? style.leftImgStateAlarm : style.leftImgStateOff
 &&{
@@ -226,8 +237,8 @@ export default function GatewayDetail(props) {
     getLogData();
   }, [search.sn, projectId, pageLog, paramsLog.pageSize]);
   return (
-    <div className={style.main}>
-      <div className={style.head}>
+    <Mainbox className={style.main}>
+      <div className={style.head + " head"}>
         {logoImage ? (
           <img src={logoImage} className={style.headImg}></img>
         ) : null}
@@ -239,7 +250,7 @@ export default function GatewayDetail(props) {
             <div className={style.leftHeadLine}></div>
             <p>网关详情</p>
           </div>
-          <div className={style.leftImgBox}>
+          <div className={style.leftImgBox + " leftImgBox"}>
             <img
               src={
                 detail
@@ -290,7 +301,7 @@ export default function GatewayDetail(props) {
           </div>
         </div>
         <div className={style.right}>
-          <div className={style.rightHead}>
+          <div className={style.rightHead + " rightHead"}>
             <div
               className={state ? style.tabBoxW : style.tabBoxB}
               onClick={onchangeTab}
@@ -355,6 +366,6 @@ export default function GatewayDetail(props) {
           </div>
         </div>
       </div>
-    </div>
+    </Mainbox>
   );
 }

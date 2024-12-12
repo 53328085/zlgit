@@ -2,7 +2,7 @@ import React, { useState, useEffect, useMemo } from 'react'
 import { Form, Modal, Collapse, DatePicker, Radio, Button, Space, message, } from 'antd'
 import styled from 'styled-components'
 import { useSelector } from 'react-redux'
-import { selectProjectId, selectOneLevelDefaultId } from '@redux/systemconfig.js'
+import { selectProjectId, selectOneLevelDefaultId,adaptation } from '@redux/systemconfig.js'
 import { useAntdTable, useReactive } from 'ahooks'
 import style from './style.module.less'
 import BlueColumn from '@com/bluecolumn'
@@ -28,9 +28,11 @@ const Mainbox = styled.div`
   row-gap: 16px;
   flex: 1;
 `
+
 export default function Index() {
   const { RuntimeCamera: { Statistics, Overview, StopYsPtz, StartYsPtz, GetYsHisPlayUrl, GetYsRealPlayUrl } } = Monitoring
   const { token } = useSelector(selectUser);
+  const {laptop} = useSelector(adaptation)
   // const {name, roleType} = useSelector(selectUser) || {};
   const projectId = useSelector(selectProjectId)
   const { Panel } = Collapse;
@@ -230,7 +232,7 @@ export default function Index() {
         id: 'replay',
         accessToken: token,//
         url: url,
-        width: 1280,
+        width: laptop ? 690 : 1280,
         height: 717,
         themeData: themeData,
         handleError: (err) => {
@@ -568,20 +570,20 @@ export default function Index() {
 
 
         </Mainbox>
+        {/* 云监控 */}
         <Modal
           title={recordData?.address}
           centered
-          width={1680}
+          width={laptop ? 1024 : 1680}
           footer={null}
           open={isModal}
           onCancel={handleCancel}
         >
           <div style={{ display: 'flex' }}>
             <div id="replay" style={{
-              width: "1280px",
-              height: '717px'
+              flex:1
             }}></div>
-            <div style={{ flex: "1", marginLeft: 32 }}>
+            <div style={{ flex: 1, marginLeft: laptop ? 16 : 32 }}>
               <Titlelayout title="云台控制" bordered="n">
                 <div className={style.controlBackground} >
                   <div className={style.slotDiv}>
@@ -649,7 +651,7 @@ export default function Index() {
         <Modal
           title={cameraTitle}
           centered
-          width={1680}
+          width={laptop ? 1024 : 1680}
           footer={null}
           open={localModal}
           onCancel={closeWS}
@@ -657,12 +659,12 @@ export default function Index() {
           destroyOnClose={true}
         >
           <div className={style.dialogBody}>
-            <div className="bodyLeft" style={{ width: 1278, height: 718 }}>
-              <div id="container" style={{ marginLeft: 0, marginRight: 16 }}>
-                <video style={{ width: 1278, height: 717.75 }} muted controls autoPlay id="player"></video>
+            <div className="bodyLeft" style={{ display: "flex", flex: 1, height: "100%" }}>
+              <div id="container" style={{ display: "flex",flex:1 }}>
+                <video style={{ width: laptop ?"690px" : "1280px", height: "717px" }} muted controls autoPlay id="player"></video>
               </div>
             </div>
-            <div className="bodyRight">
+            <div className="bodyRight" style={{ marginLeft: laptop ? "16px" : "48px" }}>
               <Titlelayout title="云台控制" bordered="n">
                 <div className="controlBackground" id="controlBackground" >
                   <div className={["slotDiv", changeType != '' ? changeType : ''].join(' ')}>

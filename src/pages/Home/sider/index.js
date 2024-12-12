@@ -1,25 +1,27 @@
 import React, {useState, useEffect} from 'react'
+import {MenuUnfoldOutlined,MenuFoldOutlined} from "@ant-design/icons"
 import { useDispatch } from "react-redux";
-import {Menu, Image} from 'antd'
+import {Menu, Image,Button} from 'antd'
 import {useNavigate, useLocation} from 'react-router-dom'
 import {useSelector} from 'react-redux'
 import styled, {css} from 'styled-components'
 // import style from './style.module.less'
 import Title from '../header/title'
-import {  configState, siderDesignerMenus, siderRunMenus, getisDistribution, adaptation} from "@redux/systemconfig";
+import {  configState, siderDesignerMenus, siderRunMenus, getisDistribution, adaptation,sidershow,getsidershow} from "@redux/systemconfig";
 import imgurl from './icon';
-
+import ShowSide from "@com/showsider"
 const Micon = () => {
    return <span className="custicon">&#9673;</span>
 }
 const Imgbox = styled.div`
-    height: 158px;
+    height: 130px;
     display: flex;
+    flex-direction: column;
     justify-content: center;
     align-items: center;
     .ant-image {
       padding-bottom: 16px;
-      border-bottom: 1px dotted #fff;
+    //  border-bottom: 1px dotted #fff;
       .ant-image-img {
         height: 114px;
       }
@@ -34,8 +36,12 @@ const Imgbox = styled.div`
 
 const Sdiv = styled.div`
     display: grid;
-    grid-template-rows: 64px 158px 1fr;
+    grid-template-rows: 64px 130px 24px 1fr;
     height: inherit;
+    .btn {
+      margin-left: 8px;
+      justify-self: flex-start;
+    }
 `
 const sty = css`
 height: 28px;line-height: 28px; font-size: 12px;
@@ -87,6 +93,7 @@ export default function Sider() {
   const siderRunMenu = useSelector(siderRunMenus)
   const siderDesignerMenu = useSelector(siderDesignerMenus)
   const {laptop} = useSelector(adaptation)
+  const SiderShow = useSelector(sidershow)
   const dispatch = useDispatch()
   
   const [key, Setkey] = useState('')
@@ -94,15 +101,22 @@ export default function Sider() {
 
   const [path, setPath] = useState('')
 
+  const toggleCollapsed = () => {
+     dispatch(getsidershow(false));
+  };
   const Showimg = () => {
     let {primary} = location.state || {}   
     let imgsrc = config ? imgurl.config : imgurl[primary]
+  
     return (
-      <Imgbox>  <Image  width={184}   src={imgsrc} preview={false} style={{outline: '1px solid #fff'}} fallback={imgurl.config} /></Imgbox>
+      <Imgbox>
+      <Image  width={184}   src={imgsrc} preview={false} style={{outline: '1px solid #fff'}} fallback={imgurl.config} />
+     
+      </Imgbox>
      )
   }
 
-  useEffect(() => {      
+  useEffect(() => {
     try {
     
       let state = location.state || {}    
@@ -138,6 +152,8 @@ export default function Sider() {
     <Sdiv> 
        <Title/>
        <Showimg/>
+       <ShowSide show={false} />
+      
        <Cmenu laptop={laptop} onClick={onSelect} selectedKeys={[key]} items={menus} ></Cmenu>
     </Sdiv>
   )

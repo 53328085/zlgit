@@ -200,6 +200,7 @@ export default function Index() {
   const addOk = async () => {
     console.log(modalTitle)
     try {
+      return form.validateFields().then(async () => {
       const values = await form.validateFields();
       console.log(values)
       let post = {
@@ -263,6 +264,7 @@ export default function Index() {
       }
       // form.resetFields()
        //  setAddModal(false)
+    })
     }catch(errorInfo){
       console.log(errorInfo)
     }

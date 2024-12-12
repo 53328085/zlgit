@@ -10,7 +10,7 @@ import Titlelayout from "@com/titlelayout";
 import Citem from './item'
 import CitemAll from './itemAll'
 import { useSelector } from 'react-redux'
-import { selectProjectId, selectOneLevelDefaultId, selectOneLevel } from '@redux/systemconfig.js'
+import { selectProjectId, selectOneLevelDefaultId, selectOneLevel, levelDefaultLabel } from '@redux/systemconfig.js'
 import moment from "moment";
 import { getTime } from "@com/usehandler"
 import UseTable from "@com/useTable"
@@ -87,6 +87,7 @@ export default function Index() {
   const projectId = useSelector(selectProjectId);
   const areaId = useSelector(selectOneLevelDefaultId)
   const areaData = useSelector(selectOneLevel)
+  const levelname = useSelector(levelDefaultLabel)
   const [tableData, setTableData] = useState([])
   const [tableDataAll, setTableDataAll] = useState([])
   const [form] = Form.useForm();
@@ -126,6 +127,11 @@ export default function Index() {
       render: (text) => <span>{text}</span>
     },
     {
+      dataIndex: "areaName",
+      title: "区域名称",
+
+    },
+    {
       dataIndex: "address",
       title: "安装位置",
 
@@ -152,10 +158,29 @@ export default function Index() {
     }
 
   ]
+  columns[2].title = levelname
   const [mode, setMode] = useState(1)
   const [showAll, setshowAll] = useState(false)
-  const getData = async () => {
+  const sortClass = sortData => {
+    const groupBy = (array, f) => {
+      let groups = {};
+      array.forEach(o => {
+        let group = JSON.stringify(f(o));
+        groups[group] = groups[group] || [];
+        groups[group].push(o);
 
+      });
+       console.log(groups)
+      return Object.keys(groups).map(group => {
+        return  groups[group]
+      })
+    }
+    const sorted = groupBy(sortData, item => {
+      return item.areaName;
+    })
+    return sorted;
+  }
+  const getData = async () => {
     try {
       let { success, data, total } = await QueryElectric.query({ ...params })
       if (success && Array.isArray(data) && data.length > 0) {
@@ -186,21 +211,36 @@ export default function Index() {
           setshowAll(true)
           const groupedItems = Object.entries(
             data.reduce(
-              (prev, next) => ({
-                ...prev,
-                [next.areaName]: [...(prev[next.areaName] || []), { ...next }]
-              }),
-              {}
-            )
+              (prev, next) => (
+                {
+                  ...prev,
+                  [next.areaName]: [...(prev[next.areaName] || []), { ...next }]
+                }),
+              {})
           ).map(([areaName, value]) => ({ areaName, value }));
-          setTableDataAll(groupedItems)
-        } else {
+          // let newData = {}
 
+          // data.forEach(e => {
+          //   // 新建属性名
+          //   if (Object.keys(newData).indexOf('' + e.areaName) === -1) {
+          //     newData[e.areaName] = []
+          //   }
+          //   // 对应插入属性值
+          //   newData[e.areaName].push(e)
+          // })
+          // console.log(newData)
+          // let groupedItems = Object.entries(newData).map(([areaName, value]) => ({ areaName, value }))
+          // console.log(groupedItems)
+          // sortClass(data)
+          
+          // console.log(groupedItems)
+          setTableDataAll( sortClass(data))
+          console.log("---tableDataAll", sortClass(data),groupedItems)
+        } else {
           setshowAll(false)
         }
         setTableData(data)
         setTotal(total)
-        console.log(data, "data111=---", areaId, tableDataAll)
       } else {
         setTotal(0)
         setTableData([])
@@ -318,7 +358,7 @@ export default function Index() {
   }
 
 
-  const items = <div style={{ height: '630px',overflowY:'scroll' }}>  {areaId != 0 && !showAll ?
+  const items = <div style={{ height: '630px', overflowY: 'scroll' }}>  {areaId != 0 && !showAll ?
     <div className="card">{tableData.map(d => <Citem  {...d} key={nanoid()} />)} </div> :
     <div>{tableDataAll.map(d => <CitemAll  {...d} key={nanoid()} />)}</div>
   }</div>

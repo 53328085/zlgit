@@ -5,7 +5,7 @@ import configIcon from './configIcon.png'
 import { Drawer, Input, message, Modal, Empty, Divider } from 'antd';
 import _, { result } from 'lodash'
 import { useSelector } from 'react-redux'
-import { selectProjectId } from '@redux/systemconfig.js'
+import { selectProjectId,themeColor } from '@redux/systemconfig.js'
 import { UISummary } from '@api/api.js'
 
 import CompanyMessage from '../../../components/defaultHome/companyMessage'
@@ -153,6 +153,8 @@ export default function Index() {
   const [resetModal, setResetModal] = useState(false)
   const [confirmModal, setConfirmModal] = useState(false);
   const projectId = useSelector(selectProjectId)
+  const {previewrbgcolor} =useSelector(themeColor)
+
   const { InsertUISummary, QueryUISummary } = UISummary
 
   const [activeName, setactiveName] = useState(null);
@@ -526,7 +528,7 @@ export default function Index() {
   return (
     <div className={style.mainContent} style={{ backgroundColor: '#eee' }}>
       {contextHolder}
-      <ReactGridLayout layout={layoutItem} onLayoutChange={onLayoutChange} {...defaultProps} isDroppable={true} onDrop={onDrop} >
+      <ReactGridLayout layout={layoutItem} onLayoutChange={onLayoutChange} {...defaultProps} isDroppable={true} onDrop={onDrop} style={{backgroundColor: previewrbgcolor || '#135abd'}} >
         {_.map(layoutItem, el => createElement(el))}
       </ReactGridLayout>
       <div className={style.selectMenu}>

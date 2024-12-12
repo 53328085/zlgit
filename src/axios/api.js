@@ -3232,7 +3232,7 @@ export class AlarmManagement {
     server.post(`Safe/Alarm/UpdateAlarmEventSOE`, data);
   static UpdateAlarmEventCommunication = (data) =>
     server.post(`Safe/Alarm/UpdateAlarmEventCommunication`, data);
-  static QueryValvseDevicePage = (data) =>
+  static QueryValveDevicePage = (data) =>
     server.post(`Safe/AlarmValveDevice/QueryValveDevicePage`, data);
   static SetAlarmValveDevice = (data) =>
     server.post(`Safe/AlarmValveDevice/SetAlarmValveDevice`, data);
