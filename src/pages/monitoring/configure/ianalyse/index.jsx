@@ -37,7 +37,7 @@ const SetDiv = styled.div`
 const options = [
   { value: 1, label: "当天" },
   { value: 2, label: "最近7天" },
-  { value: 3, label: "最近30天" },
+  { value: 3, label: "最近一个月" },
 ];
 const styobj = { width: 140 };
 const titleList = ["电量对比", "功率对比", "电流对比", "电压对比"];
@@ -63,7 +63,7 @@ const columns = [
 ];
 const {
   ComparativeAnalysis: { QueryCompareDevice, HistoryCompare },
-  IAnalyse: { Configure, CompareQuery, DeleteComparePlan,UpdateComparePlan },
+  IAnalyse: { Configure, CompareQuery, DeleteComparePlan, UpdateComparePlan },
 } = Monitoring;
 
 export default function Index() {
@@ -106,6 +106,7 @@ export default function Index() {
     setPageInfo(page)
   }
   const openModal = () => {
+    settitle('新增对比分析')
     ref.current.onOpen()
     state.groupName = `第${tabledata.length + 1}组`
     state.items.forEach((item, index) => {
@@ -116,12 +117,11 @@ export default function Index() {
   const onOk = async () => {
     console.log(state)
     if (state.snGroup.length == 0) return message.error('请选择对比设备')
-    if(title=='新增对比分析'){
+    if (title == '新增对比分析') {
       const res = await Configure(state)
-    if (res.success) {
-      message.success('新增成功')
-      ref.current.onCancel()
-      GetSns()
+      if (res.success) {
+
+
         (state.items = Array(4)
           .fill(null)
           .map(() => ({
@@ -131,15 +131,18 @@ export default function Index() {
             deviation: 0,
             deviationValue: 0,
           }))),
-        state.snGroup = []
-      state.timeType = 1
+          state.snGroup = []
+        state.timeType = 1
+        message.success('新增成功')
+        ref.current.onCancel()
+        GetSns()
+      } else {
+        message.error(res.errMsg)
+      }
     } else {
-      message.error(res.errMsg)
-    }
-    }else{
-      let params={...state,planId}
+      let params = { ...state, planId }
       const res = await UpdateComparePlan(params)
-    if (res.success) {
+      if (res.success) {
         (state.items = Array(4)
           .fill(null)
           .map(() => ({
@@ -149,28 +152,29 @@ export default function Index() {
             deviation: 0,
             deviationValue: 0,
           }))),
-        state.snGroup = []
-      state.timeType = 1
-      GetSns()
-      message.success('修改成功')
-      ref.current.onCancel()
-    } else {
-      message.error(res.errMsg)
-    }
+          state.snGroup = []
+        state.timeType = 1
+        GetSns()
+        message.success('修改成功')
+        ref.current.onCancel()
+      } else {
+        message.error(res.errMsg)
+      }
     }
   }
   const handleCancel = () => {
-      (state.items = Array(4)
-        .fill(null)
-        .map(() => ({
-          state: 0,
-          line: 0,
-          lineValue: 0,
-          deviation: 0,
-          deviationValue: 0,
-        }))),
+    (state.items = Array(4)
+      .fill(null)
+      .map(() => ({
+        state: 0,
+        line: 0,
+        lineValue: 0,
+        deviation: 0,
+        deviationValue: 0,
+      }))),
       state.snGroup = []
     state.timeType = 1
+    setSubTable([])
     ref.current.onCancel()
   }
   const onSetDevices = async () => {
@@ -231,6 +235,7 @@ export default function Index() {
           }
           return acc;
         }, []);
+        setPageInfo({ ...pageInfo, total: mergedData.length })
         console.log(mergedData, 189)
         setTabledata(mergedData)
         // let items = mergedData.items;
@@ -355,7 +360,7 @@ export default function Index() {
                   checked={state.items[index]["deviation"]}
                   onChange={(e) => {
                     if (!e.target.checked) {
-                      state.items[index]["deviationValue"] = "";
+                      state.items[index]["deviationValue"] = 0;
                     }
                     state.items[index]["deviation"] = e.target.checked ? 1 : 0;
                   }}
@@ -414,7 +419,7 @@ export default function Index() {
       ),
     },
   ]
-  
+
   const deletePlan = (record) => {
     console.log(record)
     setPlanId(record.planId)

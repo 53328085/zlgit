@@ -64,12 +64,7 @@ let markLine = {
     position: 'insideMiddle',
     formatter: '{c}'
   },
-  data: [
-    {
-      name: '阈值',
-
-    }
-  ],
+  data: [],
   lineStyle: {
     color: '#f00'
   }
@@ -106,11 +101,8 @@ export default function index() {
   const dateFormat = "YYYY-MM-DD";
   const ModalRef = useRef(null)
   const [indexBtn, setIndexBtn] = useState(0)
-  const [radioVal, setRadioVal] = useState("1");
-  const [dates, setDates] = useState([
-    moment(oneWeekAgo, dateFormat),
-    moment(currentDate, dateFormat),
-  ]);
+  const [radioVal, setRadioVal] = useState(1);
+  const [dates, setDates] = useState([]);
   const state = useReactive({
     devices: [],
     snGroup: [],
@@ -119,17 +111,19 @@ export default function index() {
       type: 5,
       ...option,
     },
+    xAxis: [],
     alltableData: [],
-    detailtableData:[],
+    detailtableData: [],
     tableData: [],
     current: 1,
     pageSize: 10,
     disabled: false,
     groupName: ''
   });
+  const markLineList=useReactive([])
   const [params, setParams] = useState([])
   const changeBtn = (e, index) => {
-    //setRadioVal(e.target.value);
+    setRadioVal(e.target.value-0);
     params[index].type = e.target.value
     setParams(params)
     HistoryCompares()
@@ -137,8 +131,8 @@ export default function index() {
   const changeDate = (dates, dateStrings, index) => {
     console.log(dates, dateStrings, index)
     console.log(params)
-    params[index].start = dateStrings[0]
-    params[index].end = dateStrings[1]
+    params[index].start = dateStrings[0]+' 00:00:00'
+    params[index].end = dateStrings[1]+' 23:59:59'
     setParams(params)
     setDates(dateStrings);
     HistoryCompares()
@@ -163,14 +157,25 @@ export default function index() {
         console.log(mergedData)
 
         let list = []
-        mergedData.map(item => {
+        mergedData.map((item,index) => {
           let param = {
-            projectId, type: 1, groupName: '', sNs: [], start: dates[0].format('YYYY-MM-DD'), end: dates[1].format('YYYY-MM-DD')
+            projectId, planId: 0, type: 1, groupName: '', sNs: [], start: '', end: ''
           }
           param.groupName = item.groupName
           param.sNs = item.snGroup
+          param.planId = item.planId
+          let startTime = []
+          startTime = getDefaultValue(item.timeType)
+          param.start = startTime[0].format('YYYY-MM-DD')+" 00:00:00"
+          param.end = startTime[1].format('YYYY-MM-DD')+' 23:59:59'
           list.push(param)
+          markLineList.push([])
+          item.items.map((it,i)=>{
+            
+            markLineList[index].push(it.lineValue)
+          })
         })
+        console.log(markLineList)
         console.log(list)
         setParams(list)
         HistoryCompares()
@@ -268,17 +273,39 @@ export default function index() {
       if (resp.data) {
         console.log(1111)
         state.chartsOpts.series = []
-        state.chartsOpts.xAxis.data = resp.data[0].snData[0]["data"][0]["data"].map(it => it.time)
+
         console.log(state.chartsOpts)
         let compareArr = []
         resp.data.forEach((a, b) => {
           state.chartsOpts.series[b] = []
+          state.xAxis[b] = []
           a.snData.forEach((item, index) => {
             if (item?.data?.length > 0) {
               item.data.forEach(it => {
                 console.log(it, b)
+                state.xAxis[b] = it["data"].map(it => it.time)
                 state.chartsOpts.series[b].push({
-                  data: it.data.map(i => (i["value"])), type: "line", smooth: true, name: item["name"] + "-" + it["point"],
+                  data: it.data.map(i => (i["value"])), 
+                  type: "line", 
+                  smooth: true, 
+                  name: item["name"] + "-" + it["point"],
+                  markLine:dataList[b].items[params[b].type-1].line!=0?{
+                    symbol: ['none', 'none'],
+                    label: {
+                      show: true,
+                      position: 'insideMiddle',
+                      formatter: '基准线:{c}'
+                    },
+                    data: [
+                      {
+                        yAxis: markLineList[b][params[b].type-1], // 这里设置基准线的值，可以根据实际情况调整
+                        name: '基准线'
+                      }
+                    ],
+                    lineStyle: {
+                      color: '#f00'
+                    }
+                  }:{}
                 })
               })
             }
@@ -287,9 +314,9 @@ export default function index() {
         console.log(state.chartsOpts.series)
         state.detailtableData = resp.data
         // if (resp.data[indexBtn].compareDeviation) {
-          // state.alltableData = resp.data[indexBtn].compareDeviation
-          // console.log(state.alltableData)
-          // state.tableData = state.alltableData?.slice(0, state.pageSize)
+        // state.alltableData = resp.data[indexBtn].compareDeviation
+        // console.log(state.alltableData)
+        // state.tableData = state.alltableData?.slice(0, state.pageSize)
         // }
 
 
@@ -416,8 +443,8 @@ export default function index() {
     console.log(index)
     ModalRef.current.onOpen()
     //setIndexBtn(index)
-    state.alltableData=state.detailtableData[index].compareDeviation
-    state.tableData = state.alltableData?.slice(0, state.pageSize)
+    state.alltableData = state.detailtableData[index]?.compareDeviation
+    state.tableData = state.alltableData.length > 0 ? state.alltableData.slice(0, state.pageSize) : []
   }
   const changePage = (val) => {
     console.log(val)
@@ -451,6 +478,43 @@ export default function index() {
     </Space>
 
   );
+  const [dateList, setDateList] = useState([])
+  const getDefaultValue = (type) => {
+    const today = moment();
+    const oneDayAgo = moment().subtract(1, 'days');
+    const oneWeekAgo = moment().subtract(7, 'days');
+    const oneMonthAgo = moment().subtract(1, 'months');
+    let List = [today, today, oneWeekAgo, oneMonthAgo]
+    setDateList(List)
+    switch (type) {
+      case 1:
+        return [today, today];
+      case 2:
+        return [oneWeekAgo, today];
+      case 3:
+        return [oneMonthAgo, today];
+    }
+  };
+  const disabledDate = (current, type) => {
+    const today = moment();
+    const oneDayAgo = moment().subtract(1, 'days');
+    const oneWeekAgo = moment().subtract(7, 'days');
+    const oneMonthAgo = moment().subtract(1, 'months');
+    if (!current) {
+      return false; // 显式处理 current 为 null 或 undefined 的情况
+    }
+
+    switch (type) {
+      case 1:
+        return current > today || current < today;
+      case 2:
+        return current > today || current < oneWeekAgo;
+      case 3:
+        return current > today || current < oneMonthAgo;
+      default:
+        return false;
+    }
+  };
   const Warn = () => {
     if (radioVal == 1 && state.devices?.[0]?.deviation == 0) {
       return null
@@ -486,22 +550,25 @@ export default function index() {
                 </BtnWrap>
               </Space>
               <Space>
-                <CustButton style={{ marginRight: 16 }} onClick={()=>warnDetail(index)}>偏差告警明细</CustButton>
+                {state.detailtableData[index]?.compareDeviation == null ? '' : <CustButton style={{ marginRight: 16 }} onClick={() => warnDetail(index)}>偏差告警明细</CustButton>}
               </Space>
               <Space>
                 <span>选择日期范围</span>
                 <RangePicker
-                  defaultValue={[
-                    moment(oneWeekAgo, dateFormat),
-                    moment(currentDate, dateFormat),
-                  ]}
+                  defaultValue={[dateList[item.timeType], dateList[0]]}
+                  disabledDate={(current) => disabledDate(current, item.timeType)}
                   onChange={(dates, dateStrings) => changeDate(dates, dateStrings, index)}
                 />
               </Space>
             </Space>}>
             <Divider dashed style={{ borderColor: "#d7d7d7" }}></Divider>
             <Charts>
-              {state.chartsOpts.series.length > 0 ? <Icharts custoption={{ ...state.chartsOpts, series: state.chartsOpts.series[index] }}></Icharts> : <Cempty tip="暂无数据" />}
+              {state.chartsOpts.series.length > 0&&item?.items[params[index].type-1].state != 0 ?
+                <Icharts custoption={{
+                  ...state.chartsOpts,
+                  series: state.chartsOpts.series[index],
+                  xAxis: { data: state.xAxis[index] }
+                }}></Icharts> : <Cempty tip="暂无数据" />}
             </Charts>
 
             {/* <BtnWrap

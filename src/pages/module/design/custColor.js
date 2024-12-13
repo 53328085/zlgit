@@ -6,10 +6,11 @@ import {CloseOutlined} from "@ant-design/icons"
 import {getThemeColor} from '@redux/systemconfig'  
 import defaultcolor from "@com/defaultcolor"
 export default function Index({value, onChange, name})  {
+    console.log("value",value)
     const dispatch = useDispatch()
     const [show, setShow]=useState(false)
     const [el, setEl] = useState()
-    const colors = defaultcolor[name] || []
+    const colors = Array.isArray(defaultcolor[name]) ? defaultcolor[name] : []
     let {left=0, top=0, height}=el?.getBoundingClientRect?.() || {}
     let  sty={
       display: 'flex',
