@@ -16,7 +16,7 @@ const TransferContent = styled.div`
 &&{
     width: calc(100% - 200px);
    // width: 1680px;
-    height:100%;
+    //height:100%;
     background-color: #003366;
     padding: 32px;
     display: flex;
@@ -48,7 +48,7 @@ const TransferContent = styled.div`
 }
 
 .actions{
-    padding: ${props=> props.laptop ? "0 16px" : "328px"};
+    padding: ${props=> props.laptop ? "0 16px" : "32px"};
     display: flex;
     flex-direction: column;
     justify-content: space-evenly;

@@ -5,7 +5,7 @@ import style from './style.module.less'
 import { useSelector } from 'react-redux'
 import { useAntdTable } from 'ahooks'
 import imgurl from './images/index.js'
-import { Pagination, message, DatePicker, Button, Radio, Empty, Form, Input, Divider, Typography } from 'antd'
+import { Pagination, message, DatePicker, Button, Radio, Empty, Form, Input, Divider, Typography, Select } from 'antd'
 import { SearchOutlined, CaretUpOutlined, CaretDownOutlined } from '@ant-design/icons';
 import { useLocation, useSearchParams } from 'react-router-dom';
 import { Monitoring, RuntimeHMI, DeviceDtl } from '@api/api.js'
@@ -26,9 +26,9 @@ import moment from "moment";
 import deviceDetail3 from './images/deviceDetail3.jpg'
 import Control from './Control'
 import { min } from "lodash";
- 
-const {Text} = Typography
-const Mainbox =  styled.div`
+
+const { Text } = Typography
+const Mainbox = styled.div`
 &&{
   background-color: ${props => props.theme.devicebgcolor || "#135abd"};
   .leftImgBox,.rightHead {
@@ -63,7 +63,7 @@ const Ctitlec = styled.div`  // detail?.state == 2 ? style.leftImgState : detail
     justify-content: center;
 }
 `
-const deviceList = ['', '电表', '冷水表', '燃气表', '传感器', '变压器', '热水表', '蒸汽表', '煤炭表', '燃油表', '储能设备', '', '断路器', '触点测温', '光纤测温']
+const deviceList = ['', '电表', '冷水表', '燃气表', '传感器', '变压器', '热水表', '蒸汽表', '煤炭表', '燃油表', '储能设备', '', '断路器', '触点测温', '光纤测温', '', '', '', '流量计']
 
 const Chartbox = styled.div`
   display: grid;
@@ -95,20 +95,20 @@ const Chartin = (props) => {
         let series = Array(data.length).fill({
             type: "line",
             seriesLayoutBy: 'row',
-            areaStyle:null,
-            stack:null
-           })       
-      
-         data.forEach((d,index) => {
-           let {point, data} = d;
-           dimensions.push(point)
-           if(index == 0) {
-             source.push(data.map(t => t.time));
-             source.push(data.map(t => t.value))
-           }else {
-            source.push(data.map(t => t.value))
-           }
-        })  
+            areaStyle: null,
+            stack: null
+        })
+
+        data.forEach((d, index) => {
+            let { point, data } = d;
+            dimensions.push(point)
+            if (index == 0) {
+                source.push(data.map(t => t.time));
+                source.push(data.map(t => t.value))
+            } else {
+                source.push(data.map(t => t.value))
+            }
+        })
 
 
         drawEcharts(ref.current, {
@@ -129,16 +129,16 @@ const Chartin = (props) => {
                     interval: "auto"
                 },
 
-           },
-           yAxis: { // 万工、老梁的方案
-            min: function(value) {
-                return value.min -10;
-              },
-            max: function(value){
-                return value.max + 10;
+            },
+            yAxis: { // 万工、老梁的方案
+                min: function (value) {
+                    return value.min - 10;
+                },
+                max: function (value) {
+                    return value.max + 10;
+                }
             }
-           }
-         
+
         })
     }, [data])
     return (
@@ -174,20 +174,32 @@ export default function GatewayDetail(props) {
     //const mqtClient =mqtt.connect(hostServer, options)
     const { chineseTitle } = useSelector(systemConfigInfo)
     const { RangePicker } = DatePicker;
-    const { RuntimeDevice: { Detail, Current, HistoryTrend, HistoryTable, EnergyActuary, EnergyReport, AlarmPage }, RuntimeLog } = Monitoring
+    const { RuntimeDevice: { Detail, Current, HistoryTrend, HistoryTable, EnergyActuary, EnergyReport, AlarmPage }, RuntimeLog, GetPointList, HistoryCurve } = Monitoring
     let [state, setstate] = useState(1)
     let [detail, setDetail] = useState({})
     const deviceStyle = detail?.deviceStyle;
     const OtherdeviceStyle = detail?.deviceStyle == 4 && detail?.category == 'ZTWLSENSOR-SL';
-    console.log(OtherdeviceStyle)
+    const category = detail?.category
+    const displaypoint = [4, 18].includes(detail?.deviceStyle)
+    console.log(OtherdeviceStyle, detail)
     // 能耗趋势 文本 1： 电， 2. 7 冷水，热水，3. 燃气 4. 传感器 不显示 5.变压器,6. 视频 7.热水表 后面的不知道用什么单位？？
-    let todayT = ['用电量 (kWh)', '用电量 (kWh)', '用水量 (m³)', '用气量 (m³)', '', '用电量 (kWh)', '', '用水量 (m³)'][deviceStyle] || '用电量 (kWh)'   //今日, 本月, 本年 文本， 数据表格中
+    // let todayT = ['用电量 (kWh)', '用电量 (kWh)', '用水量 (m³)', '用气量 (m³)', '', '用电量 (kWh)', '', '用水量 (m³)'][deviceStyle] || '用电量 (kWh)'   //今日, 本月, 本年 文本， 数据表格中
 
-    let todayA = ['用电量', '用电量', '用水量', '用气量', '', '用电量', '', '用水量'][deviceStyle] || '用电量'  // 日均， 月均， 年均， 累计
+    // let todayA = ['用电量', '用电量', '用水量', '用气量', '', '用电量', '', '用水量'][deviceStyle] || '用电量'  // 日均， 月均， 年均， 累计
 
-    let unit = ['(kWh)', '(kWh)', '(m³)', '(m³)', '', '(kWh)', '', '(m³)'][deviceStyle] || '(kWh)'
+    // let unit = ['(kWh)', '(kWh)', '(m³)', '(m³)', '', '(kWh)', '', '(m³)'][deviceStyle] || '(kWh)'
 
-
+    let todayT = {
+        0: '用电量 (kWh)',
+        1: '用电量 (kWh)',
+        2: '用水量 (m³)',
+        3: '用气量 (m³)',
+        5: '用电量 (kWh)',
+        7: '用水量 (m³)',
+        18: '流量 (m³)'
+    }[deviceStyle] || '';
+    let todayA = { 0: '用电量', 1: '用电量', 2: '用水量', 3: '用气量', 5: '用电量', 7: '用水量', 18: "流量" }[deviceStyle] || '';
+    let unit = { 0: '(kWh)', 1: '(kWh)', 2: '(m³)', 3: '(m³)', 5: '(kWh)', 7: '(m³)', 18: '(m³)' }[deviceStyle] || ''
     const [boptions, setOptions] = useState({   //能耗趋势图表
         series: [],
         grid: {
@@ -252,8 +264,12 @@ export default function GatewayDetail(props) {
     let [startTimeAlarm, setstartTimeAlarm] = useState(moment().startOf('day').format('YYYY-MM-DD HH:mm:ss'))
     let [endTimeAlarm, setendTimeAlarm] = useState(dataToday)
 
+    const [points, setPoints] = useState([])
+    const [pointval, setPointval] = useState(null)
+    const [ptrend, setPtrend] = useState({})
     const onchangeTab = val => {
         setstate(val)
+        console.log(val, deviceStyle)
         setreportTypeTime(1)
         if (dtlkeys) return
 
@@ -261,8 +277,12 @@ export default function GatewayDetail(props) {
             if (isclude) setreportTypeTime(2)
             getEnergyReport()
         } else if (val == 2) {
-            getHistoryTrend()
-            getHistoryTable()
+            if ([4, 18].includes(deviceStyle)) {
+                historycurve(pointval)
+            } else {
+                getHistoryTrend()
+                getHistoryTable()
+            }
         }
 
     }//切换tab
@@ -315,6 +335,89 @@ export default function GatewayDetail(props) {
         refreshDeps: [logparm]
     })
 
+    // 传感器、流量计
+    const ponchange = (v) => {
+        setPointval(v)
+        historycurve(v)
+    }
+    let { data: pdata, sn: psn } = isObject(ptrend) ? ptrend : {}
+    let haspdata = Array.isArray(pdata) && pdata.length > 0;
+    let pointoption = {
+        series: [{
+            type: "line",
+            seriesLayoutBy: 'row',
+        }],
+        grid: {
+            left: "0px",
+            right: "0",
+            top: "30px",
+            bottom: "0px",
+            containLabel: true,
+        },
+        legend: {
+            top: 0,
+            icon: 'rect',
+            itemHeight: 2,
+            itemWidth: 12,
+            itemGap: 20,
+        },
+        dataZoom: {
+            type: 'inside'
+        },
+        dataset: {
+            dimensions: haspdata ? ["time", psn] : [],
+            source: haspdata ? [pdata.map(p => p.x), pdata.map(p => p.y)] : []
+        },
+        xAxis: {
+            axisLabel: {
+                formatter: (value, index) => {
+                    return moment(value, "YYYY-MM-DD HH:mm:ss").format("HH:mm:ss")
+                },
+                interval: "auto"
+            },
+
+
+        }
+    }
+    let paramspointTrend = { // 传感器、流量计 监控趋势
+        sn,
+        start: startTime,
+        end: endTime,
+        projectId,
+        pointName: ''
+    }
+    const historycurve = async (pointName) => {
+        try {
+            paramspointTrend.pointName = pointName
+            let { data, success } = await HistoryCurve(paramspointTrend)
+
+            if (success && isObject(data)) {
+                setPtrend(data)
+
+
+            } else {
+                setPtrend({})
+            }
+        } catch (error) {
+            setPtrend({})
+        }
+    }
+    const getPoints = async (params) => {
+        try {
+            let data = await GetPointList(params)
+            if (Array.isArray(data) && data.length > 0) {
+                setPoints(data)
+                setPointval(data[0].name)
+                historycurve(data[0].name)
+            } else {
+                setPoints([])
+                setPointval(null)
+                setPtrend({})
+            }
+        } catch (error) {
+
+        }
+    }
     const getData = () => {//设备详情
         return Current(projectId, encodeURIComponent(sn)).then(res => {
             let { success, data } = res
@@ -622,10 +725,12 @@ export default function GatewayDetail(props) {
         setendTimeAlarm(dataString[1])
     }//告警记录选择时间
     const onSearch = () => {
-
-        // if(dtlkeys) return
-        getHistoryTrend()
-        getHistoryTable()
+        if ([4, 18].includes(deviceStyle)) {
+            historycurve(pointval)
+        } else {
+            getHistoryTrend()
+            getHistoryTable()
+        }
 
     }//监控趋势更改时间
     const onSearchAlarm = () => {
@@ -777,8 +882,12 @@ export default function GatewayDetail(props) {
     useEffect(() => {
         if (dtlkeys) return
         console.log(dtlkeys)
-        getHistoryTrend()
-        getHistoryTable()
+        if ([4, 18].includes(deviceStyle)) {
+            historycurve(pointval)
+        } else {
+            getHistoryTrend()
+            getHistoryTable()
+        }
     }, [sn, projectId, startTime, endTime, dtlkeys])
 
 
@@ -795,6 +904,12 @@ export default function GatewayDetail(props) {
     }, [dateValue, projectId, sn, reportTypeTime, trend, dtlkeys])
 
 
+    useEffect(() => {
+        if (Number.isInteger(projectId) && category && [4, 18].includes(deviceStyle)) {
+            getPoints({ projectId, category })
+        }
+
+    }, [projectId, category, deviceStyle])
     // 断路器状态
     const circuitState = {
         "Close": '合闸',
@@ -866,6 +981,7 @@ export default function GatewayDetail(props) {
                             />
                             {/* <RangePicker
                                 format='YYYY-MM-DD HH:mm:ss' disabledDate={disabledDate} showTime onChange={onTimeOk} defaultValue={[moment(yesterday), moment(today)]} /> */}
+                            {displaypoint && <Select options={points} value={pointval} onChange={ponchange} fieldNames={{ label: "description", value: "name" }} style={{ width: 200, marginLeft: "16px" }}></Select>}
                             <Button style={{ marginLeft: 16, width: 96, height: 32 }} type="primary" onClick={onSearch} icon={<SearchOutlined />} >查询</Button>
                         </div> : (state == 3) ? <div><div className={style.newTime}>
                             <img src={imgurl.time} className={style.time} ></img>
@@ -898,11 +1014,17 @@ export default function GatewayDetail(props) {
                                 </div>
                             </div>
                             : state == 2 ?
-                                <Chartbox n={historyTrend?.length}>
-                                    {historyTrend?.map(data => <Chartin {...data} deviceStyle={deviceStyle} key={data.group} />)}
+                                <> {displaypoint ? <Chartbox>
+                                    <Ichart {...pointoption} />
+                                </Chartbox> :
+                                    <Chartbox n={historyTrend?.length}>
+                                        {
+                                            historyTrend?.map(data => <Chartin {...data} deviceStyle={deviceStyle} key={data.group} />)
 
+                                        }
 
-                                </Chartbox>
+                                    </Chartbox>}
+                                </>
                         /*   <div className={style.chartsBox}>
                                 <div className={style.title}><div className={style.blueLine}></div><p>电压 (V)</p></div>
                                 <div><div ref={vlref} style={{ width: '100%', height: 320, padding: 16 }}></div></div>
@@ -979,12 +1101,13 @@ export default function GatewayDetail(props) {
                                         <Ichart {...boptions} />
                                     </div></div> : trend === 2 ? <div>
                                         <Table ref={tableLoadRef} columns={columnsTrend} dataSource={energyReport.Data} scroll={{ y: 475, }}
-                                            rowKey={columnsTrend => columnsTrend.id} style={{ marginTop: 16 }} hbc="#fff"></Table>
+                                            rowKey={columnsTrend => columnsTrend.id} style={{ marginTop: 16 }} hbc="#515151"></Table>
                                     </div> : ''}
                                 </div> : state == 4 ? <div>
                                     <img src={imgurl.line} style={{ width: 1537, height: 2, marginTop: -16, marginBottom: 16 }} ></img>
                                     <div>
-                                        <Table columns={columnsLog} dataSource={dataSourceLog} rowKey={columnsLog => columnsLog.id} istheme="theme" hbc="#fff"></Table>
+                                        {/* istheme="theme" */}
+                                        <Table columns={columnsLog} dataSource={dataSourceLog} rowKey={columnsLog => columnsLog.id} hbc="#515151"></Table>
                                         <Pagination className={style.pageNumD} size="small" current={pageNum} total={totalalarm} pageSize={12} onChange={onChangePageLog} showSizeChanger={false} />
                                     </div>
                                 </div> : state == 6
