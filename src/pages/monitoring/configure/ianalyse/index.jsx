@@ -174,6 +174,7 @@ export default function Index() {
       }))),
       state.snGroup = []
     state.timeType = 1
+    setSubTable([])
     ref.current.onCancel()
   }
   const onSetDevices = async () => {
@@ -234,6 +235,7 @@ export default function Index() {
           }
           return acc;
         }, []);
+        setPageInfo({ ...pageInfo, total: mergedData.length })
         console.log(mergedData, 189)
         setTabledata(mergedData)
         // let items = mergedData.items;
