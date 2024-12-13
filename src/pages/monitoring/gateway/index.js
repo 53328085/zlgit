@@ -180,8 +180,8 @@ const Cardbox = styled.div`
         top: 4px;
         right: -18px;
         transform: rotate(45deg);
-        background-color: rgb(0, 153, 102);
-        color: #fff;
+        background-color: ${props => props.theme.normalColor};
+        color: ${props => props.theme.fntnormalColor};
         width: 65px;
         text-align: center;
         font-size: 14px;
@@ -192,8 +192,8 @@ const Cardbox = styled.div`
         top: 4px;
         right: -18px;
         transform: rotate(45deg);
-        background-color: rgb(0102, 102, 102);
-        color: #fff;
+        background-color: ${props => props.theme.offlineColor};
+        color: ${props => props.theme.fntofflineColor};
         width: 65px;
         text-align: center;
         font-size: 14px;

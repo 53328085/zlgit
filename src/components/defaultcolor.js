@@ -24,5 +24,11 @@ export default {
     gatewayheardcolor:["#003366"],
     gatewaybgcolor:["#135abd"],
     deviceheardcolor:["#003366"],
-    devicebgcolor:["#135abd"]
+    devicebgcolor:["#135abd"],
+    normalColor: ["#009966"],
+    warningColorstate: ["#ff4d4f"],
+    offlineColor: ["#666666"],
+    fntnormalColor: ["#ffffff"],
+      fntwarningColorstate: ["#ffffff"],
+      fntofflineColor: ["#ffffff"],
 }
