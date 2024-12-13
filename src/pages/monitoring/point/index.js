@@ -150,7 +150,7 @@ const Cardbox=styled.div`
                 align-items: center;
                 justify-content: space-between;
                 border-radius: 93px;
-                width: 186px;
+                width: 196px;
                 border: 1px solid rgb(215, 215, 215);
                 height: 24px;
                 padding-left: 10px;
@@ -161,14 +161,16 @@ const Cardbox=styled.div`
             }
 
             .timeStyle {
-                width: 95px;
+                width: 85px;
                 height: 22px;
                 font-size: 12px;
                 color: #fff;
                 line-height: 22px;
                 border-radius: 40px;
-
                 z-index: 10;
+                overflow: hidden;
+                white-space: nowrap;
+                text-overflow: ellipsis;
             }
 
           
