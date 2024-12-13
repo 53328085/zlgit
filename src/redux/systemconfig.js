@@ -101,6 +101,13 @@ const initialState = {
       gatewaybgcolor:"#135abd", // 网关详情页背景色
       deviceheardcolor:"#003366" , // 设备详情页标题色
       devicebgcolor:"#135abd", // 设备详情页背景色
+      normalColor: "#009966",
+      warningColorstate: "#ff4d4f",
+      offlineColor: "#666666",
+      fntnormalColor: "#ffffff",
+      fntwarningColorstate: "#ffffff",
+      fntofflineColor: "#ffffff",
+      echartfirstcolor:"#237AE4",
     },    
     intl: {
       lang: zhCN,

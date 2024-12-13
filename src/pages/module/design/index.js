@@ -344,6 +344,29 @@ message.warning(errMsg|| "数据出错")
       <Item label="设备详情页背景色"  name="devicebgcolor" initialValue="#135abd">
         <Ccolor name="devicebgcolor" />
       </Item>
+      <Item label="设备\网关状态"   >
+        <div style={{display: "flex", columnGap: "8px", flexWrap: "wrap" }}> 
+        <Item label="正常" labelCol={{flex: "3em"}} name="normalColor" initialValue="#009966">
+          <Ccolor name="normalColor" />
+        </Item>
+        <Item label="正常字体色" labelCol={{flex: "6em"}} name="fntnormalColor" initialValue="#ffffff">
+          <Ccolor name="fntnormalColor" />
+        </Item>
+        <Item label="告警" labelCol={{flex: "3em"}} name="warningColorstate" initialValue="#ff4d4f">
+          <Ccolor name="warningColorstate" />
+        </Item>
+        <Item label="告警字体色" labelCol={{flex: "6em"}} name="fntwarningColorstate" initialValue="#ffffff">
+          <Ccolor name="fntwarningColorstate" />
+        </Item>
+        <Item label="离线" labelCol={{flex: "3em"}} name="offlineColor" initialValue="#666666">
+          <Ccolor name="offlineColor" />
+        </Item>
+        <Item label="离线字体色" labelCol={{flex: "6em"}} name="fntofflineColor" initialValue="#ffffff">
+          <Ccolor name="fntofflineColor" />
+        </Item>
+        </div>        
+      </Item>
+     
       <Item label="已有方案"    >
         <div style={{display: "flex", rowGap: "8px", flexWrap: "wrap"}}>
         {
