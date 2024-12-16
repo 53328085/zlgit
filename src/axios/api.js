@@ -1713,6 +1713,8 @@ export class UISummary {
 }
 //运行监控
 export const Monitoring = {
+  GetPointList: (params) => server.get(`Monitor/RuntimeDevice/GetPointList`, {params}),//分类测点
+  HistoryCurve: (data) => server.post(`Monitor/RuntimeDevice/HistoryCurve`, data),//监控趋势（传感器、流量计）
   //设备类型管理
   DeviceTypeManager: {
     GatewayCategory: (data) =>
@@ -1874,6 +1876,15 @@ export const Monitoring = {
     UpdateFibreTempil: (data) =>
       server.post(`/Monitor/Device/UpdateGXCW`, data), //更新光纤测温
     ImportGXCW: (data) => server.post(`/Monitor/Device/ImportGXCW`, data), //批量导入触点测温
+
+    DeleteFlow: (data) =>
+      server.delete(`/Monitor/Device/DeleteFlow`, { params: data }), //删除流量计
+    QueryByPageFlow: (data) =>
+      server.post(`/Monitor/Device/QueryByPageFlow`, data), //查询流量计
+    AddFlow: (data) => server.post(`/Monitor/Device/AddFlow`, data), //新增流量计
+    UpdateFlow: (data) =>
+      server.post(`/Monitor/Device/UpdateFlow`, data), //更新光纤测温
+    ImportFlow: (data) => server.post(`/Monitor/Device/ImportFlow`, data), //批量导入流量计
   },
   //公共照明管理
   PubliclightManager: {

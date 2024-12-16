@@ -26,7 +26,7 @@ const {
 } = Monitoring
 export default function Index() {
   const projectId = useSelector(state => state.system.menus.projectId)
-  const {laptop} = useSelector(adaptation)
+  const { laptop } = useSelector(adaptation)
   const [form] = Form.useForm();
   const [typeSelected, setTypeSelected] = useState(1)
   const [baseLine, setBaseLine] = useState([])
@@ -156,7 +156,9 @@ export default function Index() {
       Type: typeSelected,
       Sns,
       Start: startTime,
-      End: endTime
+      End: endTime,
+      planId: 0,
+      groupName: ""
     }
     HistoryCompare(params).then(res => {
       let { success, data } = res
@@ -239,7 +241,7 @@ export default function Index() {
         dataset: dataset,
         series: seriesList,
         grid: {
-          top:"10%",
+          top: "10%",
           left: "3%",
           right: "3%",
           containLabel: true,
@@ -260,7 +262,7 @@ export default function Index() {
         dataset: dataset,
         series: seriesList,
         grid: {
-          top:"10%",
+          top: "10%",
           left: "3%",
           right: "3%",
           containLabel: true,
@@ -291,7 +293,7 @@ export default function Index() {
       <Form
         layout={laptop ? "vertical" : "line"}
         form={form}
-        
+
         style={{
           display: "flex",
           flexDirection: "row",
@@ -303,12 +305,12 @@ export default function Index() {
           state: 0
         }}
       >
-        <Space size={laptop ? 16 : 64} split={laptop ? "" :<Cdivider />} align="end"  >
+        <Space size={laptop ? 16 : 64} split={laptop ? "" : <Cdivider />} align="end"  >
           <Form.Item name="button" style={{ marginBottom: 0 }}>
             <Button type='primary' ghost onClick={() => onSetDevices()}>请选择要对比的设备</Button>
           </Form.Item>
           <Form.Item label="选择对比数据" name="type" style={{ marginBottom: 0 }}>
-            <Select placeholder='请选择对比项目' options={comparisonType} defaultValue={typeSelected}   onChange={onChangeType}></Select>
+            <Select placeholder='请选择对比项目' options={comparisonType} defaultValue={typeSelected} onChange={onChangeType}></Select>
           </Form.Item>
           <Form.Item name="line" style={{ marginBottom: 0 }} >
             <div style={{ display: 'flex', alignItems: 'center' }}>
@@ -316,7 +318,7 @@ export default function Index() {
                 <Checkbox value="selected">对比基准线</Checkbox>
               </Checkbox.Group>
               <div style={{ display: 'flex', alignItems: 'center', position: 'relative' }}>
-                <InputNumber   value={baseLineValue} onChange={onChangeBaseLineValue} addonAfter={unit} />
+                <InputNumber value={baseLineValue} onChange={onChangeBaseLineValue} addonAfter={unit} />
                 {/* <p style={{
                   width: '60px', textAlign: 'center',
                   height: '30px', lineHeight: '30px', background: '#f2f2f2',
@@ -338,7 +340,7 @@ export default function Index() {
               style={{ width: laptop ? '220px' : '320px' }} />
           </Form.Item >
           <Form.Item noStyle>
-          <Button type="primary"   onClick={() => onSetcontrast()}>对比分析</Button>
+            <Button type="primary" onClick={() => onSetcontrast()}>对比分析</Button>
           </Form.Item>
         </Space>
       </Form>

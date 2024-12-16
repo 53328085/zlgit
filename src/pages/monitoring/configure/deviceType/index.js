@@ -18,6 +18,7 @@ import Coal from './coal' // 煤炭
 import Fuel from './fuel' // 燃油
 import Shock from './shock' //触点
 import Fiber from './fiber' //光纤
+import Flowmeter from './flowmeter' //流量计
 import { message } from 'antd'
 export default function Index() {
   const [value, setvalue] = useState('0')
@@ -48,7 +49,11 @@ export default function Index() {
     <Energy/>,
     <Circuit/>,
     <Shock/>,
-    <Fiber/>
+    <Fiber/>,
+    <Fiber/>,//直流屏[暂时没有涉及]
+    <Fiber/>,//出线柜
+    <Fiber/>,//电能质量分析仪
+    <Flowmeter/>
   ]
   const getAllDeviceStyle = async () => {
     try{
@@ -72,6 +77,7 @@ export default function Index() {
          console.log(list)
           setTabs(list)
           dataProps = {...dataProps,  list } 
+          console.log(dataProps)
         }
       }else{
         message.error(errMsg)

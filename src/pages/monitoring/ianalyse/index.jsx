@@ -131,8 +131,8 @@ export default function index() {
   const changeDate = (dates, dateStrings, index) => {
     console.log(dates, dateStrings, index)
     console.log(params)
-    params[index].start = dateStrings[0]
-    params[index].end = dateStrings[1]
+    params[index].start = dateStrings[0]+' 00:00:00'
+    params[index].end = dateStrings[1]+' 23:59:59'
     setParams(params)
     setDates(dateStrings);
     HistoryCompares()
@@ -166,8 +166,8 @@ export default function index() {
           param.planId = item.planId
           let startTime = []
           startTime = getDefaultValue(item.timeType)
-          param.start = startTime[0].format('YYYY-MM-DD')
-          param.end = startTime[1].format('YYYY-MM-DD')
+          param.start = startTime[0].format('YYYY-MM-DD')+" 00:00:00"
+          param.end = startTime[1].format('YYYY-MM-DD')+' 23:59:59'
           list.push(param)
           markLineList.push([])
           item.items.map((it,i)=>{
@@ -484,11 +484,11 @@ export default function index() {
     const oneDayAgo = moment().subtract(1, 'days');
     const oneWeekAgo = moment().subtract(7, 'days');
     const oneMonthAgo = moment().subtract(1, 'months');
-    let List = [today, oneDayAgo, oneWeekAgo, oneMonthAgo]
+    let List = [today, today, oneWeekAgo, oneMonthAgo]
     setDateList(List)
     switch (type) {
       case 1:
-        return [oneDayAgo, today];
+        return [today, today];
       case 2:
         return [oneWeekAgo, today];
       case 3:
@@ -497,7 +497,7 @@ export default function index() {
   };
   const disabledDate = (current, type) => {
     const today = moment();
-    const oneDayAgo = moment().subtract(2, 'days');
+    const oneDayAgo = moment().subtract(1, 'days');
     const oneWeekAgo = moment().subtract(7, 'days');
     const oneMonthAgo = moment().subtract(1, 'months');
     if (!current) {
@@ -506,7 +506,7 @@ export default function index() {
 
     switch (type) {
       case 1:
-        return current > today || current < oneDayAgo;
+        return current > today || current < today;
       case 2:
         return current > today || current < oneWeekAgo;
       case 3:
@@ -563,7 +563,7 @@ export default function index() {
             </Space>}>
             <Divider dashed style={{ borderColor: "#d7d7d7" }}></Divider>
             <Charts>
-              {state.chartsOpts.series.length > 0&&item?.items[0].state != 0 ?
+              {state.chartsOpts.series.length > 0&&item?.items[params[index].type-1].state != 0 ?
                 <Icharts custoption={{
                   ...state.chartsOpts,
                   series: state.chartsOpts.series[index],

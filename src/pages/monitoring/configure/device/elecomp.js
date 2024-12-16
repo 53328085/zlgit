@@ -315,7 +315,7 @@ export const FormComp = (props) => {
                         <Input />
                     </Form.Item>
                     {
-                        deviceStyle !== 13 && deviceStyle !== 14 ? (
+                        deviceStyle !== 13 && deviceStyle !== 14&& deviceStyle !== 18 ? (
                             <Form.Item label="用能类型" name="customerType" rules={rules}>
                                 <Select
                                     options={[{
@@ -671,7 +671,7 @@ export const EditFormComp = (props) => {
                         <Input />
                     </Form.Item>
                     {
-                        deviceStyle !== 13 && deviceStyle !== 14 ? (
+                        deviceStyle !== 13 && deviceStyle !== 14 && deviceStyle !== 18? (
                             <Form.Item label="用能类型" name="customerType" rules={rules}>
                                 <Select
                                     options={[{

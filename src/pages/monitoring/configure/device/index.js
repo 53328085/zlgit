@@ -9,9 +9,10 @@ import Sensor from './sensor'
 import Transform from './transform'
 import Video from './video'
 import Generic from './Generic' // 新增加的设备类型通用
-import  Circuit from './Circuit'
+import Circuit from './Circuit'
 import Shock from './shock'
 import Fiber from './fiber'
+import Flowmeter from './flowmeter' //流量计
 import { Monitoring } from '@api/api.js'
 import { message } from 'antd'
 const { DeviceTypeManager: { AllDeviceStyle,},DeviceManager:{OneLevel} } = Monitoring
@@ -59,6 +60,7 @@ export default function Index() {
           i ==12 ? arr[i] = <Circuit deviceStyle={k.deviceStyle} name={k.name} /> :
           i ==13 ? arr[i] = <Shock deviceStyle={k.deviceStyle} name={k.name}/> :
           i== 14 ? arr[i] = <Fiber deviceStyle={k.deviceStyle} name={k.name}/> :
+          i== 18 ? arr[i] = <Flowmeter deviceStyle={k.deviceStyle} name={k.name}/> :
           arr[i] = <Generic deviceStyle={k.deviceStyle} name={k.name} key={k.deviceStyle} />
         } 
       }
