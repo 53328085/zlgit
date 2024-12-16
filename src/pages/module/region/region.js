@@ -346,7 +346,7 @@ export default function Index({ projectId, level, CModal, name,  allLevel }) {
   const getTableData = () => {    
     // 列表查询
     if (isNaN(level)) return;
-    
+    console.log(params)
     let {topAreaId=0, name} = form.getFieldsValue()    
     params = {...params, name: window.encodeURIComponent(name), topAreaId } 
      Area.QueryByPage(params)
@@ -657,6 +657,8 @@ const beforeUpload = (file, fileList) => {
   }, [pagination.current])
   useEffect(() => {
    // getLevelOption();
+    params.pageNum = 1;
+    pagination.current = 1;
     if (level == 1) {
       form.setFieldsValue({
         topAreaId: null,

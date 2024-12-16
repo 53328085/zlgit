@@ -18,6 +18,9 @@ import Coal from './coal' // 煤炭
 import Fuel from './fuel' // 燃油
 import Shock from './shock' //触点
 import Fiber from './fiber' //光纤
+import DCScreen from './dcScreen' //直流屏
+import OutgoingCabinet from './outgoingCabinet' //出线柜
+import PowerQualityAnalyzer from './powerQualityAnalyzer' //电能质量分析仪
 import Flowmeter from './flowmeter' //流量计
 import { message } from 'antd'
 export default function Index() {
@@ -50,9 +53,9 @@ export default function Index() {
     <Circuit/>,
     <Shock/>,
     <Fiber/>,
-    <Fiber/>,//直流屏[暂时没有涉及]
-    <Fiber/>,//出线柜
-    <Fiber/>,//电能质量分析仪
+    <DCScreen/>,//直流屏[暂时没有涉及]
+    <OutgoingCabinet/>,//出线柜
+    <PowerQualityAnalyzer/>,//电能质量分析仪
     <Flowmeter/>
   ]
   const getAllDeviceStyle = async () => {

@@ -917,8 +917,8 @@ export default function GatewayDetail(props) {
     }
     // 声光报警器状态---ZTWLSENSOR-SL
     const circuitStateOther = {
-        "Close": '闭合',
-        'Open': '断开'
+        "Close": '关闭',
+        'Open': '打开'
     }
     return (
         <Mainbox className={style.main}>

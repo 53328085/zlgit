@@ -105,7 +105,7 @@ export default function Control({ sn, detail, state, Custmodal, getDetailData })
 
   console.log(OtherdeviceStyle)
   let title = ['合闸提示', '分闸提示'][optype]
-  let titleOther = ['复位提示', '启动提示'][optype]
+  let titleOther = ['关闭提示', '打开提示'][optype]
 
   const onCtrol = (type) => {
 
@@ -306,10 +306,10 @@ export default function Control({ sn, detail, state, Custmodal, getDetailData })
         <Form.Item label="当前状态">
 
           {status == "Close" ? (
-            <CustButton type="primary" key="close" >{!OtherdeviceStyle ? '合闸' : '闭合'}</CustButton>
+            <CustButton type="primary" key="close" >{!OtherdeviceStyle ? '合闸' : '关闭'}</CustButton>
           ) : status == "Open" ? (
             <CustButton type="primary" style={{ backgroundColor: "#ff5757", border: "none", color: '#fff' }} key="open" >
-              {!OtherdeviceStyle ? '分闸' : '断开'}
+              {!OtherdeviceStyle ? '分闸' : '打开'}
             </CustButton>
           ) : null}
         </Form.Item>
@@ -323,7 +323,7 @@ export default function Control({ sn, detail, state, Custmodal, getDetailData })
             ...btstyle,
             backgroundColor: status == "Open" && detail.control ? primaryColor : '#f2f2f2',
             color: status == "Open" && detail.control ? "#fff" : '#ccc'
-          }}>{!OtherdeviceStyle ? '远程合闸' : '远程复位'}</CustButton>
+          }}>{!OtherdeviceStyle ? '远程合闸' : '远程关闭'}</CustButton>
         <CustButton onClick={() => onCtrol(1)}
           src={status == "Close" && detail.control ? "opena" : 'zha'}
           disabled={status == "Open" || !detail.control}
@@ -332,7 +332,7 @@ export default function Control({ sn, detail, state, Custmodal, getDetailData })
             ...btstyle,
             backgroundColor: status == "Close" && detail.control ? errorColor : '#f2f2f2',
             color: status == "Close" && detail.control ? "#fff" : '#ccc'
-          }}>{!OtherdeviceStyle ? '远程分闸' : '远程启动'}</CustButton>
+          }}>{!OtherdeviceStyle ? '远程分闸' : '远程打开'}</CustButton>
       </div>
       <Custmodal
         key="control"
@@ -351,8 +351,8 @@ export default function Control({ sn, detail, state, Custmodal, getDetailData })
           }
         </> : <>
           {optype == 0 ?
-            '远程复位后，该声光报警器设备将关闭鸣笛告警状态，请确认！'
-            : '远程启动后，该声光报警器设备将处于鸣笛告警状态，请谨慎操作！'
+            '远程关闭后，该声光报警器设备将关闭鸣笛告警状态，请确认！'
+            : '远程打开后，该声光报警器设备将处于鸣笛告警状态，请谨慎操作！'
           }
         </>}
 
