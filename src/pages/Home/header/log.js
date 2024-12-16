@@ -267,7 +267,7 @@ const getcurTheme= async(userId, projectId)=> {
     if(suc && themeId && datalen){
       try {
         let theme = data.find(d => d.id == themeId)?.context
-        let themeobj = JSON.parse(theme)
+        let themeobj =  JSON.parse(theme)
         if(theme &&  isObject(themeobj)){
           dispatch(getThemeColor(themeobj))
         }
@@ -277,7 +277,7 @@ const getcurTheme= async(userId, projectId)=> {
       }
      
     }else if(datalen){
-        let thobj = JSON.parse(datalen[0].context)
+        let thobj = JSON.parse(data[0].context)
         if(isObject(thobj)){
           dispatch(getThemeColor(thobj))
         }
@@ -288,7 +288,7 @@ const getcurTheme= async(userId, projectId)=> {
     setItems([...inita, ...item])
 
   } catch (error) {
-    
+    console.log(error)
   }
 }
 
