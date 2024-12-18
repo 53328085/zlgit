@@ -90,7 +90,7 @@ export default memo(({projectId, areaAnnualQuota=[],  parkNum,
     structureNum,
     roomNum
     return    (
-      <Cspin spinning={spinning} tip="图片下载中……">
+      <Cspin spinning={spinning} tip="图片加载中……">
       <div style={{position: "relative"}}>
           <img src={energyImage || enerbg}   style={{width: "1368px", height: "800px"}}  />
           <Numbox>

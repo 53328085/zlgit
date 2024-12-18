@@ -16,7 +16,7 @@ const Box =styled.div`
         justify-content: center;
         border: 1px solid #dedede;
         border-radius: 2px;
-        background-color: #237ae4;
+        background-color: ${props => props.theme.primaryColor || "#237ae4" };
         .img {
             cursor: pointer;
         }

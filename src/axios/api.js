@@ -3251,7 +3251,8 @@ export class AlarmManagement {
     server.get(`Safe/AlarmValveDevice/GetAlarmValveDevice?projectId=${projectId}&alarmId=${alarmId}`);
 }
 export class StorageEnvironmentRuntime {
-
+  static queryEnvironmentInfo = (projectId, areaId, siteId) => server.get(`/Storage/StorageEnvironmentRuntime/QueryEnvironmentInfo?projectId=${projectId}&areaId=${areaId}&siteId=${siteId}`)
+  static queryTrends = (projectId, storageRoomId, date) => server.get(`/Storage/StorageEnvironmentRuntime/QueryTrends?projectId=${projectId}&storageRoomId=${storageRoomId}&date=${date}`)
 }
 //储能--环境监控
 export class DeviceRuler {
