@@ -316,7 +316,7 @@ export default function Control({ sn, detail, state, Custmodal, getDetailData })
       </Form>
       <div className="ctrol">
         <CustButton onClick={() => onCtrol(0)}
-          src={status == "Open" && detail.control ? "closea" : 'zha'}
+          src={status == "Open" && detail.control ? "buttonIcon" : 'zha'}
           disabled={status == "Close" || !detail.control}
           imgh="40px"
           style={{
@@ -325,7 +325,7 @@ export default function Control({ sn, detail, state, Custmodal, getDetailData })
             color: status == "Open" && detail.control ? "#fff" : '#ccc'
           }}>{!OtherdeviceStyle ? '远程合闸' : '远程关闭'}</CustButton>
         <CustButton onClick={() => onCtrol(1)}
-          src={status == "Close" && detail.control ? "opena" : 'zha'}
+          src={status == "Close" && detail.control ? "buttonIcon" : 'zha'}
           disabled={status == "Open" || !detail.control}
           imgh="40px"
           style={{

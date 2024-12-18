@@ -68,7 +68,7 @@ const deviceList = ['', '电表', '冷水表', '燃气表', '传感器', '变压
 const Chartbox = styled.div`
   display: grid;
   grid-template-rows:   ${props => {
-        return props.n > 3 ? `repeat(${props.n}, 320)` : `repeat(${props.n}, 1fr)`
+        return props.n > 3 ? `repeat(${props.n}, 320px)` : `repeat(${props.n}, 1fr)`
     }};
   flex: 1;
 `
@@ -82,7 +82,8 @@ const Chartin = (props) => {
         WF: [2, 7].includes(deviceStyle) ? '用水量(m³)' : '电度(kWh)',
         EC: '电流(A)',
         EP: '电压(V)',
-        TP: '温度(℃)'
+        TP: '温度(℃)',
+        PPT: '功率(kW)',
     }[group] || '未知'
 
 
@@ -132,11 +133,11 @@ const Chartin = (props) => {
             },
             yAxis: { // 万工、老梁的方案
                 min: function (value) {
-                    return value.min - 10;
+                    return (value.min - 10).toFixed(3);
                 },
                 max: function (value) {
-                    return value.max + 10;
-                }
+                    return (value.max + 10).toFixed(3);
+                },
             }
 
         })

@@ -5,9 +5,6 @@ import { message } from 'antd'
 import Icard from './card'
 import { useSelector } from 'react-redux'
 import imgurl from './images/index.js'
-import breaker from './images/breaker.png'
-import chu from './images/chu.svg'
-import guang from './images/guang.svg'
 import { Monitoring } from '@api/api.js'
 
 import { selectProjectId, selectOneLevelDefaultId, adaptation } from '@redux/systemconfig.js'
@@ -139,10 +136,6 @@ export default function Index() {
       meterType: 0,
       imageUrl: imgurl.gateway,
       name: '网关',
-      // deviceCount: 0,
-      // onlineCount: 0,
-      // offlineCount: 0,
-      // onlineRate: '0%',
     }, {
       meterType: 1,
       imageUrl: imgurl.ele,
@@ -153,7 +146,7 @@ export default function Index() {
       name: '冷水表',
     }, {
       meterType: 3,
-      imageUrl: imgurl.gas,
+      imageUrl: imgurl.device,
       name: '燃气表',
     }, {
       meterType: 4,
@@ -169,7 +162,7 @@ export default function Index() {
       name: '监控',
     }, {
       meterType: 7,
-      imageUrl: imgurl.device,
+      imageUrl: imgurl.hotWater,
       name: '热水表',
     }, {
       meterType: 8,
@@ -189,16 +182,32 @@ export default function Index() {
       name: '储能设备',
     }, {
       meterType: 12,
-      imageUrl: breaker,
+      imageUrl: imgurl.breaker,
       name: '断路器',
     }, {
       meterType: 13,
-      imageUrl: chu,
+      imageUrl: imgurl.chu,
       name: '触点测温',
     }, {
       meterType: 14,
-      imageUrl: guang,
+      imageUrl: imgurl.guang,
       name: '光纤测温',
+    }, {
+      meterType: 15,
+      imageUrl: imgurl.device,
+      name: '直流屏',
+    }, {
+      meterType: 16,
+      imageUrl:imgurl.device,
+      name: '出线柜',
+    }, {
+      meterType: 17,
+      imageUrl: imgurl.device,
+      name: '电能质量分析仪',
+    }, {
+      meterType: 18,
+      imageUrl: imgurl.flowmeter,
+      name: '流量计',
     }
   ]
 

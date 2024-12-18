@@ -15,21 +15,21 @@ import {
   Drawer,
   Cascader,
   Upload,
-  Popconfirm 
+  Popconfirm
 } from "antd";
- 
+
 import styled from "styled-components";
 import UserTable from "@com/useTable";
 import { Area } from "@api/api.js";
 import upCloud from './upcloud.png'
 import { useAntdTable, useLatest } from "ahooks";
- 
+
 import { CustButton } from "@com/useButton";
 import { custMsg } from "@com/usehandler";
 import Mapcom from "@com/useMap/indexset";
-import {selectOneLevel, selectOneLevelDefaultId, getOnelevel, publishState, currProject} from '@redux/systemconfig.js'
-import {useSelector, useDispatch} from 'react-redux'
-import {useTranslation} from "react-i18next"
+import { selectOneLevel, selectOneLevelDefaultId, getOnelevel, publishState, currProject } from '@redux/systemconfig.js'
+import { useSelector, useDispatch } from 'react-redux'
+import { useTranslation } from "react-i18next"
 
 const { Dragger } = Upload;
 const Mainbox = styled.div`
@@ -46,8 +46,8 @@ const Formbox = styled(Form)`
     isNaN(p.rowes)
       ? "repeat(8, 32px)"
       : p.islngLat
-      ? `repeat(${p.rowes + 5}, 32px)`
-      : `repeat(${p.rowes}, 32px)`};
+        ? `repeat(${p.rowes + 5}, 32px)`
+        : `repeat(${p.rowes}, 32px)`};
   column-gap: 32px;
   row-gap: 20px;
   grid-auto-flow: ${(p) => (p.islngLat ? "column" : "row")};
@@ -139,80 +139,80 @@ const Inptserach = styled(Input.Search)`
 `;
 const { Link, Text, Paragraph } = Typography;
 const { Item } = Form;
-export default function Index({ projectId, level, CModal, name,  allLevel }) {
- 
+export default function Index({ projectId, level, CModal, name, allLevel }) {
+
   const dispatch = useDispatch();
-  const {projectName} = useSelector(currProject)
-  
+  const { projectName } = useSelector(currProject)
+
   const oneLevel = useSelector(selectOneLevel) // 一级 
   const oneLevelDefaultId = useSelector(selectOneLevelDefaultId) // 一级默认id
-  const ispublish = useSelector(publishState) 
+  const ispublish = useSelector(publishState)
   const [levelone] = useState(allLevel[0]);
 
   const limitlevle = allLevel.slice(0, level - 1);
   const fields = allLevel?.find(item => item.level == level)?.fields || [];
   const currenName = allLevel?.find(item => item.level == level)?.name
   const preName = level > 1 ? allLevel?.find(item => item.level == level - 1)?.name : null
-  const sheetName = projectName+'_'+currenName
-  const {t} =useTranslation("common","comm")
+  const sheetName = projectName + '_' + currenName
+  const { t } = useTranslation("common", "comm")
   /* 
 {title: '名称', dataIndex: '名称', key: '名称'} 
 // 第一列 本级， 第二列 备注， 第三列 [父级] ...其他
 
 */
 
-  const [tempcolums, tempdata] =  useMemo(() => {
-    let getcol = (name) => ({title: name, dataIndex: name, key: name});
+  const [tempcolums, tempdata] = useMemo(() => {
+    let getcol = (name) => ({ title: name, dataIndex: name, key: name });
     let colums = [
       getcol(currenName),
       getcol('备注'),
-     
-    ];
-    if(preName) {
-      colums.push(getcol(preName));
-     }
-     if(Array.isArray(fields)) {
-        fields.forEach(f => {
-          colums.push(getcol(f.name))
-        })
 
-     }
-     let tbdata = colums.map(c => ({[c.title]:''}))
-     return [colums, tbdata]
+    ];
+    if (preName) {
+      colums.push(getcol(preName));
+    }
+    if (Array.isArray(fields)) {
+      fields.forEach(f => {
+        colums.push(getcol(f.name))
+      })
+
+    }
+    let tbdata = colums.map(c => ({ [c.title]: '' }))
+    return [colums, tbdata]
   }, [level, allLevel])
   const [form] = Form.useForm();
   const [nform] = Form.useForm();
 
   const nref = useRef(); // 新增，编辑
   const dref = useRef(); // 删除
-  
+
   const mapref = useRef();
   const boxref = useRef();
   const [Record, setRecord] = useState({});
   const [isAdd, setIsAdd] = useState(true);
 
-  
+
   const [tabelData, setTableData] = useState([])
   const [columns, setColumns] = useState([]);
   //const [topAreaId, setTopAreaId] = useState(() => level == 1 ? 0 : leveloption[0]?.id)
   const [topAreaId, setTopAreaId] = useState(oneLevelDefaultId)
-/*   const [fields, setFields] = useState({
-    field: [],
-    type: [],
-  }); */
+  /*   const [fields, setFields] = useState({
+      field: [],
+      type: [],
+    }); */
 
   const [pagination, setPagination] = useState({
     current: 1,
     pageSize: 15,
     total: 0
   })
- 
 
- 
+
+
   const islngLat = fields?.find(item => item.type == 1);
   const address = useRef("");
   const title = isAdd ? `新增${name}` : `编辑${name}`; // 当前层级名称  defaultParams
- 
+
   let params = {
     //查询
     pageNum: pagination.current,
@@ -233,98 +233,98 @@ export default function Index({ projectId, level, CModal, name,  allLevel }) {
     fields: [],
   };
   const upateOneLevel = async () => {
-     if(level !=1) return
-     try {
-      let {success: lsuccess, data: levelData} = await  Area.QueryAll({projectId,level: 1,parentId: 0})  
+    if (level != 1) return
+    try {
+      let { success: lsuccess, data: levelData } = await Area.QueryAll({ projectId, level: 1, parentId: 0 })
       lsuccess && dispatch(getOnelevel(levelData || []));
       !lsuccess && dispatch(getOnelevel([]));
-     } catch (error) {
-       console.log(error)
-     }
+    } catch (error) {
+      console.log(error)
+    }
   }
 
-  const  CascaderSct = () => {
-   // let levels =oneLevel.map(i => ({...i, children: [], isLeaf:  level - 1 == 1}))
-   // console.log(levels)
-    const [leveloptions, setLevelOption] = useState(() => oneLevel.map(i => ({...i, children: [], isLeaf:  level - 1 == 1})) )
-     // level = 2 显示前一级， = 3 显示前两两级, 依次类推
-   
+  const CascaderSct = () => {
+    // let levels =oneLevel.map(i => ({...i, children: [], isLeaf:  level - 1 == 1}))
+    // console.log(levels)
+    const [leveloptions, setLevelOption] = useState(() => oneLevel.map(i => ({ ...i, children: [], isLeaf: level - 1 == 1 })))
+    // level = 2 显示前一级， = 3 显示前两两级, 依次类推
+
     const fieldNames = {
       label: 'name',
       value: 'id',
       children: 'children'
     }
     const loadData = async (selectedOptions) => {
-    
+
       try {
         const targetOption = selectedOptions[selectedOptions.length - 1];
         console.log(targetOption)
         targetOption.loading = true;
-        let {id, level: curlevel} = targetOption // level:3 , curlevel: 2, 1
-        
-        if ((level - curlevel) == 1)  {
+        let { id, level: curlevel } = targetOption // level:3 , curlevel: 2, 1
+
+        if ((level - curlevel) == 1) {
           targetOption.children = [];
           targetOption.isLeaf = true
           setLevelOption([...leveloptions])
           console.log(setLevelOption);
           return
         } else {
-        const params = {
-          projectId,
-          level: curlevel + 1,
-          parentId: id,
-        }
-        console.log(setLevelOption);
-      let {data, success} =  await Area.QueryAll(params) 
-       targetOption.loading = false
-       if (success && Array.isArray(data)) {
-        let cardata = data.map(i => ({...i,  children: [], isLeaf: level - curlevel == 1}))
-        targetOption.children = cardata;
-        setLevelOption([...leveloptions])
-        /* setLevelOption(arr => {
-          let i = arr.findIndex(ar => ar.id == id);
-          if (i > -1) {
-
+          const params = {
+            projectId,
+            level: curlevel + 1,
+            parentId: id,
           }
-          arr.splice(i,1, targetOption)
-          return arr
-        }) */
-       } else {
-        targetOption.children = [];
-        targetOption.isLeaf = true
-        setLevelOption([...leveloptions])
-       }
-      }
-       // targetOption.loading = false;
-       
+          console.log(setLevelOption);
+          let { data, success } = await Area.QueryAll(params)
+          targetOption.loading = false
+          if (success && Array.isArray(data)) {
+            let cardata = data.map(i => ({ ...i, children: [], isLeaf: level - curlevel == 1 }))
+            targetOption.children = cardata;
+            setLevelOption([...leveloptions])
+            /* setLevelOption(arr => {
+              let i = arr.findIndex(ar => ar.id == id);
+              if (i > -1) {
+    
+              }
+              arr.splice(i,1, targetOption)
+              return arr
+            }) */
+          } else {
+            targetOption.children = [];
+            targetOption.isLeaf = true
+            setLevelOption([...leveloptions])
+          }
+        }
+        // targetOption.loading = false;
+
       } catch (error) {
         console.log(error)
       }
-    
+
 
     }
-   const onChagne =(value, selectedOptions) => {
-     console.log(value)
-     console.log(selectedOptions)
-   }
-   
+    const onChagne = (value, selectedOptions) => {
+      console.log(value)
+      console.log(selectedOptions)
+    }
+
     const labelName = (Array.isArray(leveloptions) && leveloptions.length > 0) ? leveloptions[0].levelName : '';
     return (
-      <Item label={labelName}  name="parentId" rules={[
+      <Item label={labelName} name="parentId" rules={[
         {
           required: true,
           message: `请选择${labelName}`
         }
       ]}>
-         <Cascader options={leveloptions} fieldNames={fieldNames} loadData={loadData} onChange={onChagne}   />
+        <Cascader options={leveloptions} fieldNames={fieldNames} loadData={loadData} onChange={onChagne} />
       </Item>
     )
 
 
   }
- //   级联选择 end
+  //   级联选择 end
   const del = (record) => {
-    setRecord({...record});
+    setRecord({ ...record });
     dref.current.onOpen();
   };
   const delOk = async () => {
@@ -343,13 +343,13 @@ export default function Index({ projectId, level, CModal, name,  allLevel }) {
     !success && custMsg({ success, content: errMsg || "数据出错" });
   };
 
-  const getTableData = () => {    
+  const getTableData = () => {
     // 列表查询
     if (isNaN(level)) return;
     console.log(params)
-    let {topAreaId=0, name} = form.getFieldsValue()    
-    params = {...params, name: window.encodeURIComponent(name), topAreaId } 
-     Area.QueryByPage(params)
+    let { topAreaId = 0, name } = form.getFieldsValue()
+    params = { ...params, name: window.encodeURIComponent(name), topAreaId }
+    Area.QueryByPage(params)
       .then((res) => {
         let { success, data, total } = res;
         let {
@@ -360,11 +360,11 @@ export default function Index({ projectId, level, CModal, name,  allLevel }) {
           parentIdGroup = [],
         } = data || {};
         let cols = [];
-       // let index = header.findIndex(h => h == '备注')
+        // let index = header.findIndex(h => h == '备注')
         // if(index > -1) header.splice(index,1)
-       /*  if(index > -1){
-          header.splice(index,'备注')
-        } */
+        /*  if(index > -1){
+           header.splice(index,'备注')
+         } */
         for (let k of header) {
           let col = {
             title: k,
@@ -372,8 +372,8 @@ export default function Index({ projectId, level, CModal, name,  allLevel }) {
             key: k,
           };
           cols.push(col);
-        }     
-        let colums = ispublish ? [...cols] :  [
+        }
+        let colums = ispublish ? [...cols] : [
           ...cols,
           // index > -1 ?   {title: '备注', dataIndex: '备注', key: '备注'}: {},
           {
@@ -382,7 +382,7 @@ export default function Index({ projectId, level, CModal, name,  allLevel }) {
             align: "center",
             render: (_, record) => (
               <Space size={32}>
-              
+
                 <Link underline onClick={() => edit(record)}>
                   {t("common:Edit")}
                 </Link>
@@ -393,8 +393,8 @@ export default function Index({ projectId, level, CModal, name,  allLevel }) {
             ),
           },
         ];
-          
-        setColumns(colums);       
+
+        setColumns(colums);
         let formart = body.map((r, i) => {
           let row = {
             areaId: idGroup[i],
@@ -407,24 +407,25 @@ export default function Index({ projectId, level, CModal, name,  allLevel }) {
           });
           return row;
         });
-       
+
         if (success && data) {
-          setTableData([...formart])         
-          setPagination({
-            ...pagination,
-            total: total,
-          })
-         /*  return {
-            total: colums.length,
-            list: formart,
-          }; */
+          setTableData([...formart])
+
+          /*  return {
+             total: colums.length,
+             list: formart,
+           }; */
         } else {
           setTableData([])
-        /*   return {
-            total: 0,
-            list: [],
-          }; */
+          /*   return {
+              total: 0,
+              list: [],
+            }; */
         }
+        setPagination({
+          ...pagination,
+          total: total,
+        })
       })
       .catch((e) => {
         console.log(e);
@@ -435,69 +436,69 @@ export default function Index({ projectId, level, CModal, name,  allLevel }) {
   const tableRef = useRef();
   const multref = useRef()
   const upfile = useRef();
-  const createTemp = () => {  
+  const createTemp = () => {
     tableRef.current.downTemp()
   }
 
- const multimport = () => {
+  const multimport = () => {
     multref.current.onOpen();
- }
+  }
 
-const okImport = async() => {
-   const formData = new FormData();
-   formData.append("file", upfile.current);
-   formData.append("projectId", projectId)
-   formData.append("level", level)
-   try {
-     const {data, success, errMsg} = await  Area.Import(formData)
-     if(success) {
-       let {success: suc, errMsg:err, data: info} = data;
-       if(!suc) {
-         let errs = info.map(i => <p>第{i.row}行:{i.cause}</p>)
-         const el = <div><strong>{err}</strong>{errs}</div>
-         message.warning(el)
-       }else {
-         message.success("上传成功");
-         multref.current.onCancel()
-         getTableData()
-       }
-       
-     }else {
+  const okImport = async () => {
+    const formData = new FormData();
+    formData.append("file", upfile.current);
+    formData.append("projectId", projectId)
+    formData.append("level", level)
+    try {
+      const { data, success, errMsg } = await Area.Import(formData)
+      if (success) {
+        let { success: suc, errMsg: err, data: info } = data;
+        if (!suc) {
+          let errs = info.map(i => <p>第{i.row}行:{i.cause}</p>)
+          const el = <div><strong>{err}</strong>{errs}</div>
+          message.warning(el)
+        } else {
+          message.success("上传成功");
+          multref.current.onCancel()
+          getTableData()
+        }
+
+      } else {
         message.warning(errMsg || '数据出错')
-     }
-   } catch (error) {
-    
-   }
-}
-const beforeUpload = (file, fileList) => { 
-   upfile.current = file;
-   return false
-}
- //   生成模板/批量导入 end
+      }
+    } catch (error) {
+
+    }
+  }
+  const beforeUpload = (file, fileList) => {
+    upfile.current = file;
+    return false
+  }
+  //   生成模板/批量导入 end
   const [lngLat, setLnglat] = useState()
   const curlnglat = useLatest(lngLat)
 
 
- 
+
   const add = () => {
     address.current = "";
     setLnglat(null);
     setIsAdd(true);
     nref.current.onOpen();
-    
+
   };
- 
+
   const onOk = async () => {
     // 新增、编辑
-     console.log(Record)
+    console.log(Record)
     try {
       let values = await nform.validateFields();
       console.log(values)
-      let { remark, name, parentId, lngLat={} } = values; // 编辑时 parentId=Record.parentId
-       
+      let { remark, name, parentId, lngLat = {} } = values; // 编辑时 parentId=Record.parentId
+
       let id = Array.isArray(parentId) ? parentId.pop() : parentId;
-     
-      let parent_id = isAdd && level > 1 ?  id : Record.parentId;
+
+      let parent_id = isAdd && level > 1 ? id : Record.parentId;
       let other = [];
       for (let key of fields) {
         let obj = {}
@@ -506,15 +507,15 @@ const beforeUpload = (file, fileList) => {
             name: key.name,
             value: lngLat[key.name]
           }
-        }else {
+        } else {
           obj = {
             name: key.name,
             value: values[key.name],
-         }
-         
+          }
+
         };
         other.push(obj);
-      } 
+      }
       let methods = isAdd ? "Insert" : "UpdateArea";
       let params = {
         ...defaultParams,
@@ -523,76 +524,76 @@ const beforeUpload = (file, fileList) => {
         parentId: parent_id,
         id: isAdd ? 0 : Record.areaId,
         fields: other,
-      };    
+      };
       let { success, errMsg } = await Area[methods](params);
 
-      if(success) {
-           let msg =  isAdd ? "新增成功" : "编辑成功";
-          message.success(msg)
-          getTableData();
-          upateOneLevel();
-          if(isAdd) nform.resetFields()
-          if(!isAdd)  nref.current.onCancel();
-         
-         
+      if (success) {
+        let msg = isAdd ? "新增成功" : "编辑成功";
+        message.success(msg)
+        getTableData();
+        upateOneLevel();
+        if (isAdd) nform.resetFields()
+        if (!isAdd) nref.current.onCancel();
+
+
       } else {
-         message.warning(errMsg || "数据出错") 
+        message.warning(errMsg || "数据出错")
       }
     } catch (error) {
       console.log(error);
     }
   };
-  
+
   const edit = (record) => {
     console.log(record)
     let lngLat = fields.filter(f => f.type == 1)?.map(i => i.name);
-    if(Array.isArray(lngLat) && lngLat.length > 0) {
-       for(let name of lngLat) {
-          if(record[name]) {
-            setLnglat(record[name])
-            break
-          }else {
+    if (Array.isArray(lngLat) && lngLat.length > 0) {
+      for (let name of lngLat) {
+        if (record[name]) {
+          setLnglat(record[name])
+          break
+        } else {
 
-          }
-       }
+        }
+      }
     }
     setIsAdd(false);
-    setRecord({...record});
-    let { 名称, 备注, areaId, parentId,...keys } = record;
-     
+    setRecord({ ...record });
+    let { 名称, 备注, areaId, parentId, ...keys } = record;
+
     nform.setFieldsValue({
       name: record["名称"],
       remark: record["备注"],
       ...keys,
     });
-    for(let key of fields) {
-      if(key.type == 1) {
-         nform.setFieldValue(['lngLat', `${key.name}`], record[key.name]);
-       }else {
-         nform.setFieldValue(key.name, record[key.name]);
-       }
+    for (let key of fields) {
+      if (key.type == 1) {
+        nform.setFieldValue(['lngLat', `${key.name}`], record[key.name]);
+      } else {
+        nform.setFieldValue(key.name, record[key.name]);
+      }
 
-     }
+    }
     nref.current.onOpen();
   };
   const setAaddress = (adr) => {
-   let {lngLat} = nform.getFieldsValue();
-   //console.log(lngLat)
-   //nform.setFieldValue(['lngLat', '经纬度'], `${adr.lng},${adr.lat}`);
-   let keys = Object.keys(lngLat)
-   
-   for(let key in lngLat) {   
-    
-     if(!lngLat[key] && keys.length > 1){
+    let { lngLat } = nform.getFieldsValue();
+    //console.log(lngLat)
+    //nform.setFieldValue(['lngLat', '经纬度'], `${adr.lng},${adr.lat}`);
+    let keys = Object.keys(lngLat)
+
+    for (let key in lngLat) {
+
+      if (!lngLat[key] && keys.length > 1) {
         nform.setFieldValue(['lngLat', `${key}`], `${adr.lng},${adr.lat}`);
         break
-     }else {
+      } else {
         nform.setFieldValue(['lngLat', `${key}`], `${adr.lng},${adr.lat}`);
-     }
-     
-   }
+      }
+
+    }
     nform.setFieldsValue({
-     // 'lngLat.经纬度': `${adr.lng},${adr.lat}`,
+      // 'lngLat.经纬度': `${adr.lng},${adr.lat}`,
       address: adr.address,
     });
   };
@@ -642,21 +643,21 @@ const beforeUpload = (file, fileList) => {
     }
   };
   const tableOnchange = (e) => {
-   
-    let {current} = e
-      setPagination({
-        ...pagination,
-        current,
-      })
-   
+
+    let { current } = e
+    setPagination({
+      ...pagination,
+      current,
+    })
+
   }
- 
- useEffect(() => {
-      getTableData()
-    
+
+  useEffect(() => {
+    getTableData()
+
   }, [pagination.current])
   useEffect(() => {
-   // getLevelOption();
+    // getLevelOption();
     params.pageNum = 1;
     pagination.current = 1;
     if (level == 1) {
@@ -664,18 +665,18 @@ const beforeUpload = (file, fileList) => {
         topAreaId: null,
       });
       getTableData()
-    }else if (level > 1) {
+    } else if (level > 1) {
       form.setFieldsValue({
         topAreaId: 0,
       });
       getTableData()
     }
-  
+
   }, [level]);
-  
+
   return (
     <Mainbox ref={boxref}>
-      <Form form={form} layout="inline" initialValues={{name: ""}}>
+      <Form form={form} layout="inline" initialValues={{ name: "" }}>
         <Space size={16}>
           {level == 1 && (
             <Form.Item name="name" label={`${name}${t("common:Query")}`}>
@@ -686,8 +687,8 @@ const beforeUpload = (file, fileList) => {
                 style={{ width: "550px" }}
                 onSearch={async (v) => {
                   await form.setFieldValue(name, v)
-                   getTableData()
-                 }}
+                  getTableData()
+                }}
               />
             </Form.Item>
           )}
@@ -695,8 +696,8 @@ const beforeUpload = (file, fileList) => {
             <>
               <Item label={`${levelone.name}${t("common:name")}`} name="topAreaId">
                 <Select
-                options={[...oneLevel, {name: '全部', id: 0}]}
-                
+                  options={[...oneLevel, { name: '全部', id: 0 }]}
+
                   fieldNames={{
                     label: "name",
                     value: "id",
@@ -714,104 +715,104 @@ const beforeUpload = (file, fileList) => {
                   style={{ width: "550px" }}
                   onSearch={async (v) => {
                     await form.setFieldValue(name, v)
-                     getTableData()
-                   }}
+                    getTableData()
+                  }}
                 />
               </Form.Item>
             </>
           )}
-         {!ispublish && <Form.Item>
+          {!ispublish && <Form.Item>
             <CustButton style={{ justifyContent: "center" }} onClick={add}>
               +{t("common:Add")}
-            </CustButton>         
+            </CustButton>
           </Form.Item>
-         }
-         <Form.Item>
-           <Popconfirm title={t("common:CreateGenerateTemplate")} onConfirm={createTemp}><CustButton  style={{ width:"auto"}} >{t("common:GenerateTemplate")}</CustButton></Popconfirm>
-         </Form.Item>
-         <Form.Item>
-             <CustButton onClick={multimport}>{t("common:BatchImport")}</CustButton>
-         </Form.Item>
+          }
+          <Form.Item>
+            <Popconfirm title={t("common:CreateGenerateTemplate")} onConfirm={createTemp}><CustButton style={{ width: "auto" }} >{t("common:GenerateTemplate")}</CustButton></Popconfirm>
+          </Form.Item>
+          <Form.Item>
+            <CustButton onClick={multimport}>{t("common:BatchImport")}</CustButton>
+          </Form.Item>
         </Space>
       </Form>
-      <UserTable columns={columns}  dataSource={tabelData} pagination={pagination} onChange={tableOnchange} rowKey="areaId" ref={tableRef} istemp={'istemp'} tempcolums={tempcolums} tempName={sheetName} tempdata={tempdata} />
+      <UserTable columns={columns} dataSource={tabelData} pagination={pagination} onChange={tableOnchange} rowKey="areaId" ref={tableRef} istemp={'istemp'} tempcolums={tempcolums} tempName={sheetName} tempdata={tempdata} />
       {/*    <UserTable columns={columns} {...tableProps} rowKey='areaId'  style={{display: level==1 ?'block' : 'none' }} /> 
           <UserTable columns={columns} {...tableProps} rowKey='areaId' style={{display: level>1 ?'block' : 'none' }} />   */}
- 
+
       {/* 新增 / 编辑*/}
       <CModal
-width={islngLat ? 1024 : 554}
-title={title}
-ref={nref}
-onOk={onOk}
-custft={isAdd}
-mold="cust"
->
-<Formbox
-  islngLat={islngLat}
-  rowes={limitlevle.length + 2 + fields.length}
-  form={nform}
-  size="middle"
-  labelCol={{ flex: "7em" }}
-  labelAlign="left"
-  preserve={false}
-  validateMessages={{
-    required: "'${label}' 是必选字段",
-  }}
->
-  {isAdd
-    ?  
-      
-     level > 1 && <CascaderSct /> 
-    : limitlevle?.map((lv, index, array) => {
-        return (
-          <Item label={`${lv?.name}名称`} name={lv?.name}>
-            <Input disabled={!isAdd} />
-          </Item>
-        );
-      })}
-
-  <Item
-    label={`${name}${t("common:name")}`}
-    name="name"
-    rules={[
-      {
-        required: true,
-      },
-    ]}
-  >
-    <Input />
-  </Item>
-
-  {fields?.map((f, index) => inputType(f.name, f.type))}
-  <Item
-    label={t("common:Note")}
-    name="remark"
-  >
-    <Input />
-  </Item>
-  {islngLat && (
-    <>
-      <Item
-        label="地址"
-        className="address"
-        name="address"
-        tooltip="请从地图获取地址"
+        width={islngLat ? 1024 : 554}
+        title={title}
+        ref={nref}
+        onOk={onOk}
+        custft={isAdd}
+        mold="cust"
       >
-        <Input
-          placeholder="请从地图获取地址"
-          allowClear
-          onChange={(e) => mapref.current.serachMap(e.target.value)}
-          value={address.current}
-        />
-      </Item>
-      <div className="map">
-        <Mapcom setAaddress={setAaddress} ref={mapref} lngLat={curlnglat.current} />
-      </div>
-    </>
-  )}
-</Formbox>
-</CModal>
+        <Formbox
+          islngLat={islngLat}
+          rowes={limitlevle.length + 2 + fields.length}
+          form={nform}
+          size="middle"
+          labelCol={{ flex: "7em" }}
+          labelAlign="left"
+          preserve={false}
+          validateMessages={{
+            required: "'${label}' 是必选字段",
+          }}
+        >
+          {isAdd
+            ?
+
+            level > 1 && <CascaderSct />
+            : limitlevle?.map((lv, index, array) => {
+              return (
+                <Item label={`${lv?.name}名称`} name={lv?.name}>
+                  <Input disabled={!isAdd} />
+                </Item>
+              );
+            })}
+
+          <Item
+            label={`${name}${t("common:name")}`}
+            name="name"
+            rules={[
+              {
+                required: true,
+              },
+            ]}
+          >
+            <Input />
+          </Item>
+
+          {fields?.map((f, index) => inputType(f.name, f.type))}
+          <Item
+            label={t("common:Note")}
+            name="remark"
+          >
+            <Input />
+          </Item>
+          {islngLat && (
+            <>
+              <Item
+                label="地址"
+                className="address"
+                name="address"
+                tooltip="请从地图获取地址"
+              >
+                <Input
+                  placeholder="请从地图获取地址"
+                  allowClear
+                  onChange={(e) => mapref.current.serachMap(e.target.value)}
+                  value={address.current}
+                />
+              </Item>
+              <div className="map">
+                <Mapcom setAaddress={setAaddress} ref={mapref} lngLat={curlnglat.current} />
+              </div>
+            </>
+          )}
+        </Formbox>
+      </CModal>
       {/* 删除 */}
       <CModal
         width={554}
@@ -821,16 +822,16 @@ mold="cust"
         type="warn"
         mold="cust"
       >
-         <> 是否确认删除 <Text type="danger">{Record["名称"]}</Text>和相关信息?</>
+        <> 是否确认删除 <Text type="danger">{Record["名称"]}</Text>和相关信息?</>
       </CModal>
 
-      <CModal mold='cust' ref={multref}  title='批量导入' onOk={okImport}>
-      
-      <Dragger  accept=".xlsx" maxCount={1} beforeUpload={beforeUpload}>
-        <img src={upCloud}></img>
-        <p style={{ margin: '32px 0', fontSize: 16 }}>将文件拖到此处，或<span style={{ color: '#237ae4', textDecoration: 'underline', }}>点击上传</span></p>      
-      </Dragger>  
-    </CModal>
+      <CModal mold='cust' ref={multref} title='批量导入' onOk={okImport}>
+
+        <Dragger accept=".xlsx" maxCount={1} beforeUpload={beforeUpload}>
+          <img src={upCloud}></img>
+          <p style={{ margin: '32px 0', fontSize: 16 }}>将文件拖到此处，或<span style={{ color: '#237ae4', textDecoration: 'underline', }}>点击上传</span></p>
+        </Dragger>
+      </CModal>
     </Mainbox>
   );
 }
