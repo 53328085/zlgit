@@ -2,7 +2,7 @@ import React, { useState,   useEffect } from 'react'
  
 import styled from 'styled-components'
 import {useSelector,  } from 'react-redux'
-import { selectcurlRommid } from "@redux/systemconfig";
+import { selectcurlRommid,adaptation } from "@redux/systemconfig";
 import {useOutletContext} from 'react-router-dom'
 import Pagecount from '@com/pagecontent'
 import CustContext from '@com/content.js'
@@ -37,17 +37,18 @@ export default function Index() {
   const projectId = useSelector(state => state.system.menus.projectId)  
  
   const roomId = useSelector(selectcurlRommid)
- 
+  let {laptop} = useSelector(adaptation)
   const [tabs,setTabs] =useState([])
   const {deviceStyle} = useOutletContext()
-console.log(tabs)
+
    const {label:deviceName, value:deviceVal} = deviceStyle
   const [value, setvalue] =useState(0)
 
   const device = tabs?.[value]
   const transprop ={
      device,
-     projectId
+     projectId,
+     laptop
   }
 
   // 获取配电房设备列表

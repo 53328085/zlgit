@@ -356,7 +356,7 @@ export default function Index(props) {
             <Custmodl title='新增能耗分类' ref={aref} mold="cust" width={512} onOk={onOk} custft={isAdd}>
                 <div style={{ display: "flex", alignItems: "center" }}>
                     <Form name='addform' labelCol={{ span: 7 }} form={form} labelAlign={'left'} requiredMark={false} preserve={false} >
-                        <Item label='新增分类名称' name='name' rules={[{ required: true, message: '请输入分类名称' }]} normalize={v => v.trim()} rules={[{ required: true, message: '分类名称不能为空' }]}>
+                        <Item label='新增分类名称' name='name' rules={[{ required: true, message: '请输入分类名称' }]} normalize={v => v.trim()} >
                             <Input style={{ width: '315px' }} placeholder={'请输入分类名称'} allowClear autoComplete='off'></Input>
                         </Item>
                     </Form>

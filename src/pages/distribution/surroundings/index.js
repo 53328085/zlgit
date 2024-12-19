@@ -7,7 +7,7 @@ import Pagecount from '@com/pagecontent'
 import Titlelayout from '@com/titlelayout'
 import ItemCard from './itemCard'
 
-import { selectcurlRommid } from "@redux/systemconfig";
+import { selectcurlRommid, adaptation} from "@redux/systemconfig";
 import styled from 'styled-components'
  
 import { DistributionRoomRuntime, distributionRoom } from '@api/api.js'
@@ -28,8 +28,9 @@ const Mainbox = styled.div`
   }
 `
 const Cardlist = styled.div`
+   flex: 1;
    display: grid;
-   grid-template-columns: repeat(5,313px);
+   grid-template-columns: repeat(auto-fill,minmax(313px, 1fr));
    gap:16px;
    padding-top: 16px ;
   grid-auto-rows: 120px ;
@@ -57,7 +58,7 @@ export default function Index() {
   const roomId = useSelector(selectcurlRommid)
   const [htdata, setHtdata] = useState([])
   const [envi, setEnvi] = useState({})
- 
+  let {laptop} = useSelector(adaptation)
   const {
     door,
     fire,
@@ -108,7 +109,7 @@ export default function Index() {
           </Cardlist>
 
         </Titlelayout>
-        {Array.isArray(htdata) && htdata.map((htd, index) => <Chart data={htd} ht={ht[index]}  />)}
+        {Array.isArray(htdata) && htdata.map((htd, index) => <Chart data={htd} ht={ht[index]} laptop={laptop} />)}
 
        
       </Mainbox>

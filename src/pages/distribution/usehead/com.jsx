@@ -161,13 +161,13 @@ return (
                   form={form}
                   colon={false}
                   layout="inline"  
-                  style={{flex: 1,  display: 'flex', alignItems: 'center',}} 
+                  style={{flex: 1,  display: 'flex', alignItems: 'center',  justifyContent: "space-between"}} 
                   onValuesChange={onValuesChange}             
               >
-                <Space split={ <Cdivider />} size={64}>
+                <Space split={ <Cdivider />} size={laptop ? 16 : 64}>
                 {showArea &&  <Form.Item label={levelName}   name="area" style={{ marginBottom: 0 }}>
                       <Select 
-                      style={{ width: 200 }} 
+                      style={{ width: laptop ? 150 : 200 }} 
                       options={oneLevel} 
                       fieldNames={{ label: 'name', value: 'id' }} 
                       onChange={changeArea}                      
@@ -178,7 +178,7 @@ return (
                       <Select
                           options={[{name: '全部配电房', id: 0},...roomIds]}
                           fieldNames={{ label: 'name', value: 'id' }}
-                          style={{ width: 240 }}
+                          style={{ width: laptop ? 160 : 240 }}
                           placeholder="请选择配电房"
                           onChange={lchangeRomme}
                           {...filterProps}
@@ -188,7 +188,7 @@ return (
                   <Select
                       options={roomIds}
                       fieldNames={{ label: 'name', value: 'id' }}
-                      style={{ width: 240 }}
+                      style={{ width:laptop ? 160 : 240 }}
                       placeholder="请选择配电房"
                       {...filterProps}
                       onChange={changeRomme}></Select>
@@ -206,7 +206,7 @@ return (
                   }
                   {
                     showDeviceStyle && <Form.Item name="deviceStyle" initialValue={deviceStyle}>
-                      <Select  style={{width: 200}} 
+                      <Select  style={{width: laptop ? 150 : 200}} 
                       labelInValue={true}
                       options={[
                         {label: '变压器',value: 5},
@@ -216,12 +216,13 @@ return (
                     </Form.Item>
                   }
                   </Space>
+                  <Space style={{marginLeft: laptop ? "16px" : "64px"}}>
                   {
-                   custview && <Form.Item noStyle>
+                   custview && <Form.Item noStyle >
                       {custview}
                    </Form.Item>
                   }
-
+ </Space>
                  <Form.Item style={{marginLeft: 'auto', marginRight: 0}}>
                   <Textloop projectId={projectId} roomId={curid} laptop={laptop} />
                   </Form.Item>  

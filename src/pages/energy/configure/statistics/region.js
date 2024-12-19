@@ -66,7 +66,7 @@ const Drawerbox = styled(Drawer)`
         grid-template-rows: 700px;
         .title {
           padding-left: 16px;
-          border-left: 4px #237ae4 solid;
+          border-left: 4px ${props=> props.theme.primaryColor} solid;
           color: #333;
           display: flex;
           align-items: center;

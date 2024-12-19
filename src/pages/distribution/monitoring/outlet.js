@@ -92,7 +92,6 @@ export default function Index({device, projectId}) {
             columns={columns}  
             bordered  
             dataSource={[]}
-           
             ></UseTable>
     </Box>
   )

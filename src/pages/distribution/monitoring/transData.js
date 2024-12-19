@@ -8,17 +8,24 @@ import { isObject } from '@com/usehandler'
 
 const Box = styled.div`
   display: flex;
-  column-gap: 16px;
-  height: 126px;
+ gap: 16px;
+  height: ${props => props.laptop ? "auto" : "126px"} ;
+  flex-wrap: wrap;
   .card {
     width:234px;
     display: flex;
-  
+    order: -10;
     justify-content: space-between;
     padding: 16px 16px 20px 4px;
     border: 1px solid #c9c9c9;
     background-color: #f6f6f6;
     color:#333;
+    .imgbox {
+      width: 88px;
+      img {
+        max-width: 100%;
+      }
+    }
     .tag {
       background-color: #093;
       color: #fff;
@@ -34,7 +41,7 @@ const Box = styled.div`
 const CustomTable =styled.div`
   display:grid;
   grid-template-rows:repeat(${props=>props.rows}, ${props => props.rows>2 ? '1fr' : '32px'});
-  grid-template-columns:repeat(${props=>props.cols/2},101px 121px);
+  grid-template-columns:repeat(${props=>props.cols/2}, ${props=> props.laptop ? "81px 121px" : "101px 121px"} );
   .item1{
     grid-column:1/${props=>props.cols+1};
     background:${props=>props.theme.primaryColor};
@@ -57,7 +64,7 @@ const CustomTable =styled.div`
   }
 `
  
-export default function Index({device, projectId}) {
+export default function Index({device, projectId,laptop}) {
  
   const [point, setPoint] = useState({})
   const [runstate, setRunstate] = useState()
@@ -101,16 +108,16 @@ export default function Index({device, projectId}) {
  }, [device, projectId])
  /* 1 离线  /// 2 在线  /// 3 告警 */
   return (
-    <Box>
+    <Box laptop={laptop}>
        <div className='card'>
-          <img src={transform} />
+         <div className='imgbox'><img src={transform} /></div>
           <div className='info'>
             <span>{device?.label}</span>
             <span>{device?.sn}</span>
             <div className='tag'>{stateText}</div>
           </div>
        </div>
-       <CustomTable rows={4} cols={2}>
+       <CustomTable rows={4} cols={2} laptop={laptop} style={{order: -9}}>
               <div className="item1">负荷状态</div>
               <div>{point['Load']?.description}</div>
               <div>{point['Load']?.display}</div>
@@ -120,7 +127,7 @@ export default function Index({device, projectId}) {
               <div>{point['TotVar']?.display}</div>
             </CustomTable>
  
-            <CustomTable rows={4} cols={2}>
+            <CustomTable rows={4} cols={2} style={{order: -8}}>
               <div className="item1">功率状态</div>
               <div>{point['TotVA']?.description}</div>
               <div>{point['TotVA']?.display}</div>
@@ -135,7 +142,7 @@ export default function Index({device, projectId}) {
               <div>{point['TotVar']?.description}</div>
               <div>{point['TotVar']?.display}</div> */}
             </CustomTable>
-            <CustomTable rows={4} cols={4}>
+            <CustomTable rows={4} cols={4} style={{order: -6}}>
               <div className="item1">电流/电压状态</div>
               <div>{point['Ia']?.description}</div>
               <div>{point['Ia']?.display}</div>
@@ -150,7 +157,7 @@ export default function Index({device, projectId}) {
               <div>{point['Uc']?.description}</div>
               <div>{point['Uc']?.display}</div>
             </CustomTable>
-            <CustomTable rows={2} cols={2}>
+            <CustomTable rows={2} cols={2} style={{order: laptop ? -7 : 0}}>
               <div className="item1">风机状态</div>
               <div>状态</div>
               <div>{point['Fan']?.display}</div>

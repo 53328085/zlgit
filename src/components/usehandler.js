@@ -207,3 +207,42 @@ export  const Statebox = styled.div`
        }`
        }
       }
+      function getBrightness(hexColor) {
+        // 确保输入是有效的十六进制颜色代码（例如：#FFFFFF 或 #FFF）
+        hexColor = hexColor.replace(/^#/, '');
+        if (hexColor.length === 3) {
+            hexColor = hexColor.split('').map(hex => hex + hex).join('');
+        }
+     
+        // 将十六进制颜色转换为RGB分量
+        const bigint = parseInt(hexColor, 16);
+        const r = (bigint >> 16) & 255;
+        const g = (bigint >> 8) & 255;
+        const b = bigint & 255;
+     
+        // 计算亮度
+        const brightness = 0.299 * r + 0.587 * g + 0.114 * b;
+        return brightness;
+    }
+     
+   export function isLightColor(hexColor, threshold = 100) {
+        const brightness = getBrightness(hexColor);
+        return brightness > threshold;
+    }
+   export function getprimarycolors(){
+     try {
+      let primarycolor = window.getComputedStyle(document.documentElement);
+      let colors =[]
+      for(let i=1; i<11; i++) {
+        let key =`--ant-primary-${i}`
+        let value = primarycolor.getPropertyValue(key);
+        colors.push({label: `主题色${i}`, value})
+      }
+      
+      return colors
+     } catch (error) {
+       console.log(error)
+       return []
+     }
+ 
+   }

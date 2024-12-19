@@ -1,12 +1,16 @@
 import React, {useRef, useImperativeHandle, forwardRef, useEffect, useState, useCallback, memo, useMemo} from 'react'
 import {createPortal,flushSync} from 'react-dom'
-import {Table, message} from 'antd'
+import { message} from 'antd'
+import { useSelector} from "react-redux";
 import styled from 'styled-components'
 import {useTranslation} from 'react-i18next'
 import {utils, writeFile} from 'xlsx'
 import {nanoid} from '@reduxjs/toolkit'
 import Tablecom from './custTable'
+import {
 
+  adaptation
+} from "@redux/systemconfig.js";
 const Divbox = styled.div`
 display: flex;
 flex: ${props => props.flex || 1};
@@ -66,12 +70,13 @@ flex-direction: column;
   const {pagination, sheetName="sheet.xlsx", tempName='', onExport=() => {}, tempcolums, tempdata,scroll={}, ...otherprops} =props  
   const ecolumns = otherprops.columns?.filter(col => !col.hasOwnProperty('export'))
   const tableref = useRef()
+  let {laptop} = useSelector(adaptation)
   const allref = useRef()
   const [lists, setLists] =useState()
   const [total, setTotal] = useState(0)
   const tempref = useRef();
   const {t} = useTranslation("comm")
-  console.log(props.dataSource)
+  
   const TableTemp =memo(() => {  
   
     return createPortal(
@@ -199,7 +204,7 @@ const download = useCallback(() => {
         <Tablecom  bordered  size="small"  pagination={paginationProp} ref={tableref} rowKey={nanoid()}  { ...otherprops} scroll={{
         scrollToFirstRowOnChange: true,
       ...scroll,
-    }}   />
+    }} laptop={laptop}   />
       {Array.isArray(lists)  &&  <Allupdate lists={lists} total={total}/>}
       { props.istemp  &&      <TableTemp   />}
     </Divbox>

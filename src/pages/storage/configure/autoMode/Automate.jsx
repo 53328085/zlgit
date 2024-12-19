@@ -4,11 +4,12 @@ import {Typography, Image, Form, Space, Button, Input, Select, DatePicker,  Cale
 import {CaretRightOutlined, CaretUpFilled, CaretDownFilled, WarningFilled, CheckCircleFilled}  from '@ant-design/icons'
 import moment from 'moment'
 import {nanoid} from "@reduxjs/toolkit"
-
+import {useSelector} from "react-redux"
 import Titlelayout from '@com/titlelayout'
 import {StorageAutoModeDesigner, StorageControlRuntime} from '@api/api'   // StorageControlRuntime
 import {custMsg} from '@com/usehandler'
 import {CustButtonT} from "@com/useButton"
+import { themeColor  } from '@redux/systemconfig.js'
 const {Text, Link, Title, Paragraph} = Typography
 const {Item} = Form
 const { RangePicker } = DatePicker;
@@ -34,7 +35,7 @@ const Mainbox = styled.div`
             display: grid;
             grid-template-rows: 36px 1fr 54px;
             .title {
-               background-color: #000033;
+               background-color: ${props => props.theme.primaryderived};;
                display: flex;
                align-items: center;
                justify-content: center;
@@ -201,7 +202,7 @@ const Viewbox = styled.div`
         align-items: center;
         justify-content: center;
         background-color: #f0f9ff;
-        color: #333;
+        color: #fff;
         font-size: 16px;
        } 
        .content {
@@ -292,7 +293,7 @@ const CustCalendar = styled(Calendar)`
         background-color: #fff;
         color:#515151;
         span.el {
-            color: #237ae4;
+            color: ${props => props.theme.primaryColor};
         }
     }
   }
@@ -399,7 +400,7 @@ const getvalidate = (start, end, type, choosedate) => {
   const pref = useRef()
   const [isadd, setIsadd] = useState(false)
   let disabled =  Number(curplan.enable) == 1
- 
+  let {primaryderived,primaryColor} = useSelector(themeColor)
   const showpalans = useMemo(() => {
     let len = plans.length;  // 7 0，5 1，6 2，7
     return plans.slice(count, 7+count)
@@ -415,8 +416,8 @@ const getvalidate = (start, end, type, choosedate) => {
   }
   const initform = (data) => {
 
-    let start = moment(data.startDate, 'YYYY-MM-DD hh:ss:mm')
-    let end = moment(data.endDate, 'YYYY-MM-DD hh:ss:mm')
+    let start =data.startDate ? moment(data.startDate, 'YYYY-MM-DD HH:mm:ss') : moment();
+    let end =data.endDate ? moment(data.endDate, 'YYYY-MM-DD HH:mm:ss'): moment();
     form.setFieldsValue({
         ...data,
         date: [start, end]
@@ -424,6 +425,8 @@ const getvalidate = (start, end, type, choosedate) => {
      
  }
  const QueryStrategyDetail = async (strategyId) => {
+  console.log("strategyId",strategyId)
+  if(!Number.isInteger(parseInt(strategyId))) return;
     try {
         let {success, data} =  await StorageAutoModeDesigner.QueryStrategyDetail(projectId, strategyId)
         success && setStrategyDetail([...data])
@@ -605,7 +608,8 @@ const getvalidate = (start, end, type, choosedate) => {
             setCurplan(data[count])
             setPlan([...data])
             initform(data[count])
-            QueryStrategyDetail(data[count].strategyId)
+            console.log(data[count].strategyId)
+          if(data[count].strategyId)   QueryStrategyDetail(data[count].strategyId)
         }else {
             success && setPlan([]) 
             setCurplan({})
@@ -640,12 +644,12 @@ const getvalidate = (start, end, type, choosedate) => {
   }
   
   useEffect(() => {
-    if(Number.isInteger(parseInt(areaId))) {
+    if(Number.isInteger(parseInt(areaId))&& Number.isInteger(parseInt(projectId))) {
     getPlans()
     QueryStrategyList()
     }
     //QueryPcsList()
-  }, [areaId])
+  }, [areaId, projectId])
   return (
     <Titlelayout title="自动模式管理">
     <Mainbox>
@@ -725,7 +729,7 @@ const getvalidate = (start, end, type, choosedate) => {
        是否确认删除该运行计划？
       </CModal>
       <CModal ref={oref} title='操作提示' mold='cust'   width={592}   footer={<Button type='primary' onClick={onPlanClose}>关闭</Button>}>
-       <Pinfo style={{justifyContent: 'center'}}> <CheckCircleFilled style={{color: '#237ae4', fontSize: '38px', margin: '0 16px'}}/> 运行计划保存成功！</Pinfo> 
+       <Pinfo style={{justifyContent: 'center'}}> <CheckCircleFilled style={{color: primaryColor, fontSize: '38px', margin: '0 16px'}}/> 运行计划保存成功！</Pinfo> 
       </CModal>
     </Mainbox>
     </Titlelayout>
@@ -737,7 +741,7 @@ const Planview = ({data, strategyDetail}) => { // status 1, 充电， 2， 放 3
     console.log(data)
     let {name, strategyName,priority, executionCycle,  startDate, endDate, dateChoose} = data
    
-
+    let {primaryderived,primaryColor} = useSelector(themeColor)
     const getminutes = (end, start) => moment(end, 'hh:mm').diff(moment(start, 'hh:mm'), 'minutes')   
     let status =   strategyDetail.map(s => ({start: getminutes(s.start, '00:00') / 15, end: getminutes(s.end, '00:00') / 15, type: s.status}) )   
     const items = Array.from({length: 96}, (v, i) => ({index: i+1, type: 3}))  
@@ -775,14 +779,14 @@ const Planview = ({data, strategyDetail}) => { // status 1, 充电， 2， 放 3
     }, [name])
    // const items = Array.from({length: 96}, (v, i) => ({index: i, type: i > 20 && i<40 ? 'warn' : i>=40 ? 'info' : ''}))    
     return (
-        <Titlelayout  title={<div style={{height: '32px', backgroundColor: "#000033", display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff'}}>运行计划设置</div>} bordered={'n'} pv="0px" bl="none" pl="0px">
+        <Titlelayout  title={<div style={{height: '32px', backgroundColor: primaryderived, display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff'}}>运行计划设置</div>} bordered={'n'} pv="0px" bl="none" pl="0px">
             <Viewbox>               
                 <div className='detl'>
                    <div style={{color: '#999', height: '48px'}}>查看运行计划及具体内容</div>
                    <div style={{border: '1px solid #d7d7d7', flex: 1, display: 'flex', flexDirection: 'column'}}>
                    <div className='title'>计划详细</div>
                    <div className='content'>
-                      <Descriptions  bordered column={3} size="small" labelStyle={{width: '72px',padding: '2px', textAlign: 'center'}} contentStyle={{color:'#237ae4'}}>
+                      <Descriptions  bordered column={3} size="small" labelStyle={{width: '72px',padding: '2px', textAlign: 'center'}} contentStyle={{color:primaryColor}}>
                         <Descriptions.Item label="计划名称">{name}</Descriptions.Item>
                         <Descriptions.Item label="策略模板">{strategyName}</Descriptions.Item>
                         <Descriptions.Item label="优先级">{priority}</Descriptions.Item>
@@ -826,7 +830,7 @@ const Strategy = ({data,   form, disabled, executionCycle}) => {
 
    const [show, setShow] = useState(executionCycle)
   const [options, setOptions] = useState(week)   
- 
+  let {primaryderived,primaryColor} = useSelector(themeColor)
    const onChange = (e) => {
       let opt = ['', '', week, days][e]
       setShow(e)
@@ -846,7 +850,7 @@ const Strategy = ({data,   form, disabled, executionCycle}) => {
       }
     }, [executionCycle])
    return (
-      <Titlelayout title={<div style={{height: '32px', backgroundColor: "#000033", display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff'}}>运行计划设置</div>} bordered={'n'} pv="0px" bl="none" pl="0px">
+      <Titlelayout title={<div style={{height: '32px', backgroundColor: primaryderived, display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff'}}>运行计划设置</div>} bordered={'n'} pv="0px" bl="none" pl="0px">
          <Formbox   labelCol={{flex: '96px'}} labelAlign="left" form={form} disabled={disabled}   validateMessages={
        { required: "缺少'${label}' 数据"}
       }>

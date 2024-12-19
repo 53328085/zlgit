@@ -10,7 +10,7 @@ import * as echarts from 'echarts'
 import bgImg from './imgs/background.png'
 import icon from './imgs/icon.png'
 import iconHover from './imgs/icon_hover.png'
-import { StorageEnvironmentRuntime } from '@api/api'
+import { BMSRuntime } from '@api/api'
  
  
 import { useReactive } from 'ahooks'
@@ -19,7 +19,9 @@ import Pagecount from "@com/pagecontent";
 import {Ichart} from '@com/useEcharts'
 import style from './style.module.less'
 const {Paragraph} = Typography
-
+  const Maibox = styled.div`
+  background-color: ${props => props.theme.primaryderived || "#000033"};
+  `
   //页面组件
   const CustomCss = styled.div`
     width: 260px;
@@ -161,7 +163,7 @@ export default function Index() {
   let {areaId,  projectId,stationName } = exparams
   const TempRef = useRef()
   const lineRef = useRef()
-  const { queryEnvironmentInfo, queryTrends } = StorageEnvironmentRuntime
+  const { queryEnvironmentInfo, queryTrends } = BMSRuntime
   let time = new Date()
   let year = time.getFullYear()
   let month = time.getMonth() + 1
@@ -339,7 +341,7 @@ export default function Index() {
         }
       } else {
         setStorageData([])
-        message.error(res.errMsg)
+       // message.error(res.errMsg)
       }
     })
   }
@@ -451,7 +453,7 @@ export default function Index() {
   //defaultValue={moment(today,'YYYY-MM-DD')}
   return (
     <Pagecount pd="0">     
-      <div className={style.mainContent}>
+      <Maibox className={style.mainContent}>
         <div className={style.title}>
             <Paragraph  style={{marginBottom: '0', color: "#fff"}}  ellipsis={{tooltip: stationName?.value}}>{stationName?.label}</Paragraph>  
           </div>
@@ -466,7 +468,7 @@ export default function Index() {
           <LeftButton onClick={() => transLeft()}></LeftButton>
           <RightButton onClick={() => transRight()}></RightButton>
         </div>
-      </div>
+      </Maibox>
       <CustModal title='温湿度趋势' ref={TempRef} mold="cust" width={1680} onOk={() => onOk()}>
         <div style={{ position: 'absolute', right: 32, top: 32, display: 'flex', alignItems: 'center' }}>
           <span>日期</span>

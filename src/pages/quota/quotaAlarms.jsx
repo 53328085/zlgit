@@ -16,7 +16,7 @@ import alarmSelectedIcon from '../quota/icon/alarmSelectedIcon.svg'
 import { useSelector } from 'react-redux'
 import { CPagination } from "@com/comstyled";
 import { CaretRightOutlined } from '@ant-design/icons';
-import { selectProjectId } from '@redux/systemconfig.js'
+import { selectProjectId,themeColor } from '@redux/systemconfig.js'
 
 
 import {energyQuota} from '@api/api'
@@ -52,7 +52,7 @@ export default function QuotaAlarms() {
   const [activeTab, setActiveTab] = useState(0)
   
   const projectId = useSelector(selectProjectId)
-  
+  const {errorColor} =useSelector(themeColor)
    
    
   const [form] = Form.useForm();
@@ -274,7 +274,7 @@ const changeTab = (val) => {
       <div className={style.AlarmsContent}>
         <div className={style.AlarmsContentLeft}>
           {alarmAllData.map((item, index) => (
-            <div className={style.Alarmsitem} onClick={() => changeAlarm(item)} style={{ color: activeTab == item.quotaAreaId ? '#fff' : '', background: activeTab == item.quotaAreaId ? '#ff3333' : '', border: activeTab == item.quotaAreaId? 'none' : '' }}>
+            <div className={style.Alarmsitem} onClick={() => changeAlarm(item)} style={{ color: activeTab == item.quotaAreaId ? '#fff' : '', background: activeTab == item.quotaAreaId ? errorColor : '', border: activeTab == item.quotaAreaId? 'none' : '' }}>
               <div className={style.Alarmsadress}>
                 {activeTab == item.quotaAreaId ? <img src={alarmSelectedIcon} className={style.alarmIcon} /> :
                   <img src={alarmIcon} className={style.alarmIcon} />}

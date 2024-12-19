@@ -95,7 +95,7 @@ const Mainbox = styled.div`
                 cursor: pointer;
             }
             .item.active {
-                background-color: #237ae4;
+                background-color: ${props => props.theme.primaryColor};
                 color: #fff;
             }
             .item.active::after {
@@ -119,7 +119,7 @@ const Mainbox = styled.div`
         font-size: 48px;
         overflow: hidden;
         transform: scaleY(1.3);
-        color: #237AE4;
+        color: ${props => props.theme.primaryColor};
         visibility: hidden
       }
       .arrowitem.show {
@@ -127,7 +127,7 @@ const Mainbox = styled.div`
       }
     }
     .empty {
-      border: 1px solid #237ae4;
+      border: 1px solid ${props => props.theme.primaryColor};
       border-radius: 8px;
       background-color: #f2f2f2;
       display: flex;

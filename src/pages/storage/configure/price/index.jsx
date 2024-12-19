@@ -1,4 +1,5 @@
 import React, {useEffect, useRef, useState} from 'react'
+import {useSelector} from "react-redux"
 import style from './style.module.less'
 import UseHeader from '@com/useHeader'
 import { Button, Input, Select, Space, Form, message } from 'antd';
@@ -9,6 +10,7 @@ import { cloneDeep } from 'lodash';
 import finished from '@imgs/finished.png'
 import { CaretRightOutlined } from '@ant-design/icons';
 import {CustButtonT} from '@com/useButton'
+import { themeColor  } from '@redux/systemconfig.js'
 export default function Index() {
   const [pointedForm] = Form.useForm()
   const [peakForm] = Form.useForm()
@@ -26,6 +28,7 @@ export default function Index() {
     backgroundSize: '100% 100%',
     position: 'relative'
   }
+  const {primaryColor, primaryderived} =useSelector(themeColor)
   //select disabled
   const pointStart1 = Form.useWatch('startTime1', pointedForm)
   const pointEnd1 = Form.useWatch('endTime1', pointedForm)
@@ -498,10 +501,10 @@ export default function Index() {
       <UseHeader getValues={getFromChild}></UseHeader>
       <div className={style.mainContent}>
         <div className={style.monthList}>
-          <div className={style.monthTitle}>月份选择</div>
+          <div className={style.monthTitle} style={{backgroundColor:primaryColor }}>月份选择</div>
           {monthList.map((item, index) => {
-            return <div key={index} className={style.monthTab} style={{ backgroundColor: activeTab == item.month ? '#237ae4':''}} onClick={()=>changeTab(item)}>
-              { item.storageMonthPrice .length == 0 ? null : <img src={finished} className={style.success}></img>}
+            return <div key={index} className={style.monthTab} style={{ backgroundColor: activeTab == item.month ? primaryderived :''}} onClick={()=>changeTab(item)}>
+           {/*    { item.storageMonthPrice .length == 0 ? null : <img src={finished} className={style.success}></img>} */}
               <span style={{color:activeTab == item.month ? '#fff': '#515151'}}>{item.month}月电价</span>
               <CaretRightOutlined className={style.rightIcon} style={{color:activeTab == item.month ? '#fff': '#ccc'}}/>
             </div>

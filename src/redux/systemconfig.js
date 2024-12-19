@@ -6,11 +6,13 @@ import zhCN from 'antd/es/locale/zh_CN';
 import {Login} from '../axios/api'
 import antdconfig from './theme' ; //   antd配置
 import { Area, ProjectList,ProjectSetting, BigScreen, eneryShift, Monitoring,Carbon, HomeRuntime, Editapi} from "@api/api.js"; 
-import {isObject} from '@com/usehandler'
-import moment from 'moment';
+import {isObject,isLightColor} from '@com/usehandler'
+
 
 const {DeviceTypeManager: {AllDeviceStyle} } = Monitoring
+
  
+
   // 进入项目配置/项目 
 
   const handlermenu = (Meundata,  id, homeMenuNO) => {
@@ -75,7 +77,9 @@ const initialState = {
       ratio43:true,  // 屏幕比例 4:3
     }, 
     themeColor:  {  // 可配置对象，不只是颜色属性。名字为保证稳定性不改
+      themeId:null, 
       primaryColor: '#237AE4',
+      islight: false, // 150
       errorColor: '#ff4d4f',
       warningColor: '#faad14',
       successColor: '#52c41a',
@@ -108,6 +112,14 @@ const initialState = {
       fntwarningColorstate: "#ffffff",
       fntofflineColor: "#ffffff",
       echartfirstcolor:"#237AE4",
+      fieldname: "#ffffff",
+      fieldvalue: "#33ff00",
+      itembg:"#000033",
+      primaryderived:'',
+      disfieldname: "#ffffff",
+      disfieldvalue: "#00ff00",
+      dislistbg:"#334461",
+      disitemhover: "#6633ff"
     },    
     intl: {
       lang: zhCN,
@@ -303,10 +315,18 @@ const system = createSlice({
             state.isGranary = payload
            // return Object.assign({}, state, {isGranary: actions.payload})
          },
-        getThemeColor(state, {payload}) {   
-           console.log(payload)
-           let {themeColor} = state      
-           state.themeColor ={...themeColor, ...payload};
+        getThemeColor(state, {payload}) {  
+           let {themeColor} = state  
+           if(payload.primaryColor){
+            let islight = isLightColor(payload.primaryColor)  
+           
+           
+            state.themeColor ={...themeColor, ...payload,islight};
+           }else{
+            state.themeColor ={...themeColor, ...payload};
+           }
+             
+           
           
         },
         getRoomId(state,{payload}){
@@ -326,7 +346,7 @@ const system = createSlice({
         },
         systemConfigRest(state, actions) {
            let {themeColor, intl} = state;
-           console.log(themeColor)
+          
          //  state = {...initialState, themeColor, intl};
            return {...initialState, themeColor, intl}
         },

@@ -9,7 +9,7 @@ import styled, {keyframes} from 'styled-components'
 import BlueColumn from '@com/bluecolumn'
 import time from './time.png'
 import { drawEcharts } from "@com/useEcharts";
-import { selectProjectId, selectcurlRommid } from '@redux/systemconfig.js'
+import { selectProjectId, selectcurlRommid,adaptation} from '@redux/systemconfig.js'
 import { useReactive } from 'ahooks'
 import UseModal from '@com/useModal' 
 import  Ichart from '@com/useEcharts/Ichart' 
@@ -253,6 +253,7 @@ export default function Index() {
   const [active, setActive] = useState(0)
   const projectId = useSelector(selectProjectId)
   const roomId = useSelector(selectcurlRommid)
+  let {laptop} = useSelector(adaptation)
   const chartRef = useRef()
   const [activename,setActiveName]=useState('')
   const chooseBox = (i,it) => { 
@@ -635,7 +636,7 @@ export default function Index() {
         </Titlelayout>
       </WrapDiv>
       <ModalDiv>
-        <UseModal mold='cust' ref={modalRef} width={1600} footer={null} getContainer={false} title="报警日志查看" closable>
+        <UseModal mold='cust' ref={modalRef} width={laptop ? 1000 : 1600} footer={null} getContainer={false} title="报警日志查看" closable>
           {/* <BlueColumn name="报警日志查看" styled={{ padding: '32px 0' }}>
             <CloseOutlined
               style={{ marginLeft: 'auto', fontSize: 16, cursor: 'pointer' }}
