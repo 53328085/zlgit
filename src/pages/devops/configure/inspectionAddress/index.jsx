@@ -72,7 +72,9 @@ export default function Index() {
         return (
           <Space size="middle">
             <CustLink onClick={async () => { printid = text.id; await getcode(text) }} text="printqrcode" />
-            <CustLink onClick={() => { console.log(text); setShow(!show); editform.setFieldsValue(text); editRef.current.onOpen() }} text="edit" />
+            <CustLink onClick={() => {
+              console.log(text); setShow(!show); editform.setFieldsValue(text); editRef.current.onOpen();
+            }} text="edit" />
             <CustLink type="danger" underline onClick={() => { delid = text.id; delRef.current.onOpen() }} text="delete" />
           </Space>
         )
@@ -91,11 +93,11 @@ export default function Index() {
   const curPage = useRef();
   const PageSize = 14
   const addDevice = () => {
+    setIsAdd(true)
     if (onelevel.length == 0) {
       message.warning('请新增园区!')
       return
     }
-    setIsAdd(true)
     addRef.current.onOpen()
     addform.setFieldsValue({
       address: '',
@@ -140,7 +142,9 @@ export default function Index() {
   }
   //新增检查项
   const addItems = async (position, device, content) => {
-    console.log(position)
+
+    try {
+      console.log("保存",position.local)
       return addform.validateFields().then(async () => {
         if (!position.local) {
           message.error('请添加坐标点')
@@ -164,7 +168,6 @@ export default function Index() {
         }
         const res = await operationDesigin.AddInspectionAddress(params)
         if (res.success) {
-          // addRef.current.onCancel()
           message.success('新增成功!')
           refresh()
           //  addform.resetFields()
@@ -175,6 +178,11 @@ export default function Index() {
         }
 
       })
+    } catch (error) {
+      console.log(error)
+      return Promise.reject(error)
+
+    }
   }
   //更新检查项
   const updateItems = async (position, devicelistref, checklistref) => {
@@ -345,7 +353,7 @@ export default function Index() {
 
           <Table columns={columns} {...tableProps}></Table>
 
-          <AddItem addRef={addRef} addform={addform} addItems={addItems} addoptiosn={addoptiosn} isAdd={isAdd} />
+          <AddItem addRef={addRef} addform={addform} addItems={addItems} addoptiosn={addoptiosn} />
 
           <EditItem editRef={editRef} editform={editform} updateItems={updateItems} addoptiosn={addoptiosn} />
           <DeleteModal delRef={delRef} name='删除巡检点' content="是否确认删除巡检点" onOk={delItems} />
@@ -371,7 +379,7 @@ export default function Index() {
   )
 }
 //新增
-const AddItem = ({ addRef, addItems, addform, addoptiosn, isAdd }) => {
+const AddItem = ({ addRef, addItems, addform, addoptiosn }) => {
   const projectId = useSelector(state => state.system.menus.projectId)
   const onelevel = useSelector(state => state.system.onelevel);
   let position = useReactive({})
@@ -421,7 +429,7 @@ const AddItem = ({ addRef, addItems, addform, addoptiosn, isAdd }) => {
   }, [positionRef])
   return (
     <>
-      <Modal mold='cust' custft={isAdd} width={587} ref={addRef} onOk={async () => { addItems(position, devicelistref, checklistref) }} title="新增巡检点">
+      <Modal mold='cust' custft={true} width={587} ref={addRef} onOk={async () => {await addItems(position, devicelistref, checklistref) }} title="新增巡检点">
         {/* <BlueColumn name="新增巡检点" styled={{ padding: '24px 0px', color: '#237ae4' }} ></BlueColumn> */}
         <AddDiv
           form={addform}

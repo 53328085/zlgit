@@ -20,6 +20,7 @@ const Mainbox = styled.div`
     border-left: 4px solid ${props => props.theme.primaryColor};
     display: inline-flex;
     height: 32px;
+    line-height: 32px;
     color: #515151;
   }
  
