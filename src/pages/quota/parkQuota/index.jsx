@@ -26,11 +26,11 @@ const Mainbox = styled.div`
     }
     .content {
        display: grid;
-       grid-template-columns: 1368px minmax(464px, 1fr);
+       grid-template-columns: 1180px minmax(464px, 1fr);
       overflow-x: auto;
       .right{
       display: flex;
-      padding: 16px;
+      padding:0px 16px 16px 16px;
     }
     }
   

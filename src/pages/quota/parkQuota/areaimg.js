@@ -92,7 +92,7 @@ export default memo(({projectId, areaAnnualQuota=[],  parkNum,
     return    (
       <Cspin spinning={spinning} tip="图片加载中……">
       <div style={{position: "relative"}}>
-          <img src={energyImage || enerbg}   style={{width: "1368px", height: "800px"}}  />
+          <img src={energyImage || enerbg}   style={{width: "1180px", height: "800px"}}  />
           <Numbox>
              <p><span>园区</span><span>{parkNum}</span></p>
              <p><span>建筑物</span><span>{structureNum}</span></p>

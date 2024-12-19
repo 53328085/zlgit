@@ -43,7 +43,7 @@ ${props=> props.laptop ? sty : null}
             width: 64px;
             height: 64px;
          
-            background-color: ${props => props.theme.primaryderived || '#ffffff'}; // var(--ant-primary-color) ;
+            background-color: ${props => props.theme.primaryColor || '#ffffff'}; // var(--ant-primary-color) ;
             border-radius: 50%;
             display: flex;
             align-items: center;
