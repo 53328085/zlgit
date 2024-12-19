@@ -136,6 +136,7 @@ export default function index() {
             state.spining = false
             canvas.open(dateGroup)
             canvas.render()
+            canvas.fitView(16);
           }, 1000)
         } else {
           message.error(res.errMsg)
