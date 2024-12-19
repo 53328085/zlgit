@@ -151,9 +151,9 @@ export default function pagecomp({data}) {
           <DesItem.Item label="项目名称" key="name">{projectName}</DesItem.Item>
           <DesItem.Item label="项目地址" key="address">{address}</DesItem.Item>
         </DesItem> 
-        <Usetable dataSource={[alarm]} columns={columns} size="small" title={() => <><p>2.告警事件统计</p><p style={{fontSize: "small",  marginTop: "12px"}}>本监测周期内经运维平台统计共发生-次告警，统计数据如下：</p></>} key="online" style={stye} flex="none" tfs="18px" hbg="#ecf5ff" hbc="#515151"></Usetable>
-        <Usetable dataSource={[order]} columns={columns2} size="small" title={() => <><p>3.工单事件统计</p><p style={{fontSize: "small", marginTop: "12px"}}>本监测周期内经运维平台统计共生成-次工单，统计数据如下：</p></>} key="statistic" style={stye} flex="none" tfs="18px" hbg="#ecf5ff" hbc="#515151"></Usetable>
-        <Usetable dataSource={[inspec]} columns={columns3} size="small" title={() => <><p>4.巡检任务统计</p><p style={{fontSize: "small", marginTop: "12px"}}>本监测周期内经运维平台统计共产生-次巡检任务，统计数据如下：</p></>} key="statistic" style={stye} flex="none" tfs="18px" hbg="#ecf5ff" hbc="#515151"></Usetable>                   
+        <Usetable dataSource={[alarm]} columns={columns} size="small" title={() => <><p>2.告警事件统计</p><p style={{fontSize: "small",  marginTop: "12px"}}>本监测周期内经运维平台统计共发生{alarm.all}次告警，统计数据如下：</p></>} key="online" style={stye} flex="none" tfs="18px" hbg="#ecf5ff" hbc="#515151"></Usetable>
+        <Usetable dataSource={[order]} columns={columns2} size="small" title={() => <><p>3.工单事件统计</p><p style={{fontSize: "small", marginTop: "12px"}}>本监测周期内经运维平台统计共生成{order.all}次工单，统计数据如下：</p></>} key="statistic" style={stye} flex="none" tfs="18px" hbg="#ecf5ff" hbc="#515151"></Usetable>
+        <Usetable dataSource={[inspec]} columns={columns3} size="small" title={() => <><p>4.巡检任务统计</p><p style={{fontSize: "small", marginTop: "12px"}}>本监测周期内经运维平台统计共产生{inspec.all}次巡检任务，统计数据如下：</p></>} key="statistic" style={stye} flex="none" tfs="18px" hbg="#ecf5ff" hbc="#515151"></Usetable>                   
       
          </Main> 
       </Page>

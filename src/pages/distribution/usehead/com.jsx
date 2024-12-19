@@ -5,7 +5,7 @@ import { useSelector, useDispatch } from 'react-redux'
 import { Select, Button, DatePicker, Form, Divider, message,Space } from 'antd'
 import {useLocation} from 'react-router-dom'
 import {DistributionRoomRuntime,distributionRoom, Area} from '@api/api.js'
-import {  getcurlRommid,setCurrentlevel, levelDefaultLabel,  getRoomId, roomId, selectcurlRommid,selectcurlRommidl, getcurlRommidl} from "@redux/systemconfig";
+import {  getcurlRommid,setCurrentlevel, levelDefaultLabel,  getRoomId, roomId,adaptation, selectcurlRommid,selectcurlRommidl, getcurlRommidl} from "@redux/systemconfig";
 import Textloop from '@com/textloop'
 import Devicelist from './devicelist'
 import {filterProps} from '@com/usehandler'
@@ -32,6 +32,7 @@ export default   function Index(props) {
   const roomIds = useSelector(roomId)
   const curid = useSelector(selectcurlRommid)
   const curidl = useSelector(selectcurlRommidl)
+  const {laptop} = useSelector(adaptation)
   //const roomid =  isline ? curidl : curid
   const [RommId, setRoomId] = useState(curid)
   let { showRoom = true, showArea=true, setDateVal, custview, deviceStyle,
@@ -222,7 +223,7 @@ return (
                   }
 
                  <Form.Item style={{marginLeft: 'auto', marginRight: 0}}>
-                  <Textloop projectId={projectId} roomId={curid} />
+                  <Textloop projectId={projectId} roomId={curid} laptop={laptop} />
                   </Form.Item>  
                  
               </Form>

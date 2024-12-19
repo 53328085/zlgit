@@ -200,6 +200,7 @@ const added = () => {
 }
 const onOk = async () => { // 新增，编辑 保存
   try {
+    return form.validateFields().then(async () => {
     let values = await form.validateFields().then(res => res).catch(e => undefined)
     if(!values) return
     let handler = ['AddContainer', 'UpdateContainer'][type]
@@ -211,7 +212,10 @@ const onOk = async () => { // 新增，编辑 保存
        refresh()
        let msg = ['新增成功', '编辑成功'][type];
        message.success({content: msg,duration: 0.3})
+    }else{
+      message.error({content: errMsg || '数据出错', duration: 0.3})
     }
+  })
   } catch (error) {
     console.log('error')
     console.log(error)

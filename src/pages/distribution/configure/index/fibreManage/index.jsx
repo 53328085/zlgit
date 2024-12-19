@@ -142,6 +142,7 @@ const rules = [{
  const onOk = async () => {
      console.log(recordref)
      try {
+      return form.validateFields().then(async () => {
        let values = await  form.validateFields()
        let params = {
         ...values,
@@ -156,6 +157,7 @@ const rules = [{
         state && zref.current.onCancel();
         queryTable()
       }
+    })
      } catch (error) {
        console.log(error)
      }
@@ -196,8 +198,7 @@ const rules = [{
     delref.current.onOpen()
  }
  const delOk = async () => {
-      console.log(delId)
-      let {success, errMsg} = await  DeleteGXCWInfo(delId.current);
+      let {success, errMsg} = await  DeleteGXCWInfo(delId.current.id);
       if(success) {
         message.success("删除成功");
         delref.current.onCancel()

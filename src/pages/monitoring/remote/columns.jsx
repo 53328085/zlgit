@@ -41,7 +41,7 @@
      {
         title: '开关状态',
         dataIndex:'status',
-        render: (val)=><span>{!val?'未知':val[1]==='Close'?'合闸':'开闸'}</span>
+        render: (val)=><span>{!val?'未知':val[1]==='Close'?'合闸':'分闸'}</span>
     }, 
     // {
     //     title: '保电方案',

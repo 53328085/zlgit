@@ -37,7 +37,7 @@ const CustomTable =styled.div`
   grid-template-columns:repeat(${props=>props.cols/2},101px 121px);
   .item1{
     grid-column:1/${props=>props.cols+1};
-    background:#237ae4;
+    background:${props=>props.theme.primaryColor};
     color:#fff;
     text-align:center;
   }

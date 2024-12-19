@@ -20,63 +20,63 @@ export class Editapi {
     });
 }
 // 主题配色
-export  class CustTheme {
-  static UpdateTheme = (projectId,body) =>
+export class CustTheme {
+  static UpdateTheme = (projectId, body) =>
     server.post(`Energy/Theme/UpdateTheme?projectId=${projectId}`, body); // 新增或更新主题
   static QueryTheme = (projectId) =>
     server.get(`Energy/Theme/QueryTheme?projectId=${projectId}`); // 获取项目下的主题
   static SetUserTheme = (params) =>
-    server.get(`Energy/Theme/SetUserTheme`, {params}); // 设置用户的主题
+    server.get(`Energy/Theme/SetUserTheme`, { params }); // 设置用户的主题
   static GetUserTheme = (userId) =>
     server.get(`Energy/Theme/GetUserTheme?userId=${userId}`); // 获取用户设置的主题
 
   static DeleteTheme = (params) =>
-    server.get(`Energy/Theme/DeleteTheme`, {params}); //删除主题
+    server.get(`Energy/Theme/DeleteTheme`, { params }); //删除主题
 }
 
 // 电能质量
-export class PowerQuality{
+export class PowerQuality {
   static DeviceList = (params) =>
-    server.get(`Distribution/DistributionPowerQuality/DeviceList`, { 
+    server.get(`Distribution/DistributionPowerQuality/DeviceList`, {
       params,
     }); // 查询设备
 
-    static WTJC = (body) =>
-      server.post(`Distribution/DistributionPowerQuality/WTJC`, body); // 电能质量稳态检查
+  static WTJC = (body) =>
+    server.post(`Distribution/DistributionPowerQuality/WTJC`, body); // 电能质量稳态检查
 
-    static XBPP = (body) =>
-      server.post(`Distribution/DistributionPowerQuality/XBPP`, body); // 谐波频谱
-    static WTQXTrend = (body) =>
-      server.post(`Distribution/DistributionPowerQuality/WTQXTrend`, body); // 电能质量-稳态曲线图形模式
-    static WTQXTable = (body) =>
-      server.post(`Distribution/DistributionPowerQuality/WTQXTable`, body); // 电能质量-稳态曲线数据模式
-    static WTQXExtremum = (body) =>
-      server.post(`Distribution/DistributionPowerQuality/WTQXExtremum`, body); // 电能质量-稳态曲线最值分析
-    static XBQXTrend = (body) =>
-      server.post(`Distribution/DistributionPowerQuality/XBQXTrend`, body); // 电能质量-谐波曲线图形模式
-    static XBQXTable = (body) =>
-      server.post(`Distribution/DistributionPowerQuality/XBQXTable`, body); // 电能质量-谐波曲线数据模式
-    static XBQXExtremum = (body) =>
-      server.post(`Distribution/DistributionPowerQuality/XBQXExtremum`, body); // 电能质量-谐波曲线最值分析
-    static FHQX = (body) =>
-      server.post(`Distribution/DistributionPowerQuality/FHQX`, body); // 电能质量-负荷曲线
-    static ZTFX = (body) =>
-      server.post(`Distribution/DistributionPowerQuality/ZTFX`, body); // 电能质量-暂态分析
-    static SOE = (body) =>
-      server.post(`Distribution/DistributionPowerQuality/SOE`, body); // 电能质量-SOE事件
-    static DNZLFX = (body) =>
-      server.post(`Distribution/DistributionPowerQuality/DNZLFX`, body); // 电能质量-电能质量分析
-    static DNZLZL = (body) =>
-      server.post(`Distribution/DistributionPowerQuality/DNZLZL`, body); // 电能质量-电能质量治理
+  static XBPP = (body) =>
+    server.post(`Distribution/DistributionPowerQuality/XBPP`, body); // 谐波频谱
+  static WTQXTrend = (body) =>
+    server.post(`Distribution/DistributionPowerQuality/WTQXTrend`, body); // 电能质量-稳态曲线图形模式
+  static WTQXTable = (body) =>
+    server.post(`Distribution/DistributionPowerQuality/WTQXTable`, body); // 电能质量-稳态曲线数据模式
+  static WTQXExtremum = (body) =>
+    server.post(`Distribution/DistributionPowerQuality/WTQXExtremum`, body); // 电能质量-稳态曲线最值分析
+  static XBQXTrend = (body) =>
+    server.post(`Distribution/DistributionPowerQuality/XBQXTrend`, body); // 电能质量-谐波曲线图形模式
+  static XBQXTable = (body) =>
+    server.post(`Distribution/DistributionPowerQuality/XBQXTable`, body); // 电能质量-谐波曲线数据模式
+  static XBQXExtremum = (body) =>
+    server.post(`Distribution/DistributionPowerQuality/XBQXExtremum`, body); // 电能质量-谐波曲线最值分析
+  static FHQX = (body) =>
+    server.post(`Distribution/DistributionPowerQuality/FHQX`, body); // 电能质量-负荷曲线
+  static ZTFX = (body) =>
+    server.post(`Distribution/DistributionPowerQuality/ZTFX`, body); // 电能质量-暂态分析
+  static SOE = (body) =>
+    server.post(`Distribution/DistributionPowerQuality/SOE`, body); // 电能质量-SOE事件
+  static DNZLFX = (body) =>
+    server.post(`Distribution/DistributionPowerQuality/DNZLFX`, body); // 电能质量-电能质量分析
+  static DNZLZL = (body) =>
+    server.post(`Distribution/DistributionPowerQuality/DNZLZL`, body); // 电能质量-电能质量治理
 }
 
 export class WorkTicketRuntime {
   //  word 文档
   static GetWrokTicketWrold = (params) =>
     server.get(`/Distribution/DistributionWorkTicketRuntime/GetWrokTicketWrold`, {
-       params,
-      
-       headers: {
+      params,
+
+      headers: {
         "Content-Type": "application/json;charset=UTF-8;application/msword",
       },
       responseType: "arraybuffer",
@@ -457,10 +457,10 @@ export class EnergyRankingDesign {
     ); // 获得区能耗设置信息
   static QueryDeviceSetting = (projectId) =>
     server.get(`/Energy/EnergyRankingDesign/QueryDeviceSetting?projectId=${projectId}`);//获得设备能耗设置信息
-  static UpdateDeviceSetting = (projectId,rankConut,leaderboardCount) =>
+  static UpdateDeviceSetting = (projectId, rankConut, leaderboardCount) =>
     server.get(`/Energy/EnergyRankingDesign/UpdateDeviceSetting?projectId=${projectId}&rankCount=${rankConut}&leaderboardCount=${leaderboardCount}`);//编辑设备能耗展示设置
-  static UpdateAreaLevelSetting = (projectId,data) =>
-    server.post(`/Energy/EnergyRankingDesign/UpdateAreaLevelSetting?projectId=${projectId}`,data);//编辑区域显示设置
+  static UpdateAreaLevelSetting = (projectId, data) =>
+    server.post(`/Energy/EnergyRankingDesign/UpdateAreaLevelSetting?projectId=${projectId}`, data);//编辑区域显示设置
 }
 
 // 能源管理--重点设备 -- 设计态
@@ -520,6 +520,15 @@ export class DesElectric {
   ) =>
     server.post(
       `Energy/EnergyImportantDesigner/ConfigImportmantDeviceSns?projectId=${projectId}&importantDeviceId=${id}`,
+      params
+    );
+
+  static deviceSorting = (
+    { projectId },
+    params // 设置设备位置排序
+  ) =>
+    server.post(
+      `Energy/EnergyImportantDesigner/UpdateImportmantDevicesIndex?projectId=${projectId}`,
       params
     );
 }
@@ -1704,6 +1713,8 @@ export class UISummary {
 }
 //运行监控
 export const Monitoring = {
+  GetPointList: (params) => server.get(`Monitor/RuntimeDevice/GetPointList`, {params}),//分类测点
+  HistoryCurve: (data) => server.post(`Monitor/RuntimeDevice/HistoryCurve`, data),//监控趋势（传感器、流量计）
   //设备类型管理
   DeviceTypeManager: {
     GatewayCategory: (data) =>
@@ -1751,7 +1762,7 @@ export const Monitoring = {
       server.get(`/General/Area/OneLevel?projectId=${projectId}&level=1`), //获取1级区域名
     QueryByPageElectric: (data) =>
       server.post(`/Monitor/Device/QueryByPageElectric`, data), //获取电表
-      QueryByPageHotWater: (data) =>
+    QueryByPageHotWater: (data) =>
       server.post(`/Monitor/Device/QueryByPageHotWater`, data), //获取热水表
     QueryByPage: (data) => server.post(`/Monitor/Device/QueryByPage`, data),
     QueryByPageGateWay: (data) =>
@@ -1778,14 +1789,14 @@ export const Monitoring = {
     AddHotWater: (data) => server.post(`/Monitor/Device/AddHotWater`, data), //新增热水表
     UpdateElectric: (data) =>
       server.post(`/Monitor/Device/UpdateElectric`, data), //更新电表
-      UpdateHotWater: (data) =>
+    UpdateHotWater: (data) =>
       server.post(`/Monitor/Device/UpdateHotWater`, data), //更新电表
     UpdateFactor: (data) => server.post(`/Monitor/Device/UpdateFactor`, data), //更新倍率
     DeleteElectric: (data) =>
       server.delete(
         `/Monitor/Device/DeleteElectric?projectId=${data.projectId}&sn=${data.sn}`
       ), //删除电表
-      DeleteHotWater: (data) =>
+    DeleteHotWater: (data) =>
       server.delete(
         `/Monitor/Device/DeleteHotWater?projectId=${data.projectId}&sn=${data.sn}`
       ), //删除电表
@@ -1865,6 +1876,15 @@ export const Monitoring = {
     UpdateFibreTempil: (data) =>
       server.post(`/Monitor/Device/UpdateGXCW`, data), //更新光纤测温
     ImportGXCW: (data) => server.post(`/Monitor/Device/ImportGXCW`, data), //批量导入触点测温
+
+    DeleteFlow: (data) =>
+      server.delete(`/Monitor/Device/DeleteFlow`, { params: data }), //删除流量计
+    QueryByPageFlow: (data) =>
+      server.post(`/Monitor/Device/QueryByPageFlow`, data), //查询流量计
+    AddFlow: (data) => server.post(`/Monitor/Device/AddFlow`, data), //新增流量计
+    UpdateFlow: (data) =>
+      server.post(`/Monitor/Device/UpdateFlow`, data), //更新光纤测温
+    ImportFlow: (data) => server.post(`/Monitor/Device/ImportFlow`, data), //批量导入流量计
   },
   //公共照明管理
   PubliclightManager: {
@@ -1896,9 +1916,9 @@ export const Monitoring = {
   //线路管理
   LineManager: {
     LineDevicePage: (params) =>
-      server.post(`/Monitor/LineManager/LineDevicePage`,params), //获取已接入的表
+      server.post(`/Monitor/LineManager/LineDevicePage`, params), //获取已接入的表
     RemoveUsedMeter: (params) =>
-      server.post(`/Monitor/LineManager/RemoveUsedMeter`,params), //解绑
+      server.post(`/Monitor/LineManager/RemoveUsedMeter`, params), //解绑
     AeraQueryAll: (projectId) =>
       server.get(`/General/Area/QueryAll?projectId=${projectId}&level=1`), //获取区域
     LineManagerQuery: ({ projectId, type, areaId, lineName = "" }) =>
@@ -1962,7 +1982,7 @@ export const Monitoring = {
       ), //网关详情
     Children: (data) => server.post(`/Monitor/RuntimeGateway/Children`, data), //网关子设备
     Log: (data) => server.post(`/Monitor/RuntimeGateway/Log`, data), //日志
-    RTGCall:(data)=>server.post(`/Monitor/RuntimeGateway/RTGCall`,data)
+    RTGCall: (data) => server.post(`/Monitor/RuntimeGateway/RTGCall`, data)
   },
   RuntimeDevice: {
     Statistics: (data) =>
@@ -2050,13 +2070,13 @@ export const Monitoring = {
     //     `/Monitor/RuntimeDevice/QueryCompareDevice?projectId=${projectId}&type=${type}&alike=${alike}`
     //   ), //
     QueryCompareDevice: (projectId, type, alike) =>
-        server.post(
-          `/Monitor/Compare/QueryCompareDevice`,{
-            meterType:type,
-            alike,
-            projectId
-          }
-        ), 
+      server.post(
+        `/Monitor/Compare/QueryCompareDevice`, {
+        meterType: type,
+        alike,
+        projectId
+      }
+      ),
     AllDeviceStyle: (projectId) =>
       server.get(
         `/Monitor/RuntimeDevice/AllDeviceStyle?projectId=${projectId}`
@@ -2065,11 +2085,14 @@ export const Monitoring = {
       // server.post(`/Monitor/RuntimeDevice/HistoryCompare`, data), //对比分析
       server.post(`/Monitor/Compare/HistoryCompare`, data), //对比分析
   },
-  IAnalyse:{
-    Configure:(data)=>  server.post(`/Monitor/Compare/Configure`,data),
-    CompareQuery:(projectId)=>server.get(`/Monitor/Compare/Query?projectId=${projectId}`),
-    HistoryCompare:(data)=>server.post(`Monitor/Compare/HistoryCompareSmart`,data)
-  }
+  IAnalyse: {
+    Configure: (data) => server.post(`/Monitor/Compare/Configure`, data),
+    UpdateComparePlan: (data) => server.post(`/Monitor/Compare/UpdateComparePlan`, data),
+    CompareQuery: (projectId) => server.get(`/Monitor/Compare/Query?projectId=${projectId}`),
+    QueryPlanList: (projectId) => server.get(`/Monitor/Compare/QueryPlanList?projectId=${projectId}`),
+    DeleteComparePlan: (projectId,planId) => server.get(`/Monitor/Compare/DeleteComparePlan?projectId=${projectId}&planId=${planId}`),
+    HistoryCompare: (data) => server.post(`Monitor/Compare/HistoryCompareSmart`, data)
+  }//
 };
 
 //运维管理(运行)
@@ -2297,15 +2320,15 @@ export class energyRanking {
   static Query = (data) =>
     server.post(`/Energy/EnergyRankingRuntime/Query`, data); //能耗排名
 
-    static QueryEnergyRankByArea = (data) =>
+  static QueryEnergyRankByArea = (data) =>
     server.get(`/Energy/EnergyRankingRuntime/QueryEnergyRankByArea?projectId=${data.projectId}&start=${data.start}&end=${data.end}`); //能耗排名按区域
 
-    static QueryAreaSetting = (projectId) =>
+  static QueryAreaSetting = (projectId) =>
     server.get(`/Energy/EnergyRankingRuntime/QueryAreaSetting?projectId=${projectId}`); //获取区域列表
-    static QueryAreaSettingTrees = (projectId) =>
+  static QueryAreaSettingTrees = (projectId) =>
     server.get(`/Energy/EnergyRankingRuntime/QueryAreaSettingTrees?projectId=${projectId}`); //获取区域列表
-    static QueryEnergyRankByDevice = (data,params) =>
-    server.post(`/Energy/EnergyRankingRuntime/QueryEnergyRankByDevice?projectId=${data.projectId}&start=${data.start}&end=${data.end}`,params); //能耗排名按设备
+  static QueryEnergyRankByDevice = (data, params) =>
+    server.post(`/Energy/EnergyRankingRuntime/QueryEnergyRankByDevice?projectId=${data.projectId}&start=${data.start}&end=${data.end}`, params); //能耗排名按设备
 }
 //分时能耗
 export class energyShare {
@@ -2500,60 +2523,60 @@ export class energyQuota {
       data
     );
   static QueryParkList = (params) =>
-      server.get(
-        `Quota/ParkQuotaRuntime/QueryParkList`,{params}       // 获取项目园区列表
-  );
+    server.get(
+      `Quota/ParkQuotaRuntime/QueryParkList`, { params }       // 获取项目园区列表
+    );
   static QueryStructureList = (params) =>
     server.get(
-      `Quota/QuotaDetailRuntime/QueryStructureList`,{params}       // 获取园区下建筑列表
-);
-static QueryRoomQuota = (params) =>
-  server.get(
-    `Quota/QuotaDetailRuntime/QueryRoomQuota`,{params}       // 获取房间定额信息
-);
-static QueryRoomQuotaDetail = (params) =>
-  server.get(
-    `Quota/QuotaDetailRuntime/QueryRoomQuotaDetail`,{params}       // 获取房间详细信息
-);
+      `Quota/QuotaDetailRuntime/QueryStructureList`, { params }       // 获取园区下建筑列表
+    );
+  static QueryRoomQuota = (params) =>
+    server.get(
+      `Quota/QuotaDetailRuntime/QueryRoomQuota`, { params }       // 获取房间定额信息
+    );
+  static QueryRoomQuotaDetail = (params) =>
+    server.get(
+      `Quota/QuotaDetailRuntime/QueryRoomQuotaDetail`, { params }       // 获取房间详细信息
+    );
   static QueryParkQuota = (params) =>
     server.get(
-      `Quota/ParkQuotaRuntime/QueryParkQuota`,{params}       
-);
-static QueryStructureWarn = (params) =>   // 获取园区下全部建筑告警数量
-  server.get(
-    `Quota/QuotaWarnRuntime/QueryStructureWarn`,{params}       
-);
-static QueryRoomWarn = (params) =>   // 获取建筑下全部房间告警信息
-  server.get(
-    `Quota/QuotaWarnRuntime/QueryRoomWarn`,{params}       
- );
- 
+      `Quota/ParkQuotaRuntime/QueryParkQuota`, { params }
+    );
+  static QueryStructureWarn = (params) =>   // 获取园区下全部建筑告警数量
+    server.get(
+      `Quota/QuotaWarnRuntime/QueryStructureWarn`, { params }
+    );
+  static QueryRoomWarn = (params) =>   // 获取建筑下全部房间告警信息
+    server.get(
+      `Quota/QuotaWarnRuntime/QueryRoomWarn`, { params }
+    );
+
 }
 // 定额管理 设计态
-export class QuotaManage { 
+export class QuotaManage {
   static QueryQuotaAreaTree = (projectId) => server.get(`Quota/QuotaManage/QueryQuotaAreaTree?projectId=${projectId}`) //   查询项目区域树
   static AddQuotaArea = (params) => server.post(`Quota/QuotaManage/AddQuotaArea`, params) //   新增区域
-  static UpdateQuotaArea = ({projectId,quotaAreaId,name }) => server.post(`Quota/QuotaManage/UpdateQuotaArea?projectId=${projectId}&quotaAreaId=${quotaAreaId}&name=${name}`) //   编辑区域名称
-  
-  static DeleteQuotaArea = ({projectId,quotaAreaId}) => server.delete(`Quota/QuotaManage/DeleteQuotaArea?projectId=${projectId}&quotaAreaId=${quotaAreaId}`) //   删除区域名称
-  
-  static QueryQuotaAreaConfig = ({projectId,quotaAreaId}) => server.get(`Quota/QuotaManage/QueryQuotaAreaConfig?projectId=${projectId}&quotaAreaId=${quotaAreaId}`) //   查询区域能耗定额和负责人
+  static UpdateQuotaArea = ({ projectId, quotaAreaId, name }) => server.post(`Quota/QuotaManage/UpdateQuotaArea?projectId=${projectId}&quotaAreaId=${quotaAreaId}&name=${name}`) //   编辑区域名称
+
+  static DeleteQuotaArea = ({ projectId, quotaAreaId }) => server.delete(`Quota/QuotaManage/DeleteQuotaArea?projectId=${projectId}&quotaAreaId=${quotaAreaId}`) //   删除区域名称
+
+  static QueryQuotaAreaConfig = ({ projectId, quotaAreaId }) => server.get(`Quota/QuotaManage/QueryQuotaAreaConfig?projectId=${projectId}&quotaAreaId=${quotaAreaId}`) //   查询区域能耗定额和负责人
 
   static SaveQuotaAreaConfig = (data) => server.post(`Quota/QuotaManage/SaveQuotaAreaConfig`, data) // 配置区域能耗定额和负责人
 
-  static QueryQuotaAreaDeviceConfig = ({projectId,quotaAreaId}) => server.get(`Quota/QuotaManage/QueryQuotaAreaDeviceConfig?projectId=${projectId}&quotaAreaId=${quotaAreaId}`) // 查询区域绑定设备
+  static QueryQuotaAreaDeviceConfig = ({ projectId, quotaAreaId }) => server.get(`Quota/QuotaManage/QueryQuotaAreaDeviceConfig?projectId=${projectId}&quotaAreaId=${quotaAreaId}`) // 查询区域绑定设备
 
   static SaveQuotaAreaDeviceConfig = (params) => server.post(`Quota/QuotaManage/SaveQuotaAreaDeviceConfig`, params) // 为区域绑定设备
-  static QueryProjectQuotaWarn=(projectId)=>server.get(`Quota/QuotaWarn/QueryProjectQuotaWarn?projectId=${projectId}`)//查询项目定额能耗
-  static SaveProjectQuotaWarn=(data)=>server.post(`Quota/QuotaWarn/SaveProjectQuotaWarn`,data)//保存项目定额能耗
+  static QueryProjectQuotaWarn = (projectId) => server.get(`Quota/QuotaWarn/QueryProjectQuotaWarn?projectId=${projectId}`)//查询项目定额能耗
+  static SaveProjectQuotaWarn = (data) => server.post(`Quota/QuotaWarn/SaveProjectQuotaWarn`, data)//保存项目定额能耗
 }
 
 
 //能源结构
 export class energyStructure {
-  static queryEnergyStructure = (projectId, areaId, name) =>
+  static queryEnergyStructure = (projectId, areaId, name, energyType) =>
     server.get(
-      `Energy/EnergyStructureDesigner/QueryEnergyStructure?projectId=${projectId}&areaId=${areaId}&name=${name}`
+      `Energy/EnergyStructureDesigner/QueryEnergyStructure?projectId=${projectId}&areaId=${areaId}&name=${name}&energyType=${energyType}`
     );
   static addEnergyStructure = (projectId, data) =>
     server.post(
@@ -2571,9 +2594,9 @@ export class energyStructure {
       `Energy/EnergyStructureDesigner/ConfigEnergyStructure?projectId=${projectId}`,
       data
     );
-  static queryEnergyStructureConfig = (projectId, energyStructureId, areaId) =>
+  static queryEnergyStructureConfig = (projectId, energyStructureId, areaId, energyType) =>
     server.get(
-      `Energy/EnergyStructureDesigner/QueryEnergyStructureConfig?projectId=${projectId}&energyStructureId=${energyStructureId}&areaId=${areaId}`
+      `Energy/EnergyStructureDesigner/QueryEnergyStructureConfig?projectId=${projectId}&energyStructureId=${energyStructureId}&areaId=${areaId}&energyType=${energyType}`
     );
 }
 
@@ -2808,23 +2831,23 @@ export class DistributionRoomRuntime {
       `Distribution/DistributionHighRuntime/HistoryTrend`,
       body // 运行报表 -- 回路详情, 实时监测 --数据趋势
     );
-   
 
-    static DeviceList = (params) =>
-      server.get(
-        `Distribution/DistributionHighRuntime/DeviceList`,{params}
-          // 实时监测 -- 查询配电房设备
-      );
-      static RuntimePointsH = (params) =>
-        server.get(
-          `Distribution/DistributionHighRuntime/RuntimePoints`,{params}
-            // 实时监测 -- 查询设备实时值
-        );
-        static HistoryTableH = (body) =>
-          server.post(
-            `Distribution/DistributionHighRuntime/HistoryTable`,body
-              // 实时监测 -- 查询设备实时值
-          );
+
+  static DeviceList = (params) =>
+    server.get(
+      `Distribution/DistributionHighRuntime/DeviceList`, { params }
+      // 实时监测 -- 查询配电房设备
+    );
+  static RuntimePointsH = (params) =>
+    server.get(
+      `Distribution/DistributionHighRuntime/RuntimePoints`, { params }
+      // 实时监测 -- 查询设备实时值
+    );
+  static HistoryTableH = (body) =>
+    server.post(
+      `Distribution/DistributionHighRuntime/HistoryTable`, body
+      // 实时监测 -- 查询设备实时值
+    );
   static GetEnvironment = (projectId, roomId) => {
     return server.get(`/Distribution/DistributionRoomRuntime/GetEnvironment`, {
       params: { projectId, roomId },
@@ -2982,7 +3005,7 @@ export class EnergyFlowRuntime {
   ) => server.post(`/Monitor/RuntimeDevice/OverviewFromGateway`, params);
 
   static QueryConsumeRankByDevice = (
-    { projectId, meterType, dayMonthYear,date } //能耗排名
+    { projectId, meterType, dayMonthYear, date } //能耗排名
   ) =>
     server.get(
       `Energy/EnergyFlowRuntime/QueryConsumeRankByDevice?projectId=${projectId}&meterType=${meterType}&dayMonthYear=${dayMonthYear}&date=${date}`
@@ -3180,6 +3203,7 @@ export class BMSRuntime {
       data
     );
 }
+//电气安全(设计态)
 //告警管理
 export class AlarmManagement {
   static QueryAlarmPage = (projectId, pageNum, pageSize) =>
@@ -3219,17 +3243,25 @@ export class AlarmManagement {
     server.post(`Safe/Alarm/UpdateAlarmEventSOE`, data);
   static UpdateAlarmEventCommunication = (data) =>
     server.post(`Safe/Alarm/UpdateAlarmEventCommunication`, data);
+  static QueryValveDevicePage = (data) =>
+    server.post(`Safe/AlarmValveDevice/QueryValveDevicePage`, data);
+  static SetAlarmValveDevice = (data) =>
+    server.post(`Safe/AlarmValveDevice/SetAlarmValveDevice`, data);
+  static GetAlarmValveDevice = (projectId, alarmId) =>
+    server.get(`Safe/AlarmValveDevice/GetAlarmValveDevice?projectId=${projectId}&alarmId=${alarmId}`);
+}
+export class StorageEnvironmentRuntime {
+  static queryEnvironmentInfo = (projectId, areaId, siteId) => server.get(`/Storage/StorageEnvironmentRuntime/QueryEnvironmentInfo?projectId=${projectId}&areaId=${areaId}&siteId=${siteId}`)
+  static queryTrends = (projectId, storageRoomId, date) => server.get(`/Storage/StorageEnvironmentRuntime/QueryTrends?projectId=${projectId}&storageRoomId=${storageRoomId}&date=${date}`)
 }
 //储能--环境监控
-export class StorageEnvironmentRuntime {
-  static queryEnvironmentInfo = (projectId, areaId, siteId) =>
+export class DeviceRuler {
+  static QueryBrokerShortcircuit = (projectId) =>
     server.get(
-      `/Storage/StorageEnvironmentRuntime/QueryEnvironmentInfo?projectId=${projectId}&areaId=${areaId}&siteId=${siteId}`
+      `/Safe/DeviceRuler/QueryBrokerShortcircuit?projectId=${projectId}`
     );
-  static queryTrends = (projectId, storageRoomId, date) =>
-    server.get(
-      `/Storage/StorageEnvironmentRuntime/QueryTrends?projectId=${projectId}&storageRoomId=${storageRoomId}&date=${date}`
-    );
+  static SetBrokerShortcircuit = (data) =>
+    server.post(`/Safe/DeviceRuler/SetBrokerShortcircuit`, data);
 }
 
 //储能--收益统计

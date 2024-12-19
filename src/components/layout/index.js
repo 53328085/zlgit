@@ -4,7 +4,11 @@ import styled from 'styled-components'
 import Copyright from './Copyright'
 import style from './index.module.less'
 import {useSelector} from 'react-redux'
-import {  configState,adaptation } from "@redux/systemconfig";
+
+import {  configState,adaptation,sidershow } from "@redux/systemconfig";
+
+
+import ShowSide from "@com/showsider"
 //import Logbg from './logBg.png'
 //const Logbg = lazy(() => import("./logBg.png"))
 const { Header, Footer, Sider, Content } = Layout;
@@ -14,7 +18,7 @@ const Cheader =styled(Header)`
   display: flex;
     align-items: center;
     padding: 0px;
-    background-color: ${props => props.theme.menusbgcolor || '#036'};
+    background-color: ${props => props.theme.menusbgcolor || '#003366'};
  }
 `
 
@@ -59,7 +63,7 @@ export function DefaultLayout(props) { // 默认首页
   }
   return (
     <Layout className={style.pagelayout}>
-      <Header className={style.header}>{props.custheader}</Header>
+      <Cheader className={style.header}>{props.custheader}</Cheader>
       <Content className={style.content}>{props.children}</Content>
     </Layout>
   )
@@ -67,10 +71,16 @@ export function DefaultLayout(props) { // 默认首页
 export function ProjectLayout(props) { // 项目内容
   const isconfig = useSelector(configState).toString()
   const {laptop} = useSelector(adaptation)
-
+  const siderdisplay = useSelector(sidershow)
+  
   return (
     <Layout className={style.pagelayout}>
+    {
+      siderdisplay ? 
      <Csider isconfig={isconfig} laptop={laptop}>{props.custsider}</Csider>
+     : <Sider width={48}><ShowSide show={true} /> </Sider>
+    
+  }
     <Layout>
       <Cheader className={style.header}>{props.custheader}</Cheader>
      

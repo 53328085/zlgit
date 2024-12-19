@@ -4,10 +4,10 @@
     
   }
   .react-grid-layout {
-    /* background: #135abd; */
+    background: #135abd;
     /* padding: 16px 12px; */
     /* width: 1200px; */
-    height: auto!important;
+    /* height: auto!important; */
     min-height: 100%!important;
   }
   .layoutJSON {

@@ -8,14 +8,14 @@ import {Typography, Image, Form,  DatePicker,   Descriptions, Divider,   Radio, 
  import {exportPDF} from './topdf'
 import Titlelayout from '@com/titlelayout'
 import {useSelector} from 'react-redux'
-import { selectProjectId} from '@redux/systemconfig.js'
+import { selectProjectId,adaptation} from '@redux/systemconfig.js'
 import {CustButton} from '@com/useButton'
  
  
  
 const Left = styled.div`
   && {
-        padding: 32px;
+        padding: ${props => props.laptop ? "16px" : "32px"} ;
         margin-bottom: 16px;
          display: flex;
          flex-direction: column;
@@ -63,7 +63,7 @@ const { RangePicker } = DatePicker;
    const [type, setType] = useState(2)  
    const datetype = ['','', 'month', 'year'][type]
    const [loading, setLoading] = useState(false)
-  
+   const {laptop} = useSelector(adaptation)
 const create = async () => {
     try {
         let {type, date} = form.getFieldsValue(true);
@@ -117,7 +117,7 @@ const onPrint = () => {
     setType(e.target.value)
   }
   return (
-         <Left>
+         <Left laptop={laptop}>
            <Titlelayout title='运行报告' bordered={'n'} style={{flex: 'auto'}} pv="0px" > 
                  
             <Form className="content" form={form} initialValues={{type: 2, date: moment()}}>

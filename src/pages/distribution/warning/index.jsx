@@ -100,7 +100,7 @@ export default  function Index() {
       align: 'center',
       render: (_, record) => (
         <Space size="middle">
-          <Link className={style.detailText} target="blank" to={`/deviceDetail?sn=${record.sn}`}>详情</Link>
+          <Link  target="blank" to={`/deviceDetail?sn=${record.sn}`}>详情</Link>
         </Space>
       ),
     },

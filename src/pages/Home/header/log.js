@@ -1,11 +1,11 @@
 import React, {useRef,  useCallback, useState, useEffect} from "react";
 import { Dropdown, Space, Form, Input, message, Typography, Radio } from "antd";
- 
+import {} from "@ant-design/icons"
 import styled, {css} from "styled-components";
 import { useSelector, useDispatch } from "react-redux";
 import {useNavigate, useLocation} from "react-router-dom"
 import { clearToken, selectUser, userRest, platformLang} from "@redux/user";
-import { configProject, comSetFirst, getJump, currentscreen, isGranary,datascreen, configState, setIntl,setIszhCN, selectProjectId,getMenus, setMenus,menus,adaptation} from "@redux/systemconfig";
+import { configProject, comSetFirst, getJump, currentscreen, isGranary,datascreen, configState, setIntl,setIszhCN, selectProjectId,getMenus, setMenus,menus,adaptation,getThemeColor} from "@redux/systemconfig";
 
 import moment from "moment";
 import {useTranslation, Trans, Translation} from 'react-i18next';
@@ -20,7 +20,8 @@ import lg from './icon/lg.svg'
 import {pwdValidator, phoneValidator} from '@pages/rule.js'
 import {Login,CustTheme} from '@api/api' 
 import {CustButton} from '@com/useButton'
-import {handlermenu} from "@com/usehandler"
+import {handlermenu,isObject} from "@com/usehandler"
+import svgurl from './icon/svg'
 const {Text} = Typography 
 const Lngdiv = styled.div`
   display: flex;
@@ -49,7 +50,7 @@ const Cradio = styled(Radio)`
 `
 const Cdiv = styled.div`
   display: flex;
-  height: 62px;
+  height: inherit;
   overflow: hidden;
   align-items: center;
 `;
@@ -59,68 +60,104 @@ const Ldiv = styled.div`
   display: flex;
   align-items: center;
   justify-content: flex-end;
-  border-bottom: 1px solid ${props => props.theme.menusbgcolor || '#036'};
-  border-top: 1px solid ${props => props.theme.menusbgcolor || '#036'};
+ // border-bottom: 1px solid ${props => props.theme.menusbgcolor || '#003366'};
+ // border-top: 1px solid ${props => props.theme.menusbgcolor || '#003366'};
 `;
 
 let style = css`width: 58px;
        border-right: none;
-       font-size: 12px;`
-const Idiv = styled.div`
-  border-right: 1px solid ${props => props.theme.menusbgcolorRborder || '#fff'}; //rgba(255, 255, 255, 0.3);
-  height: inherit;
-  width: 112px;
-  display: flex;
-  justify-content: center;
-  align-items: end;
-  padding-bottom: 4px;
-  background-repeat: no-repeat;
-  background-position: top 4px center;
-  ${props => props.laptop ? style : null}
-  &:last-child {
-    border-right: none;
-  }
-  &:hover {
-    background-color:${props => props.theme.menusbgcolorRA || '#3988e7'} ;
-    cursor: pointer;
-    border-right: 1px solid rgba(255, 255, 255, 0.1);
-  }
-  span {
-    line-height: 1;
-    color: ${props => props.theme.menusbgcolorRfont || '#fff'};
-  }
-  &.Idiv1{
-    background-image: url(${imgurl['31N']});
-  &:hover {
-    background-image: url(${imgurl['31H']});
-  }
-  }
-  &.Idiv2 {
-    background-image: url(${imgurl['32N']});
-  &:hover {
-    background-image: url(${imgurl['32H']});
-  }
-  }
-  &.Idiv3{
-    background-image: url(${imgurl['33N']});
-  &:hover {
-    background-image: url(${imgurl['33H']});
-  }
-  }
-  &.Idiv4{
-    background-image: url(${imgurl['34N']});
-  &:hover {
-    background-image: url(${imgurl['34H']});
-  }
-  }
-  &.Idiv5{
-    background-image: url(${imgurl['35N']});
-  &:hover {
-    background-image: url(${imgurl['35H']});
-  }
-  }
-`;
+       font-size: 12px;
+       .logo {
+              height: 28px;
+              width: 28px;
+              line-height: 28px;
+              overflow: hidden;
+              .shadow {
+              transform: translateX(-28px);
+              filter: drop-shadow(28px 0 0  ${props => props.theme.menusbgcolorRfont || '#ffffff'});
+            }
+           
+        }
+    &:hover {
+      .logo {
+              height: 28px;
+              width: 28px;
+              line-height: 28px;
+              overflow: hidden;
+              .shadow {
+              transform: translateX(-28px);
+              filter: drop-shadow(28px 0 0  ${props => props.theme.menusbgcolorRA || '#3988e7'});
+            }
+           
+        }
+    }
+       `
 
+
+const Logbox = styled.div`
+  &&{
+    height: inherit;
+    width: 112px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+    padding: 4px 0;
+    position: relative;
+    cursor: pointer;
+    &:not(:last-of-type)::after{
+    content: '';
+    position: absolute;
+    top:2px;
+    bottom: 2px;
+    right: 0px;
+    width: 1px;
+    display: block;
+    background-color: ${props => props.theme.menusbgcolorRborder || '#ffffff'} ;
+  }
+    span {
+      line-height: 1;
+      color: ${props => props.theme.menusbgcolorRfont || '#ffffff'};
+      &:hover{
+        line-height: 1;
+       color: ${props => props.theme.menusbgcolorRA || '#3988e7'}
+      }
+    }
+    .logo {
+              height: 36px;
+              width: 36px;
+              line-height: 36px;
+              overflow: hidden;
+              .shadow {
+              transform: translateX(-36px);
+              filter: drop-shadow(36px 0 0  ${props => props.theme.menusbgcolorRfont || '#ffffff'});
+            }
+           
+        }
+  &:hover {
+      .logo {
+              height: 36px;
+              width: 36px;
+              line-height: 36px;
+              overflow: hidden;
+              .shadow {
+              transform: translateX(-36px);
+              filter: drop-shadow(36px 0 0  ${props => props.theme.menusbgcolorRA || '#3988e7'});
+            }
+           
+        }
+        span {
+       color: ${props => props.theme.menusbgcolorRA || '#3988e7'}
+    }
+    }
+
+    ${props => props.laptop ? style : null}
+  }
+`
+const Ciocn = (props) => {
+  const url = props.url || svgurl['0104']
+  return <div className="logo"><img src={url}  className="shadow" style={{height: '100%', width: "100%"}} /></div> 
+}
 const Triangle = styled.div`
     width: 0; 
      height: 0;
@@ -161,7 +198,13 @@ export default function Log() {
   const setmenus = useSelector(setMenus)
   const allmenus = useSelector(menus)
   const adap =useSelector(adaptation) || {}
- 
+  const inita=[
+    {label: '账户管理', key:"mg"},
+    {label: '语言切换', key:"lng"},
+    {label: '退出系统', key:"exit"},
+  ]
+  const [items, setItems] = useState(inita)
+  
   let dataScreen =setmenus?.find(i => i.key=='dataScreen')?.label //数据大屏
   let projectSet = setmenus?.find(i => i.key=='projectSet')?.label //项目设置
   let systemSet = setmenus?.find(i => i.key=='systemSet')?.label // 平台设置
@@ -211,12 +254,41 @@ export default function Log() {
   
   
 }, [screenadr, isgranary]) */
+
+// &#8730;
 const getcurTheme= async(userId, projectId)=> {
   try {
     let {success, data} = await CustTheme.QueryTheme(projectId)
-    await CustTheme.GetUserTheme(userId)
+    let datalen = Array.isArray(data) && data.length> 0 && success ;
+    let item =[];
+
+    let {success:suc, data:themedata} = await CustTheme.GetUserTheme(userId)
+    let {themeId} = themedata || {}
+    if(suc && themeId && datalen){
+      try {
+        let theme = data.find(d => d.id == themeId)?.context
+        let themeobj =  JSON.parse(theme)
+        if(theme &&  isObject(themeobj)){
+          dispatch(getThemeColor(themeobj))
+        }
+        item=  data.map(d => ({label: d.id==themeId ? <span style={{color:isObject(themeobj) ? themeobj.primaryColor : "",fontWeight: "bolder" }}>{d.name}</span> : d.name, key: d.id}))
+      } catch (error) {
+        
+      }
+     
+    }else if(datalen){
+        let thobj = JSON.parse(data[0].context)
+        if(isObject(thobj)){
+          dispatch(getThemeColor(thobj))
+        }
+        item=  data.map((d,idx) => ({label: idx==0 ? <span style={{color:isObject(thobj) ? thobj.primaryColor : "", fontWeight: "bolder" }}>{d.name}</span> : d.name, key: d.id})) 
+    }else {
+       item =[];
+    }
+    setItems([...inita, ...item])
+
   } catch (error) {
-    
+    console.log(error)
   }
 }
 
@@ -262,6 +334,7 @@ const lngOk = () => {
     i18n.changeLanguage(lngval)
      
    const lngmenus =  handlermenu(allmenus.fullmenu, lngval=='zh' ? 'cn' : lngval)
+  
    dispatch(getMenus({...lngmenus,projectId}))
     lref.current.onCancel();
   } catch (error) {
@@ -269,15 +342,32 @@ const lngOk = () => {
   }
    // navgite('/')
 }
-
+const settheme = async (themeId) => {
+  try {
+    let params ={
+      themeId,
+      userId
+     }
+    let {success} = await  CustTheme.SetUserTheme(params)
+    if(success){
+       /* let obj= themes.find(t =>t.id==themeId)?.context
+       if(obj && isObject(JSON.parse(obj))){
+        dispatch(getThemeColor(JSON.parse(obj)))
+       } */
+        getcurTheme(userId, projectId)
+    }
+  } catch (error) {
+    
+  }
+   
+}
  
-  const items = [
-    {label: '账户管理', key:"mg"},
-    {label: '语言切换', key:"lng"},
-    {label: '退出系统', key:"exit"},
-  ]
+
   const onClick = ({key}) => {
-      if(key == 'mg') {
+      if(Number.isInteger(parseInt(key))){
+        settheme(key)
+
+      }else if(key == 'mg') {
         account()
       }else if(key == 'exit') {
         onExit()
@@ -368,7 +458,7 @@ const lngOk = () => {
     const ponOk = async() => { 
       try {
        let {oldPwd, pwd} = await pform.validateFields()
-       console.log(mobile)
+      
        let  param= {
           projectId,
           userId ,
@@ -401,26 +491,31 @@ const lngOk = () => {
       <Ldiv>
         {
           config ? 
-          (<Idiv laptop={adap.laptop} className="Idiv5" onClick={back}>
+          (<Logbox laptop={adap.laptop}  onClick={back}>
+            <Ciocn url={svgurl['back']} />
             <span> 返回</span>
-          </Idiv>)
+          </Logbox>)
           :
         <>
-      { isgranary ? <Idiv laptop={adap.laptop} className="Idiv1"  onClick={() => window.open('http://10.5.7.60:4242/ses', '_blank')}>
+      { isgranary ? <Logbox laptop={adap.laptop}  onClick={() => window.open('http://10.5.7.60:4242/ses', '_blank')}>
+      <Ciocn url={svgurl['screen']} />
           <span> {dataScreen}</span>
-        </Idiv> : showscreen  &&  <Idiv laptop={adap.laptop} className="Idiv1" onClick={onJump}>
+        </Logbox> : showscreen  &&  <Logbox laptop={adap.laptop}  onClick={onJump}>
+        <Ciocn url={svgurl['screen']} />
           <span> {dataScreen}</span>
-        </Idiv>
+        </Logbox>
         }
  
  
  
-        { roleType < 4 ? (<Idiv laptop={adap.laptop} className="Idiv4"  onClick={onConfigure}> 
+        { roleType < 4 ? (<Logbox laptop={adap.laptop}    onClick={onConfigure}> 
+          <Ciocn url={svgurl['set']} />
           <span>{projectSet}</span>
-        </Idiv>):null}
-        { roleType < 3 ? (<Idiv  Idiv laptop={adap.laptop} className="Idiv2" onClick={projectcfg}>
+        </Logbox>):null}
+        { roleType < 3 ? (<Logbox  Idiv laptop={adap.laptop}   onClick={projectcfg}>
+          <Ciocn url={svgurl['platform']} />
           <span>{systemSet}</span>
-        </Idiv>):null}
+        </Logbox>):null}
         </>
         }
         <Dropdown
@@ -430,13 +525,11 @@ const lngOk = () => {
          placement="bottom" 
         trigger={['click']
       } 
-       
         overlayClassName="custDropdown">
-        <Idiv  laptop={adap.laptop} className="Idiv3">
-          
+        <Logbox  laptop={adap.laptop}>
+        <Ciocn url={svgurl['user']} />
             <span>{name}</span>
-          
-        </Idiv>
+        </Logbox>
         </Dropdown> 
      
        

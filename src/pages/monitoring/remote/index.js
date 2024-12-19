@@ -1,24 +1,24 @@
-import React, { useState, useEffect, useRef, forwardRef, useImperativeHandle} from 'react'
+import React, { useState, useEffect, useRef, forwardRef, useImperativeHandle } from 'react'
 import { useSelector } from 'react-redux'
 import moment from 'moment'
-import {useAntdTable} from 'ahooks'
-import {Remote, Monitoring} from '@api/api.js'
-import { Form, Button, Table, Select, message,  Divider, Space, DatePicker } from 'antd'
- 
+import { useAntdTable } from 'ahooks'
+import { Remote, Monitoring } from '@api/api.js'
+import { Form, Button, Table, Select, message, Divider, Space, DatePicker } from 'antd'
+
 import Pagecount from '@com/pagecontent'
 import UserTable from '@com/useTable'
 import CustContext from '@com/content.js'
-import { selectProjectId, selectOneLevelDefaultId, deviceStyle} from '@redux/systemconfig.js'
-  
+import { selectProjectId, selectOneLevelDefaultId, deviceStyle, filterDeviceStyle } from '@redux/systemconfig.js'
+
 import styled from 'styled-components'
- 
+
 import CModal from '@com/useModal'
- 
+
 import { deepClone } from '@topology/core'
-import {Serach, Cdivider, disabledDate } from "@com/comstyled"
- 
+import { Serach, Cdivider, disabledDate } from "@com/comstyled"
+
 const { RuntimeLog: { QueryDeviceLogs } } = Monitoring
- 
+
 const Mainbox = styled.div`
    display: flex;
    flex-direction: column;
@@ -28,56 +28,58 @@ const Mainbox = styled.div`
 // 设备日志
 const columnsLogD = [
     {
-      title: '设备编号',
-      dataIndex: 'sn',
-      key: 'sn',
-      
+        title: '设备编号',
+        dataIndex: 'sn',
+        key: 'sn',
+
     },
     {
-      title: '设备类型',
-      dataIndex: 'meterType',
-      key: 'meterType',
-      
+        title: '设备类型',
+        dataIndex: 'meterType',
+        key: 'meterType',
+
     },
     {
-      title: '设备型号',
-      dataIndex: 'category',
-      key: 'category',
-      id: 'id'
+        title: '设备型号',
+        dataIndex: 'category',
+        key: 'category',
+        id: 'id'
     },
- 
+
     {
-      title: '安装地址',
-      dataIndex: 'address',
-      key: 'address',
-      
+        title: '安装地址',
+        dataIndex: 'address',
+        key: 'address',
+
     },
     {
         title: '描述',
         dataIndex: 'content',
         key: 'content',
-        
-      },
-    {
-      title: '操作时间',
-      dataIndex: 'time',
-      key: 'time',
-      
+
     },
     {
-      title: '操作者',
-      dataIndex: 'creator',
-      key: 'creator',
-      id: 'id'
+        title: '操作时间',
+        dataIndex: 'time',
+        key: 'time',
+
     },
-  ];
+    {
+        title: '操作者',
+        dataIndex: 'creator',
+        key: 'creator',
+        id: 'id'
+    },
+];
 
 export default function Index() {
     const [form] = Form.useForm()
-    const {Item} = Form
+    const { Item } = Form
     const projectId = useSelector(selectProjectId)
-    const deviceStyles = useSelector(deviceStyle)
-    const areaId = useSelector(selectOneLevelDefaultId);      
+    // const deviceStyles = useSelector(deviceStyle)
+
+    const deviceStyles = useSelector(filterDeviceStyle)
+    const areaId = useSelector(selectOneLevelDefaultId);
     const [value, setvalue] = useState('1')
     const [DataSourceReadR, setDataSourceReadR] = useState()
     const [tabledata, setTabledata] = useState()
@@ -87,88 +89,87 @@ export default function Index() {
     const tableRef = useRef()
     tableRef.current = DataSourceReadR
     let dataSourceReadR = []
-  
+
     const [brake, setbrake] = useState(false)
     const [brakeC, setbrakeC] = useState(false)
-    const [brakeResult, setbrakeResult] = useState(false)  
-    const tableRefs= useRef() 
+    const [brakeResult, setbrakeResult] = useState(false)
+    const tableRefs = useRef()
     const [logparams, setLogparams] = useState({})
-   const onValuesChange=(_, value)=> {
-      setLogparams(value)
-   }
+    const onValuesChange = (_, value) => {
+        setLogparams(value)
+    }
     useEffect(() => {
-      if(value==3) {
-        setLogparams(form.getFieldsValue(true))
-      }
-    }, [value])
-    const getLogData = ({current, pageSize}) => {
-        if(value!=3) return
-        console.log(logparams)
-        let {time, alike, deviceStyle} =logparams
-        if(!time) return
-        let [start, end] = time
-        let params ={pageNum: current, pageSize, projectId, start: start.format("yyyy-MM-DD"), end: end.format("yyyy-MM-DD") }
-        return QueryDeviceLogs(areaId, alike.trim(),deviceStyle, params).then(res => {
-         let {success, data, total} = res
-         
-         if(success && Array.isArray(data) && data.length > 0) {
-             console.log('suceess')
-            return {
-             list: data,
-             total,
-            }
-         }else {
-             return {
-                 list: [],
-                 total: 0,
-                }
-         }
-        }).catch(e => {
-         console.log(e)
-        })
- 
-     }
-   
-   const {tableProps:devieData} = useAntdTable(getLogData, {
-      defaultPageSize: 18,
-      refreshDeps: [areaId,value,logparams],
-   })
-
-
-
-
-    const getData = ({current, pageSize}, form={}) => {
-       let {alike, deviceStyle} = form
-       
-       let params ={pageNum: current, pageSize, projectId, areaId, gatewayId: 0, state: 0,category: '', deviceStyle, alike: alike.trim()}
-       return Remote.AllMeter(params).then(res => {
-        let {success, data, total} = res
-        
-        if(success && Array.isArray(data) && data.length > 0) {
-            console.log('suceess')
-           return {
-            list: data,
-            total,
-           }
-        }else {
-            return {
-                list: [],
-                total: 0,
-               }
+        if (value == 3) {
+            setLogparams(form.getFieldsValue(true))
         }
-       }).catch(e => {
-        console.log(e)
-       })
+    }, [value])
+    const getLogData = ({ current, pageSize }) => {
+        if (value != 3) return
+        let { time, alike, deviceStyle } = logparams
+        if (!time) return
+        let [start, end] = time
+        let params = { pageNum: current, pageSize, projectId, start: start.format("yyyy-MM-DD"), end: end.format("yyyy-MM-DD") }
+        return QueryDeviceLogs(areaId, alike.trim(), deviceStyle, params).then(res => {
+            let { success, data, total } = res
+
+            if (success && Array.isArray(data) && data.length > 0) {
+                console.log('suceess')
+                return {
+                    list: data,
+                    total,
+                }
+            } else {
+                return {
+                    list: [],
+                    total: 0,
+                }
+            }
+        }).catch(e => {
+            console.log(e)
+        })
 
     }
-   const {tableProps, search} = useAntdTable(getData, {
-    form,
-    defaultPageSize: 18,
-    defaultParams:[{current: 1, pageSize: 18}, {areaId, projectId,  gatewayId: 0, state: 0, category: '', alike: '', deviceStyle: 1}],
-    refreshDeps: [areaId,brakeResult]
-   })
 
-   const {submit} = search
+    const { tableProps: devieData } = useAntdTable(getLogData, {
+        defaultPageSize: 18,
+        refreshDeps: [areaId, value, logparams],
+    })
+
+
+
+
+    const getData = ({ current, pageSize }, form = {}) => {
+        let { alike, deviceStyle } = form
+        console.log(deviceStyle, "-----AllMeter")
+        let params = { pageNum: current, pageSize, projectId, areaId, gatewayId: 0, state: 0, category: '', deviceStyle, alike: alike.trim() }
+        return Remote.AllMeter(params).then(res => {
+            let { success, data, total } = res
+
+            if (success && Array.isArray(data) && data.length > 0) {
+                console.log('suceess')
+                return {
+                    list: data,
+                    total,
+                }
+            } else {
+                return {
+                    list: [],
+                    total: 0,
+                }
+            }
+        }).catch(e => {
+            console.log(e)
+        })
+
+    }
+    const { tableProps, search } = useAntdTable(getData, {
+        form,
+        defaultPageSize: 18,
+        // defaultParams: [{ current: 1, pageSize: 18 }, { areaId, projectId, gatewayId: 0, state: 0, category: '', alike: '', deviceStyle: 1 }],
+        refreshDeps: [areaId, brakeResult]
+    })
+
+    const { submit } = search
 
     const columnsLog = [
         {
@@ -202,7 +203,7 @@ export default function Index() {
             key: 'sn',
             id: 'id'
         },
-    ]; 
+    ];
     const rowSelectionRadio = {
         tableRefs,
         onChange: (selectedRowKeys, selectedRows) => {
@@ -229,7 +230,7 @@ export default function Index() {
         } else if (type == 'close') {
             setbrakeC(false)
         }
-      //  tableRefs.current=[]
+        //  tableRefs.current=[]
         //getData()
     }
     const [isComplate, setisComplate] = useState(false)
@@ -252,8 +253,8 @@ export default function Index() {
         setisComplate(false)
     }
     const changesetbrake = (type) => {
-       // console.log(tableRefs.current)
-        if (tableRefs.current&&tableRefs.current.length > 0) {
+        // console.log(tableRefs.current)
+        if (tableRefs.current && tableRefs.current.length > 0) {
             setsnList([])
             let List = []
             if (tableRefs.current.length > 0) {
@@ -270,9 +271,9 @@ export default function Index() {
             setTabledata(deepClone(all))
             myref.current?.setDataSourceRead(deepClone(all))
             tabledataRef.current = all
-          //  console.log(all, dataSourceReadR, tabledataRef.current)
-         //   console.log(DataSourceReadR, dataSourceReadR, all)
-          //  console.log(type)
+            //  console.log(all, dataSourceReadR, tabledataRef.current)
+            //   console.log(DataSourceReadR, dataSourceReadR, all)
+            //  console.log(type)
             if (type == 1) {
                 setbrake(true)
             } else if (type == 2) {
@@ -285,17 +286,17 @@ export default function Index() {
     }
     const tabs = [
         {
-            label:"单表控制",
+            label: "单表控制",
             key: 1,
 
         },
         {
-            label:"批量控制",
+            label: "批量控制",
             key: 2,
 
         },
         {
-            label:"设备日志",
+            label: "设备日志",
             key: 3,
 
         }
@@ -304,59 +305,60 @@ export default function Index() {
         value,
         setvalue,
         tabs,
-      }
-        
+    }
+    // 设置initialValues之前检查options数组是否有数据
+    const initialValues = deviceStyles.length > 0 ? { deviceStyle: deviceStyles[0]?.deviceStyle, alike: '', time: [moment().subtract(7, 'day'), moment()] } : {};
     return (
-       <CustContext.Provider value={dataProps}>
-        <Pagecount>
-            <Mainbox>              
-                    <Form form={form}   layout='inline' initialValues={{deviceStyle: 0, alike: '', time: [moment().subtract(7, 'day'), moment()]}} onValuesChange={onValuesChange} >
+        <CustContext.Provider value={dataProps}>
+            <Pagecount>
+                <Mainbox>
+                    <Form form={form} layout='inline' initialValues={initialValues} onValuesChange={onValuesChange} >
                         <Space size={32}>
-                        <Item name="deviceStyle" style={{marginBottom: '0px', marginRight: '0px'}}>
+                            <Item name="deviceStyle" style={{ marginBottom: '0px', marginRight: '0px' }}>
 
-                        <Select
-                           style={{width: "128px"}}
-                            fieldNames={{label: "name", value: "deviceStyle"}}
-                            onChange={submit}
-                            options={deviceStyles}
-                        />
-                        </Item>
-                        <Divider type="vertical" style={{margin: '0px', height: '32px'}} dashed />
-                        <Item name="alike" label="设备查询" style={{marginBottom: '0px', marginRight: '0px'}}>
-                            <Serach placeholder='请输入设备编号/安装地址' allowClear   size='middle' enterButton="查询" onSearch={submit} /> 
-                             
-                        </Item>
-                       {value == 3 && <Item name="time"><DatePicker.RangePicker disabledDate={disabledDate} format="YYYY-MM-DD" /></Item>}
-                       {value!=3 && <><Divider type="vertical" style={{margin: '0px', height: '32px'}} dashed />
-                        <Space size={16}>
-                        <Button size='middle' style={{ width: 96, height: 32, backgroundColor: '#F56C6C', border: 'none', color: '#fff',borderRadius:2 }} onClick={() => { changesetbrake(1) }}>分闸</Button>
-                        <Button size='middle' style={{ width: 96, height: 32, backgroundColor: '#F56C6C', border: 'none', color: '#fff',borderRadius:2 }} onClick={() => { changesetbrake(2) }}>合闸</Button>
-                        </Space></>}
+                                <Select
+                                    style={{ width: "128px" }}
+                                    fieldNames={{ label: "name", value: "deviceStyle" }}
+                                    onChange={submit}
+                                    options={deviceStyles}
+                                />
+                            </Item>
+                            <Divider type="vertical" style={{ margin: '0px', height: '32px' }} dashed />
+                            <Item name="alike" label="设备查询" style={{ marginBottom: '0px', marginRight: '0px' }}>
+                                <Serach placeholder='请输入设备编号/安装地址' allowClear size='middle' enterButton="查询" onSearch={submit} />
+
+                            </Item>
+                            {value == 3 && <Item name="time"><DatePicker.RangePicker disabledDate={disabledDate} format="YYYY-MM-DD" /></Item>}
+                            {value != 3 && <><Divider type="vertical" style={{ margin: '0px', height: '32px' }} dashed />
+                                <Space size={16}>
+                                    <Button size='middle' style={{ width: 96, height: 32, backgroundColor: '#F56C6C', border: 'none', color: '#fff', borderRadius: 2 }} onClick={() => { changesetbrake(1) }}>分闸</Button>
+                                    <Button size='middle' style={{ width: 96, height: 32, backgroundColor: '#F56C6C', border: 'none', color: '#fff', borderRadius: 2 }} onClick={() => { changesetbrake(2) }}>合闸</Button>
+                                </Space></>}
                         </Space>
                     </Form>
                     <Cdivider type="h" margin="16px 0" />
 
-                    
-             {value == 1 ? <div style={{display: 'flex', flex: 1}}>
-                        <UserTable columns={columnsLog}   rowKey={columnsLog => columnsLog.sn} {...tableProps}  rowSelection={{
-                            type: 'radio',  
+
+                    {value == 1 ? <div style={{ display: 'flex', flex: 1 }}>
+                        <UserTable columns={columnsLog} rowKey={columnsLog => columnsLog.sn} {...tableProps} rowSelection={{
+                            type: 'radio',
                             ...rowSelectionRadio,
-                          
+
                         }} bordered></UserTable>
-                   
-                    </div> : value == 2 ? <div style={{display: 'flex', flex: 1}}>
-                        <UserTable columns={columnsLog}   rowKey={columnsLog => columnsLog.sn} {...tableProps}  rowSelection={{
+
+                    </div> : value == 2 ? <div style={{ display: 'flex', flex: 1 }}>
+                        <UserTable columns={columnsLog} rowKey={columnsLog => columnsLog.sn} {...tableProps} rowSelection={{
                             type: 'checkbox',
                             ...rowSelectionCheckbox,
                         }} bordered></UserTable>
-                    
-                    </div> : <div style={{display: 'flex', flex: 1}}>
+
+                    </div> : <div style={{ display: 'flex', flex: 1 }}>
                         <UserTable columns={columnsLogD}     {...devieData}  ></UserTable>
-                    
-                    </div>}  
-               
-            </Mainbox>
-          {/*   <Modal
+
+                    </div>}
+
+                </Mainbox>
+                {/*   <Modal
                 title={<Bluecolumn name="分闸控制" />}
                 width={640}
                 open={brake}
@@ -375,58 +377,58 @@ export default function Index() {
                 <div style={{ fontSize: '18px', height: '106px', lineHeight: '106px', display: 'flex', alignItems: 'center' }}><img src={redwarn} className={style.imgclass}></img><p style={{ lineHeight: '48px', height: '106px', fontSize: '16px', width: 257 }}>分闸后,将导致该电表控制内的所有用电设备断电，请谨慎操作！</p></div>
             </Modal> */}
 
-               <CModal
-                 title="分闸控制"
-                 width={640}
-                 open={brake}
-                 centered={true}
-                 closable={false}
-                 type="warn"
-                 mold="cust"
-                 onOk={() => openStatus('open')}
-                 onCancel={() =>handleCancel('open')}
-               >
-                  分闸后,将导致该电表控制内的所有用电设备断电，请谨慎操作！
-               </CModal>
-            <CModal
-                title= "合闸控制"
-                width={640}
-                open={brakeC}
-                centered={true}
-                closable={false}
-                type="warn"
-                mold="cust"
-                onOk={() => {  openStatus('close') }}
-                onCancel={() => {  handleCancel('close')}}
-            >
-               合闸后,该电表控制内的所有用电设备将恢复供电，请确认！
-            </CModal>
-            <CModal
-                title="远程控制"
-                width={640}               
-                open={brakeResult}
-                centered={true}
-                closable={false}
-                destroyOnClose
-                mold="cust"
-                onCancel={() => {
-                    setbrakeResult(false)
-                }}
-                onOk={handleCancelResult}
-            >
-                <MyTable snList={snList} projectId={projectId} dataSourceRead={tabledataRef.current} changeDisabled={changeDisabled} ref={myref} changeBtnType={changeBtnType} />
+                <CModal
+                    title="分闸控制"
+                    width={640}
+                    open={brake}
+                    centered={true}
+                    closable={false}
+                    type="warn"
+                    mold="cust"
+                    onOk={() => openStatus('open')}
+                    onCancel={() => handleCancel('open')}
+                >
+                    分闸后,将导致该电表控制内的所有用电设备断电，请谨慎操作！
+                </CModal>
+                <CModal
+                    title="合闸控制"
+                    width={640}
+                    open={brakeC}
+                    centered={true}
+                    closable={false}
+                    type="warn"
+                    mold="cust"
+                    onOk={() => { openStatus('close') }}
+                    onCancel={() => { handleCancel('close') }}
+                >
+                    合闸后,该电表控制内的所有用电设备将恢复供电，请确认！
+                </CModal>
+                <CModal
+                    title="远程控制"
+                    width={640}
+                    open={brakeResult}
+                    centered={true}
+                    closable={false}
+                    destroyOnClose
+                    mold="cust"
+                    onCancel={() => {
+                        setbrakeResult(false)
+                    }}
+                    onOk={handleCancelResult}
+                >
+                    <MyTable snList={snList} projectId={projectId} dataSourceRead={tabledataRef.current} changeDisabled={changeDisabled} ref={myref} changeBtnType={changeBtnType} />
 
-            </CModal>
+                </CModal>
 
-        
-        </Pagecount>
+
+            </Pagecount>
         </CustContext.Provider>
     )
 }
 const MyTable = forwardRef(({ snList, projectId, dataSourceRead, changeDisabled, changeBtnType }, ref) => {
     console.log(snList)
     let params = {
-        sns:snList,
+        sns: snList,
         projectId,
     }
     const [DataSourceRead, setDataSourceRead] = useState(deepClone(dataSourceRead))
@@ -485,7 +487,7 @@ const MyTable = forwardRef(({ snList, projectId, dataSourceRead, changeDisabled,
                             if (status) {
                                 if (snRemoteList.length > 0) {
                                     let post = {
-                                        sns:snRemoteList,
+                                        sns: snRemoteList,
                                         projectId,
                                     }
                                     Remote.StartBatchValveTask(post).then((res) => {
@@ -508,7 +510,7 @@ const MyTable = forwardRef(({ snList, projectId, dataSourceRead, changeDisabled,
                                                         status = false
                                                         changeDisabled()
                                                         resolve(dataSourceRead)
-                                                        Remote.SetResult(setResultInfoList,projectId).then((res) => { })
+                                                        Remote.SetResult(setResultInfoList, projectId).then((res) => { })
                                                     }
                                                 }
                                             })
@@ -614,7 +616,7 @@ const MyTable = forwardRef(({ snList, projectId, dataSourceRead, changeDisabled,
         }
     }, [snList])
     return (
-        <Table columns={columnsRead} dataSource={DataSourceRead} rowKey={columnsRead => columnsRead.sn}  pagination={false} bordered></Table>
+        <Table columns={columnsRead} dataSource={DataSourceRead} rowKey={columnsRead => columnsRead.sn} pagination={false} bordered></Table>
     )
 }
 ) 

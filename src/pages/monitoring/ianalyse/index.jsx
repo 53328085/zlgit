@@ -7,7 +7,8 @@ import { Monitoring } from "@api/api.js";
 import { useSelector } from "react-redux";
 import { useReactive } from "ahooks";
 import Icharts from "@com/useEcharts/Ichart.js";
-import {CustButton} from "@com/useButton"
+import Cempty from '@com/useEmpty'
+import { CustButton } from "@com/useButton"
 import Modal from "@com/useModal"
 import Table from "@com/useTable"
 import warn from "./warn.png"
@@ -18,16 +19,16 @@ const BtnWrap = styled(Radio.Group)`
   }
 `;
 const Charts = styled.div`
-  height: 720px;
+  height: 400px;
   display: flex;
 `;
 const {
   IAnalyse: { CompareQuery, HistoryCompare },
 } = Monitoring;
 const option = {
-  legend:{
-     top: '3%',
-     left:"2%"
+  legend: {
+    top: '3%',
+    left: "2%"
   },
   xAxis: {
     type: "category",
@@ -36,20 +37,20 @@ const option = {
   yAxis: {
     type: "value",
   },
-  tooltip: {  
+  tooltip: {
     show: true, // 是否显示提示框组件，默认为true  
     trigger: 'axis' // 触发类型，'item'表示数据项图形触发，'axis'表示坐标轴触发  
-},
-dataZoom: [  
-  {  
+  },
+  dataZoom: [
+    {
       type: 'inside', // 内置缩放  
       xAxisIndex: 0, // 指定x轴索引  
       start: 0, // 起始位置（可以根据需要调整）  
       end: 100 // 结束位置（可以根据需要调整）  
-  }  
-],
+    }
+  ],
   grid: {
-    top:"10%",
+    top: "10%",
     left: "5%",
   },
   series: [
@@ -63,36 +64,34 @@ let markLine = {
     position: 'insideMiddle',
     formatter: '{c}'
   },
-  data: [
-    {
-      name: '阈值',
- 
-    }
-  ],
+  data: [],
   lineStyle: {
     color: '#f00'
   }
 }
-const columns=[{
+const columns = [{
   title: '时间',
   dataIndex: 'time',
   key: 'time',
 },
-{title: '最大测点',
-dataIndex: 'maxSNPointValue',
-key: 'maxSNPointValue',
+{
+  title: '最大测点',
+  dataIndex: 'maxSNPointValue',
+  key: 'maxSNPointValue',
 },
-{title: '最小测点',
+{
+  title: '最小测点',
   dataIndex: 'minSNPointValue',
   key: 'minSNPointValue',
 },
-{title: '实际偏差',
-dataIndex: 'curDeviation',
-key: 'curDeviation',
-},{
-  title:"偏差告警",
-  dataIndex:"setDeviation",
-  key:"setDeviation"
+{
+  title: '实际偏差',
+  dataIndex: 'curDeviation',
+  key: 'curDeviation',
+}, {
+  title: "偏差告警",
+  dataIndex: "setDeviation",
+  key: "setDeviation"
 }]
 export default function index() {
   const projectId = useSelector((state) => state.system.menus.projectId);
@@ -100,170 +99,278 @@ export default function index() {
   const currentDate = moment();
   const oneWeekAgo = moment().subtract(1, "weeks");
   const dateFormat = "YYYY-MM-DD";
-  const ModalRef =useRef()
-  const [radioVal, setRadioVal] = useState("1");
-  const [dates, setDates] = useState([
-    moment(oneWeekAgo, dateFormat),
-    moment(currentDate, dateFormat),
-  ]);
+  const ModalRef = useRef(null)
+  const [indexBtn, setIndexBtn] = useState(0)
+  const [radioVal, setRadioVal] = useState(1);
+  const [dates, setDates] = useState([]);
   const state = useReactive({
     devices: [],
     snGroup: [],
-    timeType:1,
+    timeType: 1,
     chartsOpts: {
       type: 5,
       ...option,
     },
-    alltableData:[],
-    tableData:[],
-    current:1,
-    pageSize:10,
-    disabled: false
+    xAxis: [],
+    alltableData: [],
+    detailtableData: [],
+    tableData: [],
+    current: 1,
+    pageSize: 10,
+    disabled: false,
+    groupName: ''
   });
-  const changeBtn = (e) => {
-    setRadioVal(e.target.value);
+  const markLineList=useReactive([])
+  const [params, setParams] = useState([])
+  const changeBtn = (e, index) => {
+    setRadioVal(e.target.value-0);
+    params[index].type = e.target.value
+    setParams(params)
+    HistoryCompares()
   };
-  const changeDate = (dates, dateStrings) => {
+  const changeDate = (dates, dateStrings, index) => {
+    console.log(dates, dateStrings, index)
+    console.log(params)
+    params[index].start = dateStrings[0]+' 00:00:00'
+    params[index].end = dateStrings[1]+' 23:59:59'
+    setParams(params)
     setDates(dateStrings);
+    HistoryCompares()
   };
   console.log(state.disabled)
+  const [dataList, setDataList] = useState([])
   const GetSns = async () => {
     const resp = await CompareQuery(projectId);
     if (resp.success) {
       if (resp.data) {
-        state.devices = resp.data.items;
-        state.snGroup = resp.data.snGroup;
-        state.timeType = resp.data.timeType
-        state.disabled = false
+        const mergedData = resp.data.reduce((acc, curr) => {
+          const existingIndex = acc.findIndex(item => item.planId === curr.planId);
+          if (existingIndex !== -1) {
+            acc[existingIndex].items = [...acc[existingIndex].items, ...curr.items];
+            acc[existingIndex].snGroup = [...new Set([...acc[existingIndex].snGroup, ...curr.snGroup])];
+          } else {
+            acc.push(curr);
+          }
+          return acc;
+        }, []);
+        setDataList(mergedData)
+        console.log(mergedData)
+
+        let list = []
+        mergedData.map((item,index) => {
+          let param = {
+            projectId, planId: 0, type: 1, groupName: '', sNs: [], start: '', end: ''
+          }
+          param.groupName = item.groupName
+          param.sNs = item.snGroup
+          param.planId = item.planId
+          let startTime = []
+          startTime = getDefaultValue(item.timeType)
+          param.start = startTime[0].format('YYYY-MM-DD')+" 00:00:00"
+          param.end = startTime[1].format('YYYY-MM-DD')+' 23:59:59'
+          list.push(param)
+          markLineList.push([])
+          item.items.map((it,i)=>{
+            
+            markLineList[index].push(it.lineValue)
+          })
+        })
+        console.log(markLineList)
+        console.log(list)
+        setParams(list)
+        HistoryCompares()
+        // state.devices = mergedData[0].items;
+        // state.snGroup = mergedData[0].snGroup;
+        // state.timeType = mergedData[0].timeType
+        // state.groupName = mergedData[0].groupName
+        // state.disabled = false
         // HistoryCompares(state.snGroup)
       } else {
-        state.devices = [];
-        state.snGroup = [];
-        state.timeType =1
-        state.disabled = true
+        setDataList([])
+        // state.devices = [];
+        // state.snGroup = [];
+        // state.timeType = 1
+        // state.disabled = true
       }
     } else {
       state.disabled = true
       message.error("获取设备信息失败!");
     }
   };
-  const getMaxArr=(matrix)=>{
-    if (matrix.length === 0 || matrix[0].length === 0) {  
+  const getMaxArr = (matrix) => {
+    if (matrix.length === 0 || matrix?.[0].length === 0) {
       return []; // 如果矩阵为空，返回空数组  
-  }  
+    }
 
-  const rowCount = matrix.length;  
-  const colCount = matrix[0].length;  
-  const maxValues = new Array(colCount).fill(Number.NEGATIVE_INFINITY); // 初始化辅助数组  
-  // const maxValSn = new Array(colCount).fill(Number.NEGATIVE_INFINITY);
-  // 遍历二维数组  
-  for (let i = 0; i < rowCount; i++) {  
-      for (let j = 0; j < colCount; j++) {  
-          if (matrix[i][j] > maxValues[j]) {  
-              maxValues[j] = matrix[i][j]; // 更新最大值 
-              // maxValSn[j] =  matrix[i][colCount+1]
-          }  
-      }  
-  }  
-  // console.log(maxValSn)
-  return maxValues;
+    const rowCount = matrix.length;
+    const colCount = matrix?.[0]?.length;
+    const maxValues = new Array(colCount).fill(Number.NEGATIVE_INFINITY); // 初始化辅助数组  
+    // const maxValSn = new Array(colCount).fill(Number.NEGATIVE_INFINITY);
+    // 遍历二维数组  
+    for (let i = 0; i < rowCount; i++) {
+      for (let j = 0; j < colCount; j++) {
+        if (matrix[i][j] > maxValues[j]) {
+          maxValues[j] = matrix[i][j]; // 更新最大值 
+          // maxValSn[j] =  matrix[i][colCount+1]
+        }
+      }
+    }
+    // console.log(maxValSn)
+    return maxValues;
   }
-  const getMinArr=(matrix)=> {  
-    if (matrix.length === 0 || matrix[0].length === 0) {  
-        return []; // 如果矩阵为空，返回空数组  
-    }  
-  
-    const rowCount = matrix.length;  
-    const colCount = matrix[0].length;  
+  const getMinArr = (matrix) => {
+    if (matrix.length === 0 || matrix?.[0].length === 0) {
+      return []; // 如果矩阵为空，返回空数组  
+    }
+
+    const rowCount = matrix.length;
+    const colCount = matrix?.[0]?.length;
     const minValues = new Array(colCount).fill(Number.POSITIVE_INFINITY); // 初始化辅助数组为正无穷大  
     // const minValSn = new Array(colCount).fill(Number.POSITIVE_INFINITY);
-    console.log(matrix,colCount)
+    console.log(matrix, colCount)
     // 遍历二维数组  
-    for (let i = 0; i < rowCount; i++) {  
-        for (let j = 0; j < colCount; j++) {  
-            if (matrix[i][j] < minValues[j]) {  
-                minValues[j] = matrix[i][j]; // 更新最小值 
-                // minValSn[j] =  matrix[i][colCount+1]
-             
-            }  
-        }  
-    }  
-    // console.log(minValSn)
-    return minValues;  
-}  
-  const getTime =()=>{
-     
-      if(state.timeType==1){
-       let date =   moment().format('YYYY-MM-DD ')
-        return {start:date+"00:00:00",end:date+"23:59:59"}
-      }else if(state.timeType==2){
-        let date = moment().subtract(7, 'days').format('YYYY-MM-DD ')
-        return {start:date+"00:00:00",end:moment().format('YYYY-MM-DD ')+"23:59:59"}
-      }else if(state.timeType==3){
-        let date = moment().subtract(31, 'days').format('YYYY-MM-DD ');
-        return {start:date+"00:00:00",end:moment().format('YYYY-MM-DD ')+"23:59:59"}
+    for (let i = 0; i < rowCount; i++) {
+      for (let j = 0; j < colCount; j++) {
+        if (matrix[i][j] < minValues[j]) {
+          minValues[j] = matrix[i][j]; // 更新最小值 
+          // minValSn[j] =  matrix[i][colCount+1]
+
+        }
       }
-      return null
+    }
+    // console.log(minValSn)
+    return minValues;
+  }
+  const getTime = () => {
+
+    if (state.timeType == 1) {
+      let date = moment().format('YYYY-MM-DD ')
+      return { start: date + "00:00:00", end: date + "23:59:59" }
+    } else if (state.timeType == 2) {
+      let date = moment().subtract(7, 'days').format('YYYY-MM-DD ')
+      return { start: date + "00:00:00", end: moment().format('YYYY-MM-DD ') + "23:59:59" }
+    } else if (state.timeType == 3) {
+      let date = moment().subtract(31, 'days').format('YYYY-MM-DD ');
+      return { start: date + "00:00:00", end: moment().format('YYYY-MM-DD ') + "23:59:59" }
+    }
+    return null
   }
   const HistoryCompares = async () => {
-    const timer =  getTime()
-    console.log(timer)
-    const params = {
-      projectId,
-      type: radioVal,
-      sNs: state.snGroup,
-      start:  timer.start,
-      end: timer.end,
-    };
+    //const timer = getTime()
+    // console.log(timer, dates)
+    console.log(params)
+    // const params = [{
+    //   projectId,
+    //   type: radioVal,
+    //   groupName: state.groupName,
+    //   sNs: state.snGroup,
+    //   start: dates[0],
+    //   end: dates[1],
+    // }];
+    if (params.length == 0) return
     const resp = await HistoryCompare(params);
     if (resp.success) {
-      if (resp.data.snData) {
-        markLine.data[0]["yAxis"]=""
-        markLine.label={}
-        state.chartsOpts.series=[]
-        state.chartsOpts.xAxis.data=resp.data.snData[0]["data"][0]["data"].map(it=>it.time)
+      if (resp.data) {
+        console.log(1111)
+        state.chartsOpts.series = []
 
-        if(radioVal=="1" && state.devices[0]["line"]==1){
-
-          markLine.data[0]["yAxis"]= state.devices[0]["lineValue"]
-          markLine.label.formatter=(params)=>`${params.value}kWh`
-        }else if(radioVal=="2" && state.devices[1]["line"]==1){
-          console.log(markLine)
-  
-          markLine.data[0]["yAxis"]= state.devices[1]["lineValue"]
-           markLine.label.formatter=(params)=>`${params.value}W`
-        }else if(radioVal=="3" && state.devices[2]["line"]==1){
-
-          markLine.data[0]["yAxis"]= state.devices[2]["lineValue"]
-           markLine.label.formatter=(params)=>`${params.value}A`
-        }else if(radioVal=="4" && state.devices[3]["line"]==1){
-
-          markLine.data[0]["yAxis"]= state.devices[3]["lineValue"]
-           markLine.label.formatter=(params)=>`${params.value}V`
-        }
- 
-        let compareArr=[] 
-        resp.data.snData.forEach((item,index)=>{
-          if(item.data.length>1){
-           item.data.forEach(it=>{
-              state.chartsOpts.series.push({
-                data:it.data.map(i=> (i["value"])), type: "line", smooth: true,name:item["sn"]+"-"+it["point"],markLine
-              } )
+        console.log(state.chartsOpts)
+        let compareArr = []
+        resp.data.forEach((a, b) => {
+          state.chartsOpts.series[b] = []
+          state.xAxis[b] = []
+          a.snData.forEach((item, index) => {
+            if (item?.data?.length > 0) {
+              item.data.forEach(it => {
+                console.log(it, b)
+                state.xAxis[b] = it["data"].map(it => it.time)
+                state.chartsOpts.series[b].push({
+                  data: it.data.map(i => (i["value"])), 
+                  type: "line", 
+                  smooth: true, 
+                  name: item["name"] + "-" + it["point"],
+                  markLine:dataList[b].items[params[b].type-1].line!=0?{
+                    symbol: ['none', 'none'],
+                    label: {
+                      show: true,
+                      position: 'insideMiddle',
+                      formatter: '基准线:{c}'
+                    },
+                    data: [
+                      {
+                        yAxis: markLineList[b][params[b].type-1], // 这里设置基准线的值，可以根据实际情况调整
+                        name: '基准线'
+                      }
+                    ],
+                    lineStyle: {
+                      color: '#f00'
+                    }
+                  }:{}
+                })
+              })
+            }
           })
-          }else{
-            state.chartsOpts.series.push({data:item.data[0]["data"].map(it=>it.value),type: "line", smooth: true,name:item["sn"]+"-"+item.data[0]["point"],markLine}) 
-          }
-
-         compareArr.push(item.data[0]["data"].map(it=>(it.value))) 
-          console.log(state.chartsOpts.series)
         })
+        console.log(state.chartsOpts.series)
+        state.detailtableData = resp.data
+        // if (resp.data[indexBtn].compareDeviation) {
+        // state.alltableData = resp.data[indexBtn].compareDeviation
+        // console.log(state.alltableData)
+        // state.tableData = state.alltableData?.slice(0, state.pageSize)
+        // }
+
+
+
+
+
+
+
+        // markLine.data[0]["yAxis"] = ""
+        // markLine.label = {}
+        // state.chartsOpts.series = []
+        // state.chartsOpts.xAxis.data = resp.data.snData[0]["data"][0]["data"].map(it => it.time)
+
+        // if (radioVal == "1" && state.devices[0]["line"] == 1) {
+
+        //   markLine.data[0]["yAxis"] = state.devices[0]["lineValue"]
+        //   markLine.label.formatter = (params) => `${params.value}kWh`
+        // } else if (radioVal == "2" && state.devices[1]["line"] == 1) {
+        //   console.log(markLine)
+
+        //   markLine.data[0]["yAxis"] = state.devices[1]["lineValue"]
+        //   markLine.label.formatter = (params) => `${params.value}W`
+        // } else if (radioVal == "3" && state.devices[2]["line"] == 1) {
+
+        //   markLine.data[0]["yAxis"] = state.devices[2]["lineValue"]
+        //   markLine.label.formatter = (params) => `${params.value}A`
+        // } else if (radioVal == "4" && state.devices[3]["line"] == 1) {
+
+        //   markLine.data[0]["yAxis"] = state.devices[3]["lineValue"]
+        //   markLine.label.formatter = (params) => `${params.value}V`
+        // }
+
+        // let compareArr = []
+        // resp.data.snData.forEach((item, index) => {
+        //   if (item?.data?.length > 1) {
+        //     item.data.forEach(it => {
+        //       state.chartsOpts.series.push({
+        //         data: it.data.map(i => (i["value"])), type: "line", smooth: true, name: item["name"] + "-" + it["point"], markLine
+        //       })
+        //     })
+        //   } else {
+        //     state.chartsOpts.series.push({ data: item.data[0]["data"].map(it => it.value), type: "line", smooth: true, name: item["name"] + "-" + item.data[0]["point"], markLine })
+        //   }
+
+        //   compareArr.push(item.data[0]["data"].map(it => (it.value)))
+        //   console.log(state.chartsOpts.series)
+        // })
 
         // const maxarr = getMaxArr(compareArr)
         // const minarr = getMinArr(compareArr)
         // console.log(maxarr,minarr,radioVal)
         // state.alltableData=[]
         // state.tableData =[]
- 
+
         //   maxarr.forEach((item,index)=>{
         //    const gap =  (((item-minarr[index])/item)*100).toFixed(2)
         //    console.log(gap)
@@ -313,75 +420,158 @@ export default function index() {
         //     }
         //    }
         //   })
-        
-          if(resp.data.compareDeviation){
-            state.alltableData =resp.data.compareDeviation
-            console.log(state.alltableData)
-            state.tableData = state.alltableData.slice(0, state.pageSize)
-          }
-         
-         
-    
-        
+
+        // if (resp.data.compareDeviation) {
+        //   state.alltableData = resp.data.compareDeviation
+        //   console.log(state.alltableData)
+        //   state.tableData = state.alltableData.slice(0, state.pageSize)
+        // }
+
+
+
+
       } else {
-        state.chartsOpts.series = [{ data: [], type: "line", smooth: true }];
+        //state.chartsOpts.series = [{ data: [], type: "line", smooth: true }];
       }
-    
+
+    } else {
+      message.error(resp.errMsg || "数据出错");
     }
   };
-  const warnDetail =()=>{
+
+  const warnDetail = (index) => {
+    console.log(index)
     ModalRef.current.onOpen()
+    //setIndexBtn(index)
+    state.alltableData = state.detailtableData[index]?.compareDeviation
+    state.tableData = state.alltableData.length > 0 ? state.alltableData.slice(0, state.pageSize) : []
   }
-  const changePage=(val)=>{
+  const changePage = (val) => {
     console.log(val)
-    state.current =val
-    state.tableData = state.alltableData.slice((val-1)*state.pageSize, (val-1)*state.pageSize+state.pageSize)
+    state.current = val
+    state.tableData = state.alltableData.slice((val - 1) * state.pageSize, (val - 1) * state.pageSize + state.pageSize)
   }
-  const onShowSizeChange=async (current,size)=>{
-    console.log("current,size",current,size)
-    state.current =current
+  const onShowSizeChange = async (current, size) => {
+    console.log("current,size", current, size)
+    state.current = current
     state.pageSize = size
   }
   useEffect(() => {
     GetSns();
   }, []);
   useEffect(() => {
-    state.snGroup.length > 0 && HistoryCompares();
-  }, [radioVal, state.snGroup.length, dates]);
+    params.length > 0 && HistoryCompares();
+  }, [params]);
   const DatePick = (
     <Space>
       <CustButton onClick={warnDetail}>偏差告警明细</CustButton>
       <Space>
-      <span>选择日期范围</span>
-      <RangePicker
-        defaultValue={[
-          moment(oneWeekAgo, dateFormat),
-          moment(currentDate, dateFormat),
-        ]}
-        onChange={changeDate}
-      />
+        <span>选择日期范围</span>
+        <RangePicker
+          defaultValue={[
+            moment(oneWeekAgo, dateFormat),
+            moment(currentDate, dateFormat),
+          ]}
+          onChange={changeDate}
+        />
+      </Space>
     </Space>
-    </Space>
-    
+
   );
-  const Warn =()=>{
-    if(radioVal==1&&state.devices[0]?.deviation==0 ){
+  const [dateList, setDateList] = useState([])
+  const getDefaultValue = (type) => {
+    const today = moment();
+    const oneDayAgo = moment().subtract(1, 'days');
+    const oneWeekAgo = moment().subtract(7, 'days');
+    const oneMonthAgo = moment().subtract(1, 'months');
+    let List = [today, today, oneWeekAgo, oneMonthAgo]
+    setDateList(List)
+    switch (type) {
+      case 1:
+        return [today, today];
+      case 2:
+        return [oneWeekAgo, today];
+      case 3:
+        return [oneMonthAgo, today];
+    }
+  };
+  const disabledDate = (current, type) => {
+    const today = moment();
+    const oneDayAgo = moment().subtract(1, 'days');
+    const oneWeekAgo = moment().subtract(7, 'days');
+    const oneMonthAgo = moment().subtract(1, 'months');
+    if (!current) {
+      return false; // 显式处理 current 为 null 或 undefined 的情况
+    }
+
+    switch (type) {
+      case 1:
+        return current > today || current < today;
+      case 2:
+        return current > today || current < oneWeekAgo;
+      case 3:
+        return current > today || current < oneMonthAgo;
+      default:
+        return false;
+    }
+  };
+  const Warn = () => {
+    if (radioVal == 1 && state.devices?.[0]?.deviation == 0) {
       return null
-    }else if(radioVal==2&&state.devices[1]?.deviation==0 ){
+    } else if (radioVal == 2 && state.devices?.[1]?.deviation == 0) {
       return null
-    }else if(radioVal==3&&state.devices[2]?.deviation==0 ){
+    } else if (radioVal == 3 && state.devices?.[2]?.deviation == 0) {
       return null
-    }else if(radioVal==4&&state.devices[3]?.deviation==0 ){
+    } else if (radioVal == 4 && state.devices?.[3]?.deviation == 0) {
       return null
-    }else if(!state.alltableData || state.alltableData.length==0){
+    } else if (!state.alltableData || state.alltableData?.length == 0) {
       return null
     }
     return (<img src={warn} onClick={warnDetail}></img>)
   }
   return (
-    <Titlelayout title="智能分析" extra={ state.disabled ? null : (<Warn/>)}>
-      <Divider dashed style={{ borderColor: "#d7d7d7" }}></Divider>
-      <BtnWrap
+    <div style={{ width: "100%", height: "100%", display: "flex", flexDirection: "column" }}>
+      {dataList.length > 0 && dataList.map((item, index) => {
+        return (
+          <Titlelayout title={item.groupName} style={{ height: 500, marginBottom: 16 }} extra={
+            <Space>
+              <Space>
+                <BtnWrap
+                  defaultValue="1"
+                  buttonStyle="solid"
+                  size="middle"
+                  style={{ width: 452, marginRight: 250 }}
+                  onChange={(e) => { changeBtn(e, index) }}
+                >
+                  <Radio.Button value="1" disabled={item?.items[0].state == 0}>用电量对比</Radio.Button>
+                  <Radio.Button value="2" disabled={item?.items[1].state == 0}>功率对比</Radio.Button>
+                  <Radio.Button value="3" disabled={item?.items[2].state == 0}>电流对比</Radio.Button>
+                  <Radio.Button value="4" disabled={item?.items[3].state == 0}>电压对比</Radio.Button>
+                </BtnWrap>
+              </Space>
+              <Space>
+                {state.detailtableData[index]?.compareDeviation == null ? '' : <CustButton style={{ marginRight: 16 }} onClick={() => warnDetail(index)}>偏差告警明细</CustButton>}
+              </Space>
+              <Space>
+                <span>选择日期范围</span>
+                <RangePicker
+                  defaultValue={[dateList[item.timeType], dateList[0]]}
+                  disabledDate={(current) => disabledDate(current, item.timeType)}
+                  onChange={(dates, dateStrings) => changeDate(dates, dateStrings, index)}
+                />
+              </Space>
+            </Space>}>
+            <Divider dashed style={{ borderColor: "#d7d7d7" }}></Divider>
+            <Charts>
+              {state.chartsOpts.series.length > 0&&item?.items[params[index].type-1].state != 0 ?
+                <Icharts custoption={{
+                  ...state.chartsOpts,
+                  series: state.chartsOpts.series[index],
+                  xAxis: { data: state.xAxis[index] }
+                }}></Icharts> : <Cempty tip="暂无数据" />}
+            </Charts>
+
+            {/* <BtnWrap
         defaultValue="a"
         buttonStyle="solid"
         size="middle"
@@ -390,17 +580,24 @@ export default function index() {
         value={radioVal}
         disabled={state.disabled}
       >
-        <Radio.Button value="1" disabled={state.devices[0]?.state==0}>用电量对比</Radio.Button>
-        <Radio.Button value="2" disabled={state.devices[1]?.state==0}>功率对比</Radio.Button>
-        <Radio.Button value="3" disabled={state.devices[2]?.state==0}>电流对比</Radio.Button>
-        <Radio.Button value="4" disabled={state.devices[3]?.state==0}>电压对比</Radio.Button>
+        <Radio.Button value="1" disabled={state.devices?.[0]?.state == 0}>用电量对比</Radio.Button>
+        <Radio.Button value="2" disabled={state.devices?.[1]?.state == 0}>功率对比</Radio.Button>
+        <Radio.Button value="3" disabled={state.devices?.[2]?.state == 0}>电流对比</Radio.Button>
+        <Radio.Button value="4" disabled={state.devices?.[3]?.state == 0}>电压对比</Radio.Button>
       </BtnWrap>
       <Charts>
-       {state.chartsOpts.series.length>0?<Icharts custoption={state.chartsOpts}></Icharts>:null} 
+        {state.chartsOpts.series.length > 0 ? <Icharts custoption={state.chartsOpts}></Icharts> : null}
       </Charts>
-      <Modal ref={ModalRef} mold = 'cust' title="偏差告警" onOk={()=>{ModalRef.current.onCancel()}} width={800}>
-      <Table dataSource={state.tableData} columns={columns} pagination={{pageSize:state.pageSize,current:state.current,total:state.alltableData.length,onChange:changePage,onShowSizeChange:onShowSizeChange}}  ></Table>
-      </Modal>
-    </Titlelayout>
+      <Modal ref={ModalRef} mold='cust' title="偏差告警" onOk={() => { ModalRef.current.onCancel() }} width={800}>
+        <Table dataSource={state.tableData} columns={columns} pagination={{ pageSize: state.pageSize, current: state.current, total: state.alltableData.length, onChange: changePage, onShowSizeChange: onShowSizeChange }}  ></Table>
+      </Modal> */}
+          </Titlelayout>
+        );
+      })
+
+      }
+      <Modal ref={ModalRef} mold='cust' title="偏差告警" onOk={() => { ModalRef.current.onCancel() }} width={800}>
+        <Table dataSource={state.tableData} columns={columns} pagination={{ pageSize: state.pageSize, current: state.current, total: state.alltableData.length, onChange: changePage, onShowSizeChange: onShowSizeChange }}  ></Table>
+      </Modal></div>
   );
 }

@@ -1,4 +1,5 @@
 import { React, useState, useEffect } from "react";
+import styled from "styled-components";
 import style from "./style.module.less";
 import { useSelector } from "react-redux";
 import imgurl from "./images/index.js";
@@ -15,6 +16,35 @@ import {
 
 import Table from "@com/useTable";
 const { Text } = Typography;
+const Mainbox =  styled.div`
+&&{
+  background-color: ${props => props.theme.gatewaybgcolor || "#135abd"};
+  .leftImgBox,.rightHead {
+    background-color: ${props => props.theme.gatewaybgcolor || "#135abd"};
+  }
+  .head{
+    background-color: ${props => props.theme.gatewayheardcolor || "#003366"};
+  }
+  
+}
+`
+
+const Ctitlec = styled.div`  // detail?.state == 2 ? style.leftImgState : detail.state == 3 ? style.leftImgStateAlarm : style.leftImgStateOff
+&&{
+    width: 96px;
+    height: 32px;
+    background-color: ${props => props.state==2 ? props.theme.successColor : props.state == 3 ? props.theme.errorColor : "#666" };
+    border: none;
+   // border: 1px solid rgb(0, 204, 0);
+    color: #fff;
+    position: absolute;
+    top: 16px;
+    right: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+`
 export default function GatewayDetail(props) {
   const { projectName, logoImage } = useSelector(currProject);
   let location = useLocation();
@@ -207,8 +237,8 @@ export default function GatewayDetail(props) {
     getLogData();
   }, [search.sn, projectId, pageLog, paramsLog.pageSize]);
   return (
-    <div className={style.main}>
-      <div className={style.head}>
+    <Mainbox className={style.main}>
+      <div className={style.head + " head"}>
         {logoImage ? (
           <img src={logoImage} className={style.headImg}></img>
         ) : null}
@@ -220,7 +250,7 @@ export default function GatewayDetail(props) {
             <div className={style.leftHeadLine}></div>
             <p>网关详情</p>
           </div>
-          <div className={style.leftImgBox}>
+          <div className={style.leftImgBox + " leftImgBox"}>
             <img
               src={
                 detail
@@ -229,21 +259,15 @@ export default function GatewayDetail(props) {
               }
               className={style.leftImg}
             ></img>
-            <div
-              className={
-                detail.state == 3
-                  ? style.leftImgStateAlarm
-                  : detail.state == 2
-                  ? style.leftImgState
-                  : style.leftImgStateOff
-              }
+            <Ctitlec
+              state={detail.state}
             >
               {detail.state == 3
                 ? "网关告警"
                 : detail.state == 2
                 ? "网关在线"
                 : "网关失联"}
-            </div>
+            </Ctitlec>
           </div>
           <div className={style.leftBottom}>
             <p>
@@ -277,7 +301,7 @@ export default function GatewayDetail(props) {
           </div>
         </div>
         <div className={style.right}>
-          <div className={style.rightHead}>
+          <div className={style.rightHead + " rightHead"}>
             <div
               className={state ? style.tabBoxW : style.tabBoxB}
               onClick={onchangeTab}
@@ -342,6 +366,6 @@ export default function GatewayDetail(props) {
           </div>
         </div>
       </div>
-    </div>
+    </Mainbox>
   );
 }

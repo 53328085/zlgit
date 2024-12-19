@@ -3,6 +3,7 @@ import React,{useRef} from 'react'
  import {Descriptions} from 'antd'
 import Page from "@com/reportPrint/page"
 import Ichart from '@com/useEcharts/Ichart'
+import {isObject} from "@com/usehandler"
 import _ from 'lodash'
 
 const DesItem = styled(Descriptions)`
@@ -49,14 +50,15 @@ const Transformer = ({data}) => {  // 1
 
 }
 export default function pagecomp({data,index, params}) {
-  let {detail={}, transformers, temperature, water, smoke } = data.constructor===Object ? data : {} ;
+  console.log('data',data)
+  let {detail={}, transformers, temperature, water, smoke } = isObject(data) ? data : {} ;
   let temp = temperature?.constructor == Object ? temperature : {}
   let wat = water?.constructor == Object ? water : {}
   let smk = water?.constructor == Object ? smoke : {}
   let transformerD = useRef([])
   let len = 0  // 变压器是否超过3个
   let {type} = params?? {}
- 
+  console.log('transformers',transformers)
   if(Array.isArray(transformers)) {
     let arr = transformers.length
     if(arr>3) {
@@ -68,7 +70,10 @@ export default function pagecomp({data,index, params}) {
     }else  {
       len = 0
     }
+  }else{
+    transformerD.current =[]
   }
+  console.log(transformerD.current)
   let text = type==2 ? '日' : '月'
    let option =useRef({      
       series: [{ type: "line",  seriesLayoutBy: 'row', }],  
@@ -133,15 +138,15 @@ export default function pagecomp({data,index, params}) {
          </div>
       </Page>
       {
-       len>3 ?
-       transformerD.current.map(ds => <Page>
+       (len>3 && Array.isArray(transformerD?.current)) ?
+       transformerD?.current?.map(ds => <Page>
         <span style={sty}>{index}.2变压器监控</span>
-        {ds.current.map(d =>  <Transformer data={d}  key={d.category} />)}
+        {ds.map(d =>  <Transformer data={d}  key={d.category} />)}
         </Page>)
         :
-       (len> 0 && len<4) ? (<Page>
+       (len> 0 && len<4 && Array.isArray(transformerD?.current)) ? (<Page>
            <span style={sty}>{index}.2变压器监控</span>
-           {transformerD.current.map((d,dex) =>  <Transformer data={d} key={d.category + dex} />)}
+           {transformerD?.current?.map((d,dex) =>  <Transformer data={d} key={d.category + dex} />)}
         </Page>)
         : null
        }

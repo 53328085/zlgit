@@ -13,7 +13,8 @@ const Itembox = styled.div`
   outline: 1px solid rgba(215,215,215,1);
   outline-offset: 1px ;
   display: grid;
-  padding: 8px;
+  //padding: 8px;
+  padding: 20px 8px;
   grid-template-rows: 128px 140px;
   row-gap: 16px;
   align-content: end;
@@ -116,12 +117,12 @@ export default function Item(props) {
   let {type, name, states=[], sns, address, e, e2, e3, e4, momE, yoyE, momE2, yoyE2, momE3, yoyE3, momE4, yoyE4, image} = props
   // 1，2，3 离线,正常，告警
   
-  let index = states[0];
-  const state = typeof index == "number" ? (['离线', '正常', '告警'][index-1] || '未知') : '未知';
-  const bgColor = typeof index == "number" ? (['#666', '#096', '#ff4d4f'][index-1] || 'ff4d4f') : '#666';
+  // let index = states[0];
+  // const state = typeof index == "number" ? (['离线', '正常', '告警'][index-1] || '未知') : '未知';
+  // const bgColor = typeof index == "number" ? (['#666', '#096', '#ff4d4f'][index-1] || 'ff4d4f') : '#666';
   return (
     <Itembox>
-       <Statebox top="13px" right="-20px" width="85px" bgColor={bgColor}>{state}</Statebox>
+       {/* <Statebox top="13px" right="-20px" width="85px" bgColor={bgColor}>{state}</Statebox> */}
        <div className='upper' key={nanoid()}>
            <div className='pic' key={nanoid()}>
               <Image src={image} preview={false} ></Image>

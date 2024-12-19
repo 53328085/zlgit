@@ -5,6 +5,7 @@ import {CaretDownFilled, CloseOutlined} from '@ant-design/icons'
 import {useTranslation} from 'react-i18next' 
 import i18 from '../../i18n'
 import icon from "./icon";
+
 const {Link} = Typography
 
 const Normal = styled.div`
@@ -38,8 +39,8 @@ export  const Wtag = styled(Normal)`
    transition:  all 0.3s;
    &:hover{
     cursor: pointer;
-    background-color: rgb(240,60,60,1);
-    border-color:rgb(240,60,60,1) ;
+    background-color: rgba(240,60,60,1);
+    border-color:rgba(240,60,60,1) ;
     color:#fff;
    }
 
@@ -152,15 +153,15 @@ const Wegbtn = styled(Button)`
 
   &&:hover:not([other]) {       
     background-image: url(${props => icon[`${props.weg}h`]});
-    border-color: #237AE4;
-    color: #237AE4;
+    border-color: ${props => props.theme.primaryColor || "#237ae4" };
+    color:${props => props.theme.primaryColor || "#237ae4" };
   }
 
   &&:active,
   &&:focus {
-    background-color: #237AE4;
+    background-color: ${props => props.theme.primaryColor || "#237ae4" };;
     background-image: url(${props => icon[`${props.weg}s`]});
-    border-color: #237AE4;
+    border-color: ${props => props.theme.primaryColor || "#237ae4" };;
     color: #fff;
   }
   &&[disabled] {
@@ -193,7 +194,7 @@ const CmenuItem = styled(Menu.Item)`
      
   }
 &&:hover{
-  background-color: #237AE4;
+  background-color: ${props => props.theme.primaryColor || "#2374e4" };
   color:#fff;
   background-image: url(${props => icon[`${props.type}h`]});
 }
@@ -255,6 +256,7 @@ export function CustButtonT(props) { // 通用方式按钮 通用翻译
 }
 export function CustButton(props) { // 通用方式按钮
   let {src, ...other} = props 
+  console.log(props,icon)
   return (
     <Custbtn {...other}>
      {src ? <img src={icon[src]} width={props.width} /> : null}

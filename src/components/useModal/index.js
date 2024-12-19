@@ -32,7 +32,7 @@ const CModal = styled(Modal)`
     }
   }
   .ant-modal-body {
-    padding: ${props => props.bdpd || '0 32px 32px 32px'} ;
+    padding: 0 32px 32px 32px;
   }
   .ant-modal-footer {
     border-top: none;
@@ -58,8 +58,8 @@ const CModal = styled(Modal)`
     margin-bottom: 0px;
   }
 `;
-
-
+ 
+ 
  function Custmodal({ 
   fromprops = {
   initialValues: {},
@@ -96,7 +96,7 @@ const CModal = styled(Modal)`
       bottom: clientHeight - (targetRect.bottom - uiData.y),
     });
   };
-  const {onCancel: close, custft=false, onOk,title, bodyStyle, warnimg = true,apply="apply", ...rest} = props
+  const {onCancel: close, custft=false, onOk,title, bodyStyle, warnimg = true, ...rest} = props
   const formref = useRef()
   const onCancel = () => {
     setOpen(false)
@@ -105,7 +105,7 @@ const CModal = styled(Modal)`
     setOpen(true)
   }
  // const onResetform = () => formref.current.resetfrom()
-
+ 
   const onGetvalue = () => formref.current.getValue()
   const [currbtn, setCurrbtn] = useState(1)
   const CustFooter = [
@@ -114,7 +114,7 @@ const CModal = styled(Modal)`
         
         setCurrbtn(1)
         onOk()
-       }} key="apply" >{t(apply)}</Button> ,
+       }} key="apply" >{t('apply')}</Button> ,
        <Button type="primary" loading={currbtn == 2 && loading} key="ok" onClick={() => {
         setCurrbtn(2)
         onOk().then(() => {
@@ -148,7 +148,6 @@ const CModal = styled(Modal)`
       confirmLoading={loading}
       bodyStyle= {
          type=="warn" ? {
-           padding: "32px 64px 32px 128px",
            display: 'flex',
            alignItems: 'center',
            fontSize: '16px',
@@ -185,8 +184,7 @@ const CModal = styled(Modal)`
       {mold == 'cust' ? children : mold == 'default' ? <Useform {...fromprops} ref={formref} /> : ''}
     </CModal>
   )
-
-}
-
-export default forwardRef(Custmodal)
  
+}
+ 
+export default forwardRef(Custmodal)

@@ -24,6 +24,7 @@
   "Cancel": "Cancel",
   "edit": "Edit",
   "modify": "Modify",
+  "association":"Association",
   "accompanyRate": "Accompany rate",
   "parametersSentDown": "Parameters sent down",
   "newMainLine": "New main line",
@@ -69,5 +70,6 @@
   "back": "Back",
   "moveUp":"Move up one line",
   "moveDown":"Move down one line",
+  "sorting":"Save device sorting",
   "z": ""
 }

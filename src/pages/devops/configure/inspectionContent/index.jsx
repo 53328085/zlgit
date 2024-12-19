@@ -1,8 +1,8 @@
-import React, { useMemo,  useRef } from 'react'
-import {useAntdTable } from 'ahooks';
+import React, { useMemo, useRef,useState } from 'react'
+import { useAntdTable } from 'ahooks';
 import styled from 'styled-components'
- 
-import { Select, Divider, Input, Button, message, Form, Space, Typography} from 'antd'
+
+import { Select, Divider, Input, Button, message, Form, Space, Typography } from 'antd'
 import Table from '@com/useTable'
 import { useSelector } from 'react-redux'
 import { publishState } from '@redux/systemconfig'
@@ -12,9 +12,9 @@ import { CustButton } from '@com/useButton'
 import { operationDesigin } from '@api/api'
 import Pagecont from "@com/pagecontent"
 import Titlelayout from '@com/titlelayout'
-import {Serach} from '@com/comstyled'
-import {CustButtonT, CustLink} from "@com/useButton"
-const {Link} = Typography
+import { Serach } from '@com/comstyled'
+import { CustButtonT, CustLink } from "@com/useButton"
+const { Link } = Typography
 
 const DropstartDiv = styled.div`
  .ant-form-item-label > label.ant-form-item-required:not(.ant-form-item-required-mark-optional)::before{
@@ -30,6 +30,7 @@ const ContainerDiv = styled.div`
   `
 const { TextArea } = Input
 export default function Index() {
+  const [isAdd, setIsAdd] = useState(false)
   const publish = useSelector(publishState)
   const projectId = useSelector(state => state.system.menus.projectId)
   const onelevel = useSelector(state => state.system.onelevel);
@@ -66,8 +67,11 @@ export default function Index() {
       title: '操作', dataIndex: 'options', align: "center", width: 180, render: (v, text) => {
         return (
           <div style={{ display: 'flex', justifyContent: 'space-around' }}>
-            <CustLink onClick={() => { editform.setFieldsValue(text); editRef.current.onOpen() }} text="edit" /> 
-            <CustLink type="danger"  onClick={() => { delid = text.id; delRef.current.onOpen() }} text="delete" /> 
+            <CustLink onClick={() => {
+              editform.setFieldsValue(text); editRef.current.onOpen();
+              setIsAdd(false)
+            }} text="edit" />
+            <CustLink type="danger" onClick={() => { delid = text.id; delRef.current.onOpen() }} text="delete" />
           </div>
         )
       }
@@ -79,19 +83,20 @@ export default function Index() {
   const [form] = Form.useForm()
   const [addform] = Form.useForm()
   const [editform] = Form.useForm()
- 
+
   const totalItem = useRef();
   const curPage = useRef();
   const PageSize = 14
   const addDevice = () => {
+    setIsAdd(true)
     addform.resetFields()
     addRef.current.onOpen()
   }
- 
- 
+
+
   //新增检查项
   const addItems = async () => {
-    addform.validateFields().then(async () => {
+    return  addform.validateFields().then(async () => {
       const add = addform.getFieldsValue()
       let params = {
         projectId,
@@ -104,7 +109,7 @@ export default function Index() {
         message.success('新增成功!')
         refresh()
         addform.resetFields()
-      //  addRef.current.onCancel()
+        //  addRef.current.onCancel()
       } else {
         message.error(res.errMsg)
       }
@@ -112,8 +117,8 @@ export default function Index() {
     })
   }
   //更新检查项
-  const updateItems =  () => {
-    editform.validateFields().then(async()=>{
+  const updateItems = () => {
+    editform.validateFields().then(async () => {
       const edit = editform.getFieldValue()
       let params = {
         projectId,
@@ -141,63 +146,63 @@ export default function Index() {
 
     if (res.success) {
       message.success('删除成功!')
-    
+
       try {
-        let current = Math.ceil((totalItem.current - 1)  / 14) < curPage.current
-        
-        if(current) {
+        let current = Math.ceil((totalItem.current - 1) / 14) < curPage.current
+
+        if (current) {
           let values = form.getFieldsValue()
-          run({current: curPage.current - 1, pageSize: PageSize}, values)
-        }else {
+          run({ current: curPage.current - 1, pageSize: PageSize }, values)
+        } else {
           refresh()
         }
-      
+
         delRef.current.onCancel()
       } catch (error) {
-        
+
       }
     } else {
       message.error(res.errMsg)
     }
   }
   //获取检查项数据
-  const getPage =   ({current, pageSize}, formData) => {
+  const getPage = ({ current, pageSize }, formData) => {
     curPage.current = current
-    let {alike, typeical} = formData
+    let { alike, typeical } = formData
     let params = {
       projectId,
       pageNum: current,
       pageSize: pageSize,
-      alike:alike,
-      type:typeical
+      alike: alike,
+      type: typeical
     }
-   return operationDesigin.QueryPageInspectionContent(params).then(res => {
-      let {success, data, total} = res
+    return operationDesigin.QueryPageInspectionContent(params).then(res => {
+      let { success, data, total } = res
       totalItem.current = total
-      if(success) {
+      if (success) {
         return {
           list: Array.isArray(data) ? data : [],
           total,
         }
-      }else {
+      } else {
         return {
           list: [],
           total: 0,
         }
       }
-   })   
+    })
   }
- const {tableProps, refresh, search, run} = useAntdTable(getPage, {
-   form,
-   defaultPageSize: 14,
-   refreshDeps: [projectId]
- })
- const {submit} =search
+  const { tableProps, refresh, search, run } = useAntdTable(getPage, {
+    form,
+    defaultPageSize: 14,
+    refreshDeps: [projectId]
+  })
+  const { submit } = search
   return (
-    <Pagecont showserach={false}   pd="0px" >  
+    <Pagecont showserach={false} pd="0px" >
       <Titlelayout title="检查项管理" layout="flex" dr="column">
         <ContainerDiv>
-        
+
           <Form
             layout="inline"
             form={form}
@@ -211,69 +216,69 @@ export default function Index() {
               alike: ''
             }}
           >
-          <Space  size={64} split={<Divider type="vertical" style={{ margin: 0,borderColor: '#d7d7d7', height: '32px' }} dashed />}>
-            <Form.Item  name="alike" label="检查项" style={{marginBottom: 0, marginRight: 0}}>
-              <Serach
+            <Space size={64} split={<Divider type="vertical" style={{ margin: 0, borderColor: '#d7d7d7', height: '32px' }} dashed />}>
+              <Form.Item name="alike" label="检查项" style={{ marginBottom: 0, marginRight: 0 }}>
+                <Serach
                   placeholder="检查项关键字查询"
-                  onSearch = {submit}
-                /> 
-            </Form.Item>
-            <Form.Item name="typeical" label="类别" style={{marginBottom: 0}}>
-              <Select
-                  options={typeoptions}            
+                  onSearch={submit}
+                />
+              </Form.Item>
+              <Form.Item name="typeical" label="类别" style={{ marginBottom: 0 }}>
+                <Select
+                  options={typeoptions}
                   style={{ width: 166 }}
-                 
+
                   onChange={submit}
                 ></Select>
-            </Form.Item>
+              </Form.Item>
             </Space>
             <Form.Item>
               {publish ? null : <CustButtonT onClick={addDevice} text="new" />
-                
+
               }
             </Form.Item>
           </Form>
           <Divider style={{ margin: '0px', borderColor: '#d7d7d7' }} dashed ></Divider>
-          
-            <Table columns={columns}  {...tableProps} ></Table>
-          
-        
-          <Modal mold='cust' ref={addRef} onOk={addItems} title="新增检查项" custft={true}>
-        
-          <DropstartDiv>
-            <Form
-              form={addform}
-              labelCol={{ span: 5 }}
-              colon={false}
-              labelAlign="left"
-              initialValues={{ type: 1,name:'',remark:'' }}
-            >
-              <Form.Item label="检查项类别" name="type" >
-                <Select
-                  style={{ width: 160 }}
-                  options={addoptions}
 
-                ></Select>
-              </Form.Item>
-              <Form.Item label="检查项名称" name="name" rules={[{ required: true }]}>
-                <Input placeholder="请输入检查项名称"></Input>
-              </Form.Item>
-              <Form.Item label="详细内容" name="remark">
-                <TextArea allowClear placeholder='请输入详细内容'/>
-              </Form.Item>
-            </Form>
-          </DropstartDiv>
-        </Modal>
+          <Table columns={columns}  {...tableProps} ></Table>
+
+
+          <Modal mold='cust' ref={addRef} onOk={addItems} title="新增检查项" custft={isAdd}>
+
+            <DropstartDiv>
+              <Form
+                form={addform}
+                labelCol={{ span: 5 }}
+                colon={false}
+                labelAlign="left"
+                initialValues={{ type: 1, name: '', remark: '' }}
+              >
+                <Form.Item label="检查项类别" name="type" >
+                  <Select
+                    style={{ width: 160 }}
+                    options={addoptions}
+
+                  ></Select>
+                </Form.Item>
+                <Form.Item label="检查项名称" name="name" rules={[{ required: true }]}>
+                  <Input placeholder="请输入检查项名称"></Input>
+                </Form.Item>
+                <Form.Item label="详细内容" name="remark">
+                  <TextArea allowClear placeholder='请输入详细内容' />
+                </Form.Item>
+              </Form>
+            </DropstartDiv>
+          </Modal>
 
 
           <EditItem editRef={editRef} editform={editform} addoptions={addoptions} updateItems={updateItems} />
           <DeleteModal delRef={delRef} name='删除检查项' content="是否确认删除检查项" onOk={delItems} />
         </ContainerDiv>
-    </Titlelayout>
+      </Titlelayout>
     </Pagecont>
   )
 }
- 
+
 //编辑
 const EditItem = ({ editRef, editform, addoptions, updateItems }) => {
   return (
@@ -285,7 +290,7 @@ const EditItem = ({ editRef, editform, addoptions, updateItems }) => {
           labelCol={{ span: 5 }}
           colon={false}
           labelAlign="left"
-         
+
         >
           <Form.Item label="检查项类别" name="type" >
             <Select style={{ width: 160 }} options={addoptions}></Select>
@@ -294,7 +299,7 @@ const EditItem = ({ editRef, editform, addoptions, updateItems }) => {
             <Input ></Input>
           </Form.Item>
           <Form.Item label="详细内容" name="remark" >
-            <TextArea allowClear placeholder='请输入详细内容'/>
+            <TextArea allowClear placeholder='请输入详细内容' />
           </Form.Item>
         </Form>
       </DropstartDiv>
@@ -306,7 +311,7 @@ const EditItem = ({ editRef, editform, addoptions, updateItems }) => {
 let DeleteModal = ({ delRef, name = '', content = '', ...other }) => {
   return (
     <Modal mold='cust' ref={delRef} {...other} className={style.DelModal} type="warn" title={name}>
-       {content}
+      {content}
     </Modal>
 
 

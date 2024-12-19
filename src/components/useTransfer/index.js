@@ -1,37 +1,37 @@
 import React, { useEffect, useState } from "react";
-import {useTranslation} from 'react-i18next'
+import { useTranslation } from 'react-i18next'
 import style from './style.module.less'
-import { Table, Input, message, Descriptions, Divider} from "antd";
+import { Table, Input, message, Descriptions, Divider } from "antd";
 import UsetTable from '@com/useTable'
 import { LeftOutlined, RightOutlined } from '@ant-design/icons'
 import { cloneDeep } from "lodash";
-import {CustButton} from '@com/useButton'
+import { CustButton } from '@com/useButton'
 import Mask from '../mask'
-export default function index (props) {
-    const {t} = useTranslation(["button"])
+export default function index(props) {
+    const { t } = useTranslation(["button"])
     const [messageApi, contextHolder] = message.useMessage();
     const task = props.mask == "open"
     const { Search } = Input
     const columns = props.columns
-  
+
     const fibre = props.fibre || {}
     const [mainData, setMainData] = useState([])
     const [subData, setSubData] = useState([])
     const [subCopy, setSubCopy] = useState([])
     const [unknownData, setUnknownData] = useState([])
     const [unknownCopy, setUnknownCopy] = useState([])
-    const [searchValue,setSearchValue] = useState("")
-    useEffect(()=>{
+    const [searchValue, setSearchValue] = useState("")
+    useEffect(() => {
         let mainArr = cloneDeep(props.mainTable)
         let subArr = cloneDeep(props.subTable)
         let unknownArr = cloneDeep(props.unknownTable)
-    
+
         setMainData(mainArr)
         setSubData(subArr)
         setSubCopy(subArr)
         setUnknownData(unknownArr)
         setUnknownCopy(unknownArr)
-    },[props])
+    }, [props])
 
     const [selectedRowKeys, setSelectedRowKeys] = useState([]);
     const onSelectChange = (newSelectedRowKeys) => {
@@ -49,10 +49,10 @@ export default function index (props) {
                 content:'当前线路已有总表！',
             })
             return;
-        }else */ if( selectedRowKeys.length == 0 ){
+        }else */ if (selectedRowKeys.length == 0) {
             messageApi.open({
                 type: 'warning',
-                content:'请至少选择一个设备！',
+                content: '请至少选择一个设备！',
             })
             return;
         }/* else if(selectedRowKeys.length > 1 ) {
@@ -61,15 +61,15 @@ export default function index (props) {
                 content:'线路总表只能有一个设备！',
             })
             return;
-        } */else{
+        } */else {
             console.log(unknownData)
-            let arr = [...unknownData];
+            let arr = [...unknownDsetSelectedRowKeysata];
             let arr2 = [];
-            for(let i =0;i< arr.length;i++){
-                for(let j = 0;j<selectedRowKeys.length;j++){
-                    if(arr[i].id == selectedRowKeys[j]){
+            for (let i = 0; i < arr.length; i++) {
+                for (let j = 0; j < selectedRowKeys.length; j++) {
+                    if (arr[i].id == selectedRowKeys[j]) {
                         arr2.push(arr[i])
-                        arr.splice(i,1)
+                        arr.splice(i, 1)
                     }
                 }
             }
@@ -77,7 +77,7 @@ export default function index (props) {
             setUnknownData(arr);
             setSelectedRowKeys([])
         }
-        
+
     }
 
     //总表->未知
@@ -88,18 +88,18 @@ export default function index (props) {
         setSelectedMainKeys(newSelectedRowKeys);
     };
     const mainSelection = {
-        selectedMainKeys,
+        selectedRowKeys: selectedMainKeys,
         onChange: onSelectMain,
     };
     const MainToUnknown = () => {
-        if( selectedMainKeys.length == 0 ){
+        if (selectedMainKeys.length == 0) {
             messageApi.open({
                 type: 'warning',
-                content:'请先选择设备！',
+                content: '请先选择设备！',
             })
             return;
-        }else{
-            let tounknowData = mainData.filter(d => selectedMainKeys.includes(d.id) )
+        } else {
+            let tounknowData = mainData.filter(d => selectedMainKeys.includes(d.id))
             let restData = mainData.filter(d => !selectedMainKeys.includes(d.id))
             setUnknownData(unknownData.concat(tounknowData))
             setMainData([...restData]);
@@ -108,36 +108,36 @@ export default function index (props) {
     }
 
     const unknownToSub = () => {
-      console.log(subData)
-      console.log(props.type)
-      if(subData.length>0 && props.type == "fibre"){  // fiber 光纤测温
-        return  messageApi.open({
+        console.log(subData)
+        console.log(props.type)
+        if (subData.length > 0 && props.type == "fibre") {  // fiber 光纤测温
+            return messageApi.open({
                 type: 'warning',
-                content:'光纤设备至多添加一个！',
+                content: '光纤设备至多添加一个！',
             })
-           
-        } 
-        if( selectedRowKeys.length == 0 ){
+
+        }
+        if (selectedRowKeys.length == 0) {
             messageApi.open({
                 type: 'warning',
-                content:'请至少选择一个设备！',
+                content: '请至少选择一个设备！',
             })
             return;
-        }else{
+        } else {
             let arr = [...unknownData];
             let arr2 = [];
             let copyArr = [...unknownCopy];
-            for(let i =0;i< arr.length;i++){
-                for(let j = 0;j<selectedRowKeys.length;j++){
-                    if(arr[i].id == selectedRowKeys[j]){
-                        for(let x = 0;x< copyArr.length;x++){
-                            if(arr[i].id == copyArr[x].id){
+            for (let i = 0; i < arr.length; i++) {
+                for (let j = 0; j < selectedRowKeys.length; j++) {
+                    if (arr[i].id == selectedRowKeys[j]) {
+                        for (let x = 0; x < copyArr.length; x++) {
+                            if (arr[i].id == copyArr[x].id) {
                                 copyArr.splice(x, 1)
                             }
                         }
                         arr2.push(arr[i])
-                        arr.splice(i,1)
-                        
+                        arr.splice(i, 1)
+
                     }
                 }
             }
@@ -155,30 +155,30 @@ export default function index (props) {
         console.log(newSelectedRowKeys)
     };
     const subSelection = {
-        selectedSubKeys,
+        selectedRowKeys: selectedSubKeys,
         onChange: onSelectSub,
     };
     const subToUnknown = () => {
-        if( selectedSubKeys.length == 0 ){
+        if (selectedSubKeys.length == 0) {
             messageApi.open({
                 type: 'warning',
-                content:'请先选择设备！',
+                content: '请先选择设备！',
             })
             return;
-        }else{
+        } else {
             let arr = [...subData];
             let arr2 = [];
             let copyArr = [...subCopy]
-            for(let i =0;i< arr.length;i++){
-                for(let j = 0;j<selectedSubKeys.length;j++){
-                    if(arr[i].id == selectedSubKeys[j]){
-                        for(let x = 0;x< copyArr.length;x++){
-                            if(arr[i].id == copyArr[x].id){
+            for (let i = 0; i < arr.length; i++) {
+                for (let j = 0; j < selectedSubKeys.length; j++) {
+                    if (arr[i].id == selectedSubKeys[j]) {
+                        for (let x = 0; x < copyArr.length; x++) {
+                            if (arr[i].id == copyArr[x].id) {
                                 copyArr.splice(x, 1)
                             }
                         }
                         arr2.push(arr[i])
-                        arr.splice(i,1)
+                        arr.splice(i, 1)
                     }
                 }
             }
@@ -194,163 +194,208 @@ export default function index (props) {
         setSearchValue("")
         setSubserach("")
         props.closeValue('close');
-        
+        setSelectedRowKeys([])
+        setSelectedSubKeys([])
+        setSelectedMainKeys([])
     }
+    const [clearSubData, setClearSubData] = useState(false)
+    const [clearSearchDo, setClearSearchDo] = useState(false)//是否进行搜索行为
+    const [clickSearch, setClickSearch] = useState(false)//是否点击搜索
     const handleSave = () => {
-        props.saveValue({
-            mainData,
-            subData,
-            unknownData,
-        })
+        if (clickSearch) {
+            console.log("点击了保存", clickSearch)
+            setClearSearchDo(true)
+            // setClickSearch(false)
+            setSearchValue("")
+        } else {
+            props.saveValue({
+                mainData,
+                subData,
+                unknownData,
+            })
+            setSelectedRowKeys([])
+            setSelectedSubKeys([])
+            setSelectedMainKeys([])
+        }
+
     }
+
     let tag = columns[0].key;
     let keys = columns.map(c => c.key);
-  
-    const onSearchSub = (value) => {
+
+    const onSearchSub = async (value) => {
         setSubserach(value)
         let arr = [];
-      
+        setClickSearch(true)
+        console.log("------", clearSearchDo)
+        console.log("!!!!!!", clickSearch)
+
         setSelectedSubKeys([])
-        if(value == '') {
+        if (value == '') {
             setSubData([...subCopy]);
-        }else{
-             
+            if (clearSearchDo) {
+                setClearSearchDo(false)
+                setClearSubData(true)
+                setClickSearch(false)
+            }
+
+
+        } else {
             subCopy.map(item => {
                 let f = []
-                for(let key of keys) {
-                  f.push(item[key].indexOf(value) !=-1)
+                for (let key of keys) {
+                    f.push(item[key].indexOf(value) != -1)
                 }
-                if(f.includes(true))  arr.push(item);  
-                /* if(item[tag].indexOf(value) != -1 || item.address.indexOf(value) != -1){
-                    arr.push(item)
-                } */
+                if (f.includes(true)) arr.push(item);
             })
             console.log(arr)
             setSubData([...arr]);
         }
     }
 
+    useEffect(() => {
+        console.log(subData.length, subData, clearSubData)
+        if (clearSubData) {
+            setClearSubData(false)
+            props.saveValue({
+                mainData,
+                subData,
+                unknownData,
+            })
+
+            setSelectedRowKeys([])
+            setSelectedSubKeys([])
+            setSelectedMainKeys([])
+        }
+    }, [clearSubData])
+    useEffect(() => {
+        console.log(clearSearchDo)
+        if (clearSearchDo) {
+            onSearchSub("")
+        }
+    }, [clearSearchDo])
     const onSearchUnknown = (value) => {
         let arr = [];
         setSelectedRowKeys([])
-        if(value == '') {
+        if (value == '') {
             setUnknownData([...unknownCopy]);
-        }else{
+        } else {
             unknownCopy.map(item => {
                 let f = []
-                for(let key of keys) {
-                  f.push(item[key].indexOf(value) !=-1)
+                for (let key of keys) {
+                    f.push(item[key].indexOf(value) != -1)
                 }
-                if(f.includes(true))  arr.push(item);  
-               /*  if(item[tag].indexOf(value) != -1 || item.address.indexOf(value) != -1){
-                    arr.push(item)
-                } */
+                if (f.includes(true)) arr.push(item);
+                /*  if(item[tag].indexOf(value) != -1 || item.address.indexOf(value) != -1){
+                     arr.push(item)
+                 } */
             })
             console.log(arr)
             setUnknownData([...arr]);
         }
     }
-   const [subserach, setSubserach] = useState('') 
+    const [subserach, setSubserach] = useState('')
     return (
-   
-     <Mask task={task}>
-        <div className={style.transferContent}>
-            {contextHolder}
-            { props.transferTitle.mainTitle != ''  ? 
-            (props.type !="fibre" && <div className={style.leftTable}>
-                <div className={style.mainTable}>
-                    <div className={style.publicTitle}>{props.transferTitle.mainTitle}</div>
-                    <div className={style.mainContent}>
-                        <Table bordered dataSource={mainData} columns={columns} size='middle' rowKey='id' pagination={false} rowSelection ={mainSelection} scroll={{y:141}}></Table>
+
+        <Mask task={task} maskBack={props.maskBack}>
+            <div className={props.maskBack == false ? style.transferContentNoMask : style.transferContent}>
+                {contextHolder}
+                {props.transferTitle.mainTitle != '' ?
+                    (props.type != "fibre" && <div className={style.leftTable}>
+                        <div className={style.mainTable}>
+                            <div className={style.publicTitle}>{props.transferTitle.mainTitle}</div>
+                            <div className={style.mainContent}>
+                                <Table bordered dataSource={mainData} columns={columns} size='middle' rowKey='id' pagination={false} rowSelection={mainSelection} scroll={{ y: 141 }}></Table>
+                            </div>
+                        </div>
+                        <div className={style.subTable}>
+                            <div className={style.publicTitle}>{props.transferTitle.subTitle}</div>
+                            <div className={style.searchInput}>
+                                <span style={{ marginRight: 16 }}>设备搜索</span>
+                                <Search placeholder="请输入设备编号/安装地址" style={{ width: 256 }} value={subserach} allowClear onChange={(e) => setSubserach(e.target.value)} enterButton onSearch={onSearchSub}></Search>
+                            </div>
+                            <div className={style.mainContent}>
+                                <Table bordered dataSource={subData} columns={columns} size='middle' rowKey='id' pagination={false} scroll={{ y: 188 }} rowSelection={subSelection}></Table>
+                            </div>
+                        </div>
                     </div>
-                </div>
-                <div className={style.subTable}>
-                    <div className={style.publicTitle}>{props.transferTitle.subTitle}</div>
-                    <div className={style.searchInput}>
-                        <span style={{marginRight: 16}}>设备搜索</span>
-                        <Search placeholder="请输入设备编号/安装地址" style={{width: 256}} value={subserach} allowClear onChange={(e) => setSubserach(e.target.value)} enterButton onSearch={onSearchSub}></Search>
+                    ) :
+                    (props.type != "fibre" && <div className={style.leftTable}>
+                        <div className={style.otherSubTable}>
+                            <div className={style.publicTitle}>{props.transferTitle.subTitle}</div>
+                            <div className={style.searchInput}>
+                                <span style={{ marginRight: 16 }}>设备搜索</span>
+                                <Search placeholder="设备编号/设备名称/安装地址" style={{ width: 256 }} value={subserach} allowClear onChange={(e) => setSubserach(e.target.value)} enterButton onSearch={onSearchSub}></Search>
+                            </div>
+                            <div className={style.mainContent}>
+                                <Table bordered dataSource={subData} columns={columns} size='middle' rowKey='id' pagination={false} scroll={{ y: 460 }} rowSelection={subSelection}></Table>
+                            </div>
+                        </div>
+                    </div>)
+                }
+                {
+                    props.type == "fibre" && <div className={style.leftTable}>
+                        <div className={style.otherSubTable}>
+                            <div className={style.publicTitle}>{props.transferTitle.subTitle}</div>
+                            <Descriptions title="" column={1} size="small" bordered>
+                                <Descriptions.Item label="测温通道">{fibre.channel}</Descriptions.Item>
+                                <Descriptions.Item label="分区编号">{fibre.subfield}</Descriptions.Item>
+                                <Descriptions.Item label="分区名称">{fibre.subfieldName}</Descriptions.Item>
+                            </Descriptions>
+                            <Divider />
+                            <div className={style.mainContent}>
+                                <Table bordered dataSource={subData} columns={columns} rowKey='id' pagination={false} scroll={{ y: 500 }} rowSelection={subSelection}></Table>
+                            </div>
+                        </div>
                     </div>
-                    <div className={style.mainContent}>
-                        <Table bordered dataSource={subData} columns={columns} size='middle' rowKey='id' pagination={false} scroll={{y:188}} rowSelection={subSelection}></Table>
-                    </div>
-                </div>
-            </div>
-             ) : 
-            (props.type !="fibre" && <div className={style.leftTable}>
-                <div className={style.otherSubTable}>
-                    <div className={style.publicTitle}>{props.transferTitle.subTitle}</div>
-                    <div className={style.searchInput}>
-                        <span style={{marginRight: 16}}>设备搜索</span>
-                        <Search placeholder="请输入设备编号/安装地址" style={{width: 256}} value={subserach} allowClear onChange={(e) => setSubserach(e.target.value)} enterButton onSearch={onSearchSub}></Search>
-                    </div>
-                    <div className={style.mainContent}>
-                        <Table bordered dataSource={subData} columns={columns} size='middle' rowKey='id' pagination={false} scroll={{y:460}} rowSelection={subSelection}></Table>
-                    </div>
-                </div>
-            </div>)
-            }
-            {
-                props.type == "fibre" && <div className={style.leftTable}>
-                <div className={style.otherSubTable}>
-                    <div className={style.publicTitle}>{props.transferTitle.subTitle}</div>
-                    <Descriptions title="" column={1}  size="small" bordered>
-    <Descriptions.Item label="测温通道">{fibre.channel}</Descriptions.Item>
-    <Descriptions.Item label="分区编号">{fibre.subfield}</Descriptions.Item>
-    <Descriptions.Item label="分区名称">{fibre.subfieldName}</Descriptions.Item>
-                    </Descriptions>
-                    <Divider />
-                    <div className={style.mainContent}>
-                        <Table bordered dataSource={subData} columns={columns}   rowKey='id' pagination={false} scroll={{y:500}} rowSelection={subSelection}></Table>
-                    </div>
-                </div>
-            </div>
-            }
-            <div className={style.actions}>
-                { props.transferTitle.mainTitle != ''? 
-                <div className={style.firstButton}>
-                    <CustButton icon={<LeftOutlined />} style={{height:"46px", width: "68px"}} onClick={unknownToMain}></CustButton>
-                    <CustButton icon={<RightOutlined />} style={{height:"46px", width: "68px"}} onClick={MainToUnknown}></CustButton>
-                   {/*  <span className={style.leftButton} onClick={()=>unknownToMain()}>
+                }
+                <div className={style.actions}>
+                    {props.transferTitle.mainTitle != '' ?
+                        <div className={style.firstButton}>
+                            <CustButton icon={<LeftOutlined />} style={{ height: "46px", width: "68px" }} onClick={unknownToMain}></CustButton>
+                            <CustButton icon={<RightOutlined />} style={{ height: "46px", width: "68px" }} onClick={MainToUnknown}></CustButton>
+                            {/*  <span className={style.leftButton} onClick={()=>unknownToMain()}>
                         <LeftOutlined />
                     </span>
                     <span className={style.rightButton} onClick={()=>MainToUnknown()}>
                         <RightOutlined />
                     </span> */}
-                </div> : null }
-                <div className={style.secondButton}>
-                    <CustButton icon={<LeftOutlined />} style={{height:"46px", width: "68px"}} onClick={unknownToSub}></CustButton>
-                    <CustButton icon={<RightOutlined />} style={{height:"46px", width: "68px"}} onClick={subToUnknown}></CustButton>
-                  {/*   <span className={style.leftButton} onClick={() => unknownToSub() }>
+                        </div> : null}
+                    <div className={style.secondButton}>
+                        <CustButton icon={<LeftOutlined />} style={{ height: "46px", width: "68px" }} onClick={unknownToSub}></CustButton>
+                        <CustButton icon={<RightOutlined />} style={{ height: "46px", width: "68px" }} onClick={subToUnknown}></CustButton>
+                        {/*   <span className={style.leftButton} onClick={() => unknownToSub() }>
                         <LeftOutlined />
                     </span>
                     <span className={style.rightButton} onClick={() => subToUnknown() }>
                         <RightOutlined />
                     </span> */}
+                    </div>
+                    <div className={style.finalButton}>
+                        <CustButton onClick={handleSave} style={{ height: "46px", width: "146px" }}>{t("button:save")}</CustButton>
+                        {props.maskBack == false ? null : <div className={style.closeButton} onClick={() => handleClose()}>{t("button:cancel")}</div>}
+                    </div>
                 </div>
-                <div className={style.finalButton}>
-                    <CustButton onClick={handleSave} style={{height:"46px", width: "146px"}}>{t("button:save")}</CustButton>
-                    <div className={style.closeButton} onClick={ ()=> handleClose()}>{t("button:cancel")}</div>
+                <div className={style.rightTable}>
+                    <div className={style.publicTitle}>{props.transferTitle.unknownTitle}</div>
+                    <div className={style.searchInput}>
+                        <span style={{ marginRight: 16 }}>设备搜索</span>
+                        <Search
+                            placeholder="设备编号/设备名称/安装地址"
+                            style={{ width: 256 }}
+                            enterButton
+                            onSearch={onSearchUnknown}
+                            allowClear
+                            value={searchValue}
+                            onChange={(e) => { setSearchValue(e.target.value) }}
+                        ></Search>
+                    </div>
+                    <div className={style.mainContent}>
+                        <Table
+                            bordered pagination={props.maskBack == false ? false : true} dataSource={unknownData} columns={columns} rowKey='id' scroll={{ y: 450 }} rowSelection={rowSelection}></Table>
+                    </div>
                 </div>
             </div>
-            <div className={style.rightTable}>
-                <div className={style.publicTitle}>{props.transferTitle.unknownTitle}</div>
-                <div className={style.searchInput}>
-                    <span style={{marginRight: 16}}>设备搜索</span>
-                    <Search 
-                    placeholder="请输入设备编号/设备名称/安装地址" 
-                    style={{width: 256}} 
-                    enterButton 
-                    onSearch={onSearchUnknown} 
-                    allowClear
-                    value={searchValue}
-                    onChange={(e)=>{setSearchValue(e.target.value)}}
-                    ></Search>
-                </div>
-                <div className={style.mainContent}>
-                    <Table  dataSource={unknownData} columns={columns}  rowKey='id' scroll={{y:450}} rowSelection={rowSelection}></Table>
-                </div>
-            </div>
-        </div>
         </Mask>
     )
 }

@@ -298,6 +298,7 @@ export default function Index() {
                 name: it.point,
                 type: 'line',
               //  stack: 'Total',
+                stack: null,
                 lineStyle:{
                   width:1
                 },

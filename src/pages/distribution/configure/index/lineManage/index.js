@@ -109,6 +109,8 @@ export default function Index() {
   }
   const addOk = async () => {
     try {
+      
+      return form.validateFields().then(async () => {
       const values = await form.validateFields();
       
       let params = {
@@ -142,7 +144,7 @@ export default function Index() {
           }
         })
       }
-      
+    })
      
     }catch(errorInfo){}
   }

@@ -69,7 +69,7 @@ export default function Index() {
   let {exparams, enterpriseId} = useOutletContext() 
   
   let {  date,   type} = exparams
-
+console.log(exparams)
   const [treeId, setTreeId] = useState(null)
  
   const params = useRef({})

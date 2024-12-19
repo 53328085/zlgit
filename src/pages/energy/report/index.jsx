@@ -31,7 +31,7 @@ const Contentbox = styled.div`
  
 const cols =[ // 实时抄表  
 {
-  title: '名称',
+  title: '区域名称',
   dataIndex: 'nodeName', 
 },
   {
@@ -61,7 +61,7 @@ const cols =[ // 实时抄表
 
 let conscols =[ //  cols 实时抄表，  conscols 能耗报表 , typecols 分类能耗
 {
-  title: '名称',
+  title: '区域名称',
   dataIndex: 'nodeName', 
   key: "nodeName",
   fixed: 'left',
@@ -100,7 +100,7 @@ const cellstyle = {
 }
 const timecols =[  // 分时能耗 
 {
-  title: '名称',
+  title: '区域名称',
   dataIndex: 'nodeName', 
 },
 {
@@ -196,9 +196,9 @@ export default function Index() {
   const [line, setLine] = useState(0)
   const [treeId, setTreeId] = useState()
   let {areaId, projectId, type, date, energytype} = exparams
-  conscols[0].title = levelname
-  cols[0].title = levelname
-  timecols[0].title = levelname
+  // conscols[0].title = levelname
+  // cols[0].title = levelname
+  // timecols[0].title = levelname
   const [concolumns, setConcolumns] = useState(conscols) 
   const [total, setTotal] = useState(0)
   const tbref = useRef()

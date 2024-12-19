@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react'
+import React, {useEffect, useState, useContext} from 'react'
 import {useSelector} from 'react-redux'
 import { selectProjectId } from '@redux/systemconfig.js'
 import Titlelayout from '@com/titlelayout';
@@ -7,7 +7,7 @@ import {useTranslation} from 'react-i18next'
 import fuhe from '../fuhe.svg'
 import { HomeRuntime } from '@api/api.js'
 import { message } from 'antd';
- 
+import Context from "@com/content"
 const fs = {
   hv: '24px',
   fc: '#333',
@@ -21,7 +21,7 @@ export default function DefaultHome(props){
   const projectId = useSelector(selectProjectId)
   const {t} = useTranslation("overview")
   const [total, setTotal] = useState(0)
-
+  const {laptop} =useContext(Context)
  
   useEffect(() => {
 
@@ -43,7 +43,7 @@ export default function DefaultHome(props){
   return (
          <Titlelayout title={t("TotalTransformerLoad")} {...fs} style={{height: '200px'}} layout="flex">
          <div  style={{flex:1, display: 'flex'}}>
-               <div style={{display: "flex", flex: 1, alignItems: "center", justifyContent: "space-between", padding: "0 32px"}}>
+               <div style={{display: "flex", flex: 1, alignItems: "center", justifyContent: "space-between", padding: laptop ? "0 8px" : "0 32px"}}>
                   <img src={fuhe} width={64} height={64} />
                   <div style={{display: "flex", flexDirection: "column", }}>
                     <span style={{color: "#333"}}>{t("Realtimetotalload")}</span>

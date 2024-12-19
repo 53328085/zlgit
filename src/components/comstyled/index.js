@@ -281,8 +281,8 @@ export const Cradiogroup = styled(Radio.Group)`
   }
   .ant-radio-button-wrapper-checked.ant-radio-button-wrapper {
     color:#fff;
-    background-color: #237ae4;
-    border-color: #237ae4;
+    background-color:  ${props => props.theme.primaryColor || "#237ae4" };
+    border-color: ${props => props.theme.primaryColor || "#237ae4" };
   }
  
  

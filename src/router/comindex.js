@@ -18,7 +18,7 @@ export default function Index() {
   const location = useLocation();
   let { state = {} } = location;
   let { nested = "", primary, meterType } = state; // meterType 从运行监控 =》 运行监控 跳转到 运行监控-》 设备管理
-  console.log('meterType',meterType)
+  console.log('meterType', meterType)
   let whole = ["runtimeMonitor", "runtimeSafe", "runtimeEnergy", "runtimeStorage", "runtimeMaintenance"]; // 需要显示搜索 ***（全部）的模块
   let include = {
     runtimeEnergy: ["area", "report"], // 模块里不需要显示全部的
@@ -75,16 +75,16 @@ export default function Index() {
       "class",
       "chart"
     ],
- /*    runtimeQuota: [
-      "runtimeParkQuota", //园区是专门的接口
-      "runtimeQuotaDetailed",
-     "runtimeQuotaAlarms"
-    ], */
+    /*    runtimeQuota: [
+         "runtimeParkQuota", //园区是专门的接口
+         "runtimeQuotaDetailed",
+        "runtimeQuotaAlarms"
+       ], */
     // 设计态
     designerEnergy: [ // 能源管理
       "price",
       "norm",
-      "type","energyRank"
+      "type", "energyRank"
     ],
     runtimeCarbonEmissionManager: [  //碳排管理
       "runtimeCarbonData",
@@ -92,7 +92,7 @@ export default function Index() {
     ],
     ledger: [  //台账管理
       "deviceLedger",
-      "spareParts","ledgerManagement","spareParts"
+      "spareParts", "ledgerManagement", "spareParts"
     ]
   }); // 需要显示搜索的页面
 
@@ -137,9 +137,9 @@ export default function Index() {
   const sethandler = () => {
     try {
       console.log(nested)
-      if (primary == "runtimeMonitor" && nested == "point") {      
+      if (primary == "runtimeMonitor" && nested == "point") {
         if (!config.isdevsty) setConfig({ isdevsty: true, meterType });
-      } else {      
+      } else {
         setConfig({ isdevsty: false });
       }
       if (primary == "runtimeEnergy") {
@@ -149,7 +149,7 @@ export default function Index() {
             setConfig({ isview: true, isdate: true });
             break;
           case "range":
-            setConfig({ energytype: false, isdate: false, custview: true ,isAreaId: false,});
+            setConfig({ energytype: false, isdate: false, custview: true, isAreaId: false, });
             break;
           case "time":
             setConfig({ shiftNo: true, isdate: true }); // shiftNo: true 不显示
@@ -170,7 +170,7 @@ export default function Index() {
               shiftNo: true,
               isAreaId: false,
               gas: false,
-              custview: true ,
+              custview: true,
             });
             break;
           case "analysis":
@@ -226,7 +226,7 @@ export default function Index() {
             setConfig({ isAreaId: false, dateY: true });
             break;
           case "runtimeCarbonData":
-            setConfig({ isAreaId: false, isdate: true, shiftNo: true, dateType: 2 });
+            setConfig({ isAreaId: false, isdate: true, shiftNo: true, dateType: 2, daterang: "week" });
             break;
         }
       }
@@ -236,12 +236,12 @@ export default function Index() {
             setConfig({ custview: false });
             break;
           case "spareParts":
-            setConfig({ custview: true,isAreaId:true });
+            setConfig({ custview: true, isAreaId: true });
             break;
-            case "ledgerManagement":
+          case "ledgerManagement":
             setConfig({ custview: false });
             break;
-            case "spareParts":
+          case "spareParts":
             setConfig({ custview: false });
             break;
         }
@@ -250,25 +250,25 @@ export default function Index() {
 
         setConfig({});
       }
-     /*  if (primary == "runtimeQuota") {
-        switch (nested) {
-          case "runtimeQuotaDetailed":
-            setConfig({ custview: true });
-            break;
-          case "runtimeQuotaAlarms":
-            setConfig({ custview: true });
-            break;
-        }
-
-      } */
+      /*  if (primary == "runtimeQuota") {
+         switch (nested) {
+           case "runtimeQuotaDetailed":
+             setConfig({ custview: true });
+             break;
+           case "runtimeQuotaAlarms":
+             setConfig({ custview: true });
+             break;
+         }
+ 
+       } */
       // 设计态
       if (primary == "designerEnergy") {
         switch (nested) {
           case "norm":
             setConfig({ custview: true });
             break;
-            case "energyRank":
-            setConfig({isAreaId:false,custview: true });
+          case "energyRank":
+            setConfig({ isAreaId: false, custview: true });
             break;
         }
 
