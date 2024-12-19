@@ -9,13 +9,14 @@ import {
   message,
   Typography,
   Tag,
-  theme
+  theme,
+  Select
 } from "antd";
 import styled from "styled-components";
 
 import {ProjectSetting,CustTheme} from '@api/api.js'
 
-import Mapcom from "@com/useMap/indexset";
+
 //import useMap from "@com/useMap/useInitMap"
 //import useMap from "@com/useMap/indexset"
 import Cupload from "@com/useUpload.js" 
@@ -26,6 +27,7 @@ import {manager, maintenance} from '@redux/user' //   布尔值  是否是 项�
 import {publishState, getCurrProjectInfo, currProject, iszhCN, selectProjectId, getThemeColor,themeColor} from '@redux/systemconfig' // 布尔值 发布状态 
  
 import {SaveButton, CustButton} from "@com/useButton" ;
+import {getprimarycolors} from "@com/usehandler";
 import Ccolor from './custColor';
 
 const {Text, Link} =Typography
@@ -97,12 +99,12 @@ export default function Index() {
   const ispublish = useSelector(publishState)
   const iszh = useSelector(iszhCN)
   const projectId= useSelector(selectProjectId)
+  const {themeId,primaryderived} =useSelector(themeColor)
+ 
   const [themes, setThemes] = useState([])
   const {t} = useTranslation("comm","common")
-  console.log(themes)
-  const CurrProject = useSelector(currProject)
+  
 
-  const {QueryProjectInfo, SaveProjectInfo} = ProjectSetting
   const [form] = Form.useForm();
 
   const refid = useRef() // 保存时的ID
@@ -114,7 +116,7 @@ const getTheme = async()=>{
       let datas = data.map(d => ({...d, context: JSON.parse(d.context)}))
       let formdata
       if(!Number.isInteger(refid.current)) { // 页面初始化时      
-        formdata = datas[0]
+        formdata = Number.isInteger(parseInt(themeId)) ? datas.find(d=> d.id==themeId)??datas[0] : datas[0]
       }else if(refid.current ==0){ // 新增时
        formdata =datas.reduce((c,p)=> {
            return c.id > p.id ? c : p
@@ -122,7 +124,7 @@ const getTheme = async()=>{
       }else if(refid.current > 0){ // 编辑时
         formdata = datas.find(d => d.id == refid.id)
       }
-      console.log(formdata)
+      
       currtheme.current = formdata;
       dispatch(getThemeColor(formdata.context))
       form.setFieldsValue({id: formdata.id, name: formdata.name, ...formdata.context})
@@ -344,7 +346,7 @@ message.warning(errMsg|| "数据出错")
       <Item label="设备详情页背景色"  name="devicebgcolor" initialValue="#135abd">
         <Ccolor name="devicebgcolor" />
       </Item>
-      <Item label="设备\网关状态"   >
+      <Item label="设备\网关运行状态"   >
         <div style={{display: "flex", columnGap: "8px", flexWrap: "wrap" }}> 
         <Item label="正常" labelCol={{flex: "3em"}} name="normalColor" initialValue="#009966">
           <Ccolor name="normalColor" />
@@ -366,7 +368,50 @@ message.warning(errMsg|| "数据出错")
         </Item>
         </div>        
       </Item>
-     
+      <Item label="设备\网关项右下设置">
+      <div style={{display: "flex", columnGap: "8px", flexWrap: "wrap" }}> 
+      <Item label="字段名" labelCol={{flex: "4em"}} name="fieldname" initialValue="#ffffff">
+          <Ccolor name="fieldname" />
+        </Item>
+        <Item label="字段值" labelCol={{flex: "4em"}} name="fieldvalue" initialValue="#33ff00">
+          <Ccolor name="fieldvalue" />
+        </Item>
+        <Item label="背景色" labelCol={{flex: "4em"}} name="itembg" initialValue="#000033">
+          <Ccolor name="itembg" />
+        </Item>
+     </div>
+    
+     </Item>
+     <Item label="配电房概述菜单">
+      <div style={{display: "flex", columnGap: "8px", flexWrap: "wrap" }}> 
+      <Item label="字段名" labelCol={{flex: "4em"}} name="disfieldname" initialValue="#ffffff">
+          <Ccolor name="disfieldname" />
+        </Item>
+        <Item label="字段值" labelCol={{flex: "4em"}} name="disfieldvalue" initialValue="#33ff00">
+          <Ccolor name="disfieldvalue" />
+        </Item>
+        <Item label="列表项背景色" labelCol={{flex: "9em"}} name="dislistbg" initialValue="#000033">
+          <Ccolor name="dislistbg" />
+        </Item>
+        <Item label="列表项背景色hove" labelCol={{flex: "9em"}} name="disitemhover" initialValue="#000033">
+          <Ccolor name="disitemhover" />
+        </Item>
+     </div>
+    
+     </Item>
+       <Item label="主题衍生背景色" shouldUpdate={(cur, pre) => cur.primaryColor!=pre.primaryColor} >
+        {
+          ()=> {
+          let arrcolor=getprimarycolors().map?.(d => d.value)??[];
+            return (
+              <Item initialValue={primaryderived || "#ffffff"} name="primaryderived" >
+              <Ccolor name="primaryderived"  arrcolor={arrcolor}></Ccolor>
+              </Item>
+            )
+          }
+        }
+        </Item>
+        <Divider dashed  className="divider" />
       <Item label="已有方案"    >
         <div style={{display: "flex", rowGap: "8px", flexWrap: "wrap"}}>
         {

@@ -41,7 +41,7 @@ const Cradio = styled(Radio)`
   .ant-radio-inner {
     width: 28px;
     height: 28px;
-    background-color: var(--ant-primary-color);
+    background-color: ${props => props.theme.primaryColor || '#237AE4'};;
     &:after {
       background-color: #fff;
     }
@@ -198,9 +198,12 @@ export default function Log() {
   const setmenus = useSelector(setMenus)
   const allmenus = useSelector(menus)
   const adap =useSelector(adaptation) || {}
-  const inita=[
+  const inita=process.env.NODE_ENV === 'development' ? [   // 王工正式线屏蔽语言切换
     {label: '账户管理', key:"mg"},
     {label: '语言切换', key:"lng"},
+    {label: '退出系统', key:"exit"},
+  ]: [
+    {label: '账户管理', key:"mg"},
     {label: '退出系统', key:"exit"},
   ]
   const [items, setItems] = useState(inita)
@@ -269,7 +272,7 @@ const getcurTheme= async(userId, projectId)=> {
         let theme = data.find(d => d.id == themeId)?.context
         let themeobj =  JSON.parse(theme)
         if(theme &&  isObject(themeobj)){
-          dispatch(getThemeColor(themeobj))
+          dispatch(getThemeColor({...themeobj, themeId}))
         }
         item=  data.map(d => ({label: d.id==themeId ? <span style={{color:isObject(themeobj) ? themeobj.primaryColor : "",fontWeight: "bolder" }}>{d.name}</span> : d.name, key: d.id}))
       } catch (error) {
@@ -279,13 +282,21 @@ const getcurTheme= async(userId, projectId)=> {
     }else if(datalen){
         let thobj = JSON.parse(data[0].context)
         if(isObject(thobj)){
-          dispatch(getThemeColor(thobj))
+          dispatch(getThemeColor({...thobj, themeId: null}))
         }
         item=  data.map((d,idx) => ({label: idx==0 ? <span style={{color:isObject(thobj) ? thobj.primaryColor : "", fontWeight: "bolder" }}>{d.name}</span> : d.name, key: d.id})) 
     }else {
        item =[];
     }
-    setItems([...inita, ...item])
+
+    if (Array.isArray(item) && item.length > 0) {
+      setItems([...inita, {label: '主题', key:"theme", children: item}])
+    }else{
+      setItems([...inita])
+    }
+      
+  
+   
 
   } catch (error) {
     console.log(error)

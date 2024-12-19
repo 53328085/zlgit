@@ -6,14 +6,15 @@ import { Select, Radio, Pagination, message, Space, Form} from "antd";
 import { Link } from "react-router-dom";
 import { useAntdTable } from "ahooks";
 
-import style from "./style.module.less";
+import {isLightColor} from "@com/usehandler"
 import Icard from "./card";
 import imgurl from "./images/index.js";
 import { Monitoring } from "@api/api.js";
 import {
   selectProjectId,
   selectOneLevelDefaultId,
-  adaptation
+  adaptation,
+  themeColor
 } from "@redux/systemconfig.js";
 import { ExportExcel } from "@com/useButton";
  
@@ -35,19 +36,20 @@ const Cardbox = styled.div`
     grid-template-columns: repeat(3, 538px);
     grid-template-rows: repeat(4, 156px);
     gap: 16px;
-    justify-content: space-between;
+    justify-content: space-evenly;
    
     .cardItem {
     height: 156px;
-    background-color: #fff;
+  //  background-color: #fff;
+    background-color: ${props => props.theme.primaryderived || '#ffffff'};
     border: 1px solid rgb(215, 215, 215);
     border-radius: 4px;
     //  margin-right: 16px;
     display: flex;
-    align-items: center;
+  //  align-items: center;
     column-gap: 8px;
     justify-content: flex-start;
-    background-image: url(${bgi});
+  //  background-image: url(${bgi});
     background-size: 100% 100%;
     position: relative;
     overflow: hidden;
@@ -56,6 +58,7 @@ const Cardbox = styled.div`
     .cardImg {
         width: 128px;
         height: 128px;
+        align-self: center;
     }
 
     .ItemValue {
@@ -74,18 +77,19 @@ const Cardbox = styled.div`
             align-items: center;
             column-gap: 32px;
             font-size: 14px;
-            color: #000;
+            color: ${props => props.islight ? "#000000" : "#fff"} ;
             font-weight: 700;
             text-align: left;
             align-self: flex-start;
+           
             
         }
 
         .valueData {
             //margin-top: 10px;
             font-size: 14px;
-            color: #333;
-            margin-bottom: 10px;
+            color: ${props => props.islight ? "#333333" : "#fff"} ;
+            
         }
 
         .btnStyle {
@@ -102,18 +106,18 @@ const Cardbox = styled.div`
                 justify-content: space-between;
                 border-radius: 24px;
              
-                border: 1px solid rgb(215, 215, 215);
+              //  border: 1px solid rgb(215, 215, 215);
                 height: 24px;
                 border-radius: 40px;
-                background-color: rgba(0, 0, 51, 1);
-                color: #33FF00;
+                background-color: ${props => props.theme.itembg || "#000033"};
+                
             }
 
             .timeStyle {
                 flex: auto;
                 height: 24px;
                 font-size: 12px;
-                color: #fff;
+                color: ${props => props.theme.fieldname || "#ffffff"};
                 line-height: 24px;
                 
             }
@@ -124,20 +128,21 @@ const Cardbox = styled.div`
                 font-size: 14px;
                 text-align: center;
                 line-height: 24px;
+                color: ${props => props.theme.fieldvalue || "#33FF00"} ;
             }
         }
         .btnBoxStyle {
     display: flex;
     flex-direction: row;
-    margin-bottom: 12px;
+  
     border-radius: 40px;
-    background-color: rgba(0, 0, 51, 1);
+    background-color: ${props => props.theme.itembg || "#000033"};
 
     .timeStyle {
         flex: auto;
         height: 24px;
         font-size: 12px;
-        color: #fff;
+        color: ${props => props.theme.fieldname || "#ffffff"};
         line-height: 24px;
         padding-left: 10px;
     }
@@ -145,7 +150,7 @@ const Cardbox = styled.div`
     .timeValueStyle {
         flex: auto;
         height: 24px;
-        color: #33FF00;
+        color: ${props => props.theme.fieldvalue || "#33FF00"};
         font-size: 14px;
         text-align: left;
         line-height: 24px;
@@ -180,8 +185,8 @@ const Cardbox = styled.div`
         top: 4px;
         right: -18px;
         transform: rotate(45deg);
-        background-color: ${props => props.theme.normalColor};
-        color: ${props => props.theme.fntnormalColor};
+        background-color: ${props => props.theme.normalColor ||"#009966"};
+        color: ${props => props.theme.fntnormalColor || "#ffffff"};
         width: 65px;
         text-align: center;
         font-size: 14px;
@@ -192,8 +197,8 @@ const Cardbox = styled.div`
         top: 4px;
         right: -18px;
         transform: rotate(45deg);
-        background-color: ${props => props.theme.offlineColor};
-        color: ${props => props.theme.fntofflineColor};
+        background-color: ${props => props.theme.offlineColor || "#666666"};
+        color: ${props => props.theme.fntofflineColor || "#ffffff"};
         width: 65px;
         text-align: center;
         font-size: 14px;
@@ -208,6 +213,8 @@ export default function Index(props) {
   const [form] = Form.useForm();
   let areaId = useSelector(selectOneLevelDefaultId);
   const {laptop} = useSelector(adaptation)
+  const {primaryderived} = useSelector(themeColor)
+  let islight = isLightColor(primaryderived)
   const {
     RuntimeGateway: { RuntimeGatewayStatistics, Overview, CategoryImages },
     DeviceManager: { QueryUsedGateway },
@@ -535,7 +542,7 @@ export default function Index(props) {
         
         <Cdivider type="h" margin="16px 0" />
         {isCard ? (
-          <Cardbox laptop={laptop}>
+          <Cardbox laptop={laptop} islight={islight}>
             {  tableProps?.dataSource?.length > 0 ?   tableProps?.dataSource?.map((item, index) => {
               return (
                 <div key={index} >

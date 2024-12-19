@@ -18,7 +18,6 @@ const {Text} = Typography
 const Mainbox = styled.div`
   flex: 1;
   position: relative;
-   
   .cardList{
     position: absolute;
     right: 32px;
@@ -71,10 +70,6 @@ const Mainbox = styled.div`
     }
   }
  `
- 
- 
- 
- 
  
  
 export default function Index() {

@@ -9,7 +9,9 @@ import { StorageMonitorRuntime } from '@api/api.js'
 import { message } from "antd";
 import { CaretLeftOutlined, CaretRightOutlined } from '@ant-design/icons'
 import style from './style.module.less'
-
+const Mainbox =styled.div`
+  background-color: ${props => props.theme.primaryderived || "#000033"};
+`
 export default function Index(props) {
     console.log(props.headerValues)
     const { queryContainersStacks } = StorageMonitorRuntime
@@ -205,7 +207,7 @@ export default function Index(props) {
         }
     }, [props.headerValues])
     return (
-        <div className={style.main_box}>
+        <Mainbox className={style.main_box}>
             <div className="headerTitle">{state.name}</div>
             <div className="containerList">
                 {
@@ -226,6 +228,6 @@ export default function Index(props) {
                     }
                 </div>
             </div>
-        </div>
+        </Mainbox>
     )
 }

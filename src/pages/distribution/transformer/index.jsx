@@ -2,7 +2,7 @@ import React, { useState, useRef ,useMemo, useEffect } from 'react'
 import { Select ,Space,Divider,DatePicker,Radio, Button, message } from 'antd'
 import styled from 'styled-components'
 import {useSelector,  } from 'react-redux'
-import { selectcurlRommid } from "@redux/systemconfig";
+import { selectcurlRommid,adaptation } from "@redux/systemconfig";
 import style from './style.module.less'
 import TranCard from './transcard'
 import UseTable from '@com/useTable'
@@ -11,7 +11,7 @@ import Pagecount from '@com/pagecontent'
 import CustContext from '@com/content.js'
  
 import { drawEcharts } from "@com/useEcharts"
-import {DistributionRoomRuntime,distributionRoom} from '@api/api.js'
+import {DistributionRoomRuntime} from '@api/api.js'
 import  imgurl from '@imgs'
 import moment from 'moment'
  

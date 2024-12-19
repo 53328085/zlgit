@@ -1,15 +1,24 @@
 import React, { useState, useRef, useEffect } from 'react'
+import styled from 'styled-components'
 import UseHeader from '@com/useHeader'
 import CustModal from '@com/useModal'
+import {useSelector} from "react-redux"
 import { Divider, message, Form, Space, Input, Button, Select } from 'antd'
 import style from './style.module.less'
 import { StorageStrategyDesigner } from '@api/api.js'
 import { CaretRightOutlined, CaretUpOutlined, CaretDownOutlined } from '@ant-design/icons';
 import { timeToValue, controlList, timeList, idToTime, timeToId } from './changeJson'
 import imgurl from './imgs'
-import firstwarn from './imgs/warning.svg'
+import { themeColor  } from '@redux/systemconfig.js'
 import { cloneDeep, range } from 'lodash'
 import {CustButtonT} from "@com/useButton"
+import {isLightColor} from "@com/usehandler"
+const Ctitle = styled.div`
+ background-color: ${props => props.theme.primaryderived || "#000033"};
+ color: #fff;
+`
+ 
+
 export default function Index() {
   let time = new Date()
   let curentTieStamp =time.getTime()
@@ -21,7 +30,8 @@ export default function Index() {
   let day = nextDate.getDate()
   day = day > 9 ? day : '0' + day
   let daytime = year+ '-' + month + '-' + day
-
+  const {primaryColor, primaryderived} =useSelector(themeColor)
+  let isLight =isLightColor(primaryderived)
   const addRef = useRef()
   const editRef = useRef()
   const deleteRef = useRef()
@@ -249,11 +259,11 @@ export default function Index() {
         <Divider dashed style={{margin: '16px 0'}}></Divider>
         <div className={style.strategyItem}>
           <div className={style.left}>
-            <div className={style.itemTitle}>策略管理</div>
+            <Ctitle isLight={isLight} className={style.itemTitle}>策略管理</Ctitle>
             <div className={style.strategyList}>
               <div className={style.trans} style={{ top: (-(count * 64) + 16)}}>
                 {strategyList.map(item => {
-                  return <div key={item.id} className={style.strategyButton} style={{ backgroundColor: activeTab == item.id ? '#237ae4':''}} onClick={()=>changeTab(item)}>
+                  return <div key={item.id} className={style.strategyButton} style={{ backgroundColor: activeTab == item.id ? primaryColor : ''}} onClick={()=>changeTab(item)}>
                     <span style={{color:activeTab == item.id ? '#fff': '#515151'}}>{item.name}</span>
                     <CaretRightOutlined style={{color:activeTab == item.id ? '#fff': '#ccc', position: 'absolute',right: 16, top: 16}}></CaretRightOutlined>
                   </div>
@@ -269,7 +279,7 @@ export default function Index() {
             </div>
           </div>
           <div className={style.right}>
-            <div className={style.itemTitle}>充放策略详细设置</div>
+            <Ctitle isLight={isLight} className={style.itemTitle}>充放策略详细设置</Ctitle>
             <div className={style.middle}>
               <Form name='strategyForm' form={strategyForm} requiredMark={false} autoComplete='off'>
                 <Item label='策略名称'>

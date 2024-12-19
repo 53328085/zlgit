@@ -6,7 +6,7 @@ import enUS from 'antd/es/locale/en_US'; // 国际化时使用
 import zhCN from 'antd/es/locale/zh_CN';
 import moment from 'moment';
 import 'moment/locale/zh-cn';
-import {detectZoom} from '@com/usehandler' 
+
 moment.locale('zhCN');
 
 import Loading from './pages/Loading';
@@ -14,9 +14,10 @@ import EL from './router'
 import ErrorBoundary from './ErrorBoundary';
 //import useConfig from './antdconfig';\
 import {ConfigProvider} from 'antd'
-import {themeColor, intl,setadaptation} from "@redux/systemconfig";
+import {themeColor, intl,setadaptation,getThemeColor} from "@redux/systemconfig";
 import CustConfig from './custConfig';
 import { clearToken} from "@redux/user";
+import {getprimarycolors} from "@com/usehandler";
 function App() {
   const dispatch = useDispatch()
   const theme = useSelector(themeColor)
@@ -70,6 +71,16 @@ ratiostr.addEventListener("change", updateratio)
 }
 
  }, [width, height])
+ useEffect(()=> {
+    try {
+      let primaryderiveds=  getprimarycolors().map?.(d => d.value) || []
+      let primaryderived=primaryderiveds?.[5]||"#ffffff"
+      dispatch(getThemeColor({primaryderived}))
+    } catch (error) {
+      
+    }
+   
+ }, [])
  
   return   (
  <CustConfig> 

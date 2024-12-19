@@ -513,14 +513,14 @@ export const Serach =(props) => {
    padding: 0 8px;
 `
 export  const Ptag = styled(Normal)`
-   background-color: #ecf5ff;
-   color: #409eff;
-   border-color:#409eff;
+   background-color: ${props=> props.theme.primaryderived};
+   color: #fff;
+  // border-color:#409eff;
    transition:  all 0.3s;
    &:hover{
     cursor: pointer;
-    background-color: rgb(64,158,255);
-    border-color:rgb(64,158,255) ;
+    background-color: ${props=> props.theme.primaryColor};
+    border-color:${props=> props.theme.primaryColor} ;
     color:#fff;
    }
 

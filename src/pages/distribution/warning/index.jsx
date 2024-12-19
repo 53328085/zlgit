@@ -28,8 +28,8 @@ const Mainbox = styled.div`
         flex: 1;
         color:#515151;
         padding-top: 16px;
-        height: 700px;   
-        width: 1650px;
+      //  height: 700px;   
+     //   width: 1650px;
         .top {
             display: flex;
             justify-content: space-between;
@@ -56,7 +56,8 @@ export default  function Index() {
       title: '最新告警时间',
       dataIndex: 'alarmTime',
       key: 'alarmTime',
-      align: 'center'
+      align: 'center',
+      
     },
     {
       title: '告警等级',
@@ -234,6 +235,7 @@ export default  function Index() {
             </Form>
 
             <Cdivider type="h" margin="0" />
+            <div>
             <Usetable 
             hbg="#f0f9ff"
             hbc="#515151"
@@ -250,7 +252,7 @@ export default  function Index() {
             }}
             onChange={changePage}
             />
-
+          </div>
           </div>
         </Titlelayout>
       </Mainbox>

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import styled, {css} from 'styled-components'
-
+import { useNavigate, useOutletContext } from "react-router-dom";
 import { message } from 'antd'
 import Icard from './card'
 import { useSelector } from 'react-redux'
@@ -10,9 +10,10 @@ import chu from './images/chu.svg'
 import guang from './images/guang.svg'
 import { Monitoring } from '@api/api.js'
 
-import { selectProjectId, selectOneLevelDefaultId, adaptation } from '@redux/systemconfig.js'
+import { selectProjectId, selectOneLevelDefaultId, adaptation,themeColor } from '@redux/systemconfig.js'
 import Pagecount from '@com/pagecontent'
-import { useNavigate, useOutletContext } from "react-router-dom";
+
+import {isLightColor} from "@com/usehandler"
 import Bgi from "./images/bgi.png"
 const sty =css`
 grid-template-columns: repeat(auto-fill, minmax(304px, 1fr));
@@ -27,13 +28,15 @@ ${props=> props.laptop ? sty : null}
 .cardItem{
       // width: 404px;
        height: 124px;
-        background-color: #fff;
-        border: 1px solid rgb(215, 215, 215);
+       // background-color: #fff;
+       // border: 1px solid rgb(215, 215, 215);
+       background-color: ${props => props.theme.primaryderived || '#ffffff'};
+
         border-radius: 4px;
         display: flex;
         align-items: center;
         justify-content: flex-start;
-        background-image: url(${Bgi});
+      //  background-image: url(${Bgi});
         background-size: 100% 100%;
         position: relative;
         cursor: pointer;
@@ -43,7 +46,7 @@ ${props=> props.laptop ? sty : null}
             width: 64px;
             height: 64px;
          
-            background-color: #237ae4; // var(--ant-primary-color) ;
+            background-color: ${props => props.theme.primaryderived || '#ffffff'}; // var(--ant-primary-color) ;
             border-radius: 50%;
             display: flex;
             align-items: center;
@@ -62,12 +65,12 @@ ${props=> props.laptop ? sty : null}
             text-align: left;
             .valueTitle{
                 font-size: 14px;
-                color: #333;
+                color: ${props => props.islight ? "#333" : "#fff"} ;
             }
             .valueData{
                 //margin-top: 10px;
                 font-size: 28px;
-                color: #515151;
+                color: ${props => props.islight ? "#515151" : "#fff"} ;
             }
         }
         .boxCard{
@@ -86,6 +89,17 @@ ${props=> props.laptop ? sty : null}
                 display: flex;
             align-items: center;
             justify-content: space-between;
+            span{
+             
+            }
+            .on{
+              color: ${props => props.theme.successColor || '#52c41a'};
+              font-size: 14px;
+            }
+            .off{
+              color: ${props => props.theme.warningColor || '#faad14'};
+              font-size: 14px;
+            }
             }
         }
     }
@@ -109,7 +123,7 @@ ${props=> props.laptop ? sty : null}
             }
             .itemTitle{
                 font-size: 14px;
-                color: #333;
+                color: ${props => props.islight ? "#333" : "#fff"};
             }
             .waitOrder, .duringOrder, .waitInspection{
                 background-repeat: no-repeat;
@@ -133,7 +147,9 @@ export default function Index() {
   let areaId = useSelector(selectOneLevelDefaultId)
   let {laptop} = useSelector(adaptation)
 
-
+  let {primaryderived} = useSelector(themeColor)
+  
+  let islight = isLightColor(primaryderived)
   const statusAttribute = [
     {
       meterType: 0,
@@ -261,11 +277,11 @@ export default function Index() {
   }, [areaId, projectId])
   return (
     <Pagecount pd="0" bgcolor="transparent">
-      <Mainbox laptop={laptop}>
-        <Icard img={imgurl.device} title={'设备总数'} value={allCount} key="device" />
+      <Mainbox laptop={laptop} islight={islight}>
+        <Icard img={imgurl.device} title={'设备总数'} value={allCount} key="device"  />
         {MonitoringData?.map((item) => (
           <div onClick={() => toDevicePage(item.meterType)}>
-            <Icard img={item.imageUrl} title={item.name} value={item.count}
+            <Icard img={item.imageUrl} title={item.name} value={item.count} 
             isShow={true} on={'在线'} off={'离线'} per={'在线率'} onValue={item.onlineCount}
             offValue={item.offlineCount} perValue={item.onlineRate} isRed={true} isGreen={true} isredE={false} after="%" key={item.meterType} />
           </div>))}

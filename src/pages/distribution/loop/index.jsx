@@ -20,7 +20,7 @@ const {Link} = Typography
 const Mainbox = styled.div`
 flex: 1;
 display: grid;
-grid-template-columns: 265px 1397px;
+grid-template-columns: 265px minmax(1397px,1fr);
 column-gap: 16px;
  align-items: stretch;
 .tbwrap {

@@ -9,9 +9,9 @@ export default function Icard({img, title, value,isShow,on,off,per,onValue,offVa
                 <div className="valueData">{ value }</div>
             </div>
             {isShow?<div className="boxCard">
-                <p><span>{on}</span>{isGreen?<span style={{color:'green'}}>{onValue}</span>:<span>{onValue}{after}</span>}</p>
-                <p><span>{off}</span>{isRed?<span style={{color:'red'}}>{offValue}</span>:<span>{offValue}{after}</span>}</p>
-                <p><span>{per}</span>{isredE?<span style={{color:'red'}}>{perValue}</span>:<span>{perValue}{after}</span>}</p>
+                <p><span>{on}</span>{isGreen?<span className="on">{onValue}</span>:<span>{onValue}{after}</span>}</p>
+                <p><span>{off}</span>{isRed?<span className="off">{offValue}</span>:<span>{offValue}{after}</span>}</p>
+                <p><span>{per}</span>{isredE?<span className="off">{perValue}</span>:<span>{perValue}{after}</span>}</p>
                 </div>:''}
         </div>
     )
