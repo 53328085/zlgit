@@ -47,8 +47,8 @@ export default function Index(props) {
 
     const transferTitle = {
         mainTitle: '',
-        subTitle: '已配置的断路器设备',
-        unknownTitle: '未配置的断路器设备'
+        subTitle: '已配置断路器',
+        unknownTitle: '未配置断路器'
     }
     const columns = [
         {

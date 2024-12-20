@@ -390,7 +390,7 @@ export default function index(props) {
                             </div>
                         </div>
                         <div className={style.actions}>
-                            <span className={style.tip}> 选择告警时启用设备</span>
+                            <span className={style.tip}>选择设备</span>
                             <Space size={16}>
                                 <CustButton icon={<LeftOutlined />} style={{ height: "46px", width: "68px" }} onClick={() => unknownToSub(1)}></CustButton>
                                 <CustButton icon={<RightOutlined />} style={{ height: "46px", width: "68px" }} onClick={() => subToUnknown(1)}></CustButton>
@@ -405,7 +405,7 @@ export default function index(props) {
                             </div>
                         </div>
                         <div className={style.actions}>
-                            <span className={style.tip}>选择告警时禁用设备</span>
+                            <span className={style.tip}>选择设备</span>
                             <Space size={16}>
                                 <CustButton icon={<LeftOutlined />} style={{ height: "46px", width: "68px" }} onClick={() => unknownToSub(2)}></CustButton>
                                 <CustButton icon={<RightOutlined />} style={{ height: "46px", width: "68px" }} onClick={() => subToUnknown(2)}></CustButton>
@@ -420,7 +420,7 @@ export default function index(props) {
                             </div>
                         </div>
                         <div className={style.actions}>
-                            <span className={style.tip}>选择消警时启用设备</span>
+                            <span className={style.tip}>选择设备</span>
                             <Space size={16}>
                                 <CustButton icon={<LeftOutlined />} style={{ height: "46px", width: "68px" }} onClick={() => unknownToSub(3)}></CustButton>
                                 <CustButton icon={<RightOutlined />} style={{ height: "46px", width: "68px" }} onClick={() => subToUnknown(3)}></CustButton>
@@ -435,7 +435,7 @@ export default function index(props) {
                             </div>
                         </div>
                         <div className={style.actions}>
-                            <span className={style.tip}>选择消警时禁用设备</span>
+                            <span className={style.tip}>选择设备</span>
                             <Space size={16}>
                                 <CustButton icon={<LeftOutlined />} style={{ height: "46px", width: "68px" }} onClick={() => unknownToSub(4)}></CustButton>
                                 <CustButton icon={<RightOutlined />} style={{ height: "46px", width: "68px" }} onClick={() => subToUnknown(4)}></CustButton>

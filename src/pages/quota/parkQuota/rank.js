@@ -10,7 +10,7 @@ const Rankbox=styled.div`
   grid-template-rows: 172px minmax(580px, 1fr);
   row-gap: 16px;
   color:#363636;
-  padding-top: 16px;
+  //padding-top: 16px;
   .totalNum{
     display: flex;
     justify-content: space-between;
