@@ -122,7 +122,7 @@ const getTheme = async()=>{
            return c.id > p.id ? c : p
        }, {id: 0})
       }else if(refid.current > 0){ // 编辑时
-        formdata = datas.find(d => d.id == refid.id)
+        formdata = datas.find(d => d.id == refid.current)
       }
       
       currtheme.current = formdata;
@@ -145,6 +145,7 @@ const getTheme = async()=>{
 const onSave =async () => { // 保存
   try {
     let {id, name, ...params} = await form.validateFields()
+    console.log(params)
     refid.current=id;
     let obj = {id, name, context: JSON.stringify(params)};
    
@@ -199,7 +200,7 @@ const ondelete=async ()=> {
       projectId,
       themeId: refid.current
     }
-    console.log(params)
+   
     let {success,errMsg}=await  CustTheme.DeleteTheme(params)
     if(success){
       message.success("删除成功")
@@ -402,6 +403,7 @@ message.warning(errMsg|| "数据出错")
        <Item label="主题衍生背景色" shouldUpdate={(cur, pre) => cur.primaryColor!=pre.primaryColor} >
         {
           ()=> {
+
           let arrcolor=getprimarycolors().map?.(d => d.value)??[];
             return (
               <Item initialValue={primaryderived || "#ffffff"} name="primaryderived" >

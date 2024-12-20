@@ -6,7 +6,7 @@ import {CloseOutlined} from "@ant-design/icons"
 import {getThemeColor} from '@redux/systemconfig'  
 import defaultcolor from "@com/defaultcolor"
 export default function Index({value, onChange, name, arrcolor})  {
-    
+    const [showv, setShowv] =useState(value)
     const dispatch = useDispatch()
     const [show, setShow]=useState(false)
     const [el, setEl] = useState()
@@ -28,15 +28,18 @@ export default function Index({value, onChange, name, arrcolor})  {
       e.preventDefault()
       setShow(true)
     }
-  
+   useEffect(()=> {
+     setShowv(value)
+   },[value])
     const  onColorChange= (hex)=> {
       dispatch(getThemeColor({[name]: hex}))
       if( name=="primaryColor") window.localStorage.setItem("CustThemeColor", hex)
       onChange(hex)
+      setShowv(hex)
     }
    
     return   <div>
-      <input type='color' value={value} onClick={changecolor} ref={ref => setEl(ref)} />
+      <input type='color' value={showv} onClick={changecolor} ref={ref => setEl(ref)} />
     {show && createPortal(<div style={sty}><SketchPicker
     presetColors={colors}
     disabled
