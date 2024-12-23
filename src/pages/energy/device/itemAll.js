@@ -1,10 +1,15 @@
 import React from 'react'
 import imgurl from './icon'
-import styled from 'styled-components'
+import styled, {css} from 'styled-components'
 import { nanoid } from "@reduxjs/toolkit";
 import { Image, Typography, Descriptions } from 'antd'
 import { numberformat, Statebox } from "@com/usehandler"
+import {useSelector} from 'react-redux'
+import {  adaptation } from '@redux/systemconfig.js'
 const { Paragraph } = Typography
+const sty = css`
+ grid-template-columns: 115px repeat(3, 1fr);
+`
 const ItemAll = styled.div`
 .levelName{
     font-size: 18px;
@@ -13,9 +18,9 @@ const ItemAll = styled.div`
 .level{
 flex: 1;
 display: grid;
-grid-template-columns: repeat(4, 394px);
-row-gap: 16px;
-//   gap: 16px;
+grid-template-columns: repeat(auto-fill, minmax(394px, 1fr));// repeat(4, 394px);
+//row-gap: 16px;
+  gap: 16px;
 justify-content: space-between;   
 margin: 24px 0px;
 }
@@ -120,6 +125,7 @@ const Itembox = styled.div`
        color: #090;
        
      } 
+    ${props => props.laptop ? sty : null}
   }
 `
 /* total: {
@@ -130,17 +136,17 @@ const Itembox = styled.div`
 
 
 export default function Item(props) {
-  console.log(props,"---props")
+  let {laptop} = useSelector(adaptation)
   // 1，2，3 离线,正常，告警
   // let { areaName } = props
   // const state = typeof index == "number" ? (['离线', '正常', '告警'][index - 1] || '未知') : '未知';
   // const bgColor = typeof index == "number" ? (['#666', '#096', '#ff4d4f'][index - 1] || 'ff4d4f') : '#666';
   return (
-    <ItemAll>
+    <ItemAll >
       <div className='levelName' key={nanoid()}>{props[0].areaName}</div>
       <div className='level'>
         {Object.values(props).map(item =>
-          <Itembox>
+          <Itembox laptop={laptop}>
             {/* <Statebox top="13px" right="-20px" width="85px" bgColor={bgColor}>{state}</Statebox> */}
             <div className='upper' key={nanoid()}>
               <div className='pic' key={nanoid()}>

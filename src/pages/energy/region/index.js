@@ -116,12 +116,13 @@ export default function Index() {
     grid: {
       left: "0px",
       right: "0",
-      top: "30px",
+      top: "46px",
       bottom: "0px",
       containLabel: true,
     },
     legend: {
       top: 0,
+      type: "scroll"
     },
     dataset: {
       dimensions: [],
@@ -214,8 +215,7 @@ export default function Index() {
           source.push(list)
           dimensions.push({ name })
         })
-        console.log(dimensions)
-        console.log(source)
+       
         setOptions({
           ...boptions,
           series: Array.from({ length: data.length }, () => ({ type: "bar", seriesLayoutBy: 'row', stack: 'x' })),

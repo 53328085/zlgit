@@ -1,22 +1,140 @@
 import React, { useCallback, useState, useEffect, useMemo } from 'react'
 import moment from 'moment'
-import style from './style.module.less'
-
+import styled, {css} from 'styled-components'
+import {useSelector} from "react-redux"
 import { Tooltip } from 'antd'
 import { numberformat } from '@com/usehandler'
 
 import Titlelayout from '@com/titlelayout'
 import Ichart from '@com/useEcharts/Ichart'
 import { Cdivider } from "@com/comstyled"
-/* import icon1 from './imgs/icon1.png'
-import icon2 from './imgs/icon2.png'
-import icon3 from './imgs/icon3.png'
-import icon4 from './imgs/icon4.png' */
+import {  adaptation} from '@redux/systemconfig.js'
 import uppng from './imgs/up.png'
 import downpng from './imgs/down.png'
 
 import imgurl from './imgs'
-import { getTime } from '@com/usehandler'
+
+const sty= css`
+  grid-template-columns: repeat(5, 1fr);
+  gap: 8ox;
+`
+
+const Mainbox=styled.div`
+
+    display: grid;
+    grid-template-columns: repeat(4, 304px) 1fr;
+ //   grid-template-rows: 800px;
+    gap:16px;
+    flex:1;
+    ${props => props.laptop ? sty : null}
+    .bdcolor {
+        border: 1px solid #d7d7d7;
+        border-radius: 4px;
+        padding-top: 1px;
+        background-color: #fff;
+        display: flex;
+        flex-direction: column;
+        align-items: stretch;
+        .leftbd {
+            width: 4px;
+            height: 32px;
+            background-color: var(--ant-primary-color);
+        }
+
+        .bgclass {
+          //  width: ${props => props.laptop ? "100%" : "300px"};
+            height: 220px;
+         //   margin: 0 auto;
+            padding: ${props => props.laptop ? "8px" : "16px"} ;
+            background-image: url(${imgurl['bg1']});
+            background-size: 100% 100%;
+        }
+
+        .bg1class {
+            background-image: url(${imgurl['bg2']});
+        }
+
+        .bg2class {
+            background-image: url(${imgurl['bg3']});
+        }
+
+        .bg3class {
+            background-image: url(${imgurl['bg4']});
+        }
+
+        .textstyle {
+            height: 104px;
+           // width: 300px;
+           // margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            grid-template-rows: repeat(2, 30px);
+            column-gap: 10px;
+            padding: 0 10px;
+            align-content: center;
+            align-items: center;
+            padding-left: 16px;
+
+            .pdlf16 {
+                padding-left: 8px;
+                padding-right: 2px;
+                color: #fff;
+            }
+        }
+    }
+
+    .piestyle {
+        height: 448px;
+        width: 408px;
+        border: 1px solid #d7d7d7;
+        border-radius: 4px;
+        background-color: #fff;
+        padding: 14px;
+    }
+
+    .sorts {
+        height: 335px;
+        width: 100%;
+        border: 1px solid #d7d7d7;
+        border-radius: 4px;
+        background-color: #fff;
+        padding: 16px
+    }
+`
+const sty2=css`
+  flex-direction: column;
+ // align-items: center;
+  padding: 4px;
+`
+const Cardbox=styled.div`
+    border: 1px solid #d7d7d7;
+    padding-right: 8px;
+    display: flex;
+    justify-content: space-between;
+    ${props => props.laptop ? sty2 : null}
+  .box {
+    display: flex;
+    flex: auto;
+  }
+  .left {
+     column-gap: ${props => props.laptop ? "8px" : "24px"};
+     align-items: center;
+    
+     .lable{
+        font-size: 12px;
+        color: #666;
+     }
+     .value {
+      font-size: 18px;
+      color: #333;
+     }
+  }
+  .right{
+
+    align-items: center;
+    justify-content: ${props=> props.laptop ? "flex-start" : "flex-end"};
+  }
+`
 const Boxchart = ({ index, showType, data, date }) => {
   let istoday = date.format('YYYY-MM-DD') === moment().format('YYYY-MM-DD')
   let color = ['#bdd2fd', '#99adba', '#ffc299', '#99d699']
@@ -78,8 +196,8 @@ const Boxchart = ({ index, showType, data, date }) => {
 }
 
 export default function Energy({ showData, dateType, showType, date }) {
-
-  const { bg1class, bg2class, bg3class } = style
+  let {laptop} = useSelector(adaptation)
+ 
   let consumeTotal
   let consumeDetail
   let proportion
@@ -125,13 +243,13 @@ export default function Energy({ showData, dateType, showType, date }) {
 
   }, [proportion])
   return (
-    <div className={style.gridstyle}>
+    <Mainbox laptop={laptop}>
       {
         showData?.consumeTotal?.map((it, index) => {
           let { lastDayPeriodValue, lastMonthPeriodValue, lastYearPeriodValue } = it;
           let timetype = ['', lastDayPeriodValue, lastMonthPeriodValue, lastYearPeriodValue][dateType]
-          return (<div className={style.bdcolor} key={index} >
-            <div className={`${style.bgclass}  ${index === 0 ? "" : index === 1 ? bg1class : index === 2 ? bg2class : bg3class}`}>
+          return (<div className="bdcolor" key={index} >
+            <div className={`bgclass  ${index === 0 ? "" : index === 1 ? 'bg1class' : index === 2 ? 'bg2class' : 'bg3class'}`}>
               <div style={{ display: 'flex', alignItems: 'center' }}>
                 {/* <div className={style.leftbd}></div> */}
                 <div style={{ fontSize: 12, color: '#666', padding: '0  16px ', backgroundColor: '#ffffff', borderRadius: '36px' }}>
@@ -139,14 +257,15 @@ export default function Energy({ showData, dateType, showType, date }) {
                   {showType == 1 ? '(kWh)' : '(元)'}</div>
               </div>
             </div>
-            {/* style={{ backgroundColor: index % 2 === 0 ? '#a0cede' : '#afdb92' }}  */}
-            <div className={style.textstyle} style={{ backgroundColor: index === 0 ? '#a8e8eb' : index === 1 ? '#71cefe' : index === 2 ? '#8db4d3' : '#cbe8f0' }}>
-              <div style={overcss}>{dateType === 1 ? "今日:" : dateType === 2 ? "本月:" : "本年:"}
+          
+            <div className="textstyle" style={{ backgroundColor: index === 0 ? '#a8e8eb' : index === 1 ? '#71cefe' : index === 2 ? '#8db4d3' : '#cbe8f0' }}>
+              <div style={overcss}>
+                {dateType === 1 ? "今日:" : dateType === 2 ? "本月:" : "本年:"}
                 <Tooltip title={parseFloat(it?.periodValue)}>
-                  <span className={style.pdlf16}>{parseFloat(it?.periodValue)}</span>
+                  <span className="pdlf16">{parseFloat(it?.periodValue)}</span>
                 </Tooltip>
               </div>
-              <div style={{ display: 'flex', alignItems: 'center', ...overcss }}>环比:<span className={style.pdlf16}>
+              <div style={{ display: 'flex', alignItems: 'center', ...overcss }}>环比:<span className="pdlf16">
                 {parseFloat(it?.mom)}%
               </span>
                 {dateType == 3 ? <img src={Number(it.periodValue) - Number(it.lastYearPeriodValue) > 0 ? uppng : downpng} style={{ width: 10, marginLeft: 2 }} /> :
@@ -155,10 +274,10 @@ export default function Energy({ showData, dateType, showType, date }) {
               </div>
               <div style={overcss}>{dateType === 1 ? "昨日:" : dateType === 2 ? "上月:" : "上年:"}
                 <Tooltip title={parseFloat(timetype)}>
-                  <span className={style.pdlf16}>{parseFloat(timetype)}</span>
+                  <span className="pdlf16">{parseFloat(timetype)}</span>
                 </Tooltip>
               </div>
-              <div style={{ display: 'flex', alignItems: 'center', ...overcss }}>同比:<span className={style.pdlf16}>{parseFloat(it?.yoy)}%</span>
+              <div style={{ display: 'flex', alignItems: 'center', ...overcss }}>同比:<span className="pdlf16">{parseFloat(it?.yoy)}%</span>
                 {dateType == 3 ? <img src={Number(it.periodValue) - Number(timetype) > 0 ? uppng : downpng} style={{ width: 10, marginLeft: 2 }} /> :
                   <img src={Number(it.periodValue) - Number(timetype) > 0 ? uppng : Number(it.periodValue) - Number(timetype) < 0 ? downpng : ''} style={{ width: 10, marginLeft: 2 }} />
                 }
@@ -186,34 +305,31 @@ export default function Energy({ showData, dateType, showType, date }) {
             <Cdivider type="h" margin="16px 0" />
             <div style={{ height: 237, display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
               {
-                consumeTotal?.map((it, index) => (<Card index={index} {...it} showtype={showType} />))
+                consumeTotal?.map((it, index) => (<Card index={index} {...it} showtype={showType} laptop={laptop} />))
               }
             </div>
           </Titlelayout>
         </div>) : null
       }
 
-    </div>
+    </Mainbox>
   )
 }
 
 
-let Card = ({ index, showtype, ...other }) => {
+let Card = ({ index, showtype,laptop, ...other }) => {
   return (
-    <div style={{ border: '1px solid #d7d7d7', padding: 1, display: 'flex', justifyContent: 'space-between' }}>
-      <div style={{ display: 'flex' }}>
-        <img src={imgurl[other.name]} alt="" style={{ width: 54, height: 42 }} />
-        <div style={{ marginLeft: 24 }}>
-          <div style={{ fontSize: 12, color: '#666', minHeight: 18 }}>{other.name ? other.name : ""}  {showtype == 1 ? '(kwh)' : '元'}</div>
-          <div style={{ fontSize: 18, color: '#333', lineHeight: '18px' }}>{other.periodValue}</div>
+    <Cardbox laptop={laptop}>
+      <div  className='box left'>
+        {laptop ? null : <img src={imgurl[other.name]} alt="" style={{ width: 54, height: 42 }} />} 
+        <div>
+          <div className='lable'>{other.name ? other.name : ""}  {showtype == 1 ? '(kwh)' : '元'}</div>
+          <div className='value'>{other.periodValue}</div>
         </div>
       </div>
-      <div style={{ marginRight: 16, display: 'flex', alignItems: 'center' }}>
+      <div className='box right' >
         {numberformat(other.mom)}
-        {/*  <img src={parseFloat(other.mom)>0?uppng:downpng} alt="" style={{ width: 14, height: 19 }} />
-        <span style={{ fontSize: 18, lineHeight: '18px', padding: '0 16px' }}>{parseFloat(other.mom)}</span>
-        <span>%</span> */}
       </div>
-    </div>
+    </Cardbox>
   )
 }

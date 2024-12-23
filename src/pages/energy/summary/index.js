@@ -31,6 +31,13 @@ const Ctag = styled(Tag)`
     cursor: pointer;
   }
 `
+const  Mainbox = styled.div`
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  align-items: stretch;
+`
  
 const Title = styled.div`
     &&{
@@ -39,7 +46,8 @@ const Title = styled.div`
      border-radius: 4px;
      background-color: #fff;
      height: 48px;
-     margin-bottom: 16px;
+     display: flex;
+     align-items: center;
      .text {
       display: inline-block;
       border-left: 4px solid ${props => props.theme.primaryColor};
@@ -320,7 +328,7 @@ const getDataEnergy = async () => {
   return (
  /*    <CustContext.Provider > */
        <Pagecount bgcolor="transparent" pd="0">
-       
+         <Mainbox>
            <Title>
                <span className="text">园区概述</span>
            </Title>
@@ -390,7 +398,7 @@ const getDataEnergy = async () => {
               </Titlelayout>
               </div>
            </Content>
-        
+           </Mainbox>
         </Pagecount>
        
   /*   </CustContext.Provider> */
