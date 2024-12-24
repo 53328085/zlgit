@@ -1,20 +1,22 @@
 import React, { useState, useRef, useEffect,useCallback } from "react";
 import { nanoid } from "@reduxjs/toolkit";
 import { Image, Space, Tabs, Typography, Radio} from "antd";
-import styled from "styled-components";
+import styled, {css} from "styled-components";
 import {useOutletContext} from 'react-router-dom' 
 import { drawEcharts } from "@com/useEcharts";
 import {EnergyComprehensive} from "@api/api.js"
 import Titlelayout from "@com/titlelayout";
  import {useSelector} from 'react-redux'
- import {selectOneLevel} from '@redux/systemconfig.js'
+ import {selectOneLevel,adaptation} from '@redux/systemconfig.js'
 import {numberformat, getTime} from '@com/usehandler'
 import Pagecount from "@com/pagecontent";
 import imgurl from "./icon";
 import Charttable from './chartTable'
  
 const {Text} = Typography
- 
+ const sty = css`
+  grid-template-columns: 1fr min-content;
+ `
 
 const Laybox = styled.div`
   display: grid;
@@ -27,6 +29,7 @@ const Laybox = styled.div`
     grid-template-columns: 1256px 408px;
     column-gap: 16px; 
     overflow: hidden;
+    ${props=> props.laptop ? sty : null}
     .upleft {
       display: grid;
       grid-template-rows: 40px minmax(472px, 1fr);
@@ -47,6 +50,7 @@ const Laybox = styled.div`
       flex:1;
       display: grid;
       grid-template-columns: 1264px 1fr;
+      ${props=> props.laptop ? sty : null}
       column-gap: 16px;
       .upleft {
        display: grid;
@@ -218,7 +222,7 @@ const ElectricRight = styled.div`
 export default function Index() {   
   //const projectId = useSelector(selectProjectId);
   const areaIds = useSelector(selectOneLevel);
-  
+  let {laptop} = useSelector(adaptation)
   let {exparams} = useOutletContext() 
   const {areaId, date, type:dateType, shiftNo, view, projectId} = exparams  
   const [qverview, setOverview] = useState({}) 
@@ -382,7 +386,8 @@ const Energyitem = ({op}) => {
 
    )
 }
-const Electric = ({data, des, datetype}) => {
+const Electric = ({data, des, datetype, laptop}) => {
+  console.log("laptop",laptop)
   let {lastDayPeriodValue,lastMonthPeriodValue,lastYearPeriodValue  } = data
   let timetype = ['', lastDayPeriodValue,lastMonthPeriodValue,lastYearPeriodValue][datetype]
   let icon = tabvalue == 2 ? 'electric' : 'water';
@@ -438,7 +443,7 @@ const Electric = ({data, des, datetype}) => {
       key="pie"
     >
       <div
-        style={{ width: "368px", height: "356px" }}
+        style={{ width: laptop ? "300px" : "368px", height: "356px" }}
         ref={pieref}
       ></div>
     </Titlelayout>
@@ -453,7 +458,7 @@ const Electric = ({data, des, datetype}) => {
 
 
 }
-const CoalStandard =({data={}, op, datetype}) => {
+const CoalStandard =({data={}, op, datetype, laptop}) => {
   
   let {lastDayPeriodValue,lastMonthPeriodValue,lastYearPeriodValue  } = data
   let timetype = ['', lastDayPeriodValue,lastMonthPeriodValue,lastYearPeriodValue][datetype]
@@ -470,7 +475,7 @@ const CoalStandard =({data={}, op, datetype}) => {
       grid: {
         bottom: 20
       },
-      radius:["50%", "70%"]
+      radius: ["50%", "70%"]
     });
   }, [])
   return (
@@ -594,14 +599,14 @@ const CoalStandard =({data={}, op, datetype}) => {
   return (
     <Pagecount bgcolor="transparent" pd="0">
       <div style={{display: 'flex',  flex: 1}}>   
-      <Laybox   className={ tabvalue == 1 ? 'zonghe' : 'classify'}>
+      <Laybox   className={ tabvalue == 1 ? 'zonghe' : 'classify'} laptop={laptop}>
         <div className="up">
           <div className="upleft">
              <Tabsbox defaultActiveKey={1} items={tabs} onChange={ontabChange}>
              </Tabsbox>
              <Chartbox  data={detail} op={exparams.view} type={type} my={my}  datetype={exparams.type} tabvalue={tabvalue} />
            </div>
-           {tabvalue == 1 ? <CoalStandard  op={exparams.view}  data={coalStandard}  datetype={exparams.type} key="CoalStandard"  /> : <Electric data={consume} des={analysisDes}  datetype={exparams.type}   key="Electric" /> }
+           {tabvalue == 1 ? <CoalStandard  op={exparams.view}  data={coalStandard}  datetype={exparams.type} key="CoalStandard" laptop={laptop}  /> : <Electric data={consume} des={analysisDes}  datetype={exparams.type} laptop={laptop}   key="Electric" /> }
          </div>  
         
        {tabvalue == 1 && <div className="down">

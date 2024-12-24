@@ -2,13 +2,24 @@ import React, { useEffect, useState, useRef } from "react";
 
 import { nanoid } from "@reduxjs/toolkit";
 import Titlelayout from "@com/titlelayout";
-import styled from "styled-components";
+import styled, {css} from "styled-components";
 import Pagecount from "@com/pagecontent";
 import CustContext from "@com/content.js";
 import { Form, Image, Typography } from "antd";
-
+import {useSelector} from "react-redux"
+import { adaptation  } from '@redux/systemconfig.js'
 import { drawEcharts } from "@com/useEcharts";
 import imgurl from "./icon";
+const sty=css`
+ font-size: 12;
+ .imgbox {
+  width: 40px;
+  height: 40px;
+ }
+ strong {
+  font-size: 14px;
+ }
+`
 const Mainbox = styled.div`
   display: flex;
   flex-direction: column;
@@ -16,11 +27,19 @@ const Mainbox = styled.div`
  // grid-template-rows: 184px 280px 304px;
   row-gap: 16px;
   flex: 1;
+
   .upper {
     flex: 1 1 184px;
     display: grid;
-    grid-template-columns: 348px  minmax(1348px, 1fr) ;
+    grid-template-columns: 332px  1fr ;
     column-gap: 16px;
+    .imgbox {
+      img {
+         width: 100%;
+         height: 100%;
+      }
+      
+    }
     .list {
       display: grid;
       grid-template-columns: repeat(7, 1fr);
@@ -31,10 +50,18 @@ const Mainbox = styled.div`
         display: flex;
         flex-direction:column;
         align-items: center;
-        justify-content: center;      
+        justify-content: center;  
+        .imgbox{
+          height: 80px;
+          width: 80px;
+          img{
+            max-width: 100%;
+          }
+        }    
         strong {         
           font-size: 24px;
         }
+        ${props => props.laptop ? sty : null}
       }
       .listItem+.listItem {
         border-left: 1px dotted #dedede;
@@ -44,7 +71,7 @@ const Mainbox = styled.div`
   .middle {
     flex: 1 1 280px;
     display: grid;
-    grid-template-columns: 400px repeat(2, minmax(200px, 1fr)) minmax(832px, 1fr);
+    grid-template-columns:  repeat(2, minmax(200px, 1fr)) 2fr;
     column-gap: 16px;
     #he-plugin-standard {
       flex: auto;
@@ -87,10 +114,10 @@ const Mainbox = styled.div`
   .lower {
     flex: 1 1 304px;
     display: grid;
-    grid-template-columns: repeat(2, minmax(832px, 1fr));
+    grid-template-columns: repeat(2,  1fr);
     column-gap: 16px;
   }
-  .rigth {
+/*   .rigth {
     display: grid;
     grid-template-rows: 96px 690px;
     row-gap: 16px;
@@ -136,7 +163,7 @@ const Mainbox = styled.div`
         background-color: #fff;
       }
     }
-  }
+  } */
 
   .content {
     display: grid;
@@ -154,6 +181,7 @@ const Mainbox = styled.div`
 
 export default function Index() {
   const [form] = Form.useForm();
+  let {laptop} = useSelector(adaptation)
   const { Text } = Typography;
   const bref = useRef(null);
   const plref = useRef(null);
@@ -239,7 +267,7 @@ export default function Index() {
     
   };
   useEffect(() => {
-    weather();
+   // weather();
     drawEcharts(plref.current, {
       toolbox: {
         feature: {
@@ -305,43 +333,66 @@ export default function Index() {
   return (
     <CustContext.Provider value={{ form }}>
       <Pagecount bgcolor="#eeeff3" pd="0px">
-        <Mainbox>
+        <Mainbox laptop={laptop}>
           <div className="upper">
-            <Image src={imgurl.pv} preview={false} size={332} height={184}></Image>
+            <div className="imgbox">
+            <img src={imgurl.pv} alt=""></img>
+            </div>
+           
              <Titlelayout bgcolor="#eef6fd">
                <div className="list">
                    <div className="listItem">
-                       <Image src={imgurl.p1} width={80} height={80}></Image>
+                        <div className="imgbox">
+                        <img src={imgurl.p1}></img>
+                        </div>
                        <span>当前功率(kw)</span>
                        <Text strong ellipsis>125896.300</Text>
                    </div>
                    <div className="listItem">
-                       <Image src={imgurl.p2} width={80} height={80}></Image>
+                    <div className="imgbox">
+                    <img src={imgurl.p2} ></img>
+                    </div>
+                       
                        <span>当日发电量(kwh)</span>
                        <Text strong ellipsis>321.21</Text>
                    </div>
                    <div className="listItem">
-                       <Image src={imgurl.p3} width={80} height={80}></Image>
+                    <div className="imgbox">
+                    <img src={imgurl.p3}></img>
+                    </div>
+                       
                        <span>当前辐照度(w/m&#178;)</span>
                        <Text strong ellipsis>745896.300</Text>
                    </div>
                    <div className="listItem">
-                       <Image src={imgurl.p4} width={80} height={80}></Image>
+                    <div className="imgbox">
+                    <img src={imgurl.p4} ></img>
+                    </div>
+                      
                        <span>累计发电量(kwh)</span>
                        <Text strong ellipsis>5896.300</Text>
                    </div>
                    <div className="listItem">
-                       <Image src={imgurl.p5} width={80} height={80}></Image>
+                    <div className="imgbox">
+                    <img src={imgurl.p5} ></img>
+                    </div>
+                      
                        <span>累计收益(元)</span>
                        <Text strong ellipsis>496.300</Text>
                    </div>
                    <div className="listItem">
-                       <Image src={imgurl.p6} width={80} height={80}></Image>
+                    <div className="imgbox">
+                    <img src={imgurl.p6} ></img>
+                    </div>
+                      
                        <span>co2减排(kwh)</span>
                        <Text strong ellipsis>85896.300</Text>
                    </div>
                    <div className="listItem">
-                       <Image src={imgurl.p7} width={80} height={80}></Image>
+                    <div className="imgbox">
+                    <img src={imgurl.p7} ></img>
+                    </div>
+                      
                        <span>日转换效率</span>
                        <Text strong ellipsis>56%</Text>
                    </div>
@@ -349,7 +400,7 @@ export default function Index() {
              </Titlelayout>
           </div>
           <div className="middle">
-            <div id="he-plugin-standard" ref={wref} ></div>
+            {/* <div id="he-plugin-standard" ref={wref} ></div> */}
             <Titlelayout>
               <div className="item">
                 <div className="content">
@@ -394,16 +445,16 @@ export default function Index() {
                 </div>
               </div>
             </Titlelayout>
-            <Titlelayout title={"日发电量及收益"} fc="#333" bl="none" pl="0px" hv="24px">
-              <div ref={plref} style={{ width: "100%", height: "100%" }}></div>
+            <Titlelayout title={"日发电量及收益"} fc="#333" bl="none" pl="0px" hv="24px" layout="flex">
+              <div ref={plref} style={{flex: 1}}></div>
             </Titlelayout>
           </div>
           <div className="lower">
-          <Titlelayout title={"实时辐射与功率曲线"} fc="#333" bl="none" pl="0px" hv="24px">
-              <div ref={lref} style={{ width: "100%", height: "100%" }}></div>
+          <Titlelayout title={"实时辐射与功率曲线"} fc="#333" bl="none" pl="0px" hv="24px" layout="flex">
+              <div ref={lref} style={{ flex:1}}></div>
           </Titlelayout>
-          <Titlelayout title={"累计发电量及节能减排"} fc="#333" bl="none" pl="0px" hv="24px">
-              <div ref={stref} style={{ width: "100%", height: "100%" }}></div>
+          <Titlelayout title={"累计发电量及节能减排"} fc="#333" bl="none" pl="0px" hv="24px" layout="flex">
+              <div ref={stref} style={{flex: 1}}></div>
           </Titlelayout>
          
           </div>

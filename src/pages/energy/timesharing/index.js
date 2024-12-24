@@ -1,11 +1,11 @@
 import React,{useEffect, useState,useRef,useMemo} from 'react'
 import {useSelector } from 'react-redux'
 import {useOutletContext} from 'react-router-dom' 
-import styled from 'styled-components'
+import styled, {css} from 'styled-components'
 
 import Ichart  from '@com/useEcharts/Ichart';
 import { energyShare, Monitoring } from '@api/api'
-import {selectProjectId} from '@redux/systemconfig.js'
+import {selectProjectId,adaptation} from '@redux/systemconfig.js'
 import {Tree ,Radio, Empty, Input } from 'antd'
  
 import Titlelayout from "@com/titlelayout";
@@ -16,17 +16,23 @@ import {getTime, numberformat} from "@com/usehandler"
 const {Search} = Input
 const {QuerySpaceTrees, queryArea, queryLine} = energyShare
 const {LineManagerQuery} = Monitoring.LineManager // 线路查询
- 
+ const sty = css`
+ grid-template-columns: 1fr 3fr min-content;
+ `
 const Mainbox = styled.div`
   && {
     flex:1;
     display: grid;
     grid-template-columns: 296px 952px 1fr;
     column-gap: 16px;
+    ${props => props.laptop ? sty : null}
     .treebox {
        display: grid;
        grid-template-rows: 32px 32px 604px;
        row-gap: 32px;
+       span.ant-radio+*{
+        padding: ${props=> props.laptop ?  "padding: 0px" : "padding: 0 8px"};
+       }
        .ant-tree {
         overflow-y: auto;
       }
@@ -51,7 +57,7 @@ export default function Index() {
   const [treeData,setTreeData] =useState([])
  
   let {exparams} = useOutletContext() 
- 
+  let {laptop} = useSelector(adaptation)
   const {areaId, date, type} =  exparams
  
   const [selectkeys, setSelectkeys] = useState([])
@@ -224,7 +230,8 @@ const [baropt, pieopt, momYoy] = useMemo(() => {
     legend: {
       bottom: 0,
       top: 'auto',
-      itemGap: 5
+      itemGap: 5,
+      type: "scroll"
     },
     grid: {
       bottom: 20
@@ -272,7 +279,7 @@ momYoy
  
   return (
     <Pagecount bgcolor="transparent" pd="0">
-      <Mainbox>
+      <Mainbox laptop={laptop}>
         <Titlelayout key="line">
         <div className="treebox">
         <Radio.Group onChange={switchLine} style={radiosty} value={typeTree}>

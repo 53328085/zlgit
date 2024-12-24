@@ -2,12 +2,13 @@ import React, { useState, useEffect, useRef } from 'react'
 import { QuestionCircleFilled, RightOutlined, LeftOutlined} from '@ant-design/icons';
 import {   Button, Image, Empty, message,Space } from 'antd';
 import styled from 'styled-components';
+import {useSelector} from 'react-redux'
 import Titlelayout from '@com/titlelayout'
 import Ichart  from '@com/useEcharts/Ichart';
 import Custmodl from '@com/useModal'
 import imgurl from './img/index.js'
 import { useRequest } from "ahooks";
- 
+import { adaptation } from '@redux/systemconfig.js' 
 import {CustButton} from '@com/useButton'
 import { energyDesigner } from '@api/api.js'
  
@@ -155,7 +156,7 @@ export default function Index(props) {
   const [keyword, setKeyword] = useState('')
  
   const [messageApi, contextHolder] = message.useMessage();
-  
+  let {laptop} = useSelector(adaptation)
  
   let [state, setstate] = useState('开启');
   let [operateState, setoperateState] = useState(true);
@@ -360,11 +361,12 @@ export default function Index(props) {
             <div className="right">
               <Titlelayout title={title + '路灯能耗 (kWh)'} layout="flex">
                 <div className="airEnergy"   >
-                 <div className='imgborder'>
-                  <div className='imgbox'>
+                {laptop ? null :    <div className='imgborder'>
+                <div className='imgbox'>
                     <Image src={imgurl.logo} preview={false} width={64} height={64} />
                     </div>
-                    </div>
+
+                    </div> }
                   <div className="airEnergyData">
                     <div className='line'>
                     <p>{lightDate} :{total?.periodValue ? total?.periodValue : '0.00'}</p>

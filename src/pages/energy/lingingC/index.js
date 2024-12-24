@@ -1,13 +1,14 @@
 import React, { useState,  useRef } from 'react'
  
 import {  QuestionCircleFilled, RightOutlined, LeftOutlined } from '@ant-design/icons';
+import {useSelector} from "react-redux"
 import {   Button, Image,   message, Space } from 'antd';
-import styled from 'styled-components';
+import styled, {css} from 'styled-components';
 import Titlelayout from '@com/titlelayout'
 import Custmodl from '@com/useModal'
 import imgurl from './img/index.js'
 import { useRequest } from "ahooks";
- 
+import {  adaptation } from '@redux/systemconfig.js'
 import Ichart  from '@com/useEcharts/Ichart'; 
 import { energyDesigner } from '@api/api.js'
 import {CustButton} from '@com/useButton'
@@ -15,7 +16,13 @@ import {useOutletContext} from 'react-router-dom'
 import Pagecount from "@com/pagecontent";
 import {Cspin, Serach, Cdivider} from '@com/comstyled'
 import {getTime} from '@com/usehandler'
-
+const sty=css`
+padding-left: 0px;
+font-size: 12px;
+.airEnergyData{
+  row-gap: 16px;
+}
+`
 const Mainbox = styled.div`
 && {
     flex: 1 1;
@@ -45,6 +52,7 @@ const Mainbox = styled.div`
           justify-content: space-between;
           column-gap: 16px;
           padding-left: 16px;
+        
           .imgborder {
             margin-top: 16px;
             height: 68px;
@@ -80,6 +88,7 @@ const Mainbox = styled.div`
               }
             }
           }
+          ${props => props.laptop ? sty : null}
         }
       }
     }
@@ -157,6 +166,7 @@ export default function Index(props) {
  
   let {exparams} = useOutletContext()
   let {view, areaId, date, type:dateType,  projectId} = exparams 
+  let {laptop} = useSelector(adaptation)
   const {
     queryPublicLights,
     querOverviewLight,
@@ -346,7 +356,7 @@ export default function Index(props) {
       {contextHolder}
       <Cspin size="large" spinning={loading} tip="控制命令下发中，请稍候……">
       {/*   <UseHeader {...headerProps} getValues={getFromChild}></UseHeader> */}
-        <Mainbox>
+        <Mainbox laptop={laptop}>
           <div className="maintop">
              <div className="chart"> 
               <Ichart {...options} />
@@ -354,11 +364,11 @@ export default function Index(props) {
             <div className="right">
               <Titlelayout title={lightDate + '路灯能耗 (kWh)'} layout="flex">
                 <div className="airEnergy">
-                  <div className='imgborder'>
+               {laptop ? null :  <div className='imgborder'>
                   <div className="imgbox">
                     <Image src={imgurl.light} preview={false} width={60} height={60} /> 
                   </div>
-                  </div>
+                  </div>}
                   <div className="airEnergyData">
                     <div className='line'>
                     <p>{lightDate} :{total.periodValue ? total.periodValue : '0.00'}</p>
