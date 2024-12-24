@@ -235,7 +235,7 @@ const Imgbg = memo(({projectId, areaVos}) => {
               </div>
               <div className="content">
                   <p className="key">今日费用 <span>(元)</span></p>
-                  <p className="value">{info.todayCost}</p>
+                  <p className="value">{info.todayCost==-1?"/":info.todayCost}</p>
               </div>
               <div className="content">
                   <p className="key">今日碳排<span>(kg)</span></p>
