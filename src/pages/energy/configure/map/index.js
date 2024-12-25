@@ -31,7 +31,7 @@ const Main = styled.div`
        justify-content: space-between;
       .text {
         padding-left: 16px;
-        border-left: 4px solid #237ae4;
+        border-left: 4px solid ${props=> props.theme.primaryColor};
         display: flex;
         align-items: center;
         height: 32px;
@@ -61,7 +61,7 @@ const Main = styled.div`
     .set {
       position: relative;
       padding: 0;
-     // border: #237ae4;
+  
       flex:0 0 1368px;
       height: 800px;
       background-color: ${props=>props.theme.primaryderived || "#fffffff"};

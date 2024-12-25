@@ -228,13 +228,14 @@ const selectTheme =(id)=> {
   try {
     refid.current=id
     dispatch(getThemeId(id))
-    let formdata = themes.find(t => t.id ==id)
+    let formdata = Themes.find(t => t.id ==id)
+     
     dispatch(getThemeColor({id: formdata.id, name: formdata.name, ...formdata.context}))
   form.setFieldsValue({id: formdata.id, name: formdata.name, ...formdata.context})
   //  refid.current=id;
   
   } catch (error) {
-    
+    console.log(error)
   }
 
 }

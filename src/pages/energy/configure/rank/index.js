@@ -3,7 +3,7 @@ import styled from "styled-components";
 import { useSelector } from "react-redux";
 import { CustButtonT, CustButton } from '@com/useButton'
 import Cupload from "@com/useUpload.js"
-import { selectProjectId } from '@redux/systemconfig.js'
+import { selectProjectId,themeColor } from '@redux/systemconfig.js'
 import { message, Switch, Input, InputNumber, Space, Divider, Button, Checkbox, Tag, Alert } from 'antd';
 import { EnergyRankingDesign } from '@api/api.js'
 import { Cspin } from "@com/comstyled"
@@ -25,6 +25,7 @@ const Main = styled.div`
 
 export default function Index() {
     let { setCustview } = useOutletContext() || {}
+    const {primaryColor} = useSelector(themeColor)
     const projectId = useSelector(selectProjectId)
     const tbcolumns = [
         {
@@ -173,7 +174,7 @@ export default function Index() {
     }, [])
     const CustView = (
         <div style={{ width: '100%', height: '100%' }}>
-            <p style={{ height: '32px', borderLeft: '4px solid #237ae4', paddingLeft: '16px', lineHeight: '32px' }}>排名设置</p>
+            <p style={{ height: '32px', borderLeft: `4px solid ${primaryColor}`, paddingLeft: '16px', lineHeight: '32px' }}>排名设置</p>
         </div>
     )
     useEffect(() => {
