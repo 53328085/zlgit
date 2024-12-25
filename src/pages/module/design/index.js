@@ -103,7 +103,7 @@ export default function Index() {
   const defaluttheme =useSelector(themeColor)
   const Themes = useSelector(themes)
 
-  console.log(Themes)
+  console.log(defaluttheme)
  // const [themes, setThemes] = useState([])
   const {t} = useTranslation("comm","common")
   
@@ -242,7 +242,8 @@ const ondelete=async ()=> {
 
    try {
     let id = form.getFieldValue("id")
-    if(!Number.isInteger(id)) return message.warning("没有选择方案")
+    console.log(id)
+    if(!Number.isInteger(parseInt(id)) && id>0 ) return message.warning("没有选择方案")
     
     let params ={
       projectId,

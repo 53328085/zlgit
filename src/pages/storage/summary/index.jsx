@@ -1,19 +1,21 @@
 import React, { Fragment, useState, useEffect, useRef } from 'react'
 import style from './style.module.less'
 import { useNavigate, useOutletContext} from 'react-router-dom'
- 
+import {useSelector} from "react-redux"
 import { SiteSummaryRuntime, StorageAlarmRuntime, SiteManagerDesigner } from '@api/api.js'
 import { message, Typography, Empty} from 'antd'
 import Ichart  from '@com/useEcharts/Ichart'; 
 import { range } from 'lodash'
 import imgurl from './imgs'
- 
+import deep from './imgs/deep.svg'
+import light from './imgs/light.svg'
 import styled from 'styled-components'
  
 import Pagecount from "@com/pagecontent";
  
 import Titlelayout from "@com/titlelayout";
 import Cempty from '@com/useEmpty'
+import { themeColor } from '@redux/systemconfig.js'
 const {Link, Paragraph, Text} = Typography
 const  Mainbox = styled.div`
   display: grid;
@@ -66,6 +68,7 @@ const  Mainbox = styled.div`
        column-gap: 16px;
        .topology {
          position: relative;
+         background-color: ${props=> props.theme.primaryderived || "#ffffff"};
          .zhanwei{
                     width: 752px;
                     height: 696px;
@@ -76,8 +79,8 @@ const  Mainbox = styled.div`
                     justify-content: space-between;
                     flex-direction: column;
                     position: absolute;
-                    left: 223px;
-                    top: 367px;
+                    left: 202px;
+                    top: 338px;
                     padding: 6px 12px;
                     width: 164px;
                     height: 80px;
@@ -106,8 +109,8 @@ const  Mainbox = styled.div`
                     justify-content: space-between;
                     flex-direction: column;
                     position: absolute;
-                    right: 176px;
-                    top: 367px;
+                    right:214px;
+                    top: 338px;
                     padding: 4px 12px;
                     width: 164px;
                     height: 80px;
@@ -211,7 +214,7 @@ export default function Index() {
   let {exparams} = useOutletContext()
  
   let {areaId, stationName,  projectId} = exparams
- 
+  let {islight} = useSelector(themeColor)
   const navigate = useNavigate()
   const [cardData, setCardData] = useState(null)//卡片数据
   const [warningData, setWarningData] = useState([])//最新告警
@@ -549,7 +552,9 @@ export default function Index() {
           </div>
           <div className="rightdown" >
             <div className="topology">
-              <img src={imgurl.zhanwei} className={style.zhanwei}></img>
+             {
+              islight ? <img src={deep} className={style.zhanwei}></img> : <img src={light} className={style.zhanwei}></img>
+             } 
               {/* 储能总表 */}
               <div className='storageMeter'>
                 <div className='meterData'>

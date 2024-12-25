@@ -61,9 +61,10 @@ const Main = styled.div`
     .set {
       position: relative;
       padding: 0;
-      border: #237ae4;
-      flex-basis: 1368px;
+     // border: #237ae4;
+      flex:0 0 1368px;
       height: 800px;
+      background-color: ${props=>props.theme.primaryderived || "#fffffff"};
       .img{
          position: absolute;
       }

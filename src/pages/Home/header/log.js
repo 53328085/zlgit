@@ -376,7 +376,7 @@ const settheme = async (themeId) => {
     
        dispatch(getThemeId(themeId))
        let data = Themes.find(t =>t.id==themeId)
-       dispatch(getThemeColor({id:data.id, name:data.name, ...data.context}))
+          dispatch(getThemeColor({id:data.id, name:data.name, ...data.context}))
        /* let obj= themes.find(t =>t.id==themeId)?.context
        if(obj && isObject(JSON.parse(obj))){
         dispatch(getThemeColor(JSON.parse(obj)))
