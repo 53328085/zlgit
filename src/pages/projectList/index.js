@@ -39,7 +39,7 @@ import {Circle} from '@com/useIcon'
  
 import Projectform from './projectform'
 import { systemConfigInfo, getJump, iszhCN, getWebsiteState, getWebsiteMenu, adaptation} from "@redux/systemconfig";
- 
+
 import UseTabel from '@com/useTable'
 import Account from "./account";
 //import { runMenus } from "../../redux/systemconfig";
@@ -268,6 +268,7 @@ export default function Index() {
  const {t} = useTranslation(["comm","platformcig"])
   const iszh = useSelector(iszhCN)
   const {laptop} = useSelector(adaptation) || {}
+  const {userId,roleType} =useSelector(selectUser)
   const navigate = useNavigate();
   const dispatch = useDispatch();
    
@@ -315,7 +316,7 @@ export default function Index() {
 
  const enterProject = async ({id, type, publishState}) => { // type 1是设计type 2是运行
    try {
-     dispatch(getWebsiteState(id))
+     dispatch(getWebsiteState({id, userId}))
     // dispatch(configProject(type === 1))
      let {runMenus, designerMenus,siderRunMenus, siderDesignerMenus, homeMenuNO} = await dispatch(getWebsiteMenu(id)).unwrap()
     
@@ -602,7 +603,7 @@ tableProps.pagination.size=laptop ? "small" : "default" // 页码大小默认
 // 操作记录 end
 
 // 运维管理员管理 start
- const {roleType} = useSelector(selectUser)
+ //const {roleType} = useSelector(selectUser)
  const operRef = useRef()
  const devOps = () => {
      operRef.current.onOpen();

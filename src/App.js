@@ -21,6 +21,7 @@ import {getprimarycolors} from "@com/usehandler";
 function App() {
   const dispatch = useDispatch()
   const theme = useSelector(themeColor)
+ 
 /*   const theme = useSelector(themeColor)
  
    
@@ -72,13 +73,13 @@ ratiostr.addEventListener("change", updateratio)
 
  }, [width, height])
  useEffect(()=> {
-    try {
+   /*  try {
       let primaryderiveds=  getprimarycolors().map?.(d => d.value) || []
       let primaryderived=primaryderiveds?.[5]||"#ffffff"
       dispatch(getThemeColor({primaryderived}))
     } catch (error) {
       
-    }
+    } */
    
  }, [])
  

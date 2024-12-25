@@ -3,8 +3,10 @@ import leftBox from '@imgs/leftBox.png'
 import flower from '@imgs/flower.png'
 import styled from 'styled-components'
 import { Progress ,Image, Typography} from 'antd';
+import {useSelector} from "react-redux"
 import Titlelayout from '@com/titlelayout';
 import {CustTransO} from "@com/useButton"
+import { themeColor } from '@redux/systemconfig.js'
 const {Paragraph,Text} =Typography
 const CProgress = styled(Progress)`
 && {
@@ -60,7 +62,7 @@ const Mainbox = styled.div`
 `
  
 export default function card({name='',bgcolor='#009966', title='',value=0, yoy=0}) {
- 
+  let {primaryderived,carnstrokecolor,carntrailcolor} = useSelector(themeColor)
  let content 
  if(title) {
     content = (
@@ -70,7 +72,7 @@ export default function card({name='',bgcolor='#009966', title='',value=0, yoy=0
                <p style={{textAlign:"right"}}><Text className='num' ellipsis={value} ><CustTransO ns="comm" text="intlNumberWithOptions" val={value} /></Text></p>
               <div style={{display: "flex", rowGap: '16px'}}>
                 <span style={{fontSize: '12px', paddingRight: '8px'}}>{yoy}</span>
-                <CProgress percent={parseFloat(yoy)} showInfo={false} size="small" trailColor={bgcolor} strokeColor="#ff9" />
+                <CProgress percent={parseFloat(yoy)} showInfo={false} size="small" trailColor={carntrailcolor} strokeColor={carnstrokecolor} />
               </div>
            </div>
        </div>
@@ -92,7 +94,7 @@ export default function card({name='',bgcolor='#009966', title='',value=0, yoy=0
  }
 
   return (
-    <Titlelayout title={title} bgcolor={bgcolor} layout="flex" hv="24px" bg="transparent" bl="4px solid #fff" fc="#fff" style={{height: '112px'}}>
+    <Titlelayout title={title} bgcolor={primaryderived} layout="flex" hv="24px" bg="transparent" bl="4px solid #fff" fc="#fff" style={{height: '112px'}}>
         <Mainbox>
             {content}
         </Mainbox>

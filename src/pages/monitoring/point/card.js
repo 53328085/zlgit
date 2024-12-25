@@ -37,7 +37,7 @@ export default function Icard(props) {
                     </div>
                     <div className="btnBoxStyle">
 
-                        <p className="timeStyle" title={props?.fields[3]?.name}>{props.fields[3] ? props.fields[3].name : ''}</p><p className="timeValueStyle" style={{ color: props?.fields[3]?.value == 'Close' ? "#f00" : "#3f0" }}>{
+                        <p className="timeStyle" title={props?.fields[3]?.name}>{props.fields[3] ? props.fields[3].name : ''}</p><p className="timeValueStyle" style={{ color: props?.fields[3]?.value == 'Close' ? "#f00" : "null" }}>{
                             props.fields[3] ? (statet[props.fields[3].value?.toLowerCase()] || props.fields[3].value) : ''
                         }</p>
 

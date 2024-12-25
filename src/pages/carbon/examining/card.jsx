@@ -2,7 +2,9 @@ import React from 'react'
 import Titlelayout from '@com/titlelayout';
 import flower from '@imgs/flower.png'
 import styled from 'styled-components'
+import {useSelector} from "react-redux"
 import {CustTransO} from "@com/useButton"
+import { themeColor } from '@redux/systemconfig.js'
 import { Progress } from 'antd';
 const Progressdiv =styled.progress`
 
@@ -22,47 +24,39 @@ const Progressdiv =styled.progress`
 }
 
 `
-export default function card({title,bgcolor='#043665',numberval=0.00}) {
-    const Mainbox = styled.div`
-    display: flex;
-    flex: 1;
-   
-    align-items: center;
-    padding: 0 8px;
-    color: #fff;
-    column-gap: 34px;
-    overflow: hidden;
-    .content {
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      row-gap: 16px;
-      p {
-        line-height: 1;
-      }
-      .title {
-        color: #f2f2f2;
-      }
-      .number {
-        font-size: 28px;
-        font-weight: bold;
-      }
-    }
+const Mainbox = styled.div`
+display: flex;
+flex: 1;
+
+align-items: center;
+padding: 0 8px;
+color: #fff;
+column-gap: 34px;
+overflow: hidden;
+.content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  row-gap: 16px;
+  p {
+    line-height: 1;
+  }
+  .title {
+    color: #f2f2f2;
+  }
+  .number {
+    font-size: 28px;
+    font-weight: bold;
+  }
+}
 `
- /*  <div style={cardstyle}>
-      
-       <div style={wrapdiv}>
-        <img src={flower} alt="" style={{width:42,height:42}}/>
-        <div>
-            <p style={{fontSize:16,fontWeight:400,lineHeight:'30px',textAlign:'right',width:210}}>{name}</p>
-            <p style={{fontSize:28,fontWeight:700,lineHeight:'50px',textAlign:'right',width:210}}>{numberval.toFixed(2)}</p>
-        </div>
-       </div>
-    </div> */
+export default function card({title,bgcolor='#043665',numberval=0.00}) {
+
+let {primaryderived} = useSelector(themeColor)
   return (
   
-     <Titlelayout   bgcolor={bgcolor} layout="flex" hv="24px" bg="transparent" bl="4px solid #fff" fc="#fff" style={{height: '92px', width: '324px'}}>
+     <Titlelayout   bgcolor={primaryderived} layout="flex" hv="24px" bg="transparent" bl="4px solid #fff" fc="#fff" style={{height: '92px', width: '324px'}}>
        <Mainbox>
           <img src={flower} alt="" style={{width:42,height:42}}/>
           <div className='content'>

@@ -16,19 +16,20 @@ import styled from "styled-components";
 
 import {ProjectSetting,CustTheme} from '@api/api.js'
 
-
+import {initithemeColor} from "@com/defaultcolor"
 //import useMap from "@com/useMap/useInitMap"
 //import useMap from "@com/useMap/indexset"
 import Cupload from "@com/useUpload.js" 
 import Titlelayout from '@com/titlelayout'
 import {useSelector, useDispatch} from "react-redux";
 import {useTranslation} from 'react-i18next'
-import {manager, maintenance} from '@redux/user' //   布尔值  是否是 项目管理员， 运营人员；
-import {publishState, getCurrProjectInfo, currProject, iszhCN, selectProjectId, getThemeColor,themeColor} from '@redux/systemconfig' // 布尔值 发布状态 
+
+import {publishState, getCurrProjectInfo, currProject, iszhCN, selectProjectId, getThemeColor,themeColor,themes,themeId, getThemeId, getThemes} from '@redux/systemconfig' // 布尔值 发布状态 
  
 import {SaveButton, CustButton} from "@com/useButton" ;
 import {getprimarycolors} from "@com/usehandler";
 import Ccolor from './custColor';
+import { isObject } from "lodash";
 
 const {Text, Link} =Typography
 const { Item } = Form;
@@ -43,7 +44,7 @@ const Ctag=styled(Tag)`
 `
  const Formbox = styled(Form)`
   display: grid;
-  grid-template-columns: 500px 500px;
+  grid-template-columns: repeat(auto-fill, minmax(500px, 1fr)); 
   column-gap: 64px ;
   //grid-template-rows: repeat(16, 32px);
   //gap: 16px 128px;
@@ -99,17 +100,52 @@ export default function Index() {
   const ispublish = useSelector(publishState)
   const iszh = useSelector(iszhCN)
   const projectId= useSelector(selectProjectId)
-  const {themeId,primaryderived} =useSelector(themeColor)
- 
-  const [themes, setThemes] = useState([])
+  const defaluttheme =useSelector(themeColor)
+  const Themes = useSelector(themes)
+
+  console.log(Themes)
+ // const [themes, setThemes] = useState([])
   const {t} = useTranslation("comm","common")
   
 
   const [form] = Form.useForm();
 
   const refid = useRef() // 保存时的ID
- const currtheme = useRef()
+
 const getTheme = async()=>{
+  try {
+    let {success, data, errMsg} = await  CustTheme.QueryTheme(projectId)
+    if(success && Array.isArray(data) && data.length >0 ){
+      let datas = data.map(d => ({...d, context: JSON.parse(d.context)}))
+      let ids = data.map(d =>d.id);
+      let maxid = Math.max(...ids)
+      let minid = Math.min(...ids)
+      let formdata;
+      if(refid.current == 0) { // 新增时
+         dispatch(getThemeId(maxid))
+         formdata = datas.find(d => d.id == maxid);
+         
+      }else if(refid.current==-1){ // 删除时
+        dispatch(getThemeId(minid))
+        formdata=datas[0]
+      }else if(refid.current>0){ // 编辑时
+        formdata = datas.find(d => d.id == refid.current)
+      }
+      dispatch(getThemeColor({id: formdata.id, name: formdata.name, ...formdata.context}))
+      dispatch(getThemes(datas)) 
+    }else{
+      dispatch(getThemeColor(initithemeColor))
+      dispatch(getThemeId(NaN))
+      dispatch(getThemes([])) 
+    //  form.resetFields()
+      if(!success) message.warning(errMsg || "数据出错")
+    }
+  } catch (error) {
+    console.log(error)
+  }
+ 
+}
+/* const getTheme = async()=>{
   try {
     let {success, data, errMsg} = await  CustTheme.QueryTheme(projectId)
     if(success && Array.isArray(data) && data.length >0 ){
@@ -128,10 +164,10 @@ const getTheme = async()=>{
       currtheme.current = formdata;
       dispatch(getThemeColor(formdata.context))
       form.setFieldsValue({id: formdata.id, name: formdata.name, ...formdata.context})
-      setThemes(datas)
+     
 
     }else{
-      setThemes([])
+    
       currtheme.current(null)
       if(!success) message.warning(errMsg || "数据出错")
     }
@@ -139,20 +175,22 @@ const getTheme = async()=>{
     console.log(error)
   }
  
-}
+} */
 
 
 const onSave =async () => { // 保存
   try {
     let {id, name, ...params} = await form.validateFields()
-    console.log(params)
     refid.current=id;
     let obj = {id, name, context: JSON.stringify(params)};
    
     let {success, errMsg} =  await  CustTheme.UpdateTheme(projectId, [obj])
     if(success){
       message.success("保存成功")
-      getTheme()
+    
+     if(id > 0)  dispatch(getThemeId(id)) // 编辑时
+    
+      getTheme();
     }else{
       message.warning(errMsg || "数据出错")
     }
@@ -165,13 +203,19 @@ const onSave =async () => { // 保存
 }
 const onrest=()=>{
   try {
-    if(refid!=0 && themes?.length>0 && currtheme ){
+    let id = form.getFieldValue("id")
+    if(id==0){
+      form.resetFields()
+    }else if(id>0){
+      form.setFieldsValue(defaluttheme)
+    }
+    /* if(refid!=0 && themes?.length>0 && currtheme ){
       let formdata = currtheme.current
      
       dispatch(getThemeColor(formdata.context))
       form.setFieldsValue({id: formdata.id, name: formdata.name, ...formdata.context})
   
-    }
+    } */
   } catch (error) {
     console.log(error)
   }
@@ -182,10 +226,12 @@ const onadd =()=> {
 }
 const selectTheme =(id)=> {
   try {
+    refid.current=id
+    dispatch(getThemeId(id))
     let formdata = themes.find(t => t.id ==id)
-    dispatch(getThemeColor(formdata.context))
-    form.setFieldsValue({id: formdata.id, name: formdata.name, ...formdata.context})
-    refid.current=id;
+    dispatch(getThemeColor({id: formdata.id, name: formdata.name, ...formdata.context}))
+  form.setFieldsValue({id: formdata.id, name: formdata.name, ...formdata.context})
+  //  refid.current=id;
   
   } catch (error) {
     
@@ -195,16 +241,18 @@ const selectTheme =(id)=> {
 const ondelete=async ()=> {
 
    try {
-    if(!Number.isInteger(refid.current)) return message.warning("没有选择方案")
+    let id = form.getFieldValue("id")
+    if(!Number.isInteger(id)) return message.warning("没有选择方案")
+    
     let params ={
       projectId,
-      themeId: refid.current
+      themeId: id
     }
    
     let {success,errMsg}=await  CustTheme.DeleteTheme(params)
     if(success){
       message.success("删除成功")
-      refid.current=undefined
+      refid.current=-1
       getTheme()
     }else{
 message.warning(errMsg|| "数据出错")
@@ -214,9 +262,13 @@ message.warning(errMsg|| "数据出错")
    }
 }
  useEffect(() => {
-  getTheme(); 
+ // getTheme(); 
 }, [projectId]) 
- 
+useEffect(()=>{
+  if(isObject(defaluttheme)){
+    form.setFieldsValue(defaluttheme)
+  }
+},[defaluttheme])
   return (
     <Titlelayout title={<div style={{display: 'flex', justifyContent: "space-between", alignItems: 'center'}}>
       <span>网站设计</span>  <Space size={32}>
@@ -406,7 +458,7 @@ message.warning(errMsg|| "数据出错")
 
           let arrcolor=getprimarycolors().map?.(d => d.value)??[];
             return (
-              <Item initialValue={primaryderived || "#ffffff"} name="primaryderived" >
+              <Item initialValue="#ffffff" name="primaryderived" >
               <Ccolor name="primaryderived"  arrcolor={arrcolor}></Ccolor>
               </Item>
             )
@@ -417,7 +469,7 @@ message.warning(errMsg|| "数据出错")
       <Item label="已有方案"    >
         <div style={{display: "flex", rowGap: "8px", flexWrap: "wrap"}}>
         {
-         themes?.length > 0 ?  themes?.map?.(t => <Ctag key={t.id} color={t?.context?.primaryColor} onClick={() => selectTheme(t.id)}>{t.name}</Ctag>): null
+         Themes?.length > 0 ?  Themes?.map?.(t => <Ctag key={t.id} color={t?.context?.primaryColor} onClick={() => selectTheme(t.id)}>{t.name}</Ctag>): null
         }
         </div>
       </Item>
@@ -425,7 +477,14 @@ message.warning(errMsg|| "数据出错")
           <Input hidden></Input>
        </Item>
       </div>
-
+       <div className="leftlayout">
+       <Item label="碳排概述进度条颜色"  name="carnstrokecolor" initialValue="#ffff99">
+      <Ccolor name="carnstrokecolor" />
+      </Item>
+      <Item label="碳排概述进度条末完成颜色" labelCol={{flex:"13em"}} name="carntrailcolor" initialValue="#6633cc">
+      <Ccolor name="carntrailcolor" />
+      </Item>
+       </div>
     </Formbox>
     </Titlelayout>
   );

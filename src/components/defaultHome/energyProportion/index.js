@@ -21,7 +21,7 @@ export default function DefaultHome(props){
   const projectId = useSelector(selectProjectId)
   const [options, setOptions] = useState({
     type: 3,
-    pieData: { data: [], total: '100%', radius: ["55%",  "70%"] },
+    pieData: { data: [], total: '100%', radius: ["55%",  "70%"]},
     legend: {
       top: 16,
       orient: 'vertical',

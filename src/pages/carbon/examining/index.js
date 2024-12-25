@@ -10,8 +10,9 @@ import UseTable from '@com/useTable'
 import {Carbon} from '@api/api'
 import {useOutletContext} from 'react-router-dom'
 import {isObject} from "@com/usehandler"
-import { message } from 'antd';
+import {useSelector} from "react-redux"
 import {CustTransO, i18warning, i18t} from "@com/useButton"
+import { themeColor } from '@redux/systemconfig.js'
 import { 
   useAnnualQuery,
   useAnalysisQuery,
@@ -33,7 +34,7 @@ const Mainbox = styled.div`
       flex: 1;
       display: flex;
       margin: 16px -16px -16px -16px;
-      background-image: linear-gradient(to right, rgb(16,32,61), rgb(4,53,102),rgb(16,32,61)); 
+    //  background-image: linear-gradient(to right, rgb(16,32,61), rgb(4,53,102),rgb(16,32,61)); 
       display: flex;
        padding-top: 16px;
        flex-direction: column;
@@ -65,23 +66,23 @@ export default function Index() {
   let {exparams, enterpriseId, iszh} = useOutletContext()   
   let {carbonY} = exparams
   //const [annualData, setAnnualData] = useState({})
-
+  let {primaryderived} = useSelector(themeColor)
   const  roption= useRef({
     series: [{type: "line", seriesLayoutBy: 'row', areaStyle: null, showSymbol: true, itemStyle: {
-      color: "#63d98a"
+    //  color: "#63d98a"
     }},
      {type: "line", seriesLayoutBy: 'row',  areaStyle: null,showSymbol: true, itemStyle: {
-      color: "#248fff"
+     // color: "#248fff"
      }},
      {type: "bar", seriesLayoutBy: 'row', itemStyle: {
-      color: "#333399",
+    //  color: "#333399",
       
      }},
      {type: "bar", seriesLayoutBy: 'row', itemStyle: {
-      color: "#f3cd61"
+    //  color: "#f3cd61"
      }}, 
      {type: "bar", seriesLayoutBy: 'row', itemStyle: {
-      color: "#ff6061"
+     // color: "#ff6061"
      }}
     ],
     xAxis: {
@@ -181,24 +182,7 @@ const getMonthData =async () =>{
     }
 
    })
-/*    for(let [index, value] of y2.entries()) {
-    console.log(index)
-      if(parseFloat(value) > parseFloat(yy[index])) {
-        y4.splice(index, 1, value)
-       
-        y2.splice(index, 0, 0)
-        continue
-      }else if(parseFloat(value) >parseFloat(y1[index])) {
-         console.log(index)
-         y3.splice(index, 1, value)
-         y2.splice(index, 0, 0)
-      }
-   } */
-  /*   {name:  i18t('carbon','Monthlyquota') , icon: "circle"},
-     {name: i18t('carbon','Monthlytargetvalue'),icon: "circle"},
-      {name: i18t('carbon','Monthlyemissions'), icon: 'roundRect'},
-      {name: i18t('carbon','abovetarget'), icon: 'roundRect'},
-      {name:i18t('carbon','overquota'),icon: 'roundRect'} */
+
    roption.current = ({
     ...roption.current,
     dataset: {
@@ -230,63 +214,7 @@ useEffect(() => {
 
 }, [enterpriseId, year])
 
- /*  const getAnnual = async () => {
-    try {
-      let year = carbonY.year()
-      let promise =[QueryAnnualData(enterpriseId, year),  QueryMonthlyAnalysis(enterpriseId, year)] 
-      let [{value: {success: asuc, data: AnnualData, errMsg: aerr}}
-        ,{value: {success: msuc, data:monthlyData, errMsg: merr}} ] = await Promise.allSettled(promise)
-      if(asuc && isObject(AnnualData) ) {
-        setAnnualData(AnnualData)
-      }else {
-        if(!asuc) message.warning(aerr || '数据出错')
-        setAnnualData({})
-      }
-      if(msuc && isObject(monthlyData)) {
-         let {x=[], y=[], y1=[], y2=[]} = monthlyData;
-         console.log(x)
-         console.log(y)
-         console.log(y1)
-         console.log(y2)
-         let len = x.length
-         let y3 =new Array(len).fill(0),  y4 = new Array(len).fill(0);  // y4 超配额， y3超目标
-         for(let [index, value] of y2.entries()) {
-            if(parseFloat(value) > parseFloat(y[index])) {
-              y4.splice(index, 1, value)
-              y2.splice(index, 1, '-')
-              continue
-            }else if(parseFloat(value) >parseFloat(y1[index])) {
-               y3.splice(index, 1, value)
-               y2.splice(index, 1, '-')
-            }
-         }
-         console.log(y3)
-         console.log(y4)
-         setRoption({
-          ...roption,
-          dataset: {
-            ...roption.dataset,
-            dimensions: [
-              {name: '日期', displayName: '日期', type: "time"},
-              {name: '月度配额', displayName: '月度配额',},
-              {name: '月度目标值', displayName: '月度目标值',},
-              {name: '月度排放量', displayName: '月度排放量',},
-              {name: '月度排放量(超目标)', displayName: '月度排放量(超目标)',},
-              {name: '月度排放量(超预配额)', displayName: '月度排放量(超预配额)',},
-            ],
-            source: [x, y, y1, y2, y3, y4],
-            sourceHeade: false,
-          //  
-          }
-         })
-      }
-
-    } catch (error) {
-      console.log(error)
-    }
-  
-   
-  } */
+ 
   const [tableData, setTableData] = useState([])
   const getTableData = async ({current, pageSize }) => {
      if(Number.isInteger(enterpriseId) && carbonY) {
@@ -386,7 +314,7 @@ useEffect(() => {
      
      
        
-          <Titlelayout title={<CustTransO ns="carbon" text="Monthlyanalysis" param="(tCO₂)" />} layout="flex" bgcolor="#14223e" bg="#14223e" fc="#fff"  key="chart">
+          <Titlelayout title={<CustTransO ns="carbon" text="Monthlyanalysis" param="(tCO₂)" />} layout="flex" bgcolor={primaryderived} bg={primaryderived} fc="#fff"  key="chart">
               <div  className='chartbox'>
                 <Ichart {...roption.current} />
               </div>

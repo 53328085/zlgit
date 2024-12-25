@@ -151,7 +151,9 @@ const Cardbox=styled.div`
                 text-overflow: ellipsis;
             }
 
-          
+            .timeValueStyle{
+              color: ${props => props.theme.fieldvalue || "#ffffff"};
+            }
         }
     }
 
