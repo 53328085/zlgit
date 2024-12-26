@@ -34,7 +34,7 @@ export default function Index({value, onChange, name, arrcolor})  {
     const  onColorChange= (hex)=> { 
       dispatch(getThemeColor({[name]: hex}))
       if( name=="primaryColor") window.localStorage.setItem("CustThemeColor", hex)
-      onChange(hex)
+      onChange?.(hex)
       setShowv(hex)
     }
    

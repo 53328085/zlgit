@@ -17,14 +17,12 @@ import styled from "styled-components";
 import {ProjectSetting,CustTheme} from '@api/api.js'
 
 import {initithemeColor} from "@com/defaultcolor"
-//import useMap from "@com/useMap/useInitMap"
-//import useMap from "@com/useMap/indexset"
-import Cupload from "@com/useUpload.js" 
+
 import Titlelayout from '@com/titlelayout'
 import {useSelector, useDispatch} from "react-redux";
 import {useTranslation} from 'react-i18next'
 
-import {publishState, getCurrProjectInfo, currProject, iszhCN, selectProjectId, getThemeColor,themeColor,themes,themeId, getThemeId, getThemes} from '@redux/systemconfig' // 布尔值 发布状态 
+import {publishState, getCurrProjectInfo, currProject, iszhCN, selectProjectId, getThemeColor,themeColor,themes,themeId, getThemeId, getThemes, selectedtheme} from '@redux/systemconfig' // 布尔值 发布状态 
  
 import {SaveButton, CustButton} from "@com/useButton" ;
 import {getprimarycolors} from "@com/usehandler";
@@ -101,13 +99,13 @@ export default function Index() {
   const iszh = useSelector(iszhCN)
   const projectId= useSelector(selectProjectId)
   const defaluttheme =useSelector(themeColor)
+  const SelectedTheme = useSelector(selectedtheme)
   const Themes = useSelector(themes)
 
-  console.log(defaluttheme)
  // const [themes, setThemes] = useState([])
-  const {t} = useTranslation("comm","common")
+ // const {t} = useTranslation("comm","common")
   
-
+  console.log(SelectedTheme);
   const [form] = Form.useForm();
 
   const refid = useRef() // 保存时的ID
@@ -119,18 +117,19 @@ const getTheme = async()=>{
       let datas = data.map(d => ({...d, context: JSON.parse(d.context)}))
       let ids = data.map(d =>d.id);
       let maxid = Math.max(...ids)
-      let minid = Math.min(...ids)
+    //  let minid = Math.min(...ids)
       let formdata;
       if(refid.current == 0) { // 新增时
-         dispatch(getThemeId(maxid))
+         
          formdata = datas.find(d => d.id == maxid);
          
       }else if(refid.current==-1){ // 删除时
-        dispatch(getThemeId(minid))
+       
         formdata=datas[0]
       }else if(refid.current>0){ // 编辑时
         formdata = datas.find(d => d.id == refid.current)
       }
+      dispatch(getThemeId(formdata.id))
       dispatch(getThemeColor({id: formdata.id, name: formdata.name, ...formdata.context}))
       dispatch(getThemes(datas)) 
     }else{
@@ -270,7 +269,15 @@ useEffect(()=>{
   if(isObject(defaluttheme)){
     form.setFieldsValue(defaluttheme)
   }
+  
 },[defaluttheme])
+useEffect(()=>{
+  return ()=> {
+    
+      dispatch(getThemeColor(SelectedTheme))
+    }
+  
+},[])
   return (
     <Titlelayout title={<div style={{display: 'flex', justifyContent: "space-between", alignItems: 'center'}}>
       <span>网站设计</span>  <Space size={32}>
@@ -457,10 +464,11 @@ useEffect(()=>{
        <Item label="主题衍生背景色" shouldUpdate={(cur, pre) => cur.primaryColor!=pre.primaryColor} >
         {
           ()=> {
-
+         
           let arrcolor=getprimarycolors().map?.(d => d.value)??[];
+         
             return (
-              <Item initialValue="#ffffff" name="primaryderived" >
+              <Item initialValue="#4a9af0" name="primaryderived" >
               <Ccolor name="primaryderived"  arrcolor={arrcolor}></Ccolor>
               </Item>
             )

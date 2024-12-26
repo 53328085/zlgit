@@ -561,8 +561,8 @@ export const themeId= state => state.system.themeId
  
 } */ 
  
-/*  
-  export const themeColor =  createSelector( // 
+
+  export const selectedtheme =  createSelector( // 已选择的的方案
     themes,
     themeId,
     (datas, tid)=> {
@@ -578,7 +578,7 @@ export const themeId= state => state.system.themeId
         }
       }
     }
-  ) */
+  ) 
  export const themeColor = state => state.system.themeColor;
 
 export const themelist = createSelector(
