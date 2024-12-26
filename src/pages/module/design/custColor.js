@@ -39,7 +39,7 @@ export default function Index({value, onChange, name, arrcolor})  {
     }
    
     return   <div>
-      <input type='color' value={showv} onClick={changecolor} ref={ref => setEl(ref)} />
+      <input type='color' value={showv} onChange={()=>{}} onClick={changecolor} ref={ref => setEl(ref)} />
     {show && createPortal(<div style={sty}><SketchPicker
     presetColors={colors}
     disabled

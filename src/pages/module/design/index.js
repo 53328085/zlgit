@@ -105,7 +105,7 @@ export default function Index() {
  // const [themes, setThemes] = useState([])
  // const {t} = useTranslation("comm","common")
   
-  console.log(SelectedTheme);
+ // Sconsole.log(SelectedTheme);
   const [form] = Form.useForm();
 
   const refid = useRef() // 保存时的ID
