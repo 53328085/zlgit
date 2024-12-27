@@ -215,6 +215,7 @@ export default function Index() {
  
   let {areaId, stationName,  projectId} = exparams
   let {islight} = useSelector(themeColor)
+  console.log("islight",islight)
   const navigate = useNavigate()
   const [cardData, setCardData] = useState(null)//卡片数据
   const [warningData, setWarningData] = useState([])//最新告警
@@ -553,7 +554,7 @@ export default function Index() {
           <div className="rightdown" >
             <div className="topology">
              {
-              islight ? <img src={deep} className={style.zhanwei}></img> : <img src={light} className={style.zhanwei}></img>
+              islight ? <img src={light} className={style.zhanwei}></img> :<img src={deep} className={style.zhanwei}></img> 
              } 
               {/* 储能总表 */}
               <div className='storageMeter'>

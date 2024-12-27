@@ -104,14 +104,16 @@ export default function Index() {
 
  // const [themes, setThemes] = useState([])
  // const {t} = useTranslation("comm","common")
+console.log('defaulttheme', defaluttheme)
+ // console.log('SelectedTheme',SelectedTheme.primaryderived)
   
- // Sconsole.log(SelectedTheme);
   const [form] = Form.useForm();
 
   const refid = useRef() // 保存时的ID
 
 const getTheme = async()=>{
   try {
+    
     let {success, data, errMsg} = await  CustTheme.QueryTheme(projectId)
     if(success && Array.isArray(data) && data.length >0 ){
       let datas = data.map(d => ({...d, context: JSON.parse(d.context)}))
@@ -129,6 +131,7 @@ const getTheme = async()=>{
       }else if(refid.current>0){ // 编辑时
         formdata = datas.find(d => d.id == refid.current)
       }
+      console.log("formdata",formdata.context)
       dispatch(getThemeId(formdata.id))
       dispatch(getThemeColor({id: formdata.id, name: formdata.name, ...formdata.context}))
       dispatch(getThemes(datas)) 
@@ -180,6 +183,7 @@ const getTheme = async()=>{
 const onSave =async () => { // 保存
   try {
     let {id, name, ...params} = await form.validateFields()
+    console.dir(params)
     refid.current=id;
     let obj = {id, name, context: JSON.stringify(params)};
    
@@ -187,7 +191,7 @@ const onSave =async () => { // 保存
     if(success){
       message.success("保存成功")
     
-     if(id > 0)  dispatch(getThemeId(id)) // 编辑时
+    // if(id > 0)  dispatch(getThemeId(id))
     
       getTheme();
     }else{
@@ -200,13 +204,18 @@ const onSave =async () => { // 保存
   }
   
 }
+const onadd =()=> {
+  form.resetFields()
+  dispatch(getThemeColor(form.getFieldsValue()))
+}
 const onrest=()=>{
   try {
     let id = form.getFieldValue("id")
     if(id==0){
-      form.resetFields()
+       onadd();
     }else if(id>0){
-      form.setFieldsValue(defaluttheme)
+      dispatch(getThemeColor(SelectedTheme))
+     
     }
     /* if(refid!=0 && themes?.length>0 && currtheme ){
       let formdata = currtheme.current
@@ -219,10 +228,7 @@ const onrest=()=>{
     console.log(error)
   }
 }
-const onadd =()=> {
-  form.resetFields()
-  dispatch(getThemeColor(form.getFieldsValue()))
-}
+
 const selectTheme =(id)=> {
   try {
     refid.current=id
@@ -242,7 +248,7 @@ const ondelete=async ()=> {
 
    try {
     let id = form.getFieldValue("id")
-    console.log(id)
+    
     if(!Number.isInteger(parseInt(id)) && id>0 ) return message.warning("没有选择方案")
     
     let params ={
@@ -266,7 +272,9 @@ message.warning(errMsg|| "数据出错")
  // getTheme(); 
 }, [projectId]) 
 useEffect(()=>{
-  if(isObject(defaluttheme)){
+   
+  if(isObject(defaluttheme) && defaluttheme.id >0){
+    
     form.setFieldsValue(defaluttheme)
   }
   
@@ -274,7 +282,7 @@ useEffect(()=>{
 useEffect(()=>{
   return ()=> {
     
-      dispatch(getThemeColor(SelectedTheme))
+     // dispatch(getThemeColor(SelectedTheme))
     }
   
 },[])

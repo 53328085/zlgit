@@ -209,20 +209,25 @@ export  const Statebox = styled.div`
       }
       function getBrightness(hexColor) {
         // 确保输入是有效的十六进制颜色代码（例如：#FFFFFF 或 #FFF）
-        hexColor = hexColor.replace(/^#/, '');
-        if (hexColor.length === 3) {
-            hexColor = hexColor.split('').map(hex => hex + hex).join('');
+        try {
+          hexColor = hexColor.replace(/^#/, '');
+          if (hexColor.length === 3) {
+              hexColor = hexColor.split('').map(hex => hex + hex).join('');
+          }
+       
+          // 将十六进制颜色转换为RGB分量
+          const bigint = parseInt(hexColor, 16);
+          const r = (bigint >> 16) & 255;
+          const g = (bigint >> 8) & 255;
+          const b = bigint & 255;
+       
+          // 计算亮度
+          const brightness = 0.299 * r + 0.587 * g + 0.114 * b;
+          return brightness;
+        } catch (error) {
+          return 0
         }
-     
-        // 将十六进制颜色转换为RGB分量
-        const bigint = parseInt(hexColor, 16);
-        const r = (bigint >> 16) & 255;
-        const g = (bigint >> 8) & 255;
-        const b = bigint & 255;
-     
-        // 计算亮度
-        const brightness = 0.299 * r + 0.587 * g + 0.114 * b;
-        return brightness;
+      
     }
      
    export function isLightColor(hexColor, threshold = 100) {

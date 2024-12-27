@@ -30,7 +30,7 @@ flex: 1;
 
 align-items: center;
 padding: 0 8px;
-color: #fff;
+color: ${props=> props.theme.bgcolorfont};
 column-gap: 34px;
 overflow: hidden;
 .content {
@@ -43,7 +43,7 @@ overflow: hidden;
     line-height: 1;
   }
   .title {
-    color: #f2f2f2;
+    color: ${props=> props.theme.bgcolorfont};
   }
   .number {
     font-size: 28px;

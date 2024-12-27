@@ -327,12 +327,11 @@ const system = createSlice({
          },
         getThemeColor(state, {payload}) {  
            let {themeColor } = state  
-          
-           if(payload.primaryColor){
-            let islight = isLightColor(payload.primaryColor)  
-           
-           
-            state.themeColor ={...themeColor, ...payload,islight};
+           console.log(payload)
+           if(payload.primaryderived){
+            let islight = isLightColor(payload.primaryderived)  
+             let bgcolorfont = islight ? "#000000a5" : "#ffffff"
+            state.themeColor ={...themeColor, ...payload,islight,bgcolorfont};
            }else{
              state.themeColor ={...themeColor, ...payload};
            }
@@ -429,8 +428,10 @@ const system = createSlice({
                   state.themeId = themeId;
                   if(state.themes?.length > 0 && Number.isInteger(themeId)) {
                      let  {context,id,name} = state.themes.find(t => t.id==themeId) || {};
+                     let islight = isLightColor(context.primaryderived)  
+                     let bgcolorfont = islight ? "#000000a5" : "#ffffff"
                      if(isObject(context)){
-                       state.themeColor ={...context, id, name}
+                       state.themeColor ={...context,islight,bgcolorfont, id, name}
                      }else{
                        state.themeColor=initithemeColor
                      }
@@ -566,6 +567,7 @@ export const themeId= state => state.system.themeId
     themes,
     themeId,
     (datas, tid)=> {
+      console.log("修改时", tid)
       let isdata = Array.isArray(datas) && datas?.length>0
       if(!Number.isInteger(parseInt(tid)) || !isdata) return initithemeColor
       if(Number.isInteger(parseInt(tid)) && isdata){
