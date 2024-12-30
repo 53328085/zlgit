@@ -453,7 +453,7 @@ useEffect(() => {
                   )
                 }
               ),
-                <div style={{height:326,overflow:'hidden'}}>
+                <div style={{height:326}}>
                 {warnlist.map(
                 it => {
                   return (

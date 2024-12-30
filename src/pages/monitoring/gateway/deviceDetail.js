@@ -75,7 +75,7 @@ const Chartbox = styled.div`
 // 2,7
 const Chartin = (props) => {
     let { group, data, deviceStyle } = props
-    if (!group || !Array.isArray(data) || data.length == 0) return <Empty description={group ? `${group}暂无数据` : null} />
+    if (!group || !Array.isArray(data) || data.length == 0) return <Empty description={group ? `${group} 暂无数据` : null} />
 
     let title = {
         EC: '电流(A)',

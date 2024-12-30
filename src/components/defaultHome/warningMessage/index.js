@@ -1,14 +1,14 @@
-import React, { useRef, useEffect,useState } from 'react'
+import React, { useRef, useEffect, useState } from 'react'
 import { Image, Timeline } from 'antd'
 import { useSelector } from 'react-redux'
 import { selectProjectId } from '@redux/systemconfig.js'
 import Titlelayout from '@com/titlelayout';
 import styled from 'styled-components';
 import { useReactive } from 'ahooks';
-import { HomeRuntime } from '@api/api.js'
+import { HomeRuntime, safeElectric } from '@api/api.js'
 import { message } from 'antd';
 import Cempty from '@com/useEmpty'
-import {useTranslation} from 'react-i18next'
+import { useTranslation } from 'react-i18next'
 
 const fs = {
   hv: '24px',
@@ -32,15 +32,19 @@ export default function DefaultHome(props) {
   }
   .title {
     color:#1e1e1e;
+    display: flex;
+    justify-content: space-between;
   }
   .content {
     font-size: 12px;
     color:#6b6b6b;
   }
   #scrollTimeLine{
-    animation: ${props=>{if(props.domht>142){
-      return 'transY'
-    }else{return ""}}} ${props=>(props.domht/60)}s 1s linear infinite;;
+    animation: ${props => {
+      if (props.domht > 142) {
+        return 'transY'
+      } else { return "" }
+    }} ${props => (props.domht / 60)}s 1s linear infinite;;
     &:hover{
       animation-play-state: paused;
     }
@@ -50,14 +54,15 @@ export default function DefaultHome(props) {
       transform:translateY(0)
    }
    100%{
-    transform:translateY(-${props=>props.dmheight}px) 
+    transform:translateY(-${props => props.dmheight}px) 
    }
  }
 `
-  const {t} = useTranslation("overview")
+  const { t } = useTranslation("overview")
   const projectId = useSelector(selectProjectId)
-  const [dmheight,setDomHeight] =useState(0)
-  const domRef =useRef()
+  const [dmheight, setDomHeight] = useState(0)
+  const mapobj = new Map([[1, { color: '#ff7070', text: '一级告警' }], [2, { color: '#ffb726', text: '二级告警' }], [3, { color: '#b07ef9', text: '三级告警' }]])
+  const domRef = useRef()
   const state = useReactive({
     alarmList: [
       // {
@@ -69,11 +74,17 @@ export default function DefaultHome(props) {
     ]
   })
 
-  const { GetAlarmInfo } = HomeRuntime
+  // const { GetAlarmInfo } = HomeRuntime
 
+  const { WarningDetailsList } = safeElectric
   useEffect(() => {
     if (props.type == 'runtTime') {
-      GetAlarmInfo(projectId).then(res => {
+
+      let params = {
+        projectId,
+        areaId: 0
+      }
+      WarningDetailsList(params).then(res => {
         let { success, data } = res
         if (success) {
           if (data) {
@@ -87,67 +98,105 @@ export default function DefaultHome(props) {
       return;
     }
   }, [])
-  useEffect(()=>{
-    
+  useEffect(() => {
 
-    if(state.alarmList?.length>0){
+
+    if (state.alarmList?.length > 0) {
       console.log(state.alarmList?.length)
       const listdom = document.querySelector('#scrollTimeLine')
       const domstyle = listdom.getBoundingClientRect()
       domRef.current = domstyle.height
-      console.log(domstyle,domstyle.height-142)
-      setDomHeight(domstyle.height-142)
+      console.log(domstyle, domstyle.height - 142)
+      setDomHeight(domstyle.height - 142)
     }
-    
-  },[state.alarmList.length])
+
+  }, [state.alarmList.length])
   const sty = {
-     height: '200px' 
+    height: '200px'
   }
   return (
     <Titlelayout title={t("LatestAlarm")} {...fs} style={sty}>
-      
-      {  (state.alarmList?.length > 0) ? (
-        <Timelinebox dmheight={dmheight} domht ={domRef.current} >
+
+      {(state.alarmList?.length > 0) ? (
+        <Timelinebox dmheight={dmheight} domht={domRef.current} >
           <div id="scrollTimeLine">
-          {state.alarmList?.length > 3?(
-             [...state.alarmList.map((item, index) => {
-              return (<Timeline.Item key={index}>
+            {state.alarmList?.length > 3 ? (
+              [...state.alarmList.map((item, index) => {
+                return (<Timeline.Item key={index}
+                  dot={<div
+                    style={{
+                      borderRadius: '50%', width: 16, height: 16, border: '1px solid',
+                      display: 'flex', justifyContent: 'center', alignItems: 'center',
+                      borderColor: item.level === 1 ? 'rgb(255,112,112)' : item.level === 2 ? 'rgb(255 183 38)' : 'rgb(176,126,249)'
+                    }}>
+                    <div style={{ borderRadius: '50%', width: 10, height: 10, background: item.level === 1 ? 'rgb(255,112,112)' : item.level === 2 ? 'rgb(255 183 38)' : 'rgb(176,126,249)' }}>
+                    </div >
+                  </div>}>
+                  <div>
+                    <p className='title'>
+                      <span> {item.warningTime}</span>
+                      <span style={{ color: mapobj.get(item.level).color, fontSize: 12 }}>{mapobj.get(item.level).text}</span>
+                    </p>
+                    <p className='title'>{item.alarmEvent}</p>
+                    <p className='content'>{item.address + '  SN ' + item.sn}</p>
+                  </div>
+                </Timeline.Item>)
+              }
+              )
+                , <div style={{ height: 326 }}>
+                {state.alarmList.map((item, index) => {
+                  return <Timeline.Item key={index}
+                    dot={<div
+                      style={{
+                        borderRadius: '50%', width: 16, height: 16, border: '1px solid',
+                        display: 'flex', justifyContent: 'center', alignItems: 'center',
+                        borderColor: item.level === 1 ? 'rgb(255,112,112)' : item.level === 2 ? 'rgb(255 183 38)' : 'rgb(176,126,249)'
+                      }}>
+                      <div style={{ borderRadius: '50%', width: 10, height: 10, background: item.level === 1 ? 'rgb(255,112,112)' : item.level === 2 ? 'rgb(255 183 38)' : 'rgb(176,126,249)' }}>
+                      </div >
+                    </div>}>
+                    <div>
+                      <p className='title'>
+                        <span> {item.warningTime}</span>
+                        <span style={{ color: mapobj.get(item.level).color, fontSize: 12 }}>{mapobj.get(item.level).text}</span>
+                      </p>
+                      <p className='title'>{item.alarmEvent}</p>
+                      <p className='content'>{item.address + '  SN ' + item.sn}</p>
+                    </div>
+                  </Timeline.Item>
+                })
+                }
+              </div>]
+            ) : state.alarmList.map((item, index) => {
+              return (<Timeline.Item key={index}
+                dot={<div
+                  style={{
+                    borderRadius: '50%', width: 16, height: 16, border: '1px solid',
+                    display: 'flex', justifyContent: 'center', alignItems: 'center',
+                    borderColor: item.level === 1 ? 'rgb(255,112,112)' : item.level === 2 ? 'rgb(255 183 38)' : 'rgb(176,126,249)'
+                  }}>
+                  <div style={{ borderRadius: '50%', width: 10, height: 10, background: item.level === 1 ? 'rgb(255,112,112)' : item.level === 2 ? 'rgb(255 183 38)' : 'rgb(176,126,249)' }}>
+                  </div >
+                </div>}>
                 <div>
-                  <p className='title'>{item.alarmTime + '  ' + item.alarmDes}</p>
+                  <p className='title'>
+                    <span> {item.warningTime}</span>
+                    <span style={{ color: mapobj.get(item.level).color, fontSize: 12 }}>{mapobj.get(item.level).text}</span>
+                  </p>
+                  <p className='title'>{item.alarmEvent}</p>
                   <p className='content'>{item.address + '  SN ' + item.sn}</p>
                 </div>
               </Timeline.Item>)
             }
             )
-            ,  <div style={{height:142,overflow:'hidden',paddingTop: '1px'}}>
-                  {state.alarmList.map((item, index) => {
-                    return <Timeline.Item key={index}>
-                      <div>
-                        <p className='title'>{item.alarmTime + '  ' + item.alarmDes}</p>
-                        <p className='content'>{item.address + '  SN ' + item.sn}</p>
-                      </div>
-                    </Timeline.Item>
-                  })
-                }
-              </div>]
-          ):state.alarmList.map((item, index) => {
-            return (<Timeline.Item key={index}>
-              <div>
-                <p className='title'>{item.alarmTime + '  ' + item.alarmDes}</p>
-                <p className='content'>{item.address + '  SN ' + item.sn}</p>
-              </div>
-            </Timeline.Item>)
-          }
-          )
-            
-          } 
-            </div>
+            }
+          </div>
 
         </Timelinebox>
-        )
-      :  <Cempty />
-      } 
-       
+      )
+        : <Cempty />
+      }
+
     </Titlelayout>
   )
 }
