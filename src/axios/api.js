@@ -27,8 +27,8 @@ export class CustTheme {
     server.get(`Energy/Theme/QueryTheme?projectId=${projectId}`); // 获取项目下的主题
   static SetUserTheme = (params) =>
     server.get(`Energy/Theme/SetUserTheme`, { params }); // 设置用户的主题
-  static GetUserTheme = (userId) =>
-    server.get(`Energy/Theme/GetUserTheme?userId=${userId}`); // 获取用户设置的主题
+  static GetUserTheme = (params) =>
+    server.get(`Energy/Theme/GetUserTheme`,{params}); // 获取用户设置的主题
 
   static DeleteTheme = (params) =>
     server.get(`Energy/Theme/DeleteTheme`, { params }); //删除主题

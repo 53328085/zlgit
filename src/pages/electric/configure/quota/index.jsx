@@ -665,11 +665,11 @@ export default function Index() {
     console.log(record)
     setPlanItemId(record.Id)
     setTransferTitle({
-      unknownTitle: '未选中的设备',
-      alarmOpenTitle: '告警时设备（开）',
-      alarmCloseTitle: '告警时设备（关）',
-      noalarmOpenTitle: '消警时设备（开）',
-      noalarmCloseTitle: '消警时设备（关）',
+      unknownTitle: '未选中设备',
+      alarmOpenTitle: '告警后：分闸/开阀/打开',
+      alarmCloseTitle: '告警后：合闸/关阀/关闭',
+      noalarmOpenTitle: '消警后：分闸/开阀/打开',
+      noalarmCloseTitle: '消警后：合闸/关阀/关闭',
     })
     const resp = await QueryValveDevicePage({ projectId })
     if (resp.success && Array.isArray(resp.data)) {

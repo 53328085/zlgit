@@ -8,11 +8,12 @@ import server from '../../axios'
 const Tabsbox = styled(Tabs)`
   .ant-tabs-nav {
     margin-bottom: 0px;
+    max-width: inherit;
    .ant-tabs-nav-list {
     .ant-tabs-tab {
         border-radius: 4px 4px 0 0;
         height: 41px;
-        width: ${props => props.tabwidth || '145px'} ;
+        min-width: ${props => props.tabwidth || '145px'} ;
         justify-content: center;
         font-size: 14px;
         background-color: #fff;  
@@ -42,9 +43,11 @@ const Tabsbox = styled(Tabs)`
 }
 `
 const Pagecontentbox = styled.div`
-    display: flex;
+    /* display: flex;
     flex-direction: column;
-    flex: ${p => p.beTabs ? '41px 1' :  1};
+    flex: ${p => p.beTabs ? '41px 1' :  1}; */
+    display: grid;
+    grid-template-rows: ${p => p.beTabs ? '41px 1fr' :  '1fr'};
 `
 /* 
  // custserach 自定义搜索
@@ -147,10 +150,11 @@ useEffect(() => {
  const TabsEl = () => {   
      if (!beTabs) return null    
      return (
-        <Tabsbox  
+      <Tabsbox  
         onChange={onChange} 
         defaultActiveKey={defaultTab} 
         animated 
+        tabPosition="top"
         tabBarGutter={tabgap || 16} 
         tabwidth={tabwidth} 
         tabgap ={tabgap}
@@ -163,7 +167,7 @@ useEffect(() => {
  } 
   return (
     <Pagecontentbox beTabs={beTabs}>
-        <TabsEl ></TabsEl>
+       <TabsEl ></TabsEl>
       
        {/*  <div className='page--content--main'>{props.children}</div> */}
         <PageContentMain   beTabs={beTabs}  {...props}>

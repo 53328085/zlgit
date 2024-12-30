@@ -1,11 +1,16 @@
 import React, {useRef,  useCallback, useState, useEffect} from "react";
 import { Dropdown, Space, Form, Input, message, Typography, Radio } from "antd";
-import {} from "@ant-design/icons"
+
 import styled, {css} from "styled-components";
 import { useSelector, useDispatch } from "react-redux";
 import {useNavigate, useLocation} from "react-router-dom"
 import { clearToken, selectUser, userRest, platformLang} from "@redux/user";
-import { configProject, comSetFirst, getJump, currentscreen, isGranary,datascreen, configState, setIntl,setIszhCN, selectProjectId,getMenus, setMenus,menus,adaptation,getThemeColor} from "@redux/systemconfig";
+import { configProject, comSetFirst, getJump, currentscreen, isGranary,datascreen, configState, setIntl,setIszhCN, selectProjectId,getMenus,
+   setMenus,menus,adaptation,getThemeColor,
+  themelist,
+  themes,
+ getThemeId
+ } from "@redux/systemconfig";
 
 import moment from "moment";
 import {useTranslation, Trans, Translation} from 'react-i18next';
@@ -21,6 +26,7 @@ import {pwdValidator, phoneValidator} from '@pages/rule.js'
 import {Login,CustTheme} from '@api/api' 
 import {CustButton} from '@com/useButton'
 import {handlermenu,isObject} from "@com/usehandler"
+
 import svgurl from './icon/svg'
 const {Text} = Typography 
 const Lngdiv = styled.div`
@@ -41,7 +47,7 @@ const Cradio = styled(Radio)`
   .ant-radio-inner {
     width: 28px;
     height: 28px;
-    background-color: var(--ant-primary-color);
+    background-color: ${props => props.theme.primaryColor || '#237AE4'};;
     &:after {
       background-color: #fff;
     }
@@ -194,16 +200,26 @@ export default function Log() {
   const navgite = useNavigate()
   const projectId = useSelector(selectProjectId)
   const  screenadr = useSelector(currentscreen)
-  const  isgranary = useSelector(isGranary)
+  const  isgranary = useSelector(isGranary) 
   const setmenus = useSelector(setMenus)
   const allmenus = useSelector(menus)
   const adap =useSelector(adaptation) || {}
-  const inita=[
+ const themelists = useSelector(themelist)
+ let Themes = useSelector(themes);
+  
+   let item = themelists?.length> 0 ? {label: '主题', key:"theme", children: themelists} : null
+
+  const items=process.env.NODE_ENV === 'development' ? [   // 王工正式线屏蔽语言切换
     {label: '账户管理', key:"mg"},
     {label: '语言切换', key:"lng"},
     {label: '退出系统', key:"exit"},
+    item
+  ]: [
+    {label: '账户管理', key:"mg"},
+    {label: '退出系统', key:"exit"},
+    item
   ]
-  const [items, setItems] = useState(inita)
+ // const [items, setItems] = useState(inita)
   
   let dataScreen =setmenus?.find(i => i.key=='dataScreen')?.label //数据大屏
   let projectSet = setmenus?.find(i => i.key=='projectSet')?.label //项目设置
@@ -261,17 +277,20 @@ const getcurTheme= async(userId, projectId)=> {
     let {success, data} = await CustTheme.QueryTheme(projectId)
     let datalen = Array.isArray(data) && data.length> 0 && success ;
     let item =[];
-
-    let {success:suc, data:themedata} = await CustTheme.GetUserTheme(userId)
+    let params ={
+      projectId,
+      userId
+    }
+    let {success:suc, data:themedata} = await CustTheme.GetUserTheme(params)
     let {themeId} = themedata || {}
     if(suc && themeId && datalen){
       try {
         let theme = data.find(d => d.id == themeId)?.context
         let themeobj =  JSON.parse(theme)
         if(theme &&  isObject(themeobj)){
-          dispatch(getThemeColor(themeobj))
+          dispatch(getThemeColor({...themeobj, themeId}))
         }
-        item=  data.map(d => ({label: d.id==themeId ? <span style={{color:isObject(themeobj) ? themeobj.primaryColor : "",fontWeight: "bolder" }}>{d.name}</span> : d.name, key: d.id}))
+        item=  data.map(d => ({label: d.id==themeId ? <span style={{color:isObject(themeobj) ? themeobj.primaryColor : "",fontWeight: "bolder" }}>{d.name}</span> : d.name, key: d.themeId}))
       } catch (error) {
         
       }
@@ -279,26 +298,29 @@ const getcurTheme= async(userId, projectId)=> {
     }else if(datalen){
         let thobj = JSON.parse(data[0].context)
         if(isObject(thobj)){
-          dispatch(getThemeColor(thobj))
+          dispatch(getThemeColor({...thobj, themeId: null}))
         }
-        item=  data.map((d,idx) => ({label: idx==0 ? <span style={{color:isObject(thobj) ? thobj.primaryColor : "", fontWeight: "bolder" }}>{d.name}</span> : d.name, key: d.id})) 
+        item=  data.map((d,idx) => ({label: idx==0 ? <span style={{color:isObject(thobj) ? thobj.primaryColor : "", fontWeight: "bolder" }}>{d.name}</span> : d.name, key: d.themeId})) 
     }else {
        item =[];
     }
-    setItems([...inita, ...item])
+
+    if (Array.isArray(item) && item.length > 0) {
+   //   setItems([...inita, {label: '主题', key:"theme", children: item}])
+    }else{
+    //  setItems([...inita])
+    //  dispatch(getThemeColor(themeColor))
+    }
+      
+  
+   
 
   } catch (error) {
     console.log(error)
   }
 }
 
-useEffect(()=> {
-  if(Number.isInteger(userId) && Number.isInteger(projectId)){
-    getcurTheme(userId, projectId)
-    
-  }
-
-}, [userId, projectId])
+ 
 const onJump = useCallback(() => {  
   let {bigScreenEnabled, bigScreenUrl} = Datascreen   
 
@@ -346,25 +368,32 @@ const settheme = async (themeId) => {
   try {
     let params ={
       themeId,
-      userId
+      userId,
+      projectId,
      }
     let {success} = await  CustTheme.SetUserTheme(params)
     if(success){
+    
+       dispatch(getThemeId(themeId))
+       let data = Themes.find(t =>t.id==themeId)
+          dispatch(getThemeColor({id:data.id, name:data.name, ...data.context}))
        /* let obj= themes.find(t =>t.id==themeId)?.context
        if(obj && isObject(JSON.parse(obj))){
         dispatch(getThemeColor(JSON.parse(obj)))
        } */
-        getcurTheme(userId, projectId)
+       // getcurTheme(userId, projectId)
     }
   } catch (error) {
-    
+    console.log(error)
   }
    
 }
  
 
   const onClick = ({key}) => {
+      
       if(Number.isInteger(parseInt(key))){
+       
         settheme(key)
 
       }else if(key == 'mg') {

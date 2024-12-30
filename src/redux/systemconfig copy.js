@@ -10,7 +10,6 @@ import {isObject,isLightColor} from '@com/usehandler'
 import {initithemeColor} from '@com/defaultcolor';
 
 
-
 const {DeviceTypeManager: {AllDeviceStyle} } = Monitoring
 
  console.log("initithemeColor",initithemeColor)
@@ -79,8 +78,7 @@ const initialState = {
       ratio43:true,  // 屏幕比例 4:3
     }, 
     themeColor:  {  // 可配置对象，不只是颜色属性。名字为保证稳定性不改
-      ...initithemeColor,
-     /*  themeId:null, 
+      themeId:null, 
       primaryColor: '#237AE4',
       islight: false, // 150
       errorColor: '#ff4d4f',
@@ -124,10 +122,10 @@ const initialState = {
       dislistbg:"#334461",
       disitemhover: "#6633ff",
       carnstrokecolor: "#ffff99",
-      carntrailcolor: "#6633cc",  */
+      carntrailcolor: "#6633cc", 
     }, 
     themes:[],   // 项目配色方案列表
-    themeId:NaN,
+    themeId:null,
     intl: {
       lang: zhCN,
       locale: 'zh-cn'
@@ -180,7 +178,8 @@ export const getWebsiteState = createAsyncThunk(
   'system/getState',
   async ({id,userId}, {rejectWithValue}) => {
       try {
-       
+        console.log("id", id)
+        console.log("userid", userId)
         let promises = [
           Area.QueryAll({projectId: id,level: 1,parentId: 0}), 
           eneryShift.queryShifts(id), 
@@ -192,8 +191,8 @@ export const getWebsiteState = createAsyncThunk(
           Carbon.QueryCarbonEnterprise(id), // 获取碳排企业信息
           HomeRuntime.GetProjectInfo(id),
           Editapi.FilterDeviceStyle(id), // 运行监控运行态，获取设备总类
-        CustTheme.QueryTheme(id), // 获取配色方案
-       CustTheme.GetUserTheme({projectId:id, userId})
+          CustTheme.QueryTheme(id), // 获取配色方案
+          CustTheme.GetUserTheme({projectId:id, userId})
          ] 
         let results = await Promise.allSettled(promises)
         return results
@@ -326,22 +325,28 @@ const system = createSlice({
            // return Object.assign({}, state, {isGranary: actions.payload})
          },
         getThemeColor(state, {payload}) {  
-           let {themeColor } = state  
-           console.log(payload)
-           if(payload.primaryderived){
-            let islight = isLightColor(payload.primaryderived)  
-             let bgcolorfont = islight ? "#000000a5" : "#ffffff"
-            state.themeColor ={...themeColor, ...payload,islight,bgcolorfont};
-           }else{
-             state.themeColor ={...themeColor, ...payload};
-           }
+           let {themeColor} = state  
+           if(payload.primaryColor){
+            let islight = isLightColor(payload.primaryColor)  
            
+           
+            state.themeColor ={...themeColor, ...payload,islight};
+           }else{
+            state.themeColor ={...themeColor, ...payload};
+           }
+             
+           
+          
         },
         getThemeId(state, {payload}){
-          state.themeId = payload
-        },
-        getThemes(state, {payload}){
-          state.themes = payload
+           let {themes} = state
+           console.log("payload",payload)
+           if(Array.isArray(themes) && themes?.length > 0 && Number.isInteger(payload)){
+              let curtheme = themes.find(t => t.id==payload)?.context
+              if(isObject(curtheme)){
+                state.themeColor=curtheme;
+              }
+           }
         },
         getRoomId(state,{payload}){
           state.roomId= Array.isArray(payload)?payload:[]
@@ -414,29 +419,24 @@ const system = createSlice({
                }
              
                index == 7 && (state.filterDeviceStyle = data || [])
-               if(index == 8) {
+               if(index == 18) {
                   let themes = []
                    if (Array.isArray(data) && data.length> 0) {
                        themes = data.map(d=> ({...d, context: JSON.parse(d.context)}))
                    }
                   state.themes=themes;
                }
-               if(index == 9) {
+               if(index == 19) {
                  try {
-                 
                   let {themeId  } = data || {}
                   state.themeId = themeId;
                   if(state.themes?.length > 0 && Number.isInteger(themeId)) {
-                     let  {context,id,name} = state.themes.find(t => t.id==themeId) || {};
-                     let islight = isLightColor(context.primaryderived)  
-                     let bgcolorfont = islight ? "#000000a5" : "#ffffff"
+                     let  {context} = state.themes.find(t => t.id==themeId) || {};
                      if(isObject(context)){
-                       state.themeColor ={...context,islight,bgcolorfont, id, name}
+                       state.themeColor = themeColor
                      }else{
                        state.themeColor=initithemeColor
                      }
-                  }else{
-                    state.themeColor=initithemeColor
                   }
                  } catch (error) {
                    console.log(error)
@@ -454,7 +454,7 @@ const system = createSlice({
                index == 6 && (state.currProject = {})
                index == 7 && (state.filterDeviceStyle =[])
                index == 18 && (state.themes =[])
-               index == 19 && (state.themeId=NaN)
+               index == 19 && (state.themeId=null)
              }
           }
         })
@@ -503,6 +503,8 @@ export const comSetFirst  = state => state.system.menus?.comSet?.length > 0 ? st
 export const Selectmenus  =createSelector(
  [menus, (state, parentNo) => parentNo],
   (menus, parentNo) => {
+     console.log(menus)
+     console.log(parentNo)
      return menus?.fullmenu.filter(f =>f.parentNo == parentNo)
   }
  )
@@ -539,20 +541,20 @@ export const isGranary = state => state.system.isGranary
 export const currProject  = state => state.system.currProject
 export const custconfig = state => state.system.siteConfig
 
-
+export const themeColor = state => state.system.themeColor
 
 export const themes = state => state.system.themes
 export const themeId= state => state.system.themeId
-/*  export const themelist = state => {
+/* export const themelist = state => {
   try {
     let {themes, themeId,themeColor} = state.system
     let item =[]
     if(Array.isArray(themes) && themes.length>0 && Number.isInteger(themeId)){
-      item= themes.map?.(d => ({label: d.id==themeId ? <span style={{color:isObject(themeColor) ? themeColor.primaryColor : "",fontWeight: "bolder" }}>{d.name}</span> : d.name, key: d.id}))
+      item= themes.map(d => ({label: d.id==themeId ? <span style={{color:isObject(themeColor) ? themeColor.primaryColor : "",fontWeight: "bolder" }}>{d.name}</span> : d.name, key: d.themeId}))
     }else if(Array.isArray(themes) && themes.length>0){
-      item=  themes.map?.((d) => ({label:  d.name, key: d.id})) 
+      item=  data.map((d) => ({label:  d.name, key: d.themeId})) 
     }
-    
+    console.log(item)
     return item
   } catch (error) {
     console.log(error)
@@ -560,44 +562,7 @@ export const themeId= state => state.system.themeId
    
   }
  
-} */ 
- 
-
-  export const selectedtheme =  createSelector( // 已选择的的方案
-    themes,
-    themeId,
-    (datas, tid)=> {
-      console.log("修改时", tid)
-      let isdata = Array.isArray(datas) && datas?.length>0
-      if(!Number.isInteger(parseInt(tid)) || !isdata) return initithemeColor
-      if(Number.isInteger(parseInt(tid)) && isdata){
-        let {id, name, context}   = datas.find(f => f.id==tid)??{} //
-       
-        if(isObject(context)){
-          return {...context,id,name};
-        }else{
-          return initithemeColor
-        }
-      }
-    }
-  ) 
- export const themeColor = state => state.system.themeColor;
-
-export const themelist = createSelector(
-  themes,
-  themeId,
-  themeColor,
-  (datas, id, color) =>{
-    let item =[]
-    if(Array.isArray(datas) && datas.length>0 && Number.isInteger(parseInt(id))){    
-      item= datas.map?.(d => ({label: d.id==id ? <span style={{color:isObject(color) ? color.primaryColor : "",fontWeight: "bolder" }}>{d.name}</span> : d.name, key: d.id}))
-    }else if(Array.isArray(datas) && datas.length>0 && !Number.isInteger(parseInt(id))){     
-      item=  datas.map?.((d) => ({label:  d.name, key: d.id})) 
-    }
-   
-    return item
-  }
-)
+} */
 export const roomId =state=>state.system.roomId
 
 export const roomName = state =>  {
@@ -645,6 +610,5 @@ export const {
     setadaptation,
     getsidershow,
     getThemeId,
-    getThemes,
 } = actions
 export default system.reducer

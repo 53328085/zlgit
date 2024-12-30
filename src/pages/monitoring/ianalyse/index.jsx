@@ -129,15 +129,14 @@ export default function index() {
     HistoryCompares()
   };
   const changeDate = (dates, dateStrings, index) => {
-    console.log(dates, dateStrings, index)
-    console.log(params)
+ 
     params[index].start = dateStrings[0]+' 00:00:00'
     params[index].end = dateStrings[1]+' 23:59:59'
     setParams(params)
     setDates(dateStrings);
     HistoryCompares()
   };
-  console.log(state.disabled)
+  
   const [dataList, setDataList] = useState([])
   const GetSns = async () => {
     const resp = await CompareQuery(projectId);
@@ -154,7 +153,7 @@ export default function index() {
           return acc;
         }, []);
         setDataList(mergedData)
-        console.log(mergedData)
+       
 
         let list = []
         mergedData.map((item,index) => {
@@ -175,8 +174,7 @@ export default function index() {
             markLineList[index].push(it.lineValue)
           })
         })
-        console.log(markLineList)
-        console.log(list)
+        
         setParams(list)
         HistoryCompares()
         // state.devices = mergedData[0].items;
@@ -227,7 +225,7 @@ export default function index() {
     const colCount = matrix?.[0]?.length;
     const minValues = new Array(colCount).fill(Number.POSITIVE_INFINITY); // 初始化辅助数组为正无穷大  
     // const minValSn = new Array(colCount).fill(Number.POSITIVE_INFINITY);
-    console.log(matrix, colCount)
+    
     // 遍历二维数组  
     for (let i = 0; i < rowCount; i++) {
       for (let j = 0; j < colCount; j++) {
@@ -258,7 +256,7 @@ export default function index() {
   const HistoryCompares = async () => {
     //const timer = getTime()
     // console.log(timer, dates)
-    console.log(params)
+    
     // const params = [{
     //   projectId,
     //   type: radioVal,
@@ -271,10 +269,10 @@ export default function index() {
     const resp = await HistoryCompare(params);
     if (resp.success) {
       if (resp.data) {
-        console.log(1111)
+       
         state.chartsOpts.series = []
 
-        console.log(state.chartsOpts)
+        
         let compareArr = []
         resp.data.forEach((a, b) => {
           state.chartsOpts.series[b] = []
@@ -282,7 +280,7 @@ export default function index() {
           a.snData.forEach((item, index) => {
             if (item?.data?.length > 0) {
               item.data.forEach(it => {
-                console.log(it, b)
+               
                 state.xAxis[b] = it["data"].map(it => it.time)
                 state.chartsOpts.series[b].push({
                   data: it.data.map(i => (i["value"])), 
@@ -311,7 +309,7 @@ export default function index() {
             }
           })
         })
-        console.log(state.chartsOpts.series)
+        
         state.detailtableData = resp.data
         // if (resp.data[indexBtn].compareDeviation) {
         // state.alltableData = resp.data[indexBtn].compareDeviation
@@ -440,19 +438,19 @@ export default function index() {
   };
 
   const warnDetail = (index) => {
-    console.log(index)
+   
     ModalRef.current.onOpen()
     //setIndexBtn(index)
     state.alltableData = state.detailtableData[index]?.compareDeviation
     state.tableData = state.alltableData.length > 0 ? state.alltableData.slice(0, state.pageSize) : []
   }
   const changePage = (val) => {
-    console.log(val)
+   
     state.current = val
     state.tableData = state.alltableData.slice((val - 1) * state.pageSize, (val - 1) * state.pageSize + state.pageSize)
   }
   const onShowSizeChange = async (current, size) => {
-    console.log("current,size", current, size)
+   
     state.current = current
     state.pageSize = size
   }
@@ -540,7 +538,7 @@ export default function index() {
                   defaultValue="1"
                   buttonStyle="solid"
                   size="middle"
-                  style={{ width: 452, marginRight: 250 }}
+                  
                   onChange={(e) => { changeBtn(e, index) }}
                 >
                   <Radio.Button value="1" disabled={item?.items[0].state == 0}>用电量对比</Radio.Button>

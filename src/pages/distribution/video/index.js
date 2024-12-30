@@ -7,7 +7,7 @@ import { selectProjectId, selectcurlRommid } from '@redux/systemconfig.js'
 import UseTable from '@com/useTable'
 import { Serach, Cdivider, Borderleft } from "@com/comstyled"
 import style from './style.module.less'
-
+import {useOutletContext} from "react-router-dom"
 import cameraBG from '@imgs/carmeraBG.png'
 import EZUIKit from "ezuikit-js";
 import moment from 'moment';
@@ -114,6 +114,7 @@ export default function Index() {
   const [wsocket, setwebsocket] = useState(null);
   const [recordData, setrecordData] = useState()
   const roomId = useSelector(selectcurlRommid)
+  const {setCustview} =useOutletContext()
   // const areaOptions =oneLevel.length>0? useMemo(() => ([{ name: oneLevel[0].levelName+'(全部)', id: 0 }, ...oneLevel]), [oneLevel]):[]
 
   const state = useReactive({
@@ -325,18 +326,15 @@ export default function Index() {
   const CameraValue = (props) => {
     return (
 
-      <Titlelayout layout="flex" pv="0">
-        <Info>
-          <img src={props.img} className='img' alt={props.title}></img>
-          <div className="count">
-            <div>{props.title}</div>
-            <div><span className='num'>{props.value}</span>台</div>
-          </div>
-        </Info>
-      </Titlelayout>
+      <div>监控总数<span style={{fontSize: "18px", color: "#000"}}>{ props.totalValue }</span>台</div>
     )
   }
-
+  useEffect(()=> {
+    setCustview(<CameraValue totalValue={totalValue} />)
+    return ()=> {
+      setCustview(null)
+    }
+  }, [totalValue])
   const columns = [
     // {
     //   title: '序号',
@@ -625,12 +623,6 @@ export default function Index() {
   }
 
   return (
-
-    <>
-      <TotalDiv>
-        <Divider dashed type="vertical" style={{ borderColor: "#999", height: '30px' }}></Divider>
-        <div className='totalTitle'>监控总数<span className='totalData'>{ totalValue }</span>台</div>
-      </TotalDiv>
     <Pagecount  bgcolor="transparent" pd="0">
         <Titlelayout layout="flex">
           
@@ -785,6 +777,5 @@ export default function Index() {
         </div>
       </Modal>
     </Pagecount>
-    </>
   )
 }

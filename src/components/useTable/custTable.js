@@ -1,5 +1,11 @@
-import styled from "styled-components"
+import styled, {css} from "styled-components"
 import {Table} from 'antd'
+const sty = css`
+.ant-empty-normal .ant-empty-image {
+  display: none;
+}
+
+`
 const Tablecom = styled(Table)`
 && {
 display: flex;
@@ -34,6 +40,14 @@ flex-direction: column;
           padding: ${props => props.pd || '4px 4px'} ;
         }
       }
+      .ant-table-placeholder{
+        .ant-table-cell{
+          padding: 0px;
+          .ant-empty.ant-empty-normal{
+            margin: 0;
+          }
+        }
+      }
     }
   }
 }
@@ -43,7 +57,8 @@ flex-direction: column;
   flex-direction: column;
   justify-content: space-between;
 }
- 
+
+${props => props.laptop ? sty : null}
 }
 `
 export default Tablecom

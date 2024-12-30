@@ -33,7 +33,7 @@ const Itemsty = styled.div`
       }
       .sub {
         font-size: 14px;
-        color: #333333;
+        color: ${props=> props.theme.bgcolorfont};
         margin-left:10px;
         white-space: pre-wrap;
         word-wrap: break-word;
@@ -41,7 +41,7 @@ const Itemsty = styled.div`
   
        .ant-typography{
         font-size: 16px;
-        color: #000000;
+        color:${props=> props.theme.bgcolorfont};
         margin-left:10px;
       }
       .progressColor{

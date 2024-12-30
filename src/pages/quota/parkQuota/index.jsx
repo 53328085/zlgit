@@ -7,7 +7,7 @@ import Pagecount from '@com/pagecontent'
  
  
 import { energyQuota} from "@api/api.js";
-import { selectProjectId } from '@redux/systemconfig.js'
+import { selectProjectId,themeColor } from '@redux/systemconfig.js'
 
 import {isObject} from '@com/usehandler'
 import Areaimg from './areaimg'
@@ -30,7 +30,7 @@ const Mainbox = styled.div`
       overflow-x: auto;
       .right{
       display: flex;
-      padding: 16px;
+      padding:0px 16px 16px 16px;
     }
     }
   
@@ -43,6 +43,7 @@ const Mainbox = styled.div`
 
 export default function ParkQuota() {
   const projectId = useSelector(selectProjectId)
+  const {primaryderived} = useSelector(themeColor)
   const [parkAreaId, setParkAreaId] = useState(0)
   const [park, setPark] = useState()
   const [quota, setQuota] = useState({})
@@ -53,7 +54,8 @@ export default function ParkQuota() {
     areaAnnualQuota,
     parkNum, 
     structureNum,
-    roomNum
+    roomNum,
+    primaryderived,
  }
  const rankprops = {
    parkAnnualQuota,

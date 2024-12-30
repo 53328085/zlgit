@@ -5,11 +5,16 @@ import Runmode from './runmode'
 import Onoff from './onoff'
 import CModal from '@com/useModal'
 import {StorageControlRuntime} from '@api/api'
- 
+import {useSelector} from "react-redux"
 import {Tabs, Typography } from 'antd'
  
 import styled from 'styled-components'
 import { useOutletContext} from 'react-router-dom'
+import {
+ 
+  themeColor
+} from "@redux/systemconfig.js";
+import {isLightColor} from "@com/usehandler"
 const {Text} = Typography
 const Contentbox = styled.div`
   display: grid;
@@ -17,18 +22,18 @@ const Contentbox = styled.div`
   row-gap: 16px;
   flex: 1;
   .info {
-    background-color: #000033;
-    color:#fff;
+    background-color: ${props => props.theme.primaryderived || "#000033"} ;
+    color:${props => props.islight ? "#333333" : "#fff"};
     display: flex;
     align-items: center;
     justify-content: space-between;
-    background-color: rgba(0, 0, 51, 1); 
+ 
     border: 1px solid rgba(215, 215, 215, 1);
     border-radius: 4px;
     padding: 0 16px;
     .circle {
       font-size: 18px;
-      color: #0f0;
+      color: ${props => props.theme.successColor || "#52c41a"};
       padding-right: 16px;
     }
   }
@@ -85,6 +90,8 @@ export default function Index() {
   let {exparams} = useOutletContext()
   let {areaId,   projectId, pcsId} = exparams
   const [infoData, setInfoData] = useState({})
+  const {primaryderived} = useSelector(themeColor)
+  let islight = isLightColor(primaryderived)
   const [mode, setMode] = useState(1) // 运行模式
   const [tab, setTab] = useState(1)
   const modestr = ['待机', '手动模式', '自动模式'][mode] // 0 待机， 1 手动 2 自动
@@ -125,7 +132,7 @@ export default function Index() {
   const ProjectCom = [Onoff, Onoff, Runmode][tab]
   return (
     <Pagecount  pd="0px" bgcolor="transparent">   
-         <Contentbox>
+         <Contentbox islight={islight}>
            <div className='info'>
               <span><span className='circle'>&#x25CF;</span><span>当前运行状态：{infoData.systemStatus == 1 ? '开机' : infoData.systemStatus == 2 ? '关机': null }</span></span>
               <span><span className='circle'>&#x25CF;</span>当前运行模式：{modestr }</span>

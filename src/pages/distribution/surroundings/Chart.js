@@ -1,23 +1,26 @@
 import React,{useState, useEffect} from 'react'
 import moment from 'moment';
-import styled from 'styled-components';
+import styled, {css} from 'styled-components';
 import Ichart from "@com/useEcharts/Ichart"
 import Titlelayout from '@com/titlelayout' 
-
+const sty = css`
+  column-gap: 8px;
+`
 const Chartwrap = styled.div`
  display: flex;
  flex:1;
  
  justify-content: space-between;
+ ${props => props.laptop ? sty : null}
  .yb {
-  flex-basis: 264px;
+  flex:1 1 264px;
  }
  .line {
   display: flex;
-  flex-basis: 1040px;
+  flex: 1 1 1040px;
  }
 `
-const  comoption ={
+const  comoptionfn =(laptop) => ({
   type: 5,
   grid: {
     left: 0,
@@ -34,13 +37,14 @@ const  comoption ={
       type: 'gauge',
 
       center: ["50%", "50%"],
-      radius: 90,
+      radius: laptop ? 65 : 90,
       progress: {
         show: true,
        // width: 18
       },
       axisLine: {
         lineStyle: {
+          width: laptop ? 8 : 10
          // width: 18
         }
       },
@@ -57,7 +61,7 @@ const  comoption ={
       axisLabel: {
         distance: 12,
         color: '#999',
-        fontSize: 9
+        fontSize: laptop ? 7 :9
       },
       anchor: {
         show: true,
@@ -73,18 +77,20 @@ const  comoption ={
       detail: {
         valueAnimation: true,
         formatter: '{value}',
-        offsetCenter: [0, '70%']
+        offsetCenter: [0, '70%'],
+        fontSize: laptop ? 20 : 30
       },
     
      
     }]
  
-    }
-export default function Chart({ht, data}) {
+    })
+export default function Chart({ht, data,laptop}) {
   const {tValue, hValue} = ht || {}
-  console.dir(data)
+
   let {humidityTrends, name, tempTrends} = data
   // #6395fa
+ let comoption= comoptionfn(laptop)
   const toption = {
         ...comoption,
         series: [{
@@ -94,7 +100,7 @@ export default function Chart({ht, data}) {
             {
               title: {
                 show: true,
-                fontSize: "14px",
+                fontSize: laptop ? "12px" :"14px",
                 offsetCenter: [0, "30%"]
               },
             value: parseFloat(tValue),
@@ -114,7 +120,7 @@ export default function Chart({ht, data}) {
           {
             title: {
               show: true,
-              fontSize: "14px",
+              fontSize: laptop ? "12px" :"14px",
               offsetCenter: [0, "30%"]
             },
           value: parseFloat(hValue),
@@ -189,7 +195,7 @@ export default function Chart({ht, data}) {
  
  </div>}>
  
-    <Chartwrap >
+    <Chartwrap laptop={laptop}>
       <div className='yb'>
       <Ichart custoption={toption} />
       </div>

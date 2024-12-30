@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import Pagecont from "@com/pagecontent"
 import styled from "styled-components";
-import { Space, Select, Divider, message, Button, Image, Input, Upload, DatePicker } from "antd";
+import { Space, Select, Divider, message, Button, Image, Input, Upload, DatePicker,Typography } from "antd";
 import { useSelector, useDispatch } from 'react-redux'
 import { selectProjectId, selectOneLevel } from '@redux/systemconfig.js'
 import { SpareParts, distributionRoom } from '@api/api.js'
@@ -9,6 +9,7 @@ import Usetable from '@com/useTable'
 import CModal from '@com/useModal'
 import { PlusOutlined } from '@ant-design/icons';
 import moment from 'moment';
+const {Link} = Typography
 const { TextArea } = Input;
 
 const Title = styled.div`
@@ -430,8 +431,8 @@ export default function Index() {
       align: 'center',
       render: (_, record) => (
         <Space size="middle">
-          <span style={{ color: '#237Ae4', textDecoration: 'underline' }} onClick={() => setEdit(record)}>编辑</span>
-          <span style={{ color: '#ff0000', textDecoration: 'underline' }} onClick={() => setDelete(record)}>删除</span>
+          <Link onClick={() => setEdit(record)}>编辑</Link>
+          <Link type="danger" onClick={() => setDelete(record)}>删除</Link>
         </Space>
       ),
     },

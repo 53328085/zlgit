@@ -9,24 +9,25 @@ import {
   message,
   Typography,
   Tag,
-  theme
+  theme,
+  Select
 } from "antd";
 import styled from "styled-components";
 
 import {ProjectSetting,CustTheme} from '@api/api.js'
 
-import Mapcom from "@com/useMap/indexset";
-//import useMap from "@com/useMap/useInitMap"
-//import useMap from "@com/useMap/indexset"
-import Cupload from "@com/useUpload.js" 
+import {initithemeColor} from "@com/defaultcolor"
+
 import Titlelayout from '@com/titlelayout'
 import {useSelector, useDispatch} from "react-redux";
 import {useTranslation} from 'react-i18next'
-import {manager, maintenance} from '@redux/user' //   布尔值  是否是 项目管理员， 运营人员；
-import {publishState, getCurrProjectInfo, currProject, iszhCN, selectProjectId, getThemeColor,themeColor} from '@redux/systemconfig' // 布尔值 发布状态 
+
+import {publishState, getCurrProjectInfo, currProject, iszhCN, selectProjectId, getThemeColor,themeColor,themes,themeId, getThemeId, getThemes, selectedtheme} from '@redux/systemconfig' // 布尔值 发布状态 
  
 import {SaveButton, CustButton} from "@com/useButton" ;
+import {getprimarycolors} from "@com/usehandler";
 import Ccolor from './custColor';
+import { isObject } from "lodash";
 
 const {Text, Link} =Typography
 const { Item } = Form;
@@ -41,7 +42,7 @@ const Ctag=styled(Tag)`
 `
  const Formbox = styled(Form)`
   display: grid;
-  grid-template-columns: 500px 500px;
+  grid-template-columns: repeat(auto-fill, minmax(500px, 1fr)); 
   column-gap: 64px ;
   //grid-template-rows: repeat(16, 32px);
   //gap: 16px 128px;
@@ -97,40 +98,48 @@ export default function Index() {
   const ispublish = useSelector(publishState)
   const iszh = useSelector(iszhCN)
   const projectId= useSelector(selectProjectId)
-  const [themes, setThemes] = useState([])
-  const {t} = useTranslation("comm","common")
-  console.log(themes)
-  const CurrProject = useSelector(currProject)
+  const defaluttheme =useSelector(themeColor)
+  const SelectedTheme = useSelector(selectedtheme)
+  const Themes = useSelector(themes)
 
-  const {QueryProjectInfo, SaveProjectInfo} = ProjectSetting
+ // const [themes, setThemes] = useState([])
+ // const {t} = useTranslation("comm","common")
+console.log('defaulttheme', defaluttheme)
+ // console.log('SelectedTheme',SelectedTheme.primaryderived)
+  
   const [form] = Form.useForm();
 
   const refid = useRef() // 保存时的ID
- const currtheme = useRef()
+
 const getTheme = async()=>{
   try {
+    
     let {success, data, errMsg} = await  CustTheme.QueryTheme(projectId)
     if(success && Array.isArray(data) && data.length >0 ){
       let datas = data.map(d => ({...d, context: JSON.parse(d.context)}))
-      let formdata
-      if(!Number.isInteger(refid.current)) { // 页面初始化时      
-        formdata = datas[0]
-      }else if(refid.current ==0){ // 新增时
-       formdata =datas.reduce((c,p)=> {
-           return c.id > p.id ? c : p
-       }, {id: 0})
-      }else if(refid.current > 0){ // 编辑时
-        formdata = datas.find(d => d.id == refid.id)
+      let ids = data.map(d =>d.id);
+      let maxid = Math.max(...ids)
+    //  let minid = Math.min(...ids)
+      let formdata;
+      if(refid.current == 0) { // 新增时
+         
+         formdata = datas.find(d => d.id == maxid);
+         
+      }else if(refid.current==-1){ // 删除时
+       
+        formdata=datas[0]
+      }else if(refid.current>0){ // 编辑时
+        formdata = datas.find(d => d.id == refid.current)
       }
-      console.log(formdata)
-      currtheme.current = formdata;
-      dispatch(getThemeColor(formdata.context))
-      form.setFieldsValue({id: formdata.id, name: formdata.name, ...formdata.context})
-      setThemes(datas)
-
+      console.log("formdata",formdata.context)
+      dispatch(getThemeId(formdata.id))
+      dispatch(getThemeColor({id: formdata.id, name: formdata.name, ...formdata.context}))
+      dispatch(getThemes(datas)) 
     }else{
-      setThemes([])
-      currtheme.current(null)
+      dispatch(getThemeColor(initithemeColor))
+      dispatch(getThemeId(NaN))
+      dispatch(getThemes([])) 
+    //  form.resetFields()
       if(!success) message.warning(errMsg || "数据出错")
     }
   } catch (error) {
@@ -138,18 +147,53 @@ const getTheme = async()=>{
   }
  
 }
+/* const getTheme = async()=>{
+  try {
+    let {success, data, errMsg} = await  CustTheme.QueryTheme(projectId)
+    if(success && Array.isArray(data) && data.length >0 ){
+      let datas = data.map(d => ({...d, context: JSON.parse(d.context)}))
+      let formdata
+      if(!Number.isInteger(refid.current)) { // 页面初始化时      
+        formdata = Number.isInteger(parseInt(themeId)) ? datas.find(d=> d.id==themeId)??datas[0] : datas[0]
+      }else if(refid.current ==0){ // 新增时
+       formdata =datas.reduce((c,p)=> {
+           return c.id > p.id ? c : p
+       }, {id: 0})
+      }else if(refid.current > 0){ // 编辑时
+        formdata = datas.find(d => d.id == refid.current)
+      }
+      
+      currtheme.current = formdata;
+      dispatch(getThemeColor(formdata.context))
+      form.setFieldsValue({id: formdata.id, name: formdata.name, ...formdata.context})
+     
+
+    }else{
+    
+      currtheme.current(null)
+      if(!success) message.warning(errMsg || "数据出错")
+    }
+  } catch (error) {
+    console.log(error)
+  }
+ 
+} */
 
 
 const onSave =async () => { // 保存
   try {
     let {id, name, ...params} = await form.validateFields()
+    console.dir(params)
     refid.current=id;
     let obj = {id, name, context: JSON.stringify(params)};
    
     let {success, errMsg} =  await  CustTheme.UpdateTheme(projectId, [obj])
     if(success){
       message.success("保存成功")
-      getTheme()
+    
+    // if(id > 0)  dispatch(getThemeId(id))
+    
+      getTheme();
     }else{
       message.warning(errMsg || "数据出错")
     }
@@ -160,48 +204,62 @@ const onSave =async () => { // 保存
   }
   
 }
+const onadd =()=> {
+  form.resetFields()
+  dispatch(getThemeColor(form.getFieldsValue()))
+}
 const onrest=()=>{
   try {
-    if(refid!=0 && themes?.length>0 && currtheme ){
+    let id = form.getFieldValue("id")
+    if(id==0){
+       onadd();
+    }else if(id>0){
+      dispatch(getThemeColor(SelectedTheme))
+     
+    }
+    /* if(refid!=0 && themes?.length>0 && currtheme ){
       let formdata = currtheme.current
      
       dispatch(getThemeColor(formdata.context))
       form.setFieldsValue({id: formdata.id, name: formdata.name, ...formdata.context})
   
-    }
+    } */
   } catch (error) {
     console.log(error)
   }
 }
-const onadd =()=> {
-  form.resetFields()
-  dispatch(getThemeColor(form.getFieldsValue()))
-}
+
 const selectTheme =(id)=> {
   try {
-    let formdata = themes.find(t => t.id ==id)
-    dispatch(getThemeColor(formdata.context))
-    form.setFieldsValue({id: formdata.id, name: formdata.name, ...formdata.context})
-    refid.current=id;
+    refid.current=id
+    dispatch(getThemeId(id))
+    let formdata = Themes.find(t => t.id ==id)
+     
+    dispatch(getThemeColor({id: formdata.id, name: formdata.name, ...formdata.context}))
+  form.setFieldsValue({id: formdata.id, name: formdata.name, ...formdata.context})
+  //  refid.current=id;
   
   } catch (error) {
-    
+    console.log(error)
   }
 
 }
 const ondelete=async ()=> {
 
    try {
-    if(!Number.isInteger(refid.current)) return message.warning("没有选择方案")
+    let id = form.getFieldValue("id")
+    
+    if(!Number.isInteger(parseInt(id)) && id>0 ) return message.warning("没有选择方案")
+    
     let params ={
       projectId,
-      themeId: refid.current
+      themeId: id
     }
-    console.log(params)
+   
     let {success,errMsg}=await  CustTheme.DeleteTheme(params)
     if(success){
       message.success("删除成功")
-      refid.current=undefined
+      refid.current=-1
       getTheme()
     }else{
 message.warning(errMsg|| "数据出错")
@@ -211,9 +269,23 @@ message.warning(errMsg|| "数据出错")
    }
 }
  useEffect(() => {
-  getTheme(); 
+ // getTheme(); 
 }, [projectId]) 
- 
+useEffect(()=>{
+   
+  if(isObject(defaluttheme) && defaluttheme.id >0){
+    
+    form.setFieldsValue(defaluttheme)
+  }
+  
+},[defaluttheme])
+useEffect(()=>{
+  return ()=> {
+    
+     // dispatch(getThemeColor(SelectedTheme))
+    }
+  
+},[])
   return (
     <Titlelayout title={<div style={{display: 'flex', justifyContent: "space-between", alignItems: 'center'}}>
       <span>网站设计</span>  <Space size={32}>
@@ -344,7 +416,7 @@ message.warning(errMsg|| "数据出错")
       <Item label="设备详情页背景色"  name="devicebgcolor" initialValue="#135abd">
         <Ccolor name="devicebgcolor" />
       </Item>
-      <Item label="设备\网关状态"   >
+      <Item label="设备\网关运行状态"   >
         <div style={{display: "flex", columnGap: "8px", flexWrap: "wrap" }}> 
         <Item label="正常" labelCol={{flex: "3em"}} name="normalColor" initialValue="#009966">
           <Ccolor name="normalColor" />
@@ -366,11 +438,56 @@ message.warning(errMsg|| "数据出错")
         </Item>
         </div>        
       </Item>
-     
+      <Item label="设备\网关项右下设置">
+      <div style={{display: "flex", columnGap: "8px", flexWrap: "wrap" }}> 
+      <Item label="字段名" labelCol={{flex: "4em"}} name="fieldname" initialValue="#ffffff">
+          <Ccolor name="fieldname" />
+        </Item>
+        <Item label="字段值" labelCol={{flex: "4em"}} name="fieldvalue" initialValue="#33ff00">
+          <Ccolor name="fieldvalue" />
+        </Item>
+        <Item label="背景色" labelCol={{flex: "4em"}} name="itembg" initialValue="#000033">
+          <Ccolor name="itembg" />
+        </Item>
+     </div>
+    
+     </Item>
+     <Item label="配电房概述菜单">
+      <div style={{display: "flex", columnGap: "8px", flexWrap: "wrap" }}> 
+      <Item label="字段名" labelCol={{flex: "4em"}} name="disfieldname" initialValue="#ffffff">
+          <Ccolor name="disfieldname" />
+        </Item>
+        <Item label="字段值" labelCol={{flex: "4em"}} name="disfieldvalue" initialValue="#33ff00">
+          <Ccolor name="disfieldvalue" />
+        </Item>
+        <Item label="列表项背景色" labelCol={{flex: "9em"}} name="dislistbg" initialValue="#000033">
+          <Ccolor name="dislistbg" />
+        </Item>
+        <Item label="列表项背景色hove" labelCol={{flex: "9em"}} name="disitemhover" initialValue="#000033">
+          <Ccolor name="disitemhover" />
+        </Item>
+     </div>
+    
+     </Item>
+       <Item label="主题衍生背景色" shouldUpdate={(cur, pre) => cur.primaryColor!=pre.primaryColor} >
+        {
+          ()=> {
+         
+          let arrcolor=getprimarycolors().map?.(d => d.value)??[];
+         
+            return (
+              <Item initialValue="#4a9af0" name="primaryderived" >
+              <Ccolor name="primaryderived"  arrcolor={arrcolor}></Ccolor>
+              </Item>
+            )
+          }
+        }
+        </Item>
+        <Divider dashed  className="divider" />
       <Item label="已有方案"    >
         <div style={{display: "flex", rowGap: "8px", flexWrap: "wrap"}}>
         {
-         themes?.length > 0 ?  themes?.map?.(t => <Ctag key={t.id} color={t?.context?.primaryColor} onClick={() => selectTheme(t.id)}>{t.name}</Ctag>): null
+         Themes?.length > 0 ?  Themes?.map?.(t => <Ctag key={t.id} color={t?.context?.primaryColor} onClick={() => selectTheme(t.id)}>{t.name}</Ctag>): null
         }
         </div>
       </Item>
@@ -378,7 +495,14 @@ message.warning(errMsg|| "数据出错")
           <Input hidden></Input>
        </Item>
       </div>
-
+       <div className="leftlayout">
+       <Item label="碳排概述进度条颜色"  name="carnstrokecolor" initialValue="#ffff99">
+      <Ccolor name="carnstrokecolor" />
+      </Item>
+      <Item label="碳排概述进度条末完成颜色" labelCol={{flex:"13em"}} name="carntrailcolor" initialValue="#6633cc">
+      <Ccolor name="carntrailcolor" />
+      </Item>
+       </div>
     </Formbox>
     </Titlelayout>
   );

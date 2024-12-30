@@ -85,6 +85,7 @@ const Box = styled.div`
     width: 833px;
     background-image: url(${zlpbg});
     background-position: 0 0;
+    background-size: 100% 100%;
     .content {
       display: flex;
       flex-direction: column;

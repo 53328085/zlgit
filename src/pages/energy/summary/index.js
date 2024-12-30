@@ -16,6 +16,7 @@ import {Cspin} from "@com/comstyled"
 import {isObject} from "@com/usehandler"
 import {
   selectProjectId,
+  themeColor,
   selectOneLevelDefaultId,
 } from "@redux/systemconfig.js";
 import { useRequest } from "ahooks";
@@ -31,6 +32,13 @@ const Ctag = styled(Tag)`
     cursor: pointer;
   }
 `
+const  Mainbox = styled.div`
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  align-items: stretch;
+`
  
 const Title = styled.div`
     &&{
@@ -39,7 +47,8 @@ const Title = styled.div`
      border-radius: 4px;
      background-color: #fff;
      height: 48px;
-     margin-bottom: 16px;
+     display: flex;
+     align-items: center;
      .text {
       display: inline-block;
       border-left: 4px solid ${props => props.theme.primaryColor};
@@ -106,28 +115,6 @@ const Cp = styled(Paragraph)`
   }
 `;
  
-const labels = {
-  totalInstalledCapacity: "总装机容量(MWh)", //装机容量
-  totalInstalledPower: "总装机功率(MW)", //装机功率
-  totalOutElectric: "总放电量(GWh)", //总放电量
-  totalInElectric: "总充电量(GWh)", //总充电量
-  curPower: "0.00",
-  curRadiance: "当前辐射度", //当前辐射度
-  todayElectricProduct: "当日发电量(kwh)", //当日发电
-  totalElectricProduct: "累计发电量(kWh)", //总发电
-  todayElectricConsume: "今日用电量(kwh)", //当日用电
-  todayElectricConsumePay: "今日电费(元)", //今日电费
-  curMonthElectricConsume: "本月用电量(kwh)", //本月用电
-  curMonthElectricConsumePay: "本月累计电费(元)", //本月电费
-  curYearElectricConsume: "年度总用电量(kwh)", //今年用电
-  curYearElectricConsumePay: "本年累计电费", //今年电费
-  curLoad: "当前负荷(kw)", //当前负荷
-  curLoadPercent: "当前负荷率(%)", //当前负荷率
-  curMonthMaxLoad: "本月最大负荷(kw)", //本月最大负荷
-  curMonthAvgLoad: "本月平均负荷(kwh)", //本月平均负荷
-  curPF: "功率因素", //功率因素
-  curMonthAvgPF: "月平均功率因素", //月平均功率因素
-};
  
 const TitP = styled.div`
   && {
@@ -180,6 +167,7 @@ const Imgbg = memo(({projectId, areaVos}) => {
   const [spinning, setSpinning] = useState(false)
   const [build, setBuild] = useState()
   const [info, setInfo] = useState()
+  const {primaryderived} = useSelector(themeColor)
   const getbuild= async ({buildingId, x, y})=> {
       try {
        let {data, success} = await EnergyOverView.QueryImageBuilding(projectId, buildingId)
@@ -223,7 +211,7 @@ const Imgbg = memo(({projectId, areaVos}) => {
   }, [projectId])
   return    (
     <Cspin spinning={spinning} tip="图片下载中……">
-    <div style={{position: "relative"}}>
+    <div style={{position: "relative", backgroundColor: primaryderived || "#fffffff"}}>
         <img src={energyImage || imgurl.engeryBg}  usemap="#building"  />
         {map}
         {info && <TitP left={info.x} top={info.y}>
@@ -235,7 +223,7 @@ const Imgbg = memo(({projectId, areaVos}) => {
               </div>
               <div className="content">
                   <p className="key">今日费用 <span>(元)</span></p>
-                  <p className="value">{info.todayCost}</p>
+                  <p className="value">{info.todayCost==-1?"/":info.todayCost}</p>
               </div>
               <div className="content">
                   <p className="key">今日碳排<span>(kg)</span></p>
@@ -320,7 +308,7 @@ const getDataEnergy = async () => {
   return (
  /*    <CustContext.Provider > */
        <Pagecount bgcolor="transparent" pd="0">
-       
+         <Mainbox>
            <Title>
                <span className="text">园区概述</span>
            </Title>
@@ -390,7 +378,7 @@ const getDataEnergy = async () => {
               </Titlelayout>
               </div>
            </Content>
-        
+           </Mainbox>
         </Pagecount>
        
   /*   </CustContext.Provider> */

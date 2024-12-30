@@ -18,6 +18,13 @@ import Titlelayout from "@com/titlelayout";
 import styled from 'styled-components'
  
 import Usetable from '@com/useTable'
+const Mainbox = styled.div`
+ && {
+   .leftlayout {
+      background-color: ${props => props.theme.primaryderived ||rgb(0, 0, 51)};
+   }
+ }
+`
 export default function Index() {
   let {exparams} = useOutletContext() 
   let {areaId,  projectId,  pcsId} = exparams
@@ -207,9 +214,9 @@ export default function Index() {
 
   return (
     <Pagecount bgcolor='transparent' pd="0">
-   
-      <div className={style.pcsContent}>
-        <div className={style.left}>
+      
+      <Mainbox className={style.pcsContent}>
+        <div className={style.left + " leftlayout"}>
           <div className={style.title}>
             <span>储能交流器</span>
             <span className={style.pcsName}>{label}</span>
@@ -270,7 +277,7 @@ export default function Index() {
           <Usetable   dataSource={state.ACData} columns={AcClomns} rowKey='name' pagination={false} hbg="#036" />
           
         </div>
-      </div>
+      </Mainbox>
     </Pagecount>
   )
 }

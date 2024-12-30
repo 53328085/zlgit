@@ -48,7 +48,7 @@ const Mainbox = styled.div`
   .bottom {
    /*  position: absolute;
     top: 308px; */
-    border-top: 3px solid #06c;
+    border-top: 3px solid ${props=> props.theme.primaryColor};
     display: grid;
    // grid-auto-columns: 128px;
     grid-template-columns: repeat(8, 128px);
@@ -82,10 +82,10 @@ const Mainbox = styled.div`
         font-size: 24px;
       }
       .num.blue {
-        color: var(--ant-primary-color);
+        color: ${props => props.theme.successColor};
       }
       .num.red {
-        color: #f00;
+        color:  ${props => props.theme.errorColor};
       }
      }
     }
@@ -114,7 +114,7 @@ const Imgboxh = styled.div`
 `
  
 const LineSty = styled.div`
-  background-color: #06c;
+  background-color: ${props=>props.theme.primaryColor};
   height: ${props => props.height|| "4px" };
   width: ${props => props.width || "4px"};
 `

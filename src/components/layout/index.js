@@ -5,7 +5,7 @@ import Copyright from './Copyright'
 import style from './index.module.less'
 import {useSelector} from 'react-redux'
 
-import {  configState,adaptation,sidershow } from "@redux/systemconfig";
+import {  configState,adaptation,sidershow,themeColor } from "@redux/systemconfig";
 
 
 import ShowSide from "@com/showsider"
@@ -63,7 +63,7 @@ export function DefaultLayout(props) { // 默认首页
   }
   return (
     <Layout className={style.pagelayout}>
-      <Cheader className={style.header}>{props.custheader}</Cheader>
+      <Cheader >{props.custheader}</Cheader>
       <Content className={style.content}>{props.children}</Content>
     </Layout>
   )
@@ -82,7 +82,7 @@ export function ProjectLayout(props) { // 项目内容
     
   }
     <Layout>
-      <Cheader className={style.header}>{props.custheader}</Cheader>
+      <Cheader >{props.custheader}</Cheader>
      
       <Content className={style.content}>{props.children}</Content>
      

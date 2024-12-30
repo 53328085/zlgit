@@ -20,14 +20,14 @@ border-radius: 2px;
 padding: 0 8px;
 `
 export  const Ptag = styled(Normal)`
-   background-color: #ecf5ff;
-   color: #409eff;
-   border-color:#409eff;
+   background-color: ${props=> props.theme.primaryderived};
+   color: #fff;
+  // border-color:#409eff;
    transition:  all 0.3s;
    &:hover{
     cursor: pointer;
-    background-color: rgb(64,158,255);
-    border-color:rgb(64,158,255) ;
+    background-color: ${props=> props.theme.primaryColor};
+    border-color:${props=> props.theme.primaryColor} ;
     color:#fff;
    }
 
@@ -256,7 +256,6 @@ export function CustButtonT(props) { // 通用方式按钮 通用翻译
 }
 export function CustButton(props) { // 通用方式按钮
   let {src, ...other} = props 
-  // console.log(props,icon)
   return (
     <Custbtn {...other}>
      {src ? <img src={icon[src]} width={props.width} /> : null}

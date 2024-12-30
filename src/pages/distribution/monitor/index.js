@@ -21,7 +21,7 @@ const Mainbox = styled.div`
   position: relative;
    .cardlocal{
     position: absolute;
-    left:16px;
+    padding: 0 16px;
     top:16px;
     display:flex;
     column-gap: 16px;
@@ -39,7 +39,7 @@ const Mainbox = styled.div`
     //  width: max-content;
      column-gap: 4px;
       height: 48px;
-      background-color: rgba(15, 34, 63, 0.8);
+      background-color:  rgba(15, 34, 63, 0.8);
       border: 1px solid rgba(0, 153, 204, 1);
       padding: 4px 24px;
       display: flex;
@@ -196,11 +196,7 @@ export default function Index() {
             <Image src={imgBg || dimg} preview={false}   />
           </div>
           <div className='cardlocal'>
-            {/* <HoverList keys={keys1} values={['10/0.4',1,64.25,100,350,12]}>配电房概述</HoverList>
-            <HoverList keys={keys2}>运行状态</HoverList>
-            <HoverList keys={keys3}>变压器控制</HoverList>
-            <HoverList keys={keys4}>直流屏监控</HoverList>
-            <HoverList keys={keys5}>环境监控</HoverList> */}
+          
             <HoverDiv>
               配电房概述
               <div className="list" >
@@ -434,8 +430,8 @@ const HoverDiv = styled.div`
 //  width:257px;
   flex: 0 1 257px;
   height:43px;
-  background:#1b3b64;
-  color:#fff;
+  background: ${props => props.theme.primaryderived || '#1b3b64'};
+  color: ${props => props.theme.bgcolorfont};
  // margin-right:16px;
   text-align:center;
   line-height:43px;
@@ -445,14 +441,14 @@ const HoverDiv = styled.div`
     position:absolute;
     top:43px;
     width:100%;
-    background-color:RGB(51,68,97,.9);
+    background-color:${props => props.theme.dislistbg || '#334461'};
     font-size:14px;
     transition:.3s;
     transform-origin:center top;
     .ant-collapse-header{
-      background-color: rgba(51, 68, 97, 1);
-      border-bottom:1px solid #1d7096;
-      color: #fff;
+      background-color: ${props => props.theme.dislistbg || '#334461'};
+      border-bottom:1px solid rgba(255,255,255,0.8);
+      color: ${props => props.theme.islight ? props.theme.lightcolor : "#ffffff"}; // 
       
     }
     .ant-collapse-content-box{
@@ -460,25 +456,25 @@ const HoverDiv = styled.div`
         background-color: transparent;
       }
     .line{
-      border-bottom:1px solid #1d7096;
+      border-bottom:1px solid rgba(255,255,255,0.8);
       display:flex;
       justify-content:space-between;
       padding:8px;
       height:43px;
       align-items:center;
       span:nth-of-type(1){
-        color:#fff
+        color:${props => props.theme.disfieldname || '#ffffff'};
       }
       span:nth-of-type(2){
-        color:#00ff00
+        color:${props => props.theme.disfieldvalue || '#00ff00'};
       }
     }
     .line:hover{
-    background:rgb(102,51,255,.5);
+    background:${props => props.theme.disitemhover || '#6633ff'};
   }
   }
   &:hover{
-    background:rgb(102,51,255);
+   // background:rgb(102,51,255);
     cursor:pointer;
     
   }
@@ -487,30 +483,3 @@ const HoverDiv = styled.div`
     }
  
 `
-const HoverList = (props) => {
-  const { keys, values = [] } = props
-  console.log(keys)
-  return (
-
-    <HoverDiv>
-      {/* <Collapse > */}
-      {props.children}
-      <div className="list" >
-
-        {
-          keys.map((it, i) => {
-            return (<div className="line" key={i}>
-              <span>{it}</span>
-              <span>{values[i]}</span>
-            </div>)
-          })
-        }
-      </div>
-      {/* </Collapse> */}
-
-    </HoverDiv>
-
-
-
-  )
-}

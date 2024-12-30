@@ -33,7 +33,7 @@ const Mainbox = styled.div`
   overflow-y: auto;
   .chart {
     width: 100%;
-    height: 500px;
+    height: 450px;
     display: flex;
     align-items: center;
     justify-content: center;

@@ -5,10 +5,10 @@ import Pagecount from '@com/pagecontent'
 import Card from './card'
 import {isObject} from "@com/usehandler"
 import {CustTransO, i18t, i18warning} from "@com/useButton"
-import styled from 'styled-components'
+import styled , {css} from 'styled-components'
  
 import { Radiogroup, Cdivider } from "@com/comstyled"
-import {enterprise,selectProjectId} from "@redux/systemconfig"
+import {enterprise,selectProjectId,adaptation} from "@redux/systemconfig"
 import Titlelayout from '@com/titlelayout';
 import imgsrcs from "@imgs"
 import Ichart from '@com/useEcharts/Ichart'
@@ -17,6 +17,18 @@ import Table from '@com/useTable'
 import {carbonSlice, useOverviewQuery,useRealTimeQuery, useRankingQuery, useMonthQuery, useRatioQuery, useProjectPhotoQuery, useEnergyQuery} from '@redux/carbon'
  
 const {Text} = Typography
+const sty = css`
+.up {
+  grid-template-columns: repeat(5, 1fr)  ;
+}
+.center {
+  grid-template-columns: repeat(3, 1fr);
+}
+.down {
+  grid-template-columns: 3fr 1fr;
+}
+`
+
 const Mainbox =styled.div`
   flex:1;
   display: grid;
@@ -36,12 +48,24 @@ const Mainbox =styled.div`
   .up{
     display: grid;
     column-gap: 16px;
-    grid-template-columns: repeat(3, 320px) 2px repeat(2, 320px) ;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)) ;
+    
   }
   .center {
      display: grid;
      grid-template-columns:656px 544px 448px;
      column-gap: 16px;
+     .imgbox {
+      background-color: ${props => props.theme.primaryderived};
+      display: flex;
+      align-items: center;
+    //  height:100%;
+      img {
+       max-width: 100%;
+        
+      }
+     
+     }
   }
   .down {
     display: grid;
@@ -51,7 +75,7 @@ const Mainbox =styled.div`
       .wrap {
         margin-top: 16px;
         height: 254px;
-         width: 100%;
+        width: 100%;
         overflow-y: scroll;
         scrollbar-width: none;
         -ms-overflow-style: none;
@@ -80,6 +104,7 @@ const Mainbox =styled.div`
       
       }
   }
+  ${props => props.laptop ? sty : null}
 `  
 const options = [
   {
@@ -99,6 +124,7 @@ const options = [
 /* 月，年。没有日 */
 export default function Index() {
   const {enterpriseId} = useSelector(enterprise)
+  let {laptop} = useSelector(adaptation)
  // 概览数据查询
  let Quota ={}
  const {isSuccess, data: quotaData } = useOverviewQuery(enterpriseId, {
@@ -363,22 +389,21 @@ if(classSuc) {
 
   return (
     <Pagecount bgcolor="#eeeff3" pd={0}>
-      <Mainbox>
+      <Mainbox laptop={laptop}>
       <div className='up' key="up" >
-           <Card name={<CustTransO ns="carbon" text="annualquota" param="(tCO₂)" />}  bgcolor='#333399'  title="" value={Quota.annualQuota} yoy={Quota.annualQuotaYoy} key="a"/> 
-           <Card name={<CustTransO ns="carbon" text="Annualee" param="(tCO₂)" />} bgcolor='#0066CC'  title="" value={Quota.annualEmissionEquivalent} yoy={Quota.annualEmissionEquivalentYoy} key="b" /> 
-           <Card title={<CustTransO ns="carbon" text="Annualce" param="(tCO₂)" />} bgcolor='#006699'  value={Quota.annualResidualCarbonEmission} yoy={Quota.annualResidualCarbonEmissionPercent} key="c"/>
-           <Cdivider type="h" borderColor="#bcbcbc" />
-           <Card title={<CustTransO ns="carbon" text="directe" param="(tCO₂)" />} bgcolor='#6633CC'   value={Quota.directEmission} yoy={Quota.directEmissionPercent} key="d" />
-           <Card title={<CustTransO ns="carbon" text="indirecte" param="(tCO₂)" />} bgcolor='#660099'   value={Quota.indirectEmission} yoy={Quota.indirectEmissionPercent} key="e" />
+           <Card name={<CustTransO ns="carbon" text="annualquota" param="(tCO₂)" />} laptop={laptop}   title="" value={Quota.annualQuota} yoy={Quota.annualQuotaYoy} key="a"/> 
+           <Card name={<CustTransO ns="carbon" text="Annualee" param="(tCO₂)" />} laptop={laptop}  title="" value={Quota.annualEmissionEquivalent} yoy={Quota.annualEmissionEquivalentYoy} key="b" /> 
+           <Card title={<CustTransO ns="carbon" text="Annualce" param="(tCO₂)" />} laptop={laptop}  value={Quota.annualResidualCarbonEmission} yoy={Quota.annualResidualCarbonEmissionPercent} key="c"/>
+          {/*  <Cdivider type="h" borderColor="#bcbcbc" /> */}
+           <Card title={<CustTransO ns="carbon" text="directe" param="(tCO₂)" />} laptop={laptop}   value={Quota.directEmission} yoy={Quota.directEmissionPercent} key="d" />
+           <Card title={<CustTransO ns="carbon" text="indirecte" param="(tCO₂)" />} laptop={laptop}   value={Quota.indirectEmission} yoy={Quota.indirectEmissionPercent} key="e" />
       </div>
       <div className='center' key="center">
-         <Image src={projectImg.current} style={{height: "100%"}} preview={false} fallback={imgsrcs['carbon']}  />
-        {/*   <Titlelayout title={Ctitle} layout="flex" key="real">
-            <div className='chart'>
-                <Ichart {...roption} /> 
-            </div>
-          </Titlelayout>    */}     
+        <div className='imgbox'>
+          <img src={projectImg.current || imgsrcs['carbon']} alt="" />
+        </div>
+       
+       
           <Titlelayout title={Rtitle}  key="rank">
             <div className='chart'>  
                 <Table columns={columnstable} className="tablestyle" rowKey={(columns) => columns.key} dataSource={dataSource.current} scroll={{

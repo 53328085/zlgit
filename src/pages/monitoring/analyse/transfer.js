@@ -12,6 +12,11 @@ import {
     adaptation
   } from "@redux/systemconfig.js";
 const { ComparativeAnalysis: { AllDeviceStyle, QueryCompareDevice } } = Monitoring
+const sty = css`
+ justify-content: flex-start;
+ row-gap: 32px;
+ padding-top: 32px;
+`
 const TransferContent = styled.div`
 &&{
     width: calc(100% - 200px);
@@ -21,12 +26,14 @@ const TransferContent = styled.div`
     padding: 32px;
     display: flex;
     position: absolute;
-    top:50%;
-    transform: translate(200px, -50%);
+   // top:50%;
+    transform: translate(200px, 64px);
+    min-height: calc(100% - 64px);
+    overflow: auto;
     display: flex;
     .otherSubTable{
      flex: 1 1 692px;
-    height: 696px;
+  //  height: 696px;
     padding: 16px;
     background-color: #fff;
     border-radius: 2px;
@@ -47,6 +54,7 @@ const TransferContent = styled.div`
     align-items: center;
 }
 
+
 .actions{
     padding: ${props=> props.laptop ? "0 16px" : "32px"};
     display: flex;
@@ -59,12 +67,12 @@ const TransferContent = styled.div`
      width: ${props=> props.laptop ? "38px" : "68px"};
    }
 
-  
+   ${props => props.laptop ? sty : null};
    
 }
 .rightTable{
     flex: 1 1 714px;
-    height: 696px;
+ //   height: 696px;
     border-radius: 2px;
     padding: 16px;
     background-color: #fff;
