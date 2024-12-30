@@ -196,11 +196,7 @@ export default function Index() {
             <Image src={imgBg || dimg} preview={false}   />
           </div>
           <div className='cardlocal'>
-            {/* <HoverList keys={keys1} values={['10/0.4',1,64.25,100,350,12]}>配电房概述</HoverList>
-            <HoverList keys={keys2}>运行状态</HoverList>
-            <HoverList keys={keys3}>变压器控制</HoverList>
-            <HoverList keys={keys4}>直流屏监控</HoverList>
-            <HoverList keys={keys5}>环境监控</HoverList> */}
+          
             <HoverDiv>
               配电房概述
               <div className="list" >
@@ -435,7 +431,7 @@ const HoverDiv = styled.div`
   flex: 0 1 257px;
   height:43px;
   background: ${props => props.theme.primaryderived || '#1b3b64'};
-  color:#fff;
+  color: ${props => props.theme.bgcolorfont};
  // margin-right:16px;
   text-align:center;
   line-height:43px;
@@ -450,9 +446,9 @@ const HoverDiv = styled.div`
     transition:.3s;
     transform-origin:center top;
     .ant-collapse-header{
-      background-color: ${props => props.theme.dislistbg || '#334461'};;
+      background-color: ${props => props.theme.dislistbg || '#334461'};
       border-bottom:1px solid rgba(255,255,255,0.8);
-      color: #fff;
+      color: ${props => props.theme.islight ? props.theme.lightcolor : "#ffffff"}; // 
       
     }
     .ant-collapse-content-box{
@@ -487,30 +483,3 @@ const HoverDiv = styled.div`
     }
  
 `
-const HoverList = (props) => {
-  const { keys, values = [] } = props
-  console.log(keys)
-  return (
-
-    <HoverDiv>
-      {/* <Collapse > */}
-      {props.children}
-      <div className="list" >
-
-        {
-          keys.map((it, i) => {
-            return (<div className="line" key={i}>
-              <span>{it}</span>
-              <span>{values[i]}</span>
-            </div>)
-          })
-        }
-      </div>
-      {/* </Collapse> */}
-
-    </HoverDiv>
-
-
-
-  )
-}

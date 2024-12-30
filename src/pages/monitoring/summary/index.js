@@ -62,12 +62,12 @@ ${props=> props.laptop ? sty : null}
             text-align: left;
             .valueTitle{
                 font-size: 14px;
-                color: ${props => props.islight ? "#333" : "#fff"} ;
+                color: ${props => props.theme.bgcolorfont} ;
             }
             .valueData{
                 //margin-top: 10px;
                 font-size: 28px;
-                color: ${props => props.islight ? "#515151" : "#fff"} ;
+                color: ${props => props.theme.bgcolorfont} ;
             }
         }
         .boxCard{
@@ -120,7 +120,7 @@ ${props=> props.laptop ? sty : null}
             }
             .itemTitle{
                 font-size: 14px;
-                color: ${props => props.islight ? "#333" : "#fff"};
+                color: ${props => props.theme.bgcolorfont};
             }
             .waitOrder, .duringOrder, .waitInspection{
                 background-repeat: no-repeat;
@@ -145,8 +145,8 @@ export default function Index() {
   let {laptop} = useSelector(adaptation)
 
   let {primaryderived} = useSelector(themeColor)
-  
-  let islight = isLightColor(primaryderived)
+  console.log("primaryderived", primaryderived)
+   
   const statusAttribute = [
     {
       meterType: 0,
@@ -286,7 +286,7 @@ export default function Index() {
   }, [areaId, projectId])
   return (
     <Pagecount pd="0" bgcolor="transparent">
-      <Mainbox laptop={laptop} islight={islight}>
+      <Mainbox laptop={laptop} >
         <Icard img={imgurl.device} title={'设备总数'} value={allCount} key="device"  />
         {MonitoringData?.map((item) => (
           <div onClick={() => toDevicePage(item.meterType)}>

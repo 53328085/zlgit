@@ -206,7 +206,7 @@ export default function Log() {
   const adap =useSelector(adaptation) || {}
  const themelists = useSelector(themelist)
  let Themes = useSelector(themes);
-  console.log(themelists)
+  
    let item = themelists?.length> 0 ? {label: '主题', key:"theme", children: themelists} : null
 
   const items=process.env.NODE_ENV === 'development' ? [   // 王工正式线屏蔽语言切换

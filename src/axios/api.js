@@ -2003,6 +2003,8 @@ export const Monitoring = {
       server.get(
         `/Monitor/RuntimeDevice/Current?projectId=${projectId}&sn=${sn}`
       ), //设备
+    HistoryPointTrend: (data) =>
+      server.post(`/Monitor/RuntimeDevice/HistoryPointTrend`, data), //
     HistoryTrend: (data) =>
       server.post(`/Monitor/RuntimeDevice/HistoryTrend`, data), //
     HistoryTable: (data) =>

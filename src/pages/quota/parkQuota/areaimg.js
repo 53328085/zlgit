@@ -1,5 +1,6 @@
 import React, {memo, useState, useEffect} from 'react'
 import { Form, Image, Progress, Typography, Spin, Tag } from "antd";
+import {CloseOutlined}  from "@ant-design/icons"
 import styled from 'styled-components';
 import { EnergyOverView, UpdateEnergyImage, HomeRuntime} from "@api/api.js"
 import {Cspin} from "@com/comstyled"
@@ -27,7 +28,7 @@ const Numbox = styled.div`
   right: 16px;
   align-items: center;
   justify-content: space-around;
-  color:#000;
+  color:${props=> props.theme.bgcolorfont};
   font-size: 16px;
   p {
     
@@ -36,9 +37,57 @@ const Numbox = styled.div`
     }
   }
 `
+const TitP = styled.div`
+  && {
+    width: 176px;
+    min-height: 244px;
+    border: 1px solid #fff;
+    border-radius: 4px;
+    left: ${props => props.left+'px'};
+    top: ${props=> props.top+32+'px'};
+    position: absolute;
+    transition: all 0.3s;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    color:${props=> props.theme.bgcolorfont};
+    .title {
+      background-color: #0c3;
+      color: #fff;
+      height: 24px;
+      padding: 2px 8px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .contentbox {
+      background-color: rgba(255,255,255,0.6);
+      padding: 16px 2px 16px 32px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      flex:1;
+      .contentx {
+        .key{
+          font-size: 14px;
+          line-height: 1;
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          padding-right: 16px;
+        }
+        .value{
+          font-size: 18px;
+          line-height: 1;
+        }
+      }
+    }
+  }
+`
+ 
 export default memo(({projectId, areaAnnualQuota=[],  parkNum, 
     structureNum,
-    roomNum}) => {
+    roomNum,primaryderived}) => {
     const [energyImage, setEnergyImage]= useState()
     const [spinning, setSpinning] = useState(false)
     const [build, setBuild] = useState()
@@ -91,8 +140,8 @@ export default memo(({projectId, areaAnnualQuota=[],  parkNum,
     roomNum
     return    (
       <Cspin spinning={spinning} tip="图片加载中……">
-      <div style={{position: "relative"}}>
-          <img src={energyImage || enerbg}   style={{width: "1180px", height: "800px"}}  />
+      <div style={{position: "relative", backgroundColor: primaryderived}}>
+          <img src={energyImage || enerbg}     />
           <Numbox>
              <p><span>园区</span><span>{parkNum}</span></p>
              <p><span>建筑物</span><span>{structureNum}</span></p>
@@ -102,19 +151,19 @@ export default memo(({projectId, areaAnnualQuota=[],  parkNum,
           {info && <TitP left={info.x} top={info.y}>
             <h5 className="title">{info.buildingName} <CloseOutlined onClick={() => setInfo(null)}  /> </h5>
             <div className="contentbox">
-                <div className="content">
+                <div className="contentx">
                     <p className="key">今日能耗 <span>(kWh)</span></p>
                     <p className="value">{info.todayElectricity}</p>
                 </div>
-                <div className="content">
+                <div className="contentx">
                     <p className="key">今日费用 <span>(元)</span></p>
                     <p className="value">{info.todayCost}</p>
                 </div>
-                <div className="content">
+                <div className="contentx">
                     <p className="key">今日碳排<span>(kg)</span></p>
                     <p className="value">{info.todayCarbon}</p>
                 </div>
-                <div className="content">
+                <div className="contentx">
                     <p className="key">实时功率<span>(kW)</span></p>
                     <p className="value">{info.curPower}</p>
                 </div>

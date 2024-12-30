@@ -1,28 +1,26 @@
 import React from 'react'
 import Titlelayout from '@com/titlelayout';
 import flower from '@imgs/flower.png'
-import styled from 'styled-components'
+import styled, {css} from 'styled-components'
 import {useSelector} from "react-redux"
 import {CustTransO} from "@com/useButton"
-import { themeColor } from '@redux/systemconfig.js'
-import { Progress } from 'antd';
-const Progressdiv =styled.progress`
+import { themeColor,adaptation } from '@redux/systemconfig.js'
 
-   border-radius: 10px;
-   border:  1px solid #d7d7d7;
-   height: 8px;
-   width: 160px;
-   margin-left: 5px;
-   padding: 1px;
-    &::-webkit-progress-value {
-        background: #ffff99;
-        border-radius:10px;
+const sty=css`
+  column-gap:16px ;
+  padding: 0px;
+  img {
+    height: 36px;
+    width: 36px;
+  }
+  .content {
+    .number {
+      font-size: 16px;
     }
-    &::-webkit-progress-bar{
-     background-color:transparent;
-     border-radius:10px;
-}
-
+    .title {
+      font-size: 12px;
+    }
+  }
 `
 const Mainbox = styled.div`
 display: flex;
@@ -30,9 +28,13 @@ flex: 1;
 
 align-items: center;
 padding: 0 8px;
-color: #fff;
+color: ${props=> props.theme.bgcolorfont};
 column-gap: 34px;
 overflow: hidden;
+img {
+  height: 42px;
+  width: 42px;
+}
 .content {
   flex: 1;
   display: flex;
@@ -43,22 +45,25 @@ overflow: hidden;
     line-height: 1;
   }
   .title {
-    color: #f2f2f2;
+    color: ${props=> props.theme.bgcolorfont};
   }
   .number {
     font-size: 28px;
     font-weight: bold;
   }
 }
+${props=> props.laptop ? sty : null}
 `
 export default function card({title,bgcolor='#043665',numberval=0.00}) {
 
-let {primaryderived} = useSelector(themeColor)
+let {primaryderived,bgcolorfont} = useSelector(themeColor)
+let {laptop} = useSelector(adaptation)
+  
   return (
   
-     <Titlelayout   bgcolor={primaryderived} layout="flex" hv="24px" bg="transparent" bl="4px solid #fff" fc="#fff" style={{height: '92px', width: '324px'}}>
-       <Mainbox>
-          <img src={flower} alt="" style={{width:42,height:42}}/>
+     <Titlelayout   bgcolor={primaryderived} layout="flex" hv="24px" bg="transparent" bl="4px solid #fff" fc="#fff" style={{height: '92px'}} pv={laptop ? "8px" : "16px"}>
+       <Mainbox laptop={laptop}>
+          <img src={flower} alt="" />
           <div className='content'>
              <p className='title'>{title}</p>
              <p className='number'><CustTransO ns="comm" text="intlNumberWithOptions" val={numberval} /></p>  

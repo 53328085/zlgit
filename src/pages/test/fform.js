@@ -1,26 +1,39 @@
 import { Radio, Tabs } from 'antd';
-import React, { useState, useEffect} from 'react';
+import React, { useState, useEffect, useRef} from 'react';
 import styled from 'styled-components';
 const Ctabs = styled(Tabs)``
-const App = () => {
-
-  let a=14;
-  console.log(a.toString(16))
-const  getprimarycolors=()=>{
-     let primarycolor = window.getComputedStyle(document.documentElement);
-      let colors =[]
-      for(let i=1; i<11; i++) {
-        let key =`--ant-primary-${i}`
-        let value = primarycolor.getPropertyValue(key);
-        colors.push({lable: key, value})
-      }
-  }
+const Test=({cout})=>{
+  const [num, setNum] = useState(1)
+  const ref=useRef()
+  ref.current = num;
+  
   useEffect(()=>{
-    getprimarycolors()
-  })
+    console.log("没有依赖")
+    return ()=> {
+      console.log("退出时的num值", num)
+      console.log("退出时的cout值", cout)
+      console.log("ref", ref.current)
+    }
+  },[])
   return (
     <div>
-     
+    <button onClick={() => setNum(num+1)}>{num}</button> 
+    </div>
+  );
+}
+const App = () => {
+  const [show, setShow] = useState(true)
+  
+  const [cout, setCout] = useState(10)
+  return (
+    <div>
+      <div>
+        <button onClick={()=> setShow(!show)}>show</button>
+      </div>
+      <div>
+        <button onClick={()=> setCout(cout+1)}>{cout}</button>
+      </div>
+     {show && <Test cout={cout}></Test>}
     </div>
   );
 };
