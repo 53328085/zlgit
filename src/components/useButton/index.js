@@ -256,7 +256,6 @@ export function CustButtonT(props) { // 通用方式按钮 通用翻译
 }
 export function CustButton(props) { // 通用方式按钮
   let {src, ...other} = props 
- 
   return (
     <Custbtn {...other}>
      {src ? <img src={icon[src]} width={props.width} /> : null}

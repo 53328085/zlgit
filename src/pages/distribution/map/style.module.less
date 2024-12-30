@@ -1,11 +1,142 @@
-.map{
+.map {
     width: 100%;
-    .mapheader{
+
+    .mapheader {
         background-color: #fff;
         height: 48px;
         line-height: 48px;
-        .areachoose{
+
+        .areachoose {
             padding: 0 16px;
+        }
+    }
+}
+
+.topology {
+
+    // 画布
+    :global {
+        .ant-card-body {
+            padding: 0;
+        }
+
+        .bindMenu {
+            width: 110px;
+            height: 30px;
+            margin: 8px 5px;
+            line-height: 30px;
+            font-size: 14px;
+            color: #333;
+            text-align: center;
+            cursor: pointer;
+
+            &:hover {
+                background-color: #1890ff;
+                color: #fff;
+            }
+        }
+    }
+}
+
+.dialogContent {
+    .tabHeader {
+        display: flex;
+        align-items: center;
+
+        div {
+            width: 144px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 16px;
+        }
+
+        .tabBoxW {
+            background-color: #fff;
+            color: #000;
+            border-top-left-radius: 4px;
+            border-top-right-radius: 4px;
+            cursor: pointer;
+            border: 1px solid var(--ant-primary-color);
+            border-bottom: none;
+        }
+
+        .tabBoxB {
+            background-color: var(--ant-primary-color);
+            color: #fff;
+            border-top-left-radius: 4px;
+            border-top-right-radius: 4px;
+            cursor: pointer;
+        }
+    }
+
+    .tabContent {
+        border: 1px solid var(--ant-primary-color);
+        padding: 16px;
+        border-radius: 4px;
+        border-top-left-radius: 0;
+        min-height: 500px;
+
+    }
+
+    .timeLine {
+        // width: 1536px;
+        height: 36px;
+        background-color: var(--ant-primary-color);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0 16px;
+        color: #fff;
+        line-height: 36px;
+    }
+    .dataBottom {
+        display: grid;
+        // grid-template-columns: repeat(3, 367px);
+        grid-template-columns: repeat(2, 501px);
+
+        .itemBox {
+            display: flex;
+            flex-direction: row;
+
+            .itemHead {
+                background-color: rgb(236, 245, 255);
+                width: 260px;
+                height: 36px;
+                line-height: 36px;
+                padding-left: 16px;
+                text-align: left;
+                border: 1px solid rgb(228, 228, 288);
+                border-top: none;
+                border-right: none;
+                font-size: 14px;
+                color: #333;
+            }
+
+            .itemTail {
+                width: 252px;
+                height: 36px;
+                line-height: 36px;
+                padding-right: 16px;
+                text-align: right;
+                border: 1px solid rgb(228, 228, 288);
+                border-top: none;
+                font-size: 14px;
+                color: #333;
+            }
+        }
+    }
+
+    .warningContent{
+        .warnHeader{
+            display: flex;
+            align-items: center;
+        }
+        .chartBox{
+            width: 100%;
+            height: 500px;
+            margin-top: 16px;
         }
     }
 }

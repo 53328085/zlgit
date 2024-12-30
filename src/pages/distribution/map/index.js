@@ -1,16 +1,22 @@
 import React, { useEffect, useState, useRef, useMemo } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
-import { selectcurlRommid,adaptation } from "@redux/systemconfig";
+import { selectcurlRommid, adaptation } from "@redux/systemconfig";
 import Pagecount from '@com/pagecontent'
-import {Select, message, Spin, Space } from 'antd'
+import { Select, message, Spin, Card, Button } from 'antd'
 import { useReactive } from "ahooks";
-import {useNavigate} from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 import { DistributionRoomRuntime, distributionRoom, RuntimeHMI } from '@api/api.js'
-import styled, {css} from 'styled-components';
+import styled, { css } from 'styled-components';
 import { Topology } from "@topology/core/src/core";
 import { register as registerFlow } from '@topology/flow-diagram'
-import {Cspin} from '@com/comstyled'
+import { Cspin } from '@com/comstyled'
 import mqtt from 'mqtt'
+import style from './style.module.less'
+import CustModal from '@com/useModal'
+
+//子栏目
+import DialogContent from './DialogContent'
+
 
 // 左侧工具栏图标
 import '../../../assets/css/fonts/font/iconfont.css'
@@ -21,13 +27,14 @@ import '../../../assets/css/font_99x1os11gqi/iconfont.css'
 import '../../../assets/css/font_c44gejdj174/iconfont.css'
 import '../../../assets/css/font_ehfbe2lg8tb/iconfont.css'
 import '../../../assets/css/font_ugr1luq01xe/iconfont.css'
+import '../../../assets/css/font_nilhyhwpjm9/iconfont.css'
 // 右侧图形库图标
 import '../../../assets/css/fonts/font/libs/iconfont.css'
 import '../../../assets/css/font_g4v09lxfde/iconfont.css'
 import '../../../assets/css/font_bz4csze2alg/iconfont.css'
 
 const { Option } = Select;
-import {CustButton} from '@com/useButton'
+import { CustButton } from '@com/useButton'
 const sty = css`
  padding: 0 16px;
 `
@@ -48,7 +55,7 @@ export default function Index() {
   `
 
   const { hostServer } = useSelector((state) => state.user);
-  const {laptop} = useSelector(adaptation)
+  const { laptop } = useSelector(adaptation)
   // const hostServer = 'ws://10.5.25.182:4239/eiot/mqtt'
 
   let canvas
@@ -67,7 +74,12 @@ export default function Index() {
     activeChart: 0,
     getGuid: '',
     client: {},
-    timer:null,
+    timer: null,
+    detailTitle: '',
+    pointDetailTitle:'',
+    activeTab: 'current',
+    selectedSn:'',
+    selectedPoint:'',
   })
 
 
@@ -102,7 +114,7 @@ export default function Index() {
     if (res.success) {
       let dateGroup = JSON.parse(res.data.dataGroup)
       dateGroup.locked = 1
-      
+
       setTimeout(() => {
         state.spining = false
         canvas.open(dateGroup)
@@ -168,7 +180,7 @@ export default function Index() {
     state.client.on("message", (topic, message) => {
       console.log('接所消息')
       let mqttData = JSON.parse(message.toString());
- 
+
       for (let key in mqttData.Points) {
         // console.log(mqttData.DeviceId + "_" +key)
         if (window.topology.find(mqttData.SN + "_" + key)) {
@@ -185,7 +197,7 @@ export default function Index() {
         }
         let value = mqttData.Points[key].Value;
       }
-    
+
       canvas.render();
     });
     // 断开发起重连
@@ -197,24 +209,24 @@ export default function Index() {
       console.log("连接失败:", error);
     });
 
-  /*  setTimeout(() => {
-      getHeart(HMIDevices);
-    }, 100); */
+    /*  setTimeout(() => {
+        getHeart(HMIDevices);
+      }, 100); */
   }
 
   const getHeart = (devices) => {
-  //  console.log(devices)
+    //  console.log(devices)
     let params = {
       projectId: projectId,
       channel: state.getGuid,
       devices
     }
     RuntimeHMI.onHerart(params).then(res => {
-      if(res.success){
-        state.timer = setTimeout(()=> {
+      if (res.success) {
+        state.timer = setTimeout(() => {
           getHeart(devices)
         }, 120000)
-      }else{
+      } else {
         message.error(res.errMsg)
       }
     }).catch(e => {
@@ -261,33 +273,36 @@ export default function Index() {
   }
 
   const onMessage = (event, data) => {
-    
-    
+    if (event == 'line' || event == 'space' || event == 'multi') {
+      setNodeTag(false)
+    }
     if (event == 'nodeRightClick') {
-      // console.log(data.evs)
-      if (data.name == "text" || data.name == "rectangle") {
-        setContextMenu({
-          left: data.evs.x - 210 + 'px',
-          top: data.evs.y - 110 + 'px'
-        })
-        setNodeTag(true)
-        setSelectedNode(data)
-        setNodeType('数据绑定')
-      } else if (data.name == 'image') {
-        setContextMenu({
-          left: data.evs.x - 210 + 'px',
-          top: data.evs.y - 110 + 'px'
-        })
-        setNodeTag(true)
-        setSelectedNode(data)
-        setNodeType('设备绑定')
+      if(isf){
+        return;
       }
-    } else if(event == 'dblclick') {
+      if ((data.name == "text" || data.name == "rectangle") && data.tags.length == 3) {
+        setContextMenu({
+          left: isf ? (data.evs.x + 'px') : (data.evs.x - 210 + 'px'),
+          top: isf ? (data.evs.y + 'px') : (data.evs.y - 126 + 'px')
+        })
+        setNodeTag(true)
+        setSelectedNode(data)
+        setNodeType('测点详情')
+      } else if (data.name == 'image' && data.tags.length == 3) {
+        setContextMenu({
+          left: isf ? (data.evs.x + 'px') : (data.evs.x - 210 + 'px'),
+          top: isf ? (data.evs.y + 'px') : (data.evs.y - 126 + 'px')
+        })
+        setNodeTag(true)
+        setSelectedNode(data)
+        setNodeType('设备详情')
+      }
+    } else if (event == 'dblclick') {
       console.log(data)
-       let {tags} = data
-       console.log(tags)
-        if(!Array.isArray(tags) || tags.length < 1) return
-       window.open(`/deviceDetail?sn=${tags[0]}`, "_blank")
+      let { tags } = data
+      console.log(tags)
+      if (!Array.isArray(tags) || tags.length < 1) return
+      window.open(`/deviceDetail?sn=${tags[0]}`, "_blank")
     }
   }
 
@@ -309,43 +324,97 @@ export default function Index() {
     if (roomId) getChartList(roomId)
 
   }, [roomId])
- const mapref = useRef();
- const [isf, setIsf] = useState(false)
- const fullscreen = (e) => {
+  const mapref = useRef();
+  const [isf, setIsf] = useState(false)
+  const fullscreen = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
 
-   e.preventDefault();
-   e.stopPropagation();
-  
-   if(isf) {
-    document.exitFullscreen();
-   }else {
-    mapref.current.requestFullscreen()
-   }
-   setIsf(!isf)
- }
-
- useEffect(()=> {
-  return () => {
-   (typeof state?.client?.end == "function") && state?.client?.end();
-    console.log('卸载')
+    if (isf) {
+      setIsf(false)
+      document.exitFullscreen();
+      setTimeout(() => {
+        newCanvas.fitView(16)
+      }, 100)
+    } else {
+      setIsf(true)
+      mapref.current.requestFullscreen()
+      setTimeout(() => {
+        newCanvas.fitView(16)
+      }, 100)
+    }
   }
- }, [])
+
+  //详情dialog
+  const detailRef = useRef()
+  const pointDetailRef = useRef()
+  const showDetails = () => {
+    setNodeTag(false)
+    if(selectedNode.tags[1]){
+      state.pointDetailTitle = nodeType + '--' + selectedNode.tags[0] + '--' + selectedNode.tags[1]
+      state.selectedSn = selectedNode.tags[0]
+      state.selectedPoint = selectedNode.tags[1]
+      pointDetailRef.current.onOpen()
+    }else{
+      state.detailTitle = nodeType + '--' + selectedNode.tags[0]
+      state.selectedSn = selectedNode.tags[0]
+      state.selectedPoint = ''
+      state.activeTab = 'current'
+      detailRef.current.onOpen()
+    }
+    
+  }
+
+  const onPointCancel = () => {
+    pointDetailRef.current.onCancel()
+  }
+
+  const onCancel = () => {
+    
+    detailRef.current.onCancel()
+  }
+
+
+
+
+  useEffect(() => {
+    return () => {
+      (typeof state?.client?.end == "function") && state?.client?.end();
+      console.log('卸载')
+    }
+  }, [])
 
   return (
     <Cspin spinning={state.spining} tip="Loading...">
-      <div  style={{backgroundColor: "#eeeff3", flex: 1, display: 'flex'}}>
-        <div id="topology-canvas" style={{ position: 'relative', flex:1, backgroundColor: '#fff' }} onContextMenu={e => onContextMenu(e)} ref={mapref}>
+      <div className={style.topology} style={{ backgroundColor: "#eeeff3", flex: 1, display: 'flex' }}>
+        <div id="topology-canvas" style={{ position: 'relative', flex: 1, backgroundColor: '#fff' }} onContextMenu={e => onContextMenu(e)} ref={mapref}>
           <ChartItem laptop={laptop}>
-          
+
             {state.chartList.map((item, index) => {
-              return <CustButton ghost={state.activeChart == item.id ? false : true} wh="112px" style={{borderColor: "#fff"}} key={index} onClick={() => changeChart(item.id)}>{item.name}</CustButton>
+              return <CustButton ghost={state.activeChart == item.id ? false : true} wh="112px" style={{ borderColor: "#fff" }} key={index} onClick={() => changeChart(item.id)}>{item.name}</CustButton>
             })}
-         
-           {(state.chartList?.length > 0) && <CustButton   style={{marginLeft: "auto"}} onClick={fullscreen}>{isf ? '退出全屏' : '全屏显示'}</CustButton>}
+
+            {(state.chartList?.length > 0) && <CustButton style={{ marginLeft: "auto" }} onClick={fullscreen}>{isf ? '退出全屏' : '全屏显示'}</CustButton>}
           </ChartItem>
-         
+
+          {(nodeTag) ? <Card style={{ width: 120, position: 'absolute', ...contextmenu }} >
+            <div className="bindMenu" onClick={() => showDetails()}>{nodeType}</div>
+          </Card> : null}
+
         </div>
       </div>
+
+      <CustModal title={state.detailTitle} ref={detailRef} mold="cust" width={1100} footer={[<Button onClick={onCancel} key="cancel">关闭</Button>]}>
+            <DialogContent projectId={projectId} sn={state.selectedSn}></DialogContent>
+            
+      </CustModal>
+      <CustModal title={state.pointDetailTitle} ref={pointDetailRef} mold="cust" width={1200} footer={[<Button onClick={onPointCancel} key="cancel">关闭</Button>]}>
+            <div className={style.dialogContent}>
+              <div className={style.tabContent} style={{borderTopLeftRadius: '4px'}}>
+
+              </div>
+            </div>
+      </CustModal>
     </Cspin>
   )
 }
