@@ -1,21 +1,27 @@
 import React, { useEffect, useState, useRef, useMemo, useCallback } from 'react'
-import styled from 'styled-components'
+import styled, {css} from 'styled-components'
 import Bluecolumn from "@com/bluecolumn"
 import {useLocation} from 'react-router-dom'
 import { Flex, Progress, Divider, Radio } from 'antd';
+import {useSelector} from 'react-redux'
 import { CaretUpOutlined, CaretDownOutlined } from '@ant-design/icons';
+import {  adaptation } from '@redux/systemconfig.js'
 import DaySvg from '../../../assets/svg/day.svg';
 import Month from '../../../assets/svg/month.svg'
 import Year from '../../../assets/svg/year.svg'
-import CO2 from '../../../assets/svg/CO2.svg'
-import { drawEcharts } from "@com/useEcharts"
+ 
 import imgurl from '@imgs';
 import Ichart from "@com/useEcharts/Ichart"
 import {energyQuota} from "@api/api"
 import { useTranslation } from "react-i18next"
 import { isObject } from '@com/usehandler';
+const sty = css`
+    .gridlayout {
+        grid-template-columns: 1fr 3fr;
+    }
+`
 const WrapDiv = styled.div`
-    background-color:#135abd;
+    background-color: ${props=> props.theme.primaryderived};  //#135abd;
     padding:16px;
     overflow: auto;
     flex: 1;
@@ -25,7 +31,7 @@ const WrapDiv = styled.div`
     .hd{
         font-size:16px;
         height:60px;
-        background-color:#3366cc;
+        background-color:${props=>`rgb(from ${props.theme.primaryderived} r g b / 0.6)` }; //#3366cc;
         color:#fff;
         box-shadow:0px 2px 2px rgba(0, 0, 0, 0.349019607843137);
         border-radius:4px;
@@ -145,6 +151,7 @@ const WrapDiv = styled.div`
         
         
     }
+    ${props => props.laptop ? sty : null}
 `
 const Cycle = ({ text, value = "" }) => {
     return (
@@ -208,7 +215,7 @@ const Cardyear = styled.div`
 export default function Index() {
     const { t } = useTranslation("quota")
     const {search} = useLocation()
-    
+    const {laptop} = useSelector(adaptation)
     const [value, setValue] = useState(1);
     const [datas, setDatas] = useState({})
     const {quotaAreaValue, energyConsumption={}, detail} = isObject(datas) ?datas : {}
@@ -283,7 +290,7 @@ export default function Index() {
    
 
     return (
-        <WrapDiv>
+        <WrapDiv laptop={laptop}>
             <div className="hd">{t("RoomEnergyConsumptionQuota")}</div>
             <div className="title">{quotaRoom?.areaName}</div>
             <div className="gridlayout">

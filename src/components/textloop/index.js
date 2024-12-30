@@ -19,7 +19,7 @@ const Showbox =styled.div`
      
  `
 const Textscroll = styled.div`
-  width: ${props => props.laptop ? "438px" : "538px"};
+  width: ${props => props.laptop ? "436px" : "538px"};
   height: 46px;
   background-color: #f00;
   display: flex;
@@ -52,9 +52,10 @@ const Textscroll = styled.div`
     flex-direction: column;
     
     padding: 4px 8px;
-    justify-content: center;
+    justify-content: space-between;
     .ant-typography {
         color: #fff;
+        line-height: 1;
     }
     
     

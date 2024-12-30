@@ -2,7 +2,7 @@ import React, { useState, useRef, useEffect, useCallback } from 'react'
  
 import { Space, Radio, Select, Progress, Pagination, Form } from 'antd';
 import { useAntdTable } from "ahooks";
-import styled from 'styled-components';
+import styled, {css} from 'styled-components';
 import { useTranslation } from "react-i18next"
 import { ExportExcel } from '@com/useButton'
 import {useLocation, useNavigate, Link} from 'react-router-dom'
@@ -16,25 +16,35 @@ import alarmSelectedIcon from '../quota/icon/alarmSelectedIcon.svg'
 import { useSelector } from 'react-redux'
 import { CPagination } from "@com/comstyled";
 import { CaretRightOutlined } from '@ant-design/icons';
-import { selectProjectId,themeColor } from '@redux/systemconfig.js'
+import { selectProjectId,themeColor,adaptation } from '@redux/systemconfig.js'
 
 
 import {energyQuota} from '@api/api'
 import { isObject } from '@com/usehandler';
+const sty = css`
+  .adapcontent {
+    grid-template-columns: 416px  1fr;
+    .contentright {
+      overflow: auto;
+  .cardDatar {
+    grid-template-columns:repeat(auto-fill, minmax(550px, 1fr));
+    grid-auto-rows: 176px
+  }
+ }
+  }
+
+`
 const Mainbox = styled.div`
+&& {
   display: grid;
   grid-template-rows: 48px 1fr;
   flex: 1;
   row-gap: 16px;
-`
-const ProgressBoX = styled.div`
-.progressColor{
-  .ant-progress-text{
-    color: rgba(255, 0, 0, 1);
-  }
-  
+  ${props => props.laptop ? sty : null}
 }
+
 `
+ 
 const Search = styled.div`
   display: flex;
   height: 48px;
@@ -53,7 +63,7 @@ export default function QuotaAlarms() {
   
   const projectId = useSelector(selectProjectId)
   const {errorColor} =useSelector(themeColor)
-   
+  const {laptop} = useSelector(adaptation)
    
   const [form] = Form.useForm();
   const { t } = useTranslation("quota")
@@ -268,10 +278,10 @@ const changeTab = (val) => {
  
  
   return (
-    <Mainbox>
+    <Mainbox laptop={laptop}>
       {CustView}
     <div className={style.quotaAlarmsContent}>
-      <div className={style.AlarmsContent}>
+      <div className={style.AlarmsContent + " adapcontent"}>
         <div className={style.AlarmsContentLeft}>
           {alarmAllData.map((item, index) => (
             <div className={style.Alarmsitem} onClick={() => changeAlarm(item)} style={{ color: activeTab == item.quotaAreaId ? '#fff' : '', background: activeTab == item.quotaAreaId ? errorColor : '', border: activeTab == item.quotaAreaId? 'none' : '' }}>
@@ -288,9 +298,9 @@ const changeTab = (val) => {
             </div>
           ))}
         </div>
-        <div className={style.AlarmsContentRight}>
+        <div className={style.AlarmsContentRight + " contentright"}>
           
-            <div className={style.cardData}>
+            <div className={style.cardData + " cardDatar"}>
               {
                 tableProps?.dataSource?.map((item, index) => (
                 <Link to={`/detailIndicators?quotaAreaId=${item.quotaAreaId}&type=1&projectId=${projectId}`} target="_blank" key={item.quotaAreaId}>  <div className={style.cardBox}   >
