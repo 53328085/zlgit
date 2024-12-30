@@ -38,7 +38,7 @@ import Table from "@com/useTable";
 import { Serach, Cdivider,  CPagination} from "@com/comstyled";
 import bgi from "./images/bgi.png"
 import Pagecount from "@com/pagecontent";
-import {isLightColor} from "@com/usehandler"
+ 
 const channel = new BroadcastChannel('my-channel')
 const sty =css`
 grid-template-columns: repeat(auto-fill, minmax(438px, 1fr));
@@ -97,7 +97,7 @@ const Cardbox=styled.div`
             align-items: center;
             justify-content: space-between;
             font-size: 14px;
-            color: ${props => props.islight ? "#000000" : "#fff"} ;
+            color: ${props => props.theme.bgcolorfont} ;
             font-weight: 700;
             text-align: left;
            
@@ -105,7 +105,7 @@ const Cardbox=styled.div`
                 width: 183px;
             }
             &.val {
-              color: ${props => props.islight ? "#333333" : "#fff"} ;
+              color: ${props => props.theme.bgcolorfont} ;
               font-weight: normal;
             }
         }
@@ -231,7 +231,7 @@ export default function Index(props) {
   const [form] = Form.useForm();
   let areaId = useSelector(selectOneLevelDefaultId);
   const {primaryderived} = useSelector(themeColor)
-  let islight = isLightColor(primaryderived)
+ 
   let {exparams} = useOutletContext()
   let {deviceStyle} = exparams
   const dstate = useSelector(deviceState)
@@ -587,7 +587,7 @@ export default function Index(props) {
         </Form>
         <Cdivider type="h" margin="16px 0" />
         {isCard ? (
-          <Cardbox laptop={laptop} islight={islight}>
+          <Cardbox laptop={laptop} >
             {tableProps?.dataSource?.length > 0 ?
                 tableProps?.dataSource.map((item, index) => { // state 1, 离线 2 在线 3 告警; states 
                 /*   let status =

@@ -13,7 +13,7 @@ const flexcss ={
         title: '工单编号',
         dataIndex: 'name',
         key: 'name',
-        width: 350
+      //  width: 350
         // render:(text,val,index)=>(<a onClick={()=>{console.log(val)}}>{val.sn}</a>)
       },
       {
@@ -55,7 +55,7 @@ const flexcss ={
         title: '状态',
         dataIndex: 'state',
         key: 'state',
-        width:200,
+        width:120,
       //   onCell:(record, index)=>{
       //       return {
       //         style:{

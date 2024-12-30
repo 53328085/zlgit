@@ -244,6 +244,7 @@ const pieOption = ({ data = [], total = 0, radius= ["60%", "80%"],labelLine={},l
     itemHeight: 8,
     itemWidth: 8,
     itemGap: 20,
+    type: "scroll",
     ...legend
   },
   grid,

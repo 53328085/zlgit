@@ -330,8 +330,8 @@ const system = createSlice({
            console.log(payload)
            if(payload.primaryderived){
             let islight = isLightColor(payload.primaryderived)  
-             let bgcolorfont = islight ? "#000000a5" : "#ffffff"
-            state.themeColor ={...themeColor, ...payload,islight,bgcolorfont};
+           //  let bgcolorfont = islight ? "#000000a5" : "#ffffff"
+            state.themeColor ={...themeColor, ...payload,islight };
            }else{
              state.themeColor ={...themeColor, ...payload};
            }

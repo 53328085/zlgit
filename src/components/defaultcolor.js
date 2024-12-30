@@ -40,6 +40,7 @@ export default {
     disitemhover: ["#6633ff"],
     carnstrokecolor: ["#ffff99"],
     carntrailcolor: ["#6633cc"],
+    bgcolorfont: ["#fffff"],
 }
 export const initithemeColor = {  // 可配置对象，不只是颜色属性。名字为保证稳定性不改
     id:0, 

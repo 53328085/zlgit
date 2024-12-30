@@ -1,19 +1,21 @@
 import React, { useState, useRef} from 'react'
 import {useAntdTable} from 'ahooks'
- 
+import {useSelector} from "react-redux"
 import Pagecount from '@com/pagecontent'
-import styled from 'styled-components'
+import styled, {css} from 'styled-components'
 import {  message, Space} from 'antd'
 import {useOutletContext} from 'react-router-dom'
 import {CustButtonT, CustTransO,i18t, i18warning, i18success} from "@com/useButton"
 import Titlelayout from "@com/titlelayout"
- 
+import { themeColor, adaptation} from '@redux/systemconfig.js'
 import {Carbon} from '@api/api'
 import CTree from './ctree'
 import Usetable from '@com/useTable'
 import {getTime} from "@com/usehandler"
 
- 
+ const sty = css`
+  grid-template-columns: 296px 1fr;
+ `
 const Mainbox = styled.div`
   display: grid;
   grid-template-columns: 296px minmax(1368px, auto);
@@ -27,7 +29,7 @@ const Mainbox = styled.div`
       background-color: #fdfdfd;
     }
   }
-  
+  ${props=> props.laptop ? sty : null}
 `
 const columns = [
   {
@@ -69,7 +71,7 @@ export default function Index() {
   let {exparams, enterpriseId} = useOutletContext() 
   
   let {  date,   type} = exparams
-console.log(exparams)
+  let {laptop} = useSelector(adaptation)
   const [treeId, setTreeId] = useState(null)
  
   const params = useRef({})
@@ -143,7 +145,7 @@ console.log(exparams)
   )
   return (
     <Pagecount bgcolor="transparent" pd="0">
-       <Mainbox>
+       <Mainbox laptop={laptop}>
         <CTree enterpriseId={enterpriseId} setTreeId={setTreeId} />
       {/*  <UserTree areaId={areaId}   setTreeId={setTreeId} setLine={setLine}     />  */}
      

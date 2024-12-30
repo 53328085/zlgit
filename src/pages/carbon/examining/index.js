@@ -12,7 +12,7 @@ import {useOutletContext} from 'react-router-dom'
 import {isObject} from "@com/usehandler"
 import {useSelector} from "react-redux"
 import {CustTransO, i18warning, i18t} from "@com/useButton"
-import { themeColor } from '@redux/systemconfig.js'
+import { themeColor, adaptation} from '@redux/systemconfig.js'
 import { 
   useAnnualQuery,
   useAnalysisQuery,
@@ -27,8 +27,9 @@ const Mainbox = styled.div`
     row-gap: 16px;
     .flexuse {
       display: grid;
-      grid-template-columns: repeat(5, 324px);
+      grid-template-columns: ${props=> props.laptop ? "repeat(5, 1fr)" : "repeat(5, 324px)"} ;
       justify-content: space-between;
+      column-gap: 16px;
     }
     .chartbox {
       flex: 1;
@@ -66,7 +67,8 @@ export default function Index() {
   let {exparams, enterpriseId, iszh} = useOutletContext()   
   let {carbonY} = exparams
   //const [annualData, setAnnualData] = useState({})
-  let {primaryderived} = useSelector(themeColor)
+  let {primaryderived,bgcolorfont} = useSelector(themeColor)
+  const {laptop} = useSelector(adaptation)
   const  roption= useRef({
     series: [{type: "line", seriesLayoutBy: 'row', areaStyle: null, showSymbol: true, itemStyle: {
     //  color: "#63d98a"
@@ -280,9 +282,9 @@ useEffect(() => {
 
   const columnstable = [
     { title: i18t("comm", 'index'), dataIndex: 'key',width: 48, align: "center", render: (text, _,index) => <>{index +1}</>},
-    { title: i18t("carbon", "carbonquota"), dataIndex: 'carbonQuotaItem', key: 'carbonQuotaItem', width: 210,ellipsis: true, align: "center", },
-    { title: i18t("carbon", "totalAnnualQuota"), dataIndex: 'totalAnnualQuota',width: 96, key: 'totalAnnualQuota',ellipsis: true,align: "center", },
-    { title: i18t("carbon", "totalAnnualTarget"), dataIndex: 'totalAnnualTarget',width: 96,key: 'totalAnnualTarget',ellipsis: true, align: "center", },
+    { title: i18t("carbon", "carbonquota"), dataIndex: 'carbonQuotaItem', key: 'carbonQuotaItem', ellipsis: true, align: "center", },
+    { title: i18t("carbon", "totalAnnualQuota"), dataIndex: 'totalAnnualQuota', key: 'totalAnnualQuota',ellipsis: true,align: "center", },
+    { title: i18t("carbon", "totalAnnualTarget"), dataIndex: 'totalAnnualTarget', key: 'totalAnnualTarget',ellipsis: true, align: "center", },
     { title: i18t("carbon", "cumEmissionEquivalent"), dataIndex: 'cumEmissionEquivalent',key: 'cumEmissionEquivalent',ellipsis: true, align: "center", },
     { title: i18t("carbon", "remainEmissionQuota"), dataIndex: 'remainEmissionQuota', key: 'remainEmissionQuota',ellipsis: true, align: "center", },
     { title: i18t("carbon", "remainEmissionTarget"), dataIndex: 'remainEmissionTarget',key: 'remainEmissionTarget',ellipsis: true, align: "center", },
@@ -291,7 +293,7 @@ useEffect(() => {
          title:  i18t("comm", (i+1).toString()),
          dataIndex: i+1,
          key: i+1,
-         width: 76,
+        // width: 76,
          ellipsis: true,
          render: (text, record, index) =>  <Custcul record={record} text={text} i={i} />
 
@@ -303,7 +305,7 @@ useEffect(() => {
   return (
 
     <Pagecount bgcolor="#eeeff3" pd={0}>
-        <Mainbox>
+        <Mainbox laptop={laptop}>
         <div className='flexuse'>
           <Card title={<CustTransO ns="carbon" text="totalAnnualQuota" param="(tCO₂)" />} numberval={annualData.current.totalAnnualQuota} key="quota"/>
           <Card title={<CustTransO ns="carbon" text="totalAnnualTarget" param="(tCO₂)" />} numberval={annualData.current.totalAnnualTarget} key="target"/>
@@ -314,7 +316,7 @@ useEffect(() => {
      
      
        
-          <Titlelayout title={<CustTransO ns="carbon" text="Monthlyanalysis" param="(tCO₂)" />} layout="flex" bgcolor={primaryderived} bg={primaryderived} fc="#fff"  key="chart">
+          <Titlelayout title={<CustTransO ns="carbon" text="Monthlyanalysis" param="(tCO₂)" />} layout="flex" bgcolor={primaryderived} bg={primaryderived} fc={bgcolorfont}  key="chart">
               <div  className='chartbox'>
                 <Ichart {...roption.current} />
               </div>
@@ -324,7 +326,7 @@ useEffect(() => {
         
           <Titlelayout title={<CustTransO ns="carbon" text="Carbonemissiondata" param="(tCO₂)" />} layout="flex" key="table">
             <div className='tablebox'>
-            <UseTable columns={columnstable} istheme hc="#fff" dataSource={tableData} /> 
+            <UseTable columns={columnstable} istheme hc="#fff" dataSource={tableData} scroll={{x: "100%"}} /> 
                 <div className='tip'>
                   <p>
                     <span style={{backgroundColor:'#FFCC33',width:'24px',height:'10px',color:'#FFCC33',marginRight:'16px'}}>123456</span>
