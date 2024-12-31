@@ -52,7 +52,7 @@ export default function Ichart(props={}) {
     }
   }
   if(typechart==5) {   
-    if(!Array.isArray(custoption?.series) || (Array.isArray(custoption?.series[0].data) && custoption?.series[0].data.length ===0)) {
+    if(!Array.isArray(custoption?.series) || (Array.isArray(custoption?.series?.[0]?.data) && custoption?.series?.[0]?.data?.length ===0)) {
       return <Cempty tip={info} />
     }
   }

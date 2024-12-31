@@ -223,10 +223,10 @@ return (
                    </Form.Item>
                   }
  </Space>
-                 <Form.Item style={{marginLeft: 'auto', marginRight: 0}}>
+                {(showDevlist&&laptop) ? null : <Form.Item style={{marginLeft: 'auto', marginRight: 0}}>
                   <Textloop projectId={projectId} roomId={curid} laptop={laptop} />
                   </Form.Item>  
-                 
+}
               </Form>
             
           </Mainbox>

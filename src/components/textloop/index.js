@@ -14,14 +14,14 @@ const Showbox =styled.div`
     display: flex;
     justify-content: center;
     align-items: center;
-    background-color: #f00;
+    background-color: ${props=>props.theme.errorColor};
     cursor: pointer;
      
  `
 const Textscroll = styled.div`
   width: ${props => props.laptop ? "436px" : "538px"};
   height: 46px;
-  background-color: #f00;
+  background-color: ${props=>props.theme.errorColor};
   display: flex;
   align-items: center;
   padding: 0 6px 0px 8px ;

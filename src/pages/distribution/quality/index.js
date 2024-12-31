@@ -2,8 +2,8 @@ import React , {useState} from 'react'
 import {useOutletContext} from 'react-router-dom' 
 import Pagecount from '@com/pagecontent' 
 import CustContext from '@com/content.js' 
-import {useSelector,  } from 'react-redux'
-import { selectcurlRommid , selectProjectId} from "@redux/systemconfig";
+import {useSelector  } from 'react-redux'
+import { selectcurlRommid , selectProjectId, adaptation} from "@redux/systemconfig";
 import Wtjc from './wtjc'
 import Xbpp from './xbpp'
 import Wtqx from './wtqx'
@@ -18,11 +18,13 @@ export default function Index() {
   const {sn, dateval} = exparams || {}
   const projectId = useSelector(selectProjectId)  
   const roomId = useSelector(selectcurlRommid)
+  const {laptop} = useSelector(adaptation)
   const [value, setvalue] = useState('0')
   const propsdata ={
      sn, 
      projectId,
-     day:dateval
+     day:dateval,
+     laptop,
   }
   const tabs = [
     { key: '0', label: '稳态检测' },

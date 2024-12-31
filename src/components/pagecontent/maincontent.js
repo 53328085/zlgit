@@ -4,11 +4,12 @@ import {Tabs} from 'antd'
 import CustContext from '../content'
 
 import styled from 'styled-components'
-import server from '../../axios'
+ 
 const Tabsbox = styled(Tabs)`
   .ant-tabs-nav {
     margin-bottom: 0px;
     max-width: inherit;
+  //  width:  calc(100vw - 220px);
    .ant-tabs-nav-list {
     .ant-tabs-tab {
         border-radius: 4px 4px 0 0;
@@ -166,8 +167,10 @@ useEffect(() => {
      )
  } 
   return (
-    <Pagecontentbox beTabs={beTabs}>
+    <Pagecontentbox beTabs={beTabs}> 
+       <div style={{overflow: "hidden", minWidth: "1070px"}}>
        <TabsEl ></TabsEl>
+        </div> 
       
        {/*  <div className='page--content--main'>{props.children}</div> */}
         <PageContentMain   beTabs={beTabs}  {...props}>
