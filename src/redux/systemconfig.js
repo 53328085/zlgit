@@ -428,10 +428,9 @@ const system = createSlice({
                   state.themeId = themeId;
                   if(state.themes?.length > 0 && Number.isInteger(themeId)) {
                      let  {context,id,name} = state.themes.find(t => t.id==themeId) || {};
-                     let islight = isLightColor(context.primaryderived)  
-                     let bgcolorfont = islight ? "#000000a5" : "#ffffff"
+                     let islight = isLightColor(context.primaryderived)   
                      if(isObject(context)){
-                       state.themeColor ={...context,islight,bgcolorfont, id, name}
+                       state.themeColor ={...context,islight,  id, name}
                      }else{
                        state.themeColor=initithemeColor
                      }

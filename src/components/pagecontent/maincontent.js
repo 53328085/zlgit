@@ -95,10 +95,7 @@ export default function Maincontent(props) {
     const [defaultTab, setDefaultTab] = useState(value)
     const [pathName, setPathName] = useState()
     const [urlstate, setUrlstate] = useState()
- const tabstyl = {
-     background: '#237ae4',
-     color: '#fff'
- }
+
  const onChange = (key) => {  
     
     setvalue(key)
@@ -168,7 +165,7 @@ useEffect(() => {
  } 
   return (
     <Pagecontentbox beTabs={beTabs}> 
-       <div style={{overflow: "hidden", minWidth: "1070px"}}>
+       <div style={{overflow: "hidden", minWidth: "1024px"}}>
        <TabsEl ></TabsEl>
         </div> 
       

@@ -2,7 +2,7 @@ import React, {Fragment, useEffect, useState} from 'react'
 import style from './style.module.less'
 import { Select, Form, Table, message } from 'antd'
 import { useSelector, useDispatch } from 'react-redux'
-import { selectProjectId, selectOneLevel, levelDefaultLabel, selectOneLevelDefaultId, setCurrentlevel } from '@redux/systemconfig.js'
+import { selectProjectId, selectOneLevel, levelDefaultLabel, selectOneLevelDefaultId, setCurrentlevel,themeColor } from '@redux/systemconfig.js'
 import PowerChart from './powerChart'
 import SocChart from './SocChart'
 import {PCSMonitorRuntime, SiteManagerDesigner, StorageContainerDesigner } from '@api/api.js'
@@ -29,7 +29,7 @@ export default function Index() {
   let {exparams} = useOutletContext() 
   let {areaId,  projectId,  pcsId} = exparams
   let {value: pcs_id, label} = pcsId || {}
-
+  const {errorColor,successColor} = useSelector(themeColor)
   const { 
     queryPCSInfo,
     queryPCSWarningInfo, 
@@ -225,11 +225,11 @@ export default function Index() {
             <div className={style.stateList}>
               <div className={style.stateItem}>
                 <img src={online} className={style.circle}></img>
-                <span style={{color:'#0f0'}}>无故障</span>
+                <span style={{color:successColor}}>无故障</span>
               </div>
               <div className={style.stateItem}>
               <img src={error} className={style.circle}></img>
-                <span style={{color:'#f00'}}>告警</span>
+                <span style={{color:errorColor}}>告警</span>
               </div>
               <div className={style.stateItem}>
               <img src={offline} className={style.circle}></img>
