@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect, useCallback, useMemo } from 'react'
-import styled from 'styled-components'
+import styled, {css} from 'styled-components'
 import { Space, Button, message, Input, Divider, Tree, Select, Image } from 'antd'
 import { selectcurlRommid, selectProjectId,selectOneLevelDefaultId } from "@redux/systemconfig";
 import Titlelayout from '@com/titlelayout'
@@ -8,7 +8,14 @@ import Pagecount from "@com/pagecontent";
 import { SpareParts, distributionRoom } from '@api/api.js'
 import { SearchOutlined } from '@ant-design/icons'
 import Cempty from '@com/useEmpty'
-
+const sty = css`
+  .label {
+    flex: 1
+  }
+  .deviceValue {
+    flex: 2
+  }
+`
 const Mainbox = styled.div`
     && {
       flex: 1;
@@ -61,6 +68,9 @@ const Mainbox = styled.div`
             flex-direction: row;
             justify-content: flex-start;
             align-items:center;
+            .label {
+              width: 120px;
+            }
             .deviceValue{
               width:241px;
               height:32px;
@@ -72,6 +82,7 @@ const Mainbox = styled.div`
               padding:0 10px;
               margin-right:16px;
             }
+            ${props => props.theme.laptop ? sty : null}
           }
         }
        
@@ -159,28 +170,28 @@ export default function Index() {
               <Divider dashed style={{ width: '100%' }}>{deviceInfo?.typeName||''}</Divider>
               <div  className='deviceBox'>
               <div className='deviceItem'>
-                        <span style={{width:'120px'}}>设备名称</span>
+                        <span className='label'>设备名称</span>
                         <div className='deviceValue'>
                           <span>{deviceInfo?.deviceName}</span>
                           <span></span>
                         </div>
               </div>
               <div className='deviceItem'>
-                        <span style={{width:'120px'}}>设备编号</span>
+                        <span className='label'>设备编号</span>
                         <div className='deviceValue'>
                           <span>{deviceInfo?.sn}</span>
                           <span></span>
                         </div>
               </div>
               <div className='deviceItem'>
-                        <span style={{width:'120px'}}>规格型号</span>
+                        <span className='label'>规格型号</span>
                         <div className='deviceValue'>
                           <span>{deviceInfo?.category}</span>
                           <span></span>
                         </div>
               </div>
               <div className='deviceItem'>
-                        <span style={{width:'120px'}}>设备类型</span>
+                        <span className='label'>设备类型</span>
                         <div className='deviceValue'>
                           <span>{deviceInfo?.typeName}</span>
                           <span></span>
@@ -188,7 +199,7 @@ export default function Index() {
               </div>
               {deviceInfo?.data&&deviceInfo.data[0]?.data?.length>0?deviceInfo?.data[0]?.data.map(it => {
                       return <div className='deviceItem'>
-                        <span style={{width:'120px'}}>{it.label}</span>
+                        <span className='label'>{it.label}</span>
                         <div className='deviceValue'>
                           <span>{it.data}</span>
                           <span>{it.unit}</span>
@@ -202,7 +213,7 @@ export default function Index() {
                     <Divider dashed style={{ width: '100%' }}>{item.label}</Divider>
                     <div  className='deviceBox'>{item.data.map(it => {
                       return <div className='deviceItem'>
-                        <span style={{width:'120px'}}>{it.label}</span>
+                        <span  className='label'>{it.label}</span>
                         <div className='deviceValue'>
                           {it.label=='最后一次维护时间'?<span>{it.data.slice(0,10)}</span>:
                           it.label=='维护详情'?<span style={{overflowX:'auto'}}>{it.data}</span>:

@@ -5,7 +5,7 @@ import {useRequest} from 'ahooks'
 import styled from "styled-components";
 import {  ExportExcel,i18t, CustTransO} from '@com/useButton'
 import {useSelector, useDispatch} from 'react-redux'
-import {levelDefaultLabel,selectProjectId,selectshifts, filterDeviceStyle,selectOneLevelDefaultId, selectOneLevel, setCurrentlevel, deviceStyle, getThemeColor, themeColor, setIntl} from '@redux/systemconfig.js'
+import {levelDefaultLabel,selectProjectId,selectshifts, filterDeviceStyle,selectOneLevelDefaultId, selectOneLevel, setCurrentlevel, deviceStyle, getThemeColor, themeColor, setIntl,adaptation} from '@redux/systemconfig.js'
 import moment from "moment"; 
 import 'moment/locale/zh-cn';
 const { RangePicker } = DatePicker;
@@ -63,6 +63,7 @@ export default function UseSerach(props) {
   const oneLevelDefaultId = useSelector(selectOneLevelDefaultId) // 选择后的值 
   let [AreaID, setAreaid] = useState(oneLevelDefaultId) 
   const levelone = useSelector(selectOneLevel)  
+  const {laptop} = useSelector(adaptation)
   //const DeviceStyle = useSelector(filterDeviceStyle)  
  const [DeviceStyle, setDeviceStyle] = useState([])
   
@@ -305,19 +306,19 @@ const deviceStyleChange=(v) => {
 
 const deviceStyleNode = (<Item name="deviceStyle" label="设备类型"  >
 
-<Select options={DeviceStyle} fieldNames={{label: "name", value: "deviceStyle"}} style={{width: '200px'}} onChange={deviceStyleChange} {...filterProps}></Select>  
+<Select options={DeviceStyle} fieldNames={{label: "name", value: "deviceStyle"}} style={{width: laptop ? "160px" : '200px'}} onChange={deviceStyleChange} {...filterProps}></Select>  
 </Item>)
 // 站点选择
   const site = (<Item name="stationName" label="站点"   >
-              <Select options={options} onChange={getTank} fieldNames={{label: 'name', value: 'id'}} style={{width: '264px'}} labelInValue></Select>  
+              <Select options={options} onChange={getTank} fieldNames={{label: 'name', value: 'id'}} style={{width: laptop ? "160px" : '264px'}} labelInValue></Select>  
              </Item>)
              // 储能柜
   const tank =  (<Item name="containerId" label="储能柜" >
-  <Select options={tankoptions} onChange={getPcs} fieldNames={{label: 'name', value: 'id'}} style={{width: '264px'}} labelInValue></Select>  
+  <Select options={tankoptions} onChange={getPcs} fieldNames={{label: 'name', value: 'id'}} style={{width: laptop ? "160px" : '264px'}} labelInValue></Select>  
 </Item>)
 // pcs选择
   const pcs = (<Item name="pcsId" label="PCS" >
-              <Select options={pcsoptions} fieldNames={{label: 'sn', value: 'id'}} style={{width: '264px'}} {...filterProps}></Select>  
+              <Select options={pcsoptions} fieldNames={{label: 'sn', value: 'id'}} style={{width:laptop ? "160px" : '264px'}} {...filterProps}></Select>  
              </Item>)
 
 
@@ -360,7 +361,7 @@ const deviceStyleNode = (<Item name="deviceStyle" label="设备类型"  >
     <Cform layout="inline"   form={form}   {...props.formprop} 
      onValuesChange={onValuesChange}      
     style={{displey: 'flex', justifyContent: 'space-between'}} >
-      <Space size={64} split={ <Cdivider />}>
+      <Space size={laptop ? 32 : 64} split={laptop ? null : <Cdivider />}>
       {isAreaId && <Item label={varlabel} name='areaId' initialValue={AreaID}>
         <Select style={{ width: "200px" }} onChange={onChange} options={levelone}  fieldNames={{label: 'name', value: 'id', options: 'options'}}>
          

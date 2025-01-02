@@ -29,7 +29,7 @@ export default function Index() {
   let {exparams} = useOutletContext() 
   let {areaId,  projectId,  pcsId} = exparams
   let {value: pcs_id, label} = pcsId || {}
-  const {errorColor,successColor} = useSelector(themeColor)
+  const {errorColor,successColor,warningColor} = useSelector(themeColor)
   const { 
     queryPCSInfo,
     queryPCSWarningInfo, 
@@ -267,11 +267,11 @@ export default function Index() {
         <div className={style.right}>
           <div className={style.chartCard}>
             <div className={style.chartTitle}>总功率</div>
-            <PowerChart lineData={powerData} Unit='实时总功率(kwh)' color={'#1ba41b'}></PowerChart>
+            <PowerChart lineData={powerData} Unit='实时总功率(kwh)' color={successColor}></PowerChart>
           </div>
           <div className={style.chartCard}>
             <div className={style.chartTitle}>SOC</div>
-            <SocChart lineData={socData} Unit='SOC(%)' color={'#ff6701'}></SocChart>
+            <SocChart lineData={socData} Unit='SOC(%)' color={warningColor}></SocChart>
           </div>
          
           <Usetable   dataSource={state.ACData} columns={AcClomns} rowKey='name' pagination={false} hbg="#036" />

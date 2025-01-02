@@ -51,6 +51,7 @@ const TitP = styled.div`
     flex-direction: column;
     overflow: hidden;
     color:${props=> props.theme.bgcolorfont};
+   
     .title {
       background-color: #0c3;
       color: #fff;
@@ -61,13 +62,14 @@ const TitP = styled.div`
       justify-content: space-between;
     }
     .contentbox {
-      background-color: rgba(255,255,255,0.6);
+      background-color: rgba(205,205,205,0.6);
       padding: 16px 2px 16px 32px;
       display: flex;
       flex-direction: column;
       justify-content: space-between;
       flex:1;
       .contentx {
+       // mix-blend-mode: difference;
         .key{
           font-size: 14px;
           line-height: 1;

@@ -163,9 +163,11 @@ useEffect(() => {
         </Tabsbox>
      )
  } 
+ let {minw=true} = props
+ let minsty = minw ? {overflow: "hidden", minWidth: "1024px"} : null
   return (
     <Pagecontentbox beTabs={beTabs}> 
-       <div style={{overflow: "hidden", minWidth: "1024px"}}>
+       <div style={minsty}>
        <TabsEl ></TabsEl>
         </div> 
       

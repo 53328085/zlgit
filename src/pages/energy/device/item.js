@@ -1,10 +1,16 @@
 import React from 'react'
 import imgurl from './icon'
-import styled from 'styled-components'
+import styled, {css} from 'styled-components'
 import { nanoid } from "@reduxjs/toolkit";
 import {Image, Typography, Descriptions} from 'antd'
 import {numberformat, Statebox} from "@com/usehandler"
 const {Paragraph} = Typography
+const sty= css`
+  .below{
+    grid-template-columns: 115px repeat(3,1fr);
+  }
+
+`
 const Itembox = styled.div`
   position: relative;
   overflow: hidden;
@@ -105,6 +111,7 @@ const Itembox = styled.div`
        
      } 
   }
+  ${props=> props.laptop ? sty : null}
 `
 /* total: {
   value: 312.35,
@@ -114,14 +121,14 @@ const Itembox = styled.div`
 
  
 export default function Item(props) {
-  let {type, name, states=[], sns, address, e, e2, e3, e4, momE, yoyE, momE2, yoyE2, momE3, yoyE3, momE4, yoyE4, image} = props
+  let {type, name, states=[], sns, address, e, e2, e3, e4, momE, yoyE, momE2, yoyE2, momE3, yoyE3, momE4, yoyE4, image, laptop} = props
   // 1，2，3 离线,正常，告警
   
   // let index = states[0];
   // const state = typeof index == "number" ? (['离线', '正常', '告警'][index-1] || '未知') : '未知';
   // const bgColor = typeof index == "number" ? (['#666', '#096', '#ff4d4f'][index-1] || 'ff4d4f') : '#666';
   return (
-    <Itembox>
+    <Itembox laptop={laptop}>
        {/* <Statebox top="13px" right="-20px" width="85px" bgColor={bgColor}>{state}</Statebox> */}
        <div className='upper' key={nanoid()}>
            <div className='pic' key={nanoid()}>

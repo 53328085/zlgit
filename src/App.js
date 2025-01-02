@@ -14,14 +14,14 @@ import EL from './router'
 import ErrorBoundary from './ErrorBoundary';
 //import useConfig from './antdconfig';\
 import {ConfigProvider} from 'antd'
-import {themeColor, intl,setadaptation,getThemeColor} from "@redux/systemconfig";
+import {themeColor, intl,setadaptation,getThemeColor,adaptation} from "@redux/systemconfig";
 import CustConfig from './custConfig';
 import { clearToken} from "@redux/user";
 import {getprimarycolors} from "@com/usehandler";
 function App() {
   const dispatch = useDispatch()
   const theme = useSelector(themeColor)
- 
+  const laptop = useSelector(adaptation)
 /*   const theme = useSelector(themeColor)
  
    
@@ -85,7 +85,7 @@ ratiostr.addEventListener("change", updateratio)
  
   return   (
  <CustConfig> 
-    <ThemeProvider theme={theme}>
+    <ThemeProvider theme={{...theme, ...laptop}}>
     <ErrorBoundary>
   <BrowserRouter>
     <Suspense fallback={<Loading/>}>  

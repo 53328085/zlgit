@@ -39,6 +39,7 @@ export default function Index() {
     value,
     setvalue,
     tabs,
+    minw:false
   }
   const getLinePoint =(keys) => {
      

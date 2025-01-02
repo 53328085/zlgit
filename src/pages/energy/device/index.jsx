@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect, useCallback } from "react";
 import { nanoid } from "@reduxjs/toolkit";
 import { Form, Radio, Space, DatePicker, Select, Pagination, } from "antd";
-import styled from "styled-components";
+import styled, {css} from "styled-components";
 import UserSearch from "@com/useSerach";
 import CustContext from "@com/content.js";
 import { useAntdTable } from 'ahooks'
@@ -10,11 +10,17 @@ import Titlelayout from "@com/titlelayout";
 import Citem from './item'
 import CitemAll from './itemAll'
 import { useSelector } from 'react-redux'
-import { selectProjectId, selectOneLevelDefaultId, selectOneLevel, levelDefaultLabel } from '@redux/systemconfig.js'
+import { selectProjectId, selectOneLevelDefaultId, selectOneLevel, levelDefaultLabel,adaptation } from '@redux/systemconfig.js'
 import moment from "moment";
 import { getTime } from "@com/usehandler"
 import UseTable from "@com/useTable"
 import { ExportExcel } from '@com/useButton'
+const sty= css`
+  .card {
+    grid-template-columns: repeat(auto-fill, minmax(394px, 1fr) );
+    gap:16px
+  }
+`
 const Mainbox = styled.div`
 display: grid;
  grid-template-rows: 48px 1fr;
@@ -36,13 +42,14 @@ const Laybox = styled.div`
   .card {
     flex: 1;
     display: grid;
-    grid-template-columns: repeat(4, 394px);
+    grid-template-columns: repeat(auto-fill, 394px);
     //grid-template-rows: repeat(2, 316px);
-    row-gap: 16px;
+    gap: 16px;
  //   gap: 16px;
     justify-content: space-between;
+   
   }
- 
+  ${props=>props.laptop ? sty : null}
  
  
 `;
@@ -88,6 +95,7 @@ export default function Index() {
   const areaId = useSelector(selectOneLevelDefaultId)
   const areaData = useSelector(selectOneLevel)
   const levelname = useSelector(levelDefaultLabel)
+  const {laptop} = useSelector(adaptation)
   const [tableData, setTableData] = useState([])
   const [tableDataAll, setTableDataAll] = useState([])
   const [form] = Form.useForm();
@@ -359,7 +367,7 @@ export default function Index() {
 
 
   const items = <div style={{ height: '630px', overflowY: 'scroll' }}>  {areaId != 0 && !showAll ?
-    <div className="card">{tableData.map(d => <Citem  {...d} key={nanoid()} />)} </div> :
+    <div className="card">{tableData.map(d => <Citem  {...d} laptop={laptop}  key={nanoid()} />)} </div> :
     <div>{tableDataAll.map(d => <CitemAll  {...d} key={nanoid()} />)}</div>
   }</div>
   const showTotal = (total) => `共${total}条记录`;
@@ -381,7 +389,7 @@ export default function Index() {
         <UserSearch></UserSearch>
 
         <Titlelayout title={Title} layout="flex">
-          <Laybox >
+          <Laybox laptop={laptop}>
 
             {
               mode == 1 ? items : <UseTable dataSource={tableData} columns={columns} key={nanoid()} ref={tbref} sheetName="重点设备" onExport={onExport} />
