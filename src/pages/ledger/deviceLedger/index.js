@@ -8,14 +8,8 @@ import Pagecount from "@com/pagecontent";
 import { SpareParts, distributionRoom } from '@api/api.js'
 import { SearchOutlined } from '@ant-design/icons'
 import Cempty from '@com/useEmpty'
-const sty = css`
-  .label {
-    flex: 1
-  }
-  .deviceValue {
-    flex: 2
-  }
-`
+ 
+ 
 const Mainbox = styled.div`
     && {
       flex: 1;
@@ -82,11 +76,12 @@ const Mainbox = styled.div`
               padding:0 10px;
               margin-right:16px;
             }
-            ${props => props.theme.laptop ? sty : null}
+           
           }
         }
-       
+        
       }
+ //  
 `
 export default function Index() {
   const areaId = useSelector(selectOneLevelDefaultId)

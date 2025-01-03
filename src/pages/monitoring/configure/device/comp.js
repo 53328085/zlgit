@@ -3,7 +3,7 @@ import { useSelector } from 'react-redux'
 import { Input, Select, Space, Divider, Row, Col } from 'antd'
 import style from './style.module.less'
 import { Monitoring } from '@api/api.js'
-import { publishState } from '@redux/systemconfig'
+import { publishState,adaptation } from '@redux/systemconfig'
 import {  ExportExcel, NewButton, AllExportButton} from '@com/useButton'
 import {Serach, Cdivider} from '@com/comstyled'
 const { DeviceManager: { OneLevel } } = Monitoring
@@ -26,6 +26,7 @@ export default forwardRef(function Comp(props, ref) {
     const publish = useSelector(publishState)
     const projectId = useSelector(state => state.system.menus.projectId)
     const oneLevel = useSelector(state => state.system.onelevel)
+    const {laptop} = useSelector(adaptation)
     const areaOptions = oneLevel.length > 0 ? useMemo(() =>{
          let all = oneLevel.find(i => i.id ==0)
         if(!all)   {
@@ -100,7 +101,7 @@ export default forwardRef(function Comp(props, ref) {
                                 }        
                             }}
                             style={{
-                                width: 264,
+                                width: laptop ? 160 : 264,
                             }}
                             fieldNames={{
                                 label: 'name',
@@ -112,15 +113,15 @@ export default forwardRef(function Comp(props, ref) {
                             options={areaOptions}
                         />
                     </Col>
-                    <Col style={{ margin: '0 20px' }}>
+                   {laptop ? null : <Col style={{ margin: '0 20px' }}>
                         <Divider type="vertical" dashed style={{ borderColor: ' #d7d7d7', height: 30 }} />
-                    </Col>
+                    </Col>}
                     <Col>
-                        <span style={{ paddingRight: 16 }}>{inplabel}</span>
+                        <span style={{ padding: laptop ? '0 0 0 16px' : '0 16px 0 0' }}>{inplabel}</span>
                     </Col>
                     <Col>
                     <Serach
-                           style={{ width: 321 }}
+                           style={{ width: laptop ? 260 : 321 }}
                             placeholder={placeholder}
                             allowClear
                             onChange={(e) => { 

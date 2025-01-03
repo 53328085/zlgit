@@ -137,7 +137,7 @@ const getTheme = async()=>{
         formdata = datas.find(d => d.id == refid.current)
       }
       
-      dispatch(getThemeId(formdata.id))
+     // dispatch(getThemeId(formdata.id)) 编辑时不应修改用户已选择的主题色
       dispatch(getThemeColor({id: formdata.id, name: formdata.name, ...formdata.context}))
       dispatch(getThemes(datas)) 
     }else{
@@ -237,12 +237,12 @@ const onrest=()=>{
 const selectTheme =(id)=> {
   try {
     refid.current=id
-    dispatch(getThemeId(id))
+  //  dispatch(getThemeId(id)) 编辑时不应影响用户选择的主题
     let formdata = Themes.find(t => t.id ==id)
      
     dispatch(getThemeColor({id: formdata.id, name: formdata.name, ...formdata.context}))
   form.setFieldsValue({id: formdata.id, name: formdata.name, ...formdata.context})
-  //  refid.current=id;
+   
   
   } catch (error) {
     console.log(error)

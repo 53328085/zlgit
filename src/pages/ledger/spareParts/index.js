@@ -2,7 +2,7 @@ import React, { useState, useRef, useEffect, useCallback, useMemo } from 'react'
 import styled from 'styled-components'
 import { Space, Button, message, InputNumber, Input, Select, DatePicker, Divider } from 'antd'
 import { nanoid } from "@reduxjs/toolkit"
-import { selectdiscurlevel, selectProjectId, selectOneLevelDefaultId, selectcurlRommid } from "@redux/systemconfig";
+import { selectdiscurlevel, selectProjectId, selectOneLevelDefaultId, selectcurlRommid,adaptation } from "@redux/systemconfig";
 import { SpareParts, distributionRoom } from '@api/api.js'
 import Titlelayout from '@com/titlelayout'
 import Usetable from '@com/useTable'
@@ -64,6 +64,7 @@ export default function Index() {
   const projectId = useSelector(selectProjectId)
   const areaId = useSelector(selectOneLevelDefaultId)
   const roomId = useSelector(selectcurlRommid)
+  const {laptop} = useSelector(adaptation)
   const { RangePicker } = DatePicker;
   useEffect(() => {
     setCustview(
@@ -391,7 +392,7 @@ export default function Index() {
               </div>
             </div>
           </UseModal>
-          <UseModal width={1469} height={697}
+          <UseModal width={laptop ? 1024 : 1469} height={laptop ? 500 : 697}
             ref={modalRefRecord}
             mold='cust'
             custft={false}
@@ -399,7 +400,7 @@ export default function Index() {
             title="出入库记录"
             closable
           >
-            <div style={{ margin: '16px 0', width: '1410px', height: '600px' }}>
+            <div style={{ minHeight: laptop ? '350px' : '600px' }}>
               <div style={{ display: 'flex', flexWrap: 'nowrap', justifyContent: 'space-between', flexDirection: 'row', marginBottom: '16px' }}>
                 <div style={{ display: 'flex', flexWrap: 'nowrap', flexDirection: 'row' }}>
                   <div style={{ marginRight: '16px' }}>
