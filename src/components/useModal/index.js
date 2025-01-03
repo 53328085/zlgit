@@ -1,16 +1,27 @@
 import React, {useState, useRef, useImperativeHandle, forwardRef, memo} from "react";
 import {useTranslation} from 'react-i18next'
 import { Button, Modal, Space} from "antd";
-import styled from "styled-components";
+import styled, {css} from "styled-components";
 import Draggable  from "react-draggable";
 import Useform from "./useform";
 import redwarn from '@imgs/redwarn.png'
 //const theme =(type) =>   `4px solid ${custCorle[type]}`
-const theme = (props) => props.type == 'warn' ? `#ff4d4f` : props.theme.primaryColor
+const sty = css`
+.ant-modal-header{
+  padding: 16px;
+}
+.ant-modal-body{
+  padding: 0 16px 16px 16px;
+}
+.ant-modal-footer {
+  padding: 0 16px 16px 16px;
+}
+`
+const theme = (props) => props.type == 'warn' ? props.theme.errorColor : props.theme.primaryColor
 const custCorle =(props) => {
  return {
   normal: props.theme.primaryColor,
-  warn: "#ff4d4f",
+  warn: props.theme.errorColor,
  // dark: "#fff"
  }[props.type]
 }
@@ -57,6 +68,7 @@ const CModal = styled(Modal)`
   .ant-form-item:last-of-type {
     margin-bottom: 0px;
   }
+  ${props=>props.theme.laptop ? sty : null}
 `;
  
  

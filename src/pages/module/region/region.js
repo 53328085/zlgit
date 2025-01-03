@@ -27,7 +27,7 @@ import { useAntdTable, useLatest } from "ahooks";
 import { CustButton } from "@com/useButton";
 import { custMsg } from "@com/usehandler";
 import Mapcom from "@com/useMap/indexset";
-import { selectOneLevel, selectOneLevelDefaultId, getOnelevel, publishState, currProject } from '@redux/systemconfig.js'
+import { selectOneLevel, selectOneLevelDefaultId, getOnelevel, publishState, currProject,adaptation } from '@redux/systemconfig.js'
 import { useSelector, useDispatch } from 'react-redux'
 import { useTranslation } from "react-i18next"
 
@@ -39,7 +39,15 @@ const Mainbox = styled.div`
   row-gap: 16px;
   flex: 1;
 `;
+const Cform = styled(Form)`
+&&{ 
+    .ant-form-item{
+      margin-right:0px;
+    } 
+}
+`
 const Formbox = styled(Form)`
+&&{
   display: grid;
   grid-template-columns: ${(p) => (p.islngLat ? "1fr 584px;" : "1fr")};
   grid-template-rows: ${(p) =>
@@ -49,8 +57,12 @@ const Formbox = styled(Form)`
         ? `repeat(${p.rowes + 5}, 32px)`
         : `repeat(${p.rowes}, 32px)`};
   column-gap: 32px;
-  row-gap: 20px;
+  row-gap: ${props=> props.theme.laptop ? "12px" : "20px"};
   grid-auto-flow: ${(p) => (p.islngLat ? "column" : "row")};
+  .ant-form-item {
+    margin: 0 0 ${props=> props.theme.laptop ? "12px" : "24px"};
+  }
+
   .address {
     grid-column: 2;
   }
@@ -59,6 +71,7 @@ const Formbox = styled(Form)`
     grid-row: 2 /-1;
     display: flex;
   }
+}
 `;
 const Drawerbox = styled(Drawer)`
   && {
@@ -143,7 +156,7 @@ export default function Index({ projectId, level, CModal, name, allLevel }) {
 
   const dispatch = useDispatch();
   const { projectName } = useSelector(currProject)
-
+  const {laptop} = useSelector(adaptation)
   const oneLevel = useSelector(selectOneLevel) // 一级 
   const oneLevelDefaultId = useSelector(selectOneLevelDefaultId) // 一级默认id
   const ispublish = useSelector(publishState)
@@ -258,7 +271,7 @@ export default function Index({ projectId, level, CModal, name, allLevel }) {
 
       try {
         const targetOption = selectedOptions[selectedOptions.length - 1];
-        console.log(targetOption)
+     //   console.log(targetOption)
         targetOption.loading = true;
         let { id, level: curlevel } = targetOption // level:3 , curlevel: 2, 1
 
@@ -266,7 +279,7 @@ export default function Index({ projectId, level, CModal, name, allLevel }) {
           targetOption.children = [];
           targetOption.isLeaf = true
           setLevelOption([...leveloptions])
-          console.log(setLevelOption);
+      //    console.log(setLevelOption);
           return
         } else {
           const params = {
@@ -274,7 +287,7 @@ export default function Index({ projectId, level, CModal, name, allLevel }) {
             level: curlevel + 1,
             parentId: id,
           }
-          console.log(setLevelOption);
+       //  console.log(setLevelOption);
           let { data, success } = await Area.QueryAll(params)
           targetOption.loading = false
           if (success && Array.isArray(data)) {
@@ -676,7 +689,7 @@ export default function Index({ projectId, level, CModal, name, allLevel }) {
 
   return (
     <Mainbox ref={boxref}>
-      <Form form={form} layout="inline" initialValues={{ name: "" }}>
+      <Cform form={form} layout="inline" initialValues={{ name: "" }}>
         <Space size={16}>
           {level == 1 && (
             <Form.Item name="name" label={`${name}${t("common:Query")}`}>
@@ -684,7 +697,7 @@ export default function Index({ projectId, level, CModal, name, allLevel }) {
                 placeholder={`请输入${name}名称`}
                 allowClear
                 enterButton={t("common:Query")}
-                style={{ width: "550px" }}
+                style={{ width: laptop ? "300px" : "550px" }}
                 onSearch={async (v) => {
                   await form.setFieldValue(name, v)
                   getTableData()
@@ -703,7 +716,7 @@ export default function Index({ projectId, level, CModal, name, allLevel }) {
                     value: "id",
                     options: "options",
                   }}
-                  style={{ width: "200px" }}
+                  style={{ width: laptop ? "120px" : "200px" }}
                   onChange={getTableData}
                 ></Select>
               </Item>
@@ -712,7 +725,7 @@ export default function Index({ projectId, level, CModal, name, allLevel }) {
                   placeholder={`请输入${name}名称`}
                   allowClear
                   enterButton={t("common:Query")}
-                  style={{ width: "550px" }}
+                  style={{ width: laptop ? "300px" : "550px" }}
                   onSearch={async (v) => {
                     await form.setFieldValue(name, v)
                     getTableData()
@@ -734,7 +747,7 @@ export default function Index({ projectId, level, CModal, name, allLevel }) {
             <CustButton onClick={multimport}>{t("common:BatchImport")}</CustButton>
           </Form.Item>
         </Space>
-      </Form>
+      </Cform>
       <UserTable columns={columns} dataSource={tabelData} pagination={pagination} onChange={tableOnchange} rowKey="areaId" ref={tableRef} istemp={'istemp'} tempcolums={tempcolums} tempName={sheetName} tempdata={tempdata} />
       {/*    <UserTable columns={columns} {...tableProps} rowKey='areaId'  style={{display: level==1 ?'block' : 'none' }} /> 
           <UserTable columns={columns} {...tableProps} rowKey='areaId' style={{display: level>1 ?'block' : 'none' }} />   */}
