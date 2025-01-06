@@ -513,7 +513,7 @@ export default function Index() {
   const jump = useCallback(() => {
     let { name, password } = loginf;
     if (!jumurl) return message.warning("网站地址为空");
-    window.open(`${jumurl}/?name=${name}&password=${password}&type=dark`);
+    window.open(`${jumurl}/?userName=${name}&pwd=${password}&type=dark`);
   }, [loginf, jumurl]);
   return (
     <Pagecount bgcolor="#eeeff3" pd="0px">
