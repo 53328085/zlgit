@@ -381,7 +381,7 @@ const getvalidate = (start, end, type, choosedate) => {
     {label: '周四', value: 4},
     {label: '周五', value: 5},
     {label: '周六', value: 6},
-    {label: '周日', value: 7},
+    {label: '周日', value: 0},
   ]
   let days = Array.from({length: 31},(v, i) => ({label: i < 9 ? '0'+ (i+1) : (i+1).toString(), value: i+1 }))
  
