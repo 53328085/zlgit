@@ -48,7 +48,7 @@ const TotalDiv = styled.div`
 const Mainbox = styled.div`
   flex: 1;
   display: flex;
-  gap: 16px;
+  gap: 12px;
   flex-wrap: wrap;
   /* flex-direction: column;
   row-gap: 16px; */

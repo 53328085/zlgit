@@ -29,7 +29,7 @@ const sty = css`
 `
 const Divorder = styled.div`
   display: flex;
- // align-items: center;
+  align-items: center;
   margin-top: 30px;
   .card_icon{
     margin-left: 25px;
