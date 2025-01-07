@@ -61,7 +61,7 @@ const Mainbox = styled.div`
     display: grid;
     grid-template-rows: 112px 32px 1fr; 
     justify-items: center;
-    
+    grid-template-columns: 1fr;
     .downUp {
         height: 112px;
         background-color: #686569;
@@ -71,7 +71,7 @@ const Mainbox = styled.div`
         row-gap: 6px;
         padding: 6px 16px 20px 16px;
         align-content: center;
-        width: 1202px;
+        width: ${props=> props.theme.laptop ? "80%" : "1202px"};
         overflow-x: auto;
         span {
             text-align: center;
@@ -81,7 +81,7 @@ const Mainbox = styled.div`
             grid-template-columns: ${props => `repeat(${props.len}, 56px)` };
             grid-auto-rows: 56px;
             column-gap: 8px;
-            width: 1170px;
+           // width: 1170px;
             overflow-x: auto;
             .item {
                 height: 56px;
@@ -104,12 +104,15 @@ const Mainbox = styled.div`
             }
         }
     }
+    .spin{
+      width:100%
+    }
     .arrow {
       display: grid;
             grid-template-columns: ${props => `repeat(${props.len}, 56px)` };
             grid-auto-rows: 32px;
             column-gap: 8px;
-            width: 1202px;
+            width: ${props=> props.theme.laptop ? "80%" : "1202px"};
             padding: 0 16px;
             overflow-x: auto;
             overflow-y: hidden;
@@ -146,11 +149,15 @@ const Mainbox = styled.div`
         border: 1px solid ${props => props.theme.primaryColor};
         border-radius: 8px;
         background-color: #f2f2f2;
-        display: flex;
-        flex-wrap: wrap;
+       // display: flex;
+      //  flex-wrap: wrap;
+        display:grid;
+        grid-template-columns: repeat(auto-fill, minmax(428px,1fr));
+        grid-auto-rows:152px;
         gap:16px;
         height: 568px;
-        width: 1680px;
+      //  width: 1680px;
+        width:100%;
         padding: 16px;
         align-content: flex-start;
       /*   display: grid;
@@ -326,14 +333,7 @@ export default function Commport({projectId,gateway:{gatewayId, name}, device={}
          <div className='arrow'>
             {Array.from({length: com}, (v, i) => <span className={acindex ==(i+1)?  'arrowitem show' : 'arrowitem' }>&#8593;</span>)}
          </div>
-         <Cspin spinning={loading} delay={300}>
-      {/*    <div className={isdatas ? 'downcenter' : 'empty'}>
-              {isdatas > 0 ? datas.map(d => 
-              (<div className='address' key={d.sn}>
-                 <div className={'state '+ ['b', 'b', 's', 'r'][d.state >3  ? 1 : d.state] }>{}</div>
-                 <Text ellipsis={{tooltip: d.name}}>{d.name}</Text>
-              </div>) ) : <Empty />}
-         </div> */}
+         <Cspin spinning={loading} delay={300} className="spin"> 
 
         <div className={isdatas ? 'downcenter' : 'empty'}>
               {isdatas > 0 ? <>
