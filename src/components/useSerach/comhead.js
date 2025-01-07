@@ -37,7 +37,12 @@ const Cform = styled(Form)`
 const { Item } = Form;
 export const AreaSelect = ({value, onChange, isall, ...otherProps}) => {
   const levelone = useSelector(selectOneLevel)
-  const options = isall ?  [isall, ...levelone] : levelone
+  const filter = levelone?.filter?.(f => f.id!=0);
+  let options =[];
+  if(filter?.length > 0){
+    options =  isall ?  [isall, ...filter] : filter
+  }
+    
    return (
     <Select  {...otherProps} defaultValue={value} onChange={onChange} options={options} fieldNames={{label: 'name', value: 'id', options: 'options'}}>
          

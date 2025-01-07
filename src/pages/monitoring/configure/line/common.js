@@ -52,10 +52,12 @@ padding: 16px;
 const Mainbox = styled.div`
 position: absolute;
   width:calc(100% - 200px); //1686 ;
-  height: ${props => props.theme.laptop ? "100%" : "755px"};
-  top: 50%;
+  //height:  calc(100% - 84px);          //  ${props => props.theme.laptop ? "100%" : "755px"};
+  height: calc(100% - 64px);
+  top:  64px ;
   left: 200px;
-  transform: translateY(-50%);
+   
+ //transform: translateY(calc((100% - 64px) / -2));
   background: #003366;
   padding: 32px;
   display: flex;
@@ -67,6 +69,7 @@ position: absolute;
   .content {
      flex: 1;
      display: flex;
+     height: inherit;
      .left {
         flex : 1 1 692px;
         display: flex;
@@ -99,7 +102,7 @@ position: absolute;
         column-gap:16px;
         background-color: #fff;
         padding: 16px;
-        overflow-y: auto;
+     //   overflow-y: auto;
         .rightup{
             display: flex;
             flex-direction: column;
@@ -884,6 +887,7 @@ let SetLine = forwardRef(({ open, lineName, closeDrawer, getLineManagerQuery, tr
                         </div>
                     </div>
                     <Table
+                        style={{overflow: "auto"}}
                         bordered
                         pagination={false}
                         rowSelection={{ selectedRowKeys, onChange: onSelectChange }}
