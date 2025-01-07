@@ -1,4 +1,4 @@
-import React, {useState,  useEffect,useRef} from "react";
+import React, {useState,  useEffect,useRef, useMemo} from "react";
 
 import { Form, Select,  Space, DatePicker, message,  Input, Button,} from "antd";
 import {useRequest} from 'ahooks' 
@@ -53,7 +53,7 @@ export const AreaSelect = ({value, onChange, isall, ...otherProps}) => {
 // 1.   状态中获取
 export default function UseSerach(props) {
   
-  const isprodction =  process.env.NODE_ENV !== "production"
+  
   const {config={}, custview=null,record=null} = props  
  
   const {isAreaId=true, gas=true, daterang='day'} = config

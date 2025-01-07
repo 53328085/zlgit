@@ -51,7 +51,8 @@ const Mainbox = styled.div`
     border-radius: 2px;
     margin-bottom: 32px;
     height: 100%;
-
+    display: flex;
+    flex-direction: column;
   }
   .actions{
     padding: 0 32px;

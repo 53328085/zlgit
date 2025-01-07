@@ -39,7 +39,8 @@ import {ledger} from './ledger'
  export const designerComponents = { 
   '0201': Common,
   '0202': Project,
-  '0203': Monitoring,
+//  '0203': Monitoring,
+  "0203":Comindex,
   '0204': Electric,
   '0205': Distribution,
   '0206': Prepayment,
