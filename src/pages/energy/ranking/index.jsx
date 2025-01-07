@@ -24,11 +24,12 @@ const Main = styled.div`
   justify-content: space-between;
   width: 100%;
   height: 100%;
+  column-gap: 8px;
 `
 const Mainbox = styled.div`
   display: flex;
   flex-direction: column;
-  width: 1072px;
+  flex:1 1 1072px;
   height: 100%;
   overflow-y: auto;
   .chart {
@@ -49,7 +50,7 @@ const Mainbox = styled.div`
 const MainboxRight = styled.div`
   display: flex;
   flex-direction: column;
-  width: 580px;
+  flex:1 1 580px;
   height: 100%;
   overflow-y: auto;
   .chart {

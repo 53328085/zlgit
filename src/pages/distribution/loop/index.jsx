@@ -70,7 +70,7 @@ export default function Index() {
             title: '回路名称',
             dataIndex: 'lineName',
              width: 160,
-            key: 'lineName'
+            key: 'lineName', 
         }, 
         {
             title:"总分表",
@@ -155,12 +155,12 @@ export default function Index() {
             ]
         },  {
             title: '总能耗', 
-            width: laptop ? 96 : "auto",
             children:[
                 {
                     title:'(kW·h)',
                     dataIndex: 'EP',
-                    key: 'EP'
+                    key: 'EP',
+                    width: laptop ? 96 : "auto",
                 }
             ]
         },

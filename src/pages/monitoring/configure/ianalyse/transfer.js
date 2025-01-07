@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next"
+import styled from "styled-components";
 import style from './style.module.less'
 import { useSelector } from 'react-redux'
 import { Table, Input, message, Select, Space } from "antd";
@@ -7,6 +8,22 @@ import { LeftOutlined, RightOutlined } from '@ant-design/icons'
 import { cloneDeep } from "lodash";
 import { CustButton } from '@com/useButton'
 import { Monitoring } from '@api/api.js'
+
+const Mainbox = styled.div`
+&& {
+    display: flex;
+    column-gap: 16px;
+    .otherSubTable{
+    flex: 1 1 692px;
+    height: 696px;
+    padding: 16px;
+    background-color: #fff;
+    border-radius: 2px;
+    margin-bottom: 32px;
+  }
+}
+
+`
 const { ComparativeAnalysis: { AllDeviceStyle, QueryCompareDevice } } = Monitoring
 export default function index(props) {
     console.log(props);
@@ -282,7 +299,7 @@ export default function index(props) {
         getDevices()
     }, [type, searchUnknown])
     return (
-        <div className={style.transferContent}>
+        <Mainbox className={style.transferContent}>
             {contextHolder}
             <div className={style.leftTable}>
                 <div className={style.otherSubTable}>
@@ -333,6 +350,6 @@ export default function index(props) {
                     <Table bordered dataSource={unknownData} columns={columns} size='middle' rowKey='id' pagination={false} scroll={{ y: 500 }} rowSelection={rowSelection}></Table>
                 </div>
             </div>
-        </div>
+        </Mainbox>
     )
 }

@@ -241,7 +241,8 @@ const poptions = useRef({
   pieData: { data: [], total: "100%", radius: ["50%",  "65%"],  center: ['50%', '50%']},
   legend: {
     bottom: 5,
-    top: 'auto'
+    top: 'auto',
+    
   },
  
 })

@@ -4,11 +4,12 @@ import { Input, Select, Space, Divider, Row, Col,message } from 'antd'
 import style from './style.module.less'
 import { Monitoring } from '@api/api.js'
 import CustContext from '@com/content'
-import { publishState } from '@redux/systemconfig'
+import { publishState,adaptation } from '@redux/systemconfig'
 import {  ExportExcel, NewButton, AllExportButton} from '@com/useButton'
 import {Serach, Cdivider} from '@com/comstyled'
 function Comp(props, ref) {
     const publish = useSelector(publishState)
+    const {laptop} =useSelector(adaptation)
     const context = useContext(CustContext)
     const [selvalue, setSelValue] = useState()
     const [inpvalue, setInpValue] = useState()
@@ -92,7 +93,7 @@ function Comp(props, ref) {
                                 value: 'id'
                             }}
                             style={{
-                                width: 264,
+                                width: laptop ? 160 : 264,
                             }}
                             defaultValue={oneLevel.length > 0 ? 0 : null}
                             value={selvalue}
@@ -100,15 +101,15 @@ function Comp(props, ref) {
                             onChange={changeSelect}
                         />
                     </Col>
-                    <Col>
-                        <Cdivider    style={{height: 30 }} />
-                    </Col>
+                    {laptop ? null : <Col style={{ margin: '0 20px' }}>
+                        <Divider type="vertical" dashed style={{ borderColor: ' #d7d7d7', height: 30 }} />
+                    </Col>}
                     <Col>
                         <span style={{ paddingRight: 16 }}>{inplabel}</span>
                     </Col>
                     <Col>
                                 <Serach
-                                style={{ width: 321 }}
+                                style={{ width: laptop ? 260 : 321 }}
                                 placeholder={placeholder}
                                 allowClear
                                 onChange={changeInp}

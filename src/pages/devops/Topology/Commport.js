@@ -2,6 +2,7 @@ import React, {useEffect, useState, useRef, useMemo} from 'react'
 import {message, Empty, Spin, Typography,Pagination} from 'antd'
 import {EnergyFlowRuntime,Monitoring} from "@api/api"
 import {useAntdTable} from 'ahooks'
+import {Cspin} from "@com/comstyled"
 import { Link } from "react-router-dom";
 import {Button} from 'antd'
  import styled from 'styled-components'
@@ -134,14 +135,15 @@ const Mainbox = styled.div`
       flex: 1;
       align-items: center;
       justify-content: center;
-      width: 1688px;
+      width:100%;
+    //  width: 1688px;
       height: 528px;
     
       overflow-y: auto;
     }
     .downcenter {  // 538,152
         position: relative;
-        border: 1px solid #237ae4;
+        border: 1px solid ${props => props.theme.primaryColor};
         border-radius: 8px;
         background-color: #f2f2f2;
         display: flex;
@@ -324,7 +326,7 @@ export default function Commport({projectId,gateway:{gatewayId, name}, device={}
          <div className='arrow'>
             {Array.from({length: com}, (v, i) => <span className={acindex ==(i+1)?  'arrowitem show' : 'arrowitem' }>&#8593;</span>)}
          </div>
-         <Spin spinning={loading} delay={300}>
+         <Cspin spinning={loading} delay={300}>
       {/*    <div className={isdatas ? 'downcenter' : 'empty'}>
               {isdatas > 0 ? datas.map(d => 
               (<div className='address' key={d.sn}>
@@ -354,7 +356,7 @@ export default function Commport({projectId,gateway:{gatewayId, name}, device={}
                       } <Pagination total={total} pageSize={9} hideOnSinglePage style={{position: "absolute", bottom: "16px", right: '16px'}} onChange={onChange}  /> </>: <Empty />}
                       
          </div>
-         </Spin>
+         </Cspin>
        </div>
     </Mainbox>
   )

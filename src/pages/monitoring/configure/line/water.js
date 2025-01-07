@@ -8,7 +8,7 @@ export default function water() {
     addMainLine
   }
   return (
-    <div style={{ overflow: 'hidden' ,width:'100%',height:873}}>
+    <div style={{ overflow: 'hidden' ,width:'100%',height:"inherit", overflowY: "auto"}}>
         <Common type={2}/>
     </div>
   )

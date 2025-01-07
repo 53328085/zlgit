@@ -1,19 +1,27 @@
 import React, { useState, forwardRef, useImperativeHandle, useRef, useEffect } from 'react'
 import { Drawer, Select, Button, Typography, Space, Form, Input, message, Switch } from 'antd'
 import { LeftOutlined, RightOutlined } from "@ant-design/icons";
-import styled from 'styled-components'
+import styled,{css} from 'styled-components'
 import {useSelector} from 'react-redux'
 import Titlelayout from '@com/titlelayout.js'
 import UserTable from "@com/useTable";
 import { AutoValve } from '@api/api'
 import { CustButtonT } from "@com/useButton"
-import {filterDeviceStyle} from '@redux/systemconfig'
+import {filterDeviceStyle,adaptation} from '@redux/systemconfig'
 import Devicestyle from "@com/useSerach/devicestyle"
 const { Paragraph } = Typography
-
+const sty=css` 
+      grid-template-columns: 1fr 140px 1fr;
+        column-gap: 16px;
+        grid-template-rows:  1fr; 
+`
+const iconsty = css`
+  width: 48px;
+  height: 32px;
+`
 const Inptserach = styled(Input.Search)`
   && {
-    width: 256px;
+    width: ${props => props.theme.laptop ? "fit-content" : "256px" } ;
     .ant-input-search
       .ant-input-group
       .ant-input-affix-wrapper:not(:last-child) {
@@ -24,7 +32,8 @@ const Inptserach = styled(Input.Search)`
 const Drawerbox = styled(Drawer)`
   && {
     .ant-drawer-content-wrapper {
-      height:min-content;
+      width: calc(100% - 200px) !important;
+      height: calc(100% - 80px);
       top: 80px;
     }
     .ant-drawer-wrapper-body {
@@ -33,7 +42,8 @@ const Drawerbox = styled(Drawer)`
         display: grid;
         grid-template-columns: 692px 1fr 714px;
         column-gap: 30px;
-        grid-template-rows: 700px;
+        grid-template-rows: 1fr;
+        ${props=> props.theme.laptop ? sty : null}
         .title {
           padding-left: 16px;
           border-left: 4px #237ae4 solid;
@@ -84,11 +94,13 @@ const Drawerbox = styled(Drawer)`
             .ant-btn-icon-only {
               width: 64px;
               height: 46px;
+              ${props => props.theme.laptop ? iconsty : null}
             }
           }
         }
       }
     }
+   
   }
 `;
 const deviceColumns = [
@@ -144,11 +156,12 @@ const unselectdevice = [
 ]
 function Draw({ params }, ref) {
   const deviceStyle = useSelector(filterDeviceStyle)
+  const {laptop} = useSelector(adaptation)
   const [open, setOpen] = useState(false)
   const [sfrom] = Form.useForm()
   const { Item } = Form
   let { projectId, planId } = params || {}
-   
+  
   const [usedtb, setusedtable] = useState([])
   const [unusedtb, setUnusedtb] = useState([])
   const unusedtbbk = useRef()
@@ -334,11 +347,11 @@ function Draw({ params }, ref) {
     <Drawerbox
       onClose={drawClose}
       open={open}
-      width={1688}
+      width={null}
       closable={false}
       maskClosable={false}
       contentWrapperStyle={{ margingRight: '16px' }}
-
+     
       destroyOnClose
     >
       <Titlelayout title="选中设备">
@@ -360,7 +373,7 @@ function Draw({ params }, ref) {
       <div className="optab">
         <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
           <Paragraph>选择设备</Paragraph>
-          <div style={{ display: 'flex', justifyContent: "space-between", padding: "0 16px" }}>
+          <div style={{ display: 'flex', justifyContent: "space-between", padding: laptop ? "0 8px" : "0 16px" }}>
             <Button
               type="primary"
               icon={<LeftOutlined style={{ fontSize: "18px", marginRight: "8px" }} />}
@@ -423,7 +436,7 @@ function Draw({ params }, ref) {
             columns={unselectdevice}
             rowSelection={unrowSelection}
             dataSource={unusedtb}
-            scroll={{ y: 696 }}
+            scroll={{ y: laptop ? 270 : 725 }}
             ref={untb}
             rowKey="id"
           />
