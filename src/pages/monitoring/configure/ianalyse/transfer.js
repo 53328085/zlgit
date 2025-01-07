@@ -1,16 +1,159 @@
 import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next"
-import style from './style.module.less'
+import styled, {css} from "styled-components";
+ 
 import { useSelector } from 'react-redux'
 import { Table, Input, message, Select, Space } from "antd";
 import { LeftOutlined, RightOutlined } from '@ant-design/icons'
 import { cloneDeep } from "lodash";
 import { CustButton } from '@com/useButton'
 import { Monitoring } from '@api/api.js'
+import { 
+    adaptation 
+  } from "@redux/systemconfig.js";
+const sty= css`
+padding: 16px;
+ .actions {
+    padding: 0 16px;
+ }
+`
+const Mainbox = styled.div`
+&& {
+    width:  calc(100% - 200px);
+    height:  calc(100% - 84px);
+    background-color: #003366;
+    padding: 32px;
+    display: flex;
+    position: absolute;
+    top:64px;
+    left:200px;
+   // transform: translateX(200px);
+    z-index: 1000; 
+    .publicTitle{
+    height: 32px;
+    padding-left: 16px;
+    margin-bottom: 16px;
+    line-height: 32px;
+    font-size: 14px;
+    color: #333;
+    border-left: 4px solid var(--ant-primary-color);
+}
+.searchInput{
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+}
+    .otherSubTable{
+    flex: 1 1 692px;
+ //   height: 696px;
+    padding: 16px;
+    background-color: #fff;
+    border-radius: 2px;
+    margin-bottom: 32px;
+    height: 100%;
+
+  }
+  .actions{
+    padding: 0 32px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-evenly;
+    align-items: stretch;
+    .firstButton{
+        margin-top: 64px;
+    }
+    .secondButton{
+        margin-top: 182px;
+        display: flex;
+        justify-content: space-between;
+    }
+    .leftButton{
+        display: inline-block;
+        width: 68px;
+        height: 46px;
+        background-color: var(--ant-primary-color);
+        border-radius: 4px;
+        cursor: pointer;
+        color: #fff;
+        font-size: 20px;
+        line-height: 46px;
+        text-align: center;
+        &:hover{
+            background-color: rgba(64, 158, 255, 1);
+        }
+    }
+    .rightButton{
+        display: inline-block;
+        width: 68px;
+        height: 46px;
+        margin-left:10px;
+        background-color: var(--ant-primary-color);
+        border-radius: 4px;
+        cursor: pointer;
+        color: #fff;
+        font-size: 20px;
+        line-height: 46px;
+        text-align: center;
+        &:hover{
+            background-color: rgba(64, 158, 255, 1);
+        }
+    }
+    .finalButton{
+        margin-top: 180px;
+        .saveButton{
+            width: 146px;
+            height: 40px;
+            background-color: var(--ant-primary-color);
+            border-radius: 4px;
+            cursor: pointer;
+            color: #fff;
+            font-size: 14px;
+            line-height: 40px;
+            text-align: center;
+            &:hover{
+                background-color: rgba(64, 158, 255, 1);
+            } 
+        }
+        .closeButton{
+            margin-top: 16px;
+            width: 146px;
+            height: 40px;
+            background-color: #fff;
+            border-radius: 4px;
+            cursor: pointer;
+            color: #212121;
+            font-size: 14px;
+            line-height: 40px;
+            text-align: center;
+            &:hover{
+                opacity: 0.5;
+            } 
+        }
+    }
+  }
+  .rightTable{
+     flex: 1 1 714px;
+  //  height: 696px;
+    border-radius: 2px;
+    padding: 16px;
+    background-color: #fff;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    .tablebox{ 
+        height: inherit;
+        overflow: auto;
+    }
+}
+${props => props.theme.laptop ? sty : null}
+}
+
+`
 const { ComparativeAnalysis: { AllDeviceStyle, QueryCompareDevice } } = Monitoring
 export default function index(props) {
-    console.log(props);
+    
     const projectId = useSelector(state => state.system.menus.projectId)
+    const {laptop} = useSelector(adaptation)
     const { t } = useTranslation(["button"])
     const [messageApi, contextHolder] = message.useMessage();
     const { Search } = Input
@@ -281,35 +424,44 @@ export default function index(props) {
     useEffect(() => {
         getDevices()
     }, [type, searchUnknown])
+    const btsty =laptop ? {
+        height: "32px",
+        width: "48px",
+    }: { height: "46px", width: "68px" }
+    const htsty =laptop ? {
+       height: "32px"
+    }: {
+        height: "46px"
+    }
     return (
-        <div className={style.transferContent}>
+        <Mainbox >
             {contextHolder}
-            <div className={style.leftTable}>
-                <div className={style.otherSubTable}>
-                    <div className={style.publicTitle}>{props.transferTitle.subTitle}</div>
-                    <div className={style.searchInput}>
+            
+                <div className="otherSubTable">
+                    <div className="publicTitle">{props.transferTitle.subTitle}</div>
+                    <div className="searchInput">
                         <span style={{ marginRight: 16 }}>设备搜索</span>
                         <Search placeholder="请输入设备编号/安装地址" value={searchknown} onChange={(e) => setSearchknown(e.target.value)}
                          style={{ width: 256 }} enterButton onSearch={onSearchSub}></Search>
                     </div>
-                    <div>
-                        <Table bordered dataSource={subData} columns={columns} size='middle' rowKey='id' pagination={false} scroll={{ y: 500 }} rowSelection={subSelection}></Table>
-                    </div>
+                     
+                        <Table style={{overflow: "auto"}} bordered dataSource={subData} columns={columns} size='middle' rowKey='id' pagination={false}   rowSelection={subSelection}></Table>
+                     
                 </div>
-            </div>
-            <div className={style.actions}>
+             
+            <div className="actions">
                 <Space size={16}>
-                    <CustButton icon={<LeftOutlined />} style={{ height: "46px", width: "68px" }} onClick={unknownToSub}></CustButton>
-                    <CustButton icon={<RightOutlined />} style={{ height: "46px", width: "68px" }} onClick={subToUnknown}></CustButton>
+                    <CustButton icon={<LeftOutlined />} style={btsty} onClick={unknownToSub}></CustButton>
+                    <CustButton icon={<RightOutlined />} style={btsty} onClick={subToUnknown}></CustButton>
                 </Space>
                 <Space size={16} direction="vertical">
-                    <CustButton onClick={handleSave} style={{ height: "46px", width: "100%" }} >{t("button:save")}</CustButton>
-                    <CustButton type="default" style={{ height: "46px", width: "100%" }} onClick={() => handleClose()}>{t("button:cancel")}</CustButton>
+                    <CustButton onClick={handleSave} style={{  ...htsty, width: "100%" }} >{t("button:save")}</CustButton>
+                    <CustButton type="default" style={{ ...htsty, width: "100%" }} onClick={() => handleClose()}>{t("button:cancel")}</CustButton>
                 </Space>
             </div>
-            <div className={style.rightTable}>
-                <div className={style.publicTitle}>{props.transferTitle.unknownTitle}</div>
-                <div className={style.searchInput}>
+            <div className="rightTable">
+                <div className="publicTitle">{props.transferTitle.unknownTitle}</div>
+                <div className="searchInput">
                     <span>设备类型</span>
                     <Select
                         size="middle"
@@ -324,15 +476,15 @@ export default function index(props) {
                         <Select.Option value={2}>水表</Select.Option>
                         <Select.Option value={3}>燃气表</Select.Option> */}
                     </Select>
-                    <div style={{ width: 0, height: 32, margin: '0 32px', borderLeft: '1px dashed #ddd' }}></div>
+                   {laptop ? null :  <div style={{ width: 0, height: 32, margin: '0 32px', borderLeft: '1px dashed #ddd' }}></div>}
                     <span style={{ marginRight: 16 }}>设备搜索</span>
                     <Search placeholder="请输入设备编号/安装地址" value={searchUnknown} onChange={(e) => setSearchUnknown(e.target.value)}
-                     style={{ width: 256 }} enterButton onSearch={onSearchUnknown}></Search>
+                     style={{ width: laptop ? 160 : 256 }} enterButton onSearch={onSearchUnknown}></Search>
                 </div>
-                <div>
-                    <Table bordered dataSource={unknownData} columns={columns} size='middle' rowKey='id' pagination={false} scroll={{ y: 500 }} rowSelection={rowSelection}></Table>
-                </div>
+                
+                    <Table style={{overflow: "auto"}} bordered dataSource={unknownData} columns={columns} size='middle' rowKey='id' pagination={false}    rowSelection={rowSelection}></Table>
+                 
             </div>
-        </div>
+        </Mainbox>
     )
 }

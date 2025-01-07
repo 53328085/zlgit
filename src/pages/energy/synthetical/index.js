@@ -15,7 +15,7 @@ import Charttable from './chartTable'
  
 const {Text} = Typography
  const sty = css`
-  grid-template-columns: 1fr min-content;
+  grid-template-columns: 1fr max-content;
  `
 
 const Laybox = styled.div`
@@ -76,13 +76,25 @@ const Custspan = styled(Text)`
 }
 
 `;
-
+const divboxsty = css`
+.imgbox {
+  width: 48px;
+  height: 48px;
+}
+`
 const Divbox = styled.div`
   display: grid;
   grid-template-columns: 40% 1fr;
   column-gap: 16px;
   margin: 8px 0 8px 0;
   align-items: center;
+  .imgbox {
+     width: 64px;
+     height: 64px;
+     img {
+      max-width: 100%;
+     }
+  }
   .list {
     display: grid;
     grid-auto-rows: 30px;
@@ -100,14 +112,31 @@ const Divbox = styled.div`
       }
     }
   }
+  ${props=> props.theme.laptop ? divboxsty : null}
 `;
+const engboxsty=css`
+column-gap: 8px;
+grid-template-columns: 32px 1fr;
+.imgbox{
+  width: 32px;
+  height: 32px;
+
+}
+`
 const Engbox = styled.div`
   display: grid;
   grid-template-columns: 64px 1fr;
   column-gap: 32px;
-  height: 100%;
-  align-items: ${props => props.type == 2 ? 'center' : 'start'};
-  padding-top:${props => props.type == 2 ? '0px' : '35px'}; ;
+//  height: 100%;
+  align-items:   ${props => props.type == 2 ? 'center' : 'start'};
+  padding-top:${props => props.type == 2 ? '0px' : '35px'}; 
+  .imgbox {
+    width: 64px;
+    height: 64px;
+    img {
+      max-width: 100%;
+    }
+  }
   .list {
     display: grid;
     grid-auto-rows: 30px;
@@ -125,6 +154,7 @@ const Engbox = styled.div`
       }
     }
   }
+  ${props=>props.theme.laptop ? engboxsty : null}
 `;
 const Tabsbox = styled(Tabs)`
  && {
@@ -387,7 +417,7 @@ const Energyitem = ({op}) => {
    )
 }
 const Electric = ({data, des, datetype, laptop}) => {
-  console.log("laptop",laptop)
+  
   let {lastDayPeriodValue,lastMonthPeriodValue,lastYearPeriodValue  } = data
   let timetype = ['', lastDayPeriodValue,lastMonthPeriodValue,lastYearPeriodValue][datetype]
   let icon = tabvalue == 2 ? 'electric' : 'water';
@@ -411,31 +441,36 @@ const Electric = ({data, des, datetype, laptop}) => {
   return (
     <ElectricRight type={tabvalue}>
       <Titlelayout title={<Title title={data?.name} />} key="electr" >
-      <Engbox type={tabvalue}>
-        <Image
-          src={imgurl[icon]}
-          preview={false}
-          width={64}
-          height={64}
-        />
-      <div className="list">
-        <div className="item">
-          <span>本{type}：</span>
-          <span>{data.periodValue}</span>
-          <span>同比</span>
-          {numberformat(data.yoy)}
-        </div>
-        <div className="item">
-          <span>{my}{type}：</span>
-          <span>{timetype}</span>
-          <span>环比</span>
-          
+      <div style={{height:"100%", display: 'flex', justifyContent:"center"}}>
         
-            {numberformat(data.mom)}
-          
-        </div>
+      <Engbox type={tabvalue}>
+
+<div className="imgbox" style={{marginTop: tabvalue==3 ? "16px" : 0}}>
+<img
+  src={imgurl[icon]} 
+/>
+</div>
+<div className="list">
+<div className="item">
+  <span>本{type}：</span>
+  <Text ellipsis={{tooltip:data.periodValue}}>{data.periodValue}</Text>
+  <span>同比</span>
+  {numberformat(data.yoy)}
+</div>
+<div className="item">
+  <span>{my}{type}：</span>
+  <Text ellipsis={{tooltip:timetype}}>{timetype}</Text>
+  <span>环比</span>
+  
+
+    {numberformat(data.mom)}
+  
+</div>
+</div>
+</Engbox>
+ 
       </div>
-     </Engbox>
+     
     </Titlelayout>
     { tabvalue == 2 && <Titlelayout
       type="inner"
@@ -489,12 +524,13 @@ const CoalStandard =({data={}, op, datetype, laptop}) => {
           alignItems: "center",
         }}
       >
-        <Image
+        <div className="imgbox">
+        <img
           src={imgurl['coalStandard']}
-          preview={false}
-          width={64}
-          height={64}
+          alt=""
         />
+        </div>
+       
         <span style={{ color: "#999", marginTop: "10px" }}>
          {op ==1 ? <> （吨标煤）</> : <>（元）</>}
         </span>

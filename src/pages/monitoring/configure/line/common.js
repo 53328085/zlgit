@@ -1,8 +1,9 @@
 import React, { useEffect, useState, useRef, forwardRef, useImperativeHandle, Fragment, useMemo } from 'react'
 import { useSelector } from 'react-redux'
 import { useTranslation } from "react-i18next"
-import { Divider, Select, Tree, Row, Col, Input, Form, message, Space, Table, Button, Typography, Popconfirm } from 'antd'
+import { Divider, Select, Tree, Row, Col, Input, Form, message, Space,   Button, Typography, Popconfirm } from 'antd'
 import { useAntdTable } from 'ahooks'
+import styled,{css} from 'styled-components'
 import commonstyle from './commonstyle.module.less'
 import Modal from '@com/useModal';
 import BlueColumn from '@com/bluecolumn'
@@ -11,8 +12,9 @@ import { Monitoring } from '@api/api'
 import Mask from '@com/mask'
 import Ctable from '@com/useTable'
 import { LeftOutlined, RightOutlined } from '@ant-design/icons';
-import { publishState } from '@redux/systemconfig'
+import { publishState,adaptation } from '@redux/systemconfig'
 import { Serach } from "@com/comstyled";
+import Table from "@com/useTable";
 const { LineManager: {
     AeraQueryAll,
     LineManagerQuery,
@@ -26,6 +28,96 @@ const { LineManager: {
 } } = Monitoring
 
 const { Link } = Typography
+ 
+const sty = css`
+padding: 16px;
+ .content {
+    .left {
+        column-gap: 16px;
+        .leftup{
+            flex: 1;
+            padding: 8px;
+        }
+        .leftdown {
+            flex: 1;
+            padding: 8px;
+        }
+    }
+    .right {
+       column-gap: 8px;
+       padding: 8px; 
+    }
+ }
+`
+const Mainbox = styled.div`
+position: absolute;
+  width:calc(100% - 200px); //1686 ;
+  //height:  calc(100% - 84px);          //  ${props => props.theme.laptop ? "100%" : "755px"};
+  height: calc(100% - 64px);
+  top:  64px ;
+  left: 200px;
+   
+ //transform: translateY(calc((100% - 64px) / -2));
+  background: #003366;
+  padding: 32px;
+  display: flex;
+  flex-direction: column;
+  .title {
+      color: #fff;
+      font-size: 16px;
+  }
+  .content {
+     flex: 1;
+     display: flex;
+     height: inherit;
+     .left {
+        flex : 1 1 692px;
+        display: flex;
+        flex-direction: column;
+        column-gap: 32px;
+        .leftup {
+            flex: 1 1 259px;
+            background-color: #fff;
+            padding: 16px; 
+            overflow-y: auto;
+        }
+        .leftdown {
+            flex: 1 1 397px;
+            background-color: #fff;
+            padding: 16px; 
+            overflow-y: auto;
+        }
+     }
+     .middle {
+        flex: 1;
+        padding: 0 32px;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-around;
+     }
+     .right {
+        flex: 1 1 714px;
+        display: flex;
+        flex-direction: column;
+        column-gap:16px;
+        background-color: #fff;
+        padding: 16px;
+     //   overflow-y: auto;
+        .rightup{
+            display: flex;
+            flex-direction: column;
+            row-gap: 16px;
+            .searchinp{
+            display: flex;
+            align-items: center;
+            column-gap: 16px;
+        }
+        }
+      
+     }
+  }
+  ${props=> props.theme.laptop ? sty : null}
+`
 
 export default function Common({ type }) {
     const { t } = useTranslation(["button"])
@@ -39,6 +131,7 @@ export default function Common({ type }) {
     const projectId = useSelector(state => state.system.menus.projectId)
     const publish = useSelector(publishState)
     const oneLevel = useSelector(state => state.system.onelevel)
+    const {laptop} = useSelector(adaptation)
     const addmianRef = useRef()
     const setforwardRef = useRef()
     const titlelinecss = {
@@ -69,7 +162,7 @@ export default function Common({ type }) {
     ]
     const linedevicePage = async ({ current, pageSize }, formdata) => {
         try {
-            console.log(current, pageSize, formdata, "------")
+           
             let { alike = '' } = formdata
             if ([projectId, areaId].every(d => Number.isInteger(d))) {
                 let params = {
@@ -280,7 +373,7 @@ export default function Common({ type }) {
         refresh
     }
     return (
-        <div style={{ height: '100%', position: 'relative', overflow: 'hidden', }}>
+        <div style={{ height: '100%', position: 'relative', overflow: "auto" , }}>
 
             <div style={{ display: 'flex', justifyContent: 'space-between' }}>
                 <Form form={selform}>
@@ -304,7 +397,7 @@ export default function Common({ type }) {
 
             </div>
             <Divider style={{ borderColor: '#d7d7d7', margin: '0 0 16px 0' }} dashed></Divider>
-            <div style={{ display: 'flex', columnGap: "32px" }}>
+            <div style={{ display: 'flex', columnGap: "32px", flexDirection: laptop ? "column" : "row", overflow: "auto" }}>
                 <div style={{ overflow: "auto" }}>
                     <div style={{ display: 'flex', margin: '16px 0 24px 0' }}>
                         <div style={{ ...titlelinecss, width: 416, paddingLeft: 24 }}>线路图</div>
@@ -312,7 +405,7 @@ export default function Common({ type }) {
                         <div style={{ ...titlelinecss, width: 208, textAlign: 'center' }}>操作</div>
                     </div>
 
-                    <div style={{ height: "600px", overflow: "auto" }}>
+                    <div style={{ height:  "600px", overflow: "auto" }}>
                         <Tree
                             className={commonstyle.treeclass}
                             selectable={false}
@@ -321,7 +414,7 @@ export default function Common({ type }) {
                         />
                     </div>
                 </div>
-                <div style={{ display: 'flex', flex: 1, flexDirection: "column", columnGap: '16px', paddingTop: "16px" }}>
+                <div style={{ display: 'flex', flex: 1, flexDirection: "column", columnGap: '16px', paddingTop: "16px", }}>
                     <Form form={lineform} layout='line' >
                         <Form.Item name="alike" initialValue=''>
                             <Serach
@@ -567,13 +660,17 @@ let SetLine = forwardRef(({ open, lineName, closeDrawer, getLineManagerQuery, tr
     const [lineId, setLineId] = useState(null);
     const [searchValue, setSearchValue] = useState(""); //搜索值
     const projectId = useSelector(state => state.system.menus.projectId)
+    const {laptop} = useSelector(adaptation)
     const columns = [
-        { title: '设备编号', dataIndex: 'sn', align: "center", width: 201 },
-        { title: '设备名称', dataIndex: 'name', align: "center", width: 201 },
+        { title: '设备编号', dataIndex: 'sn', align: "center",   },
+        { title: '设备名称', dataIndex: 'name', align: "center",   },
         { title: '安装地址', dataIndex: 'address', align: "center", },
 
     ]
-    const btncss = {
+    const btncss =laptop ? {
+        width:48,
+        height: 32
+    } : {
         width: 68,
         height: 46,
     }
@@ -630,7 +727,7 @@ let SetLine = forwardRef(({ open, lineName, closeDrawer, getLineManagerQuery, tr
             return
         }
         const arr = subMeter.filter(it => !subMeterRowKeys.includes(it.id))
-        console.log(arr, selectedRowKeys, selectedRows)
+       
         setDataSource([...subSelectedRows, ...dataSource])
         setCopydataSource([...subSelectedRows, ...copydataSource])
         setSubMeter([...arr])
@@ -723,33 +820,34 @@ let SetLine = forwardRef(({ open, lineName, closeDrawer, getLineManagerQuery, tr
         setSearchValue
     }))
     return (
-        <div style={{ position: 'absolute', width: 1686, height: 755, top: '50%', left: '200px', transform: 'translateY(-50%)', background: "#003366", padding: 32, display: 'flex' }}>
-            <div style={{ position: "absolute", top: "4px", color: "#fff", fontSize: '16px' }}>
+        <Mainbox>
+            <div className='title'>
                 {lineName}
             </div>
-            <div style={{ position: 'relative', width: 692 }}>
-                <div style={{ marginBottom: 32, background: "#ffffff", padding: 16, height: 259 }} key="up" >
+            <div className="content">
+            <div className='left'>
+                <div  className='leftup' key="up" >
                     <BlueColumn name="线路总表" styled={{ marginBottom: 16 }}></BlueColumn>
                     <Table
                         bordered
                         pagination={false}
                         rowSelection={{ selectedRowKeys: summaryRowKeys, onChange: summarySelectChange }}
                         columns={columns}
-                        scroll={{ y: 130 }}
+                     
                         size={'small'}
                         rowKey={record => record.id}
-                        style={{ height: 139 }}
+                        
                         dataSource={summaryMeter}
                     ></Table>
                 </div>
-                <div style={{ background: "#ffffff", padding: 16, height: 397 }} key="down">
+                <div className='leftdown' key="down">
                     <BlueColumn name="线路分表" styled={{ marginBottom: 16 }}></BlueColumn>
                     <Table
                         bordered
                         pagination={false}
                         rowSelection={{ onChange: subMeterSelectChange, selectedRowKeys: subMeterRowKeys }}
                         columns={columns}
-                        scroll={{ y: 260 }}
+                      
                         size={'small'}
                         dataSource={subMeter}
                         rowKey={record => record.id}
@@ -757,16 +855,16 @@ let SetLine = forwardRef(({ open, lineName, closeDrawer, getLineManagerQuery, tr
                 </div>
 
             </div>
-            <div style={{ position: 'relative', flex: 1, padding: '0 32px' }}>
+            <div className='middle'>
                 {publish ? null : <>
-                    <div style={{ marginTop: 21 }}>
+                    <div >
                         <div style={{ color: '#fff', marginBottom: 16 }}>选择线路总表</div>
                         <Space size={16}>
                             <Button type='primary' icon={<LeftOutlined />} onClick={summaryToLeft} style={btncss} />
                             <Button type='primary' icon={<RightOutlined />} onClick={summaryToRight} style={btncss} />
                         </Space>
                     </div>
-                    <div style={{ marginTop: 150 }}>
+                    <div >
                         <div style={{ color: '#fff', marginBottom: 16 }}>选择线路分表</div>
                         <Space size={16}>
                             <Button type="primary" style={btncss} onClick={subToLeft} icon={<LeftOutlined />} />
@@ -775,31 +873,32 @@ let SetLine = forwardRef(({ open, lineName, closeDrawer, getLineManagerQuery, tr
                     </div>
                 </>}
 
-                <div style={{ marginTop: publish ? 560 : 0 }}>
-                    {publish ? null : <Button style={{ marginTop: 200, marginBottom: 16, height: "40px" }} type="primary" block onClick={saveConfig}>保存</Button>}
-                    <Button style={{ height: "40px" }} block onClick={close}>关闭</Button>
-                </div>
+                <Space direction="vertical" size={16}>
+                    {publish ? null : <Button   type="primary" block onClick={saveConfig}>保存</Button>}
+                    <Button   block onClick={close}>关闭</Button>
+                </Space>
             </div>
-            <div style={{ position: 'relative', width: 714 }}>
-                <div style={{ background: "#ffffff", padding: 16, height: '99%', width: '100%', overflow: 'hidden', }}>
-                    <BlueColumn name="未选中的设备" styled={{ marginBottom: 16 }}></BlueColumn>
-                    <div style={{ marginBottom: 16 }} className={commonstyle.searchinp}>
-                        <span>设备搜索</span>
-                        <Search style={{ width: 372, borderRadius: 16, marginLeft: 16 }} placeholder="请设备编号/安装地址" onSearch={onSearch} value={searchValue} onChange={(e) => { setSearchValue(e.target.value) }}></Search>
+            <div className='right'> 
+                    <div className='rightup'>
+                        <BlueColumn name="未选中的设备" ></BlueColumn>
+                        <div style={{ marginBottom: 16 }} className="searchinp">
+                            <span>设备搜索</span>
+                            <Search style={{flexBasis: "320px"}} placeholder="请设备编号/安装地址" onSearch={onSearch} value={searchValue} onChange={(e) => { setSearchValue(e.target.value) }}></Search>
+                        </div>
                     </div>
                     <Table
+                        style={{overflow: "auto"}}
                         bordered
                         pagination={false}
                         rowSelection={{ selectedRowKeys, onChange: onSelectChange }}
                         columns={columns}
-                        dataSource={dataSource}
-                        scroll={{ y: 500 }}
+                        dataSource={dataSource} 
                         size={'small'}
                         rowKey={record => record.id}
                     ></Table>
-                </div>
+                </div> 
             </div>
-        </div>
+        </Mainbox>
     )
 })
 
