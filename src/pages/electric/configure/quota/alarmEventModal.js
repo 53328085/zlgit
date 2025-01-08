@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
+import styled, {css} from "styled-components";
 import style from "./style.module.less";
 import {
   Modal,
@@ -19,6 +20,213 @@ import CModal from '@com/useModal'
 import { useSelector } from "react-redux";
 import { selectProjectId } from "@redux/systemconfig.js";
 const {Text} = Typography
+const sty = css`
+  P {
+    margin: 5PX 0;
+    line-height: 1;
+  }
+  .titleModal{
+    font-size: 14px;
+  }
+ 
+`
+const Mainbox=styled.div`
+&&{
+ 
+transform: translateY(-16px);
+p {
+  margin: 10px 0px;
+}
+
+ 
+
+.titleModal {
+  font-family: "微软雅黑 Bold", "微软雅黑 Regular", "微软雅黑";
+  font-weight: 700;
+  font-style: normal;
+  font-size: 16px;
+}
+
+.addSourceTypeTable {
+  .editText {
+    color: ${props=> props.theme.primaryColor};
+    font-size: 14px;
+    text-decoration: underline;
+    cursor: pointer;
+  }
+
+  .deleteText {
+    color: #f33;
+    font-size: 14px;
+    text-decoration: underline;
+    cursor: pointer;
+  }
+}
+
+.form {
+  .divBox {
+    display: flex;
+    align-items: center; 
+  }
+
+  .ant-form-item {
+    margin-bottom: ${props=> props.theme.laptop ? "12px" : "24px"} ;
+  }
+
+  .qujianLi,
+  .lessThan,
+  .qujianwai,
+  .greaterThan {
+    display: flex;
+    justify-content: flex-start;
+    position: relative;
+    align-items: flex-end;
+    .title {
+     // padding: 40px 20px 0 5px;
+      text-align: left;
+      font-size: 14px;
+      display: inline-block;
+    }
+
+    .content {
+   //   margin-top: 20px;
+      display: flex;
+      justify-content: flex-start;
+      align-items: center;
+      position: relative;
+
+      .outer {
+        width: 100px;
+        height: 50px;
+        border-bottom: 2px dashed #00cc00;
+        color: #00cc00;
+        text-align: center;
+
+        span {
+          display: inline-block;
+          padding-top: 10px;
+        }
+      }
+
+      .inner {
+        width: 130px;
+        height: 50px;
+        border: 2px solid ${props=> props.theme.errorColor};
+        color: ${props=> props.theme.errorColor};
+        text-align: center;
+        background-color: #ffe6e6;
+
+        span {
+          display: inline-block;
+          padding-top: 10px;
+        }
+      }
+
+      .innerWaiLeft {
+        width: 120px;
+        height: 50px;
+        border-bottom: 2px solid ${props=> props.theme.errorColor};
+        border-right: 2px solid ${props=> props.theme.errorColor};
+        border-top: 2px solid ${props=> props.theme.errorColor};
+        color: #${props=> props.theme.errorColor};
+        text-align: center;
+        background-color: #ffe6e6;
+
+        span {
+          display: inline-block;
+          padding-top: 10px;
+        }
+      }
+
+      .innerWaiRight {
+        width: 120px;
+        height: 50px;
+        border-bottom: 2px solid ${props=> props.theme.errorColor};
+        border-left: 2px solid ${props=> props.theme.errorColor};
+        border-top: 2px solid ${props=> props.theme.errorColor};
+        color: ${props=> props.theme.errorColor};
+        text-align: center;
+        background-color: #ffe6e6;
+
+        span {
+          display: inline-block;
+          padding-top: 10px;
+        }
+      }
+
+      .low {
+        position: absolute;
+        top: 50px;
+        left: 90px;
+        color: #ff0000;
+      }
+
+      .high {
+        position: absolute;
+        top: 50px;
+        left: 220px;
+        color: #ff0000;
+      }
+
+      .lt {
+        border: none;
+        border-bottom: 2px solid ${props=> props.theme.errorColor};
+        border-right: 2px solid ${props=> props.theme.errorColor};
+        width: 170px;
+        height: 50px;
+        color: ${props=> props.theme.errorColor};
+        text-align: center;
+        background-color: #ffe6e6;
+
+        span {
+          display: inline-block;
+          padding-top: 10px;
+        }
+      }
+
+      .ltAlarm {
+        border: none;
+        border-bottom: 2px solid ${props=> props.theme.errorColor};
+        border-left: 2px solid ${props=> props.theme.errorColor};
+        width: 170px;
+        height: 50px;
+        color: ${props=> props.theme.errorColor};
+        text-align: center;
+        background-color: #ffe6e6;
+
+        span {
+          display: inline-block;
+          padding-top: 10px;
+        }
+      }
+
+      .gt {
+        width: 170px;
+        height: 50px;
+        border-bottom: 2px dashed #00cc00;
+        color: #00cc00;
+        text-align: center;
+
+        span {
+          display: inline-block;
+          padding-top: 10px;
+        }
+      }
+
+      .critical {
+        left: 179px;
+        position: absolute;
+        top: 50px;
+        left: 150px;
+        color: ${props=> props.theme.errorColor};
+      }
+    }
+  }
+}
+ ${props=>props.theme.laptop ? sty : null}
+}
+   
+`
 export default function Index(props) {
   const {t} = useTranslation(["button"])
   const { AddAlarmEventGive, giveFormType, giveChildForm, giveModalTitle } =    props;
@@ -361,20 +569,20 @@ export default function Index(props) {
         closable
         mold="cust"
       >        
-        <div className={style.addBody}>
+        <Mainbox >
          
           <Form
             labelCol={{ flex: "110px" }}
             labelAlign="left"
             wrapperCol={{ flex: 1 }}
-            className={style.form}
+            className="form"
             // size="small"
             form={formInfo}
             layout="horizontal"
             name="addform"
             preserve={false}
           >
-              <p className={style.titleModal}>告警全局设置</p>
+              <p className="titleModal">告警全局设置</p>
               <Space>
               <Item
                 label="是否启用："
@@ -404,12 +612,12 @@ export default function Index(props) {
                 />
               </Item>
               </Space>
-              <p className={style.titleModal}>告警生效时段</p>
+              <p className="titleModal">告警生效时段</p>
               <Space>
               <Item
                 label="生效时段开关："
                 valuePropName="checked"
-                style={{ width: 220, marginBottom: 24 }}
+                style={{ width: 220}}
                 initialValue={enabled}
                 name="HourEnable"
 
@@ -426,14 +634,14 @@ export default function Index(props) {
                 <Item label="时段范围" name="HourRange" shouldUpdate={(pre, cur) => pre.HourEnable!==cur.HourEnable }>
                   <TimePicker.RangePicker format="HH" disabled={!enabled} />
                 </Item>
-              <p className={style.titleModal}>基础配置</p>
+              <p className="titleModal">基础配置</p>
             {giveModalTitle === "新增告警事件" ? (
               <Space style={{ alignItems: "baseline" }}>
                 <Item
                   name="Name"
                   label="告警事件名称："
                   rules={[{ required: true, message: "请输入告警事件名称" }]}
-                  style={{ width: 415, marginBottom: 24 }}
+                  style={{ width: 415,  }}
                   initialValue={alarmList[0].name}
                 >
                   <Input
@@ -444,7 +652,7 @@ export default function Index(props) {
                 <span style={{ marginLeft: 5, color: "#999" }}>(必填)</span>
               </Space>
             ) : (
-              <Item name="Name" label="告警事件名称：" style={{ width: 415, marginBottom: 24 }}>
+              <Item name="Name" label="告警事件名称：" style={{ width: 415,  }}>
                 <Input
                   style={{ border: "none" }}
                   disabled
@@ -457,7 +665,7 @@ export default function Index(props) {
                 <Item
                   label="数据标识："
                   rules={[{ required: true, message: "请输入数据标识" }]}
-                  style={{ width: 415, marginBottom: 24 }}
+                  style={{ width: 415,  }}
                   name="PointIdentifier"
                   disabled={disabled}
                 >
@@ -511,7 +719,7 @@ export default function Index(props) {
                 </div>
               </div>           
             <Divider dashed style={{ margin: 0 }} />
-            <p className={style.titleModal}>告警规则</p>
+            <p className="titleModal">告警规则</p>
             {giveModalTitle === "新增告警事件" ? (
               <Item
                 label="告警类型："
@@ -557,7 +765,7 @@ export default function Index(props) {
             {/* 区间告警 */}
 
             {AlarmRule === 2 ? (
-              <div className={style.intervalAlarm}>
+              <div className="intervalAlarm">
                 {giveModalTitle === "新增告警事件" ? (
                   <Item label="告警条件：" labelCol={{ flex: "85px" }}>
                     <Radio.Group
@@ -576,7 +784,7 @@ export default function Index(props) {
                     ) : null}
                   </Item>
                 )}
-                <div className={style.divBox}>
+                <div className="divBox">
                   <Space style={{ alignItems: "baseline" }}>
                     <Item
                       label="低限："
@@ -634,40 +842,40 @@ export default function Index(props) {
                 {/* -----区间内----- */}
                 {alarmCondition === 1 ? (
                   <Item>
-                    <div className={style.qujianLi}>
-                      <span className={style.title}>告警说明：</span>
-                      <div className={style.content}>
-                        <div className={style.outer}>
+                    <div className="qujianLi">
+                      <span className="title">告警说明：</span>
+                      <div className="content">
+                        <div className="outer">
                           <span>区间外</span>
                         </div>
-                        <div className={style.inner}>
+                        <div className="inner">
                           <span>区间内告警</span>
                         </div>
-                        <div className={style.outer}>
+                        <div className="outer">
                           <span> 区间外</span>
                         </div>
-                        <span className={style.low}>低限</span>
-                        <span className={style.high}>高限</span>
+                        <span className="low">低限</span>
+                        <span className="high">高限</span>
                       </div>
                     </div>
                   </Item>
                 ) : (
                   //    {/* -----区间外----- */}
                   <Item>
-                    <div className={style.qujianwai}>
-                      <span className={style.title}>告警说明：</span>
-                      <div className={style.content}>
-                        <div className={style.innerWaiLeft}>
+                    <div className="qujianwai">
+                      <span className="title">告警说明：</span>
+                      <div className="content">
+                        <div className="innerWaiLeft">
                           <span>区间外告警</span>
                         </div>
-                        <div className={style.outer}>
+                        <div className="outer">
                           <span>区间内</span>
                         </div>
-                        <div className={style.innerWaiRight}>
+                        <div className="innerWaiRight">
                           <span> 区间外告警</span>
                         </div>
-                        <span className={style.low}>低限</span>
-                        <span className={style.high}>高限</span>
+                        <span className="low">低限</span>
+                        <span className="high">高限</span>
                       </div>
                     </div>
                   </Item>
@@ -675,7 +883,7 @@ export default function Index(props) {
               </div>
             ) : AlarmRule === 1 ? (
               // {/* //越限告警 */}
-              <div className={style.OverLimitAlarm}>
+              <div className="OverLimitAlarm">
                 {giveModalTitle === "新增告警事件" ? (
                   <Item label="告警条件：" labelCol={{ flex: "85px" }}>
                     <Radio.Group
@@ -712,32 +920,32 @@ export default function Index(props) {
                 {/* -----小于等于----- */}
                 {compareValue === 2 ? (
                   <Item labelCol={{ flex: "95px" }}>
-                    <div className={style.lessThan}>
-                      <span className={style.title}>告警说明：</span>
-                      <div className={style.content}>
-                        <div className={style.lt}>
+                    <div className="lessThan">
+                      <span className="title">告警说明：</span>
+                      <div className="content">
+                        <div className="lt">
                           <span>小于等于(告警)</span>
                         </div>
-                        <div className={style.gt}>
+                        <div className="gt">
                           <span>大于等于</span>
                         </div>
-                        <span className={style.critical}> 临界值 </span>
+                        <span className="critical"> 临界值 </span>
                       </div>
                     </div>
                   </Item>
                 ) : (
                   //   {/* -----大于等于----- */}
                   <Item labelCol={{ flex: "95px" }}>
-                    <div className={style.greaterThan}>
-                      <span className={style.title}>告警说明：</span>
-                      <div className={style.content}>
-                        <div className={style.gt}>
+                    <div className="greaterThan">
+                      <span className="title">告警说明：</span>
+                      <div className="content">
+                        <div className="gt">
                           <span>小于等于</span>
                         </div>
-                        <div className={style.ltAlarm}>
+                        <div className="ltAlarm">
                           <span>大于等于(告警)</span>
                         </div>
-                        <span className={style.critical}> 临界值 </span>
+                        <span className="critical"> 临界值 </span>
                       </div>
                     </div>
                   </Item>
@@ -890,7 +1098,7 @@ export default function Index(props) {
               </Item>
             )}
           </Form>
-        </div>
+        </Mainbox>
       </CModal>
     </div>
   );

@@ -10,13 +10,13 @@ import {CustButtonT, CustLink} from "@com/useButton"
 import upload from '@imgs/upload.png'
 import { SiteManagerDesigner, StorageEquipmentDesigner } from '@api/api.js'
 import { useReactive } from 'ahooks'
-import {Serach} from "@com/comstyled"
+import {Serach,Cdivider} from "@com/comstyled"
 import Mask from '@com/mask'
 export default function Index(props) {
   const [form] = Form.useForm()
   const [multiForm] = Form.useForm()
   const Item = Form.Item
-
+  const {laptop} = props
   const dref = useRef()
   const { Dragger } = Upload
   const errRef = useRef()
@@ -107,43 +107,43 @@ export default function Index(props) {
       dataIndex: 'areaName',
       key: 'areaName',
       align: 'center',
-      width: '200px'
+    //  width: '200px'
     }, {
       title: '站点名称',
       dataIndex: 'siteName',
       key: 'siteName',
       align: 'center',
-      width: '200px'
+   //   width: '200px'
     }, {
       title: '设备名称',
       dataIndex: 'deviceName',
       key: 'deviceName',
       align: 'center',
-      width: '200px'
+   //   width: '200px'
     }, {
       title: '安装地址',
       dataIndex: 'address',
       key: 'address',
       align: 'center',
-      width: '266px'
+   //   width: '266px'
     }, {
       title: '设备编号',
       dataIndex: 'sn',
       key: 'sn',
       align: 'center',
-      width: '160px'
+   //   width: '160px'
     }, {
       title: '设备型号',
       dataIndex: 'category',
       key: 'category',
       align: 'center',
-      width: '160px'
+   //   width: '160px'
     }, {
       title: '所属网关',
       dataIndex: 'gatewaySn',
       key: 'gatewaySn',
       align: 'center',
-      width: '172px'
+   //   width: '172px'
     }, {
       title: '备注',
       dataIndex: 'remark',
@@ -154,7 +154,7 @@ export default function Index(props) {
       dataIndex: 'action',
       key: 'action',
       align: 'center',
-      width: '176px',
+      width: laptop ?'80px' : "117px",
       render: (_, record) => (
         <Space size="middle">
           {/* <span style={{ textDecoration: 'underline', color: '#237ae4', cursor: 'pointer' }} onClick={() => setMulti(record)}>倍率</span> */}
@@ -375,11 +375,12 @@ export default function Index(props) {
    {/*    {transTag == 'open' ? <div className={style.mask}></div> : null} */}
       <div className={style.header}>
         <Form form={form} layout='inline' colon={false}>
-          <Item name='areaId' label={areaName + '选择'} style={{ marginLeft: 16 }}>
+        <Space size={laptop ? 16 : 64} split={laptop? null : <Cdivider />}>
+          <Item name='areaId' label={areaName + '选择'} >
             <Select
               placeholder="请选择"
               size="middle"
-              style={{ marginLeft: 16, width: '200px' }}
+              style={{ width: laptop ? "100px" : '200px' }}
               onChange={changeArea}
             >
               {areaList.map(item => {
@@ -387,12 +388,12 @@ export default function Index(props) {
               })}
             </Select>
           </Item>
-          <div className={style.line}></div>
+          
           <Item name='siteId' label=''>
             <Select
               placeholder="请选择站点"
               size="middle"
-              style={{ width: '264px' }}
+              style={{ width: laptop ? "160px" : '264px'}}
               onChange={changeSite}
             >
               {siteList.map(item => {
@@ -400,13 +401,13 @@ export default function Index(props) {
               })}
             </Select>
           </Item>
-          <div className={style.line}></div>
           <Item name='alike' label='设备查询'>
             <Serach
               placeholder='请输入设备名称/设备编号/安装地址'
-              style={{ width: 400 }}
+              style={{ width: laptop ? 200 : 400  }}
               onSearch={onSearch}></Serach>
           </Item>
+          </Space>
         </Form>
         <Space>
           <CustButtonT text="new" src="new" onClick={() => settingClick()} />
