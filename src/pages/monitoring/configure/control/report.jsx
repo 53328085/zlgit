@@ -524,7 +524,7 @@ const controlcolumns = [
     <Mainbox>    
     <Titlelayout title="自动控制" layout="flex" >
     <div className='content'>
-        <UseSerach 
+        <UseSerach  isHaveAll={true}
         style={{padding: '0 0 16px 0', borderTop: "none"}}
         custview={ <Space size={16} style={{marginLeft: 'auto'}} >
               <NewButton key="add" onClick={add} /> 
