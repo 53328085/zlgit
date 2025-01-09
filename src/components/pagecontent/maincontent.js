@@ -60,19 +60,18 @@ const PageContentMain = styled.div`
     display: flex;
     flex-direction: column;
     position: relative;
-    flex: 1;
-   //  max-height: max-content; // 适配页面缩放
-     // max-height: 873px
-    height:  ${props => {
+   // flex: 1;
+ 
+  /*   height:  ${props => {
          let {showserach, beTabs, custserach} = props 
          if (showserach || custserach) return beTabs ? '764px' : '805px'
          if (!showserach && !custserach) return beTabs ? '832px' : '873px'
        
           
-    }}; 
+    }};  */
     overflow-y: auto;
     & .flexcol {
-        flex: 1;
+         flex: 1;
         display: flex;
         flex-direction: column;
     }
@@ -146,7 +145,7 @@ useEffect(() => {
     }
 }, [location.pathname, setvalue, initialval])
  const TabsEl = () => {   
-     if (!beTabs) return null    
+  //   if (!beTabs) return null    
      return (
       <Tabsbox  
         onChange={onChange} 
@@ -159,7 +158,6 @@ useEffect(() => {
         type="card"
          items={tabs}
         >
-           {/*  {tabs.map(t => <TabPane tab={t.label} key={t.value} ></TabPane>)} */}
         </Tabsbox>
      )
  } 
@@ -167,11 +165,11 @@ useEffect(() => {
  let minsty = minw ? {overflow: "hidden", minWidth: "1024px"} : null
   return (
     <Pagecontentbox beTabs={beTabs}> 
-       <div style={minsty}>
+      {beTabs ? <div style={minsty}>
        <TabsEl ></TabsEl>
         </div> 
-      
-       {/*  <div className='page--content--main'>{props.children}</div> */}
+        :null
+}
         <PageContentMain   beTabs={beTabs}  {...props}>
           {props.children}
         </PageContentMain>

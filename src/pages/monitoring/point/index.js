@@ -57,9 +57,10 @@ gap: 16px;
 
 const Cardbox=styled.div`
  display: grid;
-    grid-template-columns: repeat(3, 538px);
-    grid-template-rows: repeat(4, 152px);
-    row-gap: 16px;
+    grid-template-columns: repeat(auto-fill, minmax(438px, 1fr));
+ //   grid-template-rows: repeat(4, 152px);
+  //  row-gap: 16px;
+    gap:16px;
     justify-content: space-between;
  
     .cardItem {

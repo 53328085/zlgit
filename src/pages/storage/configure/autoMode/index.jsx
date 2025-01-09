@@ -21,7 +21,7 @@ export default function Index() {
   return (
     <CustContext.Provider  value={{handler: setAreaid}} >      
     <Pagecount showserach={true} pd="0px" bgcolor="transparent">   
-        <Automate projectId={projectId}   CModal={CModal}    areaId={AreaID}    />   
+        <Automate projectId={projectId}   CModal={CModal}    areaId={AreaID}    />
     </Pagecount>
     </CustContext.Provider>
   )

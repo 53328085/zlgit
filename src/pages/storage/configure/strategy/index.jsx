@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react'
+import {CheckCircleOutlined} from "@ant-design/icons"
 import styled from 'styled-components'
 import UseHeader from '@com/useHeader'
 import CustModal from '@com/useModal'
@@ -30,7 +31,7 @@ export default function Index() {
   let day = nextDate.getDate()
   day = day > 9 ? day : '0' + day
   let daytime = year+ '-' + month + '-' + day
-  const {primaryColor, primaryderived} =useSelector(themeColor)
+  const {primaryColor, primaryderived, successColor} =useSelector(themeColor)
   let isLight =isLightColor(primaryderived)
   const addRef = useRef()
   const editRef = useRef()
@@ -419,7 +420,7 @@ export default function Index() {
       </CustModal>
       <CustModal title='操作提示' ref={editRef}  mold="cust" width={592} footer={null}  maskClosable={false}>
         <div style={{display:'flex',alignItems:'center', justifyContent:'center'}}>
-          <img src={imgurl.success} style={{width:'44px', height: 44, marginRight:16}}></img>
+           <CheckCircleOutlined  style={{fontSize:'44px', color:successColor,  marginRight:16}} />  
           <span style={{fontSize: 16, color: '#333'}}>策略保存成功!</span>
         </div>
         <div style={{marginTop: 32, display:'flex',justifyContent:'flex-end', alignItems:'center'}}>
