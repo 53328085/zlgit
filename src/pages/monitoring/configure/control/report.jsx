@@ -524,9 +524,9 @@ function Main({ projectId, areaId }) {
     <Mainbox>
       <Titlelayout title="自动控制" layout="flex" >
         <div className='content'>
-          <UseSerach
+          <UseSerach isHaveAll={true}
             style={{ padding: '0 0 16px 0', borderTop: "none" }}
-            custview={<Space size={16} style={{ marginLeft: 'auto' }} isHaveAll={true}>
+            custview={<Space size={16} style={{ marginLeft: 'auto' }} >
               <NewButton key="add" onClick={add} />
               {/*  <AllExportButton key="export" onClick={onExport} /> 此处缺少接口暂时隐藏 */}
               <ExportExcel tb={tableref} />
