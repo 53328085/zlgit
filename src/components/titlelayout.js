@@ -6,7 +6,7 @@ const Boxdiv = styled(Card)`
   border-radius: 4px;
   border:  ${(props) =>  props.bordered=='y' ? ' 1px solid #d7d7d7' : 'none'};  
   display: grid;
-  grid-template-rows: ${(props) => props.title ? `${props.hv || '32px'} 1fr` : '1fr'};
+  grid-template-rows: ${(props) => props.title ? `auto 1fr` : '1fr'};
   flex:1;
   background-color: ${(props) =>  props.bgcolor || '#fff'};
   box-shadow: ${props => props.shadow=="y" ? `0px 2px 2px rgba(0, 0, 0, 0.349019607843137)` : 'none'} ;
@@ -16,9 +16,8 @@ const Boxdiv = styled(Card)`
     display: flex;
     align-items: center;
     border-bottom: none;
-    min-height: ${(props) =>  props.hv || '32px'};
-    /* height: ${(props) =>  props.hv || '32px'}; */
-    height: ${(props) =>  props.hv || '32px'};;
+    min-height: ${(props) =>  props.hv || (props.theme.laptop ? '24px' : '32px')};
+    height: ${(props) =>  props.hv || (props.theme.laptop ? '24px' : '32px')};;
     padding-right: 0px;
     background-color:${({bg}) => bg || '#fff'};
     z-index:${({zd}) => zd || 100};

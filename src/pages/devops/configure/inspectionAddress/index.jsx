@@ -70,7 +70,7 @@ export default function Index() {
     {
       title: '操作', dataIndex: 'options', align: "center", width: 240, render: (v, text) => {
         return (
-          <Space size="middle">
+          <Space>
             <CustLink onClick={async () => { printid = text.id; await getcode(text) }} text="printqrcode" />
             <CustLink onClick={() => {
               console.log(text); setShow(!show); editform.setFieldsValue(text); editRef.current.onOpen();

@@ -25,7 +25,8 @@ const Mainbox = styled.div`
     display: flex;
     flex-direction: column;
     gap: 16px;
-    width:1652px;
+    flex: 1;
+  //  width:1652px;
     .ant-form-item {
       margin-bottom: 0px;
     }
@@ -399,7 +400,11 @@ const onQuery = async () => {
                </Form>
                <Cdivider type="h" />
                <Form form={tbform} component={false}>  
-                  <Usetable columns={columns} dataSource={tableData} scroll={{x: 1620,y:658}}  hbg="#ecf5ff" hbc="#515151" sticky />
+                  <div style={{flex:1, position: "relative"}}>
+                    <div style={{position:"absolute", width: "100%"}}>
+                    <Usetable columns={columns} dataSource={tableData} scroll={{x: 1620,y:658}}  hbg="#ecf5ff" hbc="#515151" sticky />
+                    </div>
+                  </div>
                </Form>
              </Mainbox>
 
