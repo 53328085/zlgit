@@ -597,7 +597,7 @@ export default function gateway({ deviceStyle }) {
   return (
     <div>
       <Comp {...ComProps}>
-        <Table columns={columns} pagination={page} dataSource={dataSource} loading={loading}  ref={tableLoadRef} onChange={(page, pageSize) => {
+        <Table columns={columns} pagination={page} paginationShow={true} dataSource={dataSource} loading={loading}  ref={tableLoadRef} onChange={(page, pageSize) => {
           setPage(() => ({
             ...page
           }))

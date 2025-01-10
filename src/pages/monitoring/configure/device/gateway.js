@@ -737,6 +737,7 @@ if(Number.isInteger(projectId)) {
             columns={columns}
             dataSource={dataSource}
             pagination={page}
+            paginationShow={true}
             loading={loading}
             ref={tableLoadRef}
             rowKey={columns => columns.sn}
