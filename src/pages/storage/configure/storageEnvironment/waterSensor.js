@@ -11,8 +11,16 @@ import Custmodl from '@com/useModal'
 import warning from '@imgs/warning.png'
 import upload from '@imgs/upload.png'
 import { CustButtonT, CustLink } from '@com/useButton'
-import {Serach} from "@com/comstyled"
+import {Serach,Cdivider} from "@com/comstyled"
+const CForm = styled(Form)`
+&&{
+  .ant-form-item{
+    margin-bottom: ${props => props.theme.laptop ? "12px" : "24px"};
+  }
+}
+`
 export default function Index(props) {
+  const {laptop} = props
   const tableRef = useRef()
   const dref = useRef()
   const errRef = useRef()
@@ -169,7 +177,7 @@ export default function Index(props) {
       align: 'center',
       width: '176px',
       render: (_, record) => (
-        <Space size="middle">
+        <Space size={laptop ? "small" : "middle"}>
             <CustLink onClick={() => setMulti(record)} text="edit" />
           <CustLink type="danger"  onClick={() => clickDel(record)} text="delete" /> 
           
@@ -436,10 +444,11 @@ export default function Index(props) {
     <div className={style.contents}>
       <div className={style.header}>
         <Form form={form} layout='inline' colon={false}>
-          <Item name='areaId' label={areaName + '选择'} style={{ marginLeft: 16 }}>
+        <Space size={laptop ? 16 : 64} split={laptop? null : <Cdivider />}>
+          <Item name='areaId' label={areaName + '选择'} >
             <Select
               size="middle"
-              style={{ width: '200px' }}
+              style={{ width: laptop ? "100px" : '200px' }}
               onChange={changeArea}
             >
               {props.areaList.map(item => {
@@ -447,11 +456,11 @@ export default function Index(props) {
               })}
             </Select>
           </Item>
-          <Divider dashed type='vertical' style={{ height: 32 }}></Divider>
-          <Item name='siteId' label='站点选择' style={{ marginLeft: 16 }}>
+          
+          <Item name='siteId' label='' >
             <Select
               size="middle"
-              style={{ width: '264px' }}
+              style={{ width: laptop ? "160px" : '264px'}}
               onChange={changeSite}
             >
               {state.siteList.map(item => {
@@ -459,24 +468,23 @@ export default function Index(props) {
               })}
             </Select>
           </Item>
-          <Divider dashed type='vertical' style={{ height: 32 }}></Divider>
-          <Item name='alike' label='编号查询' style={{ marginLeft: 16 }}>
+         
+          <Item name='alike' label='编号查询' >
             <Serach
               placeholder="请输入设备名称/设备编号/安装地址"
               allowClear
-              style={{ width: '400px' }}
+              style={{ width: laptop ? 200 : 400 }}
               onSearch={onSearch}
               
             />
           </Item>
+          </Space>
         </Form>
-        <Space size={16}>
+        <Space size={laptop ? "small" : "middle"}>
         <CustButtonT text="new" src="new" onClick={() => addData()} />
           <CustButtonT text="batchImport" src="export" wh="auto" onClick={() => setAddModal(true)} />
           <CustButtonT  text="export"  src="export" onClick={() => exportData()} />  
-        {/*   <MainButton type='primary' onClick={() => addData()}>新增</MainButton>
-          <MainButton type='primary' onClick={() => { setAddModal(true) }}>批量导入</MainButton>
-          <MainButton type='primary' onClick={() => exportData()}>导出</MainButton> */}
+        
         </Space>
       </div>
       <Divider dashed style={{ borderColor: '#d7d7d7' }}></Divider>
@@ -484,7 +492,7 @@ export default function Index(props) {
       <Custmodl title='删除提示' ref={dref} mold="cust" width={512} type="warn" onOk={() => onDelete()} maskClosable={false}>
           是否确认删除水浸传感器？
       </Custmodl>
-      <Custmodl  title="批量导入" mold="cust" className={style.addModal} open={addModal} onOk={onUpload} onCancel={handleCancel} width={600}  >
+      <Custmodl  title="批量导入" mold="cust"   open={addModal} onOk={onUpload} onCancel={handleCancel} width={600}  >
         
         <div className={style.addBody}>
           <div style={{ display: "flex", alignItems: "center", position: 'relative' }}>
@@ -503,10 +511,10 @@ export default function Index(props) {
           <Table columns={errColumns} dataSource={errorData} bordered size='middle' rowKey='row' pagination={false} scroll={{ y: 300 }}></Table>
         </div>
       </Custmodl>
-      <Custmodl mold="cust" ref={addedit} title={state.modalTitle} className={style.addModal}  onOK={onAdd} width={544} custft={state.modalTitle == '新增水浸传感器'}>
+      <Custmodl mold="cust" ref={addedit} title={state.modalTitle}    onOK={onAdd} width={544} custft={state.modalTitle == '新增水浸传感器'}>
         
-        <div className={style.addBody}>
-          <Form form={addForm} colon={false} labelCol={{ span: 7 }} labelAlign='left' requiredMark={false}>
+        
+          <CForm form={addForm} colon={false} labelCol={{ span: 7 }} labelAlign='left' requiredMark={false}>
             <Item name='areaId' label={areaName + '选择'} rules={[{ required: true, message: '请选择' + areaName }]}>
               <Select
                 placeholder="请选择"
@@ -575,13 +583,7 @@ export default function Index(props) {
             <Item name='remark' label='备注' >
               <TextArea style={{ width: '320px' }} rows={4}></TextArea>
             </Item>
-          </Form>
-          {/* <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: 32 }}>
-            <Button style={{ width: 96, marginLeft: 'auto', marginRight: 0 }} onClick={() => closeModal()}>取消</Button>
-            <Button style={{ width: 96, marginLeft: 16 }} type='primary' onClick={() => onAdd()}>确认</Button>
-            {state.modalTitle == '新增水浸传感器' ? <Button style={{ width: 96, marginLeft: 16 }} type='primary' onClick={() => onApplication()}>应用</Button> : null}
-          </div> */}
-        </div>
+          </CForm>
       </Custmodl>
     </div>
   )

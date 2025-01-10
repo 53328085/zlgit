@@ -74,8 +74,7 @@ const initialState = {
     deviceState:false,
     siteConfig: antdconfig,
     adaptation: { // 屏幕适配
-      laptop: false, // 笔记本屏幕(max-device-width:1536px)<=1536px
-   
+      laptop: false, // 笔记本屏幕(max-device-width:1536px)<=1536px      
       ratio43:true,  // 屏幕比例 4:3
     }, 
     themeColor:  {  // 可配置对象，不只是颜色属性。名字为保证稳定性不改

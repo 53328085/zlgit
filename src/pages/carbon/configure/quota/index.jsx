@@ -25,6 +25,11 @@ const Mainbox = styled.div`
     .content {
       flex: 1;
       padding-top: 16px;
+      position: relative;
+      .tbbox {
+        position: absolute;
+        width: 100%;
+      }
     }
 `
 
@@ -288,7 +293,7 @@ export default function Index() {
            carbonMonthlyQuota: value
          })
       }
-      console.log(params)
+      
       let {success,errMsg} = await saveQuota(params).unwrap()
       if(success) {
          i18success("save")   //  message.success('保存成功')
@@ -355,18 +360,26 @@ export default function Index() {
     <Pagecount bgcolor="transparent" pd="0">
         <Mainbox> 
           <Titlelayout title={CTitle} layout="flex" key="quota"> 
-             <div className='content'>
-              <Form form={form} component={false} onValuesChange={onValuesChange}>             
+             
+              <Form form={form} component={false} onValuesChange={onValuesChange}> 
+              <div className='content'>  
+                <div className='tbbox'>         
                <Usetable columns={columns} dataSource={tableData} scroll={{x: 1648}} hbg="#ecf5ff" hbc="#515151" />
-               </Form> 
+               </div> 
                </div>
+               </Form> 
+             
           </Titlelayout>
           <Titlelayout title={CTitleC} layout="flex" key="target"> 
+              
+              <Form form={formt} component={false}>   
               <div className='content'>
-              <Form form={formt} component={false}>             
-               <Usetable columns={columnsT} dataSource={targetData} scroll={{x: 1648}} hbg="#ecf5ff" hbc="#515151" />
-               </Form> 
+                <div className="tbbox">
+                <Usetable columns={columnsT} dataSource={targetData} scroll={{x: 1648}} hbg="#ecf5ff" hbc="#515151" />
+                  </div>
                </div>
+               </Form> 
+             
           </Titlelayout>
           </Mainbox>
     </Pagecount>

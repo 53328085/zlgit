@@ -46,7 +46,7 @@ import {ledger} from './ledger'
   '0206': Prepayment,
   '0207': Comindex,
   '0208': Solar,
-  '0209': Storage,
+  '0209': Comindex,
   '0210': Comindex,
   '0211': Devops,
   '0212': Quota,

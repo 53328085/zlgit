@@ -1,10 +1,13 @@
 import React, {useContext, useEffect, useMemo, useState}  from 'react'
 import {useSearchParams, useLocation, useNavigate} from 'react-router-dom'
+import {useSelector} from "react-redux"
 import {Tabs} from 'antd'
 import CustContext from '../content'
 
 import styled from 'styled-components'
- 
+import { 
+    adaptation
+  } from "@redux/systemconfig.js";
 const Tabsbox = styled(Tabs)`
   .ant-tabs-nav {
     margin-bottom: 0px;
@@ -13,10 +16,9 @@ const Tabsbox = styled(Tabs)`
    .ant-tabs-nav-list {
     .ant-tabs-tab {
         border-radius: 4px 4px 0 0;
-        height: 41px;
+     //   height: 41px;
         min-width: ${props => props.tabwidth || '145px'} ;
-        justify-content: center;
-        font-size: 14px;
+        justify-content: center;       
         background-color: #fff;  
         transition: none;
         &:hover {
@@ -48,7 +50,7 @@ const Pagecontentbox = styled.div`
     flex-direction: column;
     flex: ${p => p.beTabs ? '41px 1' :  1}; */
     display: grid;
-    grid-template-rows: ${p => p.beTabs ? '41px 1fr' :  '1fr'};
+    grid-template-rows: ${p => p.beTabs ? 'auto 1fr' :  '1fr'};
 `
 /* 
  // custserach 自定义搜索
@@ -60,19 +62,18 @@ const PageContentMain = styled.div`
     display: flex;
     flex-direction: column;
     position: relative;
-    flex: 1;
-   //  max-height: max-content; // 适配页面缩放
-     // max-height: 873px
-    height:  ${props => {
+   // flex: 1;
+ 
+  /*   height:  ${props => {
          let {showserach, beTabs, custserach} = props 
          if (showserach || custserach) return beTabs ? '764px' : '805px'
          if (!showserach && !custserach) return beTabs ? '832px' : '873px'
        
           
-    }}; 
+    }};  */
     overflow-y: auto;
     & .flexcol {
-        flex: 1;
+         flex: 1;
         display: flex;
         flex-direction: column;
     }
@@ -86,7 +87,7 @@ export default function Maincontent(props) {
     const [searchParams, setSearchParams] = useSearchParams()
  
     const location = useLocation()
-   
+    const {laptop} = useSelector(adaptation)
     
     const navigate = useNavigate()
     const {tabs, value, setvalue, tabwidth, tabgap, initialval=null} = useContext(CustContext) || {}
@@ -145,13 +146,14 @@ useEffect(() => {
        
     }
 }, [location.pathname, setvalue, initialval])
- const TabsEl = () => {   
-     if (!beTabs) return null    
+ const TabsEl = ({laptop}) => {   
+  //   if (!beTabs) return null    
      return (
       <Tabsbox  
         onChange={onChange} 
         defaultActiveKey={defaultTab} 
-        animated 
+        animated
+        size={laptop ? "small" : "middle"}
         tabPosition="top"
         tabBarGutter={tabgap || 16} 
         tabwidth={tabwidth} 
@@ -159,7 +161,6 @@ useEffect(() => {
         type="card"
          items={tabs}
         >
-           {/*  {tabs.map(t => <TabPane tab={t.label} key={t.value} ></TabPane>)} */}
         </Tabsbox>
      )
  } 
@@ -167,11 +168,11 @@ useEffect(() => {
  let minsty = minw ? {overflow: "hidden", minWidth: "1024px"} : null
   return (
     <Pagecontentbox beTabs={beTabs}> 
-       <div style={minsty}>
-       <TabsEl ></TabsEl>
+      {beTabs ? <div style={minsty}>
+       <TabsEl laptop={laptop}></TabsEl>
         </div> 
-      
-       {/*  <div className='page--content--main'>{props.children}</div> */}
+        :null
+}
         <PageContentMain   beTabs={beTabs}  {...props}>
           {props.children}
         </PageContentMain>

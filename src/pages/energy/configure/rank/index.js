@@ -14,10 +14,11 @@ import Pagecount from '@com/pagecontent'
 import { useSearchParams, useOutletContext } from 'react-router-dom'
 const Main = styled.div`
   &&{
-   width: 100%; 
-   height: auto;
+    
+   flex:1;
    display: flex;
    flex-direction: row;
+   column-gap: 16px;
    justify-content: space-between;
   }
 `
@@ -186,14 +187,14 @@ export default function Index() {
     return (
         <Pagecount pd="0px" bgcolor="transparent">
             <Main>
-                <Titlelayout title='区域能耗排名设置' layout="flex" style={{ width: '897px', marginRight: '16px' }} >
-                    <div style={{ width: '865px', height: '448px', overflow: 'auto', marginTop: '16px' }}>
+                <Titlelayout title='区域能耗排名设置' layout="flex" style={{flex: 1}} >
+                    <div style={{ flex:1,   overflow: 'auto', marginTop: '16px' }}>
                         <UseTable columns={tbcolumns} dataSource={treeData}></UseTable>
                         <div style={{ width: '100%', display: 'flex', justifyContent: 'flex-end', marginTop: '16px' }}><Button type="primary" onClick={saveEnergy}>保存</Button></div>
                     </div>
                 </Titlelayout>
-                <Titlelayout title='设备能耗排名设置' layout="flex" style={{ width: '751px' }} >
-                    <div style={{ width: '719px', height: '448px', overflow: 'auto', marginTop: '16px' }}>
+                <Titlelayout title='设备能耗排名设置' layout="flex" style={{flex:1}} >
+                    <div style={{flex:1,   overflow: 'auto', marginTop: '16px' }}>
                         <UseTable columns={listcolumns} dataSource={listData}></UseTable>
                         <div style={{ width: '100%', display: 'flex', justifyContent: 'flex-end', marginTop: '16px' }}><Button type="primary" onClick={saveDevice}>保存</Button></div>
                     </div>

@@ -24,10 +24,10 @@ const Main = styled.div`
        justify-content: space-between;
       .text {
         padding-left: 16px;
-        border-left: 4px solid #237ae4;
+        border-left: 4px solid  ${props => props.theme.primaryColor || "#237AE4"};
         display: flex;
         align-items: center;
-        height: 32px;
+        height: ${props => props.theme.latop ? "28px" :  "32px"} ;
       }
    }
    .imgbox {

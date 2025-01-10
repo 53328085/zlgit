@@ -6,6 +6,8 @@
 import styled, {css} from "styled-components";
 import {Input, Select, DatePicker, Radio, Form, Button, Checkbox, Spin, Divider, Pagination} from 'antd'
 import {useTranslation} from "react-i18next"
+import {useSelector} from 'react-redux'
+import {adaptation} from "@redux/systemconfig"
 import moment from "moment";
 const {Search, Password, TextArea} = Input
 const { Item } = Form;
@@ -435,7 +437,8 @@ export const Logbtn = styled(Button)`
  
 export const Serach =(props) => {
   const {t} = useTranslation('button')
-  return <Input.Search   allowClear enterButton={<Button style={{width: '80px'}} type="primary">{t("button:search")}</Button>} {...props}  />
+  const {laptop} = useSelector(adaptation)
+  return <Input.Search   allowClear enterButton={<Button style={{width: laptop ? '4em' : '80px'}} type="primary">{t("button:search")}</Button>} {...props}  />
 }
 /* export const Serach = styled(Input.Search)`    
  && {

@@ -5,6 +5,9 @@ import Modal from '@com/useModal'
 import BlueColumn from '@com/bluecolumn'
 // import UseMap from '@com/useMap'
 import UseMap from '@com/useMap/index tadi.js'
+import { 
+    adaptation 
+  } from "@redux/systemconfig.js";
 import CustContext from '@com/content.js'
 export let  SetPosition =({positionRef,savePosition})=>{
     const loaclRef=useRef()
@@ -17,11 +20,12 @@ export let  SetPosition =({positionRef,savePosition})=>{
 }
 let LoaclForm =forwardRef((props,ref)=>{
     const [inpvalue,setInpvalue] =useState()
+    const {laptop} = useSelector(adaptation)
     // const inpvalueRef = useRef()
     const [local,setLoacl] = useState()
     const mapRef = useRef()
     const context =useContext(CustContext)
-    console.log(context)
+    
     const search=(text)=>{
         // mapRef.current.serachMap.search(inpvalue)
         mapRef.current.serachMap(inpvalue)
@@ -63,7 +67,7 @@ let LoaclForm =forwardRef((props,ref)=>{
             <span style={{paddingRight:32}}>经纬度</span>
             <Input style={{width:645}}  placeholder="点击地图获取经纬度" value={local} ></Input>
         </div>
-        <div style={{height:387,marginTop:24,border:'1px solid #d7d7d7'}}>
+        <div style={{height: laptop ? 340 : 387,marginTop: laptop ? 12 : 24,border:'1px solid #d7d7d7'}}>
         <UseMap setAaddress={setAaddress} ref={mapRef} lngLat={context?.lngLat?.current.lngLat}/>
         </div>
         

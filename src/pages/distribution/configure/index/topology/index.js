@@ -33,7 +33,7 @@ export default function Index() {
       title: '备注',
       dataIndex: 'remark',
       key: 'remark',
-      width: 680,
+     // width: 680,
       align: 'center',
     },
   ] : [
@@ -47,13 +47,13 @@ export default function Index() {
       dataIndex: 'remark',
       key: 'remark',
       align: 'center',
-      width: 680,
+     // width: 680,
     },
     isPublish ? null : {
       title: '操作',
       key: 'action',
       align: 'center',
-      width: 280,
+      width: 180,
       render: (_, record) => (
         <Space size="middle">
           <Link type='primary' underline onClick={() => edit(record)}>{t("button:edit")}</Link>

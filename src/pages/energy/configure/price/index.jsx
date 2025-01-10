@@ -7,17 +7,31 @@ import style from './style.module.less'
 import { energyPrice } from '@api/api.js'
 import { useRequest } from 'ahooks';
 import Custmodl from '@com/useModal'
-import styled from 'styled-components';
+import styled, {css} from 'styled-components';
 import {useOutletContext} from 'react-router-dom'  
 import Pagecount from "@com/pagecontent";
 
 import {CustButton} from "@com/useButton"
+const sty = css`
+ grid-template-columns: repeat(4, minmax(8em, 1fr)); 
+            column-gap: 16px;
+ 
+`
 const Mainbox = styled.div`
   
   display: flex;
   flex: 1;
   flex-direction: column;
   row-gap: 16px;
+  .elprice {
+    flex:1;
+    display: grid;
+    grid-template-columns: repeat(4, 127px);
+    column-gap: 32px;
+            grid-template-rows: 1fr 1fr;            
+            row-gap: 8px;
+            ${props=>props.theme.laptop ? sty : null}
+  }
 `
 export default function Index() {
   const {t} = useTranslation(["button"])
@@ -247,19 +261,17 @@ export default function Index() {
           <div className={style.cardTitle}>{areaName}电价</div>
           <div className={style.cardContent}>
             <div className={style.contentLeft}>电价&nbsp;(元/度)</div>
-            {elecPrice ? <div className={style.contentMiddle}>
-              <div>
+            {elecPrice ? <div className="elprice">
                 <span>尖电价&nbsp;(元/度)</span>
                 <span>峰电价&nbsp;(元/度)</span>
                 <span>平电价&nbsp;(元/度)</span>
                 <span>谷电价&nbsp;(元/度)</span>
-              </div>
-              <div>
+            
                 <span>{elecPrice.price1}</span>
                 <span>{elecPrice.price2}</span>
                 <span>{elecPrice.price3}</span>
                 <span>{elecPrice.price4}</span>
-              </div>
+              
             </div> :<div className={style.contentMiddle}></div>}
             <Actions valueJson={elecPrice} title={'electric'}></Actions>
           </div>

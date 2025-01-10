@@ -33,10 +33,10 @@ const sty = css`
 `
 const Cardbox = styled.div`
  display: grid;
-    grid-template-columns: repeat(3, 538px);
-    grid-template-rows: repeat(4, 156px);
+    grid-template-columns: repeat(auto-fill, minmax(538px,1fr));
+  //  grid-template-rows: repeat(4, 156px);
     gap: 16px;
-    justify-content: space-evenly;
+   // justify-content: space-evenly;
    
     .cardItem {
     height: 156px;
