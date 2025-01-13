@@ -2,15 +2,18 @@ import React, { useEffect, useState, useRef, useMemo } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 import { selectcurlRommid, adaptation } from "@redux/systemconfig";
 import Pagecount from '@com/pagecontent'
-import { Select, message, Spin, Card, Button } from 'antd'
+import { Select, message, Spin, Card, Button, DatePicker  } from 'antd'
 import { useReactive } from "ahooks";
 import { useNavigate } from 'react-router-dom'
-import { DistributionRoomRuntime, distributionRoom, RuntimeHMI } from '@api/api.js'
+import { DistributionRoomRuntime, Monitoring, RuntimeHMI } from '@api/api.js'
 import styled, { css } from 'styled-components';
 import { Topology } from "@topology/core/src/core";
 import { register as registerFlow } from '@topology/flow-diagram'
 import { Cspin } from '@com/comstyled'
 import mqtt from 'mqtt'
+import moment from "moment";
+import { SearchOutlined } from '@ant-design/icons';
+import { drawEcharts } from "@com/useEcharts"
 import style from './style.module.less'
 import CustModal from '@com/useModal'
 
@@ -39,6 +42,7 @@ const sty = css`
  padding: 0 16px;
 `
 export default function Index() {
+  const { RangePicker } = DatePicker;
   const ChartItem = styled.div`
     position: absolute;
     
@@ -68,6 +72,19 @@ export default function Index() {
   const dispatch = useDispatch()
   const projectId = useSelector(state => state.system.menus.projectId)
   const roomId = useSelector(selectcurlRommid)
+
+
+  const now = new Date();
+  const year = now.getFullYear();
+  const month = ('0' + (now.getMonth() + 1)).slice(-2);
+  const day = ('0' + now.getDate()).slice(-2);
+  const hours = ('0' + now.getHours()).slice(-2);
+  const minutes = ('0' + now.getMinutes()).slice(-2);
+  const seconds = ('0' + now.getSeconds()).slice(-2);
+
+  const defaultStartTime = `${year}-${month}-${day} 00:00:00`
+  const defaultEndTime = `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`
+
   const state = useReactive({
     spining: false,
     chartList: [],
@@ -76,10 +93,12 @@ export default function Index() {
     client: {},
     timer: null,
     detailTitle: '',
-    pointDetailTitle:'',
+    pointDetailTitle: '',
     activeTab: 'current',
-    selectedSn:'',
-    selectedPoint:'',
+    selectedSn: '',
+    selectedPoint: '',
+    startTime: '',
+    endTime: '',
   })
 
 
@@ -277,7 +296,7 @@ export default function Index() {
       setNodeTag(false)
     }
     if (event == 'nodeRightClick') {
-      if(isf){
+      if (isf) {
         return;
       }
       if ((data.name == "text" || data.name == "rectangle") && data.tags.length == 3) {
@@ -298,9 +317,7 @@ export default function Index() {
         setNodeType('设备详情')
       }
     } else if (event == 'dblclick') {
-      console.log(data)
       let { tags } = data
-      console.log(tags)
       if (!Array.isArray(tags) || tags.length < 1) return
       window.open(`/deviceDetail?sn=${tags[0]}`, "_blank")
     }
@@ -350,19 +367,22 @@ export default function Index() {
   const pointDetailRef = useRef()
   const showDetails = () => {
     setNodeTag(false)
-    if(selectedNode.tags[1]){
+    if (selectedNode.tags[1]) {
       state.pointDetailTitle = nodeType + '--' + selectedNode.tags[0] + '--' + selectedNode.tags[1]
       state.selectedSn = selectedNode.tags[0]
       state.selectedPoint = selectedNode.tags[1]
+      state.startTime = `${year}-${month}-${day} 00:00:00`
+      state.endTime = `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`
       pointDetailRef.current.onOpen()
-    }else{
+      onSearch()
+    } else {
       state.detailTitle = nodeType + '--' + selectedNode.tags[0]
       state.selectedSn = selectedNode.tags[0]
       state.selectedPoint = ''
       state.activeTab = 'current'
       detailRef.current.onOpen()
     }
-    
+
   }
 
   const onPointCancel = () => {
@@ -370,17 +390,89 @@ export default function Index() {
   }
 
   const onCancel = () => {
-    
+
     detailRef.current.onCancel()
   }
 
+  const dateFormat = 'YYYY-MM-DD HH:mm:ss'
+  const analysisRef = useRef()
+  const changeDate = (date, dateString) => {
+    state.startTime = dateString[0]
+    state.endTime = dateString[1]
+  }
 
+  const onSearch = () => {
+    if (state.startTime == '' || state.endTime == '') {
+      message.error('请选择完整日期!');
+      return;
+    }
+    if (state.selectedPoint == '') {
+      message.error('请选择测点！')
+      return;
+    }
+    let params = {
+      ProjectId: projectId,
+      SN: state.selectedSn,
+      Point: state.selectedPoint,
+      Start: state.startTime,
+      End: state.endTime,
+    }
+
+    Monitoring.RuntimeDevice.HistoryPointTrend(params).then(res => {
+      if (res.success) {
+        if (res.data) {
+          // state.chartTitle = res.data.description + '(' + res.data.unit + ')'
+          if (res.data.data && Array.isArray(res.data.data)) {
+            setTimeout(() => { drawEchartsData(res.data.data, res.data.sn) }, 100)
+          }
+        }
+      } else {
+        message.error(res.errMsg)
+      }
+    })
+  }
+
+  const drawEchartsData = (data, point) => {
+    let dimensions = ['time', point]
+    let source = []
+    data.map((item, index) => {
+      let value = {}
+      value['time'] = item.x
+      value[point] = item.y
+      source.push(value)
+    })
+
+    let dataset = {
+      dimensions,
+      source
+    }
+    drawEcharts(analysisRef.current, {
+      dataset: dataset,
+      series: [{
+        type: "line", areaStyle: null, showSymbol: true, symbol: 'none'
+      },],
+      grid: {
+        top: '30px',
+        left: 0,
+        right: 0,
+        bottom: '30px',
+        containLabel: true,
+      },
+      legend: {
+        top: 0,
+        right: 16,
+        icon: 'rect', //rect
+        itemHeight: 2,
+        itemWidth: 24,
+        itemGap: 30,
+      }
+    })
+  }
 
 
   useEffect(() => {
     return () => {
       (typeof state?.client?.end == "function") && state?.client?.end();
-      console.log('卸载')
     }
   }, [])
 
@@ -405,15 +497,25 @@ export default function Index() {
       </div>
 
       <CustModal title={state.detailTitle} ref={detailRef} mold="cust" width={1100} footer={[<Button onClick={onCancel} key="cancel">关闭</Button>]}>
-            <DialogContent projectId={projectId} sn={state.selectedSn}></DialogContent>
-            
+        <DialogContent projectId={projectId} sn={state.selectedSn}></DialogContent>
+
       </CustModal>
       <CustModal title={state.pointDetailTitle} ref={pointDetailRef} mold="cust" width={1200} footer={[<Button onClick={onPointCancel} key="cancel">关闭</Button>]}>
-            <div className={style.dialogContent}>
-              <div className={style.tabContent} style={{borderTopLeftRadius: '4px'}}>
+        <div className={style.dialogContent}>
+          <div className={style.tabContent} style={{ borderTopLeftRadius: '4px' }}>
+            <div className={style.warningContent}>
+              <div className={style.warnHeader}>
+                <RangePicker showTime defaultValue={[moment().startOf('day'), moment()]} format={dateFormat} onChange={changeDate}></RangePicker>
 
+                <Button style={{ marginLeft: 16, width: 96, height: 32 }} type="primary" onClick={onSearch} icon={<SearchOutlined />}>查询</Button>
+              </div>
+              <div className={style.chartBox}>
+                <div>{state.chartTitle}</div>
+                <div style={{ width: "1100px", height: '500px' }} ref={analysisRef}></div>
               </div>
             </div>
+          </div>
+        </div>
       </CustModal>
     </Cspin>
   )

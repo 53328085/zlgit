@@ -23,6 +23,7 @@ const Storage = lazy(() => import("@pages/storage/configure/index"))
 const Comindex = lazy(() => import("../comindex"))
 const Quota = lazy(() => import("@pages/quota/configure/index"))
 const Ledger = lazy(() => import("@pages/ledger/configure/index"))
+const Cabinets = lazy(() => import("@pages/cabinet/configure/index"))
 
 import  {designerCommon} from './common'
 import  {designerMonitor} from './monitoring'
@@ -36,6 +37,7 @@ import {designCarbonEmissionManage} from './carbon'
 import  {maintenance} from './devops'
 import {quota} from './quota'
 import {ledger} from './ledger'
+import {cabinets} from './cabinets'
  export const designerComponents = { 
   '0201': Common,
   '0202': Project,
@@ -49,7 +51,8 @@ import {ledger} from './ledger'
   '0210': Comindex,
   '0211': Devops,
   '0212': Quota,
-  "0213": Ledger
+  "0213": Ledger,
+  '0214': Cabinets
 } 
 export const designerRoutes = {
   designerCommon,
@@ -63,7 +66,8 @@ export const designerRoutes = {
   designCarbonEmissionManage,
   maintenance,
   quota,
-  ledger
+  ledger,
+  cabinets
 }
 
 

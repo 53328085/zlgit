@@ -20,6 +20,7 @@ import  {runtimeCarbonEmissionManager} from "./carbon" // 碳排管理
 import  {runtimeStorage} from './storage' // 储能管理
 import  {runtimeQuota} from './quota'
 import {ledger} from './ledger.js'
+import {cabinets} from './cabinets.js'
  let runRoutes = {
   runtimeMonitor,
   runtimeEnergy,
@@ -32,7 +33,8 @@ import {ledger} from './ledger.js'
   runtimeCarbonEmissionManager,
   runtimeStorage,
   runtimeQuota,
-  ledger
+  ledger,
+  cabinets
  }
 
 
@@ -105,6 +107,7 @@ const loginrouter =  [{
   '0113': Comindex,
   '0114': Comindex,
   '0115': Distribution,
+  '0116': Comindex
 } 
 
  
