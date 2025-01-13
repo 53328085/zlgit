@@ -1,17 +1,215 @@
 import React, { useEffect, useState } from "react";
+import {useSelector} from 'react-redux'
 import { useTranslation } from 'react-i18next'
 import style from './style.module.less'
+import styled, {css} from "styled-components";
 import { Table, Input, message, Descriptions, Divider } from "antd";
 import UsetTable from '@com/useTable'
 import { LeftOutlined, RightOutlined } from '@ant-design/icons'
 import { cloneDeep } from "lodash";
 import { CustButton } from '@com/useButton'
+import { adaptation} from '@redux/systemconfig'
 import Mask from '../mask'
+const csssty = css`
+  .transferContent{
+    padding: 16px;
+  }
+  .leftTable{
+    row-gap: 16px;
+  }
+  .actions {
+    margin: 0px 8px ;
+    .finalButton{
+        row-gap: 8px;
+    }
+  }
+`
+const Mainbox = styled.div`
+width: 100%;
+ height: 100%;
+.transferContent {
+   // width: 1680px;
+    height: inherit;
+    background-color: #003366;
+    padding: 32px;
+    display: flex;
+    position: absolute;
+    left: 0px;
+    top: 50%;
+    transform: translate(200px, -50%);
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    grid-template-rows: 1fr;
+    width: calc(100% - 200px);
+}
+
+.transferContentNoMask {
+   // height: 760px;
+    height: inherit;
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    grid-template-rows: 1fr;
+}
+.leftTable{
+    height: inherit;
+    display: flex;
+    flex-direction: column;
+    row-gap: 32px;
+}
+.publicTitle {
+    height: 32px;
+    padding-left: 16px;
+    margin-bottom: 16px;
+    line-height: 32px;
+    font-size: 14px;
+    color: #333;
+    border-left: 4px solid var(--ant-primary-color);
+}
+
+.mainTable {
+  // width: 692px;
+  //  height: 272px;
+    padding: 16px;
+    background-color: #fff;
+    border-radius: 2px;
+   
+    flex: 1;
+}
+
+.subTable {
+ //   width: 692px;
+ //   height: 378px;
+    padding: 16px;
+    background-color: #fff;
+    border-radius: 2px;
+    
+    flex: 1;
+}
+
+.otherSubTable {
+  //  width: 692px;
+  //  height: 696px;
+    flex: 1;
+    padding: 16px;
+    background-color: #fff;
+    border-radius: 2px;
+    
+}
+
+.searchInput {
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+}
+
+.actions {
+    margin: 0 32px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-evenly;
+    .firstButton {
+        // margin-top: 64px;
+        display: flex;
+        justify-content: space-between;
+    }
+
+    .secondButton {
+      //  margin-top: 182px;
+        display: flex;
+        justify-content: space-between;
+    }
+
+    .leftButton {
+        display: inline-block;
+        width: 68px;
+        height: 46px;
+        background-color: var(--ant-primary-color);
+        border-radius: 4px;
+        cursor: pointer;
+        color: #fff;
+        font-size: 20px;
+        line-height: 46px;
+        text-align: center;
+
+        &:hover {
+            background-color: rgba(64, 158, 255, 1);
+        }
+    }
+
+    .rightButton {
+        display: inline-block;
+        width: 68px;
+        height: 46px;
+        margin-left: 10px;
+        background-color: var(--ant-primary-color);
+        border-radius: 4px;
+        cursor: pointer;
+        color: #fff;
+        font-size: 20px;
+        line-height: 46px;
+        text-align: center;
+
+        &:hover {
+            background-color: rgba(64, 158, 255, 1);
+        }
+    }
+
+    .finalButton {
+       // margin-top: 180px;
+        display: flex;
+        flex-direction: column;
+        row-gap: 16px;
+        .saveButton {
+            width: 146px;
+            height: 40px;
+            background-color: var(--ant-primary-color);
+            border-radius: 4px;
+            cursor: pointer;
+            color: #fff;
+            font-size: 14px;
+            line-height: 40px;
+            text-align: center;
+
+            &:hover {
+                background-color: rgba(64, 158, 255, 1);
+            }
+        }
+
+        .closeButton {
+            margin-top: 16px;
+            width: 146px;
+            height: 40px;
+            background-color: #fff;
+            border-radius: 4px;
+            cursor: pointer;
+            color: #212121;
+            font-size: 14px;
+            line-height: 40px;
+            text-align: center;
+
+            &:hover {
+                opacity: 0.5;
+            }
+        }
+    }
+}
+
+.rightTable {
+  //  width: 714px;
+  //  height: 696px;
+    border-radius: 2px;
+    padding: 16px;
+    background-color: #fff;
+}
+${props => props.theme.laptop ? csssty : null}   
+`
+
 export default function index(props) {
     const { t } = useTranslation(["button"])
     const [messageApi, contextHolder] = message.useMessage();
     const task = props.mask == "open"
     const { Search } = Input
+    const {laptop} = useSelector(adaptation)
     const columns = props.columns
 
     const fibre = props.fibre || {}
@@ -295,90 +493,93 @@ export default function index(props) {
         }
     }
     const [subserach, setSubserach] = useState('')
+    const btnsty = laptop ? {
+        height: "32px", 
+        width: "55px"
+    }:  {
+        height: "46px",
+         width: "68px"
+    }
+    const savesty = laptop ? {
+         height: "34px", width: "120px" ,
+    }: {
+         height: "46px", width: "146px"
+    }
     return (
 
         <Mask task={task} maskBack={props.maskBack}>
-            <div className={props.maskBack == false ? style.transferContentNoMask : style.transferContent}>
+            <Mainbox>
+            <div className={props.maskBack == false ? "transferContentNoMask" : "transferContent"}>
                 {contextHolder}
                 {props.transferTitle.mainTitle != '' ?
-                    (props.type != "fibre" && <div className={style.leftTable}>
-                        <div className={style.mainTable}>
-                            <div className={style.publicTitle}>{props.transferTitle.mainTitle}</div>
-                            <div className={style.mainContent}>
-                                <Table bordered dataSource={mainData} columns={columns} size='middle' rowKey='id' pagination={false} rowSelection={mainSelection} scroll={{ y: 141 }}></Table>
+                    (props.type != "fibre" && <div className="leftTable">
+                        <div className="mainTable">
+                            <div className="publicTitle">{props.transferTitle.mainTitle}</div>
+                            <div className="mainContent">
+                                <UsetTable bordered dataSource={mainData} columns={columns} size='middle' rowKey='id' pagination={false} rowSelection={mainSelection} scroll={{ y: 141 }}></UsetTable>
                             </div>
                         </div>
-                        <div className={style.subTable}>
-                            <div className={style.publicTitle}>{props.transferTitle.subTitle}</div>
-                            <div className={style.searchInput}>
+                        <div className="subTable">
+                            <div className="publicTitle">{props.transferTitle.subTitle}</div>
+                            <div className="searchInput">
                                 <span style={{ marginRight: 16 }}>设备搜索</span>
                                 <Search placeholder="请输入设备编号/安装地址" style={{ width: 256 }} value={subserach} allowClear onChange={(e) => setSubserach(e.target.value)} enterButton onSearch={onSearchSub}></Search>
                             </div>
-                            <div className={style.mainContent}>
-                                <Table bordered dataSource={subData} columns={columns} size='middle' rowKey='id' pagination={false} scroll={{ y: 188 }} rowSelection={subSelection}></Table>
+                            <div className="mainContent">
+                                <UsetTable bordered dataSource={subData} columns={columns} size='middle' rowKey='id' pagination={false} scroll={{ y: 188 }} rowSelection={subSelection}></UsetTable>
                             </div>
                         </div>
                     </div>
                     ) :
-                    (props.type != "fibre" && <div className={style.leftTable}>
-                        <div className={style.otherSubTable}>
-                            <div className={style.publicTitle}>{props.transferTitle.subTitle}</div>
-                            <div className={style.searchInput}>
+                    (props.type != "fibre" && <div className="leftTable">
+                        <div className="otherSubTable">
+                            <div className="publicTitle">{props.transferTitle.subTitle}</div>
+                            <div className="searchInput">
                                 <span style={{ marginRight: 16 }}>设备搜索</span>
                                 <Search placeholder="设备编号/设备名称/安装地址" style={{ width: 256 }} value={subserach} allowClear onChange={(e) => setSubserach(e.target.value)} enterButton onSearch={onSearchSub}></Search>
                             </div>
-                            <div className={style.mainContent}>
-                                <Table bordered dataSource={subData} columns={columns} size='middle' rowKey='id' pagination={false} scroll={{ y: 460 }} rowSelection={subSelection}></Table>
+                            <div className="mainContent">
+                                <UsetTable bordered dataSource={subData} columns={columns} size='middle' rowKey='id' pagination={false} scroll={{ y: 460 }} rowSelection={subSelection}></UsetTable>
                             </div>
                         </div>
                     </div>)
                 }
                 {
-                    props.type == "fibre" && <div className={style.leftTable}>
-                        <div className={style.otherSubTable}>
-                            <div className={style.publicTitle}>{props.transferTitle.subTitle}</div>
+                    props.type == "fibre" && <div className="leftTable">
+                        <div className="otherSubTable">
+                            <div className="publicTitle">{props.transferTitle.subTitle}</div>
                             <Descriptions title="" column={1} size="small" bordered>
                                 <Descriptions.Item label="测温通道">{fibre.channel}</Descriptions.Item>
                                 <Descriptions.Item label="分区编号">{fibre.subfield}</Descriptions.Item>
                                 <Descriptions.Item label="分区名称">{fibre.subfieldName}</Descriptions.Item>
                             </Descriptions>
                             <Divider />
-                            <div className={style.mainContent}>
-                                <Table bordered dataSource={subData} columns={columns} rowKey='id' pagination={false} scroll={{ y: 500 }} rowSelection={subSelection}></Table>
+                            <div className="mainContent">
+                                <UsetTable bordered dataSource={subData} columns={columns} rowKey='id' pagination={false} scroll={{ y: 500 }} rowSelection={subSelection}></UsetTable>
                             </div>
                         </div>
                     </div>
                 }
-                <div className={style.actions}>
+                <div className="actions">
                     {props.transferTitle.mainTitle != '' ?
-                        <div className={style.firstButton}>
-                            <CustButton icon={<LeftOutlined />} style={{ height: "46px", width: "68px" }} onClick={unknownToMain}></CustButton>
-                            <CustButton icon={<RightOutlined />} style={{ height: "46px", width: "68px" }} onClick={MainToUnknown}></CustButton>
-                            {/*  <span className={style.leftButton} onClick={()=>unknownToMain()}>
-                        <LeftOutlined />
-                    </span>
-                    <span className={style.rightButton} onClick={()=>MainToUnknown()}>
-                        <RightOutlined />
-                    </span> */}
+                        <div className="firstButton">
+                            <CustButton icon={<LeftOutlined />} style={btnsty} onClick={unknownToMain}></CustButton>
+                            <CustButton icon={<RightOutlined />} style={btnsty} onClick={MainToUnknown}></CustButton>
+                           
                         </div> : null}
-                    <div className={style.secondButton}>
-                        <CustButton icon={<LeftOutlined />} style={{ height: "46px", width: "68px" }} onClick={unknownToSub}></CustButton>
-                        <CustButton icon={<RightOutlined />} style={{ height: "46px", width: "68px" }} onClick={subToUnknown}></CustButton>
-                        {/*   <span className={style.leftButton} onClick={() => unknownToSub() }>
-                        <LeftOutlined />
-                    </span>
-                    <span className={style.rightButton} onClick={() => subToUnknown() }>
-                        <RightOutlined />
-                    </span> */}
+                    <div className="secondButton">
+                        <CustButton icon={<LeftOutlined />} style={btnsty} onClick={unknownToSub}></CustButton>
+                        <CustButton icon={<RightOutlined />} style={btnsty} onClick={subToUnknown}></CustButton>
+                      
                     </div>
-                    <div className={style.finalButton}>
-                        <CustButton onClick={handleSave} style={{ height: "46px", width: "146px" }}>{t("button:save")}</CustButton>
-                        {props.maskBack == false ? null : <div className={style.closeButton} onClick={() => handleClose()}>{t("button:cancel")}</div>}
+                    <div className="finalButton">
+                        <CustButton onClick={handleSave} style={savesty}>{t("button:save")}</CustButton>
+                        {props.maskBack == false ? null : <CustButton type="default" style={savesty} onClick={() => handleClose()}>{t("button:cancel")}</CustButton>}
                     </div>
                 </div>
-                <div className={style.rightTable}>
-                    <div className={style.publicTitle}>{props.transferTitle.unknownTitle}</div>
-                    <div className={style.searchInput}>
+                <div className="rightTable">
+                    <div className="publicTitle">{props.transferTitle.unknownTitle}</div>
+                    <div className="searchInput">
                         <span style={{ marginRight: 16 }}>设备搜索</span>
                         <Search
                             placeholder="设备编号/设备名称/安装地址"
@@ -390,12 +591,13 @@ export default function index(props) {
                             onChange={(e) => { setSearchValue(e.target.value) }}
                         ></Search>
                     </div>
-                    <div className={style.mainContent}>
+                    <div className="mainContent">
                         <Table
                             bordered pagination={props.maskBack == false ? false : true} dataSource={unknownData} columns={columns} rowKey='id' scroll={{ y: 450 }} rowSelection={rowSelection}></Table>
                     </div>
                 </div>
             </div>
+            </Mainbox>
         </Mask>
     )
 }
