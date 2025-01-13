@@ -240,15 +240,18 @@
 }
 
 .main {
-    width: 100vw;
-    height: 100vh;
-    min-height: 634px;
-    background-color: rgb(19, 90, 189);
-
+  // width: 100vw;
+  // height: 100vh;
+ //  min-height: 634px;
+ //   background-color: rgb(19, 90, 189);
+    display: flex;
+    flex-direction: column;
+    overflow: auto;
+    height: inherit;
     .head {
         width: 100%;
         height: 64px;
-     //   background-color: rgb(0, 51, 102);
+    
         display: flex;
         flex-direction: row;
         align-items: center;
@@ -269,20 +272,18 @@
     }
 
     .body {
-        width: 100%;
-        height: calc(100% - 64px);
+       // width: 100%;
+      // height: calc(100% - 64px);
         padding: 16px;
         display: flex;
         flex-direction: row;
-
-
+        column-gap: 16px;
+        flex:1;
+     //   overflow-y: auto;
         .left {
-            width: 304px;
-
+            width: 304px; 
             background-color: #fff;
-            padding: 16px;
-            margin-right: 16px;
-
+            padding: 16px; 
             .leftHead {
                 display: flex;
                 flex-direction: row;
@@ -386,13 +387,13 @@
         }
 
         .right {
-            width: 1568px;
-
+           // width: 1568px;
+            flex: 1;
             background-color: #fff;
             position: relative;
             display: flex;
             flex-direction: column;
-
+            
             .rightHead {
                 height: 40px;
               //  background-color: #135ABD;
@@ -435,6 +436,7 @@
                 flex-direction: row;
                 align-items: center;
                 padding: 16px;
+                border-bottom: 1px dotted #d7d7d7;
                 // justify-content: space-between;
                 .time {
                     width: 18px;
@@ -444,16 +446,17 @@
             }
 
             .timeline {
-                width: 1537px;
-                height: 2px;
+              //  width: 1537px;
+              //  height: 2px;
             }
 
             .tableBox {
                 padding: 16px;
                 width: 100%;
-                overflow-y: scroll;
-
-                .dataHeader {
+                height: max-content;
+            //    overflow-y: scroll;
+s             
+                .dataHeader { 
                     width: 1536px;
                     height: 36px;
                     background-color: var(--ant-primary-color);
@@ -537,8 +540,10 @@
     display: grid;
     grid-template-columns: repeat(3, 336px) 528px;
     grid-template-rows: repeat(1, 152px);
-    height: 152px;
-
+    height: 168px;
+    padding-bottom: 16px;
+    border-bottom: 1px dotted #d7d7d7;
+    margin-bottom: 16px;
     .dateData {
         width: 320px;
         height: 152px;

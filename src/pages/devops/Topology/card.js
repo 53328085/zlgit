@@ -178,7 +178,7 @@ export default function Icard(props) {
             <div className="cardImg"><img src={props.img}  alt={props.title}></img></div>
             <div className="ItemValue">
                 <div className="valueTitle"><span>{props.title}</span><span>SN:{props.category}</span></div>
-                <div className="valueTitle" style={{ color: '#333', fontWeight: 'normal' }}><sapn>{props.value}</sapn>
+                <div className="valueTitle" ><sapn>{props.value}</sapn>
                     {/* <span>{props.lastSampleTime}</span> */}
                 </div>
                 {/*  <div className={style.btnBoxStyle}>

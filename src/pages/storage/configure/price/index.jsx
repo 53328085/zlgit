@@ -7,10 +7,98 @@ import imgurl from './imgs'
 import {timeList, timeToValue, valueToTime} from './time'
 import { StoragePriceDesigner } from '@api/api.js'
 import { cloneDeep } from 'lodash';
-import finished from '@imgs/finished.png'
+ 
 import { CaretRightOutlined } from '@ant-design/icons';
 import {CustButtonT} from '@com/useButton'
-import { themeColor  } from '@redux/systemconfig.js'
+import { themeColor,adaptation  } from '@redux/systemconfig.js'
+import Pagecount from '@com/pagecontent' 
+import styled, {css} from 'styled-components';
+
+const stycss = css`
+  padding-left: 16px;
+  .imgbox {
+    width: 50px;
+    height: 50px;
+    .imgs {
+      width: 42px;
+      height: 42px;
+    }
+    .word{
+      width: 50px;
+      height: 50px;
+      line-height: 50px;
+      font-size: 20px;
+
+    }
+  }
+`
+const Timebox = styled.div`
+  &&{
+   
+    margin-top: 16px;
+    padding-left: 80px;
+    height: 160px;
+    border: 1px solid #d7d7d7;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    
+    .imgbox{
+       width: 90px;
+       height: 90px;
+       border: 1px solid #d7d7d7;
+       border-radius: 50%;
+       position: relative;
+       display: flex;
+       align-items: center;
+       justify-content: center;
+       .imgs{
+        width: 80px;
+        height: 80px;
+        margin: 4px;
+       }
+       .word{
+        display: inline-block;
+        width: 88px;
+        height: 88px;
+        text-align: center;
+        line-height: 88px;
+        position: absolute;
+        left: 0;
+        top: 0;
+        color: #fff;
+        font-size: 28px;
+    }
+    }
+   
+  
+    .priceInput{
+     //   margin-left: 64px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+    }
+    .rightTriggle{
+        width: 28px;
+        height: 18px;
+      //  margin-left: 80px;
+        transform: rotate(90deg);
+      //  margin-right: 60px;
+    }
+    .timeList{
+        height: 160px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: space-around;
+            .ant-row{
+                flex-wrap: nowrap;
+            }
+    }
+   ${props => props.theme.laptop ? stycss : null}
+  }
+`
 export default function Index() {
   const [pointedForm] = Form.useForm()
   const [peakForm] = Form.useForm()
@@ -18,16 +106,7 @@ export default function Index() {
   const [valleyForm] = Form.useForm()
   const Item = Form.Item
   const { QueryStoragePrice, UpdateStoragePrice } = StoragePriceDesigner
-  const imgBg = {
-    width: 88,
-    height: 88,
-    lineHeight: '80px',
-    textAlign: 'center',
-    marginLeft: 60,
-    backgroundImage:`url('${imgurl.bgCircle}')`,
-    backgroundSize: '100% 100%',
-    position: 'relative'
-  }
+ 
   const {primaryColor, primaryderived} =useSelector(themeColor)
   //select disabled
   const pointStart1 = Form.useWatch('startTime1', pointedForm)
@@ -133,33 +212,37 @@ export default function Index() {
   //公用组件
   const CustomPrice = props => {
     let {disChange} = props
-    return (<div className={style.priceList}>
-    <div style={imgBg}>
-      <img src={props.imgs} className={style.imgs}></img>
-      <span className={style.word}>{props.title}</span>
+    let {laptop} = useSelector(adaptation)
+    let gap = laptop ? 16 : 40;
+    let space = laptop ? {marginLeft: 10, width: "auto"} :{marginLeft: 40, width: 196}
+    let span = laptop ? 7 : 6;
+    return (<Timebox>
+    <div className='imgbox'>
+      <img src={props.imgs} className="imgs"></img>
+      <span className="word">{props.title}</span>
     </div>
-    <Form form={props.formName} layout='inline' colon={false} style={{display:'flex',alignItems: 'center'}} requiredMark={false} autoComplete='off' >
-      <div className={style.priceInput}>
-        <Space>
+    <Form form={props.formName} layout='inline' colon={false} style={{display:'flex',alignItems: 'center', flex: 1, justifyContent: laptop ? "space-between" : "space-around"}} requiredMark={false} autoComplete='off' >
+      <div className="priceInput">
+        <Space size={laptop ? "small" : "large"}>
           <Item label={ props.title + '电价'} name='price'>
-            <Input></Input>
+            <Input style={{width: laptop ? "100px" : "180px"}}></Input>
           </Item>
           <span style={{fontSize: 12, color:'#999'}}>(元/kWh)</span>
         </Space>
       </div>
-      <img className={style.rightTriggle} src={imgurl.right}></img>
-      <div className={style.timeList}>
-        <Space size={40}>
-          <Item name='startTime1' label='开始时间' labelCol={{span:6}}>
-            <Select style={{marginLeft: 40, width: 196}} placeholder='请选择开始时间' >
+      <img className="rightTriggle" src={imgurl.right}></img>
+      <div className="timeList">
+        <Space size={gap}>
+          <Item name='startTime1' label='开始时间' labelCol={{span}}>
+            <Select style={space} placeholder='请选择开始时间' >
               {timeList.map(item => {
                 return <Select.Option key={item.id} value={item.id} 
                 disabled={((props.formName).getFieldValue('endTime1') && (props.formName).getFieldValue('endTime1') != -1 && (props.formName).getFieldValue('endTime1') <= item.id) ? true : false }>{item.label}</Select.Option>
               }) }
             </Select>
           </Item>
-          <Item name='endTime1' label='结束时间' labelCol={{span:6}}>
-            <Select style={{marginLeft: 40, width: 196}} placeholder='请选择结束时间' >
+          <Item name='endTime1' label='结束时间' labelCol={{span}}>
+            <Select style={space} placeholder='请选择结束时间' >
               {timeList.map(item => {
                 return <Select.Option key={item.id} value={item.id} 
                 disabled={(( (props.formName).getFieldValue('startTime1') || (props.formName).getFieldValue('startTime1') == 0 )&& (props.formName).getFieldValue('startTime1') != -1 && (props.formName).getFieldValue('startTime1') >= item.id) ? true : false }>{item.label}</Select.Option>
@@ -167,17 +250,17 @@ export default function Index() {
             </Select>
           </Item>
         </Space>
-        <Space size={40}>
-          <Item name='startTime2' label='开始时间' labelCol={{span:6}} >
-            <Select style={{marginLeft: 40, width: 196}} placeholder='请选择开始时间' disabled={disChange[0]}>
+        <Space size={gap}>
+          <Item name='startTime2' label='开始时间' labelCol={{span}} >
+            <Select style={space} placeholder='请选择开始时间' disabled={disChange[0]}>
               {timeList.map(item => {
                 return <Select.Option key={item.id} value={item.id} 
                 disabled={((props.formName).getFieldValue('endTime2') && (props.formName).getFieldValue('endTime2') != -1 && (props.formName).getFieldValue('endTime2') <= item.id) ? true : false } >{item.label}</Select.Option>
               }) }
             </Select>
           </Item>
-          <Item name='endTime2' label='结束时间' labelCol={{span:6}}>
-            <Select style={{marginLeft: 40, width: 196}} placeholder='请选择结束时间' disabled={disChange[0]}>
+          <Item name='endTime2' label='结束时间' labelCol={{span}}>
+            <Select style={space} placeholder='请选择结束时间' disabled={disChange[0]}>
               {timeList.map(item => {
                 return <Select.Option key={item.id} value={item.id}
                 disabled={(( (props.formName).getFieldValue('startTime2') || (props.formName).getFieldValue('startTime2') == 0 ) && (props.formName).getFieldValue('startTime2') != -1 && (props.formName).getFieldValue('startTime2') >= item.id) ? true : false }>{item.label}</Select.Option>
@@ -185,17 +268,17 @@ export default function Index() {
             </Select>
           </Item>
         </Space>
-        <Space size={40}>
-          <Item name='startTime3' label='开始时间' labelCol={{span:6}} shouldUpdate>
-            <Select style={{marginLeft: 40, width: 196}} placeholder='请选择开始时间' disabled={disChange[1]}>
+        <Space size={gap}>
+          <Item name='startTime3' label='开始时间' labelCol={{span}} shouldUpdate>
+            <Select style={space} placeholder='请选择开始时间' disabled={disChange[1]}>
               {timeList.map(item => {
                 return <Select.Option key={item.id} value={item.id}
                 disabled={((props.formName).getFieldValue('endTime3') && (props.formName).getFieldValue('endTime3') != -1 && (props.formName).getFieldValue('endTime3') <= item.id) ? true : false }>{item.label}</Select.Option>
               }) }
             </Select>
           </Item>
-          <Item name='endTime3' label='结束时间' labelCol={{span:6}} shouldUpdate>
-            <Select style={{marginLeft: 40, width: 196}} placeholder='请选择结束时间' disabled={disChange[1]}>
+          <Item name='endTime3' label='结束时间' labelCol={{span}} shouldUpdate>
+            <Select style={space} placeholder='请选择结束时间' disabled={disChange[1]}>
               {timeList.map(item => {
                 return <Select.Option key={item.id} value={item.id}
                 disabled={(( (props.formName).getFieldValue('startTime3') || (props.formName).getFieldValue('startTime3') == 0 ) && (props.formName).getFieldValue('startTime3') != -1 && (props.formName).getFieldValue('startTime3') >= item.id) ? true : false }>{item.label}</Select.Option>
@@ -205,7 +288,7 @@ export default function Index() {
         </Space>
       </div>
     </Form>
-  </div>)
+  </Timebox>)
   }
   const [headerData, setHeaderData] = useState({})
   const getFromChild = data => {
@@ -497,7 +580,7 @@ export default function Index() {
   }
 
   return (
-    <div>
+    <Pagecount>
       <UseHeader getValues={getFromChild}></UseHeader>
       <div className={style.mainContent}>
         <div className={style.monthList}>
@@ -521,6 +604,6 @@ export default function Index() {
         <CustomPrice title='谷' formName={valleyForm} imgs={imgurl.gu} disChange={[disValley2, disValley3]}></CustomPrice>
       </div>
       </div>
-    </div>
+    </Pagecount>
   )
 }

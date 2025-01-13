@@ -7,16 +7,19 @@ import LoopSelect from './loopSelect'
 import { useSelector } from 'react-redux'
 import moment from 'moment';
 import {DistributionRoomRuntime,distributionRoom} from '@api/api.js'
-import { selectcurlRommidl, roomId } from "@redux/systemconfig";
+import { selectcurlRommidl, roomId ,adaptation} from "@redux/systemconfig";
 //import {Link} from 'react-router-dom'
 import {ExportExcel, CustButtonT} from '@com/useButton'
-import styled from 'styled-components';
+import styled, {css} from 'styled-components';
 import Titlelayout from '@com/titlelayout'
 import Pagecount from '@com/pagecontent' 
 import UseTable from '@com/useTable'
-
+ 
  
 const {Link} = Typography
+const sty = css`
+    grid-template-columns: 265px 1fr;
+`
 const Mainbox = styled.div`
 flex: 1;
 display: grid;
@@ -44,6 +47,7 @@ column-gap: 16px;
      }
    }
 }
+${props=> props.laptop ? sty : null}
 `
 export default function Index() {
    
@@ -51,6 +55,8 @@ export default function Index() {
     const projectId = useSelector(state => state.system.menus.projectId)
     const curid = useSelector(selectcurlRommidl)
     const roomIds = useSelector(roomId)    
+    const {laptop} = useSelector(adaptation)
+    console.log(laptop)
    //  const roomId = [curid]
     const  RoomId = useMemo(() => {
        return  curid==0 ? roomIds?.filter(r => r.id!=0).map(m => m.id) : [curid]
@@ -63,8 +69,8 @@ export default function Index() {
         {
             title: '回路名称',
             dataIndex: 'lineName',
-            width: 176,
-            key: 'lineName'
+             width: 160,
+            key: 'lineName', 
         }, 
         {
             title:"总分表",
@@ -75,7 +81,7 @@ export default function Index() {
         },{
             title:"设备编号",
             dataIndex:'sn',
-            width:160,
+            width:140,
             key: 'sn',
             render: (text, record) => <Link underline  target="blank" href={`/deviceDetail?sn=${record.sn}`}>{text}</Link>
         },{
@@ -125,7 +131,7 @@ export default function Index() {
         }, {
             title: '功率因数',
             dataIndex: 'phsA',
-            width: 95
+            width: 85
         }, {
             title: '总有功功率',
             children:[
@@ -138,6 +144,7 @@ export default function Index() {
             ]
         },{
             title: '总无功功率',
+            
             children:[
                 {
                     title:'(kVar)',
@@ -152,7 +159,8 @@ export default function Index() {
                 {
                     title:'(kW·h)',
                     dataIndex: 'EP',
-                    key: 'EP'
+                    key: 'EP',
+                    width: laptop ? 96 : "auto",
                 }
             ]
         },
@@ -160,7 +168,7 @@ export default function Index() {
  
    
     const getLinePoint=async(RoomId,lineId)=>{
-       console.log('lineId', lineId)
+      
        if(!Number.isInteger(lineId)) return 
        const res =  await DistributionRoomRuntime.LineRuntimePoints(projectId,RoomId,lineId)
        if(res.success){
@@ -200,7 +208,7 @@ export default function Index() {
  
     return (
         <Pagecount bgcolor="transparent" pd="0">
-            <Mainbox>
+            <Mainbox laptop={laptop}>
                 <Titlelayout layout="flex" title="回路监测">
                 <LoopSelect   projectId={projectId} roomId={RoomId} ref={selectRef} getLinePoint={getLinePoint}></LoopSelect>
                 </Titlelayout>

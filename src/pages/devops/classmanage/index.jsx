@@ -103,7 +103,7 @@ const columns =[
     title: "值班人员",
     dataIndex: `userName`,
     align: 'center',
-    width: 200,
+    width: 120,
   }, {
     title: "班次",
     dataIndex: `plan`,

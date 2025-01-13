@@ -375,10 +375,10 @@ export default function Index() {
                     type == 3
                       ? "上日"
                       : type == 2
-                      ? "上月"
-                      : type == 1
-                      ? moment().add(-1, "y").format("yyyy")
-                      : "",
+                        ? "上月"
+                        : type == 1
+                          ? moment().add(-1, "y").format("yyyy")
+                          : "",
                 },
                 {
                   name: "thisYearIncome",
@@ -386,10 +386,10 @@ export default function Index() {
                     type == 3
                       ? "本日"
                       : type == 2
-                      ? "本月"
-                      : type == 1
-                      ? moment().format("yyyy")
-                      : "",
+                        ? "本月"
+                        : type == 1
+                          ? moment().format("yyyy")
+                          : "",
                 },
               ],
               source: incomeTrend,
@@ -513,7 +513,7 @@ export default function Index() {
   const jump = useCallback(() => {
     let { name, password } = loginf;
     if (!jumurl) return message.warning("网站地址为空");
-    window.open(`${jumurl}/?name=${name}&password=${password}&type=dark`);
+    window.open(`${jumurl}/?userName=${name}&pwd=${password}&type=dark`);
   }, [loginf, jumurl]);
   return (
     <Pagecount bgcolor="#eeeff3" pd="0px">
@@ -546,7 +546,8 @@ export default function Index() {
               style={{ justifyContent: "space-between" }}
             >
               <Image
-                src={info.imageBase64 || projectimg}
+                src={info.imageBase64
+                  ? "data:image/png;base64," + info.imageBase64 : projectimg}
                 preview={false}
                 height={130}
                 width={192}
@@ -616,15 +617,15 @@ export default function Index() {
         </div>
         <div className="lower">
           <div className="itembox box">
-          <div className="itemTitle">用电量趋势</div>
+            <div className="itemTitle">用电量趋势</div>
             <div ref={lref} className="itemContent"></div>
           </div>
           <div className="itembox box">
-          <div className="itemTitle">用水量趋势</div>
+            <div className="itemTitle">用水量趋势</div>
             <div ref={l2ref} className="itemContent"></div>
           </div>
           <div className="itembox box">
-          <div className="itemTitle">用气趋势</div>
+            <div className="itemTitle">用气趋势</div>
             <div ref={l3ref} className="itemContent"></div>
           </div>
         </div>

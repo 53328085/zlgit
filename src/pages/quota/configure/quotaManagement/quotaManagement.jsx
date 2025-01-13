@@ -1,10 +1,10 @@
 import React, { useEffect, useState, useRef, useMemo, useCallback } from 'react'
-import { Form, Space, Button, Tree, Input, message, Drawer, Divider, InputNumber } from 'antd'
+import { Form, Space, Button, Tree, Input, message, Drawer, Divider, InputNumber, Typography } from 'antd'
 import Pagecount from '@com/pagecontent'
-import styled from 'styled-components'
+import styled, {css} from 'styled-components'
 import Titlelayout from "@com/titlelayout"
 import { useSelector } from 'react-redux'
-import { selectProjectId } from '@redux/systemconfig.js'
+import { selectProjectId ,themeColor} from '@redux/systemconfig.js'
 import { cloneDeep, isObject } from 'lodash';
 import { CustButtonT, CustButton, TreeBtnN, TreeBtnW } from "@com/useButton"
 import CModal from "@com/useModal"
@@ -12,10 +12,14 @@ import Bluecolumn from "@com/bluecolumn"
 import CustomDraw from "./draw.js"
 const { TreeNode } = Tree;
 import { QuotaManage } from '@api/api'
+const {Text} = Typography
+const sty = css`
+   grid-template-columns: 1fr 1fr;
+`
 const Mainbox = styled.div`
   flex: 1;
   display: grid;
-  grid-template-columns: 1024px 1fr ;
+  grid-template-columns:  1024px 1fr ;
   column-gap: 16px;
   .formbox {
     margin-top: 16px;
@@ -35,7 +39,7 @@ const Mainbox = styled.div`
   .ant-drawer-header{
     display: none
   }
- 
+ ${props => props.theme.laptop ? sty : null}
 `
 const CTree = styled(Tree)`
   && {
@@ -44,6 +48,7 @@ const CTree = styled(Tree)`
     margin-top: 16px;
     padding-top: 32px;
     border-top: 1px solid #d7d7d7;
+    
     .ant-tree-title {
       display: block;
       margin-bottom: 16px;
@@ -64,20 +69,28 @@ const CTree = styled(Tree)`
   }
 
 `
+const titlesty = css`
+  max-width: 12em;
+`
+
 const Custtitle = styled.div`
     display: flex;
-    padding: 2px 32px;
+    padding: ${props => props.theme.laptop ? "2px" : "2px 32px"} ;
     height: 22px;
     border-radius: 4px;
-    color: var(--ant-primary-color);
+   // color: ${props => props.theme.primaryColor};
     border: 1px solid ${props => props.theme.primaryColor};
     justify-content: center;
     align-items: center;
-    font-size: 16px;
+    
     .ant-tree-switcher-leaf-line:before {
-      border-color: #237ae4;
+      border-color: ${props => props.theme.primaryColor};
     }
-
+    .ant-typography.ant-typography-ellipsis{
+      color: ${props => props.theme.primaryColor};
+      font-size: ${props => props.theme.laptop ? "14px" : "16px"};
+    }
+    ${props=>props.theme.laptop ? titlesty : null}
 `
 
 
@@ -106,7 +119,7 @@ export default function QuotaManagement() {
   const drawref = useRef()
   const quotaAreaId = useRef()
   const isadd = useRef()
-
+  const {primaryColor} = useSelector(themeColor)
   const [expandedKeys, setExpandedKeys] = useState([]);
   const onExpand = (newExpandedKeys, obj) => {
 
@@ -241,8 +254,8 @@ export default function QuotaManagement() {
     let { name, quotaAreaId, nodes, areaLevel, parentId = '' } = data
     return (
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-        {parentId === 0 ? <CustButton wh="auto">{data.name}</CustButton> : <Custtitle>{data.name}</Custtitle>}
-        <Space size={16}>
+        {parentId === 0 ? <CustButton wh="auto">{data.name}</CustButton> : <Custtitle><Text ellipsis={{tooltip: {title: data.name, color: primaryColor}}}>{data.name}</Text></Custtitle>}
+        <Space >
           {areaLevel < 3 && <TreeBtnN text="addSubitem" wh="auto" onClick={() => addSubitem(quotaAreaId, valName)} key="add" />}
           <TreeBtnN text="edit" key="edit" onClick={() => editSubitem(quotaAreaId, valName)} />
           {areaLevel > 0 ? <TreeBtnW text="delete" key="delete" onClick={() => onDelete(quotaAreaId)} /> : <TreeBtnW style={{ opacity: 0 }} />}

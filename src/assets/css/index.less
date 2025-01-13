@@ -4,10 +4,12 @@ html, body {
     padding: 0;
     height: 100vh;
     width: 100%;
+    min-width: 1098px;
  //   min-width:1920px;  
     display: flex;
     font-size: 14px;
     overflow: auto; // 屏幕缩放150%、200%时需要滚动条
+  
 }
 [lang^="en"] body {
    font-size: small !important;
@@ -22,6 +24,11 @@ html, body {
 }
 @media (pointer: coarse) {
   /* 在触摸屏设备上应用的样式 */
+}
+@media screen and (max-device-width:1536px) {
+  .ant-form-item{
+    margin-bottom: 12px;
+  }
 }
 /* 屏幕分辨率放大为 150 */ /* 缩放数值需要根据效果调试 */
 /* @media (-webkit-min-device-pixel-ratio: 1.5), (min-resolution: 120dpi) {
@@ -143,6 +150,7 @@ body *::-webkit-scrollbar-thumb {
   flex: 1;
   display: flex;
   flex-direction: column;
+  width: 100%;
   .ant-spin-container{
   display: flex;
   flex: 1;

@@ -1,5 +1,7 @@
 import React from 'react'
 import {Form, Space, Select, Input} from 'antd'
+import {useSelector} from "react-redux"
+import { adaptation } from "@redux/systemconfig";
 import screenes from '../../screen'
 import {useTranslation} from "react-i18next"
 const {Item} = Form
@@ -24,6 +26,7 @@ const {Item} = Form
     )
   }
 export default function Citem({label, name1, name2, form}) { 
+  const {laptop} = useSelector(adaptation)
   const {t} =useTranslation("common","comm")
     const opChange = (e, filed) => {
       if(e == 0) {
@@ -54,7 +57,7 @@ export default function Citem({label, name1, name2, form}) {
                        <Item name={name2} rules={[{
                         required: true,
                         message: `${label}数据是必须的`
-                       }]}><Input placeholder='请输入大屏网址' style={{width: "800px"}}   allowClear  /></Item>
+                       }]}><Input placeholder='请输入大屏网址' style={{width: laptop ? "500px" : "800px"}}   allowClear  /></Item>
                    }  
                   
                  }

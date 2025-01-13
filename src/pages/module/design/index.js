@@ -4,7 +4,7 @@ import {
   Form,
   Input,
   InputNumber,
-  Divider,
+ 
   Space,
   message,
   Typography,
@@ -23,7 +23,7 @@ import {useSelector, useDispatch} from "react-redux";
 import {useTranslation} from 'react-i18next'
 
 import {publishState, getCurrProjectInfo, currProject, iszhCN, selectProjectId, getThemeColor,themeColor,themes,themeId, getThemeId, getThemes, selectedtheme} from '@redux/systemconfig' // 布尔值 发布状态 
- 
+import Pagecount from "@com/pagecontent";
 import {SaveButton, CustButton} from "@com/useButton" ;
 import {getprimarycolors} from "@com/usehandler";
 import Ccolor from './custColor';
@@ -40,48 +40,52 @@ const Ctag=styled(Tag)`
   }
  }
 `
+ 
  const Formbox = styled(Form)`
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(500px, 1fr)); 
-  column-gap: 64px ;
-  //grid-template-rows: repeat(16, 32px);
-  //gap: 16px 128px;
- // grid-auto-flow: column;
- // justify-content: space-between;
-  align-items: start;
-  padding: 32px 0px;
-    margin-top: 16px;
-    border-top: 1px dotted #d7d7d7;
-
-    .divider {
-      margin: 0px;
-      border-color: #d7d7d7;
-    }
-    .ant-form-item-explain-error {
+  
+  flex: 1;
+ 
+   padding-top: 32px;
+   margin-top: 16px;
+   border-top: 1px dotted #d7d7d7;
+  display: flex;
+   .mainbox {
+    display:flex;
+    flex-direction: column;
+    row-gap: 32px;
+    flex:1;
+ .list {
+     display: flex;
+     flex-wrap: wrap;
+     gap: 16px;
+     min-height: 20px;
+   }
+ 
+   
+  .items{
+   //grid-template-rows: repeat(16, 32px);
+    position: relative;
+    flex: 1;
+    column-width: 500px;
+    column-gap: 32px;
+    column-rule: 2px dotted #d7d7d7;
+   // grid-auto-rows: auto;
+   //row-gap: 16px;
+  // display: grid;
+    
+  .ant-form-item-explain-error {
       line-height: 1;
     }
   .ant-form-item {
-    margin-bottom: 0px;
+    margin-bottom: 8px;
   }
   .ant-form-item-label {
     flex-basis: 146px;
     padding-right: 10px;
   }
 
-  .leftlayout{
-   //grid-template-rows: repeat(16, 32px);
-    position: relative;
-    grid-auto-rows: auto;
-   row-gap: 16px;
-   display: grid;
-   .row {
-    display:  grid;
-   // grid-template-rows: repeat(3, 32px);
-    row-gap: 16px;
-   }
- 
 }
-
+   }
   
 `; 
 const Info = styled.span`
@@ -101,11 +105,12 @@ export default function Index() {
   const defaluttheme =useSelector(themeColor)
   const SelectedTheme = useSelector(selectedtheme)
   const Themes = useSelector(themes)
-
- // const [themes, setThemes] = useState([])
- // const {t} = useTranslation("comm","common")
-console.log('defaulttheme', defaluttheme)
- // console.log('SelectedTheme',SelectedTheme.primaryderived)
+  const curtheme = useRef();
+  curtheme.current = SelectedTheme;
+  
+ 
+  console.log("SelectedTheme",SelectedTheme)
+  console.log("curtheme.current",curtheme.current)
   
   const [form] = Form.useForm();
 
@@ -131,8 +136,8 @@ const getTheme = async()=>{
       }else if(refid.current>0){ // 编辑时
         formdata = datas.find(d => d.id == refid.current)
       }
-      console.log("formdata",formdata.context)
-      dispatch(getThemeId(formdata.id))
+      
+     // dispatch(getThemeId(formdata.id)) 编辑时不应修改用户已选择的主题色
       dispatch(getThemeColor({id: formdata.id, name: formdata.name, ...formdata.context}))
       dispatch(getThemes(datas)) 
     }else{
@@ -232,12 +237,12 @@ const onrest=()=>{
 const selectTheme =(id)=> {
   try {
     refid.current=id
-    dispatch(getThemeId(id))
+  //  dispatch(getThemeId(id)) 编辑时不应影响用户选择的主题
     let formdata = Themes.find(t => t.id ==id)
      
     dispatch(getThemeColor({id: formdata.id, name: formdata.name, ...formdata.context}))
   form.setFieldsValue({id: formdata.id, name: formdata.name, ...formdata.context})
-  //  refid.current=id;
+   
   
   } catch (error) {
     console.log(error)
@@ -282,18 +287,23 @@ useEffect(()=>{
 useEffect(()=>{
   return ()=> {
     
-     // dispatch(getThemeColor(SelectedTheme))
+     dispatch(getThemeColor(curtheme.current))
     }
   
 },[])
   return (
-    <Titlelayout title={<div style={{display: 'flex', justifyContent: "space-between", alignItems: 'center'}}>
+    <Pagecount pd="0">
+      
+    
+
+    <Titlelayout title={<div style={{display: 'flex', justifyContent: "space-between", alignItems: 'center'}} >
       <span>网站设计</span>  <Space size={32}>
         <CustButton onClick={onrest} ghost>恢复默认值</CustButton>
         <CustButton onClick={onadd}>新增方案</CustButton>
      <CustButton onClick={onSave} isicon={false} >保存方案</CustButton>
      <CustButton onClick={ondelete} type="default" danger>删除</CustButton>
-     </Space></div>}>
+     </Space></div>} layout="flex">
+  
     <Formbox
       form={form}   
       labelAlign="left"
@@ -307,8 +317,15 @@ useEffect(()=>{
       
       }
     >
-      <div className="leftlayout" >
-        <div className="row">
+    <div className="mainbox">
+         <div className="list">
+        <strong>已有方案：</strong> 
+        {
+         Themes?.length > 0 ?  Themes?.map?.(t => <Ctag key={t.id} color={t?.context?.primaryColor} onClick={() => selectTheme(t.id)}>{t.name}</Ctag>): null
+        }
+      </div>
+      <div className="items" >
+        
         <Item label="方案名称" name="name"   rules={[
           {
             required: true
@@ -318,7 +335,7 @@ useEffect(()=>{
         }>
          <Input></Input>
       </Item>
-      <Divider dashed  className="divider" />
+     
       <Item label="主题色">
         <Item name="primaryColor" initialValue="#237ae4" noStyle>
         <Ccolor name="primaryColor" />
@@ -343,7 +360,7 @@ useEffect(()=>{
         </Item>
         <Text type="success">应用于ant-design成功信息显示,其他需要成功色的元素</Text>
       </Item>
-      <Divider dashed  className="divider" />
+    
       <Item label="模块菜单栏背景色"  name="menusbgcolor" initialValue="#003366">
       <Ccolor name="menusbgcolor" />
       </Item>
@@ -373,12 +390,7 @@ useEffect(()=>{
       <Ccolor name="menusbgcolorRborder" />
       </Item>
       
-      </div>
-     
       
-      
-      </div>
-      <div className="leftlayout">
       <Item label="运行态侧边栏起始色"  name="runasiderstart" initialValue="#0b41c7">
       <Ccolor name="runasiderstart" />
       </Item>
@@ -400,7 +412,7 @@ useEffect(()=>{
       <Item label="当前侧边栏背景色"  name="asiderbgcolorA" initialValue="#3333cc">
         <Ccolor name="asiderbgcolorA" />
       </Item>
-      <Divider dashed  className="divider" />
+     
       <Item label="项目概述背景色"  name="previewrbgcolor" initialValue="#135abd">
         <Ccolor name="previewrbgcolor" />
       </Item>
@@ -460,10 +472,10 @@ useEffect(()=>{
         <Item label="字段值" labelCol={{flex: "4em"}} name="disfieldvalue" initialValue="#33ff00">
           <Ccolor name="disfieldvalue" />
         </Item>
-        <Item label="列表项背景色" labelCol={{flex: "9em"}} name="dislistbg" initialValue="#000033">
+        <Item label="列表项背景色" labelCol={{flex: "8em"}} name="dislistbg" initialValue="#000033">
           <Ccolor name="dislistbg" />
         </Item>
-        <Item label="列表项背景色hove" labelCol={{flex: "9em"}} name="disitemhover" initialValue="#000033">
+        <Item label="列表项背景色hove" labelCol={{flex: "10em"}} name="disitemhover" initialValue="#000033">
           <Ccolor name="disitemhover" />
         </Item>
      </div>
@@ -475,35 +487,35 @@ useEffect(()=>{
          
           let arrcolor=getprimarycolors().map?.(d => d.value)??[];
          
-            return (
-              <Item initialValue="#4a9af0" name="primaryderived" >
+            return ( 
+              <Item  initialValue="#4a9af0" name="primaryderived" >
               <Ccolor name="primaryderived"  arrcolor={arrcolor}></Ccolor>
-              </Item>
+              </Item> 
             )
           }
         }
         </Item>
-        <Divider dashed  className="divider" />
-      <Item label="已有方案"    >
-        <div style={{display: "flex", rowGap: "8px", flexWrap: "wrap"}}>
-        {
-         Themes?.length > 0 ?  Themes?.map?.(t => <Ctag key={t.id} color={t?.context?.primaryColor} onClick={() => selectTheme(t.id)}>{t.name}</Ctag>): null
-        }
-        </div>
-      </Item>
+        <Item  label="衍生背景色对应文字" initialValue="#ffffff" name="bgcolorfont" >
+              <Ccolor name="bgcolorfont" ></Ccolor>
+        </Item>
+       
+     
       <Item   name="id" noStyle initialValue={0} >
           <Input hidden></Input>
        </Item>
-      </div>
-       <div className="leftlayout">
+      
+      
        <Item label="碳排概述进度条颜色"  name="carnstrokecolor" initialValue="#ffff99">
       <Ccolor name="carnstrokecolor" />
       </Item>
       <Item label="碳排概述进度条末完成颜色" labelCol={{flex:"13em"}} name="carntrailcolor" initialValue="#6633cc">
       <Ccolor name="carntrailcolor" />
       </Item>
+      </div>
        </div>
     </Formbox>
     </Titlelayout>
+    </Pagecount>
   );
+
 }

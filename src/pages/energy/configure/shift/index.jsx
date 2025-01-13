@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react'
+import styled from 'styled-components';
 import style from './style.module.less'
 import { Button, Modal, Form, Input, TimePicker, Space, message } from 'antd'
 import dayjs from 'dayjs';
@@ -10,8 +11,125 @@ import {useSelector, useDispatch} from 'react-redux'
 import {selectProjectId, getshifts, selectshifts} from '@redux/systemconfig.js'
 import { useRequest } from 'ahooks';
 import Custmodl from '@com/useModal'
-import warning from '@imgs/warning.png'
+ 
 import {CustButtonT} from "@com/useButton"
+const Mainbox = styled.div`
+  
+&&{
+  flex:1;
+  .header{
+   
+    height: 64px;
+    padding: 16px;
+    background-color: #fff;
+    border-radius: 4px;
+    border: 1px solid #d7d7d7;
+    .flex{
+        // width: 100%;
+        border-left: 4px solid ${props=>props.theme.primaryColor};
+        height: 32px;
+        padding-left: 16px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+    .headerTitle{
+        font-size: 14px;
+        color: rgba(0, 0, 0, 0.847058823529412);
+    }
+}
+.mainContent{
+  //  width: 1680px;
+    background-color: #fff;
+    border: 1px solid #d7d7d7;
+    border-radius: 4px;
+    margin-top: 16px;
+    padding: 16px;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    .content {
+      flex:1;
+      display: grid;
+      grid-template-columns: repeat(3, minmax(auto, 365px));
+      grid-auto-rows: 36px; 
+      column-gap: 32px;
+      padding-bottom: 32px;
+      border-bottom: 1px solid #d7d7d7;
+      margin-bottom: 32px;
+    }
+
+ 
+ 
+    .cardItem{ 
+        display: flex;
+        
+        // border-right: 1px dashed #d7d7d7;
+        height: 33px;
+        align-items: center;
+        column-gap: 16px;
+        .ant-input{
+          width: auto;
+        }
+        .ant-picker, .ant-input{
+          flex:auto;
+        }
+        .title{ 
+            display: inline-block;
+          //  flex: auto;
+            font-size: 14px;
+            color: rgba(0, 0, 0, 0.847058823529412);
+        }
+      }
+       
+    .middleItem{
+        border-left: 1px dashed #d7d7d7;
+        border-right: 1px dashed #d7d7d7;
+        padding-left: 32px;
+        padding-right: 32px;
+         
+    }
+}
+}
+  
+`
+const Logbox=styled.div`
+  display: flex;
+   align-items:center;
+  justify-content: space-around;
+  margin-top: 32px;
+  .defaultStyle{
+    display: inline-block;
+    width: 148px; 
+    height: 56px;
+    border: 1px solid #d7d7d7;
+    text-align: center;
+    line-height: 56px;
+    font-size: 16;
+    color: #515151;
+    background-color: #fff;
+    cursor: pointer;
+  }
+  .activeStyle { 
+    color: #fff;
+    background-color: ${props => props.theme.primaryColor};
+  }
+
+ 
+`
+const Formbox = styled.div`
+&&{
+  display: flex;
+  align-items: center;
+  .ant-form-item {
+    margin-bottom: ${props=> props.theme.laptop ? "12px" : "24px"};
+  }
+  .ant-space-item  .ant-form-item{
+    margin-bottom: ${props=> props.theme.laptop ? "0px" : "24px"};
+  }
+}
+
+`
 export default function Index() {
   const dref = useRef()
   const dispatch = useDispatch();
@@ -27,29 +145,7 @@ export default function Index() {
   const Item = Form.Item
   const format = 'HH:mm';
 
-  const defaultStyle = {
-    display: 'inline-block',
-    width: 148, 
-    height: 56,
-    border: '1px solid #d7d7d7',
-    textAlign: 'center',
-    lineHeight: '56px',
-    fontSize: 16,
-    color: '#515151',
-    backgroundColor: '#fff',
-    cursor:'pointer'
-  }
-  const activeStyle = {
-    display: 'inline-block',
-    width: 148, 
-    height: 56,
-    border: '1px solid #d7d7d7',
-    textAlign: 'center',
-    lineHeight: '56px',
-    fontSize: 16,
-    color: '#fff',
-    backgroundColor:'#237ae4'
-  }
+ 
 
   useEffect(()=>{
     shiftQuery()
@@ -78,22 +174,22 @@ export default function Index() {
 
   const CardItem = (props)=> {
     let itemData = props.values
-    return <><div className={style.card}>
-      <div className={style.cardItem}>
-        <span className={style.title}>班次{props.index}名称</span>
-        <Input defaultValue={itemData.name} style={{width: 248,height: 36}} disabled></Input>
+    return <div className='content'> 
+      <div className="cardItem">
+        <span className="title">班次{props.index}名称</span>
+        <Input defaultValue={itemData.name}  disabled></Input>
       </div>
-      <div className={style.middleItem}>
-        <span className={style.title}>开始时间</span>
-        <TimePicker defaultValue={dayjs(itemData.startTime, 'HH:mm')} format={format} style={{width: 248,height: 36}} disabled></TimePicker>
+      <div className="cardItem middleItem">
+        <span className="title">开始时间</span>
+        <TimePicker defaultValue={dayjs(itemData.startTime, 'HH:mm')} format={format}   disabled></TimePicker>
       </div>
-      <div className={style.cardItem}>
-        <span className={style.title}>结束时间</span>
-        <TimePicker defaultValue={dayjs(itemData.endTime, 'HH:mm')} format={format} style={{width: 248,height: 36}} disabled></TimePicker>
+      <div className="cardItem">
+        <span className="title">结束时间</span>
+        <TimePicker defaultValue={dayjs(itemData.endTime, 'HH:mm')} format={format}  disabled></TimePicker>
       </div>
+     
+    
     </div>
-    { props.index == shiftList.length ? null : <img src={dashed} style={{width: 1120, marginTop: 32, marginBottom: 32}}></img> }
-    </>
   }
 
   const onAdd = () => {
@@ -348,45 +444,46 @@ export default function Index() {
 
 
   return (
-    <div>
+    <Mainbox>
       {contextHolder}
-      <div className={style.header}>
-        <div className={style.flex}>
-          <span className={style.headerTitle}>班次管理</span>
+      <div className="header">
+        <div className="flex">
+          <span className="headerTitle">班次管理</span>
           { shiftList.length == 0 ? <Button type='primary' style={{width: 96, height: 36}} onClick={() => onAdd()}>新增班次</Button> : 
           <CustButtonT onClick={() => onDelete()} text="deleteShiftPlan" wh="auto" />  }
         </div>
       </div>
-      { shiftList.length > 0 ? <div className={style.mainContent}>
+      { shiftList.length > 0 ? <div className="mainContent">
+       
         { shiftList.map((item, index) => {
           return <CardItem values={item} index={index + 1}></CardItem>
         }) }
-        <img src={dashed} style={{width:'100%', marginTop: 32,marginBottom: 16}}></img>
+        
+        
         <div style={{display: 'flex', marginTop: 0, justifyContent:'flex-end'}}>
           <CustButtonT onClick={() => onEdit()} text="editShift" /> 
         </div>
       </div> : null }
-      <Modal className={style.addModal} open={addModal} onOk={toNext} onCancel={handleCancel} width={600} cancelText={'取消'} centered={true} closable={false} maskClosable={false} okText={'下一步'} okType={'primary'} >
-        <div className={style.addHeader}>选择每天的班次数量</div>
-        <div className={style.addBody}>
-          <div style={{display: 'flex', alignItems:'center', justifyContent:'space-around', marginTop:'32px'}}>
-            <span style={classes == 2 ? activeStyle : defaultStyle } onClick={()=> {setClasses(2)}}>一天两班</span>
-            <span style={classes == 3 ? activeStyle : defaultStyle } onClick={()=> {setClasses(3)}}>一天三班</span>
-            <span style={classes == 4 ? activeStyle : defaultStyle } onClick={()=> {setClasses(4)}}>一天四班</span>
-          </div>
+      <Custmodl   open={addModal} title="选择每天的班次数量" onOk={toNext} onCancel={handleCancel} width={600} cancelText={'取消'} centered={true} closable={false} mold="cust" maskClosable={false} okText={'下一步'} okType={'primary'} >
+         
+          <Logbox>
+            <span className={classes == 2 ? 'activeStyle defaultStyle' : 'defaultStyle' } onClick={()=> {setClasses(2)}}>一天两班</span>
+            <span className={classes == 3 ? 'activeStyle defaultStyle' : 'defaultStyle' } onClick={()=> {setClasses(3)}}>一天三班</span>
+            <span className={classes == 4 ? 'activeStyle defaultStyle' : 'defaultStyle' } onClick={()=> {setClasses(4)}}>一天四班</span>
+          </Logbox>
           <img src={dashed} style={{marginTop: 32, width:'100%'}}></img>
-        </div>
-      </Modal>
+        
+      </Custmodl>
       {/* 新增 */}
-      <Modal className={style.addModal} open={nextModal} onOk={onOk} onCancel={handleCancel} width={530} cancelText={'取消'} centered={true} closable={false} maskClosable={false} okText={'确认'} okType={'primary'} >
-        <div className={style.addHeader}>创建班次</div>
-        <div className={style.addBody}>
-          <div style={{display:"flex", alignItems: "center"}}>
+      <Custmodl title="创建班次"  open={nextModal} onOk={onOk} onCancel={handleCancel} width={530} cancelText={'取消'} centered={true} closable={false} maskClosable={false} okText={'确认'} okType={'primary'} mold="cust" >
+        
+        
+          <Formbox>
             <Form name='addform' labelCol={{span:4}} form={form} labelAlign={'left'} requiredMark={false} autoComplete='off'>
               <Item label='班次1名称' name='className1' rules={[{required:true, message:'班次名称不能为空'}]}>
                 <Input style={{width:'180px'}} placeholder={'请输入班次名称'}></Input>
               </Item>
-              <Item label='班次时段' >
+              <Item label='班次时段'>
                 <Space size={32} style={{display:'flex', alignItems:'flex-start'}}>
                   <Item name='time1' rules={[{required:true, message:'班次时段不能为空'}]}>
                     <TimePicker style={{width: 180}} onChange={onChange1} format={format} disabledHours={()=>disabledHoursFun(null, time2)}></TimePicker>
@@ -434,15 +531,17 @@ export default function Index() {
                 <img src={dashed} style={{width:'100%'}}></img> 
                 </> : null }
             </Form>
-          </div>
-        </div>
-      </Modal>
+          </Formbox>
+         
+      </Custmodl>
       <Custmodl title='删除班次' ref={dref}  mold="cust" width={512} type="warn" onOk={()=>onDeleteShift()}>
          是否确认删除班次方案？ 
       </Custmodl>
       {/* 编辑 */}
       <Custmodl  title="编辑班次" open={editModal} onOk={onUpdate} onCancel={handleCancel} width={530}  closable={false} mold="cust" >
+      <Formbox>
             <Form name='editform' labelCol={{span:4}} form={editform} labelAlign={'left'} requiredMark={false} autoComplete='off'>
+            
               <Item label='班次1名称' name='className1' rules={[{required:true, message:'班次名称不能为空'}]}>
                 <Input style={{width:'180px'}} placeholder={'请输入班次名称'}></Input>
               </Item>
@@ -493,8 +592,10 @@ export default function Index() {
                 </Item>
                 <img src={dashed} style={{width:'100%'}}></img> 
                 </> : null }
+               
             </Form>
+            </Formbox>
       </Custmodl>
-    </div>
+    </Mainbox>
   )
 }

@@ -2,12 +2,12 @@ import React, { useEffect, useRef, useState } from 'react'
 import { Button, Space, Form, Input, message, Spin, Divider, Typography } from 'antd';
 import { PlusOutlined } from '@ant-design/icons' 
 import {useTranslation} from "react-i18next"
-import styled from 'styled-components';
+import styled, {css} from 'styled-components';
 import UseTable from '@com/useTable'
 import { distributionRoom } from '@api/api.js'
 import { useAntdTable } from "ahooks";
 import {useSelector} from 'react-redux'
-import {selectProjectId,   publishState, selectOneLevelDefaultId} from '@redux/systemconfig.js'
+import {selectProjectId,   publishState, selectOneLevelDefaultId,adaptation} from '@redux/systemconfig.js'
 import Titlelayout from '@com/titlelayout'
 import Custmodal from '@com/useModal'
 import Cupload from "@com/useUpload.js" 
@@ -19,9 +19,16 @@ const Info = styled.span`
   font-size: 12px;
   color: rgba(0,0,0,0.85);
 `
+const Mainbox = styled.div`
+  &&{
+    .ant-form-item{
+      margin-bottom: 12px;
+    }
+  }
+`
 const Imgbox = styled.div`
     width: 300px;
-    height: 200px;
+    height: ${props=> props.theme.laptop ? "100px" : "200px"} ;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -31,6 +38,7 @@ export default function Index() {
   const {t} =useTranslation(["button"])
   const isPublish = useSelector(publishState)
   const areaId = useSelector(selectOneLevelDefaultId)
+  const {laptop} = useSelector(adaptation)
   const { queryPageRoom, addRoom, updateRoom, deleteRoom, GetRoomImage } = distributionRoom
   const [messageApi, contextHolder] = message.useMessage();
   const projectId = useSelector(selectProjectId);
@@ -345,7 +353,7 @@ export default function Index() {
       <UseTable style={{marginTop:'16px'}} columns={columns}   rowKey='id'  {...tableProps}></UseTable>
       <Custmodal  title={modalTitle}  custft={modalTitle =="新增配电房"}  loading={loading} onOk={addOk} width={592} mold="cust" ref={ref} key="edit">
         
-        <div>
+        <Mainbox>
           <Form  labelCol={{span:5}} form={form} labelAlign={'left'} requiredMark={false}   preserve={false}>
             <Item label='配电房名称' name='name' rules={[{required:true, message:'请输入配电房名称'}]}>
               <Input style={{width:'400px'}}></Input>
@@ -363,7 +371,7 @@ export default function Index() {
               <Input style={{width:'400px'}}></Input>
             </Item>
             <Item label="配电房图片" >
-            <Imgbox>
+           {laptop ? <Imgbox>
             <Item noStyle name="imgBg" rules={[
               {
                 validator: checkLog,
@@ -372,17 +380,26 @@ export default function Index() {
               <Cupload wpx={1676} hpx={796} swpx={200} shpx={116} maximum={500} style={{padding: '16px'}}   /> 
             </Item>
             <Info>（图片大小为: 1676*796 png 格式,不超过500KB）</Info>
-           </Imgbox>
+           </Imgbox> : <Imgbox>
+            <Item noStyle name="imgBg" rules={[
+              {
+                validator: checkLog,
+              },
+            ]}>
+              <Cupload wpx={1676} hpx={796} swpx={200} shpx={116} maximum={500} style={{padding: '16px'}}   /> 
+            </Item>
+            <Info>（图片大小为: 1676*796 png 格式,不超过500KB）</Info>
+           </Imgbox>} 
            
            </Item>
             <Item label='备注' name='remark'>
-              <TextArea rows={4} style={{width:'400px'}}></TextArea>
+              <TextArea rows={laptop ? 2 : 4} style={{width:'400px'}}></TextArea>
             </Item>
             <Item name="imgBgKey" noStyle>
                   <Input type="text" hidden />
             </Item>
           </Form>
-        </div>
+        </Mainbox>
       </Custmodal>
       <Custmodal title="删除提示" mold="cust" type="warn"  ref={delref} onOk={deleteOk} onCancel={handleDelete} width={512}     key="del">
           是否确认删除配电房？ 

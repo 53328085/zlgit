@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react'
 import Pagecont from "@com/pagecontent"
-import styled from "styled-components";
+import styled,{css} from "styled-components";
 import { Space, Select, Divider, message, Button, Image, Input, Upload, DatePicker,Typography } from "antd";
 import { useSelector, useDispatch } from 'react-redux'
-import { selectProjectId, selectOneLevel } from '@redux/systemconfig.js'
+import { selectProjectId, selectOneLevel,themeColor,adaptation } from '@redux/systemconfig.js'
 import { SpareParts, distributionRoom } from '@api/api.js'
 import Usetable from '@com/useTable'
 import CModal from '@com/useModal'
@@ -40,43 +40,94 @@ const Content = styled.div`
     background-color: #fff;
  }
 `
+const boxsty = css`
+ column-gap: 8px;
+ .left {
+  padding-right: 8px;
+ }
+ .right {
+  column-gap: 16px;
+  .uploadwrap{
+    flex: 0 0 120px;
+    .outwrap {
+      height: 120px;
+    }
+  } 
+ }
+`
 const Box = styled.div` 
-  && {
-    .modalBox{
+  && { 
       width: 100%;
       height: 100%;
       display: flex;
       flex-direction: row;
+      column-gap: 32px;
       .left{
-        width: 240px;
-        height: 704px;
+        flex:  1 1 240px;
+        padding-right: 32px;
+        border-right: 1px dotted #d7d7d7;
+        display: flex;
+        flex-direction: column;
         p{
           line-height: 32px;
           height: 32px;
         }
       }
       .right{
-        width: 1115px;
-        height: 704px;
+        flex: 1 1 1115px; 
         overflow-y:scroll;
         display: flex;
         flex-direction: row;
         justify-content: space-between;
         padding-right:16px;
+        column-gap: 32px;
+        .uploadwrap {
+          flex: 0 0 230px;
+          display: flex;
+          flex-direction: column;
+          padding-top: 16px;
+          .outwrap {
+            height: 240px;
+            display: flex;
+            flex-direction: column;
+            .ant-image{
+              flex:1;
+              .ant-image-img{
+                height:100% ;
+              }
+            }
+            .ant-upload-picture-card-wrapper {
+              flex: 1;
+              display: flex;
+              .ant-upload.ant-upload-select-picture-card{
+                flex: 1;
+                height: 100%;
+                margin: 0px;
+                
+              }
+            }
+          }
+        }
         .deviceBox{
           width:100%;
           height:auto;
           display:grid;
           grid-template-rows:32px;
           grid-template-columns:1fr 1fr;
-          grid-gap:16px;
+          row-gap:16px;
+          column-gap: 32px;
           .deviceItem{
             width:100%;
             height:100%;
-            display:flex;
-            flex-direction: row;
-            justify-content: flex-start;
-            align-items:center;
+            display:grid;
+           // flex-direction: row;
+          //  justify-content: flex-start;
+          //  align-items:center;
+             grid-template-columns: 150px 1fr;
+             
+             .ant-input{
+              width: 100%;
+             }
             .deviceValue{
               width:241px;
               height:32px;
@@ -93,31 +144,13 @@ const Box = styled.div`
         }
         .deviceItemdetail{
             width:100%;
-            display:flex;
-            flex-direction: row;
-            justify-content: flex-start;
-            align-items:center;
+            display:grid;
+            grid-template-columns: 160px 1fr;
             margin-top:16px;
         }
-        .uploadBox{
-          .ant-upload{
-            width: 231px;
-            height: 22px;
-            background: #fff;
-            border:none;
-            margin-top:10px;
-          }
-        }
-        .uploadBoxNew{
-          .ant-upload{
-          width: 100%;
-          height: 100%;
-          background: #fff;
-          border:none;
-          }
-        }
+        
       }
-    }
+    ${props => props.theme.laptop ? boxsty : null}
  }
 `
 const getBase64 = (file) =>
@@ -129,6 +162,8 @@ const getBase64 = (file) =>
 export default function Index() {
   const projectId = useSelector(selectProjectId)
   const levelone = useSelector(selectOneLevel)
+  const {laptop} = useSelector(adaptation)
+  const {primaryColor} = useSelector(themeColor)
   const allOption = { name: '全部', id: 0 };
   // 合并“全部”选项到原始选项列表
   const allOptions = allOption ? [allOption, ...levelone] : levelone;
@@ -152,7 +187,7 @@ export default function Index() {
     })
   }//新增页面设备列表
   useEffect(() => {
-    console.log(areaIdIn)
+   
     if([areaIdIn, defalutType].every(d => Number.isInteger(parseInt(d)))) {
       SelectDevice()
     }
@@ -430,7 +465,7 @@ export default function Index() {
       key: 'action',
       align: 'center',
       render: (_, record) => (
-        <Space size="middle">
+        <Space>
           <Link onClick={() => setEdit(record)}>编辑</Link>
           <Link type="danger" onClick={() => setDelete(record)}>删除</Link>
         </Space>
@@ -569,6 +604,7 @@ export default function Index() {
   const handleEdit = () => {
     setEditModal(false)
     onChangeType(1)
+    setImageUrl(null)
   }
   const openNewC = () => {
     setEditModal(true)
@@ -705,59 +741,47 @@ export default function Index() {
         <CModal title="删除" open={deleteModal} onOk={deleteOk} onCancel={handleDelete} width={512} mold="cust" type="warn" closable={false}>
           是否确认删除该台账？
         </CModal>
-        <CModal title={Ctitle} open={editModal} onOk={editOk} onCancel={handleEdit} width={1484} mold="cust" type="edit" closable={false}>
-          <Box>
-            <div className='modalBox'>
+        <CModal title={Ctitle} open={editModal} onOk={editOk} onCancel={handleEdit} width={laptop ? "90%" : "80%"} mold="cust" type="edit" closable={false}>
+          <Box> 
               <div className='left'>
                 <p>设备所属园区</p>
-                <Select style={{ width: '240px', marginBottom: '16px' }} options={levelone} value={areaIdIn} onChange={onChangeIn}
+                <Select   options={levelone} value={areaIdIn} onChange={onChangeIn}
                   fieldNames={{ label: 'name', value: 'id', options: 'options' }} disabled={Ctitle == '编辑设备台账'}>
-                </Select>
-                {/* <p>所属配电房</p>
-                <Select style={{ width: '240px', marginBottom: '16px' }} options={roomList} value={defalutroom} onChange={onChangeRoom}
-                  fieldNames={{ label: 'name', value: 'id', options: 'options' }}>
-                </Select> */}
+                </Select>               
                 <p>设备类型</p>
-                <Select style={{ width: '240px', marginBottom: '16px' }} options={typeList} value={defalutType} onChange={onChangeType}
+                <Select   options={typeList} value={defalutType} onChange={onChangeType}
                   fieldNames={{ label: 'name', value: 'id', options: 'options' }} disabled={Ctitle == '编辑设备台账'}>
                 </Select>
-                {(deviceList.length > 0) ? <div>
+                {(deviceList.length > 0) ? <div style={{width: "100%"}}>
                   <p>请选择{typeName}</p>
-                  <Select style={{ width: '240px', marginBottom: '16px' }} options={deviceList} value={deviceValue} onChange={onChangeDevice}
+                  <Select style={{width: "100%"}}  options={deviceList} value={deviceValue} onChange={onChangeDevice}
                     fieldNames={{ label: 'name', value: 'id', options: 'options' }} disabled={Ctitle == '编辑设备台账'}>
                   </Select>
                 </div> : <div></div>}
               </div>
-              <Divider style={{ margin: '0px 32px', height: '704px' }} type="vertical" />
+              
               <div className='right'>
-                <div style={{ width: '231px', height: '704px', display: 'flex', flexDirection: 'column' }}>
-                  <div style={{ width: '231px', height: '240px', border: '1px solid #d2d2d2', display: 'flex', alignItems: 'center', justifyContent: 'center', marginTop: '16px' }}>
-                    {imageUrl ? <Image src={imageUrl} style={{maxHeight:240,maxWidth:230}} /> :
-                      <Upload className='uploadBoxNew'
+                <div className='uploadwrap'>
+                    <div className='outwrap'>
+                    {imageUrl ? <Image src={imageUrl}  /> :
+                      <Upload  
                         listType="picture-card"
                         beforeUpload={beforeUpload}
                         showUploadList={false}
                       >
                         <PlusOutlined style={{ fontSize: '32px', color: '#999' }} />
                       </Upload>}
-                  </div>
-                  {Ctitle == '编辑设备台账' ? <Upload className='uploadBox'
+                 
+                  {Ctitle == '编辑设备台账' ? <Upload 
                     listType="picture-card"
                     beforeUpload={beforeUpload}
                     showUploadList={false}
                   >
-                    <p
-                      style={{
-                        width: '231px',
-                        textDecoration: 'underline',
-                        textAlign: 'center',
-                        color: '#237ae4',
-                        cursor: 'pointer'
-                      }}
-                    >
+                    <Link underline >
                       更换
-                    </p>
+                    </Link>
                   </Upload> : null}
+                  </div>
                 </div>
                 <div className='chartRight'>
                   <div>
@@ -765,26 +789,26 @@ export default function Index() {
                     <Divider dashed style={{ width: '100%' }}>{typeName || ''}</Divider>
                     <div className='deviceBox'>
                       <div className='deviceItem'>
-                        <span style={{ width: '160px' }}>设备名称</span>
-                        <Input style={{ width: '241px' }} disabled={deviceList?.length > 0 || Ctitle == '编辑设备台账'} value={deviceInfo?.name} onChange={(e) => inputBasicInfo(1, e)} />
+                        <span  >设备名称</span>
+                        <Input   disabled={deviceList?.length > 0 || Ctitle == '编辑设备台账'} value={deviceInfo?.name} onChange={(e) => inputBasicInfo(1, e)} />
                       </div>
                       <div className='deviceItem'>
                         <span style={{ width: '160px' }}>设备编号</span>
                         <Input style={{ width: '241px' }} disabled={deviceList?.length > 0 || Ctitle == '编辑设备台账'} value={deviceInfo?.sn} onChange={(e) => inputBasicInfo(2, e)} />
                       </div>
                       <div className='deviceItem'>
-                        <span style={{ width: '160px' }}>规格型号</span>
-                        <Input style={{ width: '241px' }} disabled={deviceList?.length > 0 || Ctitle == '编辑设备台账'} value={deviceInfo?.category} onChange={(e) => inputBasicInfo(3, e)} />
+                        <span  >规格型号</span>
+                        <Input   disabled={deviceList?.length > 0 || Ctitle == '编辑设备台账'} value={deviceInfo?.category} onChange={(e) => inputBasicInfo(3, e)} />
                       </div>
                       <div className='deviceItem'>
-                        <span style={{ width: '160px' }}>设备类型</span>
-                        <Input style={{ width: '241px' }} disabled value={typeName} />
+                        <span  >设备类型</span>
+                        <Input   disabled value={typeName} />
                       </div>
                       {/* 设备除四个基本信息外的信息（第一part） */}
                       {deviceInfoList && deviceInfoList.data?.length>0 ? deviceInfoList.data.map(it => {
                         return <div className='deviceItem'>
-                          <span style={{ width: '160px' }}>{it.label}</span>
-                          <Input suffix={it.unit} style={{ width: '241px' }} value={it.data} onChange={(e) => inputDeviceInfo(it, e)} />
+                          <span  >{it.label}</span>
+                          <Input suffix={it.unit}   value={it.data} onChange={(e) => inputDeviceInfo(it, e)} />
                         </div>
                       }) : <></>}
 
@@ -795,8 +819,8 @@ export default function Index() {
                         <Divider dashed style={{ width: '100%' }}>{deviceOtherInfo1.label}</Divider>
                         <div className='deviceBox'>{deviceOtherInfo1.data.map((it, index) => {
                           return <div className='deviceItem'>
-                            <span style={{ width: '160px' }}>{it.label}</span>
-                            <Input suffix={it.unit} style={{ width: '241px' }} value={it.data} onChange={(e) => onChangeInput1(index, e)} />
+                            <span  >{it.label}</span>
+                            <Input suffix={it.unit}   value={it.data} onChange={(e) => onChangeInput1(index, e)} />
                           </div>
                         })}</div>
                       </div> :  <></>
@@ -806,8 +830,8 @@ export default function Index() {
                         <Divider dashed style={{ width: '100%' }}>{deviceOtherInfo2.label}</Divider>
                         <div className='deviceBox'>{deviceOtherInfo2.data.map((it, index) => {
                           return <div className='deviceItem'>
-                            <span style={{ width: '160px' }}>{it.label}</span>
-                            <Input suffix={it.unit} style={{ width: '241px' }} value={it.data} onChange={(e) => onChangeInput2(index, e)} />
+                            <span  >{it.label}</span>
+                            <Input suffix={it.unit}   value={it.data} onChange={(e) => onChangeInput2(index, e)} />
                           </div>
                         })}</div>
                       </div> :  <></>
@@ -816,26 +840,25 @@ export default function Index() {
                     <Divider dashed style={{ width: '100%' }}>维护信息</Divider>
                     <div className='deviceBox'>
                       <div className='deviceItem'>
-                        <span style={{ width: '160px' }}>维护周期</span>
-                        <Input style={{ width: '241px' }} value={repairInfo?.data[0]?.data} onChange={(e) => onChangeInputRepair(0, e)} />
+                        <span  >维护周期</span>
+                        <Input   value={repairInfo?.data[0]?.data} onChange={(e) => onChangeInputRepair(0, e)} />
                       </div>
                       <div className='deviceItem'>
-                        <span style={{ width: '160px' }}>维护人员</span>
-                        <Input style={{ width: '241px' }} value={repairInfo?.data[1]?.data} onChange={(e) => onChangeInputRepair(1, e)} />
+                        <span  >维护人员</span>
+                        <Input   value={repairInfo?.data[1]?.data} onChange={(e) => onChangeInputRepair(1, e)} />
                       </div>
                       <div className='deviceItem'>
-                        <span style={{ width: '160px' }}>最后一次维护时间</span>
-                        <DatePicker style={{ width: '241px' }} format='YYYY-MM-DD' value={repairInfo?.data[2]?.data} onChange={onChangeDate} disabledDate={disabledDate}/>
+                        <span  >最后一次维护时间</span>
+                        <DatePicker   format='YYYY-MM-DD' value={repairInfo?.data[2]?.data} onChange={onChangeDate} disabledDate={disabledDate}/>
                       </div>
                     </div>
                     <div className='deviceItemdetail'>
-                      <span style={{ width: '160px' }}>维护详情</span>
-                      <TextArea style={{ width: '675px' }} value={repairInfo?.data[3]?.data} rows={4} onChange={(e) => onChangeInputRepair(3, e)} />
+                      <span  >维护详情</span>
+                      <TextArea   value={repairInfo?.data[3]?.data} rows={4} onChange={(e) => onChangeInputRepair(3, e)} />
                     </div>
                   </div>
                 </div>
-              </div>
-            </div>
+              </div> 
           </Box>
         </CModal>
       </Content>

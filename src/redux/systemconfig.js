@@ -74,8 +74,7 @@ const initialState = {
     deviceState:false,
     siteConfig: antdconfig,
     adaptation: { // 屏幕适配
-      laptop: false, // 笔记本屏幕(max-device-width:1536px)<=1536px
-   
+      laptop: false, // 笔记本屏幕(max-device-width:1536px)<=1536px      
       ratio43:true,  // 屏幕比例 4:3
     }, 
     themeColor:  {  // 可配置对象，不只是颜色属性。名字为保证稳定性不改
@@ -330,8 +329,8 @@ const system = createSlice({
            console.log(payload)
            if(payload.primaryderived){
             let islight = isLightColor(payload.primaryderived)  
-             let bgcolorfont = islight ? "#000000a5" : "#ffffff"
-            state.themeColor ={...themeColor, ...payload,islight,bgcolorfont};
+           //  let bgcolorfont = islight ? "#000000a5" : "#ffffff"
+            state.themeColor ={...themeColor, ...payload,islight };
            }else{
              state.themeColor ={...themeColor, ...payload};
            }
@@ -428,10 +427,9 @@ const system = createSlice({
                   state.themeId = themeId;
                   if(state.themes?.length > 0 && Number.isInteger(themeId)) {
                      let  {context,id,name} = state.themes.find(t => t.id==themeId) || {};
-                     let islight = isLightColor(context.primaryderived)  
-                     let bgcolorfont = islight ? "#000000a5" : "#ffffff"
+                     let islight = isLightColor(context.primaryderived)   
                      if(isObject(context)){
-                       state.themeColor ={...context,islight,bgcolorfont, id, name}
+                       state.themeColor ={...context,islight,  id, name}
                      }else{
                        state.themeColor=initithemeColor
                      }

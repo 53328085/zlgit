@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import {useSelector} from 'react-redux'
 import Pagecount from '@com/pagecontent'
-import {selectProjectId, selectOneLevel} from '@redux/systemconfig.js'
+import {selectProjectId, selectOneLevel,adaptation} from '@redux/systemconfig.js'
 import CustContext from '@com/content.js'
 import AirCondition from './airCondition'
 import TemperatureSensor from './temperatureSensor'
@@ -13,6 +13,7 @@ export default function Index() {
   const [value, setvalue] = useState('airCondition')
   const projectId = useSelector(selectProjectId);
   const areaList = useSelector(selectOneLevel)
+  const {laptop} = useSelector(adaptation)
   const {
     DeviceManager: { QueryPlanList }
   } = Monitoring
@@ -52,7 +53,7 @@ export default function Index() {
   return (
     <CustContext.Provider value={propsData}>
       <Pagecount showserach={false} pd="16px">   
-      { <Com projectId={projectId} areaList={areaList} alarmPlanList={state.alarmPlanList} />}
+      { <Com projectId={projectId} areaList={areaList} alarmPlanList={state.alarmPlanList} laptop={laptop} />}
       </Pagecount>
     </CustContext.Provider>
   )

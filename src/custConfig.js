@@ -8,16 +8,24 @@ import 'moment/locale/zh-cn';
 moment.locale('zhCN');
  
 import {ConfigProvider} from 'antd'
-import {themeColor, intl} from "@redux/systemconfig";
+import {themeColor,adaptation, intl} from "@redux/systemconfig";
+ 
 
 export default function CustConfig(props) {
   const theme = useSelector(themeColor)
-  const {lang} = useSelector(state => state.system.intl)
+  const {laptop} = useSelector(adaptation)
+  const {lang} = useSelector(intl)
   const config = {
     csp: {
       nonce: 'YourNonceCode'
     },
     locale: lang,
+    input: {autoComplete: "off"} ,
+    space: laptop ? "small" : "middle",
+  //  componentSize: laptop ? "small" : "middle", //form表单small
+    form: {
+      required: "'${label}' 是必选字段",
+    }
   }
   ConfigProvider.config({
     theme , 

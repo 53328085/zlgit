@@ -6,7 +6,7 @@
 
 import React, { useEffect, useMemo, useState, useRef } from "react";
 import { flushSync } from "react-dom";
-import styled from "styled-components";
+import styled, {css} from "styled-components";
 import {
   Typography,
   Select,
@@ -50,6 +50,11 @@ const {
   InsertProjectMaintenance,
   DeleteProjectMaintenance,
 } = User;
+const sty = css`
+.item {
+  grid-template-columns: repeat(4, 120px) 1fr;
+}
+`
 const Mainbox = styled.div`
   display: grid;
   grid-template-rows: repeat(3, auto);
@@ -81,6 +86,7 @@ const Mainbox = styled.div`
         margin-right: 16px;
       }
     }
+    ${props=> props.theme.laptop ? sty : null}
   }
 `;
 const Dbutton = styled(Button).attrs({

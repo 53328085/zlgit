@@ -33,10 +33,10 @@ const sty = css`
 `
 const Cardbox = styled.div`
  display: grid;
-    grid-template-columns: repeat(3, 538px);
-    grid-template-rows: repeat(4, 156px);
+    grid-template-columns: repeat(auto-fill, minmax(538px,1fr));
+  //  grid-template-rows: repeat(4, 156px);
     gap: 16px;
-    justify-content: space-evenly;
+   // justify-content: space-evenly;
    
     .cardItem {
     height: 156px;
@@ -77,7 +77,7 @@ const Cardbox = styled.div`
             align-items: center;
             column-gap: 32px;
             font-size: 14px;
-            color: ${props => props.islight ? "#000000" : "#fff"} ;
+            color: ${props => props.theme.bgcolorfont} ;
             font-weight: 700;
             text-align: left;
             align-self: flex-start;
@@ -88,7 +88,7 @@ const Cardbox = styled.div`
         .valueData {
             //margin-top: 10px;
             font-size: 14px;
-            color: ${props => props.islight ? "#333333" : "#fff"} ;
+            color: ${props => props.theme.bgcolorfont} ;
             
         }
 
@@ -214,7 +214,7 @@ export default function Index(props) {
   let areaId = useSelector(selectOneLevelDefaultId);
   const {laptop} = useSelector(adaptation)
   const {primaryderived} = useSelector(themeColor)
-  let islight = isLightColor(primaryderived)
+  
   const {
     RuntimeGateway: { RuntimeGatewayStatistics, Overview, CategoryImages },
     DeviceManager: { QueryUsedGateway },
@@ -542,7 +542,7 @@ export default function Index(props) {
         
         <Cdivider type="h" margin="16px 0" />
         {isCard ? (
-          <Cardbox laptop={laptop} islight={islight}>
+          <Cardbox laptop={laptop} >
             {  tableProps?.dataSource?.length > 0 ?   tableProps?.dataSource?.map((item, index) => {
               return (
                 <div key={index} >

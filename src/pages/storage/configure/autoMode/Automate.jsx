@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect, useCallback, useMemo } from 'react'
-import styled from 'styled-components'
+import styled,{css} from 'styled-components'
 import {Typography, Image, Form, Space, Button, Input, Select, DatePicker,  Calendar, Descriptions, Divider, Checkbox, message } from 'antd'
 import {CaretRightOutlined, CaretUpFilled, CaretDownFilled, WarningFilled, CheckCircleFilled}  from '@ant-design/icons'
 import moment from 'moment'
@@ -9,7 +9,7 @@ import Titlelayout from '@com/titlelayout'
 import {StorageAutoModeDesigner, StorageControlRuntime} from '@api/api'   // StorageControlRuntime
 import {custMsg} from '@com/usehandler'
 import {CustButtonT} from "@com/useButton"
-import { themeColor  } from '@redux/systemconfig.js'
+import { themeColor,adaptation  } from '@redux/systemconfig.js'
 const {Text, Link, Title, Paragraph} = Typography
 const {Item} = Form
 const { RangePicker } = DatePicker;
@@ -19,7 +19,7 @@ moment.updateLocale('zh-cn', {
 const Mainbox = styled.div`
     && {
        display: grid;
-       grid-template-rows: 614px 74px;
+       grid-template-rows: ${props => props.theme.laptop ? "1fr 48px" : "1fr 74px"} ;
        row-gap: 16px; 
        flex: 1;
        color:#515151;
@@ -134,12 +134,12 @@ const Formbox = styled(Form)`
     && {
         display: grid;
         grid-template-rows: repeat(5, 36px);
-        grid-template-columns: repeat(2, 496px);
+        grid-template-columns: repeat(2, minmax(300px,496px));
       //  grid-template-columns: 646px;
         row-gap: 32px;
-        column-gap: 64px;
-        padding-top: 32px;
-        padding-left: 16px;
+        column-gap: ${props =>props.theme.laptop ? "32px" : "64px"};
+        padding: 32px 16px 16px;
+         
         grid-auto-flow: column;
         .priority {
             grid-column: 2;
@@ -158,27 +158,12 @@ const Formbox = styled(Form)`
        }
     }
 `
-const Bigbutton = styled(Button)`
-    width: 200px;
-    height: 72px;
-    font-size: 18px;
-    border-radius: 4px;
-`
-const Normalbt = styled(Button)`
-    width: 96px;
-    height: 32px;
-`
-const Timeipt = styled(Input)`
-    && {
-        width: 52px;
-    height: 40px; 
-    background-color: rgba(242, 242, 242, 1); 
-    border: 1px solid rgba(215, 215, 215, 1); 
-    color: #333333;
-    border-radius: 0px;
-    box-shadow: none;
-    }
-`
+ 
+ const viesty = css`
+   grid-template-columns: 1fr 1fr;
+   padding: 16px;
+ `
+ 
 const Viewbox = styled.div`
     display: grid;
     grid-template-rows: 1fr;
@@ -187,7 +172,7 @@ const Viewbox = styled.div`
    column-gap: 16px;
    padding: 16px 32px 32px 32px;
    align-items: stretch;
-   height: 100%;
+   flex:1;
     .detl {
       //  height: 365px;
       //  border: 1px solid rgba(215, 215, 215, 1); 
@@ -251,7 +236,12 @@ const Viewbox = styled.div`
           justify-self: end;
         }
        }
+       .dstrategy {
+        flex: 1;
+        overflow: auto;
+       }
     }
+   ${props=> props.theme.laptop ? viesty : null}
 `
 const Itembox = styled.div`
       width: 4px;
@@ -331,7 +321,7 @@ const  enumerateDaysBetweenDates = (startDate, endDate) => {
     let daysList = [];
     let SDate=moment(startDate);
     let EDate=moment(endDate);
-    let xt;
+     
     daysList.push(SDate.format('YYYY-MM-DD'));
     while( SDate.add(1,"days").isBefore( EDate) ){   
         daysList.push( SDate.format('YYYY-MM-DD'));
@@ -381,7 +371,7 @@ const getvalidate = (start, end, type, choosedate) => {
     {label: '周四', value: 4},
     {label: '周五', value: 5},
     {label: '周六', value: 6},
-    {label: '周日', value: 7},
+    {label: '周日', value: 0},
   ]
   let days = Array.from({length: 31},(v, i) => ({label: i < 9 ? '0'+ (i+1) : (i+1).toString(), value: i+1 }))
  
@@ -485,21 +475,6 @@ const getvalidate = (start, end, type, choosedate) => {
        })
        if (!values) return
        let {date,   ...params} = values; 
-       /*  let type = params.executionCycle  // 此部分逻辑暂时不需要， 后端判断
-      const datalist = enumerateDaysBetweenDates(date[0], date[1])   
-      
-       let week = datalist.filter(d => {     
-         return dateType.includes(moment(d, 'YYYY-MM-DD').day())
-       })
-       let day = datalist.filter(d => {   
-        
-        return dateType.includes(moment(d, 'YYYY-MM-DD').date())
-       })
-      
-        let dateChoose = {
-            2: week,
-            3: day
-        }[type] */
        
     
        
@@ -587,17 +562,7 @@ const getvalidate = (start, end, type, choosedate) => {
      }
     
  } 
-/*  const QueryPcsList = async () => {
-    try {
-       let {success, data} = await  StorageControlRuntime.QueryPcsList(projectId, areaId)
-       success && setPcs([...data])
-       !success && setPcs([])
-    } catch (error) {
-       console.log(error)
-    }
-   
-}  */
-
+ 
 
   const getPlans = async () => {
     try {
@@ -651,7 +616,7 @@ const getvalidate = (start, end, type, choosedate) => {
     //QueryPcsList()
   }, [areaId, projectId])
   return (
-    <Titlelayout title="自动模式管理">
+    <Titlelayout title="自动模式管理" layout="flex">
     <Mainbox>
         <div className='top'>
             <div className='topleft'> 
@@ -692,7 +657,7 @@ const getvalidate = (start, end, type, choosedate) => {
         </div>
         <div className='foot'>
            
-            <CustButtonT   ghost={disabled}  onClick={UpdateEnable} text={disabled ? 'enabled' : 'enable'} style={{width: "200px", height: "72px"}} /> 
+            <CustButtonT   ghost={disabled}  onClick={UpdateEnable} text={disabled ? 'enabled' : 'enable'} style={{width: "200px", height: "100%"}} /> 
                
         </div>
         <CModal
@@ -738,7 +703,7 @@ const getvalidate = (start, end, type, choosedate) => {
 
 
 const Planview = ({data, strategyDetail}) => { // status 1, 充电， 2， 放 3 待机 4. 停机
-    console.log(data)
+    let {laptop} = useSelector(adaptation)
     let {name, strategyName,priority, executionCycle,  startDate, endDate, dateChoose} = data
    
     let {primaryderived,primaryColor} = useSelector(themeColor)
@@ -779,7 +744,7 @@ const Planview = ({data, strategyDetail}) => { // status 1, 充电， 2， 放 3
     }, [name])
    // const items = Array.from({length: 96}, (v, i) => ({index: i, type: i > 20 && i<40 ? 'warn' : i>=40 ? 'info' : ''}))    
     return (
-        <Titlelayout  title={<div style={{height: '32px', backgroundColor: primaryderived, display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff'}}>运行计划设置</div>} bordered={'n'} pv="0px" bl="none" pl="0px">
+        <Titlelayout  title={<div style={{height: '32px', backgroundColor: primaryderived, display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff'}}>运行计划设置</div>} bordered={'n'} layout="flex" pv="0px" bl="none" pl="0px">
             <Viewbox>               
                 <div className='detl'>
                    <div style={{color: '#999', height: '48px'}}>查看运行计划及具体内容</div>
@@ -799,7 +764,7 @@ const Planview = ({data, strategyDetail}) => { // status 1, 充电， 2， 放 3
                         <div className='num'>
                             {hours.map(i => <span>{i}</span>)}
                         </div>
-                        <div className='dstrategy' style={{height: '208px', overflow: 'auto'}}>
+                        <div className='dstrategy'  >
                              {
                                 strategyDetail.map(s => <div className='dsitme'>
                                     <span>{s.start}-{s.end}</span>
@@ -808,7 +773,7 @@ const Planview = ({data, strategyDetail}) => { // status 1, 充电， 2， 放 3
                                 </div>)
                              }
                         </div>
-                        <Space size={32} style={{marginLeft: '-16px'}}>
+                        <Space size={32} style={{marginLeft: laptop? '0px' : '-16px'}}>
                            <div style={{fontSize: '12px', display: 'flex',alignItems: 'center'}}><Sblock bg='#4370ff'   />充电</div>
                            <div style={{fontSize: '12px', display: 'flex',alignItems: 'center'}}><Sblock bg='#ff9933' />放电</div> 
                            <div style={{fontSize: '12px', display: 'flex',alignItems: 'center'}}><Sblock bg='#0dc6d1' />待机</div> 
@@ -850,7 +815,7 @@ const Strategy = ({data,   form, disabled, executionCycle}) => {
       }
     }, [executionCycle])
    return (
-      <Titlelayout title={<div style={{height: '32px', backgroundColor: primaryderived, display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff'}}>运行计划设置</div>} bordered={'n'} pv="0px" bl="none" pl="0px">
+      <Titlelayout title={<div style={{height: '32px', backgroundColor: primaryderived, display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff'}}>运行计划设置</div>} bordered={'n'} pv="0px" bl="none" pl="0px" layout="flex">
          <Formbox   labelCol={{flex: '96px'}} labelAlign="left" form={form} disabled={disabled}   validateMessages={
        { required: "缺少'${label}' 数据"}
       }>
@@ -926,7 +891,7 @@ const Strategy = ({data,   form, disabled, executionCycle}) => {
             <Item label="生效日期" className='date' name="date" rules={[
                   {required: true},
             ]}>
-                   <RangePicker style={{width: '100%'}}  disabledDate={disabledDate}/>
+                   <RangePicker    disabledDate={disabledDate}/>
             </Item>
            
          </Formbox>

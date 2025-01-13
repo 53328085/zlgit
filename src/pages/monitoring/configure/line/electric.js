@@ -8,7 +8,7 @@ export default function electric() {
     addMainLine
   }
   return (
-    <div style={{ overflow: 'hidden' ,width:'100%',height:873}}>
+    <div style={{ overflow: 'hidden' ,width:'100%',height:"inherit", overflowY: "auto"}}>
         <Common type={1}/>
     </div>
   )

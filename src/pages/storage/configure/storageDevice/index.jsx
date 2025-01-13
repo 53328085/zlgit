@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { useSelector } from 'react-redux'
 import Pagecount from '@com/pagecontent'
-import { selectProjectId, selectOneLevel } from '@redux/systemconfig.js'
+import { selectProjectId, selectOneLevel,adaptation } from '@redux/systemconfig.js'
 import CustContext from '@com/content.js'
 import Devices from './devices'
 import PCS from './PCS'
@@ -18,6 +18,7 @@ export default function Index() {
   const [value, setvalue] = useState('devices')
   const projectId = useSelector(selectProjectId);
   const areaList = useSelector(selectOneLevel)
+  const {laptop} = useSelector(adaptation)
   const tabs = [
     { label: '电表', key: 'devices' },
     { label: 'PCS', key: 'PCS' },
@@ -56,7 +57,7 @@ export default function Index() {
   return (
     <CustContext.Provider value={propsData}>
       <Pagecount showserach={false} pd="16px">
-        {<Com projectId={projectId} alarmPlanList={state.alarmPlanList} />}
+        {<Com projectId={projectId} alarmPlanList={state.alarmPlanList} laptop={laptop} />}
       </Pagecount>
     </CustContext.Provider>
   )

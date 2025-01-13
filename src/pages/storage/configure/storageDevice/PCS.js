@@ -2,16 +2,17 @@ import React, { useEffect, useState, useRef } from 'react'
 import { Button, Form, Input, Select, Space, message, Divider, Upload, Modal, Table } from 'antd'
 import style from './style.module.less'
 import { useSelector, useDispatch } from 'react-redux'
-import { selectProjectId, selectOneLevel, levelDefaultLabel, selectOneLevelDefaultId, setCurrentlevel } from '@redux/systemconfig.js'
+import { selectProjectId, selectOneLevel, levelDefaultLabel, selectOneLevelDefaultId, setCurrentlevel,adaptation } from '@redux/systemconfig.js'
 import Usetable from '@com/useTable'
 import Custmodl from '@com/useModal'
 import {CustButtonT, CustLink} from '@com/useButton'
 import upload from '@imgs/upload.png'
 import { SiteManagerDesigner, StorageEquipmentDesigner, StorageContainerDesigner } from '@api/api.js'
-import {Serach} from "@com/comstyled"
+import {Serach,Cdivider} from "@com/comstyled"
 export default function Index(props) {
   const [form] = Form.useForm()
   const [addForm] = Form.useForm()
+  const {laptop} = useSelector(adaptation)
   const Item = Form.Item
   const { Search, TextArea } = Input
   const dref = useRef()
@@ -121,19 +122,19 @@ export default function Index(props) {
       dataIndex: 'areaName',
       key: 'areaName',
       align: 'center',
-      width: '200px'
+  //    width: '200px'
     }, {
       title: '所属站点',
       dataIndex: 'siteName',
       key: 'siteName',
       align: 'center',
-      width: '200px'
+  //    width: '200px'
     }, {
       title: '所属储能柜',
       dataIndex: 'containerName',
       key: 'containerName',
       align: 'center',
-      width: '200px'
+  //    width: '200px'
     }, {
       title: '设备名称',
       dataIndex: 'name',
@@ -149,7 +150,7 @@ export default function Index(props) {
       dataIndex: 'sn',
       key: 'sn',
       align: 'center',
-      width: '160px'
+ //     width: '160px'
     }, {
       title: '设备型号',
       dataIndex: 'category',
@@ -160,15 +161,15 @@ export default function Index(props) {
       dataIndex: 'remark',
       key: 'remark',
       align: 'center',
-      width: '160px'
+  //    width: '160px'
     }, {
       title: '操作',
       dataIndex: 'action',
       key: 'action',
       align: 'center',
-      width: '176px',
+      width: laptop ? '120px' : '176px',
       render: (_, record) => (
-        <Space size="middle">
+        <Space size={laptop ? "small" : "middle"}>
           <CustLink text="edit" onClick={() => setMulti(record)} /> 
           <CustLink text="delete" onClick={() => clickDel(record)} /> 
         </Space>
@@ -438,11 +439,12 @@ export default function Index(props) {
     <div className={style.mainContainer}>
       <div className={style.header}>
         <Form form={form} layout='inline' colon={false}>
-          <Item name='areaId' label={areaName + '选择'} style={{ marginLeft: 16 }}>
+          <Space size={laptop ? 16 : 64} split={laptop? null : <Cdivider />}>
+          <Item name='areaId' label={areaName + '选择'} >
             <Select
               placeholder="请选择"
               size="middle"
-              style={{ marginLeft: 16, width: '200px' }}
+              style={{ width: laptop ? "100px" : '200px' }}
               onChange={changeArea}
             >
               {areaList.map(item => {
@@ -450,12 +452,12 @@ export default function Index(props) {
               })}
             </Select>
           </Item>
-          <div className={style.line}></div>
+         
           <Item name='siteId' label=''>
             <Select
               placeholder="请选择站点"
               size="middle"
-              style={{ width: '264px' }}
+              style={{ width: laptop ? "160px" : '264px' }}
               onChange={changeSite}
             >
               {siteList.map(item => {
@@ -463,13 +465,14 @@ export default function Index(props) {
               })}
             </Select>
           </Item>
-          <div className={style.line}></div>
+          
           <Item name='alike' label='设备查询'>
             <Serach
-              style={{ width: 400 }}
+              style={{ width: laptop ? 200 : 400 }}
               placeholder='请输入设备名称/设备编号/安装地址'
               onSearch={onSearch}></Serach>
           </Item>
+          </Space>
         </Form>
         <Space>
 

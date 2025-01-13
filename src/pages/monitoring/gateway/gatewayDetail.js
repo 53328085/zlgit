@@ -85,21 +85,21 @@ export default function GatewayDetail(props) {
         </Link>
       ),
       id: "id",
-      width: 315,
+    //  width: 315,
     },
     {
       title: "设备型号",
       dataIndex: "category",
       key: "category",
       id: "id",
-      width: 224,
+    //  width: 224,
     },
     {
       title: "设备状态",
       dataIndex: "state",
       key: "state",
       id: "id",
-      width: 150,
+   //   width: 150,
       render: (state) => {
         if (isNaN(state)) return;
         let text = ["离线", "离线", "正常", "告警"];
@@ -113,21 +113,21 @@ export default function GatewayDetail(props) {
       dataIndex: "address",
       key: "address",
       id: "id",
-      width: 288,
+    //  width: 288,
     },
     {
       title: "通信地址",
       dataIndex: "commAddressName",
       key: "commAddressName",
       id: "id",
-      width: 150,
+  //    width: 150,
     },
     {
       title: "通信端口",
       dataIndex: "commPortName",
       key: "commPort",
       id: "id",
-      width: 150,
+    //  width: 150,
     },
     {
       title: "通信协议",
@@ -143,20 +143,21 @@ export default function GatewayDetail(props) {
       dataIndex: "time",
       key: "sn",
       id: "id",
-      width: 510,
+     // width: 510,
     },
     {
       title: "操作日志",
       dataIndex: "content",
       key: "category",
       id: "id",
-      width: 510,
+   //   width: 510,
     },
     {
       title: "操作者",
       dataIndex: "creator",
       key: "sn",
       id: "id",
+      width:100
     },
   ];
   let [dataSource, setdataSource] = useState([]);
@@ -320,7 +321,7 @@ export default function GatewayDetail(props) {
               <p>数据最新更新时间：{detail.lastSampleTime}</p>
               <Button type="primary" style={{marginLeft:'auto'}} onClick={setRTGCall}>手动召读</Button>
           </div>
-          <img src={imgurl.line} className={style.timeline}></img>
+        {/*   <img src={imgurl.line} className={style.timeline}></img> */}
           <div className={style.tableBox}>
             {state ? (
               <div>

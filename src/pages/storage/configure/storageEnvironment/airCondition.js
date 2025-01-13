@@ -2,7 +2,7 @@ import React, { useRef, useEffect, useState } from 'react'
 import style from './style.module.less'
 import { Form, Select, Input, Button, Divider, Space, Modal, message, Upload, Table } from 'antd'
 import { useSelector, useDispatch } from 'react-redux'
-import { levelDefaultLabel, selectOneLevelDefaultId, setCurrentlevel } from '@redux/systemconfig.js'
+import { levelDefaultLabel, selectOneLevelDefaultId, setCurrentlevel  } from '@redux/systemconfig.js'
 import styled from 'styled-components'
 import UseTable from '@com/useTable'
 import { SiteManagerDesigner, StorageContainerDesigner, StorageMonitorDesigner } from '@api/api.js'
@@ -11,8 +11,16 @@ import Custmodl from '@com/useModal'
  
 import upload from '@imgs/upload.png'
 import { CustButtonT, CustLink } from '@com/useButton'
-import {Serach} from "@com/comstyled"
+import {Serach,Cdivider} from "@com/comstyled"
+const CForm = styled(Form)`
+&&{
+  .ant-form-item{
+    margin-bottom: ${props => props.theme.laptop ? "12px" : "24px"};
+  }
+}
+`
 export default function Index(props) {
+  const {laptop} = props
   const tableRef = useRef()
   const dref = useRef()
   const errRef = useRef()
@@ -23,10 +31,7 @@ export default function Index(props) {
   const { TextArea } = Input
   let { projectId, areaList } = props
 
-  const MainButton = styled(Button)`
-    margin-left: 16px;
-    width: 96px;
-  `
+ 
 
   const dispatch = useDispatch()
   const areaName = useSelector(levelDefaultLabel) || '园区'
@@ -169,7 +174,7 @@ export default function Index(props) {
       align: 'center',
       width: '176px',
       render: (_, record) => (
-        <Space size="middle">
+        <Space size={laptop ? "small" : "middle"}>
           <CustLink text="edit" onClick={() => setMulti(record)} /> 
           <CustLink type="danger" text="delete" onClick={() => clickDel(record)} /> 
         </Space>
@@ -429,45 +434,44 @@ export default function Index(props) {
     <div className={style.contents}>
       <div className={style.header}>
         <Form form={form} layout='inline' colon={false}>
-          <Item name='areaId' label={areaName + '选择'} style={{ marginLeft: 16 }}>
+        <Space size={laptop ? 16 : 64} split={laptop? null : <Cdivider />}>
+          <Item name='areaId' label={areaName + '选择'} >
             <Select
               size="middle"
-              style={{ width: '200px' }}
+              style={{ width: laptop ? "100px" : '200px'}}
               onChange={changeArea}
             >
               {props.areaList.map(item => {
                 return <Select.Option key={item.id} value={item.id}>{item.name}</Select.Option>
               })}
             </Select>
-          </Item>
-          <Divider dashed type='vertical' style={{ height: 32 }}></Divider>
-          <Item name='siteId' label='站点选择' style={{ marginLeft: 16 }}>
+          </Item>        
+          <Item name='siteId' label='' >
             <Select
               size="middle"
-              style={{ width: '264px' }}
+              placeholder="请选择站点"
+              style={{ width: laptop ? "160px" : '264px' }}
               onChange={changeSite}
             >
               {state.siteList.map(item => {
                 return <Select.Option key={item.id} value={item.id}>{item.name}</Select.Option>
               })}
             </Select>
-          </Item>
-          <Divider dashed type='vertical' style={{ height: 32 }}></Divider>
-          <Item name='alike' label='编号查询' style={{ marginLeft: 16 }}>
+          </Item>        
+          <Item name='alike' label='编号查询' >
             <Serach
               placeholder="请输入设备名称/设备编号/安装地址"
-              style={{ width: '400px' }}
+              style={{ width: laptop ? 200 : 400  }}
               onSearch={onSearch}
             />
           </Item>
+          </Space>
         </Form>
-        <Space size={16}>
+        <Space size={laptop ? "small" : "middle"}>
         <CustButtonT text="new" src="new" onClick={() => addData()} />
           <CustButtonT text="batchImport" src="export" wh="auto" onClick={() => setAddModal(true)} />
           <CustButtonT  text="export"  src="export" onClick={() => exportData()} />  
-         {/*  <MainButton type='primary' onClick={() => addData()}>新增</MainButton>
-          <MainButton type='primary' onClick={() => { setAddModal(true) }}>批量导入</MainButton>
-          <MainButton type='primary' onClick={() => exportData()}>导出</MainButton> */}
+         
         </Space>
       </div>
       <Divider dashed style={{ borderColor: '#d7d7d7' }}></Divider>
@@ -492,8 +496,9 @@ export default function Index(props) {
         </div>
       </Custmodl>
       <Custmodl  title={state.modalTitle} custft={state.modalTitle == '新增空调'}  onOk={onAdd}     width={544}  closable={false} mold="cust" ref={cref}  >
-          <Form form={addForm} colon={false} labelCol={{ span: 7 }} labelAlign='left' requiredMark={false} preserve={false}>
+          <CForm form={addForm} colon={false} labelCol={{ span: 7 }} labelAlign='left' requiredMark={false} preserve={false}>
             <Item name='areaId' label={areaName + '选择'} rules={[{ required: true, message: '请选择' + areaName }]}>
+
               <Select
                 placeholder="请选择"
                 size="middle"
@@ -561,7 +566,7 @@ export default function Index(props) {
             <Item name='remark' label='备注' >
               <TextArea style={{ width: '320px' }} rows={4}></TextArea>
             </Item>
-          </Form> 
+          </CForm> 
       </Custmodl>
     </div>
   )

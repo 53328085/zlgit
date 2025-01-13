@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useRef, forwardRef, useImperativeHandle, useContext, useMemo } from 'react'
 import { Button, Form, Input, Row, Col, Upload, Select, Switch, message, Divider } from 'antd';
-import WarningPng from '@imgs/warning.png'
+import {useSelector} from 'react-redux'
 import Modal from '@com/useModal'
 import style from './style.module.less'
 import BlueColumn from '@com/bluecolumn'
@@ -8,6 +8,7 @@ import UploadImg from './upload.jsx'
 import Table from '@com/useTable'
 import upCloud from './imgs/upcloud.png'
 import cusContext from '@com/content'
+import {adaptation} from "@redux/systemconfig"
 const { Dragger } = Upload;
 //删除modal组件
 export let DeleteModal = ({ DelModalRef, name = '', content = '', ...other }) => {
@@ -64,9 +65,9 @@ let TableForm = forwardRef(({ defaultTableData, tabledatas }, ref) => {
   const TableParam = useMemo(() => {
     return { current: 1, pageSize: defaultTableData?.length || 0, hideOnSinglePage: true }
   }, [defaultTableData])
-  console.log(defaultTableData)
+  
   const [pointSource, setPointSource] = useState([...defaultTableData])
-
+  const {laptop} = useSelector(adaptation)
   const tableDataRef = useRef()
   let checedList = []
   defaultTableData?.forEach(it => { if (it.watchPoint) { checedList.push(it.index) } })
@@ -214,7 +215,7 @@ let TableForm = forwardRef(({ defaultTableData, tabledatas }, ref) => {
       rowKey={record => (record.index + ' ' + record.dataMark)}
       pagination={false}
       scroll={{
-        y: 546
+        y: laptop ? 300 : 546
       }}
     ></Table>
   )
@@ -328,6 +329,7 @@ export let AddModal = forwardRef(
 let TableEditForm = forwardRef(({ defaultTableData, tabledatas }, ref) => {
   const [pointSource, setPointSource] = useState([...defaultTableData])
   const tableDataRef = useRef()
+  const {laptop} = useSelector(adaptation)
   tableDataRef.current = structuredClone(pointSource)
   // console.log('tableDataRef',tableDataRef.current)
   let checedList = []
@@ -456,7 +458,7 @@ let TableEditForm = forwardRef(({ defaultTableData, tabledatas }, ref) => {
       rowKey={record => (record.index + ' ' + record.dataMark)}
       pagination={false}
       scroll={{
-        y: 546
+        y: laptop ? 300 : 546
       }}
     ></Table>
   )

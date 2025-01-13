@@ -5,7 +5,7 @@ import configIcon from './configIcon.png'
 import { Drawer, Input, message, Modal, Empty, Divider } from 'antd';
 import _, { result } from 'lodash'
 import { useSelector } from 'react-redux'
-import { selectProjectId,themeColor } from '@redux/systemconfig.js'
+import { selectProjectId,themeColor,adaptation } from '@redux/systemconfig.js'
 import { UISummary } from '@api/api.js'
 
 import CompanyMessage from '../../../components/defaultHome/companyMessage'
@@ -57,6 +57,7 @@ import RoomCapacity from '@com/defaultHome/roomCapacity' // 总额度容量
 import Roomload from '@com/defaultHome/roomload' // 实时负荷
 import Loadlate from "@com/defaultHome/loadlate" // 负荷率
 import {useTranslation} from "react-i18next"
+import Context from "@com/content"
 // TodayElectricity 今日用电量  TransformerTotal 变压器总负荷 TransformerNum 变压器数量  Inspection 本月巡检
 
 
@@ -143,6 +144,7 @@ const CDrawer = styled(Drawer)`
 export default function Index() {
   const {t} = useTranslation(["button","overview", "comm"])
   const { Search } = Input
+  const {laptop} = useSelector(adaptation)
   const [messageApi, contextHolder] = message.useMessage();
   const messageContent = (type, content) => {
     messageApi.open({
@@ -527,6 +529,7 @@ export default function Index() {
 
   return (
     <div className={style.mainContent} style={{ backgroundColor: '#eee' }}>
+      <Context.Provider value={{laptop}}>
       {contextHolder}
       <ReactGridLayout layout={layoutItem} onLayoutChange={onLayoutChange} {...defaultProps} isDroppable={true} onDrop={onDrop} style={{backgroundColor: previewrbgcolor || '#135abd'}} >
         {_.map(layoutItem, el => createElement(el))}
@@ -572,6 +575,7 @@ export default function Index() {
           <MenuUnfoldOutlined onClick={onClose} />
         </div>
       </CDrawer>
+      </Context.Provider>
     </div>
   )
 }

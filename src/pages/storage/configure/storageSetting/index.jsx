@@ -1,5 +1,6 @@
 import React, { useRef, useState } from "react";
 import style from "./style.module.less";
+import styled from "styled-components";
 import { useSelector } from "react-redux";
 import {useAntdTable} from 'ahooks'
 import Usetable from '@com/useTable'
@@ -28,6 +29,15 @@ import Titlelayout from '@com/titlelayout'
 import CModal from '@com/useModal'
 import { CustButtonT, CustLink } from '@com/useButton'
 const {Link} = Typography
+
+const Formbox=styled.div`
+  && {
+    
+    .ant-form-item {
+      margin-bottom: ${props=>props.theme.laptop ? "8px" : "24px"};
+    }
+  }
+`
 export default function Index() {
   const tableRef = useRef();
   const [form] = Form.useForm();
@@ -342,8 +352,7 @@ export default function Index() {
     return  getBase64(e.file);
   };
   const getBase64 = (file) =>
-    new Promise((resolve, reject) => {
-      console.log(file);
+    new Promise((resolve, reject) => { 
       const reader = new FileReader();
       if (file.status === "removed") {
         setImageUrl();
@@ -422,7 +431,7 @@ export default function Index() {
           mold="cust"
           key="mb"
         >
-         
+         <Formbox>
           <Form
             name="addform"
             form={form}
@@ -491,7 +500,7 @@ export default function Index() {
               rules={[{ required: true, message: "请输入站点容量" } ]}
               key="capacity"
             >
-              <InputNumber placeholder="请输入站点容量" style={{width: "466px"}} />
+              <InputNumber placeholder="请输入站点容量"    />
             </Item>
             <Item
               label="投运时间"
@@ -533,7 +542,7 @@ export default function Index() {
             <Item name="image" label="站点图片" getValueFromEvent={normFile} key="image">
               <Upload
                 listType="picture-card"
-                className={style.uploader}
+              //  className={style.uploader}
                 fileList={fileList}
                 onChange={handleChange}
                 onPreview={handlePreview}
@@ -557,6 +566,7 @@ export default function Index() {
               </Upload>
             </Item>
           </Form>
+          </Formbox>
         </CModal>
         <CModal open={previewOpen} footer={null} mold="cust" onCancel={handleCancel} key="del">
           <img

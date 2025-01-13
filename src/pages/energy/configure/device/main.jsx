@@ -10,7 +10,8 @@ import Mask from '@com/mask.jsx'
 import Titlelayout from '@com/titlelayout'
 import UseTable from '@com/useTable'
 import { CustButton } from '@com/useButton'
-
+import {adaptation} from '@redux/systemconfig'
+import { useSelector } from 'react-redux';
 const { Link } = Typography
 export default function Index({ projectId, areaId }) {
   const { t } = useTranslation(["button"])
@@ -18,7 +19,7 @@ export default function Index({ projectId, areaId }) {
   const dref = useRef()
   const [form] = Form.useForm()
   const Item = Form.Item
-
+  const {laptop} = useSelector(adaptation)
   console.log(areaId, "-----")
 
 
@@ -41,8 +42,8 @@ export default function Index({ projectId, areaId }) {
     {
       dataIndex: "op",
       title: "操作",
-      width: "400px",
-      render: (_, record, index) => (<Space size={32}><Link underline onClick={() => settingClick(record.id, record.name)}>{t("button:configure")}</Link><Link underline onClick={() => edit(record)}>{t("button:edit")}</Link>
+      width: laptop ? "300px" : "400px",
+      render: (_, record, index) => (<Space size={laptop ? 16 :32}><Link underline onClick={() => settingClick(record.id, record.name)}>{t("button:configure")}</Link><Link underline onClick={() => edit(record)}>{t("button:edit")}</Link>
 
         < Link underline type="danger" onClick={() => deleteRecord(record.id)
         }> {t("button:delete")}</Link >

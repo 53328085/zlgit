@@ -1,12 +1,12 @@
 .mainContent{
     margin-top: 16px;
     display: flex;
-    align-items: center;
+  //  align-items: center;
     padding-bottom: 16px;
 }
 .monthList{
-    width: 184px;
-    height: 800px;
+    flex:1 1 184px;
+ //   height: 800px;
     border: 1px solid #d7d7d7;
     background-color: #fff;
     .monthTitle{
@@ -45,13 +45,13 @@
     }
 }
 .priceContent{
- width: 1480px;
+ flex: 1 1 1480px;
  border: 1px solid #d7d7d7;
  background-color: #fff;
  border-radius: 4px;
  padding: 16px;
  margin-left: 16px;
- height: 800px;
+ 
  .headerTitle{
     border-left: 4px solid var(--ant-primary-color);
     padding-left: 16px;
@@ -64,7 +64,7 @@
  }
  .priceList{
     margin-top: 16px;
-    width: 1448px;
+   // width: 1448px;
     height: 160px;
     border: 1px solid #d7d7d7;
     display: flex;

@@ -170,8 +170,15 @@ const getStructure = async() => {
 }; 
 useEffect(() => {
    const val = new URLSearchParams(query).get('type') 
-   setisCard(val=='card')
-   setModelType(val)
+   //val不为null则是从‘定额告警跳转过来查看定额详细列表数据’
+   if(val==null){
+     setisCard(true)
+     setModelType('card')
+   }else{
+     setisCard(false)
+     setModelType('list')
+   }
+  
 }, [])
 const [total, setTotal] = useState()
 const geRoomData = async ({current, pageSize}, formData) => {

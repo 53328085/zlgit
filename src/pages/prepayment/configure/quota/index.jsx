@@ -1,5 +1,5 @@
 import React, {useState, useEffect, useRef} from 'react'
-import styled from 'styled-components'
+import styled, {css} from 'styled-components'
 import {useTranslation} from 'react-i18next'
 import Titlelayout from '@com/titlelayout'
 import {Button, Typography, Space, Input, Form, Radio, message} from 'antd'
@@ -12,6 +12,15 @@ import {cipher} from '@com/usehandler'
 import {CustButton} from "@com/useButton"
 const {Title, Link} = Typography
 let {QueryPrepayServerUrl, SaveUrl, QueryUsers, SavePreapyUser, DeletePreapyUser} = PrepayConfig
+const sty = css`
+  padding: 16px;
+  .left{
+    padding-right: 16px;
+  }
+  .right{
+    padding-left: 16px;
+  }
+`
 const Mainbox = styled.div`
   margin-top: 16px;
   padding: 32px 16px;
@@ -31,7 +40,7 @@ const Mainbox = styled.div`
     padding-left: 32px;
     flex: 1;
   }
-
+  ${props=>props.theme.laptop ? sty : null}
 `
 
 
@@ -207,7 +216,7 @@ export default function Index() {
             </div>
             <div className='right'>
                <Title level={5} style={{fontSize: "14px", marginBottom: "16px"}}>控制台用户管理</Title>
-               <UseTable columns={columns} dataSource={data} size="small" style={{width: "680px"}} onRow={onRow}></UseTable>
+               <UseTable columns={columns} dataSource={data} size="small"   onRow={onRow}></UseTable>
             </div>
           </Mainbox>  
           <Custmodal title={title} width={540} ref={ref} mold="cust" custft onOk={onOk} >

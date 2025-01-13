@@ -29,6 +29,15 @@ const Mainbox = styled.div`
     flex-direction: column;
     gap: 16px;
     flex:1;
+    display: flex;
+    .content {
+       flex: 1;
+       position: relative;
+       .tbbox {
+        position: absolute;
+        width: 100%;
+       }
+    }
 `
 
 export default function Index() { 
@@ -287,9 +296,12 @@ const onedit =(record) => {
      
     
           <Titlelayout title={CTitle} layout="flex">
-            <Mainbox>               
-               <Usetable columns={columns} dataSource={tableData} scroll={{x: 1648}} hbg="#ecf5ff" hbc="#515151" />
-            
+            <Mainbox>
+              <div className='content'>
+                <div className="tbbox">
+                <Usetable columns={columns} dataSource={tableData} scroll={{x: 1648}} hbg="#ecf5ff" hbc="#515151" />
+                </div>
+                </div>                 
              </Mainbox>
 
           </Titlelayout>
