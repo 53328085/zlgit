@@ -84,7 +84,8 @@ const Cmenu = styled(Menu)`
         flex-direction: column;
         justify-content: space-between;
         align-items: center;
-        width: 100px;
+       // width: 100px;
+        flex: 0 1 100px;
         padding: 4px 0; 
         height: 64px;
         color: ${props => props.theme.menusfontcolor || '#b2c1d1'};
