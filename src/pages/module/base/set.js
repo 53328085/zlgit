@@ -10,9 +10,9 @@ import {
   Checkbox,
   message
 } from "antd";
-import styled from "styled-components";
+import styled,{css} from "styled-components";
 import moment from 'moment';
-import { SketchPicker } from 'react-color';
+ 
 import {ProjectSetting} from '@api/api.js'
 
 import Mapcom from "@com/useMap/indexset";
@@ -23,13 +23,21 @@ import Titlelayout from '@com/titlelayout'
 import {useSelector, useDispatch} from "react-redux";
 import {useTranslation} from 'react-i18next'
 import {manager, maintenance} from '@redux/user' //   布尔值  是否是 项目管理员， 运营人员；
-import {publishState, getCurrProjectInfo, currProject, iszhCN, getThemeColor} from '@redux/systemconfig' // 布尔值 发布状态 
+import {publishState, getCurrProjectInfo, currProject, iszhCN, adaptation} from '@redux/systemconfig' // 布尔值 发布状态 
  
 import {SaveButton} from "@com/useButton"
-
+const stycss = css`
+column-gap: 32px;
+.rightlayout {
+  grid-template-rows: auto 1px repeat(2, 32px) 370px 1px 32px;
+  .upload{
+    grid-template-columns: 1fr;
+  }
+}
+`
  const Formbox = styled(Form)`
-  display: grid;
-  grid-template-columns: 578px 720px;
+  display: flex;
+ // grid-template-columns: 578px 720px;
   column-gap: 128px ;
   //grid-template-rows: repeat(16, 32px);
   //gap: 16px 128px;
@@ -43,6 +51,7 @@ import {SaveButton} from "@com/useButton"
     .divider {
       margin: 0px;
       border-color: #d7d7d7;
+      width: calc(100% - 96px);
     }
     .ant-form-item-explain-error {
       line-height: 1;
@@ -56,6 +65,7 @@ import {SaveButton} from "@com/useButton"
   }
 
   .leftlayout{
+    flex: 1 1 578px;
    //grid-template-rows: repeat(16, 32px);
     grid-auto-rows: auto;
    row-gap: 16px;
@@ -68,6 +78,7 @@ import {SaveButton} from "@com/useButton"
  
 }
  .rightlayout {
+  flex: 1 1 720px;
    grid-template-rows: 164px 1px repeat(2, 32px) 370px 1px 32px;
    row-gap: 16px;
    display: grid;
@@ -102,7 +113,7 @@ import {SaveButton} from "@com/useButton"
   .map { 
     display: flex;
     height: 370px;
-    width: 624px;
+   // width: 624px;
     margin-left: 96px;
   }
 }
@@ -121,6 +132,7 @@ import {SaveButton} from "@com/useButton"
     padding: 0;
     font-size: 14px;
   }
+  ${props => props.theme.laptop ? stycss : null}
 `; 
 const Info = styled.span`
   font-size: 12px;
@@ -128,9 +140,11 @@ const Info = styled.span`
 `
 const Dcheckbox = styled.div`
  && {
-  display: grid;
-  grid-template-columns: repeat(${props => props.colum}, ${props => props.wh || "96px"});
-  grid-auto-rows: auto;
+//  display: grid;
+ // grid-template-columns: repeat(${props => props.colum}, ${props => props.wh || "96px"});
+ // grid-auto-rows: auto;
+   display: flex;
+   flex-wrap: wrap;
   gap: 16px;
   .ant-checkbox-wrapper {
     margin: 0px;
@@ -194,27 +208,12 @@ const getVal = (key) => {
 }
 
 
-const CSketchPicker=({value, onChange}) => {
-  const dispatch = useDispatch();
-  const  onColorChange= (hex)=> {
-    dispatch(getThemeColor({primaryColor: hex}))
-    window.localStorage.setItem("CustThemeColor", hex)
-    onChange(hex)
-  }
-  return  <SketchPicker
-  presetColors={[value]}
-  disabled
-  color={value}
-  onChange={({ hex }) => {
-    onColorChange(hex);
-  }}
-/>
-}
+ 
 export default function ProjectSet({projectId}) {
   const dispatch = useDispatch(); 
   const ispublish = useSelector(publishState)
   const iszh = useSelector(iszhCN)
-
+  const {laptop} = useSelector(adaptation)
   
   const {t} = useTranslation("comm","common")
 
@@ -302,12 +301,7 @@ export default function ProjectSet({projectId}) {
     }
    
   }
-  const onColorChange = (hex) => {
  
-    
-    dispatch(getThemeColor({primaryColor: hex}))
- 
-}
 
 
   const { Item } = Form;
@@ -329,7 +323,7 @@ export default function ProjectSet({projectId}) {
 
     //imgProject: '',
     projectImage: '',
-    themeColor: '#237ae4',
+   // themeColor: '#237ae4',
     homeMenu: 0,
   };  
  
@@ -470,7 +464,6 @@ useEffect(() => {
     <Formbox
       form={form}   
       labelAlign="left"
-      size="middle"
       scrollToFirstError={true}
       disabled={ispublish}
       onFinish={onFinish}
@@ -494,13 +487,13 @@ useEffect(() => {
       </div>
       <Divider dashed  className="divider" />
       <Item label={t("common:DefaultModule")}>
-          <Dcheckbox colum={iszh ? 4 : 2} wh="auto">
+          <Dcheckbox   wh="auto">
             <Checkbox checked disabled>{t("common:ProjectOverview")}</Checkbox>
             <Checkbox checked disabled>{t("common:OperationMonitoring")}</Checkbox>
           </Dcheckbox>
       </Item>
       <Item label={t("common:OptionalModules")}> {/* className='optional' */}
-           <Dcheckbox colum={iszh ? 4 : 2} wh="auto" >
+           <Dcheckbox   wh="auto" >
              {optionalProject.map(o => <Item noStyle name ={o.value} valuePropName='checked' key={o.value}><Checkbox onChange={chChnage}>{o.label}</Checkbox></Item>)}
           </Dcheckbox>
      
@@ -577,7 +570,7 @@ useEffect(() => {
            <Info>{t("comm:sizeofpicture", {size: "248*168"})}</Info>
          </Item>
       </div>
-      <Divider dashed  className="divider" style={{width: '624px',minWidth: '624px', marginLeft: '96px'}} />    
+      <Divider dashed  className="divider"   />    
       <Item label={t("comm:ProjectAddress")} name="address" labelCol={iszh ? null : {flex: "160px"}}  rules={[  
               {
                 required: true,
@@ -599,9 +592,9 @@ useEffect(() => {
  
     
       <div className='map'> 
-         <Mapcom setAaddress={setAaddress}   ref={map} />         
+         <Mapcom setAaddress={setAaddress}   ref={map} />          
       </div> 
-      <Divider dashed  className="divider" style={{width: '624px', minWidth: '624px', marginLeft: '96px'}} />
+      <Divider dashed  className="divider"   /> 
       <Item label={t("comm:Projectremark")}   name="remark"> 
         <TextArea placeholder={t("common:ProjectDetails")} maxLength={99} style={{height: '32px'}} />
       </Item> 

@@ -5,15 +5,9 @@ import Pagecount from '@com/pagecontent'
 import CustContext from '@com/content.js'
 import Set from './set'
 export default function Index() {
-  const [value, setvalue] = useState('set')
+ 
   const projectId = useSelector(selectProjectId);
-  const tabs = [
-    {label: '基础设置', key: 'set'},
-  
-  ]
- const propsData ={
-  tabs,
-}
+
   return (
     <CustContext.Provider value={{}}>
     <Pagecount showserach={false} pd="0px">   

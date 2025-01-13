@@ -43,12 +43,6 @@ const Drawerbox = styled(Drawer)`
         grid-template-columns: 692px 1fr 714px;
         column-gap: 30px;
         grid-template-rows: 1fr;
-
-        .leftpart{
-          display: flex;
-          flex-direction: column;
-          row-gap: 16px;
-        }
         ${props=> props.theme.laptop ? sty : null}
         .title {
           padding-left: 16px;
@@ -266,7 +260,8 @@ function Draw({ params }, ref) {
     drawOpen,
   }))
 
-  const changeUnselected = (v) => {   
+  const changeUnselected = (v) => {
+    console.log(v)
     try {
       if (v != 0) {
         let arr = unusedtbbk.current?.filter(i => v == i.deviceStyle) || []
@@ -359,22 +354,22 @@ function Draw({ params }, ref) {
      
       destroyOnClose
     >
-      <div className='leftpart'>
-      <Titlelayout title="选中设备" layout="flex">
-        <div className='z'>
+      <Titlelayout title="选中设备">
+
         <UserTable
           columns={deviceColumns}
           rowSelection={rowSelection}
           dataSource={usedtb}
           rowKey="id"
           ref={setb}
-          
+          scroll={{
+            y: 696
+          }}
+          style={{ marginTop: '16px' }}
         />
-        </div>
-  
+
+
       </Titlelayout>
-      </div>
-     
       <div className="optab">
         <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
           <Paragraph>选择设备</Paragraph>

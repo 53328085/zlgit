@@ -53,6 +53,7 @@ const {
 const sty = css`
 .item {
   grid-template-columns: repeat(4, 120px) 1fr;
+   
 }
 `
 const Mainbox = styled.div`
@@ -69,8 +70,12 @@ const Mainbox = styled.div`
     border-bottom: 1px dotted #dedede;
     .item {
       display: grid;
-      grid-template-columns: 160px 160px 256px 256px 1fr;
+      grid-template-columns: 160px 160px 256px 256px auto;
+      
       column-gap: 16px;
+      .ant-space-align-center{
+        margin-left: auto;
+      }
       .as {
         grid-area: 1 / 1 / 2/ 3;
       }
@@ -473,7 +478,7 @@ export default function Account({ projectId, CModal }) {
             />
           </Item>
           <Item noStyle>
-            <Space size={16} style={{ marginLeft: "auto" }}>
+            <Space>
               <Pbutton onClick={() => menufn(field.id, 2, 4)}>{t("common:DataPermissions")}</Pbutton>
               <Pbutton onClick={() => menufn(field.id, 1, 4)}>{t("common:MenuPermissions")}</Pbutton>
               <Pbutton onClick={() => useEdit(field, 4)}> {t("common:Edit")}</Pbutton>
@@ -547,7 +552,7 @@ export default function Account({ projectId, CModal }) {
                   "YYYY-MM-DD HH:mm:ss"
                 ).format("YYYY/MM/DD")}
               />
-              <Space size={16} style={{ marginLeft: "auto" }}>
+              <Space >
                 <Pbutton onClick={() => useEdit(item, 2)}>{t("common:Edit")}</Pbutton>
                 <Pbutton onClick={() => reset(item)}>{t("common:ResetPassword")}</Pbutton>
                 <Dbutton onClick={() => onDeleteMsg(0, item.id)}>{t("common:Delete")}</Dbutton>
@@ -558,7 +563,7 @@ export default function Account({ projectId, CModal }) {
       ) : null}
       {roleType == 2 || roleType == 1 ? (
         <div className="admin">
-          <Space size={16}>
+          <Space >
             <Title level={5} className="title">
               {t("common:ProjectAdministrator")}
             </Title>
@@ -591,7 +596,7 @@ export default function Account({ projectId, CModal }) {
                 <Item noStyle shouldUpdate>
                   {({ getFieldValue, getFieldsValue }) => {
                     return (
-                      <Space style={{ marginLeft: "auto" }} size={16}>
+                      <Space >
                         <Pbutton
                           onClick={() => menufn(getFieldValue("id"), 1, 3)}
                         >
@@ -627,7 +632,7 @@ export default function Account({ projectId, CModal }) {
       ) : null}
       {roleType == 3 || roleType == 1 ? (
         <div className="admin">
-          <Space size={16}>
+          <Space>
             <Title level={5} className="title">
              {t("common:OperationAndMaintenancePersonnel")}
             </Title>
