@@ -600,7 +600,7 @@ export default function gateway({ deviceStyle }) {
   return (
     <div>
       <Comp {...ComProps}>
-        <Table columns={columns}  dataSource={dataSource} pagination={page} loading={loading} onChange={changePage } ref={tableLoadRef} onExport={onExport}></Table>
+        <Table columns={columns}  dataSource={dataSource} pagination={page} paginationShow={true} loading={loading} onChange={changePage } ref={tableLoadRef} onExport={onExport}></Table>
       </Comp>
       {AddModalComp}
       {/* <MyContext.Provider value={{ addopts, gatewaylist, devicelist, alarmopts, form: addform, deviceStyle, levelname }}>

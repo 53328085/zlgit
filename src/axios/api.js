@@ -2005,6 +2005,8 @@ export const Monitoring = {
       ), //设备
     HistoryPointTrend: (data) =>
       server.post(`/Monitor/RuntimeDevice/HistoryPointTrend`, data), //
+    HistoryPointsTrend: (data) =>
+      server.post(`/Monitor/RuntimeDevice/HistoryPointsTrend`, data), //
     HistoryTrend: (data) =>
       server.post(`/Monitor/RuntimeDevice/HistoryTrend`, data), //
     HistoryTable: (data) =>
