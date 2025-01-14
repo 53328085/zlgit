@@ -1,6 +1,6 @@
 import React, {useState, useEffect, useRef} from 'react'
 import {useSelector} from 'react-redux'
-import {selectProjectId, iszhCN} from '@redux/systemconfig.js'
+import {selectProjectId, iszhCN,adaptation} from '@redux/systemconfig.js'
 
 import Pagecount from '@com/pagecontent'
 import {useTranslation} from "react-i18next"
@@ -16,6 +16,7 @@ export default function Index() {
   const {t} = useTranslation("common")
   const iszh = useSelector(iszhCN)
   const projectId = useSelector(selectProjectId);
+  const {laptop} = useSelector(adaptation)
   const tabs = [
    /*  {label: '项目基础设置', key: 'set'}, */
     {label: t("RegionSettings"), key: 'area'},
@@ -37,7 +38,7 @@ export default function Index() {
  let Com = ProjectCom[value]
   return (
     <CustContext.Provider value={propsData}>
-    <Pagecount showserach={false} pd="32px">   
+    <Pagecount showserach={false} pd={laptop ? "16px" : "32px"}>   
         
      { <Com CModal={CModal} projectId={projectId} />}
       
