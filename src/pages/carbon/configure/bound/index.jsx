@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useRef, useMemo, useCallback } from 'react'
 import Pagecount from '@com/pagecontent'
-import styled, { createGlobalStyle } from 'styled-components'
+import styled, { createGlobalStyle, css } from 'styled-components'
 import { Form, Space, Button, Tree, Input, Typography, Empty } from 'antd'
 import { useSelector } from 'react-redux'
 import { selectProjectId, enterprise } from '@redux/systemconfig'
@@ -76,6 +76,9 @@ const Custtitle = styled.div`
    
 
 `
+const csssty = css`
+ grid-template-columns: 632px 1fr ;
+`
 const Mainbox = styled.div`
   flex: 1;
   display: grid;
@@ -96,7 +99,7 @@ const Mainbox = styled.div`
     margin-bottom: 16px;
   }
   }
- 
+ ${props => props.theme.laptop ? csssty : null}
 `
 const Tablebox = styled.div`
   flex:1;

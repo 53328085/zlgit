@@ -40,7 +40,7 @@ export default memo(function Index() {
     <Headcust>
         { (systemLogoImage || imgurl.logo) && <img src={systemLogoImage ?  `data:image/png;base64,${systemLogoImage}` : imgurl.logo}  alt='' className='logo'  />} {/* width={120} */}
         <div style={{display: 'flex', width: '402px', justifyContent: 'center'}}>
-         {1 ==1 && <Link href='https://www.cmmiinstitute.com/pars/appraisals/69522' target="_blank"> { imgurl.credentials &&  <img src={imgurl.credentials} className='cmmi'    />}</Link>}
+         {cmmi ==1 && <Link href='https://www.cmmiinstitute.com/pars/appraisals/69522' target="_blank"> { imgurl.credentials &&  <img src={imgurl.credentials} className='cmmi'    />}</Link>}
          </div>
     </Headcust>
     

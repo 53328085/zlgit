@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useState,useRef } from 'react'
-import styled from 'styled-components'
+import styled, {css} from 'styled-components'
  
 import { Select, Divider, Input, Button, message, Form, Space, Typography} from 'antd'
 import { useSelector } from 'react-redux'
@@ -19,12 +19,16 @@ import Mask from "@com/mask"
 import { CustButtonT, CustLink } from '@com/useButton'
 const {Item} = Form
 const {Link} = Typography
+const csssty = css`
+row-gap: 16px;
+`
 const ContainerDiv = styled.div`
  display: grid;
  grid-template-rows: 32px 1px 1fr;
  row-gap: 32px;
  padding-top: 16px;
  flex: 1;
+ ${props=> props.theme.laptop ? csssty : null}
 `
 export default function Index() {
   const [form] = Form.useForm() 

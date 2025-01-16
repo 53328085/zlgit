@@ -2,14 +2,224 @@
 import React, { useEffect, useState, useRef, forwardRef, useImperativeHandle, Fragment, useMemo } from 'react'
 import { useSelector } from 'react-redux'
 import { Divider, Select, Tree, Row, Col, Input, Form, message, Drawer, Table,Button, Space} from 'antd'
-import { publishState } from '@redux/systemconfig'
-import BlueColumn from '@com/bluecolumn'
-import commonstyle from './commonstyle.module.less'
+import { publishState,adaptation } from '@redux/systemconfig'
+ import styled, {css} from 'styled-components'
 import { LeftOutlined, RightOutlined } from '@ant-design/icons';
 import {operationDesigin} from '@api/api'
 import {SetPosition} from './position'
 import {CustButton, CustButtonT} from "@com/useButton"
+import UsetTable from "@com/useTable";
 //配置线路
+const csssty = css`
+  .transferContent {
+    padding: 16px;
+  }
+  .leftTable {
+    row-gap: 16px;
+  }
+  .actions {
+    margin: 0px 8px;
+    .finalButton {
+      row-gap: 8px;
+    }
+  }
+`;
+const Mainbox = styled.div`
+   &&{
+   
+    height: inherit;
+    background-color: #003366;
+    padding: 32px;
+    display: flex;
+    position: absolute;
+    left: 0px;
+    top: 50%;
+    transform: translate(200px, -50%);
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    grid-template-rows: 1fr;
+    width: calc(100% - 200px);
+ 
+   
+  .leftTable {
+    height: inherit;
+    display: flex;
+    flex-direction: column;
+    row-gap: 32px;
+  }
+
+  .subTable {
+    padding: 16px;
+    background-color: #fff;
+    border-radius: 2px;
+     display: flex;
+     flex-direction: column;
+     row-gap: 16px;
+    flex: 1;
+  }
+
+  .otherSubTable {
+    flex: 1;
+    padding: 16px 16px 0 16px;
+    background-color: #fff;
+    border-radius: 2px;
+    display: flex;
+    flex-direction: column;
+    row-gap: 16px;
+  }
+
+  .mainContent {
+    flex: 1;
+    position: relative;
+    overflow: auto;
+  }
+
+  .actions {
+    margin: 0 32px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-evenly;
+    .firstButton {
+      // margin-top: 64px;
+      display: flex;
+      justify-content: space-between;
+    }
+
+    .secondButton {
+      //  margin-top: 182px;
+      display: flex;
+      justify-content: space-between;
+    }
+
+    .leftButton {
+      display: inline-block;
+      width: 68px;
+      height: 46px;
+      background-color: var(--ant-primary-color);
+      border-radius: 4px;
+      cursor: pointer;
+      color: #fff;
+      font-size: 20px;
+      line-height: 46px;
+      text-align: center;
+
+      &:hover {
+        background-color: rgba(64, 158, 255, 1);
+      }
+    }
+
+    .rightButton {
+      display: inline-block;
+      width: 68px;
+      height: 46px;
+      margin-left: 10px;
+      background-color: var(--ant-primary-color);
+      border-radius: 4px;
+      cursor: pointer;
+      color: #fff;
+      font-size: 20px;
+      line-height: 46px;
+      text-align: center;
+
+      &:hover {
+        background-color: rgba(64, 158, 255, 1);
+      }
+    }
+
+    .finalButton {
+      // margin-top: 180px;
+      display: flex;
+      flex-direction: column;
+      row-gap: 16px;
+      .saveButton {
+        width: 146px;
+        height: 40px;
+        background-color: var(--ant-primary-color);
+        border-radius: 4px;
+        cursor: pointer;
+        color: #fff;
+        font-size: 14px;
+        line-height: 40px;
+        text-align: center;
+
+        &:hover {
+          background-color: rgba(64, 158, 255, 1);
+        }
+      }
+
+      .closeButton {
+        margin-top: 16px;
+        width: 146px;
+        height: 40px;
+        background-color: #fff;
+        border-radius: 4px;
+        cursor: pointer;
+        color: #212121;
+        font-size: 14px;
+        line-height: 40px;
+        text-align: center;
+
+        &:hover {
+          opacity: 0.5;
+        }
+      }
+    }
+  }
+
+  .rightTable {
+    //  width: 714px;
+    //  height: 696px;
+    border-radius: 2px;
+    padding: 16px 16px 0 16px;
+    background-color: #fff;
+    display: flex;
+    flex-direction: column;
+    row-gap: 16px;
+  }
+  .rightTable,
+  .leftTable {
+    .publicTitle {
+      height: 32px;
+      padding-left: 16px;
+      line-height: 32px;
+      font-size: 14px;
+      color: #333;
+      border-left: 4px solid var(--ant-primary-color);
+    }
+    .searchInput {
+      display: flex;
+      align-items: center;
+      column-gap: ${props=> props.theme.laptop ? "8px" : "16px"};
+      height: 32px;
+      .ipt {
+        display: flex;
+        column-gap: 8px;
+        align-items: center;
+
+       
+
+      }
+      
+    }
+    .mainTable {
+      padding: 16px;
+      background-color: #fff;
+      border-radius: 2px;
+      display: flex;
+      flex-direction: column;
+      row-gap: 16px;
+      flex: 1;
+      
+    }
+    .tbwrap {
+        position: absolute;
+        width: 100%; 
+      }
+  }
+
+  ${(props) => (props.theme.laptop ? csssty : null)}
+}
+`;
 export let SetLine = forwardRef(({  getQueryPageDevice,areaId, setTarg }, ref) => {
     const [open,setOpen] = useState(false)
     const publish = useSelector(publishState)
@@ -21,7 +231,7 @@ export let SetLine = forwardRef(({  getQueryPageDevice,areaId, setTarg }, ref) =
     const [subMeter, setSubMeter] = useState([]); //已选择设备data
     const [subMeterRowKeys, setSubMeterRowKeys] = useState([]);//选中check
     const [subSelectedRows, setSubSelectedRows] = useState([]);//选中设备data
-
+    const {laptop} = useSelector(adaptation)
     const [lineId, setLineId] = useState(null);
     const [searchValue, setSearchValue] = useState(""); //搜索值
     const [devicetype,setDeviceType] = useState(0);//设备类型
@@ -37,30 +247,29 @@ export let SetLine = forwardRef(({  getQueryPageDevice,areaId, setTarg }, ref) =
         {label:'储能设备',value:11}
     ]
     const columns = [
-        { title: '设备编号', dataIndex: 'sn', align: "center", width: 201 },
-        { title: '设备名称', dataIndex: 'name', align: "center", width: 201 },
+        { title: '设备编号', dataIndex: 'sn', align: "center",  },
+        { title: '设备名称', dataIndex: 'name', align: "center",  },
         { title: '安装地址', dataIndex: 'address', align: "center", },
 
     ]
-    const btncss = {
-        width: 68,
-        height: 46,
-        background: "#237ae4",
-        textAlign: 'center',
-        lineHeight: '46px',
-        borderRadius: 4,
-        cursor: 'pointer',
-    }
-    const btnstyle = {
-        width: 146,
-        height: 40,
-        background: '#237ae4',
-        textAlign: 'center',
-        lineHeight: '40px',
-        color: '#fff',
-        borderRadius: 4,
-        cursor: 'pointer',
-    }
+    const btnsty = laptop
+    ? {
+        height: "32px",
+        width: "55px",
+      }
+    : {
+        height: "46px",
+        width: "68px",
+      };
+  const savesty = laptop
+    ? {
+        height: "34px",
+        width: "120px",
+      }
+    : {
+        height: "46px",
+        width: "146px",
+      };
      //获取已选和未选设备
   const getQueryDeviceList=async(deviceStyle=0,alike="")=>{
     let params={
@@ -176,6 +385,9 @@ export let SetLine = forwardRef(({  getQueryPageDevice,areaId, setTarg }, ref) =
 
     //保存线路编辑
     const saveConfig = async () => {
+       try {
+        
+     
         setSearchValue("")
         const subsn = subMeter.map(it =>({sn:it.sn,lngLat:it.lngLat,lngLatAddress:it.lngLatAddress}) )
         console.log(subMeter)
@@ -192,6 +404,9 @@ export let SetLine = forwardRef(({  getQueryPageDevice,areaId, setTarg }, ref) =
         } else {
             message.error(resp.errMsg)
         }
+    } catch (error) {
+        
+    }
     }
     //搜索
     const onSearch = async (value, event) => {
@@ -312,83 +527,75 @@ export let SetLine = forwardRef(({  getQueryPageDevice,areaId, setTarg }, ref) =
     useEffect(()=>{
         // getQueryDeviceList()
     },[areaId])
-    const style = {
-        width: "1686px",
-    height: "770px",
-    backgroundColor: "#003366",
-    padding: "32px",
-    display: "flex",
-    position: "absolute",
-    left: "0px",
-    top: "50%",
-    transform: "translate(200px, -50%)",
-    padding: "32px",
-    }
+    
     return (
-        <div style={style}>
-            <div style={{ position: 'relative', width: 692 }}>
-                <div style={{ background: "#ffffff", padding: 16, height: 698 }}>
+        <Mainbox>
+            <div className="leftTable">
+                <div className="otherSubTable">
                     <div style={{display:'flex',justifyContent:'space-between'}}>
-                    <BlueColumn name="选择设备" styled={{ marginBottom: 16 }}></BlueColumn>
-                    <div className={commonstyle.divBtn} onClick={setlocal}>设置坐标</div>
+                    <div className='publicTitle'>选择设备</div>
+                    <CustButton wh="auto" onClick={setlocal}>设置坐标</CustButton>
                     </div>
-                    
-                    <Table
+                    <div className="mainContent">
+                    <div className="tbwrap">
+                    <UsetTable
                         bordered
                         pagination={false}
                         rowSelection={{ onChange: subMeterSelectChange, selectedRowKeys: subMeterRowKeys }}
-                        columns={columns}
-                        scroll={{ y: 560 }}
-                        size={'small'}
+                        columns={columns} 
                         dataSource={subMeter}
                         rowKey={record => record.sn}
-                    ></Table>
+                    ></UsetTable>
+                    </div>
+                    </div>
                 </div>
 
             </div>
-            <div style={{ position: 'relative', flex: 1, padding: '64px 32px', display: "flex", flexDirection: "column", justifyContent: "space-evenly" }}>
+            <div className="actions">
                 {publish ? null : <>
                     <div>
                         <div style={{ color: '#fff', marginBottom: 16 }}>选择线路分表</div>
                         <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                            <CustButton style={{width: 68, height: 46}} icon={<LeftOutlined style={{ color: '#fff', fontSize: 20 }} />} onClick={subToLeft} /> 
-                            <CustButton style={{width: 68, height: 46}} icon={<RightOutlined style={{ color: '#fff', fontSize: 20 }} />} onClick={subToRight} /> 
+                            <CustButton style={btnsty} icon={<LeftOutlined   />} onClick={subToLeft} /> 
+                            <CustButton style={btnsty} icon={<RightOutlined   />} onClick={subToRight} /> 
                         </div>
                     </div>
                 </>}
 
-                <Space direction="vertical" size={16}>
-                    {publish ? null : <CustButtonT style={{height: "40px", width: "146px"}} onClick={saveConfig} text="save" />}
-                    <CustButtonT onClick={close} style={{height: "40px", width: "146px"}} text="cancel"  /> 
+                <Space direction="vertical" >
+                    {publish ? null : <CustButtonT style={savesty} onClick={saveConfig} text="save" />}
+                    <CustButtonT type="default" onClick={close} style={savesty} text="cancel"  /> 
                 </Space>
             </div>
-            <div style={{ position: 'relative', width: 714 }}>
-                <div style={{ background: "#ffffff", padding: 16, height: '99%', width: '100%', overflow: 'hidden', }}>
-                    <BlueColumn name="未选中的设备" styled={{ marginBottom: 16 }}></BlueColumn>
-                    <div style={{display:'flex',justifyContent:'space-between'}}>
-                    <div>
-                    <span>设备类型</span>
-                    <Select style={{width:128, marginLeft: 16 }} options={deviceoptions} defaultValue={0} onChange={changeType} value={devicetype}></Select>
+            <div className="rightTable">
+               
+                    <div className="publicTitle">未选中的设备</div>
+                    <div className="searchInput">
+                    <div className='ipt'>
+                    <div>设备类型</div>
+                    <Select style={{width: laptop ? "100px" : "150px"}}  options={deviceoptions} defaultValue={0} onChange={changeType} value={devicetype}></Select>
                     </div>    
-                    <div style={{ marginBottom: 16 }} className={commonstyle.searchinp}>
-                        <span>设备搜索</span>
-                        <Search style={{ width: 304, borderRadius: 16, marginLeft: 16 }} placeholder="请设备编号/安装地址" onSearch={onSearch} value={searchValue} onChange={(e) => { setSearchValue(e.target.value) }}></Search>
+                    <div className='ipt'>
+                        <div>设备搜索</div>
+                        <Search style={{width: laptop ? "160px" : "256px" }} placeholder="请设备编号/安装地址" onSearch={onSearch} value={searchValue} onChange={(e) => { setSearchValue(e.target.value) }}></Search>
                     </div>
                     </div>
-                    
-                    <Table
+                    <div className="mainContent">
+                <div className="tbwrap">
+                    <UsetTable
                         bordered
                         pagination={false}
                         rowSelection={{ selectedRowKeys, onChange: onSelectChange }}
                         columns={columns}
                         dataSource={dataSource}
-                        scroll={{ y: 500 }}
-                        size={'small'}
+                       
                         rowKey={record => record.sn}
-                    ></Table>
-                </div>
+                    ></UsetTable>
+                    </div>
+                    </div>
+                 
             </div>
             <SetPosition positionRef={positionRef} savePosition={savePosition}/>
-        </div>
+        </Mainbox>
     )
 })

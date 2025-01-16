@@ -123,7 +123,7 @@ export default function Index() {
       key: 'action',
       align:'center',
       render: (_, record) => (
-        <Space size="middle">
+        <Space>
           <Link type="danger" underline onClick={() => deleteRecord(record)}>{t("button:delete")}</Link>
         </Space>
       ),
