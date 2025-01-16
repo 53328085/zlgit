@@ -1,217 +1,91 @@
 import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next"
-import styled, {css} from "styled-components";
 import style from './style.module.less'
+import styled, { css } from "styled-components";
+import { useSelector } from 'react-redux'
 import { Table, Input, message, Select, Space } from "antd";
 import { LeftOutlined, RightOutlined } from '@ant-design/icons'
 import { cloneDeep } from "lodash";
-import { useSelector } from 'react-redux'
-import { filterDeviceStyle } from '@redux/systemconfig.js'
 import { CustButton } from '@com/useButton'
-import UsetTable from "@com/useTable";
-import { adaptation } from "@redux/systemconfig";
-const csssty = css`
-  .transferContent {
-    padding: 16px;
-  }
-  .leftTable {
-    row-gap: 16px;
-  }
-  .actions {
-    margin: 0px 8px;
-    .finalButton {
-      row-gap: 8px;
-    }
-  }
-`;
-const Mainbox = styled.div`
-   &&{
-   
-    height: inherit;
+import { Monitoring } from '@api/api.js'
+import {
+    adaptation
+} from "@redux/systemconfig.js";
+const { ComparativeAnalysis: { AllDeviceStyle, QueryCompareDevice } } = Monitoring
+const sty = css`
+ justify-content: flex-start;
+ row-gap: 32px;
+ padding-top: 32px;
+`
+const TransferContent = styled.div`
+&&{
+    width: calc(110%);
+   // width: 1680px;
+    //height:100%;
     background-color: #003366;
     padding: 32px;
     display: flex;
     position: absolute;
-    left: 0px;
-    top: 50%;
-    transform: translate(200px, -50%);
-    display: grid;
-    grid-template-columns: 1fr auto 1fr;
-    grid-template-rows: 1fr;
-    width: calc(100% - 200px);
- 
-   
-  .leftTable {
-    height: inherit;
+   // top:50%;
+    transform: translate(-60px, 30px);
+    min-height: calc(100%);
+    overflow: auto;
     display: flex;
-    flex-direction: column;
-    row-gap: 32px;
-  }
-
-  .subTable {
+    .otherSubTable{
+     flex: 1 1 692px;
+  //  height: 696px;
     padding: 16px;
     background-color: #fff;
     border-radius: 2px;
-     display: flex;
-     flex-direction: column;
-     row-gap: 16px;
-    flex: 1;
-  }
-
-  .otherSubTable {
-    flex: 1;
-    padding: 16px 16px 0 16px;
-    background-color: #fff;
-    border-radius: 2px;
+    margin-bottom: 32px;
+}
+    .publicTitle{
+    height: 32px;
+    padding-left: 16px;
+    margin-bottom: 16px;
+    line-height: 32px;
+    font-size: 14px;
+    color: #333;
+    border-left: 4px solid var(--ant-primary-color);
+}
+.searchInput{
+    margin-bottom: 16px;
     display: flex;
-    flex-direction: column;
-    row-gap: 16px;
-  }
+    align-items: center;
+}
 
-  .mainContent {
-    flex: 1;
-    position: relative;
-    overflow: auto;
-  }
 
-  .actions {
-    margin: 0 32px;
+.actions{
+    padding: ${props => props.laptop ? "0 16px" : "32px"};
     display: flex;
     flex-direction: column;
     justify-content: space-evenly;
-    .firstButton {
-      // margin-top: 64px;
-      display: flex;
-      justify-content: space-between;
-    }
+    align-items: stretch;
+ 
+   .arrow{
+    height: 46px;
+     width: ${props => props.laptop ? "38px" : "68px"};
+   }
 
-    .secondButton {
-      //  margin-top: 182px;
-      display: flex;
-      justify-content: space-between;
-    }
-
-    .leftButton {
-      display: inline-block;
-      width: 68px;
-      height: 46px;
-      background-color: var(--ant-primary-color);
-      border-radius: 4px;
-      cursor: pointer;
-      color: #fff;
-      font-size: 20px;
-      line-height: 46px;
-      text-align: center;
-
-      &:hover {
-        background-color: rgba(64, 158, 255, 1);
-      }
-    }
-
-    .rightButton {
-      display: inline-block;
-      width: 68px;
-      height: 46px;
-      margin-left: 10px;
-      background-color: var(--ant-primary-color);
-      border-radius: 4px;
-      cursor: pointer;
-      color: #fff;
-      font-size: 20px;
-      line-height: 46px;
-      text-align: center;
-
-      &:hover {
-        background-color: rgba(64, 158, 255, 1);
-      }
-    }
-
-    .finalButton {
-      // margin-top: 180px;
-      display: flex;
-      flex-direction: column;
-      row-gap: 16px;
-      .saveButton {
-        width: 146px;
-        height: 40px;
-        background-color: var(--ant-primary-color);
-        border-radius: 4px;
-        cursor: pointer;
-        color: #fff;
-        font-size: 14px;
-        line-height: 40px;
-        text-align: center;
-
-        &:hover {
-          background-color: rgba(64, 158, 255, 1);
-        }
-      }
-
-      .closeButton {
-        margin-top: 16px;
-        width: 146px;
-        height: 40px;
-        background-color: #fff;
-        border-radius: 4px;
-        cursor: pointer;
-        color: #212121;
-        font-size: 14px;
-        line-height: 40px;
-        text-align: center;
-
-        &:hover {
-          opacity: 0.5;
-        }
-      }
-    }
-  }
-
-  .rightTable {
-    //  width: 714px;
-    //  height: 696px;
-    border-radius: 2px;
-    padding: 16px 0 0 16px;
-    background-color: #fff;
-    display: flex;
-    flex-direction: column;
-    row-gap: 16px;
-  }
-  .rightTable,
-  .leftTable {
-    .publicTitle {
-      height: 32px;
-      padding-left: 16px;
-      line-height: 32px;
-      font-size: 14px;
-      color: #333;
-      border-left: 4px solid var(--ant-primary-color);
-    }
-    .searchInput {
-      display: flex;
-      align-items: center;
-      height: 32px;
-    }
-    .mainTable {
-      padding: 16px;
-      background-color: #fff;
-      border-radius: 2px;
-      display: flex;
-      flex-direction: column;
-      row-gap: 16px;
-      flex: 1;
-      
-    }
-    .tbwrap {
-        position: absolute;
-        width: 100%; 
-      }
-  }
-
-  ${(props) => (props.theme.laptop ? csssty : null)}
+   ${props => props.laptop ? sty : null};
+   
 }
-`;
+.rightTable{
+    flex: 1 1 714px;
+ //   height: 696px;
+    border-radius: 2px;
+    padding: 16px;
+    background-color: #fff;
+}
+}
+
+`
+
 
 export default function index(props) {
+    console.log(props)
+    const { laptop } = useSelector(adaptation)
+    const projectId = useSelector(state => state.system.menus.projectId)
     const { t } = useTranslation(["button"])
     const [messageApi, contextHolder] = message.useMessage();
     const { Search } = Input
@@ -220,18 +94,42 @@ export default function index(props) {
     const [subCopy, setSubCopy] = useState([])
     const [unknownData, setUnknownData] = useState([])
     const [unknownCopy, setUnknownCopy] = useState([])
-    const {laptop} = useSelector(adaptation)
-
     useEffect(() => {
         let subArr = cloneDeep(props.subTable)
-        let unknownArr = cloneDeep(props.unknownTable)
         setSubData(subArr)
         setSubCopy(subArr)
+        let unknownArr = cloneDeep(props.unknownTable)
         setUnknownData(unknownArr)
         setUnknownCopy(unknownArr)
         setType(0)
+        setSearchUnknown('')
     }, [props])
 
+    const [devices, setDevies] = useState([])
+    const getType = async () => { // 获取设备类型
+        try {
+            let { success, data } = await AllDeviceStyle(projectId);
+            if (success && Array.isArray(data)) {
+                setDevies([{
+                    deviceStyle: 0, name: '全部类型',
+                }, ...data]);
+            } else {
+                setDevies([]);
+            }
+        } catch (error) {
+            setDevies([]);
+        }
+    }
+    const getDevices = async () => {
+        console.log(projectId, type, subData);
+        if (props.modalName == "添加站点设备") {
+            const resp = await QueryCompareDevice(projectId, type, searchUnknown)
+            if (resp.success && Array.isArray(resp.data)) {
+                setUnknownData(resp.data)
+            }
+        }
+
+    }
     const [selectedRowKeys, setSelectedRowKeys] = useState([]);
     const onSelectChange = (newSelectedRowKeys) => {
         //   console.log(newSelectedRowKeys)
@@ -254,7 +152,7 @@ export default function index(props) {
             let arr2 = [];
             let copyArr = [...unknownCopy];
 
-             
+            console.log(selectedRowKeys)
             selectedRowKeys.forEach(id => {
                 let idx = arr.findIndex(a => a.id == id);
                 if (idx > -1) {
@@ -263,24 +161,6 @@ export default function index(props) {
                     arr2.push(...item)
                 }
             })
-
-            /*  for(let i =0;i< arr.length;i++){
-                 for(let j = 0;j<selectedRowKeys.length;j++){
-                     if(arr[i].id == selectedRowKeys[j]){
-                         for(let x = 0;x< copyArr.length;x++){
-                             if(arr[i].id == copyArr[x].id){
-                                 copyArr.splice(x, 1)
-                             }
-                         }
-                         arr2.push(arr[i])
-                         arr.splice(i,1)
-                         
-                     }
-                 }
-             } */
-            console.log(arr2);
-            //  setSubData(subData.concat(arr2));
-            // setSubCopy(subCopy.concat(arr2));
             setSubData([...arr2, ...subData])
             setSubCopy([...arr2, ...subCopy])
             setUnknownData([...arr]);
@@ -345,10 +225,18 @@ export default function index(props) {
         props.closeValue('close');
     }
     const handleSave = () => {
+        console.log(subData.length);
+        if (subData.length < 1) return messageApi.open({
+            type: 'warning',
+            content: '请至少选择1个站点设备！',
+        })
+
         props.saveValue({
             subData,
-            unknownData,
+            unknownCopy,
         })
+        props.closeValue('close');
+        // props.subTable = subData
     }
     let tag = columns[0].key;
 
@@ -395,7 +283,6 @@ export default function index(props) {
         }
     }
 
-    const deviceStyles = useSelector(filterDeviceStyle)
     const [type, setType] = useState(0)
     const changeType = (value) => {
         setType(value)
@@ -424,63 +311,58 @@ export default function index(props) {
             setUnknownData([...arr]);
         }
     }
-    const btnsty = laptop
-    ? {
-        height: "32px",
-        width: "55px",
-      }
-    : {
-        height: "46px",
-        width: "68px",
-      };
-  const savesty = laptop
-    ? {
-        height: "34px",
-        width: "120px",
-      }
-    : {
-        height: "46px",
-        width: "146px",
-      };
+
+    useEffect(() => {
+        getType();
+    }, [])
+    useEffect(() => {
+        getDevices()
+    }, [type, searchUnknown])
     return (
-        <Mainbox>
+        <TransferContent laptop={laptop}>
             {contextHolder}
-            <div className="leftTable">
-                <div className="otherSubTable">
-                    <div className="publicTitle">{props.transferTitle.subTitle}</div>
-                    <div className="searchInput">
-                        <span style={{ marginRight: 16 }}>设备搜索</span>
-                        <Search placeholder="请输入设备编号/安装地址" style={{ width: 256 }} enterButton onSearch={onSearchSub}></Search>
-                    </div>
-                    <div className="mainContent">
-                         <div className="tbwrap">
-                        <UsetTable bordered dataSource={subData} columns={columns}   rowKey='id' pagination={false}   rowSelection={subSelection}></UsetTable>
-                        </div>
-                    </div>
+            <div className="otherSubTable">
+                <div className="publicTitle">{props.transferTitle.subTitle}</div>
+                <div className="searchInput">
+                    <div style={{ marginRight: laptop ? 8 : 16 }}>设备搜索</div>
+                    <Search placeholder="请输入设备编号/安装地址" enterButton onSearch={onSearchSub} style={{ width: "256px" }}></Search>
+                </div>
+                <div>
+                    <Table bordered dataSource={subData} columns={columns} size={laptop ? "small" : "middle"} rowKey='id' pagination={false} scroll={{ y: 450 }} rowSelection={subSelection}></Table>
                 </div>
             </div>
+
             <div className="actions">
-                <Space>
-                    <CustButton icon={<LeftOutlined />} style={btnsty} onClick={unknownToSub}></CustButton>
-                    <CustButton icon={<RightOutlined />} style={btnsty} onClick={subToUnknown}></CustButton>
+                <Space size={16}>
+                    <CustButton icon={<LeftOutlined />} className="arrow" onClick={unknownToSub}></CustButton>
+                    <CustButton icon={<RightOutlined />} className="arrow" onClick={subToUnknown}></CustButton>
                 </Space>
-                <Space direction="vertical">
-                    <CustButton onClick={handleSave} style={savesty} >{t("button:save")}</CustButton>
-                    <CustButton type="default" style={savesty} onClick={() => handleClose()}>{t("button:cancel")}</CustButton>
+                <Space size={16} direction="vertical">
+                    <CustButton onClick={handleSave} style={{ height: "46px", width: "100%" }} >{t("button:save")}</CustButton>
+                    <CustButton type="default" style={{ height: "46px", width: "100%" }} onClick={() => handleClose()}>{t("button:cancel")}</CustButton>
                 </Space>
             </div>
             <div className="rightTable">
                 <div className="publicTitle">{props.transferTitle.unknownTitle}</div>
-                <div className="searchInput">                     
-                    <span style={{ marginRight: 16 }}>设备搜索</span>
-                    <Search placeholder="请输入设备编号/安装地址" style={{ width: 256 }} enterButton onSearch={onSearchUnknown}></Search>
+                <div className="searchInput">
+                    <span>设备类型</span>
+                    <Select
+                        size="middle"
+                        defaultValue={0}
+                        style={{ marginLeft: laptop ? 8 : 16, width: '112px' }}
+                        onChange={changeType}
+                        options={devices}
+                        fieldNames={{ label: "name", value: "deviceStyle" }}
+                    >
+                    </Select>
+                    {laptop ? null : <div style={{ width: 0, height: 32, margin: '0 32px', borderLeft: '1px dashed #ddd' }}></div>}
+                    <div style={{ marginRight: laptop ? 8 : 16 }}>设备搜索</div>
+                    <Search placeholder="请输入设备编号/安装地址" enterButton onSearch={onSearchUnknown} style={{ width: laptop ? "180px" : "256px" }}></Search>
                 </div>
-                <div className="mainContent">
-                     <div className="tbwrap">
-                    <UsetTable bordered dataSource={unknownData} columns={columns}   rowKey='id' pagination={false}   rowSelection={rowSelection}></UsetTable>
-                    </div>
+                <div>
+                    <Table bordered dataSource={unknownData} columns={columns} size={laptop ? "small" : "middle"} rowKey='id' pagination={false} scroll={{ y: 450 }} rowSelection={rowSelection}></Table>
                 </div>
             </div>
-        </Mainbox>
+        </TransferContent>
     )
 }

@@ -173,8 +173,9 @@ export default function Index({ projectId, level, CModal, name, allLevel }) {
 // 第一列 本级， 第二列 备注， 第三列 [父级] ...其他
 
 */
-
-  const [tempcolums, tempdata] = useMemo(() => {
+  const [tempcolums, setTempcolums] = useState([])
+  const [tempdata, setTempdata] = useState([])
+/*   const [tempcolums, tempdata] = useMemo(() => {
     let getcol = (name) => ({ title: name, dataIndex: name, key: name });
     let colums = [
       getcol(currenName),
@@ -192,7 +193,7 @@ export default function Index({ projectId, level, CModal, name, allLevel }) {
     }
     let tbdata = colums.map(c => ({ [c.title]: '' }))
     return [colums, tbdata]
-  }, [level, allLevel])
+  }, [level, allLevel]) */
   const [form] = Form.useForm();
   const [nform] = Form.useForm();
 
@@ -386,6 +387,14 @@ export default function Index({ projectId, level, CModal, name, allLevel }) {
           };
           cols.push(col);
         }
+        setTempcolums(cols)
+       // console.log(cols)
+        let temp = {}
+        cols.forEach((c) => {
+          temp[c.title] = "列子"
+        })
+       
+        setTempdata([temp])
         let colums = ispublish ? [...cols] : [
           ...cols,
           // index > -1 ?   {title: '备注', dataIndex: '备注', key: '备注'}: {},

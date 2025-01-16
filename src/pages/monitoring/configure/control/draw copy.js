@@ -43,35 +43,6 @@ const Drawerbox = styled(Drawer)`
         grid-template-columns: 692px 1fr 714px;
         column-gap: 30px;
         grid-template-rows: 1fr;
-        .outwrap{
-            padding-top: 16px;
-            position: relative;
-            flex:1;
-            
-          }
-          .inwrap {
-            position: absolute;
-            width: 100%;
-            height: calc(100% - 16px);
-            overflow: auto;
-          }
-          .outwrapr{ 
-            position: relative;
-            flex:1;
-            
-          }
-          .inwrapr {
-            position: absolute;
-            width: 100%;
-            height: calc(100% - 32px);
-            overflow: auto;
-          }
-        .leftpart{
-          display: flex;
-          flex-direction: column;
-          row-gap: 16px;
-         
-        }
         ${props=> props.theme.laptop ? sty : null}
         .title {
           padding-left: 16px;
@@ -104,22 +75,11 @@ const Drawerbox = styled(Drawer)`
           }
         }
         .unselected {
-          display: flex;
-          flex-direction: column;
-          padding: ${props => props.theme.laptop  ? "16px 0 0 0" : "16px" } ;
+          display: grid;
+          grid-template-rows: 32px 32px 1fr;
+          padding: 16px;
           row-gap: 16px;
           background-color: #fff;
-
-          .serachbox{
-            display: grid;
-            grid-template-columns: minmax(150px, auto) auto;
-            justify-content: space-between;
-            height: 32px;
-            .ant-form-item{
-              margin-bottom: 0px;
-            }
-            
-          }
         }
         .optab {
           display: flex;
@@ -275,8 +235,6 @@ function Draw({ params }, ref) {
   const drawClose = () => {
     setOpen(false);
     sfrom.resetFields()
-    setSelectedRowKeys([])
-    setUnselectedRowKeys([])
   };
   const drawOpen = () => {
     setOpen(true)
@@ -302,7 +260,8 @@ function Draw({ params }, ref) {
     drawOpen,
   }))
 
-  const changeUnselected = (v) => {   
+  const changeUnselected = (v) => {
+    console.log(v)
     try {
       if (v != 0) {
         let arr = unusedtbbk.current?.filter(i => v == i.deviceStyle) || []
@@ -346,9 +305,6 @@ function Draw({ params }, ref) {
   const untb = useRef()
   const [selectedRowKeys, setSelectedRowKeys] = useState([]) // 已选中的设备
   const [unselectedRowKeys, setUnselectedRowKeys] = useState([]) // 未选中的设备
-
-  console.log('selectedRowKeys',selectedRowKeys)
-  console.log('unselectedRowKeys',unselectedRowKeys)
   const rowSelection = { // 已选中的设备
     selectedRowKeys,
     onChange: (selectedRowKeys, selectedRows, info) => {
@@ -372,7 +328,6 @@ function Draw({ params }, ref) {
     setUnusedtb([...unusedtb, ...devices.current])
     let data = usedtb.filter(t => !keys.includes(t.id))
     setusedtable([...data])
-    setSelectedRowKeys([])
     setUnselectedRowKeys([])
     devices.current = {}
     undevices.current = {}
@@ -385,12 +340,9 @@ function Draw({ params }, ref) {
     let undata = unusedtb.filter(t => !keys.includes(t.id))
     setUnusedtb([...undata])
     setSelectedRowKeys([])
-    setUnselectedRowKeys([])
     devices.current = {}
     undevices.current = {}
   }
- 
-
   return (
     <Drawerbox
       onClose={drawClose}
@@ -402,24 +354,22 @@ function Draw({ params }, ref) {
      
       destroyOnClose
     >
-      <div className='leftpart'>
-      <Titlelayout title="选中设备" layout="flex">
-        <div className='outwrap'>
-          <div className='inwrap'>
-          <UserTable
+      <Titlelayout title="选中设备">
+
+        <UserTable
           columns={deviceColumns}
           rowSelection={rowSelection}
           dataSource={usedtb}
           rowKey="id"
-          ref={setb} 
+          ref={setb}
+          scroll={{
+            y: 696
+          }}
+          style={{ marginTop: '16px' }}
         />
-          </div>
-      
-        </div>
-  
+
+
       </Titlelayout>
-      </div>
-     
       <div className="optab">
         <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
           <Paragraph>选择设备</Paragraph>
@@ -451,20 +401,19 @@ function Draw({ params }, ref) {
 
         </div>
       </div>
-      <Titlelayout title="未选中的设备" layout="flex">
+      <Titlelayout title="未选中的设备">
         <div className="unselected">
 
           <Form
             form={sfrom}
-            labelWrap={true}
             initialValues={{
               deviceStyle: 0,
             }}
           >
-            <div className='serachbox'>
-             
+            <Space>
+              <div style={{width: "200px"}}>
               <Devicestyle projectId={projectId} itemprops={{label: "设备类型"}} onchange={changeUnselected} all={true}  />
-              
+              </div>
              
               <Item name="alike" label="设备搜索">
                 <Inptserach
@@ -473,20 +422,16 @@ function Draw({ params }, ref) {
                   onSearch={onSerach}
                 />
               </Item>
-            </div>
+            </Space>
           </Form>
-          <div className='outwrapr'>
-          <div className='inwrapr'>
-          
           <UserTable
             columns={unselectdevice}
             rowSelection={unrowSelection}
-            dataSource={unusedtb} 
+            dataSource={unusedtb}
+            scroll={{ y: laptop ? 270 : 725 }}
             ref={untb}
             rowKey="id"
           />
-          </div>
-          </div>
         </div>
       </Titlelayout>
 

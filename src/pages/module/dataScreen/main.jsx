@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef } from 'react'
-import styled from 'styled-components'
+import styled, {css} from 'styled-components'
 import {Form,message,} from 'antd' 
 import {useRequest} from 'ahooks'
 import { useDispatch } from "react-redux";
@@ -16,6 +16,9 @@ const Mainbox = styled.div`
        flex: 1; 
        display: flex;
        }
+`
+const csstys =css`
+    row-gap: 16px;
 `
 const Formbox = styled(Form)`
     && {
@@ -37,6 +40,7 @@ const Formbox = styled(Form)`
         .ant-form-item-label > label.ant-form-item-required:not(.ant-form-item-required-mark-optional)::before {
             display: none;
         }
+        ${props => props.theme.laptop ? csstys : null}
     }
 `
 

@@ -1,9 +1,42 @@
 import React, {memo, useState, useEffect} from 'react'
-import styled from 'styled-components'
+import styled, {css} from 'styled-components'
 import { Login as Logapi } from "@api/api";
 import {useDispatch} from 'react-redux'
 import {  getThemeColor, getSystemconfiginfo} from "@redux/systemconfig";
 import {useTranslation, Trans, Translation} from 'react-i18next';
+const stycss= css`
+  .chtitle{
+    .text {
+      font-size: 32px;
+      transform: translate(6px, 12px);
+    }
+   }  
+  .block {
+    width: 120%;
+  }
+  .entitle{
+    font-size: 22px;
+    padding-bottom: 32px;
+  }
+  .itemlist {
+    flex: 1;
+    justify-content: space-between;
+    padding-bottom: 32px;
+
+    .text {
+      font-size: 14px;
+    }
+    .icon {
+      width: 14px;
+      height: 14px;
+      margin-right: 14px;
+    }
+    .item + .item{
+      margin-top: 0;
+    }
+  }
+  
+`
 const List = styled.div`
   display: flex;
   flex-direction: column;
@@ -59,9 +92,10 @@ const List = styled.div`
       margin-right: 16px;
     }
     .item + .item {
-      margin-top: 24px;
+       margin-top: 24px;
     }
   }
+  ${props => props.theme.laptop ? stycss : null}
 `;
 
 export default memo(function Listitem({logtitle, englishTitle, literal}) {   
