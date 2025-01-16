@@ -112,7 +112,7 @@ export default function Index() {
         title: '安装位置',
         dataIndex: 'capacity',
         key: 'capacity',
-      },,{
+      },{
         align:'center',
         title: '备注',
         dataIndex: 'ratedU',

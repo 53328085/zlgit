@@ -58,7 +58,7 @@ const CModal = styled(Modal)`
     }
     .ant-btn-default {
       background-color: ${(props) => props.type=='dark' ? '#1b1d23' : '#fff'};
-      color: #666;
+      // color: #666;
     }
  .ant-btn-primary {
       border-color:   ${custCorle};
