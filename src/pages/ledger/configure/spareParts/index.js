@@ -153,7 +153,7 @@ export default function Index() {
     apiform.setFieldsValue(it)
     setEditModal(true)
     setCtitle('编辑')
-    setdefalutType(1)
+    // setdefalutType(1)
   }
   const [pageInfo, setpageInfo] = useState({
     current: 1,
