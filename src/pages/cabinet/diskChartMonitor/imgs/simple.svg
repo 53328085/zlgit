@@ -1,0 +1,271 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="260" height="800" viewBox="0 0 260 800">
+  <defs>
+    <pattern id="pattern" preserveAspectRatio="none" width="100%" height="100%" viewBox="0 0 208 64">
+      <image width="208" height="64" xlink:href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAANAAAABACAYAAABrwvk3AAAACXBIWXMAAAsTAAALEwEAmpwYAAAFuWlUWHRYTUw6Y29tLmFkb2JlLnhtcAAAAAAAPD94cGFja2V0IGJlZ2luPSLvu78iIGlkPSJXNU0wTXBDZWhpSHpyZVN6TlRjemtjOWQiPz4gPHg6eG1wbWV0YSB4bWxuczp4PSJhZG9iZTpuczptZXRhLyIgeDp4bXB0az0iQWRvYmUgWE1QIENvcmUgNS42LWMxNDggNzkuMTY0MDM2LCAyMDE5LzA4LzEzLTAxOjA2OjU3ICAgICAgICAiPiA8cmRmOlJERiB4bWxuczpyZGY9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkvMDIvMjItcmRmLXN5bnRheC1ucyMiPiA8cmRmOkRlc2NyaXB0aW9uIHJkZjphYm91dD0iIiB4bWxuczp4bXA9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC8iIHhtbG5zOnhtcE1NPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvbW0vIiB4bWxuczpzdEV2dD0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL3NUeXBlL1Jlc291cmNlRXZlbnQjIiB4bWxuczpkYz0iaHR0cDovL3B1cmwub3JnL2RjL2VsZW1lbnRzLzEuMS8iIHhtbG5zOnBob3Rvc2hvcD0iaHR0cDovL25zLmFkb2JlLmNvbS9waG90b3Nob3AvMS4wLyIgeG1wOkNyZWF0b3JUb29sPSJBZG9iZSBQaG90b3Nob3AgMjEuMCAoV2luZG93cykiIHhtcDpDcmVhdGVEYXRlPSIyMDI0LTAzLTE5VDA5OjE2KzA4OjAwIiB4bXA6TWV0YWRhdGFEYXRlPSIyMDI0LTAzLTE5VDA5OjE2KzA4OjAwIiB4bXA6TW9kaWZ5RGF0ZT0iMjAyNC0wMy0xOVQwOToxNiswODowMCIgeG1wTU06SW5zdGFuY2VJRD0ieG1wLmlpZDo0ZTgyYzNhYS1lYmNjLTc2NDYtYmYzNS0zYjQzZGU3OTRiYzgiIHhtcE1NOkRvY3VtZW50SUQ9ImFkb2JlOmRvY2lkOnBob3Rvc2hvcDpmMWVlOTYxZS1iNmNhLWI0NGQtOGQzZi04NTc1YjIzOGM4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"/>
+    </pattern>
+  </defs>
+  <g id="组_472" data-name="组 472" transform="translate(-173 -1295)">
+    <g id="组_434" data-name="组 434">
+      <g id="路径_5" data-name="路径 5" transform="translate(173 1295)" fill="#f1f1f1">
+        <path d="M 259.5 799.5 L 0.5 799.5 L 0.5 0.5 L 259.5 0.5 L 259.5 799.5 Z" stroke="none"/>
+        <path d="M 1 1 L 1 799 L 259 799 L 259 1 L 1 1 M 0 0 L 260 0 L 260 800 L 0 800 L 0 0 Z" stroke="none" fill="#707070"/>
+      </g>
+      <g id="矩形_81" data-name="矩形 81" transform="translate(173 1295)" fill="#f1f1f1" stroke="#707070" stroke-width="1">
+        <rect width="260" height="64" stroke="none"/>
+        <rect x="0.5" y="0.5" width="259" height="63" fill="none"/>
+      </g>
+      <g id="矩形_109" data-name="矩形 109" transform="translate(173 1295)" fill="#333" stroke="#707070" stroke-width="1">
+        <rect width="260" height="32" stroke="none"/>
+        <rect x="0.5" y="0.5" width="259" height="31" fill="none"/>
+      </g>
+      <rect id="物联logo" width="48" height="15" transform="translate(181 1304)" fill="url(#pattern)"/>
+    </g>
+    <g id="组_444" data-name="组 444" transform="translate(0 962)">
+      <g id="组_443" data-name="组 443" transform="translate(-16 123)">
+        <g id="矩形_683" data-name="矩形 683" transform="translate(189 373)" fill="#fff" stroke="#707070" stroke-width="1">
+          <rect width="260" height="400" stroke="none"/>
+          <rect x="0.5" y="0.5" width="259" height="399" fill="none"/>
+        </g>
+        <g id="矩形_690" data-name="矩形 690" transform="translate(370 405)" stroke="#707070" stroke-width="1">
+          <rect width="62" height="62" rx="2" stroke="none"/>
+          <rect x="0.5" y="0.5" width="61" height="61" rx="1.5" fill="none"/>
+        </g>
+        <g id="矩形_691" data-name="矩形 691" transform="translate(370 477)" stroke="#707070" stroke-width="1">
+          <rect width="62" height="23" rx="2" stroke="none"/>
+          <rect x="0.5" y="0.5" width="61" height="22" rx="1.5" fill="none"/>
+        </g>
+        <text id="Ia" transform="translate(396 420)" fill="lime" font-size="12" font-family="MicrosoftYaHei, Microsoft YaHei"><tspan x="0" y="0">Ia</tspan></text>
+        <text id="_25.3_A" data-name="25.3 A" transform="translate(385 442)" fill="lime" font-size="12" font-family="MicrosoftYaHei, Microsoft YaHei"><tspan x="0" y="0">25.3 </tspan><tspan y="0" font-size="8">A</tspan></text>
+        <text id="_48.2_" data-name="48.2 ℃" transform="translate(383 459)" fill="lime" font-size="12" font-family="MicrosoftYaHei, Microsoft YaHei"><tspan x="0" y="0">48.2 </tspan><tspan y="0" font-size="8">℃</tspan></text>
+        <line id="直线_88" data-name="直线 88" x2="54" transform="translate(374 425.5)" fill="none" stroke="lime" stroke-linecap="round" stroke-width="1"/>
+        <g id="矩形_684" data-name="矩形 684" transform="translate(208 405)" fill="#fff" stroke="#707070" stroke-width="1">
+          <rect width="62" height="95" rx="2" stroke="none"/>
+          <rect x="0.5" y="0.5" width="61" height="94" rx="1.5" fill="none"/>
+        </g>
+        <g id="矩形_685" data-name="矩形 685" transform="translate(211 409)" stroke="#707070" stroke-width="1">
+          <rect width="56" height="37" rx="1" stroke="none"/>
+          <rect x="0.5" y="0.5" width="55" height="36" rx="0.5" fill="none"/>
+        </g>
+        <g id="组_358" data-name="组 358" transform="translate(-2032 -1019)">
+          <g id="路径_10" data-name="路径 10" transform="translate(2330 1549)" fill="#2bbe2b">
+            <path d="M 8 15.5 C 3.864490032196045 15.5 0.5 12.13551044464111 0.5 8 C 0.5 3.864490032196045 3.864490032196045 0.5 8 0.5 C 12.13551044464111 0.5 15.5 3.864490032196045 15.5 8 C 15.5 12.13551044464111 12.13551044464111 15.5 8 15.5 Z" stroke="none"/>
+            <path d="M 8 1 C 4.140190124511719 1 1 4.140190124511719 1 8 C 1 11.85980987548828 4.140190124511719 15 8 15 C 11.85980987548828 15 15 11.85980987548828 15 8 C 15 4.140190124511719 11.85980987548828 1 8 1 M 8 0 C 12.41827964782715 0 16 3.581720352172852 16 8 C 16 12.41827964782715 12.41827964782715 16 8 16 C 3.581720352172852 16 0 12.41827964782715 0 8 C 0 3.581720352172852 3.581720352172852 0 8 0 Z" stroke="none" fill="#3d3d3d"/>
+          </g>
+          <circle id="椭圆_40" data-name="椭圆 40" cx="6" cy="6" r="6" transform="translate(2332 1551)" fill="#256725"/>
+        </g>
+        <g id="组_357" data-name="组 357" transform="translate(-2060 -1019)">
+          <g id="路径_10-2" data-name="路径 10" transform="translate(2330 1549)" fill="#2bbe2b">
+            <path d="M 8 15.5 C 3.864490032196045 15.5 0.5 12.13551044464111 0.5 8 C 0.5 3.864490032196045 3.864490032196045 0.5 8 0.5 C 12.13551044464111 0.5 15.5 3.864490032196045 15.5 8 C 15.5 12.13551044464111 12.13551044464111 15.5 8 15.5 Z" stroke="none"/>
+            <path d="M 8 1 C 4.140190124511719 1 1 4.140190124511719 1 8 C 1 11.85980987548828 4.140190124511719 15 8 15 C 11.85980987548828 15 15 11.85980987548828 15 8 C 15 4.140190124511719 11.85980987548828 1 8 1 M 8 0 C 12.41827964782715 0 16 3.581720352172852 16 8 C 16 12.41827964782715 12.41827964782715 16 8 16 C 3.581720352172852 16 0 12.41827964782715 0 8 C 0 3.581720352172852 3.581720352172852 0 8 0 Z" stroke="none" fill="#3d3d3d"/>
+          </g>
+          <circle id="椭圆_40-2" data-name="椭圆 40" cx="6" cy="6" r="6" transform="translate(2332 1551)" fill="#256725"/>
+        </g>
+        <g id="组_359" data-name="组 359" transform="translate(-2032 -1019)">
+          <g id="路径_11" data-name="路径 11" transform="translate(2358 1549)" fill="red">
+            <path d="M 8 15.5 C 3.864490032196045 15.5 0.5 12.13551044464111 0.5 8 C 0.5 3.864490032196045 3.864490032196045 0.5 8 0.5 C 12.13551044464111 0.5 15.5 3.864490032196045 15.5 8 C 15.5 12.13551044464111 12.13551044464111 15.5 8 15.5 Z" stroke="none"/>
+            <path d="M 8 1 C 4.140190124511719 1 1 4.140190124511719 1 8 C 1 11.85980987548828 4.140190124511719 15 8 15 C 11.85980987548828 15 15 11.85980987548828 15 8 C 15 4.140190124511719 11.85980987548828 1 8 1 M 8 0 C 12.41827964782715 0 16 3.581720352172852 16 8 C 16 12.41827964782715 12.41827964782715 16 8 16 C 3.581720352172852 16 0 12.41827964782715 0 8 C 0 3.581720352172852 3.581720352172852 0 8 0 Z" stroke="none" fill="#3d3d3d"/>
+          </g>
+          <circle id="椭圆_41" data-name="椭圆 41" cx="6" cy="6" r="6" transform="translate(2360 1551)" fill="#bc0000"/>
+        </g>
+        <g id="组_360" data-name="组 360" transform="translate(-2032 -1019)">
+          <g id="路径_12" data-name="路径 12" transform="translate(2386 1549)" fill="#fa0">
+            <path d="M 8 15.5 C 3.864490032196045 15.5 0.5 12.13551044464111 0.5 8 C 0.5 3.864490032196045 3.864490032196045 0.5 8 0.5 C 12.13551044464111 0.5 15.5 3.864490032196045 15.5 8 C 15.5 12.13551044464111 12.13551044464111 15.5 8 15.5 Z" stroke="none"/>
+            <path d="M 8 1 C 4.140190124511719 1 1 4.140190124511719 1 8 C 1 11.85980987548828 4.140190124511719 15 8 15 C 11.85980987548828 15 15 11.85980987548828 15 8 C 15 4.140190124511719 11.85980987548828 1 8 1 M 8 0 C 12.41827964782715 0 16 3.581720352172852 16 8 C 16 12.41827964782715 12.41827964782715 16 8 16 C 3.581720352172852 16 0 12.41827964782715 0 8 C 0 3.581720352172852 3.581720352172852 0 8 0 Z" stroke="none" fill="#3d3d3d"/>
+          </g>
+          <circle id="椭圆_42" data-name="椭圆 42" cx="6" cy="6" r="6" transform="translate(2388 1551)" fill="#bf8000"/>
+        </g>
+        <g id="组_362" data-name="组 362" transform="translate(0 11)">
+          <rect id="矩形_692" data-name="矩形 692" width="22" height="4" rx="1" transform="translate(253 559)" fill="#dedede"/>
+          <rect id="矩形_693" data-name="矩形 693" width="22" height="4" rx="1" transform="translate(225 559)" fill="#dedede"/>
+          <rect id="矩形_740" data-name="矩形 740" width="22" height="4" rx="1" transform="translate(393 559)" fill="#dedede"/>
+          <rect id="矩形_694" data-name="矩形 694" width="22" height="4" rx="1" transform="translate(253 567)" fill="#dedede"/>
+          <rect id="矩形_695" data-name="矩形 695" width="22" height="4" rx="1" transform="translate(225 567)" fill="#dedede"/>
+          <rect id="矩形_741" data-name="矩形 741" width="22" height="4" rx="1" transform="translate(393 567)" fill="#dedede"/>
+          <rect id="矩形_696" data-name="矩形 696" width="22" height="4" rx="1" transform="translate(253 575)" fill="#dedede"/>
+          <rect id="矩形_697" data-name="矩形 697" width="22" height="4" rx="1" transform="translate(225 575)" fill="#dedede"/>
+          <rect id="矩形_742" data-name="矩形 742" width="22" height="4" rx="1" transform="translate(393 575)" fill="#dedede"/>
+          <rect id="矩形_698" data-name="矩形 698" width="22" height="4" rx="1" transform="translate(253 583)" fill="#dedede"/>
+          <rect id="矩形_699" data-name="矩形 699" width="22" height="4" rx="1" transform="translate(225 583)" fill="#dedede"/>
+          <rect id="矩形_743" data-name="矩形 743" width="22" height="4" rx="1" transform="translate(393 583)" fill="#dedede"/>
+          <rect id="矩形_700" data-name="矩形 700" width="22" height="4" rx="1" transform="translate(253 591)" fill="#dedede"/>
+          <rect id="矩形_701" data-name="矩形 701" width="22" height="4" rx="1" transform="translate(225 591)" fill="#dedede"/>
+          <rect id="矩形_744" data-name="矩形 744" width="22" height="4" rx="1" transform="translate(393 591)" fill="#dedede"/>
+          <rect id="矩形_702" data-name="矩形 702" width="22" height="4" rx="1" transform="translate(253 599)" fill="#dedede"/>
+          <rect id="矩形_703" data-name="矩形 703" width="22" height="4" rx="1" transform="translate(225 599)" fill="#dedede"/>
+          <rect id="矩形_745" data-name="矩形 745" width="22" height="4" rx="1" transform="translate(393 599)" fill="#dedede"/>
+          <rect id="矩形_704" data-name="矩形 704" width="22" height="4" rx="1" transform="translate(253 607)" fill="#dedede"/>
+          <rect id="矩形_705" data-name="矩形 705" width="22" height="4" rx="1" transform="translate(225 607)" fill="#dedede"/>
+          <rect id="矩形_746" data-name="矩形 746" width="22" height="4" rx="1" transform="translate(393 607)" fill="#dedede"/>
+          <rect id="矩形_734" data-name="矩形 734" width="22" height="4" rx="1" transform="translate(253 615)" fill="#dedede"/>
+          <rect id="矩形_735" data-name="矩形 735" width="22" height="4" rx="1" transform="translate(225 615)" fill="#dedede"/>
+          <rect id="矩形_747" data-name="矩形 747" width="22" height="4" rx="1" transform="translate(393 615)" fill="#dedede"/>
+          <rect id="矩形_748" data-name="矩形 748" width="22" height="4" rx="1" transform="translate(253 623)" fill="#dedede"/>
+          <rect id="矩形_749" data-name="矩形 749" width="22" height="4" rx="1" transform="translate(225 623)" fill="#dedede"/>
+          <rect id="矩形_750" data-name="矩形 750" width="22" height="4" rx="1" transform="translate(393 623)" fill="#dedede"/>
+          <rect id="矩形_751" data-name="矩形 751" width="22" height="4" rx="1" transform="translate(253 631)" fill="#dedede"/>
+          <rect id="矩形_752" data-name="矩形 752" width="22" height="4" rx="1" transform="translate(225 631)" fill="#dedede"/>
+          <rect id="矩形_753" data-name="矩形 753" width="22" height="4" rx="1" transform="translate(393 631)" fill="#dedede"/>
+          <rect id="矩形_762" data-name="矩形 762" width="22" height="4" rx="1" transform="translate(253 639)" fill="#dedede"/>
+          <rect id="矩形_763" data-name="矩形 763" width="22" height="4" rx="1" transform="translate(225 639)" fill="#dedede"/>
+          <rect id="矩形_764" data-name="矩形 764" width="22" height="4" rx="1" transform="translate(393 639)" fill="#dedede"/>
+          <rect id="矩形_706" data-name="矩形 706" width="22" height="4" rx="1" transform="translate(281 559)" fill="#dedede"/>
+          <rect id="矩形_707" data-name="矩形 707" width="22" height="4" rx="1" transform="translate(281 567)" fill="#dedede"/>
+          <rect id="矩形_708" data-name="矩形 708" width="22" height="4" rx="1" transform="translate(281 575)" fill="#dedede"/>
+          <rect id="矩形_709" data-name="矩形 709" width="22" height="4" rx="1" transform="translate(281 583)" fill="#dedede"/>
+          <rect id="矩形_710" data-name="矩形 710" width="22" height="4" rx="1" transform="translate(281 591)" fill="#dedede"/>
+          <rect id="矩形_711" data-name="矩形 711" width="22" height="4" rx="1" transform="translate(281 599)" fill="#dedede"/>
+          <rect id="矩形_712" data-name="矩形 712" width="22" height="4" rx="1" transform="translate(281 607)" fill="#dedede"/>
+          <rect id="矩形_736" data-name="矩形 736" width="22" height="4" rx="1" transform="translate(281 615)" fill="#dedede"/>
+          <rect id="矩形_754" data-name="矩形 754" width="22" height="4" rx="1" transform="translate(281 623)" fill="#dedede"/>
+          <rect id="矩形_755" data-name="矩形 755" width="22" height="4" rx="1" transform="translate(281 631)" fill="#dedede"/>
+          <rect id="矩形_765" data-name="矩形 765" width="22" height="4" rx="1" transform="translate(281 639)" fill="#dedede"/>
+          <rect id="矩形_713" data-name="矩形 713" width="22" height="4" rx="1" transform="translate(309 559)" fill="#dedede"/>
+          <rect id="矩形_714" data-name="矩形 714" width="22" height="4" rx="1" transform="translate(309 567)" fill="#dedede"/>
+          <rect id="矩形_715" data-name="矩形 715" width="22" height="4" rx="1" transform="translate(309 575)" fill="#dedede"/>
+          <rect id="矩形_716" data-name="矩形 716" width="22" height="4" rx="1" transform="translate(309 583)" fill="#dedede"/>
+          <rect id="矩形_717" data-name="矩形 717" width="22" height="4" rx="1" transform="translate(309 591)" fill="#dedede"/>
+          <rect id="矩形_718" data-name="矩形 718" width="22" height="4" rx="1" transform="translate(309 599)" fill="#dedede"/>
+          <rect id="矩形_719" data-name="矩形 719" width="22" height="4" rx="1" transform="translate(309 607)" fill="#dedede"/>
+          <rect id="矩形_737" data-name="矩形 737" width="22" height="4" rx="1" transform="translate(309 615)" fill="#dedede"/>
+          <rect id="矩形_756" data-name="矩形 756" width="22" height="4" rx="1" transform="translate(309 623)" fill="#dedede"/>
+          <rect id="矩形_757" data-name="矩形 757" width="22" height="4" rx="1" transform="translate(309 631)" fill="#dedede"/>
+          <rect id="矩形_766" data-name="矩形 766" width="22" height="4" rx="1" transform="translate(309 639)" fill="#dedede"/>
+          <rect id="矩形_720" data-name="矩形 720" width="22" height="4" rx="1" transform="translate(337 559)" fill="#dedede"/>
+          <rect id="矩形_721" data-name="矩形 721" width="22" height="4" rx="1" transform="translate(337 567)" fill="#dedede"/>
+          <rect id="矩形_722" data-name="矩形 722" width="22" height="4" rx="1" transform="translate(337 575)" fill="#dedede"/>
+          <rect id="矩形_723" data-name="矩形 723" width="22" height="4" rx="1" transform="translate(337 583)" fill="#dedede"/>
+          <rect id="矩形_724" data-name="矩形 724" width="22" height="4" rx="1" transform="translate(337 591)" fill="#dedede"/>
+          <rect id="矩形_725" data-name="矩形 725" width="22" height="4" rx="1" transform="translate(337 599)" fill="#dedede"/>
+          <rect id="矩形_726" data-name="矩形 726" width="22" height="4" rx="1" transform="translate(337 607)" fill="#dedede"/>
+          <rect id="矩形_738" data-name="矩形 738" width="22" height="4" rx="1" transform="translate(337 615)" fill="#dedede"/>
+          <rect id="矩形_758" data-name="矩形 758" width="22" height="4" rx="1" transform="translate(337 623)" fill="#dedede"/>
+          <rect id="矩形_759" data-name="矩形 759" width="22" height="4" rx="1" transform="translate(337 631)" fill="#dedede"/>
+          <rect id="矩形_767" data-name="矩形 767" width="22" height="4" rx="1" transform="translate(337 639)" fill="#dedede"/>
+          <rect id="矩形_727" data-name="矩形 727" width="22" height="4" rx="1" transform="translate(365 559)" fill="#dedede"/>
+          <rect id="矩形_728" data-name="矩形 728" width="22" height="4" rx="1" transform="translate(365 567)" fill="#dedede"/>
+          <rect id="矩形_729" data-name="矩形 729" width="22" height="4" rx="1" transform="translate(365 575)" fill="#dedede"/>
+          <rect id="矩形_730" data-name="矩形 730" width="22" height="4" rx="1" transform="translate(365 583)" fill="#dedede"/>
+          <rect id="矩形_731" data-name="矩形 731" width="22" height="4" rx="1" transform="translate(365 591)" fill="#dedede"/>
+          <rect id="矩形_732" data-name="矩形 732" width="22" height="4" rx="1" transform="translate(365 599)" fill="#dedede"/>
+          <rect id="矩形_733" data-name="矩形 733" width="22" height="4" rx="1" transform="translate(365 607)" fill="#dedede"/>
+          <rect id="矩形_739" data-name="矩形 739" width="22" height="4" rx="1" transform="translate(365 615)" fill="#dedede"/>
+          <rect id="矩形_760" data-name="矩形 760" width="22" height="4" rx="1" transform="translate(365 623)" fill="#dedede"/>
+          <rect id="矩形_761" data-name="矩形 761" width="22" height="4" rx="1" transform="translate(365 631)" fill="#dedede"/>
+          <rect id="矩形_768" data-name="矩形 768" width="22" height="4" rx="1" transform="translate(365 639)" fill="#dedede"/>
+        </g>
+        <g id="组_363" data-name="组 363" transform="translate(0 111)">
+          <rect id="矩形_692-2" data-name="矩形 692" width="22" height="4" rx="1" transform="translate(253 559)" fill="#dedede"/>
+          <rect id="矩形_693-2" data-name="矩形 693" width="22" height="4" rx="1" transform="translate(225 559)" fill="#dedede"/>
+          <rect id="矩形_740-2" data-name="矩形 740" width="22" height="4" rx="1" transform="translate(393 559)" fill="#dedede"/>
+          <rect id="矩形_694-2" data-name="矩形 694" width="22" height="4" rx="1" transform="translate(253 567)" fill="#dedede"/>
+          <rect id="矩形_695-2" data-name="矩形 695" width="22" height="4" rx="1" transform="translate(225 567)" fill="#dedede"/>
+          <rect id="矩形_741-2" data-name="矩形 741" width="22" height="4" rx="1" transform="translate(393 567)" fill="#dedede"/>
+          <rect id="矩形_696-2" data-name="矩形 696" width="22" height="4" rx="1" transform="translate(253 575)" fill="#dedede"/>
+          <rect id="矩形_697-2" data-name="矩形 697" width="22" height="4" rx="1" transform="translate(225 575)" fill="#dedede"/>
+          <rect id="矩形_742-2" data-name="矩形 742" width="22" height="4" rx="1" transform="translate(393 575)" fill="#dedede"/>
+          <rect id="矩形_698-2" data-name="矩形 698" width="22" height="4" rx="1" transform="translate(253 583)" fill="#dedede"/>
+          <rect id="矩形_699-2" data-name="矩形 699" width="22" height="4" rx="1" transform="translate(225 583)" fill="#dedede"/>
+          <rect id="矩形_743-2" data-name="矩形 743" width="22" height="4" rx="1" transform="translate(393 583)" fill="#dedede"/>
+          <rect id="矩形_700-2" data-name="矩形 700" width="22" height="4" rx="1" transform="translate(253 591)" fill="#dedede"/>
+          <rect id="矩形_701-2" data-name="矩形 701" width="22" height="4" rx="1" transform="translate(225 591)" fill="#dedede"/>
+          <rect id="矩形_744-2" data-name="矩形 744" width="22" height="4" rx="1" transform="translate(393 591)" fill="#dedede"/>
+          <rect id="矩形_702-2" data-name="矩形 702" width="22" height="4" rx="1" transform="translate(253 599)" fill="#dedede"/>
+          <rect id="矩形_703-2" data-name="矩形 703" width="22" height="4" rx="1" transform="translate(225 599)" fill="#dedede"/>
+          <rect id="矩形_745-2" data-name="矩形 745" width="22" height="4" rx="1" transform="translate(393 599)" fill="#dedede"/>
+          <rect id="矩形_704-2" data-name="矩形 704" width="22" height="4" rx="1" transform="translate(253 607)" fill="#dedede"/>
+          <rect id="矩形_705-2" data-name="矩形 705" width="22" height="4" rx="1" transform="translate(225 607)" fill="#dedede"/>
+          <rect id="矩形_746-2" data-name="矩形 746" width="22" height="4" rx="1" transform="translate(393 607)" fill="#dedede"/>
+          <rect id="矩形_734-2" data-name="矩形 734" width="22" height="4" rx="1" transform="translate(253 615)" fill="#dedede"/>
+          <rect id="矩形_735-2" data-name="矩形 735" width="22" height="4" rx="1" transform="translate(225 615)" fill="#dedede"/>
+          <rect id="矩形_747-2" data-name="矩形 747" width="22" height="4" rx="1" transform="translate(393 615)" fill="#dedede"/>
+          <rect id="矩形_748-2" data-name="矩形 748" width="22" height="4" rx="1" transform="translate(253 623)" fill="#dedede"/>
+          <rect id="矩形_749-2" data-name="矩形 749" width="22" height="4" rx="1" transform="translate(225 623)" fill="#dedede"/>
+          <rect id="矩形_750-2" data-name="矩形 750" width="22" height="4" rx="1" transform="translate(393 623)" fill="#dedede"/>
+          <rect id="矩形_751-2" data-name="矩形 751" width="22" height="4" rx="1" transform="translate(253 631)" fill="#dedede"/>
+          <rect id="矩形_752-2" data-name="矩形 752" width="22" height="4" rx="1" transform="translate(225 631)" fill="#dedede"/>
+          <rect id="矩形_753-2" data-name="矩形 753" width="22" height="4" rx="1" transform="translate(393 631)" fill="#dedede"/>
+          <rect id="矩形_762-2" data-name="矩形 762" width="22" height="4" rx="1" transform="translate(253 639)" fill="#dedede"/>
+          <rect id="矩形_763-2" data-name="矩形 763" width="22" height="4" rx="1" transform="translate(225 639)" fill="#dedede"/>
+          <rect id="矩形_764-2" data-name="矩形 764" width="22" height="4" rx="1" transform="translate(393 639)" fill="#dedede"/>
+          <rect id="矩形_706-2" data-name="矩形 706" width="22" height="4" rx="1" transform="translate(281 559)" fill="#dedede"/>
+          <rect id="矩形_707-2" data-name="矩形 707" width="22" height="4" rx="1" transform="translate(281 567)" fill="#dedede"/>
+          <rect id="矩形_708-2" data-name="矩形 708" width="22" height="4" rx="1" transform="translate(281 575)" fill="#dedede"/>
+          <rect id="矩形_709-2" data-name="矩形 709" width="22" height="4" rx="1" transform="translate(281 583)" fill="#dedede"/>
+          <rect id="矩形_710-2" data-name="矩形 710" width="22" height="4" rx="1" transform="translate(281 591)" fill="#dedede"/>
+          <rect id="矩形_711-2" data-name="矩形 711" width="22" height="4" rx="1" transform="translate(281 599)" fill="#dedede"/>
+          <rect id="矩形_712-2" data-name="矩形 712" width="22" height="4" rx="1" transform="translate(281 607)" fill="#dedede"/>
+          <rect id="矩形_736-2" data-name="矩形 736" width="22" height="4" rx="1" transform="translate(281 615)" fill="#dedede"/>
+          <rect id="矩形_754-2" data-name="矩形 754" width="22" height="4" rx="1" transform="translate(281 623)" fill="#dedede"/>
+          <rect id="矩形_755-2" data-name="矩形 755" width="22" height="4" rx="1" transform="translate(281 631)" fill="#dedede"/>
+          <rect id="矩形_765-2" data-name="矩形 765" width="22" height="4" rx="1" transform="translate(281 639)" fill="#dedede"/>
+          <rect id="矩形_713-2" data-name="矩形 713" width="22" height="4" rx="1" transform="translate(309 559)" fill="#dedede"/>
+          <rect id="矩形_714-2" data-name="矩形 714" width="22" height="4" rx="1" transform="translate(309 567)" fill="#dedede"/>
+          <rect id="矩形_715-2" data-name="矩形 715" width="22" height="4" rx="1" transform="translate(309 575)" fill="#dedede"/>
+          <rect id="矩形_716-2" data-name="矩形 716" width="22" height="4" rx="1" transform="translate(309 583)" fill="#dedede"/>
+          <rect id="矩形_717-2" data-name="矩形 717" width="22" height="4" rx="1" transform="translate(309 591)" fill="#dedede"/>
+          <rect id="矩形_718-2" data-name="矩形 718" width="22" height="4" rx="1" transform="translate(309 599)" fill="#dedede"/>
+          <rect id="矩形_719-2" data-name="矩形 719" width="22" height="4" rx="1" transform="translate(309 607)" fill="#dedede"/>
+          <rect id="矩形_737-2" data-name="矩形 737" width="22" height="4" rx="1" transform="translate(309 615)" fill="#dedede"/>
+          <rect id="矩形_756-2" data-name="矩形 756" width="22" height="4" rx="1" transform="translate(309 623)" fill="#dedede"/>
+          <rect id="矩形_757-2" data-name="矩形 757" width="22" height="4" rx="1" transform="translate(309 631)" fill="#dedede"/>
+          <rect id="矩形_766-2" data-name="矩形 766" width="22" height="4" rx="1" transform="translate(309 639)" fill="#dedede"/>
+          <rect id="矩形_720-2" data-name="矩形 720" width="22" height="4" rx="1" transform="translate(337 559)" fill="#dedede"/>
+          <rect id="矩形_721-2" data-name="矩形 721" width="22" height="4" rx="1" transform="translate(337 567)" fill="#dedede"/>
+          <rect id="矩形_722-2" data-name="矩形 722" width="22" height="4" rx="1" transform="translate(337 575)" fill="#dedede"/>
+          <rect id="矩形_723-2" data-name="矩形 723" width="22" height="4" rx="1" transform="translate(337 583)" fill="#dedede"/>
+          <rect id="矩形_724-2" data-name="矩形 724" width="22" height="4" rx="1" transform="translate(337 591)" fill="#dedede"/>
+          <rect id="矩形_725-2" data-name="矩形 725" width="22" height="4" rx="1" transform="translate(337 599)" fill="#dedede"/>
+          <rect id="矩形_726-2" data-name="矩形 726" width="22" height="4" rx="1" transform="translate(337 607)" fill="#dedede"/>
+          <rect id="矩形_738-2" data-name="矩形 738" width="22" height="4" rx="1" transform="translate(337 615)" fill="#dedede"/>
+          <rect id="矩形_758-2" data-name="矩形 758" width="22" height="4" rx="1" transform="translate(337 623)" fill="#dedede"/>
+          <rect id="矩形_759-2" data-name="矩形 759" width="22" height="4" rx="1" transform="translate(337 631)" fill="#dedede"/>
+          <rect id="矩形_767-2" data-name="矩形 767" width="22" height="4" rx="1" transform="translate(337 639)" fill="#dedede"/>
+          <rect id="矩形_727-2" data-name="矩形 727" width="22" height="4" rx="1" transform="translate(365 559)" fill="#dedede"/>
+          <rect id="矩形_728-2" data-name="矩形 728" width="22" height="4" rx="1" transform="translate(365 567)" fill="#dedede"/>
+          <rect id="矩形_729-2" data-name="矩形 729" width="22" height="4" rx="1" transform="translate(365 575)" fill="#dedede"/>
+          <rect id="矩形_730-2" data-name="矩形 730" width="22" height="4" rx="1" transform="translate(365 583)" fill="#dedede"/>
+          <rect id="矩形_731-2" data-name="矩形 731" width="22" height="4" rx="1" transform="translate(365 591)" fill="#dedede"/>
+          <rect id="矩形_732-2" data-name="矩形 732" width="22" height="4" rx="1" transform="translate(365 599)" fill="#dedede"/>
+          <rect id="矩形_733-2" data-name="矩形 733" width="22" height="4" rx="1" transform="translate(365 607)" fill="#dedede"/>
+          <rect id="矩形_739-2" data-name="矩形 739" width="22" height="4" rx="1" transform="translate(365 615)" fill="#dedede"/>
+          <rect id="矩形_760-2" data-name="矩形 760" width="22" height="4" rx="1" transform="translate(365 623)" fill="#dedede"/>
+          <rect id="矩形_761-2" data-name="矩形 761" width="22" height="4" rx="1" transform="translate(365 631)" fill="#dedede"/>
+          <rect id="矩形_768-2" data-name="矩形 768" width="22" height="4" rx="1" transform="translate(365 639)" fill="#dedede"/>
+        </g>
+        <g id="路径_32" data-name="路径 32" transform="translate(211 454)" fill="#ececec">
+          <path d="M 22 6.800000190734863 L 1 6.800000190734863 C 0.5588799715042114 6.800000190734863 0.2000000029802322 6.441120147705078 0.2000000029802322 6 L 0.2000000029802322 1 C 0.2000000029802322 0.5588799715042114 0.5588799715042114 0.2000000029802322 1 0.2000000029802322 L 22 0.2000000029802322 C 22.44112014770508 0.2000000029802322 22.79999923706055 0.5588799715042114 22.79999923706055 1 L 22.79999923706055 6 C 22.79999923706055 6.441120147705078 22.44112014770508 6.800000190734863 22 6.800000190734863 Z" stroke="none"/>
+          <path d="M 1 0.4000000953674316 C 0.6691608428955078 0.4000000953674316 0.3999996185302734 0.6691598892211914 0.3999996185302734 1 L 0.3999996185302734 6 C 0.3999996185302734 6.330840110778809 0.6691608428955078 6.599999904632568 1 6.599999904632568 L 22 6.599999904632568 C 22.33083915710449 6.599999904632568 22.60000038146973 6.330840110778809 22.60000038146973 6 L 22.60000038146973 1 C 22.60000038146973 0.6691598892211914 22.33083915710449 0.4000000953674316 22 0.4000000953674316 L 1 0.4000000953674316 M 1 0 L 22 0 C 22.55228042602539 0 23 0.4477200508117676 23 1 L 23 6 C 23 6.552279949188232 22.55228042602539 7 22 7 L 1 7 C 0.4477195739746094 7 0 6.552279949188232 0 6 L 0 1 C 0 0.4477200508117676 0.4477195739746094 0 1 0 Z" stroke="none" fill="#d1d1d1"/>
+        </g>
+        <g id="矩形_687" data-name="矩形 687" transform="translate(211 465)" fill="#ececec" stroke="#d1d1d1" stroke-width="0.4">
+          <rect width="23" height="7" rx="1" stroke="none"/>
+          <rect x="0.2" y="0.2" width="22.6" height="6.6" rx="0.8" fill="none"/>
+        </g>
+        <g id="矩形_688" data-name="矩形 688" transform="translate(244 454)" fill="#ececec" stroke="#d1d1d1" stroke-width="0.4">
+          <rect width="23" height="7" rx="1" stroke="none"/>
+          <rect x="0.2" y="0.2" width="22.6" height="6.6" rx="0.8" fill="none"/>
+        </g>
+        <g id="矩形_689" data-name="矩形 689" transform="translate(244 465)" fill="#ececec" stroke="#d1d1d1" stroke-width="0.4">
+          <rect width="23" height="7" rx="1" stroke="none"/>
+          <rect x="0.2" y="0.2" width="22.6" height="6.6" rx="0.8" fill="none"/>
+        </g>
+        <g id="矩形_773" data-name="矩形 773" transform="translate(270 550)" fill="#f1c359" stroke="#707070" stroke-width="0.4">
+          <rect width="16" height="4" rx="1" stroke="none"/>
+          <rect x="0.2" y="0.2" width="15.6" height="3.6" rx="0.8" fill="none"/>
+        </g>
+        <g id="矩形_774" data-name="矩形 774" transform="translate(298 550)" fill="#f1c359" stroke="#707070" stroke-width="0.4">
+          <rect width="16" height="4" rx="1" stroke="none"/>
+          <rect x="0.2" y="0.2" width="15.6" height="3.6" rx="0.8" fill="none"/>
+        </g>
+        <g id="矩形_775" data-name="矩形 775" transform="translate(326 550)" fill="#f1c359" stroke="#707070" stroke-width="0.4">
+          <rect width="16" height="4" rx="1" stroke="none"/>
+          <rect x="0.2" y="0.2" width="15.6" height="3.6" rx="0.8" fill="none"/>
+        </g>
+        <g id="矩形_776" data-name="矩形 776" transform="translate(354 550)" fill="#f1c359" stroke="#707070" stroke-width="0.4">
+          <rect width="16" height="4" rx="1" stroke="none"/>
+          <rect x="0.2" y="0.2" width="15.6" height="3.6" rx="0.8" fill="none"/>
+        </g>
+      </g>
+      <rect id="矩形_991" data-name="矩形 991" width="258" height="19" transform="translate(174 497)" fill="#f2f2f2"/>
+    </g>
+  </g>
+</svg>
