@@ -116,5 +116,6 @@
     "Transformerinformation": "Transformer information",
     "Numberoftransformers": "Number of transformers",
     "Realtimetotalload": "Real-time total load",
-    "Monthlyenergyconsumptiontrend": "Monthly energy consumption trend"
+    "Monthlyenergyconsumptiontrend": "Monthly energy consumption trend",
+     "SiteSettings": " Site Settings"
 }

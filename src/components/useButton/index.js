@@ -329,6 +329,14 @@ export function ImportButton(props) {
     </Custbtn>
   );
 }
+
+export function ImportConfigurationFile(props) {
+  return (
+    <Custbtn wh="auto" {...props}>
+      {i18.t('ImportConfigurationFile', {ns: "button"})}
+    </Custbtn>
+  );
+}
 export function ExportButton(props) {  
   return (
     <Custbtn {...props}>

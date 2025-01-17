@@ -9,7 +9,7 @@ import { operationDesigin } from '@api/api'
 import moment from 'moment'
 import { useAntdTable } from 'ahooks'
 import style from './style.module.less'
-import { publishState } from '@redux/systemconfig'
+import { publishState,adaptation } from '@redux/systemconfig'
 import { SetLine } from './inspectcomp.jsx'
 import { ExportExcel, CustButton, CustLink } from '@com/useButton'
 import Pagecont from "@com/pagecontent"
@@ -39,7 +39,7 @@ export default function Index() {
     let isall = onelevel.find(o => o.id == 0)
     return isall ? onelevel : ([{ name: onelevel[0]?.levelName + '(全部)', id: 0 }, ...onelevel])
   }, [onelevel]) : []
-
+  const {laptop} = useSelector(adaptation)
   const addmodalRef = useRef() //modal的ref
   const addformRef = useRef() //addform的ref
   const delModalRef = useRef() //del
@@ -268,7 +268,7 @@ export default function Index() {
           </Form>
 
 
-          <Divider style={{ margin: "32px 0", borderColor: '#d7d7d7' }} dashed ></Divider>
+          <Divider style={{ margin: laptop ? "16px 0" : "32px 0", borderColor: '#d7d7d7' }} dashed ></Divider>
 
           <Table columns={columns} ref={tableRef}  {...tableProps} onExport={onExport} sheetName="巡检计划管理"></Table>
 

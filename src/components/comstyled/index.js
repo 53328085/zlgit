@@ -298,7 +298,7 @@ export const Borderleft = styled.div`
    border-left: 4px solid ${props => props.theme.primaryColor};
 `
 export const Itembox = styled(Item)`
- 
+   margin-bottom: 24px;
   .ant-input-affix-wrapper-lg {
     height: 48px;
   }

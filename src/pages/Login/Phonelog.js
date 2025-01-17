@@ -10,7 +10,7 @@ import {  useCountDown, useRequest } from "ahooks";
  
 import { Form,  message, Space, } from "antd";
 import {useTranslation, Trans, Translation} from 'react-i18next';
- 
+import { adaptation } from "@redux/systemconfig";
 import {  phoneValidator, codeValidator, } from "@pages/rule";
 import { Login as Logapi} from "@api/api";
 import {Logselect, Itembox, Ipticon, Logipt, Logck, Logbtn} from '@com/comstyled'
@@ -23,6 +23,7 @@ export default  memo(({onSubmit})=> {
     const [phoneform] = Form.useForm();
     let initPhone = useSelector(selectMemoPhone);
     let { mobile } = useSelector(selectUser);
+    const {laptop} = useSelector(adaptation)
     let [loading, setLoading] = useState(false);
     const auto = useMemo(() => (initPhone ? "on" : "off"), [initPhone]);
     const initMobile = useMemo(() => (initPhone ? mobile : ""), [initPhone]);
@@ -184,7 +185,7 @@ export default  memo(({onSubmit})=> {
             htmlType="submit"
             block
             loading={loading}
-            style={{ height: "56px" }}
+            style={{ height: laptop ? "42px" : "56px" }}
           >
           {t("Login")}
           </Logbtn>

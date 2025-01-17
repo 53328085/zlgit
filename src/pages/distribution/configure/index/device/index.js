@@ -112,7 +112,7 @@ export default function Index() {
         title: '安装位置',
         dataIndex: 'capacity',
         key: 'capacity',
-      },,{
+      },{
         align:'center',
         title: '备注',
         dataIndex: 'ratedU',
@@ -123,7 +123,7 @@ export default function Index() {
       key: 'action',
       align:'center',
       render: (_, record) => (
-        <Space size="middle">
+        <Space>
           <Link type="danger" underline onClick={() => deleteRecord(record)}>{t("button:delete")}</Link>
         </Space>
       ),
