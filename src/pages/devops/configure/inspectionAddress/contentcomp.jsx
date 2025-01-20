@@ -1,6 +1,6 @@
 
 import React, { useEffect, useState, useRef, forwardRef, useImperativeHandle, Fragment, useMemo } from 'react'
-import {createPortal} from 'react-dom'
+ 
 import { useSelector } from 'react-redux'
 import { Divider, Select, Tree, Row, Col, Input, Form, message, Drawer, Table,Button } from 'antd'
 import { publishState } from '@redux/systemconfig'
@@ -20,21 +20,18 @@ const csssty = css`
   }
   .actions {
     margin: 0px 8px;
-    .finalButton {
-      row-gap: 8px;
-    }
+   
   }
 `;
 const Mainbox = styled.div`
    &&{
-    height: ${porps => porps.hh};
-    width: ${props => props.wh};
+    
     background-color: #003366;
     padding: 32px;
     display: flex;
     position: fixed;
-    top: 0px;
-    left:${props => props.open ? "0px" : "3000px"};
+    top:  0px;
+    left:200px;
      bottom: 0;
      right: 0;
     display: grid;
@@ -42,6 +39,8 @@ const Mainbox = styled.div`
     grid-template-rows: 1fr;
     transition: all .75s linear;
     z-index: 1999;
+    transform: translateX(${props => props.open ? 0 : '3000px'});
+   
   .leftTable {
     height: inherit;
     display: flex;
@@ -79,86 +78,8 @@ const Mainbox = styled.div`
     margin: 0 32px;
     display: flex;
     flex-direction: column;
-    justify-content: space-evenly;
-    .firstButton {
-      // margin-top: 64px;
-      display: flex;
-      justify-content: space-between;
-    }
-
-    .secondButton {
-      //  margin-top: 182px;
-      display: flex;
-      justify-content: space-between;
-    }
-
-    .leftButton {
-      display: inline-block;
-      width: 68px;
-      height: 46px;
-      background-color: var(--ant-primary-color);
-      border-radius: 4px;
-      cursor: pointer;
-      color: #fff;
-      font-size: 20px;
-      line-height: 46px;
-      text-align: center;
-
-      &:hover {
-        background-color: rgba(64, 158, 255, 1);
-      }
-    }
-
-    .rightButton {
-      display: inline-block;
-      width: 68px;
-      height: 46px;
-      margin-left: 10px;
-      background-color: var(--ant-primary-color);
-      border-radius: 4px;
-      cursor: pointer;
-      color: #fff;
-      font-size: 20px;
-      line-height: 46px;
-      text-align: center;
-    }
-
-    .finalButton {
-      // margin-top: 180px;
-      display: flex;
-      flex-direction: column;
-      row-gap: 16px;
-      .saveButton {
-        width: 146px;
-        height: 40px;
-        background-color: var(--ant-primary-color);
-        border-radius: 4px;
-        cursor: pointer;
-        color: #fff;
-        font-size: 14px;
-        line-height: 40px;
-        text-align: center;
-
-        
-      }
-
-      .closeButton {
-        margin-top: 16px;
-        width: 146px;
-        height: 40px;
-        background-color: #fff;
-        border-radius: 4px;
-        cursor: pointer;
-        color: #212121;
-        font-size: 14px;
-        line-height: 40px;
-        text-align: center;
-
-        &:hover {
-          opacity: 0.5;
-        }
-      }
-    }
+    justify-content: space-evenly; 
+    
   }
 
   .rightTable {
@@ -212,7 +133,7 @@ const Mainbox = styled.div`
       }
   }
 
-  ${(props) => (props.theme.laptop ? csssty : null)}
+  ${props =>props.theme.laptop ? csssty : null}
 }
 `;
 //配置线路
@@ -240,6 +161,7 @@ export default forwardRef(({  getQueryPageDevice,areaId,addform, laptop }, ref) 
         {label:'储能',value:4},
         
     ]
+    
     const maparr= new Map([[1,'常规'],[2,'配电'],[3,'光伏'],[4,'储能']])
     const columns = [
         // { title: '设备编号', dataIndex: 'sn', align: "center", width: 201 },
@@ -249,11 +171,7 @@ export default forwardRef(({  getQueryPageDevice,areaId,addform, laptop }, ref) 
         } },
 
     ]
-    const wh = document.documentElement.clientWidth + 'px';
-    const hh = document.documentElement.clientHeight + 'px';
-    let mref = useRef()
-    console.log(wh)
-    console.log(hh)
+ 
      //获取已选和未选设备
   const getQueryDeviceList=async(deviceStyle=0,alike="")=>{
     let params={
@@ -389,38 +307,45 @@ export default forwardRef(({  getQueryPageDevice,areaId,addform, laptop }, ref) 
     }
     //设备类型改变
     const changeType=(v)=>{
-        setDeviceType(v)
-        setSelectedRowKeys([])
-        setSelectedRows([])
-        let filterarr;
-        if(!searchValue){
-            if(v===0){
-                setDataSource([...copydataSource])
-                return
+        console.log("v", v)
+        try { 
+            console.log(v);
+            setDeviceType(v)
+            setSelectedRowKeys([])
+            setSelectedRows([])
+            let filterarr;
+            if(!searchValue){
+                if(v===0){
+                    setDataSource([...copydataSource])
+                    return
+                }else{
+                    filterarr  =  copydataSource.filter(it=>{
+                        return  it.type === v
+                    })
+                }
+               
             }else{
-                filterarr  =  copydataSource.filter(it=>{
-                    return  it.type === v
-                })
+    
+                if(v===0){
+                 filterarr= copydataSource.filter(it=>{
+                        return it.name.indexOf(searchValue)!==-1
+                    })
+                    // setDataSource([...filterarr])
+                    // return
+                } else{
+                    filterarr= copydataSource.filter(it=>{
+                        return (it.name.indexOf(searchValue)!==-1)&&it.type === v
+                    })
+                }
+              
+                // setDataSource([...copydataSource])
             }
-           
-        }else{
-
-            if(v===0){
-             filterarr= copydataSource.filter(it=>{
-                    return it.name.indexOf(searchValue)!==-1
-                })
-                // setDataSource([...filterarr])
-                // return
-            } else{
-                filterarr= copydataSource.filter(it=>{
-                    return (it.name.indexOf(searchValue)!==-1)&&it.type === v
-                })
-            }
-          
-            // setDataSource([...copydataSource])
+            console.log(filterarr)
+            setDataSource([...filterarr])
+        } catch (error) {
+            console.log(error)
         }
-        console.log(filterarr)
-        setDataSource([...filterarr])
+       
     }
   
     useImperativeHandle(ref, () => ({
@@ -456,12 +381,9 @@ export default forwardRef(({  getQueryPageDevice,areaId,addform, laptop }, ref) 
         height: "46px",
         width: "146px",
       };
-    useEffect(()=> {
-      let el =  mref.current.getBoundingClientRect()
-      console.log(el)
-    }, [open])
+   const rightref= useRef()
     return (
-       <Mainbox open={open} wh={wh} hh={hh} ref={mref} >
+       <Mainbox open={open} >
             <div className="leftTable">
                 <div className="otherSubTable">
                 <div  className='publicTitle'>已选中的巡检项</div>
@@ -493,13 +415,12 @@ export default forwardRef(({  getQueryPageDevice,areaId,addform, laptop }, ref) 
                 </>}
                     <CustButtonT text="cancel" onClick={close} style={savesty} /> 
             </div>
-            <div className="rightTable">
+            <div className="rightTable" ref={rightref}>
             <div className="publicTitle">未选中的巡检项</div> 
-                    
                     <div className="searchInput">
                     <div className='ipt'>
-                    <div>设备类型</div>
-                    <Select style={{width:laptop ? "100px" : "150px"}} options={deviceoptions} defaultValue={0} onChange={changeType} value={devicetype}></Select>
+                    <div>设备类型</div>  
+                    <Select  getPopupContainer={() =>rightref.current} style={{width:laptop ? "100px" : "150px"}} options={deviceoptions} defaultValue={2} onChange={changeType} value={devicetype}></Select>
                     </div>    
                     <div className='ipt'>
                         <div>设备搜索</div>
@@ -508,16 +429,14 @@ export default forwardRef(({  getQueryPageDevice,areaId,addform, laptop }, ref) 
                     </div>
                     <div className="mainContent">
                 <div className="tbwrap"> 
-                    <Table
+                    <UsetTable
                         bordered
                         pagination={false}
                         rowSelection={{ selectedRowKeys, onChange: onSelectChange }}
                         columns={columns}
                         dataSource={dataSource}
-                        scroll={{ y: 500 }}id
-                        size={'small'}
                         rowKey={record => record.id}
-                    ></Table>
+                    ></UsetTable>
                     </div>
                     </div>
                 </div>

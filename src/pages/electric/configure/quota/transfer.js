@@ -1,17 +1,154 @@
 import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next"
 import style from './style.module.less'
+import styled, {css} from "styled-components";
 import { useSelector } from 'react-redux'
 import { Table, Input, message, Select, Space } from "antd";
 import { LeftOutlined, RightOutlined } from '@ant-design/icons'
 import { cloneDeep } from "lodash";
 import { CustButton } from '@com/useButton'
 import { AlarmManagement, Monitoring } from "@api/api.js";
+import {adaptation} from '@redux/systemconfig'
+import UsetTable from "@com/useTable";
+const csssty = css`
+    grid-template-columns: minmax(auto, 2fr) minmax(max-content, 1fr);
+    padding: 16px;
+    width: 100%;
+    left: 0;
+  .left {
+    row-gap: 8px;
+  }
+  .actions {
+    flex: 0 0 160px;
+     
+   
+  }
+`;
+const Mainbox = styled.div`
+  background-color: #003366;
+  padding: 16px 32px;
+  justify-content: space-between;
+  position: absolute;
+  top: 0px;
+  left: 200px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: 1fr;
+  width:calc(100% - 200px) ;
+ height: 100%;
+overflow: auto;
+.left {
+  display: grid;
+  grid-template-rows: repeat(4, 1fr);
+  grid-template-columns: 1fr;
+  row-gap: 16px;
+  
+  .flex{
+        display: flex;
+        align-items: center;
+    }
+  // flex-direction: column;
+  
+}
+
+.publicTitle {
+  height: 25px;
+  padding-left: 16px;
+  margin-bottom: 10px;
+  line-height: 25px;
+  font-size: 14px;
+  color: #333;
+  border-left: 4px solid var(--ant-primary-color);
+}
+
+.mainTable {
+ 
+  padding: 16px;
+  background-color: #fff;
+  border-radius: 2px;
+  margin-bottom: 32px;
+}
+
+.subTable {
+ 
+  padding: 16px;
+  background-color: #fff;
+  border-radius: 2px;
+  margin-bottom: 32px;
+}
+
+.otherSubTable {
+  flex:1;
+  padding: 10px;
+  background-color: #fff;
+  border-radius: 2px;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.searchInput {
+  margin-bottom: 16px;
+  display: flex;
+  align-items: center;
+}
+
+.actions {
+   flex: 0 0 208px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-evenly;
+  align-items: stretch;
+  row-gap: 8px;
+  .tip {
+    color: #fff;
+    text-align: center;
+  }
+  .btns {
+    display: flex;
+    justify-content: space-evenly;
+  }
+ 
+}
+
+.right {
+  display: flex;
+  flex-direction: column;
+
+  .btn {
+    display: flex;
+    align-items: center;
+    justify-content: end;
+    margin-top: 16px;
+  }
+}
+
+.rightTable {
+ 
+  border-radius: 2px;
+  padding: 16px;
+  background-color: #fff;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+.outwrap {
+    flex: 1;
+    position: relative;
+    overflow: auto;
+  }
+  .tbwrap {
+        position: absolute;
+        width: 100%; 
+      }
+${props => props.theme.laptop ? csssty : null}
+`
 export default function index(props) {
-    console.log(props);
+     
     const { SetAlarmValveDevice } = AlarmManagement;
     const { ComparativeAnalysis: { AllDeviceStyle } } = Monitoring
     const projectId = useSelector(state => state.system.menus.projectId)
+    const {laptop} = useSelector(adaptation)
     const { t } = useTranslation(["button"])
     const [messageApi, contextHolder] = message.useMessage();
     const { Search } = Input
@@ -377,77 +514,96 @@ export default function index(props) {
     useEffect(() => {
         // getDevices()
     }, [type, searchUnknown])
+    
+    const btnsty = laptop
+    ? {
+        height: "32px",
+        width: "55px",
+      }
+    : {
+        height: "46px",
+        width: "68px",
+      };
     return (
-        <div className={style.transferContent}>
+        <Mainbox>
             {contextHolder}
-            <div className={style.left}>
-                <div className={style.leftTable}>
-                    <div className={style.left1}>
-                        <div className={style.otherSubTable}>
-                            <div className={style.publicTitle}>{props.transferTitle.alarmOpenTitle}</div>
-                            <div>
-                                <Table bordered dataSource={alarmOpenData} columns={columns} size='middle' rowKey='id' pagination={false} scroll={{ y: 90 }} rowSelection={leftOpenKeys}></Table>
+            <div className="left">
+               
+                    <div className="flex">
+                        <div className="otherSubTable">
+                            <div className="publicTitle">{props.transferTitle.alarmOpenTitle}</div>
+                            <div className="outwrap">
+                                <div className="tbwrap"> 
+                                  <UsetTable bordered dataSource={alarmOpenData} columns={columns}   rowKey='id' pagination={false}  rowSelection={leftOpenKeys}></UsetTable>
+                                 </div>
                             </div>
                         </div>
-                        <div className={style.actions}>
-                            <span className={style.tip}>选择设备</span>
-                            <Space size={16}>
-                                <CustButton icon={<LeftOutlined />} style={{ height: "46px", width: "68px" }} onClick={() => unknownToSub(1)}></CustButton>
-                                <CustButton icon={<RightOutlined />} style={{ height: "46px", width: "68px" }} onClick={() => subToUnknown(1)}></CustButton>
-                            </Space>
-                        </div>
-                    </div>
-                    <div className={style.left2}>
-                        <div className={style.otherSubTable}>
-                            <div className={style.publicTitle}>{props.transferTitle.alarmCloseTitle}</div>
-                            <div>
-                                <Table bordered dataSource={alarmCloseData} columns={columns} size='middle' rowKey='id' pagination={false} scroll={{ y: 90 }} rowSelection={leftCloseKeys}></Table>
+
+                        <div className="actions">
+                            <span className="tip">选择设备</span>
+                            <div className="btns">
+                                <CustButton icon={<LeftOutlined />} style={btnsty} onClick={() => unknownToSub(1)}></CustButton>
+                                <CustButton icon={<RightOutlined />} style={btnsty} onClick={() => subToUnknown(1)}></CustButton>
                             </div>
                         </div>
-                        <div className={style.actions}>
-                            <span className={style.tip}>选择设备</span>
-                            <Space size={16}>
-                                <CustButton icon={<LeftOutlined />} style={{ height: "46px", width: "68px" }} onClick={() => unknownToSub(2)}></CustButton>
-                                <CustButton icon={<RightOutlined />} style={{ height: "46px", width: "68px" }} onClick={() => subToUnknown(2)}></CustButton>
-                            </Space>
-                        </div>
                     </div>
-                    <div className={style.left3}>
-                        <div className={style.otherSubTable}>
-                            <div className={style.publicTitle}>{props.transferTitle.noalarmOpenTitle}</div>
-                            <div>
-                                <Table bordered dataSource={noalarmOpenData} columns={columns} size='middle' rowKey='id' pagination={false} scroll={{ y: 90 }} rowSelection={leftNoOpenKeys}></Table>
+                    <div className="flex">
+                        <div className="otherSubTable">
+                            <div className="publicTitle">{props.transferTitle.alarmCloseTitle}</div>
+                            <div className="outwrap">
+                                <div className="tbwrap"> 
+                                <UsetTable bordered dataSource={alarmCloseData} columns={columns}   rowKey='id' pagination={false}   rowSelection={leftCloseKeys}></UsetTable>
+                              </div>
                             </div>
                         </div>
-                        <div className={style.actions}>
-                            <span className={style.tip}>选择设备</span>
-                            <Space size={16}>
-                                <CustButton icon={<LeftOutlined />} style={{ height: "46px", width: "68px" }} onClick={() => unknownToSub(3)}></CustButton>
-                                <CustButton icon={<RightOutlined />} style={{ height: "46px", width: "68px" }} onClick={() => subToUnknown(3)}></CustButton>
-                            </Space>
-                        </div>
-                    </div>
-                    <div className={style.left4}>
-                        <div className={style.otherSubTable}>
-                            <div className={style.publicTitle}>{props.transferTitle.noalarmCloseTitle}</div>
-                            <div>
-                                <Table bordered dataSource={noalarmloseData} columns={columns} size='middle' rowKey='id' pagination={false} scroll={{ y: 90 }} rowSelection={leftNoCloseKeys}></Table>
+                        <div className="actions">
+                            <span className="tip">选择设备</span>
+                            <div className="btns">
+                                <CustButton icon={<LeftOutlined />} style={btnsty} onClick={() => unknownToSub(2)}></CustButton>
+                                <CustButton icon={<RightOutlined />} style={btnsty} onClick={() => subToUnknown(2)}></CustButton>
                             </div>
                         </div>
-                        <div className={style.actions}>
-                            <span className={style.tip}>选择设备</span>
-                            <Space size={16}>
-                                <CustButton icon={<LeftOutlined />} style={{ height: "46px", width: "68px" }} onClick={() => unknownToSub(4)}></CustButton>
-                                <CustButton icon={<RightOutlined />} style={{ height: "46px", width: "68px" }} onClick={() => subToUnknown(4)}></CustButton>
-                            </Space>
+                    </div>
+                    <div className="flex">
+                        <div className="otherSubTable">
+                            <div className="publicTitle">{props.transferTitle.noalarmOpenTitle}</div>
+                            <div className="outwrap">
+                                <div className="tbwrap"> 
+                                <UsetTable bordered dataSource={noalarmOpenData} columns={columns}   rowKey='id' pagination={false}   rowSelection={leftNoOpenKeys}></UsetTable>
+                               </div>
+                            </div>
+                        </div>
+                        <div className="actions">
+                            <span className="tip">选择设备</span>
+                            <div className="btns">
+                                <CustButton icon={<LeftOutlined />} style={btnsty} onClick={() => unknownToSub(3)}></CustButton>
+                                <CustButton icon={<RightOutlined />} style={btnsty} onClick={() => subToUnknown(3)}></CustButton>
+                            </div>
                         </div>
                     </div>
+                    <div className="flex">
+                        <div className="otherSubTable">
+                            <div className="publicTitle">{props.transferTitle.noalarmCloseTitle}</div>
+                            <div className="outwrap">
+                                <div className="tbwrap"> 
+                                <UsetTable bordered dataSource={noalarmloseData} columns={columns}   rowKey='id' pagination={false}   rowSelection={leftNoCloseKeys}></UsetTable>
+                            </div>
+                            </div>
+                        </div>
+                        <div className="actions">
+                            <span className="tip">选择设备</span>
+                            <div className="btns">
+                                <CustButton icon={<LeftOutlined />} style={btnsty} onClick={() => unknownToSub(4)}></CustButton>
+                                <CustButton icon={<RightOutlined />} style={btnsty} onClick={() => subToUnknown(4)}></CustButton>
+                            </div>
+                        </div>
+                     
                 </div>
             </div>
-            <div className={style.right}>
-                <div className={style.rightTable}>
-                    <div className={style.publicTitle}>{props.transferTitle.unknownTitle}</div>
-                    <div className={style.searchInput}>
+            <div className="right">
+                <div className="rightTable">
+                    <div className="publicTitle">{props.transferTitle.unknownTitle}</div>
+                    <div className="searchInput">
                         <span>设备类型</span>
                         <Select
                             size="middle"
@@ -458,20 +614,22 @@ export default function index(props) {
                             fieldNames={{ label: "name", value: "deviceStyle" }}
                         >
                         </Select>
-                        <div style={{ width: 0, height: 32, margin: '0 32px', borderLeft: '1px dashed #ddd' }}></div>
+                      {laptop ? null : <div style={{ width: 0, height: 32, margin: '0 32px', borderLeft: '1px dashed #ddd' }}></div>}  
                         <span style={{ marginRight: 16 }}>设备搜索</span>
-                        <Search placeholder="请输入设备编号/安装地址" style={{ width: 256 }} enterButton onSearch={onSearchUnknown}></Search>
+                        <Search placeholder="请输入设备编号/安装地址" style={{ width: laptop ? 220 : 256 }} enterButton onSearch={onSearchUnknown}></Search>
                     </div>
-                    <div>
-                        <Table bordered dataSource={unknownData} columns={columns} size='middle' rowKey='id' pagination={false} scroll={{ y: 600 }} rowSelection={rightKeys}></Table>
+                    <div className="outwrap">
+                                <div className="tbwrap"> 
+                        <UsetTable bordered dataSource={unknownData} columns={columns}  rowKey='id' pagination={false}   rowSelection={rightKeys}></UsetTable>
+                     </div>
                     </div>
                 </div>
 
-                <div className={style.btn}>
-                    <CustButton type="default" style={{ height: "46px" }} onClick={() => handleClose()}>{t("button:cancel")}</CustButton>
-                    <CustButton onClick={handleSave} style={{ height: "46px", marginLeft: "16px" }} >{t("button:save")}</CustButton></div>
+                <div className="btn">
+                    <CustButton type="default" style={{ height: laptop ? "32px": "46px" }} onClick={() => handleClose()}>{t("button:cancel")}</CustButton>
+                    <CustButton onClick={handleSave} style={{ height: laptop ? "32px" : "46px", marginLeft: "16px" }} >{t("button:save")}</CustButton></div>
             </div>
-        </div>
+        </Mainbox>
 
     )
 }

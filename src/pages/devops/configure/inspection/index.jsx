@@ -222,7 +222,31 @@ export default function Index() {
 
   }
 
-
+  const inspectRef = useRef()
+  const chooseAddress = async () => {
+    
+      try {
+      const { areaId } = addformRef.current.form?.getFieldsValue()
+      const res = await operationDesigin.QueryInspectionPlanAddress({
+        projectId,
+        areaId,
+        alike: ''
+      })
+      if (res.success) {
+        inspectRef.current.setDataSource(res.data.unused)
+        inspectRef.current.setCopydataSource(res.data.unused)
+        inspectRef.current.setSubMeter(res.data.used)
+        inspectRef.current.setOpen(true)
+      } else {
+        message.error(res.errMsg)
+      }
+    
+    } catch(e) {
+        console.log(e)
+    }
+    
+  }
+  
   return (
     <Pagecont showserach={false} pd="0px" >
       <Titlelayout title="巡检计划管理" layout="flex" dr="column" style={{ height: "823px", overflow: "hidden" }}>
@@ -274,8 +298,9 @@ export default function Index() {
 
           <Modal mold='cust' ref={addmodalRef} width={538} onOk={confirmAdd} custft={isAdd} title="新建巡检计划">
 
-            <AddPlan projectId={projectId} ref={addformRef} getQueryProjectMaintenance={getQueryProjectMaintenance} />
+            <AddPlan projectId={projectId} ref={addformRef} laptop={laptop} getQueryProjectMaintenance={getQueryProjectMaintenance} chooseAddress={chooseAddress}  />
           </Modal>
+          <SetLine ref={inspectRef} form={() =>addformRef.current?.form} laptop={laptop} />
           <PlanAddres PlanAddresRef={PlanAddresRef} planAddress={planAddress} />
           <DeleteModal delModalRef={delModalRef} name="删除巡检计划" content="确认是否要删除巡检计划？" onOk={delOk} />
         </ContainerDiv>
@@ -286,7 +311,7 @@ export default function Index() {
 
 //新增巡检计划组件
 let AddPlan = forwardRef(
-  ({ projectId, getQueryProjectMaintenance }, ref) => {
+  ({ projectId, getQueryProjectMaintenance, chooseAddress }, ref) => {
     const [form] = Form.useForm()
     const [userList, setUserList] = useState([])//运维人员列表
     const onelevel = useSelector(state => state.system.onelevel);
@@ -435,10 +460,10 @@ let AddPlan = forwardRef(
       console.log(v, dateCycle)
     }
     const inspectRef = useRef()
-    const chooseAddress = () => {
+   /*  const chooseAddress = () => {
       inspectRef.current.setOpen(true)
       QueryInspectionPlanAddress()
-    }
+    } */
     const onChangeStartTime = (time, timeString) => {
       setDefaultHM(timeString)
       console.log(defaultHM)
@@ -524,7 +549,7 @@ let AddPlan = forwardRef(
         </Form.Item> */}
 
         </Form>
-        <SetLine ref={inspectRef} form={form} />
+       {/*  <SetLine ref={inspectRef} form={form} laptop={laptop} /> */}
       </DropstartDiv >
 
 
