@@ -12,7 +12,7 @@ import { useAntdTable } from 'ahooks';
 import styled, { css } from 'styled-components';
 import style from './style.module.less'
 import { useSelector } from 'react-redux'
-
+import { MultImport, DeleteModal, ErrorMessage } from './modalCom'
 
 import SetUpSubstation from './SetUpSubstation.js'
 import AddSiteDevices from './AddSiteDevices.js'
@@ -75,12 +75,12 @@ padding: 20px;
     align-items: center;
     border-radius: 80px;
     padding:0px 5px;
-    // color:${props => props.theme.primaryderived || '#237AE4'};
-    // background:${props => props.theme.asiderbgcolorA || '#e5effc'};
-    // border:1px solid  ${props => props.theme.primaryderived || '#237AE4'};
-    color: #0066CC;
-    background-color: rgba(35, 122, 228, 0.117647058823529);
-    border:1px solid rgba(35, 122, 228, 1);
+    color:${props => props.theme.primaryderived || '#237AE4'};
+    background:${props => props.theme.asiderbgcolorA || '#e5effc'};
+    border:1px solid  ${props => props.theme.primaryderived || '#237AE4'};
+    // color: #0066CC;
+    // background-color: rgba(35, 122, 228, 0.117647058823529);
+    // border:1px solid rgba(35, 122, 228, 1);
     
   .marker {
     width: 30px;
@@ -89,8 +89,8 @@ padding: 20px;
     font-size: 24px;
     text-align: center;
     color: #fff;
-    //background-color: ${props => props.theme.primaryderived || '#237AE4'};
-    background-color: rgba(35, 122, 228, 1);
+    background-color: ${props => props.theme.primaryderived || '#237AE4'};
+    //background-color: rgba(35, 122, 228, 1);
     border-radius: 50%;
   }
   
@@ -111,6 +111,8 @@ export default function Index() {
     const { t } = useTranslation(["button", "overview"])
     const tableRef = useRef()
     const setRef = useRef()
+    const modalImportRef = useRef() //导入Ref
+    const modalDelRef = useRef() //删除Ref
     // const { laptop } = useSelector(adaptation)
     const [messageApi, contextHolder] = message.useMessage();
     const getTableData = ({ current, pageSize }) => {
@@ -196,7 +198,7 @@ export default function Index() {
                 <Space size="middle">
                     <Link underline onClick={() => edit(record)}>{t("button:edit")}</Link>
                     <Link underline onClick={() => setAll(record)}>{t("button:export")}</Link>
-                    <CustLink type="danger" onClick={() => clickDel(record)} text="delete" />
+                    <CustLink type="danger" onClick={() => onDelete(record)} text="delete" />
                 </Space>
             ),
         },
@@ -208,6 +210,44 @@ export default function Index() {
         { content: '添加柜体设备' },
         { content: '配置预览' },
     ];
+    const edit = () => {
+        setTimeStatus(1)
+        setIsModalOpen(true);
+    }
+    const onDelete = () => {
+        modalDelRef?.current?.onOpen()
+    }
+
+    //确认删除
+    const delOk = async () => {
+        modalDelRef?.current?.onCancel()
+    }
+    //打开批量导入窗口
+    const siteExport = () => {
+        modalImportRef?.current?.onOpen()
+    }
+
+    const uploadprops = {
+        maxCount: 1,
+        beforeUpload(file, fileList) {
+            console.log(file, fileList)
+            flies = [...fileList]
+            return false
+        }
+    };
+    //确认导入
+    const onImportOk = async () => {
+        modalImportRef.current.onCancel()
+    }
+    const ImportProps = {
+        modalImportRef,
+        width: 560,
+        link: '/deviceExcel/gateway.xlsx',
+        name: '变电站导入',
+        uploadprops,
+        onOk: onImportOk
+    }
+
     const addClick = () => {
         setTimeStatus(1)
         setIsModalOpen(true);
@@ -257,7 +297,7 @@ export default function Index() {
                 <CustButton onClick={() => addClick()}>
                     {t("button:mnuallyAdd")}
                 </CustButton>
-                <ImportConfigurationFile tb={tableRef} />
+                <ImportConfigurationFile onClick={() => siteExport()} />
                 {/* <ExportExcel tb={tableRef} /> */}
                 {/* <CustButton onClick={() => settingClick()}>
                     {t("button:addEquipment")}
@@ -265,7 +305,7 @@ export default function Index() {
             </Space>
         </div>
     )
-    
+
     return (
         <Pagecount showserach={false} custserach pd="0px" >
             {contextHolder}
@@ -346,6 +386,8 @@ export default function Index() {
                                 timeStatus == 4 ? <AddCabinetEquipment></AddCabinetEquipment> :
                                     timeStatus == 5 ? <ConfigurationPreview></ConfigurationPreview> : null}
                 </Modal>
+                <MultImport {...ImportProps}></MultImport>
+                <DeleteModal DelModalRef={modalDelRef} name="删除站点" content="是否确认删除站点？" onOk={delOk}></DeleteModal>
             </Titlelayout>
         </Pagecount >
     )
