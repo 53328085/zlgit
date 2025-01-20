@@ -1,0 +1,130 @@
+.header {
+    width: 1680px;
+    height: 48px;
+    background-color: #fff;
+    border-radius: 4px;
+    border: 1px solid #d7d7d7;
+    display: flex;
+    align-items: center;
+    .updateTime{
+        margin-right: 32px;
+        margin-left: auto;
+        display: flex;
+        width: 300px;
+        align-items: center;
+        justify-content: flex-end;
+        .updateImg{
+            width: 18px;
+            height: 18px;
+            margin-right: 8px;
+        }
+        .time{
+            font-size: 16px;
+            color: #515151;
+        }
+    }
+}
+.content{
+    .topContent{
+        width: 1680px;
+        height: 448px;
+        background-color: #fff;
+        border: 1px solid rgb(215, 215,215);
+        border-radius: 4px;
+        .topheader{
+            display: flex;
+            justify-content: space-between;
+            padding-right: 16px;
+        }
+        .topTitle{
+            width: 124px;
+            height: 36px;
+            line-height: 36px;
+            text-align: center;
+            background-color: #237ae4;
+            font-size: 14px;
+            color: #fff;
+            border-radius: 4px 0 0;
+        }
+        .searchDiv{
+            margin: 16px 0;
+            padding-left: 16px;
+        }
+        .lineChart{
+            width: 1648px;
+            height: 192px;
+            margin-left: 16px;
+        }
+    }
+    .bottomContent{
+        margin-top: 16px;
+        background-color: #fff;
+        height: 336px;
+        width: 1680px;
+        border: 1px solid rgb(215, 215,215);
+        padding: 16px;
+        .cardflex{
+            display: grid;
+            grid-template-columns: repeat(5,313px);
+            
+            gap:16px;
+            margin: 16px auto 0;
+            
+            .card{
+                width: 313px;
+                height: 120px;
+                padding: 16px;
+                margin-right: 16px;
+                color: #000;
+                border: 1px solid rgb(215, 215,215);
+                border-radius: 4px;
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                box-shadow:2px  2px 2px rgba(0, 0, 0, 0.0784313725490196);
+                //background: linear-gradient(180deg, rgba(0, 51, 204, 1) 0%, rgba(0, 51, 204, 1) 0%, rgba(51, 204, 255, 1) 100%, rgba(51, 204, 255, 1) 100%);;
+                .leftcard{
+                    height: 100%;
+                    display: flex;
+                    flex-direction: column;
+                    justify-content: space-between;
+                    .cardTitle{
+                        border-left: 4px solid #fff;
+                        font-size: 14px;
+                        color: #000;
+                        font-weight: bold;
+                    } 
+                    .cardData{
+                           font-size: 18px;
+                           color: #000;
+                       }
+                    .desc{
+                        font-size: 14px;
+                        color: #000;
+                        .normalSign{
+                            background-color: #00ff33;
+                            display: inline-block;
+                            width: 14px;
+                            height: 14px;
+                            border-radius: 50%;
+                            margin-right: 12px;
+                        }
+                        .warnSign{
+                            background-color: #f93e3e;
+                        }
+                    }
+                }
+                
+                .cardContent{    
+                    .imgDiv{
+                        width: 64px;
+                        height: 64px;
+                    }
+                    
+                   
+                }
+            }
+        }
+        
+    }
+}
