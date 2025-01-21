@@ -31,7 +31,8 @@ const Loginpage =  styled.div`
   flex-direction: column;
   position: relative;
   background-image: ${props => `url(${props.bgImg})`};
-  background-size: contain;
+  background-size:cover;
+  background-repeat: no-repeat;
   overflow:auto;
 
 `
