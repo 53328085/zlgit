@@ -164,8 +164,8 @@ export let SetLine = forwardRef(({  getQueryPageDevice,areaId,addform, laptop },
         {label:'储能设备',value:11}
     ]
     const columns = [
-        { title: '设备编号', dataIndex: 'sn', align: "center", width: 201 },
-        { title: '设备名称', dataIndex: 'name', align: "center", width: 201 },
+        { title: '设备编号', dataIndex: 'sn', align: "center", },
+        { title: '设备名称', dataIndex: 'name', align: "center",  },
         { title: '安装地址', dataIndex: 'address', align: "center", },
 
     ]
