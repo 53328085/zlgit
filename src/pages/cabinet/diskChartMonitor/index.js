@@ -536,7 +536,7 @@ let moption ={
             }}
             extra= {<Extra  fn={() => setIopen(false)} />}
             footerStyle={{display: "flex", backgroundColor: "#fff",justifyContent: "flex-end"}}
-            footer={<Space><CustButtonT text="cancel" ghost onClick={() => setCopen(false)}></CustButtonT><CustButtonT text="ok"></CustButtonT></Space>}
+            footer={<Space><CustButtonT text="cancel" ghost onClick={() => setIopen(false)}></CustButtonT><CustButtonT text="ok"></CustButtonT></Space>}
           >
               <div className='leftmain'>
                 <Descriptions column={1} colon={null} bordered contentStyle={descsty} labelStyle={descsty}>
