@@ -28,9 +28,9 @@ const Elects = styled.div`
    }
 }
 `
-const Elect = ({title, num})=> {
+const Elect = ({title, num,onhandler})=> {
     return (
-      <div className='box'>
+      <div className='box' onClick={() => onhandler(title,num)} >
           <Text ellipsis={{tooltip:title}}>{title}</Text>
           <div className="btn">{num}
             <img src={arrow} width={12} /> 
@@ -38,12 +38,12 @@ const Elect = ({title, num})=> {
       </div>  
     )
   }
-export default function Index({datas}) {
+export default function Index({datas, onClick}) {
   if(Array.isArray(datas) && datas.length > 0) {
     return (
         <Elects>
             {
-                datas.map(d => <Elect {...d} />)
+                datas.map(d => <Elect {...d} onhandler={onClick} />)
             }
         </Elects>
       )

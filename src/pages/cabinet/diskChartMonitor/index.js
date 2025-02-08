@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useRef, useMemo } from 'react'
 import moment from 'moment'
 import { useSelector } from 'react-redux'
-import { Form, Image, message, Progress, Select,Space,Input,   DatePicker, Typography, Drawer, Descriptions,Timeline } from 'antd'
+import { Form, Image, message, Progress,Button, InputNumber, Select,Space,Input,   DatePicker, Typography, Drawer, Descriptions,Timeline } from 'antd'
 import Pagecount from '@com/pagecontent'
 import {CloseOutlined} from "@ant-design/icons"
 import {isObject} from "@com/usehandler"
@@ -11,6 +11,7 @@ import styled , {css} from 'styled-components'
 import { Radiogroup, Cdivider } from "@com/comstyled"
 import {enterprise,selectProjectId,adaptation} from "@redux/systemconfig"
 import Titlelayout from '@com/titlelayout';
+import Custmodal from '@com/useModal'
 import imgsrc from "./imgs"
 import Ichart from '@com/useEcharts/Ichart'
  
@@ -28,6 +29,29 @@ const titlesty = css`
     padding-left: 16px;
     border-left: 4px solid  ${props=> props.theme.primaryColor}; 
     font-size: ${props => props.theme.laptop ? "14px" : "16px"}; 
+`
+const Okt =styled.div`
+  padding-left: 32px;
+   font-size: 16px;
+   color:#515151;
+  .ok {
+    display: flex;
+   align-items: center;
+ 
+   img {
+    margin-right: 16px;
+   }
+  }
+  .pwd {
+    display: flex;
+    align-items: center;
+    column-gap: 16px;
+    .ipt {
+      flex:1;
+      flex-direction: column;
+      
+    }
+  }
 `
 const CDrawer = styled(Drawer)`
 && {
@@ -65,8 +89,7 @@ const Dot = styled.div`
          background-size: 8px;
          background-repeat: no-repeat;
           
-}
-         
+} 
            
 `
 const DDrawer = styled(Drawer)`
@@ -81,16 +104,24 @@ const DDrawer = styled(Drawer)`
       background-color: transparent;
     }
   }
-  .ant-drawer-body {
+  .ant-drawer-extra {
+    flex: 2;
     display: flex;
-    column-gap: 8px;
+  }
+  .ant-drawer-body {
+   // display: flex;
+  //  column-gap: 8px;
+     display: grid;
+     grid-template-columns: ${props=> props.inner ? "1fr" : "1fr 1036px"} ;
+     grid-template-rows: 1fr;
+     column-gap: 8px;
     .left {
-      flex:1;
+       height: 100%;
       position: relative;
       display: flex;
+
       .leftmain  {
-         display: flex;
-         flex:1;
+         display: flex; 
          flex-direction: column;
          row-gap: 16px;
        .alarm{
@@ -104,6 +135,7 @@ const DDrawer = styled(Drawer)`
       }
     }
     .mainbox {
+      height: 100%;
       display: flex;
       flex-basis:1036px;
       flex-direction: column;
@@ -136,10 +168,19 @@ const DDrawer = styled(Drawer)`
         justify-content: space-between;
         background-color: rgb(215,215,215);
       }
-    
+      .remote {
+        height: 40px;
+        font-size: 16px;
+        width: 144px;
+        text-align: left;
+        padding: 0 8px;
+        img {
+          margin-right: 8px;
+        } 
+     }
     }
-   
   }
+ 
   .ant-drawer-header{
     .ant-drawer-title {
     padding-left: 16px;
@@ -240,7 +281,7 @@ const Mainbox =styled.div`
 const Extrea = styled.div`
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: ${props => props.ist ? "space-between" : "flex-end"} ;
   flex:1;
   .close {
      color:#d6d6d6;
@@ -271,9 +312,12 @@ const {laptop} = useSelector(adaptation)
  const [open, setOpen] = useState(false)
  const [copen, setCopen] = useState(false)
  const [iopen, setIopen] = useState(false)
+ const [elopen, setElopen] = useState(false)
  const [title, setTitle] = useState("变压器柜温度趋势") 
  const [ctitle, setCtitle] = useState("有源滤波回路") 
  const [ititle, setititle] = useState("告警详情") 
+ const [eltitle, setEltitle] = useState('') // 遥测 图表的标题
+ const [form] = Form.useForm()
  const  onOpen = () => {
    setOpen(true)
  }
@@ -283,6 +327,12 @@ const {laptop} = useSelector(adaptation)
  
 const vdata= [
   Array.from({length: 24}, (_, index) => index > 9 ? `${index}:00` : `0${index}:00`),
+  Array.from({length:24}, (_,index) => (Math.random()*100)?.toFixed(2)),
+  Array.from({length:24}, (_,index) => (Math.random()*100)?.toFixed(2))
+]
+const eldata= [
+  Array.from({length: 24}, (_, index) => index > 9 ? `${index}:00` : `0${index}:00`),
+  Array.from({length:24}, (_,index) => (Math.random()*100)?.toFixed(2)),
   Array.from({length:24}, (_,index) => (Math.random()*100)?.toFixed(2)),
   Array.from({length:24}, (_,index) => (Math.random()*100)?.toFixed(2))
 ]
@@ -389,20 +439,92 @@ let moption ={
     sourceHeader: false,
   }
 }
+let eloption ={
+  // color: ["#ff7345","#6a6e88"],
+   series: [{type: "line",   seriesLayoutBy: 'row',  },{type: "line",   seriesLayoutBy: 'row'}],
+   grid: {
+       right: 0,
+       left: 0,
+       top: "32px",
+       bottom: 0,
+        containLabel: true,
+    },
+    legend: {
+      top: "0px",
+      left: "16px"
+   },
+   yAxis: [
+     {
+       
+       axisLabel: {
+         formatter: '{value}V'
+       }
+     },
+   ],
+   dataset: { 
+     dimensions: [{name: "时间", type: "time"}, {name:"相电压VAB" }, {name:"相电压VAC" },{name:"相电压VCA" }],
+     source: eldata,
+     sourceHeader: false,
+   }
+ }
 
 // 自定义告警详情描述类别样式
  const descsty = {
   backgroundColor: "#e1f3e7",
   padding: "8px 16px"
  }
+// 表单项宽度
 
+const itemsty = {
+  width: "160px"
+}
+const toptions =[
+  {label:15,value:15 },
+  {label:30,value:30 },
+  {label:60,value:60 },
+  {label:120,value:120 },
+  {label:240,value:240 },
+  {label:480,value:480 }, 
+]
+const loptions =[
+  {label:'12t',value:12 },
+  {label:'1t',value:1 },
+  {label:'24t',value:24 },
+  {label: "定时限",value: 0},
+  
+]
+const options3 =[
+  {label:100,value:100 },
+  {label:200,value:200 },
+  {label:300,value:300 },
+  {label:400,value:400 }, 
+]
+const options4 =[ 
+  {label:'反是限',value:1 },
+  {label: "定时限",value: 0},
+  
+]
  const Extra =({ist,title, fn}) =>{ 
-  return (<Extrea>
+  return (<Extrea ist={ist}>
  {ist && <RangePicker /> }
 <CloseOutlined onClick={fn} className='close' />
  </Extrea>)
  }
- 
+ const onelchart = (title) => { 
+    setEltitle(title)
+    setElopen(true)
+ }
+ const [rState, setRstate] = useState(1)
+ const modal = useRef();
+ const onControl = ()=> {
+   modal.current.onOpen();
+  
+ }
+ const onOk=()=> {
+   if(rState==1) {
+    setRstate(2)
+   }
+ }
   return (
     <Pagecount  >
       <Mainbox>
@@ -515,6 +637,7 @@ let moption ={
              <div className='left'>
             <DDrawer
             title="告警详情" 
+            inner={true}
             wh="524px"
             open={iopen}
             bodyStyle={{
@@ -531,9 +654,6 @@ let moption ={
             mask={false}
             closable={false}
             getContainer={false}
-            style={{
-              position: 'absolute',
-            }}
             extra= {<Extra  fn={() => setIopen(false)} />}
             footerStyle={{display: "flex", backgroundColor: "#fff",justifyContent: "flex-end"}}
             footer={<Space><CustButtonT text="cancel" ghost onClick={() => setIopen(false)}></CustButtonT><CustButtonT text="ok"></CustButtonT></Space>}
@@ -572,6 +692,34 @@ let moption ={
               </div>
 
             </DDrawer>
+            <DDrawer
+            title={eltitle}
+            wh="840px"
+            open={elopen}
+            inner={true}
+            bodyStyle={{
+              backgroundColor: '#fff',
+              padding: '16px 24px 16px 16px',
+            }}
+            headerStyle={{
+              backgroundColor: '#fff',
+              padding: '16px 24px 16px 16px',
+              borderBottom: 'none',
+              display: "flex", 
+            }}
+            placement="right"
+            mask={false}
+            closable={false}
+            getContainer={false}
+            extra= {<Extra ist={true}  fn={() => setElopen(false)} />}
+            zIndex={1001}
+            
+          >
+              <div className='leftmain'>
+                 <Ichart {...eloption} /> 
+              </div>
+
+            </DDrawer>
             </div>
             <div className="mainbox">
              <div className='ctitle'>
@@ -606,9 +754,131 @@ let moption ={
                     }
                 </span>
               </div>
-              <Electric datas={vedata} />
+              <Electric datas={vedata} onClick={ onelchart} />
+              <div className="htitle">
+                <span>遥调</span>
+                <CustButton style={{marginRight: "-16px"}}>保存参数</CustButton>
+              </div>
+              <Form form={form} layout="vertical" >
+                 <Title level={5}>长延时保护</Title>
+                 <Space size={laptop ? "small" : "large"}>
+                   <Form.Item label="长延时电流整定值" name="a">
+                      <InputNumber placeholder='0.4-1.0' min={0.4} max={1.0} step={0.1} style={itemsty} />
+                   </Form.Item>
+                   <Form.Item label="长延时时间整定值" name="b">
+                      <Select options={toptions} style={itemsty}></Select>
+                   </Form.Item>
+                   <Form.Item label="长延时曲线类型" name="c">
+                      <Select options={loptions} style={itemsty}></Select>
+                   </Form.Item>
+                 </Space>
+                 <Title level={5}>短延时保护</Title>
+                 <Space size={laptop ? "small" : "large"}>
+                   <Form.Item label="短延时电流整定值" name="d">
+                      <InputNumber placeholder='1.5-15' min={1.5} max={15} step={0.1} style={itemsty} />
+                   </Form.Item>
+                   <Form.Item label="短延时时间整定值" name="e">
+                      <Select options={options3} style={itemsty}></Select>
+                   </Form.Item>
+                   <Form.Item label="短延时曲线类型" name="f">
+                      <Select options={options4} style={itemsty}></Select>
+                   </Form.Item>
+                 </Space>
+                 <Title level={5}>瞬动保护</Title>
+                 <Space size={laptop ? "small" : "large"}>
+                   <Form.Item label="瞬动电流整定值" name="g">
+                      <InputNumber placeholder='1.5-15' min={1.5} max={15} step={0.1} style={itemsty} />
+                   </Form.Item>
+                   <Form.Item label="瞬时电流动作方式" name="h">
+                      <Input></Input>
+                   </Form.Item>
+                   
+                 </Space>
+                 <Title level={5}>接地保护</Title>
+                 <Space size={laptop ? "small" : "large"}>
+                   <Form.Item label="接地保护电流整定值" name="i">
+                      <InputNumber   min={0}  style={itemsty} />
+                   </Form.Item>
+                   <Form.Item label="接地保护电流曲线类型" name="j">
+                      <Select options={options4} style={itemsty}></Select>
+                   </Form.Item>
+                   <Form.Item label="接地保护电流动作时间" name="k">
+                      <Input></Input>
+                   </Form.Item>
+                 </Space>
+                 <Title level={5}>剩余电流保护</Title>
+                 <Space size={laptop ? "small" : "large"}>
+                   <Form.Item label="剩余电流保护阀值" name="l">
+                      <InputNumber   min={0}  style={itemsty} addonAfter="A" />
+                   </Form.Item>
+                   <Form.Item label="剩余电流保护延迟" name="m">
+                   <InputNumber   min={0}  style={itemsty} addonAfter="ms" />
+                   </Form.Item>
+                  
+                 </Space>
+                 <Title level={5}>欠压保护</Title>
+                 <Space size={laptop ? "small" : "large"}>
+                   <Form.Item label="欠电压动作阀值整定值" name="n">
+                      <InputNumber   min={0}  style={itemsty} addonAfter="A" />
+                   </Form.Item>
+                   <Form.Item label="欠电压动作延时时间整定值" name="o">
+                      <InputNumber   min={0}  style={itemsty} addonAfter="S" />
+                   </Form.Item>
+                   <Form.Item label="欠电压返回阀值整定值" name="p">
+                   <InputNumber   min={0}  style={itemsty} addonAfter="A" />
+                   </Form.Item>
+                   <Form.Item label="欠电压返回延时时间整定值" name="q">
+                   <InputNumber   min={0}  style={itemsty} addonAfter="A" />
+                   </Form.Item>
+                 </Space>
+                 <Title level={5}>过压保护</Title>
+                 <Space size={laptop ? "small" : "large"}>
+                   <Form.Item label="过电压动作阀值整定值" name="r">
+                      <InputNumber   min={0}  style={itemsty} addonAfter="A" />
+                   </Form.Item>
+                   <Form.Item label="过电压动作延时时间整定值" name="s">
+                      <InputNumber   min={0}  style={itemsty} addonAfter="S" />
+                   </Form.Item>
+                   <Form.Item label="过电压返回阀值整定值" name="t">
+                   <InputNumber   min={0}  style={itemsty} addonAfter="A" />
+                   </Form.Item>
+                   <Form.Item label="过电压返回延时时间整定值" name="u">
+                   <InputNumber   min={0}  style={itemsty} addonAfter="A" />
+                   </Form.Item>
+                 </Space>
+              </Form>
+             <div className="htitle">
+              <span>遥控</span>
+             </div>
+             <div style={{display: "flex", columnGap:"64px", alignItems: "center"}}>
+                <div>
+                  当前状态：<span>合闸</span>
+                </div>
+                <Button type="primary"   danger className='remote' onClick={onControl} ><img src={imgsrc["remote"]}  width={32} height={32}></img>远程分闸</Button>
+             </div>
             </div>
-           
+            <Custmodal
+    title="远程控制"
+    ref={modal}
+    mold="cust" 
+    width="592px" 
+    onOk={onOk}
+  >
+    <Okt>
+     {
+       rState == 1 ? <div className='ok'>
+       <img src={imgsrc['ok']}></img> 当前状态为合闸，确认要进线远程分闸操作？
+    </div> : 
+    <div className='pwd'>
+      <div>请输入安全码</div>
+       <div className='ipt'><Input></Input></div> 
+    </div>
+    
+     }   
+       
+    </Okt>
+ 
+  </Custmodal>
           </DDrawer>
     </Pagecount>
 
