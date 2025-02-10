@@ -29,7 +29,7 @@ const Formbox = styled(Form)`
         row-gap: 32px;
         padding: 32px 0px;
         border-top: 1px dotted #d7d7d7;
-        grid-template-columns: 1200px;
+        grid-template-columns: 1fr;
          .ant-form-item {
             margin-right: 0;
            

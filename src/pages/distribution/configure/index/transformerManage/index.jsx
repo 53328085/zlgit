@@ -274,7 +274,7 @@ export default function Index() {
  const Title = (
     <div style={{display: 'flex',justifyContent: "space-between", alignItems: "center"}}>
       <span>变压器管理</span>
-            <Space size={32}>
+            <Space size={16}>
             <CustButton onClick={()=> settingClick()}>
                  {t("button:selectDevice")}
             </CustButton>

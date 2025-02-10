@@ -62,15 +62,7 @@ const PageContentMain = styled.div`
     display: flex;
     flex-direction: column;
     position: relative;
-   // flex: 1;
- 
-  /*   height:  ${props => {
-         let {showserach, beTabs, custserach} = props 
-         if (showserach || custserach) return beTabs ? '764px' : '805px'
-         if (!showserach && !custserach) return beTabs ? '832px' : '873px'
-       
-          
-    }};  */
+   
     overflow-y: auto;
     & .flexcol {
          flex: 1;
@@ -81,7 +73,7 @@ const PageContentMain = styled.div`
 
 PageContentMain.defaultProps = {
     pd: "16px",
-    bgcolor: "#fff"
+    bgcolor: "#fff",
 }
 export default function Maincontent(props) {
     const [searchParams, setSearchParams] = useSearchParams()

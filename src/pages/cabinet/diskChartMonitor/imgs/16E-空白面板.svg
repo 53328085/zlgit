@@ -1,0 +1,10 @@
+<svg id="组_703" data-name="组 703" xmlns="http://www.w3.org/2000/svg" width="8" height="15" viewBox="0 0 8 15">
+  <g id="矩形_1012" data-name="矩形 1012" fill="#868688" stroke="#707070" stroke-width="0.2">
+    <rect width="8" height="15" rx="2" stroke="none"/>
+    <rect x="0.1" y="0.1" width="7.8" height="14.8" rx="1.9" fill="none"/>
+  </g>
+  <g id="椭圆_103" data-name="椭圆 103" transform="translate(1 5)" fill="#363636" stroke="#9b9b9b" stroke-width="0.6">
+    <circle cx="2.5" cy="2.5" r="2.5" stroke="none"/>
+    <circle cx="2.5" cy="2.5" r="2.2" fill="none"/>
+  </g>
+</svg>

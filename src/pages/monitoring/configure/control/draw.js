@@ -33,8 +33,8 @@ const Drawerbox = styled(Drawer)`
   && {
     .ant-drawer-content-wrapper {
       width: calc(100% - 200px) !important;
-      height: calc(100% - 80px);
-      top: 80px;
+      height: calc(100% - 64px);
+      top: 64px;
     }
     .ant-drawer-wrapper-body {
       background-color: #003366;

@@ -144,9 +144,7 @@ export default function Index() {
   let areaId = useSelector(selectOneLevelDefaultId)
   let {laptop} = useSelector(adaptation)
 
-  let {primaryderived} = useSelector(themeColor)
-  console.log("primaryderived", primaryderived)
-   
+  let {primaryderived} = useSelector(themeColor)  
   const statusAttribute = [
     {
       meterType: 0,

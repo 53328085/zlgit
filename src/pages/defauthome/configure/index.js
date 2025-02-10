@@ -119,10 +119,12 @@ const CDrawer = styled(Drawer)`
     .ant-drawer-content-wrapper{
         top: 80px!important;
         width: 284px!important;
-        height: 848px!important;
+        height: calc(100% - 80px);
+    //    height: 848px!important;
         // position: relative;
         margin-left: 48px;
         background: transparent;
+        overflow: auto;
     }
     .ant-drawer-header{
         display: none;
