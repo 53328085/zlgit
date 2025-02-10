@@ -1,9 +1,9 @@
 import React, { useState, useEffect, useRef } from 'react'
 
- 
+
 
 export default function Icard(props) {
-    let daluq = props.deviceStyle == 12;
+    let daluq = props.deviceStyle == 12 || props.deviceStyle == 1;
     const statet = daluq ? {
         open: '分闸',
         close: '合闸'
