@@ -6,7 +6,7 @@ import {
   memorizeName,
   selectUser,
 } from "@redux/user";
- 
+import { adaptation } from "@redux/systemconfig";
 import { Form, Input,  Image } from "antd"; 
 import {useTranslation, Trans, Translation} from 'react-i18next';
 import { pwdValidator, imgcodeValidator } from "@pages/rule";
@@ -23,6 +23,7 @@ export default memo(function({onSubmit}){
     const dispatch = useDispatch()
     let initmemorize = useSelector(selectMemorize);
     let { name, password } = useSelector(selectUser);
+    let {laptop} = useSelector(adaptation)
     let [loading, setLoading] = useState(false);
     let [codeUrl, setCodeUrl] =useState()
     const auto = useMemo(() => (initmemorize ? "on" : "off"), [initmemorize]);
@@ -168,7 +169,7 @@ export default memo(function({onSubmit}){
             htmlType="submit"
             block
             loading={loading}
-            style={{ height: "56px" }}
+            style={{ height: laptop ? "42px" : "56px" }}
           >
             {t("Login")}
           </Logbtn>

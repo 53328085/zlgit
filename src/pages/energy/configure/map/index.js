@@ -70,7 +70,7 @@ const Main = styled.div`
       }
     }
     .point {
-      flex: 1 0 294x;
+      flex: 1 0 294px;
       overflow: auto;
     }
   }

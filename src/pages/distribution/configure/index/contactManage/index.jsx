@@ -249,7 +249,7 @@ export default function Index() {
   const Title = (
     <div style={{display: 'flex',justifyContent: "space-between", alignItems: "center"}}>
       <span>配电房触点测温</span>
-            <Space size={32}>
+            <Space size={16}>
             <CustButton   onClick={()=> settingClick()} >
                 {t("button:selectDevice")}
             </CustButton>

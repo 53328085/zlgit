@@ -14,17 +14,17 @@ import {
   Drawer,
 } from "antd";
 
-import styled from "styled-components";
+import styled, {css} from "styled-components";
 import UserTable from "@com/useTable";
 import { Area } from "@api/api.js";
 import { WarningFilled, LeftOutlined, RightOutlined } from "@ant-design/icons";
 
 import { Serach } from '@com/comstyled'
 
-import { selectOneLevel, selectOneLevelDefaultId, getOnelevel, publishState, filterDeviceStyle } from '@redux/systemconfig.js'
+import { selectOneLevel, selectOneLevelDefaultId, getOnelevel, publishState, filterDeviceStyle,adaptation } from '@redux/systemconfig.js'
 import { useSelector, useDispatch } from 'react-redux'
 import Mask from '@com/mask.jsx'
-import { CustLink, CancelButton } from "@com/useButton"
+import { CustLink, CancelButton , CustButton} from "@com/useButton"
 const Mainbox = styled.div`
   position: relative;
   display: grid;
@@ -32,30 +32,26 @@ const Mainbox = styled.div`
   row-gap: 16px;
   flex: 1;
 `;
-const Formbox = styled(Form)`
-  display: grid;
-  grid-template-columns: ${(p) => (p.islngLat ? "1fr 584px;" : "1fr")};
-  grid-template-rows: ${(p) =>
-    isNaN(p.rowes)
-      ? "repeat(8, 32px)"
-      : p.islngLat
-        ? `repeat(${p.rowes + 5}, 32px)`
-        : `repeat(${p.rowes}, 32px)`};
-  column-gap: 32px;
-  row-gap: 20px;
-  grid-auto-flow: ${(p) => (p.islngLat ? "column" : "row")};
-  .address {
-    grid-column: 2;
-  }
-  .map {
-    grid-column: 2;
-    grid-row: 2 /-1;
-  }
-`;
+ 
+const sty=css` 
+      grid-template-columns: 1fr auto 1fr;
+        column-gap: 16px;
+        grid-template-rows:  1fr; 
+        .selected{
+          row-gap:16px;
+        }
+`
+const iconsty = css`
+  width: 48px;
+  height: 32px;
+`
 const Drawerbox = styled(Drawer)`
   && {
+    z-index: 10001;
     .ant-drawer-content-wrapper {
-      width: 100% !important;
+      width: calc(100% - 200px)!important;
+      height: calc(100% - 64px);
+      top:64px;
     }
     .ant-drawer-wrapper-body {
       background-color: #003366;
@@ -63,7 +59,8 @@ const Drawerbox = styled(Drawer)`
         display: grid;
         grid-template-columns: 692px 1fr 714px;
         column-gap: 30px;
-        grid-template-rows: 700px;
+        grid-template-rows: 1fr;
+       
         .title {
           padding-left: 16px;
           border-left: 4px ${props=> props.theme.primaryColor} solid;
@@ -72,19 +69,16 @@ const Drawerbox = styled(Drawer)`
           align-items: center;
         }
         .selected {
-          display: grid;
-          grid-template-rows: 1fr 1fr;
+          display: flex;  
           row-gap: 32px;
-
-          .ant-table {
-            height: 100%;
-          }
+          flex-direction:column;
           .total {
             display: grid;
             grid-template-rows: 32px 1fr;
             row-gap: 16px;
             padding: 16px;
             background-color: #fff;
+            flex:1;
           }
           .sub {
             display: grid;
@@ -92,6 +86,16 @@ const Drawerbox = styled(Drawer)`
             padding: 16px;
             row-gap: 16px;
             background-color: #fff;
+            flex: 1;
+          }
+        }
+        .outwrap {
+          position: relative;
+          height: 100%;
+          overflow: auto;
+          .inwrap {
+            position: absolute;
+            width: 100%;
           }
         }
         .unselected {
@@ -116,13 +120,15 @@ const Drawerbox = styled(Drawer)`
             }
           }
         }
+        ${props=> props.theme.laptop ? sty : null}
       }
+     
     }
   }
 `;
 const Inptserach = styled(Input.Search)`
   && {
-    width: 256px;
+    
     .ant-input-search
       .ant-input-group
       .ant-input-affix-wrapper:not(:last-child) {
@@ -139,7 +145,7 @@ export default function Index({ projectId, level, CModal, name, allLevel }) {
   const oneLevelDefaultId = useSelector(selectOneLevelDefaultId) // 一级默认id
   const ispublish = useSelector(publishState)
   const [levelone] = useState(allLevel[0]);
-
+  const {laptop} = useSelector(adaptation)
   const limitlevle = allLevel.slice(0, level - 1);
   const fields = allLevel?.find(item => item.level == level)?.fields || [];
   const [form] = Form.useForm();
@@ -530,7 +536,24 @@ export default function Index({ projectId, level, CModal, name, allLevel }) {
     }
 
   }, [level]);
-
+  const btnsty = laptop
+    ? {
+        height: "32px",
+        width: "55px",
+      }
+    : {
+        height: "46px",
+        width: "68px",
+      };
+const savesty = laptop
+      ? {
+          height: "34px",
+          width: "120px",
+        }
+      : {
+          height: "46px",
+          width: "146px",
+        };
   return (
     <Mainbox ref={boxref}>
 
@@ -581,27 +604,25 @@ export default function Index({ projectId, level, CModal, name, allLevel }) {
       <Mask task={open} >
         <Drawerbox
           onClose={drawClose}
-          open={open}
-          getContainer={() => boxref.current}
-
-          style={{ position: "absolute", top: "-16px", left: "-16px" }}
+          open={open}         
           closable={false}
           destroyOnClose
-          height={760}
-
+          contentWrapperStyle={{ margingRight: '16px' }}
         >
           <div className="selected">
             <div className="total">
               <p className="title">{name}总表</p>
-              <UserTable
+              <div className="outwrap">
+                <div className="inwrap">
+                <UserTable
                 columns={deviceColumns}
                 rowSelection={rowSelection}
                 dataSource={deviceSummary}
                 rowKey="id"
-                scroll={{
-                  y: 180
-                }}
               />
+                </div>
+              </div>
+            
             </div>
             <div className="sub">
               <p className="title">{name}分表</p>
@@ -614,67 +635,57 @@ export default function Index({ projectId, level, CModal, name, allLevel }) {
                   onSearch={handlersearch}
                 />
               </Space>
-              <UserTable
+              <div className="outwrap">
+                <div className="inwrap">
+                <UserTable
                 columns={deviceColumns}
                 rowSelection={subrowSelection}
                 dataSource={deviceSub}
-                scroll={{
-                  y: 248
-                }}
                 rowKey="id"
 
               />
+                </div>
+              </div>
+             
             </div>
           </div>
           <div className="optab">
             <div>
               <Paragraph>选中{name}总表</Paragraph>
-              <Space size={16}>
-                <Button
-                  type="primary"
-                  icon={<LeftOutlined style={{ fontSize: "18px" }} />}
+              <Space>
+                <CustButton
+                  icon={<LeftOutlined  />}
                   onClick={() => onMove(1)}
-                ></Button>
-                <Button
-                  type="primary"
-                  icon={<RightOutlined style={{ fontSize: "18px" }} />}
+                  style={btnsty}
+                ></CustButton>
+                <CustButton
+                  icon={<RightOutlined />}
                   onClick={() => onMove(2)}
-                ></Button>
+                  style={btnsty}
+                ></CustButton>
               </Space>
             </div>
             <div>
               <Paragraph>选择{name}分表</Paragraph>
               <Space size={16}>
-                <Button
-                  type="primary"
-                  icon={
-                    <LeftOutlined
-                      style={{ fontSize: "18px" }}
-                      onClick={() => onMove(3)}
+                <CustButton
+                 icon={<LeftOutlined />} 
+                 style={btnsty}
+                 onClick={() => onMove(3)}
                     />
-                  }
-                ></Button>
-                <Button
-                  type="primary"
-                  icon={
-                    <RightOutlined
-                      style={{ fontSize: "18px" }}
-                      onClick={() => onMove(4)}
-                    />
-                  }
-                ></Button>
+                 
+                
+                <CustButton
+                 icon={<RightOutlined />} 
+                 style={btnsty}
+                 onClick={() => onMove(4)}
+                 
+                /> 
               </Space>
             </div>
             <div>
-              {/* <Button
-              type="primary"
-              block
-              style={{ marginBottom: "16px" }}
-              onClick={configureMeter}
-            >
-              保存
-            </Button> */}
-              <CancelButton onClick={drawClose} style={{ height: "46px", width: "100%" }} />
+             
+              <CancelButton onClick={drawClose} style={savesty} />
 
             </div>
           </div>
@@ -731,13 +742,17 @@ export default function Index({ projectId, level, CModal, name, allLevel }) {
                 </Item>
               </Space>
             </Form>
-            <UserTable
+            <div className="outwrap">
+              <div className="inwrap">
+              <UserTable
               columns={deviceColumns}
               rowSelection={unrowSelection}
               dataSource={Unselected}
-              scroll={{ y: 556 }}
               rowKey="id"
             />
+              </div>
+            </div>
+           
           </div>
         </Drawerbox>
       </Mask>

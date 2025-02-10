@@ -13,7 +13,7 @@ import {   getJump,  getIsGranary, configProject,   systemConfigInfo, getWebsite
 import { Login as LoginApi, I18N,  } from "@api/api.js";
 import { message, Tabs, Form, Input } from "antd";
 import {useTranslation, Trans, Translation} from 'react-i18next';
-import styled from "styled-components";
+import styled, {css} from "styled-components";
 import CModal from "@com/useModal"
 import {cipher, isObject} from "@com/usehandler"
 import { phoneValidator} from "@pages/rule";
@@ -24,16 +24,28 @@ import Listitem from "./Listitem";
 import Username from "./Username";
 import Phonelog from "./Phonelog";
 import Copyright from './Copyright'
-import {media} from '@com/usehandler' 
+ 
 const Loginpage =  styled.div`
   display: flex;
   flex:1;
   flex-direction: column;
   position: relative;
   background-image: ${props => `url(${props.bgImg})`};
-  background-size: cover;
-  
+  background-size:cover;
+  background-repeat: no-repeat;
+  overflow:auto;
 
+`
+const tabsty = css`
+.ant-tabs-nav{
+  margin-bottom: 24px;
+}
+.ant-tabs-tab .ant-tabs-tab-btn{
+  font-size: 22px;
+}
+.ant-tabs-tab.ant-tabs-tab-active .ant-tabs-tab-btn{
+  font-size: 24px;
+}
 `
 const CTabs = styled(Tabs)`
    && {
@@ -67,17 +79,22 @@ const CTabs = styled(Tabs)`
       .ant-tabs-ink-bar {
         display: none;
       }
+      ${props=> props.theme.laptop ? tabsty : null}
    }
 
+`
+const mainsty = css`
+ padding: 0 32px;
 `
 const Logmain = styled.div`
   && {
     padding: 142px 45px 0 100px;
     display: flex;
-    flex: 1 calc(100vh - 138px - 24px);
-   // height: calc(100vh - 138px - 24px);
-    overflow-y: auto;
+    flex: 1;
+   // flex: 1 calc(100vh - 138px - 24px);
+   // overflow-y: auto;
     justify-content: space-between;
+    ${props => props.theme.laptop ? mainsty : null}
   }
 `;
 

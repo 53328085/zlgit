@@ -13,6 +13,7 @@ import editpng from "./imgs/edit.png"
 import deletepng from "./imgs/delete.png"
 import { operationDesigin } from '@api/api'
 import {CustButtonT} from "@com/useButton"
+import { adaptation } from "@redux/systemconfig";
 import Loading from '../../../Loading'
 const MainBox = styled.div`
   background-color: #fff;
@@ -118,7 +119,7 @@ export default function Index() {
   const planRef = useRef() //班次管理
   const palnEditRef = useRef() //班次编辑
   const delRef =useRef()
-
+  const {laptop} = useSelector(adaptation)
   const userPlan = useRef()
   const  delId=useRef();
   const oneLevel = useSelector(state => state.system.onelevel)
@@ -480,7 +481,7 @@ export default function Index() {
         </div>
             <MainBox>
               <BlueColumn name="排班管理"></BlueColumn>
-              <Divider dashed style={{ borderColor: '#d7d7d7' }}></Divider>
+              <Divider dashed style={{ borderColor: '#d7d7d7', margin: laptop ? "16px 0" : "24px : 0" }}></Divider>
               <div className='mgt16'>
                 <div className='title'>
                     <CustButtonT onClick={() => {if(!areaId){message.warning('请新增园区');return}; planRef.current.onOpen() }} text="shiftmg" wh="auto" /> 

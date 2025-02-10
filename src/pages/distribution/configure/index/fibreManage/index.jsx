@@ -299,7 +299,7 @@ const rules = [{
   const Title = (
     <div style={{display: 'flex',justifyContent: "space-between", alignItems: "center"}}>
       <span>光纤测温</span>
-            <Space size={32}>
+            <Space size={16}>
             <CustButton  wh="auto" onClick={() => onOpen(false)} >
                {t("button:createTemperaturePartition")}
             </CustButton>

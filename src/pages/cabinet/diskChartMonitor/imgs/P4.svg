@@ -1,0 +1,555 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="320" height="866" viewBox="0 0 320 866">
+  <g id="组_975" data-name="组 975" transform="translate(622 -4005)">
+    <g id="矩形_1305" data-name="矩形 1305" transform="translate(-622 4007)" fill="#fff" stroke="#707070" stroke-width="1">
+      <rect width="320" height="864" stroke="none"/>
+      <rect x="0.5" y="0.5" width="319" height="863" fill="none"/>
+    </g>
+    <g id="矩形_1306" data-name="矩形 1306" transform="translate(-622 4032)" fill="#e4e4e4" stroke="#707070" stroke-width="1">
+      <rect width="320" height="80" stroke="none"/>
+      <rect x="0.5" y="0.5" width="319" height="79" fill="none"/>
+    </g>
+    <g id="矩形_1319" data-name="矩形 1319" transform="translate(-622 4833)" fill="#76787c" stroke="#707070" stroke-width="1">
+      <rect width="320" height="38" stroke="none"/>
+      <rect x="0.5" y="0.5" width="319" height="37" fill="none"/>
+    </g>
+    <g id="矩形_1307" data-name="矩形 1307" transform="translate(-622 4005)" fill="#1d252d" stroke="#707070" stroke-width="1">
+      <rect width="320" height="27" stroke="none"/>
+      <rect x="0.5" y="0.5" width="319" height="26" fill="none"/>
+    </g>
+    <path id="减去_16" data-name="减去 16" d="M39.381,17H2a2,2,0,0,1-2-2V2A2,2,0,0,1,2,0H48a2,2,0,0,1,2,2V4.5L39.381,17Z" transform="translate(-615 4010)" fill="#1ba5eb"/>
+    <image id="物联logo" width="44.87" height="13.806" transform="translate(-615.635 4011.608)" xlink:href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAANAAAABACAYAAABrwvk3AAAACXBIWXMAAAsTAAALEwEAmpwYAAAFuWlUWHRYTUw6Y29tLmFkb2JlLnhtcAAAAAAAPD94cGFja2V0IGJlZ2luPSLvu78iIGlkPSJXNU0wTXBDZWhpSHpyZVN6TlRjemtjOWQiPz4gPHg6eG1wbWV0YSB4bWxuczp4PSJhZG9iZTpuczptZXRhLyIgeDp4bXB0az0iQWRvYmUgWE1QIENvcmUgNS42LWMxNDggNzkuMTY0MDM2LCAyMDE5LzA4LzEzLTAxOjA2OjU3ICAgICAgICAiPiA8cmRmOlJERiB4bWxuczpyZGY9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkvMDIvMjItcmRmLXN5bnRheC1ucyMiPiA8cmRmOkRlc2NyaXB0aW9uIHJkZjphYm91dD0iIiB4bWxuczp4bXA9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC8iIHhtbG5zOnhtcE1NPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvbW0vIiB4bWxuczpzdEV2dD0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL3NUeXBlL1Jlc291cmNlRXZlbnQjIiB4bWxuczpkYz0iaHR0cDovL3B1cmwub3JnL2RjL2VsZW1lbnRzLzEuMS8iIHhtbG5zOnBob3Rvc2hvcD0iaHR0cDovL25zLmFkb2JlLmNvbS9waG90b3Nob3AvMS4wLyIgeG1wOkNyZWF0b3JUb29sPSJBZG9iZSBQaG90b3Nob3AgMjEuMCAoV2luZG93cykiIHhtcDpDcmVhdGVEYXRlPSIyMDI0LTAzLTE5VDA5OjE2KzA4OjAwIiB4bXA6TWV0YWRhdGFEYXRlPSIyMDI0LTAzLTE5VDA5OjE2KzA4OjAwIiB4bXA6TW9kaWZ5RGF0ZT0iMjAyNC0wMy0xOVQwOToxNiswODowMCIgeG1wTU06SW5zdGFuY2VJRD0ieG1wLmlpZDo0ZTgyYzNhYS1lYmNjLTc2NDYtYmYzNS0zYjQzZGU3OTRiYzgiIHhtcE1NOkRvY3VtZW50SUQ9ImFkb2JlOmRvY2lkOnBob3Rvc2hvcDpmMWVlOTYxZS1iNmNhLWI0NGQtOGQzZi04NTc1YjIzOGM4Y2IiIHhtcE1NOk9yaWdpbmFsRG9jdW1lbnRJRD0ieG1wLmRpZDoxYmJiNmIzOC1hNTYzLTdlNGMtOGEzNy04ZmIwNzk1N2U1OTkiIGRjOmZvcm1hdD0iaW1hZ2UvcG5nIiBwaG90b3Nob3A6Q29sb3JNb2RlPSIzIj4gPHhtcE1NOkhpc3Rvcnk+IDxyZGY6U2VxPiA8cmRmOmxpIHN0RXZ0OmFjdGlvbj0iY3JlYXRlZCIgc3RFdnQ6aW5zdGFuY2VJRD0ieG1wLmlpZDoxYmJiNmIzOC1hNTYzLTdlNGMtOGEzNy04ZmIwNzk1N2U1OTkiIHN0RXZ0OndoZW49IjIwMjQtMDMtMTlUMDk6MTYrMDg6MDAiIHN0RXZ0OnNvZnR3YXJlQWdlbnQ9IkFkb2JlIFBob3Rvc2hvcCAyMS4wIChXaW5kb3dzKSIvPiA8cmRmOmxpIHN0RXZ0OmFjdGlvbj0ic2F2ZWQiIHN0RXZ0Omluc3RhbmNlSUQ9InhtcC5paWQ6NGU4MmMzYWEtZWJjYy03NjQ2LWJmMzUtM2I0M2RlNzk0YmM4IiBzdEV2dDp3aGVuPSIyMDI0LTAzLTE5VDA5OjE2KzA4OjAwIiBzdEV2dDpzb2Z0d2FyZUFnZW50PSJBZG9iZSBQaG90b3Nob3AgMjEuMCAoV2luZG93cykiIHN0RXZ0OmNoYW5nZWQ9Ii8iLz4gPC9yZGY6U2VxPiA8L3htcE1NOkhpc3Rvcnk+IDwvcmRmOkRlc2NyaXB0aW9uPiA8L3JkZjpSREY+IDwveDp4bXBtZXRhPiA8P3hwYWNrZXQgZW5kPSJyIj8+Uy6+tAAABm1JREFUeNrtnVtsVEUYx0egtPQOtlqKlxTinQdNvYRaY8IrGmNUaq2XNAasl6DUB2OEBDUiNVogaFBjYoIVjDEhIaZRQtFGIxgwGna7XLqQAIpUKBVabbe1Hb+vO4Vtc7qdOTu7e3b3P8nvpek535mZ89tzzlyFlFIAANyBQgAAAgEAgQCAQABAIAAABAIAAgEAgQCAQAAACAQABAIgYwS6mniJ2EkcI7qJs5Y5QmwnniKKNK9rfZTz8TX+SazUOddAR0AE5pSKQMmVIlBaFo1yYg/RQ5x14BxxmKjsKJwtgncuEnJ4eCxOBfEL0eNwrSeIHcTDcai/SuKgQ9wx+O8/EGURx0wj1hF/xaGuY+EcESTuSAWBZhKriDMysekwUT/FtXEFn9Q4Fxd2lkWB6gmpQbODQMs0899KXGOxHps049ZGHHO5EsurqdnrApUSbUkupE+JnCgCdWqcI6B+CGwJ1KAp0CYHgRoM8u5XT34bdblOM+ZjEceUEF0eFmi9lwWaQ/zkkYL6kpgRg0AdlgVarinQRgeBnjHM+14iz0J9vu3iCcQCncYTyB1feayw3oi7QD6/8M/K95pAnLZAoNQS6BEPFlaIWBhPgYYv9IoTNbXCl5XjNYE4rU6CQKUef4Xb4EWBZhF7PFpgn8RToFGJ+vvF8aU1wjcjx2sCSfXDlkiBZqvWQa+mJi8KtJj4zzAjZ9SNHDSAm6x/N4zzB1EcT4GYkYEBkujRaE8i3UaE9y0LdJ64PYECXUY0qroyqdtOg7r918W9w90oPxI3elGg1QYV2q2amrnBIdcQftIVEPeqD2XdVBVvgUYlGn0SkUTTZgp/ftFEgWo0BXrLskBjzfvlCRIo8q3EtG4Xa8Zrd3Hv5Cm5PdmR+pFmxoeIByw2lx/XjFuTCIFGJRocFD2ftYhgVbXwZeeSSMVjAhURW4gDxK8O+IhWooIF6ry10qZAnHYR2QkUyA13acZrk2k2EuFDzYzvt5yJN130U8RVoHEitXwugovuFv7sPNFxSaTpURj9Hxbv1IqVQo6M2BSI02aPC1SlGW93pgq003ImGlxUcEIEivw26tm6jUSqFv6cfOHPLSAKJ4fkCVwxV4SCRyPPY0sgqb5PIFCKCrTLciZWaMatS5ZAF0UKhURfe7vo+z46vW27Rf8B38TjbQrEr9H3QSAIZNJ48aALgfy2PzpjwKZAYw05N0EgCDSf+IY4pJ4YEzmoeuQLXQjELVfzVGNFoihJkECcfKolFAJlsECRo7+zHHB6BdMVaJjoJS4kkL+Jx2MQaIfqf9FNX6vygEAZLpAJugIlK22OQaA1MjzfJWQQ7z0IBIHSSaCNMQjU7PKVbxkEgkAQaPxI42aDmP1qFAAEgkAQSDFdfePoplPEAggEgSDQ+OnVAYPY+ya0WEIgCJTRAjELpdn0gm0QCALZEGhEhldz6bLAadVMnQyBGB55MGQg0evquLUQKL0FKlCx+dVjrwP71C9quQuB/pHheTS2OklfTqJATKPhk3AJ8SoESm+BntCM+5oLgfqkvdVtmKeTLBDzsYFAXepGhUBpLNCLmnHfdSnQfIvXutwDAuWoOrCdIFCKCvSCZtwmCHSRuTI8xRkCQSAI5EIghof7nIdAqSfQt5Yz8SwEciUQsxQCpZ5APMXA5hybDZpx34FAjqyCQKm1qAin5y3F5A7CHs2YayDQpLRAoNRa1mpIPRF4BZbriBsMuJ64Rd1QJuvDPQmBJiVfxr4oJgSKETcLK3JPP48CHjCA/z9kGGeQuBkCRYX3HzoJgbC0r1P6bsJ3FwRy5h4ZXvETAmFx+XFpiXQ3Fi7TBGLqIRC2N4lMW6X7waSZKJDJrnQQKA4n9dIGW/ul86ozEGjq0erbIVBmb/HIHbZlUW6QYxrn4O+BBUno9N3kcOxzmsfa2vumWH076qY6S3GrNeO1p7NAydxkmEcQvyKdt3aM3H7DpynQPItlUquZB6f9a+o0j11r8Xp5R4MPZHh5r6nSQ5Zi3qaZz9Z0FyhR29x3q/Py4oq8Lf1Vmtd1P/GbvLQvTST8Nx4x0Wi5LPLVN1nnJARVOVU4HMvTrL+Y4lh+6l4bhzrkcXO89BXvrXPEIfY2OX4aeCzwDx/Pgj00ST6PEj/L8dvVpLVAAKQtKAQAIBAAEAgACAQABAIAQCAAIBAAEAgACAQAgEAAQCAAPMH/WMtXmejdRpsAAAAASUVORK5CYII="/>
+    <line id="直线_117" data-name="直线 117" x2="254.242" transform="translate(-561.742 4012)" fill="none" stroke="#1ba5eb" stroke-linecap="round" stroke-width="2"/>
+    <g id="组_970" data-name="组 970" transform="translate(-321.5 4065)">
+      <g id="矩形_1012" data-name="矩形 1012" fill="#868688" stroke="#707070" stroke-width="0.2">
+        <rect width="8" height="14" rx="2" stroke="none"/>
+        <rect x="0.1" y="0.1" width="7.8" height="13.8" rx="1.9" fill="none"/>
+      </g>
+      <g id="椭圆_103" data-name="椭圆 103" transform="translate(1 4)" fill="#363636" stroke="#9b9b9b" stroke-width="0.6">
+        <circle cx="3" cy="3" r="3" stroke="none"/>
+        <circle cx="3" cy="3" r="2.7" fill="none"/>
+      </g>
+    </g>
+    <g id="组_954" data-name="组 954" transform="translate(-587 4839)">
+      <g id="组_540" data-name="组 540">
+        <g id="组_538" data-name="组 538">
+          <g id="组_532" data-name="组 532">
+            <circle id="椭圆_113" data-name="椭圆 113" cx="1.5" cy="1.5" r="1.5"/>
+            <circle id="椭圆_119" data-name="椭圆 119" cx="1.5" cy="1.5" r="1.5" transform="translate(5)"/>
+            <circle id="椭圆_120" data-name="椭圆 120" cx="1.5" cy="1.5" r="1.5" transform="translate(11)"/>
+            <circle id="椭圆_121" data-name="椭圆 121" cx="1.5" cy="1.5" r="1.5" transform="translate(16)"/>
+            <circle id="椭圆_122" data-name="椭圆 122" cx="1.5" cy="1.5" r="1.5" transform="translate(22)"/>
+            <circle id="椭圆_123" data-name="椭圆 123" cx="1.5" cy="1.5" r="1.5" transform="translate(28)"/>
+          </g>
+          <g id="组_533" data-name="组 533" transform="translate(3 4)">
+            <circle id="椭圆_113-2" data-name="椭圆 113" cx="1.5" cy="1.5" r="1.5"/>
+            <circle id="椭圆_119-2" data-name="椭圆 119" cx="1.5" cy="1.5" r="1.5" transform="translate(6)"/>
+            <circle id="椭圆_120-2" data-name="椭圆 120" cx="2" cy="2" r="2" transform="translate(11)"/>
+            <circle id="椭圆_121-2" data-name="椭圆 121" cx="1.5" cy="1.5" r="1.5" transform="translate(17)"/>
+            <circle id="椭圆_122-2" data-name="椭圆 122" cx="2" cy="2" r="2" transform="translate(22)"/>
+          </g>
+          <g id="组_534" data-name="组 534" transform="translate(5 9)">
+            <circle id="椭圆_113-3" data-name="椭圆 113" cx="1.5" cy="1.5" r="1.5"/>
+            <circle id="椭圆_119-3" data-name="椭圆 119" cx="1.5" cy="1.5" r="1.5" transform="translate(6)"/>
+            <circle id="椭圆_120-3" data-name="椭圆 120" cx="1.5" cy="1.5" r="1.5" transform="translate(11)"/>
+            <circle id="椭圆_121-3" data-name="椭圆 121" cx="1.5" cy="1.5" r="1.5" transform="translate(17)"/>
+          </g>
+          <g id="组_535" data-name="组 535" transform="translate(9 13)">
+            <circle id="椭圆_113-4" data-name="椭圆 113" cx="1.5" cy="1.5" r="1.5"/>
+            <circle id="椭圆_119-4" data-name="椭圆 119" cx="2" cy="2" r="2" transform="translate(5)"/>
+            <circle id="椭圆_120-4" data-name="椭圆 120" cx="1.5" cy="1.5" r="1.5" transform="translate(11)"/>
+          </g>
+          <g id="组_536" data-name="组 536" transform="translate(11 18)">
+            <circle id="椭圆_113-5" data-name="椭圆 113" cx="1.5" cy="1.5" r="1.5"/>
+            <circle id="椭圆_119-5" data-name="椭圆 119" cx="1.5" cy="1.5" r="1.5" transform="translate(5)"/>
+          </g>
+          <g id="组_537" data-name="组 537" transform="translate(14 22)">
+            <circle id="椭圆_113-6" data-name="椭圆 113" cx="2" cy="2" r="2"/>
+          </g>
+        </g>
+        <g id="组_539" data-name="组 539" transform="translate(24)">
+          <g id="组_532-2" data-name="组 532" transform="translate(0 22)">
+            <circle id="椭圆_113-7" data-name="椭圆 113" cx="2" cy="2" r="2"/>
+            <circle id="椭圆_119-6" data-name="椭圆 119" cx="1.5" cy="1.5" r="1.5" transform="translate(6)"/>
+            <circle id="椭圆_120-5" data-name="椭圆 120" cx="1.5" cy="1.5" r="1.5" transform="translate(12)"/>
+            <circle id="椭圆_121-4" data-name="椭圆 121" cx="1.5" cy="1.5" r="1.5" transform="translate(17)"/>
+            <circle id="椭圆_122-3" data-name="椭圆 122" cx="1.5" cy="1.5" r="1.5" transform="translate(23)"/>
+            <circle id="椭圆_123-2" data-name="椭圆 123" cx="2" cy="2" r="2" transform="translate(28)"/>
+          </g>
+          <g id="组_533-2" data-name="组 533" transform="translate(4 18)">
+            <circle id="椭圆_113-8" data-name="椭圆 113" cx="1.5" cy="1.5" r="1.5"/>
+            <circle id="椭圆_119-7" data-name="椭圆 119" cx="1.5" cy="1.5" r="1.5" transform="translate(5)"/>
+            <circle id="椭圆_120-6" data-name="椭圆 120" cx="1.5" cy="1.5" r="1.5" transform="translate(11)"/>
+            <circle id="椭圆_121-5" data-name="椭圆 121" cx="1.5" cy="1.5" r="1.5" transform="translate(16)"/>
+            <circle id="椭圆_122-4" data-name="椭圆 122" cx="1.5" cy="1.5" r="1.5" transform="translate(22)"/>
+          </g>
+          <g id="组_534-2" data-name="组 534" transform="translate(6 13)">
+            <circle id="椭圆_113-9" data-name="椭圆 113" cx="1.5" cy="1.5" r="1.5"/>
+            <circle id="椭圆_119-8" data-name="椭圆 119" cx="1.5" cy="1.5" r="1.5" transform="translate(6)"/>
+            <circle id="椭圆_120-7" data-name="椭圆 120" cx="1.5" cy="1.5" r="1.5" transform="translate(11)"/>
+            <circle id="椭圆_121-6" data-name="椭圆 121" cx="1.5" cy="1.5" r="1.5" transform="translate(17)"/>
+          </g>
+          <g id="组_535-2" data-name="组 535" transform="translate(9 9)">
+            <circle id="椭圆_113-10" data-name="椭圆 113" cx="1.5" cy="1.5" r="1.5"/>
+            <circle id="椭圆_119-9" data-name="椭圆 119" cx="1.5" cy="1.5" r="1.5" transform="translate(6)"/>
+            <circle id="椭圆_120-8" data-name="椭圆 120" cx="1.5" cy="1.5" r="1.5" transform="translate(11)"/>
+          </g>
+          <g id="组_536-2" data-name="组 536" transform="translate(12 4)">
+            <circle id="椭圆_113-11" data-name="椭圆 113" cx="1.5" cy="1.5" r="1.5"/>
+            <circle id="椭圆_119-10" data-name="椭圆 119" cx="1.5" cy="1.5" r="1.5" transform="translate(5)"/>
+          </g>
+          <g id="组_537-2" data-name="组 537" transform="translate(15)">
+            <circle id="椭圆_113-12" data-name="椭圆 113" cx="1.5" cy="1.5" r="1.5"/>
+          </g>
+        </g>
+      </g>
+      <g id="组_541" data-name="组 541" transform="translate(65)">
+        <g id="组_538-2" data-name="组 538">
+          <g id="组_532-3" data-name="组 532">
+            <circle id="椭圆_113-13" data-name="椭圆 113" cx="1.5" cy="1.5" r="1.5"/>
+            <circle id="椭圆_119-11" data-name="椭圆 119" cx="1.5" cy="1.5" r="1.5" transform="translate(5)"/>
+            <circle id="椭圆_120-9" data-name="椭圆 120" cx="1.5" cy="1.5" r="1.5" transform="translate(11)"/>
+            <circle id="椭圆_121-7" data-name="椭圆 121" cx="1.5" cy="1.5" r="1.5" transform="translate(17)"/>
+            <circle id="椭圆_122-5" data-name="椭圆 122" cx="1.5" cy="1.5" r="1.5" transform="translate(22)"/>
+            <circle id="椭圆_123-3" data-name="椭圆 123" cx="1.5" cy="1.5" r="1.5" transform="translate(28)"/>
+          </g>
+          <g id="组_533-3" data-name="组 533" transform="translate(3 4)">
+            <circle id="椭圆_113-14" data-name="椭圆 113" cx="1.5" cy="1.5" r="1.5"/>
+            <circle id="椭圆_119-12" data-name="椭圆 119" cx="1.5" cy="1.5" r="1.5" transform="translate(6)"/>
+            <circle id="椭圆_120-10" data-name="椭圆 120" cx="2" cy="2" r="2" transform="translate(11)"/>
+            <circle id="椭圆_121-8" data-name="椭圆 121" cx="1.5" cy="1.5" r="1.5" transform="translate(17)"/>
+            <circle id="椭圆_122-6" data-name="椭圆 122" cx="2" cy="2" r="2" transform="translate(22)"/>
+          </g>
+          <g id="组_534-3" data-name="组 534" transform="translate(5 9)">
+            <circle id="椭圆_113-15" data-name="椭圆 113" cx="1.5" cy="1.5" r="1.5"/>
+            <circle id="椭圆_119-13" data-name="椭圆 119" cx="1.5" cy="1.5" r="1.5" transform="translate(6)"/>
+            <circle id="椭圆_120-11" data-name="椭圆 120" cx="1.5" cy="1.5" r="1.5" transform="translate(12)"/>
+            <circle id="椭圆_121-9" data-name="椭圆 121" cx="1.5" cy="1.5" r="1.5" transform="translate(17)"/>
+          </g>
+          <g id="组_535-3" data-name="组 535" transform="translate(9 13)">
+            <circle id="椭圆_113-16" data-name="椭圆 113" cx="1.5" cy="1.5" r="1.5"/>
+            <circle id="椭圆_119-14" data-name="椭圆 119" cx="2" cy="2" r="2" transform="translate(5)"/>
+            <circle id="椭圆_120-12" data-name="椭圆 120" cx="1.5" cy="1.5" r="1.5" transform="translate(11)"/>
+          </g>
+          <g id="组_536-3" data-name="组 536" transform="translate(11 18)">
+            <circle id="椭圆_113-17" data-name="椭圆 113" cx="1.5" cy="1.5" r="1.5"/>
+            <circle id="椭圆_119-15" data-name="椭圆 119" cx="1.5" cy="1.5" r="1.5" transform="translate(6)"/>
+          </g>
+          <g id="组_537-3" data-name="组 537" transform="translate(14 22)">
+            <circle id="椭圆_113-18" data-name="椭圆 113" cx="2" cy="2" r="2"/>
+          </g>
+        </g>
+        <g id="组_539-2" data-name="组 539" transform="translate(24)">
+          <g id="组_532-4" data-name="组 532" transform="translate(0 22)">
+            <circle id="椭圆_113-19" data-name="椭圆 113" cx="2" cy="2" r="2"/>
+            <circle id="椭圆_119-16" data-name="椭圆 119" cx="1.5" cy="1.5" r="1.5" transform="translate(6)"/>
+            <circle id="椭圆_120-13" data-name="椭圆 120" cx="1.5" cy="1.5" r="1.5" transform="translate(12)"/>
+            <circle id="椭圆_121-10" data-name="椭圆 121" cx="2" cy="2" r="2" transform="translate(17)"/>
+            <circle id="椭圆_122-7" data-name="椭圆 122" cx="1.5" cy="1.5" r="1.5" transform="translate(23)"/>
+            <circle id="椭圆_123-4" data-name="椭圆 123" cx="2" cy="2" r="2" transform="translate(28)"/>
+          </g>
+          <g id="组_533-4" data-name="组 533" transform="translate(4 18)">
+            <circle id="椭圆_113-20" data-name="椭圆 113" cx="1.5" cy="1.5" r="1.5"/>
+            <circle id="椭圆_119-17" data-name="椭圆 119" cx="1.5" cy="1.5" r="1.5" transform="translate(5)"/>
+            <circle id="椭圆_120-14" data-name="椭圆 120" cx="1.5" cy="1.5" r="1.5" transform="translate(11)"/>
+            <circle id="椭圆_121-11" data-name="椭圆 121" cx="1.5" cy="1.5" r="1.5" transform="translate(17)"/>
+            <circle id="椭圆_122-8" data-name="椭圆 122" cx="1.5" cy="1.5" r="1.5" transform="translate(22)"/>
+          </g>
+          <g id="组_534-4" data-name="组 534" transform="translate(6 13)">
+            <circle id="椭圆_113-21" data-name="椭圆 113" cx="1.5" cy="1.5" r="1.5"/>
+            <circle id="椭圆_119-18" data-name="椭圆 119" cx="1.5" cy="1.5" r="1.5" transform="translate(6)"/>
+            <circle id="椭圆_120-15" data-name="椭圆 120" cx="2" cy="2" r="2" transform="translate(11)"/>
+            <circle id="椭圆_121-12" data-name="椭圆 121" cx="1.5" cy="1.5" r="1.5" transform="translate(17)"/>
+          </g>
+          <g id="组_535-4" data-name="组 535" transform="translate(9 9)">
+            <circle id="椭圆_113-22" data-name="椭圆 113" cx="1.5" cy="1.5" r="1.5"/>
+            <circle id="椭圆_119-19" data-name="椭圆 119" cx="1.5" cy="1.5" r="1.5" transform="translate(6)"/>
+            <circle id="椭圆_120-16" data-name="椭圆 120" cx="1.5" cy="1.5" r="1.5" transform="translate(12)"/>
+          </g>
+          <g id="组_536-4" data-name="组 536" transform="translate(12 4)">
+            <circle id="椭圆_113-23" data-name="椭圆 113" cx="1.5" cy="1.5" r="1.5"/>
+            <circle id="椭圆_119-20" data-name="椭圆 119" cx="2" cy="2" r="2" transform="translate(5)"/>
+          </g>
+          <g id="组_537-4" data-name="组 537" transform="translate(15)">
+            <circle id="椭圆_113-24" data-name="椭圆 113" cx="1.5" cy="1.5" r="1.5"/>
+          </g>
+        </g>
+      </g>
+      <g id="组_542" data-name="组 542" transform="translate(130)">
+        <g id="组_538-3" data-name="组 538">
+          <g id="组_532-5" data-name="组 532">
+            <circle id="椭圆_113-25" data-name="椭圆 113" cx="1.5" cy="1.5" r="1.5"/>
+            <circle id="椭圆_119-21" data-name="椭圆 119" cx="1.5" cy="1.5" r="1.5" transform="translate(5)"/>
+            <circle id="椭圆_120-17" data-name="椭圆 120" cx="1.5" cy="1.5" r="1.5" transform="translate(11)"/>
+            <circle id="椭圆_121-13" data-name="椭圆 121" cx="1.5" cy="1.5" r="1.5" transform="translate(17)"/>
+            <circle id="椭圆_122-9" data-name="椭圆 122" cx="1.5" cy="1.5" r="1.5" transform="translate(22)"/>
+            <circle id="椭圆_123-5" data-name="椭圆 123" cx="1.5" cy="1.5" r="1.5" transform="translate(28)"/>
+          </g>
+          <g id="组_533-5" data-name="组 533" transform="translate(3 4)">
+            <circle id="椭圆_113-26" data-name="椭圆 113" cx="1.5" cy="1.5" r="1.5"/>
+            <circle id="椭圆_119-22" data-name="椭圆 119" cx="1.5" cy="1.5" r="1.5" transform="translate(6)"/>
+            <circle id="椭圆_120-18" data-name="椭圆 120" cx="2" cy="2" r="2" transform="translate(11)"/>
+            <circle id="椭圆_121-14" data-name="椭圆 121" cx="1.5" cy="1.5" r="1.5" transform="translate(17)"/>
+            <circle id="椭圆_122-10" data-name="椭圆 122" cx="1.5" cy="1.5" r="1.5" transform="translate(23)"/>
+          </g>
+          <g id="组_534-5" data-name="组 534" transform="translate(5 9)">
+            <circle id="椭圆_113-27" data-name="椭圆 113" cx="1.5" cy="1.5" r="1.5"/>
+            <circle id="椭圆_119-23" data-name="椭圆 119" cx="1.5" cy="1.5" r="1.5" transform="translate(6)"/>
+            <circle id="椭圆_120-19" data-name="椭圆 120" cx="1.5" cy="1.5" r="1.5" transform="translate(12)"/>
+            <circle id="椭圆_121-15" data-name="椭圆 121" cx="1.5" cy="1.5" r="1.5" transform="translate(17)"/>
+          </g>
+          <g id="组_535-5" data-name="组 535" transform="translate(9 13)">
+            <circle id="椭圆_113-28" data-name="椭圆 113" cx="1.5" cy="1.5" r="1.5"/>
+            <circle id="椭圆_119-24" data-name="椭圆 119" cx="2" cy="2" r="2" transform="translate(5)"/>
+            <circle id="椭圆_120-20" data-name="椭圆 120" cx="1.5" cy="1.5" r="1.5" transform="translate(11)"/>
+          </g>
+          <g id="组_536-5" data-name="组 536" transform="translate(11 18)">
+            <circle id="椭圆_113-29" data-name="椭圆 113" cx="1.5" cy="1.5" r="1.5"/>
+            <circle id="椭圆_119-25" data-name="椭圆 119" cx="1.5" cy="1.5" r="1.5" transform="translate(6)"/>
+          </g>
+          <g id="组_537-5" data-name="组 537" transform="translate(14 22)">
+            <circle id="椭圆_113-30" data-name="椭圆 113" cx="2" cy="2" r="2"/>
+          </g>
+        </g>
+        <g id="组_539-3" data-name="组 539" transform="translate(24)">
+          <g id="组_532-6" data-name="组 532" transform="translate(0 22)">
+            <circle id="椭圆_113-31" data-name="椭圆 113" cx="2" cy="2" r="2"/>
+            <circle id="椭圆_119-26" data-name="椭圆 119" cx="1.5" cy="1.5" r="1.5" transform="translate(6)"/>
+            <circle id="椭圆_120-21" data-name="椭圆 120" cx="1.5" cy="1.5" r="1.5" transform="translate(12)"/>
+            <circle id="椭圆_121-16" data-name="椭圆 121" cx="2" cy="2" r="2" transform="translate(17)"/>
+            <circle id="椭圆_122-11" data-name="椭圆 122" cx="1.5" cy="1.5" r="1.5" transform="translate(23)"/>
+            <circle id="椭圆_123-6" data-name="椭圆 123" cx="2" cy="2" r="2" transform="translate(28)"/>
+          </g>
+          <g id="组_533-6" data-name="组 533" transform="translate(4 18)">
+            <circle id="椭圆_113-32" data-name="椭圆 113" cx="1.5" cy="1.5" r="1.5"/>
+            <circle id="椭圆_119-27" data-name="椭圆 119" cx="1.5" cy="1.5" r="1.5" transform="translate(5)"/>
+            <circle id="椭圆_120-22" data-name="椭圆 120" cx="1.5" cy="1.5" r="1.5" transform="translate(11)"/>
+            <circle id="椭圆_121-17" data-name="椭圆 121" cx="1.5" cy="1.5" r="1.5" transform="translate(17)"/>
+            <circle id="椭圆_122-12" data-name="椭圆 122" cx="1.5" cy="1.5" r="1.5" transform="translate(22)"/>
+          </g>
+          <g id="组_534-6" data-name="组 534" transform="translate(6 13)">
+            <circle id="椭圆_113-33" data-name="椭圆 113" cx="1.5" cy="1.5" r="1.5"/>
+            <circle id="椭圆_119-28" data-name="椭圆 119" cx="1.5" cy="1.5" r="1.5" transform="translate(6)"/>
+            <circle id="椭圆_120-23" data-name="椭圆 120" cx="2" cy="2" r="2" transform="translate(11)"/>
+            <circle id="椭圆_121-18" data-name="椭圆 121" cx="1.5" cy="1.5" r="1.5" transform="translate(17)"/>
+          </g>
+          <g id="组_535-6" data-name="组 535" transform="translate(9 9)">
+            <circle id="椭圆_113-34" data-name="椭圆 113" cx="1.5" cy="1.5" r="1.5"/>
+            <circle id="椭圆_119-29" data-name="椭圆 119" cx="1.5" cy="1.5" r="1.5" transform="translate(6)"/>
+            <circle id="椭圆_120-24" data-name="椭圆 120" cx="1.5" cy="1.5" r="1.5" transform="translate(12)"/>
+          </g>
+          <g id="组_536-6" data-name="组 536" transform="translate(12 4)">
+            <circle id="椭圆_113-35" data-name="椭圆 113" cx="1.5" cy="1.5" r="1.5"/>
+            <circle id="椭圆_119-30" data-name="椭圆 119" cx="2" cy="2" r="2" transform="translate(5)"/>
+          </g>
+          <g id="组_537-6" data-name="组 537" transform="translate(15)">
+            <circle id="椭圆_113-36" data-name="椭圆 113" cx="1.5" cy="1.5" r="1.5"/>
+          </g>
+        </g>
+      </g>
+      <g id="组_543" data-name="组 543" transform="translate(195)">
+        <g id="组_538-4" data-name="组 538">
+          <g id="组_532-7" data-name="组 532">
+            <circle id="椭圆_113-37" data-name="椭圆 113" cx="1.5" cy="1.5" r="1.5"/>
+            <circle id="椭圆_119-31" data-name="椭圆 119" cx="1.5" cy="1.5" r="1.5" transform="translate(5)"/>
+            <circle id="椭圆_120-25" data-name="椭圆 120" cx="1.5" cy="1.5" r="1.5" transform="translate(11)"/>
+            <circle id="椭圆_121-19" data-name="椭圆 121" cx="1.5" cy="1.5" r="1.5" transform="translate(17)"/>
+            <circle id="椭圆_122-13" data-name="椭圆 122" cx="1.5" cy="1.5" r="1.5" transform="translate(22)"/>
+            <circle id="椭圆_123-7" data-name="椭圆 123" cx="1.5" cy="1.5" r="1.5" transform="translate(28)"/>
+          </g>
+          <g id="组_533-7" data-name="组 533" transform="translate(3 4)">
+            <circle id="椭圆_113-38" data-name="椭圆 113" cx="2" cy="2" r="2"/>
+            <circle id="椭圆_119-32" data-name="椭圆 119" cx="1.5" cy="1.5" r="1.5" transform="translate(6)"/>
+            <circle id="椭圆_120-26" data-name="椭圆 120" cx="2" cy="2" r="2" transform="translate(11)"/>
+            <circle id="椭圆_121-20" data-name="椭圆 121" cx="1.5" cy="1.5" r="1.5" transform="translate(17)"/>
+            <circle id="椭圆_122-14" data-name="椭圆 122" cx="1.5" cy="1.5" r="1.5" transform="translate(23)"/>
+          </g>
+          <g id="组_534-7" data-name="组 534" transform="translate(5 9)">
+            <circle id="椭圆_113-39" data-name="椭圆 113" cx="1.5" cy="1.5" r="1.5"/>
+            <circle id="椭圆_119-33" data-name="椭圆 119" cx="1.5" cy="1.5" r="1.5" transform="translate(6)"/>
+            <circle id="椭圆_120-27" data-name="椭圆 120" cx="1.5" cy="1.5" r="1.5" transform="translate(12)"/>
+            <circle id="椭圆_121-21" data-name="椭圆 121" cx="1.5" cy="1.5" r="1.5" transform="translate(17)"/>
+          </g>
+          <g id="组_535-7" data-name="组 535" transform="translate(9 13)">
+            <circle id="椭圆_113-40" data-name="椭圆 113" cx="1.5" cy="1.5" r="1.5"/>
+            <circle id="椭圆_119-34" data-name="椭圆 119" cx="2" cy="2" r="2" transform="translate(5)"/>
+            <circle id="椭圆_120-28" data-name="椭圆 120" cx="1.5" cy="1.5" r="1.5" transform="translate(11)"/>
+          </g>
+          <g id="组_536-7" data-name="组 536" transform="translate(11 18)">
+            <circle id="椭圆_113-41" data-name="椭圆 113" cx="1.5" cy="1.5" r="1.5"/>
+            <circle id="椭圆_119-35" data-name="椭圆 119" cx="1.5" cy="1.5" r="1.5" transform="translate(6)"/>
+          </g>
+          <g id="组_537-7" data-name="组 537" transform="translate(14 22)">
+            <circle id="椭圆_113-42" data-name="椭圆 113" cx="2" cy="2" r="2"/>
+          </g>
+        </g>
+        <g id="组_539-4" data-name="组 539" transform="translate(24)">
+          <g id="组_532-8" data-name="组 532" transform="translate(0 22)">
+            <circle id="椭圆_113-43" data-name="椭圆 113" cx="2" cy="2" r="2"/>
+            <circle id="椭圆_119-36" data-name="椭圆 119" cx="1.5" cy="1.5" r="1.5" transform="translate(6)"/>
+            <circle id="椭圆_120-29" data-name="椭圆 120" cx="1.5" cy="1.5" r="1.5" transform="translate(12)"/>
+            <circle id="椭圆_121-22" data-name="椭圆 121" cx="2" cy="2" r="2" transform="translate(17)"/>
+            <circle id="椭圆_122-15" data-name="椭圆 122" cx="1.5" cy="1.5" r="1.5" transform="translate(23)"/>
+            <circle id="椭圆_123-8" data-name="椭圆 123" cx="1.5" cy="1.5" r="1.5" transform="translate(29)"/>
+          </g>
+          <g id="组_533-8" data-name="组 533" transform="translate(4 18)">
+            <circle id="椭圆_113-44" data-name="椭圆 113" cx="1.5" cy="1.5" r="1.5"/>
+            <circle id="椭圆_119-37" data-name="椭圆 119" cx="1.5" cy="1.5" r="1.5" transform="translate(5)"/>
+            <circle id="椭圆_120-30" data-name="椭圆 120" cx="1.5" cy="1.5" r="1.5" transform="translate(11)"/>
+            <circle id="椭圆_121-23" data-name="椭圆 121" cx="1.5" cy="1.5" r="1.5" transform="translate(17)"/>
+            <circle id="椭圆_122-16" data-name="椭圆 122" cx="1.5" cy="1.5" r="1.5" transform="translate(22)"/>
+          </g>
+          <g id="组_534-8" data-name="组 534" transform="translate(6 13)">
+            <circle id="椭圆_113-45" data-name="椭圆 113" cx="1.5" cy="1.5" r="1.5"/>
+            <circle id="椭圆_119-38" data-name="椭圆 119" cx="1.5" cy="1.5" r="1.5" transform="translate(6)"/>
+            <circle id="椭圆_120-31" data-name="椭圆 120" cx="2" cy="2" r="2" transform="translate(11)"/>
+            <circle id="椭圆_121-24" data-name="椭圆 121" cx="1.5" cy="1.5" r="1.5" transform="translate(17)"/>
+          </g>
+          <g id="组_535-8" data-name="组 535" transform="translate(9 9)">
+            <circle id="椭圆_113-46" data-name="椭圆 113" cx="1.5" cy="1.5" r="1.5"/>
+            <circle id="椭圆_119-39" data-name="椭圆 119" cx="1.5" cy="1.5" r="1.5" transform="translate(6)"/>
+            <circle id="椭圆_120-32" data-name="椭圆 120" cx="1.5" cy="1.5" r="1.5" transform="translate(12)"/>
+          </g>
+          <g id="组_536-8" data-name="组 536" transform="translate(12 4)">
+            <circle id="椭圆_113-47" data-name="椭圆 113" cx="1.5" cy="1.5" r="1.5"/>
+            <circle id="椭圆_119-40" data-name="椭圆 119" cx="2" cy="2" r="2" transform="translate(5)"/>
+          </g>
+          <g id="组_537-8" data-name="组 537" transform="translate(15)">
+            <circle id="椭圆_113-48" data-name="椭圆 113" cx="1.5" cy="1.5" r="1.5"/>
+          </g>
+        </g>
+      </g>
+    </g>
+    <g id="矩形_1309" data-name="矩形 1309" transform="translate(-622 4112)" fill="#e4e4e4" stroke="#707070" stroke-width="1">
+      <rect width="160" height="80" stroke="none"/>
+      <rect x="0.5" y="0.5" width="159" height="79" fill="none"/>
+    </g>
+    <g id="组_959" data-name="组 959" transform="translate(-532 4122)">
+      <g id="矩形_652" data-name="矩形 652" stroke="#707070" stroke-width="1">
+        <rect width="58" height="60" rx="2" stroke="none"/>
+        <rect x="0.5" y="0.5" width="57" height="59" rx="1.5" fill="none"/>
+      </g>
+    </g>
+    <g id="矩形_1310" data-name="矩形 1310" transform="translate(-622 4192)" fill="#e4e4e4" stroke="#707070" stroke-width="1">
+      <rect width="160" height="80" stroke="none"/>
+      <rect x="0.5" y="0.5" width="159" height="79" fill="none"/>
+    </g>
+    <g id="组_960" data-name="组 960" transform="translate(-532 4202)">
+      <g id="矩形_652-2" data-name="矩形 652" stroke="#707070" stroke-width="1">
+        <rect width="58" height="60" rx="2" stroke="none"/>
+        <rect x="0.5" y="0.5" width="57" height="59" rx="1.5" fill="none"/>
+      </g>
+    </g>
+    <g id="组_962" data-name="组 962" transform="translate(-588.046 2533)">
+      <g id="矩形_1113" data-name="矩形 1113" transform="translate(126.046 1579)" fill="#e4e4e4" stroke="#707070" stroke-width="1">
+        <rect width="160" height="80" stroke="none"/>
+        <rect x="0.5" y="0.5" width="159" height="79" fill="none"/>
+      </g>
+      <g id="组_630" data-name="组 630" transform="translate(216.046 1589)">
+        <g id="矩形_652-3" data-name="矩形 652" stroke="#707070" stroke-width="1">
+          <rect width="58" height="60" rx="2" stroke="none"/>
+          <rect x="0.5" y="0.5" width="57" height="59" rx="1.5" fill="none"/>
+        </g>
+      </g>
+    </g>
+    <g id="组_963" data-name="组 963" transform="translate(-588.046 2613)">
+      <g id="矩形_1113-2" data-name="矩形 1113" transform="translate(126.046 1579)" fill="#e4e4e4" stroke="#707070" stroke-width="1">
+        <rect width="160" height="80" stroke="none"/>
+        <rect x="0.5" y="0.5" width="159" height="79" fill="none"/>
+      </g>
+      <g id="组_630-2" data-name="组 630" transform="translate(216.046 1589)">
+        <g id="矩形_652-4" data-name="矩形 652" stroke="#707070" stroke-width="1">
+          <rect width="58" height="60" rx="2" stroke="none"/>
+          <rect x="0.5" y="0.5" width="57" height="59" rx="1.5" fill="none"/>
+        </g>
+      </g>
+    </g>
+    <g id="组_948" data-name="组 948" transform="translate(122 2689)">
+      <g id="矩形_1126" data-name="矩形 1126" transform="translate(-744 1583)" fill="#e4e4e4" stroke="#707070" stroke-width="1">
+        <rect width="320" height="80" stroke="none"/>
+        <rect x="0.5" y="0.5" width="319" height="79" fill="none"/>
+      </g>
+      <g id="组_616" data-name="组 616" transform="translate(-444 1616)">
+        <g id="矩形_1012-2" data-name="矩形 1012" fill="#868688" stroke="#707070" stroke-width="0.2">
+          <rect width="7" height="14" rx="2" stroke="none"/>
+          <rect x="0.1" y="0.1" width="6.8" height="13.8" rx="1.9" fill="none"/>
+        </g>
+        <g id="椭圆_103-2" data-name="椭圆 103" transform="translate(1 4)" fill="#363636" stroke="#9b9b9b" stroke-width="0.6">
+          <circle cx="2.5" cy="2.5" r="2.5" stroke="none"/>
+          <circle cx="2.5" cy="2.5" r="2.2" fill="none"/>
+        </g>
+      </g>
+      <g id="矩形_1209" data-name="矩形 1209" transform="translate(-554 1589)" fill="#5d5d5d" stroke="#707070" stroke-width="1">
+        <rect width="94" height="68" rx="4" stroke="none"/>
+        <rect x="0.5" y="0.5" width="93" height="67" rx="3.5" fill="none"/>
+      </g>
+      <g id="组_798" data-name="组 798" transform="translate(-11 -0.99)">
+        <g id="组_642" data-name="组 642" transform="translate(-512 1593.99)">
+          <g id="矩形_652-5" data-name="矩形 652" stroke="#707070" stroke-width="1">
+            <rect width="59" height="60" rx="2" stroke="none"/>
+            <rect x="0.5" y="0.5" width="58" height="59" rx="1.5" fill="none"/>
+          </g>
+        </g>
+      </g>
+    </g>
+    <g id="组_949" data-name="组 949" transform="translate(122 2769)">
+      <g id="矩形_1126-2" data-name="矩形 1126" transform="translate(-744 1583)" fill="#e4e4e4" stroke="#707070" stroke-width="1">
+        <rect width="320" height="80" stroke="none"/>
+        <rect x="0.5" y="0.5" width="319" height="79" fill="none"/>
+      </g>
+      <g id="组_616-2" data-name="组 616" transform="translate(-444 1616)">
+        <g id="矩形_1012-3" data-name="矩形 1012" fill="#868688" stroke="#707070" stroke-width="0.2">
+          <rect width="7" height="14" rx="2" stroke="none"/>
+          <rect x="0.1" y="0.1" width="6.8" height="13.8" rx="1.9" fill="none"/>
+        </g>
+        <g id="椭圆_103-3" data-name="椭圆 103" transform="translate(1 4)" fill="#363636" stroke="#9b9b9b" stroke-width="0.6">
+          <circle cx="2.5" cy="2.5" r="2.5" stroke="none"/>
+          <circle cx="2.5" cy="2.5" r="2.2" fill="none"/>
+        </g>
+      </g>
+      <g id="矩形_1209-2" data-name="矩形 1209" transform="translate(-554 1589)" fill="#5d5d5d" stroke="#707070" stroke-width="1">
+        <rect width="94" height="68" rx="4" stroke="none"/>
+        <rect x="0.5" y="0.5" width="93" height="67" rx="3.5" fill="none"/>
+      </g>
+      <g id="组_798-2" data-name="组 798" transform="translate(-11 -0.99)">
+        <g id="组_642-2" data-name="组 642" transform="translate(-512 1593.99)">
+          <g id="矩形_652-6" data-name="矩形 652" stroke="#707070" stroke-width="1">
+            <rect width="59" height="61" rx="2" stroke="none"/>
+            <rect x="0.5" y="0.5" width="58" height="60" rx="1.5" fill="none"/>
+          </g>
+        </g>
+      </g>
+    </g>
+    <g id="矩形_1311" data-name="矩形 1311" transform="translate(-622 4432)" fill="#e4e4e4" stroke="#707070" stroke-width="1">
+      <rect width="320" height="80" stroke="none"/>
+      <rect x="0.5" y="0.5" width="319" height="79" fill="none"/>
+    </g>
+    <g id="组_971" data-name="组 971" transform="translate(-322 4465)">
+      <g id="矩形_1012-4" data-name="矩形 1012" fill="#868688" stroke="#707070" stroke-width="0.2">
+        <rect width="7" height="14" rx="2" stroke="none"/>
+        <rect x="0.1" y="0.1" width="6.8" height="13.8" rx="1.9" fill="none"/>
+      </g>
+      <g id="椭圆_103-4" data-name="椭圆 103" transform="translate(1 4)" fill="#363636" stroke="#9b9b9b" stroke-width="0.6">
+        <circle cx="2.5" cy="2.5" r="2.5" stroke="none"/>
+        <circle cx="2.5" cy="2.5" r="2.2" fill="none"/>
+      </g>
+    </g>
+    <g id="路径_84" data-name="路径 84" transform="translate(-432 4438)" fill="#5d5d5d">
+      <path d="M 90 67.5 L 4 67.5 C 2.070087432861328 67.5 0.5 65.92990875244141 0.5 64 L 0.5 4 C 0.5 2.070087432861328 2.070087432861328 0.5 4 0.5 L 90 0.5 C 91.92990875244141 0.5 93.5 2.070087432861328 93.5 4 L 93.5 64 C 93.5 65.92990875244141 91.92990875244141 67.5 90 67.5 Z" stroke="none"/>
+      <path d="M 4 1 C 2.345802307128906 1 1 2.345802307128906 1 4 L 1 64 C 1 65.65419769287109 2.345802307128906 67 4 67 L 90 67 C 91.65419769287109 67 93 65.65419769287109 93 64 L 93 4 C 93 2.345802307128906 91.65419769287109 1 90 1 L 4 1 M 4 0 L 90 0 C 92.20913696289062 0 94 1.790863037109375 94 4 L 94 64 C 94 66.20913696289062 92.20913696289062 68 90 68 L 4 68 C 1.790863037109375 68 0 66.20913696289062 0 64 L 0 4 C 0 1.790863037109375 1.790863037109375 0 4 0 Z" stroke="none" fill="#707070"/>
+    </g>
+    <g id="组_967" data-name="组 967" transform="translate(111 2848.01)">
+      <g id="组_642-3" data-name="组 642" transform="translate(-512 1593.99)">
+        <g id="矩形_652-7" data-name="矩形 652" stroke="#707070" stroke-width="1">
+          <rect width="59" height="61" rx="2" stroke="none"/>
+          <rect x="0.5" y="0.5" width="58" height="60" rx="1.5" fill="none"/>
+        </g>
+      </g>
+    </g>
+    <g id="组_950" data-name="组 950" transform="translate(2981 365)">
+      <g id="矩形_1132" data-name="矩形 1132" transform="translate(-3603 4147)" fill="#e4e4e4" stroke="#707070" stroke-width="1">
+        <rect width="320" height="160" stroke="none"/>
+        <rect x="0.5" y="0.5" width="319" height="159" fill="none"/>
+      </g>
+      <g id="组_615" data-name="组 615" transform="translate(-3303 4164.462)">
+        <g id="组_549" data-name="组 549">
+          <g id="矩形_1012-5" data-name="矩形 1012" fill="#868688" stroke="#707070" stroke-width="0.2">
+            <rect width="7" height="15" rx="2" stroke="none"/>
+            <rect x="0.1" y="0.1" width="6.8" height="14.8" rx="1.9" fill="none"/>
+          </g>
+          <g id="椭圆_103-5" data-name="椭圆 103" transform="translate(1 5)" fill="#363636" stroke="#9b9b9b" stroke-width="0.6">
+            <circle cx="2.5" cy="2.5" r="2.5" stroke="none"/>
+            <circle cx="2.5" cy="2.5" r="2.2" fill="none"/>
+          </g>
+        </g>
+        <g id="组_550" data-name="组 550" transform="translate(0 112)">
+          <g id="矩形_1012-6" data-name="矩形 1012" fill="#868688" stroke="#707070" stroke-width="0.2">
+            <rect width="7" height="14" rx="2" stroke="none"/>
+            <rect x="0.1" y="0.1" width="6.8" height="13.8" rx="1.9" fill="none"/>
+          </g>
+          <g id="椭圆_103-6" data-name="椭圆 103" transform="translate(1 4)" fill="#363636" stroke="#9b9b9b" stroke-width="0.6">
+            <circle cx="2.5" cy="2.5" r="2.5" stroke="none"/>
+            <circle cx="2.5" cy="2.5" r="2.2" fill="none"/>
+          </g>
+        </g>
+      </g>
+      <g id="组_645" data-name="组 645" transform="translate(-3376 4224)">
+        <g id="矩形_652-8" data-name="矩形 652" stroke="#707070" stroke-width="1">
+          <rect width="59" height="61" rx="2" stroke="none"/>
+          <rect x="0.5" y="0.5" width="58" height="60" rx="1.5" fill="none"/>
+        </g>
+      </g>
+      <path id="路径_80" data-name="路径 80" d="M-345.361,434.81V540.987a5.669,5.669,0,0,0,5.67,5.669h128.937a5.669,5.669,0,0,0,5.669-5.669V478.1a5.67,5.67,0,0,1,5.669-5.67h99.725a5.669,5.669,0,0,0,5.67-5.669V434.81a5.669,5.669,0,0,0-5.67-5.669h-240A5.669,5.669,0,0,0-345.361,434.81Z" transform="translate(-3223.139 3738.601)" fill="#f9f9f9" stroke="#acacac" stroke-miterlimit="10" stroke-width="1"/>
+    </g>
+    <g id="组_951" data-name="组 951" transform="translate(2981 525)">
+      <g id="矩形_1132-2" data-name="矩形 1132" transform="translate(-3603 4147)" fill="#e4e4e4" stroke="#707070" stroke-width="1">
+        <rect width="320" height="161" stroke="none"/>
+        <rect x="0.5" y="0.5" width="319" height="160" fill="none"/>
+      </g>
+      <g id="组_615-2" data-name="组 615" transform="translate(-3303 4164.462)">
+        <g id="组_549-2" data-name="组 549">
+          <g id="矩形_1012-7" data-name="矩形 1012" fill="#868688" stroke="#707070" stroke-width="0.2">
+            <rect width="7" height="15" rx="2" stroke="none"/>
+            <rect x="0.1" y="0.1" width="6.8" height="14.8" rx="1.9" fill="none"/>
+          </g>
+          <g id="椭圆_103-7" data-name="椭圆 103" transform="translate(1 5)" fill="#363636" stroke="#9b9b9b" stroke-width="0.6">
+            <circle cx="2.5" cy="2.5" r="2.5" stroke="none"/>
+            <circle cx="2.5" cy="2.5" r="2.2" fill="none"/>
+          </g>
+        </g>
+        <g id="组_550-2" data-name="组 550" transform="translate(0 112)">
+          <g id="矩形_1012-8" data-name="矩形 1012" fill="#868688" stroke="#707070" stroke-width="0.2">
+            <rect width="7" height="14" rx="2" stroke="none"/>
+            <rect x="0.1" y="0.1" width="6.8" height="13.8" rx="1.9" fill="none"/>
+          </g>
+          <g id="椭圆_103-8" data-name="椭圆 103" transform="translate(1 4)" fill="#363636" stroke="#9b9b9b" stroke-width="0.6">
+            <circle cx="2.5" cy="2.5" r="2.5" stroke="none"/>
+            <circle cx="2.5" cy="2.5" r="2.2" fill="none"/>
+          </g>
+        </g>
+      </g>
+      <g id="组_645-2" data-name="组 645" transform="translate(-3376 4224)">
+        <g id="矩形_652-9" data-name="矩形 652" stroke="#707070" stroke-width="1">
+          <rect width="59" height="61" rx="2" stroke="none"/>
+          <rect x="0.5" y="0.5" width="58" height="60" rx="1.5" fill="none"/>
+        </g>
+      </g>
+      <path id="路径_80-2" data-name="路径 80" d="M-345.361,434.81V540.987a5.669,5.669,0,0,0,5.67,5.669h128.937a5.669,5.669,0,0,0,5.669-5.669V478.1a5.67,5.67,0,0,1,5.669-5.67h99.725a5.669,5.669,0,0,0,5.67-5.669V434.81a5.669,5.669,0,0,0-5.67-5.669h-240A5.669,5.669,0,0,0-345.361,434.81Z" transform="translate(-3223.139 3738.601)" fill="#f9f9f9" stroke="#acacac" stroke-miterlimit="10" stroke-width="1"/>
+    </g>
+    <g id="矩形_1312" data-name="矩形 1312" transform="translate(-613 4112)" fill="#fff" stroke="#707070" stroke-width="1">
+      <path d="M0,0H48a0,0,0,0,1,0,0V12a4,4,0,0,1-4,4H4a4,4,0,0,1-4-4V0A0,0,0,0,1,0,0Z" stroke="none"/>
+      <path d="M.5.5h47a0,0,0,0,1,0,0V12A3.5,3.5,0,0,1,44,15.5H4A3.5,3.5,0,0,1,.5,12V.5A0,0,0,0,1,.5.5Z" fill="none"/>
+    </g>
+    <g id="矩形_1320" data-name="矩形 1320" transform="translate(-454 4112)" fill="#fff" stroke="#707070" stroke-width="1">
+      <path d="M0,0H48a0,0,0,0,1,0,0V12a4,4,0,0,1-4,4H4a4,4,0,0,1-4-4V0A0,0,0,0,1,0,0Z" stroke="none"/>
+      <path d="M.5.5h47a0,0,0,0,1,0,0V12A3.5,3.5,0,0,1,44,15.5H4A3.5,3.5,0,0,1,.5,12V.5A0,0,0,0,1,.5.5Z" fill="none"/>
+    </g>
+    <g id="矩形_1313" data-name="矩形 1313" transform="translate(-613 4192)" fill="#fff" stroke="#707070" stroke-width="1">
+      <path d="M0,0H48a0,0,0,0,1,0,0V12a4,4,0,0,1-4,4H4a4,4,0,0,1-4-4V0A0,0,0,0,1,0,0Z" stroke="none"/>
+      <path d="M.5.5h47a0,0,0,0,1,0,0V12A3.5,3.5,0,0,1,44,15.5H4A3.5,3.5,0,0,1,.5,12V.5A0,0,0,0,1,.5.5Z" fill="none"/>
+    </g>
+    <g id="矩形_1314" data-name="矩形 1314" transform="translate(-613 4272)" fill="#fff" stroke="#707070" stroke-width="1">
+      <path d="M0,0H48a0,0,0,0,1,0,0V12a4,4,0,0,1-4,4H4a4,4,0,0,1-4-4V0A0,0,0,0,1,0,0Z" stroke="none"/>
+      <path d="M.5.5h47a0,0,0,0,1,0,0V12A3.5,3.5,0,0,1,44,15.5H4A3.5,3.5,0,0,1,.5,12V.5A0,0,0,0,1,.5.5Z" fill="none"/>
+    </g>
+    <g id="矩形_1315" data-name="矩形 1315" transform="translate(-613 4352)" fill="#fff" stroke="#707070" stroke-width="1">
+      <path d="M0,0H48a0,0,0,0,1,0,0V12a4,4,0,0,1-4,4H4a4,4,0,0,1-4-4V0A0,0,0,0,1,0,0Z" stroke="none"/>
+      <path d="M.5.5h47a0,0,0,0,1,0,0V12A3.5,3.5,0,0,1,44,15.5H4A3.5,3.5,0,0,1,.5,12V.5A0,0,0,0,1,.5.5Z" fill="none"/>
+    </g>
+    <g id="矩形_1316" data-name="矩形 1316" transform="translate(-613 4432)" fill="#fff" stroke="#707070" stroke-width="1">
+      <path d="M0,0H48a0,0,0,0,1,0,0V12a4,4,0,0,1-4,4H4a4,4,0,0,1-4-4V0A0,0,0,0,1,0,0Z" stroke="none"/>
+      <path d="M.5.5h47a0,0,0,0,1,0,0V12A3.5,3.5,0,0,1,44,15.5H4A3.5,3.5,0,0,1,.5,12V.5A0,0,0,0,1,.5.5Z" fill="none"/>
+    </g>
+    <g id="矩形_1317" data-name="矩形 1317" transform="translate(-613 4512)" fill="#fff" stroke="#707070" stroke-width="1">
+      <path d="M0,0H48a0,0,0,0,1,0,0V12a4,4,0,0,1-4,4H4a4,4,0,0,1-4-4V0A0,0,0,0,1,0,0Z" stroke="none"/>
+      <path d="M.5.5h47a0,0,0,0,1,0,0V12A3.5,3.5,0,0,1,44,15.5H4A3.5,3.5,0,0,1,.5,12V.5A0,0,0,0,1,.5.5Z" fill="none"/>
+    </g>
+    <g id="矩形_1318" data-name="矩形 1318" transform="translate(-613 4672)" fill="#fff" stroke="#707070" stroke-width="1">
+      <path d="M0,0H48a0,0,0,0,1,0,0V12a4,4,0,0,1-4,4H4a4,4,0,0,1-4-4V0A0,0,0,0,1,0,0Z" stroke="none"/>
+      <path d="M.5.5h47a0,0,0,0,1,0,0V12A3.5,3.5,0,0,1,44,15.5H4A3.5,3.5,0,0,1,.5,12V.5A0,0,0,0,1,.5.5Z" fill="none"/>
+    </g>
+    <g id="矩形_1321" data-name="矩形 1321" transform="translate(-454 4192)" fill="#fff" stroke="#707070" stroke-width="1">
+      <path d="M0,0H48a0,0,0,0,1,0,0V12a4,4,0,0,1-4,4H4a4,4,0,0,1-4-4V0A0,0,0,0,1,0,0Z" stroke="none"/>
+      <path d="M.5.5h47a0,0,0,0,1,0,0V12A3.5,3.5,0,0,1,44,15.5H4A3.5,3.5,0,0,1,.5,12V.5A0,0,0,0,1,.5.5Z" fill="none"/>
+    </g>
+  </g>
+</svg>

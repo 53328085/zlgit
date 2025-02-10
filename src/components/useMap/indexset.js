@@ -11,7 +11,7 @@
 import React, {useEffect, useRef, forwardRef, useImperativeHandle, useCallback, useState,memo} from "react";
 import {useSelector} from 'react-redux'
 import {Fallack} from "@com/useError"
-import {currProject} from '@redux/systemconfig'
+import {currProject,adaptation} from '@redux/systemconfig'
 import {message} from 'antd'
 
   function Index(props, ref) {
@@ -20,6 +20,7 @@ import {message} from 'antd'
   
  
  let {lngLat: projectLnglat, address} = useSelector(currProject);
+ let {laptop} = useSelector(adaptation)
  let defaultpoint =  value || lngLat || projectLnglat;
  let geocoder ;
  
@@ -147,7 +148,7 @@ import {message} from 'antd'
      if(!map) {
      
       map =new T.Map("tmap");
-      map.centerAndZoom(latlng, 18)    
+      map.centerAndZoom(latlng,  18)    
       map.enableDrag();
       if(latlng && address)  addmarker(latlng, address)
       if (Array.isArray(defaultpoint)) {

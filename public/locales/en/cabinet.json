@@ -1,0 +1,12 @@
+{
+  "annualquota": "annual quota {{param}}",
+  "Annualee": "Annual emission equivalent {{param}}",
+  "Annualce": "Annual residual carbon emissions {{param}}",
+  "directe": "direct emission {{param}}",
+  "indirecte": "indirect emission {{param}}",
+  "RankingOfCarbon": "Ranking of carbon emissions from circuits",
+  "ProportionOfCarbonEmissions": "Proportion of carbon emissions",
+  "Classificationratio": "Proportion of energy consumption by site classification",
+  "CircuitName": "Circuit name",
+  "CarbonEmission":"Carbon emission {{param}}"
+}

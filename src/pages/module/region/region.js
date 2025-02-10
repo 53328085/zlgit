@@ -27,7 +27,7 @@ import { useAntdTable, useLatest } from "ahooks";
 import { CustButton } from "@com/useButton";
 import { custMsg } from "@com/usehandler";
 import Mapcom from "@com/useMap/indexset";
-import { selectOneLevel, selectOneLevelDefaultId, getOnelevel, publishState, currProject,adaptation } from '@redux/systemconfig.js'
+import { selectOneLevel, selectOneLevelDefaultId, getOnelevel, publishState, currProject, adaptation } from '@redux/systemconfig.js'
 import { useSelector, useDispatch } from 'react-redux'
 import { useTranslation } from "react-i18next"
 
@@ -57,10 +57,10 @@ const Formbox = styled(Form)`
         ? `repeat(${p.rowes + 5}, 32px)`
         : `repeat(${p.rowes}, 32px)`};
   column-gap: 32px;
-  row-gap: ${props=> props.theme.laptop ? "12px" : "20px"};
+  row-gap: ${props => props.theme.laptop ? "12px" : "20px"};
   grid-auto-flow: ${(p) => (p.islngLat ? "column" : "row")};
   .ant-form-item {
-    margin: 0 0 ${props=> props.theme.laptop ? "12px" : "24px"};
+    margin: 0 0 ${props => props.theme.laptop ? "12px" : "24px"};
   }
 
   .address {
@@ -156,7 +156,7 @@ export default function Index({ projectId, level, CModal, name, allLevel }) {
 
   const dispatch = useDispatch();
   const { projectName } = useSelector(currProject)
-  const {laptop} = useSelector(adaptation)
+  const { laptop } = useSelector(adaptation)
   const oneLevel = useSelector(selectOneLevel) // 一级 
   const oneLevelDefaultId = useSelector(selectOneLevelDefaultId) // 一级默认id
   const ispublish = useSelector(publishState)
@@ -173,26 +173,27 @@ export default function Index({ projectId, level, CModal, name, allLevel }) {
 // 第一列 本级， 第二列 备注， 第三列 [父级] ...其他
 
 */
-
-  const [tempcolums, tempdata] = useMemo(() => {
-    let getcol = (name) => ({ title: name, dataIndex: name, key: name });
-    let colums = [
-      getcol(currenName),
-      getcol('备注'),
-
-    ];
-    if (preName) {
-      colums.push(getcol(preName));
-    }
-    if (Array.isArray(fields)) {
-      fields.forEach(f => {
-        colums.push(getcol(f.name))
-      })
-
-    }
-    let tbdata = colums.map(c => ({ [c.title]: '' }))
-    return [colums, tbdata]
-  }, [level, allLevel])
+  const [tempcolums, setTempcolums] = useState([])
+  const [tempdata, setTempdata] = useState([])
+  /*   const [tempcolums, tempdata] = useMemo(() => {
+      let getcol = (name) => ({ title: name, dataIndex: name, key: name });
+      let colums = [
+        getcol(currenName),
+        getcol('备注'),
+  
+      ];
+      if (preName) {
+        colums.push(getcol(preName));
+      }
+      if (Array.isArray(fields)) {
+        fields.forEach(f => {
+          colums.push(getcol(f.name))
+        })
+  
+      }
+      let tbdata = colums.map(c => ({ [c.title]: '' }))
+      return [colums, tbdata]
+    }, [level, allLevel]) */
   const [form] = Form.useForm();
   const [nform] = Form.useForm();
 
@@ -225,7 +226,6 @@ export default function Index({ projectId, level, CModal, name, allLevel }) {
   const islngLat = fields?.find(item => item.type == 1);
   const address = useRef("");
   const title = isAdd ? `新增${name}` : `编辑${name}`; // 当前层级名称  defaultParams
-
   let params = {
     //查询
     pageNum: pagination.current,
@@ -271,7 +271,7 @@ export default function Index({ projectId, level, CModal, name, allLevel }) {
 
       try {
         const targetOption = selectedOptions[selectedOptions.length - 1];
-     //   console.log(targetOption)
+        //   console.log(targetOption)
         targetOption.loading = true;
         let { id, level: curlevel } = targetOption // level:3 , curlevel: 2, 1
 
@@ -279,7 +279,7 @@ export default function Index({ projectId, level, CModal, name, allLevel }) {
           targetOption.children = [];
           targetOption.isLeaf = true
           setLevelOption([...leveloptions])
-      //    console.log(setLevelOption);
+          //    console.log(setLevelOption);
           return
         } else {
           const params = {
@@ -287,7 +287,7 @@ export default function Index({ projectId, level, CModal, name, allLevel }) {
             level: curlevel + 1,
             parentId: id,
           }
-       //  console.log(setLevelOption);
+          //  console.log(setLevelOption);
           let { data, success } = await Area.QueryAll(params)
           targetOption.loading = false
           if (success && Array.isArray(data)) {
@@ -356,7 +356,7 @@ export default function Index({ projectId, level, CModal, name, allLevel }) {
     !success && custMsg({ success, content: errMsg || "数据出错" });
   };
 
-  const getTableData = () => {
+  const getTableData = (levelName) => {
     // 列表查询
     if (isNaN(level)) return;
     console.log(params)
@@ -378,6 +378,7 @@ export default function Index({ projectId, level, CModal, name, allLevel }) {
         /*  if(index > -1){
            header.splice(index,'备注')
          } */
+
         for (let k of header) {
           let col = {
             title: k,
@@ -386,6 +387,69 @@ export default function Index({ projectId, level, CModal, name, allLevel }) {
           };
           cols.push(col);
         }
+        // let ccols = [...cols]
+        console.log(cols)
+        let ccols = JSON.parse(JSON.stringify(cols))
+        console.log(cols, ccols)
+        let temp = {}
+        ccols?.forEach((c, index) => {
+          console.log(c, index)
+          if (c.title != '名称') {
+            if (index < level) {
+              temp[c.title] = c.title + "名称"
+              c.title = "*" + c.title
+            } else {
+              if (c.title != '备注') {
+                temp[c.title] = c.title
+                c.title = "*" + c.title
+              } else {
+                temp[c.title] = c.title
+              }
+              // if (c.title != '备注' && c.title != '楼层') {
+              //   temp[c.title] = c.title
+              //   c.title = "*" + c.title
+              // } else {
+              //   if (c.title == '楼层') {
+              //     temp[c.title] = '1'
+              //   } else {
+              //     temp[c.title] = c.title
+              //   }
+              // }
+            }
+
+          } else {
+            temp[c.title] = levelName + '名称'
+            c.title = "*" + c.title
+          }
+
+          // if (c.title == '经纬度') {
+          //   temp[c.title] = '120.20728,30.21106'
+          // }
+          // if (c.title == '楼层') {
+          //   temp[c.title] = '1'
+          // }
+          // if (c.title == '面积') {
+          //   temp[c.title] = '123.00'
+          // }
+          // if (c.title == '建筑') {
+          //   temp[c.title] = 'A幢'
+          // }
+          // if (levelName) {
+          //   if (c.title == '名称') {
+          //     temp[c.title] = levelName + '名称'
+          //   }
+          // }
+
+          // if (c.title != '备注' && c.title != '楼层') {
+          //   c.title = "*" + c.title
+          // }
+
+        })
+        console.log(temp)
+        // return
+        setTempcolums(ccols)
+        setTempdata([temp])
+        console.log(temp, tempdata, ccols)
         let colums = ispublish ? [...cols] : [
           ...cols,
           // index > -1 ?   {title: '备注', dataIndex: '备注', key: '备注'}: {},
@@ -666,7 +730,7 @@ export default function Index({ projectId, level, CModal, name, allLevel }) {
   }
 
   useEffect(() => {
-    getTableData()
+    getTableData(name)
 
   }, [pagination.current])
   useEffect(() => {
@@ -677,12 +741,13 @@ export default function Index({ projectId, level, CModal, name, allLevel }) {
       form.setFieldsValue({
         topAreaId: null,
       });
-      getTableData()
+      console.log(name, '---name')
+      getTableData(name)
     } else if (level > 1) {
       form.setFieldsValue({
         topAreaId: 0,
       });
-      getTableData()
+      getTableData(name)
     }
 
   }, [level]);

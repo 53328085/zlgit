@@ -24,7 +24,7 @@ const DropstartDiv = styled.div`
 const ContainerDiv = styled.div`
       display: grid;
       grid-template-rows: 32px 1px 1fr;
-      row-gap: 32px;
+      row-gap: ${props=> props.theme.laptop ? "16px" : "32px"};
       padding-top: 16px;
       flex: 1;
   `

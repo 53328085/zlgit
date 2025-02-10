@@ -4,6 +4,7 @@ import { Divider, Select, Tree, Row, Col, Input, Form, message, Drawer, Table,Bu
 import Modal from '@com/useModal'
 import BlueColumn from '@com/bluecolumn'
 import UseMap from '@com/useMap/index tadi.js'
+import { adaptation } from '@redux/systemconfig'
 // import UseMap from '@com/useMap'
 import CustContext from '@com/content.js'
 export let  SetPosition =({positionRef,savePosition})=>{
@@ -17,6 +18,7 @@ export let  SetPosition =({positionRef,savePosition})=>{
 }
 let LoaclForm =forwardRef((props,ref)=>{
     const [inpvalue,setInpvalue] =useState()
+    const {laptop} = useSelector(adaptation)
     // const inpvalueRef = useRef()
     const [local,setLoacl] = useState()
     const [point,setPoint]=useState()
@@ -74,7 +76,7 @@ let LoaclForm =forwardRef((props,ref)=>{
             <span style={{paddingRight:32}}>经纬度</span>
             <Input style={{width:645}}  placeholder="点击地图获取经纬度" value={local} ></Input>
         </div>
-        <div style={{height:387,marginTop:24,border:'1px solid #d7d7d7'}}>
+        <div style={{height: laptop ? 340 : 387,marginTop: laptop ? 12 : 24,border:'1px solid #d7d7d7'}}>
        
         <UseMap setAaddress={setAaddress} ref={mapRef} lngLat={context?.lngLat}/>
        

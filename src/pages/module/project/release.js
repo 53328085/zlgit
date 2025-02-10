@@ -7,7 +7,7 @@ import {ProjectSetting, Login} from '@api/api.js'
 import {useSelector, useDispatch} from 'react-redux'
  import {selectUser, userRest} from '@redux/user.js'
 import {manager } from '@redux/user'  
-import { getpublishState, publishState, systemConfigRest} from '@redux/systemconfig.js'  
+import { getpublishState, publishState, systemConfigRest,adaptation} from '@redux/systemconfig.js'  
 import log from '@imgs/log.png'
 import {useTranslation} from "react-i18next"
  
@@ -22,28 +22,28 @@ const Itembox = styled.div`
     grid-template-columns: 160px 1fr;
     grid-template-rows: 112px;
     border-bottom: 1px dotted #dedede;   
-    column-gap: 32px;
+    column-gap:  ${props => props.theme.laptop ? "16px" : "32px"};
     .content {
        display: grid;
        align-content: space-between;
        .upper {
           display: flex;
           justify-content: space-between;
+          flex-wrap: wrap;
          .left {
             display: grid;
-            grid-template-columns: repeat(5, auto) 2px auto;
+            grid-template-columns: ${props => props.theme.laptop ? 'repeat(6, auto)' : 'repeat(5, auto) 2px auto'} ;
             grid-template-rows: 32px;
-            column-gap: 16px;
+            column-gap: ${props => props.theme.laptop ? "12px" : "16px"};
          }
          .right {
-            width: 170px;
+            
             display: flex;
            justify-content: space-between;
+           column-gap: 16px;
            align-items: center;
          }
-         .wd200{
-            width: 200px;
-         }
+         
        }
        .lower {
         display: grid;
@@ -78,7 +78,7 @@ export default function Release({CModal, projectId}) {
  const [mobile, setMobile] = useState()
  const ismanager = useSelector(manager)
  const  locale =useSelector(state => state.system.iszhCN)
-
+ const {laptop} = useSelector(adaptation)
   const code =useRef();
   const stateV = useRef('');
   
@@ -258,10 +258,10 @@ const publishing = (
                  <Tagbox>{t("common:DevicesNumber")}({item.meterCnt})</Tagbox>
                  <Tagbox>{t("common:GatewaysNumber")}({item.gatewayCnt})</Tagbox>
                  <Tagbox>{t("common:EnergyType")}({item.gatewayCnt})</Tagbox>
-                 <Divider type='vertical' style={{margin: 0, height: '36px', borderLeftStyle: 'dotted', borderLeftWidth: '2px'}}></Divider>
+                {laptop ? null : <Divider type='vertical' style={{margin: 0, height: '36px', borderLeftStyle: 'dotted', borderLeftWidth: '2px'}}></Divider>} 
                  <Tagbox>{t("common:ProjectValidityPeriod")}&nbsp;{item.validStageTime?.slice(0,10)}</Tagbox>
                  </div>
-                 <div className={locale?'right':'right wd200'} >
+                 <div className="right" >
                  <Switch key={stateV.current}  checkedChildren={t("comm:Published")}  unCheckedChildren={t("comm:Unpublished")} style={{alignSelf: 'center'}} defaultChecked={item.state == 1}    onChange={(checked) => onChange(checked, item)} />
                  {(!ismanager && !publish) && <Link underline type="danger" onClick={() => onDel(item)}>{t("common:DeleteItem")}</Link>}
                  </div>

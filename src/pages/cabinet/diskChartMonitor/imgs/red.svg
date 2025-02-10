@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="9" height="9" viewBox="0 0 9 9">
+  <defs>
+    <radialGradient id="radial-gradient" cx="0.5" cy="0.5" r="0.5" gradientUnits="objectBoundingBox">
+      <stop offset="0" stop-color="#f21a1a"/>
+      <stop offset="1" stop-color="#6d2e2e"/>
+    </radialGradient>
+  </defs>
+  <g id="组_834" data-name="组 834" transform="translate(-3626 -1152)">
+    <g id="组_832" data-name="组 832">
+      <g id="椭圆_4" data-name="椭圆 4" transform="translate(3626 1152)" fill="#c83535" stroke="#3d3d3d" stroke-width="0.4">
+        <circle cx="4.5" cy="4.5" r="4.5" stroke="none"/>
+        <circle cx="4.5" cy="4.5" r="4.3" fill="none"/>
+      </g>
+      <circle id="椭圆_63" data-name="椭圆 63" cx="3.5" cy="3.5" r="3.5" transform="translate(3627 1153)" fill="url(#radial-gradient)"/>
+    </g>
+  </g>
+</svg>

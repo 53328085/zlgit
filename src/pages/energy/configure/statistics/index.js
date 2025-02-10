@@ -24,8 +24,8 @@ export default function Index() {
      try {
       let {success, data} =  await Area.AllLevel(projectId)
       if(success && Array.isArray(data)) {
-         setTabs([...data.map((d) => ({label: d.name, key: d.level}))])
-         setvalue(data[0]?.level)
+         setTabs([...data.map((d) => ({label: d.name, key: String(d.level)}))])
+         setvalue(String(data[0]?.level))
          setLevels(data) 
       }
 
