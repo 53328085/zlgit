@@ -5,7 +5,7 @@ import { Form, Image, message, Progress,Button, InputNumber, Select,Space,Input,
 import Pagecount from '@com/pagecontent'
 import {CloseOutlined} from "@ant-design/icons"
 import {isObject} from "@com/usehandler"
-import {CustLink, i18t, i18warning, CustButton, CustButtonT} from "@com/useButton"
+import {CustLink, i18t, i18warning, CustButton, CustButtonT,ConfirmBtn} from "@com/useButton"
 import styled , {css} from 'styled-components'
  
 import { Radiogroup, Cdivider } from "@com/comstyled"
@@ -210,12 +210,8 @@ const Mainbox =styled.div`
     flex-direction: column;
     align-items: center;
     overflow: hidden;
-    
-   &:nth-of-type(1){
-        background-image: url(${imgsrc['P1']});
-        .h3d {
+    .h3d {   // 默认  P1
           position: absolute;
-         
           width: 142px;
           height: 220px;
           left: 109px;
@@ -241,11 +237,34 @@ const Mainbox =styled.div`
            }
           }
           
-        }
+        }  
+   &:nth-of-type(1){
+        background-image: url(${imgsrc['P1']});
+        
     }
     &:nth-of-type(2){
         background-image: url(${imgsrc['P2']});
-        
+        .bashou {
+           transform: translateY(110px);
+           cursor: pointer;
+        }
+        .h3d {
+           bottom: 443px;
+           height: 156px;
+           .detail{
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+           }
+           
+        }
+        .guis {
+          cursor: pointer;
+          width: 266px;
+          height: 374px; 
+          bottom: 55px;
+          position: absolute;
+           }
     }
     &:nth-of-type(3){
         flex: 0 0 320px;
@@ -317,6 +336,7 @@ const {laptop} = useSelector(adaptation)
  const [ctitle, setCtitle] = useState("有源滤波回路") 
  const [ititle, setititle] = useState("告警详情") 
  const [eltitle, setEltitle] = useState('') // 遥测 图表的标题
+ const [state, setState] = useState(1) // 1 分闸2故障3正常
  const [form] = Form.useForm()
  const  onOpen = () => {
    setOpen(true)
@@ -381,8 +401,8 @@ const columns = [
     title: "状态",
     dataIndex: "state",
     key:"state",
-    render: (text) => {
-         return text==1  ? <Link type="danger" onClick={() => setIopen(true)}>未确认</Link> : <Text type="success">已确认</Text>
+    render: (text) => { // 1确认2未确认
+         return  <Space> {text==1  ? <ConfirmBtn state={2} text="noconfirm" opac={0.2}  onClick={() => setIopen(true)} />    : <ConfirmBtn state={1} text="confirm" opac={0.2} />}</Space>
 
          
     }
@@ -565,6 +585,22 @@ const options4 =[
                 </Link>
                 <CustLink text="details" underline={false} ></CustLink>
             </div>
+            <div className='bashou' onClick={() => onCopen()}>
+            <img src={state == 1 ? imgsrc[`A分闸`] : state==2 ? imgsrc['A故障'] : imgsrc["A正常"]}></img>
+            </div>
+             <div className='h3d' onClick={null}>
+               <div className="text">有源滤波柜</div>
+               <div className='detail' onClick={onCopen}>
+               <div className='state'>
+                  <img src={imgsrc["red"]}></img>
+                  <img src={imgsrc['close']}></img>
+               </div>
+                 
+
+               </div>
+            </div>
+            <div className="guis" onClick={onCopen}></div>
+ 
         </div>
         <div className='part'>
         <div className="title">

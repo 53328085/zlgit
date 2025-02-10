@@ -1,5 +1,7 @@
 {
   "reset": "Reset",
+  "confirm": "confirm",
+  "noconfirm": "no confirm",
   "save": "Save",
    "details": "Details",
   "search": "Serach",
