@@ -29,7 +29,7 @@ export default function Index() {
             display: flex;
             align-items: center;
             justify-content: center;
-            background-color: #237ae4;
+            background-color: ${props=> props.theme.primaryColor};
             font-size: 20px;
             color: #fff;
         }
