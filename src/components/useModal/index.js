@@ -5,6 +5,7 @@ import styled, {css} from "styled-components";
 import Draggable  from "react-draggable";
 import Useform from "./useform";
 import redwarn from '@imgs/redwarn.png'
+import Ok from "./ok.svg"
 //const theme =(type) =>   `4px solid ${custCorle[type]}`
 const sty = css`
 .ant-modal-header{
@@ -159,7 +160,7 @@ const CModal = styled(Modal)`
       type={type}      
       confirmLoading={loading}
       bodyStyle= {
-         type=="warn" ? {
+         (type=="warn" || type=="ok") ? {
            display: 'flex',
            alignItems: 'center',
            fontSize: '16px',
@@ -193,6 +194,7 @@ const CModal = styled(Modal)`
       {...rest}  
     >
       {type=="warn" && warnimg && <img src={redwarn} style={{width: '54px', marginRight: "32px"}} /> }
+      {type=="ok" && warnimg && <img src={Ok} style={{width: '48px', marginRight: "16px", marginLeft:"32px"}} /> }
       {mold == 'cust' ? children : mold == 'default' ? <Useform {...fromprops} ref={formref} /> : ''}
     </CModal>
   )

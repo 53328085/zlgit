@@ -1,13 +1,15 @@
 import React, { useState, forwardRef, useImperativeHandle, useRef, useEffect } from 'react'
-import { Drawer, Select, Button, Typography, Form, Input, message, } from 'antd'
+import { Drawer, Select, Button, Typography, Form, Input, message, Space } from 'antd'
 import { LeftOutlined, RightOutlined } from "@ant-design/icons";
-import styled from 'styled-components'
+import styled, {css} from 'styled-components'
+import {useSelector} from 'react-redux'
 import Titlelayout from '@com/titlelayout.js'
 import UserTable from "@com/useTable";
 // import { boundarySlice, useConfigDeviceMutation, useApiDataMutation } from './boundary'
 import { isObject } from "@com/usehandler"
-import { CustButton } from "@com/useButton"
+import { CustButton,CustButtonT } from "@com/useButton"
 import { Cdivider } from '@com/comstyled'
+import {adaptation} from '@redux/systemconfig'
 const { Paragraph } = Typography
 import {QuotaManage} from '@api/api'
 const Apibox = styled.div`
@@ -20,7 +22,15 @@ const Apibox = styled.div`
     margin-bottom: 16px;
    }
 `
-
+const sty=css` 
+      grid-template-columns: 1fr 140px 1fr;
+        column-gap: 16px;
+        grid-template-rows:  1fr; 
+`
+const iconsty = css`
+  width: 52px;
+  height: 32px;
+`
 
 
 const Inptserach = styled(Input.Search)`
@@ -36,16 +46,47 @@ const Inptserach = styled(Input.Search)`
 const Drawerbox = styled(Drawer)`
   && {
     .ant-drawer-content-wrapper {
-      height:min-content;
-      top: 80px;
+      width: calc(100% - 200px) !important;
+      height: calc(100% - 64px);
+      top: 64px;
     }
     .ant-drawer-wrapper-body {
       background-color: #003366;
       .ant-drawer-body {
         display: grid;
-        grid-template-columns: 692px 1fr 714px;
+        grid-template-columns:  1fr 160px 1fr;
         column-gap: 30px;
-        grid-template-rows: 700px;
+        grid-template-rows: 1fr;
+        .outwrap{
+         //   padding-top: 16px;
+            position: relative;
+            flex:1;
+            
+          }
+          .inwrap {
+            position: absolute;
+            width: 100%;
+            height: calc(100% - 16px);
+            overflow: auto;
+          }
+          .outwrapr{ 
+            position: relative;
+            flex:1;
+            
+          }
+          .inwrapr {
+            position: absolute;
+            width: 100%;
+            height: calc(100% - 32px);
+            overflow: auto;
+          }
+        .leftpart{
+          display: flex;
+          flex-direction: column;
+          row-gap: 16px;
+         
+        }
+        ${props=> props.theme.laptop ? sty : null}
         .title {
           padding-left: 16px;
           border-left: 4px #237ae4 solid;
@@ -77,17 +118,29 @@ const Drawerbox = styled(Drawer)`
           }
         }
         .unselected {
-          display: grid;
-          grid-template-rows: 32px 32px 1fr;
-          padding: 16px;
-          row-gap: 16px;
+          display: flex;
+          flex-direction: column;
+          padding: ${props => props.theme.laptop  ? "16px 0 0 0" : "16px" } ;
+         // row-gap: 16px;
           background-color: #fff;
+          flex: 1;
+          .serachbox{
+            display: grid;
+            grid-template-columns: minmax(150px, auto) auto;
+            justify-content: space-between;
+            height: 32px;
+            .ant-form-item{
+              margin-bottom: 0px;
+            }
+            
+          }
         }
         .optab {
           display: flex;
           flex-direction: column;
-          justify-content: center;
-          row-gap: 128px;
+          justify-content: space-around;
+          padding: 32px 0;
+          text-align: center;
           
           > div {
             .ant-typography {
@@ -96,7 +149,11 @@ const Drawerbox = styled(Drawer)`
             .ant-btn-icon-only {
               width: 64px;
               height: 46px;
+              ${props => props.theme.laptop ? iconsty : null}
             }
+          }
+          .ant-btn-block{
+            height: ${props=> props.theme.laptop ? "32px": "40px"};
           }
         }
       }
@@ -151,7 +208,7 @@ function Draw({params }, ref) {
     const [sfrom]= Form.useForm()
     const [fromed] = Form.useForm()
     const {Item} = Form
-   
+    const {laptop} = useSelector(adaptation)
    
    const [usedtb, setusedtable] = useState([])
    const [unusedtb, setUnusedtb] = useState([])
@@ -335,7 +392,7 @@ function Draw({params }, ref) {
     <Drawerbox
     onClose={drawClose}
      open={open}
-     width={1688}
+     
     closable={false}
     maskClosable={false}
     contentWrapperStyle={{margingRight: '16px'}}
@@ -343,9 +400,9 @@ function Draw({params }, ref) {
     destroyOnClose
   >
  
-   <>
-    <Titlelayout title='选择的表计设备'>
-      <div className=''></div>
+   <div className='leftpart'>
+    <Titlelayout title='选择的表计设备' layout="flex" dr="column" bodypad="16px 0 0 0">
+      
     <Form
         form={fromed}
         initialValues={{
@@ -361,21 +418,23 @@ function Draw({params }, ref) {
             />
           </Item>
       </Form>
+      <div className='outwrap'>
+          <div className='inwrap'>
         <UserTable
           columns={deviceColumns}
           rowSelection={rowSelection}
           dataSource={usedtb}
           rowKey="deviceSn" 
           ref= {setb}
-          scroll={{
-            y: 500
-          }}
+          
         />
-     
+     </div>
+     </div>
       
     </Titlelayout> 
+    </div>
     <div className="optab">
-      <div style={{display: 'flex', flexDirection: 'column', justifyContent: 'center', padding: "0 16px"}}>
+      <div style={{display: 'flex', flexDirection: 'column', justifyContent: 'center',  }}>
         <Paragraph>选择设备</Paragraph>
         <div style={{display: 'flex', justifyContent:"space-between"}}>
           <Button
@@ -391,22 +450,23 @@ function Draw({params }, ref) {
         </div>
       </div>
       
-      <div>
-       <CustButton
-          block
-          style={{ marginBottom: "16px", height: "40px" }}
+      <Space direction="vertical" >
+       <CustButtonT
+          block 
           onClick={onSave}
           wh="100%"      
-          loading={loading}    
+          loading={loading}
+          text="save" 
+          
        >
-        保存
-        </CustButton>  
+         
+        </CustButtonT>  
        
-        <CustButton block onClick={drawClose}   text="Cancel" type="default" sylte={{height: '40px'}} wh="100%" >取消</CustButton>
+        <CustButtonT block onClick={drawClose}   text="Cancel" type="default"   wh="100%" /> 
       
-      </div>
+      </Space>
     </div>
-    <Titlelayout title="未选中的表计设备">
+    <Titlelayout title="未选中的表计设备" layout="flex">
     <div className="unselected">
       
       <Form
@@ -424,17 +484,21 @@ function Draw({params }, ref) {
             />
           </Item>
       </Form>
+      <div className='outwrapr'>
+      <div className='inwrapr'>
       <UserTable
         columns={unselectdevice}
         rowSelection={unrowSelection}
         dataSource={unusedtb}
-        scroll={{y: 500}}
+       
         ref={untb}
         rowKey="deviceSn"
       />
       </div>
+      </div>
+      </div>
       </Titlelayout>
-      </>
+      
  
   </Drawerbox>
   )

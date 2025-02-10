@@ -1,0 +1,68 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="320" height="560" viewBox="0 0 320 560">
+  <g id="组_839" data-name="组 839" transform="translate(-3988 -384)">
+    <g id="矩形_1064" data-name="矩形 1064" transform="translate(3988 384)" fill="#e4e4e4" stroke="#707070" stroke-width="1">
+      <rect width="320" height="560" stroke="none"/>
+      <rect x="0.5" y="0.5" width="319" height="559" fill="none"/>
+    </g>
+    <g id="组_838" data-name="组 838" transform="translate(0 -20)">
+      <g id="组_548" data-name="组 548" transform="translate(4288.5 477)">
+        <g id="矩形_1012" data-name="矩形 1012" fill="#868688" stroke="#707070" stroke-width="0.2">
+          <rect width="8" height="15" rx="2" stroke="none"/>
+          <rect x="0.1" y="0.1" width="7.8" height="14.8" rx="1.9" fill="none"/>
+        </g>
+        <g id="椭圆_103" data-name="椭圆 103" transform="translate(1 5)" fill="#363636" stroke="#9b9b9b" stroke-width="0.6">
+          <circle cx="2.5" cy="2.5" r="2.5" stroke="none"/>
+          <circle cx="2.5" cy="2.5" r="2.2" fill="none"/>
+        </g>
+      </g>
+      <g id="组_837" data-name="组 837" transform="translate(4288.5 677)">
+        <g id="矩形_1012-2" data-name="矩形 1012" fill="#868688" stroke="#707070" stroke-width="0.2">
+          <rect width="8" height="15" rx="2" stroke="none"/>
+          <rect x="0.1" y="0.1" width="7.8" height="14.8" rx="1.9" fill="none"/>
+        </g>
+        <g id="椭圆_103-2" data-name="椭圆 103" transform="translate(1 5)" fill="#363636" stroke="#9b9b9b" stroke-width="0.6">
+          <circle cx="2.5" cy="2.5" r="2.5" stroke="none"/>
+          <circle cx="2.5" cy="2.5" r="2.2" fill="none"/>
+        </g>
+      </g>
+      <g id="组_552" data-name="组 552" transform="translate(4288.5 877)">
+        <g id="矩形_1012-3" data-name="矩形 1012" fill="#868688" stroke="#707070" stroke-width="0.2">
+          <rect width="8" height="15" rx="2" stroke="none"/>
+          <rect x="0.1" y="0.1" width="7.8" height="14.8" rx="1.9" fill="none"/>
+        </g>
+        <g id="椭圆_103-3" data-name="椭圆 103" transform="translate(1 5)" fill="#363636" stroke="#9b9b9b" stroke-width="0.6">
+          <circle cx="2.5" cy="2.5" r="2.5" stroke="none"/>
+          <circle cx="2.5" cy="2.5" r="2.2" fill="none"/>
+        </g>
+      </g>
+    </g>
+    <g id="组_698" data-name="组 698" transform="translate(4083 439.658)">
+      <g id="矩形_1058" data-name="矩形 1058" transform="translate(130 84) rotate(180)" fill="#878586" stroke="#707070" stroke-width="1">
+        <rect width="130" height="84" stroke="none"/>
+        <rect x="0.5" y="0.5" width="129" height="83" fill="none"/>
+      </g>
+      <g id="矩形_1071" data-name="矩形 1071" transform="translate(124 76) rotate(180)" fill="#051736" stroke="#707070" stroke-width="1">
+        <rect width="119" height="60" stroke="none"/>
+        <rect x="0.5" y="0.5" width="118" height="59" fill="none"/>
+      </g>
+    </g>
+    <g id="路径_70" data-name="路径 70" transform="translate(4025 562)" fill="#e9e9e9">
+      <path d="M 238 349.5 L 8 349.5 C 3.864500045776367 349.5 0.5 346.135498046875 0.5 342 L 0.5 8 C 0.5 3.864500045776367 3.864500045776367 0.5 8 0.5 L 238 0.5 C 242.135498046875 0.5 245.5 3.864500045776367 245.5 8 L 245.5 342 C 245.5 346.135498046875 242.135498046875 349.5 238 349.5 Z" stroke="none"/>
+      <path d="M 8 1 C 4.140182495117188 1 1 4.140167236328125 1 8 L 1 342 C 1 345.8598327636719 4.140182495117188 349 8 349 L 238 349 C 241.8598175048828 349 245 345.8598327636719 245 342 L 245 8 C 245 4.140167236328125 241.8598175048828 1 238 1 L 8 1 M 8 0 L 238 0 C 242.4182739257812 0 246 3.58172607421875 246 8 L 246 342 C 246 346.4182739257812 242.4182739257812 350 238 350 L 8 350 C 3.58172607421875 350 0 346.4182739257812 0 342 L 0 8 C 0 3.58172607421875 3.58172607421875 0 8 0 Z" stroke="none" fill="#707070"/>
+    </g>
+    <g id="组_628" data-name="组 628" transform="translate(4046 574)">
+      <g id="矩形_1136" data-name="矩形 1136" transform="translate(0 16)" fill="#d8d8d8" stroke="#b2b2b2" stroke-width="1">
+        <rect width="204" height="83" rx="2" stroke="none"/>
+        <rect x="0.5" y="0.5" width="203" height="82" rx="1.5" fill="none"/>
+      </g>
+      <g id="矩形_1137" data-name="矩形 1137" transform="translate(0 119)" fill="#d8d8d8" stroke="#b2b2b2" stroke-width="1">
+        <rect width="204" height="83" rx="2" stroke="none"/>
+        <rect x="0.5" y="0.5" width="203" height="82" rx="1.5" fill="none"/>
+      </g>
+      <g id="矩形_1138" data-name="矩形 1138" transform="translate(0 228)" fill="#d8d8d8" stroke="#b2b2b2" stroke-width="1">
+        <rect width="204" height="83" rx="2" stroke="none"/>
+        <rect x="0.5" y="0.5" width="203" height="82" rx="1.5" fill="none"/>
+      </g>
+    </g>
+  </g>
+</svg>

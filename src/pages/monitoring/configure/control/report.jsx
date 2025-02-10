@@ -41,7 +41,7 @@ const CDrawer = styled(Drawer)`
   .ant-table-container .ant-table-content .ant-table-thead {
     
      tr>th{
-        background-color: #237ae4;
+        background-color: ${props=> props.theme.primaryColor};
         color: #fff;
         height: 32px;
         padding: 0;

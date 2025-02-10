@@ -1,14 +1,146 @@
 import React, { useEffect, useState } from "react";
-import style from './style.module.less'
+import { useSelector } from 'react-redux'
 import { Table, Input, message, Space } from "antd";
 import { LeftOutlined, RightOutlined } from '@ant-design/icons'
 import { cloneDeep } from "lodash";
 import { useReactive } from "ahooks";
 import  {CustButtonT, CustButton} from "@com/useButton"
+import styled, {css} from "styled-components";
+import {adaptation} from '@redux/systemconfig'
+import UsetTable from "@com/useTable";
+const csssty = css`
+     grid-template-columns: 1fr 164px 1fr;
+    padding: 16px;
+    width: 100%;
+    left: 0;
+   
+  .actions { 
+     padding: 0 16px;
+   
+  }
+  .leftTable{
+    row-gap: 8px;
+  }
+  .mainTable{
+    padding: 0;
+  }
+  .publicTitle{
+    height: 24px;
+    line-height: 24px;
+  }
+`;
+const Mainbox = styled.div`
+ 
+ background-color: #003366;
+  padding: 16px 32px;
+  justify-content: space-between;
+  position: absolute;
+  top: 0px;
+  left: 200px;
+  display: grid;
+  grid-template-columns: 1fr 232px 1fr;
+  grid-template-rows: 1fr;
+  width:calc(100% - 200px) ;
+ height: 100%;
+overflow: auto;
+ 
+.publicTitle{
+    height: 32px;
+    padding-left: 16px;
+    margin-bottom: 16px;
+    line-height: 32px;
+    font-size: 14px;
+    color: #333;
+    border-left: 4px solid ${props=> props.theme.primaryColor};
+}
+.mainTable{
+    
+    padding: 16px;
+    overflow: hidden;
+    background-color: #fff;
+    border-radius: 2px;
+    // margin-bottom: 16px;
+    display: flex;
+    flex-direction: column;
+   
+}
+.subTable{
+   
+    padding: 16px;
+    background-color: #fff;
+    border-radius: 2px;
+    margin-bottom: 32px;
+}
+.otherSubTable{
+     
+    padding: 16px;
+    background-color: #fff;
+    border-radius: 2px;
+    margin-bottom: 32px;
+}
+.searchInput{
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+}
+.actions{
+    padding: 0 32px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: stretch;
+    row-gap: 8px;
+    .ops {
+      padding-top: ${props=>props.theme.laptop ? "40px": "48px"};
+     flex:1;
+     display: flex;
+     flex-direction: column;
+     justify-content: space-between;
+    }
+}
+.leftTable{
+    display: grid;
+  grid-template-rows: repeat(3, 1fr);
+  grid-template-columns: 1fr;
+  row-gap: 16px;
+    border-radius: 2px;
+    padding: 16px;
+    background-color: #fff;
+}
+.rightTable{
+    
+    border-radius: 2px;
+    padding: 16px;
+    background-color: #fff;
+    display: flex;
+    flex-direction: column;
+}
+.outwrap {
+    flex: 1;
+    position: relative;
+    overflow: auto;
+  }
+  .tbwrap {
+        position: absolute;
+        width: 100%; 
+      }
+      .btns {
+    display: flex;
+    justify-content: space-between;
+  }
+  .saves {
+    display: flex;
+    flex-direction: column;
+    row-gap: 8px;
+  }
+ 
+${props => props.theme.laptop ? csssty : null}
+`
 export default function index (props) {
     const [messageApi, contextHolder] = message.useMessage();
     const { Search } = Input
     const columns = props.columns
+    const {laptop} = useSelector(adaptation)
     const [mainData, setMainData] = useState([])
     const state = useReactive({
         loadData:[],
@@ -248,47 +380,72 @@ export default function index (props) {
             setUnknownData([...arr]);
         }
     }
-
+    const btnsty = laptop
+    ? {
+        height: "32px",
+        width: "55px",
+      }
+    : {
+        height: "46px",
+        width: "68px",
+      };
+  const savesty = laptop
+    ? {
+        height: "34px",
+        width: "100%",
+      }
+    : {
+        height: "46px",
+        width: "100%",
+      };
     return (
-        <div className={style.transferContent}>
+        <Mainbox>
             {contextHolder}
-            <div className={style.leftTable}>
-                <div className={style.mainTable}>
-                    <div className={style.publicTitle}>{props.transferTitle.mainTitle}</div>
-                    <div className={style.mainContent}>
-                        <Table bordered dataSource={mainData} columns={columns} size='middle' rowKey='sn' pagination={false} rowSelection ={mainSelection} ></Table>
+            <div className="leftTable">
+                <div className="mainTable">
+                    <div className="publicTitle">{props.transferTitle.mainTitle}</div>
+                    <div className="outwrap">
+                    <div className="tbwrap"> 
+                        <UsetTable bordered dataSource={mainData} columns={columns}   rowKey='sn' pagination={false} rowSelection ={mainSelection} ></UsetTable>
+                    </div>
                     </div>
                 </div>
-                <div className={style.mainTable}>
-                    <div className={style.publicTitle}>{props.transferTitle.loadTitle}</div>
-                    <div className={style.mainContent}>
-                        <Table bordered dataSource={state.loadData} columns={columns} size='middle' rowKey='sn' pagination={false} rowSelection ={loadSelection} ></Table>
+                <div className="mainTable">
+                    <div className="publicTitle">{props.transferTitle.loadTitle}</div>
+                    <div className="outwrap">
+                    <div className="tbwrap"> 
+                        <UsetTable bordered dataSource={state.loadData} columns={columns}   rowKey='sn' pagination={false} rowSelection ={loadSelection} ></UsetTable>
+                    </div>
                     </div>
                 </div>
-                <div className={style.mainTable}>
-                    <div className={style.publicTitle}>{props.transferTitle.gridTitle}</div>
-                    <div className={style.mainContent}>
-                        <Table bordered dataSource={state.gridData} columns={columns} size='middle' rowKey='sn' pagination={false} rowSelection ={gridSelection} ></Table>
+                <div className="mainTable">
+                    <div className="publicTitle">{props.transferTitle.gridTitle}</div>
+                    <div className="outwrap">
+                    <div className="tbwrap"> 
+                        <UsetTable bordered dataSource={state.gridData} columns={columns}   rowKey='sn' pagination={false} rowSelection ={gridSelection} ></UsetTable>
+                    </div>
                     </div>
                 </div>
             </div>
-            <div className={style.actions}>
-                <Space size={16}>
-                   <CustButton icon={<LeftOutlined />} style={{height:"46px", width: "68px"}} onClick={unknownToMain}></CustButton>
-                    <CustButton icon={<RightOutlined />} style={{height:"46px", width: "68px"}} onClick={MainToUnknown}></CustButton>                 
-                </Space>
-                <Space size={16}>
-                   <CustButton icon={<LeftOutlined />} style={{height:"46px", width: "68px"}} onClick={unknownToLoad}></CustButton>
-                    <CustButton icon={<RightOutlined />} style={{height:"46px", width: "68px"}} onClick={LoadToUnknown}></CustButton>                 
-                </Space>
-                <Space size={16}>
-                   <CustButton icon={<LeftOutlined />} style={{height:"46px", width: "68px"}} onClick={unknownToGrid}></CustButton>
-                    <CustButton icon={<RightOutlined />} style={{height:"46px", width: "68px"}} onClick={GridToUnknown}></CustButton>                 
-                </Space>
-                <Space size={16} direction="vertical">
-                <CustButtonT onClick={handleSave} style={{height:"46px", width: "100%"}} text="save" />                 
-                    <CustButtonT  type="default" style={{height:"46px", width: "100%"}} onClick={ ()=> handleClose()} text="cancel" />
-                </Space>
+            <div className="actions">
+                <div className="ops"> 
+                <div className="btns">
+                   <CustButton icon={<LeftOutlined />} style={btnsty} onClick={unknownToMain}></CustButton>
+                    <CustButton icon={<RightOutlined />} style={btnsty} onClick={MainToUnknown}></CustButton>                 
+                </div>
+                <div className="btns">
+                   <CustButton icon={<LeftOutlined />} style={btnsty} onClick={unknownToLoad}></CustButton>
+                    <CustButton icon={<RightOutlined />} style={btnsty} onClick={LoadToUnknown}></CustButton>                 
+                </div>
+                <div className="btns">
+                   <CustButton icon={<LeftOutlined />} style={btnsty} onClick={unknownToGrid}></CustButton>
+                    <CustButton icon={<RightOutlined />} style={btnsty} onClick={GridToUnknown}></CustButton>                 
+                </div>
+                </div>
+                <div className="saves">
+                <CustButtonT onClick={handleSave} style={savesty} text="save" />                 
+                    <CustButtonT  type="default" style={savesty} onClick={ ()=> handleClose()} text="cancel" />
+                </div>
 
                 {/* <div className={style.firstButton}>
                     <span className={style.leftButton} onClick={()=>unknownToMain()}>
@@ -319,16 +476,20 @@ export default function index (props) {
                     <div className={style.closeButton} onClick={ ()=> handleClose()}>关闭</div>
                 </div> */}
             </div>
-            <div className={style.rightTable}>
-                <div className={style.publicTitle}>{props.transferTitle.unknownTitle}</div>
-                <div className={style.searchInput}>
-                    <span style={{marginRight: 16}}>设备搜索</span>
+            <div className="rightTable">
+                <div className="publicTitle">{props.transferTitle.unknownTitle}</div>
+                <div className="searchInput">
+                    <div style={{marginRight: 16}}>设备搜索</div>
                     <Search placeholder="请输入设备编号/安装地址" style={{width: 256}} enterButton onSearch={onSearchUnknown}></Search>
                 </div>
-                <div className={style.mainContent}>
-                    <Table bordered dataSource={unknownData} columns={columns} size='middle' rowKey='sn' pagination={false} scroll={{y:500}} rowSelection={rowSelection}></Table>
+               
+                <div className="outwrap">
+                <div className="tbwrap"> 
+                    <UsetTable bordered dataSource={unknownData} columns={columns}   rowKey='sn' pagination={false}   rowSelection={rowSelection}></UsetTable>
                 </div>
+                </div>
+                
             </div>
-        </div>
+        </Mainbox>
     )
 }

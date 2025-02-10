@@ -7,10 +7,136 @@ import BlueColumn from '@com/bluecolumn'
 import commonstyle from './commonstyle.module.less'
 import { LeftOutlined, RightOutlined } from '@ant-design/icons';
 import {operationDesigin} from '@api/api'
+import styled, {css} from 'styled-components'
+import {CustButton, CustButtonT} from "@com/useButton"
+import UsetTable from "@com/useTable";
+const csssty = css`
+  .transferContent {
+    padding: 16px;
+  }
+  .leftTable {
+    row-gap: 16px;
+  }
+  .actions {
+    margin: 0px 8px;
+   
+  }
+`;
+const Mainbox = styled.div`
+   &&{
+    
+    background-color: #003366;
+    padding: 32px;
+    display: flex;
+    position: fixed;
+    top:  0px;
+    left:200px;
+     bottom: 0;
+     right: 0;
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    grid-template-rows: 1fr;
+    transition: all .75s linear;
+    z-index: 1999;
+    transform: translateX(${props => props.open ? 0 : '3000px'});
+   
+  .leftTable {
+    height: inherit;
+    display: flex;
+    flex-direction: column;
+    row-gap: 32px;
+  }
 
+  .subTable {
+    padding: 16px;
+    background-color: #fff;
+    border-radius: 2px;
+     display: flex;
+     flex-direction: column;
+     row-gap: 16px;
+    flex: 1;
+  }
 
+  .otherSubTable {
+    flex: 1;
+    padding: 16px 16px 0 16px;
+    background-color: #fff;
+    border-radius: 2px;
+    display: flex;
+    flex-direction: column;
+    row-gap: 16px;
+  }
+
+  .mainContent {
+    flex: 1;
+    position: relative;
+    overflow: auto;
+  }
+
+  .actions {
+    margin: 0 32px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-evenly; 
+    
+  }
+
+  .rightTable {
+    //  width: 714px;
+    //  height: 696px;
+    border-radius: 2px;
+    padding: 16px 16px 0 16px;
+    background-color: #fff;
+    display: flex;
+    flex-direction: column;
+    row-gap: 16px;
+  }
+  .rightTable,
+  .leftTable {
+    .publicTitle {
+      height: 32px;
+      padding-left: 16px;
+      line-height: 32px;
+      font-size: 14px;
+      color: #333;
+      border-left: 4px solid var(--ant-primary-color);
+    }
+    .searchInput {
+      display: flex;
+      align-items: center;
+      column-gap: ${props=> props.theme.laptop ? "8px" : "16px"};
+      height: 32px;
+      .ipt {
+        display: flex;
+        column-gap: 8px;
+        align-items: center;
+
+       
+
+      }
+      
+    }
+    .mainTable {
+      padding: 16px;
+      background-color: #fff;
+      border-radius: 2px;
+      display: flex;
+      flex-direction: column;
+      row-gap: 16px;
+      flex: 1;
+      
+    }
+    .tbwrap {
+        position: absolute;
+        width: 100%; 
+      }
+  }
+
+  ${props =>props.theme.laptop ? csssty : null}
+}
+`;
 //配置线路
-export let SetLine = forwardRef(({  getQueryPageDevice,areaId,addform,form }, ref) => {
+export let SetLine = forwardRef(({  getQueryPageDevice,areaId,addform,form, laptop }, ref) => {
     const [open,setOpen] = useState(false)
     const publish = useSelector(publishState)
     const { Search } = Input;
@@ -41,25 +167,7 @@ export let SetLine = forwardRef(({  getQueryPageDevice,areaId,addform,form }, re
         // { title: '安装地址', dataIndex: 'address', align: "center", },
 
     ]
-    const btncss = {
-        width: 68,
-        height: 46,
-        background: "#237ae4",
-        textAlign: 'center',
-        lineHeight: '46px',
-        borderRadius: 4,
-        cursor: 'pointer',
-    }
-    const btnstyle = {
-        width: 146,
-        height: 40,
-        background: '#237ae4',
-        textAlign: 'center',
-        lineHeight: '40px',
-        color: '#fff',
-        borderRadius: 4,
-        cursor: 'pointer',
-    }
+    
      //获取已选和未选设备
   const getQueryDeviceList=async(deviceStyle=0,alike="")=>{
     let params={
@@ -80,8 +188,8 @@ export let SetLine = forwardRef(({  getQueryPageDevice,areaId,addform,form }, re
    }
   }
     //关闭抽屉
-    const close = () => {
-        form.setFieldValue("group",subMeter)
+    const close = () => { 
+        form()?.setFieldValue("group",subMeter)
         setOpen(false)
         setSearchValue("")
         setDeviceType(0)
@@ -245,29 +353,45 @@ export let SetLine = forwardRef(({  getQueryPageDevice,areaId,addform,form }, re
     useEffect(()=>{
         // getQueryDeviceList()
     },[areaId])
+    const btnsty = laptop
+    ? {
+        height: "32px",
+        width: "55px",
+      }
+    : {
+        height: "46px",
+        width: "68px",
+      };
+  const savesty = laptop
+    ? {
+        height: "34px",
+        width: "120px",
+      }
+    : {
+        height: "46px",
+        width: "146px",
+      };
+ const rightref = useRef()
     return (
-        <div style={{ position: 'absolute', width: 1686, height: 770,zIndex:10, top: -13, left: open ? -483 : 3000, background: "#003366", transition: 'all .75s linear', padding: 32, display: 'flex' }}>
-            <div style={{ position: 'relative', width: 692 }}>
-                <div style={{ background: "#ffffff", padding: 16, height: 698 }}>
-                    <div style={{display:'flex',justifyContent:'space-between'}}>
-                    <BlueColumn name="已选中的巡检点" styled={{ marginBottom: 16 }}></BlueColumn>
-                    {/* <div className={commonstyle.divBtn} onClick={setlocal}>设置坐标</div> */}
-                    </div>
-                    
-                    <Table
+        <Mainbox open={open}>
+            <div className="leftTable">
+                <div className="otherSubTable">
+                <div  className='publicTitle'>已选中的巡检点</div>
+                <div className="mainContent">
+                <div className="tbwrap">
+                    <UsetTable
                         bordered
                         pagination={false}
                         rowSelection={{ onChange: subMeterSelectChange, selectedRowKeys: subMeterRowKeys }}
                         columns={columns}
-                        scroll={{ y: 560 }}
-                        size={'small'}
                         dataSource={subMeter}
                         rowKey={record => record.id}
-                    ></Table>
+                    ></UsetTable>
                 </div>
-
+                </div>
+                </div>
             </div>
-            <div style={{ position: 'relative', flex: 1, padding: '0 32px' }}>
+            <div className="actions">
                 {publish ? null : <>
                     {/* <div style={{ marginTop: 21 }}>
                         <div style={{ color: '#fff', marginBottom: 16 }}>选择设备</div>
@@ -276,47 +400,43 @@ export let SetLine = forwardRef(({  getQueryPageDevice,areaId,addform,form }, re
                             <div style={btncss} className={commonstyle.btnhover} onClick={summaryToRight}><RightOutlined style={{ color: '#fff', fontSize: 20 }} /></div>
                         </div>
                     </div> */}
-                    <div style={{ marginTop: 150 }}>
+                    <div >
                         <div style={{ color: '#fff', marginBottom: 16 }}>选择巡检点</div>
                         <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                            <div style={btncss} className={commonstyle.btnhover} onClick={subToLeft}><LeftOutlined style={{ color: '#fff', fontSize: 20 }} /></div>
-                            <div style={btncss} className={commonstyle.btnhover} onClick={subToRight}><RightOutlined style={{ color: '#fff', fontSize: 20 }} /></div>
+                            <CustButton onClick={subToLeft} icon={<LeftOutlined   />} style={btnsty} /> 
+                            <CustButton onClick={subToRight} icon={<RightOutlined   />} style={btnsty} /> 
                         </div>
                     </div>
                 </>}
 
-                <div>
-                    {/* {publish ? null : <div style={{ ...btnstyle, marginTop: 200, marginBottom: 16 }} className={commonstyle.bghover} onClick={saveConfig}>保存</div>} */}
-                    <div style={{ ...btnstyle, marginTop: 200,color: '#000', background: 'rgb(247,247,247)' }} className={commonstyle.closehover} onClick={close}>保存</div>
-                </div>
+                <CustButtonT text="save" onClick={close} style={savesty} /> 
+            
             </div>
-            <div style={{ position: 'relative', width: 714 }}>
-                <div style={{ background: "#ffffff", padding: 16, height: '99%', width: '100%', overflow: 'hidden', }}>
-                    <BlueColumn name="未选中的巡检点" styled={{ marginBottom: 16 }}></BlueColumn>
-                    <div style={{display:'flex',justifyContent:'space-between'}}>
-                    {/* <div>
-                    <span>设备类型</span>
-                    <Select style={{width:128, marginLeft: 16 }} options={deviceoptions} defaultValue={0} onChange={changeType} value={devicetype}></Select>
-                    </div>     */}
-                    <div style={{ marginBottom: 16 }} className={commonstyle.searchinp}>
-                        {/* <span>设备搜索</span> */}
+            <div className="rightTable" ref={rightref}>
+            <div className="publicTitle">未选中的巡检点</div> 
+                    
+                    <div className="searchInput">
+                  
+                    <div>
                         <Search style={{ width: '100%', borderRadius: 16, marginLeft: 16 }} placeholder="请输入巡检点关键字查询" onSearch={onSearch} value={searchValue} onChange={(e) => { setSearchValue(e.target.value) }}></Search>
                     </div>
                     </div>
-                    
-                    <Table
+                    <div className="mainContent">
+                    <div className="tbwrap"> 
+                    <UsetTable
                         bordered
                         pagination={false}
                         rowSelection={{ selectedRowKeys, onChange: onSelectChange }}
                         columns={columns}
                         dataSource={dataSource}
-                        scroll={{ y: 500 }}
-                        size={'small'}
+                       
                         rowKey={record => record.id}
-                    ></Table>
+                    ></UsetTable>
+                    </div>
+                    
                 </div>
             </div>
      
-        </div>
+        </Mainbox>
     )
 })

@@ -47,6 +47,7 @@ const iconsty = css`
 `
 const Drawerbox = styled(Drawer)`
   && {
+    z-index: 10001;
     .ant-drawer-content-wrapper {
       width: calc(100% - 200px)!important;
       height: calc(100% - 64px);

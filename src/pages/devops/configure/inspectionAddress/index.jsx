@@ -62,6 +62,7 @@ export default function Index() {
   const [printmess, setPrintmess] = useState('')
   const [printshow, setPrintshow] = useState(false)
   const [printshowall, setPrintshowall] = useState(false)
+  const [editdata, setEditdata] = useState({})
   const columns = [
     { title: onelevel[0]?.levelName ? onelevel[0]?.levelName : '园区名称', dataIndex: 'areaName', align: "center", },
     { title: '巡检点编号', dataIndex: 'id', align: "center", },
@@ -74,7 +75,7 @@ export default function Index() {
           <Space>
             <CustLink onClick={async () => { printid = text.id; await getcode(text) }} text="printqrcode" />
             <CustLink onClick={() => {
-              console.log(text); setShow(!show); editform.setFieldsValue(text); editRef.current.onOpen();
+              setEditdata(text); setShow(!show); editform.setFieldsValue(text); editRef.current.onOpen();
             }} text="edit" />
             <CustLink type="danger" underline onClick={() => { delid = text.id; delRef.current.onOpen() }} text="delete" />
           </Space>
@@ -141,6 +142,59 @@ export default function Index() {
     handlePrint()
     setPrintshowall(true)
   }
+  const checklistref = useRef()
+  const showchecklist = async (id)=> {
+      try {
+        let params = id ? {
+          projectId,
+          type: 0,
+          alike: "",
+          inspectionAddressId:id
+        } : {
+          projectId,
+          type: 0,
+          alike: ""
+        }
+        const res = await operationDesigin.QueryContentList(params)
+        if (res.success) {
+          checklistref.current?.setDataSource(res.data.unused)
+          checklistref.current?.setSubMeter(res.data.used)
+          checklistref.current?.setCopydataSource(res.data.unused)
+          checklistref.current?.setOpen(true)
+        } else {
+          message.error(res.errMsg)
+        }
+      } catch (error) {
+        
+      }
+  }
+  const devicelistref = useRef()
+  const showdevice = async (id)=> {  // 新增时
+    try {
+      let params = id ? {
+        projectId,
+        deviceStyle: 0,
+        alike: "",
+        inspectionAddressId:id
+      } : {
+        projectId,
+        deviceStyle: 0,
+        alike: ""
+      }
+      const res = await operationDesigin.InspectionQueryDeviceList(params)
+      if (res.success) {
+        devicelistref.current.setOpen(true)
+        devicelistref.current?.setDataSource(res.data.unused)
+        devicelistref.current?.setSubMeter(res.data.used)
+        devicelistref.current?.setCopydataSource(res.data.unused)
+       
+      } else {
+        message.error(res.errMsg)
+      }
+    } catch (error) {
+      console.log(error)
+    }
+  }
   //新增检查项
   const addItems = async (position, device, content) => {
 
@@ -152,8 +206,8 @@ export default function Index() {
           return
         }
         const add = addform.getFieldsValue()
-        const deviceGroup = device.current.subMeter.map(it => it.sn)
-        const contentGroup = content.current.subMeter.map(it => it.id)
+        const deviceGroup = devicelistref.current.subMeter.map(it => it.sn)
+        const contentGroup = checklistref.current.subMeter.map(it => it.id)
 
         let params = {
           projectId,
@@ -186,10 +240,10 @@ export default function Index() {
     }
   }
   //更新检查项
-  const updateItems = async (position, devicelistref, checklistref) => {
+  const updateItems = async (position) => {
     editform.validateFields().then(async () => {
       const edit = editform.getFieldValue()
-      console.log(edit, position, devicelistref, checklistref)
+     
       const deviceGroup = devicelistref.current.subMeter.map(it => it.sn)
       const contentGroup = checklistref.current.subMeter.map(it => it.id)
       let params = {
@@ -300,26 +354,7 @@ export default function Index() {
     defaultPageSize: PageSize,
   })
   const { submit } = search
-  const checklistref = useRef()
-  const showchecklist = async ()=> {
-      try {
-        const res = await operationDesigin.QueryContentList({
-          projectId,
-          type: 0,
-          alike: ""
-        })
-        if (res.success) {
-          checklistref.current?.setDataSource(res.data.unused)
-          checklistref.current?.setSubMeter(res.data.used)
-          checklistref.current?.setCopydataSource(res.data.unused)
-          checklistref.current?.setOpen(true)
-        } else {
-          message.error(res.errMsg)
-        }
-      } catch (error) {
-        
-      }
-  }
+
   return (
     <Pagecont showserach={false} pd="0px" >
       <Titlelayout title="巡检点管理" layout="flex" dr="column" style={{ overflow: "hidden" }}>
@@ -373,10 +408,10 @@ export default function Index() {
 
           <Table columns={columns} {...tableProps}></Table>
 
-          <AddItem addRef={addRef} addform={addform} addItems={addItems} laptop={laptop} addoptiosn={addoptiosn} showchecklist={showchecklist} />
+          <AddItem addRef={addRef} addform={addform} addItems={addItems} laptop={laptop} addoptiosn={addoptiosn} showchecklist={() =>showchecklist()} showdevice={()=>showdevice()} />
           <TransLine ref={checklistref} addform={addform} laptop={laptop} />
-
-          <EditItem editRef={editRef} editform={editform} updateItems={updateItems} addoptiosn={addoptiosn} />
+          <SetLine ref={devicelistref} addform={addform} laptop={laptop} />     {/* 巡检设备 */}
+          <EditItem editRef={editRef} editform={editform} updateItems={updateItems} addoptiosn={addoptiosn} showchecklist={()=>showchecklist(editdata?.id)} showdevice={()=>showdevice(editdata?.id)}   />
           <DeleteModal delRef={delRef} name='删除巡检点' content="是否确认删除巡检点" onOk={delItems} />
           {
             printshow ? <Print print={printmess} ></Print> : null
@@ -400,7 +435,7 @@ export default function Index() {
   )
 }
 //新增
-const AddItem = ({ addRef, addItems, addform, addoptiosn, laptop, showchecklist }) => {
+const AddItem = ({ addRef, addItems, addform, addoptiosn, laptop, showchecklist,showdevice }) => {
   const projectId = useSelector(state => state.system.menus.projectId)
   const onelevel = useSelector(state => state.system.onelevel);
   let position = useReactive({})
@@ -450,7 +485,7 @@ const AddItem = ({ addRef, addItems, addform, addoptiosn, laptop, showchecklist 
   }, [positionRef])
   return (
     <>
-      <Modal mold='cust' custft={true} width={587} ref={addRef} onOk={async () => {await addItems(position, devicelistref, checklistref) }} title="新增巡检点">
+      <Modal mold='cust' custft={true} width={587} ref={addRef} onOk={async () => {await addItems(position) }} title="新增巡检点">
         {/* <BlueColumn name="新增巡检点" styled={{ padding: '24px 0px', color: '#237ae4' }} ></BlueColumn> */}
         <AddDiv
           form={addform}
@@ -489,7 +524,8 @@ const AddItem = ({ addRef, addItems, addform, addoptiosn, laptop, showchecklist 
             <Input placeholder="请输入具体位置"></Input>
           </Form.Item>
           <Form.Item label="巡检设备" rules={[{ required: true }]}>
-            <CustButtonT onClick={() => { devicelistref.current.setOpen(true); getDevicelist() }} text="clickts" />
+       {/*      <CustButtonT onClick={() => { devicelistref.current.setOpen(true); getDevicelist() }} text="clickts" /> */}
+            <CustButtonT onClick={showdevice} text="clickts" />
           </Form.Item>
           {/* <Form.Item label=" " name="deviceGroup" rules={[{ required: true }]}>
           <Input ></Input>
@@ -508,7 +544,7 @@ const AddItem = ({ addRef, addItems, addform, addoptiosn, laptop, showchecklist 
           </Form.Item>
         </AddDiv>
         <SetPosition positionRef={positionRef} savePosition={savePosition} />
-        <SetLine ref={devicelistref} addform={addform} laptop={laptop} />
+      {/*   <SetLine ref={devicelistref} addform={addform} laptop={laptop} /> */}
        {/*  <TransLine ref={checklistref} addform={addform} laptop={laptop} /> */}
       </Modal>
       
@@ -517,7 +553,7 @@ const AddItem = ({ addRef, addItems, addform, addoptiosn, laptop, showchecklist 
 
 }
 //编辑
-const EditItem = ({ editRef, editform, updateItems, addoptiosn }) => {
+const EditItem = ({ editRef, editform, updateItems, addoptiosn,showchecklist,showdevice }) => {
   const projectId = useSelector(state => state.system.menus.projectId)
   const onelevel = useSelector(state => state.system.onelevel);
   const positionRef = useRef()
@@ -567,7 +603,7 @@ const EditItem = ({ editRef, editform, updateItems, addoptiosn }) => {
 
   }, [editform.getFieldValue()])
   return (
-    <Modal mold='cust' width={587} ref={editRef} onOk={() => { updateItems(position, devicelistref, checklistref) }} title="编辑巡检点">
+    <Modal mold='cust' width={587} ref={editRef} onOk={() => { updateItems(position) }} title="编辑巡检点">
 
       {/* <BlueColumn name="编辑巡检点" styled={{ padding: '24px 0px', color: '#237ae4' }} ></BlueColumn> */}
       <AddDiv
@@ -597,14 +633,14 @@ const EditItem = ({ editRef, editform, updateItems, addoptiosn }) => {
           <Input placeholder="请输入具体位置"></Input>
         </Form.Item>
         <Form.Item label="巡检设备" rules={[{ required: true }]}>
-          <CustButtonT onClick={() => { devicelistref.current.setOpen(true); getDevicelist() }} text="clicktoget" />
+          <CustButtonT onClick={showdevice} text="clicktoget" />
         </Form.Item>
         {/* <Form.Item label=" " name="deviceGroup" rules={[{ required: true }]}>
           <Input disabled></Input>
         </Form.Item> */}
         <Divider dashed></Divider>
         <Form.Item label="巡检检查项" rules={[{ required: true }]}>
-          <CustButtonT onClick={() => { checklistref.current.setOpen(true); getChecklist() }} text="clicktoget" />
+          <CustButtonT onClick={showchecklist} text="clicktoget" />
         </Form.Item>
         {/* <Form.Item label=" " name="contentGroup" rules={[{ required: true }]}>
           <Input disabled></Input>

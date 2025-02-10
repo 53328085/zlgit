@@ -23,6 +23,7 @@ const LeftBox = styled.div`
   border-radius: 4px;
   display: flex;
   flex-direction: column;
+  margin-right: 16px;
 `;
 const ChooseBtn = styled.div`
   width: 208px;
