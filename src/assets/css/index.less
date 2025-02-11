@@ -22,6 +22,15 @@ html, body {
     flex-direction: column;
     flex:1;
 }
+html,body #root {
+  transform: translateZ(0);
+  .ant-btn, .ant-radio-button-wrapper, .ant-typography {
+     will-change: transform;
+  }
+  a {
+    touch-action: manipulation;
+  }
+}
 @media (pointer: coarse) {
   /* 在触摸屏设备上应用的样式 */
 }

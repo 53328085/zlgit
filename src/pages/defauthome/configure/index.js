@@ -356,7 +356,8 @@ export default function Index() {
       right: "5px",
       top: 0,
       zIndex: 1000,
-      cursor: "pointer"
+      cursor: "pointer",
+      outline: "10px solid transparent"
     }
     const i = el.i;
     const end = i.indexOf('_');

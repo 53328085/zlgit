@@ -22,7 +22,8 @@ export default function Index({value, onChange, name, arrcolor})  {
       position: "absolute",
     right: "0px",
     top: "0px",
-    fontSize: "10px"
+    fontSize: "10px",
+    outline: "10px solid transparent",
     }
     const changecolor=(e)=>{
       e.preventDefault()

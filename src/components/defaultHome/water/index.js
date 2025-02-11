@@ -27,7 +27,7 @@ export default function DefaultHome(props){
     grid:{
       // 图表 grid
       left: "0px",
-      right: "0",
+      right: "0px",
       top: "30px",
       bottom: "0px",
       containLabel: true,
