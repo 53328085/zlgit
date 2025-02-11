@@ -269,7 +269,83 @@ const Mainbox =styled.div`
     &:nth-of-type(3){
         flex: 0 0 320px;
         background-image: url(${imgsrc['P3']});
-        
+        .values {
+          color: #0f0;
+          position: absolute;
+          left: 13px;
+         
+          height: 80px;
+          width: 62px;
+          display: flex;
+          flex-direction: column;
+          justify-content: space-between;
+          cursor: pointer;
+          .nums{
+             height: 60px;
+             display: flex;
+             flex-direction: column;
+             justify-content: space-between;
+             align-items: center;
+             padding: 2px;
+             .ant-typography{
+              color:#0f0;
+             }
+             .type {
+              display: inline-block;
+              border-bottom:  1px dotted;
+              align-self: stretch;
+              text-align: center;
+              margin: 0 4px;
+              line-height: 1;
+              padding-bottom: 4px;
+             }
+          }
+          .state {
+            display: flex;
+            justify-content: center;
+            img+img {
+              padding-left: 8px;
+            }
+           }
+           
+        }
+        .values.first{
+          top:118px
+        }
+        .values.second{
+          top:358px
+        }
+        .values.thirdly{
+          top:600px
+        }
+       .guizhi {
+        width: 120px;
+          height: 213px;
+          position: absolute;
+          left: 100px;
+          display: flex;
+          flex-direction: column;
+          justify-content: space-between;
+          cursor: pointer;
+          .gtitle{
+             height: 18px;
+             display: flex;
+             align-items: center;
+             justify-content: center;
+          }
+          .guiti{
+            height: 160px;
+          }
+       }
+       .guizhi.first{
+         top:105px;
+       }
+       .guizhi.second{
+         top:345px
+       }
+       .guizhi.thirdly{
+         top:586px
+       }
     }
     &:nth-of-type(4){
         flex: 0 0 320px;
@@ -614,6 +690,57 @@ const options4 =[
                 </Link>
                 <CustLink text="details" underline={false} ></CustLink>
             </div>
+           <div className='values first' onClick={onCopen}>
+            <div className='nums'>
+                   <span className='type'>1a</span>
+                   <Text>25.3A</Text>
+                   <Text>48.2°C</Text>
+            </div>
+           <div className='state'>
+                  <img src={imgsrc["red"]}></img>
+                  <img src={imgsrc['close']}></img>
+               </div>
+           </div>
+           <div className='values second' onClick={onCopen}>
+            <div className='nums'>
+                   <span className='type'>1a</span>
+                   <Text>252.3A</Text>
+                   <Text>482.2°C</Text>
+            </div>
+           <div className='state'>
+                  <img src={imgsrc["red"]}></img>
+                  <img src={imgsrc['close']}></img>
+               </div>
+           </div>
+           <div className='values thirdly' onClick={onCopen}>
+            <div className='nums'>
+                   <span className='type'>1a</span>
+                   <Text>253.3A</Text>
+                   <Text>483.2°C</Text>
+            </div>
+           <div className='state'>
+                  <img src={imgsrc["red"]}></img>
+                  <img src={imgsrc['close']}></img>
+               </div>
+           </div>
+           <div className="guizhi first" onClick={onCopen}>
+              <div className="gtitle">
+                柜线1
+              </div>
+              <div className="guiti"></div>
+           </div>
+           <div className="guizhi second" onClick={onCopen}>
+              <div className="gtitle">
+                柜线2
+              </div>
+              <div className="guiti"></div>
+           </div>
+           <div className="guizhi thirdly" onClick={onCopen}>
+              <div className="gtitle">
+                柜线3
+              </div>
+              <div className="guiti"></div>
+           </div>
         </div>
         <div className='part'>
         <div className="title">
