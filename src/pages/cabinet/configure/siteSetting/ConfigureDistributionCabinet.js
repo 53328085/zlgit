@@ -3,7 +3,7 @@ import styled, { css } from "styled-components";
 import { CustLink, CustButtonT } from '@com/useButton'
 import CModal from '@com/useModal'
 import Pagecount from '@com/pagecontent'
-import { Button, Form, Input, Row, Col, Select, Space, message, Typography, Divider, Modal, Timeline } from 'antd';
+import { Button, Form, Input, Row, Col, Select, InputNumber, Space, message, Typography, Divider, Modal, Timeline } from 'antd';
 const Content = styled.div`
 width:1100px;
 margin: 24px auto;
@@ -329,13 +329,30 @@ export default function Index() {
         }
     };
     const onBusbarShow = async (row, index) => {
-        new Map(rows[row - 1].busbarShow.set(index, !rows[row - 1].busbarShow.get(index)));
         setBusbarShow(new Map(busbarShow.set(index, !busbarShow.get(index))));
+        for (let [key, value] of busbarShow) {
+            console.log(key, value, index, key != index)
+            if (key != index) {
+                setBusbarShow(new Map(busbarShow.set(key, false)));
+                new Map(rows[row - 1].busbarShow.set(key, false));
+            } else {
+                new Map(rows[row - 1].busbarShow.set(index, !rows[row - 1].busbarShow.get(index)));
+            }
+        }
+
         console.log(rows, '----setBusbarShow')
     }
     const onCabinetShow = async (row, index) => {
         setCabinetShow(new Map(cabinetShow.set(index, !cabinetShow.get(index))));
-        new Map(rows[row - 1].cabinetShow.set(index, !rows[row - 1].cabinetShow.get(index)));
+        for (let [key, value] of cabinetShow) {
+            console.log(key, value, index, key != index)
+            if (key != index) {
+                setCabinetShow(new Map(cabinetShow.set(key, false)));
+                new Map(rows[row - 1].cabinetShow.set(key, false));
+            } else {
+                new Map(rows[row - 1].cabinetShow.set(index, !rows[row - 1].cabinetShow.get(index)));
+            }
+        }
     }
 
     //删除确认
@@ -413,6 +430,19 @@ export default function Index() {
             </div>
         ));
     };
+
+    const validatorfunc = (_, value) => {
+        console.log(value, !Number(value))
+        if (!Number(value)) {
+            return Promise.reject(new Error("请输入正确的柜体属性"))
+        } else {
+            if (Number(value) <= 0) {
+                return Promise.reject(new Error("请输入正确的柜体属性"))
+            } else {
+                return Promise.resolve()
+            }
+        }
+    }
     return (
         <Pagecount pd="0" bgcolor="transparent">
             <Content>
@@ -481,8 +511,8 @@ export default function Index() {
                                 <Form.Item label="柜体样式" name="style" rules={[{ required: true }]}>
                                     <Select options={styleList} onChange={onStylechange} />
                                 </Form.Item>
-                                <Form.Item label="柜体高度(cm)" name="remark" rules={[{ required: true }]}>
-                                    <Input />
+                                <Form.Item label="柜体高度(cm)" name="remark" rules={[{ required: true, validator: validatorfunc }]}>
+                                    <Input suffix={<span>(cm)</span>} style={{ width: '100%' }} />
                                 </Form.Item>
                             </Col>
                             <Col>
@@ -499,8 +529,8 @@ export default function Index() {
                                 <Form.Item label="柜体类型" name="type" rules={[{ required: true }]}>
                                     <Select options={typeList} onChange={onTypechange} />
                                 </Form.Item>
-                                <Form.Item label="柜体宽度(cm)" name="name" rules={[{ required: true }]}>
-                                    <Input />
+                                <Form.Item label="柜体宽度(cm)" name="name" rules={[{ required: true, validator: validatorfunc }]}>
+                                    <Input suffix={<span>(cm)</span>} style={{ width: '100%' }} />
                                 </Form.Item>
                             </Col>
                         </Row>
