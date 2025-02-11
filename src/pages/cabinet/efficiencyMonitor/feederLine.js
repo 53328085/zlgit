@@ -26,7 +26,7 @@ export default function Index() {
             left: 84px;
             top: 120px;
             cursor: pointer;
-            color: #237ae4;
+            color: ${props=> props.theme.primaryColor};
             line-height: 32px;
             .data_title{
                 font-size: 16px;

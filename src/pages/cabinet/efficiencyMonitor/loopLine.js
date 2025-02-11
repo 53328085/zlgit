@@ -33,7 +33,7 @@ export default function Index(props) {
             position: absolute;
             left: 96px;
             top: 120px;
-            color: #237ae4;
+            color: ${props=> props.theme.primaryColor};
             line-height: 32px;
             .data_title{
                 font-size: 16px;
