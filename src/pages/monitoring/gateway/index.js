@@ -5,7 +5,7 @@ import { Select, Radio, Pagination, message, Space, Form} from "antd";
 
 import { Link } from "react-router-dom";
 import { useAntdTable } from "ahooks";
-
+import {CustTransO, i18t, i18warning} from "@com/useButton"
 import {isLightColor} from "@com/usehandler"
 import Icard from "./card";
 import imgurl from "./images/index.js";
@@ -456,7 +456,7 @@ export default function Index(props) {
             }}
           >
             <Space size={laptop ? 16 : 64} split={laptop ? "" :<Cdivider />}  >             
-                <Form.Item name="alike" label="网关查询" style={{marginBottom: 0}}  >
+                <Form.Item name="alike" label={i18t("comm","Query",{text:"网关"})} style={{marginBottom: 0}}  >
                   <Serach
                     size="middle"
                     placeholder="输入网关编号/安装地址"
@@ -465,14 +465,14 @@ export default function Index(props) {
                     onSearch={submit}
                   />
                 </Form.Item>
-              <Form.Item label="网关型号" name="category" style={{marginBottom: 0}}>
+              <Form.Item label={i18t("comm","type",{text:"网关"})} name="category" style={{marginBottom: 0}}>
                 <Select
                   style={{
                     width: laptop ? 180 : 200,
                   }}
                   onChange={submit}
                 >
-                  <Select.Option value={""}>全部型号</Select.Option>
+                  <Select.Option value={""}>{i18t("comm","All",{text:"全部"})}</Select.Option>
                   {optionsGateway.map((item, index) => {
                     return (
                       <Select.Option key={index} value={item}>
@@ -483,7 +483,7 @@ export default function Index(props) {
                 </Select>
               </Form.Item>
               
-                <Form.Item label="网关状态" name="state" style={{marginBottom: 0}}>
+                <Form.Item label={i18t("comm","Status",{text:"网关"})} name="state" style={{marginBottom: 0}}>
                   <Select
                     style={{
                       width: laptop ? 100 : 200,
