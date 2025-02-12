@@ -22,6 +22,7 @@ export default function DefaultHome(props) {
     height: 142px;
     overflow-y: hidden;
    padding-top: 16px;
+   padding-left: 4px;
   .ant-timeline-item {
     padding-bottom: 8px;
   

@@ -12,6 +12,7 @@ import { CustButton } from "@com/useButton"
 import Modal from "@com/useModal"
 import Table from "@com/useTable"
 import warn from "./warn.png"
+import Pagecount from "@com/pagecontent";
 const BtnWrap = styled(Radio.Group)`
   .ant-radio-button-wrapper {
     width: 113px;
@@ -19,7 +20,7 @@ const BtnWrap = styled(Radio.Group)`
   }
 `;
 const Charts = styled.div`
-  height: 400px;
+  height: ${props=> props.len > 1 ? "400px" : "100%"};
   display: flex;
 `;
 const {
@@ -138,6 +139,7 @@ export default function index() {
   };
   
   const [dataList, setDataList] = useState([])
+  const len = dataList.length
   const GetSns = async () => {
     const resp = await CompareQuery(projectId);
     if (resp.success) {
@@ -528,10 +530,11 @@ export default function index() {
     return (<img src={warn} onClick={warnDetail}></img>)
   }
   return (
-    <div style={{ width: "100%", height: "100%", display: "flex", flexDirection: "column" }}>
+   /*  <div style={{ width: "100%", height: "100%", display: "flex", flexDirection: "column" }}> */
+   <Pagecount bgcolor="transparent" pd="0">
       {dataList.length > 0 && dataList.map((item, index) => {
         return (
-          <Titlelayout title={item.groupName} style={{ height: 500, marginBottom: 16 }} extra={
+          <Titlelayout title={item.groupName} style={{ height: len== 1 ? "100%" : 500, marginBottom: 16 }} extra={
             <Space>
               <Space>
                 <BtnWrap
@@ -560,7 +563,7 @@ export default function index() {
               </Space>
             </Space>}>
             <Divider dashed style={{ borderColor: "#d7d7d7" }}></Divider>
-            <Charts>
+            <Charts len={len}>
               {state.chartsOpts.series.length > 0&&item?.items[params[index].type-1].state != 0 ?
                 <Icharts custoption={{
                   ...state.chartsOpts,
@@ -596,6 +599,8 @@ export default function index() {
       }
       <Modal ref={ModalRef} mold='cust' title="偏差告警" onOk={() => { ModalRef.current.onCancel() }} width={800}>
         <Table dataSource={state.tableData} columns={columns} pagination={{ pageSize: state.pageSize, current: state.current, total: state.alltableData.length, onChange: changePage, onShowSizeChange: onShowSizeChange }}  ></Table>
-      </Modal></div>
+      </Modal>
+      </Pagecount>
+     /*  </div> */
   );
 }
