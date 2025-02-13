@@ -13,7 +13,7 @@ import {initithemeColor} from '@com/defaultcolor';
 
 const {DeviceTypeManager: {AllDeviceStyle} } = Monitoring
 
- console.log("initithemeColor",initithemeColor)
+ 
 
   // 进入项目配置/项目 
 

@@ -1,7 +1,7 @@
 import React, {useCallback} from "react";
 import styled, {css} from "styled-components";
 import {useSelector} from 'react-redux'
-import { Button, Dropdown, Menu, Upload, Typography, message} from "antd";
+import { Button, Dropdown, Menu, Upload, Typography, message,Radio} from "antd";
 import {CaretDownFilled, CloseOutlined} from '@ant-design/icons'
 import {useTranslation} from 'react-i18next' 
 import i18 from '../../i18n'
@@ -250,6 +250,31 @@ const CmenuItem = styled(Menu.Item)`
   background-image: url(${props => icon[`${props.type}h`]});
 }
 `
+export function RadioT(props) {
+  let { text='模式', onChange, ...rest} =  props
+  const {t} = useTranslation("comm");
+  return (
+    <Radio.Group
+    onChange={onChange}
+    defaultValue="card"
+    buttonStyle="solid"
+    {...rest}
+  >
+    <Radio.Button
+      style={{ width: "96px", marginLeft: 16, textAlign: "center" }}
+      value="card"
+    >
+      {t("card", {text})}
+    </Radio.Button>
+    <Radio.Button
+      style={{ width: "96px", textAlign: "center" }}
+      value="list"
+    >
+    {t("list", {text})}
+    </Radio.Button>
+  </Radio.Group>
+  )
+}
 export function CustTransO(props) {   //通用  文字/数字翻译
   let {text, ns="overview", param='', val} = props 
   const {t} = useTranslation([ns]);

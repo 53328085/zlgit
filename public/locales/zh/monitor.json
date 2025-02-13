@@ -1,0 +1,11 @@
+{
+    "contrastiveanalysis": "对比分析",
+    "compare": "请选择要对比的设备",
+    "data": "选择对比数据",
+     "datumline":"对比基准线",
+     "datarang": "请选择日期范围",
+     "info1":"请至少选择两个设备进行对比分析！",
+     "info2": "请填写对比基准线具体数值",
+     "unselected":"未选中的设备",
+    "test":""
+ }

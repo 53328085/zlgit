@@ -25,7 +25,7 @@ import style from "./style.module.less";
 import Icard from "./card";
 import imgurl from "./images/index.js";
 import { Monitoring } from "@api/api.js";
-import { ExportExcel } from "@com/useButton";
+import {CustTransO, i18t, i18warning,ExportExcel, RadioT} from "@com/useButton"
 import {
   selectProjectId,
   selectOneLevelDefaultId,
@@ -272,7 +272,7 @@ export default function Index(props) {
  
   const columns = [
     {
-      title: "设备编号",
+      title: i18t("comm","sn",{text:"设备"}),
       dataIndex: "sn",
       render: (sn) => (
         <Link
@@ -289,19 +289,19 @@ export default function Index(props) {
       id: "id",
     },
     {
-      title: "设备名称",
+      title: i18t("comm","name",{text:"设备"}),
       dataIndex: "name",
       key: "name",
       id: "id",
     },
     {
-      title: "设备型号",
+      title: i18t("comm","category",{text:"设备"}),
       dataIndex: "category",
       key: "category",
       id: "id",
     },
     {
-      title: "设备状态",
+      title: i18t("comm","Status",{text:"设备"}),
       dataIndex: "state",
       render: (state) => (
         <span> {state == 1 ? "失联" : state == 2 ? "在线" : "告警"}</span>
@@ -310,13 +310,13 @@ export default function Index(props) {
       id: "id",
     },
     {
-      title: "安装地址",
+      title: i18t("comm","address"),
       dataIndex: "address",
       key: "address",
       id: "id",
     },
     {
-      title: "更新时间",
+      title: i18t("comm","updateTime"),
       dataIndex: "lastSampleTime",
       key: "lastSampleTime",
       id: "id",
@@ -417,7 +417,7 @@ export default function Index(props) {
                 }
               });
             });
-            console.log(imgList)
+            
             setimageList(imgList);
           }
         } else {
@@ -502,7 +502,7 @@ export default function Index(props) {
         >
           <Space size={laptop ? 16 : 64} split={laptop ? "" :<Cdivider />} >
             <Form.Item
-              label="设备查询"
+              label={i18t("comm","Query",{text:"设备"})}
               name="alike"
               style={{ marginBottom: 0 }}
             >
@@ -513,7 +513,7 @@ export default function Index(props) {
               />
             </Form.Item>
             <Form.Item
-              label="设备型号"
+              label={i18t("comm","category",{text:"设备"})}
               name="category"
               style={{ marginBottom: 0 }}
             >
@@ -523,7 +523,7 @@ export default function Index(props) {
                 }}
                 onChange={submit}
               >
-                <Select.Option value={""}>全部型号</Select.Option>
+                <Select.Option value={""}>{i18t("comm","All",{text:"全部"})}</Select.Option>
                 {optionsGateway.map((item, index) => {
                   return (
                     <Select.Option key={index} value={item}>
@@ -534,7 +534,7 @@ export default function Index(props) {
               </Select>
             </Form.Item>
             <Form.Item
-              label="设备状态"
+              label={i18t("comm","Status",{text:"设备"})}
               name="state"
               style={{ marginBottom: 0 }}
             >
@@ -546,26 +546,27 @@ export default function Index(props) {
                 options={[
                   {
                     value: 0,
-                    label: "全部(" + statistics.all + ")",
+                    label: `${i18t("comm","All")}(` + statistics.all + ")",
                   },
                   {
                     value: 2,
-                    label: "正常(" + statistics.on + ")",
+                    label:  `${i18t("comm","normal")}(` + statistics.on + ")",
                   },
                   {
                     value: 1,
-                    label: "失联(" + statistics.off + ")",
+                    label: `${i18t("overview","offline")}(` + statistics.off + ")",
                   },
                   {
                     value: 3,
-                    label: "告警(" + statistics.alarm + ")",
+                    label: `${i18t("comm","alarm")}(` + statistics.alarm + ")",
                   },
                 ]}
               />
             </Form.Item>
           </Space>
           <Space size={laptop ? 8 :16} style={{ marginLeft: "auto" }}>
-            <Radio.Group
+            <RadioT onChange={changeTab} />
+           {/*  <Radio.Group
               onChange={changeTab}
               defaultValue="card"
               buttonStyle="solid"
@@ -582,7 +583,7 @@ export default function Index(props) {
               >
                 列表模式
               </Radio.Button>
-            </Radio.Group>
+            </Radio.Group> */}
             <ExportExcel disabled={isCard} tb={tableLoadRef} />           
           </Space>
         </Form>

@@ -1,0 +1,11 @@
+{
+    "contrastiveanalysis": "Contrastive Analysis",
+    "compare": "Select devices to compare", 
+    "data": "Comparison Data",
+     "datumline":"Ddatum Line",
+     "datarang": "Data Rang",
+     "info1":"Please select at least two devices for comparative analysis!",
+     "info2": "Please fill in the specific value of the comparison baseline",
+     "unselected":"Unselected device",
+     "test": ""
+ }
