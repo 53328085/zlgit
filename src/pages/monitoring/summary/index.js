@@ -6,7 +6,7 @@ import Icard from './card'
 import { useSelector } from 'react-redux'
 import imgurl from './images/index.js'
 import { Monitoring } from '@api/api.js'
-
+import {CustTransO, i18t, i18warning} from "@com/useButton"
 import { selectProjectId, selectOneLevelDefaultId, adaptation,themeColor } from '@redux/systemconfig.js'
 import Pagecount from '@com/pagecontent'
 
@@ -149,35 +149,35 @@ export default function Index() {
     {
       meterType: 0,
       imageUrl: imgurl.gateway,
-      name: '网关',
+      name: i18t("comm","gateway"),
     }, {
       meterType: 1,
       imageUrl: imgurl.ele,
-      name: '电表',
+      name: i18t("comm","energyMeter"),
     }, {
       meterType: 2,
       imageUrl: imgurl.water,
-      name: '冷水表',
+      name:i18t("comm","coldWaterMeter"),
     }, {
       meterType: 3,
       imageUrl: imgurl.device,
-      name: '燃气表',
+      name: i18t("comm","gasMeter"),
     }, {
       meterType: 4,
       imageUrl: imgurl.chuan,
-      name: '传感器',
+      name:i18t("comm","sensor"),
     }, {
       meterType: 5,
       imageUrl: imgurl.bian,
-      name: '变压器',
+      name: i18t("comm","transformer"),
     }, {
       meterType: 6,
       imageUrl: imgurl.monitor,
-      name: '监控',
+      name:i18t("comm","monitor"),
     }, {
       meterType: 7,
       imageUrl: imgurl.hotWater,
-      name: '热水表',
+      name: i18t("comm","hotWaterMeter"),
     }, {
       meterType: 8,
       imageUrl: imgurl.device,
@@ -197,7 +197,7 @@ export default function Index() {
     }, {
       meterType: 12,
       imageUrl: imgurl.breaker,
-      name: '断路器',
+      name:i18t("comm","breaker"),
     }, {
       meterType: 13,
       imageUrl: imgurl.chu,
@@ -221,7 +221,7 @@ export default function Index() {
     }, {
       meterType: 18,
       imageUrl: imgurl.flowmeter,
-      name: '流量计',
+      name:i18t("comm","flowmeter"),
     }
   ]
 
@@ -285,26 +285,14 @@ export default function Index() {
   return (
     <Pagecount pd="0" bgcolor="transparent">
       <Mainbox laptop={laptop} >
-        <Icard img={imgurl.device} title={'设备总数'} value={allCount} key="device"  />
+        <Icard img={imgurl.device} title={i18t("overview","total")} value={allCount} key="device"  />
         {MonitoringData?.map((item) => (
           <div onClick={() => toDevicePage(item.meterType)}>
             <Icard img={item.imageUrl} title={item.name} value={item.count} 
-            isShow={true} on={'在线'} off={'离线'} per={'在线率'} onValue={item.onlineCount}
+            isShow={true} on={i18t("overview","online")} off={i18t("overview","offline")} per={i18t("overview","rate")} onValue={item.onlineCount}
             offValue={item.offlineCount} perValue={item.onlineRate} isRed={true} isGreen={true} isredE={false} after="%" key={item.meterType} />
           </div>))}
       </Mainbox>
-      {/* <div className={style.content}>
-        <Titlelayout title="月度用电量（kWh）" layout="flex" key="electric">
-          <div className='flex'>
-            <Ichart {...eoptions} />
-          </div>
-        </Titlelayout>
-        <Titlelayout title="月度用水量（(m³)）" layout="flex" key="water">
-          <div className='flex'>
-            <Ichart {...woptions} />
-          </div>
-        </Titlelayout>
-      </div> */}
     </Pagecount>
   )
 }

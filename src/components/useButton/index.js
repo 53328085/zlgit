@@ -1,12 +1,16 @@
 import React, {useCallback} from "react";
-import styled from "styled-components";
-import { Button, Dropdown, Menu, Upload, Typography, message} from "antd";
+import styled, {css} from "styled-components";
+import {useSelector} from 'react-redux'
+import { Button, Dropdown, Menu, Upload, Typography, message,Radio} from "antd";
 import {CaretDownFilled, CloseOutlined} from '@ant-design/icons'
 import {useTranslation} from 'react-i18next' 
 import i18 from '../../i18n'
 import icon from "./icon";
-
+import {hextodec} from '@com/usehandler'
+import { themeColor } from "@redux/systemconfig";
+import GouIcon from '@imgs/gou.png'
 const {Link} = Typography
+
 
 const Normal = styled.div`
 width: ${props => props.wh || "72px"};
@@ -18,6 +22,53 @@ font-size: 14px;
 border: 1px solid transparent;
 border-radius: 2px;
 padding: 0 8px;
+`
+const Dot = styled.div`
+&&{
+  width: 16px;
+          height: 16px;
+          border-radius: 50%;
+          border: 1px solid ${props =>   props.theme.successColor };  
+          background-color:  ${props =>   props.theme.successColor} ;
+         background-image: url(${GouIcon});
+         background-position:  center;
+         background-size: 8px;
+         background-repeat: no-repeat;
+         margin-right: 8px;
+          
+} 
+           
+`
+const Udot = styled.div`
+&&{
+  width: 16px;
+          height: 16px;
+          border-radius: 50%;
+          border: 1px solid ${props =>   props.theme.errorColor };  
+          background-color:  ${props =>   props.theme.errorColor} ; 
+         margin-right: 8px;
+         position: relative;
+         &::before{
+           content: "\\005F";
+           position: absolute;
+           transform: translate(-50%, -50%);
+           color:#fff;
+         }
+          
+} 
+           
+`
+// 已确认、未确认  盘面图监控页面
+const confirmsty = css`
+${props => props.state== 1 ? props.theme.successColor : props.theme.errorColor }
+`
+const Confirm = styled(Normal)`
+   color: ${confirmsty};
+   border-color:${confirmsty};
+   background-color: rgba(${props=> props.r}, ${props=> props.g}, ${props=> props.b}, ${props=> props.opac});
+   justify-content: flex-start;
+   padding-right: 4px;
+   
 `
 export  const Ptag = styled(Normal)`
    background-color: ${props=> props.theme.primaryderived};
@@ -199,6 +250,31 @@ const CmenuItem = styled(Menu.Item)`
   background-image: url(${props => icon[`${props.type}h`]});
 }
 `
+export function RadioT(props) {
+  let { text='模式', onChange, ...rest} =  props
+  const {t} = useTranslation("comm");
+  return (
+    <Radio.Group
+    onChange={onChange}
+    defaultValue="card"
+    buttonStyle="solid"
+    {...rest}
+  >
+    <Radio.Button
+      style={{ width: "96px", marginLeft: 16, textAlign: "center" }}
+      value="card"
+    >
+      {t("card", {text})}
+    </Radio.Button>
+    <Radio.Button
+      style={{ width: "96px", textAlign: "center" }}
+      value="list"
+    >
+    {t("list", {text})}
+    </Radio.Button>
+  </Radio.Group>
+  )
+}
 export function CustTransO(props) {   //通用  文字/数字翻译
   let {text, ns="overview", param='', val} = props 
   const {t} = useTranslation([ns]);
@@ -220,6 +296,17 @@ const Menus = (print) => {
     </CmenuItem>
   </Cmenu>
 )}
+
+export function ConfirmBtn(props) {  //  盘面图监控 确认、未确认  "confirm": "noconfirm",  
+  let {text, ns="button", state=1,opac=0.5,wh="80px", ...other} = props  // state=1 确认
+  let {errorColor,successColor} = useSelector(themeColor)
+  let rgb = state==1 ?  hextodec(successColor) : hextodec(errorColor);
+  
+  const {t} = useTranslation();
+   return <Confirm r={rgb[0]} g={rgb[1]} b={rgb[2]} state={state} opac={opac} wh={wh} {...other} >
+            {state==1 ? <Dot /> : <Udot />}  {t(text,{ns})}
+           </Confirm>
+}
 export function TreeBtnN(props) {  // 树形按钮  普通
   let {text, ns="button",...other} = props 
   const {t} = useTranslation();

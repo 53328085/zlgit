@@ -14,7 +14,7 @@ import EL from './router'
 import ErrorBoundary from './ErrorBoundary';
 //import useConfig from './antdconfig';\
 import {ConfigProvider} from 'antd'
-import {themeColor, intl,setadaptation,getThemeColor,adaptation} from "@redux/systemconfig";
+import {themeColor, intl,setadaptation,getThemeColor,adaptation, iszhCN} from "@redux/systemconfig";
 import CustConfig from './custConfig';
 import { clearToken} from "@redux/user";
 import {getprimarycolors} from "@com/usehandler";
@@ -22,6 +22,7 @@ function App() {
   const dispatch = useDispatch()
   const theme = useSelector(themeColor)
   const laptop = useSelector(adaptation)
+  const iscn = useSelector(iszhCN)
 /*   const theme = useSelector(themeColor)
  
    

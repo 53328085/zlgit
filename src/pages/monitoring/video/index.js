@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react'
-import { Form, Modal, Collapse, DatePicker, Radio, Button, Space, message, } from 'antd'
+import { Form, Modal, Collapse, DatePicker, Radio, Button, Space, message, Typography} from 'antd'
 import styled from 'styled-components'
 import { useSelector } from 'react-redux'
 import { selectProjectId, selectOneLevelDefaultId,adaptation } from '@redux/systemconfig.js'
@@ -22,6 +22,7 @@ import Pagecount from "@com/pagecontent";
 import Table from "@com/useTable";
 import { CustButton } from '@com/useButton'
 import Titlelayout from '@com/titlelayout'
+const {Link} = Typography
 const Mainbox = styled.div`
   display: grid;
   grid-template-rows: 80px 1fr;
@@ -300,9 +301,9 @@ export default function Index() {
       key: 'sn',
       render: (_, record) => (
         <Space size='middle'>
-          <div className={style.playButton} onClick={() => showCameraDialog(record)}>
+          <Link  underline onClick={() => showCameraDialog(record)}>
             <img src={playImg} className={style.playImg} alt='播放按钮'></img>
-          </div>
+          </Link>
         </Space>
       )
     }]

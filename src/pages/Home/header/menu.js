@@ -61,7 +61,8 @@ const Cmenu = styled(Menu)`
 &&{
   background-color: transparent;
     border-bottom: none;
-    flex: 1;
+ //   flex: 1;
+    overflow: hidden;
   //  overflow-x: auto;
     .ant-menu-item.ant-menu-item-selected {
         background-color: ${props => props.theme.menusactive || '#1c62b6'};

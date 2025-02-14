@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo, useRef } from 'react'
-import { Input, Button, DatePicker, Modal, Timeline, Select,  message, Form, Space,Image } from 'antd';
+import { Input, Button, DatePicker, Modal, Timeline, Select,  message, Form, Space,Image, Typography } from 'antd';
  
 import {useOutletContext} from 'react-router-dom'
 import { CompleteIcon, UnCompleteIcon  } from './completeicon'
@@ -22,6 +22,7 @@ const { Search } = Input;
 const { RangePicker } = DatePicker;
 const { TextArea } = Input;
 const { Item } = Form
+const {Link} = Typography
 const Mainbox = styled.div`
    flex: 1;
    display: flex;
@@ -91,11 +92,10 @@ export default function Warncontent() {
     }])
     const orderSn = useRef()  
    
-    columns[0].render = (_, record, rowIndex) => (<a style={{ textDecoration: 'underline' }} onClick={() => {
-      
+    columns[0].render = (_, record, rowIndex) => (<Link underline  onClick={() => {
         orderSn.current = _
         getInspectionDetail(record.id)
-    }}>{_}</a>)
+    }}>{_}</Link>)
     const [key, setKey] = useState()
     const [totalnum, setTotalNum] = useState()
   

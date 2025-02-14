@@ -1,5 +1,5 @@
-import React, { useState, useEffect, useRef } from 'react'
-import style from './style.module.less'
+import React  from 'react'
+import {i18t} from "@com/useButton"
 export default function Icard(props) {
     return (
         <div className="cardItem" >
@@ -10,18 +10,18 @@ export default function Icard(props) {
                 <div className="btnStyle">
 
                     <div className="btnBoxStyle">
-                        <p className="timeStyle">子设备</p><p className="timeValueStyle">{props.childrenCnt}</p>
+                        <p className="timeStyle">{i18t("comm","childdevice")}</p><p className="timeValueStyle">{props.childrenCnt}</p>
                     </div>
                     <div className="btnBoxStyle">
-                        <p className="timeStyle">联网方式</p><p className="timeValueStyle">{props.connMethod}</p>
+                        <p className="timeStyle">{i18t("comm","connection")}</p><p className="timeValueStyle">{props.connMethod}</p>
                     </div>
                 </div>
 
                 <div className="btnBoxStyle">
-                    <p className="timeStyle">更新时间</p><p className="timeValueStyle">{props.lastSampleTime}</p>
+                    <p className="timeStyle">{i18t("comm","updateTime")}</p><p className="timeValueStyle">{props.lastSampleTime}</p>
                 </div>
             </div>
-            {props.state == 2 ? <div className="state">正常</div> : <div className="stateOff">失联</div>}
+            {props.state == 2 ? <div className="state">{i18t("comm","normal")}</div> : <div className="stateOff">{i18t("comm","offline")}</div>}
 
         </div>
     )
