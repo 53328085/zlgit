@@ -6,6 +6,13 @@
      "datarang": "Data Rang",
      "info1":"Please select at least two devices for comparative analysis!",
      "info2": "Please fill in the specific value of the comparison baseline",
-     "unselected":"Unselected device",
+     "info3": "Failed to obtain device information",
+     "info4": "The current device does not support the control function",
+     "unselected":"Unselected device", 
+     "cloudmonitoring": "Cloud monitoring",
+     "localmonitoring": "Local monitoring",
+     "info5":"Please select the correct time period",
+     "unit": "cameras",
+    
      "test": ""
  }

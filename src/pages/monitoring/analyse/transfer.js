@@ -12,6 +12,7 @@ import {
     adaptation
   } from "@redux/systemconfig.js";
 const { ComparativeAnalysis: { AllDeviceStyle, QueryCompareDevice } } = Monitoring
+import {  i18t, i18warning, CustButtonT} from "@com/useButton"
 const sty = css`
  justify-content: flex-start;
  row-gap: 32px;
@@ -119,7 +120,7 @@ export default function index(props) {
             let { success, data } = await AllDeviceStyle(projectId);
             if (success && Array.isArray(data)) {
                 setDevies([{
-                    deviceStyle: 0, name: '全部类型',
+                    deviceStyle: 0, name: i18t("comm","All",{text: "类型"}),
                 }, ...data]);
             } else {
                 setDevies([]);
@@ -153,7 +154,7 @@ export default function index(props) {
         if (selectedRowKeys.length == 0) {
             messageApi.open({
                 type: 'warning',
-                content: '请至少选择一个设备！',
+                content: i18t("monitor","info1") // '请至少选择一个设备！',
             })
             return;
         } else {
@@ -208,7 +209,7 @@ export default function index(props) {
         if (selectedSubKeys.length == 0) {
             messageApi.open({
                 type: 'warning',
-                content: '请先选择设备！',
+                content: i18t("monitor","compare") // '请先选择设备！',
             })
             return;
         } else {
@@ -261,7 +262,7 @@ export default function index(props) {
         console.log(subData.length);
         if (subData.length < 2) return messageApi.open({
             type: 'warning',
-            content: '请至少选择两个设备进行对比分析！',
+            content:  i18t("monitor","info1") // '请至少选择两个设备进行对比分析！',
         })
 
         props.saveValue({
@@ -358,8 +359,8 @@ export default function index(props) {
                 <div className="otherSubTable">
                     <div className="publicTitle">{props.transferTitle.subTitle}</div>
                     <div className="searchInput">
-                        <div style={{ marginRight: laptop ? 8 : 16 }}>设备搜索</div>
-                        <Search placeholder="请输入设备编号/安装地址"  enterButton onSearch={onSearchSub} style={{width: "256px"}}></Search>
+                        <div style={{ marginRight: laptop ? 8 : 16 }}>{i18t("comm","Query",{text:"设备"})}</div>
+                        <Search placeholder={i18t("comm","placeholder", {text:"设备编号/安装地址"})}  enterButton onSearch={onSearchSub} style={{width: "256px"}}></Search>
                     </div>
                     <div>
                         <Table bordered dataSource={subData} columns={columns} size={laptop ? "small" : "middle"} rowKey='id' pagination={false} scroll={{ y: 500 }} rowSelection={subSelection}></Table>
@@ -379,7 +380,7 @@ export default function index(props) {
             <div className="rightTable">
                 <div className="publicTitle">{props.transferTitle.unknownTitle}</div>
                 <div className="searchInput">
-                    <span>设备类型</span>
+                    <span>{i18t("comm","type",{text: "设备"})}</span>
                     <Select
                         size="middle"
                         defaultValue={0}
@@ -394,8 +395,8 @@ export default function index(props) {
                         <Select.Option value={3}>燃气表</Select.Option> */}
                     </Select>
                   {laptop ? null :  <div style={{ width: 0, height: 32, margin: '0 32px', borderLeft: '1px dashed #ddd' }}></div>} 
-                    <div style={{ marginRight: laptop ? 8 : 16 }}>设备搜索</div>
-                    <Search placeholder="请输入设备编号/安装地址"   enterButton onSearch={onSearchUnknown} style={{ width: laptop ? "180px" :"256px"}}></Search>
+                    <div style={{ marginRight: laptop ? 8 : 16 }}>{i18t("comm","Query",{text:"设备"})}</div>
+                    <Search placeholder={i18t("comm","placeholder", {text:"设备编号/安装地址"})}   enterButton onSearch={onSearchUnknown} style={{ width: laptop ? "180px" :"256px"}}></Search>
                 </div>
                 <div>
                     <Table bordered dataSource={unknownData} columns={columns} size={laptop ? "small" : "middle"} rowKey='id' pagination={false} scroll={{ y: 500 }} rowSelection={rowSelection}></Table>

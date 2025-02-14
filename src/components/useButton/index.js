@@ -332,12 +332,12 @@ export function CustLink(props) { // 通用方式
   )
 }
 export function CustButtonT(props) { // 通用方式按钮 通用翻译
-  let {src,text,ns="button", ...other} = props 
+  let {src,text,ns="button",param={}, ...other} = props 
   const {t} = useTranslation()
   return (
     <Custbtn {...other}>
      {src ? <img src={icon[src]} width={props.width} /> : null}
-     {t(text, {ns})}
+     {t(text, {ns},{...param})}
     </Custbtn>
   )
 }

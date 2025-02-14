@@ -20,7 +20,7 @@ import { isObject } from '@com/usehandler'
 import { Serach, Cdivider, Borderleft } from "@com/comstyled"
 import Pagecount from "@com/pagecontent";
 import Table from "@com/useTable";
-import { CustButton } from '@com/useButton'
+import { CustTransO, i18t, i18warning,ExportExcel, RadioT,CustButtonT,CustButton } from "@com/useButton"
 import Titlelayout from '@com/titlelayout'
 const {Link} = Typography
 const Mainbox = styled.div`
@@ -72,6 +72,7 @@ export default function Index() {
   const tags = {
     width: '50%',
     textAlign: 'center',
+    whiteSpace: "nowrap"
   }
   const buttonstyle = {
     width: '120px',
@@ -151,7 +152,7 @@ export default function Index() {
       if (success && data) {
         // setrealPlayUrl(data)
       } else {
-        message.error("当前设备不支持控制功能")
+        message.error(i18t("monitor","info4"))
       }
     })
   }
@@ -162,7 +163,7 @@ export default function Index() {
         // setrealPlayUrl(data)
       } else {
 
-        message.error("当前设备不支持控制功能")
+        message.error(i18t("monitor","info4"))
       }
     })
   }//云监控云台控制
@@ -261,7 +262,7 @@ export default function Index() {
         <img src={props.img} className={style.itemImg} alt={props.title}></img>
         <div className={style.itemValue}>
           <div>{props.title}</div>
-          <div><span style={{ fontSize: 32, marginRight: 10 }}>{props.value}</span>台</div>
+          <div><span style={{ fontSize: 32, marginRight: 10 }}>{props.value}</span>{i18t("monitor","unit")}</div>
         </div>
       </div>
     )
@@ -275,28 +276,28 @@ export default function Index() {
     //   key:'sn'
     // },
     {
-      title: '监控设备编号',
+      title:   i18t("comm","sn",{text:"监控设备编号"}),
       dataIndex: 'sn',
       align: 'center',
       key: 'sn'
     }, {
-      title: '监控设备名称',
+      title: i18t("comm","name",{text:"监控设备名称"}),
       dataIndex: 'name',
       align: 'center',
       key: 'sn'
     }, {
-      title: '安装地址',
+      title: i18t("comm","address"),
       dataIndex: 'address',
       align: 'center',
       key: 'sn'
     }, {
-      title: '监控类型',
+      title: i18t("comm","mode",{text: "监控类型"}),   //'监控类型',
       dataIndex: 'accessMode',
       render: (text) => (<span>{text == 1 ? '云监控' : '本地监控'}</span>),
       align: 'center',
       key: 'sn'
     }, {
-      title: '查看监控',
+      title: i18t("comm","view",{text: "查看监控"}), //'查看监控',
       align: 'center',
       key: 'sn',
       render: (_, record) => (
@@ -492,7 +493,7 @@ export default function Index() {
 
   const playBack = () => {
     if (!startTime || !endTime) {
-      message.error('请选择正确的时间段！');
+      message.error(i18t("monitor","info5"));
       return;
     }
     state.webrtc.close();
@@ -511,7 +512,7 @@ export default function Index() {
   }
   const playBackYun = () => {
     if (!startTime || !endTime) {
-      message.error('请选择正确的时间段！');
+      message.error(i18t("monitor","info5"));
       return;
     }
     getYsHisPlayUrl(startTimeHistory, endTimeHistory)
@@ -548,15 +549,15 @@ export default function Index() {
       <Mainbox>
 
         <div id='cameraData' className={style.cameraData}>
-          <CameraValue img={totalCamera} title={'监控总数'} value={statistics.cameraCount ? statistics.cameraCount : '0'}></CameraValue>
-          <CameraValue img={cloudCamera} title={'云监控'} value={statistics.onlineCameras ? statistics.onlineCameras : '0'}></CameraValue>
-          <CameraValue img={localCamera} title={'本地监控'} value={statistics.localCameras ? statistics.localCameras : '0'}></CameraValue>
+          <CameraValue img={totalCamera} title={i18t("comm","amount",{text:"监控总数"})} value={statistics.cameraCount ? statistics.cameraCount : '0'}></CameraValue>
+          <CameraValue img={cloudCamera} title={i18t("monitor","cloudmonitoring")} value={statistics.onlineCameras ? statistics.onlineCameras : '0'}></CameraValue>
+          <CameraValue img={localCamera} title={i18t("monitor","localmonitoring")} value={statistics.localCameras ? statistics.localCameras : '0'}></CameraValue>
         </div>
 
         <Mainbox className={style.content}>
           <div className={style.contentTitle}>
-            <span>设备查询</span>
-            <Serach size="middle" placeholder='请输入设备编号/安装地址'
+            <span>{i18t("comm","Query",{text:"设备"})}</span>
+            <Serach size="middle" placeholder={i18t("comm","placeholder",{text:"设备编号/安装地址"})}
               style={{ width: '340px', marginLeft: 16 }}
 
 
@@ -585,7 +586,7 @@ export default function Index() {
               flex:1
             }}></div>
             <div style={{ flex: 1, marginLeft: laptop ? 16 : 32 }}>
-              <Titlelayout title="云台控制" bordered="n">
+              <Titlelayout title={i18t("comm","control",{text:"云台控制"})} bordered="n">
                 <div className={style.controlBackground} >
                   <div className={style.slotDiv}>
                     <span className={style.leftClick} onMouseDown={() => changeControlYun(2)} onMouseUp={cancelControlYun}></span>
@@ -602,7 +603,7 @@ export default function Index() {
                   ghost
                   activeKey={activeCollapse}
                   expandIconPosition="end">
-                  <Panel header={<Borderleft>视频回放</Borderleft>} key="1">
+                  <Panel header={<Borderleft>{i18t("comm","playback")}</Borderleft>} key="1">
                     <Form form={form} >
                       <Item style={{ width: '100%' }}>
                         <DatePicker
@@ -610,7 +611,7 @@ export default function Index() {
                             defaultValue: moment('00:00:00', 'HH:mm:ss'),
                           }}
                           format="YYYY-MM-DD HH:mm:ss"
-                          placeholder="开始时间"
+                          
                           className={style.wd100}
                           disabledDate={disabledDate}
                           onChange={changestartdate}
@@ -619,25 +620,23 @@ export default function Index() {
                       <Item>
                         <DatePicker
                           showTime
-                          placeholder="结束时间"
+                          
                           className={style.wd100}
                           onChange={changeEndDate}
                           disabledDate={disabledendDate}></DatePicker>
                       </Item>
                       <Item>
                         <Radio.Group defaultValue="2" buttonStyle="solid" className={style.wd100} onChange={changeWatchS}>
-                          <Radio.Button value="2" style={tags}>标清</Radio.Button>
-                          <Radio.Button value="1" style={tags}>高清</Radio.Button>
+                          <Radio.Button value="2" style={tags}>{i18t("comm","standarddefinition")}</Radio.Button>
+                          <Radio.Button value="1" style={tags}>{i18t("comm","highdefinition")}</Radio.Button>
                         </Radio.Group>
                       </Item>
                       <Item>
                         <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                          <CustButton ghost style={{ width: '120px' }} onClick={() => changeActive()}>
-                            返回
-                          </CustButton>
-                          <CustButton style={{ width: '120px' }} onClick={() => { playBackYun() }} >
-                            回放
-                          </CustButton>
+                          <CustButtonT ghost style={{ width: '120px' }} onClick={() => changeActive()} text="back" />
+                            
+                          <CustButtonT style={{ width: '120px' }} onClick={() => { playBackYun() }} ns="comm" text="playback" />
+                             
                         </div>
                       </Item>
                     </Form>
@@ -666,7 +665,7 @@ export default function Index() {
               </div>
             </div>
             <div className="bodyRight" style={{ marginLeft: laptop ? "16px" : "48px" }}>
-              <Titlelayout title="云台控制" bordered="n">
+              <Titlelayout title={i18t("comm","control",{text:"云台控制"})} bordered="n">
                 <div className="controlBackground" id="controlBackground" >
                   <div className={["slotDiv", changeType != '' ? changeType : ''].join(' ')}>
                     <span className="clickButton leftClick" onMouseDown={() => changeControl('left')} onMouseUp={cancelControl}></span>
@@ -682,13 +681,12 @@ export default function Index() {
                   ghost
                   activeKey={activeCollapse}
                   expandIconPosition="end">
-                  <Panel header={<Borderleft>视频回放</Borderleft>} key="1">
+                  <Panel header={<Borderleft>{i18t("comm","playback")}</Borderleft>} key="1">
                     <DatePicker
                       showTime={{
                         defaultValue: moment('00:00:00', 'HH:mm:ss'),
                       }}
-                      format="YYYY-MM-DD HH:mm:ss"
-                      placeholder="开始时间"
+                      format="YYYY-MM-DD HH:mm:ss" 
                       className={style.wd100}
                       disabledDate={disabledDate}
                       onChange={changestartdate}
@@ -696,14 +694,14 @@ export default function Index() {
 
                     <DatePicker
                       showTime
-                      placeholder="结束时间"
+                      
                       className={style.wd100}
                       onChange={changeEndDate}
                       disabledDate={disabledendDate}></DatePicker>
 
                     <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                      <CustButton ghost style={{ width: '120px' }} onClick={() => changeActive()}>返回</CustButton>
-                      <CustButton style={{ width: '120px' }} onClick={() => playBack()}>回放</CustButton>
+                      <CustButtonT ghost style={{ width: '120px' }} onClick={() => changeActive()} text="back" /> 
+                      <CustButtonT style={{ width: '120px' }} onClick={() => playBack()} ns="comm" text="playback" />  
                     </div>
 
                   </Panel>
