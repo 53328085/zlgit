@@ -281,7 +281,7 @@ export default function Index() {
       align: 'center',
       key: 'sn'
     }, {
-      title: i18t("comm","name",{text:"监控设备名称"}),
+      title: i18t("comm","name",{text:"监控设备"}),
       dataIndex: 'name',
       align: 'center',
       key: 'sn'

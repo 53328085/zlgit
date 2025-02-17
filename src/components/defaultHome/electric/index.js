@@ -9,7 +9,7 @@ import {CustTransO} from "@com/useButton"
 import {useTranslation} from "react-i18next"
 import Ichart  from '@com/useEcharts/Ichart';
 const fs = {
-  hv: '24px',
+//  hv: '24px',
   fc: '#333',
   shadow: "y"
 }

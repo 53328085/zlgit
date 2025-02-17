@@ -69,7 +69,7 @@ const Mainbox = styled.div`
 
 
 const fs = {
-  hv: '24px',
+ // hv: '24px',
   fc: '#333'
 }
 

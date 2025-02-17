@@ -2,7 +2,7 @@ import React from 'react'
 import {Card } from 'antd'
 import styled from 'styled-components'
 const Boxdiv = styled(Card)`
-  padding: ${props => props.pv};
+ // padding: ${props => props.pv};
   border-radius: 4px;
   border:  ${(props) =>  props.bordered=='y' ? ' 1px solid #d7d7d7' : 'none'};  
   display: grid;
@@ -11,25 +11,35 @@ const Boxdiv = styled(Card)`
   background-color: ${(props) =>  props.bgcolor || '#fff'};
   box-shadow: ${props => props.shadow=="y" ? `0px 2px 2px rgba(0, 0, 0, 0.349019607843137)` : 'none'} ;
   .ant-card-head {
-    padding-left: ${({pl}) => pl || '16px'};
-    border-left:  ${({bl, theme}) => bl || `4px solid ${theme.primaryColor}`};
+    padding-left: ${({pl}) => pl || '20px'};
+   // border-left:  ${({bl, theme}) => bl || `4px solid ${theme.primaryColor}`};
     display: flex;
     align-items: center;
     border-bottom: none;
-    min-height: ${(props) =>  props.hv || (props.theme.laptop ? '24px' : '32px')};
-    height: ${(props) =>  props.hv || (props.theme.laptop ? '24px' : '32px')};;
-    padding-right: 0px;
-    background-color:${({bg}) => bg || '#fff'};
+    min-height: ${(props) =>  props.hv || (props.theme.laptop ? '24px' : '40px')};
+  //  height: ${(props) =>  props.hv || (props.theme.laptop ? '24px' : '40px')};;
+    height: ${(props) =>  props.theme.laptop ? '24px' : '40px'};
+    padding-right: 20px;
+    background-color:${({bg}) => bg || '#DEE7F2'};
     z-index:${({zd}) => zd || 100};
-  
+    position: relative;
+          &::before {
+            display: block;
+            width:3px;
+            height:13px;
+            position: absolute;
+            left: 20px;
+            background-color: ${({bl, theme}) => bl || theme.primaryColor };
+          }  
+      }
     .ant-card-head-wrapper {
       flex:1;
       height: inherit;
       .ant-card-head-title {
-         font-size: ${({fz}) => fz || '14px'};
-         color: ${({fc}) => fc || '#515151'};
-         padding: 0px;
-      }
+         font-size: ${({fz}) => fz || '15px'};
+         color: ${({fc}) => fc || '#303133'};
+         padding: 0 0 0 8px;
+        
     }
 
   }
@@ -37,7 +47,8 @@ const Boxdiv = styled(Card)`
     background-color: transparent;
   }
  .ant-card-body {
-  padding: ${props => props.bodypad};
+  padding:20px;
+ //  padding: ${props => props.bodypad || "20px"};
   display: ${props => props.layout || 'block'};
   flex-direction: ${props => props.dr || 'row'};
   & .flex {

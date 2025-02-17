@@ -6,7 +6,7 @@ import Titlelayout from '@com/titlelayout';
 import {drawEcharts} from '@com/useEcharts'
 import {CustTransO} from "@com/useButton"
 const fs = {
-  hv: '24px',
+ // hv: '24px',
   fc: '#333',
   shadow: "y",
 }

@@ -166,7 +166,19 @@ body *::-webkit-scrollbar-thumb {
   flex-direction: column;
 }
 }
- 
+ // antd 样式全局修改
+ .ant-radio-button-wrapper:first-child {
+  border-radius: 6px 0 0 6px;
+ }
+ .ant-radio-button-wrapper:last-child{
+  border-radius: 0 6px 6px 0;
+ }
+ .ant-input-search>.ant-input-group>.ant-input-group-addon:last-child .ant-input-search-button {
+  border-radius: 0 6px 6px 0;
+ }
+ .ant-btn {
+  border-radius: 6px;
+ }
 /* :root {
   --main-bg-color: #ff7313;
   --max-width:1900px;
