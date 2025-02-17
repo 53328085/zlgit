@@ -3,13 +3,14 @@ import {Card } from 'antd'
 import styled from 'styled-components'
 const Boxdiv = styled(Card)`
  // padding: ${props => props.pv};
-  border-radius: 4px;
+  border-radius: 8px;
   border:  ${(props) =>  props.bordered=='y' ? ' 1px solid #d7d7d7' : 'none'};  
   display: grid;
   grid-template-rows: ${(props) => props.title ? `auto 1fr` : '1fr'};
   flex:1;
   background-color: ${(props) =>  props.bgcolor || '#fff'};
   box-shadow: ${props => props.shadow=="y" ? `0px 2px 2px rgba(0, 0, 0, 0.349019607843137)` : 'none'} ;
+  overflow: hidden;
   .ant-card-head {
     padding-left: ${({pl}) => pl || '20px'};
    // border-left:  ${({bl, theme}) => bl || `4px solid ${theme.primaryColor}`};
@@ -47,7 +48,7 @@ const Boxdiv = styled(Card)`
     background-color: transparent;
   }
  .ant-card-body {
-  padding:20px;
+  padding: ${props => props.pv || "20px"};
  //  padding: ${props => props.bodypad || "20px"};
   display: ${props => props.layout || 'block'};
   flex-direction: ${props => props.dr || 'row'};

@@ -71,7 +71,24 @@ const Mainbox = styled.div`
     }
     .head {
       background-color: ${(props) => props.theme.deviceheardcolor || "#003366"};
+     
     }
+    .leftitle {
+         position: relative;
+         padding-left: 11px;
+         font-size: 15px;
+         &::before {
+          content: "";
+          position: absolute;
+          display: block;
+          width: 3px;
+          height: 13px;
+          left:0;
+          top: 50%;
+          transform: translateY(-50%);
+          background-color:${(props) => props.theme.primaryColor} ;
+         }
+      }
     .dataHeader {
       display: flex;
       align-items: center;
@@ -207,7 +224,7 @@ const Ctitlec = styled.div`
         : props.state == 3
         ? props.theme.errorColor
         : "#666"};
-    border: none;
+    border-radius: 6px;
     // border: 1px solid rgb(0, 204, 0);
     color: #fff;
     position: absolute;
@@ -1162,8 +1179,7 @@ export default function GatewayDetail(props) {
       </div>
       <div className={style.body}>
         <div className={style.left}>
-          <div className={style.leftHead}>
-            <div className={style.leftHeadLine}></div>
+          <div className={style.leftHead + " leftitle"}>
             <p>设备详情</p>
           </div>
           <div className={style.leftImgBox + " leftImgBox"}>
