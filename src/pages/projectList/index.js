@@ -400,7 +400,7 @@ export default function Index() {
       ellipsis: true,
     },
     {
-      title: t("comm:Status"),
+      title: t("comm:Status",{text:""}),
       dataIndex: "publishStateStr",
       key: "publishStateStr",
       align: "center",

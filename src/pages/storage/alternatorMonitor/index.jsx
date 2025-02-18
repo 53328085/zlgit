@@ -43,6 +43,7 @@ const Mainbox = styled.div`
      display: grid;
      grid-template-columns: 1fr;
      grid-template-rows: 320px 320px 1fr ;
+     row-gap: 16px;
    }
  }
 `
@@ -184,6 +185,94 @@ export default function Index() {
      }
 
   }, [areaId, projectId, pcs_id])
+  const socOption = {
+    type:2,
+    color:[warningColor],
+    tooltip: {
+      trigger: 'axis',
+      axisPointer: {
+        type: 'shadow'
+      }
+    },
+    legend: {
+      top: '0',
+      left: 'center'
+    },
+    grid: {
+      left: '3%',
+      right: '4%',
+      bottom: '3%',
+      containLabel: true
+    },
+    xAxis: {
+      type: 'category',
+      boundaryGap: true,
+      axisTick:{
+        alignWithLabel:true
+      },
+      data: Array.isArray(socData.x) ? socData.x : []
+    },
+    yAxis: {
+      type: 'value',
+      // min: 24
+      scale: true, //自适应
+    },
+    series: [
+      {
+        name: "SOC(%)",
+        data:  Array.isArray(socData.y) ? socData.y : [],
+        type: 'line',
+        symbol:'none', 
+        smooth: true,
+        areaStyle: {}
+      }
+    ]
+  }
+  const poweroption = {
+    type:2,
+    color:[successColor],
+    tooltip: {
+      trigger: 'axis',
+      axisPointer: {
+        type: 'shadow'
+      }
+    },
+    legend: {
+      top: '0',
+      left: 'center'
+    },
+    grid: {
+      left: '3%',
+      right: '4%',
+      bottom: '3%',
+      containLabel: true
+    },
+    xAxis: {
+      type: 'category',
+      data:   Array.isArray(powerData.x) ? powerData.x : [],
+      boundaryGap: true,
+      axisTick:{
+        alignWithLabel:true
+      },
+    },
+    yAxis: {
+      type: 'value',
+      scale: true, //自适应
+      // min: function(value){
+      //   return (value / 1000) * 1000
+      // }
+    },
+    series: [
+      {
+        name: "实时总功率(kwh)",
+        data: Array.isArray(powerData.y) ? powerData.y : [],
+        type: 'line',
+        symbol:'none', 
+        smooth: true,
+        areaStyle: {}
+      }
+    ]
+  }
   const AcClomns = [
     {
       title:'AC',
@@ -237,12 +326,12 @@ export default function Index() {
     <Pagecount bgcolor='transparent' pd="0">
       
       <Mainbox className={style.pcsContent}>
-        <div className={style.left + " leftlayout"}>
+        <div className={style.left + " leftlayout"} key="left">
           <div className={style.title + " leftTitle"}>
             <span>储能交流器</span>
            {label && <span className={style.pcsName}>{label}</span>} 
           </div>
-          <div className={style.firstValue}>
+          <div className={style.firstValue} key="leftup">
             <div className={style.stateList}>
               <div className={style.stateItem}>
                 <img src={online} className={style.circle}></img>
@@ -266,7 +355,7 @@ export default function Index() {
               <span>{state.chargeState + ' . . .'}</span>
             </div>
           </div>
-          <div className={style.dataCard}>
+          <div className={style.dataCard} key="leftdown">
             {
               leftValues.map((item, index) => {
                 return <Fragment key={index}>
@@ -277,7 +366,7 @@ export default function Index() {
             }
           </div>
           {/* ((index == state.warningInfo.length - 4) || (index == state.warningInfo.length - 3) || (index == state.warningInfo.length - 2) || (index == state.warningInfo.length - 1)) ? bottomStyle : null */}
-          <div className={style.status}>
+          <div className={style.status} key="status">
             {
               state.warningInfo.map((item, index) => {
                 return <StateItem key={index} name={item.name} state={item.value} styles={((index + 1) % 4) == 0 ? rightStyle : null}></StateItem>
@@ -285,16 +374,17 @@ export default function Index() {
             }
           </div>
         </div>
-        <div className="rightlayout">
-          <Titlelayout  title="总功率" layout="flex">
+        <div className="rightlayout" key="right">
+          <Titlelayout  title="总功率" layout="flex" key="up">
              <div style={{display: "flex", flex:1}}>
-             <PowerChart lineData={powerData} Unit='实时总功率(kwh)' color={successColor}></PowerChart>
+              <Ichart {...poweroption} />
+          {/*    <PowerChart lineData={powerData} Unit='实时总功率(kwh)' color={successColor}></PowerChart> */}
              </div>
           </Titlelayout>
-          <div className={style.chartCard}>
-            <div className={style.chartTitle}>SOC</div>
-            <SocChart lineData={socData} Unit='SOC(%)' color={warningColor}></SocChart>
-          </div>
+          <Titlelayout title="SOC" key="down">
+             <Ichart {...socOption} />
+         {/*    <SocChart lineData={socData} Unit='SOC(%)' color={warningColor}></SocChart> */}
+          </Titlelayout>
          
           <Usetable   dataSource={state.ACData} columns={AcClomns} rowKey='name' pagination={false} hbg="#036" />
           

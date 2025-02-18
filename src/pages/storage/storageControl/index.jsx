@@ -48,7 +48,7 @@ const Tabsbox = styled(Tabs)`
     margin-bottom: 0px;
    .ant-tabs-nav-list {
     .ant-tabs-tab {
-        border-radius: 4px 4px 0 0;
+        border-radius: 6px 6px 0 0;
         height: 41px;
         width: 114px;
         justify-content: center;
