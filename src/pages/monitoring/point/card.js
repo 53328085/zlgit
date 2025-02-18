@@ -44,7 +44,7 @@ export default function Icard(props) {
                     </div>
                 </div>
             </div>
-            {props.state == 2 ? <div className="state">{i18t("comm","normal")}</div> : props.state == 1 ? <div className="stateOff">{i18t("overview","offline")}</div> : <div className="stateAlarm">{i18t("comm","alarm")}</div>}
+            {props.state == 2 ? <div className="state">{i18t("comm","normal")}</div> : props.state == 1 ? <div className="stateOff">{i18t("overview","offline")}</div> : <div className="stateAlarm">{i18t("comm","alarm",{text:"", text2:""})}</div>}
 
         </div>
     )

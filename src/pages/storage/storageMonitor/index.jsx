@@ -125,10 +125,11 @@ export default function Index() {
     }
   },[])
   return (
-    <div>
+    <Pagecount bgcolor='transparent' pd="0">
       <div className={style.header}>
         <Form form={form} layout='inline'>
-          { showPage == 'containerPage' ? <>
+          { showPage == 'containerPage' ? 
+          <>
           <Item name='areaId' label={ areaName + '选择' } style={{marginLeft:16}}>
             <Select
               placeholder="请选择园区"
@@ -203,6 +204,6 @@ export default function Index() {
       { showPage == 'batteryPage' ? <BatteryPage batteryData={batteryData} getshowPack={getFromCluster}></BatteryPage> : null }
       { showPage == 'batteryPackPage' ? <BatteryPackPage batteryPackData={batteryPackData}></BatteryPackPage> : null }
       { showPage == 'containerPage' ? <ContainerPage getshowTab={getFromContainer} headerValues={headerValues}></ContainerPage> : null }
-    </div>
+    </Pagecount>
   )
 }
