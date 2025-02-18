@@ -48,18 +48,16 @@ justify-content:flex-end;
 position: relative;
  .timeSelect{
   position: absolute;
-  top:30px;
+  top:25px;
   right:32px;
   z-index: 1000;
 }
 `;
 export default function Index() {
   const { dateval } = useOutletContext()
-
   const projectId = useSelector(state => state.system.menus.projectId)
   const roomId = useSelector(selectcurlRommid)
   const [htdata, setHtdata] = useState([])
-  const [envi, setEnvi] = useState({})
   const [monitoring, setMonitoring] = useState({})
   let { laptop } = useSelector(adaptation)
   const {
