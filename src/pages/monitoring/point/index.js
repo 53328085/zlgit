@@ -523,7 +523,7 @@ export default function Index(props) {
                 }}
                 onChange={submit}
               >
-                <Select.Option value={""}>{i18t("comm","All",{text:"全部"})}</Select.Option>
+                <Select.Option value={""}>{i18t("comm","All",{text:""})}</Select.Option>
                 {optionsGateway.map((item, index) => {
                   return (
                     <Select.Option key={index} value={item}>
