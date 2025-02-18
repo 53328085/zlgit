@@ -373,11 +373,11 @@ export default function Common({ type }) {
         refresh
     }
     return (
-        <div style={{ height: '100%', position: 'relative', overflow: "auto" , }}>
+        <div style={{ flex:1 }}>
 
             <div style={{ display: 'flex', justifyContent: 'space-between' }}>
                 <Form form={selform}>
-                    <Form.Item name="area">
+                    <Form.Item name="area" style={{marginBottom: "16px"}}>
                         <Select
                             showSearch
                             filterOption={(val, opts) => {
@@ -396,10 +396,10 @@ export default function Common({ type }) {
                 {publish ? null : <CustButton onClick={addMainLine} wh="auto">{t("button:newMainLine")}</CustButton>}
 
             </div>
-            <Divider style={{ borderColor: '#d7d7d7', margin: '0 0 16px 0' }} dashed></Divider>
+          {/*   <Divider style={{ borderColor: '#d7d7d7', margin: '0 0 16px 0' }} dashed></Divider> */}
             <div style={{ display: 'flex', columnGap: "32px", flexDirection: laptop ? "column" : "row", overflow: "auto" }}>
                 <div style={{ overflow: "auto" }}>
-                    <div style={{ display: 'flex', margin: '16px 0 24px 0' }}>
+                    <div style={{ display: 'flex', margin: '0 0 24px 0' }}>
                         <div style={{ ...titlelinecss, width: 416, paddingLeft: 24 }}>线路图</div>
                         <div style={{ ...titlelinecss, width: 48, margin: '0 16px', textAlign: 'center' }}>设备数</div>
                         <div style={{ ...titlelinecss, width: 208, textAlign: 'center' }}>操作</div>
@@ -414,7 +414,7 @@ export default function Common({ type }) {
                         />
                     </div>
                 </div>
-                <div style={{ display: 'flex', flex: 1, flexDirection: "column", columnGap: '16px', paddingTop: "16px", }}>
+                <div style={{ display: 'flex', flex: 1, flexDirection: "column", rowGap: '16px',   }}>
                     <Form form={lineform} layout='line' >
                         <Form.Item name="alike" initialValue=''>
                             <Serach

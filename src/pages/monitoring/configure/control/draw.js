@@ -75,7 +75,7 @@ const Drawerbox = styled(Drawer)`
         ${props=> props.theme.laptop ? sty : null}
         .title {
           padding-left: 16px;
-          border-left: 4px #237ae4 solid;
+          border-left: 4px ${props => props.theme.primaryColor} solid;
           color: #333;
           display: flex;
           align-items: center;

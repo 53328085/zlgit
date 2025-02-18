@@ -118,7 +118,7 @@ const onPrint = () => {
   }
   return (
          <Left laptop={laptop}>
-           <Titlelayout title='运行报告' bordered={'n'} style={{flex: 'auto'}} pv="0px" > 
+           <Titlelayout title='运行报告' bordered={'n'} style={{flex: 'auto'}} pv="0px" rad="0px" > 
                  
             <Form className="content" form={form} initialValues={{type: 2, date: moment()}}>
               <Item name="type" noStyle>

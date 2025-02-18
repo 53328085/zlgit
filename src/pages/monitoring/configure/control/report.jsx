@@ -75,11 +75,10 @@ const Mainbox = styled.div`
       flex-direction: column;
       .content {
         display: grid;
-        grid-template-rows: 50px 1fr;
+        grid-template-rows: 32px 1fr;
         row-gap: 16px; 
         flex: 1;
-        color:#515151;
-        padding-top: 16px;
+        color:#515151; 
         .top {
             display: flex;
             justify-content: space-between;
@@ -525,7 +524,7 @@ function Main({ projectId, areaId }) {
       <Titlelayout title="自动控制" layout="flex" >
         <div className='content'>
           <UseSerach isHaveAll={true}
-            style={{ padding: '0 0 16px 0', borderTop: "none" }}
+            style={{border: "none", padding: "0" }}
             custview={<Space size={16} style={{ marginLeft: 'auto' }} >
               <NewButton key="add" onClick={add} />
               {/*  <AllExportButton key="export" onClick={onExport} /> 此处缺少接口暂时隐藏 */}

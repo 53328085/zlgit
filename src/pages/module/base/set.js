@@ -158,6 +158,7 @@ const Dcheckbox = styled.div`
     transition: all 0.3s;
     display: flex;
     justify-content: center;
+    border-radius: 6px;
   }
   .ant-checkbox-disabled+span {
     color: #fff;

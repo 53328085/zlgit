@@ -119,8 +119,8 @@ export default function Water (props) {
     </div>
   )
     return (
-        <Titlelayout title= {Title}  layout="flex" dr="column" pv="0" bordered="n">
-           <Divider style={{margin: "16px 0"}} />
+        <Titlelayout title= {Title}  layout="flex" dr="column" pv="0" bordered="n" rad="0px">
+            <Divider style={{margin: "16px 0"}} />  
             <div className={style.mainContent}>
                 <div className={style.classifyTree}>
                     { treeData.length>0 ? <Tree defaultExpandedKeys={[treeData[0].energyId.toString()]} blockNode selectable={false}>{renderTreeNodes(treeData)}</Tree> : null}

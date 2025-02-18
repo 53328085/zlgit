@@ -719,7 +719,7 @@ export default function Index() {
   return (
     <Pagecont showserach={false} custserach pd="0px" >
       <Titlelayout title="告警管理" layout="flex" dr="column">
-        <Divider style={{ margin: "16px 0" }} />
+    {/*     <Divider style={{ margin: "16px 0" }} /> */}
         {ispublish ? null : (
           <div style={{ display: 'flex', justifyContent: "space-between", alignItems: "center" }}>
             <Button

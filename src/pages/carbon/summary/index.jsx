@@ -72,8 +72,7 @@ const Mainbox =styled.div`
     grid-template-columns: 1216px 448px;
     column-gap: 16px;
    // height: 320px;
-      .wrap {
-        margin-top: 16px;
+      .wrap { 
         height: 254px;
         width: 100%;
         overflow-y: scroll;

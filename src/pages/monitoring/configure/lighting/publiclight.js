@@ -7,8 +7,14 @@ import {Addmodal,EditModal,DeleteModal,MultImport,ErrorMessage} from './modalcom
 import { Form, message, Space, Typography } from 'antd'
 import {Monitoring} from '@api/api'
 import { publishState } from '@redux/systemconfig'
+import styled from 'styled-components'
 const {Link} = Typography
 const {PubliclightManager:{PublicLightAdd,PublicLightQueryByPage,PublicLightUpdate,PublicLightDelete,PublicLightImport}}=Monitoring
+const Main = styled.div`
+  flex:1;
+  display: flex;
+  
+`
 export default function Parkstreet({areaList,levelname}) {
   const {t} = useTranslation(["button"])
   const [tableParams,setTableParams]=useState({
@@ -392,7 +398,7 @@ export default function Parkstreet({areaList,levelname}) {
    
   },[])
   return (
-    <div>
+    <Main>
      <Comp {...comProps}>
       <Table 
       columns={columns} 
@@ -409,7 +415,7 @@ export default function Parkstreet({areaList,levelname}) {
      <DeleteModal {...delModalProps}></DeleteModal>
      <MultImport {...multModalProps}></MultImport>
      <ErrorMessage {...ErrModalProps}></ErrorMessage>
-    </div>
+    </Main>
   )
 }
 

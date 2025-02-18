@@ -287,7 +287,7 @@ export default function Index() {
     <Pagecont showserach={false} custserach pd="0px" >  
       {contextHolder}
       <Titlelayout title= {Title}  layout="flex" dr="column">
-        <Divider style={{margin: "16px 0"}} />
+       {/*  <Divider style={{margin: "16px 0"}} /> */}
         <UseTransfer  mask={transTag}  transferTitle={transferTitle} saveValue={getSaveValue} columns={transferColumns} mainTable={mainTable} subTable={subTable} unknownTable={unknownTable} closeValue={getCloseValue}></UseTransfer>
        
       <Usetable ref={tableRef}  bordered columns={columns}   rowKey='id'  {...tableProps}   sheetName="变压器管理" onExport={onExport} ></Usetable>
