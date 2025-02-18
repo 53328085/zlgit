@@ -1,6 +1,6 @@
 /*  运行监控 run*/
-import {lazy} from 'react'
-const lazyRetry = function(componentImport, name) {
+import { lazy } from 'react'
+const lazyRetry = function (componentImport, name) {
     return new Promise((resolve, reject) => {
         // 检查是否已经刷新过了
         const hasRefreshed = JSON.parse(
@@ -8,33 +8,33 @@ const lazyRetry = function(componentImport, name) {
         );
         // 动态导入组件
         componentImport().then((component) => {
-            window.sessionStorage.setItem(`${name}-retry-lazy-refreshed`, 'false'); 
+            window.sessionStorage.setItem(`${name}-retry-lazy-refreshed`, 'false');
             resolve(component);
         }).catch((error) => {
             if (!hasRefreshed) { // 没有刷新过，需要刷新页面刷新
-                window.sessionStorage.setItem(`${name}-retry-lazy-refreshed`, 'true'); 
+                window.sessionStorage.setItem(`${name}-retry-lazy-refreshed`, 'true');
                 return window.location.reload(); // 
             }
-            reject(error); 
+            reject(error);
         });
     });
 }
 
 // const Gateway = lazy(() => import("../pages/monitoring/gateway"))
-const Gateway = lazy(()=>lazyRetry(() => import("../pages/monitoring/gateway"),'Gateway'))
-const Point = lazy(() => lazyRetry(()=>import("../pages/monitoring/point"),'Point'))
-const Report= lazy(() => import("../pages/monitoring/report"))
+const Gateway = lazy(() => lazyRetry(() => import("../pages/monitoring/gateway"), 'Gateway'))
+const Point = lazy(() => lazyRetry(() => import("../pages/monitoring/point"), 'Point'))
+const Report = lazy(() => import("../pages/monitoring/report"))
 const Summary = lazy(() => import("../pages/monitoring/summary"))
 const Video = lazy(() => import("../pages/monitoring/video"))
 
 const Remote = lazy(() => import("../pages/monitoring/remote"))
 
 const Call = lazy(() => import("../pages/monitoring/call"))
-const Control= lazy(() => import("../pages/monitoring/control"))
+const Control = lazy(() => import("../pages/monitoring/control"))
 
-const Analyse= lazy(() => import("../pages/monitoring/analyse"))
-const Ianalyse=lazy(()=>import("../pages/monitoring/ianalyse"))
- export let runtimeMonitor = {
+const Analyse = lazy(() => import("../pages/monitoring/analyse"))
+const Ianalyse = lazy(() => import("../pages/monitoring/ianalyse"))
+export let runtimeMonitor = {
     '010501': Summary,
     '010502': Gateway,
     '010503': Point,
@@ -42,7 +42,7 @@ const Ianalyse=lazy(()=>import("../pages/monitoring/ianalyse"))
     '010505': Remote,
     '010506': Call,
     '010507': Report,
-     '010508': Control,
-     '010509': Analyse, // 对比分析
-     '010510':Ianalyse
- }
+    '010508': Control,
+    '010509': Analyse, // 对比分析
+    '010510': Ianalyse
+}

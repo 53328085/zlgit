@@ -7,27 +7,38 @@ import imgUrl from '@imgs'
 const Mainbox = styled.div`
   width: 222px;
   height: 200px;
-  padding: 16px;
+  //padding: 16px;
   background-color: #ff6642;
   border-radius: 4px;
   box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.349019607843137);
   .headerTitle{
-    padding-left: 16px;
-    border-left: 4px solid #fff;
-    height: 32px;
-    line-height: 32px;
-    font-size: 14px;
+    padding-left: 28px;
+  //  border-left: 4px solid #fff;
+    height: 40px;
+    line-height: 40px;
+    font-size: 15px;
     color: #fff;
   }
+  .headerTitle:before{
+       content: "";
+       display: block;
+       position: absolute;
+       left: 20px;
+       top:13.5px;
+       width: 3px;
+       height: 13px;
+       background-color: #fff;
+    }
   .mainData{
     display: flex;
     align-items: center;
     justify-content: center;
     flex-direction: column;
+    padding: 20px;
     .centerImg{
         width: 72px;
         height: 72px;
-        margin-top: 16px;
+       
     }
     .data{
         font-size: 32px;
@@ -40,7 +51,7 @@ const Mainbox = styled.div`
 
 
 const fs = {
-  hv: '24px',
+ // hv: '24px',
   fc: '#333'
 }
 

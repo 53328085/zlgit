@@ -27,5 +27,5 @@ export let cabinets = {
     '011609': circuitDiagonsis, 
     '011610': WarningMessage, 
     '011611': CarbonStatistics, 
-    '011612': RunReport, 
+    // '011612': RunReport, 
 }

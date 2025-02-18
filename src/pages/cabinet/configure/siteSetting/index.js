@@ -76,7 +76,7 @@ padding: 20px;
     border-radius: 80px;
     padding:0px 5px;
     color:${props => props.theme.primaryderived || '#237AE4'};
-    background:${props => props.theme.asiderbgcolorA || '#e5effc'};
+    background:${props => props.theme.primaryderived || '#e5effc'};
     border:1px solid  ${props => props.theme.primaryderived || '#237AE4'};
     // color: #0066CC;
     // background-color: rgba(35, 122, 228, 0.117647058823529);

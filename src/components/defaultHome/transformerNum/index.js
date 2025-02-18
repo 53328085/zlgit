@@ -10,7 +10,7 @@ import { HomeRuntime } from '@api/api.js'
 import Context from "@com/content"
 
 const sty = css`
- margin-top: 16px;
+ //margin-top: 16px;
  flex: 1;
  .details{
   flex: auto;
@@ -29,13 +29,13 @@ const sty = css`
 const Divorder = styled.div`
   display: flex;
   align-items: center;
-  margin-top: 30px;
+ // margin-top: 30px;
   justify-content: space-around;
   .card_icon{
-    margin-left: 25px;
+   // margin-left: 25px;
     width: 64px;
     height: 64px;
-    margin-right: 16px;
+  //  margin-right: 16px;
   }
   
   .details{
@@ -60,7 +60,7 @@ const Divorder = styled.div`
 `
 
 const fs = {
-  hv: '24px',
+ // hv: '24px',
   fc: '#333',
   shadow: "y",
   layout: 'flex'

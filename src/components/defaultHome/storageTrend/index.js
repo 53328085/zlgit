@@ -8,7 +8,7 @@ import { HomeRuntime } from '@api/api.js'
 import { message } from 'antd';
 import {useTranslation} from "react-i18next"
 const fs = {
-  hv: '24px',
+ // hv: '24px',
   fc: '#333',
   shadow: "y"
 }

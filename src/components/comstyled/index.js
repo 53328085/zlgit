@@ -292,10 +292,20 @@ export const Cradiogroup = styled(Radio.Group)`
 `
 export const Borderleft = styled.div`
    display: flex;
-   height: 32px;
+   height: 40px;
    align-items: center;
-   padding-left: 16px;
-   border-left: 4px solid ${props => props.theme.primaryColor};
+   padding-left: 8px;
+   font-size: 15px;
+ //  border-left: 3px solid ${props => props.theme.primaryColor};
+   position: relative;
+   &::before{
+     content: "";
+     width: 3px;
+     height: 13px;
+     position: absolute;
+     left: 0px;
+     background-color: ${props => props.theme.primaryColor};
+   }
 `
 export const Itembox = styled(Item)`
    margin-bottom: 24px;

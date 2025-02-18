@@ -280,7 +280,7 @@ export default function Index() {
   const { Item } = Form;
   const { Option } = Select;
   const [options, setOptions] = useState([
-    { label: t("comm:All"), value: 0 },
+    { label: t("comm:All",{text:""}), value: 0 },
     { label: t("comm:Published"), value: 1 },
     { label: t("comm:Unpublished"), value: 2 },
     { label: t("comm:Expired"), value: 3 },
@@ -400,7 +400,7 @@ export default function Index() {
       ellipsis: true,
     },
     {
-      title: t("comm:Status"),
+      title: t("comm:Status",{text:""}),
       dataIndex: "publishStateStr",
       key: "publishStateStr",
       align: "center",
@@ -673,7 +673,7 @@ const closeModl = () => {
                         mgl="8px"
                       />  
                     }
-                  >{t("comm:Query")}</CutSerachBt>}
+                  >{t("comm:Query",{text:""})}</CutSerachBt>}
                 >
                 </Iptserach>       
               </Item>

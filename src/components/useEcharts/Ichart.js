@@ -24,7 +24,7 @@ export default function Ichart(props={}) {
   
   const ref = useRef()
  // const langch = useSelector(intl)
-  let {dataset={}, type=1, pieData, custoption, tip=''} = props
+  let {dataset={}, type=1, pieData, custoption, tip='', xAxis={}, series} = props
    
   let typechart = custoption?.type || type
  
@@ -40,9 +40,20 @@ export default function Ichart(props={}) {
     if(typechart == 5 && custoption?.series[0]?.data.length > 0) {         
         drawEcharts(ref.current, {...props})
     }
+    let f = Array.isArray(series) && series?.length>0 && series.some?.(s => Array.isArray(s?.data) && s?.data?.length >0)
+    if(typechart == 2 && Array.isArray(xAxis?.data) && xAxis?.data?.length > 0  && f) {
+      drawEcharts(ref.current, {...props})
+    }
   }, [props]) // intl 语言切换时图表需要重绘
   if(typechart == 1) {
     if(!contidtion(dataset?.source)) {
+      return <Cempty tip={info} />
+    }
+  }
+  if(typechart == 2) {
+    let f = Array.isArray(series) && series?.length>0 && series?.every(s => Array.isArray(s?.data) && s?.data?.length ==0)
+    console.log("f", f)
+    if(!Array.isArray(xAxis.data) || (Array.isArray(xAxis.data) && xAxis.data?.length ===0) || !f) {
       return <Cempty tip={info} />
     }
   }

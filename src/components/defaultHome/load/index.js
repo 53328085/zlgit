@@ -5,7 +5,7 @@ import Titlelayout from '@com/titlelayout';
 import {drawEcharts} from '@com/useEcharts'
 import {useTranslation} from "react-i18next"
 const fs = {
-  hv: '24px',
+ // hv: '24px',
   fc: '#333',
   shadow: "y"
 }
