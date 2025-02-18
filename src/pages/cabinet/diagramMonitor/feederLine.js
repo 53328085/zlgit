@@ -8,7 +8,8 @@ import close4_2 from './imgs/p4/4-2_close.svg'
 export default function Index() {
 
     const state = useReactive({
-        showData: false
+        showData: false,
+        onOpen: true
     })
 
     const DiaBox = styled.div`
@@ -49,10 +50,14 @@ export default function Index() {
         state.showData = false
     }
 
+    const changeState = () => {
+        state.onOpen = !state.onOpen
+    }
+
     return (
         <DiaBox>
-            <img src={open4_2} style={{ width: 124, height: 673, marginTop: 26 }}></img>
-            <div className='click_box' onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave}></div>
+            <img src={state.onOpen ? open4_2 : close4_2} style={{ width: 124, height: 673, marginTop: 26 }}></img>
+            <div className='click_box' onMouseEnter={() => handleMouseEnter()} onMouseLeave={() => handleMouseLeave()} onClick={() => changeState()}></div>
             {
                 state.showData ? <div className='data_box'>
                 <div style={{ color:'#1F6ECD' }}>进线</div>
