@@ -61,7 +61,8 @@ const Mainbox = styled.div`
       align-items: center;
     //  height:100%;
       img {
-       max-width: 100%;
+        object-fit: cover;
+        width: 100%;
         
       }
      

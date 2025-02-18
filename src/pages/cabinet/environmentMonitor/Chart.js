@@ -131,12 +131,12 @@ export default function Chart({ data, laptop, allData }) {
   }
   const [option, setOption] = useState({
     grid: {
-      left: "100px",
-      right: "72px"
+      left: "150px",
+      right: "72px",
     },
     legend: {
       data: ["温度", "湿度"],
-      left: 'auto'
+      position: 'center',
     },
     series: [{ type: 'line', yAxisIndex: 0, smooth: true, areaStyle: null }, { type: "line", yAxisIndex: 1, smooth: true, areaStyle: null }],
 
@@ -146,7 +146,7 @@ export default function Chart({ data, laptop, allData }) {
     yAxis: [
       {
         type: 'value',
-        //  name: '温度', 
+        name: '环境温度',
         position: 'left',
         axisLabel: {
           formatter: '{value}°C'
