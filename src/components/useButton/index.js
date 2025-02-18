@@ -10,17 +10,17 @@ import {hextodec} from '@com/usehandler'
 import { themeColor } from "@redux/systemconfig";
 import GouIcon from '@imgs/gou.png'
 const {Link} = Typography
-
+// 按钮圆角一般6px,  高度28px及一下4px 陈舒映
 
 const Normal = styled.div`
 width: ${props => props.wh || "72px"};
-height: 24px;
+height: 24px;  
 display: flex;
 align-items: center;
 justify-content: center;
 font-size: 14px;
 border: 1px solid transparent;
-border-radius: 2px;
+border-radius: 4px;
 padding: 0 8px;
 `
 const Dot = styled.div`
@@ -117,7 +117,7 @@ export const i18success = (type) => {  //  成功提示
   message.success(msg)
 
 }
-export const i18t = function(ns,text, params={}) { // 名称空间， key, 其他配置参数
+export const i18t = function(ns,text, params={text:""}) { // 名称空间， key, 其他配置参数
   let {param='', ...rest} = params;
   try {
      
@@ -136,7 +136,7 @@ const Custbtn = styled(Button).attrs((props) => ({
   && {
     width: ${props => props.wh || '96px'};
     height: 32px;  
-    border-radius: 2px; 
+    border-radius: 6px; 
     padding: 8px;
     text-align: left;
     display: flex;
@@ -332,12 +332,12 @@ export function CustLink(props) { // 通用方式
   )
 }
 export function CustButtonT(props) { // 通用方式按钮 通用翻译
-  let {src,text,ns="button", ...other} = props 
+  let {src,text,ns="button",param={}, ...other} = props 
   const {t} = useTranslation()
   return (
     <Custbtn {...other}>
      {src ? <img src={icon[src]} width={props.width} /> : null}
-     {t(text, {ns})}
+     {t(text, {ns},{...param})}
     </Custbtn>
   )
 }

@@ -35,6 +35,7 @@ const Mainbox = styled.div`
       display: flex;
       align-items: center;
       justify-content: space-between;
+      border-radius: 6px;
       span{
         padding-left: 12px;
         display: inline-block;

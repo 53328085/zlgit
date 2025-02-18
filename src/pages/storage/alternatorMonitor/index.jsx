@@ -21,7 +21,28 @@ import Usetable from '@com/useTable'
 const Mainbox = styled.div`
  && {
    .leftlayout {
+      border-radius: 8px;
       background-color: ${props => props.theme.primaryderived ||rgb(0, 0, 51)};
+      padding: 20px;
+      .leftTitle {
+        position: relative;
+        border-left:none;
+        padding-left: 11px;
+        &::before {
+          position: absolute;
+          left:0px;
+          content: "";
+          width: 3px;
+          height: 13px;
+          background-color: ${({theme}) =>  theme.primaryColor };
+        }
+      }
+   }
+   .rightlayout {
+     flex:1;
+     display: grid;
+     grid-template-columns: 1fr;
+     grid-template-rows: 320px 320px 1fr ;
    }
  }
 `
@@ -217,9 +238,9 @@ export default function Index() {
       
       <Mainbox className={style.pcsContent}>
         <div className={style.left + " leftlayout"}>
-          <div className={style.title}>
+          <div className={style.title + " leftTitle"}>
             <span>储能交流器</span>
-            <span className={style.pcsName}>{label}</span>
+           {label && <span className={style.pcsName}>{label}</span>} 
           </div>
           <div className={style.firstValue}>
             <div className={style.stateList}>
@@ -264,11 +285,12 @@ export default function Index() {
             }
           </div>
         </div>
-        <div className={style.right}>
-          <div className={style.chartCard}>
-            <div className={style.chartTitle}>总功率</div>
-            <PowerChart lineData={powerData} Unit='实时总功率(kwh)' color={successColor}></PowerChart>
-          </div>
+        <div className="rightlayout">
+          <Titlelayout  title="总功率" layout="flex">
+             <div style={{display: "flex", flex:1}}>
+             <PowerChart lineData={powerData} Unit='实时总功率(kwh)' color={successColor}></PowerChart>
+             </div>
+          </Titlelayout>
           <div className={style.chartCard}>
             <div className={style.chartTitle}>SOC</div>
             <SocChart lineData={socData} Unit='SOC(%)' color={warningColor}></SocChart>

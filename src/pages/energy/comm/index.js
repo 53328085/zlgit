@@ -155,7 +155,7 @@ export default function Index(props) {
      <Mainbox energy={energytype}>
   
       <Titlelayout title="公共能耗分类" layout="flex" >
-         <div className="chart" style={{paddingTop: '16px'}}>
+         <div className="chart" >
          <UserTree areaId={areaId}   setTreeId={setTreeIdList} energytype={energytype} showline={false}    datatype={2} sty={{bordered: 'n', pv: '0'}} /> 
          </div>
        {/*  <Searchtree

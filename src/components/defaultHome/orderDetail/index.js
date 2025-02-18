@@ -12,7 +12,7 @@ const Divorder = styled.div`
   grid-template-columns: 40% 1fr;
   column-gap: 16px;
   grid-template-rows: 126px;
-  padding-top: 16px;
+ // padding-top: 16px;
   .order {
    text-align: center; 
    p:last-of-type {     
@@ -43,7 +43,7 @@ const Divorder = styled.div`
 `
 
 const fs = {
-  hv: '24px',
+//  hv: '24px',
   fc: '#333',
   shadow: "y"
 }

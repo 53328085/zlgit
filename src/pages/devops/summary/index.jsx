@@ -569,7 +569,7 @@ export default function Index() {
             title="本月所有告警"
             pl="0px"
             bl="none"
-            hv="20px"
+         //   hv="20px"
             pv={laptop ? "2px" : "16px"}
           >
             <div className="content">
@@ -594,7 +594,7 @@ export default function Index() {
             title="本月所有工单"
             pl="0px"
             bl="none"
-            hv="20px"
+         //   hv="20px"
             pv={laptop ? "2px" : "16px"}
           >
             <div className="content">
@@ -619,7 +619,7 @@ export default function Index() {
             title="巡检任务"
             pl="0px"
             bl="none"
-            hv="20px"
+         //   hv="20px"
             pv={laptop ? "2px" : "16px"}
           >
             <div className="content">
@@ -646,7 +646,7 @@ export default function Index() {
             title="本月派单情况"
             pl="0px"
             bl="none"
-            hv="20px"
+       //     hv="20px"
             layout="flex"
           >
             <div className="chart">
@@ -659,7 +659,7 @@ export default function Index() {
             title="本月告警事件"
             pl="0px"
             bl="none"
-            hv="20px"
+       //     hv="20px"
             layout="flex"
           >
             <div className="chart">

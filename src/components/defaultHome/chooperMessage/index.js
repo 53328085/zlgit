@@ -7,7 +7,7 @@ import {CustTransO} from "@com/useButton"
 import chooperRuntime from '@imgs/chooper_runtime.png'
 import Context from "@com/content"
 const sty = css`
- margin-top: 16px;
+ //margin-top: 16px;
  flex: 1;
  .totalCount{
   flex: auto;
@@ -30,12 +30,14 @@ const sty = css`
 const Divorder = styled.div`
   display: flex;
   align-items: center;
-  margin-top: 30px;
+  justify-content: space-around;
+  height: 100%;
+  //margin-top: 30px;
   .card_icon{
-    margin-left: 25px;
+   // margin-left: 25px;
     width: 64px;
     height: 64px;
-    margin-right: 24px;
+   // margin-right: 24px;
   }
   .totalCount{
     display: flex;
@@ -52,7 +54,7 @@ const Divorder = styled.div`
     }
   }
   .details{
-    margin-left: 14px;
+  //  margin-left: 14px;
     border: 1px solid #e4e4e4;
     font-size: 14px;
     color: rgba(0, 0, 0, 0.647058823529412);
@@ -72,7 +74,7 @@ const Divorder = styled.div`
 `
 
 const fs = {
-  hv: '24px',
+ // hv: '24px',
   fc: '#333',
   shadow: "y"
 }

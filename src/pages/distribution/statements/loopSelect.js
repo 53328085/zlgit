@@ -18,13 +18,23 @@ const Treewrap = styled.div`
   flex-direction: column;
   row-gap: 16px;
   width: 257px;
-  padding: 16px;
+  padding: 0 16px 16px 16px;
   background-color: #fff;
   .title {
-    height: 32px;
-    border-left: 2px solid ${props => props.theme.primaryColor};
-    padding-left: 16px;
-    line-height: 32px;
+    height: 40px; 
+    padding-left: 11px;
+    line-height: 40px;
+    font-size: 15px;
+    position: relative;
+    &::before {
+      width: 3px;
+      content: "";
+      height: 13px;
+      position: absolute;
+      background-color: ${props => props.theme.primaryColor};
+      left:0px;
+      top: 13.5px;
+    }
   }
   .radioLine {
     width: 225px;
@@ -189,7 +199,7 @@ export default forwardRef(function Index({ getLinePoint, projectId }, ref) {
       />
       <img src={dashLine} className="radioLine"></img>
       <Tree
-        style={{ height: "600px", overflow: "auto" }}
+        style={{ height: "600px", overflow: "auto"}}
         checkable
         onExpand={onExpand}
         expandedKeys={expandedKeys}

@@ -8,7 +8,7 @@ import { HomeRuntime } from '@api/api.js'
 import { message } from 'antd';
 import {useTranslation} from 'react-i18next'
 const fs = {
-  hv: '24px',
+ // hv: '24px',
   fc: '#333',
   shadow: "y"
 }
@@ -80,7 +80,7 @@ export default function DefaultHome(props){
   
   return (
     <Titlelayout title={t("sitesoc")} {...fs}>
-        <div style={{width: '424px', height: '338px', marginTop: 20}}>
+        <div style={{width: '424px', height: '338px'}}>
               <DemoLiquid data={Number(state.socData)}></DemoLiquid>
               
           </div>
