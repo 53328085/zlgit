@@ -8,7 +8,8 @@ import close2_1 from './imgs/p2/2-1_close.svg'
 export default function Index() {
 
     const state = useReactive({
-        showData: false
+        showData: false,
+        onOpen: true
     })
 
     const DiaBox = styled.div`
@@ -47,11 +48,14 @@ export default function Index() {
     const handleMouseLeave = () => {
         state.showData = false
     }
+    const changeState = () => {
+        state.onOpen = !state.onOpen
+    }
 
     return (
         <DiaBox>
-            <img src={open2_1} style={{ width: 315, height: 760, marginTop: -22 }}></img>
-            <div className='click_box' onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave}></div>
+            <img src={ state.onOpen ? open2_1 : close2_1} style={{ width: 315, height: 760, marginTop: -22 }}></img>
+            <div className='click_box' onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave} onClick={() => changeState()}></div>
             {
                 state.showData ? <div className='data_box'>
                 <div style={{ color:'#1F6ECD' }}>进线</div>

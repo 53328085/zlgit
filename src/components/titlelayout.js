@@ -1,9 +1,15 @@
 import React from 'react'
 import {Card } from 'antd'
-import styled from 'styled-components'
+import styled,{css} from 'styled-components'
+const custsty = css`
+.ant-card-body{
+  row-gap: ${props => props.dr ? (props.rgap || "16px") : 0 } 
+}
+  
+`
 const Boxdiv = styled(Card)`
  // padding: ${props => props.pv};
-  border-radius: 8px;
+  border-radius: ${props => props.rad || "8px"};
   border:  ${(props) =>  props.bordered=='y' ? ' 1px solid #d7d7d7' : 'none'};  
   display: grid;
   grid-template-rows: ${(props) => props.title ? `auto 1fr` : '1fr'};
@@ -52,15 +58,18 @@ const Boxdiv = styled(Card)`
  //  padding: ${props => props.bodypad || "20px"};
   display: ${props => props.layout || 'block'};
   flex-direction: ${props => props.dr || 'row'};
+   
   & .flex {
     display: flex;
     flex: 1;
   }
+ 
  }
+  
 `
 Boxdiv.defaultProps = {
   bordered: 'y',
-  pv: '16px',
+  pv: '20px',
   bodypad: '0px'
 }
 export default function Titlelayout({title='', children, ...other}) {

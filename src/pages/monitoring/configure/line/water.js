@@ -1,5 +1,10 @@
 import React from 'react'
 import Common from './common'
+import styled from 'styled-components'
+const Main = styled.div`
+ flex:1;
+ display: flex;
+`
 export default function water() {
   const addMainLine=()=>{
     
@@ -8,8 +13,8 @@ export default function water() {
     addMainLine
   }
   return (
-    <div style={{ overflow: 'hidden' ,width:'100%',height:"inherit", overflowY: "auto"}}>
+    <Main>
         <Common type={2}/>
-    </div>
+    </Main>
   )
 }

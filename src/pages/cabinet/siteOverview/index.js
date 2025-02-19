@@ -1,17 +1,23 @@
 import React, { useState, useRef, useEffect, useCallback } from "react";
 import Titlelayout from "@com/titlelayout";
-import { DatePicker, Space, Radio, Divider, theme } from "antd";
+import { DatePicker, Space, Radio, Divider, message } from "antd";
 import moment from "moment";
 import styled from "styled-components";
-import { Monitoring } from "@api/api.js";
+import { DistributionCabinet } from "@api/api.js";
 import { useSelector } from "react-redux";
 import { useReactive } from "ahooks";
-import Icharts from "@com/useEcharts/Ichart.js";
+import { useNavigate,} from "react-router-dom"; 
 import Cempty from '@com/useEmpty'
 import { CustButton } from "@com/useButton"
 import Modal from "@com/useModal"
 import Table from "@com/useTable"
 import warn from "./u160.jpg"
+import img1 from "./energy.svg"
+import img2 from "./p.svg"
+import img3 from "./v.svg"
+import img4 from "./today.svg"
+import normal from "./right.svg"
+import abnormal from "./false.svg"
 const BtnWrap = styled(Radio.Group)`
   .ant-radio-button-wrapper {
     width: 113px;
@@ -36,8 +42,8 @@ const BoxStyle = styled.div`
 `;
 
 const {
-  IAnalyse: { CompareQuery },
-} = Monitoring;
+  Overview,
+} = DistributionCabinet;
 
 
 export default function index() {
@@ -55,27 +61,17 @@ export default function index() {
     disabled: false,
     groupName: ''
   });
-
+  const navigate = useNavigate();
   const [dataList, setDataList] = useState([])
   const GetSns = async () => {
     try {
       if (!projectId) {
         throw new Error("projectId 未定义");
       }
-      const resp = await CompareQuery(projectId);
+      const resp = await Overview(projectId);
       if (resp.success) {
         if (resp.data) {
-          const mergedData = resp.data.reduce((acc, curr) => {
-            const existingIndex = acc.findIndex(item => item.planId === curr.planId);
-            if (existingIndex !== -1) {
-              acc[existingIndex].items = [...acc[existingIndex].items, ...curr.items];
-              acc[existingIndex].snGroup = [...new Set([...acc[existingIndex].snGroup, ...curr.snGroup])];
-            } else {
-              acc.push(curr);
-            }
-            return acc;
-          }, []);
-          setDataList(mergedData)
+          setDataList(resp.data)
         } else {
           setDataList([])
         }
@@ -101,15 +97,15 @@ export default function index() {
 
 
   const [boxData, setBoxData] = useState({
-    value: '91.31',
+    loadRate: '91.31',
     name: 'T2 变压器负载率（%）'
   });
   useEffect(() => {
     const interval = setInterval(() => {
       setBoxData((prevData) =>
         prevData.name === 'T2 变压器负载率（%）'
-          ? { value: '81.33', name: 'T1 变压器负载率（%）' }
-          : { value: '91.31', name: 'T2 变压器负载率（%）' }
+          ? { loadRate: '81.33', name: 'T1 变压器负载率（%）' }
+          : { loadRate: '91.31', name: 'T2 变压器负载率（%）' }
       );
     }, 2000);
 
@@ -129,46 +125,67 @@ export default function index() {
 
     )
   };
-  const gotoDetails = (index) => {
-    console.log(index)
-    //navigate('/carbon/examining/details')
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const [currentItem, setCurrentItem] = useState();
+
+  const SiteOverview = ({ item, name, num }) => {
+    setCurrentItem(item)
+    const currentTransformer = item.transformers[currentIndex];
+    return (
+      <Box
+        img={num == 1 ?img3:img4}
+        value={num == 1 ? currentTransformer.loadRate : currentTransformer.dayEnergy}
+        name={num == 1 ? `${currentTransformer.name + name}` : `${currentTransformer.name.slice(0, 2) + name}`}
+      />
+    );
+  };
+  useEffect(() => {
+    const intervalId = setInterval(() => {
+      setCurrentIndex((prevIndex) => (prevIndex + 1) % currentItem.transformers.length);
+    }, 2000);
+
+    // 清除定时器以防止内存泄漏
+    return () => clearInterval(intervalId);
+  }, [currentItem?.transformers.length]);
+  const gotoDetails = (item) => {
+    navigate(`/index/cabinets/diskchart?id=${item.siteId}`, {state: {title: '盘面图监控', nested: 'diskchart', primary: 'cabinets'}})
   }
 
   return (
     <div style={{ width: "100%", height: "100%", display: "flex", flexDirection: "column" }}>
       {dataList.length > 0 && dataList.map((item, index) => {
         return (
-          <BoxStyle onClick={() => gotoDetails(index)}>
+          <BoxStyle onClick={() => gotoDetails(item)} key={index}>
             <div style={{ width: '100%', height: '100%', display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', borderRadius: '4px' }}>
               <img src={warn} width={253} height={166}></img>
               <div style={{ width: 380, height: '100%', padding: '16px 0' }}>
-                <p style={{ fontSize: 24, color: '#515151', marginBottom: 48 }}>1#正泰物联变电站</p>
-                <p style={{ fontSize: 16, color: '#515151', marginBottom: 24 }}>设备：变压器2台</p>
-                <p style={{ fontSize: 16, color: '#515151' }}>浙江省杭州市滨江区月明路56号</p>
+                <p style={{ fontSize: 24, color: '#515151', marginBottom: 48 }}>{item.siteName}</p>
+                <p style={{ fontSize: 16, color: '#515151', marginBottom: 24 }}>设备：变压器{item.transformerNum}台</p>
+                <p style={{ fontSize: 16, color: '#515151' }}>{item.siteAddress}</p>
               </div>
-              <Box img={warn} value={'2541.32'} name={'当日能耗（kWh）'} />
-              <Box img={warn} value={'0.95'} name={'功率因数'} />
-              <Box img={warn} value={boxData.value} name={boxData.name} />
-              <Box img={warn} value={'543.48'} name={'T2当日能耗（kWh）'} />
+              <Box img={img1} value={item.dayEnergy} name={'当日能耗（kWh）'} />
+              <Box img={img2} value={item.powerFactor} name={'功率因数'} />
+              <SiteOverview item={item} name='负载率(%)' num={1} />
+              <SiteOverview item={item} name='当日能耗(kWh)' num={2} />
               <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'space-between', width: 180, height: 166 }}>
                 <div style={{
                   display: 'flex', flexDirection: 'row', alignItems: 'center', padding: '0px 16px',
                   justifyContent: 'space-between', width: 180, height: 74, border: '1px solid #d7d7d7'
                 }}>
-                  <img src={warn} width={32} height={32}></img>
+                  <img src={normal} width={32} height={32}></img>
                   <div>
                     <p style={{ fontSize: 14, color: '#515151' }}>正常通信设备数</p>
-                    <p style={{ fontSize: 28, color: '#333333', textAlign: 'center' }}>15</p>
+                    <p style={{ fontSize: 28, color: '#333333', textAlign: 'center' }}>{item.communicationNormalNum}</p>
                   </div>
                 </div>
                 <div style={{
                   display: 'flex', flexDirection: 'row', alignItems: 'center', padding: '0px 16px',
                   justifyContent: 'space-between', width: 180, height: 74, border: '1px solid #d7d7d7'
                 }}>
-                  <img src={warn} width={32} height={32}></img>
+                  <img src={abnormal} width={32} height={32}></img>
                   <div>
-                    <p style={{ fontSize: 14, color: '#515151' }}>正常通信设备数</p>
-                    <p style={{ fontSize: 28, color: '#ff3333', textAlign: 'center' }}>15</p>
+                    <p style={{ fontSize: 14, color: '#515151' }}>异常通信设备数</p>
+                    <p style={{ fontSize: 28, color: '#ff3333', textAlign: 'center' }}>{item.communicationAbnormalNum}</p>
                   </div>
                 </div>
               </div>

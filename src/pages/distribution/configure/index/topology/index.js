@@ -66,7 +66,7 @@ export default function Index() {
   const tableRef = useRef()
   const getTableData = ({current, pageSize}) => {
     if(!roomId || !projectId) {
-      setTotal(0)
+    //  setTotal(0)
       return {
       list: [],
       total: 0
@@ -127,7 +127,7 @@ export default function Index() {
   return (
     <Pagecont showserach={false} custserach pd="0px" >     
      <Titlelayout title="配电系统图"   layout="flex" dr="column">         
-      <Divider style={{margin: "16px 0"}} />
+    {/*   <Divider style={{margin: "16px 0"}} /> */}
         {isPublish ? null : <NewButton onClick={() => showAdd('add')} />}
         <Usetable style={{marginTop: 16}} ref={tableRef} columns={columns}   rowKey='id'  {...tableProps} />
         <CustModal title='删除提示' ref={dref} mold="cust" width={512} type="warn" onOk={() => onDelete()} maskClosable={false}>        

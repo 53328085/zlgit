@@ -276,11 +276,11 @@ export function RadioT(props) {
   )
 }
 export function CustTransO(props) {   //通用  文字/数字翻译
-  let {text, ns="overview", param='', val} = props 
+  let {text:txt, ns="overview", param='', val, params={}} = props 
   const {t} = useTranslation([ns]);
   return (
     <>
-     {t(text, {param,val})}
+     {t(txt, {param,val, ...params})}
     </>
   )
 }

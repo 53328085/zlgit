@@ -338,7 +338,7 @@ export default function Index() {
     <Pagecont showserach={false} custserach pd="0px" >   
       {contextHolder}
       <Titlelayout title= {Title}  layout="flex" dr="column">  
-        <Divider style={{margin: "16px 0"}} />
+       {/*  <Divider style={{margin: "16px 0"}} /> */}
         <div className={style.lineTree}>
             <div className={style.treeTitle}>
                 <span className={style.treeItem}>线路图</span>

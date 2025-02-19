@@ -9,7 +9,8 @@ export default function Index(props) {
 
     const state = useReactive({
         showData: false,
-        showItem: props.showItem ? true : false
+        showItem: props.showItem ? true : false,
+        onOpen: true
     })
 
     const DiaBox = styled.div`
@@ -60,13 +61,18 @@ export default function Index(props) {
         state.showData = false
     }
 
+    const changeState = () => {
+        state.onOpen = !state.onOpen
+    }
+
+
     return (
         <DiaBox>
-            <img src={open4_1} style={{ width: 124, height: 673, marginTop: 26 }}></img>
+            <img src={ state.onOpen ? open4_1 : close4_1} style={{ width: 124, height: 673, marginTop: 26 }}></img>
             {
                 state.showItem ? <div className='item_box'></div> : null
             }
-            <div className='click_box' onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave}></div>
+            <div className='click_box' onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave} onClick={() => changeState()}></div>
             {
                 state.showData ? <div className='data_box'>
                 <div style={{ color:'#1F6ECD' }}>进线</div>
