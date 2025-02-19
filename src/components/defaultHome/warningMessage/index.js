@@ -11,7 +11,7 @@ import Cempty from '@com/useEmpty'
 import { useTranslation } from 'react-i18next'
 
 const fs = {
-  hv: '24px',
+//  hv: '24px',
   fc: '#333',
   shadow: "y"
 }
@@ -19,9 +19,11 @@ const fs = {
 
 export default function DefaultHome(props) {
   const Timelinebox = styled(Timeline)`
-    height: 142px;
+   // height: 142px;
+    height: 120px;
     overflow-y: hidden;
    padding-top: 16px;
+   padding-left: 4px;
   .ant-timeline-item {
     padding-bottom: 8px;
   
@@ -41,7 +43,7 @@ export default function DefaultHome(props) {
   }
   #scrollTimeLine{
     animation: ${props => {
-      if (props.domht > 142) {
+      if (props.domht > 120) {
         return 'transY'
       } else { return "" }
     }} ${props => (props.domht / 60)}s 1s linear infinite;;

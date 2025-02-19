@@ -33,7 +33,7 @@ const Mainbox = styled.div`
 `
 const columns = [
   {
-    title: <CustTransO ns="comm" text="name" />,
+    title: <CustTransO ns="comm" text="name" params={{text: ""}} />,
     dataIndex: 'name',
     key: 'name',
     width: 180

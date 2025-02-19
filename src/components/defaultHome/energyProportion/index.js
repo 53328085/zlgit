@@ -8,7 +8,7 @@ import {CustTransO} from "@com/useButton"
 import { message } from 'antd';
 import Ichart  from '@com/useEcharts/Ichart';
 const fs = {
-  hv: '24px',
+//  hv: '24px',
   fc: '#333',
   shadow: "y",
   layout: 'flex'

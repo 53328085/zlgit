@@ -41,8 +41,9 @@ font-size: 12px;
     }
     .ant-menu-item.ant-menu-item-selected {
         background-color: ${props => props.theme.menusactive || '#1c62b6'};
-        border-bottom: 2px solid ${props => props.theme.menusborder || '#00ff66'};
+      //  border-bottom: 2px solid ${props => props.theme.menusborder || '#00ff66'};  //去掉下划线 陈舒映
         color:${props => props.theme.menusactivefontcolor || '#ffffff'};
+        border-radius: 6px;
         .logo {
               height: 28px;
               width: 28px;
@@ -61,12 +62,14 @@ const Cmenu = styled(Menu)`
 &&{
   background-color: transparent;
     border-bottom: none;
-    flex: 1;
+ //   flex: 1;
+    overflow: hidden;
   //  overflow-x: auto;
     .ant-menu-item.ant-menu-item-selected {
         background-color: ${props => props.theme.menusactive || '#1c62b6'};
-        border-bottom: 2px solid ${props => props.theme.menusborder || '#00ff66'};
+      //  border-bottom: 2px solid ${props => props.theme.menusborder || '#00ff66'};
         color:${props => props.theme.menusactivefontcolor || '#ffffff'};
+        border-radius: 6px;
         .logo {
               height: 36px;
               width: 36px;
@@ -90,7 +93,7 @@ const Cmenu = styled(Menu)`
         padding: 4px 0; 
         height: 64px;
         color: ${props => props.theme.menusfontcolor || '#b2c1d1'};
-        border-bottom: 2px solid transparent;
+       // border-bottom: 2px solid transparent;
      
       
      //   background-color: #1c62b6 ;      
@@ -117,7 +120,7 @@ const Cmenu = styled(Menu)`
         &:hover, &:active {
             background-color: ${props => props.theme.menusactive || '#1c62b6'} ;
             color:${props => props.theme.menusactivefontcolor || '#ffffff'};
-            border-bottom: 2px solid  ${props => props.theme.menusborder || '#00ff66'};
+          //  border-bottom: 2px solid  ${props => props.theme.menusborder || '#00ff66'};
             bottom: 0px;
             .logo {
               height: 36px;

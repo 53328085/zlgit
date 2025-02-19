@@ -35,12 +35,24 @@ const CModal = styled(Modal)`
     border-bottom: none;
   //  background-color: ${(props) => props.type=='dark' ? '#1b1d23' : '#fff'};
     .ant-modal-title {
-      font-size: 16px;
+      font-size: 15px;
       color: ${custCorle};;
       padding-left: ${props => props.nolf ? 0 : '16px'} ;
-      border-left: ${props =>  props.nolf ? 'none' : `4px solid  ${theme(props)}`};
+    //  border-left: ${props =>  props.nolf ? 'none' : `4px solid  ${theme(props)}`};
       height: 32px;
       line-height: 32px;
+      position:relative;
+      &::before{
+          position: absolute;
+          display: block;
+          width:3px;
+          height:13px;
+          content: "";
+          left:0;
+          top:50%;
+          transform: translateY(-50%);
+          background-color: ${props =>  props.nolf ? 'none' : `${theme(props)}`};
+      }
     }
   }
   .ant-modal-body {

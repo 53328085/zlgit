@@ -3,12 +3,17 @@ import { useSelector } from 'react-redux'
 import {useTranslation} from 'react-i18next'
 import Comp from './comp'
 import Table from '@com/useTable'
+import styled from 'styled-components'
 import {Addmodal,EditModal,DeleteModal,MultImport,ErrorMessage} from './modalcomp'
 import { Form, message, Space, Typography} from 'antd'
 import {Monitoring} from '@api/api'
 import { publishState } from '@redux/systemconfig'
 const {Link} = Typography
 const {PubliclightManager:{StreetLightAdd,StreetLightQueryByPage,StreetLightUpdate,StreetLightDelete,StreetLightImport}}=Monitoring
+const Main = styled.div`
+  flex:1;
+  display: flex;
+`
 export default function Parkstreet({areaList,levelname}) {
 
   const {t} = useTranslation(["button"])
@@ -397,7 +402,7 @@ export default function Parkstreet({areaList,levelname}) {
    
   },[])
   return (
-    <div>
+    <Main>
      <Comp {...comProps}>
       <Table 
       columns={columns} 
@@ -414,6 +419,6 @@ export default function Parkstreet({areaList,levelname}) {
      <DeleteModal {...delModalProps}></DeleteModal>
      <MultImport {...multModalProps}></MultImport>
      <ErrorMessage {...ErrModalProps}></ErrorMessage>
-    </div>
+    </Main>
   )
 }

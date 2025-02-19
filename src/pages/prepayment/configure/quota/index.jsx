@@ -24,7 +24,7 @@ const sty = css`
 const Mainbox = styled.div`
   margin-top: 16px;
   padding: 32px 16px;
-  border-top: 1px dotted #d7d7d7;
+ // border-top: 1px dotted #d7d7d7;
   display: flex;
   flex:1;
   color:#515151;

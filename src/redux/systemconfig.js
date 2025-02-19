@@ -13,7 +13,7 @@ import {initithemeColor} from '@com/defaultcolor';
 
 const {DeviceTypeManager: {AllDeviceStyle} } = Monitoring
 
- console.log("initithemeColor",initithemeColor)
+ 
 
   // 进入项目配置/项目 
 
@@ -329,7 +329,7 @@ const system = createSlice({
            console.log(payload)
            if(payload.primaryderived){
             let islight = isLightColor(payload.primaryderived)  
-           //  let bgcolorfont = islight ? "#000000a5" : "#ffffff"
+          
             state.themeColor ={...themeColor, ...payload,islight };
            }else{
              state.themeColor ={...themeColor, ...payload};
@@ -565,7 +565,7 @@ export const themeId= state => state.system.themeId
     themes,
     themeId,
     (datas, tid)=> {
-      console.log("修改时", tid)
+     
       let isdata = Array.isArray(datas) && datas?.length>0
       if(!Number.isInteger(parseInt(tid)) || !isdata) return initithemeColor
       if(Number.isInteger(parseInt(tid)) && isdata){

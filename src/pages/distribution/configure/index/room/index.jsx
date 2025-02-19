@@ -348,7 +348,7 @@ export default function Index() {
     <Pagecont showserach={true}  pd="0px" >
       {contextHolder}
       <Titlelayout title="配电房"   layout="flex" dr="column">
-         <Divider style={{margin: "16px 0"}} />
+       {/*   <Divider style={{margin: "16px 0"}} /> */}
         { isPublish ? null : <CustButtonT text="new" onClick={()=>showAdd()} src="new" />   }
       <UseTable style={{marginTop:'16px'}} columns={columns}   rowKey='id'  {...tableProps}></UseTable>
       <Custmodal  title={modalTitle}  custft={modalTitle =="新增配电房"}  loading={loading} onOk={addOk} width={592} mold="cust" ref={ref} key="edit">

@@ -9,7 +9,7 @@ import { energyRanking } from '@api/api.js'
 import Ichart from "@com/useEcharts/Ichart"
 import {CustTransO} from "@com/useButton"
 const fs = {
-  hv: '24px',
+ // hv: '24px',
   fc: '#333',
   shadow: "y"
 }

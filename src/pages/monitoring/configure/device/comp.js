@@ -1,13 +1,18 @@
 import React, { useEffect, useState, forwardRef, useImperativeHandle, useMemo, useContext, useRef } from 'react'
 import { useSelector } from 'react-redux'
 import { Input, Select, Space, Divider, Row, Col } from 'antd'
-import style from './style.module.less'
+import styled from 'styled-components'
 import { Monitoring } from '@api/api.js'
 import { publishState,adaptation } from '@redux/systemconfig'
 import {  ExportExcel, NewButton, AllExportButton} from '@com/useButton'
 import {Serach, Cdivider} from '@com/comstyled'
 const { DeviceManager: { OneLevel } } = Monitoring
-
+const Mainbox = styled.div`
+  flex:1;
+  display: flex;
+  flex-direction: column;
+  row-gap: 16px;
+`
 export default forwardRef(function Comp(props, ref) {
     const {
         placeholder = '输入设备编号/安装地址',
@@ -87,10 +92,9 @@ export default forwardRef(function Comp(props, ref) {
 
     }, [])
     return (
-        <div>
-            <Row justify='space-between'  >
-                <Row align='middle'>
-                    <Col>
+        <Mainbox>
+            <Row justify='space-between'   >
+                <Space size={16}>
                         <Select
                             showSearch
                             filterOption={(val,opts)=>{
@@ -112,14 +116,8 @@ export default forwardRef(function Comp(props, ref) {
                             onChange={changeSelect}
                             options={areaOptions}
                         />
-                    </Col>
-                   {laptop ? null : <Col style={{ margin: '0 20px' }}>
-                        <Divider type="vertical" dashed style={{ borderColor: ' #d7d7d7', height: 30 }} />
-                    </Col>}
-                    <Col>
-                        <span style={{ padding: laptop ? '0 0 0 16px' : '0 16px 0 0' }}>{inplabel}</span>
-                    </Col>
-                    <Col>
+                    <div style={{display:"flex", alignItems:"center", columnGap: "8px"}}>
+                    <span>{inplabel}</span>
                     <Serach
                            style={{ width: laptop ? 260 : 321 }}
                             placeholder={placeholder}
@@ -128,23 +126,15 @@ export default forwardRef(function Comp(props, ref) {
                                 setInpvalue(e.target.value)
                              }}
                             onSearch = {getDeviceSearch}
-                            />
-
-
-                       {/*  <Input style={{ width: 321 }} placeholder={placeholder} onChange={(e) => { setInpvalue(e.target.value) }} /> */}
-                    </Col>
-                    {/* <Col>
-                        <Button style={{ marginLeft: '-1px', width: 80, background: '#f5f7fa' }} onClick={getDeviceSearch}>查询</Button>
-                    </Col> */}
+                            /> 
+                       </div>
+                   
                     {
-                        isenergy && (<>
-                            <Divider type="vertical" dashed style={{ margin: '0 16px', borderColor: ' #d7d7d7', height: 30 }} />
-                            <Col>
+                        isenergy &&   
                                 <Select style={{ width: 128 }} options={selOptions} defaultValue={0} onChange={changeEnergy}></Select>
-                            </Col>
-                        </>)
+                            
                     }
-                </Row>
+                </Space>
                 {
                     btnlist?( <Row>
                         {publish ? null : <Space size={16} style={{marginRight: '16px'}}>
@@ -157,12 +147,11 @@ export default forwardRef(function Comp(props, ref) {
                     </Row>):<NewButton onClick={addopen} />
                 }
                
-            </Row>
-            <Cdivider  style={{ margin: '16px 0' }} />
-            <div style={{display:'flex',height:700}}>
+            </Row>         
+            <div style={{display:'flex',flex:1}}>
             {props.children}
             </div>
             
-        </div>
+        </Mainbox>
     )
 })

@@ -309,7 +309,7 @@ const deviceStyleChange=(v) => {
   window.localStorage.setItem(currdeviceStyle, v);
 }
 
-const deviceStyleNode = (<Item name="deviceStyle" label="设备类型"  >
+const deviceStyleNode = (<Item name="deviceStyle" label={i18t("comm","type",{text:"设备"})}  >
 
 <Select options={DeviceStyle} fieldNames={{label: "name", value: "deviceStyle"}} style={{width: laptop ? "160px" : '200px'}} onChange={deviceStyleChange} {...filterProps}></Select>  
 </Item>)

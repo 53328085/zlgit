@@ -229,7 +229,29 @@ export  const Statebox = styled.div`
         }
       
     }
-     
+   export  function hextodec(hex) { // 16进制转10进制 rgb
+        let rgbcolor=[255,255,255]
+         try {
+          let Hex=hex.replace(/^#/,'')
+        
+          console.log(Hex)
+          if(Hex.length==3){
+           rgbcolor = Hex.split('').map(hex => parseInt(hex + hex, 16) );
+             
+          }else if(Hex.length==6){
+             
+            rgbcolor = Hex.match(/.{1,2}/g).map(hex => parseInt(hex,16))
+            return rgbcolor
+          }
+         } catch (error) {
+           
+          return rgbcolor
+         }
+       
+        
+        
+        
+    }
    export function isLightColor(hexColor, threshold = 100) {
         const brightness = getBrightness(hexColor);
         return brightness > threshold;

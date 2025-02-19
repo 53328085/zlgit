@@ -3,6 +3,7 @@ import { useSelector } from "react-redux";
 import Usetable from '@com/useTable'
 import CModal from "@com/useModal"
 import Titlelayout from "@com/titlelayout";
+import Pagecount from "@com/pagecontent";
 import {
   Input,
   Space,
@@ -308,7 +309,7 @@ export default function Index() {
   const SetLine = titleList.map((item, index) => {
     return (
       <SetDiv>
-        <Divider dashed style={{ borderColor: "#d7d7d7" }}></Divider>
+    <Divider dashed style={{ borderColor: "#d7d7d7" }}></Divider> 
         <div className="line">
           <Checkbox
             checked={state.items[index]["state"]}
@@ -447,20 +448,13 @@ export default function Index() {
     console.log(state)
   }
   return (
-    <Titlelayout title="智能分析配置">
-      <Divider dashed style={{ borderColor: "#d7d7d7" }}></Divider>
-      <WrapDiv>
-        <Space>
-          {/* onSetDevices选择设备 */}
-          <Button type="primary" onClick={openModal}>
+     <Pagecount bgcolor="#eeeff3" pd={0}>
+    <Titlelayout title="智能分析配置" layout="flex" dr="column">
+     <div style={{marginBottom: "16px"}}>
+     <Button type="primary" onClick={openModal}>
             新增对比组合
           </Button>
-        </Space>
-      </WrapDiv>
-      <WrapDiv>
-        {" "}
-        <Divider dashed style={{ borderColor: "#d7d7d7" }}></Divider>
-      </WrapDiv>
+     </div>
       <WrapDiv style={{ justifyContent: "end" }}>
         <Usetable
           columns={columnsList}
@@ -517,5 +511,6 @@ export default function Index() {
         ></UseTransfer>
       </Mask>
     </Titlelayout>
+    </Pagecount>
   );
 }

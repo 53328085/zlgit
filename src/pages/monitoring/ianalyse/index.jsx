@@ -8,18 +8,19 @@ import { useSelector } from "react-redux";
 import { useReactive } from "ahooks";
 import Icharts from "@com/useEcharts/Ichart.js";
 import Cempty from '@com/useEmpty'
-import { CustButton } from "@com/useButton"
+import { CustTransO, i18t, i18warning,ExportExcel, RadioT,CustButtonT,CustButton } from "@com/useButton"
 import Modal from "@com/useModal"
 import Table from "@com/useTable"
 import warn from "./warn.png"
+import Pagecount from "@com/pagecontent";
 const BtnWrap = styled(Radio.Group)`
   .ant-radio-button-wrapper {
-    width: 113px;
+    min-width: 113px;
     text-align: center;
   }
 `;
 const Charts = styled.div`
-  height: 400px;
+  height: ${props=> props.len > 1 ? "400px" : "100%"};
   display: flex;
 `;
 const {
@@ -138,6 +139,7 @@ export default function index() {
   };
   
   const [dataList, setDataList] = useState([])
+  const len = dataList.length
   const GetSns = async () => {
     const resp = await CompareQuery(projectId);
     if (resp.success) {
@@ -192,7 +194,7 @@ export default function index() {
       }
     } else {
       state.disabled = true
-      message.error("获取设备信息失败!");
+      message.error(i18t("monitor","info3"));
     }
   };
   const getMaxArr = (matrix) => {
@@ -297,7 +299,7 @@ export default function index() {
                     data: [
                       {
                         yAxis: markLineList[b][params[b].type-1], // 这里设置基准线的值，可以根据实际情况调整
-                        name: '基准线'
+                        name: '基准线' ,  //'基准线'
                       }
                     ],
                     lineStyle: {
@@ -311,129 +313,14 @@ export default function index() {
         })
         
         state.detailtableData = resp.data
-        // if (resp.data[indexBtn].compareDeviation) {
-        // state.alltableData = resp.data[indexBtn].compareDeviation
-        // console.log(state.alltableData)
-        // state.tableData = state.alltableData?.slice(0, state.pageSize)
-        // }
-
-
-
-
-
-
-
-        // markLine.data[0]["yAxis"] = ""
-        // markLine.label = {}
-        // state.chartsOpts.series = []
-        // state.chartsOpts.xAxis.data = resp.data.snData[0]["data"][0]["data"].map(it => it.time)
-
-        // if (radioVal == "1" && state.devices[0]["line"] == 1) {
-
-        //   markLine.data[0]["yAxis"] = state.devices[0]["lineValue"]
-        //   markLine.label.formatter = (params) => `${params.value}kWh`
-        // } else if (radioVal == "2" && state.devices[1]["line"] == 1) {
-        //   console.log(markLine)
-
-        //   markLine.data[0]["yAxis"] = state.devices[1]["lineValue"]
-        //   markLine.label.formatter = (params) => `${params.value}W`
-        // } else if (radioVal == "3" && state.devices[2]["line"] == 1) {
-
-        //   markLine.data[0]["yAxis"] = state.devices[2]["lineValue"]
-        //   markLine.label.formatter = (params) => `${params.value}A`
-        // } else if (radioVal == "4" && state.devices[3]["line"] == 1) {
-
-        //   markLine.data[0]["yAxis"] = state.devices[3]["lineValue"]
-        //   markLine.label.formatter = (params) => `${params.value}V`
-        // }
-
-        // let compareArr = []
-        // resp.data.snData.forEach((item, index) => {
-        //   if (item?.data?.length > 1) {
-        //     item.data.forEach(it => {
-        //       state.chartsOpts.series.push({
-        //         data: it.data.map(i => (i["value"])), type: "line", smooth: true, name: item["name"] + "-" + it["point"], markLine
-        //       })
-        //     })
-        //   } else {
-        //     state.chartsOpts.series.push({ data: item.data[0]["data"].map(it => it.value), type: "line", smooth: true, name: item["name"] + "-" + item.data[0]["point"], markLine })
-        //   }
-
-        //   compareArr.push(item.data[0]["data"].map(it => (it.value)))
-        //   console.log(state.chartsOpts.series)
-        // })
-
-        // const maxarr = getMaxArr(compareArr)
-        // const minarr = getMinArr(compareArr)
-        // console.log(maxarr,minarr,radioVal)
-        // state.alltableData=[]
-        // state.tableData =[]
-
-        //   maxarr.forEach((item,index)=>{
-        //    const gap =  (((item-minarr[index])/item)*100).toFixed(2)
-        //    console.log(gap)
-        //    if(radioVal=="1"){
-        //     if(gap-state.devices[0].deviationValue>0){
-        //       state.alltableData.push({
-        //         ...resp.data[0].data[0].data[index],
-        //         point:resp.data[0].data[0].point,
-        //         gap,
-        //         deviationValue:state.devices[0].deviationValue,
-        //         maxval:item,
-        //         minval:minarr[index]
-        //       })
-        //     }
-        //    }else if(radioVal=="2"){
-        //     if(gap-state.devices[1].deviationValue>0){
-        //       state.alltableData.push({
-        //         ...resp.data[0].data[0].data[index],
-        //         point:resp.data[0].data[0].point,
-        //         gap,
-        //         deviationValue:state.devices[1].deviationValue,
-        //         maxval:item,
-        //         minval:minarr[index]
-        //       })
-        //     }
-        //    }else if(radioVal=="3"){
-        //     if(gap-state.devices[2].deviationValue>0){
-        //       state.alltableData.push({
-        //         ...resp.data[0].data[0].data[index],
-        //         point:resp.data[0].data[0].point,
-        //         gap,
-        //         deviationValue:state.devices[2].deviationValue,
-        //         maxval:item,
-        //         minval:minarr[index]
-        //       })
-        //     }
-        //    }else if(radioVal=="4"){
-        //     if(gap-state.devices[3].deviationValue>0){
-        //       state.alltableData.push({
-        //         ...resp.data[0].data[0].data[index],
-        //         point:resp.data[0].data[0].point,
-        //         gap,
-        //         deviationValue:state.devices[3].deviationValue,
-        //         maxval:item,
-        //         minval:minarr[index]
-        //       })
-        //     }
-        //    }
-        //   })
-
-        // if (resp.data.compareDeviation) {
-        //   state.alltableData = resp.data.compareDeviation
-        //   console.log(state.alltableData)
-        //   state.tableData = state.alltableData.slice(0, state.pageSize)
-        // }
-
-
-
 
       } else {
-        //state.chartsOpts.series = [{ data: [], type: "line", smooth: true }];
+       
       }
 
     } else {
-      message.error(resp.errMsg || "数据出错");
+      i18warning(resp.errMsg)
+     // message.error(resp.errMsg || "数据出错");
     }
   };
 
@@ -442,7 +329,7 @@ export default function index() {
     ModalRef.current.onOpen()
     //setIndexBtn(index)
     state.alltableData = state.detailtableData[index]?.compareDeviation
-    state.tableData = state.alltableData.length > 0 ? state.alltableData.slice(0, state.pageSize) : []
+    state.tableData = state.alltableData?.length > 0 ? state.alltableData.slice(0, state.pageSize) : []
   }
   const changePage = (val) => {
    
@@ -460,22 +347,7 @@ export default function index() {
   useEffect(() => {
     params.length > 0 && HistoryCompares();
   }, [params]);
-  const DatePick = (
-    <Space>
-      <CustButton onClick={warnDetail}>偏差告警明细</CustButton>
-      <Space>
-        <span>选择日期范围</span>
-        <RangePicker
-          defaultValue={[
-            moment(oneWeekAgo, dateFormat),
-            moment(currentDate, dateFormat),
-          ]}
-          onChange={changeDate}
-        />
-      </Space>
-    </Space>
-
-  );
+ 
   const [dateList, setDateList] = useState([])
   const getDefaultValue = (type) => {
     const today = moment();
@@ -513,27 +385,15 @@ export default function index() {
         return false;
     }
   };
-  const Warn = () => {
-    if (radioVal == 1 && state.devices?.[0]?.deviation == 0) {
-      return null
-    } else if (radioVal == 2 && state.devices?.[1]?.deviation == 0) {
-      return null
-    } else if (radioVal == 3 && state.devices?.[2]?.deviation == 0) {
-      return null
-    } else if (radioVal == 4 && state.devices?.[3]?.deviation == 0) {
-      return null
-    } else if (!state.alltableData || state.alltableData?.length == 0) {
-      return null
-    }
-    return (<img src={warn} onClick={warnDetail}></img>)
-  }
+
   return (
-    <div style={{ width: "100%", height: "100%", display: "flex", flexDirection: "column" }}>
+   /*  <div style={{ width: "100%", height: "100%", display: "flex", flexDirection: "column" }}> */
+   <Pagecount bgcolor="transparent" pd="0">
       {dataList.length > 0 && dataList.map((item, index) => {
         return (
-          <Titlelayout title={item.groupName} style={{ height: 500, marginBottom: 16 }} extra={
+          <Titlelayout title={item.groupName} style={{ height: len== 1 ? "100%" : 500, marginBottom: 16 }} extra={
             <Space>
-              <Space>
+              
                 <BtnWrap
                   defaultValue="1"
                   buttonStyle="solid"
@@ -541,61 +401,40 @@ export default function index() {
                   
                   onChange={(e) => { changeBtn(e, index) }}
                 >
-                  <Radio.Button value="1" disabled={item?.items[0].state == 0}>用电量对比</Radio.Button>
-                  <Radio.Button value="2" disabled={item?.items[1].state == 0}>功率对比</Radio.Button>
-                  <Radio.Button value="3" disabled={item?.items[2].state == 0}>电流对比</Radio.Button>
-                  <Radio.Button value="4" disabled={item?.items[3].state == 0}>电压对比</Radio.Button>
+                  <Radio.Button value="1" disabled={item?.items[0].state == 0}>{i18t("comm","electricquantity",{text:"对比"})}</Radio.Button>
+                  <Radio.Button value="2" disabled={item?.items[1].state == 0}>{i18t("comm","power",{text:"对比"})}</Radio.Button>
+                  <Radio.Button value="3" disabled={item?.items[2].state == 0}>{i18t("comm","voltage",{text:"对比"})}</Radio.Button>
+                  <Radio.Button value="4" disabled={item?.items[3].state == 0}>{i18t("comm","electricity",{text:"对比"})}</Radio.Button>
                 </BtnWrap>
-              </Space>
-              <Space>
-                {state.detailtableData[index]?.compareDeviation == null ? '' : <CustButton style={{ marginRight: 16 }} onClick={() => warnDetail(index)}>偏差告警明细</CustButton>}
-              </Space>
-              <Space>
-                <span>选择日期范围</span>
+             
+                {state.detailtableData[index]?.compareDeviation == null ? '' : <CustButtonT style={{ marginRight: 16 }} onClick={() => warnDetail(index)} ns="comm" text="alarm" param={{text:"偏差", text2: "明细"}} /> } 
+                <div>
+                <span style={{paddingRight:"0.5em"}}>{i18t("monitor","datarang")}</span>
                 <RangePicker
                   defaultValue={[dateList[item.timeType], dateList[0]]}
                   disabledDate={(current) => disabledDate(current, item.timeType)}
                   onChange={(dates, dateStrings) => changeDate(dates, dateStrings, index)}
                 />
-              </Space>
+                </div>
             </Space>}>
             <Divider dashed style={{ borderColor: "#d7d7d7" }}></Divider>
-            <Charts>
+            <Charts len={len}>
               {state.chartsOpts.series.length > 0&&item?.items[params[index].type-1].state != 0 ?
                 <Icharts custoption={{
                   ...state.chartsOpts,
                   series: state.chartsOpts.series[index],
                   xAxis: { data: state.xAxis[index] }
-                }}></Icharts> : <Cempty tip="暂无数据" />}
-            </Charts>
-
-            {/* <BtnWrap
-        defaultValue="a"
-        buttonStyle="solid"
-        size="middle"
-        style={{ width: 452 }}
-        onChange={changeBtn}
-        value={radioVal}
-        disabled={state.disabled}
-      >
-        <Radio.Button value="1" disabled={state.devices?.[0]?.state == 0}>用电量对比</Radio.Button>
-        <Radio.Button value="2" disabled={state.devices?.[1]?.state == 0}>功率对比</Radio.Button>
-        <Radio.Button value="3" disabled={state.devices?.[2]?.state == 0}>电流对比</Radio.Button>
-        <Radio.Button value="4" disabled={state.devices?.[3]?.state == 0}>电压对比</Radio.Button>
-      </BtnWrap>
-      <Charts>
-        {state.chartsOpts.series.length > 0 ? <Icharts custoption={state.chartsOpts}></Icharts> : null}
-      </Charts>
-      <Modal ref={ModalRef} mold='cust' title="偏差告警" onOk={() => { ModalRef.current.onCancel() }} width={800}>
-        <Table dataSource={state.tableData} columns={columns} pagination={{ pageSize: state.pageSize, current: state.current, total: state.alltableData.length, onChange: changePage, onShowSizeChange: onShowSizeChange }}  ></Table>
-      </Modal> */}
+                }}></Icharts> : <Cempty   />}
+            </Charts> 
           </Titlelayout>
         );
       })
 
       }
-      <Modal ref={ModalRef} mold='cust' title="偏差告警" onOk={() => { ModalRef.current.onCancel() }} width={800}>
+      <Modal ref={ModalRef} mold='cust' title={i18t("comm","alarm",{text:"偏差"})} onOk={() => { ModalRef.current.onCancel() }} width={800}>
         <Table dataSource={state.tableData} columns={columns} pagination={{ pageSize: state.pageSize, current: state.current, total: state.alltableData.length, onChange: changePage, onShowSizeChange: onShowSizeChange }}  ></Table>
-      </Modal></div>
+      </Modal>
+      </Pagecount>
+     /*  </div> */
   );
 }

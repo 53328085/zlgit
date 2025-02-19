@@ -5,7 +5,7 @@ import { Select, Radio, Pagination, message, Space, Form} from "antd";
 
 import { Link } from "react-router-dom";
 import { useAntdTable } from "ahooks";
-
+import {CustTransO, i18t, i18warning,ExportExcel, RadioT} from "@com/useButton"
 import {isLightColor} from "@com/usehandler"
 import Icard from "./card";
 import imgurl from "./images/index.js";
@@ -16,7 +16,7 @@ import {
   adaptation,
   themeColor
 } from "@redux/systemconfig.js";
-import { ExportExcel } from "@com/useButton";
+ 
  
 import Table from "@com/useTable";
 import { Serach, Cdivider, CPagination } from "@com/comstyled";
@@ -234,44 +234,44 @@ export default function Index(props) {
  
   const columns = [
     {
-      title: "网关编号",
+      title: i18t("comm","sn",{text:"网关"}),
       dataIndex: "sn",
       key: "sn",
       id: "id",
     },
     {
-      title: "网关型号",
+      title: i18t("comm","category",{text:"型号"}),
       dataIndex: "category",
       key: "category",
       id: "id",
     },
     {
-      title: "网络连接",
+      title:  i18t("comm","netwoker"),
       dataIndex: "state",
-      render: (text) => <span> {text === 2 ? "在线" : "离线"} </span>,
+      render: (text) => <span> {text === 2 ? i18t("overview","online") : i18t("overview","offline")} </span>,
       key: "state",
       id: "id",
     },
     {
-      title: "联网方式",
+      title: i18t("comm","connection"),
       dataIndex: "connMethod",
       key: "connMethod",
       id: "id",
     },
     {
-      title: "子设备",
+      title: i18t("comm","childdevice"),
       dataIndex: "childrenCnt",
       key: "childrenCnt",
       id: "id",
     },
     {
-      title: "安装地址",
+      title: i18t("comm","address"),
       dataIndex: "address",
       key: "address",
       id: "id",
     },
     {
-      title: "更新时间",
+      title: i18t("comm","updateTime"),
       dataIndex: "lastSampleTime",
       key: "lastSampleTime",
       id: "id",
@@ -401,7 +401,7 @@ export default function Index(props) {
   });
   
   const { submit } = hanlder;
-  const showTotal =(total) =>  `共 ${total} 条记录`;
+   
   const onExport = useCallback(() => {
     params.current.pageSize = total
     params.current.pageNum = 1
@@ -456,23 +456,23 @@ export default function Index(props) {
             }}
           >
             <Space size={laptop ? 16 : 64} split={laptop ? "" :<Cdivider />}  >             
-                <Form.Item name="alike" label="网关查询" style={{marginBottom: 0}}  >
+                <Form.Item name="alike" label={i18t("comm","Query",{text:"网关"})} style={{marginBottom: 0}}  >
                   <Serach
                     size="middle"
-                    placeholder="输入网关编号/安装地址"
+                    placeholder={i18t("comm","placeholder",{text:"网关编号/安装地址"})}    // "输入网关编号/安装地址"
                     style={{ width: laptop ? "200px" : "340px" }}
                     allowClear
                     onSearch={submit}
                   />
                 </Form.Item>
-              <Form.Item label="网关型号" name="category" style={{marginBottom: 0}}>
+              <Form.Item label={i18t("comm","category",{text:"网关"})} name="category" style={{marginBottom: 0}}>
                 <Select
                   style={{
                     width: laptop ? 180 : 200,
                   }}
                   onChange={submit}
                 >
-                  <Select.Option value={""}>全部型号</Select.Option>
+                  <Select.Option value={""}>{i18t("comm","All",{text:"全部"})}</Select.Option>
                   {optionsGateway.map((item, index) => {
                     return (
                       <Select.Option key={index} value={item}>
@@ -483,7 +483,7 @@ export default function Index(props) {
                 </Select>
               </Form.Item>
               
-                <Form.Item label="网关状态" name="state" style={{marginBottom: 0}}>
+                <Form.Item label={i18t("comm","Status",{text:"网关"})} name="state" style={{marginBottom: 0}}>
                   <Select
                     style={{
                       width: laptop ? 100 : 200,
@@ -493,21 +493,21 @@ export default function Index(props) {
                       {
                         value: 0,
                         label:
-                          "全部(" +
+                        `${i18t("comm","All")}(` +
                           (statistics.all == undefined ? 0 : statistics.all) +
                           ")",
                       },
                       {
                         value: 2,
                         label:
-                          "正常(" +
+                         `${i18t("comm","normal")}(` + 
                           (statistics.on == undefined ? 0 : statistics.on) +
                           ")",
                       },
                       {
                         value: 1,
                         label:
-                          "失联(" +
+                         `${i18t("overview","offline")}(` +
                           (statistics.off == undefined ? 0 : statistics.off) +
                           ")",
                       },
@@ -517,25 +517,7 @@ export default function Index(props) {
               
             </Space>
             <Space size={ laptop ? 8 :16} style={{ marginLeft: "auto" }}>
-              <Radio.Group
-                onChange={changeTab}
-                defaultValue="card"
-                buttonStyle="solid"
-              >
-                <Radio.Button
-                  style={{ width: "96px", marginLeft: 16, textAlign: "center" }}
-                  value="card"
-                >
-                  卡片模式
-                </Radio.Button>
-                <Radio.Button
-                  style={{ width: "96px", textAlign: "center" }}
-                  value="list"
-                >
-                  列表模式
-                </Radio.Button>
-              </Radio.Group>
-
+              <RadioT onChange={changeTab} /> 
               <ExportExcel disabled={isCard} tb={tableLoadRef} />
             </Space>
           </Form>

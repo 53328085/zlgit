@@ -1,12 +1,18 @@
 import React, { useEffect, useContext, forwardRef, useImperativeHandle, useState, useRef, useMemo } from 'react'
 import { useSelector } from 'react-redux'
 import { Input, Select, Space, Divider, Row, Col,message } from 'antd'
-import style from './style.module.less'
+import styled from 'styled-components'
 import { Monitoring } from '@api/api.js'
 import CustContext from '@com/content'
 import { publishState,adaptation } from '@redux/systemconfig'
 import {  ExportExcel, NewButton, AllExportButton} from '@com/useButton'
 import {Serach, Cdivider} from '@com/comstyled'
+const Mainbox = styled.div`
+  flex:1;
+  display: flex;
+  flex-direction: column;
+  row-gap: 16px;
+`
 function Comp(props, ref) {
     const publish = useSelector(publishState)
     const {laptop} =useSelector(adaptation)
@@ -75,10 +81,9 @@ function Comp(props, ref) {
     }))
 
     return (
-        <div>
+        <Mainbox>
             <Row justify='space-between'  >
-                <Row align='middle' gutter={16}>
-                    <Col>
+                <Space size={16}>
                         <Select
                             showSearch
                             filterOption={(val,opts)=>{
@@ -100,35 +105,23 @@ function Comp(props, ref) {
                             options={areaOptions}
                             onChange={changeSelect}
                         />
-                    </Col>
-                    {laptop ? null : <Col style={{ margin: '0 20px' }}>
-                        <Divider type="vertical" dashed style={{ borderColor: ' #d7d7d7', height: 30 }} />
-                    </Col>}
-                    <Col>
-                        <span style={{ paddingRight: 16 }}>{inplabel}</span>
-                    </Col>
-                    <Col>
+                         <div style={{display:"flex", alignItems:"center", columnGap: "8px"}}> 
+                        <span>{inplabel}</span>
+                     
                                 <Serach
                                 style={{ width: laptop ? 260 : 321 }}
                                 placeholder={placeholder}
                                 allowClear
                                 onChange={changeInp}
                                 onSearch = {searchBtn}
-                                />
-                      {/*   <Input style={{ width: 321 }} placeholder={placeholder} value={inpvalue} onChange={changeInp} /> */}
-                    </Col>
-                    {/* <Col>
-                        <Button style={{ marginLeft: '-1px', width: 80, background: '#f5f7fa' }} onClick={searchBtn}>查询</Button>
-                    </Col> */}
+                                /> 
+                                </div>
+                    
                     {
-                        isenergy && (<>
-                            <Cdivider     style={{ margin: '0 16px',   height: 30 }} />
-                            <Col>
-                                <Select style={{ width: 128 }}></Select>
-                            </Col>
-                        </>)
+                        isenergy &&  
+                                <Select style={{ width: 128 }}></Select>  
                     }
-                </Row>
+                </Space>
                 <Space size={16}>
                     {publish ? null : <>
                         <NewButton onClick={()=>{
@@ -144,13 +137,12 @@ function Comp(props, ref) {
                   
                     <ExportExcel tb={tb}/>
                 </Space>
-            </Row>
-            <Divider dashed style={{ margin: '16px 0', borderColor: ' #d7d7d7' }} />
-            <div style={{display:'flex',height:700}}>
+            </Row> 
+            <div style={{display:'flex',flex:1}}>
             {props.children}
             </div>
             
-        </div>
+        </Mainbox>
     )
 }
 export default forwardRef(Comp)

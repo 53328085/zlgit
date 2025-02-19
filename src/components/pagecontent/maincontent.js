@@ -15,7 +15,7 @@ const Tabsbox = styled(Tabs)`
   //  width:  calc(100vw - 220px);
    .ant-tabs-nav-list {
     .ant-tabs-tab {
-        border-radius: 4px 4px 0 0;
+        border-radius: 8px 8px 0 0;
      //   height: 41px;
         min-width: ${props => props.tabwidth || '145px'} ;
         justify-content: center;       

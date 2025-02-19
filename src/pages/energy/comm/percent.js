@@ -21,7 +21,7 @@ const Itemlist = styled.div`
   grid-template-rows: repeat(5, 48px);
   row-gap: 12px;
   flex:1;
-  padding-top: 28px;
+ // padding-top: 28px;
   .item {
     display: flex;
     border: 1px solid #d7d7d7;

@@ -28,7 +28,7 @@ export class CustTheme {
   static SetUserTheme = (params) =>
     server.get(`Energy/Theme/SetUserTheme`, { params }); // 设置用户的主题
   static GetUserTheme = (params) =>
-    server.get(`Energy/Theme/GetUserTheme`,{params}); // 获取用户设置的主题
+    server.get(`Energy/Theme/GetUserTheme`, { params }); // 获取用户设置的主题
 
   static DeleteTheme = (params) =>
     server.get(`Energy/Theme/DeleteTheme`, { params }); //删除主题
@@ -1713,7 +1713,7 @@ export class UISummary {
 }
 //运行监控
 export const Monitoring = {
-  GetPointList: (params) => server.get(`Monitor/RuntimeDevice/GetPointList`, {params}),//分类测点
+  GetPointList: (params) => server.get(`Monitor/RuntimeDevice/GetPointList`, { params }),//分类测点
   HistoryCurve: (data) => server.post(`Monitor/RuntimeDevice/HistoryCurve`, data),//监控趋势（传感器、流量计）
   //设备类型管理
   DeviceTypeManager: {
@@ -2094,7 +2094,7 @@ export const Monitoring = {
     UpdateComparePlan: (data) => server.post(`/Monitor/Compare/UpdateComparePlan`, data),
     CompareQuery: (projectId) => server.get(`/Monitor/Compare/Query?projectId=${projectId}`),
     QueryPlanList: (projectId) => server.get(`/Monitor/Compare/QueryPlanList?projectId=${projectId}`),
-    DeleteComparePlan: (projectId,planId) => server.get(`/Monitor/Compare/DeleteComparePlan?projectId=${projectId}&planId=${planId}`),
+    DeleteComparePlan: (projectId, planId) => server.get(`/Monitor/Compare/DeleteComparePlan?projectId=${projectId}&planId=${planId}`),
     HistoryCompare: (data) => server.post(`Monitor/Compare/HistoryCompareSmart`, data)
   }//
 };
@@ -3874,6 +3874,7 @@ export class SpareParts {
 } //GetDeviceInfo(int projectId, int deviceId)
 
 //智能配电柜
+
 export class DistributionCabinet {
   static Overview = (data) =>
     server.get(
@@ -3932,3 +3933,36 @@ export class DistributionCabinet {
       `DistributionCabinet/DistributionAlarmInformationRuntime/ConfirmAlarmState?alarmId=${alarmId}`
     ); //确认告警状态
 }//DistributionCabinet/DistributionAlarmInformationRuntime/ConfirmAlarmState?alarmId=1
+
+export class Cabinets {
+  //运行态
+  //---环境监控
+  static QueryEnvironmentMonitorType = () =>
+    server.get(
+      `DistributionCabinet/DistributionEnvironmentMonitorRuntime/QueryEnvironmentMonitorType`
+    );
+  static QueryEnvironmentMonitorList = (siteId) =>
+    server.get(
+      `DistributionCabinet/DistributionEnvironmentMonitorRuntime/QueryEnvironmentMonitorList?siteId=${siteId}`
+    );
+  static QueryTemperatureHumidityTrend = (data) =>
+    server.post(
+      `DistributionCabinet/DistributionEnvironmentMonitorRuntime/QueryTemperatureHumidityTrend`, data,
+    );
+  //---碳排统计
+  static QuerySiteCarbonOverview = (siteId) =>
+    server.get(
+      `DistributionCabinet/DistributionCarbonStatisticsRuntime/QuerySiteCarbonOverview?siteId=${siteId}`
+    );
+  static QueryLineCarbonRanking = (siteId, type) =>
+    server.get(
+      `DistributionCabinet/DistributionCarbonStatisticsRuntime/QueryLineCarbonRanking?siteId=${siteId}&type=${type}`
+    );
+  static QuerySiteCarbonGraph = (siteId, type) =>
+    server.get(
+      `DistributionCabinet/DistributionCarbonStatisticsRuntime/QuerySiteCarbonGraph?siteId=${siteId}&type=${type}`
+    );
+
+  //设计态
+}
+

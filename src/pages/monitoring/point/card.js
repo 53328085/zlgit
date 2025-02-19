@@ -1,9 +1,9 @@
 import React, { useState, useEffect, useRef } from 'react'
+import {i18t} from "@com/useButton"
 
- 
 
 export default function Icard(props) {
-    let daluq = props.deviceStyle == 12;
+    let daluq = props.deviceStyle == 12 || props.deviceStyle == 1;
     const statet = daluq ? {
         open: '分闸',
         close: '合闸'
@@ -44,7 +44,7 @@ export default function Icard(props) {
                     </div>
                 </div>
             </div>
-            {props.state == 2 ? <div className="state">正常</div> : props.state == 1 ? <div className="stateOff">失联</div> : <div className="stateAlarm">告警</div>}
+            {props.state == 2 ? <div className="state">{i18t("comm","normal")}</div> : props.state == 1 ? <div className="stateOff">{i18t("overview","offline")}</div> : <div className="stateAlarm">{i18t("comm","alarm",{text:"", text2:""})}</div>}
 
         </div>
     )

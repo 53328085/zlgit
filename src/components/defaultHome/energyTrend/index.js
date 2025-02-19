@@ -10,7 +10,7 @@ import { HomeRuntime } from '@api/api.js'
 import { message } from 'antd';
 import Ichart  from '@com/useEcharts/Ichart';
 const fs = {
-  hv: '24px',
+//  hv: '24px',
   fc: '#333',
   shadow: "y"
 }
@@ -31,7 +31,7 @@ export default function DefaultHome(props){
     grid:{
       // 图表 grid
       left: "0px",
-      right: "0",
+      right: "0px",
       top: "30px",
       bottom: "0px",
       containLabel: true,

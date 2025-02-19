@@ -1,12 +1,13 @@
 {
-  "annualquota": "年度配额 {{param}}",
+  "Annualquota": "年度配额 {{param}}",
   "Annualee": "年度排放当量 {{param}}",
   "Annualce": "年度剩余碳排放额 {{param}}",
   "directe": "直接排放 {{param}}",
   "indirecte": "间接排放 {{param}}",
   "RankingOfCarbon": "回路碳排放排名",
   "ProportionOfCarbonEmissions": "碳排占比",
-  "Classificationratio": "站点分类能耗占比",
+  "MonthlyCarbonEmissions": "站点月度碳排放",
+  "AnnualCarbonEmissions": "站点年度碳排放",
   "CircuitName": "回路名称",
   "CarbonEmission":"碳排放 {{param}}"
 }

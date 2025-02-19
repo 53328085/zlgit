@@ -9,7 +9,7 @@ import {snValidator} from "@pages/rule"
 import style from './style.module.less'
 import { MultImport, DeleteModal, ErrorMessage } from './modalCom'
 import restart from './imgs/restart.png'
-
+import {Cspin} from "@com/comstyled"
 import { Monitoring } from '@api/api.js'
 import { useSelector } from 'react-redux'
 import imgurl from './imgs/index.js'
@@ -729,8 +729,8 @@ if(Number.isInteger(projectId)) {
 
   },[gatewayRes])
   return (
-    <Spin tip={spinLoading} spinning={spinShow}>
-      <div>
+    <Cspin tip={spinLoading} spinning={spinShow}>
+      <div style={{flex:1, display:"flex"}}>
 
         <Comp {...ComProps}>
           <Table
@@ -807,7 +807,7 @@ if(Number.isInteger(projectId)) {
       </Form>
     </Modal>
       </div>
-    </Spin>
+    </Cspin>
   )
 }
 
@@ -855,7 +855,7 @@ let AddModalForm = ({ modalFormRef, addopts, addForm, usecategory, levelname,onO
           </Col>
           <Col>
             <Divider type='vertical' style={{ height: '100%',  borderColor: '#bcbcbc' }} dashed />
-          </Col>
+          </Col> 
           <Col span={10}>
             <Form.Item label="网关型号" name="category" rules={[rules]}>
               <Select
@@ -1000,9 +1000,9 @@ const EditModalForm = ({ modalEditRef, editform, levelname, ...other }) => {
               <Input />
             </Form.Item>
           </Col>
-          <Col>
+         <Col>
             <Divider type='vertical' style={{ height: '100%', margin: '0 32px', borderColor: '#bcbcbc' }} dashed />
-          </Col>
+          </Col>  
           <Col flex={1}>
             <Form.Item label="网关型号" name="category" rules={[rules]}>
               <Select

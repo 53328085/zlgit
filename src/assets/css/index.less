@@ -22,6 +22,15 @@ html, body {
     flex-direction: column;
     flex:1;
 }
+html,body #root {
+  transform: translateZ(0);
+  .ant-btn, .ant-radio-button-wrapper, .ant-typography {
+     will-change: transform;
+  }
+  a {
+    touch-action: manipulation;
+  }
+}
 @media (pointer: coarse) {
   /* 在触摸屏设备上应用的样式 */
 }
@@ -30,21 +39,7 @@ html, body {
     margin-bottom: 12px;
   }
 }
-/* 屏幕分辨率放大为 150 */ /* 缩放数值需要根据效果调试 */
-/* @media (-webkit-min-device-pixel-ratio: 1.5), (min-resolution: 120dpi) {
-  #root{
-      transform: scale(0.665, 0.665); 
-      transform-origin: left top;
-  }
-} */
  
-/* 屏幕分辨率放大为 125 */
-/* @media (-webkit-min-device-pixel-ratio: 1.25) {
-  #root {
-      transform: scale(0.799, 0.799); 
-      transform-origin: left top;
-  }
-} */
  
 
 
@@ -119,32 +114,7 @@ body *::-webkit-scrollbar-thumb {
 .ant-table-thead > tr > th {
   text-align: center;
 }
-/* 打印样式 */
-
-/* @media all {
-    .page-break {
-      display: none;
-    }
-  }
-  
-  @media print {
-    html, body {
-      height: initial !important;
-      overflow: initial !important;
-      -webkit-print-color-adjust: exact;
-    }
-   
-  }
-  
-  @media print {
-    .page-break {
-      margin-top: 1rem;
-      display: block;
-      page-break-before: auto;
-    }
-   
-  }
- */
+ 
 
  .spincsut{
   flex: 1;
@@ -157,7 +127,22 @@ body *::-webkit-scrollbar-thumb {
   flex-direction: column;
 }
 }
- 
+ // antd 样式全局修改
+ .ant-radio-button-wrapper:first-child {
+  border-radius: 6px 0 0 6px;
+ }
+ .ant-radio-button-wrapper:last-child{
+  border-radius: 0 6px 6px 0;
+ }
+ .ant-input-search>.ant-input-group>.ant-input-group-addon:last-child .ant-input-search-button {
+  border-radius: 0 6px 6px 0;
+ }
+ .ant-btn, .ant-select-selector,.ant-picker,.ant-input,.ant-input-affix-wrapper {
+  border-radius: 6px;
+ }
+ .ant-select:not(.ant-select-customize-input) .ant-select-selector{
+  border-radius: 6px;
+ }
 /* :root {
   --main-bg-color: #ff7313;
   --max-width:1900px;

@@ -21,7 +21,7 @@ import {
 } from "@redux/systemconfig.js";
 import { useRequest } from "ahooks";
  
-const { Paragraph, Text } = Typography;
+const { Paragraph, Text,Link } = Typography;
  
 const Ctag = styled(Tag)`
   &&{
@@ -181,7 +181,7 @@ const Imgbg = memo(({projectId, areaVos}) => {
       }
      
   }
-  const map = build?.length > 0 ? build.map(l => <Ctag left={l.x} top={l.y} key={l.buildName} onClick={() =>getbuild(l) } >{l.buildName}</Ctag>) : null
+  const map = build?.length > 0 ? build.map(l => <Ctag left={l.x} top={l.y} key={l.buildName} onClick={() =>getbuild(l) } ><Link>{l.buildName}</Link></Ctag>) : null
   const queryimg =async () => { //获取图片
     try {
       setSpinning(true)

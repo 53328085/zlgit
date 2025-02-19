@@ -317,7 +317,7 @@ const rules = [{
     <Pagecont showserach={false} custserach pd="0px" >       
       {contextHolder}
       <Titlelayout title= {Title}  layout="flex" dr="column">        
-      <Divider style={{margin: "16px 0"}} />
+     {/*  <Divider style={{margin: "16px 0"}} /> */}
         
         <UseTransfer 
         type="fibre"

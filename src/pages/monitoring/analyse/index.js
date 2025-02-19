@@ -14,6 +14,7 @@ import {
 import Mask from '@com/mask.jsx'
 import UseTransfer from './transfer';
 import { drawEcharts } from "@com/useEcharts"
+import {CustTransO, i18t, i18warning,ExportExcel, RadioT,CustButtonT} from "@com/useButton"
 const { RangePicker } = DatePicker;
 const disabledDate = (current) => {
   return current && current > moment().endOf('day');
@@ -35,16 +36,16 @@ export default function Index() {
   const comparisonType = [
     {
       value: 1,
-      label: "用电量对比"
+      label: i18t("comm","electricquantity",{text:"对比"})
     }, {
       value: 2,
-      label: "功率对比"
+      label: i18t("comm","power",{text:"对比"})
     }, {
       value: 4,
-      label: "电压对比"
+      label: i18t("comm","voltage",{text:"对比"})
     }, {
       value: 3,
-      label: "电流对比"
+      label: i18t("comm","electricity",{text:"对比"})
     },
   ]
   const onChangeType = (val) => {
@@ -62,7 +63,7 @@ export default function Index() {
 
   }
   const onChangeBaseLine = (val) => {
-    if (Sns.length < 2) return message.warning('请至少选择两个设备进行对比分析！')
+    if (Sns.length < 2) return message.warning(i18t("monitor","info1"))
     setBaseLine(val)
     console.log(baseLine, val);
   }
@@ -93,17 +94,17 @@ export default function Index() {
   const columns = [
     {
       align: 'center',
-      title: '设备编号',
+      title: i18t("comm", "sn", {text: "设备"}),
       dataIndex: 'sn',
       key: 'sn'
     }, {
       align: 'center',
-      title: '设备名称',
+      title: i18t("comm", "name", {text: "设备"}),
       dataIndex: 'name',
       key: 'name'
     }, {
       align: 'center',
-      title: '安装地址',
+      title: i18t("comm", "address"),
       dataIndex: 'address',
       key: 'address'
     }
@@ -111,8 +112,8 @@ export default function Index() {
 
   const onSetDevices = async () => {
     setTransferTitle({
-      subTitle: '选择需要对比的设备',
-      unknownTitle: '未选中的设备',
+      subTitle: i18t("monitor","compare"),
+      unknownTitle: i18t("monitor","unselected"),
     })
     const resp = await QueryCompareDevice(projectId, 0, '')
     if (resp.success && Array.isArray(resp.data)) {
@@ -140,13 +141,13 @@ export default function Index() {
   }
   const analysisRef = useRef(null)
   const onSetcontrast = () => {
-    if (Sns.length < 2) return message.warning('请至少选择两个设备进行对比分析！')
+    if (Sns.length < 2) return message.warning(i18t("monitor","info1"))
     if (!typeSelected) {
-      return message.warning('请选择对比数据')
+      return message.warning(i18t("monitor","data"))
     } else {
       if (baseLine.length != 0) {
         if (baseLineValue == undefined) {
-          return message.warning('请填写对比基准线具体数值')
+          return message.warning(i18t("monitor","info2"))
         }
       }
     }
@@ -288,7 +289,7 @@ export default function Index() {
   const [dates, setDates] = useState([moment().startOf('day'), moment()]);
   return (
 
-    <Titlelayout title='对比分析'>
+    <Titlelayout title={i18t("monitor","contrastiveanalysis")}>
       <Cdivider type="h" margin="16px 0" />
       <Form
         layout={laptop ? "vertical" : "line"}
@@ -307,15 +308,15 @@ export default function Index() {
       >
         <Space size={laptop ? 16 : 64} split={laptop ? "" : <Cdivider />} align="end"  >
           <Form.Item name="button" style={{ marginBottom: 0 }}>
-            <Button type='primary' ghost onClick={() => onSetDevices()}>请选择要对比的设备</Button>
+            <CustButtonT ns="monitor" text="compare" ghost onClick={() => onSetDevices()} wh="auto" /> 
           </Form.Item>
-          <Form.Item label="选择对比数据" name="type" style={{ marginBottom: 0 }}>
-            <Select placeholder='请选择对比项目' options={comparisonType} defaultValue={typeSelected} onChange={onChangeType}></Select>
+          <Form.Item label={i18t("monitor","data")} name="type" style={{ marginBottom: 0 }}>
+            <Select placeholder='' options={comparisonType} defaultValue={typeSelected} onChange={onChangeType}></Select>
           </Form.Item>
           <Form.Item name="line" style={{ marginBottom: 0 }} >
             <div style={{ display: 'flex', alignItems: 'center' }}>
               <Checkbox.Group value={baseLine} onChange={onChangeBaseLine}>
-                <Checkbox value="selected">对比基准线</Checkbox>
+                <Checkbox value="selected">{i18t("monitor","datumline")}</Checkbox>
               </Checkbox.Group>
               <div style={{ display: 'flex', alignItems: 'center', position: 'relative' }}>
                 <InputNumber value={baseLineValue} onChange={onChangeBaseLineValue} addonAfter={unit} />
@@ -329,7 +330,7 @@ export default function Index() {
               </div>
             </div>
           </Form.Item>
-          <Form.Item label="请选择日期范围" name="time" style={{ marginBottom: 0 }}>
+          <Form.Item label={i18t("monitor","datarang")} name="time" style={{ marginBottom: 0 }}>
             <RangePicker
               value={dates || value}
               onChange={onChangeTime}
@@ -340,7 +341,7 @@ export default function Index() {
               style={{ width: laptop ? '220px' : '320px' }} />
           </Form.Item >
           <Form.Item noStyle>
-            <Button type="primary" onClick={() => onSetcontrast()}>对比分析</Button>
+            <CustButtonT wh="auto" ns="monitor" text="contrastiveanalysis" onClick={() => onSetcontrast()} /> 
           </Form.Item>
         </Space>
       </Form>
