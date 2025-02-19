@@ -76,7 +76,7 @@ padding: 20px;
     border-radius: 80px;
     padding:0px 5px;
     color:${props => props.theme.primaryderived || '#237AE4'};
-    background:${props => props.theme.primaryderived || '#e5effc'};
+    background:${({ bg }) => bg || '#DEE7F2'};
     border:1px solid  ${props => props.theme.primaryderived || '#237AE4'};
     // color: #0066CC;
     // background-color: rgba(35, 122, 228, 0.117647058823529);
@@ -319,8 +319,9 @@ export default function Index() {
                     className={style.setModal}
                     title={
                         <Titlelayout title={t("overview:SiteSettings")}
-                            style={{ cursor: 'move', height: "30px" }}
+                            style={{ cursor: 'move', height: "40px" }}
                             bordered={'none'}
+                            bg="transparent"
                             onMouseOver={() => {
                                 if (disabled) {
                                     setDisabled(false)
