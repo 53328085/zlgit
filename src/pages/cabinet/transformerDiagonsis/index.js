@@ -1,14 +1,14 @@
 import React, { useState, useRef, useEffect, useCallback } from "react";
 import Titlelayout from "@com/titlelayout";
-import { DatePicker, Space, Radio, Divider, Select, Tree, Button } from "antd";
+import { DatePicker, Space, Radio, Divider, Select, Tree, Button, message } from "antd";
 import moment from "moment";
 import styled from "styled-components";
-import { Monitoring } from "@api/api.js";
+import { DistributionCabinet } from "@api/api.js";
 import { useSelector } from "react-redux";
 import { useReactive } from "ahooks";
 import Icharts from "@com/useEcharts/Ichart.js";
 import Cempty from '@com/useEmpty'
-import { CustButton } from "@com/useButton"
+import dayjs from 'dayjs';
 import Modal from "@com/useModal"
 import Table from "@com/useTable"
 import { ExportExcel } from '@com/useButton'
@@ -81,7 +81,7 @@ const Tbh = styled.div`
   width: 100px;
   height: 36px;
   display: flex;
-  color:${props => props.theme.islight ? '#333' : '#fff'};
+  color:${props => props.islight ? '#333' : '#fff'};
   background-color: ${props => props.theme.primaryColor};
   justify-content: center;
   align-items: center;
@@ -96,8 +96,8 @@ const Tbb = styled.div`
   border-right:1px solid #d7d7d7;
 `;
 const {
-  IAnalyse: { CompareQuery },
-} = Monitoring;
+  QueryTransformerInformation, QueryTransformerLoadRateRealtime, QueryTransformerUnbalanceRateRealtime
+} = DistributionCabinet;
 const option = {
   legend: {
     top: '3%',
@@ -145,128 +145,144 @@ export default function index() {
     pageSize: 10,
     disabled: false,
     groupName: '',
-    btnLength: [1, 2, 3],
+    btnLength: [1, 2],
     active: 0,
     chartsOpts: {
       type: 1,
       ...option,
     },
   });
-
+  const today = moment().startOf('day');
+  const tmonth = moment().startOf('month')
+  const tbref = useRef()
+  const params = useReactive({
+    siteId: 1,
+    transformerId: 1,
+    type: 1,//不平衡率时间选择
+    startDate: moment(today).format('YYYY-MM-DD'),
+    endDate: moment(today).format('YYYY-MM-DD'),
+  });
+  const params1 = useReactive({
+    siteId: 1,
+    transformerId: 1,
+    type: 1,//不平衡率时间选择
+    startDate: moment(today).format('YYYY-MM-DD'),
+    endDate: moment(today).format('YYYY-MM-DD'),
+  });
   const [dataList, setDataList] = useState([])
-  const GetSns = async () => {
-    const resp = await CompareQuery(projectId);
-    if (resp.success) {
-      if (resp.data) {
-
-        setDataList(resp.data)
+  const GetInformation = async () => {
+    try {
+      const resp = await QueryTransformerInformation(params.siteId, params.transformerId);
+      if (resp.success) {
+        if (resp.data) {
+          setDataList(resp.data)
+        } else {
+          setDataList([])
+        }
       } else {
-        setDataList([])
+        message.error("获取设备信息失败!");
       }
-    } else {
-      message.error("获取设备信息失败!");
-    }
+    } catch (err) { }
   };
 
 
 
 
   useEffect(() => {
-    //GetSns();
-  }, []);
+    GetInformation();
+  }, [params.transformerId]);
   const chooseBtn = (item, index) => {
     console.log(item, index)
     state.active = index
+    params.transformerId = index + 1
   }
-  const treeData = [
-    {
-      title: '1#正泰物联配电站',
-      key: '0',
-      children: [
-        {
-          title: '变压器T4',
-          key: '0-0',
-          children: [
-            {
-              title: '进线1AA-1',
-              key: '0-0-0',
-              children: [
-                {
-                  title: '馈线1AA-2',
-                  key: '0-0-0-0',
-                }, {
-                  title: '馈线1AA-3',
-                  key: '0-0-0-1',
-                },
-                {
-                  title: '馈线1AA-4',
-                  key: '0-0-0-2',
-                },
-              ],
-            },
-          ],
-        }, {
-          title: '变压器T4',
-          key: '0-1',
-          children: [
-            {
-              title: '进线1AA-1',
-              key: '0-1-0',
-              children: [
-                {
-                  title: '馈线1AA-2',
-                  key: '0-1-0-0',
-                }, {
-                  title: '馈线1AA-3',
-                  key: '0-1-0-1',
-                },
-                {
-                  title: '馈线1AA-4',
-                  key: '0-1-0-2',
-                },
-              ],
-            },
-          ],
-        },
-      ]
-    }
-  ];
 
-  const onCheck = (checkedKeysValue) => {
-    console.log('onCheck', checkedKeysValue);
-    setCheckedKeys(checkedKeysValue);
-  };
-  const [reportTypeTime, setreportTypeTime] = useState(1)
-  const changeTime = (e) => {
-    console.log(e)
-    setreportTypeTime(parseInt(e))
+
+  const changeTime = (e, index) => {
+    console.log(e, index)
+    if (index == 1) {
+      params.type = parseInt(e)
+    } else {
+      params1.type = parseInt(e)
+    }
+
   }//切换日月年
 
-  const today = moment().startOf('day');
-  const tmonth = moment().startOf('month')
-  const tbref = useRef()
-  const onChangeDate = (date, dateString) => {
+  const onChangeDate = (date, dateString, index) => {
+    console.log(date, dateString, index);
     if (!dateString) return;
-    if (reportTypeTime == 1) {
-      setdateValue(dateString)
-      console.log(dateString);
-    } else if (reportTypeTime == 2) {
-      setdateValue(dateString + '-01')
-      console.log(dateString + '-01');
+    if (index == 1) {
+      if (params.type == 1) {
+        params.startDate = dateString
+        params.endDate = dateString
+      } else if (params.type == 2) {
+        params.startDate = dateString + '-01'
+        params.endDate = dateString + '-01'
+      } else if (params.type == 3) {
+        params.startDate = dateString + '-01-01'
+        params.endDate = dateString + '-01-01'
+      } else {
+        params.startDate = dateString[0]
+        params.endDate = dateString[0]
+      }
     } else {
-      setdateValue(dateString + '-01-01')
-      console.log(dateString + '-01-01');
+      if (params1.type == 1) {
+        params1.startDate = dateString
+        params1.endDate = dateString
+      } else if (params1.type == 2) {
+        params1.startDate = dateString + '-01'
+        params1.endDate = dateString + '-01'
+      } else if (params1.type == 3) {
+        params1.startDate = dateString + '-01-01'
+        params1.endDate = dateString + '-01-01'
+      } else {
+        params1.startDate = dateString[0]
+        params1.endDate = dateString[0]
+      }
     }
   };
+  const disabledDate = (current) => {
+    return current > dayjs().endOf('day');
+  };
 
-  const getData = () => {
-
+  const getData = async () => {
+    try {
+      const resp = await QueryTransformerLoadRateRealtime(params);
+      if (resp.success) {
+        if (resp.data) {
+          //setDataList(resp.data)
+        } else {
+          //setDataList([])
+        }
+      } else {
+        message.error("获取设备信息失败!");
+      }
+    } catch (err) { }
   }
-
+  const getData1 = async () => {
+    try {
+      const resp = await QueryTransformerUnbalanceRateRealtime(params1);
+      if (resp.success) {
+        if (resp.data) {
+          //setDataList(resp.data)
+        } else {
+          //setDataList([])
+        }
+      } else {
+        message.error("获取设备信息失败!");
+      }
+    } catch (err) { }
+  }
+  useEffect(() => {
+    getData();
+  }, [params]);
+  useEffect(() => {
+    getData1();
+  }, [params1]);
   return (
     <div style={{ width: "100%", height: "100%", display: "flex", flexDirection: "row", justifyContent: 'space-between' }}>
       <LeftBox>
-        <div style={{ width: "100%", height: "20px", display: "flex", flexDirection: "row", alignItems: 'center', marginBottom: '16px' }}>
+        {/* <div style={{ width: "100%", height: "20px", display: "flex", flexDirection: "row", alignItems: 'center', marginBottom: '16px' }}>
           <Circle></Circle>
           <Title>变电站选择</Title>
         </div>
@@ -274,7 +290,7 @@ export default function index() {
           return index == state.active ? (<ChooseBtn key={index} onClick={() => chooseBtn(item, index)}>1#物联变电站</ChooseBtn>) :
             (<NoChooseBtn onClick={() => chooseBtn(item, index)}>2#物联变电站</NoChooseBtn>)
         })}
-        <Divider dashed style={{ borderColor: "#d7d7d7" }}></Divider>
+        <Divider dashed style={{ borderColor: "#d7d7d7" }}></Divider> */}
         <div style={{ width: "100%", height: "20px", display: "flex", flexDirection: "row", alignItems: 'center', marginBottom: '16px' }}>
           <Circle></Circle>
           <Title>变压器选择</Title>
@@ -316,7 +332,7 @@ export default function index() {
           <Header>
             <div>
               <span style={{ marginRight: "10px" }}>时间查询</span>
-              <Select defaultValue="1" style={{ width: 96, marginRight: 16 }} onChange={changeTime}
+              <Select defaultValue="1" style={{ width: 96, marginRight: 16 }} onChange={(e) => changeTime(e, 1)}
                 options={[
                   { value: '1', label: '日', },
                   { value: '2', label: '月', },
@@ -324,10 +340,10 @@ export default function index() {
                   { value: '4', label: '自定义' },
                 ]}
               />
-              {reportTypeTime == 1 ? <DatePicker style={{ marginRight: '16px' }} onChange={onChangeDate} defaultValue={moment(today)} /> :
-                reportTypeTime == 2 ? <DatePicker style={{ marginRight: '16px' }} onChange={onChangeDate} defaultValue={moment(tmonth)} picker='month' /> :
-                  reportTypeTime == 3 ? <DatePicker style={{ marginRight: '16px' }} onChange={onChangeDate} picker='year' /> :
-                    <RangePicker style={{ marginRight: '16px' }} />
+              {params.type == 1 ? <DatePicker onChange={(date, dateString) => onChangeDate(date, dateString, 1)} defaultValue={moment(today)} disabledDate={disabledDate} /> :
+                params.type == 2 ? <DatePicker onChange={(date, dateString) => onChangeDate(date, dateString, 1)} defaultValue={moment(tmonth)} picker='month' disabledDate={disabledDate} /> :
+                  params.type == 3 ? <DatePicker onChange={(date, dateString) => onChangeDate(date, dateString, 1)} picker='year' disabledDate={disabledDate} /> :
+                    <RangePicker onChange={(date, dateString) => onChangeDate(date, dateString, 1)} defaultValue={[moment(today), moment(today)]} disabledDate={disabledDate} />
               }
             </div>
           </Header>
@@ -368,7 +384,7 @@ export default function index() {
           <Header>
             <div>
               <span style={{ marginRight: "10px" }}>时间查询</span>
-              <Select defaultValue="1" style={{ width: 96, marginRight: 16 }} onChange={changeTime}
+              <Select defaultValue="1" style={{ width: 96, marginRight: 16 }} onChange={(e) => changeTime(e, 1)}
                 options={[
                   { value: '1', label: '日', },
                   { value: '2', label: '月', },
@@ -376,10 +392,10 @@ export default function index() {
                   { value: '4', label: '自定义' },
                 ]}
               />
-              {reportTypeTime == 1 ? <DatePicker style={{ marginRight: '16px' }} onChange={onChangeDate} defaultValue={moment(today)} /> :
-                reportTypeTime == 2 ? <DatePicker style={{ marginRight: '16px' }} onChange={onChangeDate} defaultValue={moment(tmonth)} picker='month' /> :
-                  reportTypeTime == 3 ? <DatePicker style={{ marginRight: '16px' }} onChange={onChangeDate} picker='year' /> :
-                    <RangePicker style={{ marginRight: '16px' }} />
+              {params1.type == 1 ? <DatePicker style={{ marginRight: '16px' }} onChange={(date, dateString) => onChangeDate(date, dateString, 2)} defaultValue={moment(today)} disabledDate={disabledDate} /> :
+                params1.type == 2 ? <DatePicker style={{ marginRight: '16px' }} onChange={(date, dateString) => onChangeDate(date, dateString, 2)} defaultValue={moment(tmonth)} picker='month' disabledDate={disabledDate} /> :
+                  params1.type == 3 ? <DatePicker style={{ marginRight: '16px' }} onChange={(date, dateString) => onChangeDate(date, dateString, 2)} picker='year' disabledDate={disabledDate} /> :
+                    <RangePicker style={{ marginRight: '16px' }} disabledDate={disabledDate} onChange={(date, dateString) => onChangeDate(date, dateString, 2)} defaultValue={[moment(today), moment(today)]} />
               }
             </div>
           </Header>
@@ -393,13 +409,13 @@ export default function index() {
               <div style={{ height: 72, display: 'flex', justifyContent: 'center', alignItems: 'center', flexDirection: 'column' }}>
                 <div style={{ width: '100%', height: 36, display: 'flex', flexDirection: 'row', border: '1px solid #d7d7d7', borderBottom: 'none' }}>
                   <Tbh>不平衡率</Tbh>
-                  <Tbb style={{width:176}}>安全</Tbb>
-                  <Tbb style={{ borderRight: 'none',width:176 }}>不安全</Tbb>
+                  <Tbb style={{ width: 176 }}>安全</Tbb>
+                  <Tbb style={{ borderRight: 'none', width: 176 }}>不安全</Tbb>
                 </div>
                 <div style={{ width: '100%', height: 36, display: 'flex', flexDirection: 'row', border: '1px solid #d7d7d7' }}>
                   <Tbh >时间占比</Tbh>
-                  <Tbb style={{width:176}}>90%</Tbb>
-                  <Tbb style={{ borderRight: 'none',width:176 }}>10%</Tbb>
+                  <Tbb style={{ width: 176 }}>90%</Tbb>
+                  <Tbb style={{ borderRight: 'none', width: 176 }}>10%</Tbb>
                 </div>
               </div>
             </div>

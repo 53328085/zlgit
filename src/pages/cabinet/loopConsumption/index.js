@@ -1,15 +1,15 @@
 import React, { useState, useRef, useEffect, useCallback } from "react";
 import Titlelayout from "@com/titlelayout";
-import { DatePicker, Space, Radio, Divider, Select, Tree, Button } from "antd";
+import { DatePicker, Space, Radio, Divider, Select, Tree, Button,message } from "antd";
 import moment from "moment";
 import styled from "styled-components";
-import { Monitoring } from "@api/api.js";
+import { DistributionCabinet } from "@api/api.js";
 import { useSelector } from "react-redux";
 import { useReactive } from "ahooks";
 import Icharts from "@com/useEcharts/Ichart.js";
 import Cempty from '@com/useEmpty'
 import { CustButton } from "@com/useButton"
-import Modal from "@com/useModal"
+import dayjs from 'dayjs';
 import Table from "@com/useTable"
 import { ExportExcel } from '@com/useButton'
 import { useAntdTable } from 'ahooks'
@@ -81,8 +81,8 @@ const Charts = styled.div`
   display: flex;
 `;
 const {
-  IAnalyse: { CompareQuery },
-} = Monitoring;
+  QuerySiteList, QuerySiteStructure,QueryLineEnergy
+} = DistributionCabinet;
 const option = {
   legend: {
     top: '3%',
@@ -137,138 +137,182 @@ export default function index() {
       ...option,
     },
   });
-
+  const today = moment().startOf('day');
+  const tmonth = moment().startOf('month')
+  const tbref = useRef()
+  const params = useReactive({
+    siteId: 1,
+    structureIds: [],
+    type: 1,
+    startDate: moment(today).format('YYYY-MM-DD'),
+    endDate: moment(today).format('YYYY-MM-DD'),
+  });
   const [dataList, setDataList] = useState([])
   const GetSns = async () => {
-    const resp = await CompareQuery(projectId);
-    if (resp.success) {
-      if (resp.data) {
-
-        setDataList(resp.data)
+    try {
+      const resp = await QuerySiteList(projectId);
+      if (resp.success) {
+        if (resp.data) {
+          setDataList(resp.data)
+          //params.siteId = resp.data[0]?.id
+        } else {
+          setDataList([])
+        }
       } else {
-        setDataList([])
+        message.error("获取设备信息失败!");
       }
-    } else {
-      message.error("获取设备信息失败!");
-    }
+    } catch (err) { }
   };
 
-
-
-
   useEffect(() => {
-    //GetSns();
+    GetSns();
   }, []);
+  const [treeData, setTreeData] = useState([])
+
+  const getTreeData = async () => {
+    try {
+      const resp = await QuerySiteStructure(params.siteId);
+      if (resp.success) {
+        if (resp.data.id != 0) {
+          let data = []
+          data.push(resp.data)
+          setTreeData(data)
+        } else {
+          setTreeData([])
+        }
+      } else {
+        message.error("获取设备信息失败!");
+      }
+    } catch (err) { }
+  }
+  useEffect(() => {
+    getTreeData();
+  }, [params.siteId]);
   const chooseBtn = (item, index) => {
     console.log(item, index)
     state.active = index
   }
-  const treeData = [
-    {
-      title: '1#正泰物联配电站',
-      key: '0',
-      children: [
-        {
-          title: '变压器T4',
-          key: '0-0',
-          children: [
-            {
-              title: '进线1AA-1',
-              key: '0-0-0',
-              children: [
-                {
-                  title: '馈线1AA-2',
-                  key: '0-0-0-0',
-                }, {
-                  title: '馈线1AA-3',
-                  key: '0-0-0-1',
-                },
-                {
-                  title: '馈线1AA-4',
-                  key: '0-0-0-2',
-                },
-              ],
-            },
-          ],
-        }, {
-          title: '变压器T4',
-          key: '0-1',
-          children: [
-            {
-              title: '进线1AA-1',
-              key: '0-1-0',
-              children: [
-                {
-                  title: '馈线1AA-2',
-                  key: '0-1-0-0',
-                }, {
-                  title: '馈线1AA-3',
-                  key: '0-1-0-1',
-                },
-                {
-                  title: '馈线1AA-4',
-                  key: '0-1-0-2',
-                },
-              ],
-            },
-          ],
-        },
-      ]
-    }
-  ];
 
   const onCheck = (checkedKeysValue) => {
     console.log('onCheck', checkedKeysValue);
     setCheckedKeys(checkedKeysValue);
   };
-  const [reportTypeTime, setreportTypeTime] = useState(1)
   const changeTime = (e) => {
     console.log(e)
-    setreportTypeTime(parseInt(e))
+    params.type = parseInt(e)
+    if (params.type == 1) {
+      params.startDate = moment(today).format('YYYY-MM-DD')
+      params.endDate = moment(today).format('YYYY-MM-DD')
+    } else if (params.type == 2) {
+      params.startDate = moment(tmonth).format('YYYY-MM') + '-01'
+      params.endDate = moment(tmonth).format('YYYY-MM') + '-01'
+    } else if (params.type == 3) {
+      params.startDate = moment(today).format('YYYY') + '-01-01'
+      params.endDate = moment(today).format('YYYY') + '-01-01'
+    } else {
+      params.startDate = moment(today).format('YYYY-MM-DD')
+      params.endDate = moment(today).format('YYYY-MM-DD')
+    }
   }//切换日月年
 
-  const today = moment().startOf('day');
-  const tmonth = moment().startOf('month')
-  const tbref = useRef()
+
   const onChangeDate = (date, dateString) => {
     if (!dateString) return;
-    if (reportTypeTime == 1) {
-      setdateValue(dateString)
-      console.log(dateString);
-    } else if (reportTypeTime == 2) {
-      setdateValue(dateString + '-01')
-      console.log(dateString + '-01');
+    if (params.type == 1) {
+      params.startDate = dateString
+      params.endDate = dateString
+    } else if (params.type == 2) {
+      params.startDate = dateString + '-01'
+      params.endDate = dateString + '-01'
+    } else if (params.type == 3) {
+      params.startDate = dateString + '-01-01'
+      params.endDate = dateString + '-01-01'
     } else {
-      setdateValue(dateString + '-01-01')
-      console.log(dateString + '-01-01');
+      params.startDate = dateString[0]
+      params.endDate = dateString[0]
     }
   };
+  const disabledDate = (current) => {
+    return current > dayjs().endOf('day');
+  };
+  const options = [
+    {
+      label: '图表',
+      value: 1,
+    },
+    {
+      label: '表格',
+      value: 2,
+    },
+  ];
 
-  const getData = () => {
-
+  const columns = [
+    { title: '线路名称', dataIndex: 'name', align: "center", },
+    {
+      title: '正向有功电能 kWh', align: "center", children: [
+        { title: '开始', dataIndex: 'companyName', key: 'companyName', },
+        { title: '截止', dataIndex: 'companyName', key: 'companyName', },
+        { title: '用能', dataIndex: 'companyName', key: 'companyName', },
+      ]
+    }, {
+      title: '反向有功电能 kWh', align: "center", children: [
+        { title: '开始', dataIndex: 'companyName', key: 'companyName', },
+        { title: '截止', dataIndex: 'companyName', key: 'companyName', },
+        { title: '用能', dataIndex: 'companyName', key: 'companyName', },
+      ]
+    }, { title: '考核功率因数', dataIndex: 'name', align: "center", },
+    { title: '正向有功最大需量 kW', dataIndex: 'name', align: "center", },
+  ]
+  const getData = async({ current, pageSize }) => {
+    try {
+      const resp = await QueryLineEnergy(params);
+      if (resp.success) {
+        if (resp.data) {
+          return {
+            data: resp.data.list,
+            total: resp.data.total,
+          }
+          } else {
+          return {
+            data: [],
+            total: 0,
+          }
+        }
+      } else {
+        message.error("获取设备信息失败!");
+      }
+    } catch (error) {
+      console.log(error)
+    }
   }
-
+  const { tableProps, refresh, run, search } = useAntdTable(getData, {
+    defaultPageSize: 14,
+  })
+  useEffect(() => {
+    run();
+  }, [params]);
   return (
     <div style={{ width: "100%", height: "100%", display: "flex", flexDirection: "row", justifyContent: 'space-between' }}>
       <LeftBox>
-        <div style={{ width: "100%", height: "20px", display: "flex", flexDirection: "row", alignItems: 'center', marginBottom: '16px' }}>
+        {/* <div style={{ width: "100%", height: "20px", display: "flex", flexDirection: "row", alignItems: 'center', marginBottom: '16px' }}>
           <Circle></Circle>
           <Title>变电站选择</Title>
         </div>
-        {state.btnLength.length > 0 && state.btnLength.map((item, index) => {
-          return index == state.active ? (<ChooseBtn key={index} onClick={() => chooseBtn(item, index)}>1#物联变电站</ChooseBtn>) :
-            (<NoChooseBtn onClick={() => chooseBtn(item, index)}>2#物联变电站</NoChooseBtn>)
+        {dataList.length > 0 && dataList.map((item, index) => {
+          return index == state.active ? (<ChooseBtn key={index} onClick={() => chooseBtn(item, index)}>{item.name}</ChooseBtn>) :
+            (<NoChooseBtn onClick={() => chooseBtn(item, index)}>{item.name}</NoChooseBtn>)
         })}
-        <Divider dashed style={{ borderColor: "#d7d7d7" }}></Divider>
+        <Divider dashed style={{ borderColor: "#d7d7d7" }}></Divider> */}
         <Tree
           checkable
           onCheck={onCheck}
           treeData={treeData}
+          fieldNames={{ title: 'name', key: 'id', children: 'nodes' }}
         />
       </LeftBox>
       <Titlelayout title='回路能耗' style={{ width: 1422, height: '100%' }} extra={
         <Header>
-          <div>
+          <div style={{ marginRight: "16px" }}>
             <span style={{ marginRight: "10px" }}>时间查询</span>
             <Select defaultValue="1" style={{ width: 96, marginRight: 16 }} onChange={changeTime}
               options={[
@@ -278,21 +322,35 @@ export default function index() {
                 { value: '4', label: '自定义' },
               ]}
             />
-            {reportTypeTime == 1 ? <DatePicker style={{ marginRight: '16px' }} onChange={onChangeDate} defaultValue={moment(today)} /> :
-              reportTypeTime == 2 ? <DatePicker style={{ marginRight: '16px' }} onChange={onChangeDate} defaultValue={moment(tmonth)} picker='month' /> :
-                reportTypeTime == 3 ? <DatePicker style={{ marginRight: '16px' }} onChange={onChangeDate} picker='year' /> : 
-                <RangePicker style={{ marginRight: '16px' }}/>
+            {params.type == 1 ? <DatePicker onChange={onChangeDate} defaultValue={moment(today)} disabledDate={disabledDate} /> :
+              params.type == 2 ? <DatePicker onChange={onChangeDate} defaultValue={moment(tmonth)} picker='month' disabledDate={disabledDate} /> :
+                params.type == 3 ? <DatePicker onChange={onChangeDate} picker='year' disabledDate={disabledDate} /> :
+                  <RangePicker onChange={onChangeDate} defaultValue={[moment(today), moment(today)]} disabledDate={disabledDate} />
             }
           </div>
-          <ExportExcel  tb={tbref} />
+          {/* <Radio.Group
+            block
+            options={options}
+            optionType="button"
+            buttonStyle="solid"
+            value={state.timeType}
+            onChange={(e) => {
+              state.timeType = e.target.value
+            }}
+            style={{ marginRight: "16px" }}
+          />
+          {state.timeType == 2 ? <ExportExcel tb={tbref} /> : null} */}
         </Header>
       }>
-        <Charts>
-          {state.chartsOpts.series.length > 0  ?
+        {state.timeType == 1 ?<Charts>
+          {state.chartsOpts.series.length > 0 ?
             <Icharts custoption={{
               ...state.chartsOpts
             }}></Icharts> : <Cempty tip="暂无数据" />}
-        </Charts>
+        </Charts>:
+        <Charts>
+          <Table columns={columns} ref={tbref}   {...tableProps} ></Table>
+          </Charts>}
       </Titlelayout>
     </div>
   );

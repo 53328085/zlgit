@@ -1,9 +1,10 @@
 import React, { useState, useRef, useEffect, useCallback } from "react";
 import Titlelayout from "@com/titlelayout";
-import { DatePicker, Input, Radio, Divider, Select, Tree, Button, Tag, Drawer, Steps } from "antd";
+import { DatePicker, Input, Radio, Divider, Select, message, Button, Tag, Drawer, Steps } from "antd";
+import dayjs from 'dayjs';
 import moment from "moment";
 import styled from "styled-components";
-import { Monitoring } from "@api/api.js";
+import { DistributionCabinet } from "@api/api.js";
 import { useSelector } from "react-redux";
 import { useReactive } from "ahooks";
 import Icharts from "@com/useEcharts/Ichart.js";
@@ -11,7 +12,11 @@ import Cempty from '@com/useEmpty'
 import { CustButton } from "@com/useButton"
 import Modal from "@com/useModal"
 import Table from "@com/useTable"
-import img from "./u542.svg"
+import img3 from "./u252.svg"
+import img1 from "./u255.svg"
+import img2 from "./u258.svg"
+import img4 from "./u544.svg"
+import img5 from "./u545.svg"
 import { ExportExcel } from '@com/useButton'
 import { useAntdTable } from 'ahooks'
 const { RangePicker } = DatePicker;
@@ -145,8 +150,8 @@ const DetailsRight = styled.div`
   justify-content: center;
 `;
 const {
-  IAnalyse: { CompareQuery },
-} = Monitoring;
+  QueryAlarmOverview, QueryAlarmInformation,QueryAlarmDetail,ConfirmAlarmState
+} = DistributionCabinet;
 const option = {
   legend: {
     top: '3%',
@@ -183,7 +188,7 @@ const option = {
 export default function index() {
   const projectId = useSelector((state) => state.system.menus.projectId);
   const state = useReactive({
-    details: {},
+    overview: {},
     snGroup: [],
     timeType: 1,
     xAxis: [],
@@ -201,171 +206,195 @@ export default function index() {
       ...option,
     },
   });
-
-  const [dataList, setDataList] = useState([])
-  const GetSns = async () => {
-    const resp = await CompareQuery(projectId);
-    if (resp.success) {
-      if (resp.data) {
-
-        setDataList(resp.data)
-      } else {
-        setDataList([])
-      }
-    } else {
-      message.error("获取设备信息失败!");
-    }
-  };
-
-
-
-
-  useEffect(() => {
-    //GetSns();
-  }, []);
-  const chooseBtn = (item, index) => {
-    console.log(item, index)
-    state.active = index
-  }
-  const treeData = [
-    {
-      title: '1#正泰物联配电站',
-      key: '0',
-      children: [
-        {
-          title: '变压器T4',
-          key: '0-0',
-          children: [
-            {
-              title: '进线1AA-1',
-              key: '0-0-0',
-              children: [
-                {
-                  title: '馈线1AA-2',
-                  key: '0-0-0-0',
-                }, {
-                  title: '馈线1AA-3',
-                  key: '0-0-0-1',
-                },
-                {
-                  title: '馈线1AA-4',
-                  key: '0-0-0-2',
-                },
-              ],
-            },
-          ],
-        }, {
-          title: '变压器T4',
-          key: '0-1',
-          children: [
-            {
-              title: '进线1AA-1',
-              key: '0-1-0',
-              children: [
-                {
-                  title: '馈线1AA-2',
-                  key: '0-1-0-0',
-                }, {
-                  title: '馈线1AA-3',
-                  key: '0-1-0-1',
-                },
-                {
-                  title: '馈线1AA-4',
-                  key: '0-1-0-2',
-                },
-              ],
-            },
-          ],
-        },
-      ]
-    }
-  ];
-
-  const onCheck = (checkedKeysValue) => {
-    console.log('onCheck', checkedKeysValue);
-    setCheckedKeys(checkedKeysValue);
-  };
-  const [reportTypeTime, setreportTypeTime] = useState(1)
-  const changeTime = (e) => {
-    console.log(e)
-    setreportTypeTime(parseInt(e))
-  }//切换日月年
-
   const today = moment().startOf('day');
   const tmonth = moment().startOf('month')
   const tbref = useRef()
-  const onChangeDate = (date, dateString) => {
-    if (!dateString) return;
-    if (reportTypeTime == 1) {
-      setdateValue(dateString)
-      console.log(dateString);
-    } else if (reportTypeTime == 2) {
-      setdateValue(dateString + '-01')
-      console.log(dateString + '-01');
-    } else {
-      setdateValue(dateString + '-01-01')
-      console.log(dateString + '-01-01');
-    }
+  const params = useReactive({
+    siteId: 1,
+    alarmLevel: 0,
+    type: 1,
+    startDate: moment(today).format('YYYY-MM-DD'),
+    endDate: moment(today).format('YYYY-MM-DD'),
+  });
+  const GetSns = async () => {
+    try {
+      const resp = await QueryAlarmOverview(projectId);
+      if (resp.success) {
+        if (resp.data) {
+          state.overview = resp.data
+        } else {
+          state.overview = {}
+        }
+      } else {
+        message.error("获取信息失败!");
+      }
+    } catch (err) { }
   };
 
-  const getData = () => {
+  useEffect(() => {
+    GetSns();
+  }, []);
 
-  }
+  const changeTime = (e) => {
+    console.log(e)
+    params.type = parseInt(e)
+    if (params.type == 1) {
+      params.startDate = moment(today).format('YYYY-MM-DD')
+      params.endDate = moment(today).format('YYYY-MM-DD')
+    } else if (params.type == 2) {
+      params.startDate = moment(tmonth).format('YYYY-MM') + '-01'
+      params.endDate = moment(tmonth).format('YYYY-MM') + '-01'
+    } else if (params.type == 3) {
+      params.startDate = moment(today).format('YYYY') + '-01-01'
+      params.endDate = moment(today).format('YYYY') + '-01-01'
+    } else {
+      params.startDate = moment(today).format('YYYY-MM-DD')
+      params.endDate = moment(today).format('YYYY-MM-DD')
+    }
+    run(1,14)
+  }//切换日月年
+
+
+  const onChangeDate = (date, dateString) => {
+    if (!dateString) return;
+    if (params.type == 1) {
+      params.startDate = dateString
+      params.endDate = dateString
+    } else if (params.type == 2) {
+      params.startDate = dateString + '-01'
+      params.endDate = dateString + '-01'
+    } else if (params.type == 3) {
+      params.startDate = dateString + '-01-01'
+      params.endDate = dateString + '-01-01'
+    } else {
+      params.startDate = dateString[0]
+      params.endDate = dateString[0]
+    }
+    run(1,14)
+  };
+  const disabledDate = (current) => {
+    return current > dayjs().endOf('day');
+  };
   const columns = [
     {
-      title: '告警等级', dataIndex: 'name', align: "center",
+      title: '告警等级', dataIndex: 'alarmLevel', align: "center", width: '78px',
       render: (text, record, index) => {
-        return text == '高' ? <span style={{ backgroundColor: '#ff3366', color: '#fff', width: '100%', height: '100%', display: 'block' }}>{record}</span> :
-          text == '中' ? <span style={{ backgroundColor: '#ffcc66', color: '#fff', width: '100%', height: '100%', display: 'block' }}>{text}</span> :
-            <span style={{ backgroundColor: '#9933cc', color: '#fff', width: '100%', height: '100%', display: 'block' }}>{record}</span>
-      }
+        return text == 3 ? <span style={{ backgroundColor: '#ff3366', color: '#fff', width: '100%', height: '100%', display: 'block' }}>高</span> :
+          text == 2 ? <span style={{ backgroundColor: '#ffcc66', color: '#fff', width: '100%', height: '100%', display: 'block' }}>中</span> :
+           <span style={{ backgroundColor: '#9933cc', color: '#fff', width: '100%', height: '100%', display: 'block' }}>低</span>
+          }
     },
-    { title: '最新告警时间', dataIndex: 'name', align: "center", },
-    { title: '告警详情', dataIndex: 'name', align: "center", },
-    { title: '设备类型', dataIndex: 'name', align: "center", },
-    { title: '报警位置', dataIndex: 'name', align: "center", },
+    { title: '最新告警时间', dataIndex: 'lastAlarmTime', align: "center", },
+    { title: '告警详情', dataIndex: 'alarmDetail', align: "center", },
+    { title: '设备类型', dataIndex: 'deviceCategory', align: "center", },
+    { title: '报警位置', dataIndex: 'alarmLocation', align: "center", },
     {
-      title: '状态', dataIndex: 'name', align: "center", render: (text, record, index) => {
-        return text == '已确认' ? <Tag color="success">已确认</Tag> : <Tag color="error" onClick={() => { gotoSure(record) }}>未确认</Tag>
+      title: '状态', dataIndex: 'alarmState', align: "center", render: (text, record, index) => {
+        return text == 0 ? <Tag color="processing">已解除</Tag> :text == 1 ?<Tag color="success" >已确认</Tag>:
+        <Tag color="error" onClick={() => { gotoSure(record) }}>未确认</Tag>
       }
     },
   ]
-  const gotoSure = (record) => {
+  const details = useReactive({
+    // alarmClearTime:'',
+    // alarmConfirmTime:'',
+    // alarmLevel:'',
+    // alarmLocation:'',
+    // alarmOccurTime:'',
+    // alarmRecord:'',
+    // alarmState:'',
+    // alarmType:'',
+    // cabinetName:'',
+    // deviceName:'',
+    // lineName:'',
+    // siteName:''
+  });
+  const gotoSure = async(record) => {
     console.log(record)
-    setOpen(true);
+    details.alarmId=record.alarmId
+    try {
+      const resp = await QueryAlarmDetail(record.alarmId);
+      if (resp.success) {
+        if (resp.data) {
+          Object.assign(details, resp.data)
+          setOpen(true);
+        } else {
+          
+        }
+      } else {
+        message.error("获取信息失败!");
+      }
+    } catch (error) {
+      console.log(error)
+    }
+
   }
   const [open, setOpen] = useState(false);
   const onClose = () => {
     setOpen(false);
   };
-  const getTableData = ({ current, pageSize }) => {
-    return {
-      list: [1, 2, 3],
-      total: 3,
-    }
+  const getTableData = async({ current, pageSize }) => {
+    try {
+      const resp = await QueryAlarmInformation(params);
+      if (resp.success) {
+        if (resp.data) {
+          return{
+            list: resp.data,
+            total: resp.data.length,
+          }
+        } else {
+          return{
+            list: [],
+            total: 0,
+          }
+        }
+      } else {
+        message.error("获取信息失败!");
+      }
+    } catch (err) { }
   }
   const { tableProps, refresh, run, search } = useAntdTable(getTableData, {
     defaultPageSize: 14,
   })
-  const { submit } = search
   const options = [
     {
       label: '全部',
-      value: '0',
+      value: 0,
     },
     {
       label: '高',
-      value: '1',
+      value: 1,
     },
     {
       label: '中',
-      value: '2',
+      value: 2,
     },
     {
       label: '低',
-      value: '3',
+      value: 3,
     },
   ];
+  const levelChange=(e)=>{
+    console.log(e)
+    params.alarmLevel=e.target.value
+    run(1,14)
+  }
+  const onChangeInput=(e)=>{
+    details.alarmRecord=e.target.value
+  }
+  const comfirmAlarm=async()=>{
+   try {
+    const resp = await ConfirmAlarmState(details.alarmId);
+      if (resp.success) {
+        message.success("确认告警信息成功!");
+        setOpen(false);
+      } else {
+        message.error("确认告警信息失败!");
+      }
+   } catch (error) {
+    
+   }
+  }
   const Title = ({ title }) => {
     return (
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-start', width: '100%', flexDirection: 'row' }}>
@@ -379,40 +408,50 @@ export default function index() {
       <Right>
         <RightTop>
           <TopBox>
-            <div style={{ width: 115, height: 66, display: 'flex', alignItems: 'center', justifyContent: 'center' }}><img src={img} width={48} height={48}></img></div>
+            <div style={{ width: 115, height: 66, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              <img src={img1} width={48} height={48}></img>
+            </div>
             <TopRight>
               <p style={{ fontSize: '16px', color: '#515151', textAlign: 'center' }}>连续无告警运行时间</p>
               <p style={{ fontSize: '16px', color: '#999999', textAlign: 'center' }}>
-                <span style={{ fontSize: '48px', color: '#515151', textAlign: 'center', marginRight: '16px' }}>12</span>天</p>
+                <span style={{ fontSize: '48px', color: '#515151', textAlign: 'center', marginRight: '16px' }}>{state.overview?.continuousNoAlarmTime}</span>天</p>
             </TopRight>
           </TopBox>
           <TopBox>
-            <div style={{ width: 115, height: 66, display: 'flex', alignItems: 'center', justifyContent: 'center' }}><img src={img} width={48} height={48}></img></div>
+            <div style={{ width: 115, height: 66, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              <img src={img2} width={48} height={48}></img>
+            </div>
             <TopRight>
               <p style={{ fontSize: '16px', color: '#515151', textAlign: 'center' }}>当前未确认报警总数</p>
               <p style={{ fontSize: '16px', color: '#999999', textAlign: 'center' }}>
-                <span style={{ fontSize: '48px', color: '#ff0000', textAlign: 'center', marginRight: '16px' }}>12</span>条</p>
+                <span style={{ fontSize: '48px', color: '#ff0000', textAlign: 'center', marginRight: '16px' }}>{state.overview?.curUnconfirmedAlarmNum}</span>条</p>
             </TopRight>
           </TopBox><TopBox>
-            <div style={{ width: 115, height: 66, display: 'flex', alignItems: 'center', justifyContent: 'center' }}><img src={img} width={48} height={48}></img></div>
+            <div style={{ width: 115, height: 66, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              <img src={img3} width={48} height={48}></img>
+            </div>
             <TopRight>
               <p style={{ fontSize: '16px', color: '#515151', textAlign: 'center' }}>当前跳闸断路器数</p>
               <p style={{ fontSize: '16px', color: '#999999', textAlign: 'center' }}>
-                <span style={{ fontSize: '48px', color: '#ff0000', textAlign: 'center', marginRight: '16px' }}>12</span>台</p>
+                <span style={{ fontSize: '48px', color: '#ff0000', textAlign: 'center', marginRight: '16px' }}>{state.overview?.circuitBreakerTripNum}</span>台</p>
             </TopRight>
           </TopBox><TopBox>
-            <div style={{ width: 115, height: 66, display: 'flex', alignItems: 'center', justifyContent: 'center' }}><img src={img} width={48} height={48}></img></div>
+            <div style={{ width: 115, height: 66, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              <img src={img4} width={48} height={48}></img>
+            </div>
             <TopRight>
               <p style={{ fontSize: '16px', color: '#515151', textAlign: 'center' }}>当前离线设备数</p>
               <p style={{ fontSize: '16px', color: '#999999', textAlign: 'center' }}>
-                <span style={{ fontSize: '48px', color: '#515151', textAlign: 'center', marginRight: '16px' }}>12</span>台</p>
+                <span style={{ fontSize: '48px', color: '#515151', textAlign: 'center', marginRight: '16px' }}>{state.overview?.deviceOfflineNum}</span>台</p>
             </TopRight>
           </TopBox><TopBox>
-            <div style={{ width: 115, height: 66, display: 'flex', alignItems: 'center', justifyContent: 'center' }}><img src={img} width={48} height={48}></img></div>
+            <div style={{ width: 115, height: 66, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              <img src={img5} width={48} height={48}></img>
+            </div>
             <TopRight>
               <p style={{ fontSize: '16px', color: '#515151', textAlign: 'center' }}>频繁离线设备数</p>
               <p style={{ fontSize: '16px', color: '#999999', textAlign: 'center' }}>
-                <span style={{ fontSize: '48px', color: '#515151', textAlign: 'center', marginRight: '16px' }}>12</span>台</p>
+                <span style={{ fontSize: '48px', color: '#515151', textAlign: 'center', marginRight: '16px' }}>{state.overview?.deviceFrequentOfflineNum}</span>台</p>
             </TopRight>
           </TopBox>
         </RightTop>
@@ -428,9 +467,10 @@ export default function index() {
                   { value: '4', label: '自定义' },
                 ]}
               />
-              {reportTypeTime == 1 ? <DatePicker onChange={onChangeDate} defaultValue={moment(today)} /> :
-                reportTypeTime == 2 ? <DatePicker onChange={onChangeDate} defaultValue={moment(tmonth)} picker='month' /> :
-                  reportTypeTime == 3 ? <DatePicker onChange={onChangeDate} picker='year' /> : <RangePicker />
+              {params.type == 1 ? <DatePicker onChange={onChangeDate} defaultValue={moment(today)} disabledDate={disabledDate}/> :
+                params.type == 2 ? <DatePicker onChange={onChangeDate} defaultValue={moment(tmonth)} picker='month' disabledDate={disabledDate}/> :
+                params.type == 3 ? <DatePicker onChange={onChangeDate} picker='year' disabledDate={disabledDate}/> : 
+                <RangePicker  onChange={onChangeDate} defaultValue={[moment(today), moment(today)]} disabledDate={disabledDate} />
               }
               {/* <Button type="primary" style={{ marginLeft: 32, width: 96 }}  onClick={submit}>开始诊断</Button> */}
             </div>
@@ -439,9 +479,10 @@ export default function index() {
               <Radio.Group
                 block
                 options={options}
-                defaultValue="0"
+                defaultValue={0}
                 optionType="button"
                 buttonStyle="solid"
+                onChange={levelChange}
               />
             </div>
             {/* <ExportExcel tb={tbref} /> */}
@@ -461,67 +502,67 @@ export default function index() {
           <div style={{ width: 486, height: 221, display: "flex", flexDirection: "column" }}>
             <Details>
               <DetailsLeft>报警类别</DetailsLeft>
-              <DetailsRight>温度超限告警</DetailsRight>
+              <DetailsRight>{details?.alarmType}</DetailsRight>
             </Details>
             <Details>
               <DetailsLeft>变电站</DetailsLeft>
-              <DetailsRight>1#配电站</DetailsRight>
+              <DetailsRight>{details?.siteName}</DetailsRight>
             </Details>
             <Details>
               <DetailsLeft>柜体</DetailsLeft>
-              <DetailsRight>BB2</DetailsRight>
+              <DetailsRight>{details?.cabinetName}</DetailsRight>
             </Details>
             <Details>
               <DetailsLeft>回路名称</DetailsLeft>
-              <DetailsRight>/</DetailsRight>
+              <DetailsRight>{details?.lineName}</DetailsRight>
             </Details>
             <Details>
               <DetailsLeft>报警设备</DetailsLeft>
-              <DetailsRight>B相温度传感器</DetailsRight>
+              <DetailsRight>{details?.deviceName}</DetailsRight>
             </Details>
             <Details style={{ borderBottom: '1px solid #d7d7d7' }}>
               <DetailsLeft>通信地址</DetailsLeft>
-              <DetailsRight>215085845013</DetailsRight>
+              <DetailsRight>{details?.alarmLocation}</DetailsRight>
             </Details>
           </div>
         </div>
         <Title title='告警等级'> </Title>
         <div style={{ height: '80px', padding: '16px' }}>
           {
-            state.details?.level == 1 ? <Tag color="red" style={{ width: 128, height: 40, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '18px' }}>高风险</Tag> :
-              state.details?.level == 1 ? <Tag color="yellow" style={{ width: 128, height: 40, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '18px' }}>中风险</Tag> :
+            details?.alarmLevel == 3 ? <Tag color="red" style={{ width: 128, height: 40, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '18px' }}>高风险</Tag> :
+              details?.alarmLevel == 2 ? <Tag color="yellow" style={{ width: 128, height: 40, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '18px' }}>中风险</Tag> :
                 <Tag color="green" style={{ width: 128, height: 40, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '18px' }}>低风险</Tag>
           }
         </div>
         <Title title='告警状态'></Title>
-        <div style={{ height: '200px',padding: '16px' }}>
+        <div style={{ height: '200px', padding: '16px' }}>
           <Steps
             direction="vertical"
             size="small"
-            current={1}
+            current={details?.alarmState==2?1:details?.alarmState==1?2:3}
             items={[
               {
                 title: '告警发生',
-                description: '2016-12-12 12:50:00',
+                description: details?.alarmOccurTime,
               },
               {
                 title: '告警确认',
-                description: '2016-12-12 12:50:00',
+                description: details?.alarmConfirmTime,
               },
               {
                 title: '报警解除',
-                description: '',
+                description: details?.alarmClearTime,
               },
             ]}
           />
         </div>
         <Title title='告警记录'></Title>
-        <div style={{ height: '200px',padding: '16px' }}>
-        <TextArea rows={4} />
+        <div style={{ height: '200px', padding: '16px' }}>
+          <TextArea rows={4} value={details?.alarmRecord} onChange={(e) => onChangeInput(e)} />
         </div>
         <div>
           <Button style={{ marginRight: 16, width: 96 }} onClick={onClose}>取消</Button>
-          <Button type="primary" style={{ marginLeft: 32, width: 96 }} >确认</Button>
+          <Button type="primary" style={{ marginLeft: 32, width: 96 }} onClick={comfirmAlarm}>确认</Button>
         </div>
       </Drawer>
     </div>

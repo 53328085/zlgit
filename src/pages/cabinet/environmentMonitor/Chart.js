@@ -135,7 +135,7 @@ export default function Chart({ data, laptop, allData }) {
       right: "72px",
     },
     legend: {
-      data: ["温度", "湿度"],
+      data: ["温度(℃)", "湿度(%)"],
       position: 'center',
     },
     series: [{ type: 'line', yAxisIndex: 0, smooth: true, areaStyle: null }, { type: "line", yAxisIndex: 1, smooth: true, areaStyle: null }],
@@ -173,8 +173,8 @@ export default function Chart({ data, laptop, allData }) {
         dataset: {
           dimensions: [
             { name: 'x', type: "time" },
-            { name: 'y', displayName: '温度' },
-            { name: 'y1', displayName: '湿度' }
+            { name: 'y', displayName: '温度(℃)' },
+            { name: 'y1', displayName: '湿度(%)' }
           ],
           source: trend,
         }
