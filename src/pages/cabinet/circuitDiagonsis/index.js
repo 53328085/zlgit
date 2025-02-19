@@ -1,9 +1,10 @@
 import React, { useState, useRef, useEffect, useCallback } from "react";
 import Titlelayout from "@com/titlelayout";
-import { DatePicker, Space, Radio, Divider, Select, Tree, Button } from "antd";
+import { DatePicker, Space, Radio, Divider, Select, Tree, Button, message } from "antd";
+import dayjs from 'dayjs';
 import moment from "moment";
 import styled from "styled-components";
-import { Monitoring } from "@api/api.js";
+import { DistributionCabinet } from "@api/api.js";
 import { useSelector } from "react-redux";
 import { useReactive } from "ahooks";
 import Icharts from "@com/useEcharts/Ichart.js";
@@ -11,7 +12,10 @@ import Cempty from '@com/useEmpty'
 import { CustButton } from "@com/useButton"
 import Modal from "@com/useModal"
 import Table from "@com/useTable"
-import img from "./u542.svg"
+import img1 from "./u542.svg"
+import img2 from "./u543.svg"
+import img3 from "./u544.svg"
+import img4 from "./u545.svg"
 import { ExportExcel } from '@com/useButton'
 import { useAntdTable } from 'ahooks'
 const { RangePicker } = DatePicker;
@@ -105,16 +109,13 @@ height:32px;
 display:flex;
 flex-direction:row;
 align-items:center;
-justify-content:flex-start;
+justify-content:space-between;
 margin-bottom:16px;
 `;
 const Charts = styled.div`
   height: 784px;
   display: flex;
 `;
-const {
-  IAnalyse: { CompareQuery },
-} = Monitoring;
 const option = {
   legend: {
     top: '3%',
@@ -147,7 +148,9 @@ const option = {
 
   ],
 };
-
+const {
+  QuerySiteList, QuerySiteStructure, QueryCircuitBreakerOverview, QueryCircuitBreakerDiagnosis
+} = DistributionCabinet;
 export default function index() {
   const projectId = useSelector((state) => state.system.menus.projectId);
   const state = useReactive({
@@ -168,11 +171,24 @@ export default function index() {
       type: 1,
       ...option,
     },
+    circuitBreakerNum:0,
+    circuitBreakerTripNum:0,
+    deviceFrequentOfflineNum:0,
+    deviceOfflineNum:0
   });
-
+  const today = moment().startOf('day');
+  const tmonth = moment().startOf('month')
+  const tbref = useRef()
+  const params = useReactive({
+    siteId: 1,
+    structureIds: [],
+    type: 1,
+    startDate: moment(today).format('YYYY-MM-DD'),
+    endDate: moment(today).format('YYYY-MM-DD'),
+  });
   const [dataList, setDataList] = useState([])
   const GetSns = async () => {
-    const resp = await CompareQuery(projectId);
+    const resp = await QuerySiteList(projectId);
     if (resp.success) {
       if (resp.data) {
 
@@ -189,125 +205,124 @@ export default function index() {
 
 
   useEffect(() => {
-    //GetSns();
+    // GetSns();
   }, []);
   const chooseBtn = (item, index) => {
     console.log(item, index)
     state.active = index
   }
-  const treeData = [
-    {
-      title: '1#正泰物联配电站',
-      key: '0',
-      children: [
-        {
-          title: '变压器T4',
-          key: '0-0',
-          children: [
-            {
-              title: '进线1AA-1',
-              key: '0-0-0',
-              children: [
-                {
-                  title: '馈线1AA-2',
-                  key: '0-0-0-0',
-                }, {
-                  title: '馈线1AA-3',
-                  key: '0-0-0-1',
-                },
-                {
-                  title: '馈线1AA-4',
-                  key: '0-0-0-2',
-                },
-              ],
-            },
-          ],
-        }, {
-          title: '变压器T4',
-          key: '0-1',
-          children: [
-            {
-              title: '进线1AA-1',
-              key: '0-1-0',
-              children: [
-                {
-                  title: '馈线1AA-2',
-                  key: '0-1-0-0',
-                }, {
-                  title: '馈线1AA-3',
-                  key: '0-1-0-1',
-                },
-                {
-                  title: '馈线1AA-4',
-                  key: '0-1-0-2',
-                },
-              ],
-            },
-          ],
-        },
-      ]
-    }
-  ];
+  const [treeData, setTreeData] = useState([])
+
+  const getTreeData = async () => {
+    try {
+      const resp = await QuerySiteStructure(params.siteId);
+      if (resp.success) {
+        if (resp.data.id != 0) {
+          let data = []
+          data.push(resp.data)
+          setTreeData(data)
+        } else {
+          setTreeData([])
+        }
+      } else {
+        message.error("获取设备信息失败!");
+      }
+    } catch (err) { }
+  }
+  useEffect(() => {
+    getTreeData();
+  }, [params.siteId]);
 
   const onCheck = (checkedKeysValue) => {
     console.log('onCheck', checkedKeysValue);
-    setCheckedKeys(checkedKeysValue);
+    params.structureIds = checkedKeysValue
   };
-  const [reportTypeTime, setreportTypeTime] = useState(1)
   const changeTime = (e) => {
     console.log(e)
-    setreportTypeTime(parseInt(e))
+    params.type = parseInt(e)
   }//切换日月年
 
-  const today = moment().startOf('day');
-  const tmonth = moment().startOf('month')
-  const tbref = useRef()
+
   const onChangeDate = (date, dateString) => {
     if (!dateString) return;
-    if (reportTypeTime == 1) {
-      setdateValue(dateString)
-      console.log(dateString);
-    } else if (reportTypeTime == 2) {
-      setdateValue(dateString + '-01')
-      console.log(dateString + '-01');
+    if (params.type == 1) {
+      params.startDate = dateString
+      params.endDate = dateString
+    } else if (params.type == 2) {
+      params.startDate = dateString + '-01'
+      params.endDate = dateString + '-01'
+    } else if (params.type == 3) {
+      params.startDate = dateString + '-01-01'
+      params.endDate = dateString + '-01-01'
     } else {
-      setdateValue(dateString + '-01-01')
-      console.log(dateString + '-01-01');
+      params.startDate = dateString[0]
+      params.endDate = dateString[0]
     }
   };
-
-  const getData = () => {
-
+  const disabledDate = (current) => {
+    return current > dayjs().endOf('day');
+  };
+  const getData = async () => {
+    try {
+      const resp = await QueryCircuitBreakerOverview({ siteId: params.siteId, structureIds: params.structureIds });
+      if (resp.success) {
+        if (resp.data) {
+          state.circuitBreakerNum=resp.data.circuitBreakerNum
+          state.circuitBreakerTripNum=resp.data.circuitBreakerTripNum
+          state.deviceFrequentOfflineNum=resp.data.deviceFrequentOfflineNum
+          state.deviceOfflineNum=resp.data.deviceOfflineNum
+        } else {
+        }
+      } else {
+        message.error("获取设备信息失败!");
+      }
+    } catch (err) { }
   }
+  useEffect(() => {
+    getData();
+  }, [params.siteId, params.structureIds]);
   const columns = [
-    { title: '回路名称', dataIndex: 'name', align: "center", },
-    { title: '容量', dataIndex: 'name', align: "center", },
-    { title: '断路器型号', dataIndex: 'name', align: "center", },
-    { title: '额定电流', dataIndex: 'name', align: "center", },
+    { title: '回路名称', dataIndex: 'lineName', align: "center", },
+    { title: '容量', dataIndex: 'capacity', align: "center", },
+    { title: '断路器型号', dataIndex: 'circuitBreakerModel', align: "center", },
+    { title: '额定电流', dataIndex: 'ratedCurrent', align: "center", },
     {
       title: '长延时', align: "center", children: [
-        { title: '电流', dataIndex: 'companyName', key: 'companyName', },
-        { title: '时间', dataIndex: 'companyName', key: 'companyName', },
+        { title: '电流', dataIndex: 'longDelayCurrent', key: 'longDelayCurrent', },
+        { title: '时间', dataIndex: 'longDelayTime', key: 'longDelayTime', },
       ]
     }, {
       title: '短延时', align: "center", children: [
-        { title: '电流', dataIndex: 'companyName', key: 'companyName', },
-        { title: '时间', dataIndex: 'companyName', key: 'companyName', },
+        { title: '电流', dataIndex: 'shortDelayCurrent', key: 'shortDelayCurrent', },
+        { title: '时间', dataIndex: 'shortDelayTime', key: 'shortDelayTime', },
       ]
-    }, { title: '瞬动电流', dataIndex: 'name', align: "center", },
+    }, { title: '瞬动电流', dataIndex: 'instantaneousActingCurrent', align: "center", },
     {
-        title: '最大值', align: "center", children: [
-          { title: '电流', dataIndex: 'companyName', key: 'companyName', },
-          { title: '电压', dataIndex: 'companyName', key: 'companyName', },
-          { title: '剩余电流', dataIndex: 'companyName', key: 'companyName', },
-        ]
-      },
-    { title: '分合次数', dataIndex: 'name', align: "center", },
-    { title: '当前状态', dataIndex: 'name', align: "center", },
-    { title: '诊断结果', dataIndex: 'name', align: "center", },
+      title: '最大值', align: "center", children: [
+        { title: '电流', dataIndex: 'maxCurrent', key: 'companyName', },
+        { title: '电压', dataIndex: 'maxVoltage', key: 'companyName', },
+        { title: '剩余电流', dataIndex: 'maxResidualCurrent', key: 'companyName', },
+      ]
+    },
+    { title: '分合次数', dataIndex: 'switchOffOnNum', align: "center", },
+    { title: '当前状态', dataIndex: 'curState', align: "center", },
+    { title: '诊断结果', dataIndex: 'diagnosis', align: "center", },
   ]
-  const getTableData = ({ current, pageSize }) => {
-
+  const getTableData = async({ current, pageSize }) => {
+    try {
+      const resp = await QueryCircuitBreakerDiagnosis(params);
+      if (resp.success) {
+        if (resp.data) {
+          return {
+            list: resp.data,
+            total: resp.data.length,
+          }
+        } else {
+        }
+      } else {
+        message.error("获取设备信息失败!");
+      }
+    } catch (err) { }
   }
   const { tableProps, refresh, run, search } = useAntdTable(getTableData, {
     defaultPageSize: 14,
@@ -316,7 +331,7 @@ export default function index() {
   return (
     <div style={{ width: "100%", height: "100%", display: "flex", flexDirection: "row", justifyContent: 'space-between' }}>
       <LeftBox>
-        <div style={{ width: "100%", height: "20px", display: "flex", flexDirection: "row", alignItems: 'center', marginBottom: '16px' }}>
+        {/* <div style={{ width: "100%", height: "20px", display: "flex", flexDirection: "row", alignItems: 'center', marginBottom: '16px' }}>
           <Circle></Circle>
           <Title>变电站选择</Title>
         </div>
@@ -324,70 +339,76 @@ export default function index() {
           return index == state.active ? (<ChooseBtn key={index} onClick={() => chooseBtn(item, index)}>1#物联变电站</ChooseBtn>) :
             (<NoChooseBtn onClick={() => chooseBtn(item, index)}>2#物联变电站</NoChooseBtn>)
         })}
-        <Divider dashed style={{ borderColor: "#d7d7d7" }}></Divider>
+        <Divider dashed style={{ borderColor: "#d7d7d7" }}></Divider> */}
         <Tree
           checkable
           onCheck={onCheck}
           treeData={treeData}
+          fieldNames={{ title: 'name', key: 'id', children: 'nodes' }}
         />
       </LeftBox>
       <Right>
         <RightTop>
-            <TopBox>
-            <div style={{ width: 115, height: 66 ,display:'flex',alignItems:'center',justifyContent:'center'}}><img src={img} width={48} height={48}></img></div>
+          <TopBox>
+            <div style={{ width: 115, height: 66, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              <img src={img1} width={48} height={48}></img></div>
             <TopRight>
-                <p style={{fontSize: '16px', color: '#515151',textAlign:'center'}}>断路器数量</p>
-                <p style={{fontSize: '16px', color: '#999999',textAlign:'center'}}>
-                    <span style={{fontSize: '48px', color: '#515151',textAlign:'center'}}>12</span>台</p>
+              <p style={{ fontSize: '16px', color: '#515151', textAlign: 'center' }}>断路器数量</p>
+              <p style={{ fontSize: '16px', color: '#999999', textAlign: 'center' }}>
+                <span style={{ fontSize: '48px', color: '#515151', textAlign: 'center' }}>{state.circuitBreakerNum}</span>台</p>
             </TopRight>
-            </TopBox>
-            <TopBox>
-            <div style={{ width: 115, height: 66 ,display:'flex',alignItems:'center',justifyContent:'center'}}><img src={img} width={48} height={48}></img></div>
+          </TopBox>
+          <TopBox>
+            <div style={{ width: 115, height: 66, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              <img src={img2} width={48} height={48}></img></div>
             <TopRight>
-                <p style={{fontSize: '16px', color: '#515151',textAlign:'center'}}>断路器数量</p>
-                <p style={{fontSize: '16px', color: '#999999',textAlign:'center'}}>
-                    <span style={{fontSize: '48px', color: '#515151',textAlign:'center'}}>12</span>台</p>
+              <p style={{ fontSize: '16px', color: '#515151', textAlign: 'center' }}>当前跳闸断路器数</p>
+              <p style={{ fontSize: '16px', color: '#999999', textAlign: 'center' }}>
+                <span style={{ fontSize: '48px', color: '#ff0000', textAlign: 'center' }}>{state.circuitBreakerTripNum}</span>台</p>
             </TopRight>
-            </TopBox><TopBox>
-            <div style={{ width: 115, height: 66 ,display:'flex',alignItems:'center',justifyContent:'center'}}><img src={img} width={48} height={48}></img></div>
+          </TopBox><TopBox>
+            <div style={{ width: 115, height: 66, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              <img src={img3} width={48} height={48}></img></div>
             <TopRight>
-                <p style={{fontSize: '16px', color: '#515151',textAlign:'center'}}>断路器数量</p>
-                <p style={{fontSize: '16px', color: '#999999',textAlign:'center'}}>
-                    <span style={{fontSize: '48px', color: '#515151',textAlign:'center'}}>12</span>台</p>
+              <p style={{ fontSize: '16px', color: '#515151', textAlign: 'center' }}>当前离线设备数</p>
+              <p style={{ fontSize: '16px', color: '#999999', textAlign: 'center' }}>
+                <span style={{ fontSize: '48px', color: '#515151', textAlign: 'center' }}>{state.deviceOfflineNum}</span>台</p>
             </TopRight>
-            </TopBox><TopBox>
-            <div style={{ width: 115, height: 66 ,display:'flex',alignItems:'center',justifyContent:'center'}}><img src={img} width={48} height={48}></img></div>
+          </TopBox><TopBox>
+            <div style={{ width: 115, height: 66, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              <img src={img4} width={48} height={48}></img></div>
             <TopRight>
-                <p style={{fontSize: '16px', color: '#515151',textAlign:'center'}}>断路器数量</p>
-                <p style={{fontSize: '16px', color: '#999999',textAlign:'center'}}>
-                    <span style={{fontSize: '48px', color: '#515151',textAlign:'center'}}>12</span>台</p>
+              <p style={{ fontSize: '16px', color: '#515151', textAlign: 'center' }}>频繁离线设备数</p>
+              <p style={{ fontSize: '16px', color: '#999999', textAlign: 'center' }}>
+                <span style={{ fontSize: '48px', color: '#ff0000', textAlign: 'center' }}>{state.deviceFrequentOfflineNum}</span>台</p>
             </TopRight>
-            </TopBox>
+          </TopBox>
         </RightTop>
-      <RightBox>
-        <Header>
-          <div>
-            <span style={{ marginRight: "10px" }}>时间查询</span>
-            <Select defaultValue="1" style={{ width: 96,marginRight:16 }} onChange={changeTime}
-              options={[
-                { value: '1', label: '日', },
-                { value: '2', label: '月', },
-                { value: '3', label: '年' },
-                { value: '4', label: '自定义' },
-              ]}
-            />
-            {reportTypeTime == 1 ? <DatePicker onChange={onChangeDate} defaultValue={moment(today)} /> :
-             reportTypeTime == 2 ? <DatePicker onChange={onChangeDate} defaultValue={moment(tmonth)} picker='month' /> : 
-             reportTypeTime == 3 ?<DatePicker onChange={onChangeDate} picker='year' />:<RangePicker />
-            }
-            <Button type="primary" style={{ marginLeft: 32, width: 96 }}  onClick={submit}>开始诊断</Button>
-          </div>
-          {/* <ExportExcel tb={tbref} /> */}
-        </Header>
-        <Table columns={columns} ref={tbref}   {...tableProps} ></Table>
-      </RightBox>
+        <RightBox>
+          <Header>
+            <div>
+              <span style={{ marginRight: "10px" }}>时间查询</span>
+              <Select defaultValue="1" style={{ width: 96, marginRight: 16 }} onChange={changeTime}
+                options={[
+                  { value: '1', label: '日', },
+                  { value: '2', label: '月', },
+                  { value: '3', label: '年' },
+                  { value: '4', label: '自定义' },
+                ]}
+              />
+              {params.type == 1 ? <DatePicker onChange={onChangeDate} defaultValue={moment(today)} disabledDate={disabledDate}/> :
+                params.type == 2 ? <DatePicker onChange={onChangeDate} defaultValue={moment(tmonth)} picker='month' disabledDate={disabledDate}/> :
+                  params.type == 3 ? <DatePicker onChange={onChangeDate} picker='year' disabledDate={disabledDate}/> : 
+                  <RangePicker  onChange={onChangeDate} defaultValue={[moment(today), moment(today)]} disabledDate={disabledDate} />
+              }
+              <Button type="primary" style={{ marginLeft: 32, width: 96 }} onClick={submit}>开始诊断</Button>
+            </div>
+            <ExportExcel tb={tbref} />
+          </Header>
+          <Table columns={columns} ref={tbref}   {...tableProps} ></Table>
+        </RightBox>
       </Right>
-      
+
     </div>
   );
 }

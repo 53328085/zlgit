@@ -3872,3 +3872,63 @@ export class SpareParts {
       `Ledger/DeviceLedger/QueryLedgerById?projectId=${projectId}&ledgerId=${ledgerId}`
     ); //根据Id获取台账信息
 } //GetDeviceInfo(int projectId, int deviceId)
+
+//智能配电柜
+export class DistributionCabinet {
+  static Overview = (data) =>
+    server.get(
+      `DistributionCabinet/DistributionSiteOverviewRuntime/QuerySiteOverview`
+    ); //站点概述
+    static QuerySiteList = (data) =>
+    server.get(
+      `DistributionCabinet/DistributionLineEnergyRuntime/QuerySiteList`
+    ); //站点列表
+    static QuerySiteStructure = (siteId) =>
+    server.get(
+      `DistributionCabinet/DistributionLineEnergyRuntime/QuerySiteStructure?siteId=${siteId}`
+    ); //站点结构
+    static QueryLineMeterReading = (data) =>
+    server.post(
+      `DistributionCabinet/DistributionMeterReadingRuntime/QueryLineMeterReading`,data
+    ); //线路抄表
+    static QueryLineEnergy = (data) =>
+    server.post(
+      `DistributionCabinet/DistributionLineEnergyRuntime/QueryLineEnergy`,data
+    ); //回路能耗
+    static QueryTransformerInformation = (siteId,transformerId) =>
+    server.get(
+      `DistributionCabinet/DistributionTransformerDiagnosisRuntime/QueryTransformerInformation?siteId=${siteId}&transformerId=${transformerId}`
+    ); //变压器信息
+    static QueryTransformerLoadRateRealtime = (data) =>
+    server.post(
+      `DistributionCabinet/DistributionTransformerDiagnosisRuntime/QueryTransformerLoadRateRealtime`,data
+    ); //变压器实时负载率
+    static QueryTransformerUnbalanceRateRealtime = (data) =>
+    server.post(
+      `DistributionCabinet/DistributionTransformerDiagnosisRuntime/QueryTransformerUnbalanceRateRealtime`,data
+    ); //变压器实时不平衡率
+    static QueryCircuitBreakerOverview = (data) =>
+    server.post(
+      `DistributionCabinet/DistributionCircuitBreakerDiagnosisRuntime/QueryCircuitBreakerOverview`,data
+    ); //断路器概览
+    static QueryCircuitBreakerDiagnosis = (data) =>
+    server.post(
+      `DistributionCabinet/DistributionCircuitBreakerDiagnosisRuntime/QueryCircuitBreakerDiagnosis`,data
+    ); //断路器诊断
+    static QueryAlarmOverview = (data) =>
+    server.get(
+      `DistributionCabinet/DistributionAlarmInformationRuntime/QueryAlarmOverview`
+    ); //告警信息概览
+    static QueryAlarmInformation = (data) =>
+    server.post(
+      `DistributionCabinet/DistributionAlarmInformationRuntime/QueryAlarmList`,data
+    ); //告警信息列表
+    static QueryAlarmDetail = (alarmId) =>
+    server.get(
+      `DistributionCabinet/DistributionAlarmInformationRuntime/QueryAlarmDetail?alarmId=${alarmId}`
+    ); //告警信息详情
+    static ConfirmAlarmState = (alarmId) =>
+    server.post(
+      `DistributionCabinet/DistributionAlarmInformationRuntime/ConfirmAlarmState?alarmId=${alarmId}`
+    ); //确认告警状态
+}//DistributionCabinet/DistributionAlarmInformationRuntime/ConfirmAlarmState?alarmId=1
