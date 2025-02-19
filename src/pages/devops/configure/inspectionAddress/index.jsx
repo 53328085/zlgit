@@ -25,8 +25,9 @@ const { Link } = Typography
 const ContainerDiv = styled.div`
       display: flex;
       flex: 1;
-      padding-top: 16px;
+   //   padding-top: 16px;
       flex-direction: column;
+      row-gap: 32px;
       overflow: hidden;     
   `
 const AddDiv = styled(Form)`
@@ -373,7 +374,7 @@ export default function Index() {
               alike: ''
             }}
           >
-            <Space size={64} split={<Divider type="vertical" style={{ margin: 0, borderColor: '#d7d7d7', height: '32px' }} dashed />}>
+            <Space size={16} >
               <Form.Item name="areaId" style={{ marginRight: 0 }}>
                 <Select
                   options={options}
@@ -404,8 +405,6 @@ export default function Index() {
             </Form.Item>
 
           </Form>
-          <Divider style={{ margin: laptop ? "16px 0" : '32px 0', borderColor: '#d7d7d7' }} dashed ></Divider>
-
           <Table columns={columns} {...tableProps}></Table>
 
           <AddItem addRef={addRef} addform={addform} addItems={addItems} laptop={laptop} addoptiosn={addoptiosn} showchecklist={() =>showchecklist()} showdevice={()=>showdevice()} />

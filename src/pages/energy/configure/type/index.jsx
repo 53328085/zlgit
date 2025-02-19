@@ -10,9 +10,14 @@ import UseTransfer from './transfer';
 import Mask from '@com/mask.jsx'
 import { Ptag, Wtag } from '@com/comstyled'
 import { useOutletContext } from 'react-router-dom'
-import { CustButton } from "@com/useButton"
+import { CustButton ,TreeBtn} from "@com/useButton"
 import Pagecount from "@com/pagecontent";
 import CustContext from '@com/content.js'
+import Titlelayout from '@com/titlelayout'
+import styled from 'styled-components';
+const Main = styled.div`
+  flex:1;
+`
 export default function Index() {
 
   const tabs = [
@@ -91,10 +96,10 @@ export default function Index() {
         <div style={nodeTitle}>
           <span style={item.parentId == 0 ? mainStyle : null}>{item.name}</span>
           <div style={nodeAction}>
-            <Ptag onClick={() => addSon(item.id)} wh="60px">{t("button:new")}</Ptag>
-            <Ptag onClick={() => edit(item.id, valName)} wh="60px">{t("button:edit")}</Ptag>
-            <Ptag onClick={() => settingClick(item.id, valName)} wh="auto">{t("button:configure")}</Ptag>
-            <Wtag onClick={() => deleteRecord(item.id)} wh="60px">{t("button:delete")}</Wtag>
+            <TreeBtn onClick={() => addSon(item.id)} wh="60px" text="new" />
+            <TreeBtn onClick={() => edit(item.id, valName)} wh="60px" text="edit" /> 
+            <TreeBtn onClick={() => settingClick(item.id, valName)} wh="auto" text="configure" /> 
+            <TreeBtn onClick={() => deleteRecord(item.id)} wh="60px" text="delete" type={3}   /> 
           </div>
         </div>
       )
@@ -277,27 +282,32 @@ export default function Index() {
     setTransTag(false)
     setTimeout(() => { setDeleteDom(false) }, 600)
   }
+    const Title = (
+      <div style={{display: 'flex',justifyContent: "space-between", alignContent: "center"}}>
+        <span style={{lineHeight: "32px"}}>能源结构</span>
+        <CustButton wh="auto" onClick={() => addMain()}>{t("button:addMasterNode")}</CustButton>
+      </div>
+    )
   return (
     <CustContext.Provider value={propsData}>
       <Pagecount value={energyType}>
-        {contextHolder}
+        {contextHolder} 
+          <Titlelayout title= {Title}  layout="flex" dr="column" pv="0" bordered="n" rad="0px">
+          <div className={style.lineTree}>
+            <div className={style.treeTitle}>
+              <span className={style.treeItem}>线路图</span>
+              <span className={style.actionItem}>操作</span>
+            </div>
+            <div className={style.treeContent}>
+              {treeData.length > 0 ? <Tree height={654} defaultExpandedKeys={[treeData[0].id.toString()]} blockNode selectable={false}>{renderTreeNodes(treeData)}</Tree> : null}
+            </div>
+          </div>
 
-        {/*   <div className={style.header}>
-        <span className={style.headerTitle}>{levelName}选择</span>
-        <Select
-          placeholder="请选择园区"
-          size="middle"
-          key={defaultArea}
-          defaultValue={defaultArea}
-          style={{width: '200px'}}
-          onChange={changeArea}
-        >
-          {areaList.map(item => {
-            return <Select.Option key={item.id} value={item.id}>{item.name}</Select.Option>
-          })}
-        </Select>
-      </div> */}
-        <div className={style.mainContent}>
+          <Mask task={transTag}>
+            {transTag && <UseTransfer transferTitle={transferTitle} columns={columns} subTable={subTable} unknownTable={unknownTable} saveValue={getSaveValue} closeValue={getCloseValue} />}
+          </Mask>
+        </Titlelayout>
+        {/* <div className={style.mainContent}>
           <div className={style.title}>
             <span>能源结构</span>
             <CustButton wh="auto" onClick={() => addMain()}>{t("button:addMasterNode")}</CustButton>
@@ -316,7 +326,7 @@ export default function Index() {
             {transTag && <UseTransfer transferTitle={transferTitle} columns={columns} subTable={subTable} unknownTable={unknownTable} saveValue={getSaveValue} closeValue={getCloseValue} />}
           </Mask>
 
-        </div>
+        </div> */}
         <Custmodl title={modalTitle} ref={aref} mold="cust" width={512} onOk={onOk}>
           <div style={{ display: "flex", alignItems: "center" }}>
             <Form name='addform' labelCol={{ span: 7 }} form={form} labelAlign={'left'} requiredMark={false} autoComplete='off' preserve={false}>

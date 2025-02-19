@@ -177,7 +177,7 @@ export default function Warncontent({ style,form, areaId }) {
                 </Form>
         </div>}>
             <div style={{display:'flex', flex: 1, flexDirection:'column' }}>
-               <Divider  dashed style={{borderColor:'#d7d7d7',margin:' 16px 0'}}></Divider>
+              
                 <UserTable 
                 columns={columns} 
                 dataSource ={tabledata}   

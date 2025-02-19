@@ -343,7 +343,7 @@ export default function Index({ projectId, areaId }) {
           <CustButton wh="auto" onClick={() => addMain()}>{t("button:addKeyEquipment")}</CustButton>
           <CustButton style={{ marginLeft: "16px" }} wh="auto" onClick={() => deviceSortingBtn()}>{t("button:sorting")}</CustButton></div>
       </div>}>
-        <div style={{ flex: 1, paddingTop: "16px" }}>
+        <div style={{ flex: 1,  }}>
           <UseTable columns={tbcolumns} dataSource={treeData}></UseTable>
 
 

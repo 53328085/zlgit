@@ -1,16 +1,18 @@
 import React, { useEffect, useState, useRef } from 'react'
 import BlueColumn from '@com/bluecolumn'
+import Pagecount from '@com/pagecontent'
 import styled from 'styled-components';
 import {Divider,InputNumber ,Switch  } from "antd";
 import { useSelector } from 'react-redux'
 import { QuotaManage } from '@api/api.js'
+import Titlelayout from "@com/titlelayout"
 const WrapDiv = styled.div`
 width:640px;
 height:160px;
-background-color:#fff;
-border:1px solid rgb(215 215 215);
-border-radius:4px;
-padding:16px;
+//background-color:#fff;
+//border:1px solid rgb(215 215 215);
+//border-radius:4px;
+//padding:16px;
 .fl{
   display: flex;
   margin:0 16px;
@@ -73,10 +75,9 @@ export default function QuotaWarning() {
     getData()
   }, [projectId])
   return (
-    <div>
-      <WrapDiv >
-        <BlueColumn name="定额预警" />
-        <Divider dashed style={{margin: '16px 0',borderColor: 'rgb(215 215 215)'}}></Divider>
+   <Pagecount bgcolor="transparent" pd="0">
+    <WrapDiv>
+      <Titlelayout title="定额预警" > 
         <div className="fl">
           <div style={{display:'flex',alignItems:'center'}}>{'能耗剩余<='}
             <InputNumber  addonAfter={'%'} style={{width:'120px',marginLeft:'16px'}}
@@ -86,7 +87,8 @@ export default function QuotaWarning() {
            checked={dataList?.enable} onChange={changeSwitch}/></div>
           </div>
        
+      </Titlelayout>
       </WrapDiv>
-    </div>
+    </Pagecount>
   )
 }

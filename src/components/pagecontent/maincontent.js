@@ -68,6 +68,7 @@ const PageContentMain = styled.div`
          flex: 1;
         display: flex;
         flex-direction: column;
+        row-gap: ${props => props.rgap || "16px"};
     }
 `
 

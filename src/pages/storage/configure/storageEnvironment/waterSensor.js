@@ -12,6 +12,17 @@ import warning from '@imgs/warning.png'
 import upload from '@imgs/upload.png'
 import { CustButtonT, CustLink } from '@com/useButton'
 import {Serach,Cdivider} from "@com/comstyled"
+const Mainbox = styled.div`
+  flex:1;
+  display: flex;
+  flex-direction: column;
+  row-gap: 20px;
+  .header{
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+`
 const CForm = styled(Form)`
 &&{
   .ant-form-item{
@@ -441,10 +452,10 @@ export default function Index(props) {
   },[])
 
   return (
-    <div className={style.contents}>
-      <div className={style.header}>
+    <Mainbox>
+      <div className="header">
         <Form form={form} layout='inline' colon={false}>
-        <Space size={laptop ? 16 : 64} split={laptop? null : <Cdivider />}>
+        <Space size={16} >
           <Item name='areaId' label={areaName + '选择'} >
             <Select
               size="middle"
@@ -486,8 +497,7 @@ export default function Index(props) {
           <CustButtonT  text="export"  src="export" onClick={() => exportData()} />  
         
         </Space>
-      </div>
-      <Divider dashed style={{ borderColor: '#d7d7d7' }}></Divider>
+      </div> 
       <UseTable columns={columns} dataSource={tableData} ref={tableRef} rowKey='id' pagination={pagination} onChange={tableOnchange} sheetName='储能柜水浸传感器.xlsx'></UseTable>
       <Custmodl title='删除提示' ref={dref} mold="cust" width={512} type="warn" onOk={() => onDelete()} maskClosable={false}>
           是否确认删除水浸传感器？
@@ -585,6 +595,6 @@ export default function Index(props) {
             </Item>
           </CForm>
       </Custmodl>
-    </div>
+    </Mainbox>
   )
 }

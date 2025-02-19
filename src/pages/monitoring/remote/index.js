@@ -311,9 +311,9 @@ export default function Index() {
     return (
         <CustContext.Provider value={dataProps}>
             <Pagecount>
-                <Mainbox>
+                <div className='flexcol'>
                     <Form form={form} layout='inline' initialValues={initialValues} onValuesChange={onValuesChange} >
-                        <Space size={32}>
+                        <Space size={16}>
                             <Item name="deviceStyle" style={{ marginBottom: '0px', marginRight: '0px' }}>
 
                                 <Select
@@ -323,20 +323,20 @@ export default function Index() {
                                     options={deviceStyles}
                                 />
                             </Item>
-                            <Divider type="vertical" style={{ margin: '0px', height: '32px' }} dashed />
+                            
                             <Item name="alike" label="设备查询" style={{ marginBottom: '0px', marginRight: '0px' }}>
                                 <Serach placeholder='请输入设备编号/安装地址' allowClear size='middle' enterButton="查询" onSearch={submit} />
 
                             </Item>
                             {value == 3 && <Item name="time"><DatePicker.RangePicker disabledDate={disabledDate} format="YYYY-MM-DD" /></Item>}
-                            {value != 3 && <><Divider type="vertical" style={{ margin: '0px', height: '32px' }} dashed />
+                            {value != 3 && <> 
                                 <Space size={16}>
                                     <Button size='middle' style={{ width: 96, height: 32, backgroundColor: '#F56C6C', border: 'none', color: '#fff', borderRadius: 2 }} onClick={() => { changesetbrake(1) }}>分闸</Button>
                                     <Button size='middle' style={{ width: 96, height: 32, backgroundColor: '#F56C6C', border: 'none', color: '#fff', borderRadius: 2 }} onClick={() => { changesetbrake(2) }}>合闸</Button>
                                 </Space></>}
                         </Space>
                     </Form>
-                    <Cdivider type="h" margin="16px 0" />
+                   
 
 
                     {value == 1 ? <div style={{ display: 'flex', flex: 1 }}>
@@ -357,7 +357,7 @@ export default function Index() {
 
                     </div>}
 
-                </Mainbox>
+                </div>
                 {/*   <Modal
                 title={<Bluecolumn name="分闸控制" />}
                 width={640}

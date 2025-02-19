@@ -14,13 +14,13 @@ import deletepng from "./imgs/delete.png"
 import { operationDesigin } from '@api/api'
 import {CustButtonT} from "@com/useButton"
 import { adaptation } from "@redux/systemconfig";
+import Titlelayout from '@com/titlelayout'
 import Loading from '../../../Loading'
-const MainBox = styled.div`
-  background-color: #fff;
-  padding:16px;
-  border: 1px solid #d7d7d7;
-  border-radius: 4px; 
+const MainBox = styled.div` 
   flex: 1;
+  display: flex;
+  flex-direction: column;
+  row-gap: 16px;
   .title{
     display: flex;
     justify-content: space-between;
@@ -28,9 +28,7 @@ const MainBox = styled.div`
   .wd96{
       width: 96px;
     }
-  .mgt16{
-      margin-top: 16px;
-    }
+ 
   .pd0{
     padding: 0px !important;
     width: 63px;
@@ -479,10 +477,11 @@ export default function Index() {
             </Form.Item>
           </Form>
         </div>
+           
+           
+            <Titlelayout title="排班管理" layout="flex" dr="column">
             <MainBox>
-              <BlueColumn name="排班管理"></BlueColumn>
-              <Divider dashed style={{ borderColor: '#d7d7d7', margin: laptop ? "16px 0" : "24px : 0" }}></Divider>
-              <div className='mgt16'>
+            <div className='mgt16'>
                 <div className='title'>
                     <CustButtonT onClick={() => {if(!areaId){message.warning('请新增园区');return}; planRef.current.onOpen() }} text="shiftmg" wh="auto" /> 
                   <div className='wd96'>
@@ -494,6 +493,7 @@ export default function Index() {
                 <UserTable columns={columns} dataSource={tabledata}></UserTable>
               </div>
             </MainBox>
+            </Titlelayout>
           </Pagecount>
           <MyModal ref={planRef} mold="cust" width={700} onOk={savePlan} title="创建班次">
             {/* <BlueColumn name="" styled={{ padding: '24px 0px', fontSize: '16px' }}></BlueColumn> */}

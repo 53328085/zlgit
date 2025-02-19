@@ -23,9 +23,9 @@ const DropstartDiv = styled.div`
 `
 const ContainerDiv = styled.div`
       display: grid;
-      grid-template-rows: 32px 1px 1fr;
+      grid-template-rows: 32px  1fr;
       row-gap: ${props=> props.theme.laptop ? "16px" : "32px"};
-      padding-top: 16px;
+    //  padding-top: 16px;
       flex: 1;
   `
 const { TextArea } = Input
@@ -216,7 +216,7 @@ export default function Index() {
               alike: ''
             }}
           >
-            <Space size={64} split={<Divider type="vertical" style={{ margin: 0, borderColor: '#d7d7d7', height: '32px' }} dashed />}>
+            <Space size={16} >
               <Form.Item name="alike" label="检查项" style={{ marginBottom: 0, marginRight: 0 }}>
                 <Serach
                   placeholder="检查项关键字查询"
@@ -238,7 +238,7 @@ export default function Index() {
               }
             </Form.Item>
           </Form>
-          <Divider style={{ margin: '0px', borderColor: '#d7d7d7' }} dashed ></Divider>
+         
 
           <Table columns={columns}  {...tableProps} ></Table>
 

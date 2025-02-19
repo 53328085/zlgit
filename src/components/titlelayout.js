@@ -26,7 +26,7 @@ const Boxdiv = styled(Card)`
     min-height: ${(props) =>  props.hv || (props.theme.laptop ? '24px' : '40px')};
   //  height: ${(props) =>  props.hv || (props.theme.laptop ? '24px' : '40px')};;
     height: ${(props) =>  props.theme.laptop ? '24px' : '40px'};
-    padding-right: 20px;
+    padding-right: ${({pr}) => pr || '20px'};
     background-color:${({bg}) => bg || '#DEE7F2'};
     z-index:${({zd}) => zd || 100};
     position: relative;
@@ -36,7 +36,7 @@ const Boxdiv = styled(Card)`
             height:13px;
             position: absolute;
             left: 20px;
-            background-color: ${({bl, theme}) => bl || theme.primaryColor };
+            background-color: ${({bl, theme}) => bl  ?  bl=="none" ? "transparent" : bl : theme.primaryColor };
           }  
       }
     .ant-card-head-wrapper {
@@ -45,7 +45,7 @@ const Boxdiv = styled(Card)`
       .ant-card-head-title {
          font-size: ${({fz}) => fz || '15px'};
          color: ${({fc}) => fc || '#303133'};
-         padding: 0 0 0 8px;
+         padding: 0 0 0 11px;
         
     }
 

@@ -45,9 +45,13 @@ const TransferContent = styled.div`
     padding-left: 16px;
     margin-bottom: 16px;
     line-height: 32px;
-    font-size: 14px;
+    font-size: 15px;
     color: #333;
-    border-left: 4px solid var(--ant-primary-color);
+    position: relative;
+    display: flex;
+    align-items: center;
+  
+   // border-left: 4px solid var(--ant-primary-color);
 }
 .searchInput{
     margin-bottom: 16px;
@@ -357,7 +361,7 @@ export default function index(props) {
             {contextHolder}
           
                 <div className="otherSubTable">
-                    <div className="publicTitle">{props.transferTitle.subTitle}</div>
+                    <div className="publicTitle title-line-zl">{props.transferTitle.subTitle}</div>
                     <div className="searchInput">
                         <div style={{ marginRight: laptop ? 8 : 16 }}>{i18t("comm","Query",{text:"设备"})}</div>
                         <Search placeholder={i18t("comm","placeholder", {text:"设备编号/安装地址"})}  enterButton onSearch={onSearchSub} style={{width: "256px"}}></Search>
@@ -378,7 +382,7 @@ export default function index(props) {
                 </Space>
             </div>
             <div className="rightTable">
-                <div className="publicTitle">{props.transferTitle.unknownTitle}</div>
+                <div className="publicTitle title-line-zl">{props.transferTitle.unknownTitle}</div>
                 <div className="searchInput">
                     <span>{i18t("comm","type",{text: "设备"})}</span>
                     <Select

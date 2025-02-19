@@ -409,7 +409,7 @@ const getWrokTicketWrold = async({no}, type) => {
             <span>任务状态</span>
             <Select style={{width: '200px'}} options={options} value={type} onChange={onChange}></Select>
         </Space>
-        <Space>
+        <Space size={16}>
           <CustButton wh="auto" ghost onClick={() =>onAdd(1)}>新增第一种工作票</CustButton>
           <CustButton wh="auto" ghost onClick={() =>onAdd(2)}>新增第二种工作票</CustButton>
         </Space>

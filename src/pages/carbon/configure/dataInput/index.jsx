@@ -19,9 +19,9 @@ const { Dragger } = Upload;
 const {Link} = Typography
 const Mainbox = styled.div`
    && {
-    margin-top: 16px;
-    padding-top: 16px;
-    border-top: 1px dotted #d7d7d7;
+  //  margin-top: 16px;
+  //  padding-top: 16px;
+   // border-top: 1px dotted #d7d7d7;
     display: flex;
     flex-direction: column;
     gap: 16px;
@@ -390,15 +390,16 @@ const onQuery = async () => {
                initialValues={{
             year: moment(),
             month: moment()
-          }}>
+          }}>  
+          <Space size={16}>
                   <Form.Item name="year" label={<CustTransO ns="comm" text="year" param="度" />} >
                      <DatePicker   picker="year" onChange={onQuery} />
                   </Form.Item>
                   <Form.Item name="month" label={<CustTransO ns="comm" text="month" param="份" />} >
                     <DatePicker   picker="month" onChange={onQuery} />
                   </Form.Item>
-               </Form>
-               <Cdivider type="h" />
+                  </Space>
+               </Form> 
                <Form form={tbform} component={false}>  
                   <div style={{flex:1, position: "relative"}}>
                     <div style={{position:"absolute", width: "100%"}}>

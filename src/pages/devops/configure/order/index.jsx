@@ -24,9 +24,9 @@ row-gap: 16px;
 `
 const ContainerDiv = styled.div`
  display: grid;
- grid-template-rows: 32px 1px 1fr;
+ grid-template-rows: 32px  1fr;
  row-gap: 32px;
- padding-top: 16px;
+ //padding-top: 16px;
  flex: 1;
  ${props=> props.theme.laptop ? csssty : null}
 `
@@ -173,7 +173,7 @@ const {submit} = search
         }}
         style={{display: 'flex', justifyContent: "space-between"}}
         >
-          <Space  size={64} split={<Divider type="vertical" style={{ margin: 0,borderColor: '#d7d7d7', height: '32px' }} dashed />}>
+          <Space  size={16}>
           <Item name="areaId" style={{marginBottom: 0}} >
           <Select
             options={options}
@@ -197,11 +197,6 @@ const {submit} = search
                
              }
         </Form>
-
-       
-     
-      <Divider style={{ margin: 0,borderColor: '#d7d7d7' }} dashed></Divider>
-    
       <Table columns={columns}  {...tableProps}></Table>
      
       

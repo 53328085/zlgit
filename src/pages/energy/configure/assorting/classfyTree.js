@@ -6,8 +6,8 @@ import { cloneDeep } from "lodash";
 import {useSelector} from 'react-redux'
 import {publishState} from '@redux/systemconfig.js'
 import Titlelayout from '@com/titlelayout'
-import {AllExportButton, CustButton} from "@com/useButton"
-import {Ptag, Wtag} from "@com/comstyled"
+import {AllExportButton, CustButton,TreeBtn} from "@com/useButton"
+ 
 export default function Water (props) {
   const {t} = useTranslation(["button"])
   const isPublish = useSelector(publishState)
@@ -39,12 +39,12 @@ export default function Water (props) {
             <div style={nodeTitle}>
                 <span style={ item.parentId == 0 ? { fontSize: 16 }:{} }>{item.energyName}</span>
                 { isPublish ? null : <Space style={{position:"absolute", right: 0}}>
-                    {item.parentId == 0 ? <Ptag   onClick={()=>addSon(item)} wh="auto" style={{padding: "0 8px"}}>{t("button:addSubitem")}</Ptag> : null}
-                    <Ptag onClick={()=>edit(name, item.energyId)} wh="60px">{t("button:edit")}</Ptag>
+                    {item.parentId == 0 ? <TreeBtn   onClick={()=>addSon(item)} wh="auto" style={{padding: "0 8px"}} text="addSubitem" />  : null}
+                    <TreeBtn onClick={()=>edit(name, item.energyId)} wh="60px" text="edit" /> 
                   {/*   {item.parentId != 0 ? <span style={{ color:'#237ae4', cursor:'pointer', textDecoration:'underline', marginRight: 32}} onClick={()=>settings(name, item.energyId)}>配置</span> : <div style={{width:28,marginRight: 32}}></div>} 比工的需求 一级也需要配置项*/}
-                  {item.parentId != 0 ? <Ptag onClick={()=>settings(name, item.energyId)} wh="auto" style={{padding: "0 8px"}}>{t("button:configure")}</Ptag> : null}
+                  {item.parentId != 0 ? <TreeBtn onClick={()=>settings(name, item.energyId)} wh="auto" style={{padding: "0 8px"}} text="configure" /> : null}
                    
-                    <Wtag onClick={()=>deleteRecord(item)} wh="60px">{t("button:delete")}</Wtag>
+                    <TreeBtn type="3" onClick={()=>deleteRecord(item)} wh="60px" text="delete" /> 
                 </Space> }
             </div>
         )
@@ -120,7 +120,6 @@ export default function Water (props) {
   )
     return (
         <Titlelayout title= {Title}  layout="flex" dr="column" pv="0" bordered="n" rad="0px">
-            <Divider style={{margin: "16px 0"}} />  
             <div className={style.mainContent}>
                 <div className={style.classifyTree}>
                     { treeData.length>0 ? <Tree defaultExpandedKeys={[treeData[0].energyId.toString()]} blockNode selectable={false}>{renderTreeNodes(treeData)}</Tree> : null}

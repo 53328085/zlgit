@@ -288,9 +288,8 @@ export default function Index() {
   }, [])
   const [dates, setDates] = useState([moment().startOf('day'), moment()]);
   return (
-
-    <Titlelayout title={i18t("monitor","contrastiveanalysis")}>
-      <Cdivider type="h" margin="16px 0" />
+<Pagecount bgcolor="transparent" pd="0">
+    <Titlelayout title={i18t("monitor","contrastiveanalysis")}>      
       <Form
         layout={laptop ? "vertical" : "line"}
         form={form}
@@ -306,7 +305,7 @@ export default function Index() {
           state: 0
         }}
       >
-        <Space size={laptop ? 16 : 64} split={laptop ? "" : <Cdivider />} align="end"  >
+        <Space size={16}   align="end"  >
           <Form.Item name="button" style={{ marginBottom: 0 }}>
             <CustButtonT ns="monitor" text="compare" ghost onClick={() => onSetDevices()} wh="auto" /> 
           </Form.Item>
@@ -353,7 +352,7 @@ export default function Index() {
 
       </div>
     </Titlelayout>
-
+    </Pagecount>
   )
 }
 

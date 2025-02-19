@@ -305,10 +305,10 @@ export default function Index() {
     <CustContext.Provider value={dataProps}>
       <Pagecount>
         <Spin tip="正在抄读，请稍候……" size="large" spinning={loading}>
-          <Mainbox>
+          <div className='flexcol'>
 
             <Form form={form} layout='inline' initialValues={initialValues}>
-              <Space size={64} split={<Cdivider />}>
+              <Space size={16}>
                 <Item name="deviceStyle" style={{ marginBottom: '0px', marginRight: '0px' }}>
                   <Select
                     style={{ width: "128px" }}
@@ -329,7 +329,7 @@ export default function Index() {
                 </Item>
               </Space>
             </Form>
-            <Cdivider type="h" margin="16px 0" />
+            
             {value == '1' ? <div style={{ display: 'flex', flex: 1 }}>
               <UserTable columns={columnsLog} rowKey={columnsLog => columnsLog.sn} {...tableProps} rowSelection={{
                 type: 'radio',
@@ -355,7 +355,7 @@ export default function Index() {
               <UserTable columns={realcolumns} dataSource={dataSourceRead} rowKey={realcolumns => realcolumns.sn} ></UserTable>
 
             </CModal>
-          </Mainbox>
+          </div>
         </Spin>
       </Pagecount>
     </CustContext.Provider>

@@ -401,7 +401,6 @@ export default function Index() {
     <Pagecont showserach={false} custserach pd="0px" >  
        <Titlelayout title= {Title}  layout="flex" dr="column">  
         <Usetable
-          style={{ marginTop: "16px" }}
           rowKey={(record) => record.id}
           ref={tableRef}
           columns={columns}

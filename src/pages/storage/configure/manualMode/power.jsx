@@ -13,13 +13,13 @@ const Mainbox = styled.div`
     && {
        flex: 1;
        color:#515151;
-       margin-top: 16px;
-       border-top: 1px dotted #d7d7d7;
-       padding: 16px 0 16px 0;
+      // margin-top: 16px;
+      // border-top: 1px dotted #d7d7d7;
+     //  padding: 16px 0 16px 0;
        display: grid;
        grid-template-rows: 404px;
        row-gap: 16px;
-      grid-template-columns: 896px;
+      grid-template-columns: 1fr;
        }
 `
 const Formbox = styled(Form)`

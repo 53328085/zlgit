@@ -3,7 +3,7 @@ import styled from 'styled-components'
 import {Typography, Image, Form, Space, Button, Input,   DatePicker,  Divider, Drawer } from 'antd'
 import {useAntdTable} from 'ahooks'
 import {nanoid} from "@reduxjs/toolkit"
-
+import Pagecount from '@com/pagecontent'
 import Titlelayout from '@com/titlelayout'
  
 import Usetable from '@com/useTable'
@@ -52,11 +52,11 @@ const Mainbox = styled.div`
       flex-direction: column;
       .content {
         display: grid;
-        grid-template-rows: 32px 4px 1fr;
+        grid-template-rows: 32px  1fr;
         row-gap: 16px; 
         flex: 1;
         color:#515151;
-        padding-top: 16px;
+       
         .top {
             display: flex;
             justify-content: space-between;
@@ -267,19 +267,19 @@ week.forEach(w => {
  
  
   return (
-    <Mainbox>    
+     <Pagecount bgcolor="transparent" pd="0">
+    
     <Titlelayout title="自动控制" layout="flex" >
+    <Mainbox>   
     <div className='content'>
         <Form form={form} className='top' layout='inline' >
-          <Space size={32}>
+          <Space size={16}>
              <Item   name="alike">
               <Serach placeholder='请输入策略名称' style={{width: '370px'}}    onSearch={submit}   />
              </Item>
            </Space>
           
         </Form>
-        
-         <Cdivider type="h" style={{margin: '0px'}} />
         <Usetable columns={columns} ref={tableref} {...tableProps}   rowKey={nanoid()}    />   
        <CDrawer
         title="被控设备"
@@ -304,8 +304,10 @@ week.forEach(w => {
        </div>
        </CDrawer>
     </div>
-    </Titlelayout>
     </Mainbox>
+    </Titlelayout>
+    
+    </Pagecount>
   )
 }
 export default function Index(props) {

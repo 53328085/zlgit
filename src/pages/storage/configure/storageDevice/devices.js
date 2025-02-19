@@ -1,6 +1,7 @@
 import React, { useEffect, useState, useRef } from 'react'
 import { Button, Form, Input, Select, Space, message, Divider, Upload, Modal, Table } from 'antd'
 import style from './style.module.less'
+import styled from 'styled-components'
 import { useSelector, useDispatch } from 'react-redux'
 import { selectProjectId, selectOneLevel, levelDefaultLabel, selectOneLevelDefaultId, setCurrentlevel } from '@redux/systemconfig.js'
 import Usetable from '@com/useTable'
@@ -12,6 +13,17 @@ import { SiteManagerDesigner, StorageEquipmentDesigner } from '@api/api.js'
 import { useReactive } from 'ahooks'
 import {Serach,Cdivider} from "@com/comstyled"
 import Mask from '@com/mask'
+const Mainbox = styled.div`
+  flex:1;
+  display: flex;
+  flex-direction: column;
+  row-gap: 20px;
+  .header{
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+`
 export default function Index(props) {
   const [form] = Form.useForm()
   const [multiForm] = Form.useForm()
@@ -371,11 +383,11 @@ export default function Index(props) {
   }
 
   return (
-    <div className={style.mainContainer}>
+    <Mainbox>
    {/*    {transTag == 'open' ? <div className={style.mask}></div> : null} */}
-      <div className={style.header}>
+      <div className="header">
         <Form form={form} layout='inline' colon={false}>
-        <Space size={laptop ? 16 : 64} split={laptop? null : <Cdivider />}>
+        <Space size={16}>
           <Item name='areaId' label={areaName + '选择'} >
             <Select
               placeholder="请选择"
@@ -388,7 +400,6 @@ export default function Index(props) {
               })}
             </Select>
           </Item>
-          
           <Item name='siteId' label=''>
             <Select
               placeholder="请选择站点"
@@ -415,7 +426,7 @@ export default function Index(props) {
           <CustButtonT  text="export"  src="export" onClick={() => exportData()} /> 
           </Space>
       </div>
-      <Divider />
+     {/*  <Divider /> */}
       <Usetable ref={tableRef} scroll={tableData.length > 15 ? { y: 720 } : null} columns={columns} dataSource={tableData} rowKey='sn' pagination={false} onChange={tableOnchange} sheetName='电表.xlsx' />
      {/*  <div className={`${style.transferPage} ${transTag == 'open' ? style.startAnimation : transTag == 'close' ? style.endAnimation : ''}`} > */}
       <Mask task={transTag}>  <UseTransfer
@@ -478,6 +489,6 @@ export default function Index(props) {
 
         </div>
       </Custmodl>
-    </div>
+    </Mainbox>
   )
 }
