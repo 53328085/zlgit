@@ -28,6 +28,8 @@ import {CustButton} from '@com/useButton'
 import {handlermenu,isObject} from "@com/usehandler"
 
 import svgurl from './icon/svg'
+ 
+
 const {Text} = Typography 
 const Lngdiv = styled.div`
   display: flex;
@@ -66,6 +68,7 @@ const Ldiv = styled.div`
   display: flex;
   align-items: center;
   justify-content: flex-end;
+  padding-left: 28px;
  // border-bottom: 1px solid ${props => props.theme.menusbgcolor || '#003366'};
  // border-top: 1px solid ${props => props.theme.menusbgcolor || '#003366'};
 `;
@@ -75,7 +78,7 @@ let style = css`width: 58px;
        font-size: 12px;
        .logo {
               height: 28px;
-              width: 28px;
+            //  width: 28px;
               line-height: 28px;
               overflow: hidden;
               .shadow {
@@ -87,7 +90,7 @@ let style = css`width: 58px;
     &:hover {
       .logo {
               height: 28px;
-              width: 28px;
+            //  width: 28px;
               line-height: 28px;
               overflow: hidden;
               .shadow {
@@ -103,27 +106,28 @@ let style = css`width: 58px;
 const Logbox = styled.div`
   &&{
     height: inherit;
-    width: 112px;
+    width: 74px;
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: space-between;
-    padding: 4px 0;
+    justify-content: center;
+    //padding: 4px 0;
     position: relative;
+    row-gap: 6px;
     cursor: pointer;
     &:not(:last-of-type)::after{
     content: '';
     position: absolute;
-    top:2px;
-    bottom: 2px;
-    right: 0px;
+    right:0;
     width: 1px;
+    height: 30px;
     display: block;
     background-color: ${props => props.theme.menusbgcolorRborder || '#ffffff'} ;
   }
     span {
       line-height: 1;
       color: ${props => props.theme.menusbgcolorRfont || '#ffffff'};
+      font-size: 13px;
       &:hover{
         line-height: 1;
        color: ${props => props.theme.menusbgcolorRA || '#3988e7'}
@@ -131,9 +135,10 @@ const Logbox = styled.div`
     }
     .logo {
               height: 36px;
-              width: 36px;
+             // width: 36px;
               line-height: 36px;
               overflow: hidden;
+              transition: all 0.3s;
               .shadow {
               transform: translateX(-36px);
               filter: drop-shadow(36px 0 0  ${props => props.theme.menusbgcolorRfont || '#ffffff'});
@@ -143,9 +148,10 @@ const Logbox = styled.div`
   &:hover {
       .logo {
               height: 36px;
-              width: 36px;
+            //  width: 36px;
               line-height: 36px;
               overflow: hidden;
+              transition: all 0.3s;
               .shadow {
               transform: translateX(-36px);
               filter: drop-shadow(36px 0 0  ${props => props.theme.menusbgcolorRA || '#3988e7'});
@@ -165,13 +171,17 @@ const Ciocn = (props) => {
   return <div className="logo"><img src={url}  className="shadow" style={{height: '100%', width: "100%"}} /></div> 
 }
 const Triangle = styled.div`
-    width: 0; 
+   /*  width: 0; 
      height: 0;
      border-width: 30px;
      border-style: solid;
      border-color: transparent  ${props => props.theme.menusbgcolorR || '#135abd'} transparent transparent;
-     display: ${props => props.laptop ? "none" : 'block'};
-    
+     display: ${props => props.laptop ? "none" : 'block'}; */
+     height: 70px;
+     width:232px;
+     
+     background-image: linear-gradient(to right, rgba(56, 168, 221, 0),rgba(29, 80, 246, 0.3)) ;
+      
 `;
 const Cipt = styled(Input)`
   && {
@@ -512,7 +522,9 @@ const settheme = async (themeId) => {
 
   return (
     <Cdiv>
-      <Triangle laptop={adap.laptop} />
+      <Triangle laptop={adap.laptop}>
+        <img src={svgurl['hux']} alt="" />
+      </Triangle>
       <Ldiv>
         {
           config ? 
