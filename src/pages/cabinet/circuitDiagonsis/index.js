@@ -212,7 +212,7 @@ export default function index() {
     state.active = index
   }
   const [treeData, setTreeData] = useState([])
-
+  const [defaultCheckedKeys, setDefaultCheckedKeys] = useState([1]);
   const getTreeData = async () => {
     try {
       const resp = await QuerySiteStructure(params.siteId);
@@ -221,6 +221,19 @@ export default function index() {
           let data = []
           data.push(resp.data)
           setTreeData(data)
+           // 生成 defaultCheckedKeys
+        const keys = [];
+        const traverse = (nodes) => {
+          nodes.forEach(node => {
+            keys.push(node.id);
+            if (node.nodes) {
+              traverse(node.nodes);
+            }
+          });
+        };
+        traverse(data);
+        setDefaultCheckedKeys(keys);
+        params.structureIds =keys
         } else {
           setTreeData([])
         }
@@ -342,6 +355,9 @@ export default function index() {
         <Divider dashed style={{ borderColor: "#d7d7d7" }}></Divider> */}
         <Tree
           checkable
+          checkedKeys={defaultCheckedKeys}
+          expandedKeys={defaultCheckedKeys}
+          defaultExpandAll={true}
           onCheck={onCheck}
           treeData={treeData}
           fieldNames={{ title: 'name', key: 'id', children: 'nodes' }}
