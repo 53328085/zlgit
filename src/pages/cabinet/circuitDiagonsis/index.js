@@ -234,6 +234,7 @@ export default function index() {
         traverse(data);
         setDefaultCheckedKeys(keys);
         params.structureIds =keys
+        run(1,14)
         } else {
           setTreeData([])
         }
@@ -248,6 +249,7 @@ export default function index() {
 
   const onCheck = (checkedKeysValue) => {
     console.log('onCheck', checkedKeysValue);
+    setDefaultCheckedKeys(checkedKeysValue)
     params.structureIds = checkedKeysValue
   };
   const changeTime = (e) => {
@@ -356,7 +358,6 @@ export default function index() {
         <Tree
           checkable
           checkedKeys={defaultCheckedKeys}
-          expandedKeys={defaultCheckedKeys}
           defaultExpandAll={true}
           onCheck={onCheck}
           treeData={treeData}

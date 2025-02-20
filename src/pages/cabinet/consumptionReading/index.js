@@ -173,6 +173,7 @@ export default function index() {
   }, [params.siteId]);
   const onCheck = (checkedKeysValue) => {
     console.log('onCheck', checkedKeysValue);
+    setDefaultCheckedKeys(checkedKeysValue)
     params.structureIds = checkedKeysValue
   };
   const disabledDate = (current) => {
@@ -277,7 +278,6 @@ export default function index() {
         <Tree
           checkable
           checkedKeys={defaultCheckedKeys}
-          expandedKeys={defaultCheckedKeys}
           defaultExpandAll={true}
           onCheck={onCheck}
           treeData={treeData}
