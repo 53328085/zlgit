@@ -179,7 +179,8 @@ const Triangle = styled.div`
      display: ${props => props.laptop ? "none" : 'block'}; */
      height: 70px;
      width:232px;
-     
+     display: flex;
+     justify-content: flex-end;
      background-image: linear-gradient(to right, rgba(56, 168, 221, 0),rgba(29, 80, 246, 0.3)) ;
       
 `;
