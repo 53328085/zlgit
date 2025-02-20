@@ -218,7 +218,7 @@ export default function index() {
   });
   const GetSns = async () => {
     try {
-      const resp = await QueryAlarmOverview(projectId);
+      const resp = await QueryAlarmOverview(params.siteId);
       if (resp.success) {
         if (resp.data) {
           state.overview = resp.data
@@ -290,7 +290,7 @@ export default function index() {
     { title: '报警位置', dataIndex: 'alarmLocation', align: "center", },
     {
       title: '状态', dataIndex: 'alarmState', align: "center", render: (text, record, index) => {
-        return text == 0 ? <Tag color="processing">已解除</Tag> :text == 1 ?<Tag color="success" >已确认</Tag>:
+        return text == 0 ? <Tag color="processing">已解除</Tag> :text == 1 ?<Tag color="success" onClick={() => { gotoSure(record) }}>已确认</Tag>:
         <Tag color="error" onClick={() => { gotoSure(record) }}>未确认</Tag>
       }
     },
@@ -363,7 +363,7 @@ export default function index() {
     },
     {
       label: '高',
-      value: 1,
+      value: 3,
     },
     {
       label: '中',
@@ -371,7 +371,7 @@ export default function index() {
     },
     {
       label: '低',
-      value: 3,
+      value: 1,
     },
   ];
   const levelChange=(e)=>{
@@ -384,10 +384,11 @@ export default function index() {
   }
   const comfirmAlarm=async()=>{
    try {
-    const resp = await ConfirmAlarmState(details.alarmId);
+    const resp = await ConfirmAlarmState(details.alarmId,details.alarmRecord);
       if (resp.success) {
         message.success("确认告警信息成功!");
         setOpen(false);
+        run(1,14)
       } else {
         message.error("确认告警信息失败!");
       }
@@ -487,7 +488,9 @@ export default function index() {
             </div>
             {/* <ExportExcel tb={tbref} /> */}
           </Header>
-          <Table columns={columns} ref={tbref}   {...tableProps} ></Table>
+          <Table columns={columns} ref={tbref}   {...tableProps} scroll={{
+        y: 55 * 5,
+      }}></Table>
         </RightBox>
       </Right>
       <Drawer
@@ -562,7 +565,7 @@ export default function index() {
         </div>
         <div>
           <Button style={{ marginRight: 16, width: 96 }} onClick={onClose}>取消</Button>
-          <Button type="primary" style={{ marginLeft: 32, width: 96 }} onClick={comfirmAlarm}>确认</Button>
+          <Button type="primary" style={{ marginLeft: 32, width: 96 }} disabled={details?.alarmState!=2} onClick={comfirmAlarm}>确认</Button>
         </div>
       </Drawer>
     </div>

@@ -3896,6 +3896,10 @@ export class DistributionCabinet {
     server.post(
       `DistributionCabinet/DistributionLineEnergyRuntime/QueryLineEnergy`,data
     ); //回路能耗
+    static QueryTransformerList = (siteId) =>
+    server.get(
+      `DistributionCabinet/DistributionTransformerDiagnosisRuntime/QueryTransformerList?siteId=${siteId}`
+    ); //变压器列表DistributionCabinet/DistributionTransformerDiagnosisRuntime/QueryTransformerList?siteId=1
     static QueryTransformerInformation = (siteId,transformerId) =>
     server.get(
       `DistributionCabinet/DistributionTransformerDiagnosisRuntime/QueryTransformerInformation?siteId=${siteId}&transformerId=${transformerId}`
@@ -3916,9 +3920,9 @@ export class DistributionCabinet {
     server.post(
       `DistributionCabinet/DistributionCircuitBreakerDiagnosisRuntime/QueryCircuitBreakerDiagnosis`,data
     ); //断路器诊断
-    static QueryAlarmOverview = (data) =>
+    static QueryAlarmOverview = (siteId) =>
     server.get(
-      `DistributionCabinet/DistributionAlarmInformationRuntime/QueryAlarmOverview`
+      `DistributionCabinet/DistributionAlarmInformationRuntime/QueryAlarmOverview?siteId=${siteId}`
     ); //告警信息概览
     static QueryAlarmInformation = (data) =>
     server.post(
@@ -3928,9 +3932,9 @@ export class DistributionCabinet {
     server.get(
       `DistributionCabinet/DistributionAlarmInformationRuntime/QueryAlarmDetail?alarmId=${alarmId}`
     ); //告警信息详情
-    static ConfirmAlarmState = (alarmId) =>
+    static ConfirmAlarmState = (alarmId,alarmRecord) =>
     server.post(
-      `DistributionCabinet/DistributionAlarmInformationRuntime/ConfirmAlarmState?alarmId=${alarmId}`
+      `DistributionCabinet/DistributionAlarmInformationRuntime/ConfirmAlarmState?alarmId=${alarmId}&alarmRecord=${alarmRecord}`
     ); //确认告警状态
 }//DistributionCabinet/DistributionAlarmInformationRuntime/ConfirmAlarmState?alarmId=1
 

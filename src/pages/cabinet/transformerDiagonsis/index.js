@@ -6,8 +6,9 @@ import styled from "styled-components";
 import { DistributionCabinet } from "@api/api.js";
 import { useSelector } from "react-redux";
 import { useReactive } from "ahooks";
-import Icharts from "@com/useEcharts/Ichart.js";
+import Icharts from "@com/useEcharts/Ichart";
 import Cempty from '@com/useEmpty'
+import { drawEcharts } from "@com/useEcharts"
 import dayjs from 'dayjs';
 import Modal from "@com/useModal"
 import Table from "@com/useTable"
@@ -16,7 +17,7 @@ import { useAntdTable } from 'ahooks'
 const { RangePicker } = DatePicker;
 const LeftBox = styled.div`
   width: 240px;
-  height: 100%;
+  height: 864px;
   overflow-y: auto;
   background-color: #fff;
   border:1px solid #d7d7d7;
@@ -59,7 +60,7 @@ const Title = styled.p`
 `;
 const RightBox = styled.div`
   width: 1422px;
-  height: 100%;
+  height: 864px;
   display: flex;
   flex-direction: column;
   
@@ -96,40 +97,9 @@ const Tbb = styled.div`
   border-right:1px solid #d7d7d7;
 `;
 const {
-  QueryTransformerInformation, QueryTransformerLoadRateRealtime, QueryTransformerUnbalanceRateRealtime
+  QueryTransformerInformation, QueryTransformerLoadRateRealtime, QueryTransformerUnbalanceRateRealtime, QueryTransformerList
 } = DistributionCabinet;
-const option = {
-  legend: {
-    top: '3%',
-    left: "2%"
-  },
-  xAxis: {
-    type: "category",
-    data: [],
-  },
-  yAxis: {
-    type: "value",
-  },
-  tooltip: {
-    show: true, // 是否显示提示框组件，默认为true  
-    trigger: 'axis' // 触发类型，'item'表示数据项图形触发，'axis'表示坐标轴触发  
-  },
-  dataZoom: [
-    {
-      type: 'inside', // 内置缩放  
-      xAxisIndex: 0, // 指定x轴索引  
-      start: 0, // 起始位置（可以根据需要调整）  
-      end: 100 // 结束位置（可以根据需要调整）  
-    }
-  ],
-  grid: {
-    top: "10%",
-    left: "5%",
-  },
-  series: [
 
-  ],
-};
 
 export default function index() {
   const projectId = useSelector((state) => state.system.menus.projectId);
@@ -139,17 +109,17 @@ export default function index() {
     timeType: 1,
     xAxis: [],
     alltableData: [],
-    detailtableData: [],
+    alltableData1: [],
+    detailData: {},
     tableData: [],
     current: 1,
     pageSize: 10,
     disabled: false,
     groupName: '',
-    btnLength: [1, 2],
+    btnLength: [],
     active: 0,
     chartsOpts: {
       type: 1,
-      ...option,
     },
   });
   const today = moment().startOf('day');
@@ -169,15 +139,100 @@ export default function index() {
     startDate: moment(today).format('YYYY-MM-DD'),
     endDate: moment(today).format('YYYY-MM-DD'),
   });
-  const [dataList, setDataList] = useState([])
+  const [option, setOption] = useState({
+    type: 5,
+    tooltip: {
+      formatter: '{b} : {c}%'
+    },
+    series: [{
+      name: '实时负载率',
+      type: 'gauge',
+      min: 0.00,
+      max: 200.00,
+      axisLine: {
+        lineStyle: {
+          width: 5,
+          color: [
+            [0.3, '#3bc27f'],
+            [0.7, '#fab120'],
+            [1, '#e96c5b']
+          ]
+        }
+      },
+      detail: {
+        formatter: '{value}%',
+        fontSize: 20
+      },
+      data: [{
+        value: '',
+        name: '实时负载率'
+      }]
+    }]
+  })
+  const [option1, setOption1] = useState({
+    type: 5,
+    tooltip: {
+      formatter: '{b} : {c}%'
+    },
+    series: [{
+      name: '实时不平衡率',
+      type: 'gauge',
+      min: 0.00,
+      max: 100.00,
+      axisLine: {
+        lineStyle: {
+          width: 5,
+          color: [
+            [0.3, '#3bc27f'],
+            [0.7, '#fab120'],
+            [1, '#e96c5b']
+          ]
+        }
+      },
+      detail: {
+        formatter: '{value}%',
+        fontSize: 20
+      },
+      data: [{
+        value: '',
+        name: '实时不平衡率'
+      }]
+    }]
+  })
+  const [eoptions, setEptions] = useState({   //
+    series: [{ type: "line" }],
+    dataset: {}
+  })
+  const [aoptions, setAptions] = useState({   //
+    series: [{ type: "line" }],
+    dataset: {}
+  })
+  const GetSns = async () => {
+    try {
+      const resp = await QueryTransformerList(params.siteId);
+      if (resp.success) {
+        if (resp.data) {
+          state.btnLength = resp.data
+        } else {
+          state.btnLength = []
+        }
+      } else {
+        message.error("获取信息失败!");
+      }
+    } catch (err) { }
+  };
+
+  useEffect(() => {
+    GetSns();
+  }, []);
   const GetInformation = async () => {
     try {
       const resp = await QueryTransformerInformation(params.siteId, params.transformerId);
       if (resp.success) {
         if (resp.data) {
-          setDataList(resp.data)
+          state.detailData = resp.data
         } else {
-          setDataList([])
+          state.detailData = {}
         }
       } else {
         message.error("获取设备信息失败!");
@@ -194,7 +249,8 @@ export default function index() {
   const chooseBtn = (item, index) => {
     console.log(item, index)
     state.active = index
-    params.transformerId = index + 1
+    params.transformerId = item.id
+    params1.transformerId = item.id
   }
 
 
@@ -223,7 +279,7 @@ export default function index() {
         params.endDate = dateString + '-01-01'
       } else {
         params.startDate = dateString[0]
-        params.endDate = dateString[0]
+        params.endDate = dateString[1]
       }
     } else {
       if (params1.type == 1) {
@@ -237,20 +293,31 @@ export default function index() {
         params1.endDate = dateString + '-01-01'
       } else {
         params1.startDate = dateString[0]
-        params1.endDate = dateString[0]
+        params1.endDate = dateString[1]
       }
     }
   };
   const disabledDate = (current) => {
     return current > dayjs().endOf('day');
   };
+  const cref = useRef(null)
+  
 
   const getData = async () => {
     try {
       const resp = await QueryTransformerLoadRateRealtime(params);
       if (resp.success) {
         if (resp.data) {
-          //setDataList(resp.data)
+          state.alltableData=resp.data.loadRateTimeRatios
+          let edataset = {
+            dimensions: [
+              { name: 'x', type: 'time' },
+              { name: "y", displayName: '变压器实时负载率' },
+            ],
+            source: resp.data.trend,
+          }
+          setOption({ ...option, series: [{ ...option.series[0], data: [{ value: resp.data?.loadRateRealtime,name: '实时负载率' }] }] })
+          setEptions({ ...eoptions, dataset: edataset, xAxis: { axisLabel: { interval: 'auto' } } })
         } else {
           //setDataList([])
         }
@@ -264,7 +331,17 @@ export default function index() {
       const resp = await QueryTransformerUnbalanceRateRealtime(params1);
       if (resp.success) {
         if (resp.data) {
+          state.alltableData1=resp.data.unbalanceRateTimeRatios
+          let edataset = {
+            dimensions: [
+              { name: 'x', type: 'time' },
+              { name: "y", displayName: '变压器实时不平衡率' },
+            ],
+            source: resp.data.trend,
+          }
           //setDataList(resp.data)
+          setOption1({ ...option1, series: [{ ...option1.series[0], data: [{ value: resp.data?.unbalanceRateRealtime,name: '实时不平衡率' }] }] })
+          setAptions({ ...aoptions, dataset: edataset, xAxis: { axisLabel: { interval: 'auto' } } })
         } else {
           //setDataList([])
         }
@@ -273,12 +350,14 @@ export default function index() {
       }
     } catch (err) { }
   }
+  
   useEffect(() => {
     getData();
-  }, [params]);
+  }, [JSON.stringify(params)]);
   useEffect(() => {
     getData1();
-  }, [params1]);
+  }, [JSON.stringify(params1)]);
+
   return (
     <div style={{ width: "100%", height: "100%", display: "flex", flexDirection: "row", justifyContent: 'space-between' }}>
       <LeftBox>
@@ -296,8 +375,8 @@ export default function index() {
           <Title>变压器选择</Title>
         </div>
         {state.btnLength.length > 0 && state.btnLength.map((item, index) => {
-          return index == state.active ? (<ChooseBtn key={index} onClick={() => chooseBtn(item, index)}>T4变压器</ChooseBtn>) :
-            (<NoChooseBtn onClick={() => chooseBtn(item, index)}>T5变压器</NoChooseBtn>)
+          return index == state.active ? (<ChooseBtn key={index} onClick={() => chooseBtn(item, index)}>{item.name}</ChooseBtn>) :
+            (<NoChooseBtn onClick={() => chooseBtn(item, index)}>{item.name}</NoChooseBtn>)
         })}
         <Divider dashed style={{ borderColor: "#d7d7d7" }}></Divider>
         <div style={{ width: "100%", height: "20px", display: "flex", flexDirection: "row", alignItems: 'center', marginBottom: '16px' }}>
@@ -307,23 +386,23 @@ export default function index() {
         <div style={{ width: 206, height: 240, display: "flex", flexDirection: "column" }}>
           <div style={{ width: 206, height: 40, display: "flex", flexDirection: "row", border: '1px solid #d7d7d7', borderBottom: 'none' }}>
             <div style={{ width: 88, height: 40, backgroundColor: '#e5effc', textAlign: 'center', borderRight: '1px solid #d7d7d7', display: "flex", alignItems: 'center', justifyContent: 'center' }}>名称</div>
-            <div style={{ width: 120, height: 40, backgroundColor: '#e5effc', textAlign: 'center', display: "flex", alignItems: 'center', justifyContent: 'center' }}>T4</div>
+            <div style={{ width: 120, height: 40, backgroundColor: '#e5effc', textAlign: 'center', display: "flex", alignItems: 'center', justifyContent: 'center' }}>{state.detailData?.name}</div>
           </div>
           <div style={{ width: 206, height: 40, display: "flex", flexDirection: "row", border: '1px solid #d7d7d7', borderBottom: 'none' }}>
             <div style={{ width: 88, height: 40, textAlign: 'center', borderRight: '1px solid #d7d7d7', display: "flex", alignItems: 'center', justifyContent: 'center' }}>型号</div>
-            <div style={{ width: 120, height: 40, textAlign: 'center', display: "flex", alignItems: 'center', justifyContent: 'center' }}>S11</div>
+            <div style={{ width: 120, height: 40, textAlign: 'center', display: "flex", alignItems: 'center', justifyContent: 'center' }}>{state.detailData?.category}</div>
           </div><div style={{ width: 206, height: 40, display: "flex", flexDirection: "row", border: '1px solid #d7d7d7', borderBottom: 'none' }}>
             <div style={{ width: 88, height: 40, textAlign: 'center', borderRight: '1px solid #d7d7d7', display: "flex", alignItems: 'center', justifyContent: 'center' }}>额定容量</div>
-            <div style={{ width: 120, height: 40, textAlign: 'center', display: "flex", alignItems: 'center', justifyContent: 'center' }}>400 KVA</div>
+            <div style={{ width: 120, height: 40, textAlign: 'center', display: "flex", alignItems: 'center', justifyContent: 'center' }}>{state.detailData?.ratedCapacity}</div>
           </div><div style={{ width: 206, height: 40, display: "flex", flexDirection: "row", border: '1px solid #d7d7d7', borderBottom: 'none' }}>
             <div style={{ width: 88, height: 40, textAlign: 'center', borderRight: '1px solid #d7d7d7', display: "flex", alignItems: 'center', justifyContent: 'center' }}>额度电压</div>
-            <div style={{ width: 120, height: 40, textAlign: 'center', display: "flex", alignItems: 'center', justifyContent: 'center' }}>10KV / 0.4KV</div>
+            <div style={{ width: 120, height: 40, textAlign: 'center', display: "flex", alignItems: 'center', justifyContent: 'center' }}>{state.detailData?.limitVoltage}</div>
           </div><div style={{ width: 206, height: 40, display: "flex", flexDirection: "row", border: '1px solid #d7d7d7', borderBottom: 'none' }}>
             <div style={{ width: 88, height: 40, textAlign: 'center', borderRight: '1px solid #d7d7d7', display: "flex", alignItems: 'center', justifyContent: 'center' }}>额度频率</div>
-            <div style={{ width: 120, height: 40, textAlign: 'center', display: "flex", alignItems: 'center', justifyContent: 'center' }}>50 Hz</div>
+            <div style={{ width: 120, height: 40, textAlign: 'center', display: "flex", alignItems: 'center', justifyContent: 'center' }}>{state.detailData?.limitFrequency}</div>
           </div><div style={{ width: 206, height: 40, display: "flex", flexDirection: "row", border: '1px solid #d7d7d7' }}>
             <div style={{ width: 88, height: 40, textAlign: 'center', borderRight: '1px solid #d7d7d7', display: "flex", alignItems: 'center', justifyContent: 'center' }}>接线联结</div>
-            <div style={{ width: 120, height: 40, textAlign: 'center', display: "flex", alignItems: 'center', justifyContent: 'center' }}>Yyh0</div>
+            <div style={{ width: 120, height: 40, textAlign: 'center', display: "flex", alignItems: 'center', justifyContent: 'center' }}>{state.detailData?.wiringConnection}</div>
           </div>
         </div>
       </LeftBox>
@@ -350,32 +429,36 @@ export default function index() {
         }>
           <Charts>
             <div style={{ width: 500, height: 350, display: 'flex', justifyContent: 'center', alignItems: 'center', flexDirection: 'column' }}>
-              {state.chartsOpts.series.length > 0 ?
-                <Icharts custoption={{
-                  ...state.chartsOpts
-                }}></Icharts> : <Cempty tip="暂无数据" />}
+              {/* {state.alltableData.length > 0 ?
+                <Icharts custoption={option}></Icharts> : <Cempty tip="暂无数据" />} */}
+                <div style={{ width: 500, height: 278 }}>
+                <Icharts custoption={option} />
+                </div>
               <div style={{ height: 72, display: 'flex', justifyContent: 'center', alignItems: 'center', flexDirection: 'column' }}>
                 <div style={{ width: '100%', height: 36, display: 'flex', flexDirection: 'row', border: '1px solid #d7d7d7', borderBottom: 'none' }}>
                   <Tbh>负载率</Tbh>
                   <Tbb>{'<30%'}</Tbb>
                   <Tbb>30%~85%</Tbb>
-                  <Tbb>{'>=85%'}</Tbb>
+                  <Tbb>{'85%~100%'}</Tbb>
                   <Tbb style={{ borderRight: 'none' }}>{'>=100%'}</Tbb>
                 </div>
                 <div style={{ width: '100%', height: 36, display: 'flex', flexDirection: 'row', border: '1px solid #d7d7d7' }}>
                   <Tbh>时间占比</Tbh>
-                  <Tbb>5%</Tbb>
-                  <Tbb>10%</Tbb>
-                  <Tbb>85%</Tbb>
-                  <Tbb style={{ borderRight: 'none' }}>0%</Tbb>
+                  <Tbb>{state.alltableData[0]?.timeRatio}</Tbb>
+                  <Tbb>{state.alltableData[1]?.timeRatio}</Tbb>
+                  <Tbb>{state.alltableData[2]?.timeRatio}</Tbb>
+                  <Tbb style={{ borderRight: 'none' }}>{state.alltableData[3]?.timeRatio}</Tbb>
                 </div>
               </div>
             </div>
             <div style={{ height: 350, width: 872, display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-              {state.chartsOpts.series.length > 0 ?
+              {/* {state.alltableData.length > 0 ?
                 <Icharts custoption={{
                   ...state.chartsOpts
-                }}></Icharts> : <Cempty tip="暂无数据" />}
+                }}></Icharts> : <Cempty tip="暂无数据" />} */}
+                <div style={{ width: 872, height: 350 }}>
+                <Icharts {...eoptions} />
+                </div>
             </div>
 
           </Charts>
@@ -384,7 +467,7 @@ export default function index() {
           <Header>
             <div>
               <span style={{ marginRight: "10px" }}>时间查询</span>
-              <Select defaultValue="1" style={{ width: 96, marginRight: 16 }} onChange={(e) => changeTime(e, 1)}
+              <Select defaultValue="1" style={{ width: 96, marginRight: 16 }} onChange={(e) => changeTime(e, 2)}
                 options={[
                   { value: '1', label: '日', },
                   { value: '2', label: '月', },
@@ -402,10 +485,13 @@ export default function index() {
         }>
           <Charts>
             <div style={{ width: 500, height: 350, display: 'flex', justifyContent: 'center', alignItems: 'center', flexDirection: 'column' }}>
-              {state.chartsOpts.series.length > 0 ?
+              {/* {state.xAxis.length > 0 ?
                 <Icharts custoption={{
                   ...state.chartsOpts
-                }}></Icharts> : <Cempty tip="暂无数据" />}
+                }}></Icharts> : <Cempty tip="暂无数据" />} */}
+                <div style={{ width: 500, height: 278 }}>
+                <Icharts custoption={option1} />
+                </div>
               <div style={{ height: 72, display: 'flex', justifyContent: 'center', alignItems: 'center', flexDirection: 'column' }}>
                 <div style={{ width: '100%', height: 36, display: 'flex', flexDirection: 'row', border: '1px solid #d7d7d7', borderBottom: 'none' }}>
                   <Tbh>不平衡率</Tbh>
@@ -414,16 +500,19 @@ export default function index() {
                 </div>
                 <div style={{ width: '100%', height: 36, display: 'flex', flexDirection: 'row', border: '1px solid #d7d7d7' }}>
                   <Tbh >时间占比</Tbh>
-                  <Tbb style={{ width: 176 }}>90%</Tbb>
-                  <Tbb style={{ borderRight: 'none', width: 176 }}>10%</Tbb>
+                  <Tbb style={{ width: 176 }}>{state.alltableData1[0]?.safeState==0?state.alltableData1[0]?.timeRatio:state.alltableData1[1]?.timeRatio}</Tbb>
+                  <Tbb style={{ borderRight: 'none', width: 176 }}>{state.alltableData1[1]?.safeState==1?state.alltableData1[1]?.timeRatio:state.alltableData1[0]?.timeRatio}</Tbb>
                 </div>
               </div>
             </div>
             <div style={{ height: 350, width: 872, display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-              {state.chartsOpts.series.length > 0 ?
+              {/* {state.xAxis.length > 0 ?
                 <Icharts custoption={{
                   ...state.chartsOpts
-                }}></Icharts> : <Cempty tip="暂无数据" />}
+                }}></Icharts> : <Cempty tip="暂无数据" />} */}
+                <div style={{ width: 872, height: 350 }}>
+                <Icharts {...aoptions} />
+                </div>
             </div>
           </Charts>
         </Titlelayout>

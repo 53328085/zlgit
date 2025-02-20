@@ -6,8 +6,9 @@ import styled from "styled-components";
 import { DistributionCabinet } from "@api/api.js";
 import { useSelector } from "react-redux";
 import { useReactive } from "ahooks";
-import Icharts from "@com/useEcharts/Ichart.js";
+import Ichart from '@com/useEcharts/Ichart';
 import Cempty from '@com/useEmpty'
+import { drawEcharts } from "@com/useEcharts"
 import { CustButton } from "@com/useButton"
 import dayjs from 'dayjs';
 import Table from "@com/useTable"
@@ -83,38 +84,38 @@ const Charts = styled.div`
 const {
   QuerySiteList, QuerySiteStructure,QueryLineEnergy
 } = DistributionCabinet;
-const option = {
-  legend: {
-    top: '3%',
-    left: "2%"
-  },
-  xAxis: {
-    type: "category",
-    data: [],
-  },
-  yAxis: {
-    type: "value",
-  },
-  tooltip: {
-    show: true, // 是否显示提示框组件，默认为true  
-    trigger: 'axis' // 触发类型，'item'表示数据项图形触发，'axis'表示坐标轴触发  
-  },
-  dataZoom: [
-    {
-      type: 'inside', // 内置缩放  
-      xAxisIndex: 0, // 指定x轴索引  
-      start: 0, // 起始位置（可以根据需要调整）  
-      end: 100 // 结束位置（可以根据需要调整）  
-    }
-  ],
-  grid: {
-    top: "10%",
-    left: "5%",
-  },
-  series: [
+// const option = {
+//   legend: {
+//     top: '3%',
+//     left: "2%"
+//   },
+//   xAxis: {
+//     type: "category",
+//     data: [],
+//   },
+//   yAxis: {
+//     type: "value",
+//   },
+//   tooltip: {
+//     show: true, // 是否显示提示框组件，默认为true  
+//     trigger: 'axis' // 触发类型，'item'表示数据项图形触发，'axis'表示坐标轴触发  
+//   },
+//   dataZoom: [
+//     {
+//       type: 'inside', // 内置缩放  
+//       xAxisIndex: 0, // 指定x轴索引  
+//       start: 0, // 起始位置（可以根据需要调整）  
+//       end: 100 // 结束位置（可以根据需要调整）  
+//     }
+//   ],
+//   grid: {
+//     top: "10%",
+//     left: "5%",
+//   },
+//   series: [
 
-  ],
-};
+//   ],
+// };
 
 export default function index() {
   const projectId = useSelector((state) => state.system.menus.projectId);
@@ -134,7 +135,6 @@ export default function index() {
     active: 0,
     chartsOpts: {
       type: 1,
-      ...option,
     },
   });
   const today = moment().startOf('day');
@@ -147,6 +147,27 @@ export default function index() {
     startDate: moment(today).format('YYYY-MM-DD'),
     endDate: moment(today).format('YYYY-MM-DD'),
   });
+  const [Eoptions, setEoptions] = useState({   
+    series: [{ type: "bar" }],
+    dataset: {}
+  })
+  const [option, setOption] = useState({
+    type: 2,
+    tooltip: {
+      formatter: '{b} : {c}%'
+    },
+    series: [{
+      name: '实时负载率',
+      type: 'gauge',
+      detail: {
+        formatter: '{value}%'
+      },
+      data: [{
+        value: '',
+        name: '实时负载率'
+      }]
+    }]
+  })
   const [dataList, setDataList] = useState([])
   const GetSns = async () => {
     try {
@@ -168,7 +189,7 @@ export default function index() {
     GetSns();
   }, []);
   const [treeData, setTreeData] = useState([])
-
+  const [defaultCheckedKeys, setDefaultCheckedKeys] = useState([1]);
   const getTreeData = async () => {
     try {
       const resp = await QuerySiteStructure(params.siteId);
@@ -177,6 +198,19 @@ export default function index() {
           let data = []
           data.push(resp.data)
           setTreeData(data)
+          // 生成 defaultCheckedKeys
+        const keys = [];
+        const traverse = (nodes) => {
+          nodes.forEach(node => {
+            keys.push(node.id);
+            if (node.nodes) {
+              traverse(node.nodes);
+            }
+          });
+        };
+        traverse(data);
+        setDefaultCheckedKeys(keys);
+        params.structureIds =keys
         } else {
           setTreeData([])
         }
@@ -195,7 +229,8 @@ export default function index() {
 
   const onCheck = (checkedKeysValue) => {
     console.log('onCheck', checkedKeysValue);
-    setCheckedKeys(checkedKeysValue);
+    //setCheckedKeys(checkedKeysValue);
+    params.structureIds = checkedKeysValue
   };
   const changeTime = (e) => {
     console.log(e)
@@ -229,7 +264,7 @@ export default function index() {
       params.endDate = dateString + '-01-01'
     } else {
       params.startDate = dateString[0]
-      params.endDate = dateString[0]
+      params.endDate = dateString[1]
     }
   };
   const disabledDate = (current) => {
@@ -268,15 +303,37 @@ export default function index() {
       const resp = await QueryLineEnergy(params);
       if (resp.success) {
         if (resp.data) {
-          return {
-            data: resp.data.list,
-            total: resp.data.total,
+          state.alltableData=resp.data
+          let wdata = []
+          let series=[]
+          let dimensions=[{ name: 'time', type: 'time' }]
+          resp.data[0]?.lineEnergy.x.map((item, index) => {
+            wdata.push({ time: ''})
+            wdata[index].time = item
+          })
+          resp.data.map((item, index) => {
+            series.push({ type: "bar", name:`${item.lineName}`,encode: { x: 'time', y: `y${index}` }})
+            dimensions.push({ name: `y${index}`, displayName: `${item.lineName}` })
+            item.lineEnergy.y.map((it, ind) => {
+              wdata[ind]['y'+index] = it
+            })
+          })
+          
+          let wdataset = {
+            dimensions: dimensions,
+            source: wdata,
           }
+          console.log(wdataset,series)
+          setEoptions({ ...Eoptions, dataset: wdataset,series:series, xAxis: { axisLabel: { interval: 'auto' } } })
+          // return {
+          //   data: resp.data.list,
+          //   total: resp.data.total,
+          // }
           } else {
-          return {
-            data: [],
-            total: 0,
-          }
+          // return {
+          //   data: [],
+          //   total: 0,
+          // }
         }
       } else {
         message.error("获取设备信息失败!");
@@ -289,8 +346,9 @@ export default function index() {
     defaultPageSize: 14,
   })
   useEffect(() => {
-    run();
-  }, [params]);
+    run(1, 14);
+  }, [JSON.stringify(params)]);
+  
   return (
     <div style={{ width: "100%", height: "100%", display: "flex", flexDirection: "row", justifyContent: 'space-between' }}>
       <LeftBox>
@@ -305,6 +363,9 @@ export default function index() {
         <Divider dashed style={{ borderColor: "#d7d7d7" }}></Divider> */}
         <Tree
           checkable
+          checkedKeys={defaultCheckedKeys}
+          expandedKeys={defaultCheckedKeys}
+          defaultExpandAll={true}
           onCheck={onCheck}
           treeData={treeData}
           fieldNames={{ title: 'name', key: 'id', children: 'nodes' }}
@@ -342,11 +403,9 @@ export default function index() {
           {state.timeType == 2 ? <ExportExcel tb={tbref} /> : null} */}
         </Header>
       }>
-        {state.timeType == 1 ?<Charts>
-          {state.chartsOpts.series.length > 0 ?
-            <Icharts custoption={{
-              ...state.chartsOpts
-            }}></Icharts> : <Cempty tip="暂无数据" />}
+        {state.timeType == 1 ?<Charts><Ichart  {...Eoptions}/>
+          {/* {state.alltableData.length > 0 ?
+            <Ichart custoption={option} /> : <Cempty tip="暂无数据" />} */}
         </Charts>:
         <Charts>
           <Table columns={columns} ref={tbref}   {...tableProps} ></Table>
