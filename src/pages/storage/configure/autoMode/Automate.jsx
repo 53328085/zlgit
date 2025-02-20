@@ -23,9 +23,9 @@ const Mainbox = styled.div`
        row-gap: 16px; 
        flex: 1;
        color:#515151;
-       margin-top: 16px;
-       border-top: 1px dotted #d7d7d7;
-       padding-top: 16px;
+      // margin-top: 16px;
+     //  border-top: 1px dotted #d7d7d7;
+      // padding-top: 16px;
        .top {
         display: grid;
         grid-template-columns: 180px 1fr;
@@ -744,7 +744,7 @@ const Planview = ({data, strategyDetail}) => { // status 1, 充电， 2， 放 3
     }, [name])
    // const items = Array.from({length: 96}, (v, i) => ({index: i, type: i > 20 && i<40 ? 'warn' : i>=40 ? 'info' : ''}))    
     return (
-        <Titlelayout  title={<div style={{height: '32px', backgroundColor: primaryderived, display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff'}}>运行计划设置</div>} bordered={'n'} layout="flex" pv="0px" bl="none" pl="0px">
+        <Titlelayout  title={<div style={{height: '32px', backgroundColor: primaryderived, display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff'}}></div>} bordered={'n'} layout="flex" pv="0px" bl="none" pl="0px">
             <Viewbox>               
                 <div className='detl'>
                    <div style={{color: '#999', height: '48px'}}>查看运行计划及具体内容</div>
@@ -815,7 +815,7 @@ const Strategy = ({data,   form, disabled, executionCycle}) => {
       }
     }, [executionCycle])
    return (
-      <Titlelayout title={<div style={{height: '32px', backgroundColor: primaryderived, display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff'}}>运行计划设置</div>} bordered={'n'} pv="0px" bl="none" pl="0px" layout="flex">
+      <Titlelayout title={<div style={{height: '40px', backgroundColor: primaryderived, display: 'flex',  alignItems: 'center', marginLeft: "-11px", justifyContent: 'center', color: '#fff'}}>运行计划设置</div>} bordered={'n'} pv="0px" bl="none" rad="0px"  pl="0px" pr="0px" layout="flex">
          <Formbox   labelCol={{flex: '96px'}} labelAlign="left" form={form} disabled={disabled}   validateMessages={
        { required: "缺少'${label}' 数据"}
       }>

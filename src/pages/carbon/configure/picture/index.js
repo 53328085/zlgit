@@ -22,12 +22,22 @@ const Main = styled.div`
        display: flex;
        align-items: center;
        justify-content: space-between;
+       position: relative;
+       &::before {
+         content: "";
+         width: 3px;
+         height: 11px;
+         position:absolute ;
+         left: 16px;
+         background-color: ${props => props.theme.primaryColor || "#237AE4"};;
+       }
       .text {
         padding-left: 16px;
-        border-left: 4px solid  ${props => props.theme.primaryColor || "#237AE4"};
+       // border-left: 4px solid  ${props => props.theme.primaryColor || "#237AE4"};
         display: flex;
         align-items: center;
         height: ${props => props.theme.latop ? "28px" :  "32px"} ;
+        font-size: 15px;
       }
    }
    .imgbox {

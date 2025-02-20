@@ -11,6 +11,19 @@ import { SiteManagerDesigner, StorageEquipmentDesigner, StorageContainerDesigner
 import { useReactive } from 'ahooks'
 import {CustButtonT, CustLink} from "@com/useButton"
 import {Serach,Cdivider} from "@com/comstyled"
+import styled from 'styled-components'
+
+const Mainbox = styled.div`
+  flex:1;
+  display: flex;
+  flex-direction: column;
+  row-gap: 20px;
+  .header{
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+`
 export default function Index(props) {
   const [form] = Form.useForm()
   const [addForm] = Form.useForm()
@@ -487,10 +500,10 @@ export default function Index(props) {
   }
 
   return (
-    <div className={style.mainContainer}>
-      <div className={style.header}>
+    <Mainbox>
+      <div className="header">
         <Form form={form} layout='inline' colon={false}>
-        <Space size={laptop ? 16 : 64} split={laptop? null : <Cdivider />}>
+        <Space size={16}>
           <Item name='areaId' label={areaName + '选择'}>
             <Select
               placeholder="请选择"
@@ -532,7 +545,7 @@ export default function Index(props) {
           <CustButtonT  text="export"  src="export" onClick={() => exportData()} />  
         </Space>
       </div>
-      <Divider />
+      
       <Usetable ref={tableRef} columns={columns} dataSource={tableData} rowKey='sn' pagination={pagination} onChange={tableOnchange} sheetName='电池组.xlsx' />
       <Custmodl title='删除提示' ref={dref} mold="cust" width={512} type="warn" onOk={() => onDelete()} maskClosable={false}>
           是否确认删除该电池组？ 
@@ -680,6 +693,6 @@ export default function Index(props) {
           </div> */}
         </div>
       </Custmodl>
-    </div>
+    </Mainbox>
   )
 }

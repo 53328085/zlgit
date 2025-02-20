@@ -364,6 +364,7 @@ export default function Index(props) {
     <Pagecount>
       <Mainbox>
         <div className="bottomTab">
+          <Space size={16}>
           <div
             style={{
               display: "flex",
@@ -385,8 +386,7 @@ export default function Index(props) {
               alignItems: "center",
             }}
           >
-            {" "}
-            <Cdivider margin="0 32px" />
+            
             <span>测温状态</span>
             <Select
               value={params.state}
@@ -415,6 +415,7 @@ export default function Index(props) {
               ]}
             />
           </div>
+          </Space>
           <Space size={16} style={{ marginLeft: "auto" }}>
             <Radio.Group
               onChange={changeTab}
@@ -437,7 +438,7 @@ export default function Index(props) {
             <ExportExcel disabled={isCard} tb={tableLoadRef} />
           </Space>
         </div>
-        <Cdivider type="h" margin="0px" />
+      
         {isCard ? (
           <div className="cardBox">
             {overView.details != null

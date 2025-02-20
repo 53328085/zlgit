@@ -22,9 +22,9 @@ import {Carbon} from '@api/api'
 
 
 const Mainbox = styled.div`
-  margin-top: 16px;
-    padding-top: 16px;
-    border-top: 1px dotted #d7d7d7;
+ // margin-top: 16px;
+    //padding-top: 16px;
+   // border-top: 1px dotted #d7d7d7;
     display: flex;
     flex-direction: column;
     gap: 16px;

@@ -20,6 +20,20 @@ const {Link} = Typography
 const sty = css`
     grid-template-columns: 265px 1fr;
 `
+const Ctitle = styled.div`
+     display: flex;
+     justify-content: space-between;
+     height: 32px;
+     margin-bottom: 16px;
+    /*  .title {
+        display: inline-flex;
+        height: 32px;
+        padding-left: 16px;
+        border-left: 4px solid ${props => props.theme.primaryColor};
+        align-items: center;
+        color: #515151;
+     } */
+`
 const Mainbox = styled.div`
 flex: 1;
 display: grid;
@@ -32,20 +46,7 @@ column-gap: 16px;
     background-color: #fff;
     border: 1px solid #d7d7d7;
     border-radius: 4px;
-   .ctitle{
-     display: flex;
-     justify-content: space-between;
-     height: 32px;
-     margin-bottom: 16px;
-     .title {
-        display: inline-flex;
-        height: 32px;
-        padding-left: 16px;
-        border-left: 4px solid ${props => props.theme.primaryColor};
-        align-items: center;
-        color: #515151;
-     }
-   }
+   
 }
 ${props=> props.laptop ? sty : null}
 `
@@ -205,24 +206,25 @@ export default function Index() {
          console.log('RoomId', RoomId)
          if(Array.isArray(RoomId))  getLinePoint(RoomId,0);
     },[RoomId])
- 
+    const CustTitle=(
+                <Ctitle>
+                    <span className='title'>详细参数</span>
+                    <Space size={16}>
+                        <span style={{paddingRight:40,fontSize:16}}>参量采集时间 :{time}</span>
+                        <CustButtonT onClick={() => refresh()} src="refresh" text="refresh" /> 
+                        <ExportExcel tb={tableRef}/>
+                    </Space>
+                    </Ctitle>
+    )
     return (
         <Pagecount bgcolor="transparent" pd="0">
             <Mainbox laptop={laptop}>
                 <Titlelayout layout="flex" title="回路监测">
                 <LoopSelect   projectId={projectId} roomId={RoomId} ref={selectRef} getLinePoint={getLinePoint}></LoopSelect>
                 </Titlelayout>
-              
+                 <Titlelayout layout="flex" title={CustTitle}>
                 <div className='tbwrap'  >
-                    <div className='ctitle'>
-                    <span className='title'>详细参数</span>
-                    <Space size={4}>
-                        <span style={{paddingRight:40,fontSize:16}}>参量采集时间 :{time}</span>
-                        <CustButtonT onClick={() => refresh()} src="refresh" text="refresh" /> 
-                        <ExportExcel tb={tableRef}/>
-                    </Space>
-                    </div>
-                  
+                    
                     <UseTable 
                     hbg="#f0f9ff" 
                     hbc="#515151"
@@ -236,8 +238,8 @@ export default function Index() {
                     }
                       }
                     ></UseTable>
-                 
                 </div>
+                </Titlelayout>
             </Mainbox>
         </Pagecount>
     )

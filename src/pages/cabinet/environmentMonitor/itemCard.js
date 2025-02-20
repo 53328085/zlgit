@@ -1,9 +1,9 @@
 import React from "react";
 import { Divider, Image, Typography } from 'antd'
-import {useSelector} from "react-redux"
+import { useSelector } from "react-redux"
 import Titlelayout from '@com/titlelayout'
 import imgurl from '@imgs'
-import { themeColor  } from '@redux/systemconfig.js'
+import { themeColor } from '@redux/systemconfig.js'
 import styled from "styled-components";
 const { Text } = Typography
 const Mainbox = styled.div`
@@ -44,10 +44,11 @@ const Mainbox = styled.div`
 
 `
 export default function Index(props) {
-    const {primaryColor, primaryderived} =useSelector(themeColor)
+    const { primaryderived, primaryColor, previewrbgcolor } = useSelector(themeColor)
 
     return (
-        <Titlelayout layout="flex" bgcolor={primaryderived} bg="transparent" pl="0px" bl="none" title=''>
+        // bgcolor={previewrbgcolor}
+        <Titlelayout layout="flex" bg="transparent" pl="0px" bl="none" title=''>
             <Mainbox>
                 <div className="imgDiv">
                     <Image src={imgurl[props.img]} preview={false} />

@@ -1,7 +1,7 @@
 import React, { useState, useMemo, useCallback, useEffect, useRef,useImperativeHandle,forwardRef } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 import { SearchOutlined ,CloseOutlined, CodeSandboxCircleFilled} from '@ant-design/icons';
-import { Select, Button, DatePicker, Form, Divider, message, Input, Timeline, Typography } from 'antd'
+import { Select, Button, DatePicker, Form, Divider, message, Input, Timeline, Typography ,Space} from 'antd'
 import { DistributionRoomRuntime, distributionRoom } from '@api/api.js'
 
 import UseTable from '@com/useTable'
@@ -651,6 +651,7 @@ export default function Index() {
               dangerType: channelInfo.typeopts[0]?.x
             }}
           >
+            <Space size={16}>
             <Item name="time">
               <RangePicker format='YYYY-MM-DD' disabledDate={disabledDate}></RangePicker>
             </Item>
@@ -663,9 +664,7 @@ export default function Index() {
                 查询
               </Button>
             </Item>
-            <Item >
-              <Divider dashed type='vertical' style={{ borderColor: "#999", height: 26 }}></Divider>
-            </Item>
+            
             <Item label="报警类型" name="dangerType">
               <Select 
               style={{ width: 160 }} 
@@ -674,6 +673,7 @@ export default function Index() {
               onChange={QueryFibreTempilWarningRecords}
               ></Select>
             </Item>
+            </Space>
           </Form>
             <CusTable ref={tableRef} QueryFibreTempilWarningRecords={QueryFibreTempilWarningRecords}></CusTable>
           

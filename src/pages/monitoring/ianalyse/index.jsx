@@ -416,8 +416,7 @@ export default function index() {
                   onChange={(dates, dateStrings) => changeDate(dates, dateStrings, index)}
                 />
                 </div>
-            </Space>}>
-            <Divider dashed style={{ borderColor: "#d7d7d7" }}></Divider>
+            </Space>}> 
             <Charts len={len}>
               {state.chartsOpts.series.length > 0&&item?.items[params[index].type-1].state != 0 ?
                 <Icharts custoption={{

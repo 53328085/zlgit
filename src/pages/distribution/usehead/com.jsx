@@ -164,7 +164,7 @@ return (
                   style={{flex: 1,  display: 'flex', alignItems: 'center',  justifyContent: "space-between"}} 
                   onValuesChange={onValuesChange}             
               >
-                <Space split={ <Cdivider />} size={laptop ? 16 : 64}>
+                <Space   size={16}>
                 {showArea &&  <Form.Item label={levelName}   name="area" style={{ marginBottom: 0 }}>
                       <Select 
                       style={{ width: laptop ? 150 : 200 }} 

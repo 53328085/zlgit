@@ -17,7 +17,7 @@ const Mainbox = styled.div`
     && {
        flex: 1;
        color:#515151;
-       padding-top: 16px;
+      // padding-top: 16px;
        display: flex;
         height: 100%;  
        }

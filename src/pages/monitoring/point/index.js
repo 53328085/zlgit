@@ -500,7 +500,7 @@ export default function Index(props) {
             state: 0
           }}
         >
-          <Space size={laptop ? 16 : 64} split={laptop ? "" :<Cdivider />} >
+          <Space size={16}>
             <Form.Item
               label={i18t("comm","Query",{text:"设备"})}
               name="alike"
@@ -586,8 +586,7 @@ export default function Index(props) {
             </Radio.Group> */}
             <ExportExcel disabled={isCard} tb={tableLoadRef} />           
           </Space>
-        </Form>
-        <Cdivider type="h" margin="16px 0" />
+        </Form> 
         {isCard ? (
           <Cardbox laptop={laptop} >
             {tableProps?.dataSource?.length > 0 ?

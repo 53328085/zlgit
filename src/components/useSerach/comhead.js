@@ -366,7 +366,7 @@ const deviceStyleNode = (<Item name="deviceStyle" label={i18t("comm","type",{tex
     <Cform layout="inline"   form={form}   {...props.formprop} 
      onValuesChange={onValuesChange}      
     style={{displey: 'flex', justifyContent: 'space-between'}} >
-      <Space size={laptop ? 32 : 64} split={laptop ? null : <Cdivider />}>
+      <Space size={16} >
       {isAreaId && <Item label={varlabel} name='areaId' initialValue={AreaID}>
         <Select style={{ width: "200px" }} onChange={onChange} options={levelone}  fieldNames={{label: 'name', value: 'id', options: 'options'}}>
          

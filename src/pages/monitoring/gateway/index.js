@@ -439,7 +439,6 @@ export default function Index(props) {
   return (
     <Pagecount>
         <div className="flexcol">
-       
           <Form
             layout={laptop ? "vertical" : "line"}
             form={form}
@@ -455,7 +454,7 @@ export default function Index(props) {
               state: 0
             }}
           >
-            <Space size={laptop ? 16 : 64} split={laptop ? "" :<Cdivider />}  >             
+            <Space size={16}>             
                 <Form.Item name="alike" label={i18t("comm","Query",{text:"网关"})} style={{marginBottom: 0}}  >
                   <Serach
                     size="middle"
@@ -520,9 +519,8 @@ export default function Index(props) {
               <RadioT onChange={changeTab} /> 
               <ExportExcel disabled={isCard} tb={tableLoadRef} />
             </Space>
-          </Form>
-        
-        <Cdivider type="h" margin="16px 0" />
+          </Form> 
+      
         {isCard ? (
           <Cardbox laptop={laptop} >
             {  tableProps?.dataSource?.length > 0 ?   tableProps?.dataSource?.map((item, index) => {

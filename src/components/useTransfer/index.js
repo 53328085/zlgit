@@ -189,9 +189,20 @@ const Mainbox = styled.div`
       height: 32px;
       padding-left: 16px;
       line-height: 32px;
-      font-size: 14px;
+      font-size: 15px;
       color: #333;
-      border-left: 4px solid var(--ant-primary-color);
+      position: relative;
+      display: flex;
+      align-items: center;
+      &::before{
+        content: "";
+        width: 3px;
+        height: 11px;
+        position: absolute;
+        left:0px;
+        background-color: ${props=> props.theme.primaryColor};
+      }
+      //border-left: 4px solid var(--ant-primary-color);
     }
     .searchInput {
       display: flex;

@@ -22,6 +22,7 @@ font-size: 14px;
 border: 1px solid transparent;
 border-radius: 4px;
 padding: 0 8px;
+transition: all 0.3s;
 `
 const Dot = styled.div`
 &&{
@@ -69,6 +70,16 @@ const Confirm = styled(Normal)`
    justify-content: flex-start;
    padding-right: 4px;
    
+`
+const Config = styled(Normal)`
+   color: ${props => props.color};
+   border-color:${props => props.color};
+   background-color: rgba(${props=> props.r}, ${props=> props.g}, ${props=> props.b}, ${props=> props.opac});
+   cursor: pointer;  
+   &:hover{
+     color: #fff;
+     background-color: rgba(${props=> props.r}, ${props=> props.g}, ${props=> props.b}, ${props=> props.opac*2.5});;
+   }
 `
 export  const Ptag = styled(Normal)`
    background-color: ${props=> props.theme.primaryderived};
@@ -299,7 +310,7 @@ const Menus = (print) => {
 
 export function ConfirmBtn(props) {  //  盘面图监控 确认、未确认  "confirm": "noconfirm",  
   let {text, ns="button", state=1,opac=0.5,wh="80px", ...other} = props  // state=1 确认
-  let {errorColor,successColor} = useSelector(themeColor)
+  let {errorColor,successColor, primaryColor} = useSelector(themeColor)
   let rgb = state==1 ?  hextodec(successColor) : hextodec(errorColor);
   
   const {t} = useTranslation();
@@ -307,6 +318,22 @@ export function ConfirmBtn(props) {  //  盘面图监控 确认、未确认  "co
             {state==1 ? <Dot /> : <Udot />}  {t(text,{ns})}
            </Confirm>
 }
+export function TreeBtn(props) {  //  树形按钮   
+  let {text, ns="button", type=1,opac=0.2,wh="80px", ...other} = props  // type： 1  主要， 2 成功 3 错误色（删除）
+  let {errorColor,successColor, primaryColor} = useSelector(themeColor)
+  let color = {
+    1: primaryColor,
+    2: successColor,
+    3: errorColor
+  }[type]
+  let rgb = hextodec(color);
+  
+  const {t} = useTranslation();
+   return <Config r={rgb[0]} g={rgb[1]} b={rgb[2]} color={color}  opac={opac} wh={wh} {...other} >
+             {t(text,{ns})}
+           </Config>
+}
+
 export function TreeBtnN(props) {  // 树形按钮  普通
   let {text, ns="button",...other} = props 
   const {t} = useTranslation();

@@ -23,11 +23,10 @@ const Mainbox = styled.div`
       flex-direction: column;
       .content {
         display: grid;
-        grid-template-rows: 32px 4px 1fr;
+        grid-template-rows: 32px  1fr;
         row-gap: 16px; 
         flex: 1;
-        color:#515151;
-        padding-top: 16px;
+        color:#515151; 
       //  height: 700px;   
      //   width: 1650px;
         .top {
@@ -211,7 +210,7 @@ export default  function Index() {
               type: 0,
               time: [moment().subtract(7, 'day'), moment()]
             }}>
-              <Space size={64} split={<Cdivider />}>               
+              <Space size={16}>               
                 <Item label="告警等级" name="type">
                   <Select options={[
                     { label: '全部告警', value: 0 },
@@ -234,7 +233,7 @@ export default  function Index() {
               </Item> */}
             </Form>
 
-            <Cdivider type="h" margin="0" />
+           
             <div>
             <Usetable 
             hbg="#f0f9ff"

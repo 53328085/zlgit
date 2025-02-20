@@ -127,6 +127,16 @@ body *::-webkit-scrollbar-thumb {
   flex-direction: column;
 }
 }
+// 添加标题前的竖线
+.title-line-zl{}
+.title-line-zl::before {
+  position: absolute;
+  content: "";
+  width: 3px;
+  height: 11px;
+  left:0;
+  background-color: var(--ant-primary-color);
+}
  // antd 样式全局修改
  .ant-radio-button-wrapper:first-child {
   border-radius: 6px 0 0 6px;
@@ -142,6 +152,9 @@ body *::-webkit-scrollbar-thumb {
  }
  .ant-select:not(.ant-select-customize-input) .ant-select-selector{
   border-radius: 6px;
+ }
+ .ant-form-inline .ant-form-item {
+  margin-right: 0px;
  }
 /* :root {
   --main-bg-color: #ff7313;

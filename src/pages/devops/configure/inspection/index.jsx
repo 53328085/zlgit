@@ -26,8 +26,9 @@ const { Link } = Typography
 const ContainerDiv = styled.div`
       display: flex;
       flex-direction: column;
-      padding-top: 16px;
+   //   padding-top: 16px;
       flex: 1;
+      row-gap: 32px;
   `
 const { RangePicker } = DatePicker;
 export default function Index() {
@@ -265,7 +266,7 @@ export default function Index() {
               alike: ''
             }}
           >
-            <Space size={64} split={<Divider type="vertical" style={{ margin: 0, borderColor: '#d7d7d7', height: '32px' }} dashed />}>
+            <Space size={16}>
               <Form.Item name="areaId" style={{ marginRight: 0, marginBottom: 0 }}>
                 <Select
                   options={options}
@@ -290,10 +291,6 @@ export default function Index() {
               <ExportExcel setKey={setKey} tb={tableRef} />
             </Space>
           </Form>
-
-
-          <Divider style={{ margin: laptop ? "16px 0" : "32px 0", borderColor: '#d7d7d7' }} dashed ></Divider>
-
           <Table columns={columns} ref={tableRef}  {...tableProps} onExport={onExport} sheetName="巡检计划管理"></Table>
 
           <Modal mold='cust' ref={addmodalRef} width={538} onOk={confirmAdd} custft={isAdd} title="新建巡检计划">

@@ -8,7 +8,7 @@ import { cloneDeep } from 'lodash';
 import { Carbon } from '@api/api'
 import Titlelayout from "@com/titlelayout"
 import { TreeBtnN, TreeBtnW } from "@com/useButton"
-import { CustButtonT, CustButton, i18warning, i18success, CustTransO } from "@com/useButton"
+import { CustButtonT, CustButton, i18warning, i18success,TreeBtn, CustTransO } from "@com/useButton"
 import CModal from "@com/useModal"
 import TableT from "./tabletmp"
 import CDraw from './draw'
@@ -422,10 +422,10 @@ export default function Index() {
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
           {parentId === 0 ? <CustButton wh="auto" style={{ borderRadius: '4px' }}>{item.name}</CustButton> : <Custtitle>{item.name}</Custtitle>}
           <Space size={16}>
-            <TreeBtnN text="addSubitem" wh="auto" onClick={() => addSubitem(id, valName)} key="add" />
-            <TreeBtnN text="edit" key="edit" onClick={() => editSubitem(id, valName)} />
-            {parentId !== 0 && <TreeBtnW text="delete" key="delete" onClick={() => onDelete(id)} />}
-            <TreeBtnN text="configure" key="configure" onClick={() => onConfig(item)} />
+            <TreeBtn text="addSubitem" wh="auto" onClick={() => addSubitem(id, valName)} key="add" />
+            <TreeBtn text="edit" key="edit" onClick={() => editSubitem(id, valName)} />
+            {parentId !== 0 && <TreeBtn type={3} text="delete" key="delete" onClick={() => onDelete(id)} />}
+            <TreeBtn text="configure" key="configure" onClick={() => onConfig(item)} />
           </Space>
         </div>
       )

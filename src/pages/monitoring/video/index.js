@@ -565,8 +565,7 @@ export default function Index() {
               onSearch={onSearchList}
             />
 
-          </div>
-          <Cdivider type="h" margin="16px 0" />
+          </div> 
 
           <Table bordered columns={columns} {...tableProps} rowKey='sn' size='small' />
 

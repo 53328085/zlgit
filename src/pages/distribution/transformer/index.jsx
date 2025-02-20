@@ -23,6 +23,7 @@ flex: 1;
 padding: 16px;
 display: flex;
 flex-direction: column;
+row-gap: 16px;
 .trancss{
   display: flex;
   .ant-table-thead .ant-table-cell{
@@ -454,7 +455,7 @@ export default function Index() {
              <TranCard  device={tabs[value]}/>
              <UseTable columns={columns} bordered className={style.transformerTable} dataSource={tabledata}></UseTable>
              </div>
-             <Divider dashed style={{borderColor:"#e4e4e4"}}></Divider>
+           
              <Titlelayout title={<div style={{display: 'flex', alignItems: 'center', justifyContent: "space-between"}}>
                <span>数据趋势</span>
                <Space size={16}>

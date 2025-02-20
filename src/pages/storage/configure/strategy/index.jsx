@@ -458,7 +458,7 @@ export default function Index() {
           <div className="right">
             <Ctitle isLight={isLight} className="itemTitle">充放策略详细设置</Ctitle>
             <div className="middle">
-              <Form name='strategyForm' form={strategyForm} requiredMark={false} autoComplete='off'>
+              <Form name='strategyForm' form={strategyForm} requiredMark={false} autoComplete='off' style={{paddingBottom: "16px"}}>
                 <Item label='策略名称'>
                   <Space size={16}>
                     <Item 

@@ -24,7 +24,7 @@ const Mainbox = styled.div`
     flex:1;
     .content {
       flex: 1;
-      padding-top: 16px;
+     // padding-top: 16px;
       position: relative;
       .tbbox {
         position: absolute;
