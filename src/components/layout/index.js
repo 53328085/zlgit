@@ -18,7 +18,10 @@ const Cheader =styled(Header)`
   display: flex;
     align-items: center;
     padding: 0px;
-    background-color: ${props => props.theme.menusbgcolor || '#003366'};
+   // background-color: ${props => props.theme.menusbgcolor || '#003366'};
+    height: 70px;
+    line-height: 70px;
+    background-color: transparent;
  }
 `
 

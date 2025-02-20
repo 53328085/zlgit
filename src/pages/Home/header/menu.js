@@ -4,10 +4,12 @@ import { useDispatch, useSelector } from "react-redux";
 import { Menu, Image } from "antd";
 import styled, {css} from "styled-components";
 //import './style.less'
-import {getJump, runMenus, designerMenus, siderDesignerMenus, siderRunMenus, configState, configProject,adaptation} from '@redux/systemconfig'
+import {getJump, runMenus,themeColor, designerMenus, siderDesignerMenus, siderRunMenus, configState, configProject,adaptation} from '@redux/systemconfig'
 import useJump from "./useJump";
 //import imgurl from './icon/index.js'
 import svgurl from './icon/svg'
+import {hextodec} from '@com/usehandler'
+ 
 const msty =css`
 font-size: 12px;
     display: flex;
@@ -60,13 +62,16 @@ font-size: 12px;
 `
 const Cmenu = styled(Menu)`
 &&{
-  background-color: transparent;
+   //background-color: transparent;
+   background-color: ${props => props.theme.menusbgcolor || '#003366'};
     border-bottom: none;
- //   flex: 1;
     overflow: hidden;
-  //  overflow-x: auto;
+    padding: 2px 0 2px 16px;
+    height: inherit;
+    display: flex;
+    column-gap: 4px;
     .ant-menu-item.ant-menu-item-selected {
-        background-color: ${props => props.theme.menusactive || '#1c62b6'};
+        background-color: rgba(${props => props.rgba[0]},${props => props.rgba[1]},${props => props.rgba[2]}, 0.2) ;
       //  border-bottom: 2px solid ${props => props.theme.menusborder || '#00ff66'};
         color:${props => props.theme.menusactivefontcolor || '#ffffff'};
         border-radius: 6px;
@@ -85,19 +90,14 @@ const Cmenu = styled(Menu)`
     .ant-menu-item{
         display: flex;
         flex-direction: column;
-        justify-content: space-between;
+        justify-content:space-evenly;
         align-items: center;
        // width: 100px;
-        flex: 0 1 92px;
+        flex: 0 1 74px;
         overflow: hidden; // 英语状态下可能会撑开
-        padding: 4px 0; 
-        height: 64px;
-        color: ${props => props.theme.menusfontcolor || '#b2c1d1'};
-       // border-bottom: 2px solid transparent;
-     
-      
-     //   background-color: #1c62b6 ;      
-     //   transition: all 0.3s;
+      //  padding: 4px 0; 
+        height: 66px;
+        color: ${props => props.theme.menusfontcolor || '#b2c1d1'}; 
         .logo {
             height: 36px;
             width: 36px;
@@ -114,14 +114,14 @@ const Cmenu = styled(Menu)`
             left: 0px;
             border-bottom: none;
         }
-     /*    &:nth-of-type(:first-of-type) {
-          border-right: 1px solid #ffffff;
-        } */
+   
         &:hover, &:active {
-            background-color: ${props => props.theme.menusactive || '#1c62b6'} ;
+            background-color:  rgba(${props => props.rgba[0]},${props => props.rgba[1]},${props => props.rgba[2]}, 0.2) ; //${props => props.theme.menusactive || '#1c62b6'} ;
             color:${props => props.theme.menusactivefontcolor || '#ffffff'};
           //  border-bottom: 2px solid  ${props => props.theme.menusborder || '#00ff66'};
             bottom: 0px;
+            border-radius: 6px;
+            border-bottom: none;
             .logo {
               height: 36px;
               width: 36px;
@@ -132,6 +132,9 @@ const Cmenu = styled(Menu)`
               filter: drop-shadow(36px 0 0  ${props => props.theme.menusactivefontcolor || '#ffffff'});
             }
            
+        }
+        &::after{
+          content: none;
         }
         }
     .ant-menu-title-content {
@@ -171,6 +174,9 @@ export default function Hmenu() {
   
   const isconfig = useSelector(configState)
   const {laptop} =useSelector(adaptation) ||{}
+  const {menusactive} = useSelector(themeColor)
+  const menusactiveoc = hextodec(menusactive)
+  //console.log("menusactiveoc",menusactiveoc)
   const  runmenus = useSelector(runMenus)
   const siderrunmenus = useSelector(siderRunMenus)
   const designermenus = useSelector(designerMenus)
@@ -259,7 +265,7 @@ export default function Hmenu() {
     }  
    },[location]) 
 
-  return <Cmenu laptop={laptop} onClick={onSelect} selectedKeys={[current]} mode="horizontal" items={menus}   />;
+  return <Cmenu laptop={laptop} onClick={onSelect} selectedKeys={[current]} mode="horizontal" items={menus} rgba={menusactiveoc}   />;
 
 
 }

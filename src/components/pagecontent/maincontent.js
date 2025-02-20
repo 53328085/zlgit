@@ -9,6 +9,7 @@ import {
     adaptation
   } from "@redux/systemconfig.js";
 const Tabsbox = styled(Tabs)`
+  transform: translateY(1px);
   .ant-tabs-nav {
     margin-bottom: 0px;
     max-width: inherit;

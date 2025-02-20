@@ -23,8 +23,9 @@ const sty = css`
 const Ctitle = styled.div`
      display: flex;
      justify-content: space-between;
-     height: 32px;
-     margin-bottom: 16px;
+     height: 40px;
+     align-items: center;
+   //  margin-bottom: 16px;
     /*  .title {
         display: inline-flex;
         height: 32px;
@@ -41,11 +42,8 @@ grid-template-columns: 265px minmax(1397px,1fr);
 column-gap: 16px;
  align-items: stretch;
 .tbwrap {
-    padding: 16px ;
-    width: 100% ;
-    background-color: #fff;
-    border: 1px solid #d7d7d7;
-    border-radius: 4px;
+     flex:1;
+     display: flex;
    
 }
 ${props=> props.laptop ? sty : null}

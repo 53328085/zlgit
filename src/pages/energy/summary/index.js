@@ -211,8 +211,8 @@ const Imgbg = memo(({projectId, areaVos}) => {
   }, [projectId])
   return    (
     <Cspin spinning={spinning} tip="图片下载中……">
-    <div style={{position: "relative", backgroundColor: primaryderived || "#fffffff"}}>
-        <img src={energyImage || imgurl.engeryBg}  usemap="#building"  />
+    <div style={{position: "relative", backgroundColor: primaryderived || "#fffffff", overflow: "hidden", border: "1px solid transparent"}} className="border_radius_8">
+        <img src={energyImage || imgurl.engeryBg}  usemap="#building" style={{clipPath: "inset(1px 1px 1px 1px)"}}  />
         {map}
         {info && <TitP left={info.x} top={info.y}>
           <h5 className="title">{info.buildingName} <CloseOutlined onClick={() => setInfo(null)}  /> </h5>
