@@ -2,7 +2,7 @@ import React from 'react'
 import styled from 'styled-components'
 import {Image, Typography} from 'antd'
 import {useSelector} from 'react-redux'
-
+import {  useLocation } from 'react-router-dom'
 const {Text} = Typography
 //import {selectCurProject} from '@redux/user'
 import {collapsed, currProject} from '@redux/systemconfig'
@@ -25,12 +25,19 @@ export default function  Title (){
    // const project = useSelector(selectCurProject)  
   //  const { logoImageBase64} = project 
    // const {chineseTitle} = useSelector(systemConfigInfo)
-    const currproject = useSelector(currProject) || {}
-    let projectLog = currproject.logoImage;
-    let Collapsed = useSelector(collapsed)
-    console.log("Collapsed", Collapsed)
+    const Currproject = useSelector(currProject) || {};
+    const location = useLocation();
+    const overview = (location?.state?.primary=="runtimeProject") || (location?.state?.primary=="designerProject");
+    let projectLog = Currproject.logoImage;
+    let smallLog = Currproject.smallLogoImage
+
+    let Collapsed = useSelector(collapsed) 
+   if (Collapsed && !overview) {
+     return  <img  height={70}  width={54 }   src={smallLog || logo}></img>
+   }else {
+      return (
+         <img  height={70}  width={200 }   src={projectLog || logo}></img>
+    )
+   }
  
-   return (
-        <img  height={70}  width={Collapsed ? 54 : 200 }   src={projectLog || logo}></img>
-   )
   }

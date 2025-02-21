@@ -3,7 +3,7 @@ import styled from 'styled-components'
 import {Button} from "antd"
 import {MenuUnfoldOutlined,MenuFoldOutlined} from "@ant-design/icons"
 import {useDispatch, useSelector} from 'react-redux'
-import {  collapsed,pgTitle, getCollapsed} from "@redux/systemconfig";
+import {  collapsed,pgTitle, getCollapsed } from "@redux/systemconfig";
 const Main =styled.div`
  padding-left: 8px;
  height: 24px;
@@ -20,6 +20,7 @@ const Main =styled.div`
 export default function Index() {
   const Collapsed = useSelector(collapsed)
   const PgTitle = useSelector(pgTitle)
+   
   const dispatch = useDispatch()
   const toggleCollapsed = ()=> {
     dispatch(getCollapsed(!Collapsed))
