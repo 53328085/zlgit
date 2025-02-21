@@ -7,7 +7,7 @@ import {useSelector} from 'react-redux'
 import styled, {css} from 'styled-components'
 // import style from './style.module.less'
 import Title from '../header/title'
-import {  configState, siderDesignerMenus, siderRunMenus, getisDistribution, adaptation,sidershow,getsidershow} from "@redux/systemconfig";
+import {  configState, siderDesignerMenus, siderRunMenus, getisDistribution, adaptation,sidershow, getPgTitle} from "@redux/systemconfig";
 import imgurl from './icon';
 import ShowSide from "@com/showsider"
 const Micon = () => {
@@ -36,8 +36,16 @@ const Imgbox = styled.div`
 
 const Sdiv = styled.div`
     display: grid;
-    grid-template-rows: 64px 130px 24px 1fr;
+    grid-template-rows: 70px 1fr;
+    row-gap: 10px;
     height: inherit;
+    .sidecontent {
+       display: grid;
+       padding: 0 6px;
+       grid-template-columns: 1fr;
+       grid-template-rows: 24px 1fr;
+       row-gap: 10px;
+    }
     .btn {
       margin-left: 8px;
       justify-self: flex-start;
@@ -55,9 +63,12 @@ const Cmenu = styled(Menu)`
     overflow-y: auto;
    }
    .ant-menu-item {
-     padding-left: 32px;
+     padding-left: 10px !important;
      display: flex;
      align-items: center;
+     &::after{
+      content: none;
+     }
      ${props => props.laptop ? sty : ''}
     
    }
@@ -66,6 +77,7 @@ const Cmenu = styled(Menu)`
     color:  ${props => props.theme.asiderfontcolor || "#ffffff"};
    }
    .ant-menu-item.ant-menu-item-selected{    
+      border-radius: 6px;
       background-color:${props => props.theme.asiderbgcolorA || "#3333cc"} ;
       ${props => props.laptop ? sty : ''}     
       .ant-menu-title-content, .custicon {
@@ -75,9 +87,15 @@ const Cmenu = styled(Menu)`
    .ant-menu-title-content {
      color: ${props => props.theme.asiderfontcolor || "#ffffff"};;
      display: inline-block;   
-     padding-left: 32px;
+     padding-left: 10px;
      ${props => props.laptop ? sty : ''}
   
+    
+   }
+   &.ant-menu-inline-collapsed {
+     .ant-menu-title-content {
+      opacity: 0;
+     }
     
    }
 `
@@ -101,9 +119,7 @@ export default function Sider() {
 
   const [path, setPath] = useState('')
 
-  const toggleCollapsed = () => {
-     dispatch(getsidershow(false));
-  };
+   
   const Showimg = () => {
     let {primary} = location.state || {}   
     let imgsrc = config ? imgurl.config : imgurl[primary]
@@ -120,7 +136,8 @@ export default function Sider() {
     try {
     
       let state = location.state || {}    
-      let {nested, primary } = state;
+      let {nested, primary, title } = state;
+      dispatch(getPgTitle(title))
     //  console.log(state,location)
       dispatch(getisDistribution(primary === 'runtimeDistribution'))
       setPath(primary)
@@ -144,17 +161,19 @@ export default function Sider() {
      }else {
       url = `/index/${path}/` + key
      }
-     
+    // dispatch(getPgTitle(label))
      navigate(url, {state: {title: label, nested: key, primary: path}})
   }
 
   return (
     <Sdiv> 
        <Title/>
-       <Showimg/>
-       <ShowSide show={false} />
-      
-       <Cmenu laptop={laptop} onClick={onSelect} selectedKeys={[key]} items={menus} ></Cmenu>
+      {/*  <Showimg/>
+       <ShowSide show={false} /> */}
+       <div className='sidecontent'>
+       <ShowSide   />
+       <Cmenu laptop={laptop} onClick={onSelect} selectedKeys={[key]} items={menus} mode="inline"></Cmenu>
+       </div>
     </Sdiv>
   )
 }

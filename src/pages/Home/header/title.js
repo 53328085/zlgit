@@ -5,11 +5,11 @@ import {useSelector} from 'react-redux'
 
 const {Text} = Typography
 //import {selectCurProject} from '@redux/user'
-import {systemConfigInfo, currProject} from '@redux/systemconfig'
+import {collapsed, currProject} from '@redux/systemconfig'
 import logo from '@imgs/czt.png'
 
 const Divlog = styled.div` 
-   height: 64px;
+   height: 70px;
    display: flex;
    flex-direction: column;
    justify-content: space-evenly;
@@ -27,10 +27,10 @@ export default function  Title (){
    // const {chineseTitle} = useSelector(systemConfigInfo)
     const currproject = useSelector(currProject) || {}
     let projectLog = currproject.logoImage;
-    let projectName = currproject.projectName || currproject.name
- 
+    let Collapsed = useSelector(collapsed)
+    console.log("Collapsed", Collapsed)
  
    return (
-        <img  height={64} width={200}   src={projectLog || logo}></img>
+        <img  height={70}  width={Collapsed ? 54 : 200 }   src={projectLog || logo}></img>
    )
   }
