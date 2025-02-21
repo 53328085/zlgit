@@ -15,6 +15,7 @@ import { operation } from "@api/api";
 import UserTable from "@com/useTable";
 import Ichart from "@com/useEcharts/Ichart";
 import Bluecolumn from "@com/bluecolumn";
+import style from './style.module.less'
 import { themeColor, adaptation } from "@redux/systemconfig.js";
 const sty = css`
   grid-template-columns: 680px 1fr;
@@ -490,6 +491,7 @@ export default function Index() {
           title={<Bluecolumn name="告警信息" bac={errorColor} />}
           closable={false}
           open={openAlarm}
+          className={style.setModal}
           footer={[
             <Button
               key="submit"
@@ -569,7 +571,7 @@ export default function Index() {
             title="本月所有告警"
             pl="0px"
             bl="none"
-         //   hv="20px"
+            //   hv="20px"
             pv={laptop ? "2px" : "16px"}
           >
             <div className="content">
@@ -594,7 +596,7 @@ export default function Index() {
             title="本月所有工单"
             pl="0px"
             bl="none"
-         //   hv="20px"
+            //   hv="20px"
             pv={laptop ? "2px" : "16px"}
           >
             <div className="content">
@@ -619,7 +621,7 @@ export default function Index() {
             title="巡检任务"
             pl="0px"
             bl="none"
-         //   hv="20px"
+            //   hv="20px"
             pv={laptop ? "2px" : "16px"}
           >
             <div className="content">
@@ -646,7 +648,7 @@ export default function Index() {
             title="本月派单情况"
             pl="0px"
             bl="none"
-       //     hv="20px"
+            //     hv="20px"
             layout="flex"
           >
             <div className="chart">
@@ -659,7 +661,7 @@ export default function Index() {
             title="本月告警事件"
             pl="0px"
             bl="none"
-       //     hv="20px"
+            //     hv="20px"
             layout="flex"
           >
             <div className="chart">

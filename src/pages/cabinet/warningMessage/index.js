@@ -75,7 +75,7 @@ const Right = styled.div`
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  
+  row-gap: 16px;
 `;
 const RightTop = styled.div`
   width: 100%;
@@ -150,7 +150,7 @@ const DetailsRight = styled.div`
   justify-content: center;
 `;
 const {
-  QueryAlarmOverview, QueryAlarmInformation,QueryAlarmDetail,ConfirmAlarmState
+  QueryAlarmOverview, QueryAlarmInformation, QueryAlarmDetail, ConfirmAlarmState
 } = DistributionCabinet;
 const option = {
   legend: {
@@ -208,6 +208,7 @@ export default function index() {
   });
   const today = moment().startOf('day');
   const tmonth = moment().startOf('month')
+  const tyear = moment().startOf('year')
   const tbref = useRef()
   const params = useReactive({
     siteId: 1,
@@ -251,7 +252,7 @@ export default function index() {
       params.startDate = moment(today).format('YYYY-MM-DD')
       params.endDate = moment(today).format('YYYY-MM-DD')
     }
-    run(1,14)
+    run(1, 14)
   }//切换日月年
 
 
@@ -270,7 +271,7 @@ export default function index() {
       params.startDate = dateString[0]
       params.endDate = dateString[0]
     }
-    run(1,14)
+    run(1, 14)
   };
   const disabledDate = (current) => {
     return current > dayjs().endOf('day');
@@ -281,8 +282,8 @@ export default function index() {
       render: (text, record, index) => {
         return text == 3 ? <span style={{ backgroundColor: '#ff3366', color: '#fff', width: '100%', height: '100%', display: 'block' }}>高</span> :
           text == 2 ? <span style={{ backgroundColor: '#ffcc66', color: '#fff', width: '100%', height: '100%', display: 'block' }}>中</span> :
-           <span style={{ backgroundColor: '#9933cc', color: '#fff', width: '100%', height: '100%', display: 'block' }}>低</span>
-          }
+            <span style={{ backgroundColor: '#9933cc', color: '#fff', width: '100%', height: '100%', display: 'block' }}>低</span>
+      }
     },
     { title: '最新告警时间', dataIndex: 'lastAlarmTime', align: "center", },
     { title: '告警详情', dataIndex: 'alarmDetail', align: "center", },
@@ -290,8 +291,8 @@ export default function index() {
     { title: '报警位置', dataIndex: 'alarmLocation', align: "center", },
     {
       title: '状态', dataIndex: 'alarmState', align: "center", render: (text, record, index) => {
-        return text == 0 ? <Tag color="processing">已解除</Tag> :text == 1 ?<Tag color="success" onClick={() => { gotoSure(record) }}>已确认</Tag>:
-        <Tag color="error" onClick={() => { gotoSure(record) }}>未确认</Tag>
+        return text == 0 ? <Tag color="processing">已解除</Tag> : text == 1 ? <Tag color="success" onClick={() => { gotoSure(record) }}>已确认</Tag> :
+          <Tag color="error" onClick={() => { gotoSure(record) }}>未确认</Tag>
       }
     },
   ]
@@ -301,7 +302,7 @@ export default function index() {
     // alarmLevel:'',
     // alarmLocation:'',
     // alarmOccurTime:'',
-    // alarmRecord:'',
+    alarmRecord: '',
     // alarmState:'',
     // alarmType:'',
     // cabinetName:'',
@@ -309,9 +310,9 @@ export default function index() {
     // lineName:'',
     // siteName:''
   });
-  const gotoSure = async(record) => {
+  const gotoSure = async (record) => {
     console.log(record)
-    details.alarmId=record.alarmId
+    details.alarmId = record.alarmId
     try {
       const resp = await QueryAlarmDetail(record.alarmId);
       if (resp.success) {
@@ -319,7 +320,7 @@ export default function index() {
           Object.assign(details, resp.data)
           setOpen(true);
         } else {
-          
+
         }
       } else {
         message.error("获取信息失败!");
@@ -333,17 +334,17 @@ export default function index() {
   const onClose = () => {
     setOpen(false);
   };
-  const getTableData = async({ current, pageSize }) => {
+  const getTableData = async ({ current, pageSize }) => {
     try {
       const resp = await QueryAlarmInformation(params);
       if (resp.success) {
         if (resp.data) {
-          return{
+          return {
             list: resp.data,
             total: resp.data.length,
           }
         } else {
-          return{
+          return {
             list: [],
             total: 0,
           }
@@ -374,27 +375,28 @@ export default function index() {
       value: 1,
     },
   ];
-  const levelChange=(e)=>{
+  const levelChange = (e) => {
     console.log(e)
-    params.alarmLevel=e.target.value
-    run(1,14)
+    params.alarmLevel = e.target.value
+    run(1, 14)
   }
-  const onChangeInput=(e)=>{
-    details.alarmRecord=e.target.value
+  const onChangeInput = (e) => {
+    details.alarmRecord = e.target.value
   }
-  const comfirmAlarm=async()=>{
-   try {
-    const resp = await ConfirmAlarmState(details.alarmId,details.alarmRecord);
+  const comfirmAlarm = async () => {
+    try {
+      if (details.alarmRecord == '') return message.warning("告警记录不能为空!");
+      const resp = await ConfirmAlarmState(details.alarmId, details.alarmRecord);
       if (resp.success) {
         message.success("确认告警信息成功!");
         setOpen(false);
-        run(1,14)
+        run(1, 14)
       } else {
         message.error("确认告警信息失败!");
       }
-   } catch (error) {
-    
-   }
+    } catch (error) {
+
+    }
   }
   const Title = ({ title }) => {
     return (
@@ -468,10 +470,10 @@ export default function index() {
                   { value: '4', label: '自定义' },
                 ]}
               />
-              {params.type == 1 ? <DatePicker onChange={onChangeDate} defaultValue={moment(today)} disabledDate={disabledDate}/> :
-                params.type == 2 ? <DatePicker onChange={onChangeDate} defaultValue={moment(tmonth)} picker='month' disabledDate={disabledDate}/> :
-                params.type == 3 ? <DatePicker onChange={onChangeDate} picker='year' disabledDate={disabledDate}/> : 
-                <RangePicker  onChange={onChangeDate} defaultValue={[moment(today), moment(today)]} disabledDate={disabledDate} />
+              {params.type == 1 ? <DatePicker style={{ width: 240 }} onChange={onChangeDate} defaultValue={moment(today)} disabledDate={disabledDate} /> :
+                params.type == 2 ? <DatePicker style={{ width: 240 }} onChange={onChangeDate} defaultValue={moment(tmonth)} picker='month' disabledDate={disabledDate} /> :
+                  params.type == 3 ? <DatePicker style={{ width: 240 }} onChange={onChangeDate} picker='year' defaultValue={moment(tyear)} disabledDate={disabledDate} /> :
+                    <RangePicker style={{ width: 240 }} onChange={onChangeDate} defaultValue={[moment(today), moment(today)]} disabledDate={disabledDate} />
               }
               {/* <Button type="primary" style={{ marginLeft: 32, width: 96 }}  onClick={submit}>开始诊断</Button> */}
             </div>
@@ -489,8 +491,8 @@ export default function index() {
             {/* <ExportExcel tb={tbref} /> */}
           </Header>
           <Table columns={columns} ref={tbref}   {...tableProps} scroll={{
-        y: 55 * 5,
-      }}></Table>
+            y: 55 * 5,
+          }}></Table>
         </RightBox>
       </Right>
       <Drawer
@@ -542,7 +544,7 @@ export default function index() {
           <Steps
             direction="vertical"
             size="small"
-            current={details?.alarmState==2?1:details?.alarmState==1?2:3}
+            current={details?.alarmState == 2 ? 1 : details?.alarmState == 1 ? 2 : 3}
             items={[
               {
                 title: '告警发生',
@@ -565,7 +567,7 @@ export default function index() {
         </div>
         <div>
           <Button style={{ marginRight: 16, width: 96 }} onClick={onClose}>取消</Button>
-          <Button type="primary" style={{ marginLeft: 32, width: 96 }} disabled={details?.alarmState!=2} onClick={comfirmAlarm}>确认</Button>
+          <Button type="primary" style={{ marginLeft: 32, width: 96 }} disabled={details?.alarmState != 2} onClick={comfirmAlarm}>确认</Button>
         </div>
       </Drawer>
     </div>
