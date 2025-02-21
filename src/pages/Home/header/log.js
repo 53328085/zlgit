@@ -9,7 +9,8 @@ import { configProject, comSetFirst, getJump, currentscreen, isGranary,datascree
    setMenus,menus,adaptation,getThemeColor,
   themelist,
   themes,
- getThemeId
+ getThemeId,
+ themeColor
  } from "@redux/systemconfig";
 
 import moment from "moment";
@@ -28,7 +29,7 @@ import {CustButton} from '@com/useButton'
 import {handlermenu,isObject} from "@com/usehandler"
 
 import svgurl from './icon/svg'
- 
+import {ReactComponent  as Hux} from './icon/hux.svg'
 
 const {Text} = Typography 
 const Lngdiv = styled.div`
@@ -238,7 +239,7 @@ export default function Log() {
   //const showscreen =  screenadr?.type==1 || screenadr?.type==2
   const dispatch = useDispatch()
   const {name, roleType, mobile, userId} = useSelector(selectUser) || {};
-  
+  const {menusbgcolorR} = useSelector(themeColor)
   let strmob = mobile.toString()
   const start = strmob.slice(0, 3).padEnd(7, '*')+strmob.slice(-4);
  
@@ -283,7 +284,7 @@ export default function Log() {
 }, [screenadr, isgranary]) */
 
 // &#8730;
-const getcurTheme= async(userId, projectId)=> {
+/* const getcurTheme= async(userId, projectId)=> {
   try {
     let {success, data} = await CustTheme.QueryTheme(projectId)
     let datalen = Array.isArray(data) && data.length> 0 && success ;
@@ -317,10 +318,9 @@ const getcurTheme= async(userId, projectId)=> {
     }
 
     if (Array.isArray(item) && item.length > 0) {
-   //   setItems([...inita, {label: '主题', key:"theme", children: item}])
+  
     }else{
-    //  setItems([...inita])
-    //  dispatch(getThemeColor(themeColor))
+    
     }
       
   
@@ -330,7 +330,7 @@ const getcurTheme= async(userId, projectId)=> {
     console.log(error)
   }
 }
-
+ */
  
 const onJump = useCallback(() => {  
   let {bigScreenEnabled, bigScreenUrl} = Datascreen   
@@ -524,7 +524,8 @@ const settheme = async (themeId) => {
   return (
     <Cdiv>
       <Triangle laptop={adap.laptop}>
-        <img src={svgurl['hux']} alt="" />
+        <Hux style={{fill: menusbgcolorR}} />
+       {/*  <img src={svgurl['hux']} alt="" /> */}
       </Triangle>
       <Ldiv>
         {

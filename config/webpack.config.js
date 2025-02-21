@@ -399,13 +399,18 @@ module.exports = function (webpackEnv) {
                 {
                   loader: require.resolve('@svgr/webpack'),
                   options: {
-                    prettier: false,
-                    svgo: false,
                     svgoConfig: {
-                      plugins: [{ removeViewBox: false }],
-                    },
-                    titleProp: true,
-                    ref: true,
+                      plugins: [
+                        { 
+                          name: 'preset-default', // 必须声明预设名称
+                          params: {
+                            overrides: {
+                              removeViewBox: false // 禁用默认的 viewBox 删除行为
+                            }
+                          }
+                        }
+                      ]
+                    }
                   },
                 },
                 {
