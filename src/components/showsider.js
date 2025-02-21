@@ -2,27 +2,40 @@ import React from 'react'
 import styled from 'styled-components'
 import {Button} from "antd"
 import {MenuUnfoldOutlined,MenuFoldOutlined} from "@ant-design/icons"
-import {useDispatch} from 'react-redux'
-import {getsidershow} from "@redux/systemconfig";
+import {useDispatch, useSelector} from 'react-redux'
+import {  collapsed,pgTitle, getCollapsed } from "@redux/systemconfig";
 const Main =styled.div`
  padding-left: 8px;
- padding-top: ${props => props.show ? "194px" : "0px"};
+ height: 24px;
+ display: flex;
+ justify-content: ${props => props.Collapsed ?  "flex-end" :"space-between"};
+ align-items: center;
+ .module{
+  font-size: 14px;
+  color:#fff;
+  font-weight: bold;
+ }
+ //padding-top: ${props => props.show ? "194px" : "0px"};
 `
-export default function Index({show=true}) {
- 
+export default function Index() {
+  const Collapsed = useSelector(collapsed)
+  const PgTitle = useSelector(pgTitle)
+   
   const dispatch = useDispatch()
   const toggleCollapsed = ()=> {
-    dispatch(getsidershow(show))
+    dispatch(getCollapsed(!Collapsed))
   }
   return (
-    <Main show={show}>
+    <Main Collapsed={Collapsed}>
+       {!Collapsed && <span className='module'>{PgTitle}</span>}  
         <Button
         type="primary"
         onClick={toggleCollapsed}
         size="small"
+        style={{backgroundColor: "rgba(40, 45, 70, 1)" ,border: "none"}}
       >
    
-       {show ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
+       {Collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
     
       </Button>
     </Main>

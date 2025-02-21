@@ -1,14 +1,14 @@
-import React, { useMemo } from 'react'
-import { Layout} from 'antd'
+import React, { useMemo, useState } from 'react'
+import { Layout, Button} from 'antd'
 import styled from 'styled-components'
 import Copyright from './Copyright'
 import style from './index.module.less'
 import {useSelector} from 'react-redux'
+ 
+import {  configState,adaptation,sidershow,themeColor,getCollapsed,collapsed } from "@redux/systemconfig";
 
-import {  configState,adaptation,sidershow,themeColor } from "@redux/systemconfig";
 
-
-import ShowSide from "@com/showsider"
+//import ShowAside from "@com/showsider"
 //import Logbg from './logBg.png'
 //const Logbg = lazy(() => import("./logBg.png"))
 const { Header, Footer, Sider, Content } = Layout;
@@ -60,10 +60,10 @@ export function LoginLayout(props) { // 登录页
 }
 
 export function DefaultLayout(props) { // 默认首页
-  const CustSider = (props) => {
+/*   const CustSider = (props) => {
     if(props.issider) return   <Sider>{props.sider}</Sider>
     return null
-  }
+  } */
   return (
     <Layout className={style.pagelayout}>
       <Cheader >{props.custheader}</Cheader>
@@ -75,15 +75,19 @@ export function ProjectLayout(props) { // 项目内容
   const isconfig = useSelector(configState).toString()
   const {laptop} = useSelector(adaptation)
   const siderdisplay = useSelector(sidershow)
-  
+  const Collapsed = useSelector(collapsed)
+//  const [collapsed, setCollapsed] = useState(true)
   return (
     <Layout className={style.pagelayout}>
     {
-      siderdisplay ? 
+   /*    siderdisplay ? 
      <Csider isconfig={isconfig} laptop={laptop}>{props.custsider}</Csider>
-     : <Sider width={48}><ShowSide show={true} /> </Sider>
+     : <Sider width={48}><ShowSide show={true} /> </Sider> */
     
   }
+   <Csider isconfig={isconfig} laptop={laptop} trigger={null} collapsible collapsed={Collapsed} collapsedWidth={54}>    
+    {props.custsider}
+    </Csider>
     <Layout>
       <Cheader >{props.custheader}</Cheader>
      

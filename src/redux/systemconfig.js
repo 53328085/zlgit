@@ -173,6 +173,8 @@ const initialState = {
   enterprise: {}, // 碳排 企业信息
   filterDeviceStyle: [], // 运行态 运行监控 设备监测 表计类型
   sidershow: true,
+  collapsed:false,
+  pgTitle: ""
 }
  
 export const getWebsiteState = createAsyncThunk(
@@ -389,7 +391,13 @@ const system = createSlice({
        getsidershow(state, {payload}){
         
          state.sidershow=payload;
-       }
+       },
+      getCollapsed(state, {payload}){
+        state.collapsed = payload
+      },
+      getPgTitle(state, {payload}){
+        state.pgTitle = payload
+      }
     },
      extraReducers: {
       [getWebsiteState.fulfilled]: (state, action) => {
@@ -610,6 +618,8 @@ export const Time = state => state.system.environmentTime // 碳排企业信息
 export const filterDeviceStyle = state => state.system.filterDeviceStyle?.filter(f => f.deviceStyle!=6)
 export const adaptation = state => state.system.adaptation
 export const sidershow = state => state.system.sidershow
+export const collapsed = state => state.system.collapsed
+export const pgTitle = state=>state.system.pgTitle
 export const {
     configProject,
     getSetMenus,
@@ -644,5 +654,7 @@ export const {
     getsidershow,
     getThemeId,
     getThemes,
+    getCollapsed,
+    getPgTitle
 } = actions
 export default system.reducer

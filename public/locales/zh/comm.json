@@ -43,6 +43,7 @@
     "ProjectAddress":"项目地址",
     "ProjectID":"项目ID",
     "Projectlogo": "项目Logo",
+    "smalllog":"小logo",
     "Projectpicture":"项目图片",
     "Projectremark":"项目备注",
     "Projectvalidityperiod" : "项目有效期",
