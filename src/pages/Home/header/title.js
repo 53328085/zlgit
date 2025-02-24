@@ -28,16 +28,15 @@ export default function  Title (){
     const Currproject = useSelector(currProject) || {};
     const location = useLocation();
     const overview = (location?.state?.primary=="runtimeProject") || (location?.state?.primary=="designerProject");
+
     let projectLog = Currproject.logoImage;
     let smallLog = Currproject.smallLogoImage
-
+   console.log("Currproject" ,Currproject)
     let Collapsed = useSelector(collapsed) 
    if (Collapsed && !overview) {
-     return  <img  height={70}  width={54 }   src={smallLog || logo}></img>
+     return   smallLog   ?  <img  height={70}  width={54 }   src={smallLog }></img> : <div  style={{height:70}}></div> 
    }else {
-      return (
-         <img  height={70}  width={200 }   src={projectLog || logo}></img>
-    )
+      return    projectLog ? <img  height={70}  width={200 }   src={projectLog }></img> :  <div   style={{height:70, width:200}}></div> 
    }
  
   }

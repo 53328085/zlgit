@@ -15,18 +15,20 @@ const Mainbox = styled.div`
   border-radius: 4px;
   box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.349019607843137);
   .headerTitle{
-    padding-left: 28px; 
-    height: 40px;
-    line-height: 40px;
+    padding-left: 24px; 
+    height: 24px;
+    line-height: 24px;
     font-size: 15px;
     color: #fff;
+    display: flex;
+    align-items: center;
   }
   .headerTitle:before{
        content: "";
        display: block;
        position: absolute;
-       left: 20px;
-       top:13.5px;
+       left: 16px;
+     //  top:13.5px;
        width: 3px;
        height: 13px;
        background-color: #fff;

@@ -532,7 +532,7 @@ useEffect(() => {
           checkedChildren={t("comm:Yes")}
           unCheckedChildren={t("comm:No")}
           style={{
-            width: "64px",
+            width: "64px",            
           }}
         />
       </Item>
@@ -559,7 +559,7 @@ useEffect(() => {
                 validator: checkLog,
               },
             ]}>
-              <Cupload wpx={208} hpx={64} swpx={200} shpx={116} style={{padding: '16px'}} isDel={ispublish}  /> 
+              <Cupload wpx={200} hpx={70} swpx={200} shpx={116} style={{padding: '16px'}} isDel={ispublish}  /> 
             </Item>
            </div>
            <Info>{t("comm:sizeofpicture", {size: "208*64"})}</Info>

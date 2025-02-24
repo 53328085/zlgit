@@ -1,7 +1,7 @@
 import React, {useRef, useEffect} from 'react'
 import {useSelector} from 'react-redux'
 import { selectProjectId } from '@redux/systemconfig.js'
-import Titlelayout from '@com/titlelayout';
+import {TitlelayoutOv as Titlelayout} from '@com/titlelayout';
 import {Liquid} from "@ant-design/charts"
 import { useReactive } from 'ahooks';
 import { HomeRuntime } from '@api/api.js'

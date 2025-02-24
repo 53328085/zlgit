@@ -1,7 +1,7 @@
 import React, { useRef, useEffect, useState, useMemo, useContext } from 'react'
 import {Typography} from 'antd'
 import styled, {css} from 'styled-components';
-import Titlelayout from '@com/titlelayout';
+import {TitlelayoutOv as Titlelayout} from '@com/titlelayout';
  import {useTranslation} from 'react-i18next';
  import { TextLoop } from "react-text-loop-next";
  import Context from "@com/content"

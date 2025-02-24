@@ -2,7 +2,7 @@ import React, {useRef, useEffect, useState} from 'react'
 import {useSelector} from 'react-redux'
 import {useTranslation} from "react-i18next"
 import { selectProjectId } from '@redux/systemconfig.js'
-import Titlelayout from '@com/titlelayout';
+import {TitlelayoutOv as Titlelayout} from '@com/titlelayout';
 import { HomeRuntime } from '@api/api.js'
 import { message } from 'antd';
 import Ichart  from '@com/useEcharts/Ichart';

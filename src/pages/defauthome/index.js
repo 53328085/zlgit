@@ -195,7 +195,7 @@ export default function Index() {
         { i.indexOf('储能月收益') != -1 ? <MonthIncome type={'runtTime'}></MonthIncome> : null }
         { i.indexOf('储能日收益') != -1 ? <DayIncome type={'runtTime'}></DayIncome> : null }
         { i.indexOf('储能收益统计') != -1 ? <StorageStatistics type={'runtTime'}></StorageStatistics> : null }
-        { i.indexOf('充放电量趋势') != -1 ? <StorageTrend type={'runtTime'}></StorageTrend> : null }
+        {i.substring(0, end)=='充放电量趋势' ? <StorageTrend type={'runtTime'}></StorageTrend> : null }
         { i.indexOf('站点soc') != -1 ? <SocData type={'runtTime'}></SocData> : null }
         {i.indexOf('能耗排名') != -1 ? <EnergyRanking type={'runtTime'}></EnergyRanking> : null}
         { i.indexOf('分类能耗') != -1 ? <EnergyProportion type={'runtTime'}></EnergyProportion> : null }

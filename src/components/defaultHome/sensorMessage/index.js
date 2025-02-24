@@ -1,7 +1,7 @@
 import React, {useContext} from 'react'
 
 import styled, {css} from 'styled-components';
-import Titlelayout from '@com/titlelayout';
+import {TitlelayoutOv as Titlelayout} from '@com/titlelayout';
 
 import {useTranslation} from "react-i18next"
 import gatewayRuntime from '../sensor.svg'

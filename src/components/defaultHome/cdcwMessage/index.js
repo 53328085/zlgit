@@ -1,7 +1,7 @@
 import React, { useRef, useEffect, useContext } from 'react'
  
 import styled, {css} from 'styled-components';
-import Titlelayout from '@com/titlelayout';
+import {TitlelayoutOv as Titlelayout} from '@com/titlelayout';
 import {CustTransO} from "@com/useButton"
 import Context from "@com/content"
 

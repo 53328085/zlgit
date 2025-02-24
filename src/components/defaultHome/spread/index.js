@@ -1,7 +1,7 @@
 import React, { useRef, useEffect, useState } from 'react'
 import { useSelector } from 'react-redux'
 import { selectProjectId } from '@redux/systemconfig.js'
-import Titlelayout from '@com/titlelayout';
+import {TitlelayoutOv as Titlelayout} from '@com/titlelayout';
 import {useTranslation} from "react-i18next"
 import { HomeRuntime } from '@api/api.js'
 import {  message } from 'antd';
