@@ -6,6 +6,7 @@ import { useOutletContext } from 'react-router-dom'
 import Pagecount from '@com/pagecontent'
 import Titlelayout from '@com/titlelayout'
 import ItemCard from './itemCard'
+import dayjs from 'dayjs';
 
 import { selectcurlRommid, adaptation } from "@redux/systemconfig";
 import styled from 'styled-components'
@@ -91,7 +92,7 @@ export default function Index() {
         params = {
           siteId: 1,
           monitorId: dataId,
-          type: type === 'day' ? 1 : type === 'month' ? 2 : type === 'year' ? 3 : 4,
+          type: type === 'date' ? 1 : type === 'month' ? 2 : type === 'year' ? 3 : 4,
           startDate: time,
           endDate: time
         }
@@ -99,7 +100,7 @@ export default function Index() {
         params = {
           siteId: 1,
           monitorId: dataId,
-          type: type === 'day' ? 1 : type === 'month' ? 2 : type === 'year' ? 3 : 4,
+          type: type === 'date' ? 1 : type === 'month' ? 2 : type === 'year' ? 3 : 4,
           startDate: time[0],
           endDate: time[1]
         }
@@ -118,10 +119,13 @@ export default function Index() {
     }
 
   }
-  const today = moment().startOf('day');
+  const today = moment().startOf('date');
   const tmonth = moment().startOf('month')
+  const tyear = moment().startOf('year')
   const [timePickers, setTimePickers] = useState({});
-
+  const disabledDate = (current) => {
+    return current > dayjs().endOf('date');
+  };
   // 处理时间选择器类型变更
   const handlePickerTypeChange = (pickerType, dataId) => {
     setTimePickers((prevState) => ({
@@ -134,19 +138,22 @@ export default function Index() {
     }
     ));
     let date = ''
-    if (pickerType === 'day') {
+    let dateList = []
+    if (pickerType === 'date') {
       date = moment().format('YYYY-MM-DD')
     } else if (pickerType === 'month') {
       date = moment().format('YYYY-MM-01')
     } else if (pickerType === 'year') {
       date = moment().format('YYYY-01-01')
+    } else {
+      dateList = [moment().format('YYYY-MM-DD'), moment().format('YYYY-MM-DD')]
     }
-    if (pickerType !== 'custom') return EnvironmentChart(date, dataId, pickerType)
+    EnvironmentChart(pickerType === 'custom' ? dateList : date, dataId, pickerType)
   };
   // 处理时间选择器值变更
   const handleDateChange = (dates, dateString, dataId, pickerType) => {
     let time = ''
-    if (pickerType === 'day') {
+    if (pickerType === 'date') {
       // console.log(dateString);
       time = dateString
     } else if (pickerType === 'month') {
@@ -189,7 +196,7 @@ export default function Index() {
 
         </Titlelayout>
         {Array.isArray(htdata) && htdata.map((item, index) => {
-          const { pickerType = 'day' } = timePickers[item.id] || {};
+          const { pickerType = 'date' } = timePickers[item.id] || {};
           return (
             <div key={item.id}>
               <Header>
@@ -197,7 +204,7 @@ export default function Index() {
                   <span style={{ marginRight: "10px" }}>时间查询</span>
                   <Select value={pickerType} style={{ width: 96, marginRight: 16 }} onChange={(value) => handlePickerTypeChange(value, item.id)}
                     options={[
-                      { value: 'day', label: '日', },
+                      { value: 'date', label: '日', },
                       { value: 'month', label: '月', },
                       { value: 'year', label: '年' },
                       { value: 'custom', label: '自定义' },
@@ -208,12 +215,13 @@ export default function Index() {
                     <DatePicker
                       picker={pickerType}
                       style={{ width: 320 }}
+                      disabledDate={disabledDate}
                       //value={value.length ? value[0] : null} // 只显示单个日期（对于非自定义选择器）
-                      defaultValue={pickerType == 'day' ? moment(today) : pickerType == 'month' ? moment(tmonth) : null}
+                      defaultValue={pickerType == 'date' ? moment(today) : pickerType == 'month' ? moment(tmonth) : pickerType == 'year' ? moment(tyear) : null}
                       onChange={(date, dateString) =>
                         handleDateChange([date], dateString, item.id, pickerType) // 确保传递数组以保持状态一致
                       }
-                    /> : <RangePicker style={{ width: 320 }} format="YYYY-MM-DD" onChange={(dates, dateString) => handleDateChange(dates, dateString, item.id, pickerType)} />}
+                    /> : <RangePicker style={{ width: 320 }} disabledDate={disabledDate} defaultValue={[moment(today), moment(today)]} onChange={(dates, dateString) => handleDateChange(dates, dateString, item.id, pickerType)} />}
                 </div>
               </Header>
               <Chart data={item} laptop={laptop} allData={htdata} />

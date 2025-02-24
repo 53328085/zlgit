@@ -124,6 +124,7 @@ export default function index() {
   });
   const today = moment().startOf('day');
   const tmonth = moment().startOf('month')
+  const tyear = moment().startOf('year')
   const tbref = useRef()
   const params = useReactive({
     siteId: 1,
@@ -301,14 +302,14 @@ export default function index() {
     return current > dayjs().endOf('day');
   };
   const cref = useRef(null)
-  
+
 
   const getData = async () => {
     try {
       const resp = await QueryTransformerLoadRateRealtime(params);
       if (resp.success) {
         if (resp.data) {
-          state.alltableData=resp.data.loadRateTimeRatios
+          state.alltableData = resp.data.loadRateTimeRatios
           let edataset = {
             dimensions: [
               { name: 'x', type: 'time' },
@@ -316,7 +317,7 @@ export default function index() {
             ],
             source: resp.data.trend,
           }
-          setOption({ ...option, series: [{ ...option.series[0], data: [{ value: resp.data?.loadRateRealtime,name: '实时负载率' }] }] })
+          setOption({ ...option, series: [{ ...option.series[0], data: [{ value: resp.data?.loadRateRealtime, name: '实时负载率' }] }] })
           setEptions({ ...eoptions, dataset: edataset, xAxis: { axisLabel: { interval: 'auto' } } })
         } else {
           //setDataList([])
@@ -331,7 +332,7 @@ export default function index() {
       const resp = await QueryTransformerUnbalanceRateRealtime(params1);
       if (resp.success) {
         if (resp.data) {
-          state.alltableData1=resp.data.unbalanceRateTimeRatios
+          state.alltableData1 = resp.data.unbalanceRateTimeRatios
           let edataset = {
             dimensions: [
               { name: 'x', type: 'time' },
@@ -340,7 +341,7 @@ export default function index() {
             source: resp.data.trend,
           }
           //setDataList(resp.data)
-          setOption1({ ...option1, series: [{ ...option1.series[0], data: [{ value: resp.data?.unbalanceRateRealtime,name: '实时不平衡率' }] }] })
+          setOption1({ ...option1, series: [{ ...option1.series[0], data: [{ value: resp.data?.unbalanceRateRealtime, name: '实时不平衡率' }] }] })
           setAptions({ ...aoptions, dataset: edataset, xAxis: { axisLabel: { interval: 'auto' } } })
         } else {
           //setDataList([])
@@ -350,7 +351,7 @@ export default function index() {
       }
     } catch (err) { }
   }
-  
+
   useEffect(() => {
     getData();
   }, [JSON.stringify(params)]);
@@ -419,10 +420,10 @@ export default function index() {
                   { value: '4', label: '自定义' },
                 ]}
               />
-              {params.type == 1 ? <DatePicker onChange={(date, dateString) => onChangeDate(date, dateString, 1)} defaultValue={moment(today)} disabledDate={disabledDate} /> :
-                params.type == 2 ? <DatePicker onChange={(date, dateString) => onChangeDate(date, dateString, 1)} defaultValue={moment(tmonth)} picker='month' disabledDate={disabledDate} /> :
-                  params.type == 3 ? <DatePicker onChange={(date, dateString) => onChangeDate(date, dateString, 1)} picker='year' disabledDate={disabledDate} /> :
-                    <RangePicker onChange={(date, dateString) => onChangeDate(date, dateString, 1)} defaultValue={[moment(today), moment(today)]} disabledDate={disabledDate} />
+              {params.type == 1 ? <DatePicker style={{ width: 240 }} onChange={(date, dateString) => onChangeDate(date, dateString, 1)} defaultValue={moment(today)} disabledDate={disabledDate} /> :
+                params.type == 2 ? <DatePicker style={{ width: 240 }} onChange={(date, dateString) => onChangeDate(date, dateString, 1)} defaultValue={moment(tmonth)} picker='month' disabledDate={disabledDate} /> :
+                  params.type == 3 ? <DatePicker style={{ width: 240 }} onChange={(date, dateString) => onChangeDate(date, dateString, 1)} picker='year' defaultValue={moment(tyear)} disabledDate={disabledDate} /> :
+                    <RangePicker style={{ width: 240 }} onChange={(date, dateString) => onChangeDate(date, dateString, 1)} defaultValue={[moment(today), moment(today)]} disabledDate={disabledDate} />
               }
             </div>
           </Header>
@@ -431,9 +432,9 @@ export default function index() {
             <div style={{ width: 500, height: 350, display: 'flex', justifyContent: 'center', alignItems: 'center', flexDirection: 'column' }}>
               {/* {state.alltableData.length > 0 ?
                 <Icharts custoption={option}></Icharts> : <Cempty tip="暂无数据" />} */}
-                <div style={{ width: 500, height: 278 }}>
+              <div style={{ width: 500, height: 278 }}>
                 <Icharts custoption={option} />
-                </div>
+              </div>
               <div style={{ height: 72, display: 'flex', justifyContent: 'center', alignItems: 'center', flexDirection: 'column' }}>
                 <div style={{ width: '100%', height: 36, display: 'flex', flexDirection: 'row', border: '1px solid #d7d7d7', borderBottom: 'none' }}>
                   <Tbh>负载率</Tbh>
@@ -456,9 +457,9 @@ export default function index() {
                 <Icharts custoption={{
                   ...state.chartsOpts
                 }}></Icharts> : <Cempty tip="暂无数据" />} */}
-                <div style={{ width: 872, height: 350 }}>
+              <div style={{ width: 872, height: 350 }}>
                 <Icharts {...eoptions} />
-                </div>
+              </div>
             </div>
 
           </Charts>
@@ -475,10 +476,10 @@ export default function index() {
                   { value: '4', label: '自定义' },
                 ]}
               />
-              {params1.type == 1 ? <DatePicker style={{ marginRight: '16px' }} onChange={(date, dateString) => onChangeDate(date, dateString, 2)} defaultValue={moment(today)} disabledDate={disabledDate} /> :
-                params1.type == 2 ? <DatePicker style={{ marginRight: '16px' }} onChange={(date, dateString) => onChangeDate(date, dateString, 2)} defaultValue={moment(tmonth)} picker='month' disabledDate={disabledDate} /> :
-                  params1.type == 3 ? <DatePicker style={{ marginRight: '16px' }} onChange={(date, dateString) => onChangeDate(date, dateString, 2)} picker='year' disabledDate={disabledDate} /> :
-                    <RangePicker style={{ marginRight: '16px' }} disabledDate={disabledDate} onChange={(date, dateString) => onChangeDate(date, dateString, 2)} defaultValue={[moment(today), moment(today)]} />
+              {params1.type == 1 ? <DatePicker style={{ marginRight: '16px', width: 240 }} onChange={(date, dateString) => onChangeDate(date, dateString, 2)} defaultValue={moment(today)} disabledDate={disabledDate} /> :
+                params1.type == 2 ? <DatePicker style={{ marginRight: '16px', width: 240 }} onChange={(date, dateString) => onChangeDate(date, dateString, 2)} picker='month' disabledDate={disabledDate} /> :
+                  params1.type == 3 ? <DatePicker style={{ marginRight: '16px', width: 240 }} onChange={(date, dateString) => onChangeDate(date, dateString, 2)} picker='year' defaultValue={moment(tyear)} disabledDate={disabledDate} /> :
+                    <RangePicker style={{ marginRight: '16px', width: 240 }} disabledDate={disabledDate} onChange={(date, dateString) => onChangeDate(date, dateString, 2)} defaultValue={[moment(today), moment(today)]} />
               }
             </div>
           </Header>
@@ -489,9 +490,9 @@ export default function index() {
                 <Icharts custoption={{
                   ...state.chartsOpts
                 }}></Icharts> : <Cempty tip="暂无数据" />} */}
-                <div style={{ width: 500, height: 278 }}>
+              <div style={{ width: 500, height: 278 }}>
                 <Icharts custoption={option1} />
-                </div>
+              </div>
               <div style={{ height: 72, display: 'flex', justifyContent: 'center', alignItems: 'center', flexDirection: 'column' }}>
                 <div style={{ width: '100%', height: 36, display: 'flex', flexDirection: 'row', border: '1px solid #d7d7d7', borderBottom: 'none' }}>
                   <Tbh>不平衡率</Tbh>
@@ -500,8 +501,8 @@ export default function index() {
                 </div>
                 <div style={{ width: '100%', height: 36, display: 'flex', flexDirection: 'row', border: '1px solid #d7d7d7' }}>
                   <Tbh >时间占比</Tbh>
-                  <Tbb style={{ width: 176 }}>{state.alltableData1[0]?.safeState==0?state.alltableData1[0]?.timeRatio:state.alltableData1[1]?.timeRatio}</Tbb>
-                  <Tbb style={{ borderRight: 'none', width: 176 }}>{state.alltableData1[1]?.safeState==1?state.alltableData1[1]?.timeRatio:state.alltableData1[0]?.timeRatio}</Tbb>
+                  <Tbb style={{ width: 176 }}>{state.alltableData1[0]?.safeState == 0 ? state.alltableData1[0]?.timeRatio : state.alltableData1[1]?.timeRatio}</Tbb>
+                  <Tbb style={{ borderRight: 'none', width: 176 }}>{state.alltableData1[1]?.safeState == 1 ? state.alltableData1[1]?.timeRatio : state.alltableData1[0]?.timeRatio}</Tbb>
                 </div>
               </div>
             </div>
@@ -510,9 +511,9 @@ export default function index() {
                 <Icharts custoption={{
                   ...state.chartsOpts
                 }}></Icharts> : <Cempty tip="暂无数据" />} */}
-                <div style={{ width: 872, height: 350 }}>
+              <div style={{ width: 872, height: 350 }}>
                 <Icharts {...aoptions} />
-                </div>
+              </div>
             </div>
           </Charts>
         </Titlelayout>

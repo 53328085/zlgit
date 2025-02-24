@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect, useCallback } from "react";
 import Titlelayout from "@com/titlelayout";
-import { DatePicker, Space, Radio, Divider, Select, Tree, Button ,message} from "antd";
+import { DatePicker, Space, Radio, Divider, Select, Tree, Button, message } from "antd";
 import moment from "moment";
 import styled from "styled-components";
 import { DistributionCabinet } from "@api/api.js";
@@ -77,7 +77,7 @@ justify-content:space-between;
 margin-bottom:16px;
 `;
 const {
-  QuerySiteList, QuerySiteStructure,QueryLineMeterReading
+  QuerySiteList, QuerySiteStructure, QueryLineMeterReading
 } = DistributionCabinet;
 
 
@@ -101,13 +101,14 @@ export default function index() {
   const [dataList, setDataList] = useState([])
   const today = moment().startOf('day');
   const tmonth = moment().startOf('month')
+  const tyear = moment().startOf('year')
   const tbref = useRef()
   const params = useReactive({
     siteId: 1,
     structureIds: [],
     type: 1,
     startDate: moment(today).format('YYYY-MM-DD'),
-    endDate:  moment(today).format('YYYY-MM-DD'),
+    endDate: moment(today).format('YYYY-MM-DD'),
   });
   const GetSns = async () => {
     try {
@@ -148,18 +149,18 @@ export default function index() {
           data.push(resp.data)
           setTreeData(data)
           // 生成 defaultCheckedKeys
-        const keys = [];
-        const traverse = (nodes) => {
-          nodes.forEach(node => {
-            keys.push(node.id);
-            if (node.nodes) {
-              traverse(node.nodes);
-            }
-          });
-        };
-        traverse(data);
-        setDefaultCheckedKeys(keys);
-        params.structureIds =keys
+          const keys = [];
+          const traverse = (nodes) => {
+            nodes.forEach(node => {
+              keys.push(node.id);
+              if (node.nodes) {
+                traverse(node.nodes);
+              }
+            });
+          };
+          traverse(data);
+          setDefaultCheckedKeys(keys);
+          params.structureIds = keys
         } else {
           setTreeData([])
         }
@@ -177,7 +178,7 @@ export default function index() {
     params.structureIds = checkedKeysValue
   };
   const disabledDate = (current) => {
-    return  current > dayjs().endOf('day');
+    return current > dayjs().endOf('day');
   };
   const changeTime = (e) => {
     console.log(e)
@@ -197,7 +198,7 @@ export default function index() {
     }
   }//切换日月年
 
- 
+
   const onChangeDate = (date, dateString) => {
     console.log(date, dateString)
     if (!dateString) return;
@@ -212,7 +213,7 @@ export default function index() {
       params.endDate = dateString + '-01-01'
     } else {
       params.startDate = dateString[0]
-      params.endDate = dateString[0]
+      params.endDate = dateString[1]
     }
     console.log(params.startDate);
   };
@@ -236,7 +237,7 @@ export default function index() {
     }, { title: '考核功率因数', dataIndex: 'evaluatedPowerFactor', align: "center", },
     { title: '正向有功最大需量 kW', dataIndex: 'forwardActiveMaxDemand', align: "center", },
   ]
-  const getData = async({ current, pageSize }) => {
+  const getData = async ({ current, pageSize }) => {
     try {
       const resp = await QueryLineMeterReading(params);
       if (resp.success) {
@@ -245,7 +246,7 @@ export default function index() {
             list: resp.data,
             total: resp.data.total,
           }
-          } else {
+        } else {
           return {
             list: [],
             total: 0,
@@ -262,7 +263,9 @@ export default function index() {
     defaultPageSize: 14,
   })
   const { submit } = search
-
+  useEffect(() => {
+    run(1, 14);
+  }, [JSON.stringify(params)]);
   return (
     <div style={{ width: "100%", height: "100%", display: "flex", flexDirection: "row", justifyContent: 'space-between' }}>
       <LeftBox>
@@ -276,8 +279,11 @@ export default function index() {
         })}
         <Divider dashed style={{ borderColor: "#d7d7d7" }}></Divider> */}
         <Tree
+          showLine
           checkable
           checkedKeys={defaultCheckedKeys}
+          expandedKeys={defaultCheckedKeys}
+          autoExpandParent={true}
           defaultExpandAll={true}
           onCheck={onCheck}
           treeData={treeData}
@@ -296,10 +302,10 @@ export default function index() {
                 { value: '4', label: '自定义' },
               ]}
             />
-            {params.type == 1 ? <DatePicker onChange={onChangeDate} defaultValue={moment(today)} disabledDate={disabledDate}/> :
-              params.type == 2 ? <DatePicker onChange={onChangeDate} defaultValue={moment(tmonth)} picker='month' disabledDate={disabledDate}/> :
-                params.type == 3 ? <DatePicker onChange={onChangeDate} picker='year' disabledDate={disabledDate}/> : 
-                <RangePicker onChange={onChangeDate} defaultValue={[moment(today),moment(today)]} disabledDate={disabledDate}/>
+            {params.type == 1 ? <DatePicker style={{ width: 240 }} onChange={onChangeDate} defaultValue={moment(today)} disabledDate={disabledDate} /> :
+              params.type == 2 ? <DatePicker style={{ width: 240 }} onChange={onChangeDate} defaultValue={moment(tmonth)} picker='month' disabledDate={disabledDate} /> :
+                params.type == 3 ? <DatePicker style={{ width: 240 }} onChange={onChangeDate} picker='year' defaultValue={moment(tyear)} disabledDate={disabledDate} /> :
+                  <RangePicker style={{ width: 240 }} onChange={onChangeDate} defaultValue={[moment(today), moment(today)]} disabledDate={disabledDate} />
             }
             <Button type="primary" style={{ marginLeft: 32, width: 96 }} onClick={submit}>查询</Button>
           </div>
