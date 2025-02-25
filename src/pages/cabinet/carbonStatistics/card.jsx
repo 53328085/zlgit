@@ -58,7 +58,7 @@ const Mainbox = styled.div`
     display: flex;
     align-items: center;
     column-gap: 8px;
-    height: 38px;
+    height: 58px;
     justify-content: space-between;
     
     .imgbox {
