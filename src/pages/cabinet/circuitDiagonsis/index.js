@@ -294,6 +294,7 @@ export default function index() {
       }
     } catch (err) { }
   }
+
   useEffect(() => {
     getData();
   }, [params.siteId, params.structureIds]);
@@ -324,7 +325,7 @@ export default function index() {
     { title: '当前状态', dataIndex: 'curState', align: "center", },
     { title: '诊断结果', dataIndex: 'diagnosis', align: "center", },
   ]
-  const getTableData = async ({ current, pageSize }) => {
+  const getTableData = async () => {
     try {
       const resp = await QueryCircuitBreakerDiagnosis(params);
       if (resp.success) {
@@ -340,7 +341,9 @@ export default function index() {
       }
     } catch (err) { }
   }
+
   const { tableProps, refresh, run, search } = useAntdTable(getTableData, {
+    refreshDeps: [params.siteId, params.structureIds],
     defaultPageSize: 14,
   })
   const { submit } = search

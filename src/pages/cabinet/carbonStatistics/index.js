@@ -353,8 +353,8 @@ export default function Index() {
                     <Card name={<CustTransO ns="cabinet" text="Annualee" param="(tCO₂)" />} laptop={laptop} title="" value={Quota.annualEmission} yoy={Quota.annualEmissionYoy} key="b" />
                     <Card title={<CustTransO ns="cabinet" text="Annualce" param="(tCO₂)" />} laptop={laptop} value={Quota.annualResidual} yoy={Quota.annualResidualPct} key="c" />
                     {/*  <Cdivider type="h" borderColor="#bcbcbc" /> */}
-                    <Card title={<CustTransO ns="cabinet" text="directe" param="(tCO₂)" />} laptop={laptop} value={Quota.dailyEmission} yoy={Quota.dailyEmissionPct} key="d" />
-                    <Card title={<CustTransO ns="cabinet" text="indirecte" param="(tCO₂)" />} laptop={laptop} value={Quota.monthlyEmission} yoy={Quota.monthlyEmissionPct} key="e" />
+                    <Card title={<CustTransO ns="cabinet" text="MonthlyCarbon" param="(tCO₂)" />} laptop={laptop} value={Quota.monthlyEmission} yoy={Quota.monthlyEmissionPct} key="d" />
+                    <Card title={<CustTransO ns="cabinet" text="Dailycarbon" param="(tCO₂)" />} laptop={laptop} value={Quota.dailyEmission} yoy={Quota.dailyEmissionPct} key="e" />
                 </div>
                 <div className='center' key="center">
                     <div className='imgbox'>

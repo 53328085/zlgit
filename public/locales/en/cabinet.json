@@ -2,6 +2,8 @@
   "Annualquota": "annual quota {{param}}",
   "Annualee": "Annual emission equivalent {{param}}",
   "Annualce": "Annual residual carbon emissions {{param}}",
+  "MonthlyCarbon": "Monthly carbon emissions {{param}}",
+  "Dailycarbon": "Daily carbon emissions {{param}}",
   "directe": "direct emission {{param}}",
   "indirecte": "indirect emission {{param}}",
   "RankingOfCarbon": "Ranking of carbon emissions from circuits",
