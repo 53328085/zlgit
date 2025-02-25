@@ -50,6 +50,11 @@ const Mainbox = styled.div`
     column-gap: 16px;
     grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)) ;
     
+  .ant-card-head-wrapper {
+    .ant-card-head-title {
+       padding: 30px 0 0 11px;
+  }
+}
   }
   .center {
      display: grid;
@@ -348,13 +353,12 @@ export default function Index() {
     return (
         <Pagecount bgcolor="#eeeff3" pd={0}>
             <Mainbox laptop={laptop}>
-                <div className='up' key="up" >
+                <div className='up' key="up" >  
                     <Card name={<CustTransO ns="cabinet" text="Annualquota" param="(tCO₂)" />} laptop={laptop} title="" value={Quota.annualQuota} yoy={Quota.annualQuotaYoy} key="a" />
                     <Card name={<CustTransO ns="cabinet" text="Annualee" param="(tCO₂)" />} laptop={laptop} title="" value={Quota.annualEmission} yoy={Quota.annualEmissionYoy} key="b" />
                     <Card title={<CustTransO ns="cabinet" text="Annualce" param="(tCO₂)" />} laptop={laptop} value={Quota.annualResidual} yoy={Quota.annualResidualPct} key="c" />
-                    {/*  <Cdivider type="h" borderColor="#bcbcbc" /> */}
-                    <Card title={<CustTransO ns="cabinet" text="directe" param="(tCO₂)" />} laptop={laptop} value={Quota.dailyEmission} yoy={Quota.dailyEmissionPct} key="d" />
-                    <Card title={<CustTransO ns="cabinet" text="indirecte" param="(tCO₂)" />} laptop={laptop} value={Quota.monthlyEmission} yoy={Quota.monthlyEmissionPct} key="e" />
+                    <Card title={<CustTransO ns="cabinet" text="MonthlyCarbon" param="(tCO₂)" />} laptop={laptop} value={Quota.monthlyEmission} yoy={Quota.monthlyEmissionPct} key="d" />
+                    <Card title={<CustTransO ns="cabinet" text="Dailycarbon" param="(tCO₂)" />} laptop={laptop} value={Quota.dailyEmission} yoy={Quota.dailyEmissionPct} key="e" />
                 </div>
                 <div className='center' key="center">
                     <div className='imgbox'>
