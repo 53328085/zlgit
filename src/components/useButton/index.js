@@ -319,18 +319,19 @@ export function ConfirmBtn(props) {  //  盘面图监控 确认、未确认  "co
            </Confirm>
 }
 export function TreeBtn(props) {  //  树形按钮   
-  let {text, ns="button", type=1,opac=0.2,wh="80px", ...other} = props  // type： 1  主要， 2 成功 3 错误色（删除）
-  let {errorColor,successColor, primaryColor} = useSelector(themeColor)
+  let {text, params={}, ns="button", type=1,opac=0.2,wh="80px", ...other} = props  // type： 1  主要， 2 成功 3 错误色（删除） 4 离线（失效）等
+  let {errorColor,successColor, primaryColor,offlineColor} = useSelector(themeColor)
   let color = {
     1: primaryColor,
     2: successColor,
-    3: errorColor
+    3: errorColor,
+    4: offlineColor
   }[type]
   let rgb = hextodec(color);
   
   const {t} = useTranslation();
    return <Config r={rgb[0]} g={rgb[1]} b={rgb[2]} color={color}  opac={opac} wh={wh} {...other} >
-             {t(text,{ns})}
+             {t(text,{ns,...params})}
            </Config>
 }
 

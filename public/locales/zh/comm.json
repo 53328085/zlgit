@@ -134,6 +134,7 @@
      "card": "卡片{{text}}",
      "list": "列表{{text}}",
      "normal":"正常",
+     "offline": "离线",
     "childdevice": "子设备",
     "connection":"上网方式",
     "updateTime":"更新时间",
