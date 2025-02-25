@@ -2,7 +2,7 @@ import React, { useRef, useEffect, useContext } from 'react'
 import { useSelector } from 'react-redux'
 import { selectProjectId } from '@redux/systemconfig.js'
 import styled, {css} from 'styled-components';
-import Titlelayout from '@com/titlelayout';
+import {TitlelayoutOv as Titlelayout} from '@com/titlelayout';
 import { useReactive } from 'ahooks';
 import { message } from 'antd';
 import { Monitoring } from '@api/api.js'

@@ -1,7 +1,7 @@
 import React, { useRef, useEffect, useState } from 'react'
  
 import styled from 'styled-components';
-import Titlelayout from '@com/titlelayout';
+import {TitlelayoutOv as Titlelayout} from '@com/titlelayout';
  import {useTranslation} from 'react-i18next';
  import Ichart from "@com/useEcharts/Ichart"
  

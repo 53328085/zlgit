@@ -2,7 +2,7 @@ import React, { useState,useEffect, useContext } from 'react'
 import Context from "@com/content"
 import styled from 'styled-components';
 import companyImg from '@imgs/projectimg.png'
-import Titlelayout from '@com/titlelayout' 
+import {TitlelayoutOv as Titlelayout} from '@com/titlelayout' 
 import { Borderleft} from "@com/comstyled"
 import {CustTransO} from "@com/useButton"
  

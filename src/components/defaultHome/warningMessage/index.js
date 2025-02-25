@@ -2,7 +2,7 @@ import React, { useRef, useEffect, useState } from 'react'
 import { Image, Timeline } from 'antd'
 import { useSelector } from 'react-redux'
 import { selectProjectId } from '@redux/systemconfig.js'
-import Titlelayout from '@com/titlelayout';
+import {TitlelayoutOv as Titlelayout} from '@com/titlelayout';
 import styled from 'styled-components';
 import { useReactive } from 'ahooks';
 import { HomeRuntime, safeElectric } from '@api/api.js'

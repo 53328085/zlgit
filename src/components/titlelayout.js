@@ -25,7 +25,7 @@ const Boxdiv = styled(Card)`
     border-bottom: none;
     min-height: ${(props) =>  props.hv || (props.theme.laptop ? '24px' : '40px')};
   //  height: ${(props) =>  props.hv || (props.theme.laptop ? '24px' : '40px')};;
-    height: ${(props) =>  props.theme.laptop ? '24px' : '40px'};
+    height: ${(props) =>  props.hv || (props.theme.laptop ? '24px' : '40px')};
     padding-right: ${({pr}) => pr || '20px'};
     background-color:${({bg}) => bg || '#DEE7F2'};
     z-index:${({zd}) => zd || 100};
@@ -35,7 +35,7 @@ const Boxdiv = styled(Card)`
             width:3px;
             height:13px;
             position: absolute;
-            left: 20px;
+            left: ${({pt}) => pt || '20px'};
             background-color: ${({bl, theme}) => bl  ?  bl=="none" ? "transparent" : bl : theme.primaryColor };
           }  
       }
@@ -71,6 +71,13 @@ Boxdiv.defaultProps = {
   bordered: 'y',
   pv: '20px',
   bodypad: '0px'
+}
+export function TitlelayoutOv({title='', children, ...other}) {
+  return (
+    <Boxdiv title={title} pv="16px" hv="24px" pl="16px" pr="16px" pt="16px" {...other}> 
+        {children}
+    </Boxdiv>
+  )
 }
 export default function Titlelayout({title='', children, ...other}) {
   return (

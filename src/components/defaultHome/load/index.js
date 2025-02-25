@@ -1,7 +1,7 @@
 import React, {useRef, useEffect} from 'react'
 import {useSelector} from 'react-redux'
 import {selectCurProject} from '@redux/user.js'
-import Titlelayout from '@com/titlelayout';
+import {TitlelayoutOv as Titlelayout} from '@com/titlelayout';
 import {drawEcharts} from '@com/useEcharts'
 import {useTranslation} from "react-i18next"
 const fs = {
