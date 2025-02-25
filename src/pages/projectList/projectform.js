@@ -49,9 +49,11 @@ const Formbox = styled(Form)`
     
     
   }
-
+  .smalllog {
+    grid-row: 8/10; 
+  }
   .remark {
-    grid-row: ${props => props.laptop ? "9 / 12" : "7 / 10" } ;
+    grid-row: 10/12; //  ${props => props.laptop ? "8 / 10" : "7 / 9" } ;
   }
   /* .upload {
     grid-row: 4 / 7;
@@ -63,7 +65,7 @@ const Formbox = styled(Form)`
    
   } */
   .upload {
-    grid-row: ${props => props.laptop ? "4 / 9" : "4 / 7" } ;
+    grid-row: 4 / 8; //${props => props.laptop ? "4 / 8" : "4 / 7" } ;
     display: grid;
     grid-template-columns: 1fr 1fr;
     column-gap: 16px;
@@ -108,7 +110,7 @@ const Formbox = styled(Form)`
 `;
 const Info = styled.span`
   font-size: 12px;
-  
+  white-space: nowrap;
 `
 
 const imgToBase = (url) => {
@@ -155,10 +157,8 @@ const imgToBase = (url) => {
     validStageTime: '', //项目有效期
      imgLogo: '',
      imgProject: '',
-    address: "",
-   // LineAnalysisEnabled: 0,
-    //lng: "",
-   // lat: "",
+     imgSmallLogo:"",
+    address: "",  
     lngLat: '',
     remark: "", //备注
   };
@@ -280,10 +280,10 @@ const imgToBase = (url) => {
             }
             ]
            }>
-            <Upload wpx={212} hpx={32} swpx={155} shpx={32} style={{padding: '16px'}} getfile={setImgLogo} /> 
+            <Upload wpx={200} hpx={70} swpx={155} shpx={32} style={{padding: '16px'}}  /> 
             </Item>
            </div>
-           <Info>{t("sizeofpicture", {size: '212*32'})}</Info>
+           <Info>{t("sizeofpicture", {size: '200*70'})}</Info>
          </Item>
          <Item label={t("Projectpicture")} labelCol={laptop ? {flex:"5em"} :{flex: "100px"}}   required>
            <div className="img">
@@ -291,39 +291,32 @@ const imgToBase = (url) => {
               [
               {
                 required: true,
-                message: t("longitudeatitude")
+                message: t("uploadprojectpic")
               }
              ]
            }>
-            <Upload wpx={248} hpx={168} swpx={laptop ? 150 : 200} shpx={116} getfile={setImgProject} /> 
+            <Upload wpx={248} hpx={168} swpx={laptop ? 150 : 200} shpx={116}  /> 
             </Item>
            </div>
            <Info>{t("sizeofpicture", {size: '248*168'})}</Info>
          </Item>
       </div>
-     {/*  <Item label="项目图片" className="upload">
-        <Image src={imgurl['projectimg']} height={116}></Image>
-        <div style={{border: "1px dotted #9c9ea4", display: 'flex'}}>
-           <Upload shpx={116} wpx={248} hpx={168}  />
-        </div>
-      </Item> */}
+     <Item label={t("comm:smalllog")} className="smalllog" required>
+     <Item nostyle  name="imgSmallLogo" rules={
+              [
+              {
+                required: true,
+                message: t("uploadprojectlog")
+              }
+             ]
+           }>
+            <Upload wpx={54} hpx={70} swpx={54} shpx={70}   /> 
+    </Item>
+     </Item>
       <Item label={t("Projectremark")} name="remark" className="remark">
-        <Input.TextArea   placeholder={t("99words")} maxLength={99} style={{height: "140px"}} />
+        <Input.TextArea   placeholder={t("99words")} maxLength={99}   />
       </Item>
-      <Item label={t("ProjectAddress")} labelCol={{flex: laptop ? "85px" : "166px"}} className="address" name="address" tooltip={t("mapgetit")}>
-       {/*  <Item noStyle>
-          <Cascader
-            options={options}
-            defaultValue={defaultAdress}
-            value={addressVal}
-            onChange={changeaddress}
-            showSearch
-            placeholder="请选择或输入省/市/区"
-            style={{
-              marginBottom: "16px",
-            }}
-          />
-        </Item> */} 
+      <Item label={t("ProjectAddress")} labelCol={{flex: laptop ? "85px" : "166px"}} className="address" name="address" tooltip={t("mapgetit")}> 
           <Input placeholder={t("detailedaddress")} onChange={onInput} /> 
       </Item>
       <Item label={t("longitudeatitude")} labelCol={{flex: laptop? "85px" :"166px"}} className="lnglat" tooltip={t("mapgetit")}>
@@ -345,7 +338,7 @@ const imgToBase = (url) => {
           message: t("mapgetit")
         }
       ]}>
-              <Input placeholder={t("longitude")} />
+        <Input placeholder={t("longitude")} />
             </Item>
           </Col>
         </Row>

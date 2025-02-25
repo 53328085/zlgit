@@ -1,7 +1,7 @@
 import React, { useRef, useEffect } from 'react'
  
 import styled from 'styled-components';
-import Titlelayout from '@com/titlelayout';
+import {TitlelayoutOv as Titlelayout} from '@com/titlelayout';
  
 
 import gatewayRuntime from '../transformer.svg'

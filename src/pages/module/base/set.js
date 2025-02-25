@@ -79,7 +79,7 @@ column-gap: 32px;
 }
  .rightlayout {
   flex: 1 1 720px;
-   grid-template-rows: 164px 1px repeat(2, 32px) 370px 1px 32px;
+   grid-template-rows: 164px 164px 1px repeat(2, 32px) 370px 1px 32px;
    row-gap: 16px;
    display: grid;
   .ant-form-item-label {
@@ -110,6 +110,12 @@ column-gap: 32px;
   
    
   }
+  .img2 {
+          border: 1px dotted #dedede;
+          display: flex;
+          height: 116px;
+          width: 200px;
+        }
   .map { 
     display: flex;
     height: 370px;
@@ -321,7 +327,7 @@ export default function ProjectSet({projectId}) {
     remark: "", //备注
    // imgLogo: '',
     logoImage: '',
-
+    smallLogoImage:"",
     //imgProject: '',
     projectImage: '',
    // themeColor: '#237ae4',
@@ -526,7 +532,7 @@ useEffect(() => {
           checkedChildren={t("comm:Yes")}
           unCheckedChildren={t("comm:No")}
           style={{
-            width: "64px",
+            width: "64px",            
           }}
         />
       </Item>
@@ -553,7 +559,7 @@ useEffect(() => {
                 validator: checkLog,
               },
             ]}>
-              <Cupload wpx={208} hpx={64} swpx={200} shpx={116} style={{padding: '16px'}} isDel={ispublish}  /> 
+              <Cupload wpx={200} hpx={70} swpx={200} shpx={116} style={{padding: '16px'}} isDel={ispublish}  /> 
             </Item>
            </div>
            <Info>{t("comm:sizeofpicture", {size: "208*64"})}</Info>
@@ -571,6 +577,21 @@ useEffect(() => {
            <Info>{t("comm:sizeofpicture", {size: "248*168"})}</Info>
          </Item>
       </div>
+      <div className="upload">
+      <Item label={t("comm:smalllog")} className="left" required>
+           <div className="img">
+            <Item noStyle name="smallLogoImage" rules={[
+              {
+                validator: checkLog,
+              },
+            ]}>
+              <Cupload wpx={54} hpx={70} swpx={200} shpx={116} style={{padding: '16px'}} isDel={ispublish}  /> 
+            </Item>
+           </div>
+           <Info>{t("comm:sizeofpicture", {size: "54*70"})}</Info>
+         </Item>
+      </div>
+     
       <Divider dashed  className="divider"   />    
       <Item label={t("comm:ProjectAddress")} name="address" labelCol={iszh ? null : {flex: "160px"}}  rules={[  
               {

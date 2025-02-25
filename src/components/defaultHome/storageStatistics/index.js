@@ -16,9 +16,9 @@ const Mainbox = styled.div`
   box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.349019607843137);
   .headerTitle{
     padding-left: 16px;
-    border-left: 4px solid #237ae4;
-    height: 32px;
-    line-height: 32px;
+    border-left: 4px solid ${props => props.theme.primaryColor};
+    height: 24px;
+    line-height: 24px;
     font-size: 14px;
     color: #333;
   }

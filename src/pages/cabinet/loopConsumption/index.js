@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect, useCallback } from "react";
 import Titlelayout from "@com/titlelayout";
-import { DatePicker, Space, Radio, Divider, Select, Tree, Button,message } from "antd";
+import { DatePicker, Space, Radio, Divider, Select, Tree, Button, message } from "antd";
 import moment from "moment";
 import styled from "styled-components";
 import { DistributionCabinet } from "@api/api.js";
@@ -82,7 +82,7 @@ const Charts = styled.div`
   display: flex;
 `;
 const {
-  QuerySiteList, QuerySiteStructure,QueryLineEnergy
+  QuerySiteList, QuerySiteStructure, QueryLineEnergy
 } = DistributionCabinet;
 // const option = {
 //   legend: {
@@ -139,6 +139,7 @@ export default function index() {
   });
   const today = moment().startOf('day');
   const tmonth = moment().startOf('month')
+  const tyear = moment().startOf('year')
   const tbref = useRef()
   const params = useReactive({
     siteId: 1,
@@ -147,7 +148,7 @@ export default function index() {
     startDate: moment(today).format('YYYY-MM-DD'),
     endDate: moment(today).format('YYYY-MM-DD'),
   });
-  const [Eoptions, setEoptions] = useState({   
+  const [Eoptions, setEoptions] = useState({
     series: [{ type: "bar" }],
     dataset: {}
   })
@@ -199,18 +200,18 @@ export default function index() {
           data.push(resp.data)
           setTreeData(data)
           // 生成 defaultCheckedKeys
-        const keys = [];
-        const traverse = (nodes) => {
-          nodes.forEach(node => {
-            keys.push(node.id);
-            if (node.nodes) {
-              traverse(node.nodes);
-            }
-          });
-        };
-        traverse(data);
-        setDefaultCheckedKeys(keys);
-        params.structureIds =keys
+          const keys = [];
+          const traverse = (nodes) => {
+            nodes.forEach(node => {
+              keys.push(node.id);
+              if (node.nodes) {
+                traverse(node.nodes);
+              }
+            });
+          };
+          traverse(data);
+          setDefaultCheckedKeys(keys);
+          params.structureIds = keys
         } else {
           setTreeData([])
         }
@@ -229,8 +230,7 @@ export default function index() {
 
   const onCheck = (checkedKeysValue) => {
     console.log('onCheck', checkedKeysValue);
-    //setCheckedKeys(checkedKeysValue);
-    setDefaultCheckedKeys(checkedKeysValue)
+    setDefaultCheckedKeys(checkedKeysValue);
     params.structureIds = checkedKeysValue
   };
   const changeTime = (e) => {
@@ -299,38 +299,38 @@ export default function index() {
     }, { title: '考核功率因数', dataIndex: 'name', align: "center", },
     { title: '正向有功最大需量 kW', dataIndex: 'name', align: "center", },
   ]
-  const getData = async({ current, pageSize }) => {
+  const getData = async ({ current, pageSize }) => {
     try {
       const resp = await QueryLineEnergy(params);
       if (resp.success) {
         if (resp.data) {
-          state.alltableData=resp.data
+          state.alltableData = resp.data
           let wdata = []
-          let series=[]
-          let dimensions=[{ name: 'time', type: 'time' }]
+          let series = []
+          let dimensions = [{ name: 'time', type: 'time' }]
           resp.data[0]?.lineEnergy.x.map((item, index) => {
-            wdata.push({ time: ''})
+            wdata.push({ time: '' })
             wdata[index].time = item
           })
           resp.data.map((item, index) => {
-            series.push({ type: "bar", name:`${item.lineName}`,encode: { x: 'time', y: `y${index}` }})
+            series.push({ type: "bar", name: `${item.lineName}`, encode: { x: 'time', y: `y${index}` } })
             dimensions.push({ name: `y${index}`, displayName: `${item.lineName}` })
             item.lineEnergy.y.map((it, ind) => {
-              wdata[ind]['y'+index] = it
+              wdata[ind]['y' + index] = it
             })
           })
-          
+
           let wdataset = {
             dimensions: dimensions,
             source: wdata,
           }
-          console.log(wdataset,series)
-          setEoptions({ ...Eoptions, dataset: wdataset,series:series, xAxis: { axisLabel: { interval: 'auto' } } })
+          console.log(wdataset, series)
+          setEoptions({ ...Eoptions, dataset: wdataset, series: series, xAxis: { axisLabel: { interval: 'auto' } } })
           // return {
           //   data: resp.data.list,
           //   total: resp.data.total,
           // }
-          } else {
+        } else {
           // return {
           //   data: [],
           //   total: 0,
@@ -349,7 +349,7 @@ export default function index() {
   useEffect(() => {
     run(1, 14);
   }, [JSON.stringify(params)]);
-  
+
   return (
     <div style={{ width: "100%", height: "100%", display: "flex", flexDirection: "row", justifyContent: 'space-between' }}>
       <LeftBox>
@@ -363,8 +363,11 @@ export default function index() {
         })}
         <Divider dashed style={{ borderColor: "#d7d7d7" }}></Divider> */}
         <Tree
+          showLine
           checkable
           checkedKeys={defaultCheckedKeys}
+          expandedKeys={defaultCheckedKeys}
+          autoExpandParent={true}
           defaultExpandAll={true}
           onCheck={onCheck}
           treeData={treeData}
@@ -383,10 +386,10 @@ export default function index() {
                 { value: '4', label: '自定义' },
               ]}
             />
-            {params.type == 1 ? <DatePicker onChange={onChangeDate} defaultValue={moment(today)} disabledDate={disabledDate} /> :
-              params.type == 2 ? <DatePicker onChange={onChangeDate} defaultValue={moment(tmonth)} picker='month' disabledDate={disabledDate} /> :
-                params.type == 3 ? <DatePicker onChange={onChangeDate} picker='year' disabledDate={disabledDate} /> :
-                  <RangePicker onChange={onChangeDate} defaultValue={[moment(today), moment(today)]} disabledDate={disabledDate} />
+            {params.type == 1 ? <DatePicker style={{ width: 240 }} onChange={onChangeDate} defaultValue={moment(today)} disabledDate={disabledDate} /> :
+              params.type == 2 ? <DatePicker style={{ width: 240 }} onChange={onChangeDate} defaultValue={moment(tmonth)} picker='month' disabledDate={disabledDate} /> :
+                params.type == 3 ? <DatePicker style={{ width: 240 }} onChange={onChangeDate} picker='year' defaultValue={moment(tyear)} disabledDate={disabledDate} /> :
+                  <RangePicker style={{ width: 240 }} onChange={onChangeDate} defaultValue={[moment(today), moment(today)]} disabledDate={disabledDate} />
             }
           </div>
           {/* <Radio.Group
@@ -403,12 +406,12 @@ export default function index() {
           {state.timeType == 2 ? <ExportExcel tb={tbref} /> : null} */}
         </Header>
       }>
-        {state.timeType == 1 ?<Charts><Ichart  {...Eoptions}/>
+        {state.timeType == 1 ? <Charts><Ichart  {...Eoptions} />
           {/* {state.alltableData.length > 0 ?
             <Ichart custoption={option} /> : <Cempty tip="暂无数据" />} */}
-        </Charts>:
-        <Charts>
-          <Table columns={columns} ref={tbref}   {...tableProps} ></Table>
+        </Charts> :
+          <Charts>
+            <Table columns={columns} ref={tbref}   {...tableProps} ></Table>
           </Charts>}
       </Titlelayout>
     </div>

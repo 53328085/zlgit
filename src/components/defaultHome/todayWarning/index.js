@@ -3,7 +3,7 @@ import {useSelector} from 'react-redux'
 
 import { selectProjectId } from '@redux/systemconfig.js'
 import styled from 'styled-components';
-import Titlelayout from '@com/titlelayout';
+import {TitlelayoutOv as Titlelayout} from '@com/titlelayout';
 import { drawEcharts } from "@com/useEcharts"; 
 import { HomeRuntime } from '@api/api.js'
 import { useReactive } from 'ahooks';

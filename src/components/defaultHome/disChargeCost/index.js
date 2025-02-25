@@ -14,17 +14,19 @@ const Mainbox = styled.div`
   .headerTitle{
     padding-left: 28px;
   //  border-left: 4px solid #fff;
-    height: 40px;
-    line-height: 40px;
+    height: 24px;
+    line-height: 24px;
     font-size: 15px;
     color: #fff;
+    display: flex;
+    align-items: center;
   }
   .headerTitle:before{
        content: "";
        display: block;
        position: absolute;
-       left: 20px;
-       top:13.5px;
+       left: 16px;
+      // top:13.5px;
        width: 3px;
        height: 13px;
        background-color: #fff;

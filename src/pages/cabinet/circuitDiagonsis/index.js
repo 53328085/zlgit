@@ -67,7 +67,7 @@ const Right = styled.div`
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  
+  row-gap: 16px;
 `;
 const RightTop = styled.div`
   width: 100%;
@@ -171,13 +171,14 @@ export default function index() {
       type: 1,
       ...option,
     },
-    circuitBreakerNum:0,
-    circuitBreakerTripNum:0,
-    deviceFrequentOfflineNum:0,
-    deviceOfflineNum:0
+    circuitBreakerNum: 0,
+    circuitBreakerTripNum: 0,
+    deviceFrequentOfflineNum: 0,
+    deviceOfflineNum: 0
   });
   const today = moment().startOf('day');
   const tmonth = moment().startOf('month')
+  const tyear = moment().startOf('year')
   const tbref = useRef()
   const params = useReactive({
     siteId: 1,
@@ -221,20 +222,20 @@ export default function index() {
           let data = []
           data.push(resp.data)
           setTreeData(data)
-           // 生成 defaultCheckedKeys
-        const keys = [];
-        const traverse = (nodes) => {
-          nodes.forEach(node => {
-            keys.push(node.id);
-            if (node.nodes) {
-              traverse(node.nodes);
-            }
-          });
-        };
-        traverse(data);
-        setDefaultCheckedKeys(keys);
-        params.structureIds =keys
-        run(1,14)
+          // 生成 defaultCheckedKeys
+          const keys = [];
+          const traverse = (nodes) => {
+            nodes.forEach(node => {
+              keys.push(node.id);
+              if (node.nodes) {
+                traverse(node.nodes);
+              }
+            });
+          };
+          traverse(data);
+          setDefaultCheckedKeys(keys);
+          params.structureIds = keys
+          run(1, 14)
         } else {
           setTreeData([])
         }
@@ -271,7 +272,7 @@ export default function index() {
       params.endDate = dateString + '-01-01'
     } else {
       params.startDate = dateString[0]
-      params.endDate = dateString[0]
+      params.endDate = dateString[1]
     }
   };
   const disabledDate = (current) => {
@@ -282,10 +283,10 @@ export default function index() {
       const resp = await QueryCircuitBreakerOverview({ siteId: params.siteId, structureIds: params.structureIds });
       if (resp.success) {
         if (resp.data) {
-          state.circuitBreakerNum=resp.data.circuitBreakerNum
-          state.circuitBreakerTripNum=resp.data.circuitBreakerTripNum
-          state.deviceFrequentOfflineNum=resp.data.deviceFrequentOfflineNum
-          state.deviceOfflineNum=resp.data.deviceOfflineNum
+          state.circuitBreakerNum = resp.data.circuitBreakerNum
+          state.circuitBreakerTripNum = resp.data.circuitBreakerTripNum
+          state.deviceFrequentOfflineNum = resp.data.deviceFrequentOfflineNum
+          state.deviceOfflineNum = resp.data.deviceOfflineNum
         } else {
         }
       } else {
@@ -323,7 +324,7 @@ export default function index() {
     { title: '当前状态', dataIndex: 'curState', align: "center", },
     { title: '诊断结果', dataIndex: 'diagnosis', align: "center", },
   ]
-  const getTableData = async({ current, pageSize }) => {
+  const getTableData = async ({ current, pageSize }) => {
     try {
       const resp = await QueryCircuitBreakerDiagnosis(params);
       if (resp.success) {
@@ -356,8 +357,11 @@ export default function index() {
         })}
         <Divider dashed style={{ borderColor: "#d7d7d7" }}></Divider> */}
         <Tree
+          showLine
           checkable
           checkedKeys={defaultCheckedKeys}
+          expandedKeys={defaultCheckedKeys}
+          autoExpandParent={true}
           defaultExpandAll={true}
           onCheck={onCheck}
           treeData={treeData}
@@ -413,10 +417,10 @@ export default function index() {
                   { value: '4', label: '自定义' },
                 ]}
               />
-              {params.type == 1 ? <DatePicker onChange={onChangeDate} defaultValue={moment(today)} disabledDate={disabledDate}/> :
-                params.type == 2 ? <DatePicker onChange={onChangeDate} defaultValue={moment(tmonth)} picker='month' disabledDate={disabledDate}/> :
-                  params.type == 3 ? <DatePicker onChange={onChangeDate} picker='year' disabledDate={disabledDate}/> : 
-                  <RangePicker  onChange={onChangeDate} defaultValue={[moment(today), moment(today)]} disabledDate={disabledDate} />
+              {params.type == 1 ? <DatePicker style={{ width: 240 }} onChange={onChangeDate} defaultValue={moment(today)} disabledDate={disabledDate} /> :
+                params.type == 2 ? <DatePicker style={{ width: 240 }} onChange={onChangeDate} defaultValue={moment(tmonth)} picker='month' disabledDate={disabledDate} /> :
+                  params.type == 3 ? <DatePicker style={{ width: 240 }} onChange={onChangeDate} picker='year' defaultValue={moment(tyear)} disabledDate={disabledDate} /> :
+                    <RangePicker style={{ width: 240 }} onChange={onChangeDate} defaultValue={[moment(today), moment(today)]} disabledDate={disabledDate} />
               }
               <Button type="primary" style={{ marginLeft: 32, width: 96 }} onClick={submit}>开始诊断</Button>
             </div>

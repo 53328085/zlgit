@@ -2,7 +2,7 @@ import React, { useRef, useEffect, useState, useContext } from 'react'
 import { useSelector } from 'react-redux'
 import { selectProjectId, iszhCN } from '@redux/systemconfig.js'
 import styled, {css} from 'styled-components';
-import Titlelayout from '@com/titlelayout';
+import {TitlelayoutOv as Titlelayout} from '@com/titlelayout';
  import {useTranslation} from 'react-i18next';
 
 import transformerNum from '../transformerNum.svg'
