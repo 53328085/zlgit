@@ -62,8 +62,8 @@ font-size: 12px;
 `
 const Cmenu = styled(Menu)`
 &&{
-   //background-color: transparent;
-   background-color: ${props => props.theme.menusbgcolor || '#003366'};
+   background-color: transparent;
+ //  background-color: ${props => props.theme.menusbgcolor || '#003366'};
     border-bottom: none;
     overflow: hidden;
     padding: 2px 0 2px 16px;

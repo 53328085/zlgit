@@ -13,6 +13,7 @@
      "localmonitoring": "Local monitoring",
      "info5":"Please select the correct time period",
      "unit": "cameras",
-    
+    "opening": "Opening",
+     "closing":"Closing",
      "test": ""
  }

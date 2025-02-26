@@ -31,7 +31,7 @@ export default function  Title (){
 
     let projectLog = Currproject.logoImage;
     let smallLog = Currproject.smallLogoImage
-   console.log("Currproject" ,Currproject)
+   
     let Collapsed = useSelector(collapsed) 
    if (Collapsed && !overview) {
      return   smallLog   ?  <img  height={70}  width={54 }   src={smallLog }></img> : <div  style={{height:70}}></div> 
