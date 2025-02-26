@@ -8,17 +8,16 @@ const {Text} = Typography
 import {collapsed, currProject} from '@redux/systemconfig'
 import logo from '@imgs/czt.png'
 
-const Divlog = styled.div` 
-   height: 70px;
-   display: flex;
-   flex-direction: column;
-   justify-content: space-evenly;
-   align-items: center;
-   span {
-     font-size: 16px;
-     line-height: 1;
-     color:#fff;
-   }
+const Smllog = styled.div` 
+    width: 54px;
+    height: 70px;
+  //  background-color: ${props => props.theme.logBgColor};
+
+`
+const Biglog = styled.div` 
+    width: 200px;
+    height: 70px;
+    background-color: ${props => props.overview ? props.theme.logBgColor : ""};
 
 `
 export default function  Title (){
@@ -34,9 +33,9 @@ export default function  Title (){
    
     let Collapsed = useSelector(collapsed) 
    if (Collapsed && !overview) {
-     return   smallLog   ?  <img  height={70}  width={54 }   src={smallLog }></img> : <div  style={{height:70}}></div> 
+     return   <Smllog>{smallLog && <img  height={70}  width={54 }   src={smallLog }></img> }</Smllog>
    }else {
-      return    projectLog ? <img  height={70}  width={200 }   src={projectLog }></img> :  <div   style={{height:70, width:200}}></div> 
+      return   <Biglog overview={overview}>{projectLog && <img  height={70}  width={200 }   src={projectLog }></img>}</Biglog>
    }
  
   }

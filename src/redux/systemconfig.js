@@ -11,6 +11,7 @@ import {initithemeColor} from '@com/defaultcolor';
 
 
 
+
 const {DeviceTypeManager: {AllDeviceStyle} } = Monitoring
 
  
@@ -68,7 +69,11 @@ const {DeviceTypeManager: {AllDeviceStyle} } = Monitoring
     return menus
    }
 
-
+const themeOption = {
+   opacity:0.2,
+   startOpacity:0,
+   endOpacity:0.2
+}
 
 const initialState = {
     deviceState:false,
@@ -79,6 +84,7 @@ const initialState = {
     }, 
     themeColor:  {  // 可配置对象，不只是颜色属性。名字为保证稳定性不改
       ...initithemeColor,
+      ...themeOption,
      /*  themeId:null, 
       primaryColor: '#237AE4',
       islight: false, // 150

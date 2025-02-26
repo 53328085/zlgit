@@ -1,7 +1,7 @@
 import React, {useState, useRef, useEffect } from 'react'
 import {createPortal} from 'react-dom'
 import {useDispatch} from "react-redux";
-import { SketchPicker } from 'react-color';
+import { SketchPicker, ChromePicker } from 'react-color';
 import {CloseOutlined} from "@ant-design/icons"
 import {getThemeColor} from '@redux/systemconfig'  
 import defaultcolor from "@com/defaultcolor"
@@ -33,6 +33,7 @@ export default function Index({value, onChange, name, arrcolor})  {
      setShowv(value)
    },[value])
     const  onColorChange= (hex)=> { 
+      console.log(hex)
       dispatch(getThemeColor({[name]: hex}))
       if( name=="primaryColor") window.localStorage.setItem("CustThemeColor", hex)
       onChange?.(hex)

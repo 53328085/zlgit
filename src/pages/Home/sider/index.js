@@ -61,6 +61,7 @@ const Cmenu = styled(Menu)`
    }
    &&  {
     overflow-y: auto;
+    overflow-x: hidden;
    }
    .ant-menu-item {
      padding-left: 10px !important;

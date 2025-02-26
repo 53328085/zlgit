@@ -49,6 +49,7 @@ const CommItem = styled.div`
     justify-content: space-around;
     flex-direction: column;
     padding: 16px;
+    border-radius: 6px;
     p {
       display: flex;
       align-items: center;
