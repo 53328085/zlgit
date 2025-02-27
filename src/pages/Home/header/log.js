@@ -242,7 +242,7 @@ export default function Log() {
   const {menusbgcolorR,startColor,endColor,startOpacity,endOpacity } = useSelector(themeColor)
   console.log(startColor, endColor, startOpacity, endOpacity)
   const srgb=hextodec(startColor)
-  const ergb=hextodec(endOpacity)
+  const ergb=hextodec(endColor)
   let strmob = mobile.toString()
   const start = strmob.slice(0, 3).padEnd(7, '*')+strmob.slice(-4);
  
