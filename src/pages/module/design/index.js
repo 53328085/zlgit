@@ -368,6 +368,22 @@ useEffect(()=>{
         <Link>应用于设备状态、树形结构按钮等</Link>
         </div>
       </Item>
+      <Item label="卡片样式"   >
+        <div style={{display: "grid", gap: "8px", gridTemplateColumns: "1fr 1fr" }}> 
+        <Item label="标题填充色" labelCol={{flex: "6em"}} name="cardHeadBg" initialValue="#dee7f2">
+          <Ccolor name="cardHeadBg" />
+        </Item>
+        <Item label="标题字体色" labelCol={{flex: "6em"}} name="cardHeadlColor" initialValue="#303133">
+          <Ccolor name="cardHeadlColor" />
+        </Item>
+        <Item label="标题高度" labelCol={{flex: "5em"}} name="cardHeadHeight" initialValue={40}>
+          <InputNumber min={0} step={1} addonAfter="px" onChange={(e)=>changeop(e, "cardHeadHeight")} />
+        </Item>
+        <Item label="圆角" labelCol={{flex: "3em"}} name="cardRadius" initialValue={8}>
+          <InputNumber min={0} step={1} addonAfter="px" onChange={(e)=>changeop(e, "headHeight")} />
+        </Item>
+        </div>        
+      </Item>
       <Item label="模块菜单栏背景色"  name="menusbgcolor" initialValue="#003366">
       <Ccolor name="menusbgcolor" />
       </Item>

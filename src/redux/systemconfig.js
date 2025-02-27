@@ -7,7 +7,7 @@ import {Login} from '../axios/api'
 import antdconfig from './theme' ; //   antd配置
 import { Area, ProjectList,ProjectSetting, BigScreen, eneryShift, Monitoring,Carbon, HomeRuntime, Editapi,CustTheme} from "@api/api.js"; 
 import {isObject,isLightColor,hextodec} from '@com/usehandler'
-import {initithemeColor} from '@com/defaultcolor';
+import {initithemeColor,themeOption} from '@com/defaultcolor';
 
 
 
@@ -69,11 +69,7 @@ const {DeviceTypeManager: {AllDeviceStyle} } = Monitoring
     return menus
    }
 
-const themeOption = {
-   opacity:0.2,
-   startOpacity:0,
-   endOpacity:0.2
-}
+
 
 const initialState = {
     deviceState:false,
