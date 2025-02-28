@@ -27,6 +27,7 @@ import {
   CustButton,
   CustButtonT,
   ConfirmBtn,
+   
 } from "@com/useButton";
 import styled, { css } from "styled-components";
 
@@ -43,6 +44,8 @@ import GouIcon from "@imgs/gou.png";
 import temp from "./imgs/temp.png";
 import Info from "./info";
 import Electric from "./electric";
+import RomoteRegulatin from './romoteRegulating' // 遥调 框架断路器  NA8-2500-2500H
+import RomoteRegulatinB from './romoteRegulatingb'
 import {
   Okt,
   Extrea,
@@ -52,6 +55,7 @@ import {
   CDrawer,
   
 } from './comstyle'
+ 
 const { Link, Text, Title } = Typography;
 const { Item } = Descriptions;
 const { RangePicker } = DatePicker;
@@ -80,13 +84,35 @@ export default function Index() {
   const [ititle, setititle] = useState("告警详情");
   const [eltitle, setEltitle] = useState(""); // 遥测 图表的标题
   const [state, setState] = useState(1); // 1 分闸2故障3正常
-  const [form] = Form.useForm();
-
-  const queryDeviceDataAll =async (devSn="NTCJ00122401") => {
+  
+  
+  const [deviceData, setDeviceData] = useState([])
+ 
+  const [deviceInfo, setDeviceInfo] =useState({
+    deviceName: "",
+    breakerType: 1, // 1: 框架断路器 2：塑壳断路器
+  })
+  
+  const onCopen = () => {
+    setCopen(true);
+  };
+  const queryDeviceDataAll =async ({deviceName, devSn="NTCJ00122401", breakerType}) => {
       try {
-        await QueryDeviceDataAll(devSn)
+       const {success, data, message} = await QueryDeviceDataAll(devSn)
+       if(success && Array.isArray(data)) {
+          setDeviceInfo({
+            deviceName,
+            breakerType
+          })
+          setDeviceData(data)
+          onCopen()
+         
+       }else {
+          !success && i18warning(message)
+       }
+       
       } catch (error) {
-        
+         console.log(error)
       }
   }
  
@@ -94,9 +120,7 @@ export default function Index() {
   const onOpen = () => {
     setOpen(true);
   };
-  const onCopen = () => {
-    setCopen(true);
-  };
+
 
   const vdata = [
     Array.from({ length: 24 }, (_, index) =>
@@ -118,20 +142,7 @@ export default function Index() {
     { title: "故障脱口次数", state: 0 },
     { title: "开关操作次数", state: 4 },
   ];
-  const vedata = [
-    { title: "A相电压", num: "400.00V" },
-    { title: "B相电压", num: "400.00V" },
-    { title: "C相电压", num: "400.00V" },
-    { title: "AB线电压", num: "400.00V" },
-    { title: "BC线电压", num: "400.00V" },
-    { title: "CA线电压", num: "400.00V" },
-    { title: "A相电流", num: "400.00A" },
-    { title: "B相电流", num: "400.00A" },
-    { title: "C相电流", num: "400.00A" },
-    { title: "零线电流", num: "400.00A" },
-    { title: "剩余电流", num: "400.00A" },
-    { title: "电网频率", num: "50.00Hz" },
-  ];
+ 
 
   const columns = [
     {
@@ -275,33 +286,8 @@ export default function Index() {
   };
   // 表单项宽度
 
-  const itemsty = {
-    width: "160px",
-  };
-  const toptions = [
-    { label: 15, value: 15 },
-    { label: 30, value: 30 },
-    { label: 60, value: 60 },
-    { label: 120, value: 120 },
-    { label: 240, value: 240 },
-    { label: 480, value: 480 },
-  ];
-  const loptions = [
-    { label: "12t", value: 12 },
-    { label: "1t", value: 1 },
-    { label: "24t", value: 24 },
-    { label: "定时限", value: 0 },
-  ];
-  const options3 = [
-    { label: 100, value: 100 },
-    { label: 200, value: 200 },
-    { label: 300, value: 300 },
-    { label: 400, value: 400 },
-  ];
-  const options4 = [
-    { label: "反是限", value: 1 },
-    { label: "定时限", value: 0 },
-  ];
+
+
   const Extra = ({ ist, title, fn }) => {
     return (
       <Extrea ist={ist}>
@@ -345,7 +331,7 @@ export default function Index() {
           </div>
           <div className="h3d" onClick={null}>
             <div className="textname">进线柜</div>
-            <div className="detail" onClick={onCopen}>
+            <div className="detail" onClick={()=>queryDeviceDataAll({name:"框架断路器  NA8-2500-2500H", type: 1})}>
               <div className="state">
                 <img src={imgsrc["red"]}></img>
                 <img src={imgsrc["close"]}></img>
@@ -399,7 +385,7 @@ export default function Index() {
             </Link>
             <CustLink text="details" underline={false}></CustLink>
           </div>
-          <div className="values first" onClick={onCopen}>
+          <div className="values first" onClick={()=>queryDeviceDataAll({name:"塑壳断路器  NM8N", type: 2})}>
             <div className="nums">
               <span className="type">1a</span>
               <Text>25.3A</Text>
@@ -875,7 +861,7 @@ export default function Index() {
         </div>
         <div className="mainbox">
           <div className="ctitle">
-            <div className="text">框架断路器</div>
+            <div className="text">{deviceInfo?.deviceName}</div>
             <CloseOutlined onClick={() => setCopen(false)} className="close" />
           </div>
           <div className="htitle">
@@ -894,116 +880,9 @@ export default function Index() {
             <span>遥测</span>
             <span>{moment().format("yyyy-MM-DD HH:mm:ss")}</span>
           </div>
-          <Electric datas={vedata} onClick={onelchart} />
-          <div className="htitle">
-            <span>遥调</span>
-            <CustButton style={{ marginRight: "-16px" }}>保存参数</CustButton>
-          </div>
-          <Form form={form} layout="vertical">
-            <Title level={5}>长延时保护</Title>
-            <Space size={laptop ? "small" : "large"}>
-              <Form.Item label="长延时电流整定值" name="a">
-                <InputNumber
-                  placeholder="0.4-1.0"
-                  min={0.4}
-                  max={1.0}
-                  step={0.1}
-                  style={itemsty}
-                />
-              </Form.Item>
-              <Form.Item label="长延时时间整定值" name="b">
-                <Select options={toptions} style={itemsty}></Select>
-              </Form.Item>
-              <Form.Item label="长延时曲线类型" name="c">
-                <Select options={loptions} style={itemsty}></Select>
-              </Form.Item>
-            </Space>
-            <Title level={5}>短延时保护</Title>
-            <Space size={laptop ? "small" : "large"}>
-              <Form.Item label="短延时电流整定值" name="d">
-                <InputNumber
-                  placeholder="1.5-15"
-                  min={1.5}
-                  max={15}
-                  step={0.1}
-                  style={itemsty}
-                />
-              </Form.Item>
-              <Form.Item label="短延时时间整定值" name="e">
-                <Select options={options3} style={itemsty}></Select>
-              </Form.Item>
-              <Form.Item label="短延时曲线类型" name="f">
-                <Select options={options4} style={itemsty}></Select>
-              </Form.Item>
-            </Space>
-            <Title level={5}>瞬动保护</Title>
-            <Space size={laptop ? "small" : "large"}>
-              <Form.Item label="瞬动电流整定值" name="g">
-                <InputNumber
-                  placeholder="1.5-15"
-                  min={1.5}
-                  max={15}
-                  step={0.1}
-                  style={itemsty}
-                />
-              </Form.Item>
-              <Form.Item label="瞬时电流动作方式" name="h">
-                <Input></Input>
-              </Form.Item>
-            </Space>
-            <Title level={5}>接地保护</Title>
-            <Space size={laptop ? "small" : "large"}>
-              <Form.Item label="接地保护电流整定值" name="i">
-                <InputNumber min={0} style={itemsty} />
-              </Form.Item>
-              <Form.Item label="接地保护电流曲线类型" name="j">
-                <Select options={options4} style={itemsty}></Select>
-              </Form.Item>
-              <Form.Item label="接地保护电流动作时间" name="k">
-                <Input></Input>
-              </Form.Item>
-            </Space>
-            <Title level={5}>剩余电流保护</Title>
-            <Space size={laptop ? "small" : "large"}>
-              <Form.Item label="剩余电流保护阀值" name="l">
-                <InputNumber min={0} style={itemsty} addonAfter="A" />
-              </Form.Item>
-              <Form.Item label="剩余电流保护延迟" name="m">
-                <InputNumber min={0} style={itemsty} addonAfter="ms" />
-              </Form.Item>
-            </Space>
-            <Title level={5}>欠压保护</Title>
-            <Space size={laptop ? "small" : "large"}>
-              <Form.Item label="欠电压动作阀值整定值" name="n">
-                <InputNumber min={0} style={itemsty} addonAfter="A" />
-              </Form.Item>
-              <Form.Item label="欠电压动作延时时间整定值" name="o">
-                <InputNumber min={0} style={itemsty} addonAfter="S" />
-              </Form.Item>
-              <Form.Item label="欠电压返回阀值整定值" name="p">
-                <InputNumber min={0} style={itemsty} addonAfter="A" />
-              </Form.Item>
-              <Form.Item label="欠电压返回延时时间整定值" name="q">
-                <InputNumber min={0} style={itemsty} addonAfter="A" />
-              </Form.Item>
-            </Space>
-            <Title level={5}>过压保护</Title>
-            <Space size={laptop ? "small" : "large"}>
-              <Form.Item label="过电压动作阀值整定值" name="r">
-                <InputNumber min={0} style={itemsty} addonAfter="A" />
-              </Form.Item>
-              <Form.Item label="过电压动作延时时间整定值" name="s">
-                <InputNumber min={0} style={itemsty} addonAfter="S" />
-              </Form.Item>
-              <Form.Item label="过电压返回阀值整定值" name="t">
-                <InputNumber min={0} style={itemsty} addonAfter="A" />
-              </Form.Item>
-              <Form.Item label="过电压返回延时时间整定值" name="u">
-                <InputNumber min={0} style={itemsty} addonAfter="A" />
-              </Form.Item>
-            </Space>
-          </Form>
-          <div className="htitle">
+          <Electric datas={deviceData} onClick={onelchart} />
+          {deviceInfo?.breakerType === 1 ? <RomoteRegulatin laptop={laptop} /> : deviceInfo?.breakerType === 2 ? <RomoteRegulatinB laptop={laptop} /> : null} 
+          <div className="htitle"> 
             <span>遥控</span>
           </div>
           <div
@@ -1022,6 +901,7 @@ export default function Index() {
             </Button>
           </div>
         </div>
+        
         <Custmodal
           title="远程控制"
           ref={modal}

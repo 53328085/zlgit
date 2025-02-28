@@ -1,3 +1,4 @@
+//遥测
 import React from 'react'
 import styled from 'styled-components'
 import {Typography} from 'antd'
@@ -28,11 +29,11 @@ const Elects = styled.div`
    }
 }
 `
-const Elect = ({title, num,onhandler})=> {
+const Elect = ({name,desc,value,unit, lastSampleTime,onhandler})=> {
     return (
-      <div className='box' onClick={() => onhandler(title,num)} >
-          <Text ellipsis={{tooltip:title}}>{title}</Text>
-          <div className="btn">{num}
+      <div className='box' onClick={() => onhandler(name,value)} >
+          <Text ellipsis={{tooltip:desc}}>{desc}</Text>
+          <div className="btn">{value}{unit}
             <img src={arrow} width={12} /> 
           </div>
       </div>  

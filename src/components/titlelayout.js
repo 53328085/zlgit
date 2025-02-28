@@ -74,7 +74,7 @@ Boxdiv.defaultProps = {
 }
 export function TitlelayoutOv({title='', children, ...other}) { // 项目概述
   return (
-    <Boxdiv title={title} pv="16px" hv="24px" pl="16px" pr="16px" pt="16px" {...other}> 
+    <Boxdiv title={title} pv="16px" hv="24px" pl="16px" pr="16px" pt="16px" {...other} shadow={false}> 
         {children}
     </Boxdiv>
   )

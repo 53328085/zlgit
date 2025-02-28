@@ -43,7 +43,7 @@ const Mainbox = styled.div`
   .itemContent {
       display: flex;
       flex: 1;
-      padding: 8px;
+      padding: 0 8px;
       background-color: #fff;
     }
   
@@ -537,7 +537,7 @@ export default function Index() {
                 src={info.imageBase64
                   ? "data:image/png;base64," + info.imageBase64 : projectimg}
                 preview={false}
-                height={130}
+                height={124}
                 width={192}
               ></Image>
               <div

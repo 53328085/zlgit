@@ -37,9 +37,9 @@ export class CustTheme {
 
  // 盘面图监控 （lot数据查询）
  export class DiskChart {
-  prefix='DistributionCabinet/DistributionCabinetAIotRuntime'
+   static prefix='DistributionCabinet/DistributionCabinetAIotRuntime'
   static QueryDeviceDataAll = (devSn) =>
-    server.post(`${prefix}/QueryDeviceDataAll?devSn=${devSn}`); // 获取设备所有属性值
+    server.post(`${DiskChart.prefix}/QueryDeviceDataAll?devSn=${devSn}`); // 获取设备所有属性值
  }
 // 电能质量
 export class PowerQuality {
