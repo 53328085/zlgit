@@ -42,7 +42,7 @@ font-size: 12px;
     }
     }
     .ant-menu-item.ant-menu-item-selected {
-        background-color: ${props => props.theme.menusactive || '#1c62b6'};
+        background-color:  rgba(${props => props.rgba[0]},${props => props.rgba[1]},${props => props.rgba[2]}, 0.2);
       //  border-bottom: 2px solid ${props => props.theme.menusborder || '#00ff66'};  //去掉下划线 陈舒映
         color:${props => props.theme.menusactivefontcolor || '#ffffff'};
         border-radius: 6px;

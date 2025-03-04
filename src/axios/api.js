@@ -40,6 +40,15 @@ export class CustTheme {
    static prefix='DistributionCabinet/DistributionCabinetAIotRuntime'
   static QueryDeviceDataAll = (devSn) =>
     server.post(`${DiskChart.prefix}/QueryDeviceDataAll?devSn=${devSn}`); // 获取设备所有属性值
+  static QueryDevicesDataAll = (body) =>
+    server.post(`${DiskChart.prefix}/QueryDevicesDataAll`, body); // 批量获取设备所有属性值
+  static QueryDevicePointTrend = (params) =>
+    server.post(`${DiskChart.prefix}/QueryDevicePointTrend`, null, {params}); // 获取测点历史趋势
+  static DoOpenClose = ({devSn, operation}) =>
+    server.post(`${DiskChart.prefix}/DoOpenClose?devSn=${devSn}&operation=${operation}`); // 断路器分合闸
+  static QueryServiceResult = ({tm, key}) =>
+    server.post(`${DiskChart.prefix}/QueryServiceResult?startTM=${tm}&resultKey=${key}`); // 断路器分合闸
+
  }
 // 电能质量
 export class PowerQuality {

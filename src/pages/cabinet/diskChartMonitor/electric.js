@@ -1,8 +1,10 @@
 //遥测
 import React from 'react'
 import styled from 'styled-components'
+import moment from 'moment'
 import {Typography} from 'antd'
 import arrow from './imgs/arrow.svg'
+
 const {Text} = Typography
 const Elects = styled.div`
   display: grid;
@@ -29,9 +31,10 @@ const Elects = styled.div`
    }
 }
 `
-const Elect = ({name,desc,value,unit, lastSampleTime,onhandler})=> {
+const Elect = ({datas, onhandler})=> {
+  const { name,desc,value,unit, lastSampleTime} = datas
     return (
-      <div className='box' onClick={() => onhandler(name,value)} >
+      <div className='box' onClick={() => onhandler(datas)} >
           <Text ellipsis={{tooltip:desc}}>{desc}</Text>
           <div className="btn">{value}{unit}
             <img src={arrow} width={12} /> 
@@ -42,12 +45,19 @@ const Elect = ({name,desc,value,unit, lastSampleTime,onhandler})=> {
 export default function Index({datas, onClick}) {
   if(Array.isArray(datas) && datas.length > 0) {
     return (
+      <>
+         <div className="htitle">
+                   <span>遥测</span>
+                   <span>{moment().format("yyyy-MM-DD HH:mm:ss")}</span>
+                 </div>
         <Elects>
             {
-                datas.map(d => <Elect {...d} onhandler={onClick} />)
+                datas.map(d => <Elect  datas={d} onhandler={onClick} />)
             }
         </Elects>
+        </>
       )
+     
   }else {
     return null
   }
