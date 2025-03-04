@@ -1,6 +1,7 @@
 import {Drawer} from "antd";
 import styled, {css} from "styled-components";
 import imgsrc from "./imgs";
+import GouIcon from "@imgs/gou.png";
   const titlesty = css`
   padding-left: 16px;
   border-left: 4px solid ${(props) => props.theme.primaryColor};
@@ -31,23 +32,105 @@ const Okt = styled.div`
 const CDrawer = styled(Drawer)`
   && {
     .ant-drawer-content-wrapper {
-      min-width: 928px;
-      width: calc(100% - 400px) !important;
+     // min-width: 928px;
+    //  width: calc(100% - 400px) !important;
       top: 0;
       height: 100%;
     }
     .ant-drawer-body {
       display: flex;
       flex-direction: column;
+      font-size: 14px;
+      .mainbox{
+        flex:1;
+        display: flex;
+        flex-direction: column;
+        row-gap: 16px;
+        background-color: #fff;
+
+        .stats {
+          display: flex;
+          column-gap: 32px;
+          padding-bottom: 32px;
+          border-bottom: 1px solid #d7d7d7;
+          .btn {
+            color: #fff;
+            width: 240px;
+            height: 52px; 
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: rgba(0, 51, 51, 1); 
+            border: 1px solid rgba(215, 215, 215, 1);
+            border-radius: 6px;  
+            background-repeat: no-repeat;
+            background-position: 16px center;
+            &:nth-of-type(1){
+               background-image: url(${imgsrc["water"]});
+            }  
+            &:nth-of-type(2){
+               background-image: url(${imgsrc["smook"]});
+            } 
+            &:nth-of-type(3){
+               background-image: url(${imgsrc["langy"]});
+            } 
+          }
+        }
+        .time{
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          padding-left: 16px;
+        }
+        .charts {
+          height: 248px;
+          display: flex;
+          justify-content: space-between;
+          column-gap: 32px;
+          .temperature {
+            display: flex;
+            justify-content: space-between;
+            flex-direction: column;
+            .btntitle {
+              .title{
+                line-height: 2;
+              }
+              .btn {
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                width: 128px;
+                height: 40px;
+                background: inherit;
+                background-color: rgba(0, 51, 51, 1);
+                border: 1px solid rgba(215, 215, 215, 1);
+                border-radius: 6px;
+                color: #33FF00;
+   
+              }
+            }
+          }
+          .chart{
+            flex:1;
+            display: flex;
+          }
+        }
+      }
     }
     .ant-drawer-header {
+      .ant-drawer-header-title{
       .ant-drawer-title {
         ${titlesty}
       }
-      .ant-drawer-extra {
-        flex: 2;
-        display: flex;
-      }
+      .ant-drawer-close{
+        flex: 1;
+     
+    order: 2;
+    text-align: right;
+    font-size: 22px;
+    color: #333;
+      } 
+    }
     }
   }
 `;
@@ -77,7 +160,7 @@ const DDrawer = styled(Drawer)`
   && {
     .ant-drawer-content-wrapper {
       //  min-width: 1036px;
-      width: ${(props) => props.wh || "100%"} !important;
+      width: 100% !important;
       top: 0;
       height: 100%;
       transform: translateX(0px) !important;
@@ -93,14 +176,13 @@ const DDrawer = styled(Drawer)`
       // display: flex;
       //  column-gap: 8px;
       display: grid;
-      grid-template-columns: ${(props) => (props.inner ? "1fr" : "1fr 1036px")};
+      grid-template-columns: 1fr 1036px;
       grid-template-rows: 1fr;
       column-gap: 8px;
       .left {
         height: 100%;
         position: relative;
-        display: flex;
-
+        display:  flex; 
         .leftmain {
           display: flex;
           flex-direction: column;
@@ -168,26 +250,39 @@ const DDrawer = styled(Drawer)`
     }
   }
 `;
+const IDrawer =styled(DDrawer)`
+&& {
+  .ant-drawer-body{
+  display: grid;
+    grid-template-columns: 1fr;
+    grid-template-rows: 1fr; 
+    column-gap: 8px;
+}
+}
+
+`
 const Mainbox = styled.div`
-  flex: 1;
+ // flex: 1;
   display: flex;
-  column-gap: 32px;
-  transform: scaleX(1.12);
-  transform-origin: 0px 0px;
+  background-image: url(${imgsrc["fullbg"]});
+  background-repeat: no-repeat;
+  width: 1635px;
+  height: 1000px;
+ // column-gap: 32px;
+ // transform: scaleX(1.12);
+ // transform-origin: 0px 0px;
   .part {
     position: relative;
-    flex: 0 0 360px;
-    height: 866px;
-    background-repeat: no-repeat; 
-    
-    padding: 26px 1px 0;
+    flex: 0 0 448px;
+    height: 1000px; 
+    padding: 31px 1px 44px;
     display: flex;
     flex-direction: column;
     align-items: center;
     overflow: hidden;
     .nums {
-      width: 60px;
-      height: 60px;
+      width: 71px;
+      height: 77px;
       display: flex;
       flex-direction: column;
       justify-content: space-between;
@@ -196,6 +291,7 @@ const Mainbox = styled.div`
       color: #0f0;
       white-space: nowrap;
       cursor: pointer;
+      background-color: #000;
       .ant-typography {
         color: #0f0;
       }
@@ -222,16 +318,16 @@ const Mainbox = styled.div`
     .h3d {
       // 默认  P1
       position: absolute;
-      width: 142px;
-      height: 220px;
-      left: 109px;
-      bottom: 218px;
+      width: 254px;
+      height: 300px;
+      left: 96px;
+      bottom: 124px;
       display: flex;
       flex-direction: column;
       justify-content: space-between;
 
       .detail {
-        height: 160px;
+        height: inherit;
         cursor: pointer;
         .state {
           display: flex;
@@ -243,46 +339,62 @@ const Mainbox = styled.div`
       }
     }
     &:nth-of-type(1) {
-      background-image: url(${imgsrc["P1"]});
+   //   background-image: url(${imgsrc["P1"]});
     }
     &:nth-of-type(2) {
-      background-image: url(${imgsrc["P2"]});
+    //  background-image: url(${imgsrc["P2"]});
       .bashou {
-        transform: translateY(110px);
-        cursor: pointer;
+        height: 257px;
+        width: 448px;
+        padding-top: 72px;
+        display: flex;
+        align-items: center;
+        justify-content: center; 
+        .imgbox {
+          cursor: pointer;
+        }
       }
-      .h3d {
-        bottom: 443px;
-        height: 156px;
-        .detail {
-          display: flex;
-          flex-direction: column;
-          justify-content: flex-end;
+      .yylb { 
+        height: 147px;
+        width: 138px;
+        padding-top: 50px;
+        display: flex;
+        .yylbimg {
+           flex: 1;
         }
       }
       .guis {
         cursor: pointer;
-        width: 266px;
-        height: 374px;
-        bottom: 55px;
-        position: absolute;
+        padding: 46px 69px 0;
+        
+        align-self: stretch;
+        display: flex;
+        flex:1;
+        .guisimg{
+          flex:1;
+        }
       }
     }
     &:nth-of-type(3) {
-      flex: 0 0 320px;
-      background-image: url(${imgsrc["P3"]});
-      .values {
-        color: #0f0;
-        position: absolute;
-        left: 13px;
-
-        height: 80px;
-        width: 62px;
+      flex: 0 0 369px;
+    // background-image: url(${imgsrc["P3"]});
+     .kuixians{
+        flex: 1;
+        align-self: stretch;
+        padding: 72px 16px 0 16px;
+        .kuixian {
+          height: 277px;
+          display: flex;
+          padding-top: 18px;
+          column-gap: 30px;
+          .values {
+        color: #0f0; 
+       height: 96px;
+        width: 71px;
         display: flex;
         flex-direction: column;
         justify-content: space-between;
-        cursor: pointer;
-
+        cursor: pointer; 
         .state {
           display: flex;
           justify-content: center;
@@ -291,68 +403,52 @@ const Mainbox = styled.div`
           }
         }
       }
-      .values.first {
-        top: 118px;
-      }
-      .values.second {
-        top: 358px;
-      }
-      .values.thirdly {
-        top: 600px;
-      }
       .guizhi {
-        width: 120px;
-        height: 213px;
-        position: absolute;
-        left: 100px;
-        display: flex;
-        flex-direction: column;
-        justify-content: space-between;
+        width: 136px;
+        padding-top: 38px; 
         cursor: pointer;
-        .gtitle {
-          height: 18px;
-          display: flex;
-          align-items: center;
-          justify-content: center;
+        height: 226px;
+      }
         }
-        .guiti {
-          height: 160px;
-        }
-      }
-      .guizhi.first {
-        top: 105px;
-      }
-      .guizhi.second {
-        top: 345px;
-      }
-      .guizhi.thirdly {
-        top: 586px;
-      }
+     }
+   
+      
     }
     &:nth-of-type(4) {
-      flex: 0 0 320px;
-      background-image: url(${imgsrc["P4"]});
-      .loops {
-        position: absolute;
-        width: 100%;
-        height: 160px;
-        display: grid;
-        .textname {
-            width: 50px;
-          }
+      flex: 0 0 368px; 
+      .breaker{
+        
+        flex: 1;
+        align-self: stretch;
+        padding-top: 72px;
+       //padding: 72px 8px 0 12px;
+       .loops { 
+        display: grid; 
       }
-
-      .loops1 {
-        top: 106px;
+       .loops1 { 
         grid-template-columns: repeat(2, 1fr);
-        grid-template-rows: 80px;
+        grid-template-rows: 92px 92px;
         .loop1 {
           padding-left: 8px;
           padding-right: 12px;
+          padding-top: 18px;
           display: flex;
-          flex-direction: column;
+            align-items: flex-start;
+            justify-content: space-between;
+            .loopbashou {
+              align-self: center;
+              
+            }
+            .state4 {
+              transform: translateY(-8px);
+            }
+            .nums {
+              width: 67px;
+              height: 70px;
+              transform: translateY(-8px);
+            }
         
-          .loopcontent {
+        /*   .loopcontent {
             flex: 1;
             display: flex;
             align-items: flex-start;
@@ -367,24 +463,25 @@ const Mainbox = styled.div`
             .nums {
               transform: translateY(-8px);
             }
-          }
+          } */
         }
       }
+      }
+  
+
+   
       .loops2 {
-        top: 266px;
+       
         grid-template-columns: 1fr;
-        grid-auto-rows: 80px;
-        height: 240px;
+        grid-template-rows: repeat(3,92px);
+      //  height: 240px;
         padding-left: 8px;
         padding-right: 35px;
         .loop2 {
           display: flex;
-          justify-content: space-between;
+          justify-content: flex-end;
           align-items: center; 
-          .textname {
-            align-self: flex-start;
-            
-          }
+          column-gap: 64px;
           .state42 {
             display: flex;
             align-items: center;
@@ -395,18 +492,24 @@ const Mainbox = styled.div`
         }
       }
       .loops3 {
-         top:506px;
+         
          padding-left: 8px;
          padding-right: 35px;
-         height: 320px;
+         height: 368px;
          grid-template-columns: 1fr;
          grid-template-rows: 1fr 1fr;
          .loop3 {
            display: flex;
-           justify-content: space-between;
+           justify-content: flex-end;
+           align-items: flex-end;
            padding-bottom: 20px;
-          .nums{
-            align-self: flex-end;
+           .state42 {
+            display: flex;
+            align-items: center;
+            justify-content: space-around;
+            width: 94px;
+            cursor: pointer;
+            
           }
          }
       }
@@ -421,6 +524,7 @@ const Mainbox = styled.div`
       justify-content: space-between;
       padding: 1px 16px;
       width: 100%;
+      cursor: pointer;
       .ant-typography {
         color: #fff;
         display: inline-flex;
@@ -438,7 +542,7 @@ const Extrea = styled.div`
   justify-content: ${(props) => (props.ist ? "space-between" : "flex-end")};
   flex: 1;
   .close {
-    color: #d6d6d6;
+  //  color: #d6d6d6;
     font-size: 22px;
     transition: all 0.3s;
     &:hover {
@@ -453,5 +557,5 @@ export {
     DDrawer,
     Dot,
     CDrawer,
-    
+    IDrawer,
 } // 导出变量列表

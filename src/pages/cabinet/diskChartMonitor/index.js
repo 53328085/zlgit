@@ -16,6 +16,7 @@ import {
   Drawer,
   Descriptions,
   Timeline,
+  
 } from "antd";
 import Pagecount from "@com/pagecontent";
 import { CloseOutlined } from "@ant-design/icons";
@@ -40,19 +41,20 @@ import imgsrc from "./imgs";
 import Ichart from "@com/useEcharts/Ichart";
 
 import Usetable from "@com/useTable";
-import GouIcon from "@imgs/gou.png";
+
 import temp from "./imgs/temp.png";
 import Info from "./info";
 import Electric from "./electric";
 import RomoteRegulatin from './romoteRegulating' // 遥调 框架断路器  NA8-2500-2500H
 import RomoteRegulatinB from './romoteRegulatingb'
+import Sensor from './sensor' // 温度传感器、烟感，浪涌，水浸
 import {
   Okt,
   Extrea,
   Mainbox, 
   DDrawer,
   Dot,
-  CDrawer,
+   IDrawer,
   
 } from './comstyle'
  
@@ -60,7 +62,7 @@ const { Link, Text, Title } = Typography;
 const { Item } = Descriptions;
 const { RangePicker } = DatePicker;
 const { TextArea } = Input;
-
+ 
 const options = [
   {
     label: i18t("comm", "month"),
@@ -71,72 +73,101 @@ const options = [
     value: 2,
   },
 ];
-const {QueryDeviceDataAll} =DiskChart
+const {QueryDeviceDataAll,QueryDevicesDataAll,DoOpenClose,QueryServiceResult,QueryDevicePointTrend} =DiskChart
 /* 月，年。没有日 */
 export default function Index() {
   const { laptop } = useSelector(adaptation);
-  const [open, setOpen] = useState(false);
+ 
   const [copen, setCopen] = useState(false);
   const [iopen, setIopen] = useState(false);
   const [elopen, setElopen] = useState(false);
-  const [title, setTitle] = useState("变压器柜温度趋势");
+ // const [title, setTitle] = useState("");
   const [ctitle, setCtitle] = useState("有源滤波回路");
   const [ititle, setititle] = useState("告警详情");
   const [eltitle, setEltitle] = useState(""); // 遥测 图表的标题
   const [state, setState] = useState(1); // 1 分闸2故障3正常
-  
+  const [iform] = Form.useForm()
   
   const [deviceData, setDeviceData] = useState([])
- 
+  const [sensor, setSensor] = useState(null)
   const [deviceInfo, setDeviceInfo] =useState({
-    deviceName: "",
-    breakerType: 1, // 1: 框架断路器 2：塑壳断路器
+    deviceName: "", // 设备名称
+    deviceType: 1, // 1: 框架断路器 2：塑壳断路器
   })
-  
+  const modal = useRef();
+  const onControl = () => {
+    modal.current.onOpen();
+  };
   const onCopen = () => {
     setCopen(true);
   };
-  const queryDeviceDataAll =async ({deviceName, devSn="NTCJ00122401", breakerType}) => {
+  const onOpen = () => {
+   
+  };
+  const sref=useRef()
+  const displaySensor=(type)=> { // 显示传感器弹窗
+     sref.current.onOpen(type)
+  }
+  
+  const queryDeviceDataAll =async ({name, devSn, type,supsn}) => {
       try {
-       const {success, data, message} = await QueryDeviceDataAll(devSn)
+       const sn = type==2 ? supsn : devSn
+       if(!sn) return message.warning("缺少设备Sn")
+       const {success, data, message:msg} = await QueryDeviceDataAll(sn)
        if(success && Array.isArray(data)) {
           setDeviceInfo({
-            deviceName,
-            breakerType
+            deviceName:name,
+            deviceType:type,
+            devSn,
           })
           setDeviceData(data)
           onCopen()
          
        }else {
-          !success && i18warning(message)
+           if(data===null) message.info("缺少数据");
+          !success && message.info(msg||"请求失败")
        }
        
       } catch (error) {
          console.log(error)
       }
   }
+  const queryDevicePointTrend = async(sn)=> {
+    await QueryDevicePointTrend()
+  }
+ const getResult= async (params)=> {
  
+   await QueryServiceResult(params)
+ }
+ const doOpenClose =async ()=> {
+    try {
+      // operation 1 分闸 2 合闸
+    
+      let {devSn} = deviceInfo
+      if(!devSn) return message.warning("缺少设备Sn")    
+      let params = {
+        devSn,
+        operation:1
+      }
 
-  const onOpen = () => {
-    setOpen(true);
-  };
+     let {success, data,message:msg} = await DoOpenClose(params)
+     if(success) {
+      if(!data) return message.warning("缺少key")
+        let params = {tm:moment.utc().utcOffset(8).format(),key:data}
+      getResult(params)
+     }else {
+       message.warning(msg)
+     }
+    } catch (e) {
+       console.log(e)
+    }
+ }
+
+ const [dates, setDates] = useState([moment().startOf("day"), moment()]);
+ const [eldata, setEldata] = useState()
 
 
-  const vdata = [
-    Array.from({ length: 24 }, (_, index) =>
-      index > 9 ? `${index}:00` : `0${index}:00`
-    ),
-    Array.from({ length: 24 }, (_, index) => (Math.random() * 100)?.toFixed(2)),
-    Array.from({ length: 24 }, (_, index) => (Math.random() * 100)?.toFixed(2)),
-  ];
-  const eldata = [
-    Array.from({ length: 24 }, (_, index) =>
-      index > 9 ? `${index}:00` : `0${index}:00`
-    ),
-    Array.from({ length: 24 }, (_, index) => (Math.random() * 100)?.toFixed(2)),
-    Array.from({ length: 24 }, (_, index) => (Math.random() * 100)?.toFixed(2)),
-    Array.from({ length: 24 }, (_, index) => (Math.random() * 100)?.toFixed(2)),
-  ];
+
   const vstate = [
     { title: "断路器状态", state: "合闸" },
     { title: "故障脱口次数", state: 0 },
@@ -200,49 +231,7 @@ export default function Index() {
       state: 2,
     },
   ];
-  let moption = {
-    // color: ["#ff7345","#6a6e88"],
-    series: [
-      { type: "line", seriesLayoutBy: "row", yAxisIndex: 0, name: "温度" },
-      { type: "line", seriesLayoutBy: "row", yAxisIndex: 1, name: "湿度" },
-    ],
-    grid: {
-      right: "32px",
-      left: 0,
-      top: "32px",
-      bottom: 0,
-      containLabel: true,
-    },
-    legend: {
-      top: "0px",
-      left: "32px",
-    },
-    yAxis: [
-      {
-        axisLabel: {
-          formatter: "{value}°C",
-        },
-      },
-      {
-        name: "环境湿度",
-        nameLocation: "center",
-        nameGap: 64,
-        position: "right",
-        axisLabel: {
-          formatter: "{value}%HR",
-        },
-      },
-    ],
-    dataset: {
-      dimensions: [
-        { name: "时间", type: "time" },
-        { name: "温度" },
-        { name: "湿度" },
-      ],
-      source: vdata,
-      sourceHeader: false,
-    },
-  };
+
   let eloption = {
     // color: ["#ff7345","#6a6e88"],
     series: [
@@ -260,6 +249,14 @@ export default function Index() {
       top: "0px",
       left: "16px",
     },
+     xAxis: {
+            axisLabel: {
+              formatter: (value, index) => {
+                return moment(value, "YYYY-MM-DD HH:mm:ss").format("HH:mm");
+              },
+              interval: "auto",
+            },
+          },
     yAxis: [
       {
         axisLabel: {
@@ -268,12 +265,7 @@ export default function Index() {
       },
     ],
     dataset: {
-      dimensions: [
-        { name: "时间", type: "time" },
-        { name: "相电压VAB" },
-        { name: "相电压VAC" },
-        { name: "相电压VCA" },
-      ],
+      dimensions: ["x", "y"],
       source: eldata,
       sourceHeader: false,
     },
@@ -288,50 +280,63 @@ export default function Index() {
 
 
 
+ 
   const Extra = ({ ist, title, fn }) => {
     return (
       <Extrea ist={ist}>
-        {ist && <RangePicker />}
+        {ist && <RangePicker value={dates} onCalendarChange={setDates}  format="YYYY-MM-DD" />}
         <CloseOutlined onClick={fn} className="close" />
       </Extrea>
     );
   };
-  const onelchart = (title) => {
-    setEltitle(title);
+  const onelchart = async ({desc, name}) => {
+    setEltitle(desc);
+    let params ={
+       devSn: deviceInfo.devSn,
+       point:name,
+       start: dates[0].format("YYYY-MM-DD"),
+       end:dates[1].format("YYYY-MM-DD")
+
+    }
+    let {success, data} =   await  QueryDevicePointTrend(params)
+    if(success) {
+
+    }
     setElopen(true);
   };
+  const onCloseMain = ()=> {
+      console.log("elopen", elopen)
+      if(!elopen){
+        setCopen(false)
+      }
+  }
+
   const [rState, setRstate] = useState(1);
-  const modal = useRef();
-  const onControl = () => {
-    modal.current.onOpen();
-  };
+
   const onOk = () => {
     if (rState == 1) {
       setRstate(2);
+    }else if(rState == 2){
+      doOpenClose()
     }
   };
   return (
     <Pagecount>
       <Mainbox>
-        <div className="part">
-          <div className="title">
-            <Link onClick={onOpen}>
+        <div className="part" key="part1">
+          <div className="title" onClick={()=>displaySensor(1)} key="title">
+            <Link>
               <img src={temp} alt="" />
               温度：28.1
             </Link>
-            <Link onClick={onOpen}>
-              <img src={imgsrc["smoke"]} alt="" />
-              烟感：无烟
-            </Link>
+            
             <CustLink
               text="details"
-              underline={false}
-              onClick={onOpen}
-            ></CustLink>
+              underline={false} 
+            ></CustLink> 
           </div>
-          <div className="h3d" onClick={null}>
-            <div className="textname">进线柜</div>
-            <div className="detail" onClick={()=>queryDeviceDataAll({name:"框架断路器  NA8-2500-2500H", type: 1})}>
+          <div className="h3d" key="prateh3d" >
+            <div className="detail" onClick={()=>queryDeviceDataAll({name:"框架断路器  NA8-2500-2500H", type: 1,devSn:"NA5202522401"})}>
               <div className="state">
                 <img src={imgsrc["red"]}></img>
                 <img src={imgsrc["close"]}></img>
@@ -339,19 +344,16 @@ export default function Index() {
             </div>
           </div>
         </div>
-        <div className="part">
-          <div className="title">
-            <Link onClick={onOpen}>
+        <div className="part" key="part2">
+          <div className="title" onClick={()=>displaySensor(2)}>
+            <Link>
               <img src={temp} alt="" />
               温度：28.1
             </Link>
-            <Link onClick={onOpen}>
-              <img src={imgsrc["smoke"]} alt="" />
-              烟感：无烟
-            </Link>
             <CustLink text="details" underline={false}></CustLink>
           </div>
-          <div className="bashou" onClick={() => onCopen()}>
+          <div className="bashou">
+            <div className="imgbox"  onClick={()=>queryDeviceDataAll({name:"塑壳断路器  NM8N", type: 2,devSn:"NM8N202522701",supsn:"NTCJ00122401"})}>
             <img
               src={
                 state == 1
@@ -361,31 +363,27 @@ export default function Index() {
                   : imgsrc["A正常"]
               }
             ></img>
-          </div>
-          <div className="h3d" onClick={null}>
-            <div className="textname">有源滤波柜</div>
-            <div className="detail" onClick={onCopen}>
-              <div className="state">
-                <img src={imgsrc["red"]}></img>
-                <img src={imgsrc["close"]}></img>
-              </div>
             </div>
+           
           </div>
-          <div className="guis" onClick={onCopen}></div>
+         {/*  <div className="yylb" onClick={()=>queryDeviceDataAll({name:"电能质量治理  NXW", devSn:"NXW202522201"})}>
+             <div className="yylbimg" onClick={onCopen}></div>
+          </div> */}
+          <div className="guis" >
+            <div className="guisimg"  onClick={()=>queryDeviceDataAll({name:"电能质量治理  NXW", devSn:"NXW202522201"})}></div>
+          </div>
         </div>
-        <div className="part">
-          <div className="title">
-            <Link onClick={onOpen}>
+        <div className="part" key="part3">
+          <div className="title" onClick={()=>displaySensor(3)}>
+            <Link  >
               <img src={temp} alt="" />
               温度：28.1
             </Link>
-            <Link onClick={onOpen}>
-              <img src={imgsrc["smoke"]} alt="" />
-              烟感：无烟
-            </Link>
             <CustLink text="details" underline={false}></CustLink>
           </div>
-          <div className="values first" onClick={()=>queryDeviceDataAll({name:"塑壳断路器  NM8N", type: 2})}>
+          <div className="kuixians">
+            <div className="kuixian">
+            <div className="values" onClick={()=>queryDeviceDataAll({name:"多功能仪表  PD666-3SK3H", devSn: "02713PD66601"})}>
             <div className="nums">
               <span className="type">1a</span>
               <Text>25.3A</Text>
@@ -396,57 +394,56 @@ export default function Index() {
               <img src={imgsrc["close"]}></img>
             </div>
           </div>
-          <div className="values second" onClick={onCopen}>
+          <div className="guizhi" onClick={onCopen}>
+            
+          </div>
+            </div>
+            <div className="kuixian">
+            <div className="values" onClick={()=>queryDeviceDataAll({name:"塑壳断路器  NM8N", type: 2})}>
             <div className="nums">
               <span className="type">1a</span>
-              <Text>252.3A</Text>
-              <Text>482.2°C</Text>
+              <Text>25.3A</Text>
+              <Text>48.2°C</Text>
             </div>
             <div className="state">
               <img src={imgsrc["red"]}></img>
               <img src={imgsrc["close"]}></img>
             </div>
           </div>
-          <div className="values thirdly" onClick={onCopen}>
+          <div className="guizhi" onClick={onCopen}>
+            
+          </div>
+            </div>
+            <div className="kuixian">
+            <div className="values" onClick={()=>queryDeviceDataAll({name:"塑壳断路器  NM8N", type: 2})}>
             <div className="nums">
               <span className="type">1a</span>
-              <Text>253.3A</Text>
-              <Text>483.2°C</Text>
+              <Text>25.3A</Text>
+              <Text>48.2°C</Text>
             </div>
             <div className="state">
               <img src={imgsrc["red"]}></img>
               <img src={imgsrc["close"]}></img>
             </div>
           </div>
-          <div className="guizhi first" onClick={onCopen}>
-            <div className="textname">馈线1</div>
-            <div className="guiti"></div>
+          <div className="guizhi" onClick={onCopen}>
+            
           </div>
-          <div className="guizhi second" onClick={onCopen}>
-            <div className="textname">馈线2</div>
-            <div className="guiti"></div>
-          </div>
-          <div className="guizhi thirdly" onClick={onCopen}>
-            <div className="textname">馈线3</div>
-            <div className="guiti"></div>
+            </div>
+         
           </div>
         </div>
-        <div className="part">
-          <div className="title">
+        <div className="part" key="part4">
+          <div className="title" onClick={()=>displaySensor(4)}>
             <Link onClick={onOpen}>
               <img src={temp} alt="" />
               温度：28.1
             </Link>
-            <Link onClick={onOpen}>
-              <img src={imgsrc["smoke"]} alt="" />
-              烟感：无烟
-            </Link>
             <CustLink text="details" underline={false}></CustLink>
           </div>
+          <div className="breaker">
           <div className="loops loops1">
-            <div className="loop1">
-              <div className="textname">回路1</div>
-              <div className="loopcontent">
+            <div className="loop1">  
                 <div className="loopbashou" onClick={onCopen}>
                   <img
                     src={
@@ -475,11 +472,10 @@ export default function Index() {
                   <Text>253.3A</Text>
                   <Text>483.2°C</Text>
                 </div>
-              </div>
+              
             </div>
-            <div className="loop1">
-              <div className="textname">回路2</div>
-              <div className="loopcontent">
+            <div className="loop1">             
+              
                 <div className="loopbashou" onClick={onCopen}>
                   <img
                     src={
@@ -508,11 +504,10 @@ export default function Index() {
                   <Text>153.3A</Text>
                   <Text>283.2°C</Text>
                 </div>
-              </div>
+               
             </div>
             <div className="loop1">
-              <div className="textname">回路2</div>
-              <div className="loopcontent">
+              
                 <div className="loopbashou" onClick={onCopen}>
                   <img
                     src={
@@ -541,11 +536,10 @@ export default function Index() {
                   <Text>153.3A</Text>
                   <Text>283.2°C</Text>
                 </div>
-              </div>
+              
             </div>
             <div className="loop1">
-              <div className="textname">回路2</div>
-              <div className="loopcontent">
+              
                 <div className="loopbashou" onClick={onCopen}>
                   <img
                     src={
@@ -574,12 +568,11 @@ export default function Index() {
                   <Text>153.3A</Text>
                   <Text>283.2°C</Text>
                 </div>
-              </div>
+               
             </div>
           </div>
           <div className="loops loops2">
-            <div className="loop2">
-              <div className="textname">回路5</div>
+            <div className="loop2"> 
               <div className="loopbashou" onClick={onCopen}>
                 <img
                   src={
@@ -608,8 +601,7 @@ export default function Index() {
                 </div>
               </div>
             </div>
-            <div className="loop2">
-              <div className="textname">回路6</div>
+            <div className="loop2"> 
               <div className="loopbashou" onClick={onCopen}>
                 <img
                   src={
@@ -638,8 +630,7 @@ export default function Index() {
                 </div>
               </div>
             </div>
-            <div className="loop2">
-              <div className="textname">回路7</div>
+            <div className="loop2"> 
               <div className="loopbashou" onClick={onCopen}>
                 <img
                   src={
@@ -671,53 +662,52 @@ export default function Index() {
           </div>
           <div className="loops loops3">
               <div className="loop3">
-                <div className="textname">
-                  回路8
-                </div>
+              <div className="state42">
+                <img
+                  src={
+                    state == 1
+                      ? imgsrc[`red`]
+                      : state == 2
+                      ? imgsrc["green"]
+                      : imgsrc["close"]
+                  }
+                ></img>
                 <div className="nums" onClick={onCopen}>
                   <span className="type">1a</span>
                   <Text>153.3A</Text>
                   <Text>283.2°C</Text>
                 </div>
+              </div>
               </div>
               <div className="loop3">
-                <div className="textname">
-                  回路9
-                </div>
+               
+              <div className="state42">
+                <img
+                  src={
+                    state == 1
+                      ? imgsrc[`red`]
+                      : state == 2
+                      ? imgsrc["green"]
+                      : imgsrc["close"]
+                  }
+                ></img>
                 <div className="nums" onClick={onCopen}>
                   <span className="type">1a</span>
                   <Text>153.3A</Text>
                   <Text>283.2°C</Text>
                 </div>
               </div>
+              </div>
           </div>
-
+          </div>
 
         </div>
       </Mainbox>
-      <CDrawer
-        title={title}
-        open={open}
-        bodyStyle={{
-          backgroundColor: "#fff",
-        }}
-        headerStyle={{
-          backgroundColor: "#f2f2f2",
-          padding: "16px 32px",
-          borderBottom: "none",
-          display: "flex",
-        }}
-        closable={false}
-        extra={<Extra ist={true} fn={() => setOpen(false)} />}
-      >
-        <div style={{ flex: 1, backgroundColor: "#fff" }}>
-          <Ichart {...moption} />
-        </div>
-      </CDrawer>
+     <Sensor  ref={sref} />
       <DDrawer
         // title={ctitle}
         //  ref={refdd}
-
+        maskClosable={true}
         open={copen}
         bodyStyle={{
           padding: "0px",
@@ -728,10 +718,13 @@ export default function Index() {
           borderBottom: "none",
           display: "flex",
         }}
+        onClose={()=> setCopen(false)}
         closable={false}
+        
+       
         //    extra={<Extra  fn={() => setCopen(false)} />}
       >
-        <div className="left">
+        <div className="left" onClick={onCloseMain}>
           <DDrawer
             title="告警详情"
             inner={true}
@@ -832,7 +825,7 @@ export default function Index() {
               </div>
             </div>
           </DDrawer>
-          <DDrawer
+          <IDrawer
             title={eltitle}
             wh="840px"
             open={elopen}
@@ -857,7 +850,7 @@ export default function Index() {
             <div className="leftmain">
               <Ichart {...eloption} />
             </div>
-          </DDrawer>
+          </IDrawer>
         </div>
         <div className="mainbox">
           <div className="ctitle">
@@ -876,12 +869,10 @@ export default function Index() {
             <Usetable hbg="#0066cc" columns={columns} dataSource={dataSource} />
           </div>
 
-          <div className="htitle">
-            <span>遥测</span>
-            <span>{moment().format("yyyy-MM-DD HH:mm:ss")}</span>
-          </div>
+        {/* 遥测 */}
           <Electric datas={deviceData} onClick={onelchart} />
-          {deviceInfo?.breakerType === 1 ? <RomoteRegulatin laptop={laptop} /> : deviceInfo?.breakerType === 2 ? <RomoteRegulatinB laptop={laptop} /> : null} 
+          {/* 遥调 */}
+          {deviceInfo?.deviceType === 1 ? <RomoteRegulatin laptop={laptop} /> : deviceInfo?.deviceType === 2 ? <RomoteRegulatinB laptop={laptop} /> : null} 
           <div className="htitle"> 
             <span>遥控</span>
           </div>
@@ -894,7 +885,7 @@ export default function Index() {
             <Button
               type="primary"
               danger
-              className="remote"
+              className="remote"              
               onClick={onControl}
             >
               <img src={imgsrc["remote"]} width={32} height={32}></img>远程分闸
@@ -915,14 +906,15 @@ export default function Index() {
                 <img src={imgsrc["ok"]}></img>{" "}
                 当前状态为合闸，确认要进线远程分闸操作？
               </div>
-            ) : (
-              <div className="pwd">
-                <div>请输入安全码</div>
-                <div className="ipt">
-                  <Input></Input>
-                </div>
-              </div>
-            )}
+            ) : rState == 2 ? (
+              <Form form={iform} className="pwd">
+                <Form.Item label="请输入安全码">
+                <Input></Input>
+                </Form.Item> 
+              </Form>
+            )
+            : null
+          } 
           </Okt>
         </Custmodal>
       </DDrawer>

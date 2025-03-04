@@ -21,6 +21,7 @@ const Cheader =styled(Header)`
     background-color: ${props => props.theme.menusbgcolor || '#003366'};
     height: 70px;
     line-height: 70px;
+    border-bottom: 1px solid #F0F2F5;
  }
 `
 
