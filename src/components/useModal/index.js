@@ -28,42 +28,45 @@ const custCorle =(props) => {
 }
 const CModal = styled(Modal)`
    .ant-modal-content {
+    border-radius: 12px;
+    box-shadow: none;
+    overflow: hidden;
    //  background-color: ${(props) => props.type=='dark' ? '#1b1d23' : '#fff'};
   }
   .ant-modal-header {
-    padding: 32px;
+    padding:20px 28px;
     border-bottom: none;
   //  background-color: ${(props) => props.type=='dark' ? '#1b1d23' : '#fff'};
     .ant-modal-title {
-      font-size: 15px;
+      font-size: 16px;
       color: ${custCorle};;
       padding-left: ${props => props.nolf ? 0 : '16px'} ;
     //  border-left: ${props =>  props.nolf ? 'none' : `4px solid  ${theme(props)}`};
-      height: 32px;
-      line-height: 32px;
+      height: 22px;
+      line-height: 22px;
       position:relative;
+      display:flex;
+      align-items: center;
       &::before{
+         content:"";
           position: absolute;
           display: block;
           width:3px;
-          height:13px;
-          content: "";
-          left:0;
-          top:50%;
-          transform: translateY(-50%);
+          height:16px; 
+          left:0; 
           background-color: ${props =>  props.nolf ? 'none' : `${theme(props)}`};
       }
     }
   }
   .ant-modal-body {
-    padding: 0 32px 32px 32px;
+    padding: 0 28px 20px 28px;
   }
   .ant-modal-footer {
     border-top: none;
-    padding: 0 32px 32px 32px;
+    padding: 0 28px 28px 20px;
     .ant-btn {
       padding: 0px;
-      width: 96px;
+      width: 88px;
       height: 36px;
     }
     .ant-btn + .ant-btn {
@@ -121,7 +124,7 @@ const CModal = styled(Modal)`
       bottom: clientHeight - (targetRect.bottom - uiData.y),
     });
   };
-  const {onCancel: close, custft=false, onOk,title, bodyStyle, warnimg = true, ...rest} = props
+  const {onCancel: close, custft=false, onOk,title, bodyStyle, warnimg=true, ...rest} = props
   const formref = useRef()
   const onCancel = () => {
     setOpen(false)

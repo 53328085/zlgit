@@ -4,9 +4,9 @@ import style from "./style.module.less";
 import { useSelector } from "react-redux";
 import imgurl from "./images/index.js";
 import { Pagination, message, Typography, Button } from "antd";
-import { useLocation } from "react-router";
+//import { useLocation } from "react-router";
 import { Monitoring } from "@api/api.js";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate,useLocation } from "react-router-dom";
 import {
   selectProjectId,
   mixtitle,
@@ -48,8 +48,11 @@ const Ctitlec = styled.div`  // detail?.state == 2 ? style.leftImgState : detail
 export default function GatewayDetail(props) {
   const { projectName, logoImage } = useSelector(currProject);
   let location = useLocation();
-  let qs = require("query-string");
-  let search = qs.parse(location.search);
+  const sn = new URLSearchParams(location.search).get("sn");
+  const search={sn}
+ // console.log(search)
+ // let qs = require("query-string");
+ // let search = qs.parse(location.search);
   /* useEffect(() => {
       document.title = `NIS6000 正泰储能 网关详情`
       return () => document.title= 'NIS6000 正泰储能 网关详情'

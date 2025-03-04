@@ -80,7 +80,7 @@ const Divorder = styled.div`
 const fs = {
 //  hv: '24px',
   fc: '#333',
-  shadow: "y"
+ 
 }
 
 export default function DefaultHome(props) {

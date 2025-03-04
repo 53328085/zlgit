@@ -28,7 +28,7 @@ import {SaveButton, CustButton} from "@com/useButton" ;
 import {getprimarycolors} from "@com/usehandler";
 import Ccolor from './custColor';
 import { isObject } from "lodash";
-
+ 
 const {Text, Link} =Typography
 const { Item } = Form;
 const Ctag=styled(Tag)`
@@ -109,8 +109,7 @@ export default function Index() {
   curtheme.current = SelectedTheme;
   
  
-  console.log("SelectedTheme",SelectedTheme)
-  console.log("curtheme.current",curtheme.current)
+ 
   
   const [form] = Form.useForm();
 
@@ -151,6 +150,9 @@ const getTheme = async()=>{
     console.log(error)
   }
  
+}
+const  changeop =(e, name)=> {
+    dispatch(getThemeColor({[name]:e}))
 }
 /* const getTheme = async()=>{
   try {
@@ -309,9 +311,7 @@ useEffect(()=>{
       labelAlign="left"
       size="middle"
       scrollToFirstError={true}
-      disabled={ispublish}
-     
-     
+      disabled={ispublish}     
       validateMessages={
        { required: "缺少'${label}' 数据"}
       
@@ -358,9 +358,32 @@ useEffect(()=>{
         <Item name="successColor" initialValue="#52c41a" noStyle>
         <Ccolor name="successColor" />
         </Item>
-        <Text type="success">应用于ant-design成功信息显示,其他需要成功色的元素</Text>
+        <Text  type="success">应用于ant-design成功信息显示,其他需要成功色的元素</Text>
       </Item>
-    
+      <Item label="透明度">
+        <Item name="opacity" initialValue={0.2} noStyle>
+          <InputNumber min={0} max={1} step={0.1} onChange={(e)=>changeop(e, "opacity")}></InputNumber>
+        </Item>
+        <div>
+        <Link>应用于设备状态、树形结构按钮等</Link>
+        </div>
+      </Item>
+      <Item label="卡片样式"   >
+        <div style={{display: "grid", gap: "8px", gridTemplateColumns: "1fr 1fr" }}> 
+        <Item label="标题填充色" labelCol={{flex: "6em"}} name="cardHeadBg" initialValue="#dee7f2">
+          <Ccolor name="cardHeadBg" />
+        </Item>
+        <Item label="标题字体色" labelCol={{flex: "6em"}} name="cardHeadlColor" initialValue="#303133">
+          <Ccolor name="cardHeadlColor" />
+        </Item>
+        <Item label="标题高度" labelCol={{flex: "5em"}} name="cardHeadHeight" initialValue={40}>
+          <InputNumber min={0} step={1} addonAfter="px" onChange={(e)=>changeop(e, "cardHeadHeight")} />
+        </Item>
+        <Item label="圆角" labelCol={{flex: "3em"}} name="cardRadius" initialValue={8}>
+          <InputNumber min={0} step={1} addonAfter="px" onChange={(e)=>changeop(e, "headHeight")} />
+        </Item>
+        </div>        
+      </Item>
       <Item label="模块菜单栏背景色"  name="menusbgcolor" initialValue="#003366">
       <Ccolor name="menusbgcolor" />
       </Item>
@@ -371,11 +394,27 @@ useEffect(()=>{
       <Item label="当前模块背景色"  name="menusactive" initialValue="#1c62b6">
       <Ccolor name="menusactive" />
       </Item>
-      <Item label="当前模块下边框线颜色"  name="menusborder" initialValue="#00ff66">
+    {/*   <Item label="当前模块下边框线颜色"  name="menusborder" initialValue="#00ff66">
       <Ccolor name="menusborder" />
-      </Item>
+      </Item> */}
+
       <Item label="当前模块字体颜色"  name="menusactivefontcolor" initialValue="#ffffff">
       <Ccolor name="menusactivefontcolor" />
+      </Item>
+      <Item label="渐变起始颜色"  name="startColor" initialValue="#ffffff">
+      <Ccolor name="startColor" />
+      </Item>
+      <Item name="startOpacity" initialValue={0} label="起始颜色透明度">
+          <InputNumber min={0} max={1} step={0.1} onChange={(e)=>changeop(e, "startOpacity")} ></InputNumber>
+      </Item>
+      <Item label="渐变结束颜色"  name="endColor" initialValue="#1c62b6">
+      <Ccolor name="endColor" />
+      </Item>
+      <Item name="endOpacity" initialValue={0.2} label="结束颜色透明度">
+          <InputNumber min={0} max={1} step={0.1} onChange={(e)=>changeop(e, "endOpacity")}></InputNumber>
+      </Item>
+      <Item name="logBgColor" initialValue="#1c62b6" label="Log背景色">
+         <Ccolor name="logBgColor" />
       </Item>
       <Item label="右边模块菜单栏背景色"  name="menusbgcolorR" initialValue="#135abd">
       <Ccolor name="menusbgcolorR" />
@@ -428,7 +467,7 @@ useEffect(()=>{
       <Item label="设备详情页背景色"  name="devicebgcolor" initialValue="#135abd">
         <Ccolor name="devicebgcolor" />
       </Item>
-      <Item label="设备\网关运行状态"   >
+     {/*  <Item label="设备\网关运行状态"   >
         <div style={{display: "flex", columnGap: "8px", flexWrap: "wrap" }}> 
         <Item label="正常" labelCol={{flex: "3em"}} name="normalColor" initialValue="#009966">
           <Ccolor name="normalColor" />
@@ -449,7 +488,7 @@ useEffect(()=>{
           <Ccolor name="fntofflineColor" />
         </Item>
         </div>        
-      </Item>
+      </Item> */}
       <Item label="设备\网关项右下设置">
       <div style={{display: "flex", columnGap: "8px", flexWrap: "wrap" }}> 
       <Item label="字段名" labelCol={{flex: "4em"}} name="fieldname" initialValue="#ffffff">

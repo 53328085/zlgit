@@ -234,7 +234,7 @@ export  const Statebox = styled.div`
          try {
           let Hex=hex.replace(/^#/,'')
         
-          console.log(Hex)
+          
           if(Hex.length==3){
            rgbcolor = Hex.split('').map(hex => parseInt(hex + hex, 16) );
              

@@ -359,7 +359,7 @@ useEffect(() => {
     getWarningDetailsList()
   }, [areaId])
   const fs = {
-    hv: '24px',
+   // hv: '24px',
     fc: '#333'
   }
   const [domheight,setDomHeight] =useState(0)

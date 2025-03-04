@@ -16,7 +16,7 @@ import CModal from '@com/useModal'
 
 import { deepClone } from '@topology/core'
 import { Serach, Cdivider, disabledDate } from "@com/comstyled"
-
+import {CustTransO, i18t, i18warning,ExportExcel, CustButtonT} from "@com/useButton"
 const { RuntimeLog: { QueryDeviceLogs } } = Monitoring
 
 const Mainbox = styled.div`
@@ -331,8 +331,8 @@ export default function Index() {
                             {value == 3 && <Item name="time"><DatePicker.RangePicker disabledDate={disabledDate} format="YYYY-MM-DD" /></Item>}
                             {value != 3 && <> 
                                 <Space size={16}>
-                                    <Button size='middle' style={{ width: 96, height: 32, backgroundColor: '#F56C6C', border: 'none', color: '#fff', borderRadius: 2 }} onClick={() => { changesetbrake(1) }}>分闸</Button>
-                                    <Button size='middle' style={{ width: 96, height: 32, backgroundColor: '#F56C6C', border: 'none', color: '#fff', borderRadius: 2 }} onClick={() => { changesetbrake(2) }}>合闸</Button>
+                                    <CustButtonT ns="monitor" text="opening" danger onClick={() => { changesetbrake(1) }}>分闸</CustButtonT>
+                                    <CustButtonT ns="monitor" text="closing"  danger   onClick={() => { changesetbrake(2) }}>合闸</CustButtonT>
                                 </Space></>}
                         </Space>
                     </Form>

@@ -9,8 +9,8 @@ import { Monitoring } from '@api/api.js'
 import {CustTransO, i18t, i18warning} from "@com/useButton"
 import { selectProjectId, selectOneLevelDefaultId, adaptation,themeColor } from '@redux/systemconfig.js'
 import Pagecount from '@com/pagecontent'
-import CommItem from "@com/commItem"
-import {isLightColor, isObject} from "@com/usehandler"
+
+import {isLightColor} from "@com/usehandler"
 import Bgi from "./images/bgi.png"
 const sty =css`
 grid-template-columns: repeat(auto-fill, minmax(304px, 1fr));
@@ -230,26 +230,22 @@ export default function Index() {
   let [allCount, setAllCount] = useState(0)
   const [MonitoringData, setMonitoringData] = useState([]);
   const { Runtime: { RuntimeStatusGroup, RuntimeQueryMonthUsage } } = Monitoring
-  const getStatusData = () => {//在线情况 
-    RuntimeStatusGroup({ projectId, areaId }).then(res => {
+  const getStatusData = () => {//在线情况
+    return RuntimeStatusGroup({ projectId, areaId }).then(res => {
       let { success, data } = res
-      if (success && isObject(data)) {
+      if (success) {
         setAllCount(data.allCount)
-        let datas = []
-        if(Array.isArray(data.statusItems) && data.statusItems?.length > 0) {
-         datas =  data.statusItems.map((item1) => {
-            let item2 = statusAttribute.find((item) => item.meterType == item1.meterType);
-            return {
-              ...item1,
-              ...item2,
-            };
-          })           
-        }
+        setMonitoringData(data?.statusItems?.map((item1) => {
+          let item2 = statusAttribute.find((item) => item.meterType == item1.meterType);
+          return {
+            ...item1,
+            ...item2,
+          };
 
-        setMonitoringData(datas) 
-        console.log(datas)
-      } else {        
-         if(!success) message.error(res.errMsg)
+        }))
+
+      } else {
+        message.error(res.errMsg)
       }
     }).catch(e => {
       console.log(e)
@@ -289,12 +285,12 @@ export default function Index() {
   return (
     <Pagecount pd="0" bgcolor="transparent">
       <Mainbox laptop={laptop} >
-      <CommItem  img={imgurl.device} title={i18t("overview","total")} value={allCount} key="device" />       
-        {(MonitoringData?.length >  0) && MonitoringData?.map((item) => (
-          <div onClick={() => toDevicePage(item.meterType)} key={item.meterType}>
-            <CommItem img={item.imageUrl} title={item.name} value={item.count} 
+        <Icard img={imgurl.device} title={i18t("overview","total")} value={allCount} key="device"  />
+        {MonitoringData?.map((item) => (
+          <div onClick={() => toDevicePage(item.meterType)}>
+            <Icard img={item.imageUrl} title={item.name} value={item.count} 
             isShow={true} on={i18t("overview","online")} off={i18t("overview","offline")} per={i18t("overview","rate")} onValue={item.onlineCount}
-            offValue={item.offlineCount} perValue={item.onlineRate} isRed={true} isGreen={true} isredE={false} after="%"  />
+            offValue={item.offlineCount} perValue={item.onlineRate} isRed={true} isGreen={true} isredE={false} after="%" key={item.meterType} />
           </div>))}
       </Mainbox>
     </Pagecount>

@@ -140,6 +140,7 @@
      "card": "Card",
      "list": "List",
      "normal":"Normal",
+     "offline": "Offline",
      "view": "View",
      "childdevice": "Child Device",
      "connection":"Connection",

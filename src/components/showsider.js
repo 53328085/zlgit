@@ -5,10 +5,10 @@ import {MenuUnfoldOutlined,MenuFoldOutlined} from "@ant-design/icons"
 import {useDispatch, useSelector} from 'react-redux'
 import {  collapsed,pgTitle, getCollapsed } from "@redux/systemconfig";
 const Main =styled.div`
- padding-left: 8px;
+ padding-left: ${props => props.Collapsed ?  "0px" :"8px"};
  height: 24px;
  display: flex;
- justify-content: ${props => props.Collapsed ?  "flex-end" :"space-between"};
+ justify-content: ${props => props.Collapsed ?  "center" :"space-between"};
  align-items: center;
  .module{
   font-size: 14px;

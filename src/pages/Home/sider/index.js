@@ -61,6 +61,7 @@ const Cmenu = styled(Menu)`
    }
    &&  {
     overflow-y: auto;
+    overflow-x: hidden;
    }
    .ant-menu-item {
      padding-left: 10px !important;
@@ -95,8 +96,13 @@ const Cmenu = styled(Menu)`
    &.ant-menu-inline-collapsed {
      .ant-menu-title-content {
       opacity: 0;
+      display: none;
      }
-    
+     .ant-menu-item {
+       padding-left: 0px !important;
+       padding-right: 0px !important;
+       justify-content: center;
+     }
    }
 `
 /*   siderRunMenus: null, // 项目 sider

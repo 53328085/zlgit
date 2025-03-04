@@ -34,6 +34,13 @@ export class CustTheme {
     server.get(`Energy/Theme/DeleteTheme`, { params }); //删除主题
 }
 
+
+ // 盘面图监控 （lot数据查询）
+ export class DiskChart {
+   static prefix='DistributionCabinet/DistributionCabinetAIotRuntime'
+  static QueryDeviceDataAll = (devSn) =>
+    server.post(`${DiskChart.prefix}/QueryDeviceDataAll?devSn=${devSn}`); // 获取设备所有属性值
+ }
 // 电能质量
 export class PowerQuality {
   static DeviceList = (params) =>

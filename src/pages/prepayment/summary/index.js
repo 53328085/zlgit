@@ -5,7 +5,7 @@ import { useSelector } from "react-redux";
 import moment from "moment";
 import styled, { css } from "styled-components";
 import Pagecount from "@com/pagecontent";
-
+import Titlelayout from '@com/titlelayout';
 import Cost from "./cost";
 import { selectProjectId } from "@redux/systemconfig.js";
 import {
@@ -40,25 +40,13 @@ const Mainbox = styled.div`
   gap: 16px;
  // grid-template-columns: 1fr;
   flex: 1;
-  .itembox {
-    border-radius: 4px;
-    display: grid;
-    grid-template-rows: 32px 1fr;
-    box-shadow: 0px 1px 2px rgb(0 0 0 / 35%);
-    .itemTitle {
-      background-color: ${(props) => props.theme.primaryColor};
-      padding: 0 16px;
-      color: #fff;
-      display: flex;
-      align-items: center;
-    }
-    .itemContent {
+  .itemContent {
       display: flex;
       flex: 1;
-      padding: 8px;
+      padding: 0 8px;
       background-color: #fff;
     }
-  }
+  
   .header {
     height: 48px;
     background-color: #fff;
@@ -98,7 +86,8 @@ const Mainbox = styled.div`
       border: 1px solid #d7d7d7; 
       color: #333;
       background-color: #fff;
-      box-shadow: 0px 1px 2px rgb(0 0 0 / 35%);
+      border-radius: 8px;
+     // box-shadow: 0px 1px 2px rgb(0 0 0 / 35%);
       .imgBox {
         height: 88px;
         background-color: ${(props) => props.theme.primaryColor};
@@ -539,8 +528,7 @@ export default function Index() {
           )}
         </div>
         <div className="upper">
-          <div className="itembox box">
-            <div className="itemTitle">项目信息</div>
+          <Titlelayout className="box" title="项目信息" hv="32px" pl="16px" pt="16px" pv="8px" layout="flex"> 
             <div
               className="itemContent"
               style={{ justifyContent: "space-between" }}
@@ -549,7 +537,7 @@ export default function Index() {
                 src={info.imageBase64
                   ? "data:image/png;base64," + info.imageBase64 : projectimg}
                 preview={false}
-                height={130}
+                height={124}
                 width={192}
               ></Image>
               <div
@@ -568,9 +556,8 @@ export default function Index() {
                 </Paragraph>
               </div>
             </div>
-          </div>
-          <div className="itembox box">
-            <div className="itemTitle">告警信息</div>
+          </Titlelayout>
+          <Titlelayout className="box" title="告警信息" hv="32px" pl="16px" pt="16px" pv="8px" layout="flex">            
             <div className="itemContent">
               <Timelinebox>
                 {alarmInfo.map((d, index) => (
@@ -578,12 +565,11 @@ export default function Index() {
                 ))}
               </Timelinebox>
             </div>
-          </div>
+          </Titlelayout>
           <Cost data={costData} />
         </div>
         <div className="middle">
-          <div className="itembox box1">
-            <div className="itemTitle">项目收入趋势</div>
+          <Titlelayout className="box1" title="项目收入趋势" hv="32px" pl="16px" pt="16px" pv="8px" layout="flex">           
             <div className="itemContent" style={{ flexDirection: "column" }}>
               <Radio.Group
                 options={dates}
@@ -595,13 +581,11 @@ export default function Index() {
               />
               <div ref={bref} style={{ flex: 1 }}></div>
             </div>
-          </div>
-          <div className="itembox box2">
-            <div className="itemTitle">支付方式</div>
+          </Titlelayout>
+          <Titlelayout className="box2" title="支付方式" hv="32px" pl="16px" pt="16px" pv="8px" layout="flex">             
             <div ref={pref} className="itemContent"></div>
-          </div>
-          <div className="itembox box3">
-            <div className="itemTitle">客户累计能耗排名</div>
+          </Titlelayout>
+          <Titlelayout className="box3" title="客户累计能耗排名" hv="32px" pl="16px" pt="16px" pv="8px" layout="flex">            
             <div className="itemContent" style={{ flexDirection: "column" }}>
               <Radio.Group
                 options={ranks}
@@ -613,21 +597,18 @@ export default function Index() {
               />
               <div ref={stref} style={{ flex: 1 }}></div>
             </div>
-          </div>
+          </Titlelayout>
         </div>
         <div className="lower">
-          <div className="itembox box">
-            <div className="itemTitle">用电量趋势</div>
+          <Titlelayout className="box" title="用电量趋势" hv="32px" pl="16px" pt="16px" pv="8px" layout="flex">             
             <div ref={lref} className="itemContent"></div>
-          </div>
-          <div className="itembox box">
-            <div className="itemTitle">用水量趋势</div>
+          </Titlelayout>
+          <Titlelayout className="box" title="用水量趋势" hv="32px" pl="16px" pt="16px" pv="8px" layout="flex"> 
             <div ref={l2ref} className="itemContent"></div>
-          </div>
-          <div className="itembox box">
-            <div className="itemTitle">用气趋势</div>
+          </Titlelayout>
+          <Titlelayout className="box" title="用气趋势" hv="32px" pl="16px" pt="16px" pv="8px" layout="flex"> 
             <div ref={l3ref} className="itemContent"></div>
-          </div>
+          </Titlelayout>
         </div>
       </Mainbox>
     </Pagecount>
