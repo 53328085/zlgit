@@ -18,6 +18,7 @@ export default function Index(props) {
         /* padding: 32px;
         padding-right: 48px;
         min-height: 800px; */
+        padding-right: 84px;
         margin-right: 32px;
         position: relative;
         .click_box{
@@ -30,58 +31,78 @@ export default function Index(props) {
             cursor: pointer;
         }
         .data_box{
-            width: 160px;
-            height: 148px;
-            border: 1px solid rgba(110, 169, 238, 1);
-            background-color: rgba(239, 246, 255, 1);
+            width: 112px;
+            border: 1px solid rgba(0, 153, 51, 1);
+            background-color: #000;
             border-radius: 4px;
             position: absolute;
-            left: -20px;
-            top: 316px;
-            padding: 16px 12px;
+            left: 100px;
+            top: 144px;
             font-size: 14px;
-            color: #333;
+            .data_box_title{
+                display: flex;
+                width: 100%;
+                height: 24px;
+                align-items: center;
+                background-color: #00c;
+                color: #fff;
+                justify-content: center;
+            }
+            .data_box_item{
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                margin: 0 8px;
+                border-bottom: 1px dashed #0f3;
+                font-size: 16px;
+                color: #0f3;
+                height: 36px;
+            }
         }
         .item_box{
                 position: absolute;
-                width: 156px;
+                width: 241px;
                 height: 64px;
                 left: 67px;
-                top: 30px;
+                top: 52px;
                 background-color: #fff;
                 border-bottom: 2px solid #333;
                 z-index: 10;
             }
     `
 
-    const handleMouseEnter = () => {
-        state.showData = true
-    }
-    const handleMouseLeave = () => {
-        state.showData = false
-    }
-
-    const changeState = () => {
-        state.onOpen = !state.onOpen
-    }
-
-
     return (
         <DiaBox>
-            <img src={ state.onOpen ? open4_1 : close4_1} style={{ width: 124, height: 673, marginTop: 26 }}></img>
+            <img src={ state.onOpen ? open4_1 : close4_1} style={{ width: 124, height: 673, marginTop: 50 }}></img>
             {
                 state.showItem ? <div className='item_box'></div> : null
             }
-            <div className='click_box' onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave} onClick={() => changeState()}></div>
-            {
-                state.showData ? <div className='data_box'>
-                <div style={{ color:'#1F6ECD' }}>进线</div>
-                <div style={{ color:'#1F6ECD' }}>NA8-2500-H/3D</div>
-                <div style={{marginTop: 12}}>Ia   120.5 A / 38.2 ℃</div>
-                <div>Ib   120.5 A / 38.2 ℃</div>
-                <div>Ic   120.5 A / 38.2 ℃</div>
-            </div> : null
-            }
+            <div className='data_box'>
+                <div className='data_box_title'>回路</div>
+                <div className='data_box_item'>
+                    <span>Ia</span>
+                    <div>
+                        <span>54.3 </span>
+                        <span className='unit' style={{ fontSize: 12 }}>(A)</span>
+                    </div>
+
+                </div>
+                <div className='data_box_item'>
+                    <span>Ib</span>
+                    <div>
+                        <span>54.3 </span>
+                        <span className='unit' style={{ fontSize: 12 }}>(A)</span>
+                    </div>
+
+                </div>
+                <div className='data_box_item' style={{ borderBottom: 'none' }}>
+                    <span>Ic</span>
+                    <div>
+                        <span>54.3 </span>
+                        <span className='unit' style={{ fontSize: 12 }}>(A)</span>
+                    </div>
+                </div>
+            </div>
         </DiaBox>
     )
 }

@@ -22,15 +22,16 @@ export default function Index() {
     const ContentBox = styled.div`
         min-width: 260px;
         background-color: #fff;
-        margin-right: 16px;
+        /* margin-right: 16px; */
         .box_title{
             width: 100%;
-            height: 40px;
+            height: 42px;
             display: flex;
             align-items: center;
             justify-content: center;
-            background-color: ${props=> props.theme.primaryColor};
-            font-size: 20px;
+            /* background-color: ${props=> props.theme.primaryColor}; */
+            background-color: #039;
+            font-size: 24px;
             color: #fff;
         }
         .nameItem{
@@ -66,14 +67,14 @@ export default function Index() {
     const MainLine = styled.div`
         position: absolute;
         left: 32px;
-        top: 140px;
+        top: 122px;
         width: calc(100% - 64px);
         border-top: 4px solid #000;
     `
     const MainDashedLine = styled.div`
         position: absolute;
         left: 32px;
-        top: 124px;
+        top: 106px;
         width: calc(100% - 64px);
         border-top: 4px dashed #000;
     `
@@ -86,36 +87,25 @@ export default function Index() {
     `
 
     return (
-        <div style={{ display: 'flex', alignItems: 'center', position: 'relative' }}>
+        <div style={{ display: 'flex', alignItems: 'flex-start', position: 'relative' }}>
             <MainLine></MainLine>
             <MainDashedLine></MainDashedLine>
             <BottomDashedLine></BottomDashedLine>
             <ContentBox>
-                <div className='box_title'>
-                    <span>P1 进线柜</span>
-                </div>
-                <div className='nameItem'>
-                    <div className='item'>进线回路</div>
+                <div className='box_title' style={{backgroundColor:'#000', borderRight: '1px solid rgba(0, 153, 204, 1)'}}>
+                    <span>P1</span>
                 </div>
                 <Incoming></Incoming>
             </ContentBox>
             <ContentBox>
-                <div className='box_title'>
-                    <span>P2 有源滤波柜</span>
-                </div>
-                <div className='nameItem'>
-                    <div className='item'>滤波回路</div>
+                <div className='box_title' style={{backgroundColor:'#333', borderRight: '1px solid rgba(0, 153, 204, 1)'}}>
+                    <span>P2</span>
                 </div>
                 <Filtering></Filtering>
             </ContentBox>
             <ContentBox>
-                <div className='box_title'>
-                    <span>P3 馈线柜</span>
-                </div>
-                <div className='nameItem'>
-                    <div className='item'>馈线回路1</div>
-                    <div className='item'>馈线回路2</div>
-                    <div className='item'>馈线回路3</div>
+                <div className='box_title' style={{backgroundColor:'#000', borderRight: '1px solid rgba(0, 153, 204, 1)'}}>
+                    <span>P3</span>
                 </div>
                 <div className='dia_box'>
                     <FeederLine></FeederLine>
@@ -125,19 +115,8 @@ export default function Index() {
                 
             </ContentBox>
             <ContentBox>
-                <div className='box_title'>
-                    <span>P4 出线柜</span>
-                </div>
-                <div className='nameItem'>
-                    <div className='item'>出线回路1</div>
-                    <div className='item'>出线回路2</div>
-                    <div className='item'>出线回路3</div>
-                    <div className='item'>出线回路4</div>
-                    <div className='item'>出线回路5</div>
-                    <div className='item'>出线回路6</div>
-                    <div className='item'>出线回路7</div>
-                    <div className='item'>出线回路8</div>
-                    <div className='item'>出线回路9</div>
+                <div className='box_title' style={{backgroundColor:'#333'}}>
+                    <span>P4</span>
                 </div>
                 <div className='dia_box'>
                     
