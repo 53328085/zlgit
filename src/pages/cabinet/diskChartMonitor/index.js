@@ -63,16 +63,7 @@ const { Item } = Descriptions;
 const { RangePicker } = DatePicker;
 const { TextArea } = Input;
  
-const options = [
-  {
-    label: i18t("comm", "month"),
-    value: 1,
-  },
-  {
-    label: i18t("comm", "year"),
-    value: 2,
-  },
-];
+ 
 const {QueryDeviceDataAll,QueryDevicesDataAll,DoOpenClose,QueryServiceResult,QueryDevicePointTrend} =DiskChart
 /* 月，年。没有日 */
 export default function Index() {
@@ -294,8 +285,8 @@ export default function Index() {
     let params ={
        devSn: deviceInfo.devSn,
        point:name,
-       start: dates[0].format("YYYY-MM-DD"),
-       end:dates[1].format("YYYY-MM-DD")
+       start: dates[0].format("YYYY-MM-DD")+" 00:00:00",
+       end:dates[1].format("YYYY-MM-DD HH:mm:ss")
 
     }
     let {success, data} =   await  QueryDevicePointTrend(params)

@@ -81,7 +81,9 @@ const CDrawer = styled(Drawer)`
           align-items: center;
           justify-content: space-between;
           padding-left: 16px;
+          position: sticky;
         }
+       
         .charts {
           height: 248px;
           display: flex;
