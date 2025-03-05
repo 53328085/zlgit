@@ -33,7 +33,7 @@ import {
 import styled, { css } from "styled-components";
 
 import { Radiogroup, Cdivider } from "@com/comstyled";
-import { enterprise, selectProjectId, adaptation } from "@redux/systemconfig";
+import {  adaptation } from "@redux/systemconfig";
  import { DiskChart } from "@api/api.js";
 import Titlelayout from "@com/titlelayout";
 import Custmodal from "@com/useModal";
@@ -57,7 +57,7 @@ import {
    IDrawer,
   
 } from './comstyle'
- 
+import {Cspin} from "@com/comstyled"
 const { Link, Text, Title } = Typography;
 const { Item } = Descriptions;
 const { RangePicker } = DatePicker;
@@ -68,7 +68,7 @@ const {QueryDeviceDataAll,QueryDevicesDataAll,DoOpenClose,QueryServiceResult,Que
 /* 月，年。没有日 */
 export default function Index() {
   const { laptop } = useSelector(adaptation);
- 
+  const [initval, setInitval] = useState({})
   const [copen, setCopen] = useState(false);
   const [iopen, setIopen] = useState(false);
   const [elopen, setElopen] = useState(false);
@@ -78,13 +78,15 @@ export default function Index() {
   const [eltitle, setEltitle] = useState(""); // 遥测 图表的标题
   const [state, setState] = useState(1); // 1 分闸2故障3正常
   const [iform] = Form.useForm()
-  
+  const [snapshot, setSnapshot] = useState([]) // 设备快照
   const [deviceData, setDeviceData] = useState([])
   const [sensor, setSensor] = useState(null)
   const [deviceInfo, setDeviceInfo] =useState({
     deviceName: "", // 设备名称
     deviceType: 1, // 1: 框架断路器 2：塑壳断路器
+   
   })
+  console.log("deviceInfo", deviceInfo)
   const modal = useRef();
   const onControl = () => {
     modal.current.onOpen();
@@ -92,40 +94,145 @@ export default function Index() {
   const onCopen = () => {
     setCopen(true);
   };
-  const onOpen = () => {
-   
-  };
+ 
   const sref=useRef()
   const displaySensor=(type)=> { // 显示传感器弹窗
      sref.current.onOpen(type)
   }
   
-  const queryDeviceDataAll =async ({name, devSn, type,supsn}) => {
+ const getInitVal = async ()=> { // 获取初始数据
+    try {
+       // p1 温度
+       // p1 分合闸
+
+
+      let promises = [QueryDevicesDataAll(['NTD30S119328']),QueryDeviceDataAll("NA5202522401") ]
+       const initData = await  QueryDevicesDataAll([
+          'NTD30S119328', // p1 温度
+          "NA5202522401",
+          "NTD30S119325", // p2 温度
+          "NTD30S119301", // p3 温度
+          "NA5202522402","NA5202522403","NA5202522404",   
+           "NTD30S119322", // p4 温度
+          "NTCJ20012241","NTCJ20012242","NTCJ20012243","NTCJ20012244",      
+          "NTCJ00122401","NTCJ00122402","NTCJ00122403",
+          "NTCJ00122404","PD6662555504"
+        ])
+        console.log(initData)
+     // let allData = await Promise.allSettled(promises);
+     // let p1={}
+      
+     /*  allData.forEach(d => {
+        let {status, value} = d
+        let {success, data} = value || {}
+        if(status=="fulfilled" && success && Array.isArray(data)&& data?.length > 0){
+
+        }
+
+
+      }) */
+      
+    } catch (error) {
+      
+    }
+     
+
+
+ }
+
+
+  const queryDeviceDataAll =async ({name, devSn, type,supsn,breaker=true}) => {
       try {
        const sn = type==2 ? supsn : devSn
        if(!sn) return message.warning("缺少设备Sn")
-       const {success, data, message:msg} = await QueryDeviceDataAll(sn)
+       const {response  } = await QueryDeviceDataAll(sn)
+       const  {success, data, message:msg} = response
        if(success && Array.isArray(data)) {
+          
+          let NAB8Sn = ["NA5202522401","NA5202522402","NA5202522403","NA5202522404"]
+          let NTCJ2=["NTCJ20012241","NTCJ20012242","NTCJ20012243","NTCJ20012244"] // 
+          let NTCJ=["NTCJ00122401","NTCJ00122402","NTCJ00122403","NTCJ00122404","PD6662555504",]
+          let DI = ["DigitalInstatus1","DigitalInstatus2","DigitalInstatus3"]
+          let value = data.find(d => d.name="BrokerStatus")?.value
+          let a125=["NTCJ20012241","NTCJ20012242","NTCJ20012243","NTCJ20012244","NTCJ00122401"] // 125A
+          let a250=["NTCJ00122402","NTCJ00122403"] // 250A
+          let IA= a125.includes(devSn) ? "125A" : a250.includes(devSn) ? "250A" : devSn=="NTCJ00122404" ? "300A" : devSn=="PD6662555504" ? "630A" : "125A";
+          let state = {
+            32:"分闸",
+            16: "故障",
+            0: "合闸"
+          }[value]
+          let dival = data.find(d =>  DI.includes(d.name) && d.value==1)?.name
+          let distate={
+            DigitalInstatus1: "合闸",
+            DigitalInstatus2: "分闸",
+            DigitalInstatus3: "故障"
+          }[dival]
           setDeviceInfo({
             deviceName:name,
             deviceType:type,
             devSn,
+            breaker,
+            state: state || distate
           })
-          setDeviceData(data)
+
+          if(NAB8Sn.includes(devSn)) {
+            setSnapshot([
+              {
+              name: "断路器状态",
+              value: state, 
+              },
+              {
+                name: "故障脱扣次数",
+                value: 0,
+              },
+              {
+                name: "开关操作次数",
+                value: 4,
+              }
+          ])
+          }else if(NTCJ2.includes(devSn)){
+            setSnapshot([
+              {
+              name: "断路器状态",
+              value: distate, 
+              },
+              {
+                name: "核定电流",
+                value: IA,
+              },
+              {
+                name: "保护类型",
+                value:  "热磁式长延时",
+              }
+          ])
+          }else if(NTCJ.includes(devSn)){
+            setSnapshot([
+              {
+              name: "设备状态",
+              value: distate, 
+              },
+              {
+                name: "额定电流",
+                value: IA,
+              },
+              
+          ])
+          }
+
+          setDeviceData(data.filter(d => d.name!="BrokerStatus")?.filter(d=>  d.name.indexOf("DigitalInstatus")==-1));
           onCopen()
          
        }else {
-           if(data===null) message.info("缺少数据");
-          !success && message.info(msg||"请求失败")
+          // if(data===null) message.info("缺少数据");
+         // !success && message.info(msg||"请求失败")
        }
        
       } catch (error) {
          console.log(error)
       }
   }
-  const queryDevicePointTrend = async(sn)=> {
-    await QueryDevicePointTrend()
-  }
+  
  const getResult= async (params)=> {
  
    await QueryServiceResult(params)
@@ -133,21 +240,21 @@ export default function Index() {
  const doOpenClose =async ()=> {
     try {
       // operation 1 分闸 2 合闸
-    
+      if(deviceInfo.state=="故障") return;
       let {devSn} = deviceInfo
       if(!devSn) return message.warning("缺少设备Sn")    
       let params = {
         devSn,
-        operation:1
+        operation: deviceInfo.state=="合闸" ? 1 : deviceInfo.state=="分闸" ? 2 : 0
       }
 
      let {success, data,message:msg} = await DoOpenClose(params)
      if(success) {
-      if(!data) return message.warning("缺少key")
+      if(!data) return   // message.warning("缺少key")
         let params = {tm:moment.utc().utcOffset(8).format(),key:data}
-      getResult(params)
+        getResult(params)
      }else {
-       message.warning(msg)
+       // message.warning(msg)
      }
     } catch (e) {
        console.log(e)
@@ -159,11 +266,7 @@ export default function Index() {
 
 
 
-  const vstate = [
-    { title: "断路器状态", state: "合闸" },
-    { title: "故障脱口次数", state: 0 },
-    { title: "开关操作次数", state: 4 },
-  ];
+
  
 
   const columns = [
@@ -213,7 +316,7 @@ export default function Index() {
       level: 1,
       startTime: moment().subtract(7, "days").format("yyyy-MM-DD HH:mm:ss"),
       alarmType: "温度超限",
-      state: 1,
+      state: 2,
     },
     {
       level: 1,
@@ -256,7 +359,7 @@ export default function Index() {
       },
     ],
     dataset: {
-      dimensions: ["x", "y"],
+      dimensions: ["x", eltitle],
       source: eldata,
       sourceHeader: false,
     },
@@ -270,31 +373,48 @@ export default function Index() {
   // 表单项宽度
 
 
+const disabledDate = (current) => { 
+    return current && current > moment().endOf('day');
+  };
 
- 
-  const Extra = ({ ist, title, fn }) => {
+  const Extra = ({ ist,  fn }) => {
     return (
       <Extrea ist={ist}>
-        {ist && <RangePicker value={dates} onCalendarChange={setDates}  format="YYYY-MM-DD" />}
+        {ist && <RangePicker value={dates} onCalendarChange={onchangedate} disabledDate={disabledDate}  format="YYYY-MM-DD" />}
         <CloseOutlined onClick={fn} className="close" />
       </Extrea>
     );
   };
-  const onelchart = async ({desc, name}) => {
+  let params =useRef({
+    devSn: '',
+    point: '',
+    start: dates[0].format("YYYY-MM-DD")+" 00:00:00",
+    end:dates[1].format("YYYY-MM-DD HH:mm:ss")
+ })
+  const getElData = async() => {
+    let {success, data} =  await  QueryDevicePointTrend(params.current)
+    if(success && Array.isArray(data) && data?.length>0) {
+        let x = data.map(d => d.x)
+        let y= data.map(d=> d.y)
+        setEldata([x, y])
+    }else{
+      setEldata([])
+    }
+  }
+  const onelchart = async ({desc, name}) => { // 点击遥测
     setEltitle(desc);
-    let params ={
-       devSn: deviceInfo.devSn,
-       point:name,
-       start: dates[0].format("YYYY-MM-DD")+" 00:00:00",
-       end:dates[1].format("YYYY-MM-DD HH:mm:ss")
-
-    }
-    let {success, data} =   await  QueryDevicePointTrend(params)
-    if(success) {
-
-    }
+     params.current.devSn=deviceInfo.devSn
+     params.current.point = name  
+    await getElData()
     setElopen(true);
   };
+  const onchangedate=(date)=> { // 选择时间
+    setDates(date)
+    setEldata(null)
+    params.current.start=date[0].format("YYYY-MM-DD")+" 00:00:00"
+    params.current.end = date[1].format("YYYY-MM-DD HH:mm:ss")
+    getElData()
+ }
   const onCloseMain = ()=> {
       console.log("elopen", elopen)
       if(!elopen){
@@ -311,6 +431,10 @@ export default function Index() {
       doOpenClose()
     }
   };
+  useEffect(()=> {
+   // getInitVal()
+
+  },[])
   return (
     <Pagecount>
       <Mainbox>
@@ -344,8 +468,8 @@ export default function Index() {
             <CustLink text="details" underline={false}></CustLink>
           </div>
           <div className="bashou">
-            <div className="imgbox"  onClick={()=>queryDeviceDataAll({name:"塑壳断路器  NM8N", type: 2,devSn:"NM8N202522701",supsn:"NTCJ00122401"})}>
-            <img
+            <div className="imgbox">
+           {/*  <img
               src={
                 state == 1
                   ? imgsrc[`A分闸`]
@@ -353,15 +477,16 @@ export default function Index() {
                   ? imgsrc["A故障"]
                   : imgsrc["A正常"]
               }
+            ></img> */}
+            <img
+              src={imgsrc[`A正常`]}
             ></img>
             </div>
            
-          </div>
-         {/*  <div className="yylb" onClick={()=>queryDeviceDataAll({name:"电能质量治理  NXW", devSn:"NXW202522201"})}>
-             <div className="yylbimg" onClick={onCopen}></div>
-          </div> */}
+          </div> 
+         
           <div className="guis" >
-            <div className="guisimg"  onClick={()=>queryDeviceDataAll({name:"电能质量治理  NXW", devSn:"NXW202522201"})}></div>
+            <div className="guisimg"  onClick={()=>queryDeviceDataAll({name:"电能质量治理  NXW", devSn:"NXW202522201", breaker:false})}></div>
           </div>
         </div>
         <div className="part" key="part3">
@@ -373,8 +498,8 @@ export default function Index() {
             <CustLink text="details" underline={false}></CustLink>
           </div>
           <div className="kuixians">
-            <div className="kuixian">
-            <div className="values" onClick={()=>queryDeviceDataAll({name:"多功能仪表  PD666-3SK3H", devSn: "02713PD66601"})}>
+            <div className="kuixian" onClick={()=>queryDeviceDataAll({name:"框架断路器  NA8", devSn: "NA5202522402"})}>
+            <div className="values">
             <div className="nums">
               <span className="type">1a</span>
               <Text>25.3A</Text>
@@ -385,12 +510,12 @@ export default function Index() {
               <img src={imgsrc["close"]}></img>
             </div>
           </div>
-          <div className="guizhi" onClick={onCopen}>
+          <div className="guizhi">
             
           </div>
             </div>
-            <div className="kuixian">
-            <div className="values" onClick={()=>queryDeviceDataAll({name:"塑壳断路器  NM8N", type: 2})}>
+            <div className="kuixian" onClick={()=>queryDeviceDataAll({name:"框架断路器  NA8", devSn: "NA5202522403"})}>
+            <div className="values">
             <div className="nums">
               <span className="type">1a</span>
               <Text>25.3A</Text>
@@ -401,12 +526,12 @@ export default function Index() {
               <img src={imgsrc["close"]}></img>
             </div>
           </div>
-          <div className="guizhi" onClick={onCopen}>
+          <div className="guizhi" >
             
           </div>
             </div>
-            <div className="kuixian">
-            <div className="values" onClick={()=>queryDeviceDataAll({name:"塑壳断路器  NM8N", type: 2})}>
+            <div className="kuixian" onClick={()=>queryDeviceDataAll({name:"框架断路器  NA8", devSn: "NA5202522404"})}>
+            <div className="values">
             <div className="nums">
               <span className="type">1a</span>
               <Text>25.3A</Text>
@@ -417,7 +542,7 @@ export default function Index() {
               <img src={imgsrc["close"]}></img>
             </div>
           </div>
-          <div className="guizhi" onClick={onCopen}>
+          <div className="guizhi">
             
           </div>
             </div>
@@ -426,7 +551,7 @@ export default function Index() {
         </div>
         <div className="part" key="part4">
           <div className="title" onClick={()=>displaySensor(4)}>
-            <Link onClick={onOpen}>
+            <Link >
               <img src={temp} alt="" />
               温度：28.1
             </Link>
@@ -434,8 +559,8 @@ export default function Index() {
           </div>
           <div className="breaker">
           <div className="loops loops1">
-            <div className="loop1">  
-                <div className="loopbashou" onClick={onCopen}>
+            <div className="loop1" onClick={()=>queryDeviceDataAll({name:"塑壳断路器  NM8N", devSn: "NTCJ20012241"})}>  
+                <div className="loopbashou">
                   <img
                     src={
                       state == 1
@@ -458,16 +583,15 @@ export default function Index() {
                   }
                 ></img>
 
-                <div className="nums" onClick={onCopen}>
+                <div className="nums">
                   <span className="type">1a</span>
                   <Text>253.3A</Text>
                   <Text>483.2°C</Text>
                 </div>
               
             </div>
-            <div className="loop1">             
-              
-                <div className="loopbashou" onClick={onCopen}>
+            <div className="loop1" onClick={()=>queryDeviceDataAll({name:"塑壳断路器  NM8N", devSn: "NTCJ20012242"})}>   
+                <div className="loopbashou" >
                   <img
                     src={
                       state == 1
@@ -490,16 +614,16 @@ export default function Index() {
                   }
                 ></img>
 
-                <div className="nums" onClick={onCopen}>
+                <div className="nums">
                   <span className="type">1a</span>
                   <Text>153.3A</Text>
                   <Text>283.2°C</Text>
                 </div>
                
             </div>
-            <div className="loop1">
+            <div className="loop1" onClick={()=>queryDeviceDataAll({name:"塑壳断路器  NM8N", devSn: "NTCJ20012243"})}>
               
-                <div className="loopbashou" onClick={onCopen}>
+                <div className="loopbashou">
                   <img
                     src={
                       state == 1
@@ -522,16 +646,16 @@ export default function Index() {
                   }
                 ></img>
 
-                <div className="nums" onClick={onCopen}>
+                <div className="nums">
                   <span className="type">1a</span>
                   <Text>153.3A</Text>
                   <Text>283.2°C</Text>
                 </div>
               
             </div>
-            <div className="loop1">
+            <div className="loop1" onClick={()=>queryDeviceDataAll({name:"塑壳断路器  NM8N", devSn: "NTCJ20012244"})}>
               
-                <div className="loopbashou" onClick={onCopen}>
+                <div className="loopbashou" >
                   <img
                     src={
                       state == 1
@@ -554,7 +678,7 @@ export default function Index() {
                   }
                 ></img>
 
-                <div className="nums" onClick={onCopen}>
+                <div className="nums">
                   <span className="type">1a</span>
                   <Text>153.3A</Text>
                   <Text>283.2°C</Text>
@@ -563,8 +687,8 @@ export default function Index() {
             </div>
           </div>
           <div className="loops loops2">
-            <div className="loop2"> 
-              <div className="loopbashou" onClick={onCopen}>
+            <div className="loop2" onClick={()=>queryDeviceDataAll({name:"塑壳断路器  NM8N", devSn: "NTCJ00122401"})}> 
+              <div className="loopbashou" >
                 <img
                   src={
                     state == 1
@@ -585,15 +709,15 @@ export default function Index() {
                       : imgsrc["close"]
                   }
                 ></img>
-                <div className="nums" onClick={onCopen}>
+                <div className="nums" >
                   <span className="type">1a</span>
                   <Text>153.3A</Text>
                   <Text>283.2°C</Text>
                 </div>
               </div>
             </div>
-            <div className="loop2"> 
-              <div className="loopbashou" onClick={onCopen}>
+            <div className="loop2" onClick={()=>queryDeviceDataAll({name:"塑壳断路器  NM8N", devSn: "NTCJ00122402"})}> 
+              <div className="loopbashou" >
                 <img
                   src={
                     state == 1
@@ -614,15 +738,15 @@ export default function Index() {
                       : imgsrc["close"]
                   }
                 ></img>
-                <div className="nums" onClick={onCopen}>
+                <div className="nums">
                   <span className="type">1a</span>
                   <Text>153.3A</Text>
                   <Text>283.2°C</Text>
                 </div>
               </div>
             </div>
-            <div className="loop2"> 
-              <div className="loopbashou" onClick={onCopen}>
+            <div className="loop2" onClick={()=>queryDeviceDataAll({name:"塑壳断路器  NM8N", devSn: "NTCJ00122403"})}> 
+              <div className="loopbashou" >
                 <img
                   src={
                     state == 1
@@ -643,7 +767,7 @@ export default function Index() {
                       : imgsrc["close"]
                   }
                 ></img>
-                <div className="nums" onClick={onCopen}>
+                <div className="nums" >
                   <span className="type">1a</span>
                   <Text>153.3A</Text>
                   <Text>283.2°C</Text>
@@ -663,7 +787,7 @@ export default function Index() {
                       : imgsrc["close"]
                   }
                 ></img>
-                <div className="nums" onClick={onCopen}>
+                <div className="nums" onClick={()=>queryDeviceDataAll({name:"多功能仪表  PD666-2SC3", devSn: "NTCJ00122404"})}>
                   <span className="type">1a</span>
                   <Text>153.3A</Text>
                   <Text>283.2°C</Text>
@@ -682,7 +806,7 @@ export default function Index() {
                       : imgsrc["close"]
                   }
                 ></img>
-                <div className="nums" onClick={onCopen}>
+                <div className="nums" onClick={()=>queryDeviceDataAll({name:"多功能仪表  PD666-2SC3", devSn: "PD6662555504"})}>
                   <span className="type">1a</span>
                   <Text>153.3A</Text>
                   <Text>283.2°C</Text>
@@ -716,7 +840,7 @@ export default function Index() {
         //    extra={<Extra  fn={() => setCopen(false)} />}
       >
         <div className="left" onClick={onCloseMain}>
-          <DDrawer
+          <IDrawer
             title="告警详情"
             inner={true}
             wh="524px"
@@ -815,7 +939,7 @@ export default function Index() {
                 <TextArea row={6} autoSize={false}></TextArea>
               </div>
             </div>
-          </DDrawer>
+          </IDrawer>
           <IDrawer
             title={eltitle}
             wh="840px"
@@ -839,7 +963,7 @@ export default function Index() {
             zIndex={1001}
           >
             <div className="leftmain">
-              <Ichart {...eloption} />
+           { eldata ?   <Ichart {...eloption} /> : <Cspin tip="数据加载中" />}
             </div>
           </IDrawer>
         </div>
@@ -852,7 +976,7 @@ export default function Index() {
             <span>设备快照</span>
             <span>{moment().format("yyyy-MM-DD HH:mm:ss")}</span>
           </div>
-          <Info vstate={vstate} />
+          <Info vstate={snapshot} />
           <div className="htitle">
             <span>报警信息</span>
           </div>
@@ -867,21 +991,25 @@ export default function Index() {
           <div className="htitle"> 
             <span>遥控</span>
           </div>
-          <div
+       { deviceInfo.breaker && (<div
             style={{ display: "flex", columnGap: "64px", alignItems: "center" }}
           >
-            <div>
-              当前状态：<span>合闸</span>
+            <div style={{fontSize: "16px", color: "#515151"}}>
+              当前状态：<span>{deviceInfo?.state}</span>
             </div>
             <Button
               type="primary"
               danger
               className="remote"              
               onClick={onControl}
+              disabled={deviceInfo?.state=="故障"}
             >
-              <img src={imgsrc["remote"]} width={32} height={32}></img>远程分闸
+              <img src={imgsrc["remote"]} width={32} height={32}></img>{
+                deviceInfo?.state=="合闸" ? "远程分闸" :  deviceInfo?.state=="分闸" ? "远程合闸" : "设备故障"
+              }
             </Button>
-          </div>
+          </div>)
+}
         </div>
         
         <Custmodal
@@ -895,11 +1023,11 @@ export default function Index() {
             {rState == 1 ? (
               <div className="ok">
                 <img src={imgsrc["ok"]}></img>{" "}
-                当前状态为合闸，确认要进线远程分闸操作？
+                当前状态为{deviceInfo?.state}，确认要进行{deviceInfo?.state=="合闸" ? "远程分闸" :  deviceInfo?.state=="分闸" ? "远程合闸" : ""}操作？
               </div>
             ) : rState == 2 ? (
               <Form form={iform} className="pwd">
-                <Form.Item label="请输入安全码">
+                <Form.Item label="请输入安全码" name="pwd">
                 <Input></Input>
                 </Form.Item> 
               </Form>

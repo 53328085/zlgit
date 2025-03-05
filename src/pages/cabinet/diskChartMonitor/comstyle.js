@@ -115,6 +115,8 @@ const CDrawer = styled(Drawer)`
           .chart{
             flex:1;
             display: flex;
+            align-items: center;
+            justify-content: center;
           }
         }
       }
@@ -353,7 +355,7 @@ const Mainbox = styled.div`
         align-items: center;
         justify-content: center; 
         .imgbox {
-          cursor: pointer;
+         // cursor: pointer;
         }
       }
       .yylb { 
@@ -437,6 +439,7 @@ const Mainbox = styled.div`
           display: flex;
             align-items: flex-start;
             justify-content: space-between;
+            cursor: pointer;
             .loopbashou {
               align-self: center;
               
@@ -484,6 +487,7 @@ const Mainbox = styled.div`
           justify-content: flex-end;
           align-items: center; 
           column-gap: 64px;
+          cursor: pointer;
           .state42 {
             display: flex;
             align-items: center;
@@ -505,6 +509,7 @@ const Mainbox = styled.div`
            justify-content: flex-end;
            align-items: flex-end;
            padding-bottom: 20px;
+           
            .state42 {
             display: flex;
             align-items: center;

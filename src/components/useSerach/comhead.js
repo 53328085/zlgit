@@ -352,8 +352,7 @@ const deviceStyleNode = (<Item name="deviceStyle" label={i18t("comm","type",{tex
     }else {
       form.setFieldValue('type',1)
     }
-    if(config.meterType) {
-      console.log('config.meterType', config.meterType)
+    if(config.meterType) { 
       form.setFieldValue('deviceStyle',config.meterType)
     }
      props.setexparams({...form.getFieldsValue(true)})

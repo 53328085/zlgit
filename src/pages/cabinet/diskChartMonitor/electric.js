@@ -43,7 +43,9 @@ const Elect = ({datas, onhandler})=> {
     )
   }
 export default function Index({datas, onClick}) {
+
   if(Array.isArray(datas) && datas.length > 0) {
+    
     return (
       <>
          <div className="htitle">
