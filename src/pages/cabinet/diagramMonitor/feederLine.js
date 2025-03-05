@@ -5,11 +5,16 @@ import styled from "styled-components";
 import open4_2 from './imgs/p4/4-2_open.svg'
 import close4_2 from './imgs/p4/4-2_close.svg'
 
-export default function Index() {
+export default function Index(props) {
 
     const state = useReactive({
         showData: false,
-        onOpen: true
+        onOpen: false,
+        status: 'normal',
+        Ia: '0.00',
+        Ib: '0.00',
+        Ic: '0.00',
+        name: '馈线',
     })
 
     const DiaBox = styled.div`
@@ -60,15 +65,65 @@ export default function Index() {
         }
     `
 
+    const onOpenStyle = {
+        width: 124, 
+        height: 673, 
+        marginTop: 50
+    }
+
+    useEffect(() => {
+        state.name = props.lineName
+        console.log(props)
+        if (props.deviceData.length > 0) {
+            props.deviceData.map(item => {
+                if (item.name == 'BrokerStatus') {
+                    if (item.value == 0) {
+                        state.status = 'normal'
+                        state.onOpen = true
+                    }
+                    if (item.value == 16) {
+                        state.status = 'error'
+                        state.onOpen = true
+                    }
+                    if (item.value == 32) {
+                        state.status = 'normal'
+                        state.onOpen = false
+                    }
+                    if (item.value == 48) {
+                        state.status = 'error'
+                        state.onOpen = false
+                    }
+                }
+                if (item.name == 'Ia') {
+                    state.Ia = item.value
+                }
+                if (item.name == 'Ib') {
+                    state.Ib = item.value
+                }
+                if (item.name == 'Ic') {
+                    state.Ic = item.value
+                }
+            })
+        }
+    }, [props])
+
     return (
         <DiaBox>
-            <img src={state.onOpen ? open4_2 : close4_2} style={{ width: 124, height: 673, marginTop: 50 }}></img>
+            {/* <img src={state.status == 'open' ? open4_2 : state.status == 'close' ? close4_2 : open4_2} style={{ width: 124, height: 673, marginTop: 50 }}></img> */}
+
+            {
+                state.status == 'normal' && state.onOpen == false ? <img src={close4_2} style={onOpenStyle}></img> : null
+            }
+            {
+                state.status == 'normal' && state.onOpen == true ? <img src={open4_2} style={onOpenStyle}></img> : null
+            }
+
             <div className='data_box'>
-                <div className='data_box_title'>馈线</div>
+                <div className='data_box_title'>{state.name}</div>
                 <div className='data_box_item'>
                     <span>Ia</span>
                     <div>
-                        <span>54.3 </span>
+                        <span>{state.Ia} </span>
                         <span className='unit' style={{ fontSize: 12 }}>(A)</span>
                     </div>
 
@@ -76,7 +131,7 @@ export default function Index() {
                 <div className='data_box_item'>
                     <span>Ib</span>
                     <div>
-                        <span>54.3 </span>
+                        <span>{state.Ib} </span>
                         <span className='unit' style={{ fontSize: 12 }}>(A)</span>
                     </div>
 
@@ -84,7 +139,7 @@ export default function Index() {
                 <div className='data_box_item' style={{ borderBottom: 'none' }}>
                     <span>Ic</span>
                     <div>
-                        <span>54.3 </span>
+                        <span>{state.Ic} </span>
                         <span className='unit' style={{ fontSize: 12 }}>(A)</span>
                     </div>
                 </div>

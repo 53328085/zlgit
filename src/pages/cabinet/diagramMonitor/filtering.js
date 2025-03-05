@@ -5,11 +5,14 @@ import styled from "styled-components";
 import open2_1 from './imgs/p2/2-1_open.svg'
 import close2_1 from './imgs/p2/2-1_close.svg'
 
-export default function Index() {
+export default function Index(props) {
 
     const state = useReactive({
         showData: false,
-        onOpen: true
+        onOpen: true,
+        Ia: '0.00',
+        Ib: '0.00',
+        Ic: '0.00'
     })
 
     const DiaBox = styled.div`
@@ -59,22 +62,31 @@ export default function Index() {
         }
     `
 
-    const handleMouseEnter = () => {
-        state.showData = true
-    }
-    const handleMouseLeave = () => {
-        state.showData = false
-    }
+    useEffect(() => {
+        if (props.deviceData.length > 0) {
+            props.deviceData.map(item => {
+                if (item.name == 'Ia') {
+                    state.Ia = item.value
+                }
+                if (item.name == 'Ib') {
+                    state.Ib = item.value
+                }
+                if (item.name == 'Ic') {
+                    state.Ic = item.value
+                }
+            })
+        }
+    }, [props])
 
     return (
         <DiaBox>
-            <img src={ close2_1 } style={{ width: 315, height: 760, marginTop: 0 }}></img>
+            <img src={close2_1} style={{ width: 315, height: 760, marginTop: 0 }}></img>
             <div className='data_box'>
                 <div className='data_box_title'>有源滤波柜</div>
                 <div className='data_box_item'>
                     <span>Ia</span>
                     <div>
-                        <span>54.3 </span>
+                        <span>{state.Ia} </span>
                         <span className='unit' style={{ fontSize: 12 }}>(A)</span>
                     </div>
 
@@ -82,7 +94,7 @@ export default function Index() {
                 <div className='data_box_item'>
                     <span>Ib</span>
                     <div>
-                        <span>54.3 </span>
+                        <span>{state.Ib} </span>
                         <span className='unit' style={{ fontSize: 12 }}>(A)</span>
                     </div>
 
@@ -90,7 +102,7 @@ export default function Index() {
                 <div className='data_box_item' style={{ borderBottom: 'none' }}>
                     <span>Ic</span>
                     <div>
-                        <span>54.3 </span>
+                        <span>{state.Ic} </span>
                         <span className='unit' style={{ fontSize: 12 }}>(A)</span>
                     </div>
                 </div>

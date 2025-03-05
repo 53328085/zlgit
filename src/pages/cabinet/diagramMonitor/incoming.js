@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { useReactive } from "ahooks";
+import { useSelector, useDispatch } from "react-redux";
+import { themeColor } from "@redux/systemconfig";
 
 import styled from "styled-components";
 import open1_1 from './imgs/p1/1-1_open.svg'
@@ -9,13 +11,19 @@ import close1_2 from './imgs/p1/1-2_close.svg'
 import open1_3 from './imgs/p1/1-3_open.svg'
 import close1_3 from './imgs/p1/1-3_close.svg'
 
-export default function Index() {
+import { ReactComponent as Open1 } from './imgs/p1/1-1_open.svg'
 
+export default function Index(props) {
+    const { menusbgcolorR, startColor, endColor, startOpacity, endOpacity } = useSelector(themeColor)
     const state = useReactive({
         showData: true,
         onOpen: true,
-        onOpen1_2: true,
-        onOpen1_3: true
+        status: 'normal',
+        onOpen1_2: false,
+        onOpen1_3: false,
+        Ia: '0.00',
+        Ib: '0.00',
+        Ic: '0.00',
     })
 
     const DiaBox = styled.div`
@@ -83,18 +91,64 @@ export default function Index() {
         }
     `
 
+    const onOpenStyle = {
+        width: 232, 
+        height: 672, 
+        marginTop: 50, 
+        marginLeft: '-14px'
+    }
+
+    useEffect(() => {
+        if (props.deviceData.length > 0) {
+            props.deviceData.map(item => {
+                if (item.name == 'BrokerStatus') {
+                    if(item.value == 0){
+                        state.status = 'normal'
+                        state.onOpen = true
+                    }
+                    if(item.value == 16){
+                        state.status = 'error'
+                        state.onOpen = true
+                    }
+                    if(item.value == 32){
+                        state.status = 'normal'
+                        state.onOpen = false
+                    }
+                    if(item.value == 48){
+                        state.status = 'error'
+                        state.onOpen = false
+                    }
+                }
+                if (item.name == 'Ia') {
+                    state.Ia = item.value
+                }
+                if (item.name == 'Ib') {
+                    state.Ib = item.value
+                }
+                if (item.name == 'Ic') {
+                    state.Ic = item.value
+                }
+            })
+        }
+    }, [props])
+
     return (
         <DiaBox>
             <img src={state.onOpen1_2 ? open1_2 : close1_2} style={{ width: 114, height: 258, marginTop: 464 }}></img>
-            <img src={state.onOpen ? open1_1 : close1_1} style={{ width: 232, height: 672, marginTop: 50, marginLeft: '-14px' }}></img>
+            {
+                state.status == 'normal' && state.onOpen == false ? <img src={close1_1} style={onOpenStyle}></img> : null
+            }
+            {
+                state.status == 'normal' && state.onOpen == true ? <img src={open1_1} style={onOpenStyle}></img> : null
+            }
+
             <img src={state.onOpen1_3 ? open1_3 : close1_3} style={{ width: 120, height: 274, marginTop: 464, marginLeft: '-60px' }}></img>
-            <div className='click_box'></div>
             <div className='data_box'>
                 <div className='data_box_title'>进线柜</div>
                 <div className='data_box_item'>
                     <span>Ia</span>
                     <div>
-                        <span>54.3 </span>
+                        <span>{state.Ia} </span>
                         <span className='unit' style={{ fontSize: 12 }}>(A)</span>
                     </div>
 
@@ -102,7 +156,7 @@ export default function Index() {
                 <div className='data_box_item'>
                     <span>Ib</span>
                     <div>
-                        <span>54.3 </span>
+                        <span>{state.Ib} </span>
                         <span className='unit' style={{ fontSize: 12 }}>(A)</span>
                     </div>
 
@@ -110,7 +164,7 @@ export default function Index() {
                 <div className='data_box_item' style={{ borderBottom: 'none' }}>
                     <span>Ic</span>
                     <div>
-                        <span>54.3 </span>
+                        <span>{state.Ic} </span>
                         <span className='unit' style={{ fontSize: 12 }}>(A)</span>
                     </div>
                 </div>
