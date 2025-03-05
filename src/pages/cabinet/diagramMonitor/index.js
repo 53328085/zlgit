@@ -1,10 +1,15 @@
 import React, { useState, useEffect } from 'react'
 import { useReactive } from "ahooks";
+import { Spin } from 'antd';
 
 import Incoming from './incoming.js'
 import Filtering from './filtering.js'
 import FeederLine from './feederLine.js'
 import LoopLine from './loopLine.js'
+
+import { DiskChart } from "@api/api.js";
+
+const {QueryDeviceDataAll,QueryDevicesDataAll,DoOpenClose,QueryServiceResult,QueryDevicePointTrend} =DiskChart
 
 
 import styled from "styled-components";
@@ -13,24 +18,36 @@ import styled from "styled-components";
 export default function Index() {
     const state = useReactive({
         showOpen: true,
+        loading: true,
+        incoming:[],
+        filtering:[],
+        feederLine1:[],
+        feederLine2:[],
+        feederLine3:[],
+        loopLine1:[],
+        loopLine2:[],
+        loopLine3:[],
+        loopLine4:[],
+        loopLine5:[],
+        loopLine6:[],
+        loopLine7:[],
+        loopLine8:[],
+        loopLine9:[],
     })
-
-    const changeState = () => {
-        state.showOpen = !state.showOpen
-    }
 
     const ContentBox = styled.div`
         min-width: 260px;
         background-color: #fff;
-        margin-right: 16px;
+        /* margin-right: 16px; */
         .box_title{
             width: 100%;
-            height: 40px;
+            height: 42px;
             display: flex;
             align-items: center;
             justify-content: center;
-            background-color: ${props=> props.theme.primaryColor};
-            font-size: 20px;
+            /* background-color: ${props=> props.theme.primaryColor}; */
+            background-color: #039;
+            font-size: 24px;
             color: #fff;
         }
         .nameItem{
@@ -66,14 +83,14 @@ export default function Index() {
     const MainLine = styled.div`
         position: absolute;
         left: 32px;
-        top: 140px;
+        top: 122px;
         width: calc(100% - 64px);
         border-top: 4px solid #000;
     `
     const MainDashedLine = styled.div`
         position: absolute;
         left: 32px;
-        top: 124px;
+        top: 106px;
         width: calc(100% - 64px);
         border-top: 4px dashed #000;
     `
@@ -85,73 +102,124 @@ export default function Index() {
         border-top: 4px dashed #000;
     `
 
+    const getAllData = () => {
+        let list = [
+            "NA5202522401",
+            "NXW202522201",
+            "NA5202522402",
+            "NA5202522403",
+            "NA5202522404",
+            "NTCJ20012241",
+            "NTCJ20012242",
+            "NTCJ20012243",
+            "NTCJ20012244",
+            "NTCJ00122401",
+            "NTCJ00122402",
+            "NTCJ00122403",
+            "NTCJ00122404",
+            "PD6662555504",
+        ]
+
+        QueryDevicesDataAll(list).then(res => {
+            state.loading = false
+            res.map((item, index) => {
+                if(item.devSn == 'NA5202522401' && item.response.code == 0){
+                    state.incoming = item.response.data
+                }
+                if(item.devSn == 'NXW202522201' && item.response.code == 0){
+                    state.filtering = item.response.data
+                }
+                if(item.devSn == 'NA5202522402' && item.response.code == 0){
+                    state.feederLine1 = item.response.data
+                }
+                if(item.devSn == 'NA5202522403' && item.response.code == 0){
+                    state.feederLine2 = item.response.data
+                }
+                if(item.devSn == 'NA5202522404' && item.response.code == 0){
+                    state.feederLine3 = item.response.data
+                }
+                if(item.devSn == 'NTCJ20012241' && item.response.code == 0){
+                    state.loopLine1 = item.response.data
+                }
+                if(item.devSn == 'NTCJ20012242' && item.response.code == 0){
+                    state.loopLine2 = item.response.data
+                }
+                if(item.devSn == 'NTCJ20012243' && item.response.code == 0){
+                    state.loopLine3 = item.response.data
+                }
+                if(item.devSn == 'NTCJ20012244' && item.response.code == 0){
+                    state.loopLine4 = item.response.data
+                }
+                if(item.devSn == 'NTCJ00122401' && item.response.code == 0){
+                    state.loopLine5 = item.response.data
+                }
+                if(item.devSn == 'NTCJ00122402' && item.response.code == 0){
+                    state.loopLine6 = item.response.data
+                }
+                if(item.devSn == 'NTCJ00122403' && item.response.code == 0){
+                    state.loopLine7 = item.response.data
+                }
+                if(item.devSn == 'NTCJ00122404' && item.response.code == 0){
+                    state.loopLine8 = item.response.data
+                }
+                if(item.devSn == 'PD6662555504' && item.response.code == 0){
+                    state.loopLine9 = item.response.data
+                }
+            })
+        })
+    }
+
+    useEffect(() => {
+        getAllData()
+    }, [])
+
     return (
-        <div style={{ display: 'flex', alignItems: 'center', position: 'relative' }}>
+        <Spin spinning={state.loading}>
+        <div style={{ display: 'flex', alignItems: 'flex-start', position: 'relative' }}>
             <MainLine></MainLine>
             <MainDashedLine></MainDashedLine>
             <BottomDashedLine></BottomDashedLine>
             <ContentBox>
-                <div className='box_title'>
-                    <span>P1 进线柜</span>
+                <div className='box_title' style={{backgroundColor:'#000', borderRight: '1px solid rgba(0, 153, 204, 1)'}}>
+                    <span>P1</span>
                 </div>
-                <div className='nameItem'>
-                    <div className='item'>进线回路</div>
-                </div>
-                <Incoming></Incoming>
+                <Incoming sn={'NA5202522401'} deviceData={state.incoming}></Incoming>
             </ContentBox>
             <ContentBox>
-                <div className='box_title'>
-                    <span>P2 有源滤波柜</span>
+                <div className='box_title' style={{backgroundColor:'#333', borderRight: '1px solid rgba(0, 153, 204, 1)'}}>
+                    <span>P2</span>
                 </div>
-                <div className='nameItem'>
-                    <div className='item'>滤波回路</div>
-                </div>
-                <Filtering></Filtering>
+                <Filtering sn={'NXW202522201'} deviceData={state.filtering}></Filtering>
             </ContentBox>
             <ContentBox>
-                <div className='box_title'>
-                    <span>P3 馈线柜</span>
-                </div>
-                <div className='nameItem'>
-                    <div className='item'>馈线回路1</div>
-                    <div className='item'>馈线回路2</div>
-                    <div className='item'>馈线回路3</div>
+                <div className='box_title' style={{backgroundColor:'#000', borderRight: '1px solid rgba(0, 153, 204, 1)'}}>
+                    <span>P3</span>
                 </div>
                 <div className='dia_box'>
-                    <FeederLine></FeederLine>
-                    <FeederLine></FeederLine>
-                    <FeederLine></FeederLine>
+                    <FeederLine lineName={'馈线1'} sn={'NA5202522402'} deviceData={state.feederLine1}></FeederLine>
+                    <FeederLine lineName={'馈线2'} sn={'NA5202522403'} deviceData={state.feederLine2}></FeederLine>
+                    <FeederLine lineName={'馈线3'} sn={'NA5202522404'} deviceData={state.feederLine3}></FeederLine>
                 </div>
                 
             </ContentBox>
             <ContentBox>
-                <div className='box_title'>
-                    <span>P4 出线柜</span>
-                </div>
-                <div className='nameItem'>
-                    <div className='item'>出线回路1</div>
-                    <div className='item'>出线回路2</div>
-                    <div className='item'>出线回路3</div>
-                    <div className='item'>出线回路4</div>
-                    <div className='item'>出线回路5</div>
-                    <div className='item'>出线回路6</div>
-                    <div className='item'>出线回路7</div>
-                    <div className='item'>出线回路8</div>
-                    <div className='item'>出线回路9</div>
+                <div className='box_title' style={{backgroundColor:'#333'}}>
+                    <span>P4</span>
                 </div>
                 <div className='dia_box'>
                     
-                    <LoopLine showItem></LoopLine>
-                    <LoopLine ></LoopLine>
-                    <LoopLine showItem></LoopLine>
-                    <LoopLine></LoopLine>
-                    <LoopLine></LoopLine>
-                    <LoopLine></LoopLine>
-                    <LoopLine></LoopLine>
-                    <LoopLine></LoopLine>
-                    <FeederLine></FeederLine>
+                    <LoopLine showItem lineName={'回路1'} sn={'NTCJ20012241'} deviceData={state.loopLine1}></LoopLine>
+                    <LoopLine lineName={'回路2'} sn={'NTCJ20012242'} deviceData={state.loopLine2}></LoopLine>
+                    <LoopLine showItem lineName={'回路3'} sn={'NTCJ20012243'} deviceData={state.loopLine3}></LoopLine>
+                    <LoopLine lineName={'回路4'} sn={'NTCJ20012244'} deviceData={state.loopLine4}></LoopLine>
+                    <LoopLine lineName={'回路5'} sn={'NTCJ00122401'} deviceData={state.loopLine5}></LoopLine>
+                    <LoopLine lineName={'回路6'} sn={'NTCJ00122402'} deviceData={state.loopLine6}></LoopLine>
+                    <LoopLine lineName={'回路7'} sn={'NTCJ00122403'} deviceData={state.loopLine7}></LoopLine>
+                    <LoopLine lineName={'回路8'} sn={'NTCJ00122404'} deviceData={state.loopLine8}></LoopLine>
+                    <LoopLine lineName={'回路9'} sn={'PD6662555504'} deviceData={state.loopLine9}></LoopLine>
                 </div>
             </ContentBox>
         </div>
+        </Spin>
     )
 }
