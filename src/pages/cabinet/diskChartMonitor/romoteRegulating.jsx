@@ -33,12 +33,12 @@ export default function romoteRegulating({laptop}) {
     width: "160px",
   };
   const toptions = [
-    { label: 15, value: 15 },
-    { label: 30, value: 30 },
-    { label: 60, value: 60 },
-    { label: 120, value: 120 },
-    { label: 240, value: 240 },
-    { label: 480, value: 480 },
+    { label: '15S', value: 15 },
+    { label: '30S', value: 30 },
+    { label: '60S', value: 60 },
+    { label: '120S', value: 120 },
+    { label: '240S', value: 240 },
+    { label: '480S', value: 480 },
   ];
   const loptions = [
     { label: "12t", value: 0 },
@@ -47,10 +47,10 @@ export default function romoteRegulating({laptop}) {
     { label: "定时限", value: 3 },
   ];
   const options3 = [
-    { label: 100, value: 100 },
-    { label: 200, value: 200 },
-    { label: 300, value: 300 },
-    { label: 400, value: 400 },
+    { label: '100S', value: 100 },
+    { label: '200S', value: 200 },
+    { label: '300S', value: 300 },
+    { label: '400S', value: 400 },
   ];
   const options4 = [
     { label: "反是限", value: 1 },
@@ -76,98 +76,101 @@ export default function romoteRegulating({laptop}) {
                       max={1.0}
                       step={0.1}
                       style={itemsty}
+                      addonAfter="A"
                     />
                   </Form.Item>
-                  <Form.Item label="长延时时间整定值" name="setTr">
+                  <Form.Item label="长延时时间整定值" name="setTr" initialValue={15}>
                     <Select options={toptions} style={itemsty}></Select>
                   </Form.Item>
-                  <Form.Item label="长延时曲线类型" name="setIrCurve">
+                  <Form.Item label="长延时曲线类型" name="setIrCurve"  initialValue={0}>
                     <Select options={loptions} style={itemsty}></Select>
                   </Form.Item>
                 </Space>
                 <Title level={5}>短延时保护</Title>
-                <Space size={laptop ? "small" : "large"}>
-                  <Form.Item label="短延时电流整定值" name="setIsd">
+                <Space >
+                  <Form.Item label="短延时电流整定值" name="setIsd" initialValue={1.5}>
                     <InputNumber
                       placeholder="1.5-15"
                       min={1.5}
                       max={15}
                       step={0.1}
                       style={itemsty}
+                       addonAfter="A"
                     />
                   </Form.Item>
-                  <Form.Item label="短延时时间整定值" name="setTsd">
+                  <Form.Item label="短延时时间整定值" name="setTsd"  initialValue={100}>
                     <Select options={options3} style={itemsty}></Select>
                   </Form.Item>
-                  <Form.Item label="短延时曲线类型" name="setIsdCurve">
-                    <Select options={options4} style={itemsty}></Select>
+                  <Form.Item label="短延时曲线类型" name="setIsdCurve"  >
+                    <Select options={options4} style={itemsty} disabled></Select>
                   </Form.Item>
                 </Space>
                 <Title level={5}>瞬动保护</Title>
                 <Space size={laptop ? "small" : "large"}>
-                  <Form.Item label="瞬动电流整定值" name="setIi">
+                  <Form.Item label="瞬动电流整定值" name="setIi"  >
                     <InputNumber
                       placeholder="1.5-15"
                       min={1.5}
                       max={15}
                       step={0.1}
                       style={itemsty}
+                      addonAfter="A"
                     />
                   </Form.Item>
-                  <Form.Item label="瞬时电流动作方式" name="setIiMethodh">
-                  <Select options={options5} style={itemsty}></Select>
+                  <Form.Item label="瞬时电流动作方式" name="setIiMethodh"  >
+                  <Select options={options5} style={itemsty} disabled></Select>
                   </Form.Item>
                 </Space>
                 <Title level={5}>接地保护</Title>
                 <Space size={laptop ? "small" : "large"}>
-                  <Form.Item label="接地保护电流整定值" name="setOverIgThr">
-                    <InputNumber min={0} style={itemsty} placeholder='值未确定。待补充' />
+                  <Form.Item label="接地保护电流整定值" name="setOverIgThr"  >
+                    <InputNumber min={0} style={itemsty} disabled placeholder=' ' />
                   </Form.Item>
-                  <Form.Item label="接地保护电流曲线类型" name="setOverIgCurve">
-                    <Select options={options4} style={itemsty}></Select>
+                  <Form.Item label="接地保护电流曲线类型" name="setOverIgCurve"  >
+                    <Select options={options4} style={itemsty} disabled></Select>
                   </Form.Item>
                   <Form.Item label="接地保护电流动作时间" name="setIgTimeOver">
-                  <InputNumber min={0.1} max={0.4} style={itemsty} placeholder='0.1~0.4' />
+                  <InputNumber min={0.1} max={0.4} style={itemsty} placeholder='0.1~0.4' disabled />
                   </Form.Item>
                 </Space>
                 {/* 下面的内容待定 值需要补充 */}
                 <Title level={5}>剩余电流保护</Title>
                 <Space size={laptop ? "small" : "large"}>
-                  <Form.Item label="剩余电流保护阀值" name="setOverResidualCurrentThr">
-                    <InputNumber min={0} style={itemsty} addonAfter="A" />
+                  <Form.Item label="剩余电流保护阀值" name="setOverResidualCurrentThr" >
+                    <InputNumber min={0} style={itemsty} addonAfter="A" disabled />
                   </Form.Item>
                   <Form.Item label="剩余电流保护延迟" name="setOverResidualCurrentTime">
-                    <InputNumber min={0} style={itemsty} addonAfter="ms" />
+                    <InputNumber min={0} style={itemsty} addonAfter="ms" disabled />
                   </Form.Item>
                 </Space>
                 <Title level={5}>欠压保护</Title>
                 <Space size={laptop ? "small" : "large"}>
                   <Form.Item label="欠电压动作阀值整定值" name="setUndervoltageThr">
-                    <InputNumber min={0} style={itemsty} addonAfter="A" />
+                    <InputNumber min={0} style={itemsty} addonAfter="A" disabled />
                   </Form.Item>
                   <Form.Item label="欠电压动作延时时间整定值" name="setUndervoltageTime">
-                    <InputNumber min={0} style={itemsty} addonAfter="S" />
+                    <InputNumber min={0} style={itemsty} addonAfter="S" disabled />
                   </Form.Item>
                   <Form.Item label="欠电压返回阀值整定值" name="setUndervoltageRecoveryThr">
-                    <InputNumber min={0} style={itemsty} addonAfter="A" />
+                    <InputNumber min={0} style={itemsty} addonAfter="A" disabled />
                   </Form.Item>
                   <Form.Item label="欠电压返回延时时间整定值" name="setUndervoltageRecoveryTime">
-                    <InputNumber min={0} style={itemsty} addonAfter="A" />
+                    <InputNumber min={0} style={itemsty} addonAfter="A" disabled />
                   </Form.Item>
                 </Space>
                 <Title level={5}>过压保护</Title>
                 <Space size={laptop ? "small" : "large"}>
                   <Form.Item label="过电压动作阀值整定值" name="setOvervoltageThr">
-                    <InputNumber min={0} style={itemsty} addonAfter="A" />
+                    <InputNumber min={0} style={itemsty} addonAfter="A" disabled />
                   </Form.Item>
                   <Form.Item label="过电压动作延时时间整定值" name="setOvervoltageTime">
-                    <InputNumber min={0} style={itemsty} addonAfter="S" />
+                    <InputNumber min={0} style={itemsty} addonAfter="S" disabled />
                   </Form.Item>
                   <Form.Item label="过电压返回阀值整定值" name="setOvervoltageRecoveryThr">
-                    <InputNumber min={0} style={itemsty} addonAfter="A" />
+                    <InputNumber min={0} style={itemsty} addonAfter="A" disabled />
                   </Form.Item>
                   <Form.Item label="过电压返回延时时间整定值" name="setOvervoltageRecoveryTime">
-                    <InputNumber min={0} style={itemsty} addonAfter="A" />
+                    <InputNumber min={0} style={itemsty} addonAfter="A" disabled />
                   </Form.Item>
                 </Space>
               </Form>

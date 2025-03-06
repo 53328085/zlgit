@@ -1,4 +1,4 @@
-import React, {useState} from 'react'
+import React, {useState, useRef, useEffect} from 'react'
 import styled from 'styled-components'
 import exbg from './exbg.jpg'
 import logo from './log.png'
@@ -72,8 +72,14 @@ const Mainbox=styled.div`
 `
 export default function Index() {
  const [active, setActive] = useState(1)
+ const ref=useRef()
+ useEffect(()=> {
+   if(ref.current) {
+    ref.current.requestFullscreen().catch()
+   }
+ }, [])
   return (
-    <Mainbox>
+    <Mainbox ref={ref}>
       <div className="head">
         <div className="logo"></div>
         <span>NGC8 智能配电柜</span>

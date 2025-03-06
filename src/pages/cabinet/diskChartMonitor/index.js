@@ -84,6 +84,7 @@ export default function Index() {
     deviceType: 1, // 1: 框架断路器 2：塑壳断路器
    
   })
+  const {part} = deviceInfo;
   const [swstate,setSwstate] = useState({})
   const [rState, setRstate] = useState(1);
   const [rsucs, setRsucs] = useState()
@@ -141,7 +142,7 @@ export default function Index() {
  }
 
 
-  const queryDeviceDataAll =async ({name, devSn, type,supsn,breaker=true}) => {
+  const queryDeviceDataAll =async ({name, devSn, type,supsn,breaker=true, part}) => {
       try {
        const sn = type==2 ? supsn : devSn
        if(!sn) return message.warning("缺少设备Sn")
@@ -173,7 +174,8 @@ export default function Index() {
             deviceType:type,
             devSn,
             breaker,
-            state: state || distate
+            state: state || distate,
+            part,
           })
 
           if(NAB8Sn.includes(devSn)) {
@@ -241,21 +243,16 @@ export default function Index() {
       console.log("params", params)
       let delay = (Date.now() - timeout)>10000
       let {success, data} = await QueryServiceResult(params)
-      if(success && isObject(data) && data.state==0) {
-         setRstate(4)
-         setRsucs(success)
-         setSwstate({
-          ...swstate,
-          [devSn]: data.state
-         })
-      }else if(!success && data.state!=0 && count<11 && !delay) {
+       console.log(data)
+       console.log(data.state==0, delay)
+      if(!success && data.state!=0 && count<11 && !delay) {
         console.log("延迟")
          count++
-         getResult(params)
+         getResult(params, devSn)
       }else if(count>10 || delay){
         setRsucs(false)
         setRstate(4)
-        return
+        return 
       }
     } catch (error) {
       console.log(error)
@@ -475,7 +472,7 @@ const disabledDate = (current) => {
 
   },[])
   return (
-    <Pagecount  style={{alignItems: "center"}}>
+    <Pagecount  style={{alignItems: "center", backgroundColor: "transparent"}} >
       <Mainbox>
         <div className="part" key="part1">
           <div className="title" onClick={()=>displaySensor(1)} key="title">
@@ -490,7 +487,7 @@ const disabledDate = (current) => {
             ></CustLink> 
           </div>
           <div className="h3d" key="prateh3d" >
-            <div className="detail" onClick={()=>queryDeviceDataAll({name:"框架断路器  NA8-2500-2500H", type: 1,devSn:"NA5202522401"})}>
+            <div className="detail" onClick={()=>queryDeviceDataAll({name:"框架断路器  NA8-2500-2500H", type: 1,devSn:"NA5202522401", part: 1})}>
               <div className="state">
                 <img src={imgsrc["red"]}></img>
                 <img src={imgsrc["close"]}></img>
@@ -1026,7 +1023,7 @@ const disabledDate = (current) => {
         {/* 遥测 */}
           <Electric datas={deviceData} onClick={onelchart} />
           {/* 遥调 */}
-          {deviceInfo?.deviceType === 1 ? <RomoteRegulatin laptop={laptop} /> : deviceInfo?.deviceType === 2 ? <RomoteRegulatinB laptop={laptop} /> : null} 
+          {deviceInfo?.deviceType === 1 ? <RomoteRegulatin laptop={laptop} part={part} /> : deviceInfo?.deviceType === 2 ? <RomoteRegulatinB laptop={laptop} /> : null} 
           <div className="htitle"> 
             <span>遥控</span>
           </div>
