@@ -19,6 +19,14 @@ const Okt = styled.div`
       margin-right: 16px;
     }
   }
+  .tip {
+    flex:1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding-top: 20px;
+    margin-left: -32px;
+  }
   .pwd {
     display: flex;
     align-items: center;
@@ -27,6 +35,12 @@ const Okt = styled.div`
       flex: 1;
       flex-direction: column;
     }
+  }
+  .suc{
+    display: flex;
+    flex-direction: column;
+    row-gap: 32px;
+    align-items: center;
   }
 `;
 const CDrawer = styled(Drawer)`

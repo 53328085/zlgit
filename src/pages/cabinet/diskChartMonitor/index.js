@@ -72,9 +72,7 @@ export default function Index() {
   const [copen, setCopen] = useState(false);
   const [iopen, setIopen] = useState(false);
   const [elopen, setElopen] = useState(false);
- // const [title, setTitle] = useState("");
-  const [ctitle, setCtitle] = useState("有源滤波回路");
-  const [ititle, setititle] = useState("告警详情");
+ 
   const [eltitle, setEltitle] = useState(""); // 遥测 图表的标题
   const [state, setState] = useState(1); // 1 分闸2故障3正常
   const [iform] = Form.useForm()
@@ -86,7 +84,9 @@ export default function Index() {
     deviceType: 1, // 1: 框架断路器 2：塑壳断路器
    
   })
-  console.log("deviceInfo", deviceInfo)
+  const [swstate,setSwstate] = useState({})
+  const [rState, setRstate] = useState(1);
+  const [rsucs, setRsucs] = useState()
   const modal = useRef();
   const onControl = () => {
     modal.current.onOpen();
@@ -230,12 +230,38 @@ export default function Index() {
        
       } catch (error) {
          console.log(error)
-      }
+      
   }
+}
+  let timeout  = null;
+  let count = 0;
   
- const getResult= async (params)=> {
- 
-   await QueryServiceResult(params)
+ const getResult= async (params, devSn)=> { // 超过10次或超过15秒
+    try {
+      console.log("params", params)
+      let delay = (Date.now() - timeout)>10000
+      let {success, data} = await QueryServiceResult(params)
+      if(success && isObject(data) && data.state==0) {
+         setRstate(4)
+         setRsucs(success)
+         setSwstate({
+          ...swstate,
+          [devSn]: data.state
+         })
+      }else if(!success && data.state!=0 && count<11 && !delay) {
+        console.log("延迟")
+         count++
+         getResult(params)
+      }else if(count>10 || delay){
+        setRsucs(false)
+        setRstate(4)
+        return
+      }
+    } catch (error) {
+      console.log(error)
+    }
+   
+
  }
  const doOpenClose =async ()=> {
     try {
@@ -251,8 +277,11 @@ export default function Index() {
      let {success, data,message:msg} = await DoOpenClose(params)
      if(success) {
       if(!data) return   // message.warning("缺少key")
-        let params = {tm:moment.utc().utcOffset(8).format(),key:data}
-        getResult(params)
+        let post = {tm: moment().format("YYYY-MM-DD HH:mm:ss"),key:data}
+        setRstate(3)
+        timeout = Date.now()
+        getResult(post,devSn)
+        
      }else {
        // message.warning(msg)
      }
@@ -422,21 +451,31 @@ const disabledDate = (current) => {
       }
   }
 
-  const [rState, setRstate] = useState(1);
+ 
 
-  const onOk = () => {
-    if (rState == 1) {
-      setRstate(2);
-    }else if(rState == 2){
-      doOpenClose()
+  const onOk = async () => {
+    try {
+      if (rState == 1) {
+        setRstate(2);
+      }else if(rState == 2){
+        await iform.validateFields() 
+        doOpenClose()
+      }
+    } catch (error) {
+      
     }
+
   };
+  const onCancel=()=> {
+    setRstate(1)
+    modal.current.onCancel();
+  }
   useEffect(()=> {
    // getInitVal()
 
   },[])
   return (
-    <Pagecount>
+    <Pagecount  style={{alignItems: "center"}}>
       <Mainbox>
         <div className="part" key="part1">
           <div className="title" onClick={()=>displaySensor(1)} key="title">
@@ -1017,6 +1056,7 @@ const disabledDate = (current) => {
           ref={modal}
           mold="cust"
           width="592px"
+          onCancel={onCancel}
           onOk={onOk}
         >
           <Okt>
@@ -1027,12 +1067,25 @@ const disabledDate = (current) => {
               </div>
             ) : rState == 2 ? (
               <Form form={iform} className="pwd">
-                <Form.Item label="请输入安全码" name="pwd">
+                <Form.Item label="请输入安全码" name="pwd" rules={[
+                   {required: true},
+                   {
+                    validator: (_, value) => { 
+                       if(value?.trim() == 1) return Promise.resolve()
+                       return Promise.reject(new Error("安全码错误，请核对后重新输入！"))
+                    }
+                   }
+                ]}>
                 <Input></Input>
                 </Form.Item> 
               </Form>
             )
-            : null
+            : rState == 3 ? <div className="tip"><Cspin tip="请求中……" /></div> : (<div className="suc">
+              <img src={rsucs ? imgsrc['sucs'] : imgsrc["error"]} style={{width: "56px", height: "56psx"}}></img>
+              <span>{
+                rsucs ? "远程操作命令下发成功！" : "远程操作命令下发失败！"
+                }</span>
+            </div>)
           } 
           </Okt>
         </Custmodal>
