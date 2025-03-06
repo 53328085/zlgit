@@ -1,6 +1,8 @@
 import React, { useEffect, useState, useRef, useMemo } from "react";
 import moment from "moment";
 import { useSelector } from "react-redux";
+import {useReactive} from 'ahooks'
+import mqtt from 'mqtt'
 import {
   Form,
   Image,
@@ -62,9 +64,194 @@ const { Link, Text, Title } = Typography;
 const { Item } = Descriptions;
 const { RangePicker } = DatePicker;
 const { TextArea } = Input;
+const {QueryDeviceDataAll,QueryDevicesDataAll,DoOpenClose,QueryServiceResult,QueryDevicePointTrend,GetHMIHeart,QueryMqtt} =DiskChart
+const getTemp = (arr) => {
+   console.log(arr)
+   if(Array.isArray(arr) && arr?.length> 0) {
+     return arr.find(a => a.Name=="Temp")?.value
+   }else {
+    return ''
+   }
+}
+const getState = (arr) => {
+  console.log("getState", arr)
+  if(Array.isArray(arr) && arr?.length > 0){
+    return arr.find(a => a.Name=="BrokerStatus")?.Value
+  }else{
+    return NaN;
+  }
+}
+const BreakerS = (arr) => {
+   let state = parseInt(getState(arr))
+  return (
+    <div className="state">
+            {
+              state == 0 ? // 合闸
+              <>
+               <img src={imgsrc["close"]}></img>
+               <img src={imgsrc["green"]}></img>
+              </>
+              : state == 32 ?
+              <>
+              <img src={imgsrc["red"]}></img>
+              <img src={imgsrc["close"]}></img>
+              </>
+              : <>
+                  <img src={imgsrc["close"]}></img>
+                  <img src={imgsrc["close"]}></img>
+              </>
+            }   
+     </div>
+  )
+}
+const getiaData = (arr) => {
+   
+  if(Array.isArray(arr) && arr?.length > 0) {
+    let item =  arr.find(a => a.Name=="Ia");
+     
+    return item?.Value + item?.Unit
+  }else {
+    return ''
+  }
+}
+
+const BreakerSt = ({state}) => {
+   
+ return (
+   <div className="state">
+           {
+             state == 0 ? // 合闸
+             <>
+              <img src={imgsrc["close"]}></img>
+              <img src={imgsrc["green"]}></img>
+             </>
+             : state == 32 ?
+             <>
+             <img src={imgsrc["red"]}></img>
+             <img src={imgsrc["close"]}></img>
+             </>
+             : <>
+                 <img src={imgsrc["close"]}></img>
+                 <img src={imgsrc["close"]}></img>
+             </>
+           }   
+    </div>
+ )
+}
+const Shownum = ({value}) => {
+   return( 
+    <div className="nums">
+    <span className="type">1a</span>
+    <Text>{value}</Text>
+     </div>
+   )
+
+
+}
+const GetIa =({sn})=> {
+  const [values, setValue] =useState({})
+  const getData =async () => {
+    try {
+      let {response} = await QueryDeviceDataAll(sn)
+      let {success, data} = response ||{}
+      console.log(data)
+      if(success && Array.isArray(data) && data?.length > 0) {
+        let item =  data.find(a => a.name=="Ia");
+         let stateitem = data.find(a => a.name =="BrokerStatus") 
+         setValue({
+          value: item?.value + item?.unit,
+          state: parseInt(stateitem?.value)
+         })
+      }
+    } catch (error) {
+      
+    }
+     
+  }
+  useEffect(()=> {
+    if(sn) {
+      
+      getData(sn)
+    }
+  }, [sn])
+   
+  return (
+    <>
+     <Shownum value={values.value} />
+     <BreakerSt state={values.state} />
+  </>
+  )
+}
+const getValue =(data, name)=>{
+   let item = data?.find?.(d=> d.name==name)
+   return item?.value+item?.unit
+}
+const GetP4 =({sn, ck1, ck2}) => {
  
+  const [values, setValue] =useState({})
+  let DI = ["DigitalInstatus1","DigitalInstatus2","DigitalInstatus3"]
+  let dival = values?.find?.(d =>  DI.includes(d.name) && d.value==1)?.name
+  let value = getValue(values,"Ia")
+  let temp = getValue(values,"TempInC") 
+  let text={
+    DigitalInstatus1: "green",
+    DigitalInstatus2: "red",
+    DigitalInstatus3: "close"
+  }[dival]
+  let bashou={
+     DigitalInstatus1: "B正常",
+     DigitalInstatus2: "B分闸",
+     DigitalInstatus3: "B故障"
  
-const {QueryDeviceDataAll,QueryDevicesDataAll,DoOpenClose,QueryServiceResult,QueryDevicePointTrend} =DiskChart
+  } [dival]
+
+    
+
+
+  //const {value, text, bashou, temp} = values
+  const imgn = imgsrc[`${text}`]
+  const imgbs = imgsrc[`${bashou}`]
+  const getData =async (sn) => {
+    try {
+ 
+      let {response} = await QueryDeviceDataAll(sn)
+      let {success, data} = response ||{}
+      
+      if(success && Array.isArray(data) && data?.length > 0) {   
+         setValue(data)
+      }
+    } catch (error) { 
+    }
+     
+  }
+  useEffect(()=> {
+    if(sn) {
+      getData(sn)
+    }
+  },[sn])
+
+  return (
+    <div className="loop1" >  
+    <div className="loopbashou" onClick={ck1}>
+      <img
+        src={imgbs}
+      ></img>
+    </div>
+
+    <img
+      className="state4"
+      src={imgn}
+    ></img>
+
+    <div className="nums" onClick={ck2}>
+      <span className="type">1a</span>
+      <Text>{value}</Text>
+      <Text>{temp}</Text>
+    </div>
+  
+</div>
+  )
+}
 /* 月，年。没有日 */
 export default function Index() {
   const { laptop } = useSelector(adaptation);
@@ -78,12 +265,19 @@ export default function Index() {
   const [iform] = Form.useForm()
   const [snapshot, setSnapshot] = useState([]) // 设备快照
   const [deviceData, setDeviceData] = useState([])
+  const [runtimedata, setRuntimedata] = useState({})
   const [sensor, setSensor] = useState(null)
   const [deviceInfo, setDeviceInfo] =useState({
     deviceName: "", // 设备名称
     deviceType: 1, // 1: 框架断路器 2：塑壳断路器
    
   })
+  let {NTD30S119328, NA5202522401,NTD30S119325, NTD30S119301,NA5202522402,NA5202522403,NA5202522404,   
+    NTD30S119322,
+    NTCJ20012241,NTCJ20012242,NTCJ20012243,NTCJ20012244,      
+    NTCJ00122401,NTCJ00122402,NTCJ00122403,
+   NTCJ00122404,PD6662555504} = runtimedata || {}
+  console.log(runtimedata)
   const {part} = deviceInfo;
   const [swstate,setSwstate] = useState({})
   const [rState, setRstate] = useState(1);
@@ -140,7 +334,144 @@ export default function Index() {
 
 
  }
+// mqtt 获取数据
+const ahstate = useReactive({
+   
+  guid:'',
+  timer:null,
+})
+const sns =[
+  'NTD30S119328', // p1 温度
+  "NA5202522401",
+  "NTD30S119325", // p2 温度
+  "NTD30S119301", // p3 温度
+  "NA5202522402","NA5202522403","NA5202522404",   
+   "NTD30S119322", // p4 温度
+  "NTCJ20012241","NTCJ20012242","NTCJ20012243","NTCJ20012244",      
+  "NTCJ00122401","NTCJ00122402","NTCJ00122403",
+  "NTCJ00122404","PD6662555504"
+]
+const S4 = () => {
+  return (((1 + Math.random()) * 0x10000) | 0).toString(16).substring(1);
+}
+// const guid = () => {
+//     return (S4() + S4() + "-" + S4() + "-" + S4() + "-" + S4() + "-" + S4() + S4() + S4());
+// }
 
+
+
+const getMqtt = (server, topic) => {
+  let options = {
+      clientId: "HMI_" + ahstate.guid,
+      username: "",
+      password: "",
+  }
+  ahstate.client = mqtt.connect('ws://101.133.168.242:9211/wshmi', options)
+  ahstate.client.on("connect", e => {
+    ahstate.client.subscribe(
+          "ws/hmi/runtime",
+          { qos: 0 },
+          (error) => {
+              if (!error) {
+                  console.log("订阅成功");
+                    getHeart();
+              } else {
+                  console.log("订阅失败");
+              }
+          }
+      )
+  })
+
+  // 接收消息处理
+  ahstate.client.on("message", (topic, message) => {
+    
+      let mqttData = JSON.parse(message.toString());
+      if(mqttData?.SN) {
+        setRuntimedata({
+          ...runtimedata,
+          [mqttData.SN]: mqttData.Points
+        })
+      }
+     
+      console.log('接所消息', mqttData)
+      /* if ( mqttData.SN &&  mqttData.SN == 'NA5202522401') {
+          state.incoming = mqttData.Points
+      }
+      if ( mqttData.SN &&  mqttData.SN == 'NXW202522201') {
+          state.filtering = mqttData.Points
+      }
+      if (mqttData.SN &&  mqttData.SN == 'NA5202522402') {
+          state.feederLine1 = mqttData.Points
+      }
+      if (mqttData.SN &&  mqttData.SN == 'NA5202522403') {
+          state.feederLine2 = mqttData.Points
+      }
+      if (mqttData.SN &&  mqttData.SN == 'NA5202522404') {
+          state.feederLine3 = mqttData.Points
+      }
+      if (mqttData.SN &&  mqttData.SN == 'NTCJ20012241') {
+          state.loopLine1 = mqttData.Points
+      }
+      if (mqttData.SN &&  mqttData.SN == 'NTCJ20012242') {
+          state.loopLine2 = mqttData.Points
+      }
+      if (mqttData.SN &&  mqttData.SN == 'NTCJ20012243') {
+          state.loopLine3 = mqttData.Points
+      }
+      if (mqttData.SN &&  mqttData.SN == 'NTCJ20012244') {
+          state.loopLine4 = mqttData.Points
+      }
+      if (mqttData.SN &&  mqttData.SN == 'NTCJ00122401') {
+          state.loopLine5 = mqttData.Points
+      }
+      if (mqttData.SN &&  mqttData.SN == 'NTCJ00122402') {
+          state.loopLine6 = mqttData.Points
+      }
+      if (mqttData.SN &&  mqttData.SN == 'NTCJ00122403') {
+          state.loopLine7 = mqttData.Points
+      }
+      if (mqttData.SN &&  mqttData.SN == 'NTCJ00122404') {
+          state.loopLine8 = mqttData.Points
+      }
+      if ( mqttData.SN &&  mqttData.SN == 'PD6662555504') {
+          state.loopLine9 = mqttData.Points
+      } */
+  });
+  // 断开发起重连
+  ahstate.client.on("reconnect", (error) => {
+      console.log("正在重连:", error);
+  });
+  // 链接异常处理
+  ahstate.client.on("error", (error) => {
+      console.log("连接失败:", error);
+  });
+}
+
+const getHeart = () => {
+  let params = {
+      clientId: "HMI_" + ahstate.guid,
+      devSns: sns
+  }
+  GetHMIHeart(params).then(res => {
+      if(res.success){
+        ahstate.timer = setTimeout(() => {
+              getHeart()
+          }, 120000)
+      }
+  })
+}
+
+useEffect(() => {
+/*   ahstate.guid = S4()
+  QueryMqtt().then(res => {
+      if(res.success){
+          getMqtt(res.data.mqttServer, res.data.topic)
+      }
+  }) */
+
+   
+}, [])
+// mqtt end
 
   const queryDeviceDataAll =async ({name, devSn, type,supsn,breaker=true, part}) => {
    
@@ -524,7 +855,7 @@ const disabledDate = (current) => {
           <div className="title" onClick={()=>displaySensor(1)} key="title">
             <Link>
               <img src={temp} alt="" />
-              温度：28.1
+              {getTemp(NTD30S119328)}
             </Link>
             
             <CustLink
@@ -534,10 +865,11 @@ const disabledDate = (current) => {
           </div>
           <div className="h3d" key="prateh3d" >
             <div className="detail" onClick={()=>queryDeviceDataAll({name:"框架断路器  NA8-2500-2500H", type: 1,devSn:"NA5202522401", part: 1})}>
-              <div className="state">
+            <BreakerS arr={NA5202522401} />
+             {/*  <div className="state">
                 <img src={imgsrc["red"]}></img>
                 <img src={imgsrc["close"]}></img>
-              </div>
+              </div> */}
             </div>
           </div>
         </div>
@@ -545,7 +877,7 @@ const disabledDate = (current) => {
           <div className="title" onClick={()=>displaySensor(2)}>
             <Link>
               <img src={temp} alt="" />
-              温度：28.1
+              {getTemp(NTD30S119325)}
             </Link>
             <CustLink text="details" underline={false}></CustLink>
           </div>
@@ -575,22 +907,23 @@ const disabledDate = (current) => {
           <div className="title" onClick={()=>displaySensor(3)}>
             <Link  >
               <img src={temp} alt="" />
-              温度：28.1
+              {getTemp(NTD30S119301)}
             </Link>
             <CustLink text="details" underline={false}></CustLink>
           </div>
           <div className="kuixians">
             <div className="kuixian" >
             <div className="values" onClick={()=>queryDeviceDataAll({name:"数显多功能表 PD666", devSn: "NA5202522402", part:3})}>
-            <div className="nums">
+            {/* <div className="nums">
               <span className="type">1a</span>
               <Text>25.3A</Text>
-              <Text>48.2°C</Text>
-            </div>
-            <div className="state">
+              
+            </div> */}
+            <GetIa sn="NA5202522402" />
+            {/* <div className="state">
               <img src={imgsrc["red"]}></img>
               <img src={imgsrc["close"]}></img>
-            </div>
+            </div> */}
           </div>
           <div className="guizhi" onClick={()=>queryDeviceDataAll({name:"框架断路器  NA8", devSn: "NA5202522402", part:3})}>
             
@@ -598,7 +931,7 @@ const disabledDate = (current) => {
             </div>
             <div className="kuixian" >
             <div className="values" onClick={()=>queryDeviceDataAll({name:"数显多功能表 PD666", devSn: "NA5202522403", part:3})}>
-            <div className="nums">
+           {/*  <div className="nums">
               <span className="type">1a</span>
               <Text>25.3A</Text>
               <Text>48.2°C</Text>
@@ -606,7 +939,8 @@ const disabledDate = (current) => {
             <div className="state">
               <img src={imgsrc["red"]}></img>
               <img src={imgsrc["close"]}></img>
-            </div>
+            </div> */}
+            <GetIa sn="NA5202522403" />
           </div>
           <div className="guizhi" onClick={()=>queryDeviceDataAll({name:"框架断路器  NA8", devSn: "NA5202522403", part:3})}>
             
@@ -614,15 +948,16 @@ const disabledDate = (current) => {
             </div>
             <div className="kuixian" >
             <div className="values" onClick={()=>queryDeviceDataAll({name:"数显多功能表 PD666", devSn: "NA5202522404", part:3})}>
-            <div className="nums">
+              <GetIa sn="NA5202522404" />
+         {/*    <div className="nums">
               <span className="type">1a</span>
               <Text>25.3A</Text>
               <Text>48.2°C</Text>
-            </div>
-            <div className="state">
+            </div> */}
+            {/* <div className="state">
               <img src={imgsrc["red"]}></img>
               <img src={imgsrc["close"]}></img>
-            </div>
+            </div> */}
           </div>
           <div className="guizhi" onClick={()=>queryDeviceDataAll({name:"框架断路器  NA8", devSn: "NA5202522404", part:3})}>
             
@@ -635,13 +970,14 @@ const disabledDate = (current) => {
           <div className="title" onClick={()=>displaySensor(4)}>
             <Link >
               <img src={temp} alt="" />
-              温度：28.1
+              {getTemp(NTD30S119322)}
             </Link>
             <CustLink text="details" underline={false}></CustLink>
           </div>
           <div className="breaker">
           <div className="loops loops1">
-            <div className="loop1" >  
+            <GetP4  sn="NTCJ20012241"  ck1={()=>queryDeviceDataAll({name:"塑壳断路器  NM8N", devSn: "NTCJ20012241",part:4})} ck2={()=>queryDeviceDataAll({name:"智能接插件NTCJ", devSn: "NTCJ20012241", part:4})} />
+           {/*  <div className="loop1" >  
                 <div className="loopbashou" onClick={()=>queryDeviceDataAll({name:"塑壳断路器  NM8N", devSn: "NTCJ20012241",part:4})}>
                   <img
                     src={
@@ -671,8 +1007,9 @@ const disabledDate = (current) => {
                   <Text>483.2°C</Text>
                 </div>
               
-            </div>
-            <div className="loop1" >   
+            </div> */}
+             <GetP4  sn="NTCJ20012242"  ck1={()=>queryDeviceDataAll({name:"塑壳断路器  NM8N", devSn: "NTCJ20012242",part:4})} ck2={()=>queryDeviceDataAll({name:"智能接插件NTCJ", devSn: "NTCJ20012242", part:4})} />
+           {/*  <div className="loop1" >   
                 <div className="loopbashou" onClick={()=>queryDeviceDataAll({name:"塑壳断路器  NM8N", devSn: "NTCJ20012242",part:4})} >
                   <img
                     src={
@@ -702,8 +1039,9 @@ const disabledDate = (current) => {
                   <Text>283.2°C</Text>
                 </div>
                
-            </div>
-            <div className="loop1" >
+            </div> */}
+             <GetP4  sn="NTCJ20012243"  ck1={()=>queryDeviceDataAll({name:"塑壳断路器  NM8N", devSn: "NTCJ20012243",part:4})} ck2={()=>queryDeviceDataAll({name:"智能接插件NTCJ", devSn: "NTCJ20012243", part:4})} />
+          {/*   <div className="loop1" >
               
                 <div className="loopbashou" onClick={()=>queryDeviceDataAll({name:"塑壳断路器  NM8N", devSn: "NTCJ20012243",part:4})} >
                   <img
@@ -734,8 +1072,9 @@ const disabledDate = (current) => {
                   <Text>283.2°C</Text>
                 </div>
               
-            </div>
-            <div className="loop1" >
+            </div> */}
+             <GetP4  sn="NTCJ20012244"  ck1={()=>queryDeviceDataAll({name:"塑壳断路器  NM8N", devSn: "NTCJ20012244",part:4})} ck2={()=>queryDeviceDataAll({name:"智能接插件NTCJ", devSn: "NTCJ20012244", part:4})} />
+           {/*  <div className="loop1" >
               
                 <div className="loopbashou" onClick={()=>queryDeviceDataAll({name:"塑壳断路器  NM8N", devSn: "NTCJ20012244",part:4})}>
                   <img
@@ -766,7 +1105,7 @@ const disabledDate = (current) => {
                   <Text>283.2°C</Text>
                 </div>
                
-            </div>
+            </div> */}
           </div>
           <div className="loops loops2">
             <div className="loop2" > 
