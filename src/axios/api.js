@@ -35,21 +35,26 @@ export class CustTheme {
 }
 
 
- // 盘面图监控 （lot数据查询）
- export class DiskChart {
-   static prefix='DistributionCabinet/DistributionCabinetAIotRuntime'
+// 盘面图监控 （lot数据查询）
+export class DiskChart {
+  static prefix = 'DistributionCabinet/DistributionCabinetAIotRuntime'
   static QueryDeviceDataAll = (devSn) =>
     server.post(`${DiskChart.prefix}/QueryDeviceDataAll?devSn=${devSn}`); // 获取设备所有属性值
   static QueryDevicesDataAll = (body) =>
     server.post(`${DiskChart.prefix}/QueryDevicesDataAll`, body); // 批量获取设备所有属性值
   static QueryDevicePointTrend = (params) =>
-    server.post(`${DiskChart.prefix}/QueryDevicePointTrend`, null, {params}); // 获取测点历史趋势
-  static DoOpenClose = ({devSn, operation}) =>
+    server.post(`${DiskChart.prefix}/QueryDevicePointTrend`, null, { params }); // 获取测点历史趋势
+  static DoOpenClose = ({ devSn, operation }) =>
     server.post(`${DiskChart.prefix}/DoOpenClose?devSn=${devSn}&operation=${operation}`); // 断路器分合闸
-  static QueryServiceResult = ({tm, key}) =>
+  static QueryServiceResult = ({ tm, key }) =>
     server.post(`${DiskChart.prefix}/QueryServiceResult?startTM=${tm}&resultKey=${key}`); // 断路器分合闸
+  static QueryMqtt = () => 
+    server.get(`${DiskChart.prefix}/QueryMqtt`); //获取mqtt参数
+  static GetHMIHeart = (body) => 
+    server.post(`${DiskChart.prefix}/SendDevicesHeart`, body); //获取mqtt参数
+  
 
- }
+}
 // 电能质量
 export class PowerQuality {
   static DeviceList = (params) =>
@@ -3896,59 +3901,59 @@ export class DistributionCabinet {
     server.get(
       `DistributionCabinet/DistributionSiteOverviewRuntime/QuerySiteOverview`
     ); //站点概述
-    static QuerySiteList = (data) =>
+  static QuerySiteList = (data) =>
     server.get(
       `DistributionCabinet/DistributionLineEnergyRuntime/QuerySiteList`
     ); //站点列表
-    static QuerySiteStructure = (siteId) =>
+  static QuerySiteStructure = (siteId) =>
     server.get(
       `DistributionCabinet/DistributionLineEnergyRuntime/QuerySiteStructure?siteId=${siteId}`
     ); //站点结构
-    static QueryLineMeterReading = (data) =>
+  static QueryLineMeterReading = (data) =>
     server.post(
-      `DistributionCabinet/DistributionMeterReadingRuntime/QueryLineMeterReading`,data
+      `DistributionCabinet/DistributionMeterReadingRuntime/QueryLineMeterReading`, data
     ); //线路抄表
-    static QueryLineEnergy = (data) =>
+  static QueryLineEnergy = (data) =>
     server.post(
-      `DistributionCabinet/DistributionLineEnergyRuntime/QueryLineEnergy`,data
+      `DistributionCabinet/DistributionLineEnergyRuntime/QueryLineEnergy`, data
     ); //回路能耗
-    static QueryTransformerList = (siteId) =>
+  static QueryTransformerList = (siteId) =>
     server.get(
       `DistributionCabinet/DistributionTransformerDiagnosisRuntime/QueryTransformerList?siteId=${siteId}`
     ); //变压器列表DistributionCabinet/DistributionTransformerDiagnosisRuntime/QueryTransformerList?siteId=1
-    static QueryTransformerInformation = (siteId,transformerId) =>
+  static QueryTransformerInformation = (siteId, transformerId) =>
     server.get(
       `DistributionCabinet/DistributionTransformerDiagnosisRuntime/QueryTransformerInformation?siteId=${siteId}&transformerId=${transformerId}`
     ); //变压器信息
-    static QueryTransformerLoadRateRealtime = (data) =>
+  static QueryTransformerLoadRateRealtime = (data) =>
     server.post(
-      `DistributionCabinet/DistributionTransformerDiagnosisRuntime/QueryTransformerLoadRateRealtime`,data
+      `DistributionCabinet/DistributionTransformerDiagnosisRuntime/QueryTransformerLoadRateRealtime`, data
     ); //变压器实时负载率
-    static QueryTransformerUnbalanceRateRealtime = (data) =>
+  static QueryTransformerUnbalanceRateRealtime = (data) =>
     server.post(
-      `DistributionCabinet/DistributionTransformerDiagnosisRuntime/QueryTransformerUnbalanceRateRealtime`,data
+      `DistributionCabinet/DistributionTransformerDiagnosisRuntime/QueryTransformerUnbalanceRateRealtime`, data
     ); //变压器实时不平衡率
-    static QueryCircuitBreakerOverview = (data) =>
+  static QueryCircuitBreakerOverview = (data) =>
     server.post(
-      `DistributionCabinet/DistributionCircuitBreakerDiagnosisRuntime/QueryCircuitBreakerOverview`,data
+      `DistributionCabinet/DistributionCircuitBreakerDiagnosisRuntime/QueryCircuitBreakerOverview`, data
     ); //断路器概览
-    static QueryCircuitBreakerDiagnosis = (data) =>
+  static QueryCircuitBreakerDiagnosis = (data) =>
     server.post(
-      `DistributionCabinet/DistributionCircuitBreakerDiagnosisRuntime/QueryCircuitBreakerDiagnosis`,data
+      `DistributionCabinet/DistributionCircuitBreakerDiagnosisRuntime/QueryCircuitBreakerDiagnosis`, data
     ); //断路器诊断
-    static QueryAlarmOverview = (siteId) =>
+  static QueryAlarmOverview = (siteId) =>
     server.get(
       `DistributionCabinet/DistributionAlarmInformationRuntime/QueryAlarmOverview?siteId=${siteId}`
     ); //告警信息概览
-    static QueryAlarmInformation = (data) =>
+  static QueryAlarmInformation = (data) =>
     server.post(
-      `DistributionCabinet/DistributionAlarmInformationRuntime/QueryAlarmList`,data
+      `DistributionCabinet/DistributionAlarmInformationRuntime/QueryAlarmList`, data
     ); //告警信息列表
-    static QueryAlarmDetail = (alarmId) =>
+  static QueryAlarmDetail = (alarmId) =>
     server.get(
       `DistributionCabinet/DistributionAlarmInformationRuntime/QueryAlarmDetail?alarmId=${alarmId}`
     ); //告警信息详情
-    static ConfirmAlarmState = (alarmId,alarmRecord) =>
+  static ConfirmAlarmState = (alarmId, alarmRecord) =>
     server.post(
       `DistributionCabinet/DistributionAlarmInformationRuntime/ConfirmAlarmState?alarmId=${alarmId}&alarmRecord=${alarmRecord}`
     ); //确认告警状态

@@ -103,7 +103,7 @@ export default function Index(props) {
 
     const getSingleData = () => {
             QueryDeviceDataAll(props.sn).then(res => {
-                if(res && res.response.code == 0 && res.response.data.length >0){
+                if(res && res.response.code == 0 && Array.isArray(res.response.data) && res.response.data.length >0){
                     let deviceData = res.response.data
                     deviceData.map(item => {
                         if (item.name == 'BrokerStatus') {
@@ -139,50 +139,43 @@ export default function Index(props) {
         }
     
         useEffect(() => {
-            // getSingleData()
-            // const timer = setInterval(() => {
-            //     getSingleData()
-    
-            // }, 30000)
-            // return () => {
-            //     clearInterval(timer)
-            // }
+            getSingleData()
         },[])
     
 
-    // useEffect(() => {
-    //     if (props.deviceData.length > 0) {
-    //         props.deviceData.map(item => {
-    //             if (item.name == 'BrokerStatus') {
-    //                 if(item.value == 0){
-    //                     state.status = 'normal'
-    //                     state.onOpen = false
-    //                 }
-    //                 if(item.value == 16){
-    //                     state.status = 'error'
-    //                     state.onOpen = false
-    //                 }
-    //                 if(item.value == 32){
-    //                     state.status = 'normal'
-    //                     state.onOpen = true
-    //                 }
-    //                 if(item.value == 48){
-    //                     state.status = 'error'
-    //                     state.onOpen = true
-    //                 }
-    //             }
-    //             if (item.name == 'Ia') {
-    //                 state.Ia = item.value
-    //             }
-    //             if (item.name == 'Ib') {
-    //                 state.Ib = item.value
-    //             }
-    //             if (item.name == 'Ic') {
-    //                 state.Ic = item.value
-    //             }
-    //         })
-    //     }
-    // }, [])
+    useEffect(() => {
+        if (props.deviceData && props.deviceData.length > 0) {
+            props.deviceData.map(item => {
+                if (item.name == 'BrokerStatus') {
+                    if(item.value == 0){
+                        state.status = 'normal'
+                        state.onOpen = false
+                    }
+                    if(item.value == 16){
+                        state.status = 'error'
+                        state.onOpen = false
+                    }
+                    if(item.value == 32){
+                        state.status = 'normal'
+                        state.onOpen = true
+                    }
+                    if(item.value == 48){
+                        state.status = 'error'
+                        state.onOpen = true
+                    }
+                }
+                if (item.name == 'Ia') {
+                    state.Ia = item.value
+                }
+                if (item.name == 'Ib') {
+                    state.Ib = item.value
+                }
+                if (item.name == 'Ic') {
+                    state.Ic = item.value
+                }
+            })
+        }
+    }, [])
 
     return (
         <DiaBox>
