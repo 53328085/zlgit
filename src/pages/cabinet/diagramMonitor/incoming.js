@@ -16,7 +16,7 @@ import { DiskChart } from "@api/api.js";
 const {QueryDeviceDataAll} =DiskChart
 
 
-export default function Index(props) {
+export default React.memo((props) => {
     const { menusbgcolorR, startColor, endColor, startOpacity, endOpacity } = useSelector(themeColor)
     const state = useReactive({
         showData: true,
@@ -35,33 +35,6 @@ export default function Index(props) {
         padding-right: 48px;
         min-height: 824px;
         position: relative;
-        .click_box{
-            width: 48px;
-            height: 144px;
-            background-color: transparent;
-            position: absolute;
-            left: 224px;
-            top: 152px;
-            cursor: pointer;
-        }
-        .click_box_2{
-            width: 48px;
-            height: 96px;
-            background-color: transparent;
-            position: absolute;
-            left: 110px;
-            bottom: 222px;
-            cursor: pointer;
-        }
-        .click_box_3{
-            width: 48px;
-            height: 96px;
-            background-color: transparent;
-            position: absolute;
-            left: 338px;
-            bottom: 222px;
-            cursor: pointer;
-        }
         .data_box{
             width: 112px;
             /* height: 148px; */
@@ -140,46 +113,53 @@ export default function Index(props) {
     
         useEffect(() => {
             getSingleData()
+            const timer = setInterval(() => {
+                getSingleData()
+    
+            }, 30000)
+            return () => {
+                clearInterval(timer)
+            }
         },[])
     
 
-    useEffect(() => {
-        if (props.deviceData && props.deviceData.length > 0) {
-            props.deviceData.map(item => {
-                if (item.name == 'BrokerStatus') {
-                    if(item.value == 0){
-                        state.status = 'normal'
-                        state.onOpen = false
-                    }
-                    if(item.value == 16){
-                        state.status = 'error'
-                        state.onOpen = false
-                    }
-                    if(item.value == 32){
-                        state.status = 'normal'
-                        state.onOpen = true
-                    }
-                    if(item.value == 48){
-                        state.status = 'error'
-                        state.onOpen = true
-                    }
-                }
-                if (item.name == 'Ia') {
-                    state.Ia = item.value
-                }
-                if (item.name == 'Ib') {
-                    state.Ib = item.value
-                }
-                if (item.name == 'Ic') {
-                    state.Ic = item.value
-                }
-            })
-        }
-    }, [])
+    // useEffect(() => {
+    //     if (props.deviceData && props.deviceData.length > 0) {
+    //         props.deviceData.map(item => {
+    //             if (item.name == 'BrokerStatus') {
+    //                 if(item.value == 0){
+    //                     state.status = 'normal'
+    //                     state.onOpen = false
+    //                 }
+    //                 if(item.value == 16){
+    //                     state.status = 'error'
+    //                     state.onOpen = false
+    //                 }
+    //                 if(item.value == 32){
+    //                     state.status = 'normal'
+    //                     state.onOpen = true
+    //                 }
+    //                 if(item.value == 48){
+    //                     state.status = 'error'
+    //                     state.onOpen = true
+    //                 }
+    //             }
+    //             if (item.name == 'Ia') {
+    //                 state.Ia = item.value
+    //             }
+    //             if (item.name == 'Ib') {
+    //                 state.Ib = item.value
+    //             }
+    //             if (item.name == 'Ic') {
+    //                 state.Ic = item.value
+    //             }
+    //         })
+    //     }
+    // }, [])
 
     return (
         <DiaBox>
-            <img src={state.onOpen1_2 ? open1_2 : close1_2} style={{ width: 114, height: 258, marginTop: 464 }}></img>
+            <img src={close1_2} style={{ width: 114, height: 258, marginTop: 464 }}></img>
             {
                 state.status == 'normal' && state.onOpen == false ? <img src={close1_1} style={onOpenStyle}></img> : null
             }
@@ -187,7 +167,7 @@ export default function Index(props) {
                 state.status == 'normal' && state.onOpen == true ? <img src={open1_1} style={onOpenStyle}></img> : null
             }
 
-            <img src={state.onOpen1_3 ? open1_3 : close1_3} style={{ width: 120, height: 274, marginTop: 464, marginLeft: '-60px' }}></img>
+            <img src={close1_3} style={{ width: 120, height: 274, marginTop: 464, marginLeft: '-60px' }}></img>
             <div className='data_box'>
                 <div className='data_box_title'>进线柜</div>
                 <div className='data_box_item' style={{color:'#ff0'}}>
@@ -216,4 +196,4 @@ export default function Index(props) {
             </div>
         </DiaBox>
     )
-}
+})
