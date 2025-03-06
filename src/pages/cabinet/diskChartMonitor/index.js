@@ -154,13 +154,15 @@ export default function Index() {
        if(success && Array.isArray(data)) {
           
           let NAB8Sn = ["NA5202522401","NA5202522402","NA5202522403","NA5202522404"]
-          let NTCJ2=["NTCJ20012241","NTCJ20012242","NTCJ20012243","NTCJ20012244"] // 
-          let NTCJ=["NTCJ00122401","NTCJ00122402","NTCJ00122403","NTCJ00122404","PD6662555504",]
+          let NTCJ2=["NTCJ20012241","NTCJ20012242","NTCJ20012243","NTCJ20012244","NTCJ00122401","NTCJ00122402","NTCJ00122403","NTCJ00122404","PD6662555504",] // 
+          let NTCJ=[]
           let DI = ["DigitalInstatus1","DigitalInstatus2","DigitalInstatus3"]
           let value = data.find(d => d.name="BrokerStatus")?.value
           let a125=["NTCJ20012241","NTCJ20012242","NTCJ20012243","NTCJ20012244","NTCJ00122401"] // 125A
           let a250=["NTCJ00122402","NTCJ00122403"] // 250A
-          let IA= a125.includes(devSn) ? "125A" : a250.includes(devSn) ? "250A" : devSn=="NTCJ00122404" ? "300A" : devSn=="PD6662555504" ? "630A" : "125A";
+          let IA= ["NTCJ20012241","NTCJ20012242"].includes(devSn) ? "63A" : ["NTCJ20012243","NTCJ20012244"].includes(devSn) 
+          ? "80A" : devSn=="NTCJ00122401" ? "125A" : devSn=="NTCJ00122402" ? "160A" :  devSn=="NTCJ00122403" ? "250A"  : devSn=="NTCJ00122404" ?  "400A" : devSn=="PD6662555504" ? "630A" : null;
+          let protect= ["NTCJ20012241","NTCJ20012242","NTCJ20012243","NTCJ20012244","NTCJ00122401"].includes(devSn) ? "热磁式配电保护" : ["NTCJ00122402","NTCJ00122403","NTCJ00122404","PD6662555504",].includes(devSn) ? "电子式配电保护" :null
           let state = {
             32:"分闸",
             16: "故障",
@@ -213,7 +215,7 @@ export default function Index() {
               },
               {
                 name: "保护类型",
-                value:  "热磁式长延时",
+                value:  protect,
               }
           ])
           }else if(NTCJ.includes(devSn)){
@@ -243,41 +245,32 @@ export default function Index() {
       
   }
 }
-  let timeout  = null;
+  let timerId  = null;
   let count = 0;
-  
- const getResult= async (params, devSn)=> { // 超过10次或超过15秒
+const queryResult = async(params) => {
     try {
-
-      timeout=setTimeout(async ()=> {
-        let {success, data} = await QueryServiceResult(params)
-        count++;
-        if((success && data.state==0) || count > 10){
-          clearTimeout(timeout)
-        }
-      }, [1000])
-
-
-
-      console.log("params", params)
-      let delay = (Date.now() - timeout)>10000
       let {success, data} = await QueryServiceResult(params)
-       console.log(data)
-       console.log(data.state==0, delay)
-      if(!success && data.state!=0 && count<11 && !delay) {
-        console.log("延迟")
-         count++
-         getResult(params, devSn)
-      }else if(count>10 || delay){
+      count++;
+      if((success && data.state==0) || count > 9){
         setRsucs(false)
         setRstate(4)
-        return 
-      }
-    } catch (error) {
-      console.log(error)
-    }
-   
+        clearInterval(timerId)
+        if(data.start == 0 ) {
 
+        }
+      } 
+    } catch (error) {
+      
+    }
+}
+ const getResult= (params)=> { // 超过10次或超过15秒
+    try {
+      timerId=setInterval(()=> {
+        queryResult(params)
+      }, [1000])
+    } catch (error) {
+       console.log(error)
+    } 
  }
  const doOpenClose =async ()=> {
     try {
@@ -294,9 +287,8 @@ export default function Index() {
      if(success) {
       if(!data) return   // message.warning("缺少key")
         let post = {tm: moment().format("YYYY-MM-DD HH:mm:ss"),key:data}
-        setRstate(3)
-        timeout = Date.now()
-        getResult(post,devSn)
+        setRstate(3) 
+        getResult(post)
         
      }else {
        // message.warning(msg)
@@ -356,7 +348,40 @@ export default function Index() {
       },
     },
   ];
-  const dataSource = [
+  const dataSource ={
+   1:[
+    {
+      level: "--",
+      startTime: "--",
+      alarmType: "无告警",
+      state: '',
+    }],
+   2:[
+    {
+      level: "--",
+      startTime: "--",
+      alarmType: "无报警",
+      state: 2,
+    }],
+    3:[
+      {
+        level: 1,
+        startTime:  "2025-02-09 17:45:12",
+        alarmType: "正泰展厅变电站P3柜水平母排温度超限",
+        state: 2,
+      }
+    ],
+    4: [
+      {
+        level: 1,
+        startTime:  "2025-01-02 14:15:38",
+        alarmType: "正泰展厅变电站P4柜回路1断路器异常分闸",
+        state: 2,
+      }
+    ]
+
+  }[part] 
+/*    [
     {
       level: 1,
       startTime: moment().subtract(7, "days").format("yyyy-MM-DD HH:mm:ss"),
@@ -369,7 +394,7 @@ export default function Index() {
       alarmType: "设备离线",
       state: 2,
     },
-  ];
+  ]; */
 
   let eloption = {
     // color: ["#ff7345","#6a6e88"],
@@ -476,6 +501,8 @@ const disabledDate = (current) => {
       }else if(rState == 2){
         await iform.validateFields() 
         doOpenClose()
+      }else if(rState==3 || rState == 4) {
+        modal.current.onCancel();
       }
     } catch (error) {
       
@@ -1082,7 +1109,7 @@ const disabledDate = (current) => {
                 当前状态为{deviceInfo?.state}，确认要进行{deviceInfo?.state=="合闸" ? "远程分闸" :  deviceInfo?.state=="分闸" ? "远程合闸" : ""}操作？
               </div>
             ) : rState == 2 ? (
-              <Form form={iform} className="pwd">
+              <Form form={iform} className="pwd" preserve={false}>
                 <Form.Item label="请输入安全码" name="pwd" rules={[
                    {required: true},
                    {
