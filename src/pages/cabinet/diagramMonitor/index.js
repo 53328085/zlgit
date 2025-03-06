@@ -88,22 +88,25 @@ export default function Index() {
         position: absolute;
         left: 32px;
         top: 122px;
-        width: calc(100% - 64px);
+        width: calc(3910px - 64px);
         border-top: 4px solid #000;
+        z-index: 1;
     `
     const MainDashedLine = styled.div`
         position: absolute;
         left: 32px;
         top: 106px;
-        width: calc(100% - 64px);
+        width: calc(3910px - 64px);
         border-top: 4px dashed #000;
+        z-index: 1;
     `
     const BottomDashedLine = styled.div`
         position: absolute;
         left: 32px;
         bottom: 16px;
-        width: calc(100% - 64px);
+        width: calc(3910px - 64px);
         border-top: 4px dashed #000;
+        z-index: 1;
     `
 
     const getAllData = () => {
@@ -182,7 +185,7 @@ export default function Index() {
     const getMqtt = () => {
         let options = {
             clientId:
-                "HMI_" + guid(),
+                "HMI_" + (((1 + Math.random()) * 0x10000) | 0).toString(16).substring(1),
             username: "",
             password: "",
         }
@@ -229,7 +232,7 @@ export default function Index() {
         //     clearInterval(timer)
         // }
 
-        // getMqtt()
+        getMqtt()
     }, [])
 
     useEffect(() => {
@@ -239,10 +242,11 @@ export default function Index() {
     }, [])
 
     return (
-        <div style={{ display: 'flex', alignItems: 'flex-start', position: 'relative' }}>
+        <div style={{ display: 'flex', alignItems: 'flex-start', position: 'relative', overflowX:'auto' }}>
             <MainLine></MainLine>
             <MainDashedLine></MainDashedLine>
             <BottomDashedLine></BottomDashedLine>
+            <div style={{display: 'flex', alignItems: 'flex-start', position: 'relative', width: 3910}}>
             <ContentBox>
                 <div className='box_title' style={{ backgroundColor: '#000', borderRight: '1px solid rgba(0, 153, 204, 1)' }}>
                     <span>P1</span>
@@ -283,6 +287,7 @@ export default function Index() {
                     <LoopLine lineName={'回路9'} sn={'PD6662555504'} deviceData={state.loopLine9}></LoopLine>
                 </div>
             </ContentBox>
+            </div>
         </div>
     )
 }
