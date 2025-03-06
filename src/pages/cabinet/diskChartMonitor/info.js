@@ -30,18 +30,17 @@ const Mainbox = styled.div`
     }
     }
 `
-const Block = ({title,state}) => {
+const Block = ({name,value}) => {
     return (
             <div className='box'>
-            <div className="title">{title}</div>
+            <div className="title">{name}</div>
             <div className="center">
-                {state}
+                {value}
             </div>
         </div>
     )
 }
-export default function Index({vstate=[]}) {
-    console.log(vstate)
+export default function Index({vstate=[]}) {     
   if(Array.isArray(vstate) && vstate.length > 0) {
     return (
         <Mainbox>

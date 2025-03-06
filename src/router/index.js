@@ -69,6 +69,7 @@ const Comindex = lazy(() => import("./comindex"))
 const Topologytest = lazy(() => import("../pages/topology/test"))
 const DetailIndicators = lazy(() => import("../pages/quota/detailIndicators/index.jsx"))
 const Loopname = lazy(() => import("../pages/distribution/statements/loopname.js"))
+const Diskchart = lazy(() => import("../pages/cabinet/exhibition/index.jsx"))
 import {designerComponents,  designerRoutes} from "./designer";
  
  
@@ -197,6 +198,10 @@ const loginrouter =  [{
     {
       path: "/index/runtimeDistribution/statements/:loopname",
       element: <Loopname />
+    },
+    {
+      path: "/diskchart",
+      element: <Diskchart />
     },
    {
     path: '*',

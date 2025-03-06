@@ -11,6 +11,8 @@ import moment from "moment";
 import { CDrawer, Extrea } from "./comstyle";
 import Ichart from "@com/useEcharts/Ichart";
 import { DiskChart } from "@api/api.js";
+import {nanoid} from "@reduxjs/toolkit"
+import {Cspin} from "@com/comstyled"
 const { Text } = Typography;
 const { RangePicker } = DatePicker;
 const post = {
@@ -39,13 +41,7 @@ const titles = {
   4: "P4温度传感器信息",
 };
 
-const vdata = [
-  Array.from({ length: 24 }, (_, index) =>
-    index > 9 ? `${index}:00` : `0${index}:00`
-  ),
-  Array.from({ length: 24 }, (_, index) => (Math.random() * 100)?.toFixed(2)),
-  Array.from({ length: 24 }, (_, index) => (Math.random() * 100)?.toFixed(2)),
-];
+ 
 const { QueryDevicesDataAll, QueryDevicePointTrend } = DiskChart;
 
 const temparr = [
@@ -53,7 +49,7 @@ const temparr = [
         [
             {NTD30S119328:  "水平排 A相温度"},
             {NTD30S119329:  "水平排 B相温度"},
-            {NTD30S119330:  "水平排 B相温度"},
+            {NTD30S119330:  "水平排 C相温度"},
         ],
         [
             {NTD30S119331:  "上口 A相温度"},
@@ -70,55 +66,57 @@ const temparr = [
         [
             {NTD30S119325:  "水平排 A相温度"},
             {NTD30S119326:  "水平排 B相温度"},
-            {NTD30S119327:  "水平排 B相温度"},
+            {NTD30S119327:  "水平排 C相温度"},
         ], 
     ],
     [
     [
         {NTD30S119301:  "水平排 A相温度"},
         {NTD30S119302:  "水平排 B相温度"},
-        {NTD30S119303:  "水平排 B相温度"},
+        {NTD30S119303:  "水平排 C相温度"},
     ],
     [
-        {NTD30S119304:  "馈线1上 A相温度"},
-        {NTD30S119305:  "馈线1上 B相温度"},
-        {NTD30S119306:  "馈线1上 C相温度"},
+        {NTD30S119304:  "馈线1 进线A相温度"},
+        {NTD30S119305:  "馈线1 进线B相温度"},
+        {NTD30S119306:  "馈线1 进线C相温度"},
     ],
     [
-        {NTD30S119307:  "馈线1下 A相温度"},
-        {NTD30S119308:  "馈线1下 B相温度"},
-        {NTD30S119309:  "馈线1下 C相温度"},
+        {NTD30S119307:  "馈线1 出线A相温度"},
+        {NTD30S119308:  "馈线1 出线B相温度"},
+        {NTD30S119309:  "馈线1 出线C相温度"},
     ],
     [
-        {NTD30S119310:  "馈线2上 A相温度"},
-        {NTD30S119311:  "馈线2上 B相温度"},
-        {NTD30S119312:  "馈线2上 C相温度"},
+        {NTD30S119310:  "馈线2 进线A相温度"},
+        {NTD30S119311:  "馈线2 进线B相温度"},
+        {NTD30S119312:  "馈线2 进线C相温度"},
     ],
     [
-        {NTD30S119313:  "馈线2下 A相温度"},
-        {NTD30S119314:  "馈线2下 B相温度"},
-        {NTD30S119315:  "馈线2下 C相温度"},
+        {NTD30S119313:  "馈线2 出线A相温度"},
+        {NTD30S119314:  "馈线2 出线B相温度"},
+        {NTD30S119315:  "馈线2 出线C相温度"},
     ],
     [
-        {NTD30S119316:  "馈线3上 A相温度"},
-        {NTD30S119317:  "馈线3上 B相温度"},
-        {NTD30S119318:  "馈线3上 C相温度"},
+        {NTD30S119316:  "馈线3 进线A相温度"},
+        {NTD30S119317:  "馈线3 进线B相温度"},
+        {NTD30S119318:  "馈线3 进线C相温度"},
     ],
     [
-        {NTD30S119319:  "馈线3下 A相温度"},
-        {NTD30S119320:  "馈线3下 B相温度"},
-        {NTD30S119321:  "馈线3下 C相温度"},
+        {NTD30S119319:  "馈线3 出线A相温度"},
+        {NTD30S119320:  "馈线3 出线B相温度"},
+        {NTD30S119321:  "馈线3 出线C相温度"},
     ]
     ],
     [
         [
             {NTD30S119322:  "水平排 A相温度"},
             {NTD30S119323:  "水平排 B相温度"},
-            {NTD30S119324:  "水平排 B相温度"},
+            {NTD30S119324:  "水平排 C相温度"},
         ], 
     ]
 ]
-
+const disabledDate = (current) => { 
+    return current && current > moment().endOf('day');
+  };
 const Chart = ({temps, TempData, moption}) => {
     return (
         <div className="charts">
@@ -133,52 +131,78 @@ const Chart = ({temps, TempData, moption}) => {
         
         </div>
         <div className="chart">
-          <Ichart {...moption} />
+          {moption ? <Ichart {...moption} /> : <Cspin  tip="数据加载中……"/> }    
         </div>
       </div>
     )
 }
-const Temppart = ({ temptype, moption={}, TempData }) => {
+const Temppart = ({ temptype, moptions=[], TempData}) => {
   let arrt=temparr[temptype] || []
-  console.log(temptype)
+  console.log(moptions)
   return(
     <>
     {
-       arrt.map(arr=> <Chart temps={arr} TempData={TempData} moption={moption} /> )
+       arrt.map((arr,i)=> <Chart temps={arr} TempData={TempData} moption={moptions[i]} key={nanoid()} /> )
     }
     </> 
   )
  
 };
-
+let moption = {
+    series: [
+      { type: "line", seriesLayoutBy: "row" },
+      { type: "line", seriesLayoutBy: "row"},
+      { type: "line", seriesLayoutBy: "row"},
+    ],
+    grid: {
+      right: "32px",
+      left: 0,
+      top: "32px",
+      bottom: 0,
+      containLabel: true,
+    },
+    legend: {
+      top: "0px",
+      left: "32px",
+    },
+    yAxis: [
+      {
+        axisLabel: {
+          formatter: "{value}°C",
+        },
+      } 
+    ],
+    
+  };
 function Index(props, ref) {
   const [form] = Form.useForm();
   const [title, setTitle] = useState("");
   const [open, setOpen] = useState(false);
   const [temptype, setTemptype] = useState();
   const [TempData, setTempData] = useState({});
-  const [dates, setDates] = useState([moment().startOf("day"), moment()]);
+   
   const format = "YYYY-MM-DD";
   const formatTime = "YYYY-MM-DD HH:mm:ss";
-  
-  const getPointTrend = async () => {
+  const [moptions, setMoptions] = useState([])
+   
+  const getPointTrend = async (type) => {
     try {
+      
       let values = form.getFieldsValue(true);
-      let { dateType = "date", date = moment() } = values || {};
+      
+      let { dateType = "date", time= moment() } = values || {};
+      
       let start, end;
-      if (dateType !== "cust") {
-        if (dateType != "date") {
-          start = moment().startOf(dateType).format(format) + " 00:00:00";
-          end = moment().format(formatTime);
-        } else {
-          start = date.format(format) + " 00:00:00";
-          end = date.format(formatTime);
-        }
+      if (dateType !== "cust") { 
+          start = time.startOf(dateType).format(format) + " 00:00:00";
+          end = time.endOf(dateType).format(formatTime); 
       } else if (dateType == "cust") {
-        start = date?.[0]?.format(format) + " 00:00:00";
-        end = date?.[1]?.format(formatTime);
+        start = time?.[0]?.format(format) + " 00:00:00";
+        end = time?.[1]?.format(formatTime);
       }
-      let params = post[1].map((p) => ({
+      let  ids = type==1  ? post[type].slice(0, 9) : post[type]; 
+      
+      let params = ids.map((p) => ({
         devSn: p,
         point: "Temp",
         start,
@@ -186,6 +210,39 @@ function Index(props, ref) {
       }));
       let promises = params.map((p) => QueryDevicePointTrend(p));
       const allData = await Promise.allSettled(promises);
+      const len = allData.length / 3;
+      const split = []
+      let i=0;
+      for(i; i<len; i++){
+         split.push(allData.slice(i*3, (i+1)*3))
+      }
+      let options=[]
+      split.forEach((arr, idx)=>{
+        let x, source=[];
+        arr.forEach((datas, index)=> {
+           let {status, value} = datas
+           let {success, data} = value || {}
+           
+           if(status=="fulfilled" && success && Array.isArray(data)&& data?.length > 0) {
+              if(!x) {
+                 x=data.map(d => d.x)
+                 source[0] =x;
+              }
+              source[index+1] = data.map(d=>d.y)
+           }else {
+               source[index+1] = [];
+           }
+       }) 
+       
+       options[idx] = {...moption, dataset: {
+        dimensions: ["time","A相温度","B相温度", "C相温度"],
+        source: source,
+        sourceHeader: false,
+      },}
+     }) 
+     
+     setMoptions([...options])
+   
     } catch (error) {
       console.log(error);
     }
@@ -224,9 +281,9 @@ function Index(props, ref) {
         });
 
         setTempData(tempdata);
+        getPointTrend(type)
+        setTitle(mtitle);       
         setOpen(true);
-        setTitle(mtitle);
-        getPointTrend();
       } else {
         setTitle(mtitle);
         setOpen(true);
@@ -235,53 +292,15 @@ function Index(props, ref) {
     } catch (error) {}
   };
 
-  let moption = {
-    series: [
-      { type: "line", seriesLayoutBy: "row", yAxisIndex: 0, name: "温度" },
-      { type: "line", seriesLayoutBy: "row", yAxisIndex: 1, name: "湿度" },
-    ],
-    grid: {
-      right: "32px",
-      left: 0,
-      top: "32px",
-      bottom: 0,
-      containLabel: true,
-    },
-    legend: {
-      top: "0px",
-      left: "32px",
-    },
-    yAxis: [
-      {
-        axisLabel: {
-          formatter: "{value}°C",
-        },
-      },
-      {
-        name: "环境湿度",
-        nameLocation: "center",
-        nameGap: 64,
-        position: "right",
-        axisLabel: {
-          formatter: "{value}%HR",
-        },
-      },
-    ],
-    dataset: {
-      dimensions: [
-        { name: "时间", type: "time" },
-        { name: "温度" },
-        { name: "湿度" },
-      ],
-      source: vdata,
-      sourceHeader: false,
-    },
-  };
+  const onValuesChange = ()=> { 
+    setMoptions([])
+     getPointTrend(temptype)
+  }
   const changeType = (v) => {
-    if (v == "date") {
-      form.setFieldValue("date", moment());
-    } else if (v == "cust") {
-      form.setFieldValue("date", [moment().subtract(1, "day"), moment()]);
+    if (v !="cust") {
+      form.setFieldValue("time", moment());
+    } else  {
+      form.setFieldValue("time", [moment().subtract(1, "day"), moment()]);
     }
   };
   useImperativeHandle(ref, () => ({
@@ -329,36 +348,38 @@ function Index(props, ref) {
         )}
         <div className="time">
           <span>温度传感器</span>
-          <Form form={form} onValuesChange={getPointTrend}>
+          <Form form={form} onValuesChange={onValuesChange} preserve={false}>
             <Space size={16}>
               <Form.Item
                 label="时间查询"
                 name="dateType"
                 labelCol={{ flex: "5em" }}
                 initialValue="date"
-              >
-                <Select style={{ width: "100px" }} onChange={changeType}>
-                  <Select.Option value="date">日</Select.Option>
-                  <Select.Option value="month">月</Select.Option>
-                  <Select.Option value="year">年</Select.Option>
-                  <Select.Option value="cust">自定义</Select.Option>
-                </Select>
-              </Form.Item>
+              ><Select style={{ width: "100px" }} onChange={changeType} options={[
+                    {value: "date", label:"日"},
+                    {value: "month", label:"月"},
+                    {value: "year", label:"年"},
+                    {value: "cust", label:"自定义"}
+
+                ]} />
+                </Form.Item>
               <Form.Item noStyle shouldUpdate>
                 {({ getFieldValue }) => {
                   let picker = getFieldValue("dateType");
                   return (
-                    <Form.Item name="date" initialValue={moment()}>
+                    <Form.Item name="time" initialValue={moment()}>
                       {picker != "cust" ? (
                         <DatePicker
                           picker={picker}
                           style={{ width: "288px" }}
                           key="date"
+                          disabledDate={disabledDate}
                         ></DatePicker>
                       ) : (
                         <RangePicker
                           style={{ width: "288px" }}
                           format="YYYY-MM-DD"
+                          disabledDate={disabledDate}
                           key="rangedate"
                         ></RangePicker>
                       )}
@@ -369,7 +390,7 @@ function Index(props, ref) {
             </Space>
           </Form>
         </div> 
-        <Temppart temptype={parseInt(temptype) - 1}  TempData={TempData} moption={moption} /> 
+        <Temppart temptype={parseInt(temptype) - 1}  TempData={TempData} moptions={moptions} /> 
       </div>
     </CDrawer>
   );
