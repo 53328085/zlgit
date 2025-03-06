@@ -11,7 +11,7 @@ import { DiskChart } from "@api/api.js";
 
 import mqtt from 'mqtt'
 
-const { QueryDeviceDataAll, QueryDevicesDataAll, DoOpenClose, QueryServiceResult, QueryDevicePointTrend } = DiskChart
+const { QueryDevicesDataAll, QueryMqtt, GetHMIHeart } = DiskChart
 
 
 import styled from "styled-components";
@@ -35,8 +35,26 @@ export default function Index() {
         loopLine7: [],
         loopLine8: [],
         loopLine9: [],
-        count: 0
+        guid:'',
+        timer:null,
     })
+
+    const sns = [
+        "NA5202522401",
+        "NXW202522201",
+        "NA5202522402",
+        "NA5202522403",
+        "NA5202522404",
+        "NTCJ20012241",
+        "NTCJ20012242",
+        "NTCJ20012243",
+        "NTCJ20012244",
+        "NTCJ00122401",
+        "NTCJ00122402",
+        "NTCJ00122403",
+        "NTCJ00122404",
+        "PD6662555504",
+    ]
 
     const ContentBox = styled.div`
         min-width: 260px;
@@ -110,23 +128,6 @@ export default function Index() {
     `
 
     const getAllData = () => {
-        let list = [
-            "NA5202522401",
-            "NXW202522201",
-            "NA5202522402",
-            "NA5202522403",
-            "NA5202522404",
-            "NTCJ20012241",
-            "NTCJ20012242",
-            "NTCJ20012243",
-            "NTCJ20012244",
-            "NTCJ00122401",
-            "NTCJ00122402",
-            "NTCJ00122403",
-            "NTCJ00122404",
-            "PD6662555504",
-        ]
-
         QueryDevicesDataAll(list).then(res => {
             // state.loading = false
             res.map((item, index) => {
@@ -178,26 +179,28 @@ export default function Index() {
     const S4 = () => {
         return (((1 + Math.random()) * 0x10000) | 0).toString(16).substring(1);
     }
-    const guid = () => {
-        return (S4() + S4() + "-" + S4() + "-" + S4() + "-" + S4() + "-" + S4() + S4() + S4());
-    }
+    // const guid = () => {
+    //     return (S4() + S4() + "-" + S4() + "-" + S4() + "-" + S4() + "-" + S4() + S4() + S4());
+    // }
 
-    const getMqtt = () => {
+    
+
+    const getMqtt = (server, topic) => {
         let options = {
             clientId:
-                "HMI_" + (((1 + Math.random()) * 0x10000) | 0).toString(16).substring(1),
+                "HMI_" + state.guid,
             username: "",
             password: "",
         }
-        state.client = mqtt.connect('ws://101.133.168.242:9211/ws/hmi/runtime', options)
+        state.client = mqtt.connect('ws://101.133.168.242:9211/wshmi', options)
         state.client.on("connect", e => {
             state.client.subscribe(
-                "hmi/mqtt/report/#",
+                "ws/hmi/runtime",
                 { qos: 0 },
                 (error) => {
                     if (!error) {
                         console.log("订阅成功");
-                        //   getHeart(HMIDevices);
+                          getHeart();
                     } else {
                         console.log("订阅失败");
                     }
@@ -209,8 +212,48 @@ export default function Index() {
         state.client.on("message", (topic, message) => {
             console.log('接所消息')
             let mqttData = JSON.parse(message.toString());
-
-            console.log(mqttData)
+            if ( mqttData.SN &&  mqttData.SN == 'NA5202522401') {
+                state.incoming = mqttData.Points
+            }
+            if ( mqttData.SN &&  mqttData.SN == 'NXW202522201') {
+                state.filtering = mqttData.Points
+            }
+            if (mqttData.SN &&  mqttData.SN == 'NA5202522402') {
+                state.feederLine1 = mqttData.Points
+            }
+            if (mqttData.SN &&  mqttData.SN == 'NA5202522403') {
+                state.feederLine2 = mqttData.Points
+            }
+            if (mqttData.SN &&  mqttData.SN == 'NA5202522404') {
+                state.feederLine3 = mqttData.Points
+            }
+            if (mqttData.SN &&  mqttData.SN == 'NTCJ20012241') {
+                state.loopLine1 = mqttData.Points
+            }
+            if (mqttData.SN &&  mqttData.SN == 'NTCJ20012242') {
+                state.loopLine2 = mqttData.Points
+            }
+            if (mqttData.SN &&  mqttData.SN == 'NTCJ20012243') {
+                state.loopLine3 = mqttData.Points
+            }
+            if (mqttData.SN &&  mqttData.SN == 'NTCJ20012244') {
+                state.loopLine4 = mqttData.Points
+            }
+            if (mqttData.SN &&  mqttData.SN == 'NTCJ00122401') {
+                state.loopLine5 = mqttData.Points
+            }
+            if (mqttData.SN &&  mqttData.SN == 'NTCJ00122402') {
+                state.loopLine6 = mqttData.Points
+            }
+            if (mqttData.SN &&  mqttData.SN == 'NTCJ00122403') {
+                state.loopLine7 = mqttData.Points
+            }
+            if (mqttData.SN &&  mqttData.SN == 'NTCJ00122404') {
+                state.loopLine8 = mqttData.Points
+            }
+            if ( mqttData.SN &&  mqttData.SN == 'PD6662555504') {
+                state.loopLine9 = mqttData.Points
+            }
         });
         // 断开发起重连
         state.client.on("reconnect", (error) => {
@@ -222,17 +265,29 @@ export default function Index() {
         });
     }
 
+    const getHeart = () => {
+        let params = {
+            clientId: "HMI_" + state.guid,
+            devSns: sns
+        }
+        GetHMIHeart(params).then(res => {
+            if(res.success){
+                state.timer = setTimeout(() => {
+                    getHeart()
+                }, 120000)
+            }
+        })
+    }
+
     useEffect(() => {
-        // getAllData()
-        // const timer = setInterval(() => {
-        //     getAllData()
+        state.guid = S4()
+        QueryMqtt().then(res => {
+            if(res.success){
+                getMqtt(res.data.mqttServer, res.data.topic)
+            }
+        })
 
-        // }, 10000)
-        // return () => {
-        //     clearInterval(timer)
-        // }
-
-        getMqtt()
+        // getMqtt()
     }, [])
 
     useEffect(() => {
