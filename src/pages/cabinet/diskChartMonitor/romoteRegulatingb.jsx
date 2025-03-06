@@ -27,7 +27,7 @@ import {
      
   } from "@com/useButton";
 const {Title} = Typography
-export default function romoteRegulating({laptop}) {
+export default function romoteRegulating({deviceData}) {
   const [form] = Form.useForm();
   const itemsty = {
     width: "160px",
@@ -61,15 +61,28 @@ export default function romoteRegulating({laptop}) {
     { label: "峰值", value: 0 },
     { label: "有效值", value: 1 },
   ];
+  useEffect(()=> {
+    if(Array.isArray(deviceData)&& deviceData.length > 0) {
+      let formdata = {}
+       deviceData.forEach(d => {
+         formdata[d.name]=parseFloat(d.value)
+       })
+      
+      form.setFieldsValue({...formdata})
+    }else {
+      form.resetFields()
+    }
+
+  }, [deviceData])
   return (
     <>
      <div className="htitle">
                 <span>遥调</span>
-                <CustButton style={{ marginRight: "-16px" }}>保存参数</CustButton>
+               
               </div>
               <Form form={form} layout="vertical">
                 <Title level={5}>长延时保护</Title>
-                <Space size={laptop ? "small" : "large"}>
+                <Space size="large">
                   <Form.Item label="保护类型" name="protect_type" initialValue={2}>
                   <Select options={toptions} style={itemsty} disabled ></Select>
                   </Form.Item>
@@ -81,7 +94,7 @@ export default function romoteRegulating({laptop}) {
                   </Form.Item>
                 </Space>              
                 <Title level={5}>瞬动保护</Title>
-                <Space size={laptop ? "small" : "large"}>
+                <Space size="large">
                   <Form.Item label="保护类型" name="structType">
                   <Select options={toptions} style={itemsty} disabled ></Select>
                   </Form.Item>

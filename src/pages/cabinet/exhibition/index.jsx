@@ -73,14 +73,47 @@ const Mainbox=styled.div`
 export default function Index() {
  const [active, setActive] = useState(1)
  const ref=useRef()
+ let isForcedFullscreen = useRef(false);
+ function autoFullscreen() {
+  const element = document.documentElement;
+  if (element.requestFullscreen) {
+      element.requestFullscreen().catch(err => {
+          console.error('全屏请求失败:', err);
+      });
+  } else if (element.mozRequestFullScreen) { // Firefox
+      element.mozRequestFullScreen();
+      isForcedFullscreen.current=true
+  } else if (element.webkitRequestFullscreen) { // Chrome/Safari
+      element.webkitRequestFullscreen();
+  } else if (element.msRequestFullscreen) { // IE/Edge
+      element.msRequestFullscreen();
+  }
+  isForcedFullscreen.current=true
+}
  useEffect(()=> {
-   if(ref.current) {
-    ref.current.requestFullscreen().catch()
-   }
+ 
+autoFullscreen();
+document.addEventListener('fullscreenchange', () => {
+    if (!document.fullscreenElement && isForcedFullscreen.current) {
+        const elem = document.documentElement;
+        console.log(elem)
+        elem.requestFullscreen().catch(() => {}); // 强制恢复全屏‌:ml-citation{ref="1,5" data="citationList"}
+    }
+});
+document.addEventListener('keydown', (e) => {
+  if(isForcedFullscreen.current) {
+    if (e.key === 'Escape' || e.keyCode === 122) { // 122 是 F11 键码
+      e.preventDefault();
+      return false
+  }
+  }
+
+})
+  
  }, [])
   return (
-    <Mainbox ref={ref}>
-      <div className="head">
+    <Mainbox onClick={autoFullscreen} ref={ref}>
+      <div className="head"  >
         <div className="logo"></div>
         <span>NGC8 智能配电柜</span>
         <div className='btns'>

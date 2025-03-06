@@ -1,6 +1,6 @@
 // 遥调 框架断路器  NA8-2500-2500H
 
-import React from 'react'
+import React , {useEffect} from 'react'
 import {
     Form,
     Image,
@@ -27,7 +27,7 @@ import {
      
   } from "@com/useButton";
 const {Title} = Typography
-export default function romoteRegulating({laptop}) {
+export default function romoteRegulating({deviceData}) {
   const [form] = Form.useForm();
   const itemsty = {
     width: "160px",
@@ -60,6 +60,19 @@ export default function romoteRegulating({laptop}) {
     { label: "峰值", value: 0 },
     { label: "有效值", value: 1 },
   ];
+  useEffect(()=> {
+    if(Array.isArray(deviceData)&& deviceData.length > 0) {
+      let formdata = {}
+       deviceData.forEach(d => {
+         formdata[d.name]=parseFloat(d.value)
+       })
+      
+      form.setFieldsValue({...formdata})
+    }else {
+      form.resetFields()
+    }
+
+  }, [deviceData])
   return (
     <>
      <div className="htitle">
@@ -68,15 +81,11 @@ export default function romoteRegulating({laptop}) {
               </div>
               <Form form={form} layout="vertical">
                 <Title level={5}>长延时保护</Title>
-                <Space size={laptop ? "small" : "large"}>
-                  <Form.Item label="长延时电流整定值" name="setIr">
-                    <InputNumber
-                      placeholder="0.4-1.0"
-                      min={0.4}
-                      max={1.0}
-                      step={0.1}
+                <Space size="large">
+                  <Form.Item label="长延时电流整定值(A)" name="setIgTimeOver">
+                    <InputNumber 
+                       placeholder="" 
                       style={itemsty}
-                      addonAfter="A"
                     />
                   </Form.Item>
                   <Form.Item label="长延时时间整定值" name="setTr" initialValue={15}>
@@ -88,40 +97,35 @@ export default function romoteRegulating({laptop}) {
                 </Space>
                 <Title level={5}>短延时保护</Title>
                 <Space >
-                  <Form.Item label="短延时电流整定值" name="setIsd" initialValue={1.5}>
+                  <Form.Item label="短延时电流整定值(A)" name="setIsd" initialValue={1.5}>
                     <InputNumber
-                      placeholder="1.5-15"
-                      min={1.5}
-                      max={15}
-                      step={0.1}
+                      placeholder="" 
                       style={itemsty}
-                       addonAfter="A"
+                        
                     />
                   </Form.Item>
                   <Form.Item label="短延时时间整定值" name="setTsd"  initialValue={100}>
                     <Select options={options3} style={itemsty}></Select>
                   </Form.Item>
-                  <Form.Item label="短延时曲线类型" name="setIsdCurve"  >
+                {/*   <Form.Item label="短延时曲线类型" name="setIsdCurve"  >
                     <Select options={options4} style={itemsty} disabled></Select>
-                  </Form.Item>
+                  </Form.Item> */}
                 </Space>
                 <Title level={5}>瞬动保护</Title>
-                <Space size={laptop ? "small" : "large"}>
-                  <Form.Item label="瞬动电流整定值" name="setIi"  >
+                <Space size="large">
+                  <Form.Item label="瞬动电流整定值(A)" name="setIi"  >
                     <InputNumber
-                      placeholder="1.5-15"
-                      min={1.5}
-                      max={15}
-                      step={0.1}
+                      placeholder=""
+                     
                       style={itemsty}
-                      addonAfter="A"
+                       
                     />
                   </Form.Item>
-                  <Form.Item label="瞬时电流动作方式" name="setIiMethodh"  >
+                 {/*  <Form.Item label="瞬时电流动作方式" name="setIiMethodh"  >
                   <Select options={options5} style={itemsty} disabled></Select>
-                  </Form.Item>
+                  </Form.Item> */}
                 </Space>
-                <Title level={5}>接地保护</Title>
+              {/*   <Title level={5}>接地保护</Title>
                 <Space size={laptop ? "small" : "large"}>
                   <Form.Item label="接地保护电流整定值" name="setOverIgThr"  >
                     <InputNumber min={0} style={itemsty} disabled placeholder=' ' />
@@ -133,7 +137,7 @@ export default function romoteRegulating({laptop}) {
                   <InputNumber min={0.1} max={0.4} style={itemsty} placeholder='0.1~0.4' disabled />
                   </Form.Item>
                 </Space>
-                {/* 下面的内容待定 值需要补充 */}
+              
                 <Title level={5}>剩余电流保护</Title>
                 <Space size={laptop ? "small" : "large"}>
                   <Form.Item label="剩余电流保护阀值" name="setOverResidualCurrentThr" >
@@ -172,7 +176,7 @@ export default function romoteRegulating({laptop}) {
                   <Form.Item label="过电压返回延时时间整定值" name="setOvervoltageRecoveryTime">
                     <InputNumber min={0} style={itemsty} addonAfter="A" disabled />
                   </Form.Item>
-                </Space>
+                </Space> */}
               </Form>
     </>
   )
