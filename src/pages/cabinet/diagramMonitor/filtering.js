@@ -9,7 +9,7 @@ import { DiskChart } from "@api/api.js";
 
 const {QueryDeviceDataAll} =DiskChart
 
-export default function Index(props) {
+export default React.memo((props) => {
 
     const state = useReactive({
         showData: false,
@@ -87,24 +87,30 @@ export default function Index(props) {
     
         useEffect(() => {
             getSingleData()
-
+            const timer = setInterval(() => {
+                getSingleData()
+    
+            }, 30000)
+            return () => {
+                clearInterval(timer)
+            }
         },[])
 
-    useEffect(() => {
-        if (props.deviceData && props.deviceData.length > 0) {
-            props.deviceData.map(item => {
-                if (item.name == 'Ia') {
-                    state.Ia = item.value
-                }
-                if (item.name == 'Ib') {
-                    state.Ib = item.value
-                }
-                if (item.name == 'Ic') {
-                    state.Ic = item.value
-                }
-            })
-        }
-    }, [])
+    // useEffect(() => {
+    //     if (props.deviceData && props.deviceData.length > 0) {
+    //         props.deviceData.map(item => {
+    //             if (item.name == 'Ia') {
+    //                 state.Ia = item.value
+    //             }
+    //             if (item.name == 'Ib') {
+    //                 state.Ib = item.value
+    //             }
+    //             if (item.name == 'Ic') {
+    //                 state.Ic = item.value
+    //             }
+    //         })
+    //     }
+    // }, [])
 
     return (
         <DiaBox>
@@ -137,4 +143,4 @@ export default function Index(props) {
             </div>
         </DiaBox>
     )
-}
+})

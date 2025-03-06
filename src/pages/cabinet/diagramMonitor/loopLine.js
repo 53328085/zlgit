@@ -11,7 +11,7 @@ import { DiskChart } from "@api/api.js";
 
 const {QueryDeviceDataAll} =DiskChart
 
-export default function Index(props) {
+export default React.memo((props) => {
 
     const state = useReactive({
         showData: false,
@@ -121,34 +121,41 @@ export default function Index(props) {
     
         useEffect(() => {
             getSingleData()
+            const timer = setInterval(() => {
+                getSingleData()
+    
+            }, 30000)
+            return () => {
+                clearInterval(timer)
+            }
         },[])
 
-    useEffect(() => {
-        // state.name = props.lineName
-        if (props.deviceData && props.deviceData.length > 0) {
-            props.deviceData.map(item => {
-                if (item.DigitalInstatus1 == 1) {
-                    state.status = 'close'
-                }
-                if (item.DigitalInstatus2 == 1) {
-                    state.status = 'open'
-                }
-                if (item.DigitalInstatus3 == 1) {
-                    state.status = 'error'
-                }
+    // useEffect(() => {
+    //     // state.name = props.lineName
+    //     if (props.deviceData && props.deviceData.length > 0) {
+    //         props.deviceData.map(item => {
+    //             if (item.DigitalInstatus1 == 1) {
+    //                 state.status = 'close'
+    //             }
+    //             if (item.DigitalInstatus2 == 1) {
+    //                 state.status = 'open'
+    //             }
+    //             if (item.DigitalInstatus3 == 1) {
+    //                 state.status = 'error'
+    //             }
 
-                if (item.name == 'Ia') {
-                    state.Ia = item.value
-                }
-                if (item.name == 'Ib') {
-                    state.Ib = item.value
-                }
-                if (item.name == 'Ic') {
-                    state.Ic = item.value
-                }
-            })
-        }
-    }, [])
+    //             if (item.name == 'Ia') {
+    //                 state.Ia = item.value
+    //             }
+    //             if (item.name == 'Ib') {
+    //                 state.Ib = item.value
+    //             }
+    //             if (item.name == 'Ic') {
+    //                 state.Ic = item.value
+    //             }
+    //         })
+    //     }
+    // }, [])
 
     return (
         <DiaBox>
@@ -188,4 +195,4 @@ export default function Index(props) {
             </div>
         </DiaBox>
     )
-}
+})

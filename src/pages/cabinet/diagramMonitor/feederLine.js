@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useMemo } from 'react'
 import { useReactive } from "ahooks";
 
 import styled from "styled-components";
@@ -9,7 +9,7 @@ import { DiskChart } from "@api/api.js";
 
 const {QueryDeviceDataAll} =DiskChart
 
-export default function Index(props) {
+export default React.memo((props) => {
 
     const state = useReactive({
         client: {},
@@ -115,41 +115,48 @@ export default function Index(props) {
 
     useEffect(() => {
         getSingleData()
+        const timer = setInterval(() => {
+            getSingleData()
+
+        }, 30000)
+        return () => {
+            clearInterval(timer)
+        }
     },[])
 
-    useEffect(() => {
-        if (props.deviceData && props.deviceData.length > 0) {
-            props.deviceData.map(item => {
-                if (item.name == 'BrokerStatus') {
-                    if (item.value == 0) {
-                        state.status = 'normal'
-                        state.onOpen = false
-                    }
-                    if (item.value == 16) {
-                        state.status = 'error'
-                        state.onOpen = false
-                    }
-                    if (item.value == 32) {
-                        state.status = 'normal'
-                        state.onOpen = true
-                    }
-                    if (item.value == 48) {
-                        state.status = 'error'
-                        state.onOpen = true
-                    }
-                }
-                if (item.name == 'Ia') {
-                    state.Ia = item.value
-                }
-                if (item.name == 'Ib') {
-                    state.Ib = item.value
-                }
-                if (item.name == 'Ic') {
-                    state.Ic = item.value
-                }
-            })
-        }
-    }, [props])
+    // useEffect(() => {
+    //     if (props.deviceData && props.deviceData.length > 0) {
+    //         props.deviceData.map(item => {
+    //             if (item.name == 'BrokerStatus') {
+    //                 if (item.value == 0) {
+    //                     state.status = 'normal'
+    //                     state.onOpen = false
+    //                 }
+    //                 if (item.value == 16) {
+    //                     state.status = 'error'
+    //                     state.onOpen = false
+    //                 }
+    //                 if (item.value == 32) {
+    //                     state.status = 'normal'
+    //                     state.onOpen = true
+    //                 }
+    //                 if (item.value == 48) {
+    //                     state.status = 'error'
+    //                     state.onOpen = true
+    //                 }
+    //             }
+    //             if (item.name == 'Ia') {
+    //                 state.Ia = item.value
+    //             }
+    //             if (item.name == 'Ib') {
+    //                 state.Ib = item.value
+    //             }
+    //             if (item.name == 'Ic') {
+    //                 state.Ic = item.value
+    //             }
+    //         })
+    //     }
+    // }, [])
 
     return (
         <DiaBox>
@@ -192,4 +199,4 @@ export default function Index(props) {
             </div>
         </DiaBox>
     )
-}
+})
