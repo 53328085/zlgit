@@ -143,11 +143,14 @@ export default function Index() {
 
 
   const queryDeviceDataAll =async ({name, devSn, type,supsn,breaker=true, part}) => {
+   
+   
       try {
        const sn = type==2 ? supsn : devSn
        if(!sn) return message.warning("缺少设备Sn")
        const {response  } = await QueryDeviceDataAll(sn)
        const  {success, data, message:msg} = response
+     
        if(success && Array.isArray(data)) {
           
           let NAB8Sn = ["NA5202522401","NA5202522402","NA5202522403","NA5202522404"]
@@ -176,6 +179,7 @@ export default function Index() {
             breaker,
             state: state || distate,
             part,
+            
           })
 
           if(NAB8Sn.includes(devSn)) {
@@ -191,6 +195,10 @@ export default function Index() {
               {
                 name: "开关操作次数",
                 value: 4,
+              },
+              {
+                name: "额定电流",
+                value:  part==1 ? "2500A" : part==3 ? "1600A" : ''
               }
           ])
           }else if(NTCJ2.includes(devSn)){
@@ -240,6 +248,17 @@ export default function Index() {
   
  const getResult= async (params, devSn)=> { // 超过10次或超过15秒
     try {
+
+      timeout=setTimeout(async ()=> {
+        let {success, data} = await QueryServiceResult(params)
+        count++;
+        if((success && data.state==0) || count > 10){
+          clearTimeout(timeout)
+        }
+      }, [1000])
+
+
+
       console.log("params", params)
       let delay = (Date.now() - timeout)>10000
       let {success, data} = await QueryServiceResult(params)
@@ -522,7 +541,7 @@ const disabledDate = (current) => {
           </div> 
          
           <div className="guis" >
-            <div className="guisimg"  onClick={()=>queryDeviceDataAll({name:"电能质量治理  NXW", devSn:"NXW202522201", breaker:false})}></div>
+            <div className="guisimg"  onClick={()=>queryDeviceDataAll({name:"电能质量功率单元 NXWAPF N", devSn:"NXW202522201", breaker:false, part:2})}></div>
           </div>
         </div>
         <div className="part" key="part3">
@@ -534,8 +553,8 @@ const disabledDate = (current) => {
             <CustLink text="details" underline={false}></CustLink>
           </div>
           <div className="kuixians">
-            <div className="kuixian" onClick={()=>queryDeviceDataAll({name:"框架断路器  NA8", devSn: "NA5202522402"})}>
-            <div className="values">
+            <div className="kuixian" >
+            <div className="values" onClick={()=>queryDeviceDataAll({name:"数显多功能表 PD666", devSn: "NA5202522402", part:3})}>
             <div className="nums">
               <span className="type">1a</span>
               <Text>25.3A</Text>
@@ -546,12 +565,12 @@ const disabledDate = (current) => {
               <img src={imgsrc["close"]}></img>
             </div>
           </div>
-          <div className="guizhi">
+          <div className="guizhi" onClick={()=>queryDeviceDataAll({name:"框架断路器  NA8", devSn: "NA5202522402", part:3})}>
             
           </div>
             </div>
-            <div className="kuixian" onClick={()=>queryDeviceDataAll({name:"框架断路器  NA8", devSn: "NA5202522403"})}>
-            <div className="values">
+            <div className="kuixian" >
+            <div className="values" onClick={()=>queryDeviceDataAll({name:"数显多功能表 PD666", devSn: "NA5202522403", part:3})}>
             <div className="nums">
               <span className="type">1a</span>
               <Text>25.3A</Text>
@@ -562,12 +581,12 @@ const disabledDate = (current) => {
               <img src={imgsrc["close"]}></img>
             </div>
           </div>
-          <div className="guizhi" >
+          <div className="guizhi" onClick={()=>queryDeviceDataAll({name:"框架断路器  NA8", devSn: "NA5202522403", part:3})}>
             
           </div>
             </div>
-            <div className="kuixian" onClick={()=>queryDeviceDataAll({name:"框架断路器  NA8", devSn: "NA5202522404"})}>
-            <div className="values">
+            <div className="kuixian" >
+            <div className="values" onClick={()=>queryDeviceDataAll({name:"数显多功能表 PD666", devSn: "NA5202522404", part:3})}>
             <div className="nums">
               <span className="type">1a</span>
               <Text>25.3A</Text>
@@ -578,7 +597,7 @@ const disabledDate = (current) => {
               <img src={imgsrc["close"]}></img>
             </div>
           </div>
-          <div className="guizhi">
+          <div className="guizhi" onClick={()=>queryDeviceDataAll({name:"框架断路器  NA8", devSn: "NA5202522404", part:3})}>
             
           </div>
             </div>
@@ -595,8 +614,8 @@ const disabledDate = (current) => {
           </div>
           <div className="breaker">
           <div className="loops loops1">
-            <div className="loop1" onClick={()=>queryDeviceDataAll({name:"塑壳断路器  NM8N", devSn: "NTCJ20012241"})}>  
-                <div className="loopbashou">
+            <div className="loop1" >  
+                <div className="loopbashou" onClick={()=>queryDeviceDataAll({name:"塑壳断路器  NM8N", devSn: "NTCJ20012241",part:4})}>
                   <img
                     src={
                       state == 1
@@ -619,15 +638,15 @@ const disabledDate = (current) => {
                   }
                 ></img>
 
-                <div className="nums">
+                <div className="nums" onClick={()=>queryDeviceDataAll({name:"智能接插件NTCJ", devSn: "NTCJ20012241", part:4})}>
                   <span className="type">1a</span>
                   <Text>253.3A</Text>
                   <Text>483.2°C</Text>
                 </div>
               
             </div>
-            <div className="loop1" onClick={()=>queryDeviceDataAll({name:"塑壳断路器  NM8N", devSn: "NTCJ20012242"})}>   
-                <div className="loopbashou" >
+            <div className="loop1" >   
+                <div className="loopbashou" onClick={()=>queryDeviceDataAll({name:"塑壳断路器  NM8N", devSn: "NTCJ20012242",part:4})} >
                   <img
                     src={
                       state == 1
@@ -650,16 +669,16 @@ const disabledDate = (current) => {
                   }
                 ></img>
 
-                <div className="nums">
+                <div className="nums" onClick={()=>queryDeviceDataAll({name:"智能接插件NTCJ", devSn: "NTCJ20012242",part:4})} >
                   <span className="type">1a</span>
                   <Text>153.3A</Text>
                   <Text>283.2°C</Text>
                 </div>
                
             </div>
-            <div className="loop1" onClick={()=>queryDeviceDataAll({name:"塑壳断路器  NM8N", devSn: "NTCJ20012243"})}>
+            <div className="loop1" >
               
-                <div className="loopbashou">
+                <div className="loopbashou" onClick={()=>queryDeviceDataAll({name:"塑壳断路器  NM8N", devSn: "NTCJ20012243",part:4})} >
                   <img
                     src={
                       state == 1
@@ -682,16 +701,16 @@ const disabledDate = (current) => {
                   }
                 ></img>
 
-                <div className="nums">
+                <div className="nums" onClick={()=>queryDeviceDataAll({name:"智能接插件NTCJ", devSn: "NTCJ20012243",part:4})}>
                   <span className="type">1a</span>
                   <Text>153.3A</Text>
                   <Text>283.2°C</Text>
                 </div>
               
             </div>
-            <div className="loop1" onClick={()=>queryDeviceDataAll({name:"塑壳断路器  NM8N", devSn: "NTCJ20012244"})}>
+            <div className="loop1" >
               
-                <div className="loopbashou" >
+                <div className="loopbashou" onClick={()=>queryDeviceDataAll({name:"塑壳断路器  NM8N", devSn: "NTCJ20012244",part:4})}>
                   <img
                     src={
                       state == 1
@@ -714,7 +733,7 @@ const disabledDate = (current) => {
                   }
                 ></img>
 
-                <div className="nums">
+                <div className="nums" onClick={()=>queryDeviceDataAll({name:"智能接插件NTCJ", devSn: "NTCJ20012244",part:4})}>
                   <span className="type">1a</span>
                   <Text>153.3A</Text>
                   <Text>283.2°C</Text>
@@ -723,8 +742,8 @@ const disabledDate = (current) => {
             </div>
           </div>
           <div className="loops loops2">
-            <div className="loop2" onClick={()=>queryDeviceDataAll({name:"塑壳断路器  NM8N", devSn: "NTCJ00122401"})}> 
-              <div className="loopbashou" >
+            <div className="loop2" > 
+              <div className="loopbashou" onClick={()=>queryDeviceDataAll({name:"塑壳断路器  NM8N", devSn: "NTCJ00122401",part:4})}>
                 <img
                   src={
                     state == 1
@@ -745,15 +764,15 @@ const disabledDate = (current) => {
                       : imgsrc["close"]
                   }
                 ></img>
-                <div className="nums" >
+                <div className="nums" onClick={()=>queryDeviceDataAll({name:"智能接插件NTCJ", devSn: "NTCJ00122401",part:4})}>
                   <span className="type">1a</span>
                   <Text>153.3A</Text>
                   <Text>283.2°C</Text>
                 </div>
               </div>
             </div>
-            <div className="loop2" onClick={()=>queryDeviceDataAll({name:"塑壳断路器  NM8N", devSn: "NTCJ00122402"})}> 
-              <div className="loopbashou" >
+            <div className="loop2" > 
+              <div className="loopbashou" onClick={()=>queryDeviceDataAll({name:"塑壳断路器  NM8N", devSn: "NTCJ00122402",part:4})} >
                 <img
                   src={
                     state == 1
@@ -764,7 +783,7 @@ const disabledDate = (current) => {
                   }
                 ></img>
               </div>
-              <div className="state42">
+              <div className="state42" onClick={()=>queryDeviceDataAll({name:"智能接插件NTCJ", devSn: "NTCJ00122402",part:4})}>
                 <img
                   src={
                     state == 1
@@ -781,8 +800,8 @@ const disabledDate = (current) => {
                 </div>
               </div>
             </div>
-            <div className="loop2" onClick={()=>queryDeviceDataAll({name:"塑壳断路器  NM8N", devSn: "NTCJ00122403"})}> 
-              <div className="loopbashou" >
+            <div className="loop2" > 
+              <div className="loopbashou" onClick={()=>queryDeviceDataAll({name:"塑壳断路器  NM8N", devSn: "NTCJ00122403",part:4})}>
                 <img
                   src={
                     state == 1
@@ -803,7 +822,7 @@ const disabledDate = (current) => {
                       : imgsrc["close"]
                   }
                 ></img>
-                <div className="nums" >
+                <div className="nums" onClick={()=>queryDeviceDataAll({name:"智能接插件NTCJ", devSn: "NTCJ00122403",part:4})}>
                   <span className="type">1a</span>
                   <Text>153.3A</Text>
                   <Text>283.2°C</Text>
@@ -823,7 +842,7 @@ const disabledDate = (current) => {
                       : imgsrc["close"]
                   }
                 ></img>
-                <div className="nums" onClick={()=>queryDeviceDataAll({name:"多功能仪表  PD666-2SC3", devSn: "NTCJ00122404"})}>
+                <div className="nums" onClick={()=>queryDeviceDataAll({name:"智能接插件NTCJ", devSn: "NTCJ00122404",part:4})}>
                   <span className="type">1a</span>
                   <Text>153.3A</Text>
                   <Text>283.2°C</Text>
@@ -842,7 +861,7 @@ const disabledDate = (current) => {
                       : imgsrc["close"]
                   }
                 ></img>
-                <div className="nums" onClick={()=>queryDeviceDataAll({name:"多功能仪表  PD666-2SC3", devSn: "PD6662555504"})}>
+                <div className="nums" onClick={()=>queryDeviceDataAll({name:"数显多功能表 PD666", devSn: "PD6662555504",part:4})}>
                   <span className="type">1a</span>
                   <Text>153.3A</Text>
                   <Text>283.2°C</Text>
@@ -1023,7 +1042,7 @@ const disabledDate = (current) => {
         {/* 遥测 */}
           <Electric datas={deviceData} onClick={onelchart} />
           {/* 遥调 */}
-          {deviceInfo?.deviceType === 1 ? <RomoteRegulatin laptop={laptop} part={part} /> : deviceInfo?.deviceType === 2 ? <RomoteRegulatinB laptop={laptop} /> : null} 
+          {deviceInfo?.deviceType === 1 ? <RomoteRegulatin laptop={laptop} part={part} deviceData={deviceData} /> : deviceInfo?.deviceType === 2 ? <RomoteRegulatinB deviceData={deviceData} /> : null} 
           <div className="htitle"> 
             <span>遥控</span>
           </div>
