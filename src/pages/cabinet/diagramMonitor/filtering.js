@@ -5,6 +5,10 @@ import styled from "styled-components";
 import open2_1 from './imgs/p2/2-1_open.svg'
 import close2_1 from './imgs/p2/2-1_close.svg'
 
+import { DiskChart } from "@api/api.js";
+
+const {QueryDeviceDataAll} =DiskChart
+
 export default function Index(props) {
 
     const state = useReactive({
@@ -62,28 +66,58 @@ export default function Index(props) {
         }
     `
 
-    useEffect(() => {
-        if (props.deviceData.length > 0) {
-            props.deviceData.map(item => {
-                if (item.name == 'Ia') {
-                    state.Ia = item.value
-                }
-                if (item.name == 'Ib') {
-                    state.Ib = item.value
-                }
-                if (item.name == 'Ic') {
-                    state.Ic = item.value
+    const getSingleData = () => {
+            QueryDeviceDataAll(props.sn).then(res => {
+                if(res && res.response.code == 0){
+                    let deviceData = res.response.data
+                    deviceData.map(item => {
+                        if (item.name == 'Ia') {
+                            state.Ia = item.value
+                        }
+                        if (item.name == 'Ib') {
+                            state.Ib = item.value
+                        }
+                        if (item.name == 'Ic') {
+                            state.Ic = item.value
+                        }
+                    })
                 }
             })
         }
-    }, [props])
+    
+        useEffect(() => {
+            // getSingleData()
+            // const timer = setInterval(() => {
+            //     getSingleData()
+    
+            // }, 30000)
+            // return () => {
+            //     clearInterval(timer)
+            // }
+        },[])
+
+    // useEffect(() => {
+    //     if (props.deviceData.length > 0) {
+    //         props.deviceData.map(item => {
+    //             if (item.name == 'Ia') {
+    //                 state.Ia = item.value
+    //             }
+    //             if (item.name == 'Ib') {
+    //                 state.Ib = item.value
+    //             }
+    //             if (item.name == 'Ic') {
+    //                 state.Ic = item.value
+    //             }
+    //         })
+    //     }
+    // }, [props])
 
     return (
         <DiaBox>
             <img src={close2_1} style={{ width: 315, height: 760, marginTop: 0 }}></img>
             <div className='data_box'>
                 <div className='data_box_title'>有源滤波柜</div>
-                <div className='data_box_item'>
+                <div className='data_box_item' style={{color:'#ff0'}}>
                     <span>Ia</span>
                     <div>
                         <span>{state.Ia} </span>
@@ -91,7 +125,7 @@ export default function Index(props) {
                     </div>
 
                 </div>
-                <div className='data_box_item'>
+                <div className='data_box_item' style={{color:'#0f0'}}>
                     <span>Ib</span>
                     <div>
                         <span>{state.Ib} </span>
@@ -99,7 +133,7 @@ export default function Index(props) {
                     </div>
 
                 </div>
-                <div className='data_box_item' style={{ borderBottom: 'none' }}>
+                <div className='data_box_item' style={{ borderBottom: 'none', color:'#f00' }}>
                     <span>Ic</span>
                     <div>
                         <span>{state.Ic} </span>

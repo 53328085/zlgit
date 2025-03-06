@@ -9,7 +9,9 @@ import LoopLine from './loopLine.js'
 
 import { DiskChart } from "@api/api.js";
 
-const {QueryDeviceDataAll,QueryDevicesDataAll,DoOpenClose,QueryServiceResult,QueryDevicePointTrend} =DiskChart
+import mqtt from 'mqtt'
+
+const { QueryDeviceDataAll, QueryDevicesDataAll, DoOpenClose, QueryServiceResult, QueryDevicePointTrend } = DiskChart
 
 
 import styled from "styled-components";
@@ -19,25 +21,27 @@ export default function Index() {
     const state = useReactive({
         showOpen: true,
         loading: true,
-        incoming:[],
-        filtering:[],
-        feederLine1:[],
-        feederLine2:[],
-        feederLine3:[],
-        loopLine1:[],
-        loopLine2:[],
-        loopLine3:[],
-        loopLine4:[],
-        loopLine5:[],
-        loopLine6:[],
-        loopLine7:[],
-        loopLine8:[],
-        loopLine9:[],
+        incoming: [],
+        filtering: [],
+        feederLine1: [],
+        feederLine2: [],
+        feederLine3: [],
+        loopLine1: [],
+        loopLine2: [],
+        loopLine3: [],
+        loopLine4: [],
+        loopLine5: [],
+        loopLine6: [],
+        loopLine7: [],
+        loopLine8: [],
+        loopLine9: [],
+        count: 0
     })
 
     const ContentBox = styled.div`
         min-width: 260px;
         background-color: #fff;
+        border-right: 1px dashed #aaa;
         /* margin-right: 16px; */
         .box_title{
             width: 100%;
@@ -45,7 +49,7 @@ export default function Index() {
             display: flex;
             align-items: center;
             justify-content: center;
-            /* background-color: ${props=> props.theme.primaryColor}; */
+            /* background-color: ${props => props.theme.primaryColor}; */
             background-color: #039;
             font-size: 24px;
             color: #fff;
@@ -74,7 +78,7 @@ export default function Index() {
             /* align-items: flex-end; */
             padding: 32px;
             padding-right: 48px;
-            min-height: 800px;
+            min-height: 824px;
             position: relative;
             
         }
@@ -121,93 +125,153 @@ export default function Index() {
         ]
 
         QueryDevicesDataAll(list).then(res => {
-            state.loading = false
+            // state.loading = false
             res.map((item, index) => {
-                if(item.devSn == 'NA5202522401' && item.response.code == 0){
+                if (item.devSn == 'NA5202522401' && item.response.code == 0) {
                     state.incoming = item.response.data
                 }
-                if(item.devSn == 'NXW202522201' && item.response.code == 0){
+                if (item.devSn == 'NXW202522201' && item.response.code == 0) {
                     state.filtering = item.response.data
                 }
-                if(item.devSn == 'NA5202522402' && item.response.code == 0){
+                if (item.devSn == 'NA5202522402' && item.response.code == 0) {
                     state.feederLine1 = item.response.data
                 }
-                if(item.devSn == 'NA5202522403' && item.response.code == 0){
+                if (item.devSn == 'NA5202522403' && item.response.code == 0) {
                     state.feederLine2 = item.response.data
                 }
-                if(item.devSn == 'NA5202522404' && item.response.code == 0){
+                if (item.devSn == 'NA5202522404' && item.response.code == 0) {
                     state.feederLine3 = item.response.data
                 }
-                if(item.devSn == 'NTCJ20012241' && item.response.code == 0){
+                if (item.devSn == 'NTCJ20012241' && item.response.code == 0) {
                     state.loopLine1 = item.response.data
                 }
-                if(item.devSn == 'NTCJ20012242' && item.response.code == 0){
+                if (item.devSn == 'NTCJ20012242' && item.response.code == 0) {
                     state.loopLine2 = item.response.data
                 }
-                if(item.devSn == 'NTCJ20012243' && item.response.code == 0){
+                if (item.devSn == 'NTCJ20012243' && item.response.code == 0) {
                     state.loopLine3 = item.response.data
                 }
-                if(item.devSn == 'NTCJ20012244' && item.response.code == 0){
+                if (item.devSn == 'NTCJ20012244' && item.response.code == 0) {
                     state.loopLine4 = item.response.data
                 }
-                if(item.devSn == 'NTCJ00122401' && item.response.code == 0){
+                if (item.devSn == 'NTCJ00122401' && item.response.code == 0) {
                     state.loopLine5 = item.response.data
                 }
-                if(item.devSn == 'NTCJ00122402' && item.response.code == 0){
+                if (item.devSn == 'NTCJ00122402' && item.response.code == 0) {
                     state.loopLine6 = item.response.data
                 }
-                if(item.devSn == 'NTCJ00122403' && item.response.code == 0){
+                if (item.devSn == 'NTCJ00122403' && item.response.code == 0) {
                     state.loopLine7 = item.response.data
                 }
-                if(item.devSn == 'NTCJ00122404' && item.response.code == 0){
+                if (item.devSn == 'NTCJ00122404' && item.response.code == 0) {
                     state.loopLine8 = item.response.data
                 }
-                if(item.devSn == 'PD6662555504' && item.response.code == 0){
+                if (item.devSn == 'PD6662555504' && item.response.code == 0) {
                     state.loopLine9 = item.response.data
                 }
             })
         })
     }
+    const S4 = () => {
+        return (((1 + Math.random()) * 0x10000) | 0).toString(16).substring(1);
+    }
+    const guid = () => {
+        return (S4() + S4() + "-" + S4() + "-" + S4() + "-" + S4() + "-" + S4() + S4() + S4());
+    }
+
+    const getMqtt = () => {
+        let options = {
+            clientId:
+                "HMI_" + guid(),
+            username: "",
+            password: "",
+        }
+        state.client = mqtt.connect('ws://101.133.168.242:9211/ws/hmi/runtime', options)
+        state.client.on("connect", e => {
+            state.client.subscribe(
+                "hmi/mqtt/report/#",
+                { qos: 0 },
+                (error) => {
+                    if (!error) {
+                        console.log("订阅成功");
+                        //   getHeart(HMIDevices);
+                    } else {
+                        console.log("订阅失败");
+                    }
+                }
+            )
+        })
+
+        // 接收消息处理
+        state.client.on("message", (topic, message) => {
+            console.log('接所消息')
+            let mqttData = JSON.parse(message.toString());
+
+            console.log(mqttData)
+        });
+        // 断开发起重连
+        state.client.on("reconnect", (error) => {
+            console.log("正在重连:", error);
+        });
+        // 链接异常处理
+        state.client.on("error", (error) => {
+            console.log("连接失败:", error);
+        });
+    }
 
     useEffect(() => {
-        getAllData()
+        // getAllData()
+        // const timer = setInterval(() => {
+        //     getAllData()
+
+        // }, 10000)
+        // return () => {
+        //     clearInterval(timer)
+        // }
+
+        // getMqtt()
+    }, [])
+
+    useEffect(() => {
+        return () => {
+            (typeof state?.client?.end == "function") && state?.client?.end();
+        }
     }, [])
 
     return (
-        <Spin spinning={state.loading}>
         <div style={{ display: 'flex', alignItems: 'flex-start', position: 'relative' }}>
             <MainLine></MainLine>
             <MainDashedLine></MainDashedLine>
             <BottomDashedLine></BottomDashedLine>
             <ContentBox>
-                <div className='box_title' style={{backgroundColor:'#000', borderRight: '1px solid rgba(0, 153, 204, 1)'}}>
+                <div className='box_title' style={{ backgroundColor: '#000', borderRight: '1px solid rgba(0, 153, 204, 1)' }}>
                     <span>P1</span>
                 </div>
                 <Incoming sn={'NA5202522401'} deviceData={state.incoming}></Incoming>
             </ContentBox>
             <ContentBox>
-                <div className='box_title' style={{backgroundColor:'#333', borderRight: '1px solid rgba(0, 153, 204, 1)'}}>
+                <div className='box_title' style={{ backgroundColor: '#333', borderRight: '1px solid rgba(0, 153, 204, 1)' }}>
                     <span>P2</span>
                 </div>
                 <Filtering sn={'NXW202522201'} deviceData={state.filtering}></Filtering>
             </ContentBox>
             <ContentBox>
-                <div className='box_title' style={{backgroundColor:'#000', borderRight: '1px solid rgba(0, 153, 204, 1)'}}>
+                <div className='box_title' style={{ backgroundColor: '#000', borderRight: '1px solid rgba(0, 153, 204, 1)' }}>
                     <span>P3</span>
                 </div>
                 <div className='dia_box'>
-                    <FeederLine lineName={'馈线1'} sn={'NA5202522402'} deviceData={state.feederLine1}></FeederLine>
+                    <FeederLine lineName={`馈线1`} sn={'NA5202522402'} deviceData={state.feederLine1}></FeederLine>
                     <FeederLine lineName={'馈线2'} sn={'NA5202522403'} deviceData={state.feederLine2}></FeederLine>
                     <FeederLine lineName={'馈线3'} sn={'NA5202522404'} deviceData={state.feederLine3}></FeederLine>
                 </div>
-                
+
             </ContentBox>
             <ContentBox>
-                <div className='box_title' style={{backgroundColor:'#333'}}>
+                <div className='box_title' style={{ backgroundColor: '#333' }}>
                     <span>P4</span>
                 </div>
                 <div className='dia_box'>
-                    
+
                     <LoopLine showItem lineName={'回路1'} sn={'NTCJ20012241'} deviceData={state.loopLine1}></LoopLine>
                     <LoopLine lineName={'回路2'} sn={'NTCJ20012242'} deviceData={state.loopLine2}></LoopLine>
                     <LoopLine showItem lineName={'回路3'} sn={'NTCJ20012243'} deviceData={state.loopLine3}></LoopLine>
@@ -220,6 +284,5 @@ export default function Index() {
                 </div>
             </ContentBox>
         </div>
-        </Spin>
     )
 }

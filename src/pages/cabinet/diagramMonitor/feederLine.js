@@ -5,9 +5,14 @@ import styled from "styled-components";
 import open4_2 from './imgs/p4/4-2_open.svg'
 import close4_2 from './imgs/p4/4-2_close.svg'
 
+import { DiskChart } from "@api/api.js";
+
+const {QueryDeviceDataAll} =DiskChart
+
 export default function Index(props) {
 
     const state = useReactive({
+        client: {},
         showData: false,
         onOpen: false,
         status: 'normal',
@@ -71,56 +76,104 @@ export default function Index(props) {
         marginTop: 50
     }
 
-    useEffect(() => {
-        state.name = props.lineName
-        console.log(props)
-        if (props.deviceData.length > 0) {
-            props.deviceData.map(item => {
-                if (item.name == 'BrokerStatus') {
-                    if (item.value == 0) {
-                        state.status = 'normal'
-                        state.onOpen = true
+    const getSingleData = () => {
+        QueryDeviceDataAll(props.sn).then(res => {
+            if(res && res.response.code == 0){
+                let deviceData = res.response.data
+                deviceData.map(item => {
+                    if (item.name == 'BrokerStatus') {
+                        if (item.value == 0) {
+                            state.status = 'normal'
+                            state.onOpen = false
+                        }
+                        if (item.value == 16) {
+                            state.status = 'error'
+                            state.onOpen = false
+                        }
+                        if (item.value == 32) {
+                            state.status = 'normal'
+                            state.onOpen = true
+                        }
+                        if (item.value == 48) {
+                            state.status = 'error'
+                            state.onOpen = true
+                        }
                     }
-                    if (item.value == 16) {
-                        state.status = 'error'
-                        state.onOpen = true
+                    if (item.name == 'Ia') {
+                        state.Ia = item.value
                     }
-                    if (item.value == 32) {
-                        state.status = 'normal'
-                        state.onOpen = false
+                    if (item.name == 'Ib') {
+                        state.Ib = item.value
                     }
-                    if (item.value == 48) {
-                        state.status = 'error'
-                        state.onOpen = false
+                    if (item.name == 'Ic') {
+                        state.Ic = item.value
                     }
-                }
-                if (item.name == 'Ia') {
-                    state.Ia = item.value
-                }
-                if (item.name == 'Ib') {
-                    state.Ib = item.value
-                }
-                if (item.name == 'Ic') {
-                    state.Ic = item.value
-                }
-            })
-        }
-    }, [props])
+                })
+            }
+        })
+    }
+
+    // useEffect(() => {
+    //     getSingleData()
+    //     const timer = setInterval(() => {
+    //         getSingleData()
+
+    //     }, 30000)
+    //     return () => {
+    //         clearInterval(timer)
+    //     }
+    // },[])
+
+    // useEffect(() => {
+    //     if (props.deviceData.length > 0) {
+    //         props.deviceData.map(item => {
+    //             if (item.name == 'BrokerStatus') {
+    //                 if (item.value == 0) {
+    //                     state.status = 'normal'
+    //                     state.onOpen = false
+    //                 }
+    //                 if (item.value == 16) {
+    //                     state.status = 'error'
+    //                     state.onOpen = false
+    //                 }
+    //                 if (item.value == 32) {
+    //                     state.status = 'normal'
+    //                     state.onOpen = true
+    //                 }
+    //                 if (item.value == 48) {
+    //                     state.status = 'error'
+    //                     state.onOpen = true
+    //                 }
+    //             }
+    //             if (item.name == 'Ia') {
+    //                 state.Ia = item.value
+    //             }
+    //             if (item.name == 'Ib') {
+    //                 state.Ib = item.value
+    //             }
+    //             if (item.name == 'Ic') {
+    //                 state.Ic = item.value
+    //             }
+    //         })
+    //     }
+    // }, [props])
 
     return (
         <DiaBox>
-            {/* <img src={state.status == 'open' ? open4_2 : state.status == 'close' ? close4_2 : open4_2} style={{ width: 124, height: 673, marginTop: 50 }}></img> */}
+            <img src={(state.status == 'normal' && state.onOpen == false) ? close4_2 : 
+                (state.status == 'normal' && state.onOpen == true) ? open4_2 : null
+             } style={onOpenStyle}></img>
 
-            {
+            {/* {
                 state.status == 'normal' && state.onOpen == false ? <img src={close4_2} style={onOpenStyle}></img> : null
             }
             {
                 state.status == 'normal' && state.onOpen == true ? <img src={open4_2} style={onOpenStyle}></img> : null
-            }
+            } */}
 
             <div className='data_box'>
-                <div className='data_box_title'>{state.name}</div>
-                <div className='data_box_item'>
+                <div className='data_box_title'>{props.lineName}</div>
+                <div className='data_box_item' style={{color:'#ff0'}}>
                     <span>Ia</span>
                     <div>
                         <span>{state.Ia} </span>
@@ -128,7 +181,7 @@ export default function Index(props) {
                     </div>
 
                 </div>
-                <div className='data_box_item'>
+                <div className='data_box_item' style={{color:'#0f0'}}>
                     <span>Ib</span>
                     <div>
                         <span>{state.Ib} </span>
@@ -136,7 +189,7 @@ export default function Index(props) {
                     </div>
 
                 </div>
-                <div className='data_box_item' style={{ borderBottom: 'none' }}>
+                <div className='data_box_item' style={{ borderBottom: 'none', color:'#f00' }}>
                     <span>Ic</span>
                     <div>
                         <span>{state.Ic} </span>

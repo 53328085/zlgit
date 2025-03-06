@@ -7,6 +7,10 @@ import close4_1 from './imgs/p4/4-1_close.svg'
 import open4_2 from './imgs/p4/4-2_open.svg'
 import close4_2 from './imgs/p4/4-2_close.svg'
 
+import { DiskChart } from "@api/api.js";
+
+const {QueryDeviceDataAll} =DiskChart
+
 export default function Index(props) {
 
     const state = useReactive({
@@ -26,6 +30,7 @@ export default function Index(props) {
         /* padding: 32px;
         padding-right: 48px;
         min-height: 800px; */
+        /* min-height: 824px; */
         padding-right: 84px;
         margin-right: 32px;
         position: relative;
@@ -85,46 +90,85 @@ export default function Index(props) {
         marginTop: 50
     }
 
-    useEffect(() => {
-        state.name = props.lineName
-        if (props.deviceData.length > 0) {
-            props.deviceData.map(item => {
-                if (item.DigitalInstatus1 == 1) {
-                    state.status = 'close'
-                }
-                if (item.DigitalInstatus2 == 1) {
-                    state.status = 'open'
-                }
-                if (item.DigitalInstatus3 == 1) {
-                    state.status = 'error'
-                }
-
-                if (item.name == 'Ia') {
-                    state.Ia = item.value
-                }
-                if (item.name == 'Ib') {
-                    state.Ib = item.value
-                }
-                if (item.name == 'Ic') {
-                    state.Ic = item.value
+        const getSingleData = () => {
+            QueryDeviceDataAll(props.sn).then(res => {
+                if(res && res.response.code == 0 && res.response.data.length >0){
+                    let deviceData = res.response.data
+                    deviceData.map(item => {
+                        if (item.DigitalInstatus1 == 1) {
+                            state.status = 'close'
+                        }
+                        if (item.DigitalInstatus2 == 1) {
+                            state.status = 'open'
+                        }
+                        if (item.DigitalInstatus3 == 1) {
+                            state.status = 'error'
+                        }
+        
+                        if (item.name == 'Ia') {
+                            state.Ia = item.value
+                        }
+                        if (item.name == 'Ib') {
+                            state.Ib = item.value
+                        }
+                        if (item.name == 'Ic') {
+                            state.Ic = item.value
+                        }
+                    })
                 }
             })
         }
-    }, [props])
+    
+        useEffect(() => {
+            // getSingleData()
+            // const timer = setInterval(() => {
+            //     getSingleData()
+            // }, 30000)
+            // return () => {
+            //     clearInterval(timer)
+            // }
+        },[])
+
+    // useEffect(() => {
+    //     // state.name = props.lineName
+    //     if (props.deviceData.length > 0) {
+    //         props.deviceData.map(item => {
+    //             if (item.DigitalInstatus1 == 1) {
+    //                 state.status = 'close'
+    //             }
+    //             if (item.DigitalInstatus2 == 1) {
+    //                 state.status = 'open'
+    //             }
+    //             if (item.DigitalInstatus3 == 1) {
+    //                 state.status = 'error'
+    //             }
+
+    //             if (item.name == 'Ia') {
+    //                 state.Ia = item.value
+    //             }
+    //             if (item.name == 'Ib') {
+    //                 state.Ib = item.value
+    //             }
+    //             if (item.name == 'Ic') {
+    //                 state.Ic = item.value
+    //             }
+    //         })
+    //     }
+    // }, [props])
 
     return (
         <DiaBox>
             {
-                state.name == '回路9' ? 
+                props.lineName == '回路9' ? 
                     <img src={state.status == 'open' ? open4_2 : state.status == 'close' ? close4_2 : null} style={onOpenStyle}></img> : 
                     <img src={state.status == 'open' ? open4_1 : state.status == 'close' ? close4_1 : null} style={onOpenStyle}></img>
             }
             {
                 state.showItem ? <div className='item_box'></div> : null
             }
-            <div className='data_box'>
-                <div className='data_box_title'>{state.name}</div>
-                <div className='data_box_item'>
+            <div className='data_box' >
+                <div className='data_box_title'>{props.lineName}</div>
+                <div className='data_box_item' style={{color:'#ff0'}}>
                     <span>Ia</span>
                     <div>
                         <span>{state.Ia} </span>
@@ -132,7 +176,7 @@ export default function Index(props) {
                     </div>
 
                 </div>
-                <div className='data_box_item'>
+                <div className='data_box_item' style={{color:'#0f0'}}>
                     <span>Ib</span>
                     <div>
                         <span>{state.Ib} </span>
@@ -140,7 +184,7 @@ export default function Index(props) {
                     </div>
 
                 </div>
-                <div className='data_box_item' style={{ borderBottom: 'none' }}>
+                <div className='data_box_item' style={{ borderBottom: 'none', color:'#f00' }}>
                     <span>Ic</span>
                     <div>
                         <span>{state.Ic} </span>

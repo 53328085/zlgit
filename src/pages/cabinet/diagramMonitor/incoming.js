@@ -11,7 +11,10 @@ import close1_2 from './imgs/p1/1-2_close.svg'
 import open1_3 from './imgs/p1/1-3_open.svg'
 import close1_3 from './imgs/p1/1-3_close.svg'
 
-import { ReactComponent as Open1 } from './imgs/p1/1-1_open.svg'
+import { DiskChart } from "@api/api.js";
+
+const {QueryDeviceDataAll} =DiskChart
+
 
 export default function Index(props) {
     const { menusbgcolorR, startColor, endColor, startOpacity, endOpacity } = useSelector(themeColor)
@@ -30,7 +33,7 @@ export default function Index(props) {
         display: flex;
         padding: 32px;
         padding-right: 48px;
-        min-height: 800px;
+        min-height: 824px;
         position: relative;
         .click_box{
             width: 48px;
@@ -98,39 +101,88 @@ export default function Index(props) {
         marginLeft: '-14px'
     }
 
-    useEffect(() => {
-        if (props.deviceData.length > 0) {
-            props.deviceData.map(item => {
-                if (item.name == 'BrokerStatus') {
-                    if(item.value == 0){
-                        state.status = 'normal'
-                        state.onOpen = true
-                    }
-                    if(item.value == 16){
-                        state.status = 'error'
-                        state.onOpen = true
-                    }
-                    if(item.value == 32){
-                        state.status = 'normal'
-                        state.onOpen = false
-                    }
-                    if(item.value == 48){
-                        state.status = 'error'
-                        state.onOpen = false
-                    }
-                }
-                if (item.name == 'Ia') {
-                    state.Ia = item.value
-                }
-                if (item.name == 'Ib') {
-                    state.Ib = item.value
-                }
-                if (item.name == 'Ic') {
-                    state.Ic = item.value
+    const getSingleData = () => {
+            QueryDeviceDataAll(props.sn).then(res => {
+                if(res && res.response.code == 0 && res.response.data.length >0){
+                    let deviceData = res.response.data
+                    deviceData.map(item => {
+                        if (item.name == 'BrokerStatus') {
+                            if (item.value == 0) {
+                                state.status = 'normal'
+                                state.onOpen = false
+                            }
+                            if (item.value == 16) {
+                                state.status = 'error'
+                                state.onOpen = false
+                            }
+                            if (item.value == 32) {
+                                state.status = 'normal'
+                                state.onOpen = true
+                            }
+                            if (item.value == 48) {
+                                state.status = 'error'
+                                state.onOpen = true
+                            }
+                        }
+                        if (item.name == 'Ia') {
+                            state.Ia = item.value
+                        }
+                        if (item.name == 'Ib') {
+                            state.Ib = item.value
+                        }
+                        if (item.name == 'Ic') {
+                            state.Ic = item.value
+                        }
+                    })
                 }
             })
         }
-    }, [props])
+    
+        useEffect(() => {
+            // getSingleData()
+            // const timer = setInterval(() => {
+            //     getSingleData()
+    
+            // }, 30000)
+            // return () => {
+            //     clearInterval(timer)
+            // }
+        },[])
+    
+
+    // useEffect(() => {
+    //     if (props.deviceData.length > 0) {
+    //         props.deviceData.map(item => {
+    //             if (item.name == 'BrokerStatus') {
+    //                 if(item.value == 0){
+    //                     state.status = 'normal'
+    //                     state.onOpen = false
+    //                 }
+    //                 if(item.value == 16){
+    //                     state.status = 'error'
+    //                     state.onOpen = false
+    //                 }
+    //                 if(item.value == 32){
+    //                     state.status = 'normal'
+    //                     state.onOpen = true
+    //                 }
+    //                 if(item.value == 48){
+    //                     state.status = 'error'
+    //                     state.onOpen = true
+    //                 }
+    //             }
+    //             if (item.name == 'Ia') {
+    //                 state.Ia = item.value
+    //             }
+    //             if (item.name == 'Ib') {
+    //                 state.Ib = item.value
+    //             }
+    //             if (item.name == 'Ic') {
+    //                 state.Ic = item.value
+    //             }
+    //         })
+    //     }
+    // }, [])
 
     return (
         <DiaBox>
@@ -145,7 +197,7 @@ export default function Index(props) {
             <img src={state.onOpen1_3 ? open1_3 : close1_3} style={{ width: 120, height: 274, marginTop: 464, marginLeft: '-60px' }}></img>
             <div className='data_box'>
                 <div className='data_box_title'>进线柜</div>
-                <div className='data_box_item'>
+                <div className='data_box_item' style={{color:'#ff0'}}>
                     <span>Ia</span>
                     <div>
                         <span>{state.Ia} </span>
@@ -153,7 +205,7 @@ export default function Index(props) {
                     </div>
 
                 </div>
-                <div className='data_box_item'>
+                <div className='data_box_item' style={{color:'#0f0'}}>
                     <span>Ib</span>
                     <div>
                         <span>{state.Ib} </span>
@@ -161,7 +213,7 @@ export default function Index(props) {
                     </div>
 
                 </div>
-                <div className='data_box_item' style={{ borderBottom: 'none' }}>
+                <div className='data_box_item' style={{ borderBottom: 'none', color:'#f00' }}>
                     <span>Ic</span>
                     <div>
                         <span>{state.Ic} </span>
