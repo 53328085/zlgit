@@ -118,7 +118,7 @@ export default React.memo((props) => {
         const timer = setInterval(() => {
             getSingleData()
 
-        }, 30000)
+        }, 15000)
         return () => {
             clearInterval(timer)
         }
