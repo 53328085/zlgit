@@ -88,14 +88,14 @@ const BreakerS = (arr) => {
             {
               state == 0 ? // 合闸
               <>
-               <img src={imgsrc["close"]}></img>
-               <img src={imgsrc["green"]}></img>
-              </>
-              : state == 32 ?
-              <>
               <img src={imgsrc["red"]}></img>
               <img src={imgsrc["close"]}></img>
               </>
+              : state == 32 ?
+              <>
+              <img src={imgsrc["close"]}></img>
+              <img src={imgsrc["green"]}></img>
+             </>
               : <>
                   <img src={imgsrc["close"]}></img>
                   <img src={imgsrc["close"]}></img>
@@ -122,13 +122,14 @@ const BreakerSt = ({state}) => {
            {
              state == 0 ? // 合闸
              <>
-              <img src={imgsrc["close"]}></img>
-              <img src={imgsrc["green"]}></img>
-             </>
-             : state == 32 ?
-             <>
              <img src={imgsrc["red"]}></img>
              <img src={imgsrc["close"]}></img>
+             </>
+            
+             : state == 32 ?
+             <>
+              <img src={imgsrc["close"]}></img>
+              <img src={imgsrc["green"]}></img>
              </>
              : <>
                  <img src={imgsrc["close"]}></img>
@@ -148,19 +149,21 @@ const Shownum = ({value}) => {
 
 
 }
+
 const GetIa =({sn})=> {
   const [values, setValue] =useState({})
   const getData =async () => {
     try {
       let {response} = await QueryDeviceDataAll(sn)
       let {success, data} = response ||{}
-      console.log(data)
+       
       if(success && Array.isArray(data) && data?.length > 0) {
         let item =  data.find(a => a.name=="Ia");
          let stateitem = data.find(a => a.name =="BrokerStatus") 
          setValue({
           value: item?.value + item?.unit,
-          state: parseInt(stateitem?.value)
+          state: parseInt(stateitem?.value),
+          unit: item?.unit
          })
       }
     } catch (error) {
@@ -169,33 +172,128 @@ const GetIa =({sn})=> {
      
   }
   useEffect(()=> {
+    let timerid=null
     if(sn) {
-      
-      getData(sn)
+    timerid =setInterval(()=> {
+        getData(sn)
+      }, [30000])
+     
+    }
+   return ()=> {
+      clearInterval(timerid)
     }
   }, [sn])
    
   return (
     <>
-     <Shownum value={values.value} />
-     <BreakerSt state={values.state} />
+     <Shownum value={values.value} unit={values.unit} />
+     <BreakerSt state={values.state}  />
   </>
   )
 }
 const getValue =(data, name)=>{
-   let item = data?.find?.(d=> d.name==name)
-   return item?.value+item?.unit
+   let item = data?.find?.(d=> d.name==name);
+   let value =Number.isFinite(parseFloat(item?.value)) ?  item?.value+item?.unit : '' ;
+   return [value, item?.unit]
+}
+
+const GetP1 =({sn}) => {
+ 
+  const [values, setValue] =useState({})
+  const [state] = getValue(values, "BrokerStatus")
+  console.log("getp1", state)
+  const getData =async (sn) => {
+    try {
+ 
+      let {response} = await QueryDeviceDataAll(sn)
+      let {success, data} = response ||{}
+      
+      if(success && Array.isArray(data) && data?.length > 0) {   
+         setValue(data)
+      }
+    } catch (error) { 
+    }
+     
+  }
+  useEffect(()=> {
+    let timerid=null
+    if(sn) {
+    timerid =setInterval(()=> {
+        getData(sn)
+      }, [30000])
+     
+    }
+  return ()=> {
+      clearInterval(timerid)
+    }
+  },[sn])
+
+  return (
+    <>
+    <BreakerSt state={state} />
+    </>
+    
+  )
+}
+
+
+const GetHead = ({sn, ck}) => {
+  const [values, setValue] =useState({})
+  let [value, unit] = getValue(values,"Temp")
+
+  const getData =async (sn) => {
+
+    try {
+ 
+      let {response} = await QueryDeviceDataAll(sn)
+      let {success, data} = response ||{}
+      
+      if(success && Array.isArray(data) && data?.length > 0) {   
+         setValue(data)
+      }
+    } catch (error) { 
+    }
+     
+  }
+  useEffect(()=> {
+    let timerid=null
+    if(sn) {
+    timerid =setInterval(()=> {
+        getData(sn)
+      }, [30000])
+     
+    }
+  return ()=> {
+      clearInterval(timerid)
+    }
+  },[sn])
+  return (
+    <div className="title" onClick={ck} key="title">
+    <Link>
+      <img src={temp} alt="" />
+       温度  {value}
+    {/*   {value} */}
+      {/* {getTemp(NTD30S119328)} */}
+    </Link>
+    
+    <CustLink
+      text="details"
+      underline={false} 
+    ></CustLink> 
+  </div>
+  )
 }
 const GetP4 =({sn, ck1, ck2}) => {
  
   const [values, setValue] =useState({})
   let DI = ["DigitalInstatus1","DigitalInstatus2","DigitalInstatus3"]
   let dival = values?.find?.(d =>  DI.includes(d.name) && d.value==1)?.name
-  let value = getValue(values,"Ia")
-  let temp = getValue(values,"TempInC") 
+  let [value, unit] = getValue(values,"Ia")
+  let [temp] = getValue(values,"TempInA") 
+  
   let text={
-    DigitalInstatus1: "green",
-    DigitalInstatus2: "red",
+    DigitalInstatus1: "red",
+    DigitalInstatus2: "green",
     DigitalInstatus3: "close"
   }[dival]
   let bashou={
@@ -225,8 +323,15 @@ const GetP4 =({sn, ck1, ck2}) => {
      
   }
   useEffect(()=> {
+    let timerid=null
     if(sn) {
-      getData(sn)
+    timerid =setInterval(()=> {
+        getData(sn)
+      }, [30000])
+     
+    }
+  return ()=> {
+      clearInterval(timerid)
     }
   },[sn])
 
@@ -244,12 +349,143 @@ const GetP4 =({sn, ck1, ck2}) => {
     ></img>
 
     <div className="nums" onClick={ck2}>
-      <span className="type">1a</span>
+      <span className="type">{unit}</span>
       <Text>{value}</Text>
       <Text>{temp}</Text>
     </div>
   
 </div>
+  )
+}
+const GetP42 =({sn, ck1, ck2}) => {
+ 
+  const [values, setValue] =useState({})
+  let DI = ["DigitalInstatus1","DigitalInstatus2","DigitalInstatus3"]
+  let dival = values?.find?.(d =>  DI.includes(d.name) && d.value==1)?.name
+  let [value, unit] = getValue(values,"Ia")
+  let [temp] = getValue(values,"TempInA") 
+  let text={
+    DigitalInstatus1: "red",
+    DigitalInstatus2: "green",
+    DigitalInstatus3: "close"
+  }[dival]
+  let bashou={
+     DigitalInstatus1: "B正常",
+     DigitalInstatus2: "B分闸",
+     DigitalInstatus3: "B故障"
+ 
+  } [dival]
+
+    
+
+
+  //const {value, text, bashou, temp} = values
+  const imgn = imgsrc[`${text}`]
+  const imgbs = imgsrc[`${bashou}`]
+  const getData =async (sn) => {
+    try {
+ 
+      let {response} = await QueryDeviceDataAll(sn)
+      let {success, data} = response ||{}
+      
+      if(success && Array.isArray(data) && data?.length > 0) {   
+         setValue(data)
+      }
+    } catch (error) { 
+    }
+     
+  }
+  useEffect(()=> {
+    let timerid=null
+    if(sn) {
+    timerid =setInterval(()=> {
+        getData(sn)
+      }, [30000])
+     
+    }
+   return  ()=> {
+      clearInterval(timerid)
+    }
+  },[sn])
+
+  
+
+  return (
+    <div className="loop2" > 
+    <div className="loopbashou" onClick={ck1}>
+      <img  src={imgbs}></img>
+    </div>
+    <div className="state42">
+      <img
+        src={imgn }
+      ></img>
+      <div className="nums" onClick={ck2}>
+        <span className="type">{unit}</span>
+        <Text>{value}</Text>
+        <Text>{temp}</Text>
+      </div>
+    </div>
+  </div>
+  )
+}
+
+const GetP43 =({sn, ck1, ck2}) => {
+ 
+  const [values, setValue] =useState({})
+  let DI = ["DigitalInstatus1","DigitalInstatus2","DigitalInstatus3"]
+  let dival = values?.find?.(d =>  DI.includes(d.name) && d.value==1)?.name
+  let [value, unit] = getValue(values,"Ia")
+  let [temp] = getValue(values,"TempInA") 
+  let text={
+    DigitalInstatus1: "red",
+    DigitalInstatus2: "green",
+    DigitalInstatus3: "close"
+  }[dival] 
+  //const {value, text, bashou, temp} = values
+  const imgn = imgsrc[`${text}`]
+ 
+  const getData =async (sn) => {
+    try {
+ 
+      let {response} = await QueryDeviceDataAll(sn)
+      let {success, data} = response ||{}
+      
+      if(success && Array.isArray(data) && data?.length > 0) {   
+         setValue(data)
+      }
+    } catch (error) { 
+    }
+     
+  }
+  useEffect(()=> {
+    let timerid=null
+    if(sn) {
+    timerid =setInterval(()=> {
+        getData(sn)
+      }, [30000])
+     
+    }
+   return  ()=> {
+      clearInterval(timerid)
+    }
+  },[sn])
+
+  
+
+  return (
+    <div className="loop3">
+              <div className="loop3left"></div>
+              <div className="state42">
+                <img
+                  src={imgn                 }
+                ></img>
+                <div className="nums" onClick={ck2}>
+                  <span className="type">{unit}</span>
+                  <Text>{value}</Text>
+                  <Text>{temp}</Text>
+                </div>
+              </div>
+              </div>
   )
 }
 /* 月，年。没有日 */
@@ -472,10 +708,17 @@ useEffect(() => {
    
 }, [])
 // mqtt end
-
+  let currparams = useRef()
   const queryDeviceDataAll =async ({name, devSn, type,supsn,breaker=true, part}) => {
    
-   
+      currparams.current={
+        name,
+        devSn,
+        type,
+        supsn,
+        breaker,
+         part
+      }
       try {
        const sn = type==2 ? supsn : devSn
        if(!sn) return message.warning("缺少设备Sn")
@@ -583,11 +826,14 @@ const queryResult = async(params) => {
       let {success, data} = await QueryServiceResult(params)
       count++;
       if((success && data.state==0) || count > 9){
-        setRsucs(false)
+      
         setRstate(4)
         clearInterval(timerId)
         if(data.start == 0 ) {
-
+          setRsucs(true)
+          queryDeviceDataAll(currparams.current)
+        }else {
+          setRsucs(false)
         }
       } 
     } catch (error) {
@@ -852,7 +1098,8 @@ const disabledDate = (current) => {
     <Pagecount  style={{alignItems: "center", backgroundColor: "transparent"}} >
       <Mainbox>
         <div className="part" key="part1">
-          <div className="title" onClick={()=>displaySensor(1)} key="title">
+          <GetHead sn="NTD30S119328" ck={()=>displaySensor(1)} />
+         {/*  <div className="title" onClick={()=>displaySensor(1)} key="title">
             <Link>
               <img src={temp} alt="" />
               {getTemp(NTD30S119328)}
@@ -862,10 +1109,11 @@ const disabledDate = (current) => {
               text="details"
               underline={false} 
             ></CustLink> 
-          </div>
+          </div> */}
           <div className="h3d" key="prateh3d" >
             <div className="detail" onClick={()=>queryDeviceDataAll({name:"框架断路器  NA8-2500-2500H", type: 1,devSn:"NA5202522401", part: 1})}>
-            <BreakerS arr={NA5202522401} />
+          <GetP1 sn="NA5202522401" />
+            {/* <BreakerS arr={NA5202522401} /> */}
              {/*  <div className="state">
                 <img src={imgsrc["red"]}></img>
                 <img src={imgsrc["close"]}></img>
@@ -874,13 +1122,14 @@ const disabledDate = (current) => {
           </div>
         </div>
         <div className="part" key="part2">
-          <div className="title" onClick={()=>displaySensor(2)}>
+          <GetHead  sn="NTD30S119325" ck={()=>displaySensor(2)} />
+          {/* <div className="title" onClick={()=>displaySensor(2)}>
             <Link>
               <img src={temp} alt="" />
               {getTemp(NTD30S119325)}
             </Link>
             <CustLink text="details" underline={false}></CustLink>
-          </div>
+          </div> */}
           <div className="bashou">
             <div className="imgbox">
            {/*  <img
@@ -904,13 +1153,14 @@ const disabledDate = (current) => {
           </div>
         </div>
         <div className="part" key="part3">
-          <div className="title" onClick={()=>displaySensor(3)}>
+        <GetHead  sn="NTD30S119301" ck={()=>displaySensor(3)} />
+          {/* <div className="title" onClick={()=>displaySensor(3)}>
             <Link  >
               <img src={temp} alt="" />
               {getTemp(NTD30S119301)}
             </Link>
             <CustLink text="details" underline={false}></CustLink>
-          </div>
+          </div> */}
           <div className="kuixians">
             <div className="kuixian" >
             <div className="values" onClick={()=>queryDeviceDataAll({name:"数显多功能表 PD666", devSn: "NA5202522402", part:3})}>
@@ -967,13 +1217,14 @@ const disabledDate = (current) => {
           </div>
         </div>
         <div className="part" key="part4">
-          <div className="title" onClick={()=>displaySensor(4)}>
+        <GetHead  sn="NTD30S119322" ck={()=>displaySensor(4)} />
+         {/*  <div className="title" onClick={()=>displaySensor(4)}>
             <Link >
               <img src={temp} alt="" />
               {getTemp(NTD30S119322)}
             </Link>
             <CustLink text="details" underline={false}></CustLink>
-          </div>
+          </div> */}
           <div className="breaker">
           <div className="loops loops1">
             <GetP4  sn="NTCJ20012241"  ck1={()=>queryDeviceDataAll({name:"塑壳断路器  NM8N", devSn: "NTCJ20012241",part:4})} ck2={()=>queryDeviceDataAll({name:"智能接插件NTCJ", devSn: "NTCJ20012241", part:4})} />
@@ -1108,7 +1359,8 @@ const disabledDate = (current) => {
             </div> */}
           </div>
           <div className="loops loops2">
-            <div className="loop2" > 
+            <GetP42 sn="NTCJ00122401" ck1={()=>queryDeviceDataAll({name:"塑壳断路器  NM8N", devSn: "NTCJ00122401",part:4})} ck2={()=>queryDeviceDataAll({name:"智能接插件NTCJ", devSn: "NTCJ00122401",part:4})} />
+           {/*  <div className="loop2" > 
               <div className="loopbashou" onClick={()=>queryDeviceDataAll({name:"塑壳断路器  NM8N", devSn: "NTCJ00122401",part:4})}>
                 <img
                   src={
@@ -1136,8 +1388,9 @@ const disabledDate = (current) => {
                   <Text>283.2°C</Text>
                 </div>
               </div>
-            </div>
-            <div className="loop2" > 
+            </div> */}
+             <GetP42 sn="NTCJ00122402" ck1={()=>queryDeviceDataAll({name:"塑壳断路器  NM8N", devSn: "NTCJ00122402",part:4})} ck2={()=>queryDeviceDataAll({name:"智能接插件NTCJ", devSn: "NTCJ00122402",part:4})} />
+           {/*  <div className="loop2" > 
               <div className="loopbashou" onClick={()=>queryDeviceDataAll({name:"塑壳断路器  NM8N", devSn: "NTCJ00122402",part:4})} >
                 <img
                   src={
@@ -1165,8 +1418,9 @@ const disabledDate = (current) => {
                   <Text>283.2°C</Text>
                 </div>
               </div>
-            </div>
-            <div className="loop2" > 
+            </div> */}
+             <GetP42 sn="NTCJ00122403" ck1={()=>queryDeviceDataAll({name:"塑壳断路器  NM8N", devSn: "NTCJ00122403",part:4})} ck2={()=>queryDeviceDataAll({name:"智能接插件NTCJ", devSn: "NTCJ00122401",part:4})} />
+           {/*  <div className="loop2" > 
               <div className="loopbashou" onClick={()=>queryDeviceDataAll({name:"塑壳断路器  NM8N", devSn: "NTCJ00122403",part:4})}>
                 <img
                   src={
@@ -1194,10 +1448,12 @@ const disabledDate = (current) => {
                   <Text>283.2°C</Text>
                 </div>
               </div>
-            </div>
+            </div> */}
           </div>
           <div className="loops loops3">
-              <div className="loop3">
+            <GetP43 sn="NTCJ00122404" ck2={()=>queryDeviceDataAll({name:"智能接插件NTCJ", devSn: "NTCJ00122404",part:4})}  />
+            {/*   <div className="loop3">
+              <div className="loop3left"></div>
               <div className="state42">
                 <img
                   src={
@@ -1214,8 +1470,9 @@ const disabledDate = (current) => {
                   <Text>283.2°C</Text>
                 </div>
               </div>
-              </div>
-              <div className="loop3">
+              </div> */}
+               <GetP43 sn="NTCJ00122404" ck2={()=>queryDeviceDataAll({name:"数显多功能表 PD666", devSn: "PD6662555504",part:4})}  />
+             {/*  <div className="loop3">
                
               <div className="state42">
                 <img
@@ -1233,7 +1490,7 @@ const disabledDate = (current) => {
                   <Text>283.2°C</Text>
                 </div>
               </div>
-              </div>
+              </div> */}
           </div>
           </div>
 

@@ -3,6 +3,7 @@ import styled from 'styled-components'
 import exbg from './exbg.jpg'
 import logo from './log.png'
 import arrow from './arrow.png'
+import topbg from './topbg.png'
 import Diskchart from "../diskChartMonitor"
 import Diagram from "../diagramMonitor"
 const Mainbox=styled.div`
@@ -22,10 +23,10 @@ const Mainbox=styled.div`
     justify-content: center;
     
    
-      background-image: url(${logo}), url(${arrow}) ;
+      background-image: url(${logo}), url(${arrow}), url(${topbg});
       background-repeat: no-repeat, no-repeat;
-      background-size:  130px 40px,  180px 48px;
-      background-position: left center, left center;
+      background-size:  130px 40px,  180px 48px, 100%;
+      background-position: left center, left center, left center;
       position: relative;
       .btns{
          display: flex;

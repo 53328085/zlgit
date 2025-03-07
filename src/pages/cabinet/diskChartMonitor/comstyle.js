@@ -413,6 +413,9 @@ const Mainbox = styled.div`
         flex-direction: column;
         justify-content: space-between;
         cursor: pointer; 
+        .nums {
+           padding: 16px 0;
+        }
         .state {
           display: flex;
           justify-content: center;
@@ -523,7 +526,10 @@ const Mainbox = styled.div`
            justify-content: flex-end;
            align-items: flex-end;
            padding-bottom: 20px;
-           
+           .loop3left {
+            flex:1;
+            align-self: stretch;
+           }
            .state42 {
             display: flex;
             align-items: center;
