@@ -77,7 +77,7 @@ export default function romoteRegulating({deviceData}) {
     <>
      <div className="htitle">
                 <span>遥调</span>
-                <CustButton style={{ marginRight: "-16px" }}>保存参数</CustButton>
+               {/*  <CustButton style={{ marginRight: "-16px" }}>保存参数</CustButton> */}
               </div>
               <Form form={form} layout="vertical">
                 <Title level={5}>长延时保护</Title>

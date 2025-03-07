@@ -1,6 +1,6 @@
 // 遥调 框架断路器  NA8-2500-2500H
 
-import React from 'react'
+import React,{useEffect} from 'react'
 import {
     Form,
     Image,

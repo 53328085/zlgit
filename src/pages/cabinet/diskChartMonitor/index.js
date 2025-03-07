@@ -139,32 +139,54 @@ const BreakerSt = ({state}) => {
     </div>
  )
 }
-const Shownum = ({value}) => {
+const Shownum = ({value,name}) => {
    return( 
     <div className="nums">
-    <span className="type">1a</span>
+    <span className="type">{name}</span>
     <Text>{value}</Text>
      </div>
    )
 
 
 }
-
+ 
+const getValue =(data, name)=>{ 
+   let item = data?.find?.(d=> d.name==name);
+   let value =Number.isFinite(parseFloat(item?.value)) ?  item?.value+item?.unit : '' ;
+   return [value, item?.unit]
+}
+ 
 const GetIa =({sn})=> {
+  
   const [values, setValue] =useState({})
+  const [count, setCount] = useState(null)
+  let n =Number.isInteger(count %3) ? count %3 : 0
+  console.log("n",n)
+  let [value, unit] = getValue(values,["Ia","Ib","Ic"][n])
+  let [state] = getValue(values, "BrokerStatus")
   const getData =async () => {
     try {
       let {response} = await QueryDeviceDataAll(sn)
       let {success, data} = response ||{}
        
       if(success && Array.isArray(data) && data?.length > 0) {
-        let item =  data.find(a => a.name=="Ia");
+         setValue(data)
+         setCount(n=>  {
+          if(n==null){
+            return 0
+          }else{
+            return n +1
+          }
+
+        }) 
+         
+       /*  let item =  data.find(a => a.name=="Ia");
          let stateitem = data.find(a => a.name =="BrokerStatus") 
          setValue({
           value: item?.value + item?.unit,
           state: parseInt(stateitem?.value),
           unit: item?.unit
-         })
+         }) */
       }
     } catch (error) {
       
@@ -174,6 +196,9 @@ const GetIa =({sn})=> {
   useEffect(()=> {
     let timerid=null
     if(sn) {
+      if(!timerid) {
+        getData(sn)
+       } 
     timerid =setInterval(()=> {
         getData(sn)
       }, [30000])
@@ -186,16 +211,12 @@ const GetIa =({sn})=> {
    
   return (
     <>
-     <Shownum value={values.value} unit={values.unit} />
-     <BreakerSt state={values.state}  />
+     <Shownum value={value} unit={unit} name={["Ia","Ib","Ic"][n]} />
+     <BreakerSt state={state}  />
   </>
   )
 }
-const getValue =(data, name)=>{
-   let item = data?.find?.(d=> d.name==name);
-   let value =Number.isFinite(parseFloat(item?.value)) ?  item?.value+item?.unit : '' ;
-   return [value, item?.unit]
-}
+
 
 const GetP1 =({sn}) => {
  
@@ -218,6 +239,9 @@ const GetP1 =({sn}) => {
   useEffect(()=> {
     let timerid=null
     if(sn) {
+      if(!timerid) {
+        getData(sn)
+       } 
     timerid =setInterval(()=> {
         getData(sn)
       }, [30000])
@@ -258,6 +282,9 @@ const GetHead = ({sn, ck}) => {
   useEffect(()=> {
     let timerid=null
     if(sn) {
+      if(!timerid) {
+        getData(sn)
+       } 
     timerid =setInterval(()=> {
         getData(sn)
       }, [30000])
@@ -288,7 +315,9 @@ const GetP4 =({sn, ck1, ck2}) => {
   const [values, setValue] =useState({})
   let DI = ["DigitalInstatus1","DigitalInstatus2","DigitalInstatus3"]
   let dival = values?.find?.(d =>  DI.includes(d.name) && d.value==1)?.name
-  let [value, unit] = getValue(values,"Ia")
+  const [count, setCount] = useState(null)
+  let n =Number.isInteger(count %3) ? count %3 : 0
+  let [value, unit] = getValue(values,["Ia","Ib","Ic"][n])
   let [temp] = getValue(values,"TempInA") 
   
   let text={
@@ -315,7 +344,15 @@ const GetP4 =({sn, ck1, ck2}) => {
       let {response} = await QueryDeviceDataAll(sn)
       let {success, data} = response ||{}
       
-      if(success && Array.isArray(data) && data?.length > 0) {   
+      if(success && Array.isArray(data) && data?.length > 0) {  
+        setCount(n=>  {
+          if(n==null){
+            return 0
+          }else{
+            return n +1
+          }
+
+        }) 
          setValue(data)
       }
     } catch (error) { 
@@ -325,6 +362,9 @@ const GetP4 =({sn, ck1, ck2}) => {
   useEffect(()=> {
     let timerid=null
     if(sn) {
+      if(!timerid) {
+        getData(sn)
+       } 
     timerid =setInterval(()=> {
         getData(sn)
       }, [30000])
@@ -349,7 +389,7 @@ const GetP4 =({sn, ck1, ck2}) => {
     ></img>
 
     <div className="nums" onClick={ck2}>
-      <span className="type">{unit}</span>
+      <span className="type">{["Ia","Ib","Ic"][n]}</span>
       <Text>{value}</Text>
       <Text>{temp}</Text>
     </div>
@@ -362,7 +402,9 @@ const GetP42 =({sn, ck1, ck2}) => {
   const [values, setValue] =useState({})
   let DI = ["DigitalInstatus1","DigitalInstatus2","DigitalInstatus3"]
   let dival = values?.find?.(d =>  DI.includes(d.name) && d.value==1)?.name
-  let [value, unit] = getValue(values,"Ia")
+  const [count, setCount] = useState(null)
+  let n =Number.isInteger(count %3) ? count %3 : 0
+  let [value, unit] = getValue(values,["Ia","Ib","Ic"][n])
   let [temp] = getValue(values,"TempInA") 
   let text={
     DigitalInstatus1: "red",
@@ -389,6 +431,14 @@ const GetP42 =({sn, ck1, ck2}) => {
       let {success, data} = response ||{}
       
       if(success && Array.isArray(data) && data?.length > 0) {   
+        setCount(n=>  {
+          if(n==null){
+            return 0
+          }else{
+            return n +1
+          }
+
+        }) 
          setValue(data)
       }
     } catch (error) { 
@@ -398,6 +448,9 @@ const GetP42 =({sn, ck1, ck2}) => {
   useEffect(()=> {
     let timerid=null
     if(sn) {
+      if(!timerid) {
+        getData(sn)
+       } 
     timerid =setInterval(()=> {
         getData(sn)
       }, [30000])
@@ -420,7 +473,7 @@ const GetP42 =({sn, ck1, ck2}) => {
         src={imgn }
       ></img>
       <div className="nums" onClick={ck2}>
-        <span className="type">{unit}</span>
+        <span className="type">{["Ia","Ib","Ic"][n]}</span>
         <Text>{value}</Text>
         <Text>{temp}</Text>
       </div>
@@ -434,7 +487,9 @@ const GetP43 =({sn, ck1, ck2}) => {
   const [values, setValue] =useState({})
   let DI = ["DigitalInstatus1","DigitalInstatus2","DigitalInstatus3"]
   let dival = values?.find?.(d =>  DI.includes(d.name) && d.value==1)?.name
-  let [value, unit] = getValue(values,"Ia")
+  const [count, setCount] = useState(null)
+  let n =Number.isInteger(count %3) ? count %3 : 0
+  let [value, unit] = getValue(values,["Ia","Ib","Ic"][n])
   let [temp] = getValue(values,"TempInA") 
   let text={
     DigitalInstatus1: "red",
@@ -450,7 +505,15 @@ const GetP43 =({sn, ck1, ck2}) => {
       let {response} = await QueryDeviceDataAll(sn)
       let {success, data} = response ||{}
       
-      if(success && Array.isArray(data) && data?.length > 0) {   
+      if(success && Array.isArray(data) && data?.length > 0) {  
+          setCount(n=>  {
+            if(n==null){
+              return 0
+            }else{
+              return n +1
+            }
+
+          }) 
          setValue(data)
       }
     } catch (error) { 
@@ -458,8 +521,12 @@ const GetP43 =({sn, ck1, ck2}) => {
      
   }
   useEffect(()=> {
+
     let timerid=null
     if(sn) {
+     if(!timerid) {
+      getData(sn)
+     } 
     timerid =setInterval(()=> {
         getData(sn)
       }, [30000])
@@ -480,7 +547,7 @@ const GetP43 =({sn, ck1, ck2}) => {
                   src={imgn                 }
                 ></img>
                 <div className="nums" onClick={ck2}>
-                  <span className="type">{unit}</span>
+                  <span className="type">{["Ia","Ib","Ic"][n]}</span>
                   <Text>{value}</Text>
                   <Text>{temp}</Text>
                 </div>
@@ -709,7 +776,7 @@ useEffect(() => {
 }, [])
 // mqtt end
   let currparams = useRef()
-  const queryDeviceDataAll =async ({name, devSn, type,supsn,breaker=true, part}) => {
+  const queryDeviceDataAll =async ({name, devSn, type,supsn,breaker=true, part, pdna}) => {
    
       currparams.current={
         name,
@@ -717,10 +784,11 @@ useEffect(() => {
         type,
         supsn,
         breaker,
-         part
+         part,
+         pdna, // 1: 数显 0：断路器
       }
       try {
-       const sn = type==2 ? supsn : devSn
+       const sn =  supsn || devSn
        if(!sn) return message.warning("缺少设备Sn")
        const {response  } = await QueryDeviceDataAll(sn)
        const  {success, data, message:msg} = response
@@ -755,28 +823,39 @@ useEffect(() => {
             breaker,
             state: state || distate,
             part,
-            
+            pdna, // 1: 数显 0：断路器
           })
 
-          if(NAB8Sn.includes(devSn)) {
-            setSnapshot([
-              {
-              name: "断路器状态",
-              value: state, 
-              },
-              {
-                name: "故障脱扣次数",
-                value: 0,
-              },
-              {
-                name: "开关操作次数",
-                value: 4,
-              },
-              {
-                name: "额定电流",
-                value:  part==1 ? "2500A" : part==3 ? "1600A" : ''
-              }
-          ])
+          if(NAB8Sn.includes(devSn)) { // 框架断路器
+            if(pdna==1) {
+              setSnapshot([ 
+                {
+                  name: "额定电流",
+                  value:  part==1 ? "2500A" : part==3 ? "1600A" : ''
+                }
+            ])
+
+            }else if(pdna==0) {
+              setSnapshot([
+                {
+                name: "断路器状态",
+                value: state, 
+                },
+                {
+                  name: "故障脱扣次数",
+                  value: 0,
+                },
+                {
+                  name: "开关操作次数",
+                  value: 4,
+                },
+                {
+                  name: "额定电流",
+                  value:  part==1 ? "2500A" : part==3 ? "1600A" : ''
+                }
+            ])
+            }
+             
           }else if(NTCJ2.includes(devSn)){
             setSnapshot([
               {
@@ -792,15 +871,15 @@ useEffect(() => {
                 value:  protect,
               }
           ])
-          }else if(NTCJ.includes(devSn)){
+          }else if(devSn=="NXW202522201"){
             setSnapshot([
               {
-              name: "设备状态",
-              value: distate, 
+              name: "额定电流",
+              value: "150.0A", 
               },
               {
-                name: "额定电流",
-                value: IA,
+                name: "额定电压",
+                value: "400.0V"
               },
               
           ])
@@ -821,21 +900,22 @@ useEffect(() => {
 }
   let timerId  = null;
   let count = 0;
+console.log("rsuc", rsucs)
 const queryResult = async(params) => {
     try {
       let {success, data} = await QueryServiceResult(params)
       count++;
-      if((success && data.state==0) || count > 9){
+      if((success && data?.state==0) || count > 9){
       
         setRstate(4)
         clearInterval(timerId)
-        if(data.start == 0 ) {
+        if(data.state == 0 ) {
           setRsucs(true)
           queryDeviceDataAll(currparams.current)
         }else {
           setRsucs(false)
         }
-      } 
+      }  
     } catch (error) {
       
     }
@@ -972,7 +1052,12 @@ const queryResult = async(params) => {
       state: 2,
     },
   ]; */
-
+  let params =useRef({
+    devSn: '',
+    point: '',
+    start: dates[0].format("YYYY-MM-DD")+" 00:00:00",
+    end:dates[1].format("YYYY-MM-DD HH:mm:ss")
+ })
   let eloption = {
     // color: ["#ff7345","#6a6e88"],
     series: [
@@ -1001,7 +1086,7 @@ const queryResult = async(params) => {
     yAxis: [
       {
         axisLabel: {
-          formatter: "{value}V",
+          formatter: "{value}"+ params.current.unit,
         },
       },
     ],
@@ -1032,12 +1117,7 @@ const disabledDate = (current) => {
       </Extrea>
     );
   };
-  let params =useRef({
-    devSn: '',
-    point: '',
-    start: dates[0].format("YYYY-MM-DD")+" 00:00:00",
-    end:dates[1].format("YYYY-MM-DD HH:mm:ss")
- })
+
   const getElData = async() => {
     let {success, data} =  await  QueryDevicePointTrend(params.current)
     if(success && Array.isArray(data) && data?.length>0) {
@@ -1048,10 +1128,11 @@ const disabledDate = (current) => {
       setEldata([])
     }
   }
-  const onelchart = async ({desc, name}) => { // 点击遥测
+  const onelchart = async ({desc, name, unit}) => { // 点击遥测
     setEltitle(desc);
      params.current.devSn=deviceInfo.devSn
      params.current.point = name  
+     params.current.unit=unit
     await getElData()
     setElopen(true);
   };
@@ -1079,6 +1160,7 @@ const disabledDate = (current) => {
         await iform.validateFields() 
         doOpenClose()
       }else if(rState==3 || rState == 4) {
+        setRstate(1)
         modal.current.onCancel();
       }
     } catch (error) {
@@ -1086,6 +1168,8 @@ const disabledDate = (current) => {
     }
 
   };
+  let count1 = useRef({int:0})
+   
   const onCancel=()=> {
     setRstate(1)
     modal.current.onCancel();
@@ -1111,7 +1195,7 @@ const disabledDate = (current) => {
             ></CustLink> 
           </div> */}
           <div className="h3d" key="prateh3d" >
-            <div className="detail" onClick={()=>queryDeviceDataAll({name:"框架断路器  NA8-2500-2500H", type: 1,devSn:"NA5202522401", part: 1})}>
+            <div className="detail" onClick={()=>queryDeviceDataAll({name:"框架断路器  NA8-2500-2500H", type: 1,devSn:"NA5202522401", part: 1, pdna: 0})}>
           <GetP1 sn="NA5202522401" />
             {/* <BreakerS arr={NA5202522401} /> */}
              {/*  <div className="state">
@@ -1163,24 +1247,24 @@ const disabledDate = (current) => {
           </div> */}
           <div className="kuixians">
             <div className="kuixian" >
-            <div className="values" onClick={()=>queryDeviceDataAll({name:"数显多功能表 PD666", devSn: "NA5202522402", part:3})}>
+            <div className="values" onClick={()=>queryDeviceDataAll({name:"数显多功能表 PD666",type:1, devSn: "NA5202522402", part:3, pdna:1})}>
             {/* <div className="nums">
               <span className="type">1a</span>
               <Text>25.3A</Text>
               
             </div> */}
-            <GetIa sn="NA5202522402" />
+            <GetIa sn="NA5202522402" count={count1} />
             {/* <div className="state">
               <img src={imgsrc["red"]}></img>
               <img src={imgsrc["close"]}></img>
             </div> */}
           </div>
-          <div className="guizhi" onClick={()=>queryDeviceDataAll({name:"框架断路器  NA8", devSn: "NA5202522402", part:3})}>
+          <div className="guizhi" onClick={()=>queryDeviceDataAll({name:"框架断路器  NA8", type:1, devSn: "NA5202522402", part:3, pdna:0})}>
             
           </div>
             </div>
             <div className="kuixian" >
-            <div className="values" onClick={()=>queryDeviceDataAll({name:"数显多功能表 PD666", devSn: "NA5202522403", part:3})}>
+            <div className="values" onClick={()=>queryDeviceDataAll({name:"数显多功能表 PD666",type:1, devSn: "NA5202522403", part:3, pdna: 1})}>
            {/*  <div className="nums">
               <span className="type">1a</span>
               <Text>25.3A</Text>
@@ -1190,15 +1274,15 @@ const disabledDate = (current) => {
               <img src={imgsrc["red"]}></img>
               <img src={imgsrc["close"]}></img>
             </div> */}
-            <GetIa sn="NA5202522403" />
+            <GetIa sn="NA5202522403" count={0} />
           </div>
-          <div className="guizhi" onClick={()=>queryDeviceDataAll({name:"框架断路器  NA8", devSn: "NA5202522403", part:3})}>
+          <div className="guizhi" onClick={()=>queryDeviceDataAll({name:"框架断路器  NA8",type:1, devSn: "NA5202522403", part:3, pdna: 0})}>
             
           </div>
             </div>
             <div className="kuixian" >
-            <div className="values" onClick={()=>queryDeviceDataAll({name:"数显多功能表 PD666", devSn: "NA5202522404", part:3})}>
-              <GetIa sn="NA5202522404" />
+            <div className="values" onClick={()=>queryDeviceDataAll({name:"数显多功能表 PD666",type:1, devSn: "NA5202522404", part:3, pdna: 1})}>
+              <GetIa sn="NA5202522404" count={0} />
          {/*    <div className="nums">
               <span className="type">1a</span>
               <Text>25.3A</Text>
@@ -1209,7 +1293,7 @@ const disabledDate = (current) => {
               <img src={imgsrc["close"]}></img>
             </div> */}
           </div>
-          <div className="guizhi" onClick={()=>queryDeviceDataAll({name:"框架断路器  NA8", devSn: "NA5202522404", part:3})}>
+          <div className="guizhi" onClick={()=>queryDeviceDataAll({name:"框架断路器  NA8", type:1, devSn: "NA5202522404", part:3, pdna: 0})}>
             
           </div>
             </div>
@@ -1227,7 +1311,7 @@ const disabledDate = (current) => {
           </div> */}
           <div className="breaker">
           <div className="loops loops1">
-            <GetP4  sn="NTCJ20012241"  ck1={()=>queryDeviceDataAll({name:"塑壳断路器  NM8N", devSn: "NTCJ20012241",part:4})} ck2={()=>queryDeviceDataAll({name:"智能接插件NTCJ", devSn: "NTCJ20012241", part:4})} />
+            <GetP4  sn="NTCJ20012241"  ck1={()=>queryDeviceDataAll({name:"塑壳断路器  NM8N", type:2, pdna:0, devSn: "NTCJ20012241",part:4})} ck2={()=>queryDeviceDataAll({name:"智能接插件NTCJ",type:2, pdna:0, devSn: "NTCJ20012241", part:4})} />
            {/*  <div className="loop1" >  
                 <div className="loopbashou" onClick={()=>queryDeviceDataAll({name:"塑壳断路器  NM8N", devSn: "NTCJ20012241",part:4})}>
                   <img
@@ -1259,7 +1343,7 @@ const disabledDate = (current) => {
                 </div>
               
             </div> */}
-             <GetP4  sn="NTCJ20012242"  ck1={()=>queryDeviceDataAll({name:"塑壳断路器  NM8N", devSn: "NTCJ20012242",part:4})} ck2={()=>queryDeviceDataAll({name:"智能接插件NTCJ", devSn: "NTCJ20012242", part:4})} />
+             <GetP4  sn="NTCJ20012242"  ck1={()=>queryDeviceDataAll({name:"塑壳断路器  NM8N",type:2, pdna:0, devSn: "NTCJ20012242",part:4})} ck2={()=>queryDeviceDataAll({name:"智能接插件NTCJ",type:2, pdna:1, devSn: "NTCJ20012242", part:4})} />
            {/*  <div className="loop1" >   
                 <div className="loopbashou" onClick={()=>queryDeviceDataAll({name:"塑壳断路器  NM8N", devSn: "NTCJ20012242",part:4})} >
                   <img
@@ -1291,7 +1375,7 @@ const disabledDate = (current) => {
                 </div>
                
             </div> */}
-             <GetP4  sn="NTCJ20012243"  ck1={()=>queryDeviceDataAll({name:"塑壳断路器  NM8N", devSn: "NTCJ20012243",part:4})} ck2={()=>queryDeviceDataAll({name:"智能接插件NTCJ", devSn: "NTCJ20012243", part:4})} />
+             <GetP4  sn="NTCJ20012243"  ck1={()=>queryDeviceDataAll({name:"塑壳断路器  NM8N",type:2, pdna:0, devSn: "NTCJ20012243",part:4})} ck2={()=>queryDeviceDataAll({name:"智能接插件NTCJ",type:2, pdna:1, devSn: "NTCJ20012243", part:4})} />
           {/*   <div className="loop1" >
               
                 <div className="loopbashou" onClick={()=>queryDeviceDataAll({name:"塑壳断路器  NM8N", devSn: "NTCJ20012243",part:4})} >
@@ -1324,7 +1408,7 @@ const disabledDate = (current) => {
                 </div>
               
             </div> */}
-             <GetP4  sn="NTCJ20012244"  ck1={()=>queryDeviceDataAll({name:"塑壳断路器  NM8N", devSn: "NTCJ20012244",part:4})} ck2={()=>queryDeviceDataAll({name:"智能接插件NTCJ", devSn: "NTCJ20012244", part:4})} />
+             <GetP4  sn="NTCJ20012244"  ck1={()=>queryDeviceDataAll({name:"塑壳断路器  NM8N",type:2, pdna:0, devSn: "NTCJ20012244",part:4})} ck2={()=>queryDeviceDataAll({name:"智能接插件NTCJ",type:2, pdna:1, devSn: "NTCJ20012244", part:4})} />
            {/*  <div className="loop1" >
               
                 <div className="loopbashou" onClick={()=>queryDeviceDataAll({name:"塑壳断路器  NM8N", devSn: "NTCJ20012244",part:4})}>
@@ -1359,7 +1443,7 @@ const disabledDate = (current) => {
             </div> */}
           </div>
           <div className="loops loops2">
-            <GetP42 sn="NTCJ00122401" ck1={()=>queryDeviceDataAll({name:"塑壳断路器  NM8N", devSn: "NTCJ00122401",part:4})} ck2={()=>queryDeviceDataAll({name:"智能接插件NTCJ", devSn: "NTCJ00122401",part:4})} />
+            <GetP42 sn="NTCJ00122401" ck1={()=>queryDeviceDataAll({name:"塑壳断路器  NM8N",type:2, pdna:0, devSn: "NTCJ00122401",part:4})} ck2={()=>queryDeviceDataAll({name:"智能接插件NTCJ",type:2, pdna:1, devSn: "NTCJ00122401",part:4})} />
            {/*  <div className="loop2" > 
               <div className="loopbashou" onClick={()=>queryDeviceDataAll({name:"塑壳断路器  NM8N", devSn: "NTCJ00122401",part:4})}>
                 <img
@@ -1389,7 +1473,7 @@ const disabledDate = (current) => {
                 </div>
               </div>
             </div> */}
-             <GetP42 sn="NTCJ00122402" ck1={()=>queryDeviceDataAll({name:"塑壳断路器  NM8N", devSn: "NTCJ00122402",part:4})} ck2={()=>queryDeviceDataAll({name:"智能接插件NTCJ", devSn: "NTCJ00122402",part:4})} />
+             <GetP42 sn="NTCJ00122402" ck1={()=>queryDeviceDataAll({name:"塑壳断路器  NM8N",type:2, pdna:0, devSn: "NTCJ00122402",part:4})} ck2={()=>queryDeviceDataAll({name:"智能接插件NTCJ",type:2, pdna:1, devSn: "NTCJ00122402",part:4})} />
            {/*  <div className="loop2" > 
               <div className="loopbashou" onClick={()=>queryDeviceDataAll({name:"塑壳断路器  NM8N", devSn: "NTCJ00122402",part:4})} >
                 <img
@@ -1419,7 +1503,7 @@ const disabledDate = (current) => {
                 </div>
               </div>
             </div> */}
-             <GetP42 sn="NTCJ00122403" ck1={()=>queryDeviceDataAll({name:"塑壳断路器  NM8N", devSn: "NTCJ00122403",part:4})} ck2={()=>queryDeviceDataAll({name:"智能接插件NTCJ", devSn: "NTCJ00122401",part:4})} />
+             <GetP42 sn="NTCJ00122403" ck1={()=>queryDeviceDataAll({name:"塑壳断路器  NM8N",type:2, pdna:0, devSn: "NTCJ00122403",part:4})} ck2={()=>queryDeviceDataAll({name:"智能接插件NTCJ",type:2, pdna:1, devSn: "NTCJ00122401",part:4})} />
            {/*  <div className="loop2" > 
               <div className="loopbashou" onClick={()=>queryDeviceDataAll({name:"塑壳断路器  NM8N", devSn: "NTCJ00122403",part:4})}>
                 <img
@@ -1451,7 +1535,7 @@ const disabledDate = (current) => {
             </div> */}
           </div>
           <div className="loops loops3">
-            <GetP43 sn="NTCJ00122404" ck2={()=>queryDeviceDataAll({name:"智能接插件NTCJ", devSn: "NTCJ00122404",part:4})}  />
+            <GetP43 sn="NTCJ00122404" ck2={()=>queryDeviceDataAll({name:"智能接插件NTCJ",type:2, pdna:1, devSn: "NTCJ00122404",part:4})}  />
             {/*   <div className="loop3">
               <div className="loop3left"></div>
               <div className="state42">
@@ -1471,7 +1555,7 @@ const disabledDate = (current) => {
                 </div>
               </div>
               </div> */}
-               <GetP43 sn="NTCJ00122404" ck2={()=>queryDeviceDataAll({name:"数显多功能表 PD666", devSn: "PD6662555504",part:4})}  />
+               <GetP43 sn="NTCJ00122404" ck2={()=>queryDeviceDataAll({name:"数显多功能表 PD666",type:2, pdna:1, devSn: "PD6662555504",part:4})}  />
              {/*  <div className="loop3">
                
               <div className="state42">

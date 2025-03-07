@@ -231,7 +231,7 @@ const DDrawer = styled(Drawer)`
             ${titlesty}
           }
           .close { 
-            font-size: 22px;
+            font-size: 32px;
             transition: all 0.3s;
             &:hover {
               color: #333;
@@ -570,7 +570,7 @@ const Extrea = styled.div`
   flex: 1;
   .close {
   //  color: #d6d6d6;
-    font-size: 22px;
+    font-size: 32px;
     transition: all 0.3s;
     &:hover {
       color: #333;
