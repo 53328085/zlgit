@@ -66,7 +66,6 @@ const { RangePicker } = DatePicker;
 const { TextArea } = Input;
 const {QueryDeviceDataAll,QueryDevicesDataAll,DoOpenClose,QueryServiceResult,QueryDevicePointTrend,GetHMIHeart,QueryMqtt} =DiskChart
 const getTemp = (arr) => {
-   console.log(arr)
    if(Array.isArray(arr) && arr?.length> 0) {
      return arr.find(a => a.Name=="Temp")?.value
    }else {
@@ -74,7 +73,6 @@ const getTemp = (arr) => {
    }
 }
 const getState = (arr) => {
-  console.log("getState", arr)
   if(Array.isArray(arr) && arr?.length > 0){
     return arr.find(a => a.Name=="BrokerStatus")?.Value
   }else{
@@ -161,7 +159,7 @@ const GetIa =({sn})=> {
   const [values, setValue] =useState({})
   const [count, setCount] = useState(null)
   let n =Number.isInteger(count %3) ? count %3 : 0
-  console.log("n",n)
+  
   let [value, unit] = getValue(values,["Ia","Ib","Ic"][n])
   let [state] = getValue(values, "BrokerStatus")
   const getData =async () => {
@@ -201,7 +199,7 @@ const GetIa =({sn})=> {
        } 
     timerid =setInterval(()=> {
         getData(sn)
-      }, [30000])
+      }, [5000])
      
     }
    return ()=> {
@@ -222,7 +220,7 @@ const GetP1 =({sn}) => {
  
   const [values, setValue] =useState({})
   const [state] = getValue(values, "BrokerStatus")
-  console.log("getp1", state)
+  
   const getData =async (sn) => {
     try {
  
@@ -244,7 +242,7 @@ const GetP1 =({sn}) => {
        } 
     timerid =setInterval(()=> {
         getData(sn)
-      }, [30000])
+      }, [5000])
      
     }
   return ()=> {
@@ -287,7 +285,7 @@ const GetHead = ({sn, ck}) => {
        } 
     timerid =setInterval(()=> {
         getData(sn)
-      }, [30000])
+      }, [5000])
      
     }
   return ()=> {
@@ -367,7 +365,7 @@ const GetP4 =({sn, ck1, ck2}) => {
        } 
     timerid =setInterval(()=> {
         getData(sn)
-      }, [30000])
+      }, [5000])
      
     }
   return ()=> {
@@ -453,7 +451,7 @@ const GetP42 =({sn, ck1, ck2}) => {
        } 
     timerid =setInterval(()=> {
         getData(sn)
-      }, [30000])
+      }, [5000])
      
     }
    return  ()=> {
@@ -529,7 +527,7 @@ const GetP43 =({sn, ck1, ck2}) => {
      } 
     timerid =setInterval(()=> {
         getData(sn)
-      }, [30000])
+      }, [5000])
      
     }
    return  ()=> {
@@ -575,13 +573,15 @@ export default function Index() {
     deviceType: 1, // 1: 框架断路器 2：塑壳断路器
    
   })
+  const [NTCJdata, setNTcjdata] = useState({}) // 塑壳断路器 固定数据
   let {NTD30S119328, NA5202522401,NTD30S119325, NTD30S119301,NA5202522402,NA5202522403,NA5202522404,   
     NTD30S119322,
     NTCJ20012241,NTCJ20012242,NTCJ20012243,NTCJ20012244,      
     NTCJ00122401,NTCJ00122402,NTCJ00122403,
    NTCJ00122404,PD6662555504} = runtimedata || {}
-  console.log(runtimedata)
-  const {part} = deviceInfo;
+  
+  const {part, loop} = deviceInfo;
+  
   const [swstate,setSwstate] = useState({})
   const [rState, setRstate] = useState(1);
   const [rsucs, setRsucs] = useState()
@@ -616,7 +616,7 @@ export default function Index() {
           "NTCJ00122401","NTCJ00122402","NTCJ00122403",
           "NTCJ00122404","PD6662555504"
         ])
-        console.log(initData)
+        
      // let allData = await Promise.allSettled(promises);
      // let p1={}
       
@@ -776,7 +776,7 @@ useEffect(() => {
 }, [])
 // mqtt end
   let currparams = useRef()
-  const queryDeviceDataAll =async ({name, devSn, type,supsn,breaker=true, part, pdna}) => {
+  const queryDeviceDataAll =async ({name, devSn, type,supsn,breaker=true, part, pdna, loop}) => {
    
       currparams.current={
         name,
@@ -786,6 +786,7 @@ useEffect(() => {
         breaker,
          part,
          pdna, // 1: 数显 0：断路器
+         loop,
       }
       try {
        const sn =  supsn || devSn
@@ -824,6 +825,7 @@ useEffect(() => {
             state: state || distate,
             part,
             pdna, // 1: 数显 0：断路器
+            loop,
           })
 
           if(NAB8Sn.includes(devSn)) { // 框架断路器
@@ -857,20 +859,73 @@ useEffect(() => {
             }
              
           }else if(NTCJ2.includes(devSn)){
-            setSnapshot([
-              {
-              name: "断路器状态",
-              value: distate, 
-              },
-              {
-                name: "核定电流",
-                value: IA,
-              },
-              {
-                name: "保护类型",
-                value:  protect,
-              }
-          ])
+            if(["NTCJ20012241","NTCJ20012242"].includes(devSn)) {
+              setNTcjdata({
+                type:2,
+                set:2,
+                longset:63,
+                structType:5,
+                structint: 2,
+                setIsd: 630
+              })
+            }else if(["NTCJ20012243","NTCJ20012244"].includes(devSn)) {
+              setNTcjdata({
+                type:2,
+                set:2,
+                longset:80,
+                structType:5,
+                structint: 2,
+                setIsd: 800
+              })
+            }else if(devSn=="NTCJ00122401") {
+              setNTcjdata({
+                type:1,
+                set:2,
+                longset:125,
+                structType:5,
+                structint: 2,
+                setIsd: 1250
+              })
+            }else if(devSn=="NTCJ00122402"){
+              setNTcjdata({
+                type:1,
+                set:2,
+                longset:125,
+                structType:5,
+                structint: 2,
+                setIsd: 1600
+              })
+            }
+          
+
+
+
+
+
+            if(pdna==0) {
+              setSnapshot([
+                {
+                name: "断路器状态",
+                value: distate, 
+                },
+                {
+                  name: "核定电流",
+                  value: IA,
+                },
+                {
+                  name: "保护类型",
+                  value:  protect,
+                }
+            ])
+            }else {
+              setSnapshot([ 
+                {
+                  name: "核定电流",
+                  value: IA,
+                } 
+            ])
+            }
+      
           }else if(devSn=="NXW202522201"){
             setSnapshot([
               {
@@ -900,7 +955,7 @@ useEffect(() => {
 }
   let timerId  = null;
   let count = 0;
-console.log("rsuc", rsucs)
+ 
 const queryResult = async(params) => {
     try {
       let {success, data} = await QueryServiceResult(params)
@@ -1028,14 +1083,20 @@ const queryResult = async(params) => {
         state: 2,
       }
     ],
-    4: [
+    4: loop ?  [
       {
         level: 1,
         startTime:  "2025-01-02 14:15:38",
         alarmType: "正泰展厅变电站P4柜回路1断路器异常分闸",
         state: 2,
       }
-    ]
+    ]:[
+      {
+        level: "--",
+        startTime: "--",
+        alarmType: "无告警",
+        state: '',
+      }]
 
   }[part] 
 /*    [
@@ -1144,7 +1205,7 @@ const disabledDate = (current) => {
     getElData()
  }
   const onCloseMain = ()=> {
-      console.log("elopen", elopen)
+   
       if(!elopen){
         setCopen(false)
       }
@@ -1311,7 +1372,7 @@ const disabledDate = (current) => {
           </div> */}
           <div className="breaker">
           <div className="loops loops1">
-            <GetP4  sn="NTCJ20012241"  ck1={()=>queryDeviceDataAll({name:"塑壳断路器  NM8N", type:2, pdna:0, devSn: "NTCJ20012241",part:4})} ck2={()=>queryDeviceDataAll({name:"智能接插件NTCJ",type:2, pdna:0, devSn: "NTCJ20012241", part:4})} />
+            <GetP4  sn="NTCJ20012241"  ck1={()=>queryDeviceDataAll({name:"塑壳断路器  NM8N", type:2, pdna:0, devSn: "NTCJ20012241",part:4, loop:1})} ck2={()=>queryDeviceDataAll({name:"智能接插件NTCJ",type:2, pdna:0, devSn: "NTCJ20012241", part:4, loop:1})} />
            {/*  <div className="loop1" >  
                 <div className="loopbashou" onClick={()=>queryDeviceDataAll({name:"塑壳断路器  NM8N", devSn: "NTCJ20012241",part:4})}>
                   <img
@@ -1749,7 +1810,7 @@ const disabledDate = (current) => {
         {/* 遥测 */}
           <Electric datas={deviceData} onClick={onelchart} />
           {/* 遥调 */}
-          {deviceInfo?.deviceType === 1 ? <RomoteRegulatin laptop={laptop} part={part} deviceData={deviceData} /> : deviceInfo?.deviceType === 2 ? <RomoteRegulatinB deviceData={deviceData} /> : null} 
+          {deviceInfo?.deviceType === 1 ? <RomoteRegulatin laptop={laptop} part={part} deviceData={deviceData} /> : deviceInfo?.deviceType === 2 ? <RomoteRegulatinB deviceData={NTCJdata} /> : null} 
           <div className="htitle"> 
             <span>遥控</span>
           </div>
