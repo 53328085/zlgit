@@ -95,13 +95,13 @@ export default React.memo((props) => {
                 if(res && res.response.code == 0 && Array.isArray(res.response.data) && res.response.data.length >0){
                     let deviceData = res.response.data
                     deviceData.map(item => {
-                        if (item.DigitalInstatus1 == 1) {
+                        if (item.name == 'DigitalInstatus1' && item.value == "1") {
                             state.status = 'close'
                         }
-                        if (item.DigitalInstatus2 == 1) {
+                        if (item.name == 'DigitalInstatus2' && item.value == "1") {
                             state.status = 'open'
                         }
-                        if (item.DigitalInstatus3 == 1) {
+                        if (item.name == 'DigitalInstatus3' && item.value == "1") {
                             state.status = 'error'
                         }
         
@@ -124,7 +124,7 @@ export default React.memo((props) => {
             const timer = setInterval(() => {
                 getSingleData()
     
-            }, 30000)
+            }, 15000)
             return () => {
                 clearInterval(timer)
             }
