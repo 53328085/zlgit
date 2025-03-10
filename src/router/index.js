@@ -122,7 +122,7 @@ const loginrouter =  [{
  let routes =  [
   {
    path: "/",
-   element: <Diskchart />   //    <Login />,   
+   element:  <Login />,   //<Diskchart /> 
    
    },
  

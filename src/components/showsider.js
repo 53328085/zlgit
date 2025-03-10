@@ -5,8 +5,11 @@ import {MenuUnfoldOutlined,MenuFoldOutlined} from "@ant-design/icons"
 import {useDispatch, useSelector} from 'react-redux'
 import {  collapsed,pgTitle, getCollapsed } from "@redux/systemconfig";
 const CButton = styled(Button)`
-   background-color: rgba(40, 45, 70, ${props=> props.theme.opacity});
-   border: "none";
+&& {
+  background-color: rgba(40, 45, 70, ${props=> props.theme.opacity});
+   border:  none ;
+}
+
 `
 const Main =styled.div`
  padding-left: ${props => props.Collapsed ?  "0px" :"8px"};

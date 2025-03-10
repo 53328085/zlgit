@@ -384,6 +384,9 @@ useEffect(()=>{
         </Item>
         </div>        
       </Item>
+      <Item label="图片景色"  name="imgbgcolor" initialValue="#4A9AF0">
+      <Ccolor name="imgbgcolor" />
+      </Item>
       <Item label="模块菜单栏背景色"  name="menusbgcolor" initialValue="#003366">
       <Ccolor name="menusbgcolor" />
       </Item>
