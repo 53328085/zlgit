@@ -9,7 +9,6 @@ const CButton = styled(Button)`
   background-color: rgba(40, 45, 70, ${props=> props.theme.opacity});
    border:  none ;
 }
-
 `
 const Main =styled.div`
  padding-left: ${props => props.Collapsed ?  "0px" :"8px"};
