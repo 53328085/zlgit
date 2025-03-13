@@ -392,7 +392,7 @@ module.exports = function (webpackEnv) {
                   maxSize: imageInlineSizeLimit,
                 },
               },
-            },
+            },            
             {
               test: /\.svg$/,
               use: [
@@ -402,10 +402,10 @@ module.exports = function (webpackEnv) {
                     svgoConfig: {
                       plugins: [
                         { 
-                          name: 'preset-default', // 必须声明预设名称
+                          name: 'preset-default',  
                           params: {
                             overrides: {
-                              removeViewBox: false // 禁用默认的 viewBox 删除行为
+                              removeViewBox: false  
                             }
                           }
                         }
@@ -413,17 +413,17 @@ module.exports = function (webpackEnv) {
                     }
                   },
                 },
-                {
+               {
                   loader: require.resolve('file-loader'),
                   options: {
                     name: 'static/media/[name].[hash].[ext]',
                   },
-                },
+                },  
               ],
               issuer: {
                 and: [/\.(ts|tsx|js|jsx|md|mdx)$/],
-              },
-            },
+              }, 
+            }, 
             // Process application JS with Babel.
             // The preset includes JSX, Flow, TypeScript, and some ESnext features.
             {

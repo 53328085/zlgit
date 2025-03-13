@@ -5,13 +5,22 @@ import {Menu, Image,Button} from 'antd'
 import {useNavigate, useLocation} from 'react-router-dom'
 import {useSelector} from 'react-redux'
 import styled, {css} from 'styled-components'
+
 // import style from './style.module.less'
 import Title from '../header/title'
-import {  configState, siderDesignerMenus, siderRunMenus, getisDistribution, adaptation,sidershow, getPgTitle} from "@redux/systemconfig";
-import imgurl from './icon';
+import {  configState, siderDesignerMenus, siderRunMenus, getisDistribution, adaptation,  getPgTitle} from "@redux/systemconfig";
+ 
 import ShowSide from "@com/showsider"
-const Micon = () => {
-   return <span className="custicon">&#9673;</span>
+//import svgs from './svgs'
+import * as svgcom from './svgs'
+ 
+ 
+const Micon = ({iconname}) => {
+   const location = useLocation()
+   let {primary} = location.state || {}   
+    const Com =  svgcom[iconname] 
+   return   Com ?  <Com  className={iconname + " custicon "+primary}/> : null
+  // return <span className="custicon">&#9673;</span>
 }
 const Imgbox = styled.div`
     height: 130px;
@@ -73,19 +82,33 @@ const Cmenu = styled(Menu)`
      ${props => props.laptop ? sty : ''}
     
    }
-   .custicon {
-    font-size: ${props => props.laptop ? "14px" : "16px"};
-    color:  ${props => props.theme.asiderfontcolor || "#ffffff"};
+   .custicon path:nth-of-type(1){
+    fill:  ${props => props.theme.asiderfontcolor || "#ffffff"};
+   }
+   .custicon.PCSMonitor,.control.custicon.runtimeMonitor {
+    g path{
+      fill:  ${props => props.theme.asiderfontcolor || "#ffffff"};
+    }
    }
    .ant-menu-item.ant-menu-item-selected{    
       border-radius: 6px;
       background-color:${props => props.theme.asiderbgcolorA || "#3333cc"} ;
       ${props => props.laptop ? sty : ''}     
-      .ant-menu-title-content, .custicon {
+      .ant-menu-title-content {
         color: ${props => props.theme.asiderfontcolorA || "#33FF00"};
       }
+      .custicon path:nth-of-type(1) {
+        fill: ${props => props.theme.asiderfontcolorA || "#33FF00"};
+      }
+      .custicon.PCSMonitor,.control.custicon.runtimeMonitor {
+        g path{
+          fill:  ${props => props.theme.asiderfontcolorA || "#ffffff"};
+        }
+        
+      }
+      
     }
-   .ant-menu-title-content {
+   .ant-menu-title-content  {
      color: ${props => props.theme.asiderfontcolor || "#ffffff"};;
      display: inline-block;   
      padding-left: 10px;
@@ -115,9 +138,10 @@ export default function Sider() {
   const location = useLocation()
   const config = useSelector(configState)
   const siderRunMenu = useSelector(siderRunMenus)
+  console.log(siderRunMenu)
   const siderDesignerMenu = useSelector(siderDesignerMenus)
   const {laptop} = useSelector(adaptation)
-  const SiderShow = useSelector(sidershow)
+ 
   const dispatch = useDispatch()
   
   const [key, Setkey] = useState('')
@@ -126,7 +150,7 @@ export default function Sider() {
   const [path, setPath] = useState('')
 
    
-  const Showimg = () => {
+/*   const Showimg = () => {
     let {primary} = location.state || {}   
     let imgsrc = config ? imgurl.config : imgurl[primary]
   
@@ -136,19 +160,21 @@ export default function Sider() {
      
       </Imgbox>
      )
-  }
+  } */
 
   useEffect(() => {
     try {
     
       let state = location.state || {}    
+      console.log(state)
       let {nested, primary, title } = state;
       dispatch(getPgTitle(title))
     //  console.log(state,location)
       dispatch(getisDistribution(primary === 'runtimeDistribution'))
       setPath(primary)
       let sidermenu = config ? siderDesignerMenu[primary] : siderRunMenu[primary];
-      let sidermenus = sidermenu?.map(({no, label, key}) => ({no, label,key, icon: <Micon/>})) || []; 
+      let sidermenus = sidermenu?.map(({no, label, key}) => ({no, label,key, icon: <Micon iconname={key} />})) || []; 
+       console.dir(sidermenu)
      // console.log(nested,sidermenus)    
       setMenus(sidermenus)
       Setkey(nested) 
@@ -178,7 +204,7 @@ export default function Sider() {
        <ShowSide show={false} /> */}
        <div className='sidecontent'>
        <ShowSide   />
-       <Cmenu laptop={laptop} onClick={onSelect} selectedKeys={[key]} items={menus} mode="inline"></Cmenu>
+       <Cmenu laptop={laptop} onClick={onSelect} selectedKeys={[key]} items={menus} mode="inline" path={path}></Cmenu>
        </div>
     </Sdiv>
   )

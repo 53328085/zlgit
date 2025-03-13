@@ -1,7 +1,8 @@
 import { SearchOutlined } from '@ant-design/icons';
 import { Button, Input, Space, Table } from 'antd';
-import React, { useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 // import Highlighter from 'react-highlight-words';
+import {Normal} from './gridlayout.js'
 const data = [
   {
     key: '1',
@@ -31,7 +32,19 @@ const data = [
 const App = () => {
   const [searchText, setSearchText] = useState('');
   const [searchedColumn, setSearchedColumn] = useState('');
+  const [Com, setCom] = useState(null)
   const searchInput = useRef(null);
+  const loadComponent = async (path)=> {
+    try {
+      const Component = await import(`./com.jsx`)
+      return Component.default
+    } catch  {
+      return null
+    }
+  }
+  useEffect(()=> {
+    loadComponent().then(com=> setCom(com)) 
+  },[])
   const handleSearch = (selectedKeys, confirm, dataIndex) => {
     confirm();
     setSearchText(selectedKeys[0]);
@@ -168,6 +181,12 @@ const App = () => {
       sortDirections: ['descend', 'ascend'],
     },
   ];
-  return <Table columns={columns} dataSource={data} />;
+  return(
+    <div>
+      <Normal />
+    </div>
+  )
+
+   
 };
 export default App;

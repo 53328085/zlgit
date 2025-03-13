@@ -1,0 +1,25 @@
+ export {ReactComponent as station}   from './station.svg'
+ export {ReactComponent as PCSMonitor}   from './PCSMonitor.svg'
+export {ReactComponent as BMSMonitor}   from './BMSMonitor.svg'
+export {ReactComponent as storageControl}   from './storageControl.svg'
+export {ReactComponent as consumeStatistics}   from './consumeStatistics.svg'
+export {ReactComponent as earningsStatistics}   from './earningsStatistics.svg'
+export {ReactComponent as chargingOrder}   from './chargingOrder.svg'
+export {ReactComponent as environment}   from './environment.svg'
+export {ReactComponent as alarmMessage}   from './alarmMessage.svg'
+export {ReactComponent as operationLog}   from './operationLog.svg'
+export {ReactComponent as stroageReport}   from './stroageReport.svg'
+// 储能管理
+
+ export {ReactComponent as monitor}   from './monitor.svg'
+ export {ReactComponent as gateway}   from './gateway.svg'
+ export {ReactComponent as point}   from './point.svg'
+ export {ReactComponent as ianalyse}   from './ianalyse.svg'
+ export {ReactComponent as analyse}   from './analyse.svg'
+ export {ReactComponent as camera}   from './camera.svg'
+ export {ReactComponent as remote}   from './remote.svg'
+ export {ReactComponent as control}   from './control.svg'
+ export {ReactComponent as call}   from './call.svg'
+  export {ReactComponent as report}   from './report.svg'
+
+// 运行监控

@@ -17,9 +17,10 @@ const Main =styled.div`
  display: flex;
  justify-content: ${props => props.Collapsed ?  "center" :"space-between"};
  align-items: center;
+ width: ${props=>props.collapsed ? "42px" : "auto"};
  .module{
   font-size: 14px;
-  color:#fff;
+  color: ${props => props.theme.asiderfontcolor};
   font-weight: bold;
  }
  //padding-top: ${props => props.show ? "194px" : "0px"};
