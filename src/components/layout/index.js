@@ -4,7 +4,7 @@ import styled from 'styled-components'
 import Copyright from './Copyright'
 import style from './index.module.less'
 import {useSelector} from 'react-redux'
- 
+import {hextodec} from '@com/usehandler'
 import {  configState,adaptation,sidershow,themeColor,getCollapsed,collapsed } from "@redux/systemconfig";
 
 
@@ -21,7 +21,8 @@ const Cheader =styled(Header)`
     background-color: ${props => props.theme.menusbgcolor || '#003366'};
     height: 70px;
     line-height: 70px;
-    border-bottom: 1px solid #C9CDD6;
+    border-bottom: 1px solid rgba(${props=> props.rgb[0]}, ${props=> props.rgb[1]}, ${props=> props.rgb[2]}, 0.6);
+    
  }
 `
 
@@ -64,9 +65,10 @@ export function DefaultLayout(props) { // 默认首页
     if(props.issider) return   <Sider>{props.sider}</Sider>
     return null
   } */
+ let rgb = hextodec("#C9CDD6")
   return (
     <Layout className={style.pagelayout}>
-      <Cheader >{props.custheader}</Cheader>
+      <Cheader rgb={rgb}>{props.custheader}</Cheader>
       <Content className={style.content}>{props.children}</Content>
     </Layout>
   )
@@ -77,6 +79,7 @@ export function ProjectLayout(props) { // 项目内容
   const siderdisplay = useSelector(sidershow)
   const Collapsed = useSelector(collapsed)
 //  const [collapsed, setCollapsed] = useState(true)
+let rgb = hextodec("#C9CDD6")
   return (
     <Layout className={style.pagelayout}>
     {
@@ -89,7 +92,7 @@ export function ProjectLayout(props) { // 项目内容
     {props.custsider}
     </Csider>
     <Layout>
-      <Cheader >{props.custheader}</Cheader>
+      <Cheader rgb={rgb}>{props.custheader}</Cheader>
      
       <Content className={style.content}>{props.children}</Content>
      

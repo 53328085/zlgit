@@ -20,6 +20,6 @@ export {ReactComponent as stroageReport}   from './stroageReport.svg'
  export {ReactComponent as remote}   from './remote.svg'
  export {ReactComponent as control}   from './control.svg'
  export {ReactComponent as call}   from './call.svg'
-  export {ReactComponent as report}   from './report.svg'
-
+ export {ReactComponent as report}   from './report.svg'
+ export {ReactComponent as def}   from './default.svg'
 // 运行监控

@@ -1,14 +1,14 @@
 import React, {useState, useEffect} from 'react'
 import {MenuUnfoldOutlined,MenuFoldOutlined} from "@ant-design/icons"
 import { useDispatch } from "react-redux";
-import {Menu, Image,Button} from 'antd'
+import {Menu, Image,Button, theme} from 'antd'
 import {useNavigate, useLocation} from 'react-router-dom'
 import {useSelector} from 'react-redux'
 import styled, {css} from 'styled-components'
-
+import {hextodec} from "@com/usehandler"
 // import style from './style.module.less'
 import Title from '../header/title'
-import {  configState, siderDesignerMenus, siderRunMenus, getisDistribution, adaptation,  getPgTitle} from "@redux/systemconfig";
+import {  configState, siderDesignerMenus, siderRunMenus, getisDistribution, adaptation,  getPgTitle, themeColor} from "@redux/systemconfig";
  
 import ShowSide from "@com/showsider"
 //import svgs from './svgs'
@@ -19,7 +19,8 @@ const Micon = ({iconname}) => {
    const location = useLocation()
    let {primary} = location.state || {}   
     const Com =  svgcom[iconname] 
-   return   Com ?  <Com  className={iconname + " custicon "+primary}/> : null
+    const Def = svgcom["def"]
+   return   Com ?  <Com  className={iconname + " custicon "+primary}/> :   <Def className="def" ></Def>
   // return <span className="custicon">&#9673;</span>
 }
 const Imgbox = styled.div`
@@ -63,6 +64,12 @@ const Sdiv = styled.div`
 const sty = css`
 height: 28px;line-height: 28px; font-size: 12px;
 `
+const styopc = css`
+  fill:  rgba(${props=> props.rgb[0]}, ${props=> props.rgb[1]}, ${props=> props.rgb[2]}, 0.7)
+`
+const styopca = css`
+  fill:  rgba(${props=> props.rgba[0]}, ${props=> props.rgba[1]}, ${props=> props.rgba[2]}, 0.7)
+`
 const Cmenu = styled(Menu)`
    background: none;
    && {
@@ -76,18 +83,25 @@ const Cmenu = styled(Menu)`
      padding-left: 10px !important;
      display: flex;
      align-items: center;
+     transition: padding 0.1s, width  0.3s cubic-bezier(.215,.61,.355,1);
      &::after{
       content: none;
      }
      ${props => props.laptop ? sty : ''}
     
    }
+   .def{
+     path {
+      background-color: transparent;
+     }
+     
+   }
    .custicon path:nth-of-type(1){
-    fill:  ${props => props.theme.asiderfontcolor || "#ffffff"};
+   ${styopc}
    }
    .custicon.PCSMonitor,.control.custicon.runtimeMonitor {
     g path{
-      fill:  ${props => props.theme.asiderfontcolor || "#ffffff"};
+      ${styopc}
     }
    }
    .ant-menu-item.ant-menu-item-selected{    
@@ -98,11 +112,11 @@ const Cmenu = styled(Menu)`
         color: ${props => props.theme.asiderfontcolorA || "#33FF00"};
       }
       .custicon path:nth-of-type(1) {
-        fill: ${props => props.theme.asiderfontcolorA || "#33FF00"};
+        ${styopca}
       }
       .custicon.PCSMonitor,.control.custicon.runtimeMonitor {
         g path{
-          fill:  ${props => props.theme.asiderfontcolorA || "#ffffff"};
+          ${styopca}
         }
         
       }
@@ -112,6 +126,8 @@ const Cmenu = styled(Menu)`
      color: ${props => props.theme.asiderfontcolor || "#ffffff"};;
      display: inline-block;   
      padding-left: 10px;
+     transition: padding 0.1s, width 0.3s cubic-bezier(.215,.61,.355,1);
+
      ${props => props.laptop ? sty : ''}
   
     
@@ -138,9 +154,12 @@ export default function Sider() {
   const location = useLocation()
   const config = useSelector(configState)
   const siderRunMenu = useSelector(siderRunMenus)
-  console.log(siderRunMenu)
+   
   const siderDesignerMenu = useSelector(siderDesignerMenus)
   const {laptop} = useSelector(adaptation)
+  const {asiderfontcolor, asiderfontcolorA} = useSelector(themeColor)
+  const rgb=hextodec(asiderfontcolor)
+  const rgba=hextodec(asiderfontcolorA)
  
   const dispatch = useDispatch()
   
@@ -204,7 +223,7 @@ export default function Sider() {
        <ShowSide show={false} /> */}
        <div className='sidecontent'>
        <ShowSide   />
-       <Cmenu laptop={laptop} onClick={onSelect} selectedKeys={[key]} items={menus} mode="inline" path={path}></Cmenu>
+       <Cmenu laptop={laptop} onClick={onSelect} selectedKeys={[key]} items={menus} mode="inline" rgb={rgb} rgba={rgba} path={path}></Cmenu>
        </div>
     </Sdiv>
   )
