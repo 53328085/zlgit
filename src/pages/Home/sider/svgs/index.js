@@ -10,7 +10,8 @@ export {ReactComponent as camera}   from './camera.svg'
 // 视频监控
 
 export {ReactComponent as environment}   from './environment.svg'
-// 环境监控 
+export {ReactComponent as runtimeSolarstation}   from './environment.svg'
+// **监控 
 
  export {ReactComponent as runtimeStoragestation}   from './station.svg'
  export {ReactComponent as runtimeStoragePCSMonitor}   from './PCSMonitor.svg'
@@ -80,6 +81,7 @@ export {ReactComponent as runtimeDistributiontransformer}   from './runtimeDistr
 export {ReactComponent as runtimeDistributionmonitor}   from './monitor.svg'
 
 // 配电管理
+
 export {ReactComponent as runtimeEnergyair}   from './runtimeEnergy/air.svg'
 export {ReactComponent as runtimeEnergyanalysis}   from './runtimeEnergy/analysis.svg'
 export {ReactComponent as runtimeEnergyarea}   from './runtimeEnergy/area.svg'
@@ -94,3 +96,14 @@ export {ReactComponent as runtimeEnergyregion}   from './runtimeEnergy/region.sv
 export {ReactComponent as runtimeEnergyReport}   from './runtimeEnergy/runReport.svg'
 export {ReactComponent as runtimeEnergytime}   from './runtimeEnergy/time.svg'
 export {ReactComponent as runtimeEnergysummary}   from './monitor.svg'
+
+// 能源管理
+
+export {ReactComponent as runtimeSolaraerograph}   from './runtimeSolar/aerograph.svg'
+export {ReactComponent as runtimeSolaralarm}   from './runtimeSolar/alarm.svg'
+export {ReactComponent as runtimeSolarchart}   from './runtimeSolar/chart.svg'
+export {ReactComponent as runtimeSolardata}   from './runtimeSolar/data.svg'
+export {ReactComponent as runtimeSolardevice}   from './runtimeSolar/device.svg'
+export {ReactComponent as runtimeSolarpropare}   from './runtimeSolar/propare.svg'
+export {ReactComponent as runtimeSolarsummary}   from './runtimeSolar/summary.svg'
+ 
