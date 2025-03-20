@@ -65,7 +65,7 @@ const Boxdiv = styled(Card)`
   }
  
  }
-  
+ ${props=> props.custsty}
 `
 Boxdiv.defaultProps = {
   bordered: 'y',

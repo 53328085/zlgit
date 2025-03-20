@@ -18,7 +18,8 @@ import * as svgcom from './svgs'
 const Micon = ({iconname}) => {
    const location = useLocation()
    let {primary} = location.state || {}   
-    const Com =  svgcom[iconname] 
+    let normal=["camera","report","environment"]
+    const Com = !normal.includes(iconname) ?  svgcom[primary+iconname] : svgcom[iconname]
     const Def = svgcom["def"]
    return   Com ?  <Com  className={iconname + " custicon "+primary}/> :   <Def className="def" ></Def>
   // return <span className="custicon">&#9673;</span>

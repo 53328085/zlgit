@@ -8,7 +8,11 @@ import Pagecount from "@com/pagecontent";
 import { SpareParts, distributionRoom } from '@api/api.js'
 import { SearchOutlined } from '@ant-design/icons'
 import Cempty from '@com/useEmpty'
- 
+ const custsty=css` 
+  .ant-card-body {
+    justify-content: center;
+  }
+ `
  
 const Mainbox = styled.div`
     && {
@@ -129,7 +133,7 @@ export default function Index() {
       <Mainbox>
         <div className='main'>
 
-          <Titlelayout title="设备选择" >
+          <Titlelayout title="设备选择" pv="0px" layout="flex" custsty={custsty} >
             <div className='left'>
               <Space.Compact
                 style={{
