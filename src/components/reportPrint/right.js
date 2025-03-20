@@ -2,9 +2,10 @@ import React, {forwardRef } from 'react'
 import styled from 'styled-components'
 import {Image} from 'antd'
  
-
-import {useSelector} from 'react-redux'
-import { systemConfigInfo, currProject} from '@redux/systemconfig.js'
+import {hextodec} from '@com/usehandler'
+ 
+import {useSelector} from "react-redux" 
+import { systemConfigInfo, currProject,themeColor} from '@redux/systemconfig.js'
 import moment from 'moment'
  import up from './upbg.png'
  
@@ -75,7 +76,7 @@ const Mainbox = styled.div`
                 width: 483px;
                 height: 142px;
              //   height: 136px;                
-                background-color: rgba(30, 81, 231, 0.15);                
+                background-color:  rgba(${props=> props.rgb[0]}, ${props=> props.rgb[1]}, ${props=> props.rgb[2]}, ${props=> props.opac || props.theme.opacity});;                
              //   border: 1px solid rgba(204, 204, 204, 1);
                 display: flex;
                 flex-direction: column;
@@ -122,9 +123,11 @@ export default  forwardRef(function Rightlayout(props, ref) {
   const {reportName='', params} = props
   const {address, projectName, logoImage} = useSelector(currProject)  
   let reportDate = moment().format("yyyy-MM-DD")
-  const {chineseTitle, systemLogoImage} = useSelector(systemConfigInfo)
+  const {chineseTitle } = useSelector(systemConfigInfo)
+   let {  primaryColor} = useSelector(themeColor)
+   let rgb = hextodec(primaryColor)
   return (
-          <Mainbox ref={ref} id="printRef">                         
+          <Mainbox ref={ref} id="printRef" rgb={rgb}>                         
                <div className='front'>
                    <div className='title'>
                     {logoImage ? <Image src={logoImage} preview={false}  /> : null}
