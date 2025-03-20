@@ -22,7 +22,7 @@ import {
 import Table from "@com/useTable";
 import { Serach, Cdivider, CPagination } from "@com/comstyled";
 import Pagecount from '@com/pagecontent' 
-import bgi from "./images/bgi.png"
+ 
 const sty = css`
   grid-template-columns: repeat(auto-fill, minmax(438px, 1fr));
   .cardItem{

@@ -100,11 +100,36 @@ const Cmenu = styled(Menu)`
    .custicon path:nth-of-type(1){
    ${styopc}
    }
-   .custicon.PCSMonitor,.control.custicon.runtimeMonitor {
+   .custicon.PCSMonitor,
+   .control.custicon.runtimeMonitor,
+   .deviceLedger.custicon.ledger,
+   .region.custicon.runtimeEnergy  
+   {
     g path{
       ${styopc}
     }
    }
+   .quality.custicon.runtimeDistribution{
+    g{
+      path {
+        ${styopc}
+      }
+      path:last-of-type{
+        fill:transparent
+      }
+    }
+   }
+   .summary.custicon.runtimeSolar,.propare.custicon.runtimeSolar{
+
+        g {
+          path:nth-of-type(1){
+           fill: transparent;
+          }
+          path:nth-of-type(2){
+          ${styopc}
+        }
+        }
+      }
    .ant-menu-item.ant-menu-item-selected{    
       border-radius: 6px;
       background-color:${props => props.theme.asiderbgcolorA || "#3333cc"} ;
@@ -115,13 +140,32 @@ const Cmenu = styled(Menu)`
       .custicon path:nth-of-type(1) {
         ${styopca}
       }
-      .custicon.PCSMonitor,.control.custicon.runtimeMonitor {
+      .custicon.PCSMonitor,.control.custicon.runtimeMonitor,.deviceLedger.custicon.ledger,.region.custicon.runtimeEnergy {
         g path{
           ${styopca}
         }
         
       }
-      
+      .summary.custicon.runtimeSolar,.propare.custicon.runtimeSolar{
+        g { 
+          path:nth-of-type(1){
+           fill: transparent;
+          }
+          path:nth-of-type(2){
+          ${styopca}
+        }
+        }
+      }
+      .quality.custicon.runtimeDistribution{
+    g{
+      path {
+        ${styopca}
+      }
+      path:last-of-type{
+        fill:transparent
+      }
+    }
+   }
     }
    .ant-menu-title-content  {
      color: ${props => props.theme.asiderfontcolor || "#ffffff"};;

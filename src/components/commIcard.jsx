@@ -53,7 +53,8 @@ const CardItme = styled.div`
         display: grid;
         grid-template-columns: 1fr 1fr;
         grid-template-rows: 1fr 1fr;
-        background-color: ${(props) => props.theme.itembg || "#000033"};
+        background-color: rgba(${props => props.rgb[0]},${props => props.rgb[1]},${props => props.rgb[2]},0.2);
+        border: 1px solid rgba(${props => props.rgb[0]},${props => props.rgb[1]},${props => props.rgb[2]},0.2);;
         .item {
           padding: 0 8px;
           display: flex;
@@ -179,9 +180,10 @@ const Device = (props) => {
 export default function Index(props) {
   // 1.网关设备 2.其他设备
   let { device, img, title, ...rest } = props;
-  console.log(title)
+   const mrgb = useSelector(MRGB) 
+   const [r, g, b] = Array.isArray(mrgb) ? mrgb : [] 
   return (
-    <CardItme>
+    <CardItme rgb={[r, g, b]}>
       <div className="cardImg">
         <img src={img} className="img" alt={title}></img>
       </div>

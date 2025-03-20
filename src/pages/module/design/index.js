@@ -500,9 +500,9 @@ useEffect(()=>{
         <Item label="字段值" labelCol={{flex: "4em"}} name="fieldvalue" initialValue="#33ff00">
           <Ccolor name="fieldvalue" />
         </Item>
-        <Item label="背景色" labelCol={{flex: "4em"}} name="itembg" initialValue="#000033">
+       {/*  <Item label="背景色" labelCol={{flex: "4em"}} name="itembg" initialValue="#000033">
           <Ccolor name="itembg" />
-        </Item>
+        </Item> */}
      </div>
     
      </Item>

@@ -21,8 +21,7 @@ import {
 import { Link, useOutletContext, useLocation} from "react-router-dom";
 import { useAntdTable } from "ahooks";
 import styled, {css} from "styled-components";
-import style from "./style.module.less";
-import Icard from "./card";
+ 
 import imgurl from "./images/index.js";
 import { Monitoring } from "@api/api.js";
 import CommIcard from "@com/commIcard"
