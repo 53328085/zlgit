@@ -30,8 +30,8 @@ flex-direction: column;
     .ant-table-thead{
       .ant-table-cell {
         padding: ${props => props.pd || '4px 4px'} ;
-        background-color: ${props => props.istheme ? props.theme.primaryColor : props.hbg};
-        color: ${props => props.hbc || ((props.istheme || props.hbg) ? '#fff' : '#515151')};
+        background-color: #ecf5ff;//${props => props.istheme ? props.theme.primaryColor : props.hbg};
+        color:  #515151; //${props => props.hbc || ((props.istheme || props.hbg) ? '#fff' : '#515151')};
       }
     }
     .ant-table-tbody {

@@ -10,7 +10,8 @@ import {
   Typography,
   Tag,
   theme,
-  Select
+  Select,
+  Popconfirm
 } from "antd";
 import styled from "styled-components";
 
@@ -303,7 +304,7 @@ useEffect(()=>{
         <CustButton onClick={onrest} ghost>恢复默认值</CustButton>
         <CustButton onClick={onadd}>新增方案</CustButton>
      <CustButton onClick={onSave} isicon={false} >保存方案</CustButton>
-     <CustButton onClick={ondelete} type="default" danger>删除</CustButton>
+    <Popconfirm title="是否确认删除" onConfirm={()=> ondelete()}> <CustButton  type="default" danger>删除</CustButton></Popconfirm>
      </Space></div>} layout="flex">
   
     <Formbox

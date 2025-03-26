@@ -107,3 +107,12 @@ export {ReactComponent as runtimeSolardevice}   from './runtimeSolar/device.svg'
 export {ReactComponent as runtimeSolarpropare}   from './runtimeSolar/propare.svg'
 export {ReactComponent as runtimeSolarsummary}   from './runtimeSolar/summary.svg'
  
+// 碳排
+
+export {ReactComponent as runtimeCarbonEmissionManagerruntimeCarbonData}   from './runtimeCarbonEmissionManager/runtimeCarbonData.svg'
+export {ReactComponent as runtimeCarbonEmissionManagerruntimeCarbonExamine}   from './runtimeCarbonEmissionManager/runtimeCarbonExamine.svg'
+export {ReactComponent as runtimeCarbonEmissionManagerruntimeCarbonFlow}   from './runtimeCarbonEmissionManager/runtimeCarbonFlow.svg'
+export {ReactComponent as runtimeCarbonEmissionManagerruntimeCarbonManager}   from './runtimeCarbonEmissionManager/runtimeCarbonManager.svg'
+export {ReactComponent as runtimeCarbonEmissionManagerruntimeCarbonMarket}   from './runtimeCarbonEmissionManager/runtimeCarbonMarket.svg'
+export {ReactComponent as runtimeCarbonEmissionManagerruntimeCarbonOverview}   from './runtimeCarbonEmissionManager/runtimeCarbonOverview.svg'
+export {ReactComponent as runtimeCarbonEmissionManagerruntimeCarbonReport}   from './runtimeCarbonEmissionManager/runtimeCarbonReport.svg'

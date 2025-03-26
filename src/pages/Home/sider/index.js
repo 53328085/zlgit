@@ -20,6 +20,7 @@ const Micon = ({iconname}) => {
    let {primary} = location.state || {}   
     let normal=["camera","report","environment"]
     const Com = !normal.includes(iconname) ?  svgcom[primary+iconname] : svgcom[iconname]
+    console.log(iconname)
     const Def = svgcom["def"]
    return   Com ?  <Com  className={iconname + " custicon "+primary}/> :   <Def className="def" ></Def>
   // return <span className="custicon">&#9673;</span>

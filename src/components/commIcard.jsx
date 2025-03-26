@@ -54,7 +54,8 @@ const CardItme = styled.div`
         grid-template-columns: 1fr 1fr;
         grid-template-rows: 1fr 1fr;
         background-color: rgba(${props => props.rgb[0]},${props => props.rgb[1]},${props => props.rgb[2]},0.2);
-        border: 1px solid rgba(${props => props.rgb[0]},${props => props.rgb[1]},${props => props.rgb[2]},0.2);;
+        border: 1px solid rgba(${props => props.rgb[0]},${props => props.rgb[1]},${props => props.rgb[2]},0.2);
+        border-radius: 6px;
         .item {
           padding: 0 8px;
           display: flex;

@@ -2376,6 +2376,10 @@ export class energyShare {
 }
 //数据报表
 export class energyReport {
+  static QueryReadingByAreaCustomize = (params, body) =>
+    server.post(`Energy/DataReportRuntime/QueryReadingByAreaCustomize`, body,{params}); //实时抄表自定义-区域
+  static QueryReadingByLineCustomize = (params, body) =>
+    server.post(`Energy/DataReportRuntime/QueryReadingByLineCustomize`, body,{params}); //实时抄表自定义-线路
   static AeraQueryAll = (projectId) =>
     server.get(`/General/Area/QueryAll?projectId=${projectId}&level=1`); //获取区域
   static QueryByArea = (
