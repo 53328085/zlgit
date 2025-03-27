@@ -107,7 +107,7 @@ export {ReactComponent as runtimeSolardevice}   from './runtimeSolar/device.svg'
 export {ReactComponent as runtimeSolarpropare}   from './runtimeSolar/propare.svg'
 export {ReactComponent as runtimeSolarsummary}   from './runtimeSolar/summary.svg'
  
-// 碳排
+
 
 export {ReactComponent as runtimeCarbonEmissionManagerruntimeCarbonData}   from './runtimeCarbonEmissionManager/runtimeCarbonData.svg'
 export {ReactComponent as runtimeCarbonEmissionManagerruntimeCarbonExamine}   from './runtimeCarbonEmissionManager/runtimeCarbonExamine.svg'
@@ -116,3 +116,16 @@ export {ReactComponent as runtimeCarbonEmissionManagerruntimeCarbonManager}   fr
 export {ReactComponent as runtimeCarbonEmissionManagerruntimeCarbonMarket}   from './runtimeCarbonEmissionManager/runtimeCarbonMarket.svg'
 export {ReactComponent as runtimeCarbonEmissionManagerruntimeCarbonOverview}   from './runtimeCarbonEmissionManager/runtimeCarbonOverview.svg'
 export {ReactComponent as runtimeCarbonEmissionManagerruntimeCarbonReport}   from './runtimeCarbonEmissionManager/runtimeCarbonReport.svg'
+// 碳排
+export {ReactComponent as cabinetsoverview}   from './cabinets/overview.svg'
+export {ReactComponent as cabinetsalarm}   from './cabinets/alarm.svg'
+export {ReactComponent as cabinetscarbon}   from './cabinets/carbon.svg'
+export {ReactComponent as cabinetscircuitBreaker}   from './cabinets/circuitBreaker.svg'
+export {ReactComponent as cabinetsdiskchart}   from './cabinets/diskchart.svg'
+export {ReactComponent as cabinetsenergyEfficiency}   from './cabinets/energyEfficiency.svg'
+export {ReactComponent as cabinetsenvironmental}   from './cabinets/environmental.svg'
+export {ReactComponent as cabinetsloopEnergy}   from './cabinets/loopEnergy.svg'
+export {ReactComponent as cabinetsmeterReading}   from './cabinets/meterReading.svg'
+export {ReactComponent as cabinetsonetimeGraph}   from './cabinets/onetimeGraph.svg'
+export {ReactComponent as cabinetstransformer}   from './cabinets/transformer.svg'
+// 智能配电柜

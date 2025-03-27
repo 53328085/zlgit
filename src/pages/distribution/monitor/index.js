@@ -448,8 +448,8 @@ const HoverDiv = styled.div`
     .ant-collapse-header{
       background-color: ${props => props.theme.dislistbg || '#334461'};
       border-bottom:1px solid rgba(255,255,255,0.8);
-      color: ${props => props.theme.islight ? props.theme.lightcolor : "#ffffff"}; // 
-      
+     // color: ${props => props.theme.islight ? props.theme.lightcolor : "#ffffff"}; // 
+     color:${props => props.theme.disfieldname || '#ffffff'};
     }
     .ant-collapse-content-box{
         padding: 0!important;

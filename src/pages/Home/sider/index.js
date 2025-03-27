@@ -81,6 +81,7 @@ const Cmenu = styled(Menu)`
     overflow-y: auto;
     overflow-x: hidden;
    }
+  
    .ant-menu-item {
      padding-left: 10px !important;
      display: flex;
@@ -104,7 +105,8 @@ const Cmenu = styled(Menu)`
    .custicon.PCSMonitor,
    .control.custicon.runtimeMonitor,
    .deviceLedger.custicon.ledger,
-   .region.custicon.runtimeEnergy  
+   .region.custicon.runtimeEnergy,
+   .meterReading.custicon.cabinets
    {
     g path{
       ${styopc}
@@ -131,7 +133,7 @@ const Cmenu = styled(Menu)`
         }
         }
       }
-   .ant-menu-item.ant-menu-item-selected{    
+   .ant-menu-item.ant-menu-item-selected,.ant-menu-item:active{    
       border-radius: 6px;
       background-color:${props => props.theme.asiderbgcolorA || "#3333cc"} ;
       ${props => props.laptop ? sty : ''}     

@@ -1,33 +1,19 @@
-import { EditOutlined, EllipsisOutlined, SettingOutlined } from '@ant-design/icons';
-import { Avatar, Card, Button } from 'antd';
-import React from 'react';
-const { Meta } = Card;
-const App = () => (
-  <Card
-    style={{
-      width: 300,
-    }}
-    title="多媒体"
-    cover={
-      <img
-        alt="example"
-        src="https://gw.alipayobjects.com/zos/rmsportal/JiqGstEfoWAOHiTxclqi.png"
-      />
-    }
-   bodyStyle={{fontSize: "12px"}}
-   headStyle={{fontSize: "14px"}}
-    actions={[
-      <SettingOutlined key="setting" />,
-      <EditOutlined key="edit" />,
-      <EllipsisOutlined key="ellipsis" />,
-      <Button>删除</Button>
-    ]}
-  >
-    <Meta
-      avatar={<Avatar src="https://joeschmoe.io/api/v1/random" />}
-      title="Card title"
-      description="This is the description"
-    />
-  </Card>
-);
+import { Timeline, Button } from 'antd';
+import React,{useState} from 'react';
+const App = () => {
+  const [reverse, setReverse] = useState(false);
+  const handleClick = () => {
+    setReverse(!reverse);
+  };
+  return ( 
+    <div style={{padding:"32px"}}> 
+      <Button onClick={handleClick}>切换</Button>
+  <Timeline pending="加载中……" reverse={reverse} mode="alternate"  pendingDot={<span>*</span>}>
+    <Timeline.Item color="#ff7313" label={new Date().toLocaleString()}>Create a services site 2015-09-01</Timeline.Item>
+    <Timeline.Item>Solve initial network problems 2015-09-01</Timeline.Item>
+    <Timeline.Item>Technical testing 2015-09-01</Timeline.Item>
+    <Timeline.Item>Network problems being solved 2015-09-01</Timeline.Item>
+  </Timeline>
+  </div>
+)};
 export default App;
