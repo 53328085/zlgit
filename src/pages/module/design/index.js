@@ -10,7 +10,8 @@ import {
   Typography,
   Tag,
   theme,
-  Select
+  Select,
+  Popconfirm
 } from "antd";
 import styled from "styled-components";
 
@@ -303,7 +304,7 @@ useEffect(()=>{
         <CustButton onClick={onrest} ghost>恢复默认值</CustButton>
         <CustButton onClick={onadd}>新增方案</CustButton>
      <CustButton onClick={onSave} isicon={false} >保存方案</CustButton>
-     <CustButton onClick={ondelete} type="default" danger>删除</CustButton>
+    <Popconfirm title="是否确认删除" onConfirm={()=> ondelete()}> <CustButton  type="default" danger>删除</CustButton></Popconfirm>
      </Space></div>} layout="flex">
   
     <Formbox
@@ -383,6 +384,9 @@ useEffect(()=>{
           <InputNumber min={0} step={1} addonAfter="px" onChange={(e)=>changeop(e, "headHeight")} />
         </Item>
         </div>        
+      </Item>
+      <Item label="图片景色"  name="imgbgcolor" initialValue="#4A9AF0">
+      <Ccolor name="imgbgcolor" />
       </Item>
       <Item label="模块菜单栏背景色"  name="menusbgcolor" initialValue="#003366">
       <Ccolor name="menusbgcolor" />
@@ -497,9 +501,9 @@ useEffect(()=>{
         <Item label="字段值" labelCol={{flex: "4em"}} name="fieldvalue" initialValue="#33ff00">
           <Ccolor name="fieldvalue" />
         </Item>
-        <Item label="背景色" labelCol={{flex: "4em"}} name="itembg" initialValue="#000033">
+       {/*  <Item label="背景色" labelCol={{flex: "4em"}} name="itembg" initialValue="#000033">
           <Ccolor name="itembg" />
-        </Item>
+        </Item> */}
      </div>
     
      </Item>

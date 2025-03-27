@@ -89,7 +89,7 @@ const TitP = styled.div`
  
 export default memo(({projectId, areaAnnualQuota=[],  parkNum, 
     structureNum,
-    roomNum,primaryderived}) => {
+    roomNum,primaryderived, imgbgcolor}) => {
     const [energyImage, setEnergyImage]= useState()
     const [spinning, setSpinning] = useState(false)
     const [build, setBuild] = useState()
@@ -142,7 +142,7 @@ export default memo(({projectId, areaAnnualQuota=[],  parkNum,
     roomNum
     return    (
       <Cspin spinning={spinning} tip="图片加载中……">
-      <div style={{position: "relative", backgroundColor: primaryderived}}>
+      <div style={{position: "relative", backgroundColor: imgbgcolor}}>
           <img src={energyImage || enerbg}     />
           <Numbox>
              <p><span>园区</span><span>{parkNum}</span></p>

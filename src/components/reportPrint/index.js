@@ -5,7 +5,7 @@ import printContext from './context'
  import './index.less'
  import Leftlayout from './left'
  import Rightlayout from './right'
- import {adaptation} from '@redux/systemconfig.js'
+ import {adaptation } from '@redux/systemconfig.js'
 const Mainbox = styled.div`
     && {
        display: grid;
@@ -20,6 +20,7 @@ const Mainbox = styled.div`
   let {reportName, params} = props; 
   const printRef =useRef()
   const {laptop} = useSelector(adaptation)
+
   return (
     <printContext.Provider value={props}>
     <Mainbox laptop={laptop}>

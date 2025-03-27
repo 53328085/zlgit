@@ -167,7 +167,7 @@ const Imgbg = memo(({projectId, areaVos}) => {
   const [spinning, setSpinning] = useState(false)
   const [build, setBuild] = useState()
   const [info, setInfo] = useState()
-  const {primaryderived} = useSelector(themeColor)
+  const {primaryderived, imgbgcolor} = useSelector(themeColor)
   const getbuild= async ({buildingId, x, y})=> {
       try {
        let {data, success} = await EnergyOverView.QueryImageBuilding(projectId, buildingId)
@@ -211,7 +211,7 @@ const Imgbg = memo(({projectId, areaVos}) => {
   }, [projectId])
   return    (
     <Cspin spinning={spinning} tip="图片下载中……">
-    <div style={{position: "relative", backgroundColor: primaryderived || "#fffffff", overflow: "hidden", border: "1px solid transparent"}} className="border_radius_8">
+    <div style={{position: "relative", backgroundColor: imgbgcolor || "#fffffff", overflow: "hidden", border: "1px solid transparent"}} className="border_radius_8">
         <img src={energyImage || imgurl.engeryBg}  usemap="#building" style={{clipPath: "inset(1px 1px 1px 1px)"}}  />
         {map}
         {info && <TitP left={info.x} top={info.y}>

@@ -11,6 +11,8 @@ import logo from '@imgs/czt.png'
 const Smllog = styled.div` 
     width: 54px;
     height: 70px;
+   
+   
   //  background-color: ${props => props.theme.logBgColor};
 
 `
@@ -18,6 +20,8 @@ const Biglog = styled.div`
     width: 200px;
     height: 70px;
     background-color: ${props => props.overview ? props.theme.logBgColor : ""};
+   
+    
 
 `
 export default function  Title (){
@@ -32,10 +36,11 @@ export default function  Title (){
     let smallLog = Currproject.smallLogoImage
    
     let Collapsed = useSelector(collapsed) 
-   if (Collapsed && !overview) {
+    let swtich = (Collapsed && !overview)
+  if (Collapsed && !overview) {
      return   <Smllog>{smallLog && <img  height={70}  width={54 }   src={smallLog }></img> }</Smllog>
    }else {
       return   <Biglog overview={overview}>{projectLog && <img  height={70}  width={200 }   src={projectLog }></img>}</Biglog>
-   }
- 
+   }  
+  
   }

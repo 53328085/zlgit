@@ -55,9 +55,10 @@ const Mainbox =styled.div`
      grid-template-columns:656px 544px 448px;
      column-gap: 16px;
      .imgbox {
-      background-color: ${props => props.theme.primaryderived};
+      background-color: ${props => props.theme.imgbgcolor};
       display: flex;
       align-items: center;
+      border-radius:${props=>props.theme.cardRadius +'px'};
     //  height:100%;
       img {
        max-width: 100%;

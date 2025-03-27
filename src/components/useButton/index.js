@@ -320,7 +320,7 @@ export function ConfirmBtn(props) {  //  盘面图监控 确认、未确认  "co
 }
 export function TreeBtn(props) {  //  树形按钮 / 状态
   let {text, params={}, ns="button", type=1,opac,wh="80px", ...other} = props  // type： 1  主要， 2 成功 3 错误色（删除） 4 离线（失效）等
-  let {errorColor,successColor, primaryColor,offlineColor} = useSelector(themeColor)
+  let {errorColor,successColor, primaryColor,offlineColor="#C4D0DE"} = useSelector(themeColor)
   let color = {
     1: primaryColor,
     2: successColor,

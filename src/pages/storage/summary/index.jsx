@@ -68,7 +68,7 @@ const  Mainbox = styled.div`
        column-gap: 16px;
        .topology {
          position: relative;
-         background-color: ${props=> props.theme.primaryderived || "#ffffff"};
+         background-color: ${props=> props.theme.imgbgcolor || "#ffffff"};
          .zhanwei{
                     width: 752px;
                     height: 696px;
@@ -215,7 +215,7 @@ export default function Index() {
  
   let {areaId, stationName,  projectId} = exparams
   let {islight} = useSelector(themeColor)
-  console.log("islight",islight)
+  
   const navigate = useNavigate()
   const [cardData, setCardData] = useState(null)//卡片数据
   const [warningData, setWarningData] = useState([])//最新告警

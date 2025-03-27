@@ -2,12 +2,15 @@
 import React, { useState, Fragment, useEffect, useMemo, memo } from 'react';
 import {Typography} from 'antd'
 import {CaretRightOutlined} from '@ant-design/icons'
-import styled from 'styled-components';
+import styled, {css} from 'styled-components';
 import { TextLoop } from "react-text-loop-next";
 import {Editapi} from '@api/api'
 import warn from './waring.svg'
 import Snk from './snker.png'
 const {Text} = Typography
+const custsty = css`
+
+`
 const Showbox =styled.div`
     height: 46px;
     padding: 0 8px;
@@ -71,7 +74,7 @@ const App = memo(({projectId, roomId,laptop}) => {
    const CTextLoop = useMemo(() => {
     if(arr.length > 0) {
      return <TextLoop>
-      {arr.map((d,i) => (<div className='scroll' style={{backgroundColor: i%2==0 ? "#ff4848" : 'transparent' }} key={d.warningTime} >
+      { arr.map((d,i) => (<div className='scroll' style={{backgroundColor: i%2==0 ? "#ff4848" : 'transparent' }} key={d.warningTime} >
             <Text>{d.warningTime}</Text>
             <Text ellipsis={{tooltip: d.alarmEvent}}>{d.alarmEvent}</Text>
         </div>))
@@ -93,7 +96,7 @@ const App = memo(({projectId, roomId,laptop}) => {
    }
    useEffect(() => {
     if([projectId, roomId].every(n => Number.isInteger(parseInt(n)))) {
-       getAramlist()
+      getAramlist()
     }
     
    }, [projectId, roomId])
