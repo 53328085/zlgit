@@ -138,7 +138,7 @@ export default function Index() {
         state.spining = false
         canvas.open(dateGroup)
         canvas.render()
-        canvas.fitView(16);
+        canvas.fitView(true, 20);
         getMqtt()
       }, 1000)
     } else {
