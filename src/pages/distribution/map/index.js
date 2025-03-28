@@ -38,23 +38,33 @@ import '../../../assets/css/font_bz4csze2alg/iconfont.css'
 
 const { Option } = Select;
 import { CustButton } from '@com/useButton'
-const sty = css`
- padding: 0 16px;
+
+const CButton = styled(CustButton)`
+   border: 1px solid ${props => props.theme.primaryColor};
+   background-color: ${props => props.chck ? props.theme.primaryColor : "#000"};
+   color: ${props => props.chck ? "#fff" : props.theme.primaryColor};
+
 `
+
+const sty = css`
+ padding: 16px;
+`
+ 
 export default function Index() {
   const { RangePicker } = DatePicker;
   const ChartItem = styled.div`
     position: absolute;
-    
-    top: 32px;
+    height: 100px;
+    top: 0px;
     display: flex;
     align-items: center;
     width: 100%;
-    padding: 0 64px;
+    padding: 24px 20px 0 20px;
     gap: 16px;
     flex-wrap: wrap;
     align-content: flex-start;
     ${props => props.laptop ? sty : null}
+    background-image: linear-gradient(#000, rgba(0,0,0,0) );
   
   `
 
@@ -480,19 +490,18 @@ export default function Index() {
     <Cspin spinning={state.spining} tip="Loading...">
       <div className={style.topology} style={{ backgroundColor: "#eeeff3", flex: 1, display: 'flex' }}>
         <div id="topology-canvas" style={{ position: 'relative', flex: 1, backgroundColor: '#fff' }} onContextMenu={e => onContextMenu(e)} ref={mapref}>
-          <ChartItem laptop={laptop}>
+         {state.chartList?.length && <ChartItem laptop={laptop}>
 
-            {state.chartList.map((item, index) => {
-              return <CustButton ghost={state.activeChart == item.id ? false : true} wh="112px" style={{ borderColor: "#fff" }} key={index} onClick={() => changeChart(item.id)}>{item.name}</CustButton>
-            })}
+{state.chartList.map((item, index) => {
+  return <CButton chck={state.activeChart == item.id } wh="112px"   key={index} onClick={() => changeChart(item.id)}>{item.name}</CButton>
+})}
 
-            {(state.chartList?.length > 0) && <CustButton style={{ marginLeft: "auto" }} onClick={fullscreen}>{isf ? '退出全屏' : '全屏显示'}</CustButton>}
-          </ChartItem>
-
+{(state.chartList?.length > 0) && <CButton chck="y" style={{ marginLeft: "auto" }} onClick={fullscreen}>{isf ? '退出全屏' : '全屏显示'}</CButton>}
+</ChartItem> } 
           {(nodeTag) ? <Card style={{ width: 120, position: 'absolute', ...contextmenu }} >
             <div className="bindMenu" onClick={() => showDetails()}>{nodeType}</div>
           </Card> : null}
-
+         
         </div>
       </div>
 
