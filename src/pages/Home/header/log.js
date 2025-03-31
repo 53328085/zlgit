@@ -26,7 +26,7 @@ import lg from './icon/lg.svg'
 import {pwdValidator, phoneValidator} from '@pages/rule.js'
 import {Login,CustTheme} from '@api/api' 
 import {CustButton} from '@com/useButton'
-import {handlermenu,isObject} from "@com/usehandler"
+import {handlermenu,isObject, hextodec} from "@com/usehandler"
 
 import svgurl from './icon/svg'
 import {ReactComponent  as Hux} from './icon/hux.svg'
@@ -182,7 +182,7 @@ const Triangle = styled.div`
      width:232px;
      display: flex;
      justify-content: flex-end;
-     background-image: linear-gradient(to right, rgba(56, 168, 221, 0),rgba(29, 80, 246, 0.3)) ;
+     background-image: linear-gradient(to right, rgba(${props=>props.srgb[0]}, ${props=>props.srgb[1]}, ${props=>props.srgb[2]}, ${props=>props.startOpacity}),rgba(${props=>props.ergb[0]}, ${props=>props.ergb[1]}, ${props=>props.ergb[2]}, ${props=>props.endOpacity})) ;
       
 `;
 const Cipt = styled(Input)`
@@ -239,7 +239,10 @@ export default function Log() {
   //const showscreen =  screenadr?.type==1 || screenadr?.type==2
   const dispatch = useDispatch()
   const {name, roleType, mobile, userId} = useSelector(selectUser) || {};
-  const {menusbgcolorR} = useSelector(themeColor)
+  const {menusbgcolorR,startColor,endColor,startOpacity,endOpacity } = useSelector(themeColor)
+  console.log(startColor, endColor, startOpacity, endOpacity)
+  const srgb=hextodec(startColor)
+  const ergb=hextodec(endColor)
   let strmob = mobile.toString()
   const start = strmob.slice(0, 3).padEnd(7, '*')+strmob.slice(-4);
  
@@ -523,7 +526,7 @@ const settheme = async (themeId) => {
 
   return (
     <Cdiv>
-      <Triangle laptop={adap.laptop}>
+      <Triangle laptop={adap.laptop} srgb={srgb} ergb={ergb} startOpacity={startOpacity} endOpacity={endOpacity} >
         <Hux style={{fill: menusbgcolorR}} />
        {/*  <img src={svgurl['hux']} alt="" /> */}
       </Triangle>

@@ -7,3 +7,4 @@ files.keys().forEach(filep => {
     Object.assign(imgurl, {[filename]: file})
 });
  export default imgurl
+ 

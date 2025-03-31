@@ -43,7 +43,7 @@ const Mainbox = styled.div`
 
 export default function ParkQuota() {
   const projectId = useSelector(selectProjectId)
-  const {primaryderived} = useSelector(themeColor)
+  const {primaryderived, imgbgcolor} = useSelector(themeColor)
   const [parkAreaId, setParkAreaId] = useState(0)
   const [park, setPark] = useState()
   const [quota, setQuota] = useState({})
@@ -56,6 +56,7 @@ export default function ParkQuota() {
     structureNum,
     roomNum,
     primaryderived,
+    imgbgcolor,
  }
  const rankprops = {
    parkAnnualQuota,

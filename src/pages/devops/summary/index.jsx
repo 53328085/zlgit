@@ -17,6 +17,7 @@ import Ichart from "@com/useEcharts/Ichart";
 import Bluecolumn from "@com/bluecolumn";
 import style from './style.module.less'
 import { themeColor, adaptation } from "@redux/systemconfig.js";
+import CModal from "@com/useModal"
 const sty = css`
   grid-template-columns: 680px 1fr;
   column-gap: 8px;
@@ -458,17 +459,18 @@ export default function Index() {
         let alarmDataInfo = data.filter((item) => item.status === 1);
         if (alarmDataInfo.length < 1) return;
         setAlarmData(alarmDataInfo);
-        setOpenAlarm(true);
-        console.log(alarmDataInfo, f, alarmData);
+        cref.current.onOpen();
+       // setOpenAlarm(true);
+       //console.log(alarmDataInfo, f, alarmData);
       } else {
         message.error(res.errMsg || "数据出错");
         setAlarmData([]);
       }
     });
   };
-
+  const cref=useRef()
   const onOk = async () => {
-    setOpenAlarm(false);
+    cref.current.onCancel();
   };
   useEffect(() => {
     if (condition) {
@@ -486,28 +488,15 @@ export default function Index() {
   return (
     <Pagecount bgcolor="#eeeff3" pd={0}>
       <Mainbox laptop={laptop}>
-        <Modal
+        <CModal
           mold="cust"
-          title={<Bluecolumn name="告警信息" bac={errorColor} />}
+          title="告警信息"
           closable={false}
-          open={openAlarm}
-          className={style.setModal}
-          footer={[
-            <Button
-              key="submit"
-              style={{
-                backgroundColor: errorColor,
-                border: "none",
-                color: "#fff",
-                width: 96,
-                height: 32,
-              }}
-              onClick={onOk}
-            >
-              确定
-            </Button>,
-          ]}
+          ref={cref} 
+          type="warn"
+          warnimg={false}
           width={980}
+          onOk={onOk}
         >
           <UserTable
             columns={columns}
@@ -515,7 +504,7 @@ export default function Index() {
             rowKey="id"
             scroll={{ y: 320 }}
           />
-        </Modal>
+        </CModal>
         <div className="left">
           <div
             style={{

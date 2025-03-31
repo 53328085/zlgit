@@ -9,6 +9,7 @@ import {Button} from 'antd'
  import Icard from './card'
  import {isObject} from '@com/usehandler'
  import category from './icon/category.png'
+ import CommIcard from "@com/commIcard"
 const {QueryTopologyDeviceState, OverviewFromGateway} = EnergyFlowRuntime
 const {
   RuntimeDevice: {
@@ -342,15 +343,17 @@ export default function Commport({projectId,gateway:{gatewayId, name}, device={}
                         target="_blank"
                         key={item.sn}
                       >
-                        <Icard
+                        <CommIcard
                           img={item.bg || category }
                           title={item.name}
                           deviceStyle={item.deviceStyle}
                           value={item.address}
                           state={item.state}
                           fields={item.fields}
-                          lastSampleTime={item.lastSampleTime}
+                       //   lastSampleTime={item.lastSampleTime}
                           category={item.sn}
+                          device={2}
+                           
                         />
                       </Link>)
                       } <Pagination total={total} pageSize={9} hideOnSinglePage style={{position: "absolute", bottom: "16px", right: '16px'}} onChange={onChange}  /> </>: <Empty />}

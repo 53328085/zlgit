@@ -2,13 +2,14 @@ import React, {forwardRef } from 'react'
 import styled from 'styled-components'
 import {Image} from 'antd'
  
-
-import {useSelector} from 'react-redux'
-import { systemConfigInfo, currProject} from '@redux/systemconfig.js'
-import moment from 'moment'
+import {hextodec} from '@com/usehandler'
  
- import log from './log.png'
- import bg from './bg.png'
+import {useSelector} from "react-redux" 
+import { systemConfigInfo, currProject,themeColor} from '@redux/systemconfig.js'
+import moment from 'moment'
+ import up from './upbg.png'
+ 
+ import down from './downbg.png'
 // 2 在线， 3 告警， 其他：失联  //   a4纸大小210mm×297mm
 const Mainbox = styled.div`
      @media  print {
@@ -41,7 +42,9 @@ const Mainbox = styled.div`
         flex-direction: column;
         row-gap: 32px;
         .front {
-        
+          background-image: url(${up}), url(${down});
+        background-position: 0 0, 0 642px;
+         background-repeat: no-repeat, no-repeat;
           background-color: #fff;
           page-break-after: always;
          
@@ -64,23 +67,26 @@ const Mainbox = styled.div`
               justify-self: center;
               align-self: center;
               h1 {
-                color: #ccc;
-                font-size: 32px;
+                color: rgba(48, 49, 51, 1);
+                font-size: 28px;
                 text-align: center;
-                margin-bottom: 32px;
+                margin-bottom: 47px;
               }
               .box {
-                width: 432px;
-                height: 136px;                
-                background-color: rgba(242, 242, 242, 1);                
-                border: 1px solid rgba(204, 204, 204, 1);
+                width: 483px;
+                height: 142px;
+             //   height: 136px;                
+                background-color:  rgba(${props=> props.rgb[0]}, ${props=> props.rgb[1]}, ${props=> props.rgb[2]}, ${props=> props.opac || props.theme.opacity});;                
+             //   border: 1px solid rgba(204, 204, 204, 1);
                 display: flex;
                 flex-direction: column;
                 justify-content: space-between;
-                padding: 16px;
+                padding: 24px 60px 28px;
+                border-radius: 12px;
                 p {
-                  color: #515151;
-                  font-size: 18px;
+                  color: #303133;
+                  font-size: 17px;
+                  line-height: 1;
                 }
               }
             }
@@ -88,13 +94,26 @@ const Mainbox = styled.div`
           .title{ 
             display: flex;
             align-items: center; 
-            padding: 32px;
+            width: 134px;
+            height: 64px;
+            background-color: ${props=>props.theme.primaryColor};
+            overflow: hidden;
+            img {
+              max-width: 100%;
+            }
+           // padding: 32px;
             
            
           }
-         .imgbox {
-           background-color: var(--ant-primary-color);
-         }
+          .foot {
+             height: 60px;
+             display: flex;
+             align-items: center;
+             justify-content: center;
+             font-size: 16px;
+             color:#303133;
+          }
+        
         }
 `
  
@@ -104,18 +123,19 @@ export default  forwardRef(function Rightlayout(props, ref) {
   const {reportName='', params} = props
   const {address, projectName, logoImage} = useSelector(currProject)  
   let reportDate = moment().format("yyyy-MM-DD")
-  const {chineseTitle, systemLogoImage} = useSelector(systemConfigInfo)
+  const {chineseTitle } = useSelector(systemConfigInfo)
+   let {  primaryColor} = useSelector(themeColor)
+   let rgb = hextodec(primaryColor)
   return (
-          <Mainbox ref={ref} id="printRef">                         
+          <Mainbox ref={ref} id="printRef" rgb={rgb}>                         
                <div className='front'>
                    <div className='title'>
                     {logoImage ? <Image src={logoImage} preview={false}  /> : null}
-                   {/*  <div className='imgbox'> <Image src={systemLogoImage ?  `data:image/png;base64,${systemLogoImage}` :log} height={57} preview={false}></Image></div> */}
-                    <span className='name' style={{fontSize: '20px', color:"#666"}}>{chineseTitle}</span>
+                  {/*   <span className='name' style={{fontSize: '20px', color:"#666"}}>{chineseTitle}</span> */}
                    </div>
                    <div className="frontcont">
                    <div className='head'>
-                      <h1 style={{fontSize: "32px", color:"#515151"}}>{reportName}</h1>
+                      <h1>{reportName}</h1>
                       { params ? (<div className='box'>
                           <p>项目名称：{projectName}</p>
                           <p>项目地址：{address}</p>
@@ -129,7 +149,9 @@ export default  forwardRef(function Rightlayout(props, ref) {
                       }
                    </div>
                    </div>
-                   <img src={bg}  /> 
+                  <div className="foot">
+                  <span>{chineseTitle}</span>
+                  </div>
                </div>
                 
                   {props.children}

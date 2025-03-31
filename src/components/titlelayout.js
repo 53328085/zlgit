@@ -9,7 +9,7 @@ const custsty = css`
 `
 const Boxdiv = styled(Card)`
  // padding: ${props => props.pv};
-  border-radius: ${props => props.rad || "8px"};
+  border-radius: ${props => props.rad || props.theme.cardRadius+'px'};
   border:  ${(props) =>  props.bordered=='y' ? ' 1px solid #d7d7d7' : 'none'};  
   display: grid;
   grid-template-rows: ${(props) => props.title ? `auto 1fr` : '1fr'};
@@ -23,11 +23,11 @@ const Boxdiv = styled(Card)`
     display: flex;
     align-items: center;
     border-bottom: none;
-    min-height: ${(props) =>  props.hv || (props.theme.laptop ? '24px' : '40px')};
+    min-height: ${(props) =>  props.hv || props.theme.cardHeadHeight+'px'};
   //  height: ${(props) =>  props.hv || (props.theme.laptop ? '24px' : '40px')};;
-    height: ${(props) =>  props.hv || (props.theme.laptop ? '24px' : '40px')};
+    height: ${(props) =>  props.hv || props.theme.cardHeadHeight+'px'};
     padding-right: ${({pr}) => pr || '20px'};
-    background-color:${({bg}) => bg || '#DEE7F2'};
+    background-color:${(props) => props.bg || props.theme.cardHeadBg};
     z-index:${({zd}) => zd || 100};
     position: relative;
           &::before {
@@ -44,7 +44,7 @@ const Boxdiv = styled(Card)`
       height: inherit;
       .ant-card-head-title {
          font-size: ${({fz}) => fz || '15px'};
-         color: ${({fc}) => fc || '#303133'};
+         color: ${({fc, theme}) => fc || theme.cardHeadlColor};
          padding: 0 0 0 11px;
         
     }
@@ -65,16 +65,16 @@ const Boxdiv = styled(Card)`
   }
  
  }
-  
+ ${props=> props.custsty}
 `
 Boxdiv.defaultProps = {
   bordered: 'y',
   pv: '20px',
   bodypad: '0px'
 }
-export function TitlelayoutOv({title='', children, ...other}) {
+export function TitlelayoutOv({title='', children, ...other}) { // 项目概述
   return (
-    <Boxdiv title={title} pv="16px" hv="24px" pl="16px" pr="16px" pt="16px" {...other}> 
+    <Boxdiv title={title} pv="16px" hv="24px" pl="16px" pr="16px" pt="16px" {...other} shadow={false}> 
         {children}
     </Boxdiv>
   )

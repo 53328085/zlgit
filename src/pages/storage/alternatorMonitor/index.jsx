@@ -22,7 +22,7 @@ const Mainbox = styled.div`
  && {
    .leftlayout {
       border-radius: 8px;
-      background-color: ${props => props.theme.primaryderived ||rgb(0, 0, 51)};
+      background-color: ${props => props.theme.imgbgcolor ||'rgb(0, 0, 51)'};
       padding: 20px;
       .leftTitle {
         position: relative;

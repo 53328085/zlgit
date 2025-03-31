@@ -6,8 +6,9 @@ import zhCN from 'antd/es/locale/zh_CN';
 import {Login} from '../axios/api'
 import antdconfig from './theme' ; //   antd配置
 import { Area, ProjectList,ProjectSetting, BigScreen, eneryShift, Monitoring,Carbon, HomeRuntime, Editapi,CustTheme} from "@api/api.js"; 
-import {isObject,isLightColor} from '@com/usehandler'
-import {initithemeColor} from '@com/defaultcolor';
+import {isObject,isLightColor,hextodec} from '@com/usehandler'
+import {initithemeColor,themeOption} from '@com/defaultcolor';
+
 
 
 
@@ -79,6 +80,7 @@ const initialState = {
     }, 
     themeColor:  {  // 可配置对象，不只是颜色属性。名字为保证稳定性不改
       ...initithemeColor,
+      ...themeOption,
      /*  themeId:null, 
       primaryColor: '#237AE4',
       islight: false, // 150
@@ -603,6 +605,10 @@ export const themelist = createSelector(
    
     return item
   }
+)
+export const MRGB = createSelector(
+  themeColor,
+  (data) => hextodec(data?.primaryColor)
 )
 export const roomId =state=>state.system.roomId
 

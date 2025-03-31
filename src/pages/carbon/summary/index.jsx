@@ -32,7 +32,7 @@ const sty = css`
 const Mainbox =styled.div`
   flex:1;
   display: grid;
-  grid-template-rows: 112px minmax(400px, 1fr) minmax(320px, 1fr);
+  grid-template-rows: 130px minmax(400px, 1fr) minmax(320px, 1fr);
   row-gap: 16px;
   overflow: hidden;
   .custTitle {
@@ -43,7 +43,6 @@ const Mainbox =styled.div`
   .chart {
     flex:1;
     display: flex;
-    padding-top: 16px;
   }
   .up{
     display: grid;
@@ -56,9 +55,10 @@ const Mainbox =styled.div`
      grid-template-columns:656px 544px 448px;
      column-gap: 16px;
      .imgbox {
-      background-color: ${props => props.theme.primaryderived};
+      background-color: ${props => props.theme.imgbgcolor};
       display: flex;
       align-items: center;
+      border-radius:${props=>props.theme.cardRadius +'px'};
     //  height:100%;
       img {
        max-width: 100%;
@@ -314,7 +314,7 @@ if(classSuc) {
   <div className='custTitle'>
      <span><CustTransO text="Carboner" ns="carbon" /></span>
      <Radiogroup options={options}
-                  defaultValue={1}
+                  defaultValue={1} 
                   onChange={(e) => setRankParam({...rankparam, type: e.target.value})} 
                   optionType="button"
                   buttonStyle="solid" /> 
@@ -391,12 +391,12 @@ if(classSuc) {
     <Pagecount bgcolor="#eeeff3" pd={0}>
       <Mainbox laptop={laptop}>
       <div className='up' key="up" >
-           <Card name={<CustTransO ns="carbon" text="annualquota" param="(tCO₂)" />} laptop={laptop}   title="" value={Quota.annualQuota} yoy={Quota.annualQuotaYoy} key="a"/> 
-           <Card name={<CustTransO ns="carbon" text="Annualee" param="(tCO₂)" />} laptop={laptop}  title="" value={Quota.annualEmissionEquivalent} yoy={Quota.annualEmissionEquivalentYoy} key="b" /> 
-           <Card title={<CustTransO ns="carbon" text="Annualce" param="(tCO₂)" />} laptop={laptop}  value={Quota.annualResidualCarbonEmission} yoy={Quota.annualResidualCarbonEmissionPercent} key="c"/>
+           <Card text="annualquota" name={<CustTransO ns="carbon" text="annualquota" param="(tCO₂)" />} laptop={laptop} imgtype={1}  title="" value={Quota.annualQuota} yoy={Quota.annualQuotaYoy} key="a"/> 
+           <Card text="Annualee" name={<CustTransO ns="carbon" text="Annualee" param="(tCO₂)" />} laptop={laptop} imgtype={1} title="" value={Quota.annualEmissionEquivalent} yoy={Quota.annualEmissionEquivalentYoy} key="b" /> 
+           <Card text="Annualce" name={<CustTransO ns="carbon" text="Annualce" param="(tCO₂)" />} laptop={laptop}  value={Quota.annualResidualCarbonEmission} yoy={Quota.annualResidualCarbonEmissionPercent} key="c"/>
           {/*  <Cdivider type="h" borderColor="#bcbcbc" /> */}
-           <Card title={<CustTransO ns="carbon" text="directe" param="(tCO₂)" />} laptop={laptop}   value={Quota.directEmission} yoy={Quota.directEmissionPercent} key="d" />
-           <Card title={<CustTransO ns="carbon" text="indirecte" param="(tCO₂)" />} laptop={laptop}   value={Quota.indirectEmission} yoy={Quota.indirectEmissionPercent} key="e" />
+           <Card text="directe" name={<CustTransO ns="carbon" text="directe" param="(tCO₂)" />} laptop={laptop}   value={Quota.directEmission} yoy={Quota.directEmissionPercent} key="d" />
+           <Card text="indirecte" name={<CustTransO ns="carbon" text="indirecte" param="(tCO₂)" />} laptop={laptop}   value={Quota.indirectEmission} yoy={Quota.indirectEmissionPercent} key="e" />
       </div>
       <div className='center' key="center">
         <div className='imgbox'>
@@ -404,7 +404,7 @@ if(classSuc) {
         </div>
        
        
-          <Titlelayout title={Rtitle}  key="rank">
+          <Titlelayout title={Rtitle}  key="rank" layout="flex">
             <div className='chart'>  
                 <Table columns={columnstable} className="tablestyle" rowKey={(columns) => columns.key} dataSource={dataSource.current} scroll={{
                   y: 300,

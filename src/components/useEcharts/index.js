@@ -191,7 +191,7 @@ const liuqiuOption =(option) =>  {  // 水球图
   return  {
         series: [{
             type: "liquidFill",
-            color: ['#237AE4'],
+            color: ['#5983FE'],
        
             radius: "95%",
             backgroundStyle: {
@@ -220,7 +220,7 @@ const liuqiuOption =(option) =>  {  // 水球图
 const pieOption = ({ data = [], total = 0, radius= ["60%", "80%"],labelLine={},label={}, legend={},series={},  grid={left: 0, right: 0, containLabel: true,}} = {}) =>{
   const primaryColor =store.getState()?.system?.themeColor?.primaryColor || "#237ae4"
   
-  const  color = [
+/*   const  color = [
    primaryColor,
    "#62D9AD",
    "#5472B1",
@@ -229,8 +229,23 @@ const pieOption = ({ data = [], total = 0, radius= ["60%", "80%"],labelLine={},l
    "#FED428",
    "#FF974C",
    "#E65A56",
- ]
-   
+ ] */
+   const  color = [
+    "#5983FE",
+   "#46C7FF",
+   "#FFAA54",
+   "#5ED9A7",
+   "#6859EA",
+   "#E8B520",
+   "#9661BC",
+   "#ED8F42",
+   "#0C8685",
+   "#DC82A6",
+   "#8BC349",
+   "#9D27B0",
+   "#3F51B6",
+   "#E74F82",
+   ] 
     
  return {
   // 饼图的设置 
@@ -340,14 +355,20 @@ export const drawEcharts = (
   const primaryColor =store.getState()?.system?.themeColor?.primaryColor || "#237ae4"
 
  const  color = [
-  primaryColor,
-  "#62D9AD",
-  "#5472B1",
-  "#23C2DB",
-  "#4A6FE2",
-  "#FED428",
-  "#FF974C",
-  "#E65A56",
+  "#5983FE",
+   "#46C7FF",
+   "#FFAA54",
+   "#5ED9A7",
+   "#6859EA",
+   "#E8B520",
+   "#9661BC",
+   "#ED8F42",
+   "#0C8685",
+   "#DC82A6",
+   "#8BC349",
+   "#9D27B0",
+   "#3F51B6",
+   "#E74F82",
 ]
  let {axisTick, axisLine, axisLabel, ...restxAxis} = xAxis
   const comm = {

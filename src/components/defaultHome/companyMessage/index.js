@@ -76,7 +76,7 @@ export default function DefaultHome(props) {
 }, [currproject, type])
  
   return (
-    <Titlelayout layout="flex" shadow="y" style={{height: "200px"}}>
+    <Titlelayout layout="flex"  style={{height: "200px"}}>
     <MainBox laptop={laptop}>
       <div className='company'>
         <Borderleft>{state.projectName}</Borderleft>

@@ -4,13 +4,25 @@ import { useReactive } from "ahooks";
 import styled from "styled-components";
 import open4_1 from './imgs/p4/4-1_open.svg'
 import close4_1 from './imgs/p4/4-1_close.svg'
+import open4_2 from './imgs/p4/4-2_open.svg'
+import close4_2 from './imgs/p4/4-2_close.svg'
 
-export default function Index(props) {
+import { DiskChart } from "@api/api.js";
+
+const {QueryDeviceDataAll} =DiskChart
+
+export default React.memo((props) => {
 
     const state = useReactive({
         showData: false,
         showItem: props.showItem ? true : false,
-        onOpen: true
+        onOpen: true,
+        status: 'close',
+        Ia: '0.00',
+        Ib: '0.00',
+        Ic: '0.00',
+        name: '回路',
+        Isfeeder: false,
     })
 
     const DiaBox = styled.div`
@@ -18,6 +30,8 @@ export default function Index(props) {
         /* padding: 32px;
         padding-right: 48px;
         min-height: 800px; */
+        /* min-height: 824px; */
+        padding-right: 84px;
         margin-right: 32px;
         position: relative;
         .click_box{
@@ -30,58 +44,155 @@ export default function Index(props) {
             cursor: pointer;
         }
         .data_box{
-            width: 160px;
-            height: 148px;
-            border: 1px solid rgba(110, 169, 238, 1);
-            background-color: rgba(239, 246, 255, 1);
+            width: 112px;
+            border: 1px solid rgba(0, 153, 51, 1);
+            background-color: #000;
             border-radius: 4px;
             position: absolute;
-            left: -20px;
-            top: 316px;
-            padding: 16px 12px;
+            left: 100px;
+            top: 144px;
             font-size: 14px;
-            color: #333;
+            .data_box_title{
+                display: flex;
+                width: 100%;
+                height: 24px;
+                align-items: center;
+                background-color: #00c;
+                color: #fff;
+                justify-content: center;
+            }
+            .data_box_item{
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                margin: 0 8px;
+                border-bottom: 1px dashed #0f3;
+                font-size: 16px;
+                color: #0f3;
+                height: 36px;
+            }
         }
         .item_box{
                 position: absolute;
-                width: 156px;
+                width: 241px;
                 height: 64px;
                 left: 67px;
-                top: 30px;
+                top: 52px;
                 background-color: #fff;
                 border-bottom: 2px solid #333;
                 z-index: 10;
             }
     `
 
-    const handleMouseEnter = () => {
-        state.showData = true
-    }
-    const handleMouseLeave = () => {
-        state.showData = false
-    }
-
-    const changeState = () => {
-        state.onOpen = !state.onOpen
+    const onOpenStyle = {
+        width: 124,
+        height: 673,
+        marginTop: 50
     }
 
+        const getSingleData = () => {
+            QueryDeviceDataAll(props.sn).then(res => {
+                if(res && res.response.code == 0 && Array.isArray(res.response.data) && res.response.data.length >0){
+                    let deviceData = res.response.data
+                    deviceData.map(item => {
+                        if (item.name == 'DigitalInstatus1' && item.value == "1") {
+                            state.status = 'close'
+                        }
+                        if (item.name == 'DigitalInstatus2' && item.value == "1") {
+                            state.status = 'open'
+                        }
+                        if (item.name == 'DigitalInstatus3' && item.value == "1") {
+                            state.status = 'error'
+                        }
+        
+                        if (item.name == 'Ia') {
+                            state.Ia = item.value
+                        }
+                        if (item.name == 'Ib') {
+                            state.Ib = item.value
+                        }
+                        if (item.name == 'Ic') {
+                            state.Ic = item.value
+                        }
+                    })
+                }
+            })
+        }
+    
+        useEffect(() => {
+            getSingleData()
+            const timer = setInterval(() => {
+                getSingleData()
+    
+            }, 15000)
+            return () => {
+                clearInterval(timer)
+            }
+        },[])
+
+    // useEffect(() => {
+    //     // state.name = props.lineName
+    //     if (props.deviceData && props.deviceData.length > 0) {
+    //         props.deviceData.map(item => {
+    //             if (item.DigitalInstatus1 == 1) {
+    //                 state.status = 'close'
+    //             }
+    //             if (item.DigitalInstatus2 == 1) {
+    //                 state.status = 'open'
+    //             }
+    //             if (item.DigitalInstatus3 == 1) {
+    //                 state.status = 'error'
+    //             }
+
+    //             if (item.name == 'Ia') {
+    //                 state.Ia = item.value
+    //             }
+    //             if (item.name == 'Ib') {
+    //                 state.Ib = item.value
+    //             }
+    //             if (item.name == 'Ic') {
+    //                 state.Ic = item.value
+    //             }
+    //         })
+    //     }
+    // }, [])
 
     return (
         <DiaBox>
-            <img src={ state.onOpen ? open4_1 : close4_1} style={{ width: 124, height: 673, marginTop: 26 }}></img>
+            {
+                props.lineName == '回路9' ? 
+                    <img src={state.status == 'open' ? open4_2 : state.status == 'close' ? close4_2 : null} style={onOpenStyle}></img> : 
+                    <img src={state.status == 'open' ? open4_1 : state.status == 'close' ? close4_1 : null} style={onOpenStyle}></img>
+            }
             {
                 state.showItem ? <div className='item_box'></div> : null
             }
-            <div className='click_box' onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave} onClick={() => changeState()}></div>
-            {
-                state.showData ? <div className='data_box'>
-                <div style={{ color:'#1F6ECD' }}>进线</div>
-                <div style={{ color:'#1F6ECD' }}>NA8-2500-H/3D</div>
-                <div style={{marginTop: 12}}>Ia   120.5 A / 38.2 ℃</div>
-                <div>Ib   120.5 A / 38.2 ℃</div>
-                <div>Ic   120.5 A / 38.2 ℃</div>
-            </div> : null
-            }
+            <div className='data_box' >
+                <div className='data_box_title'>{props.lineName}</div>
+                <div className='data_box_item' style={{color:'#ff0'}}>
+                    <span>Ia</span>
+                    <div>
+                        <span>{state.Ia} </span>
+                        <span className='unit' style={{ fontSize: 12 }}>(A)</span>
+                    </div>
+
+                </div>
+                <div className='data_box_item' style={{color:'#0f0'}}>
+                    <span>Ib</span>
+                    <div>
+                        <span>{state.Ib} </span>
+                        <span className='unit' style={{ fontSize: 12 }}>(A)</span>
+                    </div>
+
+                </div>
+                <div className='data_box_item' style={{ borderBottom: 'none', color:'#f00' }}>
+                    <span>Ic</span>
+                    <div>
+                        <span>{state.Ic} </span>
+                        <span className='unit' style={{ fontSize: 12 }}>(A)</span>
+                    </div>
+                </div>
+            </div>
         </DiaBox>
     )
-}
+})

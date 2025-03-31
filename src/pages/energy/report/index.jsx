@@ -1,4 +1,6 @@
-import React, { useState,useCallback,useRef, useEffect } from 'react'
+import React, { useState,useCallback,useRef, useEffect, useMemo } from 'react'
+import {Checkbox, DatePicker} from 'antd'
+import moment from 'moment'
 import { useSelector } from 'react-redux'
 import {useOutletContext} from 'react-router-dom'
 import {useAntdTable} from 'ahooks'
@@ -12,6 +14,7 @@ import styled from 'styled-components'
 import {energyReport} from '@api/api'
 import {levelDefaultLabel} from '@redux/systemconfig.js'
 import {  ExportExcel} from '@com/useButton'
+const { RangePicker } = DatePicker;
 const {
   QueryByArea, 
   QueryByLine, 
@@ -19,7 +22,9 @@ const {
   QueryConsumeByLine,
   QueryTimeConsumeByArea, 
   QueryTimeConsumeByLine,
-  QueryClassifyConsume
+  QueryClassifyConsume,
+  QueryReadingByAreaCustomize,
+  QueryReadingByLineCustomize
 } = energyReport
  
 const Contentbox = styled.div`
@@ -188,9 +193,18 @@ const typecols =[  // 分类能耗
 export default function Index() {
 
   let {exparams, setCustview} = useOutletContext() 
-
-
- 
+  const [dates, setDates] = useState([moment().startOf("day"), moment()]);
+   const disabledDate = (current) => {
+    if (!dates) {
+      return false;
+    }
+    const tooLate = dates[0] && current.diff(dates[0], 'days') > 31;
+    const tooEarly = dates[1] && dates[1].diff(current, 'days') > 31;
+    const date = current && current > moment().endOf("day");
+    return !!tooEarly || !!tooLate || !!date
+  };
+  
+  const [isrange, setIsrange] = useState(false)
   const levelname = useSelector(levelDefaultLabel)
   const [value, setvalue] = useState('0')
   const [line, setLine] = useState(0)
@@ -200,6 +214,7 @@ export default function Index() {
   // cols[0].title = levelname
   // timecols[0].title = levelname
   const [concolumns, setConcolumns] = useState(conscols) 
+ 
   const [total, setTotal] = useState(0)
   const tbref = useRef()
   const etabs = [
@@ -215,22 +230,41 @@ export default function Index() {
   ]
   const [tabs, setTabs] = useState(etabs)
   const index = Number(value)
-  const sheetName = tabs[index]?.label ?? 'sheet'
+  const filename=useMemo(()=> {
+    if(Array.isArray(dates)&&dates.length>1){
+return getTime(dates[0],1).toString()+"-"+getTime(dates[1], 1).toString()
+    }
+
+  },[dates]) ;
+  const sheetName =(index===0 && dates.length) ? filename : tabs[index]?.label ?? 'sheet'
   let columns = [cols, [], timecols, typecols][index] // 
-  const getTableData = ({ current, pageSize, areaId, projectId, type, date, energytype, treeId, index, line  }) => {
-    console.log(pageSize)
+
+
+ 
+  const getTableData = ({ current, pageSize, areaId, projectId, type, date, energytype, treeId, index, line,isrange, dates }) => {
+    console.log("dates",dates)
     let f = [areaId, projectId, type, energytype,index, line].every(v => Number.isInteger(v)) && Array.isArray(treeId) && date
-    console.log(f)
+    let range = index === 0 && isrange && Array.isArray(dates) && dates?.length>1
     if(!f) return;
-      
-     let hander =index < 3 ? [
+    if(index === 0 && isrange && !Array.isArray(dates) ){
+          return
+    }
+     let hander =range ? [QueryReadingByAreaCustomize,
+      QueryReadingByLineCustomize][line] :  index < 3 ? [
       [QueryByArea, QueryByLine], 
       [QueryConsumeByArea, QueryConsumeByLine],
       [QueryTimeConsumeByArea,QueryTimeConsumeByLine],
       ][index][line] : QueryClassifyConsume
-    // let {type, date, meterType} = formData
+    
      let time = getTime(date, type)
-     let params = {
+     let params =range ?
+     {projectId, 
+      meterType: energytype,
+      startDate:getTime(dates[0], 1),
+      endDate:getTime(dates[1], 1),
+      pageNum: current,
+      pageSize,
+       } : {
         projectId,
         type,
         date: time,
@@ -263,8 +297,8 @@ export default function Index() {
         }
       })
     }
-  
-
+ 
+   
 
      return hander(params, treeId).then(res => {
          let {success, data, total=0} = res
@@ -301,9 +335,9 @@ export default function Index() {
 
 
   }
-  const {tableProps} = useAntdTable((params) => getTableData({...params,areaId, projectId, type, date, energytype, treeId, index, line }), {
+  const {tableProps} = useAntdTable((params) => getTableData({...params,areaId, projectId, type, date, energytype, treeId, index, line,isrange, dates }), {
     defaultParams: [{current: 1, pageSize: 14}],
-    refreshDeps: [areaId, projectId, type, date, energytype, treeId, index, line]
+    refreshDeps: [areaId, projectId, type, date, energytype, treeId, index, line,isrange, dates]
   })
 
   const CustView =(
@@ -313,16 +347,34 @@ export default function Index() {
     )
   const onExport =useCallback(() => {   
    
-    return  getTableData({current: 1, pageSize: total,areaId, projectId, type, date, energytype, treeId, index, line })
- }, [total, concolumns, type, date,energytype,areaId, treeId, index, line])
-  
+    return  getTableData({current: 1, pageSize: total,areaId, projectId, type, date, energytype, treeId, index, line,isrange, dates})
+ }, [total, concolumns, type, date,energytype,areaId, treeId, index, line, isrange, dates])
+
+const boxchange = (e)=> {
+  const f = e.target.checked
+  console.log(f)
+  setIsrange(f)
+}
+
+  const [valuet, setValuet] = useState(null);
+
+  const onTimeOk = (date = [], dataString) => {
+    let f = dataString.some((d) => d);
+    if (!f) return;
+    console.log(dataString)
+     setDates(date)
+     setValuet(date)
+  };
+ 
   let dataProps = {
     value,
     setvalue,
     tabs,
+  //  tabsprops,
   //  form,
   //  custview: <CustView />,
   }
+ 
  useEffect(() => {
   setCustview(CustView);
   return () => {
@@ -333,10 +385,26 @@ export default function Index() {
 
   return (
       <CustContext.Provider value={dataProps} >
-          <Pagecount showSearch={false} custserach={true}>
+          <Pagecount showSearch={false} custserach={true} >
              <Contentbox>
                 <UserTree areaId={areaId} energytype={energytype}  setTreeId={setTreeId} setLine={setLine}   showline={value!='3'} datatype={value=='3' ? 0 : NaN}   /> 
-                {
+              <div> 
+             {value==="0" &&  <div style={{marginBottom: "16px", display: "flex"}}>
+              <div style={{marginLeft: "auto"}}>
+              <Checkbox onChange={boxchange} checked={isrange}>使用日期范围（优先）</Checkbox> <RangePicker
+                  value={dates || valuet }
+                    disabledDate={disabledDate}
+                   onCalendarChange={(val) => setDates(val)}
+                    onChange={onTimeOk} 
+                    disabled={!isrange}
+                    defaultValue={[moment().startOf("day"), moment()]}
+                    format="YYYY-MM-DD"
+                    
+                  />
+                  </div>
+                  </div>
+                }
+                 {
                   value == "1" ? <UserTable ref={tbref}  columns={concolumns} {...tableProps} key={value} scroll={{
                     scrollToFirstRowOnChange: true,
                      x: 1400, 
@@ -347,6 +415,7 @@ export default function Index() {
                   ></UserTable>
                   :<UserTable ref={tbref} columns={columns} {...tableProps} key={value} sheetName={sheetName} onExport={onExport}></UserTable>
                 } 
+                </div> 
              </Contentbox>
           </Pagecount>
       </CustContext.Provider>

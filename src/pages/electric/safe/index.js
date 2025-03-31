@@ -5,7 +5,7 @@ import styled, {css} from 'styled-components'
 import Pagecount from '@com/pagecontent'
 import CustContext from '@com/content.js'
 import { Form, Image, Progress, Timeline, Select, Divider, Space, DatePicker, message } from 'antd'
-import { Liquid } from "@ant-design/charts"
+ 
 import { drawEcharts } from "@com/useEcharts"
 import { useSelector, useStore } from 'react-redux'
 import first from '../imgs/first.png'
@@ -14,6 +14,17 @@ import third from '../imgs/third.png'
 import { safeElectric } from '@api/api'
 import {  selectOneLevelDefaultId,adaptation } from '@redux/systemconfig.js'
 import moment from 'moment'
+const Dotel =styled.div`
+&& {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background-color: ${ props => props.level==1 ? "#E27D75" : props.level==2 ? "#F8D26D" : "#A46BDD"};
+}
+`
+const Dot =({level})=> {
+   return <Dotel level={level}></Dotel>
+}
 const sty= css`
  grid-auto-rows: auto;
 `
@@ -88,42 +99,67 @@ const Warnbox = styled.div`
 position: relative;
 display: grid;
 height: 100%;
-grid-template-columns: 148px 1fr;
-grid-template-rows: 1fr 75px;
-gap: 32px;
+grid-template-columns: 158px 1fr;
+grid-template-rows: 1fr 68px;
+column-gap: 16px;
  align-items: center;
 justify-items: center;
 .info {
     grid-area: 2 / 1 / 3 /3;
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-    background-color: #f7f7f7;
-    border: 1px solid #dedede;
+    background-color: #F2F7FF;
+   // border: 1px solid #dedede;
     border-radius: 4px;
-    height: 75px;
+    height: 68px;
     width: 100%;
+    padding:11px 12px;
+    font-weight: bold;
     div{ 
-        font-size: 16px;
-        color:#666;
+        font-size: 13px;
+        color:#606266;
         display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: space-around;
+        flex-direction: column; 
+        justify-content: space-between;
+        border-left: 1px solid #E4E7ED;
+        padding-left: 11px;
+        &:first-of-type {
+          border-left: none;
+          padding-left: none;
+        }
         & span:last-child{
-            color:#ff0000;
-            font-size: 14px;
+            color:#FF502D;
+            font-size: 16px;
         }
     }
 }
 .alarm {
  display: grid;
- grid-template-rows: 24px 1px 24px 1px 24px;
- row-gap: 16px;
- div {
-  padding-left: 12px;
-  display: flex;
+ grid-template-rows: repeat(3, 1fr);
+ row-gap: 24px;
+ div.warning {
+ 
+  display: flex; 
+  column-gap: 12px;
   align-items: center;
-  justify-content: space-between;
+  img {
+    width: 36px; 
+  }
+   .content{
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    span{
+      color: #3E4043;
+      font-size: 13px;
+    }
+    span.num {
+      font-size: 16px;
+      color:#FF502D;
+      font-weight: bold;
+    }
+   }
+   
   //  &:first-of-type {
   //   border-left: 2px solid #f8857d;
   //  }
@@ -133,15 +169,38 @@ justify-items: center;
  }
  
 }`
+const ContentWrap = styled.div`
+&& {
+   width: 365px;
+   height: 78px;
+   font-size: 13px;
+   color:#606266; 
+   border-radius: 4px;
+   background-color: #F2F7FF;
+   border-left: 4px solid ${ props => props.level==1 ? "#E27D75" : props.level==2 ? "#F8D26D" : "#A46BDD"};
+   display: flex;
+   flex-direction: column;
+   justify-content: space-between;
+   padding: 10px 10px 10px 22px;
+   .warn {
+     color:${ props => props.level==1 ? "#E27D75" : props.level==2 ? "#F8D26D" : "#A46BDD"};
+     padding-left: 18px;
+   }
+   .b {
+    font-weight: bold;
+   }
+}
+
+`
 
 export default function Index() {
   const Timelinebox = styled(Timeline)`
-  height: 280px;
+  height: 325px;
   overflow: hidden;
-  margin-top: 28px;
+ // margin-top: 28px;
   background-color: #fff;
   padding-left: 5px;
-  padding-top: 15px;
+ // padding-top: 15px;
   & .transformcss{
     animation:${props=>{if(props.children.props.children?.props?.children?.length>4){return 'transY'}}} ${props=>((props.children.props.children?.props?.children?.length)*1.2)}s 1s linear infinite
   }
@@ -152,9 +211,9 @@ export default function Index() {
     width:0px
   }
  .ant-timeline-item {
-   padding-bottom: 24px;
-   padding-top:5px
+   padding-bottom: 10px;
  }
+ 
  .title {
    color:#1e1e1e;
    margin-top:-4px;
@@ -200,35 +259,12 @@ const {laptop} = useSelector(adaptation)
   }
   const pageTotalRef = useRef()
   pageTotalRef.current = 0
-  const grid = {
-    // 图表 grid
-    left: "0px",
-    right: "0",
-    top: "30px",
-    bottom: "0px",
-    containLabel: true,
-  }
+ 
   let params = {
     projectId,
     areaId
   }
-  // const datasetMonthl = {
-  //   dimensions: ["time", "本月", "上月"],
-  //   source: [
-  //     { time: "1", "本月": 5600, "上月": 9600 },
-  //     { time: "2", "本月": 4600, "上月": 3644 },
-  //     { time: "3", "本月": 3600, "上月": 4644 },
-  //     { time: "4", "本月": 5611, "上月": 9655 },
-  //     { time: "5", "本月": 5644, "上月": 3677 },
-  //     { time: "6", "本月": 4677, "上月": 3633 },
-  //     { time: "7", "本月": 3688, "上月": 4655 },
-  //     { time: "8", "本月": 5088, "上月": 2644 },
-  //     { time: "9", "本月": 6677, "上月": 2641 },
-  //     { time: "10", "本月": 5866, "上月": 5641 },
-  //     { time: "11", "本月": 4677, "上月": 7645 },
-  //     { time: "12", "本月": 1877, "上月": 2645 },
-  //   ],
-  // };
+
 
 
   //查询今日告警
@@ -310,11 +346,10 @@ const {laptop} = useSelector(adaptation)
   }
   //查询最新告警（总数）
   const getWarningDetailsList= async () => {
-    const res = await safeElectric.WarningDetailsList(params)
-  
+    const res = await safeElectric.WarningDetailsList(params)  
     if (res.success) {
       pageTotalRef.current = res.data.length*64
-      console.log(pageTotalRef.current)
+     
       if (res.data && Array.isArray(res.data)) {
         setWarnlist([...res.data])
       } else {
@@ -359,7 +394,7 @@ useEffect(() => {
     getWarningDetailsList()
   }, [areaId])
   const fs = {
-    hv: '24px',
+   // hv: '24px',
     fc: '#333'
   }
   const [domheight,setDomHeight] =useState(0)
@@ -381,28 +416,36 @@ useEffect(() => {
         <Mainbox laptop={laptop}>
           <Titlelayout title={'今日告警'} {...fs}>
             <Warnbox>
-              <div style={{ width: '148px', height: '148px' }} ref={warnref}>
+              <div style={{ width: '158px', height: '158px' }} ref={warnref}>
             
                 
               </div>
               <div className='alarm'>
                 <div className='warning'>
-                  <img src={first} style={{ width: 36, height: 36 }}></img>
-                  <span style={{ padding: '0 40px 0 16px' }}>一级告警</span>
-                  <span style={{ fontSize: 18 }}>{warnData?.levelOneCnt} </span>
+                  <img src={first} ></img>
+                  <div className='content'>
+                    <span>一级告警</span>
+                    <span className='num'>{warnData?.levelOneCnt} </span>
+                  </div>
                 </div>
-                <Divider style={{ margin: 0, borderColor: "#d7d7d7" }} dashed />
+                
                 <div className='warning'>
-                  <img src={second} style={{ width: 36, height: 36 }}></img>
-                  <span style={{ padding: '0 40px 0 16px' }}>二级告警</span>
-                  <span style={{ fontSize: 18 }}>{warnData?.levelTwoCnt} </span>
+                  <img src={second}  ></img>
+                  <div className="content">
+                  <span>二级告警</span>
+                  <span className='num'>{warnData?.levelTwoCnt} </span>
 
+                  </div>
+                
                 </div>
-                <Divider style={{ margin: 0, borderColor: "#d7d7d7" }} dashed />
+               
                 <div className='warning'>
-                  <img src={third} style={{ width: 36, height: 36 }}></img>
-                  <span style={{ padding: '0 40px 0 16px' }}>三级告警</span>
-                  <span style={{ fontSize: 18 }}>{warnData?.levelThreeCnt} </span>
+                  <img src={third}></img>
+                  <div className="content">
+                  <span>三级告警</span>
+                  <span className='num'>{warnData?.levelThreeCnt} </span>
+                  </div>
+                
                 </div>
 
               </div>
@@ -433,22 +476,15 @@ useEffect(() => {
               [...warnlist.map(
                 it => {
                   return (
-                    <Timeline.Item dot={<div 
-                    style={{
-                      borderRadius:'50%', width:16,height:16,border:'1px solid',
-                      display:'flex',justifyContent: 'center',alignItems: 'center',
-                      borderColor: it.level===1?'rgb(255,112,112)':it.level===2?'rgb(255 183 38)':'rgb(176,126,249)'}}>
-                      <div style={{borderRadius:'50%',width:10,height:10,background: it.level===1?'rgb(255,112,112)':it.level===2?'rgb(255 183 38)':'rgb(176,126,249)'}}>
-                      </div >
-                      </div>}>
-                      <div>
-                        <p className='title'>
+                    <Timeline.Item dot={<Dot level={it.level} />}>
+                      <ContentWrap level={it.level}>
+                        <p>
                           <span>{it.warningTime}</span>  
-                          <span  style={{ color:mapobj.get(it.level).color,fontSize:12 }}>{mapobj.get(it.level).text}</span>
+                          <span className='warn'>{mapobj.get(it.level).text}</span>
                         </p>
-                        <p>{it.alarmEvent}</p>
-                        <p className='content'>{it.name}  {it.address}    </p>
-                      </div>
+                        <p className='b'>{it.alarmEvent}</p>
+                        <p >{it.name} {it.address} </p>
+                      </ContentWrap>
                     </Timeline.Item>
                   )
                 }
@@ -457,22 +493,15 @@ useEffect(() => {
                 {warnlist.map(
                 it => {
                   return (
-                    <Timeline.Item dot={<div 
-                    style={{
-                      borderRadius:'50%', width:16,height:16,border:'1px solid',
-                      display:'flex',justifyContent: 'center',alignItems: 'center',
-                      borderColor: it.level===1?'rgb(255,112,112)':it.level===2?'rgb(255 183 38)':'rgb(176,126,249)'}}>
-                      <div style={{borderRadius:'50%',width:10,height:10,background: it.level===1?'rgb(255,112,112)':it.level===2?'rgb(255 183 38)':'rgb(176,126,249)'}}>
-                      </div >
-                      </div>}>
-                      <div>
-                        <p className='title'>
-                        <span>{it.warningTime}</span>  
-                        <span  style={{ color:mapobj.get(it.level).color,fontSize:12 }}>{mapobj.get(it.level).text}</span>
+                    <Timeline.Item dot={<Dot level={it.level} /> }>
+                       <ContentWrap level={it.level}>
+                        <p>
+                          <span>{it.warningTime}</span>  
+                          <span className='warn'>{mapobj.get(it.level).text}</span>
                         </p>
-                        <p>{it.alarmEvent}</p>
-                        <p className='content'>{it.name}  {it.address}    </p>
-                      </div>
+                        <p className='b'>{it.alarmEvent}</p>
+                        <p>{it.name} {it.address} </p>
+                      </ContentWrap>
                     </Timeline.Item>
                   )
                 }
@@ -481,22 +510,15 @@ useEffect(() => {
                   ]: [...warnlist.map(
                     it => {
                       return (
-                        <Timeline.Item dot={<div 
-                        style={{
-                          borderRadius:'50%', width:16,height:16,border:'1px solid',
-                          display:'flex',justifyContent: 'center',alignItems: 'center',
-                          borderColor: it.level===1?'rgb(255,112,112)':it.level===2?'rgb(255 183 38)':'rgb(176,126,249)'}}>
-                          <div style={{borderRadius:'50%',width:10,height:10,background: it.level===1?'rgb(255,112,112)':it.level===2?'rgb(255 183 38)':'rgb(176,126,249)'}}>
-                          </div >
-                          </div>}>
-                          <div>
-                            <p className='title'>
-                              <span>{it.warningTime}</span>  
-                              <span  style={{ color:mapobj.get(it.level).color,fontSize:12 }}>{mapobj.get(it.level).text}</span>
-                            </p>
-                            <p>{it.alarmEvent}</p>
-                            <p className='content'>{it.name}  {it.address}    </p>
-                          </div>
+                        <Timeline.Item dot={<Dot level={it.level} />}>
+                            <ContentWrap level={it.level}>
+                        <p>
+                          <span>{it.warningTime}</span>  
+                          <span className='warn'>{mapobj.get(it.level).text}</span>
+                        </p>
+                        <p className='b'>{it.alarmEvent}</p>
+                        <p>{it.name} {it.address} </p>
+                      </ContentWrap>
                         </Timeline.Item>
                       )
                     }

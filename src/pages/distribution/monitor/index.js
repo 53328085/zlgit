@@ -95,15 +95,15 @@ export default function Index() {
   const roomId = useSelector(selectcurlRommid)
   const rname = useSelector(roomName)
 
-    const state = useReactive({
+  const state = useReactive({
     dcScreen: [],
     environmentVo: {},
     imgBg: '',
     roomDevice: {},
     roomStatus: {},
     transformer: []
-  })  
-  
+  })
+
   const init = {
     door: [],
     fire: [],
@@ -147,13 +147,13 @@ export default function Index() {
       const res = await DistributionRoomRuntime.OverviewInfo({ projectId, roomId })
       if (res.success) {
         if (isObject(res.data)) {
-         
+
           state.dcScreen = res.data.dcScreen
           state.environmentVo = res.data.environmentVo
           state.imgBg = res.data.imgBg
           state.roomDevice = res.data.roomDevice
           state.roomStatus = res.data.roomStatus
-          state.transformer = res.data.transformer 
+          state.transformer = res.data.transformer
         }
       } else {
         message.error(res.errMsg)
@@ -193,10 +193,10 @@ export default function Index() {
 
 
             {/* door, fire, ht, noise, sF6, smoke, water */}
-            <Image src={imgBg || dimg} preview={false}   />
+            <Image src={imgBg || dimg} preview={false} />
           </div>
           <div className='cardlocal'>
-          
+
             <HoverDiv>
               配电房概述
               <div className="list" >
@@ -259,8 +259,8 @@ export default function Index() {
               变压器监控
               <div className="list" >
                 <Collapse accordion expandIconPosition="end" ghost>
-                   {
-                    state.transformer?.map((item, index) =>{
+                  {
+                    state.transformer?.map((item, index) => {
                       return (
                         <Collapse.Panel header={item.name} key={index}>
                           <div className="line">
@@ -314,7 +314,7 @@ export default function Index() {
                         </Collapse.Panel>
                       )
                     })
-                  } 
+                  }
                 </Collapse>
               </div>
             </HoverDiv>
@@ -323,7 +323,7 @@ export default function Index() {
               <div className="list" >
                 <Collapse accordion expandIconPosition="end" ghost>
                   {
-                    state.dcScreen?.map((item, index) =>{
+                    state.dcScreen?.map((item, index) => {
                       return (
                         <Collapse.Panel header={item.name} key={index}>
                           <div className="line">
@@ -350,72 +350,120 @@ export default function Index() {
                         </Collapse.Panel>
                       )
                     })
-                  }  
+                  }
                 </Collapse>
               </div>
             </HoverDiv>
             <HoverDiv>
               环境监控
               <div className="list" >
-                 {
+                {
                   (Array.isArray(state.environmentVo.ht) && state.environmentVo?.ht.length > 0) ?
-                  state.environmentVo?.ht.map(h => (
-                   <div className="line">
-                  <span>温度</span>
-                  <span>{h.tValue}</span>
-                   </div>
-                   
-                  ))
-                  :  <div className="line">
-                  <span>温度</span>
-                  <span> '-'</span>
-                </div>  
-                 } 
-                  {
+                    state.environmentVo?.ht.map(h => (
+                      <div className="line">
+                        <span>温度</span>
+                        <span>{h.tValue}</span>
+                      </div>
+
+                    ))
+                    : <div className="line">
+                      <span>温度</span>
+                      <span>{'-'}</span>
+                    </div>
+                }
+                {
                   (Array.isArray(state.environmentVo.ht) && state.environmentVo?.ht.length > 0) ?
-                  state.environmentVo?.ht.map(h => ( 
-                   <div className="line">
-                  <span>湿度</span>
-                  <span>{h.hValue}</span>
-                   </div> 
-                  ))
-                  :  
-                <div className="line">
-                  <span>湿度</span>
-                  <span> '-'</span>
-                </div>
-                
-                 } 
-                <div className="line">
-                  <span>噪音</span>
-                  <span>{state.environmentVo.noise || '-'}</span>
-                </div>
+                    state.environmentVo?.ht.map(h => (
+                      <div className="line">
+                        <span>湿度</span>
+                        <span>{h.hValue}</span>
+                      </div>
+                    ))
+                    :
+                    <div className="line">
+                      <span>湿度</span>
+                      <span>{'-'}</span>
+                    </div>
+
+                }
+                {
+                  (Array.isArray(state.environmentVo.noise) && state.environmentVo.noise?.length > 0) ?
+                    state.environmentVo.noise?.map(n => (
+                      <div className="line">
+                        <span>噪音</span>
+                        <span>{n.value}</span>
+                      </div>
+                    ))
+                    : <div className="line">
+                      <span>噪音</span>
+                      <span>{'-'}</span>
+                    </div>
+                }
                 {
                   (Array.isArray(state.environmentVo.water) && state.environmentVo.water?.length > 0) ?
-                  state.environmentVo.water?.map(w => (
-                    <div className="line">
-                    <span>水浸</span>
-                    <span>{w.value}</span>
-                  </div>
-                  ))
-                  :  <div className="line">
-                  <span>水浸</span>
-                  <span>{ '-'}</span>
-                </div>
+                    state.environmentVo.water?.map(w => (
+                      <div className="line">
+                        <span>水浸</span>
+                        <span>{w.value}</span>
+                      </div>
+                    ))
+                    : <div className="line">
+                      <span>水浸</span>
+                      <span>{'-'}</span>
+                    </div>
                 }
-               
-                <div className="line">
+
+                {/* <div className="line">
                   <span>烟感</span>
                   <span>{state.environmentVo.smoke || '-'}</span>
-                </div>
-                <div className="line">
+                </div> */}
+                {
+                  (Array.isArray(state.environmentVo.smoke) && state.environmentVo.smoke?.length > 0) ?
+                    state.environmentVo.smoke?.map(n => (
+                      <div className="line">
+                        <span>烟感</span>
+                        <span>{n.value}</span>
+                      </div>
+                    ))
+                    : <div className="line">
+                      <span>烟感</span>
+                      <span>{'-'}</span>
+                    </div>
+                }
+                {/* <div className="line">
                   <span>明火</span>
                   <span>{state.environmentVo.fire || '-'}</span>
-                </div>
-                <div className="line">
+                </div> */}
+                {
+                  (Array.isArray(state.environmentVo.smoke) && state.environmentVo.smoke?.length > 0) ?
+                    state.environmentVo.smoke?.map(n => (
+                      <div className="line">
+                        <span>烟感</span>
+                        <span>{n.value}</span>
+                      </div>
+                    ))
+                    : <div className="line">
+                      <span>烟感</span>
+                      <span>{'-'}</span>
+                    </div>
+                }
+                {/* <div className="line">
                   <span>门禁</span>
                   <span>{state.environmentVo.door || '-'}</span>
-                </div>
+                </div> */}
+                {
+                  (Array.isArray(state.environmentVo.door) && state.environmentVo.door?.length > 0) ?
+                    state.environmentVo.door?.map(n => (
+                      <div className="line">
+                        <span>门禁</span>
+                        <span>{n.value}</span>
+                      </div>
+                    ))
+                    : <div className="line">
+                      <span>门禁</span>
+                      <span>{'-'}</span>
+                    </div>
+                }
               </div>
             </HoverDiv>
           </div>
@@ -448,8 +496,8 @@ const HoverDiv = styled.div`
     .ant-collapse-header{
       background-color: ${props => props.theme.dislistbg || '#334461'};
       border-bottom:1px solid rgba(255,255,255,0.8);
-      color: ${props => props.theme.islight ? props.theme.lightcolor : "#ffffff"}; // 
-      
+     // color: ${props => props.theme.islight ? props.theme.lightcolor : "#ffffff"}; // 
+     color:${props => props.theme.disfieldname || '#ffffff'};
     }
     .ant-collapse-content-box{
         padding: 0!important;

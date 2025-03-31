@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { useReactive } from "ahooks";
+import { useSelector, useDispatch } from "react-redux";
+import { themeColor } from "@redux/systemconfig";
 
 import styled from "styled-components";
 import open1_1 from './imgs/p1/1-1_open.svg'
@@ -9,99 +11,189 @@ import close1_2 from './imgs/p1/1-2_close.svg'
 import open1_3 from './imgs/p1/1-3_open.svg'
 import close1_3 from './imgs/p1/1-3_close.svg'
 
-export default function Index() {
+import { DiskChart } from "@api/api.js";
 
+const {QueryDeviceDataAll} =DiskChart
+
+
+export default React.memo((props) => {
+    const { menusbgcolorR, startColor, endColor, startOpacity, endOpacity } = useSelector(themeColor)
     const state = useReactive({
-        showData: false,
-        onOpen: false,
+        showData: true,
+        onOpen: true,
+        status: 'normal',
         onOpen1_2: false,
-        onOpen1_3: false
+        onOpen1_3: false,
+        Ia: '0.00',
+        Ib: '0.00',
+        Ic: '0.00',
     })
 
     const DiaBox = styled.div`
         display: flex;
         padding: 32px;
         padding-right: 48px;
-        min-height: 800px;
+        min-height: 824px;
         position: relative;
-        .click_box{
-            width: 48px;
-            height: 144px;
-            background-color: transparent;
-            position: absolute;
-            left: 224px;
-            top: 152px;
-            cursor: pointer;
-        }
-        .click_box_2{
-            width: 48px;
-            height: 96px;
-            background-color: transparent;
-            position: absolute;
-            left: 110px;
-            bottom: 222px;
-            cursor: pointer;
-        }
-        .click_box_3{
-            width: 48px;
-            height: 96px;
-            background-color: transparent;
-            position: absolute;
-            left: 338px;
-            bottom: 222px;
-            cursor: pointer;
-        }
         .data_box{
-            width: 160px;
-            height: 148px;
-            border: 1px solid rgba(110, 169, 238, 1);
-            background-color: rgba(239, 246, 255, 1);
+            width: 112px;
+            /* height: 148px; */
+            border: 1px solid rgba(0, 153, 51, 1);
+            background-color: #000;
             border-radius: 4px;
             position: absolute;
-            left: 168px;
-            top: 300px;
-            padding: 16px 12px;
+            left: 290px;
+            top: 180px;
             font-size: 14px;
-            color: #333;
+            .data_box_title{
+                display: flex;
+                width: 100%;
+                height: 24px;
+                align-items: center;
+                background-color: #00c;
+                color: #fff;
+                justify-content: center;
+            }
+            .data_box_item{
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                margin: 0 8px;
+                border-bottom: 1px dashed #0f3;
+                font-size: 16px;
+                color: #0f3;
+                height: 36px;
+            }
         }
     `
 
-    const handleMouseEnter = () => {
-        state.showData = true
-    }
-    const handleMouseLeave = () => {
-        state.showData = false
+    const onOpenStyle = {
+        width: 232, 
+        height: 672, 
+        marginTop: 50, 
+        marginLeft: '-14px'
     }
 
-    const changeState = (val) => {
-        if(val == 1){
-            state.onOpen = !state.onOpen
+    const getSingleData = () => {
+            QueryDeviceDataAll(props.sn).then(res => {
+                if(res && res.response.code == 0 && Array.isArray(res.response.data) && res.response.data.length >0){
+                    let deviceData = res.response.data
+                    deviceData.map(item => {
+                        if (item.name == 'BrokerStatus') {
+                            if (item.value == 0) {
+                                state.status = 'normal'
+                                state.onOpen = false
+                            }
+                            if (item.value == 16) {
+                                state.status = 'error'
+                                state.onOpen = false
+                            }
+                            if (item.value == 32) {
+                                state.status = 'normal'
+                                state.onOpen = true
+                            }
+                            if (item.value == 48) {
+                                state.status = 'error'
+                                state.onOpen = true
+                            }
+                        }
+                        if (item.name == 'Ia') {
+                            state.Ia = item.value
+                        }
+                        if (item.name == 'Ib') {
+                            state.Ib = item.value
+                        }
+                        if (item.name == 'Ic') {
+                            state.Ic = item.value
+                        }
+                    })
+                }
+            })
         }
-        if(val == 2){
-            state.onOpen1_2 = !state.onOpen1_2
-        }
-        if(val == 3){
-            state.onOpen1_3 = !state.onOpen1_3
-        }
-    }
+    
+        useEffect(() => {
+            getSingleData()
+            const timer = setInterval(() => {
+                getSingleData()
+    
+            }, 15000)
+            return () => {
+                clearInterval(timer)
+            }
+        },[])
+    
+
+    // useEffect(() => {
+    //     if (props.deviceData && props.deviceData.length > 0) {
+    //         props.deviceData.map(item => {
+    //             if (item.name == 'BrokerStatus') {
+    //                 if(item.value == 0){
+    //                     state.status = 'normal'
+    //                     state.onOpen = false
+    //                 }
+    //                 if(item.value == 16){
+    //                     state.status = 'error'
+    //                     state.onOpen = false
+    //                 }
+    //                 if(item.value == 32){
+    //                     state.status = 'normal'
+    //                     state.onOpen = true
+    //                 }
+    //                 if(item.value == 48){
+    //                     state.status = 'error'
+    //                     state.onOpen = true
+    //                 }
+    //             }
+    //             if (item.name == 'Ia') {
+    //                 state.Ia = item.value
+    //             }
+    //             if (item.name == 'Ib') {
+    //                 state.Ib = item.value
+    //             }
+    //             if (item.name == 'Ic') {
+    //                 state.Ic = item.value
+    //             }
+    //         })
+    //     }
+    // }, [])
 
     return (
         <DiaBox>
-            <img src={state.onOpen1_2 ? open1_2 : close1_2} style={{ width: 114, height: 258, marginTop: 440 }}></img>
-            <img src={state.onOpen ? open1_1 : close1_1} style={{ width: 232, height: 672, marginTop: 26, marginLeft: '-14px' }}></img>
-            <img src={state.onOpen1_3 ? open1_3 : close1_3} style={{ width: 120, height: 274, marginTop: 440, marginLeft: '-60px' }}></img>
-            <div className='click_box_2' onClick={() => changeState(2)}></div>
-            <div className='click_box_3' onClick={() => changeState(3)}></div>
-            <div className='click_box' onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave} onClick={() => changeState(1)}></div>
+            <img src={close1_2} style={{ width: 114, height: 258, marginTop: 464 }}></img>
             {
-                state.showData ? <div className='data_box'>
-                <div style={{ color:'#1F6ECD' }}>进线</div>
-                <div style={{ color:'#1F6ECD' }}>NA8-2500-H/3D</div>
-                <div style={{marginTop: 12}}>Ia   120.5 A / 38.2 ℃</div>
-                <div>Ib   120.5 A / 38.2 ℃</div>
-                <div>Ic   120.5 A / 38.2 ℃</div>
-            </div> : null
+                state.status == 'normal' && state.onOpen == false ? <img src={close1_1} style={onOpenStyle}></img> : null
             }
+            {
+                state.status == 'normal' && state.onOpen == true ? <img src={open1_1} style={onOpenStyle}></img> : null
+            }
+
+            <img src={close1_3} style={{ width: 120, height: 274, marginTop: 464, marginLeft: '-60px' }}></img>
+            <div className='data_box'>
+                <div className='data_box_title'>进线柜</div>
+                <div className='data_box_item' style={{color:'#ff0'}}>
+                    <span>Ia</span>
+                    <div>
+                        <span>{state.Ia} </span>
+                        <span className='unit' style={{ fontSize: 12 }}>(A)</span>
+                    </div>
+
+                </div>
+                <div className='data_box_item' style={{color:'#0f0'}}>
+                    <span>Ib</span>
+                    <div>
+                        <span>{state.Ib} </span>
+                        <span className='unit' style={{ fontSize: 12 }}>(A)</span>
+                    </div>
+
+                </div>
+                <div className='data_box_item' style={{ borderBottom: 'none', color:'#f00' }}>
+                    <span>Ic</span>
+                    <div>
+                        <span>{state.Ic} </span>
+                        <span className='unit' style={{ fontSize: 12 }}>(A)</span>
+                    </div>
+                </div>
+            </div>
         </DiaBox>
     )
-}
+})

@@ -54,7 +54,7 @@ export default function Index() {
   }, [projectId])
   return (
     <Pagecount>
-      <Titlelayout style={{width:"578px", flex: "0 0 384px", boxShadow:'0px 2px 2px rgba(0, 0, 0, 0.349019607843137)'}} title={<CustTransO ns="common" text="yishiy"  />} >
+      <Titlelayout style={{width:"578px", flex: "0 0 384px"}} title={<CustTransO ns="common" text="yishiy"  />} >
         <Mainbox>
         <Cdivider type="h" style={{marginBottom: '32px'}} />
           <Form form={form} layout="vertical" requiredMark="optional">

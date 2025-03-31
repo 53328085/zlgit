@@ -7,7 +7,8 @@ import { Link } from "react-router-dom";
 import { useAntdTable } from "ahooks";
 import {CustTransO, i18t, i18warning,ExportExcel, RadioT} from "@com/useButton"
 import {isLightColor} from "@com/usehandler"
-import Icard from "./card";
+//import Icard from "./card";
+import Icard from "@com/commIcard"
 import imgurl from "./images/index.js";
 import { Monitoring } from "@api/api.js";
 import {
@@ -21,7 +22,7 @@ import {
 import Table from "@com/useTable";
 import { Serach, Cdivider, CPagination } from "@com/comstyled";
 import Pagecount from '@com/pagecontent' 
-import bgi from "./images/bgi.png"
+ 
 const sty = css`
   grid-template-columns: repeat(auto-fill, minmax(438px, 1fr));
   .cardItem{
@@ -33,177 +34,8 @@ const sty = css`
 `
 const Cardbox = styled.div`
  display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(538px,1fr));
-  //  grid-template-rows: repeat(4, 156px);
-    gap: 16px;
-   // justify-content: space-evenly;
-   
-    .cardItem {
-    height: 156px;
-  //  background-color: #fff;
-    background-color: ${props => props.theme.primaryderived || '#ffffff'};
-    border: 1px solid rgb(215, 215, 215);
-    border-radius: 4px;
-    //  margin-right: 16px;
-    display: flex;
-  //  align-items: center;
-    column-gap: 8px;
-    justify-content: flex-start;
-  //  background-image: url(${bgi});
-    background-size: 100% 100%;
-    position: relative;
-    overflow: hidden;
-
-   
-    .cardImg {
-        width: 128px;
-        height: 128px;
-        align-self: center;
-    }
-
-    .ItemValue {
-       // margin-left: 12px;
-      //  margin-right: auto;
-      padding-right: 8px;
-      flex:1;
-        text-align: left;
-      //  width: 100%;
-        display: flex;
-        flex-direction: column;      
-        justify-content: space-around;
-
-        .valueTitle {
-            display: flex;
-            align-items: center;
-            column-gap: 32px;
-            font-size: 14px;
-            color: ${props => props.theme.bgcolorfont} ;
-            font-weight: 700;
-            text-align: left;
-            align-self: flex-start;
-           
-            
-        }
-
-        .valueData {
-            //margin-top: 10px;
-            font-size: 14px;
-            color: ${props => props.theme.bgcolorfont} ;
-            
-        }
-
-        .btnStyle {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            column-gap: 8px;
-       
-            .btnBoxStyle {
-                flex: auto;
-                display: flex;
-                flex-direction: row;
-                align-items: center;
-                justify-content: space-between;
-                border-radius: 24px;
-             
-              //  border: 1px solid rgb(215, 215, 215);
-                height: 24px;
-                border-radius: 40px;
-                background-color: ${props => props.theme.itembg || "#000033"};
-                
-            }
-
-            .timeStyle {
-                flex: auto;
-                height: 24px;
-                font-size: 12px;
-                color: ${props => props.theme.fieldname || "#ffffff"};
-                line-height: 24px;
-                
-            }
-
-            .timeValueStyle {
-                float: auto;
-                height: 24px;
-                font-size: 14px;
-                text-align: center;
-                line-height: 24px;
-                color: ${props => props.theme.fieldvalue || "#33FF00"} ;
-            }
-        }
-        .btnBoxStyle {
-    display: flex;
-    flex-direction: row;
-  
-    border-radius: 40px;
-    background-color: ${props => props.theme.itembg || "#000033"};
-
-    .timeStyle {
-        flex: auto;
-        height: 24px;
-        font-size: 12px;
-        color: ${props => props.theme.fieldname || "#ffffff"};
-        line-height: 24px;
-        padding-left: 10px;
-    }
-
-    .timeValueStyle {
-        flex: auto;
-        height: 24px;
-        color: ${props => props.theme.fieldvalue || "#33FF00"};
-        font-size: 14px;
-        text-align: left;
-        line-height: 24px;
-        padding-right: 10px;
-    }
-}
-    }
-
-    .boxCard {
-        width: 200px;
-        height: 112px;
-        position: absolute;
-        right: 5px;
-        background-color: rgba(242, 242, 242, 0.75);
-        border: 1px solid rgb(228, 228, 228);
-        display: flex;
-        align-items: center;
-        justify-content: space-around;
-        flex-direction: column;
-        padding: 16px;
-
-        p {
-            width: 100%;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-        }
-    }
-
-    .state {
-        position: absolute;
-        top: 4px;
-        right: -18px;
-        transform: rotate(45deg);
-        background-color: ${props => props.theme.normalColor ||"#009966"};
-        color: ${props => props.theme.fntnormalColor || "#ffffff"};
-        width: 65px;
-        text-align: center;
-        font-size: 14px;
-    }
-
-    .stateOff {
-        position: absolute;
-        top: 4px;
-        right: -18px;
-        transform: rotate(45deg);
-        background-color: ${props => props.theme.offlineColor || "#666666"};
-        color: ${props => props.theme.fntofflineColor || "#ffffff"};
-        width: 65px;
-        text-align: center;
-        font-size: 14px;
-    }
-}
+    grid-template-columns: repeat(auto-fill, minmax(538px,1fr)); 
+    gap: 16px;  
 ${props=> props.laptop ? sty : null}
 `
  
@@ -541,6 +373,7 @@ export default function Index(props) {
                       lastSampleTime={item.lastSampleTime}
                       category={item.category}
                       name={item.name}
+                      device={1}
                     />
                   </Link>
                 </div>
