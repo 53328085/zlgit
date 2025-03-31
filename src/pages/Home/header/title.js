@@ -34,7 +34,7 @@ export default function  Title (){
    console.log("Currproject" ,Currproject)
     let Collapsed = useSelector(collapsed) 
    if (Collapsed && !overview) {
-     return   smallLog   ?  <img  height={70}  width={54 }   src={smallLog }></img> : <div  style={{height:70}}></div> 
+     return   smallLog   ?  <img  height={70}  width={54 } style={{objectFit:'contain'}}  src={smallLog }></img> : <div  style={{height:70}}></div> 
    }else {
       return    projectLog ? <img  height={70}  width={200 }   src={projectLog }></img> :  <div   style={{height:70, width:200}}></div> 
    }
