@@ -43,6 +43,7 @@ const Mainbox = styled.div`
       column-gap: 16px;
       display: flex;
       border-radius: 8px;
+      border: 1px solid #DDDFE6;
       .itemvalue {
           display: flex;
           flex-direction: column;

@@ -23,7 +23,7 @@ const Mainbox =  styled.div`
     background-color: ${props => props.theme.gatewaybgcolor || "#135abd"};
   }
   .head{
-    background-color: ${props => props.theme.gatewayheardcolor || "#003366"};
+   background-image: linear-gradient(to right, ${props => props.theme.gatewayheardcolor || "#003366"}, ${props => props.theme.gatewayheardcolorend || "#003366"});
   }
   
 }

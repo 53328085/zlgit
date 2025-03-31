@@ -71,8 +71,9 @@ const  Mainbox = styled.div`
            align-items: center;
            color: #fff;
            background-color: #fff;
-           border-radius: 4px;
+           border-radius: 8px;
            height: inherit;
+           border: 1px solid #DDDFE6;
            .ant-typography{
             margin-bottom: 0;
            }
@@ -237,7 +238,7 @@ export default function Index() {
   let {islight} = useSelector(themeColor)
   
   const navigate = useNavigate()
-  const [cardData, setCardData] = useState([{storageCapacity:12},{storageCapacity:12},{storageCapacity:12}])//卡片数据
+  const [cardData, setCardData] = useState(null)//卡片数据
   const [warningData, setWarningData] = useState([])//最新告警
   const [topologyData, setTopologyData] = useState({
     loadDevice: {},
@@ -515,7 +516,7 @@ export default function Index() {
                   <Text ellipsis={{tooltip: cardData?.runtimeChargeP}} className='num'> {cardData?.runtimeChargeP}&nbsp;kW</Text>
                   </div>
                   <div key="3">
-                  <Text className='title'>投运时间</Text>
+                  <Text className='title'><Badge color='#1E50E6' text=""></Badge>投运时间</Text>
                   <Text ellipsis={{ tooltip: cardData?.useDate}} className='num'>{cardData?.useDate}</Text>
                   </div>
               </div> 
