@@ -26,7 +26,7 @@ const Laybox = styled.div`
    row-gap: 16px;
   .up {
     display: grid;
-    grid-template-columns: 1256px 408px;
+    grid-template-columns: 1256px 1fr;
     column-gap: 16px; 
     overflow: hidden;
     ${props=> props.laptop ? sty : null}
@@ -101,7 +101,7 @@ const Divbox = styled.div`
     align-items: flex-end;
     .item {
       display: flex;
-      justify-content: space-between;
+      justify-content: space-around;
       span:first-child {
         color: #999;
         font-size: 14px;
@@ -514,7 +514,7 @@ const CoalStandard =({data={}, op, datetype, laptop}) => {
     });
   }, [])
   return (
-    <Titlelayout title={<Title title={data?.name} />}>
+    <Titlelayout title={<Title title={data?.name} layout="flex" />}>
     <Divbox>
       <div
         style={{
@@ -522,6 +522,7 @@ const CoalStandard =({data={}, op, datetype, laptop}) => {
           flexDirection: "column",
           justifyContent: "flex-end",
           alignItems: "center",
+          flex: 1,
         }}
       >
         <div className="imgbox">
@@ -563,9 +564,10 @@ const CoalStandard =({data={}, op, datetype, laptop}) => {
       type="inner"
       title={<Title title={op==1 ? "能耗占比" :  "能耗费用占比"} />}
       style={{ padding: "0px", border: "none" }}
+      layout="flex"
     >
       <div
-        style={{ width: "368px", height: "284px" }}
+        style={{ flex:1,width: "368px", height: "284px" }}
         ref={pieref}
       ></div>
     </Titlelayout>
