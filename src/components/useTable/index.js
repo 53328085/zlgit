@@ -151,7 +151,7 @@ function Index(props, ref) {
     let fileName = sheetName.split(".")[0]
     writeFile(workbook, `${fileName}.${file}`, { bookType: file }); // 下载
 
-  }, [lists, total])
+  }, [lists, total, sheetName])
 
   const domExprot = () => { // 通过table DOM 导出  
 
