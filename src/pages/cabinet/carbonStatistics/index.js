@@ -55,7 +55,7 @@ const Mainbox = styled.div`
        padding: 30px 0 0 11px;
   }
 }
-  }
+}
   .center {
      display: grid;
      grid-template-columns:656px 544px 448px;
