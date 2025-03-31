@@ -236,13 +236,14 @@ return getTime(dates[0],1).toString()+"-"+getTime(dates[1], 1).toString()
     }
 
   },[dates]) ;
-  const sheetName =(index===0 && dates.length) ? filename : tabs[index]?.label ?? 'sheet'
+   const sheetName =(index===0 && dates.length) ? filename : tabs[index]?.label ?? 'sheet'
   let columns = [cols, [], timecols, typecols][index] // 
 
 
  
   const getTableData = ({ current, pageSize, areaId, projectId, type, date, energytype, treeId, index, line,isrange, dates }) => {
     console.log("dates",dates)
+    console.log(filename,246,sheetName)
     let f = [areaId, projectId, type, energytype,index, line].every(v => Number.isInteger(v)) && Array.isArray(treeId) && date
     let range = index === 0 && isrange && Array.isArray(dates) && dates?.length>1
     if(!f) return;
@@ -348,12 +349,16 @@ return getTime(dates[0],1).toString()+"-"+getTime(dates[1], 1).toString()
   const onExport =useCallback(() => {   
    
     return  getTableData({current: 1, pageSize: total,areaId, projectId, type, date, energytype, treeId, index, line,isrange, dates})
- }, [total, concolumns, type, date,energytype,areaId, treeId, index, line, isrange, dates])
+ }, [total, concolumns, type, date,energytype,areaId, treeId, index, line, isrange, dates,sheetName])
 
 const boxchange = (e)=> {
   const f = e.target.checked
   console.log(f)
   setIsrange(f)
+  if(!f) {
+    setDates([moment().startOf("day"), moment()])
+    setValuet([moment().startOf("day"), moment()])
+  }
 }
 
   const [valuet, setValuet] = useState(null);
