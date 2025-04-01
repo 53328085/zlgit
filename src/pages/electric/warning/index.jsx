@@ -40,12 +40,39 @@ const Mainbxox = styled.div`
 && {
   flex: 1;
   display: grid;
-  grid-template-rows: 64px 1fr ;
+  grid-template-rows: 94px 1fr ;
   row-gap: 16px;
   .warning {
     display: grid;
-    grid-template-columns:${props => props.laptop ? "repeat(4, 1fr)" : "repeat(4, 320px)"};
+    grid-template-columns: repeat(4, 1fr);    //${props => props.laptop ? "repeat(4, 1fr)" : "repeat(4, 320px)"};
     column-gap: 16px;
+    height: 94px;
+    grid-template-rows: 1fr;
+    .item{
+      height: inherit;
+      background-color: #fff;
+      padding: 16px;
+      align-items: center;
+      column-gap: 16px;
+      display: flex;
+      border-radius: 8px;
+      border: 1px solid #DDDFE6;
+      .itemvalue {
+          display: flex;
+          flex-direction: column;
+          justify-content: space-between;
+          color: #3E4043;
+          font-size: 16px;
+          .name{
+            padding-right: 1em;
+          }
+          .num {
+            color: #1977FF;
+            font-size: 31px;
+            
+          } 
+      }
+    }
   }
 }
 `
@@ -92,18 +119,15 @@ export default function Index() {
     )
 }
 
-let Card = ({ png = total ,count=0,percent=0,name="告警总数"}) => {
-    const {laptop} = useSelector(adaptation);
+let Card = ({ png = total ,count=0,percent,name="告警总数"}) => {
+    let per = parseFloat(percent)
     return (
-        <Diversty laptop>
+        <div className='item'>
             <img src={png} alt="" />
-            <span >{name}</span>  
-            {png!==total?
-            <>
-             <div >{count}</div>
-             <div>{percent}%</div>
-            </>
-            :<div>{count}</div>}   
-        </Diversty>
+             <div className='itemvalue'>
+                 <div><span className='name'>{name}</span>{ !isNaN(per) ? `${percent}%` : null}</div> 
+                 <span className='num'>{count}</span>
+             </div>
+        </div>
     )
 }

@@ -7,7 +7,7 @@ import {useSelector} from "react-redux"
  
 import {CustTransO} from "@com/useButton"
 import { themeColor } from '@redux/systemconfig.js'
- 
+import imgsrc from './imgs'
 const {Paragraph,Text} =Typography
 const CProgress = styled(Progress)`
 && {
@@ -80,94 +80,16 @@ const Cardbox = styled.div`
     ${props=> props.theme.laptop ? sty : null}
   
 `
-const Mainbox = styled.div`
-  display: flex;
-  flex: 1;
-  justify-content: space-between;
-//  align-items: stretch;
-  padding: 0 8px;
-  color: ${props=> props.theme.bgcolorfont};
-  height: 80px;
-  overflow: hidden;
-  font-size: 14px;
-  .content {
-    flex: 1;
-    display: flex;
-   
-    column-gap: 8px;
-    height: 54px;
-    justify-content: space-between;
-    
-    .imgbox {
-       align-self: center;
-       width: 42px;
-       overflow: hidden;
-       display: flex;
-       align-items: center;
-       img {
-        max-width: 100%;
-       }
-    }
-    .rightbox {
-      p {
-        line-height: 1;
-      }
-       flex:1;
-       display: flex;
-       flex-direction: column;
-       justify-content: space-between;
-    }
-  }
- 
-  .imgbox2 {
-    width: 96px;
-    display: flex;
-    align-items: center;
-    overflow: hidden;
-    img {
-      max-width: 100%;
-    }
-  }
-  .right {
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    flex: 1;
-    height:80px;
-    p {
-      //  color: #fff;
-        line-height: 1;
-         
-    }
-   
-    .yoy {
-        font-size: 16px;
-        color: ${props=> props.theme.bgcolorfont};
-    }
-  }
-  .num{
-      font-size: 28px;
-    //  max-width: 160px;
-     // color: #fff;
-     color: ${props=> props.theme.bgcolorfont};
-      text-align: right;
-    }
  
  
-  .right.center {
-    align-items: center;
-  }
-  ${props=> props.laptop ? sty : null}
-`
- 
-export default function Index({name='', imgtype, value=0, yoy=0}) {
+export default function Index({name='',text, imgtype, value=0, yoy=0}) {
   let {carnstrokecolor,carntrailcolor} = useSelector(themeColor)
  
   return (
      <Cardbox>
       <div className='uppart'>
         <div className="imgBox">
-           <img src={imgtype==1 ? leftBox : flower} alt="" className='img'></img>
+           <img src={imgsrc[text]} alt="" className='img'></img>
         </div>
         <div className="leftpart">
           <div className="font1">

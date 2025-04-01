@@ -25,11 +25,52 @@ import Titlelayout from '@com/titlelayout'
 const {Link} = Typography
 const Mainbox = styled.div`
   display: grid;
-  grid-template-rows: 80px 1fr;
+  grid-template-rows: 94px 1fr;
   row-gap: 16px;
   flex: 1;
+  .cameras {
+    height: 94px;
+    display: grid;
+    column-gap: 16px;
+    grid-template-columns: repeat(3,1fr);
+    grid-template-rows: 1fr;
+    overflow: hidden;
+    .camera{
+      height: inherit;
+      background-color: #fff;
+      padding: 16px;
+      align-items: center;
+      column-gap: 16px;
+      display: flex;
+      border-radius: 8px;
+      border: 1px solid #DDDFE6;
+      .itemvalue {
+          display: flex;
+          flex-direction: column;
+          justify-content: space-between;
+          color: #37383A;
+          font-size: 16px;
+          .num {
+            color: #1977FF;
+            font-size: 31px;
+            
+          } 
+      }
+    }
+  }
 `
-
+  //摄像头展示数据
+  const CameraValue = (props) => {
+    return (
+      <div className="camera">
+        <img src={props.img}   alt={props.title}></img>
+        <div className="itemvalue">
+          <div>{props.title}</div>
+          <div><span className='num'>{props.value}</span> <span>{i18t("monitor","unit")}</span></div>
+        </div>
+      </div>
+    )
+  }
 export default function Index() {
   const { RuntimeCamera: { Statistics, Overview, StopYsPtz, StartYsPtz, GetYsHisPlayUrl, GetYsRealPlayUrl } } = Monitoring
   const { token } = useSelector(selectUser);
@@ -254,19 +295,7 @@ export default function Index() {
     // play.play()
   }
 
-  //摄像头展示数据
-  const CameraValue = (props) => {
-    return (
 
-      <div className={style.dataItem}>
-        <img src={props.img} className={style.itemImg} alt={props.title}></img>
-        <div className={style.itemValue}>
-          <div>{props.title}</div>
-          <div><span style={{ fontSize: 32, marginRight: 10 }}>{props.value}</span>{i18t("monitor","unit")}</div>
-        </div>
-      </div>
-    )
-  }
 
   const columns = [
     // {
@@ -548,7 +577,7 @@ export default function Index() {
     <Pagecount bgcolor="transparent" pd="0">
       <Mainbox>
 
-        <div id='cameraData' className={style.cameraData}>
+        <div  className="cameras">
           <CameraValue img={totalCamera} title={i18t("comm","amount",{text:"监控总数"})} value={statistics.cameraCount ? statistics.cameraCount : '0'}></CameraValue>
           <CameraValue img={cloudCamera} title={i18t("monitor","cloudmonitoring")} value={statistics.onlineCameras ? statistics.onlineCameras : '0'}></CameraValue>
           <CameraValue img={localCamera} title={i18t("monitor","localmonitoring")} value={statistics.localCameras ? statistics.localCameras : '0'}></CameraValue>

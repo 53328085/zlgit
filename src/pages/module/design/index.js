@@ -213,7 +213,8 @@ const onSave =async () => { // 保存
   
 }
 const onadd =()=> {
-  form.resetFields()
+  form.setFieldValue("id",0)
+  form.setFieldValue("name",'')
   dispatch(getThemeColor(form.getFieldsValue()))
 }
 const onrest=()=>{
@@ -255,9 +256,9 @@ const selectTheme =(id)=> {
 const ondelete=async ()=> {
 
    try {
-    let id = form.getFieldValue("id")
-    
-    if(!Number.isInteger(parseInt(id)) && id>0 ) return message.warning("没有选择方案")
+    let id =  parseInt(form.getFieldValue("id"))
+    if(id>=28&&id<35) return message.warning("基础方案不能删除")
+    if(!Number.isInteger(id) && id>0 ) return message.warning("没有选择方案")
     
     let params ={
       projectId,
@@ -459,8 +460,11 @@ useEffect(()=>{
       <Item label="项目概述背景色"  name="previewrbgcolor" initialValue="#135abd">
         <Ccolor name="previewrbgcolor" />
       </Item>
-      <Item label="网关详情页标题背景色"  name="gatewayheardcolor" initialValue="#003366">
+      <Item label="网关详情页标题起始色"  name="gatewayheardcolor" initialValue="#003366">
         <Ccolor name="gatewayheardcolor" />
+      </Item>
+      <Item label="网关详情页标题结束色"  name="gatewayheardcolorend" initialValue="#003366">
+        <Ccolor name="gatewayheardcolorend" />
       </Item>
       <Item label="网关详情页背景色"  name="gatewaybgcolor" initialValue="#135abd">
         <Ccolor name="gatewaybgcolor" />

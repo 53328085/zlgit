@@ -142,6 +142,9 @@ justify-items: center;
   display: flex; 
   column-gap: 12px;
   align-items: center;
+  img {
+    width: 36px; 
+  }
    .content{
     display: flex;
     flex-direction: column;

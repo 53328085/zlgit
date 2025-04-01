@@ -25,26 +25,9 @@ const Micon = ({iconname}) => {
    return   Com ?  <Com  className={iconname + " custicon "+primary}/> :   <Def className="def" ></Def>
   // return <span className="custicon">&#9673;</span>
 }
-const Imgbox = styled.div`
-    height: 130px;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    .ant-image {
-      padding-bottom: 16px;
-    //  border-bottom: 1px dotted #fff;
-      .ant-image-img {
-        height: 114px;
-      }
-    }
-`
+ 
 
-/* const Sdiv = styled.div`
-   display: flex;
-   flex-direction: column;
-   padding-top:16px;
-` */
+ 
 
 const Sdiv = styled.div`
     display: grid;
@@ -67,10 +50,10 @@ const sty = css`
 height: 28px;line-height: 28px; font-size: 12px;
 `
 const styopc = css`
-  fill:  rgba(${props=> props.rgb[0]}, ${props=> props.rgb[1]}, ${props=> props.rgb[2]}, 0.7)
+  fill:  rgba(${props=> props.rgb[0]}, ${props=> props.rgb[1]}, ${props=> props.rgb[2]}, 0.7);
 `
 const styopca = css`
-  fill:  rgba(${props=> props.rgba[0]}, ${props=> props.rgba[1]}, ${props=> props.rgba[2]}, 0.7)
+  fill:  rgba(${props=> props.rgba[0]}, ${props=> props.rgba[1]}, ${props=> props.rgba[2]}, 0.7);
 `
 const Cmenu = styled(Menu)`
    background: none;
@@ -205,7 +188,9 @@ export default function Sider() {
    
   const siderDesignerMenu = useSelector(siderDesignerMenus)
   const {laptop} = useSelector(adaptation)
-  const {asiderfontcolor, asiderfontcolorA} = useSelector(themeColor)
+  const curtheme = useSelector(themeColor)
+   
+  const {asiderfontcolor="#fff", asiderfontcolorA="#33ff00"} = curtheme
   const rgb=hextodec(asiderfontcolor)
   const rgba=hextodec(asiderfontcolorA)
  

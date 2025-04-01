@@ -121,9 +121,10 @@ const loginrouter =  [{
 
  let routes =  [
   {
-   path: "/",
-   element: <Login />,  //<Diskchart />   
-   },
+    path: "/",
+    element: <Login />   //    <Login />,   
+    
+    },
  
    {
      path: "/projectList",

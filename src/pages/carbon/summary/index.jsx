@@ -391,12 +391,12 @@ if(classSuc) {
     <Pagecount bgcolor="#eeeff3" pd={0}>
       <Mainbox laptop={laptop}>
       <div className='up' key="up" >
-           <Card name={<CustTransO ns="carbon" text="annualquota" param="(tCO₂)" />} laptop={laptop} imgtype={1}  title="" value={Quota.annualQuota} yoy={Quota.annualQuotaYoy} key="a"/> 
-           <Card name={<CustTransO ns="carbon" text="Annualee" param="(tCO₂)" />} laptop={laptop} imgtype={1} title="" value={Quota.annualEmissionEquivalent} yoy={Quota.annualEmissionEquivalentYoy} key="b" /> 
-           <Card name={<CustTransO ns="carbon" text="Annualce" param="(tCO₂)" />} laptop={laptop}  value={Quota.annualResidualCarbonEmission} yoy={Quota.annualResidualCarbonEmissionPercent} key="c"/>
+           <Card text="annualquota" name={<CustTransO ns="carbon" text="annualquota" param="(tCO₂)" />} laptop={laptop} imgtype={1}  title="" value={Quota.annualQuota} yoy={Quota.annualQuotaYoy} key="a"/> 
+           <Card text="Annualee" name={<CustTransO ns="carbon" text="Annualee" param="(tCO₂)" />} laptop={laptop} imgtype={1} title="" value={Quota.annualEmissionEquivalent} yoy={Quota.annualEmissionEquivalentYoy} key="b" /> 
+           <Card text="Annualce" name={<CustTransO ns="carbon" text="Annualce" param="(tCO₂)" />} laptop={laptop}  value={Quota.annualResidualCarbonEmission} yoy={Quota.annualResidualCarbonEmissionPercent} key="c"/>
           {/*  <Cdivider type="h" borderColor="#bcbcbc" /> */}
-           <Card name={<CustTransO ns="carbon" text="directe" param="(tCO₂)" />} laptop={laptop}   value={Quota.directEmission} yoy={Quota.directEmissionPercent} key="d" />
-           <Card name={<CustTransO ns="carbon" text="indirecte" param="(tCO₂)" />} laptop={laptop}   value={Quota.indirectEmission} yoy={Quota.indirectEmissionPercent} key="e" />
+           <Card text="directe" name={<CustTransO ns="carbon" text="directe" param="(tCO₂)" />} laptop={laptop}   value={Quota.directEmission} yoy={Quota.directEmissionPercent} key="d" />
+           <Card text="indirecte" name={<CustTransO ns="carbon" text="indirecte" param="(tCO₂)" />} laptop={laptop}   value={Quota.indirectEmission} yoy={Quota.indirectEmissionPercent} key="e" />
       </div>
       <div className='center' key="center">
         <div className='imgbox'>

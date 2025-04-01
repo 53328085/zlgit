@@ -3,7 +3,7 @@ import style from './style.module.less'
 import { useNavigate, useOutletContext} from 'react-router-dom'
 import {useSelector} from "react-redux"
 import { SiteSummaryRuntime, StorageAlarmRuntime, SiteManagerDesigner } from '@api/api.js'
-import { message, Typography, Empty} from 'antd'
+import { message, Typography,   Badge, Empty} from 'antd'
 import Ichart  from '@com/useEcharts/Ichart'; 
 import { range } from 'lodash'
 import imgurl from './imgs'
@@ -41,6 +41,17 @@ const  Mainbox = styled.div`
         display: grid;
         grid-template-rows: repeat(3, 1fr);
         row-gap: 6px;
+        .title{
+          color:#606266;
+          .ant-badge{
+            padding-right: 0.5em;
+          }
+        }
+        .num {
+          color:#303133;
+          font-weight: bold;
+        }
+
       }
     }
   }
@@ -49,16 +60,26 @@ const  Mainbox = styled.div`
      grid-template-rows: 88px 696px;
      row-gap: 16px;
      .rightup {
-        display: flex;
-        justify-content: space-between;
+        display: grid;
+        grid-template-columns: repeat(5, 1fr);
+        column-gap: 16px;
+        height: 88px;
+        grid-template-rows: 1fr;
         .tips {
            display: flex;           
            padding: 12px;
            align-items: center;
            color: #fff;
+           background-color: #fff;
+           border-radius: 8px;
+           height: inherit;
+           border: 1px solid #DDDFE6;
+           .ant-typography{
+            margin-bottom: 0;
+           }
            .tipsdown {
-             font-size: 20px;
-             color: #fff;
+             font-size: 31px; 
+             color:#276FFF; 
            }
         }
      }
@@ -371,10 +392,10 @@ export default function Index() {
 
   }, [exparams])
   const Tips = props => {
-    return <div className="tips"style={{ backgroundColor: props.bgcolor, width: props.width || 240 }}>
-      <img src={props.imgUrl} className={style.tipImg}></img>
+    return <div className="tips" >
+      <img src={props.imgUrl}  ></img>
       <div style={{paddingLeft: "16px"}}> 
-        <Paragraph style={{color: "#fff"}}>{props.title}</Paragraph >
+        <Paragraph style={{color: "#303133", fontSize: "16px"}}>{props.title}</Paragraph >
         <Text className="tipsdown" ellipsis={{tooltip: props.value}}>{props.value}</Text>
       </div>
     </div>
@@ -406,13 +427,7 @@ export default function Index() {
       })}
     </div>
   }
-  const StateCard = props => {
-    const customStyle = props.styles ? props.styles : null
-    return <div className={style.stateCard} style={{ width: props.width }}>
-      <div className={style.stateTitle} style={customStyle}>{props.title}</div>
-      <div className={style.stateValue}>{props.value}</div>
-    </div>
-  }
+ 
   const WarningCard = props => {
     const mapobj = new Map([[1,{color:'#ff7070',text:'一级告警'}],[2,{color:'#ffb726',text:'二级告警'}],[3,{color:'#b07ef9',text:'三级告警'}]])
     return <div className={style.warningItem}>
@@ -493,16 +508,16 @@ export default function Index() {
             
               <div className="dtl">
                    <div key="1">
-                  <Text>站点容量</Text>
-                     <Text ellipsis={{tooltip: cardData?.storageCapacity}}>{cardData?.storageCapacity} &nbsp;kVA</Text>
+                  <Text className='title'><Badge color='#1E50E6' text=""></Badge>站点容量</Text>
+                     <Text ellipsis={{tooltip: cardData?.storageCapacity}} className='num'>{cardData?.storageCapacity} &nbsp;kVA</Text>
                   </div>
                   <div key="2">
-                  <Text>实时充电功率</Text>
-                  <Text ellipsis={{tooltip: cardData?.runtimeChargeP}}> {cardData?.runtimeChargeP}&nbsp;kW</Text>
+                  <Text className='title'><Badge color='#1E50E6' text=""></Badge>实时充电功率</Text>
+                  <Text ellipsis={{tooltip: cardData?.runtimeChargeP}} className='num'> {cardData?.runtimeChargeP}&nbsp;kW</Text>
                   </div>
                   <div key="3">
-                  <Text>投运时间</Text>
-                  <Text ellipsis={{ tooltip: cardData?.useDate}}>{cardData?.useDate}</Text>
+                  <Text className='title'><Badge color='#1E50E6' text=""></Badge>投运时间</Text>
+                  <Text ellipsis={{ tooltip: cardData?.useDate}} className='num'>{cardData?.useDate}</Text>
                   </div>
               </div> 
             
@@ -511,12 +526,7 @@ export default function Index() {
            }
            
           </Titlelayout>
-          {/* <CardItem title='充放电统计' height='136px'>
-            <div className={style.stateItems}>
-              <StateCard width={'156px'} title={'储能总充电量'} value={'500.00 kWh'} styles={{ backgroundColor: '#237ae4', color: '#fff' }}></StateCard>
-              <StateCard width={'156px'} title={'储能总放电量'} value={'500.00 kWh'} styles={{ backgroundColor: '#237ae4', color: '#fff' }}></StateCard>
-            </div>
-          </CardItem> */}
+          
           <Titlelayout title='最新告警' height='548px' extra={<Link underline onClick={() => toPage('alarmMessage', '告警信息')}>查看详情</Link>}>
               <TransDiv   dmheight={domheight} speed={speed}>
                   <div id='warn'>
@@ -545,11 +555,11 @@ export default function Index() {
         </div>
         <div className="right">
           <div className="rightup">
-            <Tips imgUrl={imgurl.totalCharge} title={'总充电量 (kWh)'} value={cardData?.chargingCapacity} bgcolor={'#56b653'}></Tips>
-            <Tips imgUrl={imgurl.totalDischarge} title={'总放电电量 (kWh)'} value={cardData?.disChargingCapacity} bgcolor={'#4370ff'}></Tips>
-            <Tips imgUrl={imgurl.totalChargeCost} title={'总充电金额 (元)'} value={cardData?.chargingAmount} bgcolor={'#fea526'}></Tips>
-            <Tips imgUrl={imgurl.totalDischargeCost} title={'总放电金额 (元)'} value={cardData?.disChargingAmount} bgcolor={'#ff6642'}></Tips>
-            <Tips imgUrl={imgurl.totalIncome} title={'储能总收益 (元)'} value={cardData?.storageIncome} bgcolor={'#9951fe'} width={'280px'}></Tips>
+            <Tips imgUrl={imgurl.totalCharge} title={'总充电量 (kWh)'} value={cardData?.chargingCapacity}  ></Tips>
+            <Tips imgUrl={imgurl.totalDischarge} title={'总放电电量 (kWh)'} value={cardData?.disChargingCapacity}  ></Tips>
+            <Tips imgUrl={imgurl.totalChargeCost} title={'总充电金额 (元)'} value={cardData?.chargingAmount}  ></Tips>
+            <Tips imgUrl={imgurl.totalDischargeCost} title={'总放电金额 (元)'} value={cardData?.disChargingAmount}  ></Tips>
+            <Tips imgUrl={imgurl.totalIncome} title={'储能总收益 (元)'} value={cardData?.storageIncome}  ></Tips>
           </div>
           <div className="rightdown" >
             <div className="topology">

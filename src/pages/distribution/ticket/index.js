@@ -421,16 +421,14 @@ const getWrokTicketWrold = async({no}, type) => {
                 title={(<div style={{display:'flex',alignItems:'center',justifyContent:'space-between',fontSize:16, color: "#000", fontWeight: 'bold'}}>
                     <span>工作票详情</span>
                     <div>工作票编号:{orderNo.current}</div>
-                    <CustButton onClick={() => {ticketRef.current.onCancel() }}>关闭</CustButton>
+                  
                 </div>)}
                 mold="cust"
                 width={960}
                 ref ={ticketRef}
-                closable={false}
+                closable={true}
                 bodyStyle={{paddingLeft:52}}
-                footer={
-                    null
-                }
+                footer={<div ><CustButton style={{marginLeft: "auto"}} onClick={() => {ticketRef.current.onCancel() }}>关闭</CustButton></div>}
                 >
                 <CTimeline mode='left' >
                     <Timeline.Item label={orderdetail?.createTime} dot={<CompleteIcon />}  >
