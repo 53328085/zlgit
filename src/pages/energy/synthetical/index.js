@@ -17,7 +17,11 @@ const {Text} = Typography
  const sty = css`
   grid-template-columns: 1fr max-content;
  `
-
+const custsty = css`
+.ant-card-body{
+  padding: 0px;
+}
+`
 const Laybox = styled.div`
   display: grid;
   flex: 1;
@@ -514,7 +518,7 @@ const CoalStandard =({data={}, op, datetype, laptop}) => {
     });
   }, [])
   return (
-    <Titlelayout title={<Title title={data?.name} layout="flex" />}>
+    <Titlelayout title={<Title title={data?.name}  />}   pv="0px">
     <Divbox>
       <div
         style={{
@@ -567,7 +571,7 @@ const CoalStandard =({data={}, op, datetype, laptop}) => {
       layout="flex"
     >
       <div
-        style={{ flex:1,width: "368px", height: "284px" }}
+        style={{ flex:1,  height: "284px" }}
         ref={pieref}
       ></div>
     </Titlelayout>

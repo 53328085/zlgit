@@ -29,7 +29,7 @@ const {
  
 const Contentbox = styled.div`
   display: grid;
-  grid-template-columns: 296px 1334px;
+  grid-template-columns: 296px 1fr;
   column-gap: 16px;
   flex: 1;
 `
@@ -393,7 +393,8 @@ const boxchange = (e)=> {
           <Pagecount showSearch={false} custserach={true} >
              <Contentbox>
                 <UserTree areaId={areaId} energytype={energytype}  setTreeId={setTreeId} setLine={setLine}   showline={value!='3'} datatype={value=='3' ? 0 : NaN}   /> 
-              <div> 
+              <div style={{position: "relative", flex: 1}}> 
+                <div style={{position: "absolute", width: "100%"}}>
              {value==="0" &&  <div style={{marginBottom: "16px", display: "flex"}}>
               <div style={{marginLeft: "auto"}}>
               <Checkbox onChange={boxchange} checked={isrange}>使用日期范围（优先）</Checkbox> <RangePicker
@@ -420,6 +421,7 @@ const boxchange = (e)=> {
                   ></UserTable>
                   :<UserTable ref={tbref} columns={columns} {...tableProps} key={value} sheetName={sheetName} onExport={onExport}></UserTable>
                 } 
+                </div>
                 </div> 
              </Contentbox>
           </Pagecount>
