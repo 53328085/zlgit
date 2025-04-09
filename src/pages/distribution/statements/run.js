@@ -109,17 +109,17 @@ export default function Run({projectId, lineIds}) {
         title: '电压',
         children: [
             {
-                title: 'Ua(v)',
+                title: 'Ua(V)',
                 dataIndex: 'Ua',
                 key: 'Ua',
                },
                {
-                title: 'Ub(v)',
+                title: 'Ub(V)',
                 dataIndex: 'Ub',
                 key: 'Ub',
                },
                {
-                title: 'Uc(v)',
+                title: 'Uc(V)',
                 dataIndex: 'Uc',
                 key: 'Uc',
                },
@@ -129,17 +129,17 @@ export default function Run({projectId, lineIds}) {
         title: '电流',
         children: [
             {
-                title: 'Ia(v)',
+                title: 'Ia(A)',
                 dataIndex: 'Ia',
                 key: 'Ia',
                },
                {
-                title: 'Ib(v)',
+                title: 'Ib(A)',
                 dataIndex: 'Ib',
                 key: 'Ib',
                },
                {
-                title: 'Ic(v)',
+                title: 'Ic(A)',
                 dataIndex: 'Ic',
                 key: 'Ic',
                },
