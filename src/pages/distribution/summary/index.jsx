@@ -140,13 +140,9 @@ export default function Index() {
         <Cspin spinning={spinning} tip="图片下载中……">
         <Mainbox >
           <div style={{flex: 1, alignItems: 'center', justifyContent: 'center', display: 'flex'}}>
-        {/*   <img className='bgiamge' src={imgBg || dimg}></img> */}
- 
- 
-        {/* door, fire, ht, noise, sF6, smoke, water */}
-        <Image src={imgBg} preview={false} fallback={dimg} />
-          </div>
-          <div className='cardList'>
+        <div style={{position: "relative"}}>
+        <img src={imgBg || dimg}   />
+        <div className='cardList'>
             <div className='card headtext'>
              {rname}环境监控
             </div>
@@ -175,6 +171,10 @@ export default function Index() {
           {(door && Array.isArray(door)) ? door.map(w =><Custcard src={imgurl.door} name={w.name}  value={w.value}   /> ) : null}  
             
           </div>
+        </div>
+      
+          </div>
+          
         </Mainbox>
         </Cspin>
       </Pagecount>

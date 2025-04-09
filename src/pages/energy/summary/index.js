@@ -63,7 +63,7 @@ const Content = styled.div`
   && {
     flex: 1;
     display: grid;
-    grid-template-columns: 1368px 292px;
+    grid-template-columns: 1368px 1fr;
     column-gap: 16px;
     .right {
       display: grid;

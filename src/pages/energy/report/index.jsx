@@ -29,7 +29,7 @@ const {
  
 const Contentbox = styled.div`
   display: grid;
-  grid-template-columns: 296px 1334px;
+  grid-template-columns: 296px 1fr;
   column-gap: 16px;
   flex: 1;
 `
@@ -236,13 +236,14 @@ return getTime(dates[0],1).toString()+"-"+getTime(dates[1], 1).toString()
     }
 
   },[dates]) ;
-  const sheetName =(index===0 && dates.length) ? filename : tabs[index]?.label ?? 'sheet'
+   const sheetName =(index===0 && dates.length) ? filename : tabs[index]?.label ?? 'sheet'
   let columns = [cols, [], timecols, typecols][index] // 
 
 
  
   const getTableData = ({ current, pageSize, areaId, projectId, type, date, energytype, treeId, index, line,isrange, dates }) => {
     console.log("dates",dates)
+    console.log(filename,246,sheetName)
     let f = [areaId, projectId, type, energytype,index, line].every(v => Number.isInteger(v)) && Array.isArray(treeId) && date
     let range = index === 0 && isrange && Array.isArray(dates) && dates?.length>1
     if(!f) return;
@@ -348,12 +349,16 @@ return getTime(dates[0],1).toString()+"-"+getTime(dates[1], 1).toString()
   const onExport =useCallback(() => {   
    
     return  getTableData({current: 1, pageSize: total,areaId, projectId, type, date, energytype, treeId, index, line,isrange, dates})
- }, [total, concolumns, type, date,energytype,areaId, treeId, index, line, isrange, dates])
+ }, [total, concolumns, type, date,energytype,areaId, treeId, index, line, isrange, dates,sheetName])
 
 const boxchange = (e)=> {
   const f = e.target.checked
   console.log(f)
   setIsrange(f)
+  if(!f) {
+    setDates([moment().startOf("day"), moment()])
+    setValuet([moment().startOf("day"), moment()])
+  }
 }
 
   const [valuet, setValuet] = useState(null);
@@ -388,7 +393,8 @@ const boxchange = (e)=> {
           <Pagecount showSearch={false} custserach={true} >
              <Contentbox>
                 <UserTree areaId={areaId} energytype={energytype}  setTreeId={setTreeId} setLine={setLine}   showline={value!='3'} datatype={value=='3' ? 0 : NaN}   /> 
-              <div> 
+              <div style={{position: "relative", flex: 1}}> 
+                <div style={{position: "absolute", width: "100%"}}>
              {value==="0" &&  <div style={{marginBottom: "16px", display: "flex"}}>
               <div style={{marginLeft: "auto"}}>
               <Checkbox onChange={boxchange} checked={isrange}>使用日期范围（优先）</Checkbox> <RangePicker
@@ -415,6 +421,7 @@ const boxchange = (e)=> {
                   ></UserTable>
                   :<UserTable ref={tbref} columns={columns} {...tableProps} key={value} sheetName={sheetName} onExport={onExport}></UserTable>
                 } 
+                </div>
                 </div> 
              </Contentbox>
           </Pagecount>

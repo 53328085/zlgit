@@ -189,284 +189,283 @@ export default function Index() {
       <Cspin spinning={spinning} tip="图片下载中……">
         <Mainbox >
           <div style={{ flex: 1, alignItems: 'center', justifyContent: 'center', display: 'flex' }}>
-            {/*   <img className='bgiamge' src={imgBg || dimg}></img> */}
+            <div style={{position: "relative"}}>
+            <img src={imgBg || dimg}  alt='' />
+            <div className='cardlocal'>
 
+<HoverDiv>
+  配电房概述
+  <div className="list" >
+    <div className="line">
+      <span>电压等级</span>
+      <span>{state.roomDevice.level || '-'}</span>
+    </div>
+    <div className="line">
+      <span>变压器台数</span>
+      <span>{state.roomDevice.transformerCnt || '-'}</span>
+    </div>
+    <div className="line">
+      <span>负载率</span>
+      <span>{state.roomDevice.loadRate || '-'}</span>
+    </div>
+    <div className="line">
+      <span>额定容量</span>
+      <span>{state.roomDevice.capacity || '-'}</span>
+    </div>
+    <div className="line">
+      <span>最大需量</span>
+      <span>{state.roomDevice.demand || '-'}</span>
+    </div>
+    <div className="line">
+      <span>监测设备</span>
+      <span>{state.roomDevice.deviceCnt || '-'}</span>
+    </div>
+  </div>
+</HoverDiv>
+<HoverDiv>
+  运行状态
+  <div className="list" >
+    <div className="line">
+      <span>当日用电</span>
+      <span>{state.roomStatus.curE || '-'}</span>
+    </div>
+    <div className="line">
+      <span>昨日同期</span>
+      <span>{state.roomStatus.lastE || '-'}</span>
+    </div>
+    <div className="line">
+      <span>环比</span>
+      <span>{state.roomStatus.eRate || '-'}</span>
+    </div>
+    <div className="line">
+      <span>最大用电功率</span>
+      <span>{state.roomStatus.maxP || '-'}</span>
+    </div>
+    <div className="line">
+      <span>最大用电时间</span>
+      <span>{state.roomStatus.maxPTime || '-'}</span>
+    </div>
+    <div className="line">
+      <span>平均功率</span>
+      <span>{state.roomStatus.avgP || '-'}</span>
+    </div>
+  </div>
+</HoverDiv>
+<HoverDiv>
+  变压器监控
+  <div className="list" >
+    <Collapse accordion expandIconPosition="end" ghost>
+      {
+        state.transformer?.map((item, index) => {
+          return (
+            <Collapse.Panel header={item.name} key={index}>
+              <div className="line">
+                <span>A相电压</span>
+                <span>{item.ua || '-'}</span>
+              </div>
+              <div className="line">
+                <span>B相电压</span>
+                <span>{item.ub || '-'}</span>
+              </div>
+              <div className="line">
+                <span>C相电压</span>
+                <span>{item.uc || '-'}</span>
+              </div>
+              <div className="line">
+                <span>A相电流</span>
+                <span>{item.ia || '-'}</span>
+              </div>
+              <div className="line">
+                <span>B相电流</span>
+                <span>{item.ib || '-'}</span>
+              </div>
+              <div className="line">
+                <span>C相电流</span>
+                <span>{item.ic || '-'}</span>
+              </div>
+              <div className="line">
+                <span>有功功率</span>
+                <span>{item.totW || '-'}</span>
+              </div>
+              <div className="line">
+                <span>无功功率</span>
+                <span>{item.totVar || '-'}</span>
+              </div>
+              <div className="line">
+                <span>实在功率</span>
+                <span>{item.totVA || '-'}</span>
+              </div>
+              <div className="line">
+                <span>额定容量</span>
+                <span>{item.capacity || '-'}</span>
+              </div>
+              <div className="line">
+                <span>负荷率</span>
+                <span>{item.loadRate || '-'}</span>
+              </div>
+              <div className="line">
+                <span>功率因数</span>
+                <span>{item.totPF || '-'}</span>
+              </div>
+            </Collapse.Panel>
+          )
+        })
+      }
+    </Collapse>
+  </div>
+</HoverDiv>
+<HoverDiv>
+  直流屏监控
+  <div className="list" >
+    <Collapse accordion expandIconPosition="end" ghost>
+      {
+        state.dcScreen?.map((item, index) => {
+          return (
+            <Collapse.Panel header={item.name} key={index}>
+              <div className="line">
+                <span>控母电压</span>
+                <span>{item.motherU || '-'}</span>
+              </div>
+              <div className="line">
+                <span>控母电流</span>
+                <span>{item.motherI || '-'}</span>
+              </div>
+              <div className="line">
+                <span>充电电压</span>
+                <span>{item.chargeU || '-'}</span>
+              </div>
+              <div className="line">
+                <span>电池温度</span>
+                <span>{item.temp || '-'}</span>
+              </div>
+              <div className="line">
+                <span>合母电压</span>
+                <span>{item.bondingU || '-'}</span>
+              </div>
 
-            {/* door, fire, ht, noise, sF6, smoke, water */}
-            <Image src={imgBg || dimg} preview={false} />
+            </Collapse.Panel>
+          )
+        })
+      }
+    </Collapse>
+  </div>
+</HoverDiv>
+<HoverDiv>
+  环境监控
+  <div className="list" >
+    {
+      (Array.isArray(state.environmentVo.ht) && state.environmentVo?.ht.length > 0) ?
+        state.environmentVo?.ht.map(h => (
+          <div className="line">
+            <span>温度</span>
+            <span>{h.tValue}</span>
           </div>
-          <div className='cardlocal'>
 
-            <HoverDiv>
-              配电房概述
-              <div className="list" >
-                <div className="line">
-                  <span>电压等级</span>
-                  <span>{state.roomDevice.level || '-'}</span>
-                </div>
-                <div className="line">
-                  <span>变压器台数</span>
-                  <span>{state.roomDevice.transformerCnt || '-'}</span>
-                </div>
-                <div className="line">
-                  <span>负载率</span>
-                  <span>{state.roomDevice.loadRate || '-'}</span>
-                </div>
-                <div className="line">
-                  <span>额定容量</span>
-                  <span>{state.roomDevice.capacity || '-'}</span>
-                </div>
-                <div className="line">
-                  <span>最大需量</span>
-                  <span>{state.roomDevice.demand || '-'}</span>
-                </div>
-                <div className="line">
-                  <span>监测设备</span>
-                  <span>{state.roomDevice.deviceCnt || '-'}</span>
-                </div>
-              </div>
-            </HoverDiv>
-            <HoverDiv>
-              运行状态
-              <div className="list" >
-                <div className="line">
-                  <span>当日用电</span>
-                  <span>{state.roomStatus.curE || '-'}</span>
-                </div>
-                <div className="line">
-                  <span>昨日同期</span>
-                  <span>{state.roomStatus.lastE || '-'}</span>
-                </div>
-                <div className="line">
-                  <span>环比</span>
-                  <span>{state.roomStatus.eRate || '-'}</span>
-                </div>
-                <div className="line">
-                  <span>最大用电功率</span>
-                  <span>{state.roomStatus.maxP || '-'}</span>
-                </div>
-                <div className="line">
-                  <span>最大用电时间</span>
-                  <span>{state.roomStatus.maxPTime || '-'}</span>
-                </div>
-                <div className="line">
-                  <span>平均功率</span>
-                  <span>{state.roomStatus.avgP || '-'}</span>
-                </div>
-              </div>
-            </HoverDiv>
-            <HoverDiv>
-              变压器监控
-              <div className="list" >
-                <Collapse accordion expandIconPosition="end" ghost>
-                  {
-                    state.transformer?.map((item, index) => {
-                      return (
-                        <Collapse.Panel header={item.name} key={index}>
-                          <div className="line">
-                            <span>A相电压</span>
-                            <span>{item.ua || '-'}</span>
-                          </div>
-                          <div className="line">
-                            <span>B相电压</span>
-                            <span>{item.ub || '-'}</span>
-                          </div>
-                          <div className="line">
-                            <span>C相电压</span>
-                            <span>{item.uc || '-'}</span>
-                          </div>
-                          <div className="line">
-                            <span>A相电流</span>
-                            <span>{item.ia || '-'}</span>
-                          </div>
-                          <div className="line">
-                            <span>B相电流</span>
-                            <span>{item.ib || '-'}</span>
-                          </div>
-                          <div className="line">
-                            <span>C相电流</span>
-                            <span>{item.ic || '-'}</span>
-                          </div>
-                          <div className="line">
-                            <span>有功功率</span>
-                            <span>{item.totW || '-'}</span>
-                          </div>
-                          <div className="line">
-                            <span>无功功率</span>
-                            <span>{item.totVar || '-'}</span>
-                          </div>
-                          <div className="line">
-                            <span>实在功率</span>
-                            <span>{item.totVA || '-'}</span>
-                          </div>
-                          <div className="line">
-                            <span>额定容量</span>
-                            <span>{item.capacity || '-'}</span>
-                          </div>
-                          <div className="line">
-                            <span>负荷率</span>
-                            <span>{item.loadRate || '-'}</span>
-                          </div>
-                          <div className="line">
-                            <span>功率因数</span>
-                            <span>{item.totPF || '-'}</span>
-                          </div>
-                        </Collapse.Panel>
-                      )
-                    })
-                  }
-                </Collapse>
-              </div>
-            </HoverDiv>
-            <HoverDiv>
-              直流屏监控
-              <div className="list" >
-                <Collapse accordion expandIconPosition="end" ghost>
-                  {
-                    state.dcScreen?.map((item, index) => {
-                      return (
-                        <Collapse.Panel header={item.name} key={index}>
-                          <div className="line">
-                            <span>控母电压</span>
-                            <span>{item.motherU || '-'}</span>
-                          </div>
-                          <div className="line">
-                            <span>控母电流</span>
-                            <span>{item.motherI || '-'}</span>
-                          </div>
-                          <div className="line">
-                            <span>充电电压</span>
-                            <span>{item.chargeU || '-'}</span>
-                          </div>
-                          <div className="line">
-                            <span>电池温度</span>
-                            <span>{item.temp || '-'}</span>
-                          </div>
-                          <div className="line">
-                            <span>合母电压</span>
-                            <span>{item.bondingU || '-'}</span>
-                          </div>
-
-                        </Collapse.Panel>
-                      )
-                    })
-                  }
-                </Collapse>
-              </div>
-            </HoverDiv>
-            <HoverDiv>
-              环境监控
-              <div className="list" >
-                {
-                  (Array.isArray(state.environmentVo.ht) && state.environmentVo?.ht.length > 0) ?
-                    state.environmentVo?.ht.map(h => (
-                      <div className="line">
-                        <span>温度</span>
-                        <span>{h.tValue}</span>
-                      </div>
-
-                    ))
-                    : <div className="line">
-                      <span>温度</span>
-                      <span>{'-'}</span>
-                    </div>
-                }
-                {
-                  (Array.isArray(state.environmentVo.ht) && state.environmentVo?.ht.length > 0) ?
-                    state.environmentVo?.ht.map(h => (
-                      <div className="line">
-                        <span>湿度</span>
-                        <span>{h.hValue}</span>
-                      </div>
-                    ))
-                    :
-                    <div className="line">
-                      <span>湿度</span>
-                      <span>{'-'}</span>
-                    </div>
-
-                }
-                {
-                  (Array.isArray(state.environmentVo.noise) && state.environmentVo.noise?.length > 0) ?
-                    state.environmentVo.noise?.map(n => (
-                      <div className="line">
-                        <span>噪音</span>
-                        <span>{n.value}</span>
-                      </div>
-                    ))
-                    : <div className="line">
-                      <span>噪音</span>
-                      <span>{'-'}</span>
-                    </div>
-                }
-                {
-                  (Array.isArray(state.environmentVo.water) && state.environmentVo.water?.length > 0) ?
-                    state.environmentVo.water?.map(w => (
-                      <div className="line">
-                        <span>水浸</span>
-                        <span>{w.value}</span>
-                      </div>
-                    ))
-                    : <div className="line">
-                      <span>水浸</span>
-                      <span>{'-'}</span>
-                    </div>
-                }
-
-                {/* <div className="line">
-                  <span>烟感</span>
-                  <span>{state.environmentVo.smoke || '-'}</span>
-                </div> */}
-                {
-                  (Array.isArray(state.environmentVo.smoke) && state.environmentVo.smoke?.length > 0) ?
-                    state.environmentVo.smoke?.map(n => (
-                      <div className="line">
-                        <span>烟感</span>
-                        <span>{n.value}</span>
-                      </div>
-                    ))
-                    : <div className="line">
-                      <span>烟感</span>
-                      <span>{'-'}</span>
-                    </div>
-                }
-                {/* <div className="line">
-                  <span>明火</span>
-                  <span>{state.environmentVo.fire || '-'}</span>
-                </div> */}
-                {
-                  (Array.isArray(state.environmentVo.smoke) && state.environmentVo.smoke?.length > 0) ?
-                    state.environmentVo.smoke?.map(n => (
-                      <div className="line">
-                        <span>烟感</span>
-                        <span>{n.value}</span>
-                      </div>
-                    ))
-                    : <div className="line">
-                      <span>烟感</span>
-                      <span>{'-'}</span>
-                    </div>
-                }
-                {/* <div className="line">
-                  <span>门禁</span>
-                  <span>{state.environmentVo.door || '-'}</span>
-                </div> */}
-                {
-                  (Array.isArray(state.environmentVo.door) && state.environmentVo.door?.length > 0) ?
-                    state.environmentVo.door?.map(n => (
-                      <div className="line">
-                        <span>门禁</span>
-                        <span>{n.value}</span>
-                      </div>
-                    ))
-                    : <div className="line">
-                      <span>门禁</span>
-                      <span>{'-'}</span>
-                    </div>
-                }
-              </div>
-            </HoverDiv>
+        ))
+        : <div className="line">
+          <span>温度</span>
+          <span>{'-'}</span>
+        </div>
+    }
+    {
+      (Array.isArray(state.environmentVo.ht) && state.environmentVo?.ht.length > 0) ?
+        state.environmentVo?.ht.map(h => (
+          <div className="line">
+            <span>湿度</span>
+            <span>{h.hValue}</span>
           </div>
+        ))
+        :
+        <div className="line">
+          <span>湿度</span>
+          <span>{'-'}</span>
+        </div>
+
+    }
+    {
+      (Array.isArray(state.environmentVo.noise) && state.environmentVo.noise?.length > 0) ?
+        state.environmentVo.noise?.map(n => (
+          <div className="line">
+            <span>噪音</span>
+            <span>{n.value}</span>
+          </div>
+        ))
+        : <div className="line">
+          <span>噪音</span>
+          <span>{'-'}</span>
+        </div>
+    }
+    {
+      (Array.isArray(state.environmentVo.water) && state.environmentVo.water?.length > 0) ?
+        state.environmentVo.water?.map(w => (
+          <div className="line">
+            <span>水浸</span>
+            <span>{w.value}</span>
+          </div>
+        ))
+        : <div className="line">
+          <span>水浸</span>
+          <span>{'-'}</span>
+        </div>
+    }
+
+    {/* <div className="line">
+      <span>烟感</span>
+      <span>{state.environmentVo.smoke || '-'}</span>
+    </div> */}
+    {
+      (Array.isArray(state.environmentVo.smoke) && state.environmentVo.smoke?.length > 0) ?
+        state.environmentVo.smoke?.map(n => (
+          <div className="line">
+            <span>烟感</span>
+            <span>{n.value}</span>
+          </div>
+        ))
+        : <div className="line">
+          <span>烟感</span>
+          <span>{'-'}</span>
+        </div>
+    }
+    {/* <div className="line">
+      <span>明火</span>
+      <span>{state.environmentVo.fire || '-'}</span>
+    </div> */}
+    {
+      (Array.isArray(state.environmentVo.smoke) && state.environmentVo.smoke?.length > 0) ?
+        state.environmentVo.smoke?.map(n => (
+          <div className="line">
+            <span>烟感</span>
+            <span>{n.value}</span>
+          </div>
+        ))
+        : <div className="line">
+          <span>烟感</span>
+          <span>{'-'}</span>
+        </div>
+    }
+    {/* <div className="line">
+      <span>门禁</span>
+      <span>{state.environmentVo.door || '-'}</span>
+    </div> */}
+    {
+      (Array.isArray(state.environmentVo.door) && state.environmentVo.door?.length > 0) ?
+        state.environmentVo.door?.map(n => (
+          <div className="line">
+            <span>门禁</span>
+            <span>{n.value}</span>
+          </div>
+        ))
+        : <div className="line">
+          <span>门禁</span>
+          <span>{'-'}</span>
+        </div>
+    }
+  </div>
+</HoverDiv>
+            </div>
+            </div>
+          </div>
+        
         </Mainbox>
       </Cspin>
     </Pagecount>
