@@ -1904,7 +1904,7 @@ export const Monitoring = {
       server.post(`/Monitor/Device/QueryByPageFlow`, data), //查询流量计
     AddFlow: (data) => server.post(`/Monitor/Device/AddFlow`, data), //新增流量计
     UpdateFlow: (data) =>
-      server.post(`/Monitor/Device/UpdateFlow`, data), //更新光纤测温
+      server.post(`/Monitor/Device/UpdateFlow`, data), //更新流量计
     ImportFlow: (data) => server.post(`/Monitor/Device/ImportFlow`, data), //批量导入流量计
   },
   //公共照明管理

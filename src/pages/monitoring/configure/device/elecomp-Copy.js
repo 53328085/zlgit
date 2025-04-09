@@ -150,12 +150,13 @@ export const FormComp = (props) => {
     const [name3, setName3] = useState('通道3')
     const [name4, setName4] = useState('通道4')
     const [area, setArea] = useState([])
+    const category = Form.useWatch('category', form);
     //const [coms, setComs] = useState(0)
     const rules = [{
         required: true
     }]
     const changeGateway = (v, option) => {
-        console.log(v, option)
+        console.log(v, option, form.getFieldsValue())
         if (v) {
             const arr = addopts?.filter(it => (it.id === option.areaId))
             setArea([...arr])
@@ -300,7 +301,7 @@ export const FormComp = (props) => {
                                 return Promise.resolve()
                             } else {
                                 let val = value.trim()
- 
+
                                 if (val.split(" ").join("").length !== 12) {
                                     return Promise.reject(new Error("设备编号长度12位"))
                                 } else {
@@ -315,7 +316,7 @@ export const FormComp = (props) => {
                         <Input />
                     </Form.Item>
                     {
-                        deviceStyle !== 13 && deviceStyle !== 14 && deviceStyle !== 18 ? (
+                        deviceStyle !== 13 && deviceStyle !== 14 && deviceStyle !== 18 && deviceStyle !== 20 ? (
                             <Form.Item label="用能类型" name="customerType" rules={rules}>
                                 <Select
                                     options={[{
@@ -328,7 +329,23 @@ export const FormComp = (props) => {
                             </Form.Item>
                         ) : null
                     }
-
+                    {form.getFieldValue('gatewayId') && category === 'ZTWL376-E' ?
+                        <>
+                            <Form.Item label="写参密级" name="writePwdLevel" rules={rules}>
+                                <Select
+                                    options={[{
+                                        label: '01',
+                                        value: 1
+                                    }, {
+                                        label: '02',
+                                        value: 2
+                                    }]}
+                                    placeholder
+                                ></Select>
+                            </Form.Item>
+                            <Form.Item label="写参密码" name="writePwdpas" rules={rules}>
+                                <Input />
+                            </Form.Item> </> : null}
                     {(deviceStyle === 1 || deviceStyle == 12 || deviceStyle == 13 || deviceStyle == 14) ? <Com form={form} deviceStyle={deviceStyle} ></Com> : null}
                 </Col>
                 {/*   {
@@ -356,7 +373,7 @@ export const FormComp = (props) => {
                                             }}>分区配置</Button>
                                         </Space>
                                     </Form.Item>
- 
+
                                 
                                 <Form.Item 
                                 label={<Checkbox onChange={(e)=>{checklistRef.current.check2=e.target.checked}}></Checkbox>} 
@@ -552,7 +569,7 @@ export const EditFormComp = (props) => {
     const [coms, setComs] = useState(0)
     const [isdisable, setIsdisable] = useState(false)
     const [formdata, setFormData] = useState({})
-
+    const category = Form.useWatch('category', form);
     const rules = [{
         required: true
     }]
@@ -684,6 +701,24 @@ export const EditFormComp = (props) => {
                             </Form.Item>
                         ) : null
                     }
+
+                    {form.getFieldValue('gatewayId') && category === 'ZTWL376-E' ?
+                        <>
+                            <Form.Item label="写参密级" name="writePwdLevel" rules={rules}>
+                                <Select
+                                    options={[{
+                                        label: '01',
+                                        value: 1
+                                    }, {
+                                        label: '02',
+                                        value: 2
+                                    }]}
+                                    placeholder
+                                ></Select>
+                            </Form.Item>
+                            <Form.Item label="写参密码" name="writePwdpas" rules={rules}>
+                                <Input />
+                            </Form.Item> </> : null}
                     {/* {deviceStyle === 1? <EditCom form={form} coms={coms}></EditCom> : null} */}
                     {(deviceStyle === 1 || deviceStyle == 12 || deviceStyle == 13 || deviceStyle == 14) ? <EditCom form={form} coms={coms} deviceStyle={deviceStyle}></EditCom> : null}
                 </Col>
