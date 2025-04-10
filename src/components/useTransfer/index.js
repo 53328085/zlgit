@@ -177,7 +177,7 @@ const Mainbox = styled.div`
     //  width: 714px;
     //  height: 696px;
     border-radius: 2px;
-    padding: 16px 0 0 16px;
+    padding: 16px;
     background-color: #fff;
     display: flex;
     flex-direction: column;
@@ -200,7 +200,7 @@ const Mainbox = styled.div`
         height: 11px;
         position: absolute;
         left:0px;
-        background-color: ${props=> props.theme.primaryColor};
+        background-color: ${props => props.theme.primaryColor};
       }
       //border-left: 4px solid var(--ant-primary-color);
     }
@@ -266,17 +266,17 @@ export default function index(props) {
   };
 
   const unknownToMain = () => {
-     if (selectedRowKeys.length == 0) {
+    if (selectedRowKeys.length == 0) {
       messageApi.open({
         type: "warning",
         content: "请至少选择一个设备！",
       });
       return;
-    }  else {
-       console.log(selectedRowKeys)
-       let unarr = unknownData.filter?.(u => !selectedRowKeys.includes(u.id))
-       let sedarr = unknownData.filter?.(u =>  selectedRowKeys.includes(u.id))
-     
+    } else {
+      console.log(selectedRowKeys)
+      let unarr = unknownData.filter?.(u => !selectedRowKeys.includes(u.id))
+      let sedarr = unknownData.filter?.(u => selectedRowKeys.includes(u.id))
+
       setMainData(mainData.concat(sedarr));
       setUnknownData(unarr);
       setSelectedRowKeys([]);
@@ -310,7 +310,7 @@ export default function index(props) {
       setUnknownData(unknownData.concat(tounknowData));
       setMainData([...restData]);
       setSelectedMainKeys([]);
-     
+
     }
   };
 
@@ -358,7 +358,7 @@ export default function index(props) {
   const [selectedSubKeys, setSelectedSubKeys] = useState([]);
   const onSelectSub = (newSelectedRowKeys) => {
     setSelectedSubKeys(newSelectedRowKeys);
-     
+
   };
   const subSelection = {
     selectedRowKeys: selectedSubKeys,
@@ -489,7 +489,7 @@ export default function index(props) {
           f.push(item[key].indexOf(value) != -1);
         }
         if (f.includes(true)) arr.push(item);
-       
+
       });
       console.log(arr);
       setUnknownData([...arr]);
@@ -498,22 +498,22 @@ export default function index(props) {
   const [subserach, setSubserach] = useState("");
   const btnsty = laptop
     ? {
-        height: "32px",
-        width: "55px",
-      }
+      height: "32px",
+      width: "55px",
+    }
     : {
-        height: "46px",
-        width: "68px",
-      };
+      height: "46px",
+      width: "68px",
+    };
   const savesty = laptop
     ? {
-        height: "34px",
-        width: "120px",
-      }
+      height: "34px",
+      width: "120px",
+    }
     : {
-        height: "46px",
-        width: "146px",
-      };
+      height: "46px",
+      width: "146px",
+    };
   return (
     <Mask task={task} maskBack={props.maskBack}>
       <Mainbox>
@@ -527,88 +527,88 @@ export default function index(props) {
           {contextHolder}
           {props.transferTitle.mainTitle != ""
             ? props.type != "fibre" && (
-                <div className="leftTable">
-                  <div className="mainTable">
-                    <div className="publicTitle">
-                      {props.transferTitle.mainTitle}
-                    </div>
-                    <div className="mainContent">
-                       <div className="tbwrap">
+              <div className="leftTable">
+                <div className="mainTable">
+                  <div className="publicTitle">
+                    {props.transferTitle.mainTitle}
+                  </div>
+                  <div className="mainContent">
+                    <div className="tbwrap">
                       <UsetTable
                         bordered
                         dataSource={mainData}
-                        columns={columns} 
+                        columns={columns}
                         rowKey="id"
                         pagination={false}
-                        rowSelection={mainSelection} 
+                        rowSelection={mainSelection}
                       ></UsetTable>
-                      </div>
-                    </div>
-                  </div>
-                  <div className="subTable">
-                    <div className="publicTitle">
-                      {props.transferTitle.subTitle}
-                    </div>
-                    <div className="searchInput">
-                      <span style={{ marginRight: 16 }}>设备搜索</span>
-                      <Search
-                        placeholder="请输入设备编号/安装地址"
-                        style={{ width: 256 }}
-                        value={subserach}
-                        allowClear
-                        onChange={(e) => setSubserach(e.target.value)}
-                        enterButton
-                        onSearch={onSearchSub}
-                      ></Search>
-                    </div>
-                    <div className="mainContent">
-                      <div className="tbwrap">
-                        <UsetTable
-                          bordered
-                          dataSource={subData}
-                          columns={columns} 
-                          rowKey="id"
-                          pagination={false}
-                          rowSelection={subSelection}
-                        ></UsetTable>
-                      </div>
                     </div>
                   </div>
                 </div>
-              )
+                <div className="subTable">
+                  <div className="publicTitle">
+                    {props.transferTitle.subTitle}
+                  </div>
+                  <div className="searchInput">
+                    <span style={{ marginRight: 16 }}>设备搜索</span>
+                    <Search
+                      placeholder="请输入设备编号/安装地址"
+                      style={{ width: 256 }}
+                      value={subserach}
+                      allowClear
+                      onChange={(e) => setSubserach(e.target.value)}
+                      enterButton
+                      onSearch={onSearchSub}
+                    ></Search>
+                  </div>
+                  <div className="mainContent">
+                    <div className="tbwrap">
+                      <UsetTable
+                        bordered
+                        dataSource={subData}
+                        columns={columns}
+                        rowKey="id"
+                        pagination={false}
+                        rowSelection={subSelection}
+                      ></UsetTable>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )
             : props.type != "fibre" && (
-                <div className="leftTable">
-                  <div className="otherSubTable">
-                    <div className="publicTitle">
-                      {props.transferTitle.subTitle}
-                    </div>
-                    <div className="searchInput">
-                      <span style={{ marginRight: 16 }}>设备搜索</span>
-                      <Search
-                        placeholder="设备编号/设备名称/安装地址"
-                        style={{ width: 256 }}
-                        value={subserach}
-                        allowClear
-                        onChange={(e) => setSubserach(e.target.value)}
-                        enterButton
-                        onSearch={onSearchSub}
-                      ></Search>
-                    </div>
-                    <div className="mainContent">
-                      <div className="tbwrap">
-                        <UsetTable
-                          bordered
-                          dataSource={subData}
-                          columns={columns} 
-                          rowKey="id"
-                          pagination={false}
-                          rowSelection={subSelection}
-                        ></UsetTable>
-                      </div>
+              <div className="leftTable">
+                <div className="otherSubTable">
+                  <div className="publicTitle">
+                    {props.transferTitle.subTitle}
+                  </div>
+                  <div className="searchInput">
+                    <span style={{ marginRight: 16 }}>设备搜索</span>
+                    <Search
+                      placeholder="设备编号/设备名称/安装地址"
+                      style={{ width: 256 }}
+                      value={subserach}
+                      allowClear
+                      onChange={(e) => setSubserach(e.target.value)}
+                      enterButton
+                      onSearch={onSearchSub}
+                    ></Search>
+                  </div>
+                  <div className="mainContent">
+                    <div className="tbwrap">
+                      <UsetTable
+                        bordered
+                        dataSource={subData}
+                        columns={columns}
+                        rowKey="id"
+                        pagination={false}
+                        rowSelection={subSelection}
+                      ></UsetTable>
                     </div>
                   </div>
                 </div>
-              )}
+              </div>
+            )}
           {props.type == "fibre" && (
             <div className="leftTable">
               <div className="otherSubTable">
