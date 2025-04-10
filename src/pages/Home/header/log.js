@@ -30,6 +30,13 @@ import {handlermenu,isObject, hextodec} from "@com/usehandler"
 
 import svgurl from './icon/svg'
 import {ReactComponent  as Hux} from './icon/hux.svg'
+import * as svgcom from './icon' 
+const Micon = ({iconname}) => { 
+      const Com = svgcom[iconname] 
+    const Def = svgcom["def"]
+   return   Com ?  <Com  className={iconname + " custicon"}/> :   <Def className="def" ></Def>
+  // return <span className="custicon">&#9673;</span>
+}
 
 const {Text} = Typography 
 const Lngdiv = styled.div`
@@ -77,28 +84,26 @@ const Ldiv = styled.div`
 let style = css`width: 58px;
        border-right: none;
        font-size: 12px;
-       .logo {
-              height: 28px;
-            //  width: 28px;
-              line-height: 28px;
-              overflow: hidden;
-              .shadow {
-              transform: translateX(-28px);
-              filter: drop-shadow(28px 0 0  ${props => props.theme.menusbgcolorRfont || '#ffffff'});
-            }
-           
+       .custicon {
+          g path:nth-of-type(1) {
+                fill: ${props => props.theme.menusbgcolorRfont || '#ffffff'}; 
+              }
+        }
+        .custicon.user{
+         &> g {
+                fill: ${props => props.theme.menusbgcolorRfont || '#ffffff'}; 
+              }
         }
     &:hover {
-      .logo {
-              height: 28px;
-            //  width: 28px;
-              line-height: 28px;
-              overflow: hidden;
-              .shadow {
-              transform: translateX(-28px);
-              filter: drop-shadow(28px 0 0  ${props => props.theme.menusbgcolorRA || '#3988e7'});
-            }
-           
+      .custicon {
+          g path:nth-of-type(1) {
+                fill: ${props => props.theme.menusbgcolorRA || '#3988e7'}; 
+              }
+        }
+        .custicon.user {
+          g {
+                fill: ${props => props.theme.menusbgcolorRA || '#ffffff'}; 
+              }
         }
     }
        `
@@ -134,7 +139,23 @@ const Logbox = styled.div`
        color: ${props => props.theme.menusbgcolorRA || '#3988e7'}
       }
     }
-    .logo {
+    .custicon {
+          g path:nth-of-type(1) {
+                fill: ${props => props.theme.menusbgcolorRfont || '#ffffff'}; 
+              }
+        }
+        .custicon.user {
+          &>g{
+            &>g {
+              display: none;
+            }
+            path {
+              fill: ${props => props.theme.menusbgcolorRfont || '#ffffff'}; 
+            }
+                
+              }
+        }
+/*     .logo {
               height: 36px;
              // width: 36px;
               line-height: 36px;
@@ -145,20 +166,18 @@ const Logbox = styled.div`
               filter: drop-shadow(36px 0 0  ${props => props.theme.menusbgcolorRfont || '#ffffff'});
             }
            
-        }
+        } */
   &:hover {
-      .logo {
-              height: 36px;
-            //  width: 36px;
-              line-height: 36px;
-              overflow: hidden;
-              transition: all 0.3s;
-              .shadow {
-              transform: translateX(-36px);
-              filter: drop-shadow(36px 0 0  ${props => props.theme.menusbgcolorRA || '#3988e7'});
-            }
-           
+    .custicon {
+          g path:nth-of-type(1) {
+                fill: ${props => props.theme.menusbgcolorRA || '#3988e7'}; 
+              }
         }
+        .custicon.user {
+          g {
+                fill: ${props => props.theme.menusbgcolorRA || '#3988e7'}; 
+              }
+        } 
         span {
        color: ${props => props.theme.menusbgcolorRA || '#3988e7'}
     }
@@ -240,7 +259,7 @@ export default function Log() {
   const dispatch = useDispatch()
   const {name, roleType, mobile, userId} = useSelector(selectUser) || {};
   const {menusbgcolorR,startColor,endColor,startOpacity,endOpacity } = useSelector(themeColor)
-  console.log(startColor, endColor, startOpacity, endOpacity)
+ 
   const srgb=hextodec(startColor)
   const ergb=hextodec(endColor)
   let strmob = mobile.toString()
@@ -526,24 +545,23 @@ const settheme = async (themeId) => {
 
   return (
     <Cdiv>
-      <Triangle laptop={adap.laptop} srgb={srgb} ergb={ergb} startOpacity={startOpacity} endOpacity={endOpacity} >
-        <Hux style={{fill: menusbgcolorR}} />
-       {/*  <img src={svgurl['hux']} alt="" /> */}
-      </Triangle>
+      {!adap.laptop && <Triangle laptop={adap.laptop} srgb={srgb} ergb={ergb} startOpacity={startOpacity} endOpacity={endOpacity} >
+       <Hux style={{fill: menusbgcolorR}} />    
+      </Triangle>}
       <Ldiv>
         {
           config ? 
           (<Logbox laptop={adap.laptop}  onClick={back}>
-            <Ciocn url={svgurl['back']} />
+             <Micon iconname="back" />
             <span> 返回</span>
           </Logbox>)
           :
         <>
       { isgranary ? <Logbox laptop={adap.laptop}  onClick={() => window.open('http://10.5.7.60:4242/ses', '_blank')}>
-      <Ciocn url={svgurl['screen']} />
+          <Micon iconname="screen" />
           <span> {dataScreen}</span>
         </Logbox> : showscreen  &&  <Logbox laptop={adap.laptop}  onClick={onJump}>
-        <Ciocn url={svgurl['screen']} />
+        <Micon iconname="screen" />
           <span> {dataScreen}</span>
         </Logbox>
         }
@@ -551,11 +569,11 @@ const settheme = async (themeId) => {
  
  
         { roleType < 4 ? (<Logbox laptop={adap.laptop}    onClick={onConfigure}> 
-          <Ciocn url={svgurl['set']} />
+          <Micon iconname="projectSet" />
           <span>{projectSet}</span>
         </Logbox>):null}
         { roleType < 3 ? (<Logbox  Idiv laptop={adap.laptop}   onClick={projectcfg}>
-          <Ciocn url={svgurl['platform']} />
+          <Micon iconname="platform" />
           <span>{systemSet}</span>
         </Logbox>):null}
         </>
@@ -569,7 +587,7 @@ const settheme = async (themeId) => {
       } 
         overlayClassName="custDropdown">
         <Logbox  laptop={adap.laptop}>
-        <Ciocn url={svgurl['user']} />
+        <Micon iconname="user" />
             <span>{name}</span>
         </Logbox>
         </Dropdown> 

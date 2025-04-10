@@ -33,9 +33,9 @@ const Laybox = styled.div`
   display: grid;
   
   flex: 1;
-  margin-top: 16px;
-  padding-top: 16px;
-  border-top: 1px dotted #d7d7d7;
+  //margin-top: 16px;
+  //padding-top: 16px;
+  //border-top: 1px dotted #d7d7d7;
   grid-template-rows: 1fr 24px;
   row-gap: 16px;
 
