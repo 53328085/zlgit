@@ -44,6 +44,7 @@ export {ReactComponent as runtimeLedger} from './ledger.svg'
 
 export {ReactComponent as cabinets} from './cabinets.svg'
 export {ReactComponent as runtimeCabinets} from './cabinets.svg'
+export {ReactComponent as designerCommon} from './designerCommon.svg'
 
 // 右边图标
 
