@@ -1,51 +1,51 @@
-import React, { useState,useCallback,useRef, useEffect, useMemo } from 'react'
-import {Checkbox, DatePicker} from 'antd'
+import React, { useState, useCallback, useRef, useEffect, useMemo } from 'react'
+import { Checkbox, DatePicker, TimePicker } from 'antd'
 import moment from 'moment'
 import { useSelector } from 'react-redux'
-import {useOutletContext} from 'react-router-dom'
-import {useAntdTable} from 'ahooks'
+import { useOutletContext } from 'react-router-dom'
+import { useAntdTable } from 'ahooks'
 import CustContext from '@com/content.js'
 import Pagecount from '@com/pagecontent'
 import UserTable from "@com/useTable";
 import UserTree from "@com/useTree"
-import { Space} from 'antd'
-import {getTime} from '@com/usehandler'
+import { Space } from 'antd'
+import { getTime } from '@com/usehandler'
 import styled from 'styled-components'
-import {energyReport} from '@api/api'
-import {levelDefaultLabel} from '@redux/systemconfig.js'
-import {  ExportExcel} from '@com/useButton'
+import { energyReport } from '@api/api'
+import { levelDefaultLabel } from '@redux/systemconfig.js'
+import { ExportExcel } from '@com/useButton'
 const { RangePicker } = DatePicker;
 const {
-  QueryByArea, 
-  QueryByLine, 
+  QueryByArea,
+  QueryByLine,
   QueryConsumeByArea,
   QueryConsumeByLine,
-  QueryTimeConsumeByArea, 
+  QueryTimeConsumeByArea,
   QueryTimeConsumeByLine,
   QueryClassifyConsume,
   QueryReadingByAreaCustomize,
   QueryReadingByLineCustomize
 } = energyReport
- 
+
 const Contentbox = styled.div`
   display: grid;
   grid-template-columns: 296px 1fr;
   column-gap: 16px;
   flex: 1;
 `
- 
-const cols =[ // 实时抄表  
-{
-  title: '区域名称',
-  dataIndex: 'nodeName', 
-},
+
+const cols = [ // 实时抄表  
+  {
+    title: '区域名称',
+    dataIndex: 'nodeName',
+  },
   {
     title: '设备名称',
-    dataIndex: 'name', 
+    dataIndex: 'name',
   }, {
     title: '起始读数',
     dataIndex: 'start',
-    
+
   }, {
     title: '结束读数',
     dataIndex: 'end',
@@ -53,7 +53,7 @@ const cols =[ // 实时抄表
   {
     title: '用能(kWh)',
     dataIndex: 'consume',
-  }, 
+  },
   {
     title: '设备编号',
     dataIndex: 'sn',
@@ -64,25 +64,25 @@ const cols =[ // 实时抄表
   },
 ]
 
-let conscols =[ //  cols 实时抄表，  conscols 能耗报表 , typecols 分类能耗
-{
-  title: '区域名称',
-  dataIndex: 'nodeName', 
-  key: "nodeName",
-  fixed: 'left',
-  width: 100
-},
-{
+let conscols = [ //  cols 实时抄表，  conscols 能耗报表 , typecols 分类能耗
+  {
+    title: '区域名称',
+    dataIndex: 'nodeName',
+    key: "nodeName",
+    fixed: 'left',
+    width: 100
+  },
+  {
     title: '设备名称',
-    dataIndex: 'name', 
+    dataIndex: 'name',
     width: 84,
     key: "name",
     fixed: 'left',
-  },  
+  },
   {
     title: '设备编号',
     dataIndex: 'sn',
-    width:134,
+    width: 134,
     key: "sn",
     fixed: 'left',
   },
@@ -97,21 +97,21 @@ let conscols =[ //  cols 实时抄表，  conscols 能耗报表 , typecols 分�
     dataIndex: 'total',
     key: 'total',
     width: 92,
-  },   
+  },
 ]
 const cellstyle = {
   textAlign: "center",
   color: "#fff"
 }
-const timecols =[  // 分时能耗 
-{
-  title: '区域名称',
-  dataIndex: 'nodeName', 
-},
-{
+const timecols = [  // 分时能耗 
+  {
+    title: '区域名称',
+    dataIndex: 'nodeName',
+  },
+  {
     title: '设备名称',
-    dataIndex: 'name', 
-  },  
+    dataIndex: 'name',
+  },
   {
     title: '总计(kWh)',
     dataIndex: 'e',
@@ -141,7 +141,7 @@ const timecols =[  // 分时能耗
         ...cellstyle
       }
     })
-  },  
+  },
   {
     title: '谷(kWh)',
     dataIndex: 'e4',
@@ -152,7 +152,7 @@ const timecols =[  // 分时能耗
       }
     })
 
-  },  
+  },
   {
     title: '费用',
     dataIndex: 'cost',
@@ -160,41 +160,42 @@ const timecols =[  // 分时能耗
   {
     title: '设备编号',
     dataIndex: 'sn',
-  }, 
+  },
   {
     title: '安装位置',
     dataIndex: 'address',
-  }, 
+  },
 ]
 
-const typecols =[  // 分类能耗 
+const typecols = [  // 分类能耗 
   {
     title: '能耗类型',
-    dataIndex: 'type', 
-  },  
+    dataIndex: 'type',
+  },
   {
     title: '子类型',
     dataIndex: 'subType',
-  },  
+  },
   {
     title: '能耗(kWh)',
     dataIndex: 'consume',
-  },  
+  },
   {
     title: '同比',
     dataIndex: 'yoy',
-  }, 
+  },
   {
     title: '环比',
     dataIndex: 'mom',
-  }, 
+  },
 ]
 
 export default function Index() {
 
-  let {exparams, setCustview} = useOutletContext() 
+  let { exparams, setCustview } = useOutletContext()
   const [dates, setDates] = useState([moment().startOf("day"), moment()]);
-   const disabledDate = (current) => {
+  const [times, setTimes] = useState([moment('00:00', 'HH:mm'), moment('23:00', 'HH:mm')])
+  const disabledDate = (current) => {
     if (!dates) {
       return false;
     }
@@ -203,18 +204,18 @@ export default function Index() {
     const date = current && current > moment().endOf("day");
     return !!tooEarly || !!tooLate || !!date
   };
-  
+
   const [isrange, setIsrange] = useState(false)
   const levelname = useSelector(levelDefaultLabel)
   const [value, setvalue] = useState('0')
   const [line, setLine] = useState(0)
   const [treeId, setTreeId] = useState()
-  let {areaId, projectId, type, date, energytype} = exparams
+  let { areaId, projectId, type, date, energytype } = exparams
   // conscols[0].title = levelname
   // cols[0].title = levelname
   // timecols[0].title = levelname
-  const [concolumns, setConcolumns] = useState(conscols) 
- 
+  const [concolumns, setConcolumns] = useState(conscols)
+
   const [total, setTotal] = useState(0)
   const tbref = useRef()
   const etabs = [
@@ -230,42 +231,43 @@ export default function Index() {
   ]
   const [tabs, setTabs] = useState(etabs)
   const index = Number(value)
-  const filename=useMemo(()=> {
-    if(Array.isArray(dates)&&dates.length>1){
-return getTime(dates[0],1).toString()+"-"+getTime(dates[1], 1).toString()
+  const filename = useMemo(() => {
+    if (Array.isArray(dates) && dates.length > 1) {
+      return getTime(dates[0], 1).toString() + "-" + getTime(dates[1], 1).toString()
     }
 
-  },[dates]) ;
-   const sheetName =(index===0 && dates.length) ? filename : tabs[index]?.label ?? 'sheet'
+  }, [dates]);
+  const sheetName = (index === 0 && dates.length) ? filename : tabs[index]?.label ?? 'sheet'
   let columns = [cols, [], timecols, typecols][index] // 
 
 
- 
-  const getTableData = ({ current, pageSize, areaId, projectId, type, date, energytype, treeId, index, line,isrange, dates }) => {
-    console.log("dates",dates)
-    console.log(filename,246,sheetName)
-    let f = [areaId, projectId, type, energytype,index, line].every(v => Number.isInteger(v)) && Array.isArray(treeId) && date
-    let range = index === 0 && isrange && Array.isArray(dates) && dates?.length>1
-    if(!f) return;
-    if(index === 0 && isrange && !Array.isArray(dates) ){
-          return
+
+  const getTableData = ({ current, pageSize, areaId, projectId, type, date, energytype, treeId, index, line, isrange, dates, times }) => {
+    console.log("dates", dates)
+    console.log(filename, 246, sheetName)
+    let f = [areaId, projectId, type, energytype, index, line].every(v => Number.isInteger(v)) && Array.isArray(treeId) && date
+    let range = index === 0 && isrange && Array.isArray(dates) && dates?.length > 1
+    if (!f) return;
+    if (index === 0 && isrange && !Array.isArray(dates)) {
+      return
     }
-     let hander =range ? [QueryReadingByAreaCustomize,
-      QueryReadingByLineCustomize][line] :  index < 3 ? [
-      [QueryByArea, QueryByLine], 
-      [QueryConsumeByArea, QueryConsumeByLine],
-      [QueryTimeConsumeByArea,QueryTimeConsumeByLine],
+    let hander = range ? [QueryReadingByAreaCustomize,
+      QueryReadingByLineCustomize][line] : index < 3 ? [
+        [QueryByArea, QueryByLine],
+        [QueryConsumeByArea, QueryConsumeByLine],
+        [QueryTimeConsumeByArea, QueryTimeConsumeByLine],
       ][index][line] : QueryClassifyConsume
-    
-     let time = getTime(date, type)
-     let params =range ?
-     {projectId, 
-      meterType: energytype,
-      startDate:getTime(dates[0], 1),
-      endDate:getTime(dates[1], 1),
-      pageNum: current,
-      pageSize,
-       } : {
+
+    let time = getTime(date, type)
+    let params = range ?
+      {
+        projectId,
+        meterType: energytype,
+        startDate: getTime(dates[0], 1) + ' ' + times[0].format('HH:mm:ss'),
+        endDate: getTime(dates[1], 1) + ' ' + times[1].format('HH:mm:ss'),
+        pageNum: current,
+        pageSize,
+      } : {
         projectId,
         type,
         date: time,
@@ -273,159 +275,179 @@ return getTime(dates[0],1).toString()+"-"+getTime(dates[1], 1).toString()
         pageNum: current,
         pageSize,
         areaId,
-     }
-     // //  cols 实时抄表，  conscols 能耗报表 , typecols 分类能耗
-     if(energytype == 1) {
+      }
+    // //  cols 实时抄表，  conscols 能耗报表 , typecols 分类能耗
+    if (energytype == 1) {
       setTabs([...etabs])
-     }else if(energytype == 2) {
+    } else if (energytype == 2) {
       setTabs([...wtabs])
-     }
-   
-     columns.forEach(c => {
-             if(c.dataIndex == 'consume' && index == 0) { // 实时抄表
-                c.title = energytype == 1 ? '用能(kWh)' : '差值（m³）'
-             }
-             if (c.dataIndex == 'consume' && index == 3) {  // 分类报表
-              c.title = energytype == 1 ? '用能(kWh)' : '用水量（m³）'
-             }
-           })
-       
-      
-    if(index == 1) {
+    }
+
+    columns.forEach(c => {
+      if (c.dataIndex == 'consume' && index == 0) { // 实时抄表
+        c.title = energytype == 1 ? '用能(kWh)' : '差值（m³）'
+      }
+      if (c.dataIndex == 'consume' && index == 3) {  // 分类报表
+        c.title = energytype == 1 ? '用能(kWh)' : '用水量（m³）'
+      }
+    })
+
+
+    if (index == 1) {
       conscols.forEach(e => {
-        if(e.dataIndex == 'total') {
-           e.title = energytype == 1 ? '能耗(kWh)' : '能耗（m³）'
+        if (e.dataIndex == 'total') {
+          e.title = energytype == 1 ? '能耗(kWh)' : '能耗（m³）'
         }
       })
     }
- 
-   
 
-     return hander(params, treeId).then(res => {
-         let {success, data, total=0} = res
-         setTotal(total)
-         if(success && Array.isArray(data) && data.length > 0) {           
-           if(index == 1) {
-             let {detailHeaders} = data[0]
-             let last = detailHeaders.length - 1
-             let column = detailHeaders.map(col => ({title: col, dataIndex: col, key: col,width: "96px" }))
-             column[last].fixed = "right"
-             setConcolumns([...conscols, ...column])
-             data.forEach(item => {
-              let {detailHeaders, detailValues} = item;
-              for(const [index, val] of detailHeaders?.entries()) {
-                  item[val] = detailValues[index]
-              }
-            })
-           }
-           
-         
-            return {
-              list: data,
-              total: total
+
+
+    return hander(params, treeId).then(res => {
+      let { success, data, total = 0 } = res
+      setTotal(total)
+      if (success && Array.isArray(data) && data.length > 0) {
+        if (index == 1) {
+          let { detailHeaders } = data[0]
+          let last = detailHeaders.length - 1
+          let column = detailHeaders.map(col => ({ title: col, dataIndex: col, key: col, width: "96px" }))
+          column[last].fixed = "right"
+          setConcolumns([...conscols, ...column])
+          data.forEach(item => {
+            let { detailHeaders, detailValues } = item;
+            for (const [index, val] of detailHeaders?.entries()) {
+              item[val] = detailValues[index]
             }
-         }else {
-          return {
-            list: [],
-            total: 0
-          }
-         }
-     }).catch(e => {
+          })
+        }
+
+
+        return {
+          list: data,
+          total: total
+        }
+      } else {
+        return {
+          list: [],
+          total: 0
+        }
+      }
+    }).catch(e => {
       console.log(e)
-     })
+    })
 
 
   }
-  const {tableProps} = useAntdTable((params) => getTableData({...params,areaId, projectId, type, date, energytype, treeId, index, line,isrange, dates }), {
-    defaultParams: [{current: 1, pageSize: 14}],
-    refreshDeps: [areaId, projectId, type, date, energytype, treeId, index, line,isrange, dates]
+  const { tableProps } = useAntdTable((params) => getTableData({ ...params, areaId, projectId, type, date, energytype, treeId, index, line, isrange, dates, times }), {
+    defaultParams: [{ current: 1, pageSize: 14 }],
+    refreshDeps: [areaId, projectId, type, date, energytype, treeId, index, line, isrange, dates, times]
   })
 
-  const CustView =(
+  const CustView = (
     <Space size={16}>
       <ExportExcel tb={tbref} />
-     </Space>
-    )
-  const onExport =useCallback(() => {   
-   
-    return  getTableData({current: 1, pageSize: total,areaId, projectId, type, date, energytype, treeId, index, line,isrange, dates})
- }, [total, concolumns, type, date,energytype,areaId, treeId, index, line, isrange, dates,sheetName])
+    </Space>
+  )
+  const onExport = useCallback(() => {
 
-const boxchange = (e)=> {
-  const f = e.target.checked
-  console.log(f)
-  setIsrange(f)
-  if(!f) {
-    setDates([moment().startOf("day"), moment()])
-    setValuet([moment().startOf("day"), moment()])
+    return getTableData({ current: 1, pageSize: total, areaId, projectId, type, date, energytype, treeId, index, line, isrange, dates, times })
+  }, [total, concolumns, type, date, energytype, areaId, treeId, index, line, isrange, dates, times, sheetName])
+
+  const boxchange = (e) => {
+    const f = e.target.checked
+    console.log(f)
+    setIsrange(f)
+    if (!f) {
+      setDates([moment().startOf("day"), moment()])
+      setValuet([moment().startOf("day"), moment()])
+    }
   }
-}
 
-  const [valuet, setValuet] = useState(null);
+  // const [valuet, setValuet] = useState(null);
+  const [valuet, setValuet] = useState(moment().startOf("day"));
+  const [valuetime, setValuetime] = useState([moment('00:00', 'HH:mm'), moment('23:00', 'HH:mm')]);
 
-  const onTimeOk = (date = [], dataString) => {
-    let f = dataString.some((d) => d);
-    if (!f) return;
-    console.log(dataString)
-     setDates(date)
-     setValuet(date)
+  const onDateOk = (date, dataString) => {
+    // let f = dataString.some((d) => d);
+    // if (!f) return;
+    // console.log(dataString)
+    setDates([date, date])
+    setValuet(date)
   };
- 
+
+  const onTimeOk = (time, timeString) => {
+    console.log(time, timeString)
+    setTimes(time)
+    setValuetime(time)
+  }
+
   let dataProps = {
     value,
     setvalue,
     tabs,
-  //  tabsprops,
-  //  form,
-  //  custview: <CustView />,
+    //  tabsprops,
+    //  form,
+    //  custview: <CustView />,
   }
- 
- useEffect(() => {
-  setCustview(CustView);
-  return () => {
-    setCustview(undefined)
-  }
- }, [])
+
+  const startTime = moment('00:00', 'HH:mm');
+  const endTime = moment('23:00', 'HH:mm');
+
+  useEffect(() => {
+    setCustview(CustView);
+    return () => {
+      setCustview(undefined)
+    }
+  }, [])
 
 
   return (
-      <CustContext.Provider value={dataProps} >
-          <Pagecount showSearch={false} custserach={true} >
-             <Contentbox>
-                <UserTree areaId={areaId} energytype={energytype}  setTreeId={setTreeId} setLine={setLine}   showline={value!='3'} datatype={value=='3' ? 0 : NaN}   /> 
-              <div style={{position: "relative", flex: 1}}> 
-                <div style={{position: "absolute", width: "100%"}}>
-             {value==="0" &&  <div style={{marginBottom: "16px", display: "flex"}}>
-              <div style={{marginLeft: "auto"}}>
-              <Checkbox onChange={boxchange} checked={isrange}>使用日期范围（优先）</Checkbox> <RangePicker
-                  value={dates || valuet }
+    <CustContext.Provider value={dataProps} >
+      <Pagecount showSearch={false} custserach={true} >
+        <Contentbox>
+          <UserTree areaId={areaId} energytype={energytype} setTreeId={setTreeId} setLine={setLine} showline={value != '3'} datatype={value == '3' ? 0 : NaN} />
+          <div style={{ position: "relative", flex: 1 }}>
+            <div style={{ position: "absolute", width: "100%" }}>
+              {value === "0" && <div style={{ marginBottom: "16px", display: "flex" }}>
+                <div style={{ marginLeft: "auto" }}>
+                  <Checkbox onChange={boxchange} checked={isrange}>使用时间范围（优先）</Checkbox>
+                  {/* <RangePicker
+                    value={dates || valuet}
                     disabledDate={disabledDate}
-                   onCalendarChange={(val) => setDates(val)}
-                    onChange={onTimeOk} 
+                    onCalendarChange={(val) => setDates(val)}
+                    onChange={onTimeOk}
                     disabled={!isrange}
                     defaultValue={[moment().startOf("day"), moment()]}
                     format="YYYY-MM-DD"
-                    
+                  /> */}
+                  <DatePicker
+                    value={valuet}
+                    onCalendarChange={(val) => setDates([val])}
+                    onChange={onDateOk}
+                    disabled={!isrange}
+                    defaultValue={moment().startOf("day")}
+                    format="YYYY-MM-DD"
                   />
-                  </div>
-                  </div>
-                }
-                 {
-                  value == "1" ? <UserTable ref={tbref}  columns={concolumns} {...tableProps} key={value} scroll={{
-                    scrollToFirstRowOnChange: true,
-                     x: 1400, 
-                     y: 685
-                   }
-                  }
-                  sheetName={sheetName} onExport={onExport}
-                  ></UserTable>
-                  :<UserTable ref={tbref} columns={columns} {...tableProps} key={value} sheetName={sheetName} onExport={onExport}></UserTable>
-                } 
+                  <TimePicker.RangePicker value={times} onChange={onTimeOk} style={{ marginLeft: "16px" }} disabled={!isrange} minuteStep={15} hourStep={1} defaultValue={[startTime, endTime]} format="HH:mm"></TimePicker.RangePicker>
                 </div>
-                </div> 
-             </Contentbox>
-          </Pagecount>
-      </CustContext.Provider>
+              </div>
+              }
+              {
+                value == "1" ? <UserTable ref={tbref} columns={concolumns} {...tableProps} key={value} scroll={{
+                  scrollToFirstRowOnChange: true,
+                  x: 1400,
+                  y: 685
+                }
+                }
+                  sheetName={sheetName} onExport={onExport}
+                ></UserTable>
+                  : <UserTable ref={tbref} columns={columns} {...tableProps} key={value} sheetName={sheetName} onExport={onExport}></UserTable>
+              }
+            </div>
+          </div>
+        </Contentbox>
+      </Pagecount>
+    </CustContext.Provider>
   )
 }
 
