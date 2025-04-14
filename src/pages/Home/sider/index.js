@@ -191,8 +191,10 @@ export default function Sider() {
   const curtheme = useSelector(themeColor)
    
   const {asiderfontcolor="#fff", asiderfontcolorA="#33ff00"} = curtheme
-  const rgb=hextodec(asiderfontcolor)
-  const rgba=hextodec(asiderfontcolorA)
+  
+  const rgb=hextodec(asiderfontcolor)??"#fff"
+  
+  const rgba=hextodec(asiderfontcolorA) ?? "#33ff00"
  
   const dispatch = useDispatch()
   

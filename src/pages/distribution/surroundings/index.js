@@ -46,9 +46,9 @@ const Cardlist = styled.div`
                 align-items: center;
                 justify-content: space-between;
                 box-shadow:2px  2px 2px rgba(0, 0, 0, 0.0784313725490196);
-                //background: linear-gradient(180deg, rgba(0, 51, 204, 1) 0%, rgba(0, 51, 204, 1) 0%, rgba(51, 204, 255, 1) 100%, rgba(51, 204, 255, 1) 100%);;
+               
              
-            }
+            }  
 `
 
 export default function Index() {
@@ -97,7 +97,7 @@ export default function Index() {
   return (
     <Pagecount bgcolor="transparent" pd="0">
       <Mainbox>
-      <Titlelayout title="配电房环境监测" layout="flex" bordered="n">
+      <Titlelayout title="配电房环境监测"  bordered="n" layout="y" style={{flexBasis: 'auto'}}>
           <Cardlist>
             {(Array.isArray(door) && door?.length > 0) ? door?.map(d => <ItemCard bgcolor="#cee3a6" value={d.value} title={d.name} img="door" key={d.anme + d.value} />) : null}
             {(Array.isArray(fire) && fire.length > 0) ? fire?.map(d => <ItemCard bgcolor="#f8dadf" value={d.value} title={d.name} img="fire" />) : null}

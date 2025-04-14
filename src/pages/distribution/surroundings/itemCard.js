@@ -3,13 +3,13 @@ import { Divider, Image, Typography } from 'antd'
 
 import Titlelayout from '@com/titlelayout' 
 import imgurl from '@imgs'
-import styled from "styled-components";
+import styled, {css} from "styled-components";
 const {Text} = Typography
 const Mainbox = styled.div`
    flex: 1;
    display: flex;
    justify-content: space-between;
-   column-gap: 32px;
+  // column-gap: 32px;
     .val {
         display: flex;
         align-items: center;
@@ -22,17 +22,19 @@ const Mainbox = styled.div`
         width: 64px;
         height: 64px;
       }
-                    
-                   
-               
 
+`
+const custsty = css`
+.ant-card-body {
+    padding: 0px 20px;
+}
 
 `
 export default function Index(props) {
 
    
     return (
-    <Titlelayout layout="flex" bgcolor={props.bgcolor} bg="transparent"  pl="0px" bl="none" title={<Text strong ellipsis={{tooltip: props.title}}>{props.title}</Text>}>
+    <Titlelayout layout="flex" bgcolor={props.bgcolor} bg="transparent"  pl="0px" bl="none" custsty={custsty} title={<Text strong ellipsis={{tooltip: props.title}}>{props.title}</Text>}>
             <Mainbox>
                 <div className="val">
                     {
