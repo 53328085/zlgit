@@ -97,7 +97,7 @@ export default function Index() {
   return (
     <Pagecount bgcolor="transparent" pd="0">
       <Mainbox>
-      <Titlelayout title="配电房环境监测1"  bordered="n" layout="y" style={{flexBasis: 'auto'}}>
+      <Titlelayout title="配电房环境监测"  bordered="n" layout="y" style={{flexBasis: 'auto'}}>
           <Cardlist>
             {(Array.isArray(door) && door?.length > 0) ? door?.map(d => <ItemCard bgcolor="#cee3a6" value={d.value} title={d.name} img="door" key={d.anme + d.value} />) : null}
             {(Array.isArray(fire) && fire.length > 0) ? fire?.map(d => <ItemCard bgcolor="#f8dadf" value={d.value} title={d.name} img="fire" />) : null}
