@@ -53,8 +53,8 @@ const CardItme = styled.div`
         display: grid;
         grid-template-columns: 1fr 1fr;
         grid-template-rows: 1fr 1fr;
-        background-color: rgba(${props => props.rgb[0]},${props => props.rgb[1]},${props => props.rgb[2]},0.2);
-        border: 1px solid rgba(${props => props.rgb[0]},${props => props.rgb[1]},${props => props.rgb[2]},0.2);
+        background-color: rgba(${props => props.rgb[0]},${props => props.rgb[1]},${props => props.rgb[2]},0.15);
+       // border: 1px solid rgba(${props => props.rgb[0]},${props => props.rgb[1]},${props => props.rgb[2]},0.2);
         border-radius: 6px;
         .item {
           padding: 0 8px;
@@ -66,7 +66,7 @@ const CardItme = styled.div`
             font-size: 14px;
           }
           .value {
-            color: ${(props) => props.theme.fieldvalue || "#33FF00"};
+            color: ${(props) => props.theme.fieldvalue || "#1E50E6"};
             font-size: 16px;
             white-space: nowrap;
           }
