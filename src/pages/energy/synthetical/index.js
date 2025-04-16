@@ -346,7 +346,7 @@ const EngItem = ({name, unit, periodValue, lastDayPeriodValue, lastMonthPeriodVa
   let type = ['', '日', '月', '年'][datetype]
   let my = ['', '昨', '上', '去'][datetype] 
   let lasttime = ['', lastDayPeriodValue, lastMonthPeriodValue, lastYearPeriodValue][datetype]
-  let icon = name.indexOf("电")>-1 ? 'electric' : name.indexOf("水")>-1  ? 'water' : '';
+  let icon =  unit.indexOf("kWh")>-1 ? 'electric' : unit.indexOf("m³")>-1  ? 'water' : '';
   
   return (
    <Titlelayout
