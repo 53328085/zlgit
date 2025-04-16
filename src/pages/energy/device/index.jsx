@@ -366,7 +366,7 @@ export default function Index() {
   }
 
 
-  const items = <div style={{ height: '630px', overflowY: 'scroll' }}>  {areaId != 0 && !showAll ?
+  const items = <div>  {areaId != 0 && !showAll ?
     <div className="card">{tableData.map(d => <Citem  {...d} laptop={laptop}  key={nanoid()} />)} </div> :
     <div>{tableDataAll.map(d => <CitemAll  {...d} key={nanoid()} />)}</div>
   }</div>

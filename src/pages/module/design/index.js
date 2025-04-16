@@ -502,7 +502,7 @@ useEffect(()=>{
       <Item label="字段名" labelCol={{flex: "4em"}} name="fieldname" initialValue="#ffffff">
           <Ccolor name="fieldname" />
         </Item>
-        <Item label="字段值" labelCol={{flex: "4em"}} name="fieldvalue" initialValue="#33ff00">
+        <Item label="字段值" labelCol={{flex: "4em"}} name="fieldvalue" initialValue="#1E50E6">
           <Ccolor name="fieldvalue" />
         </Item>
        {/*  <Item label="背景色" labelCol={{flex: "4em"}} name="itembg" initialValue="#000033">
