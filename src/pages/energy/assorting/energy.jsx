@@ -16,7 +16,7 @@ import imgurl from './imgs'
 
 const sty= css`
   grid-template-columns: repeat(5, 1fr);
-  gap: 8ox;
+  gap: 8px;
 `
 
 const Mainbox=styled.div`

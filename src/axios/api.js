@@ -2380,6 +2380,13 @@ export class energyReport {
     server.post(`Energy/DataReportRuntime/QueryReadingByAreaCustomize`, body,{params}); //实时抄表自定义-区域
   static QueryReadingByLineCustomize = (params, body) =>
     server.post(`Energy/DataReportRuntime/QueryReadingByLineCustomize`, body,{params}); //实时抄表自定义-线路
+
+
+  static QueryConsumeByAreaCustomize = (params, body) =>
+    server.post(`Energy/DataReportRuntime/QueryConsumeByAreaCustomize`, body,{params}); //能耗报表自定义-区域
+  static QueryConsumeByLineCustomize = (params, body) =>
+    server.post(`Energy/DataReportRuntime/QueryConsumeByLineCustomize`, body,{params}); //能耗报表自定义-线路
+
   static AeraQueryAll = (projectId) =>
     server.get(`/General/Area/QueryAll?projectId=${projectId}&level=1`); //获取区域
   static QueryByArea = (
