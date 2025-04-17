@@ -14,6 +14,7 @@ import styled, {css} from 'styled-components';
 import Titlelayout from '@com/titlelayout'
 import Pagecount from '@com/pagecontent' 
 import UseTable from '@com/useTable'
+import { cloneDeep } from 'lodash';
  
  
 const {Link} = Typography
@@ -172,7 +173,7 @@ export default function Index() {
        const res =  await DistributionRoomRuntime.LineRuntimePoints(projectId,RoomId,lineId)
        if(res.success){
         if(res.data){
-            const dataes = structuredClone(res.data)
+            const dataes = cloneDeep(res.data)
             dataes.forEach((it, i) => {
                    if (Array.isArray(it.data)) {
                        it.data.forEach((item, index) => {
