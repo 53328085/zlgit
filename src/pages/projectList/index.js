@@ -79,6 +79,13 @@ const btsty = css`
   height: 32px;
   font-size: 12px;
 `
+const custsty = css`
+ .ant-modal-title {
+  >div {
+    flex:1
+  }
+ }
+`
 const CustBtn = styled(Button)`
   max-width: ${(props) => props.width || "144px"};
   height: ${props => props.laptop ? "32px" : "40px"} ;
@@ -764,11 +771,12 @@ const closeModl = () => {
 
 
       <Custmodal
-        title={<div style={{display: 'flex', justifyContent: 'space-between'}}><span>{t("platformcig:ProjectOperationHistory")}</span> <Button style={{width: '92px'}} type="primary" onClick={opclose}>{t("comm:Close")}</Button></div>}
+        title={<div style={{display: 'flex', flex:1, alignItems: "center", justifyContent: 'space-between'}}><span>{t("platformcig:ProjectOperationHistory")}</span> <Button style={{width: '92px'}} type="primary" onClick={opclose}>{t("comm:Close")}</Button></div>}
         ref={opref} 
         width={laptop ? 1000 : 1424} 
         mold="cust"   
         footer={null}
+        custsty={custsty}
       >
          <OprecordCom />
          
