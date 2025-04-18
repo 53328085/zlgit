@@ -214,8 +214,7 @@ export default function Hmenu() {
   }))
   const menus = isconfig ? designer : run
   
-  console.log(designer)
-  console.log(run)
+ 
   const onSelect = ({key}) => {
     
      let item = menus.find(item => item?.key === key);   
