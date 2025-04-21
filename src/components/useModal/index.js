@@ -85,6 +85,7 @@ const CModal = styled(Modal)`
     margin-bottom: 0px;
   }
   ${props => props.theme.laptop ? sty : null}
+  ${props => props.custsty}
 `;
 
 

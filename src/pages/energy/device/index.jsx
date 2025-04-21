@@ -33,9 +33,9 @@ const Laybox = styled.div`
   display: grid;
   
   flex: 1;
-  margin-top: 16px;
-  padding-top: 16px;
-  border-top: 1px dotted #d7d7d7;
+  //margin-top: 16px;
+  //padding-top: 16px;
+  //border-top: 1px dotted #d7d7d7;
   grid-template-rows: 1fr 24px;
   row-gap: 16px;
 
@@ -366,7 +366,7 @@ export default function Index() {
   }
 
 
-  const items = <div style={{ height: '630px', overflowY: 'scroll' }}>  {areaId != 0 && !showAll ?
+  const items = <div>  {areaId != 0 && !showAll ?
     <div className="card">{tableData.map(d => <Citem  {...d} laptop={laptop}  key={nanoid()} />)} </div> :
     <div>{tableDataAll.map(d => <CitemAll  {...d} key={nanoid()} />)}</div>
   }</div>

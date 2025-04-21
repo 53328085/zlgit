@@ -32,6 +32,25 @@ export class CustTheme {
 
   static DeleteTheme = (params) =>
     server.get(`Energy/Theme/DeleteTheme`, { params }); //删除主题
+
+
+
+  // 下面为新的接口
+
+  static QueryMainTheme = (params) =>
+    server.get(`Energy/MainTheme/QueryMainTheme`, { params }); // 获取所有公共主题
+
+  static SetProjectTheme = (params) =>
+    server.get(`Energy/MainTheme/SetProjectTheme`, { params }); // 为项目绑定主题
+  static QueryTheme = (params) =>
+    server.get(`Energy/Theme/QueryTheme`, { params }); // 获取项目下私有主题
+
+  static GetProjectTheme = (params) =>
+    server.get(`Energy/Theme/GetProjectTheme`, { params }); // 获取项目选择的主题
+
+  static SelProjectTheme = (params) =>
+    server.post(`Energy/Theme/SetProjectTheme`, null, { params }); // 选择项目主题
+
 }
 
 
@@ -2398,6 +2417,13 @@ export class energyReport {
     server.post(`Energy/DataReportRuntime/QueryReadingByAreaCustomize`, body, { params }); //实时抄表自定义-区域
   static QueryReadingByLineCustomize = (params, body) =>
     server.post(`Energy/DataReportRuntime/QueryReadingByLineCustomize`, body, { params }); //实时抄表自定义-线路
+
+
+  static QueryConsumeByAreaCustomize = (params, body) =>
+    server.post(`Energy/DataReportRuntime/QueryConsumeByAreaCustomize`, body, { params }); //能耗报表自定义-区域
+  static QueryConsumeByLineCustomize = (params, body) =>
+    server.post(`Energy/DataReportRuntime/QueryConsumeByLineCustomize`, body, { params }); //能耗报表自定义-线路
+
   static AeraQueryAll = (projectId) =>
     server.get(`/General/Area/QueryAll?projectId=${projectId}&level=1`); //获取区域
   static QueryByArea = (

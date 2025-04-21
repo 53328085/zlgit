@@ -1175,7 +1175,8 @@ export default function GatewayDetail(props) {
     <Mainbox className={style.main} laptop={laptop}>
       <div className={style.head + " head"}>
         <img src={logoImage || imgurl.logo} className={style.headImg}></img>
-        <p>{projectName}综合能源服务平台</p>
+        {/* <p>{projectName}综合能源服务平台</p> */}
+        <p>{projectName}</p>{/* 万工： ”去掉   ‘综合能源服务平台’“ */}
       </div>
       <div className={style.body}>
         <div className={style.left}>

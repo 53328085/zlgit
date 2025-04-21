@@ -16,7 +16,7 @@ import imgurl from './imgs'
 
 const sty= css`
   grid-template-columns: repeat(5, 1fr);
-  gap: 8ox;
+  gap: 8px;
 `
 
 const Mainbox=styled.div`
@@ -321,7 +321,7 @@ let Card = ({ index, showtype,laptop, ...other }) => {
   return (
     <Cardbox laptop={laptop}>
       <div  className='box left'>
-        {laptop ? null : <img src={imgurl[other.name]} alt="" style={{ width: 54, height: 42 }} />} 
+        {laptop ? null : <img src={imgurl[index+1]} alt="" style={{ width: 54, height: 42 }} />} 
         <div>
           <div className='lable'>{other.name ? other.name : ""}  {showtype == 1 ? '(kwh)' : '元'}</div>
           <div className='value'>{other.periodValue}</div>

@@ -9,7 +9,19 @@ import useJump from "./useJump";
 //import imgurl from './icon/index.js'
 import svgurl from './icon/svg'
 import {hextodec} from '@com/usehandler'
- 
+import * as svgcom from './icon' 
+const Micon = ({iconname}) => {
+   const location = useLocation()
+   let {nested} = location.state || {}   
+  //  let normal=["camera","report","environment"]
+  //  const Com = !normal.includes(iconname) ?  svgcom[primary+iconname] : svgcom[iconname]
+      
+      const Com = svgcom[iconname]
+    
+    const Def = svgcom["def"]
+   return   Com ?  <Com  className={iconname + " custicon "+nested}/> :   <Def className="def" ></Def>
+  // return <span className="custicon">&#9673;</span>
+}
 const msty =css`
 font-size: 12px;
     display: flex;
@@ -17,27 +29,16 @@ font-size: 12px;
     .ant-menu-item{
         width: auto;
         padding: 4px 2px;
-        .logo {
-            height: 28px;
-            width: 28px;
-            line-height: 28px;
-            overflow: hidden;
-            .shadow {
-              transform: translateX(-28px);
-              filter: drop-shadow(28px 0 0  ${props => props.theme.menusfontcolor || '#b2c1d1'})
-            }
-           
+        .custicon {
+          g path:nth-of-type(1) {
+                fill: ${props => props.theme.menusfontcolor || '#b2c1d1'}; 
+              }
         }
         &:hover, &:active {
-          .logo {
-              height: 28px;
-              width: 28px;
-              line-height: 28px;
-              overflow: hidden;
-              .shadow {
-              transform: translateX(-28px);
-              filter: drop-shadow(28px 0 0  ${props => props.theme.menusactivefontcolor || '#ffffff'});
-            }
+          .custicon {
+              g path:nth-of-type(1) {
+                fill: ${props => props.theme.menusactivefontcolor || '#fff'}; 
+              }
         }
     }
     }
@@ -46,16 +47,10 @@ font-size: 12px;
       //  border-bottom: 2px solid ${props => props.theme.menusborder || '#00ff66'};  //去掉下划线 陈舒映
         color:${props => props.theme.menusactivefontcolor || '#ffffff'};
         border-radius: 6px;
-        .logo {
-              height: 28px;
-              width: 28px;
-              line-height: 28px;
-              overflow: hidden;
-              .shadow {
-              transform: translateX(-28px);
-              filter: drop-shadow(28px 0 0  ${props => props.theme.menusactivefontcolor || '#ffffff'});
-            }
-           
+        .custicon {
+              g path:nth-of-type(1) {
+                fill: ${props => props.theme.menusactivefontcolor || '#fff'}; 
+              }
         }
     }
 
@@ -75,7 +70,12 @@ const Cmenu = styled(Menu)`
       //  border-bottom: 2px solid ${props => props.theme.menusborder || '#00ff66'};
         color:${props => props.theme.menusactivefontcolor || '#ffffff'};
         border-radius: 6px;
-        .logo {
+        .custicon {
+              g path:nth-of-type(1) {
+                fill: ${props => props.theme.menusactivefontcolor || '#fff'}; 
+              }
+        }
+        /* .logo {
               height: 36px;
               width: 36px;
               line-height: 36px;
@@ -85,7 +85,7 @@ const Cmenu = styled(Menu)`
               filter: drop-shadow(36px 0 0  ${props => props.theme.menusactivefontcolor || '#ffffff'});
             }
            
-        }
+        } */
     }
     .ant-menu-item{
         display: flex;
@@ -98,7 +98,12 @@ const Cmenu = styled(Menu)`
       //  padding: 4px 0; 
         height: 66px;
         color: ${props => props.theme.menusfontcolor || '#b2c1d1'}; 
-        .logo {
+        .custicon {
+          g path:nth-of-type(1) {
+                fill: ${props => props.theme.menusfontcolor || '#b2c1d1'}; 
+              }
+        }
+      /*   .logo {
             height: 36px;
             width: 36px;
             line-height: 36px;
@@ -108,7 +113,7 @@ const Cmenu = styled(Menu)`
               filter: drop-shadow(36px 0 0  ${props => props.theme.menusfontcolor || '#b2c1d1'});
             }
             
-        }
+        } */
         &::after {
             right: 0px;
             left: 0px;
@@ -122,7 +127,12 @@ const Cmenu = styled(Menu)`
             bottom: 0px;
             border-radius: 6px;
             border-bottom: none;
-            .logo {
+            .custicon {
+              g path:nth-of-type(1) {
+                fill: ${props => props.theme.menusactivefontcolor || '#ffffff'}; 
+              }
+        }
+          /*   .logo {
               height: 36px;
               width: 36px;
               line-height: 36px;
@@ -132,7 +142,7 @@ const Cmenu = styled(Menu)`
               filter: drop-shadow(36px 0 0  ${props => props.theme.menusactivefontcolor || '#ffffff'});
             }
            
-        }
+        } */
         &::after{
           content: none;
         }
@@ -182,12 +192,13 @@ export default function Hmenu() {
   const designermenus = useSelector(designerMenus)
   const siderdesignermenus = useSelector(siderDesignerMenus)
   //const [menus, setMenus] = useState([]) 
+
   useJump(current, isconfig)
   const run = runmenus?.map(item => ({
     no: item.no,
     label: item.label,
     key: item.key,
-    icon: <Ciocn url={svgurl[item.no]} />,
+    icon:   <Micon iconname={item.key}/>,  // <Ciocn url={svgurl[item.no]} />,
     className: 'custsubmenu',
     danger: true,
     nested: siderrunmenus[item.key]?.length > 0 ?  siderrunmenus[item.key][0]?.['key'] : ''
@@ -196,14 +207,14 @@ export default function Hmenu() {
    no: item.no,
    label: item.label,
    key: item.key,
-   icon: <Ciocn url={svgurl[item.no]} />,
+   icon:  <Micon iconname={item.key}/>, // <Ciocn url={svgurl[item.no]} />,
    className: 'custsubmenu',
    danger: true,
    nested: siderdesignermenus[item.key]?.length > 0 ?  siderdesignermenus[item.key][0]?.['key'] : ''
   }))
   const menus = isconfig ? designer : run
   
-
+ 
   const onSelect = ({key}) => {
     
      let item = menus.find(item => item?.key === key);   

@@ -33,8 +33,8 @@ import {cabinets} from './cabinets.js'
   runtimeCarbonEmissionManager,
   runtimeStorage,
   runtimeQuota,
-  ledger,
-  cabinets
+  runtimeLedger: ledger,
+  runtimeCabinets: cabinets
  }
 
 

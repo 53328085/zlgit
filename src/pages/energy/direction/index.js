@@ -222,7 +222,7 @@ export default function Index() {
   }
   useEffect(() => {
     if (Object.values(exparams).length < 4) return
-    if (energytype == undefined) return
+    if (!energytype) return
     window.localStorage.setItem('exparams', JSON.stringify(exparams))
     getData()
     getRankData()

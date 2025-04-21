@@ -36,14 +36,14 @@ const CommItem = styled.div`
     .valueData {
       //margin-top: 10px;
       font-size: 31px;
-      color: ${(props) => props.theme.bgcolorfont};
+      color: ${(props) => props.theme.bgcolorfont || "#1E50E6"};
     }
   }
   .boxCard {
     flex: auto;
     height: 102px; 
-    background-color: rgba(${props => props.rgb[0]},${props => props.rgb[1]},${props => props.rgb[2]},0.2);
-    border: 1px solid rgba(${props => props.rgb[0]},${props => props.rgb[1]},${props => props.rgb[2]},0.2);;
+    background-color: rgba(${props => props.rgb[0]},${props => props.rgb[1]},${props => props.rgb[2]},0.15);
+  //  border: 1px solid rgba(${props => props.rgb[0]},${props => props.rgb[1]},${props => props.rgb[2]},0.2);;
     display: flex;
     font-size: 14px;
     justify-content: space-around;

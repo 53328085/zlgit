@@ -24,8 +24,8 @@ const Ctitle = styled.div`
   }
 `
 const Type = {
-  1: '分表',
-  2: '总表'
+  2: '分表',
+  1: '总表'
 }
 
 export default function Run({ projectId, lineIds }) {

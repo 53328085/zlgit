@@ -29,7 +29,7 @@ export default memo(function({onSubmit}){
     const auto = useMemo(() => (initmemorize ? "on" : "off"), [initmemorize]);
     const userName = useMemo(() => (initmemorize ? name : ""), [initmemorize]);
     const usepassword = useMemo(() => (initmemorize ? password : ''), [initmemorize])    
-    const ckChange = (e) => {
+    const ckChange = (e) => {    
       dispatch(memorizeName(e.target.checked));
     };   
     const keyvalue = useRef()
@@ -123,6 +123,7 @@ export default memo(function({onSubmit}){
             prefix={<Ipticon />}
             url={imgurl.pwd}
             aurl={imgurl.pwda}
+            visibilityToggle={false}
             placeholder={t("Enpassword")}
           />  
         </Itembox>

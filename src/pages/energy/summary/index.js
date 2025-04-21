@@ -6,13 +6,13 @@ import styled from "styled-components";
  import moment from "moment";
  import {CloseOutlined} from "@ant-design/icons"
 import { Form, Image, Progress, Typography, Spin, Tag } from "antd";
-import imgurl from "./icon";
+import imgurl, {E01,E02, E03} from "./icon";
 import { EnergyOverView, UpdateEnergyImage, HomeRuntime} from "@api/api.js";
 import { useSelector } from "react-redux";
 import Ichart  from '@com/useEcharts/Ichart';
 import Ctip from './Ctip'
 import Pagecount from "@com/pagecontent";
-import {Cspin} from "@com/comstyled"
+import {Cspin, Cdivider} from "@com/comstyled"
 import {isObject} from "@com/usehandler"
 import {
   selectProjectId,
@@ -67,7 +67,7 @@ const Content = styled.div`
     column-gap: 16px;
     .right {
       display: grid;
-      grid-template-rows: repeat(3, 120px) 1fr;
+      grid-template-rows: repeat(3, 141px) 1fr;
       row-gap: 16px;
     }
  }
@@ -75,37 +75,30 @@ const Content = styled.div`
  
  
 const Itembox = styled.div`
-  background-color: #f0f9ff;
-  border-radius: 4px;
-  border: 1px solid #c9e9ff;
-  display: grid;
-  grid-template-columns: 56px 138px;
-  padding: 10px 16px;
-  justify-content: space-between;
-  align-items: center;
-  box-sizing: border-box;
+  background-color: #fff;
+  border-radius: 8px;
+  border: 1px solid #DDDFE6;
+  padding: 14px;
+  display: flex;
+  align-items: flex-start;
+  column-gap: 14px;
+ 
   .desc {
-    display: grid;
-    grid-template-rows: repeat(4, 1fr);
-    align-items: center;
-    justify-items: flex-end;
+     flex:1;
+     display: flex;
+     flex-direction: column;
+     color: #303133;
+     font-size: 16px;
+     justify-content: space-between;
     .num {
+       color: ${props=> props.theme.primaryColor};
+       font-size: 22px;
+    }
+    .num2 {
       font-size: 18px;
-      display: block;
-      line-height: 1;
     }
   }
-  .desc2 {
-    display: grid;
-    grid-template-rows: repeat(2, 1fr);
-    align-items: center;
-    justify-items: flex-end;
-    .num {
-      font-size: 18px;
-      display: block;
-      line-height: 1;
-    }
-  }
+ 
 `;
 const Cp = styled(Paragraph)`
   && {
@@ -316,60 +309,61 @@ const getDataEnergy = async () => {
               <Imgbg projectId={projectId} areaVos={areaVos} />
               <div className="right">
               <Itembox key="today">
-                <Image
+               <Image
                   src={imgurl["e01"]}
                   preview={false}
-                  width={56}
-                  height={56}
-                />
+                  width={54}
+                /> 
+                
                 <div className="desc">
                   <span>今日用电量(kWh)</span>
                   <Text className="num" ellipsis>
                     {energyValue.todayElectricConsume}
                   </Text>
+                  <Cdivider type="h" margin="4px 0px" />
                   <span>今日电费(元)</span>
- 
-                  <Cp ellipsis className="num">
+                  <Text ellipsis className="num num2">
                     {energyValue.todayElectricConsumePay}
-                  </Cp>
+                  </Text>
                 </div>
               </Itembox>
               <Itembox key="month">
                 <Image
                   src={imgurl["e02"]}
                   preview={false}
-                  width={56}
-                  height={56}
+                  width={54}
+                 
                 />
                 <div className="desc">
                   <Text>本月用电量(kWh)</Text>
                   <Text className="num" ellipsis>
                     {energyValue.curMonthElectricConsume}
                   </Text>
+                  <Cdivider type="h" margin="4px 0px" />
                   <Text>本月累计电费(元)</Text>
  
-                  <Cp ellipsis className="num">
+                  <Text ellipsis className="num num2">
                     {energyValue.curMonthElectricConsumePay}
-                  </Cp>
+                  </Text>
                 </div>
               </Itembox>
               <Itembox key="totalY">
                 <Image
                   src={imgurl["e03"]}
                   preview={false}
-                  width={56}
-                  height={56}
+                  width={54}
                 />
                 <div className="desc">
                   <Text ellipsis>年度总用电量(kWh)</Text>
                   <Text className="num" ellipsis>
                     {energyValue.curYearElectricConsume}
                   </Text>
+                  <Cdivider type="h" margin="4px 0px" />
                   <Text ellipsis>本年累计电费(元)</Text>
  
-                  <Cp ellipsis className="num">
+                  <Text ellipsis className="num num2">
                     {energyValue.curYearElectricConsumePay}
-                  </Cp>
+                  </Text>
                 </div>
               </Itembox>
  

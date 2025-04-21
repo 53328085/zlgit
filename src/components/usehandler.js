@@ -230,16 +230,13 @@ export  const Statebox = styled.div`
       
     }
    export  function hextodec(hex) { // 16进制转10进制 rgb
-        let rgbcolor=[255,255,255]
+        let rgbcolor=[255,255,255] 
          try {
-          let Hex=hex.replace(/^#/,'')
-        
-          
+          let Hex=hex.replace(/^#/,'')          
           if(Hex.length==3){
            rgbcolor = Hex.split('').map(hex => parseInt(hex + hex, 16) );
-             
+            return rgbcolor
           }else if(Hex.length==6){
-             
             rgbcolor = Hex.match(/.{1,2}/g).map(hex => parseInt(hex,16))
             return rgbcolor
           }
