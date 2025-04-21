@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState, useContext, createContext, useMemo } from 'react'
 import { useSelector } from 'react-redux'
-import { Form, Row, Col, Select, Input, Divider, message, Button, Typography,Space } from 'antd'
+import { Form, Row, Col, Select, Input, Divider, message, Button, Typography, Space } from 'antd'
 import Comp from './comp'
 import Table from '@com/useTable'
 import Modal from '@com/useModal'
@@ -11,7 +11,7 @@ import { DeleteModal } from './modalCom'
 import { MyContext } from './formcomp'
 import style from './style.module.less'
 import { publishState } from '@redux/systemconfig'
-const {Link} = Typography
+const { Link } = Typography
 const {
   DeviceManager: {
     QueryByPageSensor,
@@ -56,7 +56,7 @@ export default function gateway({ deviceStyle }) {
   const [addform] = Form.useForm()
   const [editform] = Form.useForm()
   const levelname = useRef("")
-  let delid =useRef();
+  let delid = useRef();
   let flies;
   const optcss = {
     color: '#237ae4',
@@ -106,7 +106,7 @@ export default function gateway({ deviceStyle }) {
       title: '操作',
       dataIndex: 'options',
       width: 136,
-      export:false,
+      export: false,
       render: (text, record) => {
         return (
           <Space>
@@ -232,7 +232,7 @@ export default function gateway({ deviceStyle }) {
   //确认删除
   const delOk = async () => {
     console.log(delid.current)
-    const sn =  delid.current
+    const sn = delid.current
     const { success, errMsg } = await DeleteSensor({
       projectId,
       sn: encodeURIComponent(sn),
@@ -283,7 +283,7 @@ export default function gateway({ deviceStyle }) {
   }
   //确认新增
   const addOk = async () => {
-   return addform.validateFields().then(async () => {
+    return addform.validateFields().then(async () => {
       const formvalue = addform.getFieldsValue()
       let params = {
         id: 0,
@@ -305,7 +305,7 @@ export default function gateway({ deviceStyle }) {
       const res = await AddSensor(params)
       if (res.success) {
         message.success('新增成功!')
-      //  modalFormRef?.current?.onCancel()
+        //  modalFormRef?.current?.onCancel()
         getQueryByPageSensor(pageRef.current.current, pageRef.current.pageNum, compRef.current.selvalue, compRef.current.inpvalue, compRef.current.energyVal)
       } else {
         message.error(res.errMsg)
@@ -476,16 +476,16 @@ export default function gateway({ deviceStyle }) {
       let params = {
         projectId,
         pageNum: 1,
-        pageSize:page.total,
-        areaId:  compRef.current.selvalue?compRef.current.selvalue:0,
+        pageSize: page.total,
+        areaId: compRef.current.selvalue ? compRef.current.selvalue : 0,
         alike: compRef.current.inpvalue,
 
       }
-     
+
       const resp = await QueryByPageSensor(params)
-      if(resp.success){
-        resolve({list:resp.data?resp.data:[],total:resp.total})
-      }else{
+      if (resp.success) {
+        resolve({ list: resp.data ? resp.data : [], total: resp.total })
+      } else {
         reject(resp.errMsg)
       }
     })
@@ -510,7 +510,7 @@ export default function gateway({ deviceStyle }) {
     page,
     exportExecel,
     getList: getQueryByPageSensor,
-    tb:tableLoadRef
+    tb: tableLoadRef
   }
   const ModalFormProps = {
     modalFormRef,
@@ -523,14 +523,14 @@ export default function gateway({ deviceStyle }) {
     onSure: addSure,
     onCancel: addCancel
   }
-  const AddModalComp=useMemo(()=>{
+  const AddModalComp = useMemo(() => {
     return (
       <MyContext.Provider value={{ addopts, gatewaylist, devicelist, alarmopts, form: addform, deviceStyle, levelname }}>
-      <AddModalForm {...ModalFormProps} >
-      </AddModalForm>
-    </MyContext.Provider>
+        <AddModalForm {...ModalFormProps} >
+        </AddModalForm>
+      </MyContext.Provider>
     )
-  },[addopts, gatewaylist, devicelist, alarmopts])
+  }, [addopts, gatewaylist, devicelist, alarmopts])
   const uploadprops = {
     maxCount: 1,
     beforeUpload(file, fileList) {
@@ -560,11 +560,11 @@ export default function gateway({ deviceStyle }) {
     ref: errlistRef,
     onOk: () => { ErrModalRef.current.onCancel() }
   }
-  const EditModalComp=useMemo(()=>{
-      return (<MyContext.Provider value={{ addopts, gatewaylist, devicelist, alarmopts, form: editform, deviceStyle, levelname }}>
-        <EditModalForm {...EditModalFormProps}></EditModalForm>
-      </MyContext.Provider>)
-  },[addopts, gatewaylist, devicelist, alarmopts])
+  const EditModalComp = useMemo(() => {
+    return (<MyContext.Provider value={{ addopts, gatewaylist, devicelist, alarmopts, form: editform, deviceStyle, levelname }}>
+      <EditModalForm {...EditModalFormProps}></EditModalForm>
+    </MyContext.Provider>)
+  }, [addopts, gatewaylist, devicelist, alarmopts])
   return (
     <div>
       <Comp {...ComProps}>
@@ -686,14 +686,14 @@ export const FormComp = (props) => {
         <Col flex={1}>
           <Form.Item label="所属网关" name="gatewayId" rules={rules}>
             <Select
-             showSearch
-             filterOption={(val, opts) => {
-               if (opts.sn.includes(val)) {
-                 return true
-               } else {
-                 return false
-               }
-             }}
+              showSearch
+              filterOption={(val, opts) => {
+                if (opts.sn.includes(val)) {
+                  return true
+                } else {
+                  return false
+                }
+              }}
               fieldNames={{
                 label: 'sn',
                 value: 'id',
@@ -750,7 +750,7 @@ export const FormComp = (props) => {
 //新增设备
 export let AddModalForm = ({ modalFormRef, ...other }) => {
   return (
-    <Modal mold='cust' ref={modalFormRef} {...other} title={other.name}  custft={true} onOk={other.onOk}>      
+    <Modal mold='cust' ref={modalFormRef} {...other} title={other.name} custft={true} onOk={other.onOk}>
       <FormComp >
       </FormComp>
     </Modal>
@@ -907,7 +907,7 @@ export const EditFormComp = (props) => {
             ></Select>
           </Form.Item>
           <Form.Item label="传感器编号" name="sn" rules={rules}>
-            <Input disabled/>
+            <Input disabled />
           </Form.Item>
           <Form.Item label="传感器名称" name="name" rules={rules}>
             <Input />
