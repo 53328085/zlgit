@@ -32,6 +32,25 @@ export class CustTheme {
 
   static DeleteTheme = (params) =>
     server.get(`Energy/Theme/DeleteTheme`, { params }); //删除主题
+
+
+
+  // 下面为新的接口
+
+  static QueryMainTheme = (params) =>
+    server.get(`Energy/MainTheme/QueryMainTheme`, { params }); // 获取所有公共主题
+
+  static SetProjectTheme = (params) =>
+    server.get(`Energy/MainTheme/SetProjectTheme`, { params }); // 为项目绑定主题
+  static QueryTheme = (params) =>
+    server.get(`Energy/Theme/QueryTheme`, { params }); // 获取项目下私有主题
+
+  static GetProjectTheme = (params) =>
+    server.get(`Energy/Theme/GetProjectTheme`, { params }); // 获取项目选择的主题
+
+  static SelProjectTheme = (params) =>
+    server.post(`Energy/Theme/SetProjectTheme`, null,{ params }); // 选择项目主题
+
 }
 
 
