@@ -121,6 +121,9 @@ export default function index() {
     disabled: false,
     groupName: ''
   });
+
+
+  
   const markLineList=useReactive([])
   const [params, setParams] = useState([])
   const changeBtn = (e, index) => {
@@ -280,13 +283,13 @@ export default function index() {
           state.chartsOpts.series[b] = []
           state.xAxis[b] = []
           a.snData.forEach((item, index) => {
+             let unit = item?.unit??""
             if (item?.data?.length > 0) {
-              item.data.forEach(it => {
-               
+              item.data.forEach(it => {              
                 state.xAxis[b] = it["data"].map(it => it.time)
                 state.chartsOpts.series[b].push({
-                  data: it.data.map(i => (i["value"])), 
-                  type: "line", 
+                  data: it.data.map(i => (i["value"]+unit)), 
+                  type: "line",                                 
                   smooth: true, 
                   name: item["name"] + "-" + it["point"],
                   markLine:dataList[b].items[params[b].type-1].line!=0?{
@@ -305,7 +308,9 @@ export default function index() {
                     lineStyle: {
                       color: '#f00'
                     }
-                  }:{}
+                  }:{},
+                
+
                 })
               })
             }
@@ -406,7 +411,6 @@ export default function index() {
                   <Radio.Button value="3" disabled={item?.items[2].state == 0}>{i18t("comm","voltage",{text:"对比"})}</Radio.Button>
                   <Radio.Button value="4" disabled={item?.items[3].state == 0}>{i18t("comm","electricity",{text:"对比"})}</Radio.Button>
                 </BtnWrap>
-             
                 {state.detailtableData[index]?.compareDeviation == null ? '' : <CustButtonT style={{ marginRight: 16 }} onClick={() => warnDetail(index)} ns="comm" text="alarm" param={{text:"偏差", text2: "明细"}} /> } 
                 <div>
                 <span style={{paddingRight:"0.5em"}}>{i18t("monitor","datarang")}</span>

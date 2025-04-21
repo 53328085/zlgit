@@ -20,7 +20,7 @@ const Micon = ({iconname}) => {
    let {primary} = location.state || {}   
     let normal=["camera","report","environment"]
     const Com = !normal.includes(iconname) ?  svgcom[primary+iconname] : svgcom[iconname]
-    console.log(iconname)
+    
     const Def = svgcom["def"]
    return   Com ?  <Com  className={iconname + " custicon "+primary}/> :   <Def className="def" ></Def>
   // return <span className="custicon">&#9673;</span>
@@ -220,7 +220,7 @@ export default function Sider() {
     try {
     
       let state = location.state || {}    
-      console.log(state)
+      
       let {nested, primary, title } = state;
       dispatch(getPgTitle(title))
     //  console.log(state,location)
@@ -228,7 +228,7 @@ export default function Sider() {
       setPath(primary)
       let sidermenu = config ? siderDesignerMenu[primary] : siderRunMenu[primary];
       let sidermenus = sidermenu?.map(({no, label, key}) => ({no, label,key, icon: <Micon iconname={key} />})) || []; 
-       console.dir(sidermenu)
+       
      // console.log(nested,sidermenus)    
       setMenus(sidermenus)
       Setkey(nested) 
