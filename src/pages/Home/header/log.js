@@ -397,19 +397,30 @@ const lngOk = () => {
   }
    // navgite('/')
 }
+const getTheme =async ()=>{
+  let {success, data} =  await CustTheme.GetProjectTheme({projectId}) 
+  if(success && isObject(data)) {
+    let {themeId} =data
+    dispatch(getThemeId(themeId))
+       let themedata = Themes.find(t =>t.id==themeId)
+        
+          dispatch(getThemeColor({id:themedata.id, name:themedata.name, ...themedata.context}))
+  }
+}
 const settheme = async (themeId) => {
   try {
     let params ={
       themeId,
-      userId,
+    //  userId,
       projectId,
      }
-    let {success} = await  CustTheme.SetUserTheme(params)
+    console.log(projectId)
+    let {success} = await  CustTheme.SelProjectTheme(params) // 选择项目主题
     if(success){
-    
-       dispatch(getThemeId(themeId))
+        getTheme()
+     /*   dispatch(getThemeId(themeId))
        let data = Themes.find(t =>t.id==themeId)
-          dispatch(getThemeColor({id:data.id, name:data.name, ...data.context}))
+          dispatch(getThemeColor({id:data.id, name:data.name, ...data.context})) */
        
     }
   } catch (error) {

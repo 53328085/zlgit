@@ -195,8 +195,8 @@ export const getWebsiteState = createAsyncThunk(
           Carbon.QueryCarbonEnterprise(id), // 获取碳排企业信息
           HomeRuntime.GetProjectInfo(id),
           Editapi.FilterDeviceStyle(id), // 运行监控运行态，获取设备总类
-        CustTheme.QueryTheme(id), // 获取配色方案
-       CustTheme.GetUserTheme({projectId:id, userId})
+        CustTheme.QueryTheme({projectId:id}), // 获取项目下私有主题
+        CustTheme.GetProjectTheme({projectId:id}) // 获取项目选择的主题
          ] 
         let results = await Promise.allSettled(promises)
         return results
@@ -461,8 +461,8 @@ const system = createSlice({
                index == 5 && (state.enterprise = {})
                index == 6 && (state.currProject = {})
                index == 7 && (state.filterDeviceStyle =[])
-               index == 18 && (state.themes =[])
-               index == 19 && (state.themeId=NaN)
+               index == 8 && (state.themes =[])
+               index == 9 && (state.themeId=NaN)
              }
           }
         })

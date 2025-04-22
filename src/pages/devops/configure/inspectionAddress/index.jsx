@@ -484,7 +484,7 @@ const AddItem = ({ addRef, addItems, addform, addoptiosn, laptop, showchecklist,
   }, [positionRef])
   return (
     <>
-      <Modal mold='cust' custft={true} width={587} ref={addRef} onOk={async () => {await addItems(position) }} title="新增巡检点">
+      <Modal mold='cust' custft={true} width={587} ref={addRef} onOk={async () => {await addItems(position) }} getContainer={false} title="新增巡检点">
         {/* <BlueColumn name="新增巡检点" styled={{ padding: '24px 0px', color: '#237ae4' }} ></BlueColumn> */}
         <AddDiv
           form={addform}
@@ -632,14 +632,14 @@ const EditItem = ({ editRef, editform, updateItems, addoptiosn,showchecklist,sho
           <Input placeholder="请输入具体位置"></Input>
         </Form.Item>
         <Form.Item label="巡检设备" rules={[{ required: true }]}>
-          <CustButtonT onClick={showdevice} text="clicktoget" />
+          <CustButtonT onClick={getDevicelist} text="clicktoget" />
         </Form.Item>
         {/* <Form.Item label=" " name="deviceGroup" rules={[{ required: true }]}>
           <Input disabled></Input>
         </Form.Item> */}
         <Divider dashed></Divider>
         <Form.Item label="巡检检查项" rules={[{ required: true }]}>
-          <CustButtonT onClick={showchecklist} text="clicktoget" />
+          <CustButtonT onClick={getChecklist} text="clicktoget" />
         </Form.Item>
         {/* <Form.Item label=" " name="contentGroup" rules={[{ required: true }]}>
           <Input disabled></Input>
@@ -652,8 +652,8 @@ const EditItem = ({ editRef, editform, updateItems, addoptiosn,showchecklist,sho
       <CustContext.Provider value={{ lngLat: editform.getFieldValue().lngLat, address: editform.getFieldValue().address }}>
         <SetPosition positionRef={positionRef} savePosition={savePosition} />
       </CustContext.Provider>
-      <SetLine ref={devicelistref} addform={editform} />
-      <TransLine ref={checklistref} addform={editform} />
+  <SetLine ref={devicelistref} addform={editform} />
+      <TransLine ref={checklistref} addform={editform} /> 
 
     </Modal>
   )

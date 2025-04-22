@@ -32,6 +32,25 @@ export class CustTheme {
 
   static DeleteTheme = (params) =>
     server.get(`Energy/Theme/DeleteTheme`, { params }); //删除主题
+
+
+
+  // 下面为新的接口
+
+  static QueryMainTheme = (params) =>
+    server.get(`Energy/MainTheme/QueryMainTheme`, { params }); // 获取所有公共主题
+
+  static SetProjectTheme = (params) =>
+    server.get(`Energy/MainTheme/SetProjectTheme`, { params }); // 为项目绑定主题
+  static QueryTheme = (params) =>
+    server.get(`Energy/Theme/QueryTheme`, { params }); // 获取项目下私有主题
+
+  static GetProjectTheme = (params) =>
+    server.get(`Energy/Theme/GetProjectTheme`, { params }); // 获取项目选择的主题
+
+  static SelProjectTheme = (params) =>
+    server.post(`Energy/Theme/SetProjectTheme`, null, { params }); // 选择项目主题
+
 }
 
 
@@ -48,11 +67,11 @@ export class DiskChart {
     server.post(`${DiskChart.prefix}/DoOpenClose?devSn=${devSn}&operation=${operation}`); // 断路器分合闸
   static QueryServiceResult = ({ tm, key }) =>
     server.post(`${DiskChart.prefix}/QueryServiceResult?startTM=${tm}&resultKey=${key}`); // 断路器分合闸
-  static QueryMqtt = () => 
+  static QueryMqtt = () =>
     server.get(`${DiskChart.prefix}/QueryMqtt`); //获取mqtt参数
-  static GetHMIHeart = (body) => 
+  static GetHMIHeart = (body) =>
     server.post(`${DiskChart.prefix}/SendDevicesHeart`, body); //获取mqtt参数
-  
+
 
 }
 // 电能质量
@@ -1915,6 +1934,23 @@ export const Monitoring = {
     UpdateMic: (data) =>
       server.post(`/Monitor/Device/UpdateMic`, data), //更新微机保护
     ImportMic: (data) => server.post(`/Monitor/Device/ImportMic`, data), //批量导入微机保护
+
+    //376协议
+    QueryDeviceIncreaseParams: ({ projectId, gatewayId, port, alike }) =>
+      server.post(`/Monitor/Device/QueryDeviceIncreaseParams?projectId=${projectId}&gatewayId=${gatewayId}&port=${port}&alike=${alike}`), //查询查询新增参数
+    InsertOrUpdateDeviceParam: (projectId, gatewaySn, data) =>
+      server.post(`/Monitor/Device/InsertOrUpdateDeviceParam?projectId=${projectId}&gatewaySn=${gatewaySn}`, data) // 376协议新增参数
+  },
+  FileDistribution: {
+    //档案下发
+    QueryByPageFlow: ({ projectId, gatewayId, port, alike }) =>
+      server.post(`/Monitor/Device/QueryDeviceIncreaseParams?projectId=${projectId}&gatewayId=${gatewayId}&port=${port}&alike=${alike}`), //查询查询新增参数
+    DataInitialization: ({ projectId, gatewaySn, port }) =>
+      server.post(`/Monitor/Device/DataInitialization?projectId=${projectId}&gatewaySn=${gatewaySn}&port=${port}`), //数据区初始化
+    ClearPoint: ({ projectId, gatewaySn, port }) =>
+      server.post(`/Monitor/Device/ClearPoint?projectId=${projectId}&gatewaySn=${gatewaySn}&port=${port}`), //清除测量点
+    Query376CommandSettingResult: (seq) =>
+      server.get(`/Monitor/Device/Query376CommandSettingResult?seq=${seq}`), //查询命令设置结果
   },
   //公共照明管理
   PubliclightManager: {
@@ -2386,15 +2422,15 @@ export class energyShare {
 //数据报表
 export class energyReport {
   static QueryReadingByAreaCustomize = (params, body) =>
-    server.post(`Energy/DataReportRuntime/QueryReadingByAreaCustomize`, body,{params}); //实时抄表自定义-区域
+    server.post(`Energy/DataReportRuntime/QueryReadingByAreaCustomize`, body, { params }); //实时抄表自定义-区域
   static QueryReadingByLineCustomize = (params, body) =>
-    server.post(`Energy/DataReportRuntime/QueryReadingByLineCustomize`, body,{params}); //实时抄表自定义-线路
+    server.post(`Energy/DataReportRuntime/QueryReadingByLineCustomize`, body, { params }); //实时抄表自定义-线路
 
 
   static QueryConsumeByAreaCustomize = (params, body) =>
-    server.post(`Energy/DataReportRuntime/QueryConsumeByAreaCustomize`, body,{params}); //能耗报表自定义-区域
+    server.post(`Energy/DataReportRuntime/QueryConsumeByAreaCustomize`, body, { params }); //能耗报表自定义-区域
   static QueryConsumeByLineCustomize = (params, body) =>
-    server.post(`Energy/DataReportRuntime/QueryConsumeByLineCustomize`, body,{params}); //能耗报表自定义-线路
+    server.post(`Energy/DataReportRuntime/QueryConsumeByLineCustomize`, body, { params }); //能耗报表自定义-线路
 
   static AeraQueryAll = (projectId) =>
     server.get(`/General/Area/QueryAll?projectId=${projectId}&level=1`); //获取区域

@@ -1,9 +1,10 @@
-import React from "react";
+import React, { useMemo } from "react";
 import styled, { css } from "styled-components";
 import { useSelector } from "react-redux";
 import { MRGB } from "@redux/systemconfig.js";
 import { TreeBtn, i18t } from "@com/useButton";
-
+import {Typography} from 'antd'
+const {Text} = Typography
 const CardItme = styled.div`
   && {
     height: 164px;
@@ -22,7 +23,7 @@ const CardItme = styled.div`
       justify-content: center;
       align-items: center;
       display: flex;
-      background-color: #fff;
+    //  background-color: #fff;
       overflow: hidden;
       .img {
         max-width: 100%;
@@ -41,6 +42,9 @@ const CardItme = styled.div`
         color: ${(props) => props.theme.bgcolorfont};
         font-weight: bold;
         column-gap: 16px;
+        .ant-typography{
+          color: ${(props) => props.theme.bgcolorfont};
+        }
         .on {
           margin-left: auto;
         }
@@ -53,8 +57,8 @@ const CardItme = styled.div`
         display: grid;
         grid-template-columns: 1fr 1fr;
         grid-template-rows: 1fr 1fr;
-        background-color: rgba(${props => props.rgb[0]},${props => props.rgb[1]},${props => props.rgb[2]},0.2);
-        border: 1px solid rgba(${props => props.rgb[0]},${props => props.rgb[1]},${props => props.rgb[2]},0.2);
+        background-color: rgba(${props => props.rgb[0]},${props => props.rgb[1]},${props => props.rgb[2]},0.15);
+       // border: 1px solid rgba(${props => props.rgb[0]},${props => props.rgb[1]},${props => props.rgb[2]},0.2);
         border-radius: 6px;
         .item {
           padding: 0 8px;
@@ -66,7 +70,7 @@ const CardItme = styled.div`
             font-size: 14px;
           }
           .value {
-            color: ${(props) => props.theme.fieldvalue || "#33FF00"};
+            color: ${(props) => props.theme.fieldvalue || "#1E50E6"};
             font-size: 16px;
             white-space: nowrap;
           }
@@ -107,7 +111,7 @@ const Gateway = (props) => {
   return (
     <>
       <div className="line">
-        <span>{props.name}</span>
+        <Text ellipsis={{tooltip: props.name}}>{props?.name}</Text>
         <span>{props.title}</span>
         {props.state == 2 ? (
           <TreeBtn type={2} ns="comm" text="normal" className="on" />
@@ -134,11 +138,22 @@ const Gateway = (props) => {
   );
 };
 const Device = (props) => {
-  const {fields} = props
+  const {fields,state,deviceStyle} = props
+  const text = useMemo(()=> {
+    let t='' ;
+    if(deviceStyle == 12) {
+      t = {Close: "合闸", Open: "分闸"}[fields?.[3]?.value] ?? "" ;
+    }else if(deviceStyle == 1 && state && ["Close", "Open"].includes(fields?.[3]?.value)) {
+      t = {Close: "合闸", Open: "分闸"}[fields?.[3]?.value] ?? "" ;
+    }else {
+      t = fields?.[3]?.value 
+    }
+    return t
+  }, [deviceStyle])
   return (
     <>
       <div className="line sp">
-        <span>{props.title}</span>
+        <Text ellipsis={{tooltip: props.title}}>{props.title}</Text>
         <span>SN:{props.category}</span>
         {props.state == 2 ? (
           <TreeBtn type={2} ns="comm" text="normal" />
@@ -154,25 +169,25 @@ const Device = (props) => {
         )}
       </div>
       <div className="line sp">
-        <span>{props.value}</span>
+        <Text ellipsis={{tooltip: props.value}}>{props.value}</Text>
         <span>{props.lastSampleTime}</span>
       </div>
       <div className="values"> 
             <div className="item">
-              <span className="field">{fields?.[0]?.name}</span>
+              <Text ellipsis={{ellipsis: fields?.[0]?.name}} className="field">{fields?.[0]?.name}</Text>
               <span className="value">{fields?.[0]?.value}</span>
             </div> 
             <div className="item">
-              <span className="field">{fields?.[1]?.name}</span>
+            <Text ellipsis={{ellipsis: fields?.[1]?.name}} className="field">{fields?.[1]?.name}</Text>
               <span className="value">{fields?.[1]?.value}</span>
             </div> 
             <div className="item">
-              <span className="field">{fields?.[2]?.name}</span>
+            <Text ellipsis={{ellipsis: fields?.[2]?.name}} className="field">{fields?.[2]?.name}</Text>
               <span className="value">{fields?.[2]?.value}</span>
             </div> 
             <div className="item">
-              <span className="field">{fields?.[3]?.name}</span>
-              <span className="value">{fields?.[3]?.value}</span>
+            <Text ellipsis={{ellipsis: fields?.[3]?.name}} className="field">{fields?.[3]?.name}</Text>
+              <span className="value">{text}</span>
             </div> 
       </div>
     </>
@@ -189,7 +204,7 @@ export default function Index(props) {
         <img src={img} className="img" alt={title}></img>
       </div>
       <div className="content">
-        {device == 1 ? <Gateway {...rest}  /> : <Device {...rest} title={title} />}
+        {device == 1 ? <Gateway {...rest}  /> : <Device {...rest}   title={title} />}
       </div>
     </CardItme>
   );

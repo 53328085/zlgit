@@ -1,4 +1,4 @@
-import React, { useState,  useRef } from "react";
+import React, { useState,  useRef, useEffect, useMemo } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { nanoid } from "@reduxjs/toolkit";
 import { useNavigate } from "react-router-dom";
@@ -16,7 +16,8 @@ import {
   Table,
   Layout,
   message,
-  DatePicker
+  DatePicker,
+  Tag
 } from "antd";
 import {
   UserOutlined,
@@ -28,7 +29,7 @@ import {
 } from "@ant-design/icons";
 import { useAntdTable } from "ahooks";
  
-import { ProjectList} from "@api/api.js";
+import { ProjectList, CustTheme} from "@api/api.js";
 import {selectUser} from '@redux/user'
 
 import {Iptserach, Cselect} from "@com/comstyled"
@@ -43,7 +44,7 @@ import { systemConfigInfo, getJump, iszhCN, getWebsiteState, getWebsiteMenu, ada
 import UseTabel from '@com/useTable'
 import Account from "./account";
 //import { runMenus } from "../../redux/systemconfig";
- 
+ const {QueryMainTheme, SetProjectTheme} = CustTheme
  
 const CustTable = styled(Table)`
   && {
@@ -78,6 +79,13 @@ const CustTable = styled(Table)`
 const btsty = css`
   height: 32px;
   font-size: 12px;
+`
+const custsty = css`
+ .ant-modal-title {
+  >div {
+    flex:1
+  }
+ }
 `
 const CustBtn = styled(Button)`
   max-width: ${(props) => props.width || "144px"};
@@ -269,6 +277,11 @@ export default function Index() {
   const iszh = useSelector(iszhCN)
   const {laptop} = useSelector(adaptation) || {}
   const {userId,roleType} =useSelector(selectUser)
+  const [themes, setThemes] = useState([])
+  const tbdata = useMemo(()=>{
+     return themes.map(t => ({primaryColor: t.context?.primaryColor, ...t}))
+  },[themes] )
+  console.log(tbdata)
   const navigate = useNavigate();
   const dispatch = useDispatch();
    
@@ -296,6 +309,7 @@ export default function Index() {
    // modal.current.onCancel()
     //navigate("/", {});
   };
+
   const onSubmit = async () => {
     let params =  await projectform.current.onSubmint();
     if(!params) return
@@ -313,7 +327,69 @@ export default function Index() {
       console.log(e);
     })
   }
+  // 设置 主题 start
+  const themecolumns =[
+    {
+      title: "主题名称",
+      dataIndex: "name",
+      key: "name",
+      align: "center", 
+    },
+    {
+      title:"主题主色调",
+      dataIndex: "primaryColor",
+       key: "primaryColor",
+      align: "center", 
+      width: 120,
+      render: (_, row) => <Tag color={row?.context?.primaryColor}>{row?.context?.primaryColor}</Tag>
+    },
+  ]
+  const themeId = useRef()
+  const rowSelection = {
+    onChange: (selectedRowKeys, selectedRows) => {
+      themeId.current.mainThemeId = selectedRows?.[0].id
+     // console.log(`selectedRowKeys: ${selectedRowKeys}`, 'selectedRows: ', selectedRows);
+    }, 
+  };
+  const themeref = useRef()
+ const queryMainTheme = async () => {
+    try {
+      let {success, data, errMsg} = await QueryMainTheme()
+      if(success && Array.isArray(data)) {
+        setThemes(data.map(d => ({...d,    context: JSON.parse(d.context)})))
+      }else {
+        setThemes([])
+        message.warning(errMsg || "无法获取主题")
+      }
+    } catch (error) {
+      
+    }
+    
 
+ }
+ const showtheme = (id) => {
+   themeId.current ={
+    mainThemeId: null,
+    projectId:id
+   } 
+   themeref.current.onOpen()
+
+ }
+ const themeok = async ()=> {
+    if(!themeId.current.mainThemeId) {
+      return message.warning("请选择主题")
+    }
+   let {success, errMsg} =  await SetProjectTheme(themeId.current)
+   if(success) {
+    message.success("设置主题成功")
+    themeref.current.onCancel()
+   }else {
+    message.warning(errMsg || "设置出错")
+   }
+ }
+
+
+ //end
  const enterProject = async ({id, type, publishState}) => { // type 1是设计type 2是运行
    try {
      dispatch(getWebsiteState({id, userId}))
@@ -377,6 +453,8 @@ export default function Index() {
   const showproject = () => {
     formmodal.current.onOpen()
   }
+ 
+
   const columns = [
     {
       dataIndex: "index",
@@ -438,6 +516,13 @@ export default function Index() {
           >
             {t("platformcig:EnterProject")}
           </CustBtn>
+        {roleType ==1 &&  <CustBtn
+            laptop={laptop} 
+            onClick={()=> showtheme(record.id)}
+          >
+             设置项目主题
+          </CustBtn>
+    }
         </Space>
       ),
     },
@@ -611,7 +696,9 @@ tableProps.pagination.size=laptop ? "small" : "default" // 页码大小默认
 const closeModl = () => {
   operRef.current.onCancel()
 }
-
+useEffect(()=> {
+  queryMainTheme()
+}, [])
   return (
       
       <Mainbox laptop={laptop}>
@@ -764,11 +851,12 @@ const closeModl = () => {
 
 
       <Custmodal
-        title={<div style={{display: 'flex', justifyContent: 'space-between'}}><span>{t("platformcig:ProjectOperationHistory")}</span> <Button style={{width: '92px'}} type="primary" onClick={opclose}>{t("comm:Close")}</Button></div>}
+        title={<div style={{display: 'flex', flex:1, alignItems: "center", justifyContent: 'space-between'}}><span>{t("platformcig:ProjectOperationHistory")}</span> <Button style={{width: '92px'}} type="primary" onClick={opclose}>{t("comm:Close")}</Button></div>}
         ref={opref} 
         width={laptop ? 1000 : 1424} 
         mold="cust"   
         footer={null}
+        custsty={custsty}
       >
          <OprecordCom />
          
@@ -785,6 +873,34 @@ const closeModl = () => {
       >
          <Account />
          
+      </Custmodal>
+      <Custmodal
+        title="选择项目主题" 
+         ref={themeref}
+         onOk={themeok}
+        
+        width={488}
+        mold="cust"
+       
+      >
+          <UseTabel
+            columns={themecolumns}
+            rowSelection={{
+              type: "radio",
+              ...rowSelection,
+            }}
+        //    rowClassName="rowclass"
+            dataSource={tbdata}
+            rowKey="id"
+          //  bordered={true}
+            laptop={laptop}
+            scroll={{
+              y: 800
+            }}
+            size={laptop ? "small" : "default"}
+          >
+           
+          </UseTabel>
       </Custmodal>
       </Mainbox>
      

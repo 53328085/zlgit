@@ -14,32 +14,51 @@ const sty= css`
 const Itembox = styled.div`
   position: relative;
   overflow: hidden;
-  background-image:   url(${imgurl.itembg}) ;
-  background-size: contain;
-  outline: 1px solid rgba(215,215,215,1);
-  outline-offset: 1px ;
+//  background-image:   url(${imgurl.itembg}) ;
+//  background-size: contain;
+  outline: 1px solid #DDDFE6;
+  //outline-offset: 1px ;
   display: grid;
   //padding: 8px;
-  padding: 20px 8px;
-  grid-template-rows: 128px 140px;
-  row-gap: 16px;
+  padding: 14px;
+  grid-template-rows: 100px 148px;
+  row-gap: 20px;
   align-content: end;
+  border-radius: 8px;
+  color: #303133;
   .upper{
      display: grid;
-     grid-template-columns: 172px 1fr;
-     column-gap: 8px;
+     grid-template-columns: 100px 1fr;
+     column-gap: 17px;
      padding: 0 4px;
      .pic {
        background-color: rgba(97,113,152,1);
-       border-radius: 8px;
+       border-radius: 6px;
        display: flex;
        align-items: center;
        justify-content: center;
+       width: 100px;
+       height: 100px;
+       overflow: hidden;
+       .img {
+        max-width: 100%;
+       }
      }
      .info {
+      display: flex;
+      flex-direction: column;
+      justify-content: space-evenly;
+      
       .ant-typography {
-        color: #fff;
-        line-height: 1.2;
+
+        color: #303133;
+        line-height: 1;
+        margin-bottom: 0;
+        .span {
+        display: inline-block;
+        color: #606266;
+        width: 6em;
+      }
       }
      
      }
@@ -48,7 +67,7 @@ const Itembox = styled.div`
      outline: 1px solid #fff;
      outline-offset: 1px;
      display: grid;
-     grid-template-columns: 115px 91px 86px 86px;
+     grid-template-columns: 120px repeat(3, 1fr);
      grid-template-rows: repeat(5, 1fr);
      div {
       display: flex;
@@ -58,8 +77,10 @@ const Itembox = styled.div`
       padding: 0 4px;
      }
      .title {
-      background-color: #135abd;
-      border-right: 1px solid #fff;
+       background-color: #B4CBF3;
+       color:#303133;
+    //  background-color: #135abd;
+     // border-right: 1px solid #fff;
       justify-content: center;
      
      }
@@ -70,37 +91,44 @@ const Itembox = styled.div`
       border-top: 1px solid #fff;
      }
      .back {
-      border-top: 1px solid #fff;
-       background-color: #000;
+    //  border-top: 1px solid #fff;
+       background-color: #1A316F;
      }
      .red {
-      border-top: 1px solid #fff;
-      background-color: #ff3333;
+    //  border-top: 1px solid #fff;
+      background-color:#E46464;
      }
      .yellow {
-      border-top: 1px solid #fff;
-       background-color: #ffcc00;
+    //  border-top: 1px solid #fff;
+       background-color: #EDB258;
      }
      .green {
-      border-top: 1px solid #fff;
-      background-color: #093;;
+    //  border-top: 1px solid #fff;
+      background-color: #43C66F;
      }
      .com { 
-      background-color: #fff;
-      border-right: 1px solid #d7d7d7;
-      border-bottom: 1px solid #d7d7d7 ;
-      color:#000;
+    //  background-color: #fff;
+    //  border-right: 1px solid #d7d7d7;
+     // border-bottom: 1px solid #d7d7d7 ;
+      color:#303133;
       display: flex;
       align-items: center;
-      justify-content: space-between;
+      justify-content: center;
       &:last-of-type {
        // border-right: none;
       }
      }
-     .bold {
-      color: #515151;
-      font-weight: bold;
-      justify-content: end;
+     .comback {
+      background-color: rgba(26, 49, 111, 0.15);
+     }
+     .comred {
+      background-color: rgba(228, 100, 100, 0.15);
+     }
+     .comyellow {
+      background-color: rgba(237, 178, 88, 0.15);
+     }
+     .comgreen {
+      background-color: rgba(67, 198, 111, 0.15);
      }
     
      .rose {
@@ -132,36 +160,36 @@ export default function Item(props) {
        {/* <Statebox top="13px" right="-20px" width="85px" bgColor={bgColor}>{state}</Statebox> */}
        <div className='upper' key={nanoid()}>
            <div className='pic' key={nanoid()}>
-              <Image src={image} preview={false} ></Image>
+              <img src={image} className='img' ></img>
            </div>
-           <div className='info' key={nanoid()}>
-             <Paragraph ellipsis={{tooltip: name}}>{name}</Paragraph>
-             <Paragraph ellipsis={{tooltip: sns, rows: 2}}>SN:{sns}</Paragraph>
-             <Paragraph ellipsis={{tooltip: address, rows: 3}}>{address}</Paragraph>
-           </div>
+            <div className='info' key={nanoid()}>
+                           <Paragraph ellipsis={{ tooltip: name }}><span className='span'>设备名称</span>{name}</Paragraph>
+                           <Paragraph ellipsis={{ tooltip: sns, rows: 2 }}><span className='span'>设备SN</span>SN:{sns}</Paragraph>
+                           <Paragraph ellipsis={{ tooltip: address, rows: 3 }}><span className='span'>安装地址</span>{address}</Paragraph>
+                         </div>
        </div>
-       <div className='below' key={nanoid()}>
-           {["分类", "读数","同比", "环比"].map(e => <div className='title'>{e}</div>)}
-
-           <div className='back' key={nanoid()}>总能耗(kWh)</div>
-           <div className='com bold' key={nanoid()}>{e}</div>
-           <div className='com' key={nanoid()}>{numberformat(yoyE)}</div>
-           <div className='com' key={nanoid()}>{numberformat(momE)}</div>
-           <div className='red' key={nanoid()}>峰能耗(kWh)</div>
-           <div className='com bold' key={nanoid()}>{e2}</div>
-           <div className='com' key={nanoid()}>{numberformat(yoyE2)}</div>
-           <div className='com' key={nanoid()}>{numberformat(momE2)}</div>
-
-           <div className='yellow' key={nanoid()}>平能耗(kWh)</div>
-           <div className='com bold' key={nanoid()}>{e3}</div>
-           <div className='com' key={nanoid()}>{numberformat(yoyE3)}</div>
-           <div className='com' key={nanoid()}>{numberformat(momE3)}</div>
-
-           <div className='green' key={nanoid()}>谷能耗(kWh)</div>
-           <div className='com bold' key={nanoid()}>{e4}</div>
-           <div className='com' key={nanoid()}>{numberformat(yoyE4)}</div>
-           <div className='com' key={nanoid()}>{numberformat(momE4)}</div>
-       </div>
+        <div className='below' key={nanoid()}>
+                    {["分类", "读数", "同比", "环比"].map(e => <div className='title'>{e}</div>)}
+      
+                    <div className='back' key={nanoid()}>总能耗(kWh)</div>
+                    <div className='com comback' key={nanoid()}>{e}</div>
+                    <div className='com comback' key={nanoid()}>{numberformat(yoyE)}</div>
+                    <div className='com comback' key={nanoid()}>{numberformat(momE)}</div>
+                    <div className='red' key={nanoid()}>峰能耗(kWh)</div>
+                    <div className='com comred' key={nanoid()}>{e2}</div>
+                    <div className='com comred' key={nanoid()}>{numberformat(yoyE2)}</div>
+                    <div className='com comred' key={nanoid()}>{numberformat(momE2)}</div>
+      
+                    <div className='yellow' key={nanoid()}>平能耗(kWh)</div>
+                    <div className='com comyellow' key={nanoid()}>{e3}</div>
+                    <div className='com comyellow' key={nanoid()}>{numberformat(yoyE3)}</div>
+                    <div className='com comyellow' key={nanoid()}>{numberformat(momE3)}</div>
+      
+                    <div className='green' key={nanoid()}>谷能耗(kWh)</div>
+                    <div className='com comgreen' key={nanoid()}>{e4}</div>
+                    <div className='com comgreen' key={nanoid()}>{numberformat(yoyE4)}</div>
+                    <div className='com comgreen' key={nanoid()}>{numberformat(momE4)}</div>
+                  </div>
     </Itembox>
   )
 }

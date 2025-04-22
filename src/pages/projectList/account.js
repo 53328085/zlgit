@@ -209,7 +209,7 @@ const showModl = () => {
             <Form.Item name="alike" label={t("platformcig:AccountInquiry")} normalize={normalize}>
                 <Serach placeholder={t("platformcig:msgap")}   style={{width: '550px'}} onSearch={submit}/>
             </Form.Item>
-            <Form.Item>
+            <Form.Item style={{marginLeft: "16px"}}>
                 <CustButtonT  onClick={showModl} text="new" src="new" />  
             </Form.Item>
         </Form>
