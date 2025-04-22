@@ -1906,6 +1906,15 @@ export const Monitoring = {
     UpdateFlow: (data) =>
       server.post(`/Monitor/Device/UpdateFlow`, data), //更新流量计
     ImportFlow: (data) => server.post(`/Monitor/Device/ImportFlow`, data), //批量导入流量计
+
+    DeleteMic: (data) =>
+      server.delete(`/Monitor/Device/DeleteMic`, { params: data }), //删除微机保护
+    QueryByPageMic: (data) =>
+      server.post(`/Monitor/Device/QueryByPageMic`, data), //查询微机保护
+    AddMic: (data) => server.post(`/Monitor/Device/AddMic`, data), //新增微机保护
+    UpdateMic: (data) =>
+      server.post(`/Monitor/Device/UpdateMic`, data), //更新微机保护
+    ImportMic: (data) => server.post(`/Monitor/Device/ImportMic`, data), //批量导入微机保护
   },
   //公共照明管理
   PubliclightManager: {
