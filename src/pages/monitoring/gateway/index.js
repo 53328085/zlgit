@@ -147,7 +147,7 @@ export default function Index(props) {
     getGatewayUsed();
   }, []);
   useEffect(() => {
-    console.log(areaId)
+    
     if (Number.isFinite(areaId)) {
       getData();
     }

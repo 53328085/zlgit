@@ -60,7 +60,8 @@ export default function GatewayDetail(props) {
 
   const projectId = useSelector(selectProjectId);
   const enchtitle = useSelector(mixtitle);
-  const { chineseTitle } = useSelector(systemConfigInfo);
+ // const { chineseTitle } = useSelector(systemConfigInfo);
+ 
   //   const [messageApi, contextHolder] = message.useMessage();
   const {
     RuntimeGateway: { RuntimeGatewayDetail, Children, Log, CategoryImages,RTGCall },
@@ -246,7 +247,7 @@ export default function GatewayDetail(props) {
         {logoImage ? (
           <img src={logoImage} className={style.headImg}></img>
         ) : null}
-        <p>{chineseTitle}</p>
+        <p>{projectName}</p>{/* 小何 这里改成项目名称 */}
       </div>
       <div className={style.body}>
         <div className={style.left}>
