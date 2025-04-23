@@ -9,6 +9,7 @@ import Table from '@com/useTable'
 import upCloud from './imgs/upcloud.png'
 import cusContext from '@com/content'
 import {adaptation} from "@redux/systemconfig"
+import { cloneDeep } from 'lodash';
 const { Dragger } = Upload;
 //删除modal组件
 export let DeleteModal = ({ DelModalRef, name = '', content = '', ...other }) => {
@@ -74,7 +75,7 @@ let TableForm = forwardRef(({ defaultTableData, tabledatas }, ref) => {
   const [siwtched, setSwitched] = useState([...checedList])
   const [tableParams, setTableParams] = useState({ current: 1, pageSize: 10 })
 
-  tableDataRef.current = structuredClone(pointSource)
+  tableDataRef.current = cloneDeep(pointSource)
   const choosemes = () => {
     let count = 0;
     tableDataRef.current?.forEach(it => {
@@ -156,7 +157,7 @@ let TableForm = forwardRef(({ defaultTableData, tabledatas }, ref) => {
               // defaultChecked={t}
               disabled={siwtched.length > 3 && !siwtched.includes(record.index)}
               onChange={(o) => {
-                const list = structuredClone(pointSource)
+                const list = cloneDeep(pointSource)
                 console.log('onchange', o)
                 list.forEach((it, i) => {
                   if (it.index === record.index) {
@@ -194,7 +195,7 @@ let TableForm = forwardRef(({ defaultTableData, tabledatas }, ref) => {
   //   setPointSource(JSON.parse(JSON.stringify(updateTableRef)))
   //  },[JSON.stringify(updateTableRef)])
   //  useEffect(()=>{
-  //   tableDataRef.current=structuredClone(pointSource)
+  //   tableDataRef.current=cloneDeep(pointSource)
   //   console.log('pointSource变化了',pointSource)
 
   //  },[pointSource])
@@ -330,7 +331,7 @@ let TableEditForm = forwardRef(({ defaultTableData, tabledatas }, ref) => {
   const [pointSource, setPointSource] = useState([...defaultTableData])
   const tableDataRef = useRef()
   const {laptop} = useSelector(adaptation)
-  tableDataRef.current = structuredClone(pointSource)
+  tableDataRef.current = cloneDeep(pointSource)
   // console.log('tableDataRef',tableDataRef.current)
   let checedList = []
   defaultTableData?.forEach(it => { if (it.watchPoint) { checedList.push(it.index) } })
@@ -386,7 +387,7 @@ let TableEditForm = forwardRef(({ defaultTableData, tabledatas }, ref) => {
         return (
           <Switch checkedChildren="存储" unCheckedChildren="不存储" defaultChecked={_}
             onChange={(o) => {
-              const list = structuredClone(pointSource)
+              const list = cloneDeep(pointSource)
               list.forEach((it, index) => {
                 if (it.index === v.index) {
                   it.isSave = o
@@ -413,7 +414,7 @@ let TableEditForm = forwardRef(({ defaultTableData, tabledatas }, ref) => {
             defaultChecked={t}
             disabled={siwtched.length > 3 && !siwtched.includes(record.index)}
             onChange={(o) => {
-              const list = structuredClone(pointSource)
+              const list = cloneDeep(pointSource)
               list.forEach((it, i) => {
                 if (it.index === record.index) {
                   it.watchPoint = o

@@ -1,165 +1,211 @@
 @import url('../iconfont/iconfont.css');
-html, body {
-    margin: 0;
-    padding: 0;
-    height: 100vh;
-    width: 100%;
-    min-width: 1098px;
- //   min-width:1920px;  
-    display: flex;
-    font-size: 14px;
-    overflow: auto; // 屏幕缩放150%、200%时需要滚动条
-  
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  height: 100vh;
+  width: 100%;
+  min-width: 1098px;
+  //   min-width:1920px;  
+  display: flex;
+  font-size: 14px;
+  overflow: auto; // 屏幕缩放150%、200%时需要滚动条
+
 }
+
 [lang^="en"] body {
-   font-size: small !important;
+  font-size: small !important;
 }
+
 #root {
-    overflow: auto; // 屏幕缩放150%、200%时需要滚动条
-    height: inherit;
-    overflow: hidden;
-    display: flex;
-    flex-direction: column;
-    flex:1;
+  overflow: auto; // 屏幕缩放150%、200%时需要滚动条
+  height: inherit;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
 }
-html,body #root {
+
+html,
+body #root {
   transform: translateZ(0);
-  .ant-btn, .ant-radio-button-wrapper, .ant-typography {
-     will-change: transform;
+
+  .ant-btn,
+  .ant-radio-button-wrapper,
+  .ant-typography {
+    will-change: transform;
   }
+
   a {
     touch-action: manipulation;
   }
 }
+
 @media (pointer: coarse) {
   /* 在触摸屏设备上应用的样式 */
 }
+
 @media screen and (max-device-width:1536px) {
-  .ant-form-item{
+  .ant-form-item {
     margin-bottom: 12px;
   }
 }
- 
- 
 
 
 
-*, *::after, *::before {
-    box-sizing: border-box;
-}
-h1,h2,h3,h4,h5,h6,p{
-    margin: 0;
-    padding: 0;
-    font-weight: normal;
+
+
+*,
+*::after,
+*::before {
+  box-sizing: border-box;
 }
 
-body::-webkit-scrollbar{
-    display: none !important;
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+p {
+  margin: 0;
+  padding: 0;
+  font-weight: normal;
+}
+
+body::-webkit-scrollbar {
+  display: none !important;
 }
 
 body *::-webkit-scrollbar {
-    width: 5px;
-    height: 8px;
-    background-color: #ccc; 
-  }
+  width: 5px;
+  height: 8px;
+  background-color: #ccc;
+}
+
 body *::-webkit-scrollbar-thumb {
-      background: #ccc;
-  }
+  background: #ccc;
+}
+
 .ellipsis {
-      white-space: nowrap;
-      text-overflow: ellipsis;
-      overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
 }
 
 .flex {
-    display: flex;
+  display: flex;
 }
+
 .felx_1 {
-    flex: 1
+  flex: 1
 }
+
 .ant-layout-content.page--main {
-    padding: 16px;
-    display: flex;
-    height: inherit;
-    flex-direction: column;
+  padding: 16px;
+  display: flex;
+  height: inherit;
+  flex-direction: column;
 }
+
 .page--content {
-    flex:1;
-    display: grid;
-    grid-template-rows: 52px 1fr;
-    row-gap: 16px;
-    
-  }
-  .page--content--box {
-    display: flex;
-    flex-direction: column;
-   
- }
- .page--content--main {
-    background-color: #fff;
-    padding: 16px;
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    position: relative;
- }
-.button--tabs {
-    padding-bottom: 16px;
-    border-bottom: 1px dotted #d7d7d7;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-bottom: 16px;
+  flex: 1;
+  display: grid;
+  grid-template-rows: 52px 1fr;
+  row-gap: 16px;
+
 }
-.ant-table-thead > tr > th {
+
+.page--content--box {
+  display: flex;
+  flex-direction: column;
+
+}
+
+.page--content--main {
+  background-color: #fff;
+  padding: 16px;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+}
+
+.button--tabs {
+  padding-bottom: 16px;
+  border-bottom: 1px dotted #d7d7d7;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+}
+
+.ant-table-thead>tr>th {
   text-align: center;
 }
- 
 
- .spincsut{
+
+.spincsut {
   flex: 1;
   display: flex;
   flex-direction: column;
   width: 100%;
-  .ant-spin-container{
-  display: flex;
-  flex: 1;
-  flex-direction: column;
+
+  .ant-spin-container {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+  }
 }
-}
+
 // 添加标题前的竖线
-.title-line-zl{}
+.title-line-zl {}
+
 .title-line-zl::before {
   position: absolute;
   content: "";
   width: 3px;
   height: 11px;
-  left:0;
+  left: 0;
   background-color: var(--ant-primary-color);
 }
- // antd 样式全局修改
- .ant-radio-button-wrapper:first-child {
+
+// antd 样式全局修改
+.ant-radio-button-wrapper:first-child {
   border-radius: 6px 0 0 6px;
- }
- .ant-radio-button-wrapper:last-child{
+}
+
+.ant-radio-button-wrapper:last-child {
   border-radius: 0 6px 6px 0;
- }
- .ant-input-search>.ant-input-group>.ant-input-group-addon:last-child .ant-input-search-button {
+}
+
+.ant-input-search>.ant-input-group>.ant-input-group-addon:last-child .ant-input-search-button {
   border-radius: 0 6px 6px 0;
- }
- .ant-btn, .ant-select-selector,.ant-picker,.ant-input,.ant-input-affix-wrapper {
+}
+
+.ant-btn,
+.ant-select-selector,
+.ant-picker,
+.ant-input,
+.ant-input-affix-wrapper,
+.ant-input-number {
   border-radius: 6px;
- }
- .ant-select:not(.ant-select-customize-input) .ant-select-selector{
+}
+
+.ant-select:not(.ant-select-customize-input) .ant-select-selector {
   border-radius: 6px;
- }
- .ant-form-inline .ant-form-item {
+}
+
+.ant-form-inline .ant-form-item {
   margin-right: 0px;
- }
- // 全局样式
- .border_radius_8 {
-   border-radius: 8px;
- }
+}
+
+// 全局样式
+.border_radius_8 {
+  border-radius: 8px;
+}
+
 /* :root {
   --main-bg-color: #ff7313;
   --max-width:1900px;

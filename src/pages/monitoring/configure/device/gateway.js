@@ -1,21 +1,21 @@
 import React, { useEffect, useRef, useState, useContext, useMemo } from 'react'
-import {useTranslation} from 'react-i18next'
-import { Form, Row, Col, Select, Input, Divider, Upload, message, Button, Spin, Typography, Space,Checkbox } from 'antd'
-import { useRequest,useLatest  } from 'ahooks';
+import { useTranslation } from 'react-i18next'
+import { Form, Row, Col, Select, Input, Divider, Upload, message, Button, Spin, Typography, Space, Checkbox } from 'antd'
+import { useRequest, useLatest } from 'ahooks';
 import Comp from './comp'
 import Table from '@com/useTable'
 import Modal from '@com/useModal'
-import {snValidator} from "@pages/rule"
+import { snValidator } from "@pages/rule"
 import style from './style.module.less'
 import { MultImport, DeleteModal, ErrorMessage } from './modalCom'
 import restart from './imgs/restart.png'
-import {Cspin} from "@com/comstyled"
+import { Cspin } from "@com/comstyled"
 import { Monitoring } from '@api/api.js'
 import { useSelector } from 'react-redux'
 import imgurl from './imgs/index.js'
 import cutContext from '@com/content'
 import { publishState } from '@redux/systemconfig'
-const {Link, Text} = Typography
+const { Link, Text } = Typography
 const { DeviceManager:
   { AeraQueryAll,
     QueryUsedGateway,
@@ -27,7 +27,7 @@ const { DeviceManager:
     OneLevel,
     StartReboot, State, StartDownloadTask, DownloadTaskState, QueryListGateWay, ChangeDevicesParent } } = Monitoring
 export default function Gateway() {
-  const {t} = useTranslation(["button"])
+  const { t } = useTranslation(["button"])
   const publish = useSelector(publishState)
   const [selectopts, setSelectopts] = useState()
   const selectoptsRef = useRef()
@@ -120,7 +120,7 @@ export default function Gateway() {
       render: (text, record, index) => {
         return (
           <Space size={16}>
-            { record.download == 0 && <Link onClick={() => { onKeyParam(record) }}>{t("button:parametersSentDown")}</Link>}
+            {record.download == 0 && <Link onClick={() => { onKeyParam(record) }}>{t("button:parametersSentDown")}</Link>}
             <Link onClick={() => { onEdit(record) }}>{t("button:edit")}</Link>
             <Link onClick={() => { onChange(record) }}>{t("button:change")}</Link>
             <Link type="danger" onClick={() => { onDelete(record) }}>{t("button:delete")}</Link>
@@ -172,14 +172,14 @@ export default function Gateway() {
   }
 
   // 更换网关接口
- 
-  
+
+
   const [gatewaylist, setGatewaylist] = useState()
   const getQueryListGateWay = async () => {   //获取网关
     try {
       const resp = await QueryListGateWay(projectId)
       if (resp.success && Array.isArray(resp.data)) {
-        
+
         const arr = resp.data.map(it => ({ ...it }))
         setGatewaylist(() => ([{ sn: '(无)直连设备', id: 0 }, ...arr]));
       } else {
@@ -189,45 +189,45 @@ export default function Gateway() {
 
   }
 
- const changRef = useRef()
- const [changeform] = Form.useForm()
- const onChange =(record) => {
-      let {sn} = record
-      changeform.setFieldValue('preGatewaySN', sn)
-      changRef.current.onOpen();
+  const changRef = useRef()
+  const [changeform] = Form.useForm()
+  const onChange = (record) => {
+    let { sn } = record
+    changeform.setFieldValue('preGatewaySN', sn)
+    changRef.current.onOpen();
 
- }
- const onchangeOk = async() => {
-  try {
-    let {checked, ...values} = await changeform.validateFields()
-    console.log(values)
-    let params = {
-      ...values,
-      projectId
-    }
-    let {success, errMsg} = await ChangeDevicesParent(params)
-    if(success ) {
-      changRef.current.onCancel();
-      getQueryByPageGateWay(pageRef.current.current, pageRef.current.pageNum, compRef.current.selvalue, compRef.current.inpvalue)
-      if(checked) {
-        onKeyParam({sn: values.curGatewaySN})  
-      }else {
-        message.success("更换成功")
-      }
-    }else {
-      message.warning(errMsg)
-    }
-  } catch (error) {
-    console.log(error)
   }
-}
+  const onchangeOk = async () => {
+    try {
+      let { checked, ...values } = await changeform.validateFields()
+      console.log(values)
+      let params = {
+        ...values,
+        projectId
+      }
+      let { success, errMsg } = await ChangeDevicesParent(params)
+      if (success) {
+        changRef.current.onCancel();
+        getQueryByPageGateWay(pageRef.current.current, pageRef.current.pageNum, compRef.current.selvalue, compRef.current.inpvalue)
+        if (checked) {
+          onKeyParam({ sn: values.curGatewaySN })
+        } else {
+          message.success("更换成功")
+        }
+      } else {
+        message.warning(errMsg)
+      }
+    } catch (error) {
+      console.log(error)
+    }
+  }
 
-useEffect(() => {
-if(Number.isInteger(projectId)) {
-  getQueryListGateWay()
-}
+  useEffect(() => {
+    if (Number.isInteger(projectId)) {
+      getQueryListGateWay()
+    }
 
-}, [projectId])
+  }, [projectId])
 
 
 
@@ -248,16 +248,16 @@ if(Number.isInteger(projectId)) {
       return
     }
     modalFormRef?.current?.onOpen()
- /*    addForm.setFieldsValue({
-      area: '',
-      address: '',
-      remark: '',
-      category: '',
-      sn: '',
-      pwd: '',
-      name: '',
-      heartInterval: ''
-    }) */
+    /*    addForm.setFieldsValue({
+         area: '',
+         address: '',
+         remark: '',
+         category: '',
+         sn: '',
+         pwd: '',
+         name: '',
+         heartInterval: ''
+       }) */
   }
   //打开批量导入窗口
   const multExport = () => {
@@ -339,7 +339,7 @@ if(Number.isInteger(projectId)) {
   }
   //确认新增
   const addOk = async () => {
-  return  addForm.validateFields().then(async () => {
+    return addForm.validateFields().then(async () => {
       const { area, category, address, sn, pwd, name, heartInterval, remark } = addForm.getFieldsValue()
       let params = {
         id: 0,
@@ -356,8 +356,8 @@ if(Number.isInteger(projectId)) {
       const { data, success, errMsg } = await GatewayAdd(params)
       if (success) {
         message.success('新增成功')
-      //  addForm.resetFields()
-      //  modalFormRef.current.onCancel()
+        //  addForm.resetFields()
+        //  modalFormRef.current.onCancel()
         getQueryByPageGateWay(pageRef.current.current, pageRef.current.pageNum, compRef.current.selvalue, compRef.current.inpvalue,)
       } else {
         message.error(errMsg)
@@ -367,7 +367,7 @@ if(Number.isInteger(projectId)) {
     })
 
   }
- 
+
   const cancelOk = () => {
     modalFormRef.current.onCancel()
   }
@@ -472,16 +472,16 @@ if(Number.isInteger(projectId)) {
     onError: (error) => {
       message.error(error.message);
     },
-    onSuccess(result,params){
-      if(result.data.code===1){
+    onSuccess(result, params) {
+      if (result.data.code === 1) {
         polloption.cancel();
-        if(result.data.message){
+        if (result.data.message) {
           setisSuccess(false)
-          setSpinShow(false)         
+          setSpinShow(false)
           setgatewayRes(result.data.message)
           modalReStartResRef?.current?.onOpen()
-        }else{
-          setisSuccess(true)        
+        } else {
+          setisSuccess(true)
           setgatewayRes("重启网关成功!")
           setSpinShow(false)
           modalReStartResRef?.current?.onOpen()
@@ -489,48 +489,48 @@ if(Number.isInteger(projectId)) {
       }
       if (latest.current == 15) {
         polloption.cancel();
-       
+
         setgatewayRes('任务超时，请重试！')
         setisSuccess(false)
         setSpinShow(false)
         modalReStartResRef?.current?.onOpen()
       }
-      setrebootNum(latest.current+1)
-      console.log(result,params)
+      setrebootNum(latest.current + 1)
+      console.log(result, params)
     }
   })
 
   const startOk = async () => {
-  //  modalReStartRef?.current?.onCancel()
+    //  modalReStartRef?.current?.onCancel()
     setspinLoading('正在重启网关……')
     setSpinShow(true)
     const { data, success, errMsg } = await StartReboot(restsn)
     if (success) {
-      if(data.code===1){
+      if (data.code === 1) {
         setSpinShow(false)
-       
+
         setgatewayRes(data.message)
         setisSuccess(false)
-         message.warning("网关下发失败")
-      modalReStartResRef?.current?.onOpen()
-       seterrorList(data?.message)
+        message.warning("网关下发失败")
+        modalReStartResRef?.current?.onOpen()
+        seterrorList(data?.message)
       }
-      else{
+      else {
         // polloption.run()
         setSpinShow(false)
-        
-      setgatewayRes("操作成功")
+
+        setgatewayRes("操作成功")
         setisSuccess(true)
-       seterrorList(data?.message)
-       modalReStartResRef?.current?.onOpen()
-       
+        seterrorList(data?.message)
+        modalReStartResRef?.current?.onOpen()
+
       }
-      
+
     } else {
       message.error(errMsg)
     }
   }
- 
+
   const operateOk = () => {
     modalReStartResRef?.current?.onCancel()
   }
@@ -555,7 +555,7 @@ if(Number.isInteger(projectId)) {
               setisSuccess(true)
               modalReStartResRef?.current?.onOpen()
               setgatewayRes('网关参数下发成功！')
-            //  setgatewayResTips('注意：重启网关后参数才生效')
+              //  setgatewayResTips('注意：重启网关后参数才生效')
               setSpinShow(false)
               resolve('break')
               seterrorList(res.errMsg)
@@ -573,25 +573,25 @@ if(Number.isInteger(projectId)) {
   }
   const downloadOk = async () => {
     try {
-   
-    keyParamRef?.current?.onCancel()
-    setspinLoading("网关参数正在下发，请稍候")
-    setSpinShow(true)
-    let result = await  StartDownloadTask(projectId, gatewaySn) 
-   
+
+      keyParamRef?.current?.onCancel()
+      setspinLoading("网关参数正在下发，请稍候")
+      setSpinShow(true)
+      let result = await StartDownloadTask(projectId, gatewaySn)
+
       if (result.success) {
         while (countnum < 15) {
           const resp = await poll()
           console.log(resp)
-          if (resp == 'break')  {
+          if (resp == 'break') {
             startOk();
             break;
-          } 
+          }
           if (resp === 15) {
             setisSuccess(false)
-          modalReStartResRef?.current?.onOpen()
-          setgatewayRes('网关参数下发失败！')
-          
+            modalReStartResRef?.current?.onOpen()
+            setgatewayRes('网关参数下发失败！')
+
             setSpinShow(false)
           }
         }
@@ -600,14 +600,14 @@ if(Number.isInteger(projectId)) {
         setisSuccess(false)
         setspinLoading('')
         setSpinShow(false)
-      
-     modalReStartResRef?.current?.onOpen()
-       setgatewayRes(result.errMsg)
-      seterrorList(result.errMsg)
+
+        modalReStartResRef?.current?.onOpen()
+        setgatewayRes(result.errMsg)
+        seterrorList(result.errMsg)
       }
-       
+
     } catch (error) {
-      
+
     }
   }
   //导出
@@ -680,7 +680,7 @@ if(Number.isInteger(projectId)) {
     selectopts: selectoptsRef.current,
     addForm,
     usecategory: usecategoryRef.current,
-    onOk: addOk,    
+    onOk: addOk,
     levelname
   }
   const uploadprops = {
@@ -725,12 +725,12 @@ if(Number.isInteger(projectId)) {
       getQueryUsedGateway()
     }
   }, [])
-  useEffect(()=>{
+  useEffect(() => {
 
-  },[gatewayRes])
+  }, [gatewayRes])
   return (
     <Cspin tip={spinLoading} spinning={spinShow}>
-      <div style={{flex:1, display:"flex"}}>
+      <div style={{ flex: 1, display: "flex" }}>
 
         <Comp {...ComProps}>
           <Table
@@ -752,70 +752,70 @@ if(Number.isInteger(projectId)) {
         {/* <AddModalForm {...ModalFormProps}></AddModalForm> */}
         {AddFormComp}
         <MultImport {...ImportProps}></MultImport>
-      {/*   <ReStart modalReStartRef={modalReStartRef} startOk={startOk}></ReStart> */}
+        {/*   <ReStart modalReStartRef={modalReStartRef} startOk={startOk}></ReStart> */}
 
-      {/* 操作结果 */}
+        {/* 操作结果 */}
         <ReStartRes modalReStartResRef={modalReStartResRef} operateOk={operateOk} isSuccess={isSuccess} gatewayRes={gatewayRes}
           errorList={errorList} columns={errcolumns} gatewayResTips={gatewayResTips} ></ReStartRes>
         <KeyParam keyParamRef={keyParamRef} gatewaySn={gatewaySn} downloadOk={downloadOk}></KeyParam>
         <DeleteModal DelModalRef={modalDelRef} name="删除网关" content="是否确认删除网关？" onOk={delOk}></DeleteModal>
         {EditFormComp}
         <ErrorMessage {...ErrModalProps}></ErrorMessage>
-        <Modal mold='cust' ref={changRef}   title="更换网关编号" onOk={onchangeOk}>
-      <Form
-        form={changeform}
-        preserve={false}
-        labelCol={{
-          span: 6
-        }}
-        labelAlign='left'
-        colon={false}
-      >
-          <Form.Item label="当前网关编号" name="preGatewaySN"   >
-              <Input  disabled />
+        <Modal mold='cust' ref={changRef} title="更换网关编号" onOk={onchangeOk}>
+          <Form
+            form={changeform}
+            preserve={false}
+            labelCol={{
+              span: 6
+            }}
+            labelAlign='left'
+            colon={false}
+          >
+            <Form.Item label="当前网关编号" name="preGatewaySN"   >
+              <Input disabled />
             </Form.Item>
-            <Form.Item label="更换网关编号" name="curGatewaySN" rules={[{required: true}]}>
-                        <Select
-                            showSearch
-                            filterOption={(val, opts) => {
-                                if (opts.sn.includes(val)) {
-                                    return true
-                                } else {
-                                    return false
-                                }
-                            }}
-                            fieldNames={{
-                                label: 'sn',
-                                value: 'sn',
-                            }}                           
-                            options={gatewaylist}
-                        ></Select>
-                    </Form.Item>
-                    <Form.Item label="是否直接下发"  name="checked" initialValue={false} valuePropName="checked">
-                    <Checkbox >更换成功后直接下发参数</Checkbox>
-              </Form.Item>
-              <Form.Item noStyle shouldUpdate>
-                   {
-                    ({getFieldsValue}) => {
-                      let {preGatewaySN, curGatewaySN} = getFieldsValue();
-                      return <Text type="danger">{curGatewaySN &&`${preGatewaySN}网关下的所有设备即将转移到${curGatewaySN}网关下`}</Text>
-                    }
-                   }
-              </Form.Item>
-            
-          
-      </Form>
-    </Modal>
+            <Form.Item label="更换网关编号" name="curGatewaySN" rules={[{ required: true }]}>
+              <Select
+                showSearch
+                filterOption={(val, opts) => {
+                  if (opts.sn.includes(val)) {
+                    return true
+                  } else {
+                    return false
+                  }
+                }}
+                fieldNames={{
+                  label: 'sn',
+                  value: 'sn',
+                }}
+                options={gatewaylist}
+              ></Select>
+            </Form.Item>
+            <Form.Item label="是否直接下发" name="checked" initialValue={false} valuePropName="checked">
+              <Checkbox >更换成功后直接下发参数</Checkbox>
+            </Form.Item>
+            <Form.Item noStyle shouldUpdate>
+              {
+                ({ getFieldsValue }) => {
+                  let { preGatewaySN, curGatewaySN } = getFieldsValue();
+                  return <Text type="danger">{curGatewaySN && `${preGatewaySN}网关下的所有设备即将转移到${curGatewaySN}网关下`}</Text>
+                }
+              }
+            </Form.Item>
+
+
+          </Form>
+        </Modal>
       </div>
     </Cspin>
   )
 }
 
 //新增网关组件
-let AddModalForm = ({ modalFormRef, addopts, addForm, usecategory, levelname,onOk, ...other }) => {
+let AddModalForm = ({ modalFormRef, addopts, addForm, usecategory, levelname, onOk, ...other }) => {
   const rules = { required: true, }
   return (
-    <Modal mold='cust' ref={modalFormRef} {...other} title="新增网关" onOk={onOk}  custft={true}>
+    <Modal mold='cust' ref={modalFormRef} {...other} title="新增网关" onOk={onOk} custft={true}>
       {/* <BlueColumn name="新增网关" styled={{ padding: '24px 0px' }}></BlueColumn> */}
       <Form
         form={addForm}
@@ -854,8 +854,8 @@ let AddModalForm = ({ modalFormRef, addopts, addForm, usecategory, levelname,onO
             </Form.Item>
           </Col>
           <Col>
-            <Divider type='vertical' style={{ height: '100%',  borderColor: '#bcbcbc' }} dashed />
-          </Col> 
+            <Divider type='vertical' style={{ height: '100%', borderColor: '#bcbcbc' }} dashed />
+          </Col>
           <Col span={10}>
             <Form.Item label="网关型号" name="category" rules={[rules]}>
               <Select
@@ -865,11 +865,11 @@ let AddModalForm = ({ modalFormRef, addopts, addForm, usecategory, levelname,onO
             </Form.Item>
             <Form.Item label="网关编号" name="sn" rules={[
               {
-              required: true
+                required: true
               },
-              {
-                validator: snValidator
-              }
+              // {
+              //   validator: snValidator
+              // }
             ]}>
               <Input />
             </Form.Item>
@@ -933,11 +933,11 @@ let ReStart = ({ modalReStartRef, startOk }) => {
 }
 //重启结果
 let ReStartRes = ({ modalReStartResRef, operateOk, gatewayRes, isSuccess, errorList, columns, gatewayResTips }) => {
-  
+
   return (
     <Modal mold='cust' ref={modalReStartResRef} title="操作提示" footer={[<Button key="submit" type="primary" onClick={operateOk}> 关闭</Button>,]}>
-     
-    {/*   {errorList ? <div style={{ margin: '16px 32px 0' }}>
+
+      {/*   {errorList ? <div style={{ margin: '16px 32px 0' }}>
         <img src={isSuccess ? imgurl.success : imgurl.fail}></img>
         <span style={{ paddingLeft: 32, fontSize: 16 }}>{gatewayRes}</span>
         <p style={{ color: 'red', width: 343, textAlign: 'center' }}>{gatewayResTips}</p>
@@ -945,11 +945,11 @@ let ReStartRes = ({ modalReStartResRef, operateOk, gatewayRes, isSuccess, errorL
 
       <div style={{ margin: '16px 32px 0', display: 'flex', alignContent: 'center' }}>
         <img src={isSuccess ? imgurl.success : imgurl.fail}></img>
-        <div style={{display: 'flex', flexDirection: 'column'}}>
-        <span style={{ paddingLeft: 32, fontSize: 16 }}>{errorList?.length>0?errorList:null || gatewayRes }</span>
-        <p style={{ color: 'red', width: 343, textAlign: 'center' }}>{gatewayResTips}</p>
+        <div style={{ display: 'flex', flexDirection: 'column' }}>
+          <span style={{ paddingLeft: 32, fontSize: 16 }}>{errorList?.length > 0 ? errorList : null || gatewayRes}</span>
+          <p style={{ color: 'red', width: 343, textAlign: 'center' }}>{gatewayResTips}</p>
         </div>
-      </div>  
+      </div>
 
     </Modal>
   )
@@ -973,8 +973,8 @@ const KeyParam = ({ keyParamRef, gatewaySn, downloadOk }) => {
 const EditModalForm = ({ modalEditRef, editform, levelname, ...other }) => {
   const rules = { required: true, }
   return (
-    <Modal mold='cust' ref={modalEditRef} {...other}  title="编辑网关" onOk={other.onOk}>
-     
+    <Modal mold='cust' ref={modalEditRef} {...other} title="编辑网关" onOk={other.onOk}>
+
       <Form
         form={editform}
         labelCol={{
@@ -1000,9 +1000,9 @@ const EditModalForm = ({ modalEditRef, editform, levelname, ...other }) => {
               <Input />
             </Form.Item>
           </Col>
-         <Col>
+          <Col>
             <Divider type='vertical' style={{ height: '100%', margin: '0 32px', borderColor: '#bcbcbc' }} dashed />
-          </Col>  
+          </Col>
           <Col flex={1}>
             <Form.Item label="网关型号" name="category" rules={[rules]}>
               <Select
