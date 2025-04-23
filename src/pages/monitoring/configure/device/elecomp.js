@@ -11,6 +11,7 @@ export const MyContext = createContext({ addopts: [], gatewaylist: [], devicelis
 let coms = 0
 // 1 电表, 11 断路器
 let Com = ({ form, deviceStyle }) => {
+
     const tip = (<div style={{ marginBottom: '24px' }}>
         <p>倍率=PT*CT！</p>
         <p>修改倍率会影响结算金额，请设置准确！</p>
@@ -329,7 +330,7 @@ export const FormComp = (props) => {
                         ) : null
                     }
 
-                    {(deviceStyle === 1 || deviceStyle == 12 || deviceStyle == 13 || deviceStyle == 14) ? <Com form={form} deviceStyle={deviceStyle} ></Com> : null}
+                    {(deviceStyle === 1 || deviceStyle == 12 || deviceStyle == 13 || deviceStyle == 14 || deviceStyle == 20 ) ? <Com form={form} deviceStyle={deviceStyle} ></Com> : null}
                 </Col>
                 {/*   {
                     props.isfiber ? (
@@ -483,7 +484,7 @@ let EditCom = ({ form, coms, deviceStyle }) => {
     }, [form.getFieldsValue().commAddress])
     return (
         <>
-            {![1, 13, 14, 12].includes(deviceStyle) ? (<Form.Item label="倍率" name="factor" rules={rules}>
+            {![1, 13, 14, 12, 20].includes(deviceStyle) ? (<Form.Item label="倍率" name="factor" rules={rules}>
                 <Input disabled />
 
             </Form.Item>) : [1, 12].includes(deviceStyle) ? <> <Form.Item label="CT" name="ct" initialValue={1}>
@@ -685,7 +686,7 @@ export const EditFormComp = (props) => {
                         ) : null
                     }
                     {/* {deviceStyle === 1? <EditCom form={form} coms={coms}></EditCom> : null} */}
-                    {(deviceStyle === 1 || deviceStyle == 12 || deviceStyle == 13 || deviceStyle == 14) ? <EditCom form={form} coms={coms} deviceStyle={deviceStyle}></EditCom> : null}
+                    {(deviceStyle === 1 || deviceStyle == 12 || deviceStyle == 13 || deviceStyle == 14 || deviceStyle == 20) ? <EditCom form={form} coms={coms} deviceStyle={deviceStyle}></EditCom> : null}
                 </Col>
 
             </Row>
