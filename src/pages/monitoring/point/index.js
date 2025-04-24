@@ -399,7 +399,7 @@ export default function Index(props) {
                   },
                   {
                     value: 3,
-                    label: `${i18t("comm","alarm")}(` + statistics.alarm + ")",
+                    label: `${i18t("comm","alarm", {text: "", text2: ""})}(` + statistics.alarm + ")",
                   },
                 ]}
               />
