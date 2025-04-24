@@ -374,20 +374,28 @@ export default function Index() {
  const showtheme = async (id) => {
   try {
     let  {success, data} =  await GetProjectMainTheme({projectId: id})
-    if(success && isObject(data) && Number.isInteger(data?.themeId)) { 
-      setSelectedRowKeys([data?.themeId])
-      
+    if(success && isObject(data) && Number.isInteger(data?.mainThemeId)) { 
+      setSelectedRowKeys([data?.mainThemeId])
+      themeId.current={
+        mainThemeId: data?.mainThemeId,
+        projectId:id
+       } 
     }else {
+      themeId.current ={
+        mainThemeId: null,
+        projectId:id
+       }
       setSelectedRowKeys([])
     }
     
   } catch (error) {
-    console.log(error)
-  } finally{
     themeId.current ={
       mainThemeId: null,
       projectId:id
-     } 
+     }
+    console.log(error)
+  } finally{
+    
      themeref.current.onOpen()
   }
     
