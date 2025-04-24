@@ -428,7 +428,7 @@ export default function index() {
                   <Radio.Button value="3" disabled={item?.items[2].state == 0}>{i18t("comm","voltage",{text:"对比"})}</Radio.Button>
                   <Radio.Button value="4" disabled={item?.items[3].state == 0}>{i18t("comm","electricity",{text:"对比"})}</Radio.Button>
                 </BtnWrap>
-                {state.detailtableData[index]?.compareDeviation == null ? '' : <CustButtonT style={{ marginRight: 16 }} onClick={() => warnDetail(index)} ns="comm" text="alarm" param={{text:"偏差", text2: "明细"}} /> } 
+                {state.detailtableData[index]?.compareDeviation == null ? '' : <CustButton style={{ marginRight: 16 }} onClick={() => warnDetail(index)}> {i18t("comm","alarm",{text:"偏差", text2: "明细"})}</CustButton> } 
                 <div>
                 <span style={{paddingRight:"0.5em"}}>{i18t("monitor","datarang")}</span>
                 <RangePicker
@@ -451,7 +451,7 @@ export default function index() {
       })
 
       }
-      <Modal ref={ModalRef} mold='cust' title={i18t("comm","alarm",{text:"偏差"})} onOk={() => { ModalRef.current.onCancel() }} width={800}>
+      <Modal ref={ModalRef} mold='cust' title={i18t("comm","alarm",{text:"偏差", text2:" "})} onOk={() => { ModalRef.current.onCancel() }} width={800}>
         <Table dataSource={state.tableData} columns={columns} pagination={{ pageSize: state.pageSize, current: state.current, total: state.alltableData.length, onChange: changePage, onShowSizeChange: onShowSizeChange }}  ></Table>
       </Modal>
       </Pagecount>
