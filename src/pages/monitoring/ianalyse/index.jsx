@@ -288,7 +288,7 @@ export default function index() {
              let unit = item?.unit??""
             if (Array.isArray(item?.data) &&   item.data?.length > 0) {
               state.chartsOpts.tooltip={
-                
+                trigger: "axis",
                 valueFormatter: function(value) {
                 
                  return `${value}${unit}`;  
