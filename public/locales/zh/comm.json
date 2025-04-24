@@ -144,7 +144,7 @@
     "name":"{{text}}名称",
     "placeholder": "请输入{{text}}",
      "alarm": "{{text}}告警{{text2}}", 
-     "electricquantity": "用电量{{text}}",
+     "electricquantity": "电量{{text}}",
      "power": "功率{{text}}",
      "voltage":"电流{{text}}",
      "electricity":"电压{{text}}",
