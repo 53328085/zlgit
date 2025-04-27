@@ -18,9 +18,10 @@ const imgset = {
 }
 const Itemlist = styled.div`
   display: grid;
-  grid-template-rows: repeat(5, 48px);
+  grid-template-rows: repeat(auto-fill, 48px);
   row-gap: 12px;
   flex:1;
+  overflow-y: auto;
  // padding-top: 28px;
   .item {
     display: flex;
