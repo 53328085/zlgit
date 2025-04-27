@@ -38,10 +38,10 @@ const option = {
   yAxis: {
     type: "value",
   },
-  tooltip: {
-    show: true, // 是否显示提示框组件，默认为true  
-    trigger: 'axis' // 触发类型，'item'表示数据项图形触发，'axis'表示坐标轴触发  
-  },
+   tooltip: {
+    show: true,  
+    trigger: 'axis',   
+  }, 
   dataZoom: [
     {
       type: 'inside', // 内置缩放  
@@ -128,7 +128,7 @@ export default function index() {
   const [params, setParams] = useState([])
   const changeBtn = (e, index) => {
     setRadioVal(e.target.value-0);
-    params[index].type = e.target.value
+    params[index].type =parseInt(e.target.value)
     setParams(params)
     HistoryCompares()
   };
@@ -273,7 +273,7 @@ export default function index() {
     if (params.length == 0) return
     const resp = await HistoryCompare(params);
     if (resp.success) {
-      if (resp.data) {
+      if (Array.isArray(resp.data)) {
        
         state.chartsOpts.series = []
 
@@ -282,16 +282,25 @@ export default function index() {
         resp.data.forEach((a, b) => {
           state.chartsOpts.series[b] = []
           state.xAxis[b] = []
+          if(Array.isArray(a.snData) && a.snData?.length > 0 ){
+     
           a.snData.forEach((item, index) => {
              let unit = item?.unit??""
-            if (item?.data?.length > 0) {
+            if (Array.isArray(item?.data) &&   item.data?.length > 0) {
+              state.chartsOpts.tooltip={
+                trigger: "axis",
+                valueFormatter: function(value) {
+                
+                 return `${value}${unit}`;  
+               }
+             }
               item.data.forEach(it => {              
                 state.xAxis[b] = it["data"].map(it => it.time)
                 state.chartsOpts.series[b].push({
-                  data: it.data.map(i => (i["value"]+unit)), 
+                  data: it.data.map(i => (i["value"])), 
                   type: "line",                                 
-                  smooth: true, 
-                  name: item["name"] + "-" + it["point"],
+                  smooth: true,  
+                  name: item["name"] + "-" + it["point"], 
                   markLine:dataList[b].items[params[b].type-1].line!=0?{
                     symbol: ['none', 'none'],
                     label: {
@@ -312,9 +321,17 @@ export default function index() {
                 
 
                 })
+              
               })
+           
             }
           })
+        }else {
+          state.chartsOpts.series[b] = [{
+            data: []
+          }]
+          console.log("数据为空") 
+        }
         })
         
         state.detailtableData = resp.data
@@ -411,7 +428,7 @@ export default function index() {
                   <Radio.Button value="3" disabled={item?.items[2].state == 0}>{i18t("comm","voltage",{text:"对比"})}</Radio.Button>
                   <Radio.Button value="4" disabled={item?.items[3].state == 0}>{i18t("comm","electricity",{text:"对比"})}</Radio.Button>
                 </BtnWrap>
-                {state.detailtableData[index]?.compareDeviation == null ? '' : <CustButtonT style={{ marginRight: 16 }} onClick={() => warnDetail(index)} ns="comm" text="alarm" param={{text:"偏差", text2: "明细"}} /> } 
+                {state.detailtableData[index]?.compareDeviation == null ? '' : <CustButton style={{ marginRight: 16 }} onClick={() => warnDetail(index)}> {i18t("comm","alarm",{text:"偏差", text2: "明细"})}</CustButton> } 
                 <div>
                 <span style={{paddingRight:"0.5em"}}>{i18t("monitor","datarang")}</span>
                 <RangePicker
@@ -434,7 +451,7 @@ export default function index() {
       })
 
       }
-      <Modal ref={ModalRef} mold='cust' title={i18t("comm","alarm",{text:"偏差"})} onOk={() => { ModalRef.current.onCancel() }} width={800}>
+      <Modal ref={ModalRef} mold='cust' title={i18t("comm","alarm",{text:"偏差", text2:" "})} onOk={() => { ModalRef.current.onCancel() }} width={800}>
         <Table dataSource={state.tableData} columns={columns} pagination={{ pageSize: state.pageSize, current: state.current, total: state.alltableData.length, onChange: changePage, onShowSizeChange: onShowSizeChange }}  ></Table>
       </Modal>
       </Pagecount>

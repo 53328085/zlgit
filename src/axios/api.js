@@ -49,7 +49,9 @@ export class CustTheme {
     server.get(`Energy/Theme/GetProjectTheme`, { params }); // 获取项目选择的主题
 
   static SelProjectTheme = (params) =>
-    server.post(`Energy/Theme/SetProjectTheme`, null, { params }); // 选择项目主题
+    server.post(`Energy/Theme/SetProjectTheme`, null,{ params }); // 选择项目主题
+  static GetProjectMainTheme = (params) =>
+    server.get(`Energy/MainTheme/GetProjectMainTheme`, { params }); // 获取项目公共主题
 
 }
 

@@ -293,7 +293,7 @@ export default function Index() {
           </Form>
           <Table columns={columns} ref={tableRef}  {...tableProps} onExport={onExport} sheetName="巡检计划管理"></Table>
 
-          <Modal mold='cust' ref={addmodalRef} width={538} onOk={confirmAdd} custft={isAdd} title="新建巡检计划">
+          <Modal mold='cust' ref={addmodalRef} width={538} onOk={confirmAdd} custft={isAdd} title="新建巡检计划" getContainer={false} >
 
             <AddPlan projectId={projectId} ref={addformRef} laptop={laptop} getQueryProjectMaintenance={getQueryProjectMaintenance} chooseAddress={chooseAddress}  />
           </Modal>
