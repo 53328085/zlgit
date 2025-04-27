@@ -17,12 +17,17 @@ const CardItme = styled.div`
     justify-content: flex-start;
     position: relative;
     overflow: hidden;
+    .postion {
+      position: absolute;
+      left: 14;
+    }
     .cardImg {
-      width: 100px;
+      flex: 0 0 100px;
       height: 136px;
       justify-content: center;
       align-items: center;
       display: flex;
+      padding-top: 24px;
     //  background-color: #fff;
       overflow: hidden;
       .img {
@@ -113,11 +118,11 @@ const Gateway = (props) => {
       <div className="line">
         <Text ellipsis={{tooltip: props.name}}>{props?.name}</Text>
         <span>{props.title}</span>
-        {props.state == 2 ? (
+       {/*  {props.state == 2 ? (
           <TreeBtn type={2} ns="comm" text="normal" className="on" />
         ) : (
           <TreeBtn type={4} ns="comm" text="offline" className="on" />
-        )}
+        )} */}
       </div>
       <div className="line">{props.value}</div>
       <div className="values">
@@ -164,7 +169,7 @@ const Device = (props) => {
       <div className="line sp">
         <Text ellipsis={{tooltip: props.title}}>{props.title}</Text>
         <span>SN:{props.category}</span>
-        {props.state == 2 ? (
+       {/*  {props.state == 2 ? (
           <TreeBtn type={2} ns="comm" text="normal" />
         ) : props.state == 1 ? (
           <TreeBtn type={4} ns="comm" text="offline" />
@@ -175,7 +180,7 @@ const Device = (props) => {
             text="alarm"
             params={{ text: "", text2: "" }}
           />
-        )}
+        )} */}
       </div>
       <div className="line sp">
         <Text ellipsis={{tooltip: props.value}}>{props.value}</Text>
@@ -215,6 +220,28 @@ export default function Index(props) {
       <div className="content">
         {device == 1 ? <Gateway {...rest}  /> : <Device {...rest}   title={title} />}
       </div>
+      {
+          device == 1 ? <div className="postion">{props.state == 2 ? (
+            <TreeBtn type={2} ns="comm" text="normal" />
+          ) : props.state == 1 ? (
+            <TreeBtn type={4} ns="comm" text="offline" />
+          ) : (
+            <TreeBtn
+              type={3}
+              ns="comm"
+              text="alarm"
+              params={{ text: "", text2: "" }}
+            />
+          )}
+          </div>
+          : <div className="postion">
+            {props.state == 2 ? (
+          <TreeBtn type={2} ns="comm" text="normal" className="on" />
+        ) : (
+          <TreeBtn type={4} ns="comm" text="offline" className="on" />
+        )}
+          </div>
+        }
     </CardItme>
   );
 }

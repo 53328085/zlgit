@@ -7,6 +7,7 @@ import power from "@imgs/power.png";
 import special from "@imgs/special.png";
 import up from "@imgs/up.png";
 import down from "@imgs/down.png";
+import defalut from "./icon/default.png"
 import styled from "styled-components";
 
 const imgset = {
@@ -77,7 +78,7 @@ const Itemlist = styled.div`
 
 `
 const Item = (props) => {
-    let imgsrc = imgset[props.name]
+    let imgsrc = imgset[props.name] ||defalut
     let f = parseFloat(props.yoy) > 0
     let updown = f ? up  : down
     let pre = f ? 'up' : 'down'
