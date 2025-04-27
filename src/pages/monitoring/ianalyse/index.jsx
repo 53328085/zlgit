@@ -286,14 +286,7 @@ export default function index() {
      
           a.snData.forEach((item, index) => {
              let unit = item?.unit??""
-            if (Array.isArray(item?.data) &&   item.data?.length > 0) {
-              state.chartsOpts.tooltip={
-                trigger: "axis",
-                valueFormatter: function(value) {
-                
-                 return `${value}${unit}`;  
-               }
-             }
+            if (Array.isArray(item?.data) &&   item.data?.length > 0) {            
               item.data.forEach(it => {              
                 state.xAxis[b] = it["data"].map(it => it.time)
                 state.chartsOpts.series[b].push({
@@ -301,6 +294,13 @@ export default function index() {
                   type: "line",                                 
                   smooth: true,  
                   name: item["name"] + "-" + it["point"], 
+                  tooltip: {
+                    trigger: "axis",
+                    valueFormatter: function(value) {
+                    
+                     return `${value}${unit}`;  
+                  }
+                 },
                   markLine:dataList[b].items[params[b].type-1].line!=0?{
                     symbol: ['none', 'none'],
                     label: {

@@ -1,14 +1,14 @@
-import React, { useEffect, useState, useRef, memo } from 'react'
+import React, { useEffect, useState, useRef, memo, useMemo } from 'react'
 import { useSelector } from 'react-redux'
 
 import styled from 'styled-components'
 
 import { energyShare, Monitoring, EnergyPublicRuntime } from '@api/api'
 import { selectProjectId, selectOneLevel } from '@redux/systemconfig.js'
-import { message, Input, Tree, Radio, Checkbox } from 'antd'
+import { message, Input, Tree, Radio, Checkbox , Switch} from 'antd'
 
 import Titlelayout from "@com/titlelayout";
-
+import {useLocation} from "react-router-dom"
 const { Search } = Input;
 
 const { QuerySpaceTrees } = energyShare
@@ -28,7 +28,12 @@ export default memo(function Index({ areaId, setTreeId, setLine, showline = true
   // datatype =0 或 =2
   const [treeData, setTreeData] = useState([])
 
-
+  const location = useLocation();
+  const {state} = location
+  const isshow =  useMemo(()=> {
+    const {nested, primary} = state
+    return nested=="report" && primary=="runtimeEnergy"
+  }, [state])
   const [checkedKeys, setCheckedKeys] = useState([])
 
   const [keyword, setKeyword] = useState('')
@@ -42,6 +47,9 @@ export default memo(function Index({ areaId, setTreeId, setLine, showline = true
   let treeIdRef = useRef([])
   const [indeterminate, setIndeterminate] = useState(false);
   const [checked, setChecked] = useState(false)
+  const [schecked, setschecked] = useState(1)
+  const strictyly = schecked == 1
+ 
   const allSelected = ({ target: { checked } }) => {
 
     if (checked) {
@@ -165,7 +173,15 @@ export default memo(function Index({ areaId, setTreeId, setLine, showline = true
 
   }
   // 根据区域查询
-  const onCheck = ({ checked }) => {
+  const onCheck = (data) => { // 受控
+    console.log(data)
+    let checked 
+    if(schecked==1) {
+       checked =data.checked
+    }else {
+       checked = data;
+    }
+
     let f = checked?.length > 0 && checked?.length < treeIdRef.current?.length
     setIndeterminate(f)
     setTreeId(checked)
@@ -173,14 +189,17 @@ export default memo(function Index({ areaId, setTreeId, setLine, showline = true
     setChecked(checked?.length === treeIdRef.current?.length)
 
   }
+ 
   // 树搜索
   const onExpand = (newExpandedKeys, obj) => {
 
     setExpandedKeys(newExpandedKeys);
 
   };
-
-
+  const Relevancy = (e)=> { 
+        setschecked(e.target.value)
+  }
+ 
   useEffect(() => {
     let f = [areaId, projectId].every(v => Number.isInteger(v))
     if (f) {
@@ -195,6 +214,12 @@ export default memo(function Index({ areaId, setTreeId, setLine, showline = true
     gridTemplateColumns: '1fr 1fr',
     alignContent: 'center',
     borderBottom: '1px dotted #d7d7d7',
+  }
+  const radiosty2 = {
+    display: 'grid',
+    gridTemplateColumns: '1fr 1fr',
+    alignContent: 'center',
+    
   }
   const switchLine = (e) => {
     setTypeTree(e.target.value)
@@ -224,7 +249,12 @@ export default memo(function Index({ areaId, setTreeId, setLine, showline = true
           onChange={onChange}
           onSearch={getTreeData}
         />
-        <Checkbox onChange={allSelected} indeterminate={indeterminate} checked={checked}>全部选中</Checkbox>
+    
+      <div style={{display: "flex", alignItems: "center", justifyContent: "space-between"}}>  <Checkbox onChange={allSelected} indeterminate={indeterminate} checked={checked}>全部选中</Checkbox>
+       {isshow && <Radio.Group style={radiosty2} onChange={Relevancy} value={schecked}>
+      <Radio value={1}>不关联</Radio>
+      <Radio value={2}>关联</Radio>
+    </Radio.Group> }</div>
         <Tree
           treeData={treeData}
           checkable
@@ -234,7 +264,7 @@ export default memo(function Index({ areaId, setTreeId, setLine, showline = true
           checkedKeys={checkedKeys}
           onCheck={onCheck}
           fieldNames={fieldNames}
-          checkStrictly
+          checkStrictly={strictyly} // true : 完全受控，父子节点不关联, false : 父子节点关联
           indeterminate={indeterminate}
         />
       </Treebox>

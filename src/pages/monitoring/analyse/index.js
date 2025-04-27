@@ -41,10 +41,10 @@ export default function Index() {
       value: 2,
       label: i18t("comm","power",{text:"对比"})
     }, {
-      value: 4,
+      value: 3,
       label: i18t("comm","voltage",{text:"对比"})
     }, {
-      value: 3,
+      value:4,
       label: i18t("comm","electricity",{text:"对比"})
     },
   ]
