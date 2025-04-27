@@ -373,7 +373,7 @@ const deviceStyleNode = (<Item name="deviceStyle" label={i18t("comm","type",{tex
  useEffect(()=> {
   
   if(nested=="public"&& primary=='runtimeEnergy') {
-    form.setFieldValue('date',[moment().subtract(7,"day"), moment()])
+    form.setFieldValue('date',[moment().startOf("day"), moment()])
   }else {
     form.setFieldValue('date', moment())
   }
