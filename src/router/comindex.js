@@ -180,7 +180,7 @@ export default function Index() {
             setConfig({ custview: true });
             break;
           case "public":
-            setConfig({ energytype: true, isdate: true });
+            setConfig({ energytype: true, isdate: true,  isdaterange:true });
             break;
           case "air":
           case "grading":

@@ -1,19 +1,105 @@
-import { Timeline, Button } from 'antd';
-import React,{useState} from 'react';
+import { Tree } from 'antd';
+import React, { useState } from 'react';
+const treeData = [
+  {
+    title: '0-0',
+    key: '0-0',
+    children: [
+      {
+        title: '0-0-0',
+        key: '0-0-0',
+        children: [
+          {
+            title: '0-0-0-0',
+            key: '0-0-0-0',
+          },
+          {
+            title: '0-0-0-1',
+            key: '0-0-0-1',
+          },
+          {
+            title: '0-0-0-2',
+            key: '0-0-0-2',
+          },
+        ],
+      },
+      {
+        title: '0-0-1',
+        key: '0-0-1',
+        children: [
+          {
+            title: '0-0-1-0',
+            key: '0-0-1-0',
+          },
+          {
+            title: '0-0-1-1',
+            key: '0-0-1-1',
+          },
+          {
+            title: '0-0-1-2',
+            key: '0-0-1-2',
+          },
+        ],
+      },
+      {
+        title: '0-0-2',
+        key: '0-0-2',
+      },
+    ],
+  },
+  {
+    title: '0-1',
+    key: '0-1',
+    children: [
+      {
+        title: '0-1-0-0',
+        key: '0-1-0-0',
+      },
+      {
+        title: '0-1-0-1',
+        key: '0-1-0-1',
+      },
+      {
+        title: '0-1-0-2',
+        key: '0-1-0-2',
+      },
+    ],
+  },
+  {
+    title: '0-2',
+    key: '0-2',
+  },
+];
 const App = () => {
-  const [reverse, setReverse] = useState(false);
-  const handleClick = () => {
-    setReverse(!reverse);
+  const [expandedKeys, setExpandedKeys] = useState(['0-0-0', '0-0-1']);
+  const [checkedKeys, setCheckedKeys] = useState(['0-0-0']);
+  const [selectedKeys, setSelectedKeys] = useState([]);
+  const [autoExpandParent, setAutoExpandParent] = useState(true);
+  const onExpand = (expandedKeysValue) => {
+    console.log('onExpand', expandedKeysValue);
+    // if not set autoExpandParent to false, if children expanded, parent can not collapse.
+    // or, you can remove all expanded children keys.
+    setExpandedKeys(expandedKeysValue);
+    setAutoExpandParent(false);
   };
-  return ( 
-    <div style={{padding:"32px"}}> 
-      <Button onClick={handleClick}>切换</Button>
-  <Timeline pending="加载中……" reverse={reverse} mode="alternate"  pendingDot={<span>*</span>}>
-    <Timeline.Item color="#ff7313" label={new Date().toLocaleString()}>Create a services site 2015-09-01</Timeline.Item>
-    <Timeline.Item>Solve initial network problems 2015-09-01</Timeline.Item>
-    <Timeline.Item>Technical testing 2015-09-01</Timeline.Item>
-    <Timeline.Item>Network problems being solved 2015-09-01</Timeline.Item>
-  </Timeline>
-  </div>
-)};
+  const onCheck = (checkedKeysValue) => {
+    console.log('onCheck', checkedKeysValue);
+    setCheckedKeys(checkedKeysValue);
+  };
+  const onSelect = (selectedKeysValue, info) => {
+    console.log('onSelect', info);
+    setSelectedKeys(selectedKeysValue);
+  };
+  return (
+    <Tree
+      checkable
+     
+      onCheck={onCheck}
+      checkedKeys={checkedKeys}
+      onSelect={onSelect}
+      checkStrictly={true}
+      treeData={treeData}
+    />
+  );
+};
 export default App;

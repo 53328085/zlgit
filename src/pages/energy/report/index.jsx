@@ -245,7 +245,7 @@ return getTime(dates[0],1).toString()+"-"+getTime(dates[1], 1).toString()
 
  
   const getTableData = ({ current, pageSize, areaId, projectId, type, date, energytype, treeId, index, line,isrange, dates }) => {
-    
+    console.log(date)
     let f = [areaId, projectId, type, energytype,index, line].every(v => Number.isInteger(v)) && Array.isArray(treeId) && date
     let range =[0,1].includes(index) && isrange && Array.isArray(dates) && dates?.length>1
     if(!f) return;

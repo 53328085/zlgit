@@ -54,9 +54,11 @@ export default function Index(props) {
   const {
     queryEnergyCategoryTree,
     queryElectricYear,
-    queryElectricDay,
+    queryElectricRangeDay,
+   // queryElectricDay,
     queryElectricMonth,
-    queryWaterDay,
+   // queryWaterDay,
+   queryWaterRange,
     queryWaterMonth,
     queryWaterYear,
     queryGasDay,
@@ -106,18 +108,19 @@ export default function Index(props) {
   })
   //自定义调用方法
   const pageInfo = () => {
-    console.log(exparams)
+    console.log(exparams.type)
     if (Object.values(exparams)?.length < 6 || !Array.isArray(treeIdList)) return;
     let energy = Number(energytype) - 1;
     let api = Number(type) - 1
     let hander = [
       [
-        queryElectricDay,
+       // queryElectricDay,
+        queryElectricRangeDay,
         queryElectricMonth,
         queryElectricYear,
       ],
       [
-        queryWaterDay,
+        queryWaterRange,
         queryWaterMonth,
         queryWaterYear
       ],
@@ -126,14 +129,27 @@ export default function Index(props) {
         queryGasMonth,
         queryGasYear
       ]][energy][api]
-    return hander(projectId, areaId, getTime(date, type), shiftNo, treeIdList).then(res => {
+    const params = type==1  ? {
+      projectId, 
+      areaId,
+      startDate: date?.[0]?.format("YYYY-MM-DD"),
+      endDate:date?.[1]?.format("YYYY-MM-DD"),
+      shiftNo,
+    }: {
+      projectId, 
+      areaId,
+      date: getTime(date, type), //date().startOf(type==2 ? "month" : "year").format("YYYY-MM-DD"),
+      shiftNo,
+    }
+  
+    return hander(params, treeIdList).then(res => {
       let { success, data, errMsg } = res;
       if (success) {
         let { detail = {}, energySub = [], energyTotal = [], proportion = [] } = Object.prototype.toString.call(data).slice(8, -1) == 'Object' ? data : {}
         let { x = [], y = [] } = detail
         setEnergySub(energySub);
         setEnergyTotal(energyTotal);
-        console.log(x, y)
+      
         const tableData = x.map((time, index) => ({
           time: time,
           value: y[index]

@@ -3130,50 +3130,59 @@ export class EnergyPublicRuntime {
     server.post(
       `Energy/EnergyPublicRuntime/QueryEnergyCategoryTree?projectId=${projectId}&categoryType=${categoryType}&name=${name}`
     );
-  static queryElectricYear = (projectId, areaId, date, shiftNo, data) =>
+  static queryElectricYear = (params, data) =>
     server.post(
-      `/Energy/EnergyPublicRuntime/QueryElectric_Year?projectId=${projectId}&areaId=${areaId}&date=${date}&shiftNo=${shiftNo}`,
-      data
+      `/Energy/EnergyPublicRuntime/QueryElectric_Year`,
+      data, {params}
     );
-  static queryElectricDay = (projectId, areaId, date, shiftNo, data) =>
+  static queryElectricDay = (params, data) =>
     server.post(
-      `/Energy/EnergyPublicRuntime/QueryElectric_Day?projectId=${projectId}&areaId=${areaId}&date=${date}&shiftNo=${shiftNo}`,
-      data
+      `/Energy/EnergyPublicRuntime/QueryElectric_Day`,
+      data,{params}
     );
-  static queryElectricMonth = (projectId, areaId, date, shiftNo, data) =>
-    server.post(
-      `/Energy/EnergyPublicRuntime/QueryElectric_Month?projectId=${projectId}&areaId=${areaId}&date=${date}&shiftNo=${shiftNo}`,
-      data
+    static queryElectricRangeDay =(params, data)=> server.post(
+      `/Energy/EnergyPublicRuntime/QueryElectric_Range`,data,{params}
+      
     );
-  static queryWaterDay = (projectId, areaId, date, shiftNo, data) =>
+  static queryElectricMonth = (params,data) =>
     server.post(
-      `/Energy/EnergyPublicRuntime/QueryWater_Day?projectId=${projectId}&areaId=${areaId}&date=${date}&shiftNo=${shiftNo}`,
-      data
+      `/Energy/EnergyPublicRuntime/QueryElectric_Month`,
+      data,{params}
     );
-  static queryWaterMonth = (projectId, areaId, date, shiftNo, data) =>
+  static queryWaterDay = (params, data) =>
     server.post(
-      `/Energy/EnergyPublicRuntime/QueryWater_Month?projectId=${projectId}&areaId=${areaId}&date=${date}&shiftNo=${shiftNo}`,
-      data
+      `/Energy/EnergyPublicRuntime/QueryWater_Day`,
+      data,{params}
     );
-  static queryWaterYear = (projectId, areaId, date, shiftNo, data) =>
+  static queryWaterRange = (params, data) =>
     server.post(
-      `/Energy/EnergyPublicRuntime/QueryWater_Year?projectId=${projectId}&areaId=${areaId}&date=${date}&shiftNo=${shiftNo}`,
-      data
+      `/Energy/EnergyPublicRuntime/QueryWater_Range`,
+      data,{params}
     );
-  static queryGasDay = (projectId, areaId, date, shiftNo, data) =>
+  static queryWaterMonth = (params, data) =>
     server.post(
-      `/Energy/EnergyPublicRuntime/QueryGas_Day?projectId=${projectId}&areaId=${areaId}&date=${date}&shiftNo=${shiftNo}`,
-      data
+      `/Energy/EnergyPublicRuntime/QueryWater_Month`,
+      data,{params}
     );
-  static queryGasMonth = (projectId, areaId, date, shiftNo, data) =>
+  static queryWaterYear = (params, data) =>
     server.post(
-      `/Energy/EnergyPublicRuntime/QueryGas_Month?projectId=${projectId}&areaId=${areaId}&date=${date}&shiftNo=${shiftNo}`,
-      data
+      `/Energy/EnergyPublicRuntime/QueryWater_Year`,
+      data, {params}
     );
-  static queryGasYear = (projectId, areaId, date, shiftNo, data) =>
+  static queryGasDay = (params, data) =>
     server.post(
-      `/Energy/EnergyPublicRuntime/QueryGas_Year?projectId=${projectId}&areaId=${areaId}&date=${date}&shiftNo=${shiftNo}`,
-      data
+      `/Energy/EnergyPublicRuntime/QueryGas_Day`,
+      data,{params}
+    );
+  static queryGasMonth = (params,data) =>
+    server.post(
+      `/Energy/EnergyPublicRuntime/QueryGas_Month`,
+      data,{params}
+    );
+  static queryGasYear = (params, data) =>
+    server.post(
+      `/Energy/EnergyPublicRuntime/QueryGas_Year`,
+      data, {params}
     );
 }
 //储能概述
