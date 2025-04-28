@@ -61,7 +61,7 @@ const Cmenu = styled(Menu)`
  //  background-color: ${props => props.theme.menusbgcolor || '#003366'};
     border-bottom: none;
     overflow: hidden;
-    padding: 2px 0 2px 16px;
+    padding: 2px 0px; // 万工去掉 边距
     height: inherit;
     display: flex;
     column-gap: 4px;

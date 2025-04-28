@@ -2496,6 +2496,20 @@ export class energyReport {
       `Energy/DataReportRuntime/QueryClassifyConsume?projectId=${projectId}&meterType=${meterType}&type=${type}&date=${date}&pageNum=${pageNum}&pageSize=${pageSize}&areaId=${areaId}`,
       params
     ); //分类能耗
+
+    static QueryByAreaFromIot = (params, body ) =>
+      server.post(
+        `Energy/DataReportRuntime/QueryByAreaFromIot`,
+        body,
+        {params}
+      ); //能电报表--区域
+      static QueryByLineFromIot = (params, body ) =>
+        server.post(
+          `Energy/DataReportRuntime/QueryByLineFromIot`,
+          body,
+          {params}
+        ); //能电报表--线路
+
   // static QueryReading = (data, areaId) => server.post(`/Energy/DataReportRuntime/QueryReading`, areaId, { params: data })//能耗抄表
   // static QueryConsume = (data, areaId) => server.post(`/Energy/DataReportRuntime/QueryConsume`, areaId, { params: data })//能耗用量
   // static QueryTimeConsume = (data, areaId) => server.post(`/Energy/DataReportRuntime/QueryTimeConsume`, areaId, { params: data })//分时能耗

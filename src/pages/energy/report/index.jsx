@@ -1,5 +1,5 @@
 import React, { useState,useCallback,useRef, useEffect, useMemo } from 'react'
-import {Checkbox, DatePicker, TimePicker} from 'antd'
+import {Checkbox, DatePicker, message, TimePicker} from 'antd'
 import moment from 'moment'
 import { useSelector } from 'react-redux'
 import {useOutletContext} from 'react-router-dom'
@@ -27,6 +27,8 @@ const {
   QueryReadingByLineCustomize,
   QueryConsumeByAreaCustomize,
   QueryConsumeByLineCustomize,
+  QueryByAreaFromIot,
+  QueryByLineFromIot,
 
 } = energyReport
  
@@ -66,6 +68,7 @@ const cols =[ // 实时抄表
     dataIndex: 'address',
   },
 ]
+ 
 
 let conscols =[ //  cols 实时抄表，  conscols 能耗报表 , typecols 分类能耗
 {
@@ -207,7 +210,7 @@ export default function Index() {
     return !!tooEarly || !!tooLate || !!date
   };
   
-  const [isrange, setIsrange] = useState(false)
+  const [isrange, setIsrange] = useState(true)
   const levelname = useSelector(levelDefaultLabel)
   const [value, setvalue] = useState('0')
   const [line, setLine] = useState(0)
@@ -225,6 +228,7 @@ export default function Index() {
     { key: '1', label: '能耗报表' },
     { key: '2', label: '分时能耗' },
     { key: '3', label: '分类能耗' },
+    { key: '4', label: '电能报表' },
   ]
   const wtabs = [
     { key: '0', label: '实时抄表' },
@@ -240,20 +244,20 @@ return getTime(dates[0],1).toString()+"-"+getTime(dates[1], 1).toString()
 
   },[dates]) ;
    const sheetName =(index===0 && dates.length) ? filename : tabs[index]?.label ?? 'sheet'
-  let columns = [cols, [], timecols, typecols][index] // 
+  let columns = [cols, [], timecols, typecols, cols][index] // 
 
 
  
   const getTableData = ({ current, pageSize, areaId, projectId, type, date, energytype, treeId, index, line,isrange, dates }) => {
-    console.log(date)
+  //  console.log(date)
     let f = [areaId, projectId, type, energytype,index, line].every(v => Number.isInteger(v)) && Array.isArray(treeId) && date
-    let range =[0,1].includes(index) && isrange && Array.isArray(dates) && dates?.length>1
+    let range =[0,1,4].includes(index) && isrange && Array.isArray(dates) && dates?.length>1
     if(!f) return;
     if(index === 0 && isrange && !Array.isArray(dates) ){
           return
     }
      let hander =range ? [[QueryReadingByAreaCustomize,
-      QueryReadingByLineCustomize], [QueryConsumeByAreaCustomize, QueryConsumeByLineCustomize]][index][line] :  index < 3 ? [
+      QueryReadingByLineCustomize], [QueryConsumeByAreaCustomize, QueryConsumeByLineCustomize],[],[], [QueryByAreaFromIot,QueryByLineFromIot]][index][line] :  index < 3 ? [
       [QueryByArea, QueryByLine], 
       [QueryConsumeByArea, QueryConsumeByLine],
       [QueryTimeConsumeByArea,QueryTimeConsumeByLine],
@@ -301,7 +305,7 @@ return getTime(dates[0],1).toString()+"-"+getTime(dates[1], 1).toString()
       })
     }
  
-   
+    if(!hander) return message.warning("请求方法不存在")
 
      return hander(params, treeId).then(res => {
          let {success, data, total=0} = res
@@ -396,14 +400,14 @@ const boxchange = (e)=> {
                 <UserTree areaId={areaId} energytype={energytype}  setTreeId={setTreeId} setLine={setLine}   showline={value!='3'} datatype={value=='3' ? 0 : NaN}   /> 
               <div style={{position: "relative", flex: 1}}> 
                 <div style={{position: "absolute", width: "100%"}}>
-             {["0","1"].includes(value) &&  <div style={{marginBottom: "16px", display: "flex"}}>
+             {["0","1","4"].includes(value) &&  <div style={{marginBottom: "16px", display: "flex"}}>
               <div style={{marginLeft: "auto"}}>
-              <Checkbox onChange={boxchange} checked={isrange}>使用日期范围（优先）</Checkbox> <RangePicker
+             {/*  <Checkbox onChange={boxchange} checked={isrange}>使用日期范围（优先）</Checkbox> */} <RangePicker
                   value={dates || valuet }
                     disabledDate={disabledDate}
                    onCalendarChange={(val) => setDates(val)}
                     onChange={onTimeOk} 
-                    disabled={!isrange}
+                 //   disabled={!isrange}
                     defaultValue={[moment().startOf("day"), moment().endOf("hour")]}
                     format="YYYY-MM-DD HH:mm"
                     showTime={{

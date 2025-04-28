@@ -1,105 +1,44 @@
-import { Tree } from 'antd';
-import React, { useState } from 'react';
-const treeData = [
-  {
-    title: '0-0',
-    key: '0-0',
-    children: [
-      {
-        title: '0-0-0',
-        key: '0-0-0',
-        children: [
-          {
-            title: '0-0-0-0',
-            key: '0-0-0-0',
-          },
-          {
-            title: '0-0-0-1',
-            key: '0-0-0-1',
-          },
-          {
-            title: '0-0-0-2',
-            key: '0-0-0-2',
-          },
-        ],
-      },
-      {
-        title: '0-0-1',
-        key: '0-0-1',
-        children: [
-          {
-            title: '0-0-1-0',
-            key: '0-0-1-0',
-          },
-          {
-            title: '0-0-1-1',
-            key: '0-0-1-1',
-          },
-          {
-            title: '0-0-1-2',
-            key: '0-0-1-2',
-          },
-        ],
-      },
-      {
-        title: '0-0-2',
-        key: '0-0-2',
-      },
-    ],
-  },
-  {
-    title: '0-1',
-    key: '0-1',
-    children: [
-      {
-        title: '0-1-0-0',
-        key: '0-1-0-0',
-      },
-      {
-        title: '0-1-0-1',
-        key: '0-1-0-1',
-      },
-      {
-        title: '0-1-0-2',
-        key: '0-1-0-2',
-      },
-    ],
-  },
-  {
-    title: '0-2',
-    key: '0-2',
-  },
+import React from 'react';
+import ReactDOM from 'react-dom';
+import { Line } from '@ant-design/plots';
+import styled from 'styled-components';
+const Mainbox = styled.div`
+   height: 800px;
+   width: 1024px;
+   margin: 32px;
+`
+const data = [
+  { year: '1991', value: 3, "category": "a"},
+  { year: '1992', value: 4 ,"category": "a"},
+  { year: '1993', value: 3.5, "category": "b"},
+  { year: '1994', value: 5,"category": "b" },
+  { year: '1995', value: 4.9,"category": "b" },
+  { year: '1996', value: 6,"category": "b" },
+  { year: '1997', value: 7,"category": "c" },
+  { year: '1998', value: 9,"category": "c" },
+  { year: '1999', value: 13,"category": "c" },
 ];
-const App = () => {
-  const [expandedKeys, setExpandedKeys] = useState(['0-0-0', '0-0-1']);
-  const [checkedKeys, setCheckedKeys] = useState(['0-0-0']);
-  const [selectedKeys, setSelectedKeys] = useState([]);
-  const [autoExpandParent, setAutoExpandParent] = useState(true);
-  const onExpand = (expandedKeysValue) => {
-    console.log('onExpand', expandedKeysValue);
-    // if not set autoExpandParent to false, if children expanded, parent can not collapse.
-    // or, you can remove all expanded children keys.
-    setExpandedKeys(expandedKeysValue);
-    setAutoExpandParent(false);
+const DemoLine = () => {
+ 
+  const config = {
+    data,
+    xField: "year",
+    yField: 'value',
+    point: {
+      shapeField: 'square',
+      sizeField: 14,
+    },
+    interaction: {
+      tooltip: {
+        marker: false,
+      },
+    },
+    style: {
+      lineWidth: 2,
+    },
   };
-  const onCheck = (checkedKeysValue) => {
-    console.log('onCheck', checkedKeysValue);
-    setCheckedKeys(checkedKeysValue);
-  };
-  const onSelect = (selectedKeysValue, info) => {
-    console.log('onSelect', info);
-    setSelectedKeys(selectedKeysValue);
-  };
-  return (
-    <Tree
-      checkable
-     
-      onCheck={onCheck}
-      checkedKeys={checkedKeys}
-      onSelect={onSelect}
-      checkStrictly={true}
-      treeData={treeData}
-    />
-  );
+  return <Mainbox> <Line {...config} /> </Mainbox>;
 };
-export default App;
+  
+ 
+export default DemoLine

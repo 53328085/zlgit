@@ -20,7 +20,8 @@ const Biglog = styled.div`
     width: 200px;
     height: 70px;
     background-color: ${props => props.overview ? props.theme.logBgColor : ""};
-   
+    overflow: hidden;
+    transform: translateY(-1px);
     
 
 `
