@@ -210,7 +210,7 @@ export default function Index() {
     return !!tooEarly || !!tooLate || !!date
   };
   
-  const [isrange, setIsrange] = useState(true)
+  const [isrange, setIsrange] = useState(false)
   const levelname = useSelector(levelDefaultLabel)
   const [value, setvalue] = useState('0')
   const [line, setLine] = useState(0)
@@ -402,12 +402,12 @@ const boxchange = (e)=> {
                 <div style={{position: "absolute", width: "100%"}}>
              {["0","1","4"].includes(value) &&  <div style={{marginBottom: "16px", display: "flex"}}>
               <div style={{marginLeft: "auto"}}>
-             {/*  <Checkbox onChange={boxchange} checked={isrange}>使用日期范围（优先）</Checkbox> */} <RangePicker
+            <Checkbox onChange={boxchange} checked={isrange}>使用日期范围（优先）</Checkbox>  <RangePicker
                   value={dates || valuet }
                     disabledDate={disabledDate}
                    onCalendarChange={(val) => setDates(val)}
                     onChange={onTimeOk} 
-                 //   disabled={!isrange}
+                    disabled={!isrange}
                     defaultValue={[moment().startOf("day"), moment().endOf("hour")]}
                     format="YYYY-MM-DD HH:mm"
                     showTime={{
