@@ -192,7 +192,10 @@ const ContentWrap = styled.div`
 }
 
 `
-
+const fs = {
+  // hv: '24px',
+   fc: '#333'
+ }
 export default function Index() {
   const Timelinebox = styled(Timeline)`
   height: 325px;
@@ -393,10 +396,7 @@ useEffect(() => {
     // getWarningDetailsPage()
     getWarningDetailsList()
   }, [areaId])
-  const fs = {
-   // hv: '24px',
-    fc: '#333'
-  }
+
   const [domheight,setDomHeight] =useState(0)
   const [speed,setSpeed]=useState(0)
   const mapobj = new Map([[1,{color:'#ff7070',text:'一级告警'}],[2,{color:'#ffb726',text:'二级告警'}],[3,{color:'#b07ef9',text:'三级告警'}]])
