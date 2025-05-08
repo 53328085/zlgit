@@ -60,9 +60,9 @@ const MainboxRight = styled.div`
     display: flex;
     align-items: center;
     flex-direction: column;
-    padding: 16px 0;
+   /*  padding: 16px 0;
     border-top: 1px dashed #e8e8e8;
-    margin-top: 16px;
+    margin-top: 16px; */
   }
 `
 export default function Index() {
