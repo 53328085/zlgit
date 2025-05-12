@@ -1945,10 +1945,10 @@ export const Monitoring = {
   },
   FileDistribution: {
     //档案下发
-    QueryByPageFlow: ({ projectId, gatewayId, port, alike }) =>
+    QueryDeviceIncreaseParams: ({ projectId, gatewayId, port, alike }) =>
       server.post(`/Monitor/Device/QueryDeviceIncreaseParams?projectId=${projectId}&gatewayId=${gatewayId}&port=${port}&alike=${alike}`), //查询查询新增参数
-    DataInitialization: ({ projectId, gatewaySn, port }) =>
-      server.post(`/Monitor/Device/DataInitialization?projectId=${projectId}&gatewaySn=${gatewaySn}&port=${port}`), //数据区初始化
+    DataInitialization: (projectId, gatewaySn, port, data) =>
+      server.post(`/Monitor/Device/DataInitialization?projectId=${projectId}&gatewaySn=${gatewaySn}&port=${port}`, data), //数据区初始化
     ClearPoint: ({ projectId, gatewaySn, port }) =>
       server.post(`/Monitor/Device/ClearPoint?projectId=${projectId}&gatewaySn=${gatewaySn}&port=${port}`), //清除测量点
     Query376CommandSettingResult: (seq) =>

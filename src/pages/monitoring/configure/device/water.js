@@ -45,6 +45,7 @@ export default function gateway({ deviceStyle }) {
   const pageRef = useRef(page)
   pageRef.current = page
   const [dataSource, setDataSource] = useState([])
+  const [dataSource376, setDataSource376] = useState([])
   const oneLevel = useSelector(state => state.system.onelevel)
   const projectId = useSelector(state => state.system.menus.projectId)
   const compRef = useRef()
@@ -198,6 +199,7 @@ export default function gateway({ deviceStyle }) {
           EditModalFormRef?.current?.onCancel()
         } else if (type == 'next') {
           openSetModal(editform.getFieldsValue())
+          getQueryByPageWater376()
         } else {
           message.success("更新成功")
         }
@@ -261,7 +263,7 @@ export default function gateway({ deviceStyle }) {
   }
   const setOk = async () => {
     let form = Object.keys(addform.getFieldsValue()).length === 0 ? editform.getFieldsValue() : addform.getFieldsValue()
-    const deviceItem = dataSource.find(item => item.sn === form.sn);
+    const deviceItem = dataSource376.find(item => item.sn === form.sn);
     const deviceId = deviceItem ? deviceItem.id : null;
     const gatewayItem = gatewaylist.find(item => item.id === form.gatewayId);
     const gatewaySn = gatewayItem ? gatewayItem.sn : null;
@@ -351,7 +353,7 @@ export default function gateway({ deviceStyle }) {
       integerDigits: 2, //电能示值的整数位个数
       largeCategory: 5, //大类号
       password: "000000000000", //通信密码，可为空
-      // collectSn: "000000000000", //采集器通信地址
+      collectSn: "000000000000", //采集器通信地址
       pn: "1", //所属测量点号，范围0-2040
       protocolType: 30,
       rateCount: 4, //费率数（1-12）
@@ -408,6 +410,7 @@ export default function gateway({ deviceStyle }) {
           modalFormRef?.current?.onCancel()
         } else if (type == 'next') {
           openSetModal(addform.getFieldsValue())
+          getQueryByPageWater376()
         } else {
           message.success('新增成功!')
         }
@@ -547,6 +550,30 @@ export default function gateway({ deviceStyle }) {
 
     } else {
       setDataSource([])
+    }
+  }
+  //获取水表列表
+  const getQueryByPageWater376 = async () => {
+    let params = {
+      projectId,
+      pageNum: 1,
+      pageSize: page.total + 1, areaId: compRef.current.selvalue ? compRef.current.selvalue : 0,
+      alike: compRef.current.inpvalue,
+      customerType: compRef.current.energyVal ? compRef.current.energyVal : 0
+    }
+    const resp = await QueryByPageWater(params)
+    setLoading(false)
+    setPage({
+      ...page,
+      current: resp.pageNum,
+      pageSize: resp.pageSize,
+      total: resp.total
+    })
+    if (resp.success && Array.isArray(resp.data)) {
+      setDataSource376([...resp.data.reverse()])
+
+    } else {
+      setDataSource376([])
     }
   }
   //导出

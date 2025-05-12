@@ -68,7 +68,7 @@ flex-direction: column;
 
 function Index(props, ref) {
   const { pagination, paginationShow, sheetName = "sheet.xlsx", tempName = '', onExport = () => { }, tempcolums, tempdata, scroll = {}, style = {}, ...otherprops } = props
-  
+  console.log(paginationShow, pagination)
   const ecolumns = otherprops.columns?.filter(col => !col.hasOwnProperty('export'))
   const tableref = useRef()
   let { laptop } = useSelector(adaptation)
