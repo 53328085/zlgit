@@ -1,14 +1,17 @@
-import React, {useCallback} from "react";
+import React, {useCallback,useEffect,useRef, useState} from "react";
 import styled, {css} from "styled-components";
 import {useSelector} from 'react-redux'
-import { Button, Dropdown, Menu, Upload, Typography, message,Radio} from "antd";
+import { Button, Dropdown, Menu, Upload, Typography, message,Radio, Form, DatePicker} from "antd";
 import {CaretDownFilled, CloseOutlined} from '@ant-design/icons'
 import {useTranslation} from 'react-i18next' 
+import moment from "moment";
 import i18 from '../../i18n'
 import icon from "./icon";
 import {hextodec} from '@com/usehandler'
 import { themeColor } from "@redux/systemconfig";
 import GouIcon from '@imgs/gou.png'
+import CModal from "@com/useModal";
+import { range } from "lodash";
 const {Link} = Typography
 // 按钮圆角一般6px,  高度28px及一下4px 陈舒映
 
@@ -480,14 +483,38 @@ export function PrintButton(props) {
   );
 }
 
-export function ExportExcel({tb,  single=false,...other}) {
-  
+export function ExportExcel({tb,  single=false,defined=false,setIsrange,getDates,value, ...other}) {
+ const mref= useRef()
+ const [form] = Form.useForm()
+ const [dates, setDates] = useState(null)
+ const onOk=async()=> {
+    try {
+      await form.validateFields()
+      tb.current.download()
+      mref.current.onCancel()
+    } catch (e) {
+      Promise.reject()
+    }
+ }
+ const disabledDate = (current) => { // 限制选择范围
+  if (!dates) {
+    return false;
+  }
+  const tooLate = dates[0] && current.diff(dates[0], 'days') > 31;
+  const tooEarly = dates[1] && dates[1].diff(current, 'days') > 31;
+  const date = current && current > moment().endOf("day");
+  return !!tooEarly || !!tooLate || !!date
+};
  const onClick =useCallback(({key}) => {
       
      if (key == '1') {
       tb.current.download()
      }else if(key == '2') {
       tb.current.downloadAll()
+     }else if(key=="3") {
+      let obj={range:true}
+      setIsrange(obj)
+      mref.current.onOpen()
      }
   }, [tb])
   const items = [
@@ -497,19 +524,51 @@ export function ExportExcel({tb,  single=false,...other}) {
       
          
     },
+    defined ?  {
+      key: '3',
+      label: <Link> {i18.t('Customexports', {ns: "button"})}</Link>,
+    
+    } : null,
     single ? null : {
       key: '2',
       label: <Link> {i18.t('exportAll', {ns: "button"})}</Link>,
     
     },
   ]
+  useEffect(()=> {
+    if(defined && Array.isArray(value)){
+      form.setFieldValue("date", value)
+    }
+
+  },[defined,value])
   return (
+    <div>
     <Dropdown menu={{items, onClick}} {...other}>
         <Custbtn >
       <img src={icon.export}  />
       {i18.t('export', {ns: "button"})}
     </Custbtn>
-    </Dropdown> 
+    </Dropdown>
+    <CModal width={485} title={i18.t('Customexports', {ns: "button"})} ref={mref} onOk={onOk}  mold='cust' >
+    <Form form={form} layout="vertical">
+       <Form.Item label="请选择数据导出时间段" name="date"  rules={[{
+        required:true,
+        message:"请选择数据导出时间段"
+       }]}>
+       <DatePicker.RangePicker 
+       disabledDate={disabledDate} 
+       onChange={getDates}
+       onCalendarChange={(val) => setDates(val)}
+         format="YYYY-MM-DD HH:mm"
+       showTime={{
+        format: 'HH:mm',
+        minuteStep:15
+      }}
+       ></DatePicker.RangePicker>
+       </Form.Item>
+    </Form>
+</CModal>
+</div>
   );
 }
 

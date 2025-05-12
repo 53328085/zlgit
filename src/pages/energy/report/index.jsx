@@ -199,18 +199,10 @@ const typecols =[  // 分类能耗
 export default function Index() {
 
   let {exparams, setCustview} = useOutletContext() 
-  const [dates, setDates] = useState([moment().startOf("day"), moment()]);
-   const disabledDate = (current) => {
-    if (!dates) {
-      return false;
-    }
-    const tooLate = dates[0] && current.diff(dates[0], 'days') > 31;
-    const tooEarly = dates[1] && dates[1].diff(current, 'days') > 31;
-    const date = current && current > moment().endOf("day");
-    return !!tooEarly || !!tooLate || !!date
-  };
+  const [dates, setDates] = useState([moment().startOf("day"), moment().endOf("hour")]);
+
   
-  const [isrange, setIsrange] = useState(false)
+  const [isrange, setIsrange] = useState({range:false})
   const levelname = useSelector(levelDefaultLabel)
   const [value, setvalue] = useState('0')
   const [line, setLine] = useState(0)
@@ -237,23 +229,37 @@ export default function Index() {
   ]
   const [tabs, setTabs] = useState(etabs)
   const index = Number(value)
-  const filename=useMemo(()=> {
-    if(Array.isArray(dates)&&dates.length>1){
-return getTime(dates[0],1).toString()+"-"+getTime(dates[1], 1).toString()
-    }
+ 
 
-  },[dates]) ;
-   const sheetName =(index===0 && dates.length) ? filename : tabs[index]?.label ?? 'sheet'
-  let columns = [cols, [], timecols, typecols, cols][index] // 
 
+ const sheetName = useMemo(()=> {
+     let filename="sheet"
+     let  f = ["0","1","4"].includes(value)
+     if(Array.isArray(dates)&&dates.length>1){
+       filename = getTime(dates[0],1).toString()+"-"+getTime(dates[1], 1).toString() + tabs[index]?.label
+     }
+    return (f&&isrange.range&&dates?.length) ?filename :  (tabs[index]?.label ?? 'sheet')
+
+ }, [value, dates, tabs,isrange])
+ 
+ 
+  
+ let columns = [cols, [], timecols, typecols, cols][index] // 
 
  
+  
   const getTableData = ({ current, pageSize, areaId, projectId, type, date, energytype, treeId, index, line,isrange, dates }) => {
   //  console.log(date)
+
+
+    console.log("isrange", isrange)
+    console.log("dates", dates)
     let f = [areaId, projectId, type, energytype,index, line].every(v => Number.isInteger(v)) && Array.isArray(treeId) && date
-    let range =[0,1,4].includes(index) && isrange && Array.isArray(dates) && dates?.length>1
+
+   
+    let range =[0,1,4].includes(index) && isrange.range && Array.isArray(dates) && dates?.length>1
     if(!f) return;
-    if(index === 0 && isrange && !Array.isArray(dates) ){
+    if(index === 0 && isrange.range && !Array.isArray(dates) ){
           return
     }
      let hander =range ? [[QueryReadingByAreaCustomize,
@@ -347,17 +353,19 @@ return getTime(dates[0],1).toString()+"-"+getTime(dates[1], 1).toString()
     refreshDeps: [areaId, projectId, type, date, energytype, treeId, index, line,isrange, dates]
   })
 
-  const CustView =(
-    <Space size={16}>
-      <ExportExcel tb={tbref} />
-     </Space>
-    )
-  const onExport =useCallback(() => {   
-   
+  const CustView =useMemo(()=> {
+    const showdefined =  ["0","1","4"].includes(value)
+    return (
+      <Space size={16}>
+        <ExportExcel tb={tbref} defined={showdefined}  setIsrange={setIsrange} getDates={setDates} value={dates}  />
+       </Space>
+      )
+  }, [value]) 
+  const onExport =useCallback(() => {  
     return  getTableData({current: 1, pageSize: total,areaId, projectId, type, date, energytype, treeId, index, line,isrange, dates})
  }, [total, concolumns, type, date,energytype,areaId, treeId, index, line, isrange, dates,sheetName])
 
-const boxchange = (e)=> {
+/* const boxchange = (e)=> {
   const f = e.target.checked
   setIsrange(f)
   if(!f) {
@@ -374,7 +382,7 @@ const boxchange = (e)=> {
     console.log(dataString)
      setDates(date)
      setValuet(date)
-  };
+  }; */
  
   let dataProps = {
     value,
@@ -390,7 +398,7 @@ const boxchange = (e)=> {
   return () => {
     setCustview(undefined)
   }
- }, [])
+ }, [value])
 
 
   return (
@@ -400,7 +408,7 @@ const boxchange = (e)=> {
                 <UserTree areaId={areaId} energytype={energytype}  setTreeId={setTreeId} setLine={setLine}   showline={value!='3'} datatype={value=='3' ? 0 : NaN}   /> 
               <div style={{position: "relative", flex: 1}}> 
                 <div style={{position: "absolute", width: "100%"}}>
-             {["0","1","4"].includes(value) &&  <div style={{marginBottom: "16px", display: "flex"}}>
+            {/*  {["0","1","4"].includes(value) &&  <div style={{marginBottom: "16px", display: "flex"}}>
               <div style={{marginLeft: "auto"}}>
             <Checkbox onChange={boxchange} checked={isrange}>使用日期范围（优先）</Checkbox>  <RangePicker
                   value={dates || valuet }
@@ -415,12 +423,11 @@ const boxchange = (e)=> {
                       minuteStep:15
                     }}
                   />
-                  {/* <TimePicker.RangePicker minuteStep={15} hourStep={1}  format="HH:mm"></TimePicker.RangePicker> */}
                   </div>
                   </div>
-                }
+                } */}
                  {
-                  value == "1" ? <UserTable ref={tbref}  columns={concolumns} {...tableProps} key={value} scroll={{
+                  value == "1" ? <UserTable ref={tbref}  columns={concolumns} {...tableProps} key={value} rowKey={row=>row.sn+row.nodeName} scroll={{
                     scrollToFirstRowOnChange: true,
                      x: 1400, 
                      y: 685
@@ -428,7 +435,7 @@ const boxchange = (e)=> {
                   }
                   sheetName={sheetName} onExport={onExport}
                   ></UserTable>
-                  :<UserTable ref={tbref} columns={columns} {...tableProps} key={value} sheetName={sheetName} onExport={onExport}></UserTable>
+                  :<UserTable ref={tbref} columns={columns} {...tableProps} key={value} sheetName={sheetName} rowKey={row=>row.sn + row.nodeName} onExport={onExport}></UserTable>
                 } 
                 </div>
                 </div> 
