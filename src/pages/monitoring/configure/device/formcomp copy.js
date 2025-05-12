@@ -8,6 +8,7 @@ export const MyContext = createContext({ addopts: [], gatewaylist: [], devicelis
 //新增com
 let coms = 0
 let Com = ({ form }) => {
+    const category = Form.useWatch('category', form);
     const { type = 1, deviceStyle } = useContext(MyContext)
     console.log(type)
 
@@ -32,9 +33,9 @@ let Com = ({ form }) => {
                         ></Select>
                     </Form.Item>
                     {
-                        type === 1 ? <Form.Item label="通讯协议" name="commProtocol" rules={rules}>
+                        type === 1 ? <>{category === 'ZTWL376-W' ? null : <Form.Item label="通讯协议" name="commProtocol" rules={rules}>
                             <Select options={[{ label: "CJT188-2004", value: 0 }]} disabled></Select>
-                        </Form.Item> : <Form.Item label="通讯地址" name="commAddress" rules={[{ required: true }, {
+                        </Form.Item>}</> : <Form.Item label="通讯地址" name="commAddress" rules={[{ required: true }, {
                             validator: (_, value) => {
                                 if (!value) {
                                     return Promise.resolve()
@@ -344,7 +345,7 @@ export const EditModalForm = ({ editform, EditModalFormRef, ...other }) => {
 //编辑com组件
 let EditCom = ({ form, coms }) => {
     const { type = 1 } = useContext(MyContext)
-
+    const category = Form.useWatch('category', form);
     let options = []
     const rules = [{
         required: true,
@@ -366,11 +367,11 @@ let EditCom = ({ form, coms }) => {
                             placeholder
                         ></Select>
                     </Form.Item>
-                    {type === 1 ? <Form.Item label="通讯协议" name="commProtocol" rules={rules}>
+                    {type === 1 ? <>{category === 'ZTWL376-W' ? null : <Form.Item label="通讯协议" name="commProtocol" rules={rules}>
                         <Select
                             options={[{ label: "CJT188-2004", value: 0 }]} disabled
                         ></Select>
-                    </Form.Item> :
+                    </Form.Item>}</> :
                         <Form.Item label="通讯地址" name="commAddress" rules={[{ required: true }, {
                             validator: (_, value) => {
                                 if (!value) {
@@ -671,22 +672,22 @@ export const SetFormComp = (props) => {
         value: 7
     }]
     const LargeCategoryData = [{
-        label: '电力大型专变用户',
+        label: '0{电力大型专变用户}',
         value: 0
     }, {
-        label: '电力小型专变用户/水表',
+        label: '1{电力小型专变用户/水表}',
         value: 1
     }, {
-        label: '电力低压三相用户/热量表',
+        label: '2{电力低压三相用户/热量表}',
         value: 2
     }, {
-        label: '电力低压单相用户/燃气表',
+        label: '3{电力低压单相用户/燃气表}',
         value: 3
     }, {
-        label: '电力居民用户/其他仪表',
+        label: '4{电力居民用户/其他仪表}',
         value: 4
     }, {
-        label: '电力公变考核计量',
+        label: '5{电力公变考核计量}',
         value: 5
     }]
     const ProtocolTypeData = [{
@@ -794,20 +795,20 @@ export const SetFormComp = (props) => {
         value: 3
     }]
     const SmallCategoryData = [{
-        label: '通配电能表/冷水表/热量表(计热量)/燃气表/其他仪表(如 电度表)',
+        label: '0{通配电能表/冷水表/热量表(计热量)/燃气表/其他仪表(如 电度表)}',
         value: 0
     }, {
-        label: '单相电能表/中水表/热量表(计冷量) ',
+        label: '1{单相电能表/中水表/热量表(计冷量)}',
         value: 1
     }, {
-        label: '三相电能表/纯净水表',
+        label: '2{三相电能表/纯净水表}',
         value: 2
     }, {
-        label: '热水表',
+        label: '3{热水表}',
         value: 3
     }, {
-        label: '电子水表',
-        value: 4
+        label: '9{电子水表}',
+        value: 9
     }]
     const RateCountData = [{
         label: '1',
@@ -869,7 +870,7 @@ export const SetFormComp = (props) => {
             form={form}
             colon={false}
             labelCol={{
-                span: 8
+                span: 9
             }}
             preserve={false}
         >
@@ -908,6 +909,12 @@ export const SetFormComp = (props) => {
                         ></Select>
                     </Form.Item>
 
+                    <Form.Item label="费率数" name="rateCount" rules={rules}>
+                        <Select
+                            showSearch
+                            options={RateCountData}
+                        ></Select>
+                    </Form.Item>
 
                 </Col>
                 <Col>
@@ -941,15 +948,9 @@ export const SetFormComp = (props) => {
                     <Form.Item label="通信密码" name="password" rules={rules}>
                         <Input />
                     </Form.Item>
-                    <Form.Item label="费率数" name="rateCount" rules={rules}>
-                        <Select
-                            showSearch
-                            options={RateCountData}
-                        ></Select>
+                    <Form.Item label="采集器通信地址" name="collectSn" rules={rules}>
+                        <Input />
                     </Form.Item>
-                    {/* <Form.Item label="采集器通信地址" name="collectSn" rules={rules}>
-                                    <Input />
-                                </Form.Item> */}
                 </Col>
 
             </Row>
