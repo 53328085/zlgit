@@ -42,9 +42,10 @@ import Projectform from './projectform'
 import { systemConfigInfo, getJump, iszhCN, getWebsiteState, getWebsiteMenu, adaptation} from "@redux/systemconfig";
 
 import UseTabel from '@com/useTable'
+import {isObject} from "@com/usehandler"
 import Account from "./account";
 //import { runMenus } from "../../redux/systemconfig";
- const {QueryMainTheme, SetProjectTheme} = CustTheme
+ const {QueryMainTheme, SetProjectTheme,GetProjectMainTheme} = CustTheme
  
 const CustTable = styled(Table)`
   && {
@@ -279,9 +280,9 @@ export default function Index() {
   const {userId,roleType} =useSelector(selectUser)
   const [themes, setThemes] = useState([])
   const tbdata = useMemo(()=>{
-     return themes.map(t => ({primaryColor: t.context?.primaryColor, ...t}))
+     return themes.map(t => ({primaryColor: t.context?.primaryColor,key:t.id, ...t}))
   },[themes] )
-  console.log(tbdata)
+   
   const navigate = useNavigate();
   const dispatch = useDispatch();
    
@@ -292,6 +293,7 @@ export default function Index() {
   const projectform = useRef()
   const { Item } = Form;
   const { Option } = Select;
+  const [selectedRowKeys, setSelectedRowKeys] = useState([])
   const [options, setOptions] = useState([
     { label: t("comm:All",{text:""}), value: 0 },
     { label: t("comm:Published"), value: 1 },
@@ -347,6 +349,8 @@ export default function Index() {
   const themeId = useRef()
   const rowSelection = {
     onChange: (selectedRowKeys, selectedRows) => {
+      console.log(selectedRowKeys)
+      setSelectedRowKeys(selectedRowKeys)
       themeId.current.mainThemeId = selectedRows?.[0].id
      // console.log(`selectedRowKeys: ${selectedRowKeys}`, 'selectedRows: ', selectedRows);
     }, 
@@ -367,12 +371,35 @@ export default function Index() {
     
 
  }
- const showtheme = (id) => {
-   themeId.current ={
-    mainThemeId: null,
-    projectId:id
-   } 
-   themeref.current.onOpen()
+ const showtheme = async (id) => {
+  try {
+    let  {success, data} =  await GetProjectMainTheme({projectId: id})
+    if(success && isObject(data) && Number.isInteger(data?.mainThemeId)) { 
+      setSelectedRowKeys([data?.mainThemeId])
+      themeId.current={
+        mainThemeId: data?.mainThemeId,
+        projectId:id
+       } 
+    }else {
+      themeId.current ={
+        mainThemeId: null,
+        projectId:id
+       }
+      setSelectedRowKeys([])
+    }
+    
+  } catch (error) {
+    themeId.current ={
+      mainThemeId: null,
+      projectId:id
+     }
+    console.log(error)
+  } finally{
+    
+     themeref.current.onOpen()
+  }
+    
+  
 
  }
  const themeok = async ()=> {
@@ -885,8 +912,10 @@ useEffect(()=> {
       >
           <UseTabel
             columns={themecolumns}
+           
             rowSelection={{
               type: "radio",
+              selectedRowKeys,
               ...rowSelection,
             }}
         //    rowClassName="rowclass"

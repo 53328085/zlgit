@@ -302,7 +302,7 @@ export default function Energy({ showData, dateType, showType, date }) {
           </Titlelayout>
           <Titlelayout title={<div><span>{showType === 1 ? '分类能耗' : '分类能耗费用'}</span> <span style={{ fontSize: 12, color: '#666', paddingLeft: 8, }}>{showType === 1 ? '' : '(元)'}</span></div>} >
 
-            <Cdivider type="h" margin="16px 0" />
+           {/*  <Cdivider type="h" margin="16px 0" /> */}
             <div style={{ height: 237, display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
               {
                 consumeTotal?.map((it, index) => (<Card index={index} {...it} showtype={showType} laptop={laptop} />))

@@ -152,7 +152,7 @@ const Mainbox = styled.div`
 `
 export default function Index(props) {
   let {exparams} = useOutletContext()
-  let {view, areaId, date, type:dateType,  projectId} = exparams 
+  let { areaId, date, type:dateType,  projectId} = exparams 
   const [keyword, setKeyword] = useState('')
  
   const [messageApi, contextHolder] = message.useMessage();
@@ -195,8 +195,9 @@ export default function Index(props) {
     dataset: {}
   })
   const getData = () => {//图表和能耗详情值
-
-   if (Object.values(exparams)?.length <5 ) return
+   
+   let f = Number.isInteger(projectId)&& Number.isInteger(dateType) && Number.isInteger(parseInt(areaId)) && date
+   if (!f) return
     let time = getTime(date, dateType)
     return querOverview(projectId, dateType, areaId, time).then(res => {
       let { success, data } = res

@@ -16,6 +16,8 @@ import  imgurl from '@imgs'
 import moment from 'moment'
  
 import Titlelayout from '@com/titlelayout' 
+
+import { cloneDeep } from 'lodash';
  
 const MainDiv =styled.div`
 background-color: #fff;
@@ -225,7 +227,7 @@ export default function Index() {
  
     if(res.success){
       if(res.data.data){
-        const dataes = structuredClone(res.data)
+        const dataes = cloneDeep(res.data)
         dataes.data?.forEach((it, i) => {
           if(it.name){
             dataes[it.name] = it.value

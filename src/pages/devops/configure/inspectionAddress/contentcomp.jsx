@@ -139,6 +139,7 @@ const Mainbox = styled.div`
 //配置线路
 export default forwardRef(({  getQueryPageDevice,areaId,addform, laptop }, ref) => {
     const [open,setOpen] = useState(false)
+    console.log("open", open)
     const publish = useSelector(publishState)
     const { Search } = Input;
     const [dataSource, setDataSource] = useState([])//未选data

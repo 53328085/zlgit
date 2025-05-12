@@ -16,6 +16,7 @@ const sty = css`
  .totalCount{
   flex: auto;
     justify-content: space-evenly;
+    
   .count_title{
         line-height: 14px;
     }
@@ -35,7 +36,7 @@ const Divorder = styled.div`
   display: flex;
   height: 100%;
   justify-content: space-around;
- // align-items: center;
+  align-items: center;
  // margin-top: 30px;
   .card_icon{
   //  margin-left: 25px;

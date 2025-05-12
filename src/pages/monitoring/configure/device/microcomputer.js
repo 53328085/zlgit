@@ -15,15 +15,15 @@ import {publishState} from '@redux/systemconfig'
 const {Link} = Typography
 const {
   DeviceManager: {
-    QueryByPageFlow,
+    QueryByPageMic,
     AeraQueryAll,
     QueryListGateWay,
     QueryUsedDeviceCategory,
     QueryPlanList,
     AddFlow,
-    UpdateFlow,
-    DeleteFlow,
-    ImportFlow,
+    UpdateMic,
+    DeleteMic,
+    ImportMic,
     OneLevel
   }
 } = Monitoring
@@ -132,17 +132,17 @@ export default function gateway({ deviceStyle }) {
 
       }
     },
-    // {
-    //   title: '用能类型',
-    //   dataIndex: 'customerType',
-    //   render: (text) => {
-    //     return (
-    //       <>
-    //         {text === 1 ? <span>客户用能</span> : <span>公共用能</span>}
-    //       </>
-    //     )
-    //   }
-    // },
+    {
+      title: '用能类型',
+      dataIndex: 'customerType',
+      render: (text) => {
+        return (
+          <>
+            {text === 1 ? <span>客户用能</span> : <span>公共用能</span>}
+          </>
+        )
+      }
+    },
     {
       title: '备注',
       dataIndex: 'remark'
@@ -211,14 +211,14 @@ export default function gateway({ deviceStyle }) {
         category,
         sn,
         name,
-        commPort,
+        commPort:commPort?commPort:0,
         commProtocol:commProtocol?commProtocol:0,
         commAddress,
         factor: 0,
-        customerType: 0,     
+        customerType,     
       }
       console.log(params,editform.getFieldValue(),path1Gruop,path2Gruop,path3Gruop,path4Gruop,pathGruop)
-      const resp = await UpdateFlow(params)
+      const resp = await UpdateMic(params)
       if(resp.success){
         message.success("更新成功")
         EditModalFormRef?.current?.onCancel()
@@ -241,7 +241,7 @@ export default function gateway({ deviceStyle }) {
   }
   //确认删除
   const delOk=async()=>{
-    const {success,errMsg} = await DeleteFlow({
+    const {success,errMsg} = await DeleteMic({
       projectId,
       sn:encodeURIComponent(delid.current)
     })
@@ -305,7 +305,7 @@ export default function gateway({ deviceStyle }) {
         category: formvalue.category,
         sn: formvalue.sn,
         name: formvalue.name,
-        // customerType:0,
+        customerType: formvalue.customerType ? formvalue.customerType : 0,
         commPort: formvalue.commPort ? formvalue.commPort : 0,
         commProtocol: formvalue.commProtocol ? formvalue.commProtocol : 0,
         commAddress: formvalue.commAddress ? formvalue.commAddress : 0,
@@ -418,10 +418,10 @@ export default function gateway({ deviceStyle }) {
       pageSize: pageSize?pageSize:pageRef.current.pageSize,
       areaId: id ? id : 0,
       alike: like ? like : '',
-      deviceStyle: 14,
+      deviceStyle: 20,
       customerType:customerType?customerType:0
     }
-    const resp = await QueryByPageFlow(params)
+    const resp = await QueryByPageMic(params)
     setLoading(false)
     setPage({
       ...page,
@@ -452,7 +452,7 @@ export default function gateway({ deviceStyle }) {
         customerType:compRef.current.energyVal?compRef.current.energyVal:0
       }
      
-      const resp = await QueryByPageFlow(params)
+      const resp = await QueryByPageMic(params)
       if(resp.success){
         resolve({list:resp.data?resp.data:[],total:resp.total})
       }else{
@@ -465,7 +465,7 @@ export default function gateway({ deviceStyle }) {
     const formData =new FormData()
     formData.append("file",flies[0])
     formData.append("projectId",projectId)
-    const res = await ImportFlow(formData)
+    const res = await ImportMic(formData)
      if(res.success) {
       if (res.data.success) {
         message.success("上传成功")

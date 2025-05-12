@@ -1,19 +1,44 @@
-import { Timeline, Button } from 'antd';
-import React,{useState} from 'react';
-const App = () => {
-  const [reverse, setReverse] = useState(false);
-  const handleClick = () => {
-    setReverse(!reverse);
+import React from 'react';
+import ReactDOM from 'react-dom';
+import { Line } from '@ant-design/plots';
+import styled from 'styled-components';
+const Mainbox = styled.div`
+   height: 800px;
+   width: 1024px;
+   margin: 32px;
+`
+const data = [
+  { year: '1991', value: 3, "category": "a"},
+  { year: '1992', value: 4 ,"category": "a"},
+  { year: '1993', value: 3.5, "category": "b"},
+  { year: '1994', value: 5,"category": "b" },
+  { year: '1995', value: 4.9,"category": "b" },
+  { year: '1996', value: 6,"category": "b" },
+  { year: '1997', value: 7,"category": "c" },
+  { year: '1998', value: 9,"category": "c" },
+  { year: '1999', value: 13,"category": "c" },
+];
+const DemoLine = () => {
+ 
+  const config = {
+    data,
+    xField: "year",
+    yField: 'value',
+    point: {
+      shapeField: 'square',
+      sizeField: 14,
+    },
+    interaction: {
+      tooltip: {
+        marker: false,
+      },
+    },
+    style: {
+      lineWidth: 2,
+    },
   };
-  return ( 
-    <div style={{padding:"32px"}}> 
-      <Button onClick={handleClick}>切换</Button>
-  <Timeline pending="加载中……" reverse={reverse} mode="alternate"  pendingDot={<span>*</span>}>
-    <Timeline.Item color="#ff7313" label={new Date().toLocaleString()}>Create a services site 2015-09-01</Timeline.Item>
-    <Timeline.Item>Solve initial network problems 2015-09-01</Timeline.Item>
-    <Timeline.Item>Technical testing 2015-09-01</Timeline.Item>
-    <Timeline.Item>Network problems being solved 2015-09-01</Timeline.Item>
-  </Timeline>
-  </div>
-)};
-export default App;
+  return <Mainbox> <Line {...config} /> </Mainbox>;
+};
+  
+ 
+export default DemoLine

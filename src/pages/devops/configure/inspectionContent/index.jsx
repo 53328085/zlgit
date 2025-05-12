@@ -243,7 +243,7 @@ export default function Index() {
           <Table columns={columns}  {...tableProps} ></Table>
 
 
-          <Modal mold='cust' ref={addRef} onOk={addItems} title="新增检查项" custft={isAdd}>
+          <Modal mold='cust' ref={addRef} onOk={addItems} title="新增检查项" custft={isAdd} >
 
             <DropstartDiv>
               <Form

@@ -16,6 +16,7 @@ import {CustButtonT} from "@com/useButton"
 import { adaptation } from "@redux/systemconfig";
 import Titlelayout from '@com/titlelayout'
 import Loading from '../../../Loading'
+import { cloneDeep } from 'lodash'
 const MainBox = styled.div` 
   flex: 1;
   display: flex;
@@ -265,7 +266,7 @@ export default function Index() {
      const resp =  await planListRef.current.setDuty();
      if(resp){
         planRef.current.onCancel()
-        checklist.current = structuredClone(checkGruopArr)
+        checklist.current = cloneDeep(checkGruopArr)
         getDuty()
         // GetDutyUsers()
      }
@@ -337,11 +338,11 @@ export default function Index() {
         nois0[key]=1
       }
     }
-    const copytabledatat = structuredClone(tabledataRef.current)
-    copytabledatat[index]['nos'][i-1] = structuredClone(nois0)
+    const copytabledatat = cloneDeep(tabledataRef.current)
+    copytabledatat[index]['nos'][i-1] = cloneDeep(nois0)
     // console.log(copytabledatat,copytabledatat[index]['nos'][i-1],nois0)
-    tabledataRef.current = structuredClone(copytabledatat)
-    setTableData(structuredClone(copytabledatat))
+    tabledataRef.current = cloneDeep(copytabledatat)
+    setTableData(cloneDeep(copytabledatat))
   }
   const lastcountRef=useRef(0)
   //表格视图更新
@@ -350,7 +351,7 @@ export default function Index() {
     let palnobj=[];
     let columnarr=[];
    console.log(tabledata)
-    const copytable =structuredClone(tabledata)
+    const copytable =cloneDeep(tabledata)
     for (const key in  plan) {
       if ( key.indexOf('no')!==-1 &&plan[key] ) {
         count++;

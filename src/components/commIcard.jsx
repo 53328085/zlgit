@@ -17,12 +17,17 @@ const CardItme = styled.div`
     justify-content: flex-start;
     position: relative;
     overflow: hidden;
+    .postion {
+      position: absolute;
+      left: 14;
+    }
     .cardImg {
-      width: 100px;
+      flex: 0 0 100px;
       height: 136px;
       justify-content: center;
       align-items: center;
       display: flex;
+      padding-top: 24px;
     //  background-color: #fff;
       overflow: hidden;
       .img {
@@ -113,11 +118,11 @@ const Gateway = (props) => {
       <div className="line">
         <Text ellipsis={{tooltip: props.name}}>{props?.name}</Text>
         <span>{props.title}</span>
-        {props.state == 2 ? (
+       {/*  {props.state == 2 ? (
           <TreeBtn type={2} ns="comm" text="normal" className="on" />
         ) : (
           <TreeBtn type={4} ns="comm" text="offline" className="on" />
-        )}
+        )} */}
       </div>
       <div className="line">{props.value}</div>
       <div className="values">
@@ -138,9 +143,9 @@ const Gateway = (props) => {
   );
 };
 const Device = (props) => {
-  const {fields,state,deviceStyle} = props
-  const text = useMemo(()=> {
-    let t='' ;
+  const {fields:datas,state,deviceStyle} = props
+  const fields = useMemo(()=> {
+    /* let t='' ;
     if(deviceStyle == 12) {
       t = {Close: "合闸", Open: "分闸"}[fields?.[3]?.value] ?? "" ;
     }else if(deviceStyle == 1 && state && ["Close", "Open"].includes(fields?.[3]?.value)) {
@@ -148,14 +153,23 @@ const Device = (props) => {
     }else {
       t = fields?.[3]?.value 
     }
-    return t
-  }, [deviceStyle])
+    return t */
+    if(Array.isArray(datas) && datas.length > 0 ) {
+     return  datas.map(f=> {
+        const  value = f?.value
+        const  farmt =  value=="Close" ? "合闸" :  value=="Open" ? "分闸" : value
+        return {...f, value: farmt}
+    })
+   }else {
+    return []
+   }
+  }, [datas])
   return (
     <>
       <div className="line sp">
         <Text ellipsis={{tooltip: props.title}}>{props.title}</Text>
         <span>SN:{props.category}</span>
-        {props.state == 2 ? (
+       {/*  {props.state == 2 ? (
           <TreeBtn type={2} ns="comm" text="normal" />
         ) : props.state == 1 ? (
           <TreeBtn type={4} ns="comm" text="offline" />
@@ -166,7 +180,7 @@ const Device = (props) => {
             text="alarm"
             params={{ text: "", text2: "" }}
           />
-        )}
+        )} */}
       </div>
       <div className="line sp">
         <Text ellipsis={{tooltip: props.value}}>{props.value}</Text>
@@ -187,7 +201,7 @@ const Device = (props) => {
             </div> 
             <div className="item">
             <Text ellipsis={{ellipsis: fields?.[3]?.name}} className="field">{fields?.[3]?.name}</Text>
-              <span className="value">{text}</span>
+              <span className="value">{fields?.[3]?.value}</span>
             </div> 
       </div>
     </>
@@ -206,6 +220,40 @@ export default function Index(props) {
       <div className="content">
         {device == 1 ? <Gateway {...rest}  /> : <Device {...rest}   title={title} />}
       </div>
+      {
+          device == 1 ? <div className="postion">{props.state == 2 ? (
+            <TreeBtn type={2} ns="comm" text="normal" />
+          ) : props.state == 1 ? (
+            <TreeBtn type={4} ns="comm" text="offline" />
+          ) : (
+            <TreeBtn
+              type={3}
+              ns="comm"
+              text="alarm"
+              params={{ text: "", text2: "" }}
+            />
+          )}
+          </div>
+          : <div className="postion">
+             {props.state == 2 ? (
+          <TreeBtn type={2} ns="comm" text="normal" />
+        ) : props.state == 1 ? (
+          <TreeBtn type={4} ns="comm" text="offline" />
+        ) : (
+          <TreeBtn
+            type={3}
+            ns="comm"
+            text="alarm"
+            params={{ text: "", text2: "" }}
+          />
+        )}
+            {/* {props.state == 2 ? (
+          <TreeBtn type={2} ns="comm" text="normal" className="on" />
+        ) : (
+          <TreeBtn type={4} ns="comm" text="offline" className="on" />
+        )} */}
+          </div>
+        }
     </CardItme>
   );
 }

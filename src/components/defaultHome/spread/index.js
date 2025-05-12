@@ -26,18 +26,18 @@ export default function DefaultHome(props) {
       // 图表 grid
       left: "0px",
       right: "0",
-      top: "35px",
-      bottom: "0px",
+      top: "0px",
+      bottom: "32px",
       containLabel: true,
     },
     type: 3,
     pieData: {
       data: [],
       total: '100%', 
-      radius:  "65%",
+      radius:  '65%',
     },
-    legend: {
-      top: 6,
+    legend: { 
+      left:0
     },
   })
 
@@ -68,7 +68,7 @@ export default function DefaultHome(props) {
   }
   return (
     <Titlelayout title={t("AlarmDistribution")} {...fs} layout="flex" style={sty}>
-        <div  style={{flex: 1, display: 'flex'}}>
+        <div  style={{flex: 1, display: 'flex'}}> 
              <Ichart {...options} />
          </div>
     </Titlelayout>

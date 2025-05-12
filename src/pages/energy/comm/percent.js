@@ -7,6 +7,7 @@ import power from "@imgs/power.png";
 import special from "@imgs/special.png";
 import up from "@imgs/up.png";
 import down from "@imgs/down.png";
+import defalut from "./icon/default.png"
 import styled from "styled-components";
 
 const imgset = {
@@ -18,9 +19,10 @@ const imgset = {
 }
 const Itemlist = styled.div`
   display: grid;
-  grid-template-rows: repeat(5, 48px);
+  grid-template-rows: repeat(auto-fill, 48px);
   row-gap: 12px;
   flex:1;
+  overflow-y: auto;
  // padding-top: 28px;
   .item {
     display: flex;
@@ -76,7 +78,7 @@ const Itemlist = styled.div`
 
 `
 const Item = (props) => {
-    let imgsrc = imgset[props.name]
+    let imgsrc = imgset[props.name] ||defalut
     let f = parseFloat(props.yoy) > 0
     let updown = f ? up  : down
     let pre = f ? 'up' : 'down'

@@ -77,7 +77,7 @@ const Radiogroup = styled(Radio.Group)`
 const Sdiv = styled.div` 
   && {
     height: 100%;
-    padding-top: 16px;
+  //  padding-top: 16px;
     display: grid;
     grid-template-rows: 1fr 1fr;
     row-gap: 16px;

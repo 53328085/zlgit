@@ -49,7 +49,9 @@ export class CustTheme {
     server.get(`Energy/Theme/GetProjectTheme`, { params }); // 获取项目选择的主题
 
   static SelProjectTheme = (params) =>
-    server.post(`Energy/Theme/SetProjectTheme`, null, { params }); // 选择项目主题
+    server.post(`Energy/Theme/SetProjectTheme`, null,{ params }); // 选择项目主题
+  static GetProjectMainTheme = (params) =>
+    server.get(`Energy/MainTheme/GetProjectMainTheme`, { params }); // 获取项目公共主题
 
 }
 
@@ -1926,6 +1928,14 @@ export const Monitoring = {
       server.post(`/Monitor/Device/UpdateFlow`, data), //更新流量计
     ImportFlow: (data) => server.post(`/Monitor/Device/ImportFlow`, data), //批量导入流量计
 
+    DeleteMic: (data) =>
+      server.delete(`/Monitor/Device/DeleteMic`, { params: data }), //删除微机保护
+    QueryByPageMic: (data) =>
+      server.post(`/Monitor/Device/QueryByPageMic`, data), //查询微机保护
+    AddMic: (data) => server.post(`/Monitor/Device/AddMic`, data), //新增微机保护
+    UpdateMic: (data) =>
+      server.post(`/Monitor/Device/UpdateMic`, data), //更新微机保护
+    ImportMic: (data) => server.post(`/Monitor/Device/ImportMic`, data), //批量导入微机保护
 
     //376协议
     QueryDeviceIncreaseParams: ({ projectId, gatewayId, port, alike }) =>
@@ -2486,6 +2496,20 @@ export class energyReport {
       `Energy/DataReportRuntime/QueryClassifyConsume?projectId=${projectId}&meterType=${meterType}&type=${type}&date=${date}&pageNum=${pageNum}&pageSize=${pageSize}&areaId=${areaId}`,
       params
     ); //分类能耗
+
+    static QueryByAreaFromIot = (params, body ) =>
+      server.post(
+        `Energy/DataReportRuntime/QueryByAreaFromIot`,
+        body,
+        {params}
+      ); //能电报表--区域
+      static QueryByLineFromIot = (params, body ) =>
+        server.post(
+          `Energy/DataReportRuntime/QueryByLineFromIot`,
+          body,
+          {params}
+        ); //能电报表--线路
+
   // static QueryReading = (data, areaId) => server.post(`/Energy/DataReportRuntime/QueryReading`, areaId, { params: data })//能耗抄表
   // static QueryConsume = (data, areaId) => server.post(`/Energy/DataReportRuntime/QueryConsume`, areaId, { params: data })//能耗用量
   // static QueryTimeConsume = (data, areaId) => server.post(`/Energy/DataReportRuntime/QueryTimeConsume`, areaId, { params: data })//分时能耗
@@ -3120,50 +3144,59 @@ export class EnergyPublicRuntime {
     server.post(
       `Energy/EnergyPublicRuntime/QueryEnergyCategoryTree?projectId=${projectId}&categoryType=${categoryType}&name=${name}`
     );
-  static queryElectricYear = (projectId, areaId, date, shiftNo, data) =>
+  static queryElectricYear = (params, data) =>
     server.post(
-      `/Energy/EnergyPublicRuntime/QueryElectric_Year?projectId=${projectId}&areaId=${areaId}&date=${date}&shiftNo=${shiftNo}`,
-      data
+      `/Energy/EnergyPublicRuntime/QueryElectric_Year`,
+      data, {params}
     );
-  static queryElectricDay = (projectId, areaId, date, shiftNo, data) =>
+  static queryElectricDay = (params, data) =>
     server.post(
-      `/Energy/EnergyPublicRuntime/QueryElectric_Day?projectId=${projectId}&areaId=${areaId}&date=${date}&shiftNo=${shiftNo}`,
-      data
+      `/Energy/EnergyPublicRuntime/QueryElectric_Day`,
+      data,{params}
     );
-  static queryElectricMonth = (projectId, areaId, date, shiftNo, data) =>
-    server.post(
-      `/Energy/EnergyPublicRuntime/QueryElectric_Month?projectId=${projectId}&areaId=${areaId}&date=${date}&shiftNo=${shiftNo}`,
-      data
+    static queryElectricRangeDay =(params, data)=> server.post(
+      `/Energy/EnergyPublicRuntime/QueryElectric_Range`,data,{params}
+      
     );
-  static queryWaterDay = (projectId, areaId, date, shiftNo, data) =>
+  static queryElectricMonth = (params,data) =>
     server.post(
-      `/Energy/EnergyPublicRuntime/QueryWater_Day?projectId=${projectId}&areaId=${areaId}&date=${date}&shiftNo=${shiftNo}`,
-      data
+      `/Energy/EnergyPublicRuntime/QueryElectric_Month`,
+      data,{params}
     );
-  static queryWaterMonth = (projectId, areaId, date, shiftNo, data) =>
+  static queryWaterDay = (params, data) =>
     server.post(
-      `/Energy/EnergyPublicRuntime/QueryWater_Month?projectId=${projectId}&areaId=${areaId}&date=${date}&shiftNo=${shiftNo}`,
-      data
+      `/Energy/EnergyPublicRuntime/QueryWater_Day`,
+      data,{params}
     );
-  static queryWaterYear = (projectId, areaId, date, shiftNo, data) =>
+  static queryWaterRange = (params, data) =>
     server.post(
-      `/Energy/EnergyPublicRuntime/QueryWater_Year?projectId=${projectId}&areaId=${areaId}&date=${date}&shiftNo=${shiftNo}`,
-      data
+      `/Energy/EnergyPublicRuntime/QueryWater_Range`,
+      data,{params}
     );
-  static queryGasDay = (projectId, areaId, date, shiftNo, data) =>
+  static queryWaterMonth = (params, data) =>
     server.post(
-      `/Energy/EnergyPublicRuntime/QueryGas_Day?projectId=${projectId}&areaId=${areaId}&date=${date}&shiftNo=${shiftNo}`,
-      data
+      `/Energy/EnergyPublicRuntime/QueryWater_Month`,
+      data,{params}
     );
-  static queryGasMonth = (projectId, areaId, date, shiftNo, data) =>
+  static queryWaterYear = (params, data) =>
     server.post(
-      `/Energy/EnergyPublicRuntime/QueryGas_Month?projectId=${projectId}&areaId=${areaId}&date=${date}&shiftNo=${shiftNo}`,
-      data
+      `/Energy/EnergyPublicRuntime/QueryWater_Year`,
+      data, {params}
     );
-  static queryGasYear = (projectId, areaId, date, shiftNo, data) =>
+  static queryGasDay = (params, data) =>
     server.post(
-      `/Energy/EnergyPublicRuntime/QueryGas_Year?projectId=${projectId}&areaId=${areaId}&date=${date}&shiftNo=${shiftNo}`,
-      data
+      `/Energy/EnergyPublicRuntime/QueryGas_Day`,
+      data,{params}
+    );
+  static queryGasMonth = (params,data) =>
+    server.post(
+      `/Energy/EnergyPublicRuntime/QueryGas_Month`,
+      data,{params}
+    );
+  static queryGasYear = (params, data) =>
+    server.post(
+      `/Energy/EnergyPublicRuntime/QueryGas_Year`,
+      data, {params}
     );
 }
 //储能概述

@@ -1,5 +1,5 @@
 import React, {useState,  useEffect,useRef, useMemo} from "react";
-
+import {useLocation} from "react-router-dom"
 import { Form, Select,  Space, DatePicker, message,  Input, Button,} from "antd";
 import {useRequest} from 'ahooks' 
 import styled from "styled-components";
@@ -56,11 +56,11 @@ export default function UseSerach(props) {
   
   const {config={}, custview=null,record=null} = props  
  
-  const {isAreaId=true, gas=true, daterang='day'} = config
+  const {isAreaId=true, gas=true, daterang='day',isdaterange=false} = config
   const dispatch = useDispatch()
  
-
-
+  const {state={}} = useLocation()
+  const {nested, primary} = state
 
   const [form] = Form.useForm()
   const projectId = useSelector(selectProjectId)
@@ -165,25 +165,34 @@ useEffect(()=> {
   {value: 1, label: i18t("comm","day")},
   {value: 2, label: i18t("comm","month")},
   {value: 3, label: i18t("comm","year")},
- ]
-const dateselect = (
+ ] 
+ const changetype = (v) => {
+  if(v==1 &&  isdaterange) {
+    form.setFieldValue("date",[moment().subtract(7,"day"), moment()])
+   }else {
+    form.setFieldValue("date",moment())
+   }
+   props.setexparams({...form.getFieldsValue(true)})  
+ }
+const dateselect =(
   <Space size={16} style={{marginLeft:'16px'}}>
   <Item   name="type" initialValue={1}>
-     <Select style={{width: '80px'}}   options={dateoption}
+     <Select style={{width: '80px'}} onChange={changetype}   options={dateoption}
     
      ></Select>
   </Item>
 
   <Item noStyle  shouldUpdate={(pre,cur) => pre.type!=cur.type}  >
       {
-        ({getFieldValue,setFieldValue}) => {
-          
+        ({getFieldValue,setFieldValue}) => { 
           let type =(daterang=='week' ? ['week', 'week', 'month', 'year'] : ['date', 'date', 'month', 'year'])[getFieldValue('type')] 
          
          
+         
+         
          return (
-          <Item name="date" initialValue={moment(new Date(), 'YYYY-MM-DD')}> 
-             <DatePicker  picker={type}   style={{width: '160px'}} />
+          <Item name="date" > 
+            {(type=='date' && isdaterange) ?<RangePicker></RangePicker> : <DatePicker  picker={type}   style={{width: '160px'}} />} 
          </Item>
          )
       }
@@ -327,7 +336,7 @@ const deviceStyleNode = (<Item name="deviceStyle" label={i18t("comm","type",{tex
              </Item>)
 
 
-
+ 
 
 
 
@@ -349,17 +358,26 @@ const deviceStyleNode = (<Item name="deviceStyle" label={i18t("comm","type",{tex
      }
     if(config.dateType) {
       form.setFieldValue('type',config.dateType)
+
     }else {
       form.setFieldValue('type',1)
     }
+  
     if(config.meterType) { 
       form.setFieldValue('deviceStyle',config.meterType)
     }
      props.setexparams({...form.getFieldsValue(true)})
    
-  }, [props.config, projectId])
-
- 
+  }, [props.config,  projectId])
+   
+ useEffect(()=> {
+  
+  if(nested=="public"&& primary=='runtimeEnergy') {
+    form.setFieldValue('date',[moment().startOf("day"), moment()])
+  }else {
+    form.setFieldValue('date', moment())
+  }
+ },[nested, primary])
   return (  
   
     <Cform layout="inline"   form={form}   {...props.formprop} 
@@ -381,6 +399,7 @@ const deviceStyleNode = (<Item name="deviceStyle" label={i18t("comm","type",{tex
         {props.config?.energytype && energytype}
         
       </Space>
+     
          {
            props.config?.isdate && dateselect
          }

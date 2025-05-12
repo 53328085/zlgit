@@ -145,6 +145,7 @@ export default function Index() {
   }
   const checklistref = useRef()
   const showchecklist = async (id)=> {
+      console.log(id)
       try {
         let params = id ? {
           projectId,
@@ -166,11 +167,12 @@ export default function Index() {
           message.error(res.errMsg)
         }
       } catch (error) {
-        
+        console.log(error)
       }
   }
   const devicelistref = useRef()
   const showdevice = async (id)=> {  // 新增时
+    console.log(id)
     try {
       let params = id ? {
         projectId,
@@ -602,7 +604,7 @@ const EditItem = ({ editRef, editform, updateItems, addoptiosn,showchecklist,sho
 
   }, [editform.getFieldValue()])
   return (
-    <Modal mold='cust' width={587} ref={editRef} onOk={() => { updateItems(position) }} title="编辑巡检点">
+    <Modal mold='cust' width={587} ref={editRef} onOk={() => { updateItems(position) }} title="编辑巡检点" getContainer={false} >
 
       {/* <BlueColumn name="编辑巡检点" styled={{ padding: '24px 0px', color: '#237ae4' }} ></BlueColumn> */}
       <AddDiv
@@ -632,14 +634,14 @@ const EditItem = ({ editRef, editform, updateItems, addoptiosn,showchecklist,sho
           <Input placeholder="请输入具体位置"></Input>
         </Form.Item>
         <Form.Item label="巡检设备" rules={[{ required: true }]}>
-          <CustButtonT onClick={getDevicelist} text="clicktoget" />
+          <CustButtonT onClick={showdevice} text="clicktoget" />
         </Form.Item>
         {/* <Form.Item label=" " name="deviceGroup" rules={[{ required: true }]}>
           <Input disabled></Input>
         </Form.Item> */}
         <Divider dashed></Divider>
         <Form.Item label="巡检检查项" rules={[{ required: true }]}>
-          <CustButtonT onClick={getChecklist} text="clicktoget" />
+          <CustButtonT onClick={showchecklist} text="clicktoget" />
         </Form.Item>
         {/* <Form.Item label=" " name="contentGroup" rules={[{ required: true }]}>
           <Input disabled></Input>
@@ -652,8 +654,8 @@ const EditItem = ({ editRef, editform, updateItems, addoptiosn,showchecklist,sho
       <CustContext.Provider value={{ lngLat: editform.getFieldValue().lngLat, address: editform.getFieldValue().address }}>
         <SetPosition positionRef={positionRef} savePosition={savePosition} />
       </CustContext.Provider>
-  <SetLine ref={devicelistref} addform={editform} />
-      <TransLine ref={checklistref} addform={editform} /> 
+ {/*  <SetLine ref={devicelistref} addform={editform} />
+      <TransLine ref={checklistref} addform={editform} />  */}
 
     </Modal>
   )
