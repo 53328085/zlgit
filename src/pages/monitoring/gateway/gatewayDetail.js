@@ -380,7 +380,6 @@ export default function GatewayDetail(props) {
                   }}
                 ></Table>
                 <Pagination
-                  className={style.pageNumD}
                   size="small"
                   current={pageLog}
                   total={totalLog}
