@@ -119,7 +119,7 @@ export default function Index() {
 const getTheme = async()=>{
   try {
     
-    let {success, data, errMsg} = await  CustTheme.QueryTheme(projectId)
+    let {success, data, errMsg} = await  CustTheme.QueryTheme({projectId})
     if(success && Array.isArray(data) && data.length >0 ){
       let datas = data.map(d => ({...d, context: JSON.parse(d.context)}))
       let ids = data.map(d =>d.id);

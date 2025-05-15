@@ -235,11 +235,23 @@ export default function Index(props) {
           )}
           </div>
           : <div className="postion">
-            {props.state == 2 ? (
+             {props.state == 2 ? (
+          <TreeBtn type={2} ns="comm" text="normal" />
+        ) : props.state == 1 ? (
+          <TreeBtn type={4} ns="comm" text="offline" />
+        ) : (
+          <TreeBtn
+            type={3}
+            ns="comm"
+            text="alarm"
+            params={{ text: "", text2: "" }}
+          />
+        )}
+            {/* {props.state == 2 ? (
           <TreeBtn type={2} ns="comm" text="normal" className="on" />
         ) : (
           <TreeBtn type={4} ns="comm" text="offline" className="on" />
-        )}
+        )} */}
           </div>
         }
     </CardItme>

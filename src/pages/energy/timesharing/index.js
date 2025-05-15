@@ -321,7 +321,7 @@ momYoy
           </div>
            </Titlelayout>
            <Titlelayout title="分时能耗同环比" key="momyoy">
-               <div className='chart' style={{paddingTop: '16px'}}>
+               <div className='chart' >
               <UseTable 
                 columns={columns} 
                 dataSource={momYoy}

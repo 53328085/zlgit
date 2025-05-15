@@ -45,6 +45,7 @@ export default function gateway({ deviceStyle }) {
   const pageRef = useRef(page)
   pageRef.current = page
   const [dataSource, setDataSource] = useState([])
+  const dataSource376 = useRef([])
   const oneLevel = useSelector(state => state.system.onelevel)
   const projectId = useSelector(state => state.system.menus.projectId)
   const compRef = useRef()
@@ -60,7 +61,7 @@ export default function gateway({ deviceStyle }) {
   const [addform] = Form.useForm()
   const [editform] = Form.useForm()
   const [setform] = Form.useForm()
-  const [paramsSetId, setParamsSetId] = useState()
+  const paramsSetId = useRef()
   const levelname = useRef("")
   let delid = useRef();
   let flies;
@@ -198,6 +199,7 @@ export default function gateway({ deviceStyle }) {
           EditModalFormRef?.current?.onCancel()
         } else if (type == 'next') {
           openSetModal(editform.getFieldsValue())
+          getQueryByPageWater376()
         } else {
           message.success("更新成功")
         }
@@ -261,11 +263,11 @@ export default function gateway({ deviceStyle }) {
   }
   const setOk = async () => {
     let form = Object.keys(addform.getFieldsValue()).length === 0 ? editform.getFieldsValue() : addform.getFieldsValue()
-    const deviceItem = dataSource.find(item => item.sn === form.sn);
+    const deviceItem = dataSource376.current.find(item => item.sn === form.sn);
     const deviceId = deviceItem ? deviceItem.id : null;
     const gatewayItem = gatewaylist.find(item => item.id === form.gatewayId);
     const gatewaySn = gatewayItem ? gatewayItem.sn : null;
-    const newData = { ...setform.getFieldsValue(), DeviceId: deviceId, Id: paramsSetId }
+    const newData = { ...setform.getFieldsValue(), DeviceId: deviceId, ...(paramsSetId.current ? { Id: paramsSetId.current } : {}) }
     const res = await InsertOrUpdateDeviceParam(projectId, gatewaySn, newData)
     if (res.success) {
       message.success('参数设置成功')
@@ -338,8 +340,7 @@ export default function gateway({ deviceStyle }) {
       message.warning('请先添加区域名称')
       return
     }
-
-    setform.setFieldsValue({
+    setform?.setFieldsValue({
       bautRate: 3, //通讯速率，
       controlPwd: "000000", //密码
       controlPwdLevel: 2, //控制密级（1或2）
@@ -351,7 +352,7 @@ export default function gateway({ deviceStyle }) {
       integerDigits: 2, //电能示值的整数位个数
       largeCategory: 5, //大类号
       password: "000000000000", //通信密码，可为空
-      // collectSn: "000000000000", //采集器通信地址
+      collectSn: "000000000000", //采集器通信地址
       pn: "1", //所属测量点号，范围0-2040
       protocolType: 30,
       rateCount: 4, //费率数（1-12）
@@ -369,13 +370,13 @@ export default function gateway({ deviceStyle }) {
     const res = await QueryDeviceIncreaseParams(params)
     if (res.success) {
       setform?.setFieldsValue(res.data[0])
-      setParamsSetId(res.data[0].id)
+      paramsSetId.current = res.data.length != 0 ? res.data[0].id : null
     } else {
       message.error(res.errMsg)
     }
   }
   //确认新增
-  const addOk = async () => {
+  const addOk = async (type) => {
     return addform.validateFields().then(async () => {
       const formvalue = addform.getFieldsValue()
       let params = {
@@ -391,9 +392,9 @@ export default function gateway({ deviceStyle }) {
         name: formvalue.name,
         customerType: formvalue.customerType,
         commPort: formvalue.commPort ? formvalue.commPort : 0,
-        commProtocol: 0,
-        commAddress: 0,
-        factor: 1,
+        commPort: formvalue.commPort ? formvalue.commPort : 0,
+        commProtocol: formvalue.commProtocol ? formvalue.commProtocol : 0,
+        // factor: 1,
         writePwdLevel: formvalue.writePwdLevel,
         writePwd: formvalue.writePwd,
         controlPwdLevel: formvalue.controlPwdLevel,
@@ -401,13 +402,13 @@ export default function gateway({ deviceStyle }) {
       }
       const res = await AddWater(params)
       if (res.success) {
-        // modalFormRef?.current?.onCancel()
         getQueryByPageWater(pageRef.current.current, pageRef.current.pageNum, compRef.current.selvalue, compRef.current.inpvalue, compRef.current.energyVal)
         if (type == 'submit') {
           message.success('新增成功!')
           modalFormRef?.current?.onCancel()
         } else if (type == 'next') {
           openSetModal(addform.getFieldsValue())
+          getQueryByPageWater376()
         } else {
           message.success('新增成功!')
         }
@@ -549,6 +550,23 @@ export default function gateway({ deviceStyle }) {
       setDataSource([])
     }
   }
+  //获取水表列表
+  const getQueryByPageWater376 = async () => {
+    let params = {
+      projectId,
+      pageNum: 1,
+      pageSize: page.total + 1,
+      areaId: compRef.current.selvalue ? compRef.current.selvalue : 0,
+      alike: compRef.current.inpvalue,
+      customerType: compRef.current.energyVal ? compRef.current.energyVal : 0
+    }
+    const resp = await QueryByPageWater(params)
+    if (resp.success && Array.isArray(resp.data)) {
+      dataSource376.current = resp.data.reverse()
+    } else {
+      dataSource376.current = []
+    }
+  }
   //导出
   const exportExecel = () => {
     tableLoadRef.current.download()
@@ -640,7 +658,6 @@ export default function gateway({ deviceStyle }) {
   const uploadprops = {
     maxCount: 1,
     beforeUpload(file, fileList) {
-      console.log(file, fileList)
       flies = [...fileList]
       return false
     }

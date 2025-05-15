@@ -19,7 +19,7 @@ const Mainbox = styled.div`
    column-gap: 16px;
    .tablebox {
     flex: 1;
-    padding-top: 16px;
+   // padding-top: 16px;
     display: flex;
    }
 `

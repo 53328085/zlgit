@@ -131,7 +131,7 @@ export default function gateway({ deviceStyle }) {
   const onEdit = (record) => {
     console.log(record);
     EditModalFormRef?.current?.onOpen()
-    editform.setFieldsValue({ ...record, port: record.port ? record.port : '' })
+    editform.setFieldsValue({ ...record, port: record.port ? record.port : 0 })
   }
 
   //确认编辑
@@ -142,7 +142,7 @@ export default function gateway({ deviceStyle }) {
         accessMode,
         channel,
         serverAddress,
-        port,
+        port=0,
         ip,
         account,
         pwd,
@@ -191,7 +191,7 @@ export default function gateway({ deviceStyle }) {
         accessMode,
         channel,
         serverAddress,
-        port,
+        port=0,
         ip,
         account,
         pwd,

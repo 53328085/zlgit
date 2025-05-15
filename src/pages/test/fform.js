@@ -1,44 +1,187 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { Line } from '@ant-design/plots';
-import styled from 'styled-components';
-const Mainbox = styled.div`
-   height: 800px;
-   width: 1024px;
-   margin: 32px;
-`
-const data = [
-  { year: '1991', value: 3, "category": "a"},
-  { year: '1992', value: 4 ,"category": "a"},
-  { year: '1993', value: 3.5, "category": "b"},
-  { year: '1994', value: 5,"category": "b" },
-  { year: '1995', value: 4.9,"category": "b" },
-  { year: '1996', value: 6,"category": "b" },
-  { year: '1997', value: 7,"category": "c" },
-  { year: '1998', value: 9,"category": "c" },
-  { year: '1999', value: 13,"category": "c" },
-];
-const DemoLine = () => {
- 
+
+export default  function Index()  {
   const config = {
-    data,
-    xField: "year",
-    yField: 'value',
-    point: {
-      shapeField: 'square',
-      sizeField: 14,
-    },
-    interaction: {
-      tooltip: {
-        marker: false,
+    data:{
+      value: [
+      {
+        "year": "1850",
+        "value": 0,
+        "category": "Liquid fuel"
       },
+      {
+        "year": "1850",
+        "value": 54,
+        "category": "Solid fuel"
+      },
+      {
+        "year": "1850",
+        "value": 0,
+        "category": "Gas fuel"
+      },
+      {
+        "year": "1850",
+        "value": 0,
+        "category": "Cement production"
+      },
+      {
+        "year": "1850",
+        "value": 0,
+        "category": "Gas flarinl"
+      },
+      {
+        "year": "1851",
+        "value": 0,
+        "category": "Liquid fuel"
+      },
+      {
+        "year": "1851",
+        "value": 54,
+        "category": "Solid fuel"
+      },
+      {
+        "year": "1851",
+        "value": 0,
+        "category": "Gas fuel"
+      },
+      {
+        "year": "1851",
+        "value": 0,
+        "category": "Cement production"
+      },
+      {
+        "year": "1851",
+        "value": 0,
+        "category": "Gas flarinl"
+      },
+      {
+        "year": "1852",
+        "value": 0,
+        "category": "Liquid fuel"
+      },
+      {
+        "year": "1852",
+        "value": 57,
+        "category": "Solid fuel"
+      },
+      {
+        "year": "1852",
+        "value": 0,
+        "category": "Gas fuel"
+      },
+      {
+        "year": "1852",
+        "value": 0,
+        "category": "Cement production"
+      },
+      {
+        "year": "1852",
+        "value": 0,
+        "category": "Gas flarinl"
+      },
+      {
+        "year": "1853",
+        "value": 0,
+        "category": "Liquid fuel"
+      },
+      {
+        "year": "1853",
+        "value": 59,
+        "category": "Solid fuel"
+      },
+      {
+        "year": "1853",
+        "value": 0,
+        "category": "Gas fuel"
+      },
+      {
+        "year": "1853",
+        "value": 0,
+        "category": "Cement production"
+      },
+      {
+        "year": "1853",
+        "value": 0,
+        "category": "Gas flarinl"
+      },
+      {
+        "year": "1854",
+        "value": 0,
+        "category": "Liquid fuel"
+      },
+      {
+        "year": "1854",
+        "value": 69,
+        "category": "Solid fuel"
+      },
+      {
+        "year": "1854",
+        "value": 0,
+        "category": "Gas fuel"
+      },
+      {
+        "year": "1854",
+        "value": 0,
+        "category": "Cement production"
+      },
+      {
+        "year": "1854",
+        "value": 0,
+        "category": "Gas flarinl"
+      },
+      {
+        "year": "1855",
+        "value": 0,
+        "category": "Liquid fuel"
+      },
+      {
+        "year": "1855",
+        "value": 71,
+        "category": "Solid fuel"
+      },
+      {
+        "year": "1855",
+        "value": 0,
+        "category": "Gas fuel"
+      },
+      {
+        "year": "1855",
+        "value": 0,
+        "category": "Cement production"
+      },
+      {
+        "year": "1855",
+        "value": 0,
+        "category": "Gas flarinl"
+      },
+      {
+        "year": "1856",
+        "value": 0,
+        "category": "Liquid fuel"
+      },
+      {
+        "year": "1856",
+        "value": 76,
+        "category": "Solid fuel"
+      },
+      {
+        "year": "1856",
+        "value": 0,
+        "category": "Gas fuel"
+      }
+
+    ]
     },
-    style: {
-      lineWidth: 2,
-    },
+    xField: (d) => new Date(d.year),
+    yField: 'value',
+    sizeField: 'value',
+    shapeField: 'trail',
+    legend: { size: false },
+    colorField: 'category',
   };
-  return <Mainbox> <Line {...config} /> </Mainbox>;
+  return <Line {...config} />
 };
-  
+
  
-export default DemoLine

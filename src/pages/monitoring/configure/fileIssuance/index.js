@@ -23,7 +23,7 @@ const {
         QueryListGateWay
     },
     FileDistribution: {
-        QueryByPageFlow,
+        QueryDeviceIncreaseParams,
         DataInitialization,
         ClearPoint,
         Query376CommandSettingResult
@@ -57,24 +57,23 @@ export default function Index() {
     const [modalTitle, setModalTitle] = useState('')
     const [modalType, setModalType] = useState('')
     const [showLoading, setShowLoading] = useState(false)
-    let numberofIssuances = 0//下发次数
+    // 用 useRef 替代全局变量，避免污染作用域
+    const retryCountRef = useRef(0);//下发次数
     const [isInit, setIsInit] = useState(false)
+    const currentBatchIndexRef = useRef(0);
     const publish = useSelector(publishState)
     const [gatewaylist, setGatewaylist] = useState([])
     const [gatewayIdInint, setGatewayId] = useState()
     const onelevel = useSelector(state => state.system.onelevel);
     const projectId = useSelector(state => state.system.menus.projectId)
-    const options = onelevel.length > 0 ? useMemo(() => {
-        let isall = onelevel?.find(o => o.id == 0)
-        return !isall ? ([{ name: onelevel[0]?.levelName + '(全部)', id: 0 }, ...onelevel]) : onelevel
-    }, [onelevel]) : []
-    const setlineRef = useRef()
-    const editRef = useRef()
-    const delModalRef = useRef()
-    let editRowData;
-
-
     let columns = [
+        {
+            title: '序号',
+            dataIndex: 'index',
+            align: 'center',
+            width: 40,
+            render: (text, recoder, index) => <span>{index + 1}</span>
+        },
         { title: '网关编号', dataIndex: 'gatewaySn' },
         { title: '设备编号', dataIndex: 'deviceSn' },
         { title: '设备型号', dataIndex: 'deviceModel' },
@@ -99,6 +98,7 @@ export default function Index() {
             title: '校验方式', dataIndex: 'parityBites',
             render: (text) => (<span>{text === '' ? '无校验' : text === '0' ? '偶校验' : text === '1' ? '奇校验' : '/'}</span>)
         },
+        { title: '费率数', dataIndex: 'rateCount' },
         {
             title: '大类号', dataIndex: 'largeCategory',
             render: (text) => (<span>{text === 0 ? '电力大型专变用户'
@@ -116,7 +116,7 @@ export default function Index() {
                 : text === 1 ? '单相电能表/中水表/热量表(计冷量)'
                     : text === 2 ? '三相电能表/纯净水表'
                         : text === 3 ? '热水表'
-                            : text === 4 ? '电子水表'
+                            : text === 9 ? '电子水表'
                                 : '/'}</span>)
         },
         {
@@ -158,36 +158,34 @@ export default function Index() {
                                             : '/'}</span>)
         },
         { title: '通信密码', dataIndex: 'password' },
-        { title: '费率数', dataIndex: 'rateCount' },
+        { title: '采集器通信地址', dataIndex: 'collectSn' },
     ]
-    // onelevel[0] && (columns = [{ title: onelevel[0]?.levelName, dataIndex: 'area' }, ...columns])
-    // columns.forEach(it => { it.align = "center" })
     if (publish) {
         columns.pop()
     }
-    const [areaId, setAreaid] = useState(0)
-    const [targ, setTarg] = useState(false)
+    const [tableData, setTtableData] = useState(false)
+    const [dataSource, setDataSource] = useState(false)
     //获取设备
-    const getQueryPageDevice = ({ current, pageSize }, formData) => {
+    const getQueryPageDevice = (formData) => {
         if (gatewayIdInint == undefined) return
-        let { alike, port, gatewayId } = formData
-        console.log(gatewayId, '网关ID')
+        let { alike, port, gatewayId } = form.getFieldValue()
+
+        console.log(form.getFieldValue(), gatewayId, '网关ID')
         let params = {
             projectId,
             port,
             gatewayId: gatewayId == undefined ? gatewayIdInint : gatewayId,
             alike,
         }
-        return QueryByPageFlow(params).then(res => {
+        return QueryDeviceIncreaseParams(params).then(res => {
             let { success, total, data } = res
             if (success) {
-                return {
-                    list: Array.isArray(data) ? data : [],
-                    total
-                }
-
+                setTtableData(Array.isArray(data) ? data : [])
+                setDataSource(Array.isArray(data) ? data : [])
             } else {
                 message.error(res.errMsg)
+                setTtableData([])
+                setDataSource([])
                 return {
                     list: [],
                     total: 0
@@ -195,22 +193,7 @@ export default function Index() {
             }
         })
     }
-    const { tableProps, refresh, search } = useAntdTable(getQueryPageDevice, {
-        form,
-        defaultPageSize: 14,
-        refreshDeps: [gatewayIdInint], // 当 gatewayId 变化时自动刷新
-    })
-    const { submit } = search
     //打开新增
-    const addDevice = () => {
-        if (onelevel.length == 0) {
-            message.warning('请新增园区!')
-            return
-        }
-        //  setlineRef.current.setOpen(true)
-        setTarg(true)
-        setlineRef.current.getQueryDeviceList()
-    }
     // 生成 1~31 的 {label, value} 数组
     const portList = Array.from({ length: 31 }, (_, index) => ({
         label: `${index + 1}`,
@@ -233,12 +216,14 @@ export default function Index() {
 
     }
     const onClear = async () => {
+        if (tableData.length == 0) return message.warning('当前条件下不存在设备')
         setModalTitle('清除测量点')
         setModalType('clear')
         setGatewayName(gatewaylist.find(item => item.value === gatewayid)?.label)
         modalRef?.current?.onOpen()
     }
     const onInitialize = async () => {
+        if (tableData.length == 0) return message.warning('当前条件下不存在设备')
         if (!isInit) return message.warning('请先清除测量点')
         setModalTitle('数据区初始化')
         setModalType('init')
@@ -246,8 +231,7 @@ export default function Index() {
         setGatewayName(gatewaylist.find(item => item.value === gatewayid)?.label)
     }
     const onsubmit = async () => {
-        //清除
-        console.log(gatewayName, portName, 333)
+        modalRef?.current?.onCancel()
         let params = {
             projectId,
             gatewaySn: gatewayName,
@@ -270,22 +254,40 @@ export default function Index() {
                 console.log(e)
             }
         } else if (modalType === 'init') {
-            try {
-                const res = await DataInitialization(params)
-                if (res.success) {
-                    initResult(JSON.parse(res.data).seq)
-                } else {
-                    setShowLoading(false)
-                    message.error(res.errMsg)
-                }
-            } catch (e) {
-                setShowLoading(false)
-                console.log(e)
-            }
+            // 重置批次索引和重试次数
+            currentBatchIndexRef.current = 0;
+            await processBatchInitialization();
+
         }
-        //初始化
-        modalRef?.current?.onCancel()
     }
+    // 处理分批初始化
+    const processBatchInitialization = async () => {
+        const { current: currentIndex } = currentBatchIndexRef;
+        const batch = tableData.slice(currentIndex, currentIndex + 10);
+
+        if (batch.length === 0) {
+            // 所有批次完成
+            setShowLoading(false);
+            setIsInit(false)
+            retryCountRef.current = 0
+            message.success('数据区初始化成功');
+            return;
+        }
+
+        const deviceSns = batch.map(item => item.deviceSn);
+        try {
+            const res = await DataInitialization(projectId, gatewayName, portName, deviceSns);
+            if (res.success) {
+                await initResult(JSON.parse(res.data).seq);
+            } else {
+                setShowLoading(false);
+                message.error(res.errMsg);
+            }
+        } catch (e) {
+            setShowLoading(false);
+            console.error('初始化失败:', e);
+        }
+    };
 
     const clearResult = async (seq) => {
         try {
@@ -293,12 +295,12 @@ export default function Index() {
             if (res.success) {
                 if (res.data === 0 || res.data === 1) {
                     //持续调用
-                    if (numberofIssuances >= 4) {
+                    if (retryCountRef.current >= 4) {
                         message.warning('清除测量点异常,请重新操作')
-                        numberofIssuances = 0
+                        retryCountRef.current = 0
                         setShowLoading(false)
                     } else {
-                        numberofIssuances++
+                        retryCountRef.current++
                         setTimeout(() => {
                             clearResult(seq)
                         }, 1000)
@@ -310,7 +312,7 @@ export default function Index() {
                     message.success('清除测量点成功')
                     setShowLoading(false)
                     setIsInit(true)
-                    numberofIssuances = 0
+                    retryCountRef.current = 0
                 }
             } else {
                 setShowLoading(false)
@@ -326,34 +328,39 @@ export default function Index() {
             if (res.success) {
                 if (res.data === 0 || res.data === 1) {
                     //持续调用
-                    if (numberofIssuances >= 4) {
+                    if (retryCountRef.current >= 4) {
                         message.warning('数据区初始化异常,请重新操作')
-                        numberofIssuances = 0
+                        retryCountRef.current = 0
                         setShowLoading(false)
                     } else {
-                        numberofIssuances++
+                        retryCountRef.current++
                         setTimeout(() => {
                             initResult(seq)
                         }, 1000)
                     }
 
                 } else if (res.data === 2) {
-                    //成功 
-                    message.success('数据区初始化成功')
-                    setShowLoading(false)
-                    setIsInit(false)
-                    numberofIssuances = 0
+                    // 当前批次成功，处理下一批次
+                    retryCountRef.current = 0;
+                    currentBatchIndexRef.current += 10;
+                    await processBatchInitialization(); // 继续下一批
                 }
             } else {
                 message.error(res.errMsg)
+                setShowLoading(false);
             }
         } catch (e) {
             console.log(e)
+            setShowLoading(false);
         }
     }
     useEffect(() => {
         getQueryListGateWay()
     }, [])
+    const { search } = useAntdTable(getQueryPageDevice, {
+        refreshDeps: [gatewayIdInint], // 当 gatewayId 变化时自动刷新
+    })
+    const { submit } = search
     return (
         <Pagecont showserach={false} pd="0px" >
             <Titlelayout title="档案下发" layout="flex" dr="column">
@@ -404,7 +411,7 @@ export default function Index() {
 
                     </Form>
                     <div>
-                        <Table columns={columns}  {...tableProps}></Table>
+                        <Table columns={columns} dataSource={dataSource} scroll={{ y: 600 }}></Table>
                         {showLoading ? <Cspin tip="操作中……" delay={300} className='loading' /> : null}
                         <Modal mold='cust' ref={modalRef} onOk={onsubmit} title={modalTitle}>
                             <div style={{ margin: '16px 32px 0', display: 'flex', alignItems: 'center' }}>

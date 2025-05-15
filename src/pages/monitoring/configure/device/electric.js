@@ -59,6 +59,7 @@ export default function gateway({ deviceStyle }) {
   const pageRef = useRef(page)
   pageRef.current = page
   const [dataSource, setDataSource] = useState([])
+  const [dataSource376, setDataSource376] = useState([])
   const oneLevel = useSelector(state => state.system.onelevel)
   const projectId = useSelector(state => state.system.menus.projectId)
   const compRef = useRef()
@@ -167,7 +168,6 @@ export default function gateway({ deviceStyle }) {
 
   //确认编辑
   const editOk = (type) => {
-    console.log(type)
     editform.validateFields().then(async () => {
       const {
         id,
@@ -217,6 +217,7 @@ export default function gateway({ deviceStyle }) {
           EditModalFormRef?.current?.onCancel()
         } else if (type == 'next') {
           openSetModal(editform.getFieldsValue())
+          getQueryByPageElectric376()
         } else {
           message.success("更新成功")
         }
@@ -379,7 +380,7 @@ export default function gateway({ deviceStyle }) {
       integerDigits: 2, //电能示值的整数位个数
       largeCategory: 5, //大类号
       password: "000000000000", //通信密码，可为空
-      // collectSn: "000000000000", //采集器通信地址
+      collectSn: "000000000000", //采集器通信地址
       pn: "1", //所属测量点号，范围0-2040
       protocolType: 30,
       rateCount: 4, //费率数（1-12）
@@ -396,7 +397,7 @@ export default function gateway({ deviceStyle }) {
     const res = await QueryDeviceIncreaseParams(params)
     if (res.success && res.data) {
       setform?.setFieldsValue(res.data[0])
-      setParamsSetId(res.data[0].id)
+      setParamsSetId(res.data.length != 0 ? res.data[0].id : null)
     } else {
       message.error(res.errMsg)
     }
@@ -405,11 +406,12 @@ export default function gateway({ deviceStyle }) {
   //确认设备参数新增
   const setOk = async () => {
     let form = Object.keys(addform.getFieldsValue()).length === 0 ? editform.getFieldsValue() : addform.getFieldsValue()
-    const deviceItem = dataSource.find(item => item.sn === form.sn);
+    const deviceItem = dataSource376.find(item => item.sn === form.sn);
     const deviceId = deviceItem ? deviceItem.id : null;
     const gatewayItem = gatewaylist.find(item => item.id === form.gatewayId);
     const gatewaySn = gatewayItem ? gatewayItem.sn : null;
-    const newData = { ...setform.getFieldsValue(), DeviceId: deviceId, Id: paramsSetId }
+
+    const newData = { ...setform.getFieldsValue(), DeviceId: deviceId, ...(paramsSetId ? { Id: paramsSetId } : {}) }
     const res = await InsertOrUpdateDeviceParam(projectId, gatewaySn, newData)
     if (res.success) {
       message.success('参数设置成功')
@@ -456,6 +458,7 @@ export default function gateway({ deviceStyle }) {
           modalFormRef?.current?.onCancel()
         } else if (type == 'next') {
           openSetModal(addform.getFieldsValue())
+          getQueryByPageElectric376()
         } else {
           message.success('新增成功!')
         }
@@ -602,6 +605,25 @@ export default function gateway({ deviceStyle }) {
 
     } else {
       setDataSource([])
+    }
+
+  }
+  //获取电表列表(全部)
+  const getQueryByPageElectric376 = async () => {
+    let params = {
+      projectId,
+      pageNum: 1,
+      pageSize: page.total + 1,
+      areaId: compRef.current.selvalue ? compRef.current.selvalue : 0,
+      alike: compRef.current.inpvalue,
+      customerType: compRef.current.energyVal ? compRef.current.energyVal : 0
+    }
+    const resp = await QueryByPageElectric(params)
+    if (resp.success && Array.isArray(resp.data)) {
+      setDataSource376([...resp.data.reverse()])
+
+    } else {
+      setDataSource376([])
     }
 
   }
