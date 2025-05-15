@@ -168,7 +168,6 @@ export default function gateway({ deviceStyle }) {
 
   //确认编辑
   const editOk = (type) => {
-    console.log(type)
     editform.validateFields().then(async () => {
       const {
         id,
@@ -398,7 +397,7 @@ export default function gateway({ deviceStyle }) {
     const res = await QueryDeviceIncreaseParams(params)
     if (res.success && res.data) {
       setform?.setFieldsValue(res.data[0])
-      setParamsSetId(res.data[0].id)
+      setParamsSetId(res.data.length != 0 ? res.data[0].id : null)
     } else {
       message.error(res.errMsg)
     }
@@ -411,7 +410,8 @@ export default function gateway({ deviceStyle }) {
     const deviceId = deviceItem ? deviceItem.id : null;
     const gatewayItem = gatewaylist.find(item => item.id === form.gatewayId);
     const gatewaySn = gatewayItem ? gatewayItem.sn : null;
-    const newData = { ...setform.getFieldsValue(), DeviceId: deviceId, Id: paramsSetId }
+
+    const newData = { ...setform.getFieldsValue(), DeviceId: deviceId, ...(paramsSetId ? { Id: paramsSetId } : {}) }
     const res = await InsertOrUpdateDeviceParam(projectId, gatewaySn, newData)
     if (res.success) {
       message.success('参数设置成功')

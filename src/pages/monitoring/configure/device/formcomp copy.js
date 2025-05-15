@@ -289,7 +289,6 @@ export let AddModalForm = ({ addform, modalFormRef, ...other }) => {
                 [<Button key="back" onClick={handleCancel}>
                     取消
                 </Button>,
-                // ZTWL376-W
                 gatewayId && category === 'ZTWL376-W' ? <Button key="next" type="primary" onClick={() => other.onOk('next')}>
                     下一步
                 </Button> : [<Button key="apply" type="primary" onClick={() => other.onOk('apply')}>
