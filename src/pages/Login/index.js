@@ -100,6 +100,9 @@ const Logmain = styled.div`
 
  
 function UserLog() {
+  
+
+  const [defaultlogin] = useState(window.localStorage.getItem("default_login"))
    
   const navigate = useNavigate();
   const {t, i18n} = useTranslation(["login", "comm"]);
@@ -193,6 +196,8 @@ const CheckAuthorization = async (value, type=0, codekey, setLoading,getCode) =>
       dispatch(getPassword(pwd))
       setLoading &&  setLoading(false) 
        let {projectId, roleType, userId } = data   
+     
+       
        if (roleType == 1 || roleType == 2)  return navigate("/projectlist", {})
        if (roleType == 3 || roleType == 4) {     
          dispatch(getWebsiteState({id: projectId, userId})) 
@@ -200,6 +205,9 @@ const CheckAuthorization = async (value, type=0, codekey, setLoading,getCode) =>
          let {runMenus,siderRunMenus, homeMenuNO} = await dispatch(getWebsiteMenu(projectId)).unwrap()
          let ismenu = runMenus?.find(item => item.no == homeMenuNO) || runMenus[0]  
          if(!ismenu) return message.error({content:  t("comm:NoSetMenu"), duration: 0.5})
+          navigate("/websitmap", {})
+          return 
+          
          let  jumpath, substate;
          let sider = siderRunMenus?.[ismenu.key]?.[0] 
          if(sider) { 
@@ -211,8 +219,8 @@ const CheckAuthorization = async (value, type=0, codekey, setLoading,getCode) =>
              primary: ismenu.key
            }
    
-         }
-         projectRun(ismenu, jumpath, substate)
+         } 
+        //  projectRun(ismenu, jumpath, substate) 
        }
  
     }else {
@@ -239,25 +247,28 @@ const CheckAuthorization = async (value, type=0, codekey, setLoading,getCode) =>
        }
     }).catch()
   }
- 
+  
   useEffect(() => {
     dispatch(clearToken()); // 返回登录页面时清楚token
     window.sessionStorage.removeItem('chintwuliu')
     dispatch(getIsGranary(false))
     ongetLang()
+    
   }, []);
  
-
+  const tabChange=(key)=> {
+    window.localStorage.setItem("default_login", key)
+  }
   const items = [
+    {
+      label:  t("login:MoLogin"), //"手机登录",
+       key: '2',
+       children:   <Phonelog onSubmit={CheckAuthorization} />,
+   },
    {
       label:  t("login:Aclogin"), //"账户登录",
        key: '1',
        children:   <Username onSubmit={CheckAuthorization} />,
-   },
-   {
-      label:  t("login:MoLogin"), //"手机登录",
-       key: '2',
-       children:   <Phonelog onSubmit={CheckAuthorization} />,
    }
   ]
   const rules = [
@@ -268,8 +279,9 @@ const CheckAuthorization = async (value, type=0, codekey, setLoading,getCode) =>
   return (     
         <>
          <CTabs 
-           defaultActiveKey="1"
+           defaultActiveKey={defaultlogin}
            items={items}
+           onChange={tabChange}
          >
          </CTabs>    
          <CModal

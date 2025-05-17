@@ -55,3 +55,10 @@ export {ReactComponent as platform} from './platform.svg'
 export {ReactComponent as back} from './back.svg'
 
  export {ReactComponent as def}   from './default.svg'
+
+ // 以下 香炉山项目
+
+ export {ReactComponent as remote} from './remote.svg'
+
+ export {ReactComponent as camera} from './camera.svg'
+  export {ReactComponent as digitalTwin} from './digitalTwin.svg'
