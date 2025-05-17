@@ -195,9 +195,7 @@ const CheckAuthorization = async (value, type=0, codekey, setLoading,getCode) =>
     if(success) {
       dispatch(getPassword(pwd))
       setLoading &&  setLoading(false) 
-       let {projectId, roleType, userId } = data   
-     
-       
+       let {projectId, roleType, userId } = data          
        if (roleType == 1 || roleType == 2)  return navigate("/projectlist", {})
        if (roleType == 3 || roleType == 4) {     
          dispatch(getWebsiteState({id: projectId, userId})) 
@@ -205,8 +203,8 @@ const CheckAuthorization = async (value, type=0, codekey, setLoading,getCode) =>
          let {runMenus,siderRunMenus, homeMenuNO} = await dispatch(getWebsiteMenu(projectId)).unwrap()
          let ismenu = runMenus?.find(item => item.no == homeMenuNO) || runMenus[0]  
          if(!ismenu) return message.error({content:  t("comm:NoSetMenu"), duration: 0.5})
-          navigate("/websitmap", {})
-          return 
+         // navigate("/websitmap", {})
+        //  return  //香炉山项目
           
          let  jumpath, substate;
          let sider = siderRunMenus?.[ismenu.key]?.[0] 
@@ -220,7 +218,7 @@ const CheckAuthorization = async (value, type=0, codekey, setLoading,getCode) =>
            }
    
          } 
-        //  projectRun(ismenu, jumpath, substate) 
+        projectRun(ismenu, jumpath, substate) 
        }
  
     }else {
