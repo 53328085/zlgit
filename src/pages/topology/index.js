@@ -22,6 +22,7 @@ import '../../assets/css/font_c44gejdj174/iconfont.css'
 import '../../assets/css/font_ehfbe2lg8tb/iconfont.css'
 import '../../assets/css/font_ugr1luq01xe/iconfont.css'
 import '../../assets/css/font_nilhyhwpjm9/iconfont.css'
+import '../../assets/css/font_4zc0wpi01ae/iconfont.css'
 // 右侧图形库图标
 import '../../assets/css/fonts/font/libs/iconfont.css'
 import '../../assets/css/font_g4v09lxfde/iconfont.css'
@@ -229,7 +230,7 @@ export default function index() {
   const [nodeType, setNodeType] = useState('设备绑定')
   const [selectedNode, setSelectedNode] = useState()
   const onMessage = (event, data) => {
-    // console.log(data)
+    console.log(event, data)
     //  console.log(Tools)
     if (event == 'nodeRightClick') {
       console.log(data)
@@ -259,6 +260,14 @@ export default function index() {
     setTimeout(() => {
       switch (event) {
         case 'node':
+          if(data.icon == ""){
+            data.icon = ""
+            data.iconFamily = "ltdx"
+          }else if(data.icon == ""){
+            data.icon = ""
+            data.iconFamily = "iconfont"
+          }
+          break
         case 'addNode':
           nodeForm.resetFields()
           // console.log(data)

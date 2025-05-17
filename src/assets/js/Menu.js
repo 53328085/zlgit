@@ -12386,7 +12386,7 @@ export const normal = [
         }
     },
     {
-        "name": "断路器",
+        "name": "断路器-开",
         "icon": "iconfont icon-_duanluqi",
         "data": {
             "rect": {
@@ -12396,6 +12396,21 @@ export const normal = [
             "name": "image",
             "iconFamily": "iconfont",
             "icon":"\ue632"
+        }
+    },
+    {
+        "name": "断路器-合",
+        "icon": "iconfont icon-duanluqi-he",
+        "data": {
+            "rect": {
+                "width": 100,
+                "height": 100
+            },
+            "name": "image",
+            "iconFamily": "iconfont",
+            // "icon":"\ue64e"
+            "icon": ""
+
         }
     },
     {
