@@ -482,7 +482,7 @@ export default function Index() {
     return  getTableData({current: 1, pageSize: total,areaId, projectId, type, date, energytype, treeId, index, line,isrange, dates})
  }, [total, concolumns, type, date,energytype,areaId, treeId, index, line, isrange, dates,sheetName])
 
-/* const boxchange = (e)=> {
+  const boxchange = (e)=> {
   const f = e.target.checked
   setIsrange(f)
   if(!f) {
@@ -491,6 +491,15 @@ export default function Index() {
   }
 }
 
+ const disabledDate = (current) => { // 限制选择范围
+  if (!dates) {
+    return false;
+  }
+  const tooLate = dates[0] && current.diff(dates[0], 'days') > 31;
+  const tooEarly = dates[1] && dates[1].diff(current, 'days') > 31;
+  const date = current && current > moment().endOf("day");
+  return !!tooEarly || !!tooLate || !!date
+};
   const [valuet, setValuet] = useState(null);
 
   const onTimeOk = (date = [], dataString) => {
@@ -499,7 +508,7 @@ export default function Index() {
     console.log(dataString)
      setDates(date)
      setValuet(date)
-  }; */
+  };  
  
   let dataProps = {
     value,
@@ -525,7 +534,7 @@ export default function Index() {
                 <UserTree areaId={areaId} energytype={energytype}  setTreeId={setTreeId} setLine={setLine}   showline={value!='3'} datatype={value=='3' ? 0 : NaN}   /> 
               <div style={{position: "relative", flex: 1}}> 
                 <div style={{position: "absolute", width: "100%"}}>
-            {/*  {["0","1","4"].includes(value) &&  <div style={{marginBottom: "16px", display: "flex"}}>
+            {  value=="4" &&  <div style={{marginBottom: "16px", display: "flex"}}>
               <div style={{marginLeft: "auto"}}>
             <Checkbox onChange={boxchange} checked={isrange}>使用日期范围（优先）</Checkbox>  <RangePicker
                   value={dates || valuet }
@@ -542,7 +551,7 @@ export default function Index() {
                   />
                   </div>
                   </div>
-                } */}
+                } 
                  {
                    ["1","5"].includes(value) ? <UserTable ref={tbref}  columns={concolumns} {...tableProps} key={value}  scroll={{
                     scrollToFirstRowOnChange: true,
