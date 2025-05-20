@@ -484,7 +484,7 @@ export default function Index() {
 
   const boxchange = (e)=> {
   const f = e.target.checked
-  setIsrange(f)
+  setIsrange({range:f})
   if(!f) {
     setDates([moment().startOf("day"), moment()])
     setValuet([moment().startOf("day"), moment()])
@@ -534,14 +534,14 @@ export default function Index() {
                 <UserTree areaId={areaId} energytype={energytype}  setTreeId={setTreeId} setLine={setLine}   showline={value!='3'} datatype={value=='3' ? 0 : NaN}   /> 
               <div style={{position: "relative", flex: 1}}> 
                 <div style={{position: "absolute", width: "100%"}}>
-            {  value=="4" &&  <div style={{marginBottom: "16px", display: "flex"}}>
+           {  value=="4" &&  <div style={{marginBottom: "16px", display: "flex"}}>
               <div style={{marginLeft: "auto"}}>
-            <Checkbox onChange={boxchange} checked={isrange}>使用日期范围（优先）</Checkbox>  <RangePicker
+            <Checkbox onChange={boxchange} checked={isrange.range}>使用日期范围（优先）</Checkbox>  <RangePicker
                   value={dates || valuet }
                     disabledDate={disabledDate}
                    onCalendarChange={(val) => setDates(val)}
                     onChange={onTimeOk} 
-                    disabled={!isrange}
+                    disabled={!isrange.range}
                     defaultValue={[moment().startOf("day"), moment().endOf("hour")]}
                     format="YYYY-MM-DD HH:mm"
                     showTime={{
