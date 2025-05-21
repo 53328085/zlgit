@@ -21,7 +21,7 @@ import {getprimarycolors} from "@com/usehandler";
 function App() {
   const dispatch = useDispatch()
   const theme = useSelector(themeColor)
-  const laptop = useSelector(adaptation)
+  const laptop = useSelector(adaptation) || {}
   const iscn = useSelector(iszhCN)
 /*   const theme = useSelector(themeColor)
  
