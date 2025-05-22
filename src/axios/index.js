@@ -40,7 +40,6 @@ server.interceptors.response.use(
         return Promise.resolve(response)
       }
       const data = response.data || {}
-      console.log(data)
       return data
     },
     error => {       

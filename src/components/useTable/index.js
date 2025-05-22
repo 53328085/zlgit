@@ -1,6 +1,7 @@
 import React, { useRef, useImperativeHandle, forwardRef, useEffect, useState, useCallback, memo, useMemo } from 'react'
 import { createPortal, flushSync } from 'react-dom'
-import { message, Pagination } from 'antd'
+import { message, Input, Button, Space } from 'antd'
+import {SearchOutlined} from "@ant-design/icons"
 import { useSelector } from "react-redux";
 import styled from 'styled-components'
 import { useTranslation } from 'react-i18next'
@@ -64,11 +65,68 @@ flex-direction: column;
 
 // 生成表格模板 
 
+// 表格搜索函数
+export const getColumnSearchProps = (dataIndex,desc) => ({
+  filterDropdown: ({ setSelectedKeys, selectedKeys, confirm, clearFilters, close }) => (
+    <div
+      style={{
+        padding: 8,
+      }}
+      onKeyDown={(e) => e.stopPropagation()}
+    >
+      <Input
+        placeholder={`请输入${desc}`}
+        value={selectedKeys[0]}
+        onChange={(e) => setSelectedKeys(e.target.value ? [e.target.value] : [])}
+        onPressEnter={() => confirm()}
+        style={{
+          marginBottom: 8,
+          display: 'block',
+        }}
+          
+      />   
+      <Space>
+        <Button
+          type="primary"
+          onClick={() => confirm()}
+          icon={<SearchOutlined />}
+          size="small"
+        >
+          刷选
+        </Button>
+        <Button
+          onClick={() => {clearFilters?.(); confirm()}}
+          size="small"
+        >
+         清空
+        </Button> 
+        <Button
+          type="link"
+          size="small"
+          onClick={() => {
+            close();
+          }}
+        >
+         关闭
+        </Button>
+      </Space>
+    </div>
+  ),
+  filterIcon: (filtered) => (
+    <SearchOutlined
+      style={{
+        color: filtered ? '#1890ff' : undefined,
+      }}
+    />
+  ),
+  onFilter: (value, record) =>
+     record[dataIndex]?.toString().toLowerCase().includes(value?.toLowerCase()),  
+});
 
 
 function Index(props, ref) {
   const { pagination, paginationShow, sheetName = "sheet.xlsx", tempName = '', onExport = () => { }, tempcolums, tempdata, scroll = {}, style = {}, ...otherprops } = props
-  console.log(paginationShow, pagination)
+
   const ecolumns = otherprops.columns?.filter(col => !col.hasOwnProperty('export'))
   const tableref = useRef()
   let { laptop } = useSelector(adaptation)

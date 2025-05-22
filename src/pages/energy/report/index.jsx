@@ -14,6 +14,7 @@ import styled from 'styled-components'
 import {energyReport} from '@api/api'
 import {levelDefaultLabel} from '@redux/systemconfig.js'
 import {  ExportExcel} from '@com/useButton'
+import { isObject } from 'lodash'
 const { RangePicker } = DatePicker;
 const {
   QueryByArea, 
@@ -29,7 +30,7 @@ const {
   QueryConsumeByLineCustomize,
   QueryByAreaFromIot,
   QueryByLineFromIot,
-
+  QueryConsumeDeviceShit, // 班次能耗
 } = energyReport
  
 const Contentbox = styled.div`
@@ -43,29 +44,36 @@ const cols =[ // 实时抄表
 {
   title: '区域名称',
   dataIndex: 'nodeName', 
+  key:'nodeName',
 },
   {
     title: '设备名称',
     dataIndex: 'name', 
+    key: "name"
   }, {
     title: '起始读数',
     dataIndex: 'start',
+    key: "start"
     
   }, {
     title: '结束读数',
     dataIndex: 'end',
+    key:"end"
   },
   {
     title: '用能(kWh)',
     dataIndex: 'consume',
+    key: "consume"
   }, 
   {
     title: '设备编号',
     dataIndex: 'sn',
+    key:"sn"
   },
   {
     title: '安装位置',
     dataIndex: 'address',
+    key: "address"
   },
 ]
  
@@ -113,14 +121,17 @@ const timecols =[  // 分时能耗
 {
   title: '区域名称',
   dataIndex: 'nodeName', 
+  key: "nodeName"
 },
 {
     title: '设备名称',
     dataIndex: 'name', 
+    key: "name"
   },  
   {
     title: '总计(kWh)',
     dataIndex: 'e',
+    key: "e",
     onHeaderCell: () => ({
       style: {
         background: "#000",
@@ -131,6 +142,7 @@ const timecols =[  // 分时能耗
   {
     title: '峰(kWh)',
     dataIndex: 'e2',
+    key:"e2",
     onHeaderCell: () => ({
       style: {
         background: "#f33",
@@ -141,6 +153,7 @@ const timecols =[  // 分时能耗
   {
     title: '平(kWh)',
     dataIndex: 'e3',
+    key: "e3",
     onHeaderCell: () => ({
       style: {
         background: "#f90",
@@ -151,6 +164,7 @@ const timecols =[  // 分时能耗
   {
     title: '谷(kWh)',
     dataIndex: 'e4',
+    key: "e4",
     onHeaderCell: () => ({
       style: {
         background: "#093",
@@ -162,14 +176,17 @@ const timecols =[  // 分时能耗
   {
     title: '费用',
     dataIndex: 'cost',
+    key: "cost"
   },
   {
     title: '设备编号',
     dataIndex: 'sn',
+    key: "sn"
   }, 
   {
     title: '安装位置',
     dataIndex: 'address',
+    key: "address"
   }, 
 ]
 
@@ -177,24 +194,88 @@ const typecols =[  // 分类能耗
   {
     title: '能耗类型',
     dataIndex: 'type', 
+    key: "type"
   },  
   {
     title: '子类型',
     dataIndex: 'subType',
+    key:"subType"
   },  
   {
     title: '能耗(kWh)',
     dataIndex: 'consume',
+    key: "consume"
   },  
   {
     title: '同比',
     dataIndex: 'yoy',
+    key: "yoy"
   }, 
   {
     title: '环比',
     dataIndex: 'mom',
+    key: "mom"
   }, 
 ]
+const fromlot =[ // 电能报表 
+  {
+    title: '区域名称',
+    dataIndex: 'nodeName', 
+    key: "nodeName"
+  },
+    {
+      title: '设备名称',
+      dataIndex: 'name', 
+      key: "name"
+    }, {
+      title: '起始读数',
+      dataIndex: 'start',
+      key: "start"
+      
+    }, {
+      title: '结束读数',
+      dataIndex: 'end',
+      key: "end"
+    },
+    {
+      title: '用能(kWh)',
+      dataIndex: 'consume',
+      key: "consume"
+    }, 
+    {
+      title: '设备编号',
+      dataIndex: 'sn',
+      key: "sn"
+    },
+    {
+      title: '安装位置',
+      dataIndex: 'address',
+      key: "address"
+    },
+  ]
+const shitcols =[  // 班次能耗 
+  {
+    title: '区域名称',
+    dataIndex: 'nodeName', 
+    key: "nodeName"
+  },  
+  {
+    title: '设备名称',
+    dataIndex: 'name',
+    key: "name"
+  },  
+  {
+    title: '编号',
+    dataIndex: 'sn',
+    key:"sn"
+  },  
+  {
+    title: '地址',
+    dataIndex: 'address',
+    key: "address"
+  },  
+]
+
 
 export default function Index() {
 
@@ -221,11 +302,13 @@ export default function Index() {
     { key: '2', label: '分时能耗' },
     { key: '3', label: '分类能耗' },
     { key: '4', label: '电能报表' },
+    { key: '5', label: '班次能耗' },
   ]
   const wtabs = [
     { key: '0', label: '实时抄表' },
     { key: '1', label: '能耗报表' },
     { key: '3', label: '分类能耗' },
+    { key: '5', label: '班次能耗' },
   ]
   const [tabs, setTabs] = useState(etabs)
   const index = Number(value)
@@ -244,7 +327,7 @@ export default function Index() {
  
  
   
- let columns = [cols, [], timecols, typecols, cols][index] // 
+ let columns = [cols, [], timecols, typecols, fromlot,shitcols][index] // 
 
  
   
@@ -252,8 +335,7 @@ export default function Index() {
   //  console.log(date)
 
 
-    console.log("isrange", isrange)
-    console.log("dates", dates)
+    
     let f = [areaId, projectId, type, energytype,index, line].every(v => Number.isInteger(v)) && Array.isArray(treeId) && date
 
    
@@ -263,11 +345,14 @@ export default function Index() {
           return
     }
      let hander =range ? [[QueryReadingByAreaCustomize,
-      QueryReadingByLineCustomize], [QueryConsumeByAreaCustomize, QueryConsumeByLineCustomize],[],[], [QueryByAreaFromIot,QueryByLineFromIot]][index][line] :  index < 3 ? [
+      QueryReadingByLineCustomize], [QueryConsumeByAreaCustomize, QueryConsumeByLineCustomize],[],[], [QueryByAreaFromIot,QueryByLineFromIot]][index][line] :  index == 3 ? QueryClassifyConsume : [
       [QueryByArea, QueryByLine], 
       [QueryConsumeByArea, QueryConsumeByLine],
       [QueryTimeConsumeByArea,QueryTimeConsumeByLine],
-      ][index][line] : QueryClassifyConsume
+      [],
+      [QueryByAreaFromIot,QueryByLineFromIot],
+       [QueryConsumeDeviceShit, QueryConsumeDeviceShit]
+      ][index][line]  
     
      let time = getTime(date, type)
      let params =range ?
@@ -286,6 +371,11 @@ export default function Index() {
         pageSize,
         areaId,
      }
+     if(index == 5) {
+       params.queryType =line
+       
+     }
+     
      // //  cols 实时抄表，  conscols 能耗报表 , typecols 分类能耗
      if(energytype == 1) {
       setTabs([...etabs])
@@ -316,7 +406,9 @@ export default function Index() {
      return hander(params, treeId).then(res => {
          let {success, data, total=0} = res
          setTotal(total)
-         if(success && Array.isArray(data) && data.length > 0) {           
+         let fag = index == 5 && isObject(data)
+         let arrData =[]
+         if(success && ((Array.isArray(data) && data.length > 0) || fag) ) {           
            if(index == 1) {
              let {detailHeaders} = data[0]
              let last = detailHeaders.length - 1
@@ -329,11 +421,36 @@ export default function Index() {
                   item[val] = detailValues[index]
               }
             })
+           }else if(index==5) {
+              let {heads, datas} = data
+              let ishead = Array.isArray(heads) && heads?.length
+              if(ishead) {
+                  let shiftcolumn = heads.map(h=> ({
+                    title: `${h.name}`,
+                    dataIndex:  `shiftname${h.name}`,
+                  } ))
+                  setConcolumns([...shitcols, ...shiftcolumn])
+
+              }
+              if(Array.isArray(datas) && ishead) {
+                 arrData=datas.map(d => {
+                   let {e} = d, Earr=[]
+                   if(Array.isArray(e) && e.length) {
+                      e.forEach((v,index) =>{
+                      let key ='shiftname'+heads[index]?.name
+                       d[key] =v
+                     })
+
+                   }
+                   return d
+                 })
+              }
+
            }
            
          
             return {
-              list: data,
+              list: index==5 ? arrData : data,
               total: total
             }
          }else {
@@ -352,7 +469,7 @@ export default function Index() {
     defaultParams: [{current: 1, pageSize: 14}],
     refreshDeps: [areaId, projectId, type, date, energytype, treeId, index, line,isrange, dates]
   })
-
+  console.log(tableProps)
   const CustView =useMemo(()=> {
     const showdefined =  ["0","1","4"].includes(value)
     return (
@@ -365,15 +482,24 @@ export default function Index() {
     return  getTableData({current: 1, pageSize: total,areaId, projectId, type, date, energytype, treeId, index, line,isrange, dates})
  }, [total, concolumns, type, date,energytype,areaId, treeId, index, line, isrange, dates,sheetName])
 
-/* const boxchange = (e)=> {
+  const boxchange = (e)=> {
   const f = e.target.checked
-  setIsrange(f)
+  setIsrange({range:f})
   if(!f) {
     setDates([moment().startOf("day"), moment()])
     setValuet([moment().startOf("day"), moment()])
   }
 }
 
+ const disabledDate = (current) => { // 限制选择范围
+  if (!dates) {
+    return false;
+  }
+  const tooLate = dates[0] && current.diff(dates[0], 'days') > 31;
+  const tooEarly = dates[1] && dates[1].diff(current, 'days') > 31;
+  const date = current && current > moment().endOf("day");
+  return !!tooEarly || !!tooLate || !!date
+};
   const [valuet, setValuet] = useState(null);
 
   const onTimeOk = (date = [], dataString) => {
@@ -382,7 +508,7 @@ export default function Index() {
     console.log(dataString)
      setDates(date)
      setValuet(date)
-  }; */
+  };  
  
   let dataProps = {
     value,
@@ -408,14 +534,14 @@ export default function Index() {
                 <UserTree areaId={areaId} energytype={energytype}  setTreeId={setTreeId} setLine={setLine}   showline={value!='3'} datatype={value=='3' ? 0 : NaN}   /> 
               <div style={{position: "relative", flex: 1}}> 
                 <div style={{position: "absolute", width: "100%"}}>
-            {/*  {["0","1","4"].includes(value) &&  <div style={{marginBottom: "16px", display: "flex"}}>
+           {  value=="4" &&  <div style={{marginBottom: "16px", display: "flex"}}>
               <div style={{marginLeft: "auto"}}>
-            <Checkbox onChange={boxchange} checked={isrange}>使用日期范围（优先）</Checkbox>  <RangePicker
+            <Checkbox onChange={boxchange} checked={isrange.range}>使用日期范围（优先）</Checkbox>  <RangePicker
                   value={dates || valuet }
                     disabledDate={disabledDate}
                    onCalendarChange={(val) => setDates(val)}
                     onChange={onTimeOk} 
-                    disabled={!isrange}
+                    disabled={!isrange.range}
                     defaultValue={[moment().startOf("day"), moment().endOf("hour")]}
                     format="YYYY-MM-DD HH:mm"
                     showTime={{
@@ -425,9 +551,9 @@ export default function Index() {
                   />
                   </div>
                   </div>
-                } */}
+                } 
                  {
-                  value == "1" ? <UserTable ref={tbref}  columns={concolumns} {...tableProps} key={value} rowKey={row=>row.sn+row.nodeName} scroll={{
+                   ["1","5"].includes(value) ? <UserTable ref={tbref}  columns={concolumns} {...tableProps} key={value}  scroll={{
                     scrollToFirstRowOnChange: true,
                      x: 1400, 
                      y: 685
@@ -435,7 +561,7 @@ export default function Index() {
                   }
                   sheetName={sheetName} onExport={onExport}
                   ></UserTable>
-                  :<UserTable ref={tbref} columns={columns} {...tableProps} key={value} sheetName={sheetName} rowKey={row=>row.sn + row.nodeName} onExport={onExport}></UserTable>
+                  :<UserTable ref={tbref} columns={columns} {...tableProps} key={value} sheetName={sheetName}  onExport={onExport}></UserTable>
                 } 
                 </div>
                 </div> 

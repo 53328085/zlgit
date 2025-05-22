@@ -25,7 +25,26 @@ const Mainbox =  styled.div`
   .head{
    background-image: linear-gradient(to right, ${props => props.theme.gatewayheardcolor || "#003366"}, ${props => props.theme.gatewayheardcolorend || "#003366"});
   }
-  
+  .contenttable {
+    display: flex;
+    flex:1;
+    .outwrap {
+      flex:1;
+      position: relative;;
+      
+      .inwrap {
+        position: absolute;
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        .ant-pagination.ant-pagination-mini {
+          margin-top: 16px;
+          align-self: flex-end;
+        }
+      }
+    }
+    
+  }
 }
 `
 
@@ -326,9 +345,10 @@ export default function GatewayDetail(props) {
               <Button type="primary" style={{marginLeft:'auto'}} onClick={setRTGCall}>手动召读</Button>
           </div>
         {/*   <img src={imgurl.line} className={style.timeline}></img> */}
-          <div className={style.tableBox}>
+          <div className={style.tableBox + " contenttable"}>
             {state ? (
-              <div>
+              <div className="outwrap">
+                <div className="inwrap">
                 <Table
                   columns={columns}
                   dataSource={dataSource}
@@ -338,7 +358,7 @@ export default function GatewayDetail(props) {
                   }}
                 ></Table>
                 <Pagination
-                  className={style.pageNumD}
+                 
                   size="small"
                   current={page}
                   total={total}
@@ -346,9 +366,11 @@ export default function GatewayDetail(props) {
                   onChange={onChangePage}
                   showSizeChanger={false}
                 />
+                </div>
               </div>
             ) : (
-              <div>
+              <div className="outwrap">
+                <div className="inwrap">
                 <Table
                   columns={columnsLog}
                   dataSource={dataSourceLog}
@@ -358,7 +380,6 @@ export default function GatewayDetail(props) {
                   }}
                 ></Table>
                 <Pagination
-                  className={style.pageNumD}
                   size="small"
                   current={pageLog}
                   total={totalLog}
@@ -366,6 +387,7 @@ export default function GatewayDetail(props) {
                   onChange={onChangePageLog}
                   showSizeChanger={false}
                 />
+                </div>
               </div>
             )}
           </div>

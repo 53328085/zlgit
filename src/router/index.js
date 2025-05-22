@@ -70,6 +70,7 @@ const Topologytest = lazy(() => import("../pages/topology/test"))
 const DetailIndicators = lazy(() => import("../pages/quota/detailIndicators/index.jsx"))
 const Loopname = lazy(() => import("../pages/distribution/statements/loopname.js"))
 const Diskchart = lazy(() => import("../pages/cabinet/exhibition/index.jsx"))
+const Websitmap = lazy(() => import("@pages/websitmap"))
 import {designerComponents,  designerRoutes} from "./designer";
  
  
@@ -202,6 +203,10 @@ const loginrouter =  [{
     {
       path: "/diskchart",
       element: <Diskchart />
+    },
+    {
+      path: "/websitmap", // 网站
+      element: <Websitmap />
     },
    {
     path: '*',
