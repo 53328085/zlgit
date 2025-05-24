@@ -2509,13 +2509,21 @@ export class energyReport {
           body,
           {params}
         ); //能电报表--线路
-        static QueryConsumeDeviceShit = (params, post) =>{
-          let body = {...params,  ids: post}
-           return   server.post(`Energy/DataReportRuntime/QueryConsumeDeviceShit`, body ); 
-          }// 班次能耗
-  // static QueryReading = (data, areaId) => server.post(`/Energy/DataReportRuntime/QueryReading`, areaId, { params: data })//能耗抄表
-  // static QueryConsume = (data, areaId) => server.post(`/Energy/DataReportRuntime/QueryConsume`, areaId, { params: data })//能耗用量
-  // static QueryTimeConsume = (data, areaId) => server.post(`/Energy/DataReportRuntime/QueryTimeConsume`, areaId, { params: data })//分时能耗
+
+        // 新的接口
+       
+        static QueryConsumeRegion = (body) => server.post(`Energy/DataReportRuntime/QueryConsumeRegion`, body ) // 实时抄表
+
+        static QueryConsumeHourTime = (body) => server.post(`Energy/DataReportRuntime/QueryConsumeHourTime`, body ) // 能耗报表
+
+        static QueryConsumeByTime = (body) => server.post(`Energy/DataReportRuntime/QueryConsumeByTime`, body ) // 分时能耗
+
+        static QueryConsumeClassify = (body) => server.post(`Energy/DataReportRuntime/QueryConsumeClassify`, body ) // 分类能耗
+
+        static QueryConsumeFromIot = (body) => server.post(`Energy/DataReportRuntime/QueryConsumeFromIot`, body ) // 电能报表
+
+
+        static QueryConsumeDeviceShit = (body) =>server.post(`Energy/DataReportRuntime/QueryConsumeDeviceShit`, body ) // 班次能耗
 }
 //energyDesigner能耗管理
 export class energyDesigner {
