@@ -1755,6 +1755,12 @@ export class UISummary {
 }
 //运行监控
 export const Monitoring = {
+
+  PowerNeed: (params) => server.get(`Monitor/UserPower/PowerNeed`, { params }), 
+  CheckPowerOnce: (body) => server.post(`Monitor/UserPower/CheckPowerOnce`, body),//输入密码
+
+  SetUserPower: (body) => server.post(`Monitor/UserPower/SetUserPower`, body),//设置密码
+
   GetPointList: (params) => server.get(`Monitor/RuntimeDevice/GetPointList`, { params }),//分类测点
   HistoryCurve: (data) => server.post(`Monitor/RuntimeDevice/HistoryCurve`, data),//监控趋势（传感器、流量计）
   //设备类型管理
