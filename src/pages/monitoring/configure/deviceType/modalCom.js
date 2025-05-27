@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useRef, forwardRef, useImperativeHandle, useContext, useMemo } from 'react'
 import { Button, Form, Input, Row, Col, Upload, Select, Switch, message, Divider } from 'antd';
-import {useSelector} from 'react-redux'
+import { useSelector } from 'react-redux'
 import Modal from '@com/useModal'
 import style from './style.module.less'
 import BlueColumn from '@com/bluecolumn'
@@ -8,7 +8,7 @@ import UploadImg from './upload.jsx'
 import Table from '@com/useTable'
 import upCloud from './imgs/upcloud.png'
 import cusContext from '@com/content'
-import {adaptation} from "@redux/systemconfig"
+import { adaptation } from "@redux/systemconfig"
 import { cloneDeep } from 'lodash';
 const { Dragger } = Upload;
 //删除modal组件
@@ -66,9 +66,9 @@ let TableForm = forwardRef(({ defaultTableData, tabledatas }, ref) => {
   const TableParam = useMemo(() => {
     return { current: 1, pageSize: defaultTableData?.length || 0, hideOnSinglePage: true }
   }, [defaultTableData])
-  
+
   const [pointSource, setPointSource] = useState([...defaultTableData])
-  const {laptop} = useSelector(adaptation)
+  const { laptop } = useSelector(adaptation)
   const tableDataRef = useRef()
   let checedList = []
   defaultTableData?.forEach(it => { if (it.watchPoint) { checedList.push(it.index) } })
@@ -330,7 +330,7 @@ export let AddModal = forwardRef(
 let TableEditForm = forwardRef(({ defaultTableData, tabledatas }, ref) => {
   const [pointSource, setPointSource] = useState([...defaultTableData])
   const tableDataRef = useRef()
-  const {laptop} = useSelector(adaptation)
+  const { laptop } = useSelector(adaptation)
   tableDataRef.current = cloneDeep(pointSource)
   // console.log('tableDataRef',tableDataRef.current)
   let checedList = []
@@ -472,7 +472,6 @@ export let EditModal = forwardRef(
     const tableRef = useRef(null)
     // const [isControl,setIsControl] = useState()
     // const [IsCount,setIsCount] = useState()
-    console.log(tableRef.current?.tabledata)
     useEffect(() => {
       // setIsControl(editForm.getFieldsValue().Control)
       // setIsCount(editForm.getFieldsValue().IsCount)

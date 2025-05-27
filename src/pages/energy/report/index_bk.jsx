@@ -30,13 +30,6 @@ const {
   QueryConsumeByLineCustomize,
   QueryByAreaFromIot,
   QueryByLineFromIot,
-
-
-  QueryConsumeRegion, //实时抄表
-  QueryConsumeHourTime, // 能耗报表
-  QueryConsumeByTime, // 分时能耗
-  QueryConsumeClassify, // 分类能耗
-  QueryConsumeFromIot, //电能报表
   QueryConsumeDeviceShit, // 班次能耗
 } = energyReport
  
@@ -351,7 +344,7 @@ export default function Index() {
     if(index === 0 && isrange.range && !Array.isArray(dates) ){
           return
     }
-  /*    let hander =range ? [[QueryReadingByAreaCustomize,
+     let hander =range ? [[QueryReadingByAreaCustomize,
       QueryReadingByLineCustomize], [QueryConsumeByAreaCustomize, QueryConsumeByLineCustomize],[],[], [QueryByAreaFromIot,QueryByLineFromIot]][index][line] :  index == 3 ? QueryClassifyConsume : [
       [QueryByArea, QueryByLine], 
       [QueryConsumeByArea, QueryConsumeByLine],
@@ -359,35 +352,29 @@ export default function Index() {
       [],
       [QueryByAreaFromIot,QueryByLineFromIot],
        [QueryConsumeDeviceShit, QueryConsumeDeviceShit]
-      ][index][line]   */
-  /*     QueryConsumeRegion, //实时抄表
-      QueryConsumeHourTime, // 能耗报表
-      QueryConsumeByTime, // 分时能耗
-      QueryConsumeClassify, // 分类能耗
-      QueryConsumeFromIot, //电能报表
-      QueryConsumeDeviceShit, // 班次能耗 */
-    let hander = [
-      QueryConsumeRegion,
-      QueryConsumeHourTime,
-      QueryConsumeByTime,
-      QueryConsumeClassify,
-      QueryConsumeFromIot,
-      QueryConsumeDeviceShit,
-    ][index]
-     let dateType = {1: "day",2:"month",3: "year"}[type]
-   
-     let params ={
-      projectId, 
+      ][index][line]  
+    
+     let time = getTime(date, type)
+     let params =range ?
+     {projectId, 
       meterType: energytype,
-      startDate: range ? dates[0].format("YYYY-MM-DD HH:mm") : date.startOf(dateType).format("YYYY-MM-DD HH:mm"),
-      endDate:  range ? dates[1].format("YYYY-MM-DD HH:mm"): date.endOf(dateType).format("YYYY-MM-DD HH:mm"),   
+      startDate: dates[0].format("YYYY-MM-DD HH:mm"),    //getTime(dates[0], 1),
+      endDate:  dates[1].format("YYYY-MM-DD HH:mm"),  //getTime(dates[1], 1),
       pageNum: current,
       pageSize,
-      queryType:line,
-      ids:treeId,
-      type
-     }  
- 
+       } : {
+        projectId,
+        type,
+        date: time,
+        meterType: energytype,
+        pageNum: current,
+        pageSize,
+        areaId,
+     }
+     if(index == 5) {
+       params.queryType =line
+       
+     }
      
      // //  cols 实时抄表，  conscols 能耗报表 , typecols 分类能耗
      if(energytype == 1) {
@@ -416,7 +403,7 @@ export default function Index() {
  
     if(!hander) return message.warning("请求方法不存在")
 
-     return hander(params).then(res => {
+     return hander(params, treeId).then(res => {
          let {success, data, total=0} = res
          setTotal(total)
          let fag = index == 5 && isObject(data)
