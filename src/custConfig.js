@@ -13,7 +13,7 @@ import {themeColor,adaptation, intl} from "@redux/systemconfig";
 
 export default function CustConfig(props) {
   const theme = useSelector(themeColor)
-  const {laptop} = useSelector(adaptation)
+  const {laptop} = useSelector(adaptation) || { }
   const {lang} = useSelector(intl)
   const config = {
     csp: {

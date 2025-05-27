@@ -2509,7 +2509,10 @@ export class energyReport {
           body,
           {params}
         ); //能电报表--线路
-
+        static QueryConsumeDeviceShit = (params, post) =>{
+          let body = {...params,  ids: post}
+           return   server.post(`Energy/DataReportRuntime/QueryConsumeDeviceShit`, body ); 
+          }// 班次能耗
   // static QueryReading = (data, areaId) => server.post(`/Energy/DataReportRuntime/QueryReading`, areaId, { params: data })//能耗抄表
   // static QueryConsume = (data, areaId) => server.post(`/Energy/DataReportRuntime/QueryConsume`, areaId, { params: data })//能耗用量
   // static QueryTimeConsume = (data, areaId) => server.post(`/Energy/DataReportRuntime/QueryTimeConsume`, areaId, { params: data })//分时能耗

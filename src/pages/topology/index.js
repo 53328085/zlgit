@@ -260,13 +260,13 @@ export default function index() {
     setTimeout(() => {
       switch (event) {
         case 'node':
-          if(data.icon == ""){
-            data.icon = ""
-            data.iconFamily = "ltdx"
-          }else if(data.icon == ""){
-            data.icon = ""
-            data.iconFamily = "iconfont"
-          }
+          // if(data.icon == ""){
+          //   data.icon = ""
+          //   data.iconFamily = "ltdx"
+          // }else if(data.icon == ""){
+          //   data.icon = ""
+          //   data.iconFamily = "iconfont"
+          // }
           break
         case 'addNode':
           nodeForm.resetFields()

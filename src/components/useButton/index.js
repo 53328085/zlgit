@@ -490,7 +490,7 @@ export function ExportExcel({tb,  single=false,defined=false,setIsrange,getDates
  const onOk=async()=> {
     try {
       await form.validateFields()
-      tb.current.download()
+      tb.current.downloadAll()
       mref.current.onCancel()
     } catch (e) {
       Promise.reject()
