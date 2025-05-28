@@ -362,6 +362,13 @@ useEffect(()=>{
         </Item>
         <Text  type="success">应用于ant-design成功信息显示,其他需要成功色的元素</Text>
       </Item>
+      <Item label="失效色">
+       <Item  labelCol={{flex: "3em"}} name="offlineColor" initialValue="#C4D0DE">
+          <Ccolor name="offlineColor" />
+       </Item>
+        <Text >可以应用于禁止、离线等状态</Text>
+      </Item>
+    
       <Item label="透明度">
         <Item name="opacity" initialValue={0.2} noStyle>
           <InputNumber min={0} max={1} step={0.1} onChange={(e)=>changeop(e, "opacity")}></InputNumber>
