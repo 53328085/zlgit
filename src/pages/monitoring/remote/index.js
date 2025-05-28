@@ -274,7 +274,7 @@ export default function Index() {
         }
         ]
 
-    const [isfag, setIsfag] = useState(true)
+    const typeref = useRef()
     
     const [pwdform] = Form.useForm()
     const [setform] = Form.useForm()
@@ -311,28 +311,35 @@ export default function Index() {
          values.Pwd2 = cipher(values.Pwd2)
          let {success, errMsg} =  await CheckPowerOnce(values)
          if(success) {
-           return true     
+            changesetbrake(typeref.current)
          }else {
             message.warning(errMsg)
-            return false
+            
          }
       } catch (error) {
         console.log(error)
       }
     }
-    const passwordhandler =async (rows) => {
+    const passwordhandler =async (type) => {
         try {
-          console.log(rows)
-          let category = rows.map(r => r.category)
-          if(category.includes(contrCategory)) {
-             pwdmodal.current.onOpen()
-             return true
+            if (tableRefs.current && tableRefs.current.length > 0) {
+                typeref.current = type
+          let category = tableRefs.current.map(r => r.category)
+          console.log(category)
+          console.log(tableRefs.current)
+          if(category.includes(contrCategory)&& tableRef.current?.length >1) {
+            return message.warning("微机保护不能批量控制")            
+          }else if(category.includes(contrCategory)&& tableRefs.current?.length ==1) {
+            pwdmodal.current.onOpen()           
           }else {
-            return false
+            changesetbrake(type)
           }
+        } else {
+            message.error('请先选择设备！')
+        }
            // await  PowerNeed({projectId})
         } catch (error) {
-            
+            console.log(error)
         }
        
 
@@ -357,14 +364,7 @@ export default function Index() {
 
     // 香炉山项目 end
     const changesetbrake =async (type) => {
-       
-        
         if (tableRefs.current && tableRefs.current.length > 0) {
-            let mark =  await passwordhandler(tableRefs.current)
-            if(mark) {
-                
-            }
-           
             setsnList([])
             let List = []
             if (tableRefs.current.length > 0) {
@@ -439,12 +439,21 @@ export default function Index() {
 
                             </Item>
                             {value == 3 && <Item name="time"><DatePicker.RangePicker disabledDate={disabledDate} format="YYYY-MM-DD" /></Item>}
-                            {value != 3 && <> 
+                           {/*  {value != 3 && <> 
                                 <Space size={16}>
                                     <CustButtonT ns="monitor" text="opening" danger onClick={() => { changesetbrake(1) }}>分闸</CustButtonT>
                                     <CustButtonT ns="monitor" text="closing"  danger   onClick={() => { changesetbrake(2) }}>合闸</CustButtonT>
-                                    <CustButton  wh="auto"  onClick={() => { showpwd() }}>设置密码</CustButton>
-                                </Space></>}
+                                </Space></>} */}
+                               
+                             {value !=3 && <> 
+                             {
+                               (manager|| maintenance) ?  <Space size={16}>
+                               <CustButtonT ns="monitor" text="opening" danger onClick={() => { passwordhandler(1) }}>分闸</CustButtonT>
+                               <CustButtonT ns="monitor" text="closing"  danger   onClick={() => { passwordhandler(2) }}>合闸</CustButtonT>
+                               <CustButton  wh="auto"  onClick={() => { showpwd() }}>设置密码</CustButton>
+                           </Space> :  null
+                             }
+                               </>}
                         </Space>
                     </Form>
                    
