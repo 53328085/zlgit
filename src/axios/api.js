@@ -49,7 +49,7 @@ export class CustTheme {
     server.get(`Energy/Theme/GetProjectTheme`, { params }); // 获取项目选择的主题
 
   static SelProjectTheme = (params) =>
-    server.post(`Energy/Theme/SetProjectTheme`, null,{ params }); // 选择项目主题
+    server.post(`Energy/Theme/SetProjectTheme`, null, { params }); // 选择项目主题
   static GetProjectMainTheme = (params) =>
     server.get(`Energy/MainTheme/GetProjectMainTheme`, { params }); // 获取项目公共主题
 
@@ -1937,6 +1937,17 @@ export const Monitoring = {
       server.post(`/Monitor/Device/UpdateMic`, data), //更新微机保护
     ImportMic: (data) => server.post(`/Monitor/Device/ImportMic`, data), //批量导入微机保护
 
+
+    DeleteSmartControl: (data) =>
+      server.delete(`/Monitor/Device/DeleteSmartControl`, { params: data }), //删除智能控制
+    QueryByPageSmartControl: (data) =>
+      server.post(`/Monitor/Device/QueryByPageSmartControl`, data), //查询智能控制
+    AddSmartControl: (data) => server.post(`/Monitor/Device/AddSmartControl`, data), //新增智能控制
+    UpdateSmartControl: (data) =>
+      server.post(`/Monitor/Device/UpdateSmartControl`, data), //更新智能控制
+    ImportSmartControl: (data) => server.post(`/Monitor/Device/ImportSmartControl`, data), //批量导入智能控制
+
+
     //376协议
     QueryDeviceIncreaseParams: ({ projectId, gatewayId, port, alike }) =>
       server.post(`/Monitor/Device/QueryDeviceIncreaseParams?projectId=${projectId}&gatewayId=${gatewayId}&port=${port}&alike=${alike}`), //查询查询新增参数
@@ -2497,22 +2508,22 @@ export class energyReport {
       params
     ); //分类能耗
 
-    static QueryByAreaFromIot = (params, body ) =>
-      server.post(
-        `Energy/DataReportRuntime/QueryByAreaFromIot`,
-        body,
-        {params}
-      ); //能电报表--区域
-      static QueryByLineFromIot = (params, body ) =>
-        server.post(
-          `Energy/DataReportRuntime/QueryByLineFromIot`,
-          body,
-          {params}
-        ); //能电报表--线路
-        static QueryConsumeDeviceShit = (params, post) =>{
-          let body = {...params,  ids: post}
-           return   server.post(`Energy/DataReportRuntime/QueryConsumeDeviceShit`, body ); 
-          }// 班次能耗
+  static QueryByAreaFromIot = (params, body) =>
+    server.post(
+      `Energy/DataReportRuntime/QueryByAreaFromIot`,
+      body,
+      { params }
+    ); //能电报表--区域
+  static QueryByLineFromIot = (params, body) =>
+    server.post(
+      `Energy/DataReportRuntime/QueryByLineFromIot`,
+      body,
+      { params }
+    ); //能电报表--线路
+  static QueryConsumeDeviceShit = (params, post) => {
+    let body = { ...params, ids: post }
+    return server.post(`Energy/DataReportRuntime/QueryConsumeDeviceShit`, body);
+  }// 班次能耗
   // static QueryReading = (data, areaId) => server.post(`/Energy/DataReportRuntime/QueryReading`, areaId, { params: data })//能耗抄表
   // static QueryConsume = (data, areaId) => server.post(`/Energy/DataReportRuntime/QueryConsume`, areaId, { params: data })//能耗用量
   // static QueryTimeConsume = (data, areaId) => server.post(`/Energy/DataReportRuntime/QueryTimeConsume`, areaId, { params: data })//分时能耗
@@ -3150,56 +3161,56 @@ export class EnergyPublicRuntime {
   static queryElectricYear = (params, data) =>
     server.post(
       `/Energy/EnergyPublicRuntime/QueryElectric_Year`,
-      data, {params}
+      data, { params }
     );
   static queryElectricDay = (params, data) =>
     server.post(
       `/Energy/EnergyPublicRuntime/QueryElectric_Day`,
-      data,{params}
+      data, { params }
     );
-    static queryElectricRangeDay =(params, data)=> server.post(
-      `/Energy/EnergyPublicRuntime/QueryElectric_Range`,data,{params}
-      
-    );
-  static queryElectricMonth = (params,data) =>
+  static queryElectricRangeDay = (params, data) => server.post(
+    `/Energy/EnergyPublicRuntime/QueryElectric_Range`, data, { params }
+
+  );
+  static queryElectricMonth = (params, data) =>
     server.post(
       `/Energy/EnergyPublicRuntime/QueryElectric_Month`,
-      data,{params}
+      data, { params }
     );
   static queryWaterDay = (params, data) =>
     server.post(
       `/Energy/EnergyPublicRuntime/QueryWater_Day`,
-      data,{params}
+      data, { params }
     );
   static queryWaterRange = (params, data) =>
     server.post(
       `/Energy/EnergyPublicRuntime/QueryWater_Range`,
-      data,{params}
+      data, { params }
     );
   static queryWaterMonth = (params, data) =>
     server.post(
       `/Energy/EnergyPublicRuntime/QueryWater_Month`,
-      data,{params}
+      data, { params }
     );
   static queryWaterYear = (params, data) =>
     server.post(
       `/Energy/EnergyPublicRuntime/QueryWater_Year`,
-      data, {params}
+      data, { params }
     );
   static queryGasDay = (params, data) =>
     server.post(
       `/Energy/EnergyPublicRuntime/QueryGas_Day`,
-      data,{params}
+      data, { params }
     );
-  static queryGasMonth = (params,data) =>
+  static queryGasMonth = (params, data) =>
     server.post(
       `/Energy/EnergyPublicRuntime/QueryGas_Month`,
-      data,{params}
+      data, { params }
     );
   static queryGasYear = (params, data) =>
     server.post(
       `/Energy/EnergyPublicRuntime/QueryGas_Year`,
-      data, {params}
+      data, { params }
     );
 }
 //储能概述

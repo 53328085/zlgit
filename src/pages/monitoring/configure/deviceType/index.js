@@ -23,13 +23,14 @@ import OutgoingCabinet from './outgoingCabinet' //出线柜
 import PowerQualityAnalyzer from './powerQualityAnalyzer' //电能质量分析仪
 import Flowmeter from './flowmeter' //流量计
 import Microcomputer from './microcomputer' //微机保护
+import AirConditioning from './airConditioning' //空调
 import { message } from 'antd'
 export default function Index() {
   const [value, setvalue] = useState('0')
-  const [tabs,setTabs] =useState([{key: '0',label: '网关类型',}])
+  const [tabs, setTabs] = useState([{ key: '0', label: '网关类型', }])
   const { DeviceTypeManager: { AllDeviceStyle } } = Monitoring;
- 
-  
+
+
 
   let dataProps = {
     value,
@@ -41,67 +42,70 @@ export default function Index() {
   let Coms = [
     <GateWay />,
     <Electric />,
-    <Water/>,
+    <Water />,
     <Fire />,
     <Sensor />,
     <Transform />,
-    <Video/>,
-    <Hotwate/>,
-    <Steam/>,
-    <Coal/>,
-    <Fuel/>,
-    <Energy/>,
-    <Circuit/>,
-    <Shock/>,
-    <Fiber/>,
-    <DCScreen/>,//直流屏[暂时没有涉及]
-    <OutgoingCabinet/>,//出线柜
-    <PowerQualityAnalyzer/>,//电能质量分析仪
-    <Flowmeter/>,//流量计
+    <Video />,
+    <Hotwate />,
+    <Steam />,
+    <Coal />,
+    <Fuel />,
+    <Energy />,
+    <Circuit />,
+    <Shock />,
+    <Fiber />,
+    <DCScreen />,//直流屏[暂时没有涉及]
+    <OutgoingCabinet />,//出线柜
+    <PowerQualityAnalyzer />,//电能质量分析仪
+    <Flowmeter />,//流量计
     <></>,//光伏设备
-    <Microcomputer/> //微机保护
+    <Microcomputer />, //微机保护
+    <AirConditioning />, //空调
+    <Electric />,//路灯控制器
+    <Electric />,//智能控制
   ]
   const getAllDeviceStyle = async () => {
-    try{
+    try {
       const result = await AllDeviceStyle()
       const { data, errMsg, success } = result;
       if (success) {
-        if(Array.isArray(data)){
-          console.log(59,data)
-          let arr= data.map(item => {
-            if(item.state===1){
-              return{
+        if (Array.isArray(data)) {
+          console.log(59, data)
+          let arr = data.map(item => {
+            if (item.state === 1) {
+              return {
                 key: `${item.deviceStyle}`,
                 label: `${item.name}类型`
               }
             }
-           
+
           })
-          let list = arr.filter(it=>it)
-          console.log(69,arr)
+          let list = arr.filter(it => it)
+          console.log(69, arr)
           list.unshift({ key: '0', label: '网关类型' })
-         console.log(list)
+          console.log(list)
           setTabs(list)
-          dataProps = {...dataProps,  list } 
+          dataProps = { ...dataProps, list }
           console.log(dataProps)
         }
-      }else{
+      } else {
         message.error(errMsg)
       }
-    }catch(e){console.log(e)}
-  
+    } catch (e) { console.log(e) }
+
   }
- // const emptyarr = new Array(4).fill(<></>)
-  
+  // const emptyarr = new Array(4).fill(<></>)
+
   useEffect(() => {
     getAllDeviceStyle()
   }, [])
 
   return (
     <CustContext.Provider value={dataProps}>
-          <Pagecount>
-             { Coms[Number(value)] }
-          </Pagecount>
+      <Pagecount>
+        {Coms[Number(value)]}
+      </Pagecount>
     </CustContext.Provider>
 
   )

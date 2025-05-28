@@ -227,7 +227,7 @@ let TableForm = forwardRef(({ defaultTableData, tabledatas }, ref) => {
 
 //新增设备类型
 export let AddModal = forwardRef(
-  ({ addForm, dataSource, getDeviceQueryCategoryFull, defaultTableData = [], isShow = true, flow = false }, ref) => {
+  ({ addForm, dataSource, getDeviceQueryCategoryFull, defaultTableData = [], isShow = true, flow = false, metering = true }, ref) => {
 
     const tableRef = useRef(null)
     const [tabledatas, setTabledatas] = useState([...defaultTableData])
@@ -287,7 +287,7 @@ export let AddModal = forwardRef(
                 </Form.Item>
 
               </Col> : null}
-                <Col className={style.ColGap}>
+                {metering ? <Col className={style.ColGap}>
                   <Form.Item label="是否计量" name="IsCount" valuePropName="checked">
                     <Switch checkedChildren="是" unCheckedChildren="否"
                     // disabled={!IsCount} 
@@ -295,7 +295,7 @@ export let AddModal = forwardRef(
 
                   </Form.Item>
 
-                </Col>
+                </Col> : null}
                 <Col className={style.ColGap}>
                   <Form.Item label="是否抄读" name="IsRead" valuePropName='checked'>
                     <Switch checkedChildren="是" unCheckedChildren="否" />
@@ -468,7 +468,7 @@ let TableEditForm = forwardRef(({ defaultTableData, tabledatas }, ref) => {
 })
 //编辑设备类型
 export let EditModal = forwardRef(
-  ({ editForm, getDeviceQueryCategoryFull, editDefaultTableData = [], isShow = true, flow = false }, ref) => {
+  ({ editForm, getDeviceQueryCategoryFull, editDefaultTableData = [], isShow = true, flow = false, metering = true }, ref) => {
     const tableRef = useRef(null)
     // const [isControl,setIsControl] = useState()
     // const [IsCount,setIsCount] = useState()
@@ -511,13 +511,13 @@ export let EditModal = forwardRef(
                     />
                   </Form.Item>
                 </Col> : null}
-                <Col className={style.ColGap}>
+                {metering ? <Col className={style.ColGap}>
                   <Form.Item label="是否计量" name="IsCount" valuePropName="checked">
                     <Switch checkedChildren="是" unCheckedChildren="否"
                     // disabled={!IsCount} 
                     />
                   </Form.Item>
-                </Col>
+                </Col> : null}
                 <Col className={style.ColGap}>
                   <Form.Item label="是否抄读" name="IsRead" valuePropName='checked'>
                     <Switch checkedChildren="是" unCheckedChildren="否" />
