@@ -2,23 +2,24 @@ import React, { useState, useEffect, useRef, forwardRef, useImperativeHandle } f
 import { useSelector } from 'react-redux'
 import moment from 'moment'
 import { useAntdTable } from 'ahooks'
-import { Remote, Monitoring } from '@api/api.js'
-import { Form, Button, Table, Select, message, Divider, Space, DatePicker } from 'antd'
+import { Remote, Monitoring,operationDesigin } from '@api/api.js'
+import { Form, Button, Table, Select, message, Divider, Space, DatePicker,Input } from 'antd'
 
 import Pagecount from '@com/pagecontent'
 import UserTable from '@com/useTable'
 import CustContext from '@com/content.js'
 import { selectProjectId, selectOneLevelDefaultId, deviceStyle, filterDeviceStyle } from '@redux/systemconfig.js'
-
+import {manager,maintenance,selectUser} from "@redux/user"
 import styled from 'styled-components'
 
 import CModal from '@com/useModal'
 
 import { deepClone } from '@topology/core'
 import { Serach, Cdivider, disabledDate } from "@com/comstyled"
-import {CustTransO, i18t, i18warning,ExportExcel, CustButtonT} from "@com/useButton"
-const { RuntimeLog: { QueryDeviceLogs } } = Monitoring
-
+import {CustTransO, i18t, i18warning,ExportExcel, CustButtonT,CustButton} from "@com/useButton"
+import {cipher} from "@com/usehandler"
+const { RuntimeLog: { QueryDeviceLogs },PowerNeed, CheckPowerOnce,SetUserPower} = Monitoring
+const {QueryProjectMaintenance} = operationDesigin
 const Mainbox = styled.div`
    display: flex;
    flex-direction: column;
@@ -77,6 +78,10 @@ export default function Index() {
     const { Item } = Form
     const projectId = useSelector(selectProjectId)
     // const deviceStyles = useSelector(deviceStyle)
+    const ismanager = useSelector(manager)
+    const ismaintenance = useSelector(maintenance)
+    const {name: username} = useSelector(selectUser)
+   // const ismaintenance = useSelector(maintenance)
 
     const deviceStyles = useSelector(filterDeviceStyle)
     const areaId = useSelector(selectOneLevelDefaultId);
@@ -252,8 +257,116 @@ export default function Index() {
     const changeDisabled = () => {
         setisComplate(false)
     }
-    const changesetbrake = (type) => {
-        // console.log(tableRefs.current)
+
+    // 香炉山项目 start
+    const contrCategory="NPR550-U1"
+    const custrulues =[
+        {
+        required: true, 
+        },
+        {
+            validator: (_, value) => { 
+                let reg =/^[\d]{6}$/
+                if(reg.test(value)){
+                    return Promise.resolve()
+                }else {
+                    return Promise.reject("请输入正确的密码")
+                }
+            }
+        }
+        ]
+
+    const typeref = useRef()
+    
+    const [pwdform] = Form.useForm()
+    const [setform] = Form.useForm()
+    const pwdmodal = useRef()
+
+    const setmodal = useRef()
+    
+   const onsetpwd= async()=> {
+       try {
+         const values = await setform.validateFields()
+         values.projectId = projectId
+        const {success, errMsg} = await  SetUserPower(values)
+        if(success) {
+            message.success("设置密码成功")   
+            setmodal.current.onCancel()         
+        }else {
+          message.warning(errMsg || "数据出错")
+        }
+       } catch (error) {
+        
+       } 
+   }
+
+   const showpwd = () => { 
+      setmodal.current.onOpen()
+   }
+
+    const onInputpwd=async()=> { // 密码确认
+      try {
+        
+        let values =await pwdform.validateFields()
+         values.projectId = projectId
+         values.Pwd1 = cipher(username,values.Pwd1)
+         values.Pwd2 = cipher(username,values.Pwd2)
+         let {success, errMsg} =  await CheckPowerOnce(values)
+         if(success) {
+            changesetbrake(typeref.current)
+            pwdmodal.current.onCancel()
+         }else {
+            message.warning(errMsg)
+            
+         }
+      } catch (error) {
+        console.log(error)
+      }
+    }
+    const passwordhandler =async (type) => {
+        try {
+            if (tableRefs.current && tableRefs.current.length > 0) {
+                typeref.current = type
+          let category = tableRefs.current.map(r => r.category)
+          console.log(category)
+          console.log(tableRefs.current)
+          if(category.includes(contrCategory)&& tableRef.current?.length >1) {
+            return message.warning("微机保护不能批量控制")            
+          }else if(category.includes(contrCategory)&& tableRefs.current?.length ==1) {
+            pwdmodal.current.onOpen()           
+          }else {
+            changesetbrake(type)
+          }
+        } else {
+            message.error('请先选择设备！')
+        }
+           // await  PowerNeed({projectId})
+        } catch (error) {
+            console.log(error)
+        }
+       
+
+    }
+  const [devops, setDevops] = useState([])
+  const getMaintenance= async()=> {
+     let {success, data} =  await QueryProjectMaintenance(projectId)
+     if(success && Array.isArray(data) && data.length) {
+        let dataops = data.map(d => ({label: d.name, value: d.id}))
+        setDevops(dataops)
+     }else {
+        setDevops([])
+     }
+  }
+  // ismanager
+  useEffect(()=> {
+     if(true) {   
+        getMaintenance()
+     }
+
+  }, [])
+
+    // 香炉山项目 end
+    const changesetbrake =async (type) => {
         if (tableRefs.current && tableRefs.current.length > 0) {
             setsnList([])
             let List = []
@@ -333,7 +446,17 @@ export default function Index() {
                                 <Space size={16}>
                                     <CustButtonT ns="monitor" text="opening" danger onClick={() => { changesetbrake(1) }}>分闸</CustButtonT>
                                     <CustButtonT ns="monitor" text="closing"  danger   onClick={() => { changesetbrake(2) }}>合闸</CustButtonT>
-                                </Space></>}
+                                </Space></>}  
+                               
+                          {/*    {value !=3 && <> 
+                             {
+                               (ismanager|| ismaintenance) ?  <Space size={16}>
+                               <CustButtonT ns="monitor" text="opening" danger onClick={() => { passwordhandler(1) }}>分闸</CustButtonT>
+                               <CustButtonT ns="monitor" text="closing"  danger   onClick={() => { passwordhandler(2) }}>合闸</CustButtonT>
+                               <CustButton  wh="auto"  onClick={() => { showpwd() }}>设置密码</CustButton>
+                           </Space> :  null
+                             }
+                               </>}  香炉山项目 ，密码控制*/}
                         </Space>
                     </Form>
                    
@@ -419,7 +542,46 @@ export default function Index() {
                     <MyTable snList={snList} projectId={projectId} dataSourceRead={tabledataRef.current} changeDisabled={changeDisabled} ref={myref} changeBtnType={changeBtnType} />
 
                 </CModal>
-
+                <CModal
+                    title="输入控制密码"
+                    width={440}
+                    destroyOnClose
+                    ref={pwdmodal}
+                    mold="cust" 
+                    onOk={()=>onInputpwd()}
+                >
+                   <Form form={pwdform} labelCol={{flex: "8em"}} preserve={false} >
+                      <Form.Item label="管理员密码" name="Pwd1" rules={custrulues}>
+                        <Input.Password placeholder='请输入6位数字密码'></Input.Password>
+                      </Form.Item>
+                   
+                      {
+                          ismanager &&
+                        (<Form.Item label="运维人员" name="UserId" rules={[{
+                            required:true
+                         }]}>
+                            <Select options={devops}></Select>
+                        </Form.Item>)
+                      }
+                      <Form.Item label="维护人员密码" name="Pwd2" rules={custrulues}>
+                        <Input.Password placeholder='请输入6位数字密码' ></Input.Password>
+                      </Form.Item>
+                   </Form>
+                </CModal>
+                <CModal
+                    title="设置控制密码"
+                    width={440}
+                    destroyOnClose
+                    ref={setmodal}
+                    mold="cust" 
+                    onOk={()=>onsetpwd()}
+                >
+                   <Form form={setform} labelCol={{flex: "5em"}} preserve={false} >
+                      <Form.Item label="用户密码" name="Pwd" rules={custrulues}>
+                        <Input.Password placeholder='请输入6位数字密码'></Input.Password>
+                      </Form.Item>
+                   </Form>
+                </CModal>
 
             </Pagecount>
         </CustContext.Provider>

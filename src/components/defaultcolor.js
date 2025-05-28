@@ -28,7 +28,7 @@ export default {
     devicebgcolor:["#135abd"],
     normalColor: ["#009966"],
     warningColorstate: ["#ff4d4f"],
-    offlineColor: ["#666666"],
+    offlineColor: ["#C4D0DE"],
     fntnormalColor: ["#ffffff"],
     fntwarningColorstate: ["#ffffff"],
     fntofflineColor: ["#ffffff"],
@@ -82,7 +82,7 @@ export const initithemeColor = {  // 可配置对象，不只是颜色属性。�
     devicebgcolor:"#135abd", // 设备详情页背景色
     normalColor: "#009966",
     warningColorstate: "#ff4d4f",
-    offlineColor: "#666666",
+    offlineColor: "#C4D0DE",
     fntnormalColor: "#ffffff",
     fntwarningColorstate: "#ffffff",
     fntofflineColor: "#ffffff",
