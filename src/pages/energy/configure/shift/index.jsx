@@ -288,7 +288,7 @@ export default function Index() {
   } 
   const onChangeEdit4 = (time, timeString) =>{
     setEditTime4(timeString)
-    setDisabledEditTime4(timeString)
+    setDisabledEditTime3(timeString)
   }
   const onEdit = ()=> {
     setClasses(shiftList.length)
