@@ -203,7 +203,7 @@ const CheckAuthorization = async (value, type=0, codekey, setLoading,getCode) =>
          let {runMenus,siderRunMenus, homeMenuNO} = await dispatch(getWebsiteMenu(projectId)).unwrap()
          let ismenu = runMenus?.find(item => item.no == homeMenuNO) || runMenus[0]  
          if(!ismenu) return message.error({content:  t("comm:NoSetMenu"), duration: 0.5})
-         // navigate("/websitmap", {})
+        //  navigate("/websitmap", {})
         //  return  //香炉山项目
           
          let  jumpath, substate;

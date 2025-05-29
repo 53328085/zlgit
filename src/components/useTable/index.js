@@ -204,6 +204,16 @@ function Index(props, ref) {
       params
     );
     utils.book_append_sheet(workbook, ws, "Sheet1"); // 把工作表添加到工作簿
+
+    const worksheet = workbook.Sheets['Sheet1']
+    const range = utils.decode_range(worksheet['!ref']);
+    worksheet['!autofilter'] = {
+      ref: utils.encode_range({
+        s: { r: 0, c: 0 },  // 开始位置: 第1行，第1列
+        e: { r: range.e.r, c: range.e.c } // 结束位置: 最后一行，最后一列
+      })
+    };
+
     let file = sheetName.split(".").length == 1 ? "xlsx" : sheetName.split(".")[1];
 
     let fileName = sheetName.split(".")[0]
@@ -223,6 +233,16 @@ function Index(props, ref) {
       params
     );
     utils.book_append_sheet(workbook, ws, "Sheet1"); // 把工作表添加到工作簿
+
+    const worksheet = workbook.Sheets['Sheet1']
+    const range = utils.decode_range(worksheet['!ref']);
+    worksheet['!autofilter'] = {
+      ref: utils.encode_range({
+        s: { r: 0, c: 0 },  // 开始位置: 第1行，第1列
+        e: { r: range.e.r, c: range.e.c } // 结束位置: 最后一行，最后一列
+      })
+    };
+
     let file = sheetName.split(".").length == 1 ? "xlsx" : sheetName.split(".")[1];
     let fileName = sheetName.split(".")[0]
     writeFile(workbook, `${fileName}.${file}`, { bookType: file }); // 下载

@@ -1,28 +1,31 @@
-import React, { useEffect, useState, useRef, forwardRef, useImperativeHandle,useContext, useMemo } from 'react'
-import {useTranslation} from 'react-i18next'
+import React, { useEffect, useState, useRef, forwardRef, useImperativeHandle, useContext, useMemo } from 'react'
+import { useTranslation } from 'react-i18next'
 import DeviceContent from './devicecomp'
 import { Monitoring } from '@api/api.js'
 import { useSelector } from 'react-redux'
-import { Button, Form,  Typography, message, Space,Image } from 'antd';
+import { Button, Form, Typography, message, Space, Image } from 'antd';
 import Table from '@com/useTable'
 import Modal from '@com/useModal'
- 
+
 import { DeleteModal, AddModal, EditModal } from './modalCom.js'
 import cusContext from '@com/content'
-import {publishState} from '@redux/systemconfig'
+import { publishState } from '@redux/systemconfig'
 import lodash from 'lodash';
-const {Link} = Typography
+const { Link } = Typography
 const { DeviceTypeManager: { UpdateDeviceCategory, DeviceQueryNotUsed, DeviceQueryCategoryFull, DeviceCategory, AddDeviceCategory, DeleteDeviceCategory } } = Monitoring;
 export default function Electric() {
-  const {t} = useTranslation(["button"])
+  const { t } = useTranslation(["button"])
   const publish = useSelector(publishState)
-  const content =useContext(cusContext)
+  const content = useContext(cusContext)
+  const deviceName = parseInt(content.value) === 1 ? '电表类型' :
+    parseInt(content.value) === 22 ? '路灯控制器类型' :
+      parseInt(content.value) === 23 ? '智能控制类型' : '设备';
   const [dataSource, setDataSource] = useState([])//modal框表格数据
   const [tableDataSource, setTableDataSource] = useState([])//主页表格数据
   const [defaultTableData, setDefaultTableData] = useState([])//新增时表格默认数据
   const [editDefaultTableData, setEditDefaultTableData] = useState()//编辑时表格默认数据
   const [isOpenModal, setIsOpenModal] = useState(true)
-  const [isAdd,setIsAdd]=useState(false)
+  const [isAdd, setIsAdd] = useState(false)
   const [loading, setLoading] = useState(false);
   const [tableParams, setTableParams] = useState({
     current: 1,
@@ -36,7 +39,7 @@ export default function Electric() {
   const DelModalRef = useRef()
   const tableLoadRef = useRef()
   const projectId = useSelector(state => state.system.menus.projectId)
-  const updateTableRef =useRef()
+  const updateTableRef = useRef()
   const [addForm] = Form.useForm()
   const [editForm] = Form.useForm()
   const optionStyle = {
@@ -51,10 +54,10 @@ export default function Electric() {
       projectId,
       pageNum: tableParams.current,
       pageSize: tableParams.pageSize,
-      deviceStyle: 1
+      deviceStyle: parseInt(content.value)
     }
     const result = await DeviceCategory(params)
-    const { data, errMsg, success,pageNum ,pageSize,total} = result;
+    const { data, errMsg, success, pageNum, pageSize, total } = result;
     setLoading(false)
     if (success && Array.isArray(data)) {
       setTableDataSource(data)
@@ -74,20 +77,20 @@ export default function Electric() {
     const resp = await DeleteDeviceCategory({
       projectId,
       category: categoryId,
-      deviceStyle:parseInt(content.value)
+      deviceStyle: parseInt(content.value)
     })
     if (resp.success) {
       DelModalRef.current.onCancel()
       message.success("删除成功")
-      if(tableParams.total%(tableParams.pageSize*(tableParams.current-1 ))===1){
+      if (tableParams.total % (tableParams.pageSize * (tableParams.current - 1)) === 1) {
         setTableParams({
           ...tableParams,
-          current:tableParams.current-1
+          current: tableParams.current - 1
         })
-      }else{
+      } else {
         getTableData()
-      }  
-      getDeviceQueryNotUsed()  
+      }
+      getDeviceQueryNotUsed()
     } else {
       message.error(resp.errMsg)
     }
@@ -134,17 +137,17 @@ export default function Electric() {
     {
       title: '设备型号',
       dataIndex: 'category',
-      align:'center'
+      align: 'center'
     },
     {
       title: '设备厂家',
       dataIndex: 'manufacturer',
-      align:'center'
+      align: 'center'
     },
     {
       title: '设备缩略图',
       dataIndex: 'imageBase64',
-      align:'center',
+      align: 'center',
       render: (text) => {
         return (<Image src={text} width={64} height={53}></Image>)
 
@@ -153,13 +156,13 @@ export default function Electric() {
     {
       title: '当前设备数量',
       dataIndex: 'cnt',
-      align:'center'
+      align: 'center'
     },
     {
       title: '操作',
       dataIndex: 'options',
-      export:false,
-      align:'center',
+      export: false,
+      align: 'center',
       render: (text, record) => {
         return (
           <Space size={32}>
@@ -170,57 +173,57 @@ export default function Electric() {
       }
     }
   ]
-  if(publish){
+  if (publish) {
     columns.pop();
   }
-  
+
   //保存编辑
   const onOkEditModal = async () => {
     // console.log(editFromRef.current.pointSource,editForm.getFieldsValue())
     // setTimeout(async ()=>{
-    
-      const tabledata =  editFromRef.current.choosemes()
-      if(!tabledata){
-        message.warning('请至少选择一项标记检测运行点！')
-         return
-       }
-      const formvalues = editForm.getFieldsValue()
-      const tableData = tabledata.map(it => ({
-        name: it.dataMark,
-        isSave: it.isSave,
-        isRuningPoint: it.watchPoint,
-        secquence: it.dataOrder
-      }))
-      let params = {
-        projectId,
-        category: formvalues.DeviceType,
-        control: formvalues.Control,
-        calculate: formvalues.IsCount,
-        realTimeReading: formvalues.IsRead,
-        imageBase64: formvalues.ImageUpload ? formvalues.ImageUpload : formvalues.DefaulImg,
-        points: tableData
-      }
-      const resp = await UpdateDeviceCategory(params)
-      if (resp.success) {
-        EditModalRef.current.onCancel()
-        message.success("编辑成功")
-        getTableData()
-      } else {
-        message.error(resp.errMsg)
-      }
+
+    const tabledata = editFromRef.current.choosemes()
+    if (!tabledata) {
+      message.warning('请至少选择一项标记检测运行点！')
+      return
+    }
+    const formvalues = editForm.getFieldsValue()
+    const tableData = tabledata.map(it => ({
+      name: it.dataMark,
+      isSave: it.isSave,
+      isRuningPoint: it.watchPoint,
+      secquence: it.dataOrder
+    }))
+    let params = {
+      projectId,
+      category: formvalues.DeviceType,
+      control: formvalues.Control,
+      calculate: formvalues.IsCount,
+      realTimeReading: formvalues.IsRead,
+      imageBase64: formvalues.ImageUpload ? formvalues.ImageUpload : formvalues.DefaulImg,
+      points: tableData
+    }
+    const resp = await UpdateDeviceCategory(params)
+    if (resp.success) {
+      EditModalRef.current.onCancel()
+      message.success("编辑成功")
+      getTableData()
+    } else {
+      message.error(resp.errMsg)
+    }
     // },0)
-   
+
   }
   //确认应用编辑
-  const onSureEditModal = async() => {
-    const tabledata =  editFromRef.current.choosemes()
-    if(!tabledata){
+  const onSureEditModal = async () => {
+    const tabledata = editFromRef.current.choosemes()
+    if (!tabledata) {
       message.warning('请至少选择一项标记检测运行点！')
-       return
-     }
+      return
+    }
     console.log(tabledata)
     const formvalues = editForm.getFieldsValue()
-   
+
     const tableData = tabledata.map(it => ({
       name: it.dataMark,
       isSave: it.isSave,
@@ -249,7 +252,7 @@ export default function Electric() {
   const getDeviceQueryNotUsed = async () => {
     let params = {
       projectId,
-      deviceStyle: 1
+      deviceStyle: parseInt(content.value)
     }
     const r = await DeviceQueryNotUsed(params)
     if (r.success && Array.isArray(r.data)) {
@@ -269,57 +272,57 @@ export default function Electric() {
 
   //获取默认电表的详细信息
   const getDeviceQueryCategoryFull = async (category) => {
-      let params = {
-        projectId,
-        category,
-      }
-      const r = await DeviceQueryCategoryFull(params)
-      if (r.success) {
-        const data = r.data
-        console.log(271,data)
-        const arr = data.points?.map((item, index) => ({
-          index: index + 1,
-          dataMark: item.name,
-          dataName: item.description,
-          dataUnit: item.unit,
-          isSave: item.isSave,
-          watchPoint: item.isRuningPoint,
-          dataOrder: item.secquence,
-          category:data.category
-        }))
-        updateTableRef.current = lodash.cloneDeep(arr)
-        if (foRef.current) {
-          const watchPointArr = arr.filter(it => it.watchPoint)
-          console.log(watchPointArr)
-          foRef.current.setSwitched(watchPointArr)
-          foRef.current.setPointSource(lodash.cloneDeep(arr))
-          foRef.current.setTabledatas(lodash.cloneDeep(arr))
-          // foRef.current.setIsControl( data.control)
-          // foRef.current.setIsCount(data.calculate)
-        } else {
-          setDefaultTableData(arr)
-        }
-
-        addForm.setFieldsValue({
-          DeviceType: data.category,
-          Cycle: data.rateType,
-          Control: data.control,
-          IsCount: data.calculate,
-          IsRead: data.realTimeReading,
-          DefaulImg: `data:image/jpeg;base64,${data.imageBase64}`,
-          ImageUpload: '',
-          description: data.description
-          // Point:arr,
-        })
-      
-        setIsAdd(true)
-      }
-  
+    let params = {
+      projectId,
+      category,
     }
+    const r = await DeviceQueryCategoryFull(params)
+    if (r.success) {
+      const data = r.data
+      console.log(271, data)
+      const arr = data.points?.map((item, index) => ({
+        index: index + 1,
+        dataMark: item.name,
+        dataName: item.description,
+        dataUnit: item.unit,
+        isSave: item.isSave,
+        watchPoint: item.isRuningPoint,
+        dataOrder: item.secquence,
+        category: data.category
+      }))
+      updateTableRef.current = lodash.cloneDeep(arr)
+      if (foRef.current) {
+        const watchPointArr = arr.filter(it => it.watchPoint)
+        console.log(watchPointArr)
+        foRef.current.setSwitched(watchPointArr)
+        foRef.current.setPointSource(lodash.cloneDeep(arr))
+        foRef.current.setTabledatas(lodash.cloneDeep(arr))
+        // foRef.current.setIsControl( data.control)
+        // foRef.current.setIsCount(data.calculate)
+      } else {
+        setDefaultTableData(arr)
+      }
+
+      addForm.setFieldsValue({
+        DeviceType: data.category,
+        Cycle: data.rateType,
+        Control: data.control,
+        IsCount: data.calculate,
+        IsRead: data.realTimeReading,
+        DefaulImg: `data:image/jpeg;base64,${data.imageBase64}`,
+        ImageUpload: '',
+        description: data.description
+        // Point:arr,
+      })
+
+      setIsAdd(true)
+    }
+
+  }
   //打开新增modal
   const open = () => {
-    if(!isAdd)return
-    if (isOpenModal ) {
+    if (!isAdd) return
+    if (isOpenModal) {
       ModalRef.current.onOpen()
     } else {
       message.warning('无可用新增设备!')
@@ -333,11 +336,11 @@ export default function Electric() {
 
   //保存新增设备
   const onOk = async () => {
-   const result= foRef.current?.choosemes()
-   if(!result){
-    message.warning('请至少选择一项标记检测运行点！')
-     return
-   }
+    const result = foRef.current?.choosemes()
+    if (!result) {
+      message.warning('请至少选择一项标记检测运行点！')
+      return
+    }
 
     const formValue = addForm.getFieldsValue()
 
@@ -347,7 +350,7 @@ export default function Electric() {
       isRuningPoint: it.watchPoint,
       secquence: it.dataOrder
     }))
-    console.log(addForm.getFieldsValue(), foRef.current.pointSource,result)
+    console.log(addForm.getFieldsValue(), foRef.current.pointSource, result)
     let params = {
       projectId,
       category: formValue.DeviceType,
@@ -369,13 +372,13 @@ export default function Electric() {
     }
   }
   //确认新增应用
-  const onSure=async()=>{
+  const onSure = async () => {
     console.log(foRef.current)
-  const result= foRef.current?.choosemes()
-   if(!result){
-    message.warning('请至少选择一项标记检测运行点！')
-     return false
-   }
+    const result = foRef.current?.choosemes()
+    if (!result) {
+      message.warning('请至少选择一项标记检测运行点！')
+      return false
+    }
 
     const formValue = addForm.getFieldsValue()
 
@@ -385,7 +388,7 @@ export default function Electric() {
       isRuningPoint: it.watchPoint,
       secquence: it.dataOrder
     }))
-    console.log(addForm.getFieldsValue(), foRef.current.pointSource,result)
+    console.log(addForm.getFieldsValue(), foRef.current.pointSource, result)
     let params = {
       projectId,
       category: formValue.DeviceType,
@@ -415,13 +418,13 @@ export default function Electric() {
         projectId,
         pageNum: 1,
         pageSize: tableParams.total,
-        deviceStyle: 1
+        deviceStyle: parseInt(content.value)
       }
       const result = await DeviceCategory(params)
-      const { data, errMsg, success,total} = result;
-      if(success){
-        resolve({list:data?data:[],total})
-      }else{
+      const { data, errMsg, success, total } = result;
+      if (success) {
+        resolve({ list: data ? data : [], total })
+      } else {
         reject(errMsg)
       }
     })
@@ -446,10 +449,10 @@ export default function Electric() {
   }
   let deviceProps = {
     value: 0,
-    name: '新增电表类型',
+    name: '新增' + deviceName,
     AddModal: <AddModal ref={foRef} {...addModalProp} />,
-  //  cancelText: '取消',
-  //  okText: '确认',
+    //  cancelText: '取消',
+    //  okText: '确认',
     onOk,
     width: 1032,
     open,
@@ -457,8 +460,8 @@ export default function Electric() {
     onCancel,
     onSure,
     exportExecel,
-    title:'配置电表类型',
-    tb:tableLoadRef
+    title: '配置' + deviceName,
+    tb: tableLoadRef
   };
   let editFormProps = {
     editForm,
@@ -470,38 +473,38 @@ export default function Electric() {
     width: 1032,
     onOk: onOkEditModal
   }
-  
+
   let delModalProps = {
     DelModalRef,
-   // cancelText: '取消',
-  //  okText: '确认',
-    content: '是否确认删除电表类型?',
-    name: '删除电表类型',
+    // cancelText: '取消',
+    //  okText: '确认',
+    content: '是否确认删除' + deviceName + '?',
+    name: '删除' + deviceName,
     onOk: delOK,
   }
-  const EditComp=useMemo(()=>{
-    return (<Modal mold='cust' title="编辑电表类型"  {...editModalProps} onOK={onSureEditModal} >
-    <EditModal {...editFormProps}></EditModal>
-  </Modal>)
-  },[editDefaultTableData])
+  const EditComp = useMemo(() => {
+    return (<Modal mold='cust' title={`编辑${deviceName}`}  {...editModalProps} onOK={onSureEditModal} >
+      <EditModal {...editFormProps}></EditModal>
+    </Modal>)
+  }, [editDefaultTableData])
   return (
 
     <div>
-      <cusContext.Provider value={{updateTableRef:updateTableRef.current}}>
-      <DeviceContent {...deviceProps} >
-        <Table 
-        columns={columns} 
-        dataSource={tableDataSource} 
-        bordered={false} 
-        ref={tableLoadRef}
-        loading={loading}
-        pagination={tableParams}
-        onChange={onChangePage}
-        onExport={onExport}
-        ></Table>
-      </DeviceContent>
-      {EditComp}
-      <DeleteModal {...delModalProps}></DeleteModal>
+      <cusContext.Provider value={{ updateTableRef: updateTableRef.current }}>
+        <DeviceContent {...deviceProps} >
+          <Table
+            columns={columns}
+            dataSource={tableDataSource}
+            bordered={false}
+            ref={tableLoadRef}
+            loading={loading}
+            pagination={tableParams}
+            onChange={onChangePage}
+            onExport={onExport}
+          ></Table>
+        </DeviceContent>
+        {EditComp}
+        <DeleteModal {...delModalProps}></DeleteModal>
       </cusContext.Provider>
     </div>
   )

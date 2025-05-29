@@ -49,7 +49,7 @@ export class CustTheme {
     server.get(`Energy/Theme/GetProjectTheme`, { params }); // 获取项目选择的主题
 
   static SelProjectTheme = (params) =>
-    server.post(`Energy/Theme/SetProjectTheme`, null,{ params }); // 选择项目主题
+    server.post(`Energy/Theme/SetProjectTheme`, null, { params }); // 选择项目主题
   static GetProjectMainTheme = (params) =>
     server.get(`Energy/MainTheme/GetProjectMainTheme`, { params }); // 获取项目公共主题
 
@@ -1756,7 +1756,7 @@ export class UISummary {
 //运行监控
 export const Monitoring = {
 
-  PowerNeed: (params) => server.get(`Monitor/UserPower/PowerNeed`, { params }), 
+  PowerNeed: (params) => server.get(`Monitor/UserPower/PowerNeed`, { params }),
   CheckPowerOnce: (body) => server.post(`Monitor/UserPower/CheckPowerOnce`, body),//输入密码
 
   SetUserPower: (body) => server.post(`Monitor/UserPower/SetUserPower`, body),//设置密码
@@ -1942,6 +1942,17 @@ export const Monitoring = {
     UpdateMic: (data) =>
       server.post(`/Monitor/Device/UpdateMic`, data), //更新微机保护
     ImportMic: (data) => server.post(`/Monitor/Device/ImportMic`, data), //批量导入微机保护
+
+
+    DeleteSmartControl: (data) =>
+      server.delete(`/Monitor/Device/DeleteSmartControl`, { params: data }), //删除智能控制
+    QueryByPageSmartControl: (data) =>
+      server.post(`/Monitor/Device/QueryByPageSmartControl`, data), //查询智能控制
+    AddSmartControl: (data) => server.post(`/Monitor/Device/AddSmartControl`, data), //新增智能控制
+    UpdateSmartControl: (data) =>
+      server.post(`/Monitor/Device/UpdateSmartControl`, data), //更新智能控制
+    ImportSmartControl: (data) => server.post(`/Monitor/Device/ImportSmartControl`, data), //批量导入智能控制
+
 
     //376协议
     QueryDeviceIncreaseParams: ({ projectId, gatewayId, port, alike }) =>
@@ -2503,33 +2514,33 @@ export class energyReport {
       params
     ); //分类能耗
 
-    static QueryByAreaFromIot = (params, body ) =>
-      server.post(
-        `Energy/DataReportRuntime/QueryByAreaFromIot`,
-        body,
-        {params}
-      ); //能电报表--区域
-      static QueryByLineFromIot = (params, body ) =>
-        server.post(
-          `Energy/DataReportRuntime/QueryByLineFromIot`,
-          body,
-          {params}
-        ); //能电报表--线路
+  static QueryByAreaFromIot = (params, body) =>
+    server.post(
+      `Energy/DataReportRuntime/QueryByAreaFromIot`,
+      body,
+      { params }
+    ); //能电报表--区域
+  static QueryByLineFromIot = (params, body) =>
+    server.post(
+      `Energy/DataReportRuntime/QueryByLineFromIot`,
+      body,
+      { params }
+    ); //能电报表--线路
 
-        // 新的接口
-       
-        static QueryConsumeRegion = (body) => server.post(`Energy/DataReportRuntime/QueryConsumeRegion`, body ) // 实时抄表
+  // 新的接口
 
-        static QueryConsumeHourTime = (body) => server.post(`Energy/DataReportRuntime/QueryConsumeHourTime`, body ) // 能耗报表
+  static QueryConsumeRegion = (body) => server.post(`Energy/DataReportRuntime/QueryConsumeRegion`, body) // 实时抄表
 
-        static QueryConsumeByTime = (body) => server.post(`Energy/DataReportRuntime/QueryConsumeByTime`, body ) // 分时能耗
+  static QueryConsumeHourTime = (body) => server.post(`Energy/DataReportRuntime/QueryConsumeHourTime`, body) // 能耗报表
 
-        static QueryConsumeClassify = (body) => server.post(`Energy/DataReportRuntime/QueryConsumeClassify`, body ) // 分类能耗
+  static QueryConsumeByTime = (body) => server.post(`Energy/DataReportRuntime/QueryConsumeByTime`, body) // 分时能耗
 
-        static QueryConsumeFromIot = (body) => server.post(`Energy/DataReportRuntime/QueryConsumeFromIot`, body ) // 电能报表
+  static QueryConsumeClassify = (body) => server.post(`Energy/DataReportRuntime/QueryConsumeClassify`, body) // 分类能耗
+
+  static QueryConsumeFromIot = (body) => server.post(`Energy/DataReportRuntime/QueryConsumeFromIot`, body) // 电能报表
 
 
-        static QueryConsumeDeviceShit = (body) =>server.post(`Energy/DataReportRuntime/QueryConsumeDeviceShit`, body ) // 班次能耗
+  static QueryConsumeDeviceShit = (body) => server.post(`Energy/DataReportRuntime/QueryConsumeDeviceShit`, body) // 班次能耗
 }
 //energyDesigner能耗管理
 export class energyDesigner {
@@ -3164,56 +3175,56 @@ export class EnergyPublicRuntime {
   static queryElectricYear = (params, data) =>
     server.post(
       `/Energy/EnergyPublicRuntime/QueryElectric_Year`,
-      data, {params}
+      data, { params }
     );
   static queryElectricDay = (params, data) =>
     server.post(
       `/Energy/EnergyPublicRuntime/QueryElectric_Day`,
-      data,{params}
+      data, { params }
     );
-    static queryElectricRangeDay =(params, data)=> server.post(
-      `/Energy/EnergyPublicRuntime/QueryElectric_Range`,data,{params}
-      
-    );
-  static queryElectricMonth = (params,data) =>
+  static queryElectricRangeDay = (params, data) => server.post(
+    `/Energy/EnergyPublicRuntime/QueryElectric_Range`, data, { params }
+
+  );
+  static queryElectricMonth = (params, data) =>
     server.post(
       `/Energy/EnergyPublicRuntime/QueryElectric_Month`,
-      data,{params}
+      data, { params }
     );
   static queryWaterDay = (params, data) =>
     server.post(
       `/Energy/EnergyPublicRuntime/QueryWater_Day`,
-      data,{params}
+      data, { params }
     );
   static queryWaterRange = (params, data) =>
     server.post(
       `/Energy/EnergyPublicRuntime/QueryWater_Range`,
-      data,{params}
+      data, { params }
     );
   static queryWaterMonth = (params, data) =>
     server.post(
       `/Energy/EnergyPublicRuntime/QueryWater_Month`,
-      data,{params}
+      data, { params }
     );
   static queryWaterYear = (params, data) =>
     server.post(
       `/Energy/EnergyPublicRuntime/QueryWater_Year`,
-      data, {params}
+      data, { params }
     );
   static queryGasDay = (params, data) =>
     server.post(
       `/Energy/EnergyPublicRuntime/QueryGas_Day`,
-      data,{params}
+      data, { params }
     );
-  static queryGasMonth = (params,data) =>
+  static queryGasMonth = (params, data) =>
     server.post(
       `/Energy/EnergyPublicRuntime/QueryGas_Month`,
-      data,{params}
+      data, { params }
     );
   static queryGasYear = (params, data) =>
     server.post(
       `/Energy/EnergyPublicRuntime/QueryGas_Year`,
-      data, {params}
+      data, { params }
     );
 }
 //储能概述
