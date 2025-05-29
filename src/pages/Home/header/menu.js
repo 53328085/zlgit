@@ -234,7 +234,7 @@ export default function Hmenu() {
          url = no === '0202' ? `/config/${key}` : `/config/${key}/${nested}`
          state = key === 'designerProject' ? {primary: key, index: true, title: label} : {nested, title: label, primary: key}
       } else {
-        url = key == 'runtimeProject' ? `/index/${key}` : `/index/${key}/${nested}`;
+        url =  ['runtimeProject','digitalTwin'].includes(key) ? `/index/${key}` : `/index/${key}/${nested}`;
         state = key == 'runtimeProject'  ?  {index: true, nested, title: label, primary: key} : {nested, title: label, primary: key}
       }
     
@@ -251,7 +251,7 @@ export default function Hmenu() {
     if(state) {
     
       let {primary, jumpath, substate} = state
-      dispath(getJump(['designerProject', 'runtimeProject'].includes(primary)))    
+      dispath(getJump(['designerProject', 'runtimeProject','digitalTwin'].includes(primary)))    
       if(jumpath && substate) {
         navigate(jumpath, {state:substate})
       }
@@ -267,9 +267,9 @@ export default function Hmenu() {
           let title = len ? siderdesignermenus[primary]?.find(item => item.key ==nested)?.label : designermenus[primary]?.label || ''
           state = primary === 'designerProject' ? {primary, index: true, title} : {nested, title, primary}
        }else {
-        url = primary == 'runtimeProject' ? `/index/${primary}` : `/index/${primary}/${nested}`;
+        url =['runtimeProject','digitalTwin'].includes(primary) ? `/index/${primary}` : `/index/${primary}/${nested}`;
         let title = len ? siderrunmenus[primary]?.find(item => item.key ==nested)?.label :  runmenus[primary]?.label || ''
-        state = primary == 'runtimeProject'  ?  {index: true, nested, title, primary} : {nested, title, primary}
+        state = ['runtimeProject','digitalTwin'].includes(primary) ?  {index: true, nested, title, primary} : {nested, title, primary}
        }
       
        navigate(url, {state})

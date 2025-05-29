@@ -31,7 +31,7 @@ export default function  Title (){
    // const {chineseTitle} = useSelector(systemConfigInfo)
     const Currproject = useSelector(currProject) || {};
     const location = useLocation();
-    const overview = (location?.state?.primary=="runtimeProject") || (location?.state?.primary=="designerProject");
+    const overview = ['designerProject', 'runtimeProject','digitalTwin'].includes(location?.state?.primary)  // (location?.state?.primary=="runtimeProject") || (location?.state?.primary=="designerProject");
 
     let projectLog = Currproject.logoImage;
     let smallLog = Currproject.smallLogoImage

@@ -442,13 +442,13 @@ export default function Index() {
 
                             </Item>
                             {value == 3 && <Item name="time"><DatePicker.RangePicker disabledDate={disabledDate} format="YYYY-MM-DD" /></Item>}
-                            {value != 3 && <> 
+                        {/*     {value != 3 && <> 
                                 <Space size={16}>
                                     <CustButtonT ns="monitor" text="opening" danger onClick={() => { changesetbrake(1) }}>分闸</CustButtonT>
                                     <CustButtonT ns="monitor" text="closing"  danger   onClick={() => { changesetbrake(2) }}>合闸</CustButtonT>
-                                </Space></>}  
+                                </Space></>}   */}
                                
-                          {/*    {value !=3 && <> 
+                           {value !=3 && <> 
                              {
                                (ismanager|| ismaintenance) ?  <Space size={16}>
                                <CustButtonT ns="monitor" text="opening" danger onClick={() => { passwordhandler(1) }}>分闸</CustButtonT>
@@ -456,7 +456,7 @@ export default function Index() {
                                <CustButton  wh="auto"  onClick={() => { showpwd() }}>设置密码</CustButton>
                            </Space> :  null
                              }
-                               </>}  香炉山项目 ，密码控制*/}
+                               </>}  
                         </Space>
                     </Form>
                    

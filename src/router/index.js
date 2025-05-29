@@ -70,6 +70,7 @@ const Topologytest = lazy(() => import("../pages/topology/test"))
 const DetailIndicators = lazy(() => import("../pages/quota/detailIndicators/index.jsx"))
 const Loopname = lazy(() => import("../pages/distribution/statements/loopname.js"))
 const Diskchart = lazy(() => import("../pages/cabinet/exhibition/index.jsx"))
+const DigitalTwin = lazy(() => import("../pages/digitalTwin"))
 const Websitmap = lazy(() => import("@pages/websitmap"))
 import {designerComponents,  designerRoutes} from "./designer";
  
@@ -109,7 +110,8 @@ const loginrouter =  [{
   '0113': Comindex,
   '0114': Comindex,
   '0115': Distribution,
-  '0116': Comindex
+  '0116': Comindex,
+  '0117': DigitalTwin
 } 
 
  
@@ -176,7 +178,7 @@ const loginrouter =  [{
      path: '/zltest',
      element: <Fform/>, 
      loader: async (params)=> {
-        await   console.log('params',params)
+       
      }
    },
   
@@ -250,6 +252,11 @@ function useRoute() { // 重写路由
         index: true,
         element: <Defauthome/>, // 项目概述
         state: {index: true}
+      }) : no== "0117" ? RunRoute.push({
+        path: key,
+        index: true,
+        element: <DigitalTwin/>, // 数字孪生
+        state: {index: true}
       }) : RunRoute.push( {
         path: key, 
         element: <Com><Navigate to={siderRunMenus[key]?.[0]?.key} replace={true}></Navigate> </Com>, 
@@ -257,7 +264,7 @@ function useRoute() { // 重写路由
       })
     }
   }) 
-  
+  console.log("runMenus",runMenus)
   designerMenus?.forEach(r => {
     let {no, key} = r;//0212 quota 
     let Com = designerComponents[no];
