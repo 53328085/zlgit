@@ -316,7 +316,8 @@ export const FormComp = (props) => {
                         <Input />
                     </Form.Item>
                     {
-                        deviceStyle !== 13 && deviceStyle !== 14 && deviceStyle !== 18 ? (
+                        deviceStyle !== 13 && deviceStyle !== 14 && deviceStyle !== 18
+                            && deviceStyle !== 20 && deviceStyle !== 21 && deviceStyle !== 22 && deviceStyle !== 23 ? (
                             <Form.Item label="用能类型" name="customerType" rules={rules}>
                                 <Select
                                     options={[{
@@ -330,7 +331,22 @@ export const FormComp = (props) => {
                         ) : null
                     }
 
-                    {(deviceStyle === 1 || deviceStyle == 12 || deviceStyle == 13 || deviceStyle == 14 || deviceStyle == 20 ) ? <Com form={form} deviceStyle={deviceStyle} ></Com> : null}
+                    {
+                        deviceStyle === 21 ? (
+                            <Form.Item label="计量电表" name="customerType" rules={rules}>
+                                <Select
+                                    options={[{
+                                        label: '客户用能',
+                                        value: 1
+                                    }, {
+                                        label: '公共用能',
+                                        value: 2
+                                    }]}></Select>
+                            </Form.Item>
+                        ) : null
+                    }
+                    {(deviceStyle === 1 || deviceStyle == 12 || deviceStyle == 13 || deviceStyle == 14
+                        || deviceStyle == 20 || deviceStyle == 22 || deviceStyle == 23) ? <Com form={form} deviceStyle={deviceStyle} ></Com> : null}
                 </Col>
                 {/*   {
                     props.isfiber ? (
@@ -484,7 +500,7 @@ let EditCom = ({ form, coms, deviceStyle }) => {
     }, [form.getFieldsValue().commAddress])
     return (
         <>
-            {![1, 13, 14, 12, 20].includes(deviceStyle) ? (<Form.Item label="倍率" name="factor" rules={rules}>
+            {![1, 13, 14, 12, 20, 21, 22, 23].includes(deviceStyle) ? (<Form.Item label="倍率" name="factor" rules={rules}>
                 <Input disabled />
 
             </Form.Item>) : [1, 12].includes(deviceStyle) ? <> <Form.Item label="CT" name="ct" initialValue={1}>
@@ -672,7 +688,9 @@ export const EditFormComp = (props) => {
                         <Input />
                     </Form.Item>
                     {
-                        deviceStyle !== 13 && deviceStyle !== 14 && deviceStyle !== 18 ? (
+                        deviceStyle !== 13 && deviceStyle !== 14 && deviceStyle !== 18
+                            && deviceStyle !== 20 && deviceStyle !== 21 && deviceStyle !== 22
+                            && deviceStyle !== 23 ? (
                             <Form.Item label="用能类型" name="customerType" rules={rules}>
                                 <Select
                                     options={[{
@@ -685,8 +703,24 @@ export const EditFormComp = (props) => {
                             </Form.Item>
                         ) : null
                     }
+
+                    {
+                        deviceStyle === 21 ? (
+                            <Form.Item label="计量电表" name="customerType" rules={rules}>
+                                <Select
+                                    options={[{
+                                        label: '客户用能',
+                                        value: 1
+                                    }, {
+                                        label: '公共用能',
+                                        value: 2
+                                    }]}></Select>
+                            </Form.Item>
+                        ) : null
+                    }
                     {/* {deviceStyle === 1? <EditCom form={form} coms={coms}></EditCom> : null} */}
-                    {(deviceStyle === 1 || deviceStyle == 12 || deviceStyle == 13 || deviceStyle == 14 || deviceStyle == 20) ? <EditCom form={form} coms={coms} deviceStyle={deviceStyle}></EditCom> : null}
+                    {(deviceStyle === 1 || deviceStyle == 12 || deviceStyle == 13 || deviceStyle == 14
+                        || deviceStyle == 20 || deviceStyle == 22 || deviceStyle == 23) ? <EditCom form={form} coms={coms} deviceStyle={deviceStyle}></EditCom> : null}
                 </Col>
 
             </Row>

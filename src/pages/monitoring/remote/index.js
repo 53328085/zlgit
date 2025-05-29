@@ -9,7 +9,7 @@ import Pagecount from '@com/pagecontent'
 import UserTable from '@com/useTable'
 import CustContext from '@com/content.js'
 import { selectProjectId, selectOneLevelDefaultId, deviceStyle, filterDeviceStyle } from '@redux/systemconfig.js'
-import {manager,maintenance} from "@redux/user"
+import {manager,maintenance,selectUser} from "@redux/user"
 import styled from 'styled-components'
 
 import CModal from '@com/useModal'
@@ -79,6 +79,8 @@ export default function Index() {
     const projectId = useSelector(selectProjectId)
     // const deviceStyles = useSelector(deviceStyle)
     const ismanager = useSelector(manager)
+    const ismaintenance = useSelector(maintenance)
+    const {name: username} = useSelector(selectUser)
    // const ismaintenance = useSelector(maintenance)
 
     const deviceStyles = useSelector(filterDeviceStyle)
@@ -274,7 +276,7 @@ export default function Index() {
         }
         ]
 
-    const [isfag, setIsfag] = useState(true)
+    const typeref = useRef()
     
     const [pwdform] = Form.useForm()
     const [setform] = Form.useForm()
@@ -307,32 +309,40 @@ export default function Index() {
         
         let values =await pwdform.validateFields()
          values.projectId = projectId
-         values.Pwd1 = cipher(values.Pwd1)
-         values.Pwd2 = cipher(values.Pwd2)
+         values.Pwd1 = cipher(username,values.Pwd1)
+         values.Pwd2 = cipher(username,values.Pwd2)
          let {success, errMsg} =  await CheckPowerOnce(values)
          if(success) {
-           return true     
+            changesetbrake(typeref.current)
+            pwdmodal.current.onCancel()
          }else {
             message.warning(errMsg)
-            return false
+            
          }
       } catch (error) {
         console.log(error)
       }
     }
-    const passwordhandler =async (rows) => {
+    const passwordhandler =async (type) => {
         try {
-          console.log(rows)
-          let category = rows.map(r => r.category)
-          if(category.includes(contrCategory)) {
-             pwdmodal.current.onOpen()
-             return true
+            if (tableRefs.current && tableRefs.current.length > 0) {
+                typeref.current = type
+          let category = tableRefs.current.map(r => r.category)
+          console.log(category)
+          console.log(tableRefs.current)
+          if(category.includes(contrCategory)&& tableRef.current?.length >1) {
+            return message.warning("微机保护不能批量控制")            
+          }else if(category.includes(contrCategory)&& tableRefs.current?.length ==1) {
+            pwdmodal.current.onOpen()           
           }else {
-            return false
+            changesetbrake(type)
           }
+        } else {
+            message.error('请先选择设备！')
+        }
            // await  PowerNeed({projectId})
         } catch (error) {
-            
+            console.log(error)
         }
        
 
@@ -357,14 +367,7 @@ export default function Index() {
 
     // 香炉山项目 end
     const changesetbrake =async (type) => {
-       
-        
         if (tableRefs.current && tableRefs.current.length > 0) {
-            let mark =  await passwordhandler(tableRefs.current)
-            if(mark) {
-                
-            }
-           
             setsnList([])
             let List = []
             if (tableRefs.current.length > 0) {
@@ -443,8 +446,17 @@ export default function Index() {
                                 <Space size={16}>
                                     <CustButtonT ns="monitor" text="opening" danger onClick={() => { changesetbrake(1) }}>分闸</CustButtonT>
                                     <CustButtonT ns="monitor" text="closing"  danger   onClick={() => { changesetbrake(2) }}>合闸</CustButtonT>
-                                    <CustButton  wh="auto"  onClick={() => { showpwd() }}>设置密码</CustButton>
-                                </Space></>}
+                                </Space></>}  
+                               
+                          {/*    {value !=3 && <> 
+                             {
+                               (ismanager|| ismaintenance) ?  <Space size={16}>
+                               <CustButtonT ns="monitor" text="opening" danger onClick={() => { passwordhandler(1) }}>分闸</CustButtonT>
+                               <CustButtonT ns="monitor" text="closing"  danger   onClick={() => { passwordhandler(2) }}>合闸</CustButtonT>
+                               <CustButton  wh="auto"  onClick={() => { showpwd() }}>设置密码</CustButton>
+                           </Space> :  null
+                             }
+                               </>}  香炉山项目 ，密码控制*/}
                         </Space>
                     </Form>
                    
@@ -542,13 +554,14 @@ export default function Index() {
                       <Form.Item label="管理员密码" name="Pwd1" rules={custrulues}>
                         <Input.Password placeholder='请输入6位数字密码'></Input.Password>
                       </Form.Item>
-                      {/* ismanager */}
+                   
                       {
-                         <Form.Item label="运维人员" name="UserId" rules={[{
+                          ismanager &&
+                        (<Form.Item label="运维人员" name="UserId" rules={[{
                             required:true
                          }]}>
                             <Select options={devops}></Select>
-                        </Form.Item>
+                        </Form.Item>)
                       }
                       <Form.Item label="维护人员密码" name="Pwd2" rules={custrulues}>
                         <Input.Password placeholder='请输入6位数字密码' ></Input.Password>
