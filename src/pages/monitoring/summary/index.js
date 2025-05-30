@@ -115,6 +115,11 @@ export default function Index() {
       imageUrl: imgurl.mic,
       name: '微机保护',
     },
+    {
+      meterType: 23,
+      imageUrl: imgurl.device,
+      name: '智能控制',
+    },
   ]
 
   
@@ -185,6 +190,7 @@ export default function Index() {
         {(MonitoringData?.length >  0) && MonitoringData?.map((item) => (
           <div onClick={() => toDevicePage(item.meterType)} key={item.meterType}>
             <CommItem img={item.imageUrl} title={item.name} value={item.count} 
+          //   devicename={item.name}
             isShow={true} on={i18t("overview","online")} off={i18t("overview","offline")} per={i18t("overview","rate")} onValue={item.onlineCount}
             offValue={item.offlineCount} perValue={item.onlineRate} isRed={true} isGreen={true} isredE={false} after="%"  />
           </div>))}
