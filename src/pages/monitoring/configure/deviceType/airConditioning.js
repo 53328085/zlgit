@@ -438,8 +438,8 @@ export default function Electric() {
         getDeviceQueryCategoryFull,
         defaultTableData,
         isShow: true,
-        flow: true,//远程控制
-        metering: false
+        flow: false,//远程控制
+        metering: true //是否计量
     }
     let deviceProps = {
         value: 0,
@@ -462,8 +462,8 @@ export default function Electric() {
         ref: editFromRef,
         editDefaultTableData,
         isShow: true,
-        flow: true,//远程控制
-        metering: false//远程控制
+        flow: false,//远程控制
+        metering: true //是否计量
     }
     let editModalProps = {
         ref: EditModalRef,

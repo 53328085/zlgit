@@ -15,6 +15,7 @@ import Fiber from './fiber'
 import Flowmeter from './flowmeter' //流量计
 import Microcomputer from './microcomputer' //微机保护
 import AirConditioning from './airConditioning' //空调
+import Light from './light' //空调
 import IntelligentControl from './intelligentControl' //智能控制
 import { Monitoring } from '@api/api.js'
 import { message } from 'antd'
@@ -66,7 +67,7 @@ export default function Index() {
                 i == 18 ? arr[i] = <Flowmeter deviceStyle={k.deviceStyle} name={k.name} /> :
                   i == 20 ? arr[i] = <Microcomputer deviceStyle={k.deviceStyle} name={k.name} /> :
                     i == 21 ? arr[i] = <AirConditioning deviceStyle={k.deviceStyle} name={k.name} /> :
-                      i == 22 ? arr[i] = <AirConditioning deviceStyle={k.deviceStyle} name={k.name} /> :
+                      i == 22 ? arr[i] = <Light deviceStyle={k.deviceStyle} name={k.name} /> :
                         i == 23 ? arr[i] = <IntelligentControl deviceStyle={k.deviceStyle} name={k.name} /> :
                           arr[i] = <Generic deviceStyle={k.deviceStyle} name={k.name} key={k.deviceStyle} />
         }

@@ -331,7 +331,7 @@ export const FormComp = (props) => {
                         ) : null
                     }
 
-                    {
+                    {/* {
                         deviceStyle === 21 ? (
                             <Form.Item label="计量电表" name="customerType" rules={rules}>
                                 <Select
@@ -344,9 +344,9 @@ export const FormComp = (props) => {
                                     }]}></Select>
                             </Form.Item>
                         ) : null
-                    }
+                    } */}
                     {(deviceStyle === 1 || deviceStyle == 12 || deviceStyle == 13 || deviceStyle == 14
-                        || deviceStyle == 20 || deviceStyle == 22 || deviceStyle == 23) ? <Com form={form} deviceStyle={deviceStyle} ></Com> : null}
+                        || deviceStyle == 20 || deviceStyle == 21 || deviceStyle == 22 || deviceStyle == 23) ? <Com form={form} deviceStyle={deviceStyle} ></Com> : null}
                 </Col>
                 {/*   {
                     props.isfiber ? (
@@ -704,7 +704,7 @@ export const EditFormComp = (props) => {
                         ) : null
                     }
 
-                    {
+                    {/* {
                         deviceStyle === 21 ? (
                             <Form.Item label="计量电表" name="customerType" rules={rules}>
                                 <Select
@@ -717,10 +717,10 @@ export const EditFormComp = (props) => {
                                     }]}></Select>
                             </Form.Item>
                         ) : null
-                    }
+                    } */}
                     {/* {deviceStyle === 1? <EditCom form={form} coms={coms}></EditCom> : null} */}
                     {(deviceStyle === 1 || deviceStyle == 12 || deviceStyle == 13 || deviceStyle == 14
-                        || deviceStyle == 20 || deviceStyle == 22 || deviceStyle == 23) ? <EditCom form={form} coms={coms} deviceStyle={deviceStyle}></EditCom> : null}
+                        || deviceStyle == 20 || deviceStyle == 21 || deviceStyle == 22 || deviceStyle == 23) ? <EditCom form={form} coms={coms} deviceStyle={deviceStyle}></EditCom> : null}
                 </Col>
 
             </Row>
