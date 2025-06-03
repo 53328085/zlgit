@@ -154,9 +154,9 @@ export default function Index() {
  
   const onjump = ({label,key, nested})=> {
     try {
-      if(key=="digitalTwin") return message.warning("开发中……")
-      let  url = key == 'runtimeProject' ? `/index/${key}` : `/index/${key}/${nested}`;
-      let  state = key == 'runtimeProject'  ?  {index: true, nested, title: label, primary: key} : {nested, title: label, primary: key}
+      // if(key=="digitalTwin") return message.warning("开发中……")
+      let  url = ['runtimeProject',"digitalTwin"].includes(key) ? `/index/${key}` : `/index/${key}/${nested}`;
+      let  state = ['runtimeProject',"digitalTwin"].includes(key)  ?  {index: true, nested, title: label, primary: key} : {nested, title: label, primary: key}
         navigate(url, {state}) 
     } catch (error) {
       console.log(error)

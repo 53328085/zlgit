@@ -251,7 +251,7 @@ export default function Hmenu() {
     if(state) {
     
       let {primary, jumpath, substate} = state
-      dispath(getJump(['designerProject', 'runtimeProject','digitalTwin'].includes(primary)))    
+      dispath(getJump(['designerProject', 'runtimeProject','digitalTwin'].includes(primary)))    // 此处控制默认首页
       if(jumpath && substate) {
         navigate(jumpath, {state:substate})
       }
