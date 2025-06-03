@@ -78,7 +78,7 @@ export function ProjectLayout(props) { // 项目内容
   const {laptop} = useSelector(adaptation)
   const siderdisplay = useSelector(sidershow)
   const Collapsed = useSelector(collapsed)
-//  const [collapsed, setCollapsed] = useState(true)
+ 
 let rgb = hextodec("#C9CDD6")
   return (
     <Layout className={style.pagelayout}>
