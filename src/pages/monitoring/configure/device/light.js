@@ -19,11 +19,11 @@ const {
         QueryListGateWay,
         QueryUsedDeviceCategory,
         QueryPlanList,
-        QueryByPageAirconditioner,
-        AddAirconditioner,
-        UpdateAirconditioner,
-        DeleteAirconditioner,
-        ImportAirconditioner,
+        QueryByPageLight,
+        AddLight,
+        UpdateLight,
+        DeleteLight,
+        ImportLight,
         OneLevel
     }
 } = Monitoring
@@ -218,7 +218,7 @@ export default function gateway({ deviceStyle }) {
                 customerType,
             }
             console.log(params, editform.getFieldValue(), path1Gruop, path2Gruop, path3Gruop, path4Gruop, pathGruop)
-            const resp = await UpdateAirconditioner(params)
+            const resp = await UpdateLight(params)
             if (resp.success) {
                 message.success("更新成功")
                 EditModalFormRef?.current?.onCancel()
@@ -241,7 +241,7 @@ export default function gateway({ deviceStyle }) {
     }
     //确认删除
     const delOk = async () => {
-        const { success, errMsg } = await DeleteAirconditioner({
+        const { success, errMsg } = await DeleteLight({
             projectId,
             sn: encodeURIComponent(delid.current)
         })
@@ -319,7 +319,7 @@ export default function gateway({ deviceStyle }) {
                  path3Group:checklistRef.current.check3&&path3Gruop.current.length>0?path3Gruop.current:[],
                  path4Group:checklistRef.current.check4&&path4Gruop.current.length>0?path4Gruop.current:[], */
             }
-            const res = await AddAirconditioner(params)
+            const res = await AddLight(params)
             if (res.success) {
                 message.success('新增成功!')
                 // addform.resetFields()
@@ -407,7 +407,7 @@ export default function gateway({ deviceStyle }) {
             setAlarmopts([{ name: '不启用告警方案', id: 0 }])
         }
     }
-    //获取空调列表
+    //获取路灯控制器列表
     const getQueryByPageElectric = async (curpage = 0, pageSize = 0, id, like, customerType) => {
         setLoading(true)
         let params = {
@@ -421,7 +421,7 @@ export default function gateway({ deviceStyle }) {
             deviceStyle: 20,
             customerType: customerType ? customerType : 0
         }
-        const resp = await QueryByPageAirconditioner(params)
+        const resp = await QueryByPageLight(params)
         setLoading(false)
         setPage({
             ...page,
@@ -452,7 +452,7 @@ export default function gateway({ deviceStyle }) {
                 customerType: compRef.current.energyVal ? compRef.current.energyVal : 0
             }
 
-            const resp = await QueryByPageAirconditioner(params)
+            const resp = await QueryByPageLight(params)
             if (resp.success) {
                 resolve({ list: resp.data ? resp.data : [], total: resp.total })
             } else {
@@ -465,7 +465,7 @@ export default function gateway({ deviceStyle }) {
         const formData = new FormData()
         formData.append("file", flies[0])
         formData.append("projectId", projectId)
-        const res = await ImportAirconditioner(formData)
+        const res = await ImportLight(formData)
         if (res.success) {
             if (res.data.success) {
                 message.success("上传成功")
@@ -530,7 +530,7 @@ export default function gateway({ deviceStyle }) {
     const ModalFormProps = {
         modalFormRef,
         width: 732,
-        name: '新增空调',
+        name: '新增路灯控制器',
         transitionName: transitionName,
         maskTransitionName: maskTransitionName,
         onOk: addOk,
@@ -551,14 +551,14 @@ export default function gateway({ deviceStyle }) {
         modalImportRef,
         width: 560,
         link: '/deviceExcel/flow.xlsx',
-        name: '空调导入',
+        name: '路灯控制器导入',
         uploadprops,
         onOk: onImportOk
     }
     const EditModalFormProps = {
         EditModalFormRef,
         width: 732,
-        name: '编辑空调',
+        name: '编辑路灯控制器',
         onOk: editOk,
         onEditCancel: onEditCancel,
         isfiber: true,
@@ -652,7 +652,7 @@ export default function gateway({ deviceStyle }) {
 
 
             <MultImport {...ImportProps}></MultImport>
-            <DeleteModal DelModalRef={DelModalRef} name="删除提示" content="是否确认删除空调？" onOk={delOk}></DeleteModal>
+            <DeleteModal DelModalRef={DelModalRef} name="删除提示" content="是否确认删除路灯控制器？" onOk={delOk}></DeleteModal>
             {EditModalComp}
             <ErrorMessage {...ErrModalProps}></ErrorMessage>
             <MyContext.Provider value={{

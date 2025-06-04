@@ -1944,6 +1944,27 @@ export const Monitoring = {
     ImportMic: (data) => server.post(`/Monitor/Device/ImportMic`, data), //批量导入微机保护
 
 
+    DeleteAirconditioner: (data) =>
+      server.delete(`/Monitor/Device/DeleteAirconditioner`, { params: data }), //删除空调
+    QueryByPageAirconditioner: (data) =>
+      server.post(`/Monitor/Device/QueryByPageAirconditioner`, data), //查询空调
+    AddAirconditioner: (data) => server.post(`/Monitor/Device/AddAirconditioner`, data), //新增空调
+    UpdateAirconditioner: (data) =>
+      server.post(`/Monitor/Device/UpdateAirconditioner`, data), //更新空调
+    ImportAirconditioner: (data) => server.post(`/Monitor/Device/ImportAirconditioner`, data), //批量导入空调
+
+
+
+    DeleteLight: (data) =>
+      server.delete(`/Monitor/Device/DeleteLight`, { params: data }), //删除路灯
+    QueryByPageLight: (data) =>
+      server.post(`/Monitor/Device/QueryByPageLight`, data), //查询路灯
+    AddLight: (data) => server.post(`/Monitor/Device/AddLight`, data), //新增路灯
+    UpdateLight: (data) =>
+      server.post(`/Monitor/Device/UpdateLight`, data), //更新路灯
+    ImportLight: (data) => server.post(`/Monitor/Device/ImportLight`, data), //批量导入路灯
+
+
     DeleteSmartControl: (data) =>
       server.delete(`/Monitor/Device/DeleteSmartControl`, { params: data }), //删除智能控制
     QueryByPageSmartControl: (data) =>
