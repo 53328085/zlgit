@@ -146,7 +146,7 @@ const Tabsbox = styled(Tabs)`
       const [allSinderDesignMenus, setallSinderDesignMenus] = useState({}) 
       
       const [loading, setLoading] = useState(true)
-     let exclude = [ '0101', '0103'];
+     let exclude = [ '0101', '0103',"0117"];
        const queryUserMenus =  () => { 
         let f = !!projectId && !!userId
         if (!f)  return;

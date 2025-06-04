@@ -325,8 +325,9 @@ export default function Index() {
  const sheetName = useMemo(()=> {
      let filename="sheet"
      let  f = ["0","1","4"].includes(value)
-     if(Array.isArray(dates)&&dates.length>1){
-       filename = getTime(dates[0],1).toString()+"-"+getTime(dates[1], 1).toString() + tabs[index]?.label
+     console.log(dates)
+     if(Array.isArray(dates)&&dates?.[0] && dates?.[1]){
+       filename = getTime(dates?.[0],1).toString()+"-"+getTime(dates?.[1], 1).toString() + tabs[index]?.label
      }
     return (f&&isrange.range&&dates?.length) ?filename :  (tabs[index]?.label ?? 'sheet')
 
@@ -379,8 +380,8 @@ export default function Index() {
      let params ={
       projectId, 
       meterType: energytype,
-      startDate: range ? dates[0].format("YYYY-MM-DD HH:mm") : date.startOf(dateType).format("YYYY-MM-DD HH:mm"),
-      endDate:  range ? dates[1].format("YYYY-MM-DD HH:mm"): date.endOf(dateType).format("YYYY-MM-DD HH:mm"),   
+      startDate: range ? dates?.[0].format("YYYY-MM-DD HH:mm") : date?.startOf(dateType).format("YYYY-MM-DD HH:mm"),
+      endDate:  range ? dates?.[1].format("YYYY-MM-DD HH:mm"): date?.endOf(dateType).format("YYYY-MM-DD HH:mm"),   
       pageNum: current,
       pageSize,
       queryType:line,
