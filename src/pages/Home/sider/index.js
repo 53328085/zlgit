@@ -227,10 +227,8 @@ export default function Sider() {
       dispatch(getisDistribution(primary === 'runtimeDistribution'))
       setPath(primary)
       let sidermenu = config ? siderDesignerMenu[primary] : siderRunMenu[primary];
-      let sidermenus = sidermenu?.map(({no, label, key}) => ({no, label,key, icon: <Micon iconname={key} />})) || []; 
-       
-     // console.log(nested,sidermenus)    
-      setMenus(sidermenus)
+      let sidermenus = sidermenu?.map(({no, label, key}) => ({no, label,key, icon: <Micon iconname={key} />})) || [];        
+     setMenus(sidermenus)
       Setkey(nested) 
     } catch (error) {
       console.log(error);
