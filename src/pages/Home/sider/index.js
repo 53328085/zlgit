@@ -13,20 +13,29 @@ import {  configState, siderDesignerMenus, siderRunMenus, getisDistribution, ada
 import ShowSide from "@com/showsider"
 //import svgs from './svgs'
 import * as svgcom from './svgs'
- 
+import * as svgseted from './svgs/setting' 
  
 const Micon = ({iconname}) => {
    const location = useLocation()
    let {primary} = location.state || {}   
     let normal=["camera","report","environment"]
-    const Com = !normal.includes(iconname) ?  svgcom[primary+iconname] : svgcom[iconname]
+    const Com = !normal.includes(iconname) ?   svgcom[primary+iconname] : svgcom[iconname]
     
     const Def = svgcom["def"]
    return   Com ?  <Com  className={iconname + " custicon "+primary}/> :   <Def className="def" ></Def>
-  // return <span className="custicon">&#9673;</span>
+  
 }
+const MiconSet = ({iconname}) => { // 设计态
+  const location = useLocation()
+  let {primary} = location.state || {}   
+   let normal=["camera","report","environment"]
+   
+   const Com = !normal.includes(iconname) ?   svgseted[primary+iconname] : svgseted[iconname]
+   
+   const Def = svgcom["def"]
+  return   Com ?  <Com  className={iconname + " custicon "+primary}/> :   <Def className="def" ></Def>
  
-
+}
  
 
 const Sdiv = styled.div`
@@ -227,7 +236,7 @@ export default function Sider() {
       dispatch(getisDistribution(primary === 'runtimeDistribution'))
       setPath(primary)
       let sidermenu = config ? siderDesignerMenu[primary] : siderRunMenu[primary];
-      let sidermenus = sidermenu?.map(({no, label, key}) => ({no, label,key, icon: <Micon iconname={key} />})) || [];        
+      let sidermenus = sidermenu?.map(({no, label, key}) => config ? {no, label,key, icon: <MiconSet iconname={key}  />} : {no, label,key, icon: <Micon iconname={key}  />}) || [];        
      setMenus(sidermenus)
       Setkey(nested) 
     } catch (error) {
