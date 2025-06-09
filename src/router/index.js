@@ -264,7 +264,7 @@ function useRoute() { // 重写路由
       })
     }
   }) 
-  console.log("runMenus",runMenus)
+ // console.log("runMenus",runMenus)
   designerMenus?.forEach(r => {
     let {no, key} = r;//0212 quota 
     let Com = designerComponents[no];

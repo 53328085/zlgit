@@ -28,8 +28,7 @@ const Micon = ({iconname}) => {
 const MiconSet = ({iconname}) => { // 设计态
   const location = useLocation()
   let {primary} = location.state || {}   
-   let normal=["camera","report","environment"]
-   
+   let normal=["camera","report","environment"]   
    const Com = !normal.includes(iconname) ?   svgseted[primary+iconname] : svgseted[iconname]
    
    const Def = svgcom["def"]
