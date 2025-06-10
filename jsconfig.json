@@ -1,0 +1,40 @@
+{
+    "compilerOptions": {
+      "baseUrl": ".",
+      "paths": {
+        "@com/*": [
+          "src/components/*"
+        ],    
+        "@redux/*": [
+          "src/redux/*"
+        ],
+        "@imgs/*": [
+          "src/assets/image/*"
+        ],
+        "@pages/*": [
+          "src/pages/*"
+        ],
+        "@hooks/*": [
+          "src/hooks/*"
+        ],
+        "@svgs/*": [
+          "src/assets/svg/*"
+        ],
+      },
+      "jsx": "react",
+      "module": "commonjs",
+      "target": "es6",
+      "moduleResolution": "node",
+      "allowSyntheticDefaultImports": true,
+      "esModuleInterop": true
+    },
+    "exclude": [
+      "node_modules",
+      "build",
+      "dist"
+    ],
+    "include": [
+      "src/**/*"
+    ]
+  }
+  

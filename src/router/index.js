@@ -19,8 +19,11 @@ import  {designerCommon} from "./designer/common";
 import  {runtimeCarbonEmissionManager} from "./carbon" // 碳排管理
 import  {runtimeStorage} from './storage' // 储能管理
 import  {runtimeQuota} from './quota'
+import {lightManagement} from './lightManagement.js'
 import {ledger} from './ledger.js'
 import {cabinets} from './cabinets.js'
+import {runtimeWaterManagement} from './waterManagement.js'
+import {airConditioningManagement} from './airConditioningManagement'
  let runRoutes = {
   runtimeMonitor,
   runtimeEnergy,
@@ -34,7 +37,10 @@ import {cabinets} from './cabinets.js'
   runtimeStorage,
   runtimeQuota,
   runtimeLedger: ledger,
-  runtimeCabinets: cabinets
+  runtimeCabinets: cabinets,
+  lightManagement,
+  runtimeWaterManagement,
+  airConditioningManagement,
  }
 
 
@@ -111,7 +117,10 @@ const loginrouter =  [{
   '0114': Comindex,
   '0115': Distribution,
   '0116': Comindex,
-  '0117': DigitalTwin
+  '0117': DigitalTwin,
+  "0118": Comindex,
+  "0119": Comindex,
+   "0120":Comindex,
 } 
 
  
@@ -267,6 +276,7 @@ function useRoute() { // 重写路由
  // console.log("runMenus",runMenus)
   designerMenus?.forEach(r => {
     let {no, key} = r;//0212 quota 
+    console.log(no, key)
     let Com = designerComponents[no];
     let nestroute = designerRoutes[key]
     let sider = siderDesignerMenus[key]

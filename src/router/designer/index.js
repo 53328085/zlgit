@@ -38,6 +38,9 @@ import  {maintenance} from './devops'
 import {quota} from './quota'
 import {ledger} from './ledger'
 import {cabinets} from './cabinets'
+import {designerWaterManagement} from './designerWaterManagement'
+import {airConditioningManagement} from './airConditioningManagement'
+import {streetLightManagement} from './streetLightManagement'
  export const designerComponents = { 
   '0201': Common,
   '0202': Project,
@@ -53,7 +56,10 @@ import {cabinets} from './cabinets'
   '0211': Devops,
   '0212': Quota,
   "0213": Ledger,
-  '0214': Cabinets
+  '0214': Cabinets,
+  "0215": Comindex,
+  "0216": Comindex,
+  "0217": Comindex,
 } 
 export const designerRoutes = {
   designerCommon,
@@ -68,7 +74,10 @@ export const designerRoutes = {
   maintenance,
   quota,
   ledger,
-  cabinets
+  cabinets,
+  designerWaterManagement,
+  airConditioningManagement,
+  streetLightManagement,
 }
 
 
