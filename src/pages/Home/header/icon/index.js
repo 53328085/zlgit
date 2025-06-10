@@ -47,9 +47,12 @@ export {ReactComponent as runtimeCabinets} from './cabinets.svg'
 export {ReactComponent as designerCommon} from './designerCommon.svg'
 
 export {ReactComponent as designerWaterManagement} from './designerWaterManagement.svg'
+export {ReactComponent as runtimeWaterManagement} from './designerWaterManagement.svg'
 
 export {ReactComponent as streetLightManagement} from './streetLightManagement.svg'
 export {ReactComponent as airConditioningManagement} from './airConditioningManagement.svg'
+ 
+export {ReactComponent as lightManagement} from './streetLightManagement.svg'
 
 // 右边图标
 
