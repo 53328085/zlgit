@@ -95,9 +95,9 @@ export {ReactComponent as maintenanceinspectionContent}   from './inspectionCont
 export {ReactComponent as quotaquotaManagement}   from './quotaManagement.svg'
 export {ReactComponent as quotaquotaWarning}   from './quotaWarning.svg'
 
-// 能耗定额
+// 台账管理
  export {ReactComponent as ledgerledgerManagement}   from './ledger.svg'
-//export {ReactComponent as ledgerspareParts}   from './spareParts.svg'
+ export {ReactComponent as ledgerspareParts}   from './spareParts.svg'
 
 // 智能配电柜
 export {ReactComponent as cabinetssitesettings}   from './sitesettings.svg'

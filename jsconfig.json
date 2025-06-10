@@ -19,7 +19,7 @@
         ],
         "@svgs/*": [
           "src/assets/svg/*"
-        ],
+        ]
       },
       "jsx": "react",
       "module": "commonjs",
