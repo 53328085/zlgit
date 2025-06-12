@@ -276,7 +276,7 @@ function useRoute() { // 重写路由
  // console.log("runMenus",runMenus)
   designerMenus?.forEach(r => {
     let {no, key} = r;//0212 quota 
-    console.log(no, key)
+   // console.log(no, key)
     let Com = designerComponents[no];
     let nestroute = designerRoutes[key]
     let sider = siderDesignerMenus[key]

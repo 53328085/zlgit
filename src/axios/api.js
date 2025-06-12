@@ -5,7 +5,26 @@ export class Test {
 }
 // zl api start
 // 登录
-
+export  class Apimethod {
+  constructor(method, url) {
+    try {
+      this.url = url
+      this.method=method
+    
+       let methodname ='use'+ url.slice(url.lastIndexOf("/")+1);
+       this[methodname]= (function(params, body){
+        if(method=="post"){
+          return server[this.method](this.url,body, {params} )
+         }else  {
+          return server[this.method](this.url,  {params})
+         }
+         
+       }).bind(this)
+    } catch (error) {
+      console.log(error)
+    }
+  }
+}
 export class I18N {
   static GetsupportLanguages = () =>
     server.get(`/Language/GetsupportLanguages`); //

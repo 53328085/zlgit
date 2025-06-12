@@ -237,17 +237,20 @@ const fromlot =[ // 电能报表
     }, {
       title: '起始读数',
       dataIndex: 'start',
-      key: "start"
+      key: "start",
+      render:  (text)=> Math.round(parseFloat(text))
       
     }, {
       title: '结束读数',
       dataIndex: 'end',
-      key: "end"
+      key: "end",
+      render: (text)=> Math.round(parseFloat(text))
     },
     {
       title: '用能(kWh)',
       dataIndex: 'consume',
-      key: "consume"
+      key: "consume",
+      render: (text)=> Math.round(parseFloat(text)) // parseInt(text)
     }, 
     {
       title: '设备编号',

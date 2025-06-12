@@ -75,17 +75,12 @@ const Cmenu = styled(Menu)`
                 fill: ${props => props.theme.menusactivefontcolor || '#fff'}; 
               }
         }
-        /* .logo {
-              height: 36px;
-              width: 36px;
-              line-height: 36px;
-              overflow: hidden;
-              .shadow {
-              transform: translateX(-36px);
-              filter: drop-shadow(36px 0 0  ${props => props.theme.menusactivefontcolor || '#ffffff'});
-            }
-           
-        } */
+         .custicon.dmaPartitionManagemen {
+          path:nth-of-type(1)  {
+                fill: ${props => props.theme.menusactivefontcolor || '#fff'}; 
+              }
+         }
+        
     }
     .ant-menu-item{
         display: flex;
@@ -103,17 +98,7 @@ const Cmenu = styled(Menu)`
                 fill: ${props => props.theme.menusfontcolor || '#b2c1d1'}; 
               }
         }
-      /*   .logo {
-            height: 36px;
-            width: 36px;
-            line-height: 36px;
-            overflow: hidden;
-            .shadow {
-              transform: translateX(-36px);
-              filter: drop-shadow(36px 0 0  ${props => props.theme.menusfontcolor || '#b2c1d1'});
-            }
-            
-        } */
+     
         &::after {
             right: 0px;
             left: 0px;
@@ -132,17 +117,7 @@ const Cmenu = styled(Menu)`
                 fill: ${props => props.theme.menusactivefontcolor || '#ffffff'}; 
               }
         }
-          /*   .logo {
-              height: 36px;
-              width: 36px;
-              line-height: 36px;
-            overflow: hidden;
-              .shadow {
-              transform: translateX(-36px);
-              filter: drop-shadow(36px 0 0  ${props => props.theme.menusactivefontcolor || '#ffffff'});
-            }
-           
-        } */
+          
         &::after{
           content: none;
         }
