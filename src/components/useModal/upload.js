@@ -4,10 +4,10 @@ const {Dragger} = Upload
 const {Link, Paragraph} = Typography
 export default function Index({accept=".xlsx",link, ...rest}){
    return (
-    <Dragger accept={accept}>
+    <Dragger accept={accept} {...rest}>
        <img src={upicon}></img>
        <Paragraph style={{marginTop: "1em"}}>将文件拖到此处，或<Link>点击上传</Link></Paragraph>
-       <Paragraph><Link href={link}>下载模板</Link></Paragraph>
+       <Paragraph><Link href={link} onClick={(e)=>e.stopPropagation()}>下载模板</Link></Paragraph>
     </Dragger>
    )
 }

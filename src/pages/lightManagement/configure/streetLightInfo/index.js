@@ -3,33 +3,18 @@ import {Space, Form, message, Typography, Select, Input} from 'antd'
 import {useAntdTable} from "ahooks"
 import {useOutletContext} from "react-router-dom"
 import Pagecount from '@com/pagecontent'
-import styled from 'styled-components';
+
 import UserTable from "@com/useTable";
 import Titlelayout from '@com/titlelayout';
 import {CustButtonT,CustButton, ExportExcel} from "@com/useButton"
 import CModal from '@com/useModal'
 import {Serach} from "@com/comstyled"
 import {AreaSelect} from "@com/useSerach/comhead"
-import {usePage,useAdd,useUpdate,useDelete } from "./api"
-import {cols,rules, w224,options} from "./data"
+import {usePage,useAdd,useUpdate,useDelete, useImport } from "./api"
+import {cols,  items} from "./data"
+import {Mainbox } from './style'
  const {Link} = Typography
- const Mainbox = styled.div`
-   display: flex;
-   flex:1;
-   flex-direction: column;
-   row-gap: 16px;
-   .search {
-     display: flex;
-     justify-content: space-between;
-     align-items: center;
-   }
- `
- const Frombox = styled.div`
-   display: grid;
-   grid-template-columns: 1fr 1fr;
-   column-gap: 128px;
 
- `
 
 export default function Index() {
   const delref= useRef()
@@ -140,7 +125,34 @@ export default function Index() {
       
      }
   }
-  
+  const files = useRef()
+  const dragprops = {
+    link: '/deviceExcel/streetLight2.xlsx',
+    maxCount: 1,
+    beforeUpload(file) {
+        files.current = file
+        return false
+    }
+  }
+  const onUpload=async()=> {
+     try {
+      let formdata = new FormData()
+      formdata.append("projectId", projectId)
+      formdata.append("file", files.current)
+       let {success, errMsg} =  await  useImport({projectId}, formdata)
+       if(success) {
+        message.success("导入成功")
+        exprotref.current.onCancel()
+        refresh()
+       }else {
+        message.warning(errMsg || "数据出错")
+       }
+     } catch (error) {
+      console.log(error)
+     }
+   
+
+  }
   const onexport = ()=> {
     exprotref.current.onOpen()
   }
@@ -152,6 +164,7 @@ export default function Index() {
       render: (_, row)=> <Space><Link onClick={()=> onEdit(row)}>编辑</Link><Link type="danger" onClick={()=> onDel(row)}>删除</Link></Space>
     },
   ]
+  
   const onExport =useCallback(() => {  
     downParams.current.pageSize=1;
     downParams.current.pageSize=total
@@ -197,7 +210,8 @@ export default function Index() {
       </Titlelayout>
        <CModal title={Ctitle}   onOk={onOk}   width={832} mold="cust" custft={isadd}  ref={editRef}>
         <Form form={newform} labelAlign="right" labelCol={{flex: "7em"}} preserve={false}>
-          <Frombox>
+          {items}
+       {/*    <Frombox>
             <div>
           <Form.Item label="所属园区" rules={rules} name="areaId">
             <AreaSelect style={w224} />
@@ -235,13 +249,13 @@ export default function Index() {
             <Input hidden></Input>
           </Form.Item>
           </div>
-          </Frombox>
+          </Frombox> */}
         </Form>
        </CModal>
         <CModal title="删除"  ref={delref} width={512} mold="cust" type="warn" onOk={onOkDel} >
                  是否确认删除备件？
                </CModal>
-               <CModal title="批量导入"  ref={exprotref} width={512}   type="drag" onOk={onOkDel} > 
+               <CModal title="批量导入"  ref={exprotref} width={512} dragprops={dragprops}  type="drag" onOk={onUpload} > 
                </CModal>
     </Pagecount>
   )
