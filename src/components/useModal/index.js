@@ -6,6 +6,7 @@ import Draggable from "react-draggable";
 import Useform from "./useform";
 import redwarn from '@imgs/redwarn.png'
 import Ok from "./ok.svg"
+import Drag from "./upload"
 //const theme =(type) =>   `4px solid ${custCorle[type]}`
 const sty = css`
 .ant-modal-header{
@@ -125,7 +126,7 @@ function Custmodal({
       bottom: clientHeight - (targetRect.bottom - uiData.y),
     });
   };
-  const { onCancel: close, custft = false, onOk, title, bodyStyle, warnimg = true, ...rest } = props
+  const { onCancel: close, custft = false, onOk, title, bodyStyle, warnimg = true,dragprops={}, ...rest } = props
   const formref = useRef()
   const onCancel = () => {
     setOpen(false)
@@ -211,7 +212,11 @@ function Custmodal({
     >
       {type == "warn" && warnimg && <img src={redwarn} style={{ width: '54px', marginRight: "32px" }} />}
       {type == "ok" && warnimg && <img src={Ok} style={{ width: '48px', marginRight: "16px", marginLeft: "32px" }} />}
+      {
+        type=="drag" && <Drag {...dragprops} />
+      }
       {mold == 'cust' ? children : mold == 'default' ? <Useform {...fromprops} ref={formref} /> : ''}
+
     </CModal>
   )
 

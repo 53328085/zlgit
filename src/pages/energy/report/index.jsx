@@ -486,7 +486,7 @@ export default function Index() {
     defaultParams: [{current: 1, pageSize: 14}],
     refreshDeps: [areaId, projectId, type, date, energytype, treeId, index, line,isrange, dates]
   })
-  console.log(tableProps)
+ // console.log(tableProps)
   const CustView =useMemo(()=> {
     const showdefined =  ["0","1","4"].includes(value)
     return (

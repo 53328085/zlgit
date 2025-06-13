@@ -50,5 +50,13 @@ export const cols =[ // 实时抄表
   export const rules =[{
     required: true
   }]
-  export const w224= {width: "224px"}
+  export const w224= {width: "224px"}    //0：道路灯 1：高杆路灯 2：太阳能路灯 3：景观灯
+  export const options =[
+    {label: "道路灯", value: 0},
+    {label: "高杆路灯", value: 1},
+    {label: "太阳能路灯", value: 2},
+    {label: "景观灯", value: 3},
+    {label: "其他", value: 4},
+
+  ]
   
