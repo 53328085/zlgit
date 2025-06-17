@@ -1,7 +1,7 @@
 import React, { useState,useCallback,useRef, useEffect, useMemo } from 'react'
-import {Checkbox, DatePicker, message, TimePicker} from 'antd'
+import {Checkbox, DatePicker, message, Tooltip} from 'antd'
 import moment from 'moment'
-import { useSelector } from 'react-redux'
+ 
 import {useOutletContext} from 'react-router-dom'
 import {useAntdTable} from 'ahooks'
 import CustContext from '@com/content.js'
@@ -9,28 +9,18 @@ import Pagecount from '@com/pagecontent'
 import UserTable from "@com/useTable";
 import UserTree from "@com/useTree"
 import { Space} from 'antd'
-import {getTime} from '@com/usehandler'
+import {getTime, isObject} from '@com/usehandler'
 import styled from 'styled-components'
 import {energyReport} from '@api/api'
-import {levelDefaultLabel} from '@redux/systemconfig.js'
-import {  ExportExcel} from '@com/useButton'
-import { isObject } from 'lodash'
+import CModal from '@com/useModal' 
+import {  ExportExcel, CustButton} from '@com/useButton'
+ import {Serach} from "@com/comstyled"
+ import {cols,conscols, timecols, typecols, fromlot, shitcols, etabs, wtabs} from './data'
+ import Ichart from '@com/useEcharts/Ichart';
+import { data } from 'browserslist'
+ 
 const { RangePicker } = DatePicker;
-const {
-  QueryByArea, 
-  QueryByLine, 
-  QueryConsumeByArea,
-  QueryConsumeByLine,
-  QueryTimeConsumeByArea, 
-  QueryTimeConsumeByLine,
-  QueryClassifyConsume,
-  QueryReadingByAreaCustomize,
-  QueryReadingByLineCustomize,
-  QueryConsumeByAreaCustomize,
-  QueryConsumeByLineCustomize,
-  QueryByAreaFromIot,
-  QueryByLineFromIot,
-
+const { 
 
   QueryConsumeRegion, //实时抄表
   QueryConsumeHourTime, // 能耗报表
@@ -45,248 +35,25 @@ const Contentbox = styled.div`
   grid-template-columns: 296px 1fr;
   column-gap: 16px;
   flex: 1;
+  .search {
+   display: flex;
+   justify-content: flex-end;
+   padding-bottom: 8px;
+  }
+`
+const Chartwrap = styled.div`
+  .chart {
+    height: 430px;
+    display: flex;
+  }
+  .foot{
+    display: flex;
+    justify-content: center;
+    align-content: center;
+  }
+
 `
  
-const cols =[ // 实时抄表  
-{
-  title: '区域名称',
-  dataIndex: 'nodeName', 
-  key:'nodeName',
-},
-  {
-    title: '设备名称',
-    dataIndex: 'name', 
-    key: "name"
-  }, {
-    title: '起始读数',
-    dataIndex: 'start',
-    key: "start"
-    
-  }, {
-    title: '结束读数',
-    dataIndex: 'end',
-    key:"end"
-  },
-  {
-    title: '用能(kWh)',
-    dataIndex: 'consume',
-    key: "consume"
-  }, 
-  {
-    title: '设备编号',
-    dataIndex: 'sn',
-    key:"sn"
-  },
-  {
-    title: '安装位置',
-    dataIndex: 'address',
-    key: "address"
-  },
-]
- 
-
-let conscols =[ //  cols 实时抄表，  conscols 能耗报表 , typecols 分类能耗
-{
-  title: '区域名称',
-  dataIndex: 'nodeName', 
-  key: "nodeName",
-  fixed: 'left',
-  width: 100
-},
-{
-    title: '设备名称',
-    dataIndex: 'name', 
-    width: 84,
-    key: "name",
-    fixed: 'left',
-  },  
-  {
-    title: '设备编号',
-    dataIndex: 'sn',
-    width:134,
-    key: "sn",
-    fixed: 'left',
-  },
-  {
-    title: '安装位置',
-    dataIndex: 'address',
-    key: 'address',
-    width: 84,
-  },
-  {
-    title: '能耗(kWh)',
-    dataIndex: 'total',
-    key: 'total',
-    width: 92,
-  },   
-]
-const cellstyle = {
-  textAlign: "center",
-  color: "#fff"
-}
-const timecols =[  // 分时能耗 
-{
-  title: '区域名称',
-  dataIndex: 'nodeName', 
-  key: "nodeName"
-},
-{
-    title: '设备名称',
-    dataIndex: 'name', 
-    key: "name"
-  },  
-  {
-    title: '总计(kWh)',
-    dataIndex: 'e',
-    key: "e",
-    onHeaderCell: () => ({
-      style: {
-        background: "#000",
-        ...cellstyle
-      }
-    })
-  },
-  {
-    title: '峰(kWh)',
-    dataIndex: 'e2',
-    key:"e2",
-    onHeaderCell: () => ({
-      style: {
-        background: "#f33",
-        ...cellstyle
-      }
-    })
-  },
-  {
-    title: '平(kWh)',
-    dataIndex: 'e3',
-    key: "e3",
-    onHeaderCell: () => ({
-      style: {
-        background: "#f90",
-        ...cellstyle
-      }
-    })
-  },  
-  {
-    title: '谷(kWh)',
-    dataIndex: 'e4',
-    key: "e4",
-    onHeaderCell: () => ({
-      style: {
-        background: "#093",
-        ...cellstyle
-      }
-    })
-
-  },  
-  {
-    title: '费用',
-    dataIndex: 'cost',
-    key: "cost"
-  },
-  {
-    title: '设备编号',
-    dataIndex: 'sn',
-    key: "sn"
-  }, 
-  {
-    title: '安装位置',
-    dataIndex: 'address',
-    key: "address"
-  }, 
-]
-
-const typecols =[  // 分类能耗 
-  {
-    title: '能耗类型',
-    dataIndex: 'type', 
-    key: "type"
-  },  
-  {
-    title: '子类型',
-    dataIndex: 'subType',
-    key:"subType"
-  },  
-  {
-    title: '能耗(kWh)',
-    dataIndex: 'consume',
-    key: "consume"
-  },  
-  {
-    title: '同比',
-    dataIndex: 'yoy',
-    key: "yoy"
-  }, 
-  {
-    title: '环比',
-    dataIndex: 'mom',
-    key: "mom"
-  }, 
-]
-const fromlot =[ // 电能报表 
-  {
-    title: '区域名称',
-    dataIndex: 'nodeName', 
-    key: "nodeName"
-  },
-    {
-      title: '设备名称',
-      dataIndex: 'name', 
-      key: "name"
-    }, {
-      title: '起始读数',
-      dataIndex: 'start',
-      key: "start",
-      render:  (text)=> Math.round(parseFloat(text))
-      
-    }, {
-      title: '结束读数',
-      dataIndex: 'end',
-      key: "end",
-      render: (text)=> Math.round(parseFloat(text))
-    },
-    {
-      title: '用能(kWh)',
-      dataIndex: 'consume',
-      key: "consume",
-      render: (text)=> Math.round(parseFloat(text)) // parseInt(text)
-    }, 
-    {
-      title: '设备编号',
-      dataIndex: 'sn',
-      key: "sn"
-    },
-    {
-      title: '安装位置',
-      dataIndex: 'address',
-      key: "address"
-    },
-  ]
-const shitcols =[  // 班次能耗 
-  {
-    title: '区域名称',
-    dataIndex: 'nodeName', 
-    key: "nodeName"
-  },  
-  {
-    title: '设备名称',
-    dataIndex: 'name',
-    key: "name"
-  },  
-  {
-    title: '编号',
-    dataIndex: 'sn',
-    key:"sn"
-  },  
-  {
-    title: '地址',
-    dataIndex: 'address',
-    key: "address"
-  },  
-]
-
-
 export default function Index() {
 
   let {exparams, setCustview} = useOutletContext() 
@@ -294,19 +61,43 @@ export default function Index() {
 
   
   const [isrange, setIsrange] = useState({range:false})
-  const levelname = useSelector(levelDefaultLabel)
+  
   const [value, setvalue] = useState('0')
   const [line, setLine] = useState(0)
   const [treeId, setTreeId] = useState()
   let {areaId, projectId, type, date, energytype} = exparams
-  // conscols[0].title = levelname
-  // cols[0].title = levelname
-  // timecols[0].title = levelname
+  
   const [concolumns, setConcolumns] = useState(conscols) 
+
+  // 对比分析 start
+  const Ctitle= useMemo(()=> {
+   if(!(date && type)) return ""
+    let format ={
+      1:"YYYY-MM-DD",
+      2: "YYYY-MM",
+      3: "YYYY"
+    }[type]
+    return   `对比分析（${date.format(format)})`  
+  }, [date, type]) 
+  console.log(Ctitle)
+  const [selectedRowKeys, setSelectedRowKeys] = useState([]);
+  const onSelectChange = (newkey) => {
+     
+     if(newkey?.length > 3) return message.warning("最多选择3条信息进行对比")
+     setSelectedRowKeys(newkey)
+  }
+  const rowSelection = {
+    selectedRowKeys,
+    onChange: onSelectChange,
+    hideSelectAll: true
+  };
  
+
+//  对比分析 end
+
   const [total, setTotal] = useState(0)
   const tbref = useRef()
-  const etabs = [
+/*   const etabs = [
     { key: '0', label: '实时抄表' },
     { key: '1', label: '能耗报表' },
     { key: '2', label: '分时能耗' },
@@ -319,7 +110,7 @@ export default function Index() {
     { key: '1', label: '能耗报表' },
     { key: '3', label: '分类能耗' },
     { key: '5', label: '班次能耗' },
-  ]
+  ] */
   const [tabs, setTabs] = useState(etabs)
   const index = Number(value)
  
@@ -328,7 +119,7 @@ export default function Index() {
  const sheetName = useMemo(()=> {
      let filename="sheet"
      let  f = ["0","1","4"].includes(value)
-     console.log(dates)
+   //  console.log(dates)
      if(Array.isArray(dates)&&dates?.[0] && dates?.[1]){
        filename = getTime(dates?.[0],1).toString()+"-"+getTime(dates?.[1], 1).toString() + tabs[index]?.label
      }
@@ -355,21 +146,6 @@ export default function Index() {
     if(index === 0 && isrange.range && !Array.isArray(dates) ){
           return
     }
-  /*    let hander =range ? [[QueryReadingByAreaCustomize,
-      QueryReadingByLineCustomize], [QueryConsumeByAreaCustomize, QueryConsumeByLineCustomize],[],[], [QueryByAreaFromIot,QueryByLineFromIot]][index][line] :  index == 3 ? QueryClassifyConsume : [
-      [QueryByArea, QueryByLine], 
-      [QueryConsumeByArea, QueryConsumeByLine],
-      [QueryTimeConsumeByArea,QueryTimeConsumeByLine],
-      [],
-      [QueryByAreaFromIot,QueryByLineFromIot],
-       [QueryConsumeDeviceShit, QueryConsumeDeviceShit]
-      ][index][line]   */
-  /*     QueryConsumeRegion, //实时抄表
-      QueryConsumeHourTime, // 能耗报表
-      QueryConsumeByTime, // 分时能耗
-      QueryConsumeClassify, // 分类能耗
-      QueryConsumeFromIot, //电能报表
-      QueryConsumeDeviceShit, // 班次能耗 */
     let hander = [
       QueryConsumeRegion,
       QueryConsumeHourTime,
@@ -429,7 +205,8 @@ export default function Index() {
            if(index == 1) {
              let {detailHeaders} = data[0]
              let last = detailHeaders.length - 1
-             let column = detailHeaders.map(col => ({title: col, dataIndex: col, key: col,width: "96px" }))
+            let column = detailHeaders.map(col => ({title: col, dataIndex: col, key: col,width: "96px"}))
+           // let column = detailHeaders.map(col => ({title: col, dataIndex: col, key: col,width: "96px", render: (text)=> Math.round(parseFloat(text))}))  
              column[last].fixed = "right"
              setConcolumns([...conscols, ...column])
              data.forEach(item => {
@@ -445,6 +222,7 @@ export default function Index() {
                   let shiftcolumn = heads.map(h=> ({
                     title: `${h.name}`,
                     dataIndex:  `shiftname${h.name}`,
+                  //  render: (text)=> Math.round(parseFloat(text)),
                   } ))
                   setConcolumns([...shitcols, ...shiftcolumn])
 
@@ -486,7 +264,61 @@ export default function Index() {
     defaultParams: [{current: 1, pageSize: 14}],
     refreshDeps: [areaId, projectId, type, date, energytype, treeId, index, line,isrange, dates]
   })
- // console.log(tableProps)
+  console.log(tableProps)
+   // 对比分析 图表
+  const modref = useRef()
+  const [source, dimensions, chartlen, unit] = useMemo(() => {
+      let {dataSource=[]} = tableProps || {}
+      let datas = dataSource.filter(d => selectedRowKeys.includes(d.sn))
+      let {detailHeaders=[], unit} = datas?.[0]|| {}
+      let dimensions = datas?.map?.(d => d.name) || []
+      let source = datas?.map?.(d =>d.detailValues) || []
+      return [[detailHeaders, ...source], ["time",...dimensions], dimensions.length, unit]
+  }, [selectedRowKeys, tableProps])
+ 
+   const  baroption= {
+      series: new Array(chartlen).fill({ type: "bar",seriesLayoutBy: 'row' }), // [{ type: "bar",seriesLayoutBy: 'row' }], 
+      grid: {
+        left: "0px",
+        right: "0",
+        top: "40px",
+        bottom: "35px",
+        containLabel: true,
+      },
+      legend: {
+        top: "5px",
+      },
+      xAxis: {
+        type: 'category',
+  
+      },
+      yAxis: {
+        type: 'value',
+        axisLabel: {
+          formatter: (value) => value+unit
+        }
+      },
+      dataset: {
+        dimensions,
+        source,
+        sourceHeadr:true
+      },
+      toolbox: {
+        show:true,
+        feature: {
+          saveAsImage: {},
+          magicType: {
+            type: ['line', 'bar',] 
+          }
+        },
+        top: "5px",
+        right: "10px"
+      }
+    }
+  const  oncompare =() => {
+    if(selectedRowKeys?.length == 0) return message.info("请选择最多3条数据")
+      modref.current.onOpen()
+  }
   const CustView =useMemo(()=> {
     const showdefined =  ["0","1","4"].includes(value)
     return (
@@ -569,8 +401,18 @@ export default function Index() {
                   </div>
                   </div>
                 } 
+                {
+                  value=="0" && <div className='search'>
+<Serach placeholder="请输入设备名称/设备编号/安装地址查询" style={{width: "362px"}} />
+                  </div>
+                }
                  {
-                   ["1","5"].includes(value) ? <UserTable ref={tbref}  columns={concolumns} {...tableProps} key={value}  scroll={{
+                  value=="1" && <div className='search'>
+              <Tooltip title="最多选择三条信息进行对比"><CustButton onClick={oncompare}>勾选对比</CustButton></Tooltip> 
+                  </div>
+                }
+                 {
+                   ["1","5"].includes(value) ? <UserTable ref={tbref} rowSelection={value==1 ? rowSelection : null}   columns={concolumns} {...tableProps} rowKey={row => row.sn} key={value}  scroll={{
                     scrollToFirstRowOnChange: true,
                      x: 1400, 
                      y: 685
@@ -583,6 +425,17 @@ export default function Index() {
                 </div>
                 </div> 
              </Contentbox>
+              <CModal title={Ctitle} ref={modref}  footer={null}  width={1082} mold="cust"   closable={true}>
+                 <Chartwrap>
+                  <div className='chart'>
+                  <Ichart {...baroption} />
+                  </div>
+                   <div className="foot">
+
+                   </div>
+                  </Chartwrap>
+              </CModal>
+
           </Pagecount>
       </CustContext.Provider>
   )

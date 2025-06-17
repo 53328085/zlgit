@@ -66,7 +66,7 @@ export default function Index() {
   }
   const {tableProps, search, refresh} = useAntdTable(getData, {
     form,
-    defaultPageSize: 14,
+    defaultPageSize: 18,
     refreshDeps: [projectId]
   })
   const {submit} = search
@@ -211,45 +211,6 @@ export default function Index() {
        <CModal title={Ctitle}   onOk={onOk}   width={832} mold="cust" custft={isadd}  ref={editRef}>
         <Form form={newform} labelAlign="right" labelCol={{flex: "7em"}} preserve={false}>
           {items}
-       {/*    <Frombox>
-            <div>
-          <Form.Item label="所属园区" rules={rules} name="areaId">
-            <AreaSelect style={w224} />
-          </Form.Item>
-          <Form.Item label="安装地址" rules={rules} name="address">
-            <Input style={w224} />
-          </Form.Item>
-          <Form.Item label="备注"   name="remark"  >
-            <Input.TextArea  rows={2} style={w224} />
-          </Form.Item>
-          </div>
-          <div>
-          <Form.Item label="路灯名称" rules={rules}   name="name">
-            <Input style={w224} />
-          </Form.Item>
-          <Form.Item label="路灯型号" rules={rules}  name="model">
-            <Input></Input>
-          </Form.Item>
-          <Form.Item label="路灯编号" rules={rules}  name="no">
-            <Input></Input>
-          </Form.Item>
-          <Form.Item label="所属计量设备" rules={rules}  name="mSn">
-            <Input placeholder='请输入电表sn'></Input>
-          </Form.Item>
-          <Form.Item label="所属控制器编号"   name="cSn">
-            <Input placeholder="请输入路灯控制器"></Input>
-          </Form.Item>
-          <Form.Item label="路灯类型"   name="type">
-            <Select options={options}></Select>
-          </Form.Item>
-          <Form.Item name="id" noStyle initialValue={0}>
-            <Input hidden></Input>
-          </Form.Item>
-          <Form.Item name="projectId" noStyle>
-            <Input hidden></Input>
-          </Form.Item>
-          </div>
-          </Frombox> */}
         </Form>
        </CModal>
         <CModal title="删除"  ref={delref} width={512} mold="cust" type="warn" onOk={onOkDel} >

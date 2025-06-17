@@ -8,11 +8,10 @@ import UserTable from "@com/useTable";
 import Titlelayout from '@com/titlelayout';
 import {CustButtonT,CustButton, ExportExcel} from "@com/useButton"
 import CModal from '@com/useModal'
-import {Serach} from "@com/comstyled"
-import {AreaSelect} from "@com/useSerach/comhead"
+ 
 import {usePage,useAdd,useUpdate,useDelete } from "./api"
-import {cols,rules, w224,options} from "./data"
-import {Mainbox, Frombox,Title} from './style'
+import {cols, items} from "./data"
+import {Mainbox, Title} from './style'
  const {Link} = Typography
 
 
@@ -27,7 +26,7 @@ export default function Index() {
   const editRef = useRef()
   const tbref = useRef()
   const [Ctitle,msg] = useMemo(()=> {
-   let title = isadd ? "新增园区路灯" : "编辑园区路灯"
+   let title = isadd ? "新建方案" : "编辑方案"
    let msg = isadd ? "新增成功" : "编辑成功"
    return [title, msg]
   },[isadd])
@@ -75,6 +74,7 @@ export default function Index() {
      newform.setFieldValue("projectId", projectId)
      editRef.current.onOpen()
   }
+  const onBind=()=>{}
   const delparams = useRef()
   const onDel=({id})=> {
      delparams.current={
@@ -90,10 +90,13 @@ export default function Index() {
     newform.setFieldsValue({...params, projectId},)
     editRef.current.onOpen()
   }
+  const onClone=()=>{
+
+  }
   const onOk= async()=> {
     try {
       let values = await newform.validateFields()
-      
+      console.log(values)
       let hander = isadd ? useAdd : useUpdate;
       let {success, errMsg} =await hander({}, values)
       if(success) {
@@ -134,7 +137,7 @@ export default function Index() {
     {
       title: '操作', 
       key:'option',
-      render: (_, row)=> <Space><Link onClick={()=> onEdit(row)}>编辑</Link><Link type="danger" onClick={()=> onDel(row)}>删除</Link></Space>
+      render: (_, row)=> <Space><Link onClick={()=> onEdit(row)}>编辑</Link><Link onClick={()=> onClone(row)}>克隆</Link><Link type="danger" onClick={()=> onDel(row)}>删除</Link></Space>
     },
   ]
   const onExport =useCallback(() => {  
@@ -161,7 +164,7 @@ export default function Index() {
   <span>路灯控制方案列表</span>
   <Space size={16}>
             <CustButton   onClick={()=> onAdd()}>新建方案</CustButton>
-           
+            <CustButton   onClick={()=> onBind()}>绑定方案</CustButton>
             <ExportExcel tb={tbref}></ExportExcel>
           </Space>
  </Title>
@@ -169,13 +172,18 @@ export default function Index() {
     <Pagecount pd="0" bgcolor="none">
         <Mainbox>
         <div className="search">
-          <Form form={form} layout="inline"  >
-            <Form.Item name="areaId" initialValue={0}>
-            <AreaSelect style={{width: "264px"}} isall={{name: "全部", id:0}} onChange={submit} />
+          <Form form={form} layout="inline"   colon={false} >
+            <Space>
+            <Form.Item name="areaId" label="方案名称">
+              <Input placeholder='请输入'></Input>
             </Form.Item>
-            <Form.Item label="设备查询" name="alike" style={{marginLeft: "16px"}} >
-         <Serach onSearch={submit} />
+            <Form.Item label="创建人" name="alike"   >
+               <Input placeholder='请输入'></Input>
             </Form.Item>
+            <Form.Item>
+              <CustButton>查询</CustButton>
+            </Form.Item>
+            </Space>
           </Form>
          
          </div>
@@ -187,47 +195,9 @@ export default function Index() {
        
       </Titlelayout>
       </Mainbox>
-       <CModal title={Ctitle}   onOk={onOk}   width={832} mold="cust" custft={isadd}  ref={editRef}>
-        <Form form={newform} labelAlign="right" labelCol={{flex: "7em"}} preserve={false}>
-          <Frombox>
-            <div>
-          <Form.Item label="所属园区" rules={rules} name="areaId">
-            <AreaSelect style={w224} />
-          </Form.Item>
-          <Form.Item label="安装地址" rules={rules} name="address">
-            <Input style={w224} />
-          </Form.Item>
-          <Form.Item label="备注"   name="remark"  >
-            <Input.TextArea  rows={2} style={w224} />
-          </Form.Item>
-          </div>
-          <div>
-          <Form.Item label="路灯名称" rules={rules}   name="name">
-            <Input style={w224} />
-          </Form.Item>
-          <Form.Item label="路灯型号" rules={rules}  name="model">
-            <Input></Input>
-          </Form.Item>
-          <Form.Item label="路灯编号" rules={rules}  name="no">
-            <Input></Input>
-          </Form.Item>
-          <Form.Item label="所属计量设备" rules={rules}  name="mSn">
-            <Input placeholder='请输入电表sn'></Input>
-          </Form.Item>
-          <Form.Item label="所属控制器编号"   name="cSn">
-            <Input placeholder="请输入路灯控制器"></Input>
-          </Form.Item>
-          <Form.Item label="路灯类型"   name="type">
-            <Select options={options}></Select>
-          </Form.Item>
-          <Form.Item name="id" noStyle initialValue={0}>
-            <Input hidden></Input>
-          </Form.Item>
-          <Form.Item name="projectId" noStyle>
-            <Input hidden></Input>
-          </Form.Item>
-          </div>
-          </Frombox>
+       <CModal title={Ctitle}   onOk={onOk}   width={1380} mold="cust" custft={isadd}  ref={editRef}>
+        <Form form={newform} labelAlign="right" labelCol={{flex: "7em"}} preserve={false} size="small" colon={false}>
+         {items}
         </Form>
        </CModal>
         <CModal title="删除"  ref={delref} width={512} mold="cust" type="warn" onOk={onOkDel} >

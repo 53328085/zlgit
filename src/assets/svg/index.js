@@ -9,3 +9,5 @@ files.keys().forEach(filep => {
 });
 
 export default svgurl
+export {ReactComponent as LightSize} from './light.svg'
+

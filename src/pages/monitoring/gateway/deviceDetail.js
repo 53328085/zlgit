@@ -1417,12 +1417,12 @@ export default function GatewayDetail(props) {
                             <div className="itemHead">{item.name}</div>
                             {!OtherdeviceStyle ? (
                               <div className="itemTail"> 
-                                {circuitState[item.value] || item.value} 
+                                {circuitState[item.value] || (item.value?.includes?.("e") ? "--" : item.value)} 
                               </div>
                             ) : (
                               <div className="itemTail"> 
                                 {circuitStateOther[item.value] ||
-                                  item.value} 
+                                  (item.value?.includes?.("e") ? "--" : item.value)} 
                               </div>
                             )}
                           </div>

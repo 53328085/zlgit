@@ -267,7 +267,7 @@ export default function index() {
           //   data.icon = ""
           //   data.iconFamily = "iconfont"
           // }
-          break
+          // break
         case 'addNode':
           nodeForm.resetFields()
           // console.log(data)
