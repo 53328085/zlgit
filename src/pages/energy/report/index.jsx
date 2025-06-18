@@ -1,5 +1,5 @@
 import React, { useState,useCallback,useRef, useEffect, useMemo } from 'react'
-import {Checkbox, DatePicker, message, Tooltip} from 'antd'
+import {Checkbox, DatePicker, message, Tooltip, Descriptions, Radio} from 'antd'
 import moment from 'moment'
  
 import {useOutletContext} from 'react-router-dom'
@@ -15,9 +15,9 @@ import {energyReport} from '@api/api'
 import CModal from '@com/useModal' 
 import {  ExportExcel, CustButton} from '@com/useButton'
  import {Serach} from "@com/comstyled"
- import {cols,conscols, timecols, typecols, fromlot, shitcols, etabs, wtabs} from './data'
+ import {cols,conscols, timecols, typecols, fromlot, shitcols, etabs, wtabs,labelStyle,contentStyle} from './data'
  import Ichart from '@com/useEcharts/Ichart';
-import { data } from 'browserslist'
+ 
  
 const { RangePicker } = DatePicker;
 const { 
@@ -49,7 +49,8 @@ const Chartwrap = styled.div`
   .foot{
     display: flex;
     justify-content: center;
-    align-content: center;
+    align-items: center;
+    column-gap: 8px;
   }
 
 `
@@ -68,7 +69,10 @@ export default function Index() {
   let {areaId, projectId, type, date, energytype} = exparams
   
   const [concolumns, setConcolumns] = useState(conscols) 
-
+  const [alike, setAlike] = useState("")
+  const onSearch = (e)=> {
+     setAlike(e)
+  }
   // 对比分析 start
   const Ctitle= useMemo(()=> {
    if(!(date && type)) return ""
@@ -133,7 +137,7 @@ export default function Index() {
 
  
   
-  const getTableData = ({ current, pageSize, areaId, projectId, type, date, energytype, treeId, index, line,isrange, dates }) => {
+  const getTableData = ({ current, pageSize, areaId, projectId, type, date, energytype, treeId, index, line,isrange, dates, alike }) => {
   //  console.log(date)
 
 
@@ -167,7 +171,9 @@ export default function Index() {
       ids:treeId,
       type
      }  
- 
+     if(index==0) {
+       params.filterInfo=alike
+     }
      
      // //  cols 实时抄表，  conscols 能耗报表 , typecols 分类能耗
      if(energytype == 1) {
@@ -260,21 +266,31 @@ export default function Index() {
 
 
   }
-  const {tableProps} = useAntdTable((params) => getTableData({...params,areaId, projectId, type, date, energytype, treeId, index, line,isrange, dates }), {
+  const {tableProps} = useAntdTable((params) => getTableData({...params,areaId, projectId, type, date, energytype, treeId, index, line,isrange, dates,alike }), {
     defaultParams: [{current: 1, pageSize: 14}],
-    refreshDeps: [areaId, projectId, type, date, energytype, treeId, index, line,isrange, dates]
+    refreshDeps: [areaId, projectId, type, date, energytype, treeId, index, line,isrange, dates,alike]
   })
-  console.log(tableProps)
+  
    // 对比分析 图表
   const modref = useRef()
+  const [checkvalue, setCheckvalue] = useState(["1"])
+  const [checks, setChecks] = useState(["1"]) // 留着待用
+  const checkedRef = useRef([])
+  const checkChange = (e) => {
+    checkedRef.current = e
+    setCheckvalue(e)
+  }
+  const comparehandler=()=> { // 留着待用
+    setChecks(checkedRef.current)
+  }
   const [source, dimensions, chartlen, unit] = useMemo(() => {
       let {dataSource=[]} = tableProps || {}
       let datas = dataSource.filter(d => selectedRowKeys.includes(d.sn))
       let {detailHeaders=[], unit} = datas?.[0]|| {}
       let dimensions = datas?.map?.(d => d.name) || []
-      let source = datas?.map?.(d =>d.detailValues) || []
+      let source = checkvalue?.length > 0 ? (datas?.map?.(d =>d.detailValues) || []) : []
       return [[detailHeaders, ...source], ["time",...dimensions], dimensions.length, unit]
-  }, [selectedRowKeys, tableProps])
+  }, [selectedRowKeys, tableProps, checkvalue])
  
    const  baroption= {
       series: new Array(chartlen).fill({ type: "bar",seriesLayoutBy: 'row' }), // [{ type: "bar",seriesLayoutBy: 'row' }], 
@@ -306,10 +322,11 @@ export default function Index() {
       toolbox: {
         show:true,
         feature: {
-          saveAsImage: {},
           magicType: {
             type: ['line', 'bar',] 
-          }
+          },
+          saveAsImage: {},
+         
         },
         top: "5px",
         right: "10px"
@@ -354,7 +371,7 @@ export default function Index() {
   const onTimeOk = (date = [], dataString) => {
     let f = dataString.some((d) => d);
     if (!f) return;
-    console.log(dataString)
+   // console.log(dataString)
      setDates(date)
      setValuet(date)
   };  
@@ -403,7 +420,7 @@ export default function Index() {
                 } 
                 {
                   value=="0" && <div className='search'>
-<Serach placeholder="请输入设备名称/设备编号/安装地址查询" style={{width: "362px"}} />
+<Serach placeholder="请输入设备名称/设备编号/安装地址查询" style={{width: "362px"}}  onSearch={onSearch} />
                   </div>
                 }
                  {
@@ -431,7 +448,17 @@ export default function Index() {
                   <Ichart {...baroption} />
                   </div>
                    <div className="foot">
-
+                     <Descriptions column={1} bordered style={{flex: 1}} labelStyle={labelStyle} contentStyle={contentStyle}>
+                      <Descriptions.Item label="横轴">
+                        <Radio defaultChecked>日期</Radio>
+                      </Descriptions.Item>
+                      <Descriptions.Item label="纵轴">
+                        <Checkbox.Group value={checkvalue} onChange={checkChange}  >
+                          <Checkbox value="1">用能</Checkbox>
+                        </Checkbox.Group>
+                      </Descriptions.Item>
+                     </Descriptions>
+                    {/*  <CustButton wh="auto" onClick={comparehandler}>对比</CustButton> */}
                    </div>
                   </Chartwrap>
               </CModal>
