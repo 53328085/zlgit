@@ -83,20 +83,27 @@ export default function Index() {
     }[type]
     return   `对比分析（${date.format(format)})`  
   }, [date, type]) 
-  console.log(Ctitle)
+  
   const [selectedRowKeys, setSelectedRowKeys] = useState([]);
-  const onSelectChange = (newkey) => {
-     
-     if(newkey?.length > 3) return message.warning("最多选择3条信息进行对比")
-     setSelectedRowKeys(newkey)
+ 
+  const onSelectChange = (newkey,rows) => {
+     console.log(newkey, rows)
+     if(newkey?.length > 3){
+      return message.warning("最多选择3条信息进行对比")
+     }else {
+      setSelectedRowKeys(newkey)
+     }
   }
+  
   const rowSelection = {
     selectedRowKeys,
     onChange: onSelectChange,
-    hideSelectAll: true
+    hideSelectAll: true,
+    preserveSelectedRowKeys: false,
+   
   };
  
-
+ 
 //  对比分析 end
 
   const [total, setTotal] = useState(0)

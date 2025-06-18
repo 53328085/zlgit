@@ -1,4 +1,4 @@
-import React, {useState,  useEffect,useRef, useMemo} from "react";
+import React, {useState,  useEffect,useRef, useMemo, Fragment} from "react";
 import {useLocation} from "react-router-dom"
 import { Form, Select,  Space, DatePicker, message,  Input, Button,} from "antd";
 import {useRequest} from 'ahooks' 
@@ -176,10 +176,24 @@ useEffect(()=> {
  }
 const dateselect =(
   <Space size={16} style={{marginLeft:'16px'}}>
-  <Item   name="type" initialValue={1}>
-     <Select style={{width: '80px'}} onChange={changetype}   options={dateoption}
-    
-     ></Select>
+  <Item noStyle shouldUpdate={(cur, pre)=>cur.energytype!=pre.energytype }>
+    {
+      ({getFieldValue, setFieldValue})=> {
+          let type = getFieldValue("energytype")
+          if(type==2) {
+          return    <Item   name="type" initialValue={2} key="water" preserve={false}>
+            <Select style={{width: '80px'}} onChange={changetype}   options={[{value: 2, label: i18t("comm","month")},
+  {value: 3, label: i18t("comm","year")},]}></Select>
+         </Item>
+          }else {
+            return   <Item   name="type" initialValue={1} key="electricity" preserve={false}>
+          <Select style={{width: '80px'}} onChange={changetype}   options={dateoption}></Select>
+       </Item>
+          }
+         
+      }
+    }
+ 
   </Item>
 
   <Item noStyle  shouldUpdate={(pre,cur) => pre.type!=cur.type}  >

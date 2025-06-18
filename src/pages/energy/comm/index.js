@@ -138,7 +138,7 @@ export default function Index(props) {
     }: {
       projectId, 
       areaId,
-      date: getTime(date, type), //date().startOf(type==2 ? "month" : "year").format("YYYY-MM-DD"),
+      date:  data&&type ?  getTime(date, type) : "", //date().startOf(type==2 ? "month" : "year").format("YYYY-MM-DD"),
       shiftNo,
     }
   
