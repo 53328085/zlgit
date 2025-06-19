@@ -181,7 +181,7 @@ const dateselect =(
       ({getFieldValue, setFieldValue})=> {
           let type = getFieldValue("energytype")
           if(type==2) {
-          return    <Item   name="type" initialValue={2} key="water" preserve={false}>
+          return    <Item   name="type" initialValue={2} key="water" >
             <Select style={{width: '80px'}} onChange={changetype}   options={[{value: 2, label: i18t("comm","month")},
   {value: 3, label: i18t("comm","year")},]}></Select>
          </Item>
@@ -266,9 +266,13 @@ const viewtype = (<Item name="view" initialValue={1} >
   label: '水',
   value: 2
 }]
+const energyChange = (e) => { 
+    form.setFieldValue("type",e) 
+    changetype(e)
+}
 const energytype = (
   <Item label="能源类型"  name="energytype" initialValue={1}>
-        <Select style={{ width: 112 }} options={energyoptions}></Select>
+        <Select style={{ width: 112 }} options={energyoptions} onChange={energyChange}></Select>
   </Item>
 )
 const getTank = async() => { // 初始化、 站点改变时 ; 储能柜
