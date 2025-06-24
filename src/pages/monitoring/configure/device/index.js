@@ -8,6 +8,7 @@ import Fire from './fire'
 import Sensor from './sensor'
 import Transform from './transform'
 import Video from './video'
+import HotWater from './hotwater'
 import Generic from './Generic' // 新增加的设备类型通用
 import Circuit from './Circuit'
 import Shock from './shock'
@@ -59,7 +60,9 @@ export default function Index() {
           arr[5] = <Transform deviceStyle={k.deviceStyle} />
         } else if (k.deviceStyle === 6) {
           arr[6] = <Video deviceStyle={k.deviceStyle} />
-        } else if (k.deviceStyle > 6) {
+        }else if (k.deviceStyle === 7) {
+          arr[7] = <HotWater deviceStyle={k.deviceStyle} />
+        } else if (k.deviceStyle > 7) {
           let i = Number(k.deviceStyle)
           i == 12 ? arr[i] = <Circuit deviceStyle={k.deviceStyle} name={k.name} /> :
             i == 13 ? arr[i] = <Shock deviceStyle={k.deviceStyle} name={k.name} /> :

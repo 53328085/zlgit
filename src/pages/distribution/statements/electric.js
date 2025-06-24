@@ -18,13 +18,12 @@ const Mainbox = styled.div`
 `;
  
 const options = [
-  { value: 1, label: "功率" },
+  { value: 1, label: "电压" },
   { value: 2, label: "电流" },
-  { value: 3, label: "相电压" },
-  { value: 4, label: "线电压" },
-  { value: 5, label: "不平衡度" },
-  { value: 6, label: "电压谐波" },
-  { value: 7, label: "电流谐波" },
+  { value: 3, label: "功率" },
+  { value: 4, label: "不平衡度" },
+  { value: 5, label: "电压谐波" },
+  { value: 6, label: "电流谐波" },
 ];
 const colfn =(name, key) => ({
   title:  name,
