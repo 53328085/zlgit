@@ -389,7 +389,7 @@ useEffect(()=>{
           <InputNumber min={0} step={1} addonAfter="px" onChange={(e)=>changeop(e, "cardHeadHeight")} />
         </Item>
         <Item label="圆角" labelCol={{flex: "3em"}} name="cardRadius" initialValue={8}>
-          <InputNumber min={0} step={1} addonAfter="px" onChange={(e)=>changeop(e, "headHeight")} />
+          <InputNumber min={0} step={1} addonAfter="px" onChange={(e)=>changeop(e, "cardRadius")} />
         </Item>
         </div>        
       </Item>

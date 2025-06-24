@@ -1,6 +1,7 @@
 import React,{useMemo, useRef, useState, useCallback} from 'react'
 import {Space, Form, message, Typography, Select, Input} from 'antd'
 import {useAntdTable} from "ahooks"
+import {useSelector} from "react-redux"
 import {useOutletContext} from "react-router-dom"
 import Pagecount from '@com/pagecontent'
 import styled from 'styled-components';
@@ -8,7 +9,7 @@ import UserTable from "@com/useTable";
 import Titlelayout from '@com/titlelayout';
 import {CustButtonT,CustButton, ExportExcel} from "@com/useButton"
 import CModal from '@com/useModal'
- 
+import {selectUser} from "@redux/user"
 import {usePage,useAdd,useUpdate,useDelete } from "./api"
 import {cols, items} from "./data"
 import {Mainbox, Title} from './style'
@@ -18,6 +19,7 @@ import {Mainbox, Title} from './style'
 export default function Index() {
   const delref= useRef()
   const exprotref = useRef()
+  const {name} = useSelector(selectUser)
   const [form] = Form.useForm()
   const [newform] = Form.useForm()
   const {projectId} =useOutletContext()
@@ -97,8 +99,28 @@ export default function Index() {
     try {
       let values = await newform.validateFields()
       console.log(values)
+      const {schemeName, scenes, id} = values
+      scenes.forEach(element => {
+         let {tasks} = element
+         element.schemeName=tasks?.[0]?.sceneName
+         let task=  tasks.map(( {  timing,excueTime,sceneName,brightness, ...rest },index) => ({
+             taskName: `时间点${index+1}`,
+             excueTime: rest.timeType==0 ? `${excueTime}|${timing}` : excueTime.format("HH:mm"),
+             ...rest,
+         }))
+         element.tasks = task
+
+      });
+      console.log(scenes)
+      let params = {
+          projectId,
+          Creater:name,
+          schemeName,
+          scenes: JSON.stringify(scenes),
+          id,
+      }
       let hander = isadd ? useAdd : useUpdate;
-      let {success, errMsg} =await hander({}, values)
+      let {success, errMsg} =await hander({}, params)
       if(success) {
         message.success(msg)
         if(!isadd) {

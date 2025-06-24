@@ -12,7 +12,7 @@ import { SiteManagerDesigner, PCSMonitorRuntime } from '@api/api'
 import CustContext from "@com/content";
 
 import Enery from "./enery";
-import { ProFormSelect } from "@ant-design/pro-components";
+ 
 const Cform = styled(Form)`
     background: #fff;
     padding: 7px 16px;

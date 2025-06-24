@@ -176,34 +176,13 @@ useEffect(()=> {
  }
 const dateselect =(
   <Space size={16} style={{marginLeft:'16px'}}>
-  <Item noStyle shouldUpdate={(cur, pre)=>cur.energytype!=pre.energytype }>
-    {
-      ({getFieldValue, setFieldValue})=> {
-          let type = getFieldValue("energytype")
-          if(type==2) {
-          return    <Item   name="type" initialValue={2} key="water" >
-            <Select style={{width: '80px'}} onChange={changetype}   options={[{value: 2, label: i18t("comm","month")},
-  {value: 3, label: i18t("comm","year")},]}></Select>
-         </Item>
-          }else {
-            return   <Item   name="type" initialValue={1} key="electricity" preserve={false}>
+ <Item   name="type" initialValue={1} key="electricity" preserve={false}>
           <Select style={{width: '80px'}} onChange={changetype}   options={dateoption}></Select>
-       </Item>
-          }
-         
-      }
-    }
- 
   </Item>
-
   <Item noStyle  shouldUpdate={(pre,cur) => pre.type!=cur.type}  >
       {
         ({getFieldValue,setFieldValue}) => { 
           let type =(daterang=='week' ? ['week', 'week', 'month', 'year'] : ['date', 'date', 'month', 'year'])[getFieldValue('type')] 
-         
-         
-         
-         
          return (
           <Item name="date" > 
             {(type=='date' && isdaterange) ?<RangePicker></RangePicker> : <DatePicker  picker={type}   style={{width: '160px'}} />} 

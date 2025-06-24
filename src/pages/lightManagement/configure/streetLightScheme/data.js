@@ -43,10 +43,10 @@ export const cols =[ //
     {label: "泛光灯", value: "泛光灯"},
   ]
   const timeType = [
-    {label: "日出前", value: "全夜灯"},
-    {label: "日出后", value: "半夜等"},
-    {label: "日落前", value: "景观灯"},
-    {label: "日落后", value: "泛光灯"},
+    {label: "日出前", value: "日出前"},
+    {label: "日出后", value: "日出后"},
+    {label: "日落前", value: "日落前"},
+    {label: "日落后", value: "日落后"},
   ]
   export const items =(
     <>
@@ -59,7 +59,7 @@ export const cols =[ //
           <Scene>
           {
           fileds.map((field,_,arr) =>  (
-                  <Form.List name={[field.name, "subScene"]} initialValue={[{}]}>
+                  <Form.List name={[field.name, "tasks"]} initialValue={[{}]}>
                  {
                   (inerfileds, inmethods)=>{ 
                     return(
@@ -99,26 +99,26 @@ export const cols =[ //
                           </Form.Item>
                           <Form.Item label="时间点" shouldUpdate={(cur, pre)=>{
                             console.log(cur)
-                            console.log(cur["scenes"]?.[field.name]?.["subScene"]?.[inerfiled.name]?.taskType)
-                            return cur["scenes"]?.[field.name]?.["subScene"]?.[inerfiled.name]?.timeType!=pre["scenes"]?.[field.name]?.["subScene"]?.[inerfiled.name]?.timeType
+                            console.log(cur["scenes"]?.[field.name]?.["tasks"]?.[inerfiled.name]?.timeType)
+                            return cur["scenes"]?.[field.name]?.["tasks"]?.[inerfiled.name]?.timeType!=pre["scenes"]?.[field.name]?.["tasks"]?.[inerfiled.name]?.timeType
                             } }>
                             {
                               ({getFieldValue})=> {
-                                let type = getFieldValue(["scenes", field.name] )
+                                let type = getFieldValue(["scenes", field.name])?.["tasks"]?.[inerfiled.name]?.timeType
                                 console.log(type)
                                 if(type==0) {
                                   return (
-                                    <Input.Group>
+                                    <Space>
                                     <Form.Item name={[inerfiled.name,"excueTime"]} rules={rules}>
-                                       <Select options={timeType}></Select>
+                                       <Select options={timeType} style={{width: "200px"}}></Select>
                                     </Form.Item>
                                     <Form.Item name={[inerfiled.name,"timing"]} rules={rules}>
                                       <InputNumber min={0} max={60} precision={0}></InputNumber>
                                     </Form.Item>
-                                   </Input.Group>
+                                   </Space>
                                   )
                                 }else {
-                                  return <Form.Item name={[inerfiled.name,"timing"]} rules={rules}>
+                                  return <Form.Item name={[inerfiled.name,"excueTime"]} rules={rules}>
                                      <TimePicker format="HH:mm"/>
                                   </Form.Item>
                                 }
@@ -128,7 +128,7 @@ export const cols =[ //
                           <Form.Item label="亮度设置">
                           <div style={{position: "relative", width: "450px",}}> 
                               <img src={imgsrc["light"]} style={{position: "absolute"}} />
-                              <Form.Item  name={[inerfiled.name,"brightness"]} noStyle>
+                              <Form.Item  name={[inerfiled.name,"brightness"]} noStyle >
                                 <CSlider  />
                               </Form.Item>
                             </div> 
@@ -155,7 +155,6 @@ export const cols =[ //
         )
       } 
     </Form.List>
-      
-    
+    <Form.Item name="id" initialValue={0} noStyle><Input hidden /></Form.Item>
     </>
   )

@@ -23,6 +23,7 @@ export const cols =[ // 实时抄表
         title: '用能(kWh)',
         dataIndex: 'consume',
         key: "consume",
+        sorter: (a, b) => parseFloat(a?.consume) - parseFloat(b?.consume)
       }, 
       {
         title: '设备编号',
@@ -72,6 +73,7 @@ export   let conscols =[   //  conscols 能耗报表
         dataIndex: 'total',
         key: 'total',
         width: 92,
+        sorter: (a, b) => parseFloat(a.total) - parseFloat(b.total) 
       },   
     ]
     const cellstyle = {
