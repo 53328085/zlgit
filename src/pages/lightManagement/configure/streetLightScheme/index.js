@@ -1,5 +1,6 @@
 import React,{useMemo, useRef, useState, useCallback} from 'react'
 import {Space, Form, message, Typography, Select, Input} from 'antd'
+import moment from 'moment'
 import {useAntdTable} from "ahooks"
 import {useSelector} from "react-redux"
 import {useOutletContext} from "react-router-dom"
@@ -12,7 +13,7 @@ import CModal from '@com/useModal'
 import {selectUser} from "@redux/user"
 import {usePage,useAdd,useUpdate,useDelete } from "./api"
 import {cols, items} from "./data"
-import {Mainbox, Title} from './style'
+import {Mainbox, Title, } from './style'
  const {Link} = Typography
 
 
@@ -25,6 +26,7 @@ export default function Index() {
   const {projectId} =useOutletContext()
   const [isadd, setIsadd] =useState(false)
   const [total, setTotal] = useState(0)
+  const [strategyName, setStrategyName] = useState("")
   const editRef = useRef()
   const tbref = useRef()
   const [Ctitle,msg] = useMemo(()=> {
@@ -73,23 +75,51 @@ export default function Index() {
   const {submit} = search
   const onAdd=()=> {
      setIsadd(true)
-     newform.setFieldValue("projectId", projectId)
+     newform.setFieldsValue({projectId, creater: name, id:0})
+    
      editRef.current.onOpen()
   }
   const onBind=()=>{}
   const delparams = useRef()
-  const onDel=({id})=> {
+  const onDel=({strategyId,strategyName})=> {
+    setStrategyName(strategyName)
      delparams.current={
-      id,
+      id:strategyId,
       projectId
      }
      delref.current.onOpen()
   }
   const onEdit=(row)=> {
     setIsadd(false)
-    const {projectId:id, ...params} = row
+  //  console.log(row)
+    const {scenes, strategyName, ...rest} = row
+    let parseScenes = JSON.parse(scenes)
+    parseScenes.forEach((s,index, arr) => {
+      let {tasks, sceneName} = s
+       let tsk = tasks.map(t => {
+        let {timeType, excueTime, ...r} = t
+        if(timeType==0) {
+          let [type, timing] = excueTime.split("|") || []
+          return {excueTime: type, timing, ...r}
+         }else {
+          return {timeType, excueTime2:moment(excueTime,"HH:mm"), ...r }
+         }
+       })
+       arr[index] ={
+         tasks:tsk,
+         sName:sceneName
+       }
+    })
+  //  console.log(parseScenes)  
 
-    newform.setFieldsValue({...params, projectId},)
+   let params = {
+    projectId,
+    schemeName: strategyName,
+    scenes: parseScenes,
+    ...rest,
+   }
+    
+   newform.setFieldsValue(params)
     editRef.current.onOpen()
   }
   const onClone=()=>{
@@ -99,25 +129,26 @@ export default function Index() {
     try {
       let values = await newform.validateFields()
       console.log(values)
-      const {schemeName, scenes, id} = values
+      const {schemeName, scenes, ...rest} = values
       scenes.forEach(element => {
-         let {tasks} = element
-         element.schemeName=tasks?.[0]?.sceneName
-         let task=  tasks.map(( {  timing,excueTime,sceneName,brightness, ...rest },index) => ({
+         let {tasks, sName} = element
+       
+         let task=  tasks.map(( {  timing,excueTime,excueTime2,brightness, ...rest },index) => ({
              taskName: `时间点${index+1}`,
-             excueTime: rest.timeType==0 ? `${excueTime}|${timing}` : excueTime.format("HH:mm"),
+             excueTime: rest.timeType==0 ? `${excueTime}|${timing}` : excueTime2?.format?.("HH:mm"),
              ...rest,
          }))
+         delete element.sName
          element.tasks = task
+         element.sceneName=sName
 
       });
       console.log(scenes)
       let params = {
-          projectId,
-          Creater:name,
           schemeName,
           scenes: JSON.stringify(scenes),
-          id,
+          ...rest
+         
       }
       let hander = isadd ? useAdd : useUpdate;
       let {success, errMsg} =await hander({}, params)
@@ -132,6 +163,7 @@ export default function Index() {
       }
 
     } catch (error) {
+      console.log(error)
       return Promise.reject("")
     }
 
@@ -190,6 +222,15 @@ export default function Index() {
             <ExportExcel tb={tbref}></ExportExcel>
           </Space>
  </Title>
+
+ const rowSelection = {
+  onChange: (selectedRowKeys, selectedRows) => {
+    console.log(`selectedRowKeys: ${selectedRowKeys}`, 'selectedRows: ', selectedRows);
+  },
+  type: "radio",
+  columnTitle: "选择"
+   
+};
   return (
     <Pagecount pd="0" bgcolor="none">
         <Mainbox>
@@ -212,7 +253,7 @@ export default function Index() {
       <Titlelayout layout="flex" title={title}>
       
        
-        <UserTable columns={columns} {...tableProps} onExport={onExport} ref={tbref}  sheetName="路灯档案"></UserTable>
+        <UserTable columns={columns} {...tableProps} onExport={onExport} rowKey={row => row.strategyId}  ref={tbref} rowSelection={rowSelection}  sheetName="路灯档案"></UserTable>
         
        
       </Titlelayout>
@@ -222,8 +263,9 @@ export default function Index() {
          {items}
         </Form>
        </CModal>
+     
         <CModal title="删除"  ref={delref} width={512} mold="cust" type="warn" onOk={onOkDel} >
-                 是否确认删除备件？
+                 是否确认删除“{strategyName}”方案？
                </CModal>
                <CModal title="批量导入"  ref={exprotref} width={512}   type="drag" onOk={onOkDel} > 
                </CModal>

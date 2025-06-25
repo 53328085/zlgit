@@ -12,7 +12,7 @@ export const { usePage } = new Apimethod( //查询  路灯控制方案
     "post",
     "Light/StreetLightScheme/Update"
   );
-  export const { useDelete} = new Apimethod( //编辑  控制方案
+  export const { useDelete} = new Apimethod( //删除  控制方案
     "delete",
     "Light/StreetLightScheme/Delete"
   );

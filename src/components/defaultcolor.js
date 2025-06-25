@@ -44,7 +44,7 @@ export default {
     bgcolorfont: ["#ffffff"],
     startColor:["#ffffff"],
     endColor:["#1c62b6"],
-    logBgColor:["1c62b6"],
+    logBgColor:["#1c62b6"],
     cardHeadBg: ["#dee7f2"],
     cardHeadlColor: ["#303133"],
     imgbgcolor:["#4A9AF0"],
