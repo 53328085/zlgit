@@ -1923,6 +1923,7 @@ export const Monitoring = {
     ImportBreaker: (data) => server.post(`/Monitor/Device/ImportBreaker`, data), //导入电表
     ImportWater: (data) => server.post(`/Monitor/Device/ImportWater`, data), //导入水表
     ImportGas: (data) => server.post(`/Monitor/Device/ImportGas`, data), //导入燃气表
+    ImportHotWater:(data) => server.post(`/Monitor/Device/ImportHotWater`, data), //导入热水表
     ImportSensor: (data) => server.post(`/Monitor/Device/ImportSensor`, data), //导入传感器
     ImportTransformer: (data) =>
       server.post(`/Monitor/Device/ImportTransformer`, data), //导入变压器
