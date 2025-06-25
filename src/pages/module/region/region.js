@@ -720,11 +720,12 @@ export default function Index({ projectId, level, CModal, name, allLevel }) {
     }
   };
   const tableOnchange = (e) => {
-
-    let { current } = e
+    console.log(e)
+    let { current, pageSize } = e
     setPagination({
       ...pagination,
       current,
+      pageSize,
     })
 
   }
@@ -732,7 +733,7 @@ export default function Index({ projectId, level, CModal, name, allLevel }) {
   useEffect(() => {
     getTableData(name)
 
-  }, [pagination.current])
+  }, [pagination.total, pagination.pageSize])
   useEffect(() => {
     // getLevelOption();
     params.pageNum = 1;
@@ -813,7 +814,12 @@ export default function Index({ projectId, level, CModal, name, allLevel }) {
           </Form.Item>
         </Space>
       </Cform>
-      <UserTable columns={columns} dataSource={tabelData} pagination={pagination} onChange={tableOnchange} rowKey="areaId" ref={tableRef} istemp={'istemp'} tempcolums={tempcolums} tempName={sheetName} tempdata={tempdata} />
+      <div style={{position: "relative"}}>
+        <div style={{width: "100%", position: "absolute", overflow: "auto"}}>
+      <UserTable columns={columns} dataSource={tabelData} pagination={pagination} onChange={tableOnchange}  scroll={{y:600 }} rowKey="areaId" ref={tableRef} istemp={'istemp'} tempcolums={tempcolums} tempName={sheetName} tempdata={tempdata} />
+      </div>
+      </div>
+    
       {/*    <UserTable columns={columns} {...tableProps} rowKey='areaId'  style={{display: level==1 ?'block' : 'none' }} /> 
           <UserTable columns={columns} {...tableProps} rowKey='areaId' style={{display: level>1 ?'block' : 'none' }} />   */}
 

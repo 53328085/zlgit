@@ -395,7 +395,7 @@ export function CancelButton(props) {
   const {isicon=true} = props
   return (
     <Custbtn type="default" {...props}>      
-      {i18.t('Cancel', {ns: "button"})}
+      {i18.t('back', {ns: "button"})}
     </Custbtn>
   );
 }
