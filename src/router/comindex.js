@@ -249,6 +249,8 @@ export default function Index() {
       if (primary == "runtimeMaintenance") {
 
         setConfig({});
+      }else if(primary == "cabinets") {
+        setConfig({})
       }
       /*  if (primary == "runtimeQuota") {
          switch (nested) {

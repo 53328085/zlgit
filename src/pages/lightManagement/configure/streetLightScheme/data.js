@@ -11,19 +11,19 @@ import {
   Space,
 } from "antd";
 import { DeleteOutlined } from "@ant-design/icons";
-import { CSlider, Scene, CTag } from "./style";
+import { CSlider, Scene, CTag,  } from "./style";
 import imgsrc from "@svgs/index";
 import { CustButton } from "@com/useButton";
 const { Link } = Typography;
 
 
-const Custslider = ({value, onChange}) => {
+const Custslider = ({value, onChange, ...rest}) => {
   console.log(value)
   const vchange = (e) => { 
     onChange(e)
   }
   return (
-    <CSlider value={value} onChange={vchange}></CSlider>
+    <CSlider value={value} onChange={vchange} {...rest}></CSlider>
   )
 
 
@@ -56,6 +56,23 @@ export const cols = [
     key: "createTime",
   },
 ];
+export const bindcol =[
+  {
+    title: "路灯名称",
+    dataIndex: "name",
+    key: "name",
+  },
+  {
+    title: "控制器编号",
+    dataIndex: "cSn",
+    key: "cSn",
+  },
+  {
+    title: "所属区域",
+    dataIndex: "areaName",
+    key: "areaName",
+  }, 
+]
 export const rules = [
   {
     required: true,
@@ -74,9 +91,22 @@ const timeType = [
   { label: "日落前", value: "日落前" },
   { label: "日落后", value: "日落后" },
 ];
+const marks = {
+  0: '0',
+  10: '10',
+  20: '20',
+  30: '30',
+  40: '40',
+  50: '50',
+  60: '60',
+  70: '70',
+  80: '80',
+  90: '90',
+  100: '100',
+};
 export const items = (
   <>
-    <Form.Item label="方案名称" name="schemeName" rules={rules}>
+    <Form.Item label="方案名称" name="schemeName" rules={rules} labelAlign="left">
       <Input placeholder="请输入" style={w255}></Input>
     </Form.Item>
     <Form.List name="scenes" initialValue={[{}]}>
@@ -85,6 +115,8 @@ export const items = (
           {fileds.map((field, _, arr) => (
             <div>
               <Form.Item
+              labelAlign="left"
+              style={{marginBottom: "4px"}}
                           label={`场景${new Intl.NumberFormat(
                             "zh-Hans-CN-u-nu-hanidec"
                           ).format(field.name + 1)}`}
@@ -94,7 +126,7 @@ export const items = (
                             options={options}
                             style={{ width: "200px" }}
                           ></Select>
-                        </Form.Item>
+                        </Form.Item >
             <Form.List name={[field.name, "tasks"]} initialValue={[{}]}>
               {(inerfileds, inmethods) => {
                 return (
@@ -211,12 +243,12 @@ export const items = (
                               }
                             }}
                           </Form.Item>
-                          <Form.Item
-                                name={[inerfiled.name, "brightness"]}
+                        {/*   <Form.Item
+                                name={[inerfiled.name, "light"]}
                                 rules={rules}
                                 label="亮度值"
-                              ><CSlider /></Form.Item>
-                        {/*   <Form.Item label="亮度设置">
+                              ><CSlider /></Form.Item> */}
+                      <Form.Item label="亮度设置">
                             <div
                               style={{ position: "relative", width: "450px" }}
                             >
@@ -225,12 +257,12 @@ export const items = (
                                 style={{ position: "absolute" }}
                               />
                               <Form.Item
-                                name={[inerfiled.name, "brightness"]}
+                                name={[inerfiled.name, "light"]}
                                 rules={rules}
                                 noStyle
-                              ><Custslider /></Form.Item>
+                              ><Custslider step={null} marks={marks} /></Form.Item>
                             </div>
-                          </Form.Item> */}
+                          </Form.Item>
                         </div>
                       ))}
                     </div>

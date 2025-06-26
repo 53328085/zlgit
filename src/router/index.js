@@ -36,8 +36,8 @@ import {airConditioningManagement} from './airConditioningManagement'
   runtimeCarbonEmissionManager,
   runtimeStorage,
   runtimeQuota,
-  runtimeLedger: ledger,
-  runtimeCabinets: cabinets,
+  ledger,
+  cabinets,
   lightManagement,
   runtimeWaterManagement,
   airConditioningManagement,
@@ -227,6 +227,8 @@ const loginrouter =  [{
 ];
  
 const getNestRout = (sider,routes) => {   
+  console.log(sider)
+  console.log(routes)
   let menus = []
   if (Array.isArray(sider) && sider.length > 0) {        
     sider.forEach(r => {

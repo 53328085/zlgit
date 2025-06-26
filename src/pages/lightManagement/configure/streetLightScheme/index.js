@@ -1,11 +1,10 @@
 import React,{useMemo, useRef, useState, useCallback} from 'react'
-import {Space, Form, message, Typography, Select, Input} from 'antd'
+import {Space, Form, message, Typography} from 'antd'
 import moment from 'moment'
 import {useAntdTable} from "ahooks"
 import {useSelector} from "react-redux"
 import {useOutletContext} from "react-router-dom"
-import Pagecount from '@com/pagecontent'
-import styled from 'styled-components';
+import Pagecount from '@com/pagecontent' 
 import UserTable from "@com/useTable";
 import Titlelayout from '@com/titlelayout';
 import {CustButtonT,CustButton, ExportExcel} from "@com/useButton"
@@ -13,35 +12,38 @@ import CModal from '@com/useModal'
 import {selectUser} from "@redux/user"
 import {usePage,useAdd,useUpdate,useDelete } from "./api"
 import {cols, items} from "./data"
-import {Mainbox, Title, } from './style'
+import {Mainbox, Title } from './style'
+import BindLight from './bind'
+import {Serach} from "@com/comstyled"
  const {Link} = Typography
 
 
 export default function Index() {
   const delref= useRef()
   const exprotref = useRef()
+  const bindRef = useRef()
   const {name} = useSelector(selectUser)
   const [form] = Form.useForm()
   const [newform] = Form.useForm()
-  const {projectId} =useOutletContext()
-  const [isadd, setIsadd] =useState(false)
+  const {projectId, exparams} =useOutletContext()
+  const {areaId} = exparams
+  const [isadd, setIsadd] =useState(1) // 0 新增 1 编辑 2 克隆
   const [total, setTotal] = useState(0)
   const [strategyName, setStrategyName] = useState("")
   const editRef = useRef()
   const tbref = useRef()
   const [Ctitle,msg] = useMemo(()=> {
-   let title = isadd ? "新建方案" : "编辑方案"
-   let msg = isadd ? "新增成功" : "编辑成功"
+   let title =  ["新建路灯控制方案" , "编辑方案", "新建路灯控制方案"][isadd]
+   let msg =   ["新增成功", "编辑成功", "克隆成功"][isadd]
    return [title, msg]
-  },[isadd])
+  },[isadd,strategyName])
   const downParams = useRef()
   const getData= async ({current, pageSize }, formData)=> { 
     try {
       if(!Number.isInteger(parseInt(projectId))) return
-      const {alike="", areaId} = formData
+      const {alike="" } = formData
       let params ={
-        projectId,
-        areaId,
+        projectId, 
         alike,
        pageNum: current,
        pageSize,
@@ -72,14 +74,16 @@ export default function Index() {
     defaultPageSize: 14,
     refreshDeps: [projectId]
   })
-  const {submit} = search
+   
   const onAdd=()=> {
-     setIsadd(true)
+     setIsadd(0)
      newform.setFieldsValue({projectId, creater: name, id:0})
     
      editRef.current.onOpen()
   }
-  const onBind=()=>{}
+  const onBind=()=>{
+    bindRef.current.onOpen()
+  }
   const delparams = useRef()
   const onDel=({strategyId,strategyName})=> {
     setStrategyName(strategyName)
@@ -89,20 +93,21 @@ export default function Index() {
      }
      delref.current.onOpen()
   }
-  const onEdit=(row)=> {
-    setIsadd(false)
-  //  console.log(row)
-    const {scenes, strategyName, ...rest} = row
+  const onEdit=(row, type)=> {
+    setIsadd(type)
+   // console.log(row)
+    const {scenes, strategyName,strategyId, ...rest} = row
+    
     let parseScenes = JSON.parse(scenes)
     parseScenes.forEach((s,index, arr) => {
       let {tasks, sceneName} = s
        let tsk = tasks.map(t => {
-        let {timeType, excueTime, ...r} = t
+        let {timeType, excueTime,brightness, ...r} = t
         if(timeType==0) {
           let [type, timing] = excueTime.split("|") || []
-          return {excueTime: type, timing, ...r}
+          return {excueTime: type, timing,light:brightness, ...r}
          }else {
-          return {timeType, excueTime2:moment(excueTime,"HH:mm"), ...r }
+          return {timeType, excueTime2:moment(excueTime,"HH:mm"),light:brightness, ...r }
          }
        })
        arr[index] ={
@@ -114,47 +119,45 @@ export default function Index() {
 
    let params = {
     projectId,
-    schemeName: strategyName,
+    schemeName: type==1 ? strategyName : strategyName+"_副本",
     scenes: parseScenes,
+    id: type==1 ? strategyId : 0,
     ...rest,
    }
     
    newform.setFieldsValue(params)
     editRef.current.onOpen()
   }
-  const onClone=()=>{
-
-  }
+  
   const onOk= async()=> {
     try {
-      let values = await newform.validateFields()
-      console.log(values)
+      let values = await newform.validateFields()     
       const {schemeName, scenes, ...rest} = values
       scenes.forEach(element => {
          let {tasks, sName} = element
        
-         let task=  tasks.map(( {  timing,excueTime,excueTime2,brightness, ...rest },index) => ({
+         let task=  tasks.map(( {  timing,excueTime,excueTime2,light, ...rest },index) => ({
              taskName: `时间点${index+1}`,
              excueTime: rest.timeType==0 ? `${excueTime}|${timing}` : excueTime2?.format?.("HH:mm"),
+             brightness:light,
              ...rest,
          }))
          delete element.sName
          element.tasks = task
          element.sceneName=sName
 
-      });
-      console.log(scenes)
+      });      
       let params = {
           schemeName,
           scenes: JSON.stringify(scenes),
           ...rest
          
       }
-      let hander = isadd ? useAdd : useUpdate;
+      let hander =  [useAdd,useUpdate,useAdd][isadd];
       let {success, errMsg} =await hander({}, params)
       if(success) {
         message.success(msg)
-        if(!isadd) {
+        if(isadd!==0) {
           editRef.current.onCancel()
         }
         refresh()
@@ -191,7 +194,7 @@ export default function Index() {
     {
       title: '操作', 
       key:'option',
-      render: (_, row)=> <Space><Link onClick={()=> onEdit(row)}>编辑</Link><Link onClick={()=> onClone(row)}>克隆</Link><Link type="danger" onClick={()=> onDel(row)}>删除</Link></Space>
+      render: (_, row)=> <Space><Link onClick={()=> onEdit(row, 1)}>编辑</Link><Link onClick={()=> onEdit(row, 2)}>克隆</Link><Link type="danger" onClick={()=> onDel(row)}>删除</Link></Space>
     },
   ]
   const onExport =useCallback(() => {  
@@ -214,17 +217,19 @@ export default function Index() {
 
     })
  }, [total])
+ const [strategyId , setStrategyId ] = useState(null)
  const title=<Title>
   <span>路灯控制方案列表</span>
   <Space size={16}>
             <CustButton   onClick={()=> onAdd()}>新建方案</CustButton>
-            <CustButton   onClick={()=> onBind()}>绑定方案</CustButton>
+            <CustButton  disabled={!strategyId}  onClick={()=> onBind()}>绑定方案</CustButton>
             <ExportExcel tb={tbref}></ExportExcel>
           </Space>
  </Title>
 
  const rowSelection = {
   onChange: (selectedRowKeys, selectedRows) => {
+    setStrategyId(selectedRowKeys)
     console.log(`selectedRowKeys: ${selectedRowKeys}`, 'selectedRows: ', selectedRows);
   },
   type: "radio",
@@ -236,17 +241,9 @@ export default function Index() {
         <Mainbox>
         <div className="search">
           <Form form={form} layout="inline"   colon={false} >
-            <Space>
-            <Form.Item name="areaId" label="方案名称">
-              <Input placeholder='请输入'></Input>
+             <Form.Item   name="alike">
+              <Serach   onSearch={search.submit} placeholder="请输入方案名称或创建人"></Serach>
             </Form.Item>
-            <Form.Item label="创建人" name="alike"   >
-               <Input placeholder='请输入'></Input>
-            </Form.Item>
-            <Form.Item>
-              <CustButton>查询</CustButton>
-            </Form.Item>
-            </Space>
           </Form>
          
          </div>
@@ -258,7 +255,7 @@ export default function Index() {
        
       </Titlelayout>
       </Mainbox>
-       <CModal title={Ctitle}   onOk={onOk}   width={1380} mold="cust" custft={isadd}  ref={editRef}>
+       <CModal title={Ctitle}   onOk={onOk}   width={1380} mold="cust" custft={isadd==0}  ref={editRef}>
         <Form form={newform} labelAlign="right" labelCol={{flex: "7em"}} preserve={false} size="small" colon={false}>
          {items}
         </Form>
@@ -269,6 +266,7 @@ export default function Index() {
                </CModal>
                <CModal title="批量导入"  ref={exprotref} width={512}   type="drag" onOk={onOkDel} > 
                </CModal>
+               <BindLight  strategyId={strategyId} projectId={projectId} areaId={areaId} ref={bindRef} />
     </Pagecount>
   )
 }

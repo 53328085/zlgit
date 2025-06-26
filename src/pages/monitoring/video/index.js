@@ -131,7 +131,7 @@ export default function Index() {
   }//监控数量 
 
   let [realPlayUrl, setrealPlayUrl] = useState()
-  let [total, settotal] = useState(0)
+ // let [total, settotal] = useState(0)
   const getYsRealPlayUrl = async (record) => {
 
     try {
@@ -220,12 +220,12 @@ export default function Index() {
       alike: alike.trim()
     }
     return Overview(post).then((res) => {
-      let { success, data } = res
-      settotal(Number.isFinite(total) ? total : 0)
+      let { success, data, total } = res
+    //  settotal(Number.isFinite() ? total : 0)
       if (success) {
         return {
           list: Array.isArray(data) ? data : [],
-          total: Number.isFinite(total) ? total : 0
+          total: Number.isInteger(total) ? total : 0
         }
       } else {
         message.error(res.errMsg)

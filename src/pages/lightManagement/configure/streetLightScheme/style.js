@@ -34,6 +34,10 @@ export const CSlider = styled(Slider)`
     .ant-slider-rail,.ant-slider-handle:focus,.ant-slider-track{
         background-color: transparent;
     }
+    .ant-slider-handle {
+      height: 20px;
+      width: 20px;
+    }
 }
 `
 export const Scene = styled.div`
@@ -97,4 +101,26 @@ export const CTag = styled(Tag)`
   justify-content: space-between;
   cursor: pointer;
  }
+`
+export const Bindwrap = styled.div`
+  && {
+   display: grid;
+   grid-template-columns: 200px 1fr 90px 1fr ;
+   column-gap: 16px;
+   .tbwrap {
+    display: flex;
+    flex-direction: column;
+    row-gap: 16px;
+    border: 1px solid #dedede;
+    padding: 8px;
+   }
+   .handler {
+     display: flex;
+     flex-direction: column;
+     justify-content: center;
+     row-gap: 32px;
+    
+   }
+  }
+
 `
