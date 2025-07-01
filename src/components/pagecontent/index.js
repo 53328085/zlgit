@@ -7,13 +7,14 @@ const Pagecontent = styled.div`
     display: grid;
     grid-template-rows: ${p => p.showserach ? '48px 1fr' : '1fr'};
     row-gap: 16px;
+    ${p=> p.custsty};
 `
 export default function Index(props) {
-  const {showserach } = props
+  const {showserach, custsty,...rest } = props
   return (
-    <Pagecontent showserach={showserach}>
+    <Pagecontent showserach={showserach} custsty={custsty}>
       {showserach && <Userserach  /> }
-       <Maincontent {...props}></Maincontent>
+       <Maincontent {...rest}></Maincontent>
     </Pagecontent>
   )
 }

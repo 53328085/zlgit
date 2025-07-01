@@ -1,6 +1,7 @@
 import React, {useRef, forwardRef,useImperativeHandle,useState} from 'react'
 import {Row, Col, message, Button, Form} from "antd"
 import {LeftOutlined,RightOutlined} from "@ant-design/icons"
+
 import CModal from '@com/useModal'
 import {useAntdTable} from "ahooks"
 import UserTable from "@com/useTable";
@@ -14,7 +15,7 @@ export default forwardRef(function Index({strategyId, projectId, areaId}, ref){
   const mRef = useRef()
   const [form] = Form.useForm()
   const [formed] = Form.useForm()
-   const [treeId, setTreeId] = useState()
+   const [treeId, setTreeId] = useState([])
   const onOk =()=> {
 
   }
@@ -30,7 +31,7 @@ export default forwardRef(function Index({strategyId, projectId, areaId}, ref){
         pageSize,
         pageNum:current,
         alike,
-        areaIds:[]
+        areaIds:treeId || []
       }
   
      let {success, data, total,errMsg}  = await  usePageUnBind({}, body)
@@ -63,7 +64,7 @@ export default forwardRef(function Index({strategyId, projectId, areaId}, ref){
         pageSize,
         pageNum:current,
         alike,
-        areaIds:[]
+        areaIds:treeId || []
       }
   
      let {success, data, total,errMsg}  = await  usePageBind({}, body)
@@ -88,7 +89,7 @@ const  {tableProps, run, search, refresh} = useAntdTable(getUnBind, {
   //  manual:true,
     form,
     defaultPageSize: 14,
-    refreshDeps: [strategyId, projectId]
+    refreshDeps: [strategyId, projectId,treeId]
   })
   const {submit} = search
 
@@ -97,7 +98,7 @@ const  {tableProps, run, search, refresh} = useAntdTable(getUnBind, {
     form:formed,
     defaultPageSize: 14,
 
-    refreshDeps: [strategyId, projectId]
+    refreshDeps: [strategyId, projectId,treeId]
   })
   const onOpen =async ()=> {
     try {
@@ -157,7 +158,7 @@ const  {tableProps, run, search, refresh} = useAntdTable(getUnBind, {
     <div>
           <CModal title="路灯绑定"   onOk={onOk}   width={1380} mold="cust"    ref={mRef}>
             <Bindwrap>
-               <UseTree areaId={areaId} setTreeId={setTreeId} setLine={()=>{}} showline={false} datatype={0} energytype={0} ></UseTree>
+               <UseTree areaId={0} setTreeId={setTreeId} setLine={()=>{}} showline={false} datatype={NaN} energytype={1} ></UseTree>
                <div className='tbwrap'> 
                    <Form form={form} layout="inline">
                         <Form.Item label="未选中的路灯" name="alike">

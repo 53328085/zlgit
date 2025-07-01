@@ -10,6 +10,7 @@ import Titlelayout from '@com/titlelayout';
 import {CustButtonT,CustButton, ExportExcel} from "@com/useButton"
 import CModal from '@com/useModal'
 import {selectUser} from "@redux/user"
+import {selectOneLevelDefaultId} from "@redux/systemconfig"
 import {usePage,useAdd,useUpdate,useDelete } from "./api"
 import {cols, items} from "./data"
 import {Mainbox, Title } from './style'
@@ -25,8 +26,9 @@ export default function Index() {
   const {name} = useSelector(selectUser)
   const [form] = Form.useForm()
   const [newform] = Form.useForm()
-  const {projectId, exparams} =useOutletContext()
-  const {areaId} = exparams
+  const {projectId} =useOutletContext()
+  const areaId = useSelector(selectOneLevelDefaultId)
+  
   const [isadd, setIsadd] =useState(1) // 0 新增 1 编辑 2 克隆
   const [total, setTotal] = useState(0)
   const [strategyName, setStrategyName] = useState("")
