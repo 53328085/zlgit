@@ -289,6 +289,31 @@ export function RadioT(props) {
   </Radio.Group>
   )
 }
+export function ChartList(props) {
+  let { text='模式', onChange, ...rest} =  props
+  const {t} = useTranslation("comm");
+  return (
+    <Radio.Group
+    onChange={onChange}
+    defaultValue="chart"
+    buttonStyle="solid"
+    {...rest}
+  >
+    <Radio.Button
+      style={{ width: "96px", marginLeft: 16, textAlign: "center" }}
+      value="chart"
+    >
+      {t("chart", {text})}
+    </Radio.Button>
+    <Radio.Button
+      style={{ width: "96px", textAlign: "center" }}
+      value="list"
+    >
+    {t("list", {text})}
+    </Radio.Button>
+  </Radio.Group>
+  )
+}
 export function CustTransO(props) {   //通用  文字/数字翻译
   let {text:txt, ns="overview", param='', val, params={}} = props 
   const {t} = useTranslation([ns]);
