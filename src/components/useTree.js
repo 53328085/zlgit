@@ -24,7 +24,7 @@ const Treebox = styled.div`
        }
 `
 
-export default memo(function Index({ areaId, setTreeId, setLine, showline = true, datatype = NaN, energytype, sty = { bordered: 'y', pv: '16px' }, ...restprop }) {
+export default memo(function Index({ areaId, setTreeId, setLine, showline = true, datatype = NaN, energytype, sty = { bordered: 'y', pv: '16px' },allselect=true,selectobj, ...restprop }) {
   // datatype =0 或 =2
   const [treeData, setTreeData] = useState([])
 
@@ -250,11 +250,12 @@ export default memo(function Index({ areaId, setTreeId, setLine, showline = true
           onSearch={getTreeData}
         />
     
-      <div style={{display: "flex", alignItems: "center", justifyContent: "space-between"}}>  <Checkbox onChange={allSelected} indeterminate={indeterminate} checked={checked}>全部选中</Checkbox>
+   {allselect && <div style={{display: "flex", alignItems: "center", justifyContent: "space-between"}}>  <Checkbox onChange={allSelected} indeterminate={indeterminate} checked={checked}>全部选中</Checkbox>
        {isshow && <Radio.Group style={radiosty2} onChange={Relevancy} value={schecked}>
       <Radio value={1}>不关联</Radio>
       <Radio value={2}>关联</Radio>
     </Radio.Group> }</div>
+    }
         <Tree
           treeData={treeData}
           checkable

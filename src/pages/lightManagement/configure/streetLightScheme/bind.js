@@ -158,7 +158,9 @@ const  {tableProps, run, search, refresh} = useAntdTable(getUnBind, {
     <div>
           <CModal title="路灯绑定"   onOk={onOk}   width={1380} mold="cust"    ref={mRef}>
             <Bindwrap>
+              <div style={{overflow: "auto"}}>
                <UseTree areaId={0} setTreeId={setTreeId} setLine={()=>{}} showline={false} datatype={NaN} energytype={1} ></UseTree>
+               </div>
                <div className='tbwrap'> 
                    <Form form={form} layout="inline">
                         <Form.Item label="未选中的路灯" name="alike">
