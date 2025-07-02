@@ -224,7 +224,7 @@ export default function Index() {
   <span>路灯控制方案列表</span>
   <Space size={16}>
             <CustButton   onClick={()=> onAdd()}>新建方案</CustButton>
-            <CustButton  disabled={!strategyId}  onClick={()=> onBind()}>绑定方案</CustButton>
+            <CustButton  disabled={!strategyId}  onClick={()=> onBind()}>绑定路灯</CustButton>
             <ExportExcel tb={tbref}></ExportExcel>
           </Space>
  </Title>

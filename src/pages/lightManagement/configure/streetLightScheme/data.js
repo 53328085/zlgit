@@ -81,7 +81,7 @@ export const rules = [
 const w255 = { width: "255px" }; //0：道路灯 1：高杆路灯 2：太阳能路灯 3：景观灯
 const options = [
   { label: "全夜灯", value: "全夜灯" },
-  { label: "半夜等", value: "半夜等" },
+  { label: "半夜灯", value: "半夜灯" },
   { label: "景观灯", value: "景观灯" },
   { label: "泛光灯", value: "泛光灯" },
 ];
@@ -207,7 +207,7 @@ export const items = (
                                 "scenes",
                                 field.name,
                               ])?.["tasks"]?.[inerfiled.name]?.timeType;
-                              console.log(type);
+                             
                               if (type == 0) {
                                 return (
                                   <Space>
@@ -228,6 +228,8 @@ export const items = (
                                         min={0}
                                         max={60}
                                         precision={0}
+                                        style={{width: "140px"}}
+                                        addonAfter="分钟"
                                       ></InputNumber>
                                     </Form.Item>
                                   </Space>
@@ -243,25 +245,43 @@ export const items = (
                               }
                             }}
                           </Form.Item>
-                        {/*   <Form.Item
-                                name={[inerfiled.name, "light"]}
-                                rules={rules}
-                                label="亮度值"
-                              ><CSlider /></Form.Item> */}
-                      <Form.Item label="亮度设置">
-                            <div
-                              style={{ position: "relative", width: "450px" }}
+                     
+                      <Form.Item noStyle   shouldUpdate={(cur, pre) => {                            
+                              return (
+                                cur["scenes"]?.[field.name]?.["tasks"]?.[
+                                  inerfiled.name
+                                ]?.taskType !=
+                                pre["scenes"]?.[field.name]?.["tasks"]?.[
+                                  inerfiled.name
+                                ]?.taskType
+                              );
+                            }}>{
+                          ({getFieldValue})=> {
+                            let type = getFieldValue([
+                              "scenes",
+                              field.name,
+                            ])?.["tasks"]?.[inerfiled.name]?.taskType;
+                          
+                          if(type == 0) return <div
+                              style={{ position: "relative", width: "548px" }}
                             >
                               <img
                                 src={imgsrc["light"]}
-                                style={{ position: "absolute" }}
+                                style={{ position: "absolute",left:"98px" }}
                               />
                               <Form.Item
+                               label="亮度设置"
                                 name={[inerfiled.name, "light"]}
-                                rules={rules}
-                                noStyle
+                                labelCol={{flex: "98px"}}
+                                rules={[
+                                  {
+                                    required: type===0
+                                  }
+                                ]} 
                               ><Custslider step={null} marks={marks} /></Form.Item>
                             </div>
+                          }
+                            }
                           </Form.Item>
                         </div>
                       ))}
