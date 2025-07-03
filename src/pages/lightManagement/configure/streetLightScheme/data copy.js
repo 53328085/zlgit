@@ -143,32 +143,7 @@ export const items = (
                                 closable={arr.length !== 1}
                                 onClose={() => inmethods.remove(i.name)}
                               >
-                                <Form.Item noStyle  shouldUpdate={(cur, pre) => {                            
-                              return (
-                                cur["scenes"]?.[field.name]?.["tasks"]?.[i.name] != pre["scenes"]?.[field.name]?.["tasks"]?.[i.name]
-                              );
-                            }}>
-                              {
-                                ({getFieldValue})=> {
-                                   const values  = getFieldValue([
-                                    "scenes",
-                                    field.name,
-                                  ])?.["tasks"]?.[i.name] ;
-                                  console.log(values)
-                                  const {timeType, excueTime, timing, excueTime2,taskType} = values
-                                  const type = ["开","关"][taskType]
-                                  if(timeType==0 && (excueTime || timing)) {
-                                    return  <span>{excueTime}{timing}{type}</span>
-                                  }else if(timeType==1 && excueTime2) {
-                                    return <span> {excueTime2}{type}</span>
-                                  }else {
-                                   return <span> 时间点{idx + 1}</span> 
-                                  }
-                                 
-                                }
-                              }
-                            </Form.Item>
-                               
+                                时间点{idx + 1}
                               </CTag>
                             );
                           })}

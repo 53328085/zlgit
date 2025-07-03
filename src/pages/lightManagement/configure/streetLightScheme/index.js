@@ -28,6 +28,8 @@ export default function Index() {
   const [newform] = Form.useForm()
   const {projectId} =useOutletContext()
   const areaId = useSelector(selectOneLevelDefaultId)
+  const sence = Form.useWatch("scenes", newform)
+  console.log(sence)
   
   const [isadd, setIsadd] =useState(1) // 0 新增 1 编辑 2 克隆
   const [total, setTotal] = useState(0)

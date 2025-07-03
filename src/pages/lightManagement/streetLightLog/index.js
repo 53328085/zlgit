@@ -98,7 +98,7 @@ export default function Index() {
                    if(failtotal==0 && successtotal > 0) {
                      percenttotal="100%"
                    }else if(failtotal!==0 && successtotal!==0) {
-                      percenttotal =  (parseFloat(failtotal / (failtotal+successtotal))*100)?.toFixed(2) + "%"
+                      percenttotal =  (parseFloat(successtotal / (failtotal+successtotal))*100)?.toFixed(2) + "%"
                    }
                    return (
                     <>
