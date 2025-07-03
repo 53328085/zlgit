@@ -46,6 +46,7 @@ export  const Mainwrap = styled.div`
            padding: 16px;
            ol {
             padding-left: 16px;
+            margin-bottom: 0px;
            }
          }
        }

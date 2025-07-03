@@ -32,7 +32,7 @@ export default function Index() {
       }
        let {data,success, total} = await useDetail({},{projectId, schemeId, pageNum:current, pageSize})
        if(success && Array.isArray(data) && data.length) {
-          setExplains(data)
+          setExplains(Array.isArray(data[0].senceDes) ? data[0].senceDes : [] )
           return {
              list: Array.isArray(data[0].streetLightInfo) ? data[0].streetLightInfo : [],
              total
