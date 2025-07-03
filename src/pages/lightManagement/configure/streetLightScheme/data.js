@@ -160,7 +160,7 @@ export const items = (
                                   if(timeType==0 && (excueTime || timing)) {
                                     return  <span>{excueTime}{timing}{type}</span>
                                   }else if(timeType==1 && excueTime2) {
-                                    return <span> {excueTime2}{type}</span>
+                                    return <span> {excueTime2?.format?.("HH:mm")}{type}</span>
                                   }else {
                                    return <span> 时间点{idx + 1}</span> 
                                   }
