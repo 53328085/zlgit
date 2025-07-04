@@ -11,7 +11,7 @@ import Titlelayout from "@com/titlelayout";
 import {useLocation} from "react-router-dom"
 const { Search } = Input;
 
-const { QuerySpaceTrees } = energyShare
+const { QuerySpaceTrees,DMAGetTree } = energyShare
 const { LineManagerQuery } = Monitoring.LineManager // 线路查询
 const { queryEnergyCategoryTree } = EnergyPublicRuntime
 const Treebox = styled.div`
@@ -19,12 +19,13 @@ const Treebox = styled.div`
        grid-template-rows: ${(props) => props.showline == "false" ? '32px 32px 1fr' : '32px 32px 32px 556px'};
        row-gap: 16px;
        flex: 1;
+       height: 100%;
        .ant-tree{
-        overflow-y: auto;
+        /* overflow-y: auto; */
        }
 `
 
-export default memo(function Index({ areaId, setTreeId, setLine, showline = true, datatype = NaN, energytype, sty = { bordered: 'y', pv: '16px' },allselect=true,selectobj, ...restprop }) {
+export default memo(function Index({ areaId, setTreeId, setLine, showline = true, datatype = NaN, energytype, sty = { bordered: 'y', pv: '16px' },allselect=true,selectobj,multiple, ...restprop }) {
   // datatype =0 或 =2
   const [treeData, setTreeData] = useState([])
 
@@ -40,7 +41,7 @@ export default memo(function Index({ areaId, setTreeId, setLine, showline = true
   const projectId = useSelector(selectProjectId)
   const [typeTree, setTypeTree] = useState(0)
 
-  const treekey = datatype === 0 ? 'areaId' : datatype === 2 ? 'id' : typeTree == 0 ? "areaId" : "id";
+  const treekey = datatype === 0 ? 'areaId' : datatype === 2||3 ? 'id' :  typeTree == 0 ? "areaId" : "id";
 
   // const treekey =  typeTree == 0 ?  "areaId" : "id" ; 
   const [expandedKeys, setExpandedKeys] = useState([]);
@@ -75,7 +76,12 @@ export default memo(function Index({ areaId, setTreeId, setLine, showline = true
         } else if (treekey == 'id') {
           expand.push(id)
         }
-        arr.push(node[type])
+        if(allselect){
+          arr.push(node[type])
+        }
+        if(!allselect&&arr.length==0){
+          arr.push(nodes[0][type])
+        }
         if (node[child] && Array.isArray(node[child]) && node[child]?.length > 0) {
           getId(node[child], type, child)
         }
@@ -83,11 +89,11 @@ export default memo(function Index({ areaId, setTreeId, setLine, showline = true
     }
   }
 
-  const fieldNames = datatype === 2 ? { title: 'name', key: treekey, children: 'childs' } : { title: 'name', key: treekey, children: 'nodes' }
+  const fieldNames = datatype === 2 ? { title: 'name', key: treekey, children: 'childs' } :datatype === 3?{title:'name',key:treekey,children:'children'}: { title: 'name', key: treekey, children: 'nodes' }
   //const fieldNames= {title:'name',key: treekey,children:'nodes'}  
 
   //获取树的数据，0 网格, 1 线路, 2 公共能耗分类
-
+  console.log("expand",expand,"fieldNames",fieldNames)
   const getTreeData = async (name = '') => {
     let idx = Number.isInteger(datatype) ? datatype : typeTree;
 
@@ -109,11 +115,12 @@ export default memo(function Index({ areaId, setTreeId, setLine, showline = true
         projectId,
         categoryType: energytype,
         name
-      }
+      },
+      projectId
 
       ][idx]
 
-      let hander = [QuerySpaceTrees, LineManagerQuery, queryEnergyCategoryTree][idx]
+      let hander = [QuerySpaceTrees, LineManagerQuery, queryEnergyCategoryTree,DMAGetTree][idx]
 
       /*  if(lineType == "3") {
          hander = QuerySpaceTrees
@@ -136,6 +143,9 @@ export default memo(function Index({ areaId, setTreeId, setLine, showline = true
             break;
           case 2:
             getId(data, 'id', 'childs')
+            break;
+          case 3:
+            getId(data, 'id', 'children')
             break;
           default:
             break
@@ -173,14 +183,19 @@ export default memo(function Index({ areaId, setTreeId, setLine, showline = true
 
   }
   // 根据区域查询
-  const onCheck = (data) => { // 受控
-    console.log(data)
+  const onCheck = (data,e) => { // 受控
+    console.log(data,e)
     let checked 
-    if(schecked==1) {
-       checked =data.checked
-    }else {
-       checked = data;
+    if(multiple){
+      if(schecked==1) {
+        checked =data.checked
+     }else {
+        checked = data;
+     }
+    }else{
+      checked = [e.node.id]
     }
+    
 
     let f = checked?.length > 0 && checked?.length < treeIdRef.current?.length
     setIndeterminate(f)
@@ -259,7 +274,6 @@ export default memo(function Index({ areaId, setTreeId, setLine, showline = true
         <Tree
           treeData={treeData}
           checkable
-
           onExpand={onExpand}
           expandedKeys={expandedKeys}
           checkedKeys={checkedKeys}

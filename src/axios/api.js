@@ -2478,6 +2478,7 @@ export class energyShare {
 
   static queryLine = (data) =>
     server.post(`Energy/EnergyTimeShareRuntime/QueryElectricByLine`, data); //线路查询
+  static DMAGetTree =(projectId)=>server.get(`DMA/DMAPartition/GetTree?projectId=${projectId}`);//获取DMA树
 }
 //数据报表
 export class energyReport {
