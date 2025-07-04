@@ -21,11 +21,11 @@ const Treebox = styled.div`
        flex: 1;
        height: 100%;
        .ant-tree{
-        overflow-y: auto;
+        /* overflow-y: auto; */
        }
 `
 
-export default memo(function Index({ areaId, setTreeId, setLine, showline = true, datatype = NaN, energytype, sty = { bordered: 'y', pv: '16px' },allselect=true,selectobj, ...restprop }) {
+export default memo(function Index({ areaId, setTreeId, setLine, showline = true, datatype = NaN, energytype, sty = { bordered: 'y', pv: '16px' },allselect=true,selectobj,multiple, ...restprop }) {
   // datatype =0 或 =2
   const [treeData, setTreeData] = useState([])
 
@@ -76,7 +76,12 @@ export default memo(function Index({ areaId, setTreeId, setLine, showline = true
         } else if (treekey == 'id') {
           expand.push(id)
         }
-        arr.push(node[type])
+        if(allselect){
+          arr.push(node[type])
+        }
+        if(!allselect&&arr.length==0){
+          arr.push(nodes[0][type])
+        }
         if (node[child] && Array.isArray(node[child]) && node[child]?.length > 0) {
           getId(node[child], type, child)
         }
@@ -178,14 +183,19 @@ export default memo(function Index({ areaId, setTreeId, setLine, showline = true
 
   }
   // 根据区域查询
-  const onCheck = (data) => { // 受控
-    console.log(data)
+  const onCheck = (data,e) => { // 受控
+    console.log(data,e)
     let checked 
-    if(schecked==1) {
-       checked =data.checked
-    }else {
-       checked = data;
+    if(multiple){
+      if(schecked==1) {
+        checked =data.checked
+     }else {
+        checked = data;
+     }
+    }else{
+      checked = [e.node.id]
     }
+    
 
     let f = checked?.length > 0 && checked?.length < treeIdRef.current?.length
     setIndeterminate(f)
@@ -264,7 +274,6 @@ export default memo(function Index({ areaId, setTreeId, setLine, showline = true
         <Tree
           treeData={treeData}
           checkable
-
           onExpand={onExpand}
           expandedKeys={expandedKeys}
           checkedKeys={checkedKeys}

@@ -20,6 +20,8 @@ export default function Index() {
             showline={false}
             datatype={3}
             energytype={1}
+            multiple={false}
+            allselect={false}
           />
         </div>
         <div className="right-box">
