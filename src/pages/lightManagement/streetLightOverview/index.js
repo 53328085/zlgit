@@ -123,7 +123,7 @@ export default function Index() {
           <div className="shownum">
             <img src={imgurl["todayLightNum"]}></img>
             <div className='data'>
-              <span className='title'>今日路灯用电（Kwh）</span>
+              <span className='title'>今日路灯用电（kWh）</span>
               <span className='num'>{datas?.todayEnergy}</span>
             </div>
           </div>

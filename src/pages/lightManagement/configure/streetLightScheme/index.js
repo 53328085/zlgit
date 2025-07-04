@@ -28,6 +28,8 @@ export default function Index() {
   const [newform] = Form.useForm()
   const {projectId} =useOutletContext()
   const areaId = useSelector(selectOneLevelDefaultId)
+  const sence = Form.useWatch("scenes", newform)
+  console.log(sence)
   
   const [isadd, setIsadd] =useState(1) // 0 新增 1 编辑 2 克隆
   const [total, setTotal] = useState(0)
@@ -224,7 +226,7 @@ export default function Index() {
   <span>路灯控制方案列表</span>
   <Space size={16}>
             <CustButton   onClick={()=> onAdd()}>新建方案</CustButton>
-            <CustButton  disabled={!strategyId}  onClick={()=> onBind()}>绑定方案</CustButton>
+            <CustButton  disabled={!strategyId}  onClick={()=> onBind()}>绑定路灯</CustButton>
             <ExportExcel tb={tbref}></ExportExcel>
           </Space>
  </Title>
