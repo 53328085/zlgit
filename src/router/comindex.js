@@ -95,7 +95,8 @@ export default function Index() {
       "spareParts", "ledgerManagement", "spareParts"
     ],
     lightManagement: [  // 照明控制
-      "streetLightEnergyMonitor"
+      "streetLightEnergyMonitor",
+      "lightControl",
     ]
   }); // 需要显示搜索的页面
 
@@ -258,6 +259,10 @@ export default function Index() {
         switch(nested) {
           case "streetLightEnergyMonitor" :
             setConfig({isdate: true, shiftNo: true})
+            break
+         case "lightControl":
+              setConfig({ isview: true, isdate: true, shiftNo: true });
+              break;
         }
       }
       /*  if (primary == "runtimeQuota") {

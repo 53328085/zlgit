@@ -1,0 +1,249 @@
+.content {
+    flex: 1;
+    display: flex;
+    align-items: stretch;
+    justify-content: space-between;
+    flex-direction: column;
+    row-gap: 16px;
+    .contentTop {
+      //  width: 100%;
+       // height: 328px;
+        flex: 1 1 328px;
+        display: flex;
+      //  align-items: center;
+        justify-content: space-between;
+        column-gap: 16px;
+        .contentTopLeft {
+            flex:1 1 1264px;
+            
+            background-color: #fff;
+        }
+
+        .contentTopRight {
+            flex:1 1 400px;
+           // height: 100%;
+            background-color: #fff;
+
+            .airEnergy {
+                display: flex;
+                flex-direction: row;
+                justify-content: space-between;
+                align-items: flex-start;
+                padding-top: 32px;
+
+                .airEnergyImage {
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    margin-top: 16px;
+                }
+
+                .airEnergyData {
+                    display: grid;
+                    grid-template-rows: 50px;
+                    grid-template-columns: repeat(2, 120px);
+
+                    p {
+                        line-height: 50px;
+                        text-align: left;
+                    }
+                }
+            }
+        }
+    }
+
+    .contentBottom {
+        width: 100%;
+        height: 456px;
+        background-color: #fff;
+        padding: 16px;
+
+        .contentBottomTop {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+        }
+
+        .contentBottomBottom {
+            display: flex;
+            flex-direction: row;
+            justify-content: flex-start;
+            align-items: center;
+            position: relative;
+
+            .boxList {
+                overflow-x: hidden;
+                width: 1570px;
+                display: flex;
+                flex-direction: row;
+                justify-content: flex-start;
+                align-items: center;
+            }
+
+            .pageBtn {
+                width: 55px;
+                height: 100%;
+                position: absolute;
+                right: 0;
+                z-index: 100;
+                display: flex;
+                align-items: center;
+                justify-content: space-around;
+                flex-direction: column;
+            }
+        }
+
+        .airBox {
+            width: 160px;
+            height: 360px;
+            background: linear-gradient(180deg, rgba(0, 51, 204, 1) 0%, rgba(0, 51, 204, 1) 0%, rgba(51, 204, 255, 1) 100%, rgba(51, 204, 255, 1) 100%);
+            margin-right: 16px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            padding: 16px;
+
+            .dividerLine {
+                color: #fff;
+
+                :global(.ant-divider-dashed) {
+                    border-width: 0px 0px 1px;
+                    background-color: #fff;
+                }
+
+            }
+
+            .airBoxName {
+                color: #fff;
+                text-align: center;
+                margin-top: 8px;
+                margin-bottom: 32px;
+            }
+
+            .airBoxValue {
+                color: #66FF00;
+                text-align: right;
+                margin: 8px 0;
+            }
+
+            .airState {
+                display: flex;
+                flex-direction: row;
+                align-items: center;
+                margin-top: 10px;
+
+                span {
+                    margin-left: 8px;
+                    color: #fff;
+                }
+            }
+
+            .airBtn {
+                background-color: rgba(0, 51, 102, 1);
+                border: none;
+
+                span {
+                    color: #fff;
+                }
+            }
+
+            .airBtnOff {
+                background-color: rgba(0, 51, 102, 0.5);
+                border: none;
+
+                span {
+                    color: rgba(255, 255, 255, 0.5);
+                }
+            }
+        }
+    }
+}
+
+.airModal {
+    :global(.ant-modal-content) {
+
+
+        :global(.ant-modal-header) {
+            border: none;
+            padding-bottom: 0 !important;
+        }
+
+        :global(.ant-modal-footer) {
+            border: none;
+            text-align: center;
+            padding: 16px;
+        }
+
+        :global(.ant-modal-close-x) {
+            font-size: 32px;
+        }
+    }
+}
+
+.airModalBox {
+    width: 100%;
+    height: 373px;
+    border: 1px solid rgb(215, 215, 215);
+    background-color: #fff;
+    padding: 32px;
+    display: grid;
+    grid-template-columns: repeat(3, 270px);
+
+    .airModalBoxBtn {
+        position: relative;
+        width: 180px;
+        height: 178px;
+        border: 1px solid rgb(215, 215, 215);
+
+        .airModalName {
+            padding-left: 12px;
+            line-height: 30px;
+        }
+
+        .airModalImage {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            height: 104px;
+        }
+
+        .airModalState {
+            width: 180px;
+            height: 44px;
+            border-top: 1px solid rgba(204, 204, 204, 1);
+            background-color: rgba(242, 242, 242, 1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #237AE4;
+            font-size: 16px;
+            position: absolute;
+            bottom: 0;
+
+            span {
+                font-size: 14px;
+                text-align: left;
+                color: #515151;
+                line-height: 44px;
+            }
+        }
+    }
+
+    Button {
+        width: 180px;
+        height: 42px;
+    }
+
+    .onClickState {
+        background-color: #237AE4;
+        color: #fff;
+    }
+}
+
+.custmodal {
+    :global(.ant-btn-default) {
+        display: none;
+    }
+}
