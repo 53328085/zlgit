@@ -3,7 +3,7 @@ import { useSelector } from 'react-redux'
 
 import styled from 'styled-components'
 
-import { energyShare, Monitoring, EnergyPublicRuntime } from '@api/api'
+import { energyShare, Monitoring, EnergyPublicRuntime ,DMAPartition} from '@api/api'
 import { selectProjectId, selectOneLevel } from '@redux/systemconfig.js'
 import { message, Input, Tree, Radio, Checkbox , Switch} from 'antd'
 
@@ -11,7 +11,8 @@ import Titlelayout from "@com/titlelayout";
 import {useLocation} from "react-router-dom"
 const { Search } = Input;
 
-const { QuerySpaceTrees,DMAGetTree } = energyShare
+const { QuerySpaceTrees, } = energyShare
+const {DMAGetTree} = DMAPartition
 const { LineManagerQuery } = Monitoring.LineManager // 线路查询
 const { queryEnergyCategoryTree } = EnergyPublicRuntime
 const Treebox = styled.div`
