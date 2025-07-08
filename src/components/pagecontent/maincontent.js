@@ -95,7 +95,7 @@ export default function Maincontent(props) {
     
     setvalue(key)
     setDefaultTab(key)
-    let {search} = location || {}
+    let {search, hash} = location || {}
   
     let query =search ? new URLSearchParams(search) : new URLSearchParams()
    
@@ -104,9 +104,9 @@ export default function Maincontent(props) {
     }else {
         query?.append('item', key)
     }
-  
-  
-  navigate(`${pathName}?${query.toString()}`, {state: urlstate})
+  let url = hash ? `${pathName}?${query.toString()}${hash}` : `${pathName}?${query.toString()}`
+  navigate(url, {state: urlstate})
+ // navigate(`${pathName}?${query.toString()}`, {state: urlstate})
  }
 
 useEffect(() => {   

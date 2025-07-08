@@ -282,6 +282,7 @@ export default memo(function Index({ areaId, setTreeId, setLine, showline = true
           fieldNames={fieldNames}
           checkStrictly={strictyly} // true : 完全受控，父子节点不关联, false : 父子节点关联
           indeterminate={indeterminate}
+          {...restprop}
         />
       </Treebox>
     </Titlelayout>

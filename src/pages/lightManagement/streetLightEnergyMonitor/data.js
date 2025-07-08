@@ -19,3 +19,7 @@ export   const cols =[ // 能耗监测
       sorter: (a, b) => parseFloat(a.rate) - parseFloat(b.rate)
     },
   ]
+  export const tabs =[
+    {
+    
+  }]
