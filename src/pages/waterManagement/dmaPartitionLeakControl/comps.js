@@ -1,6 +1,7 @@
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState, useRef, useContext } from "react";
 import { Header, Card, StyledRadioGroup, AlarmWrapper } from "./style";
 import { SearchOutlined } from "@ant-design/icons";
+import CustContext from "@com/content";
 import {
   Form,
   Select,
@@ -23,13 +24,14 @@ import {
   PartitionAlarmTableColumns,
   PartitionAlarmTableData,
   AlarmLevel,
+  AlarmHeader,
 } from "./data";
 import BlueColumn from "@com/bluecolumn";
 import UseTable from "@com/useTable";
 import { drawEcharts } from "@com/useEcharts";
 
 //头部标签
-export const Tabs = ({ onValuesChange, setTabId,form }) => {
+export const Tabs = ({ onValuesChange, setTabId, form }) => {
   const { Item } = Form;
   const [type, setType] = useState("date");
 
@@ -85,7 +87,8 @@ export const Tabs = ({ onValuesChange, setTabId,form }) => {
 };
 
 //漏损分析
-export const Leakage = () => {
+export const Leakage = ({ analysisData }) => {
+  console.log("analysisData", analysisData);
   const dviderCss = {
     height: "174px", // 控制高度
     margin: "0 16px", // 控制左右间距
@@ -94,18 +97,28 @@ export const Leakage = () => {
   };
   const guageRef = useRef();
   const text1 = [
-    { label: "管网漏损率(%)", value: 0, color: "#ff0303" },
-    { label: "管网漏损量(m³)", value: 0, color: "#ff0303" },
-    { label: "分区供水量（m³）", value: 0 },
-    { label: "分区用水量（m³）", value: 0 },
+    {
+      label: "管网漏损率(%)",
+      value: analysisData.leakageRate ?? 0,
+      color: "#ff0303",
+    },
+    {
+      label: "管网漏损量(m³)",
+      value: analysisData.leakageValue ?? 0,
+      color: "#ff0303",
+    },
+    { label: "分区供水量（m³）", value: analysisData.supplyValue ?? 0 },
+    { label: "分区用水量（m³）", value: analysisData.useValue ?? 0 },
   ];
   const text2 = [
-    { label: "管理总表（只）", value: 0 },
-    { label: "管理分表（只）", value: 0 },
-    { label: "用水表（只）", value: 0 },
-    { label: "抄见率（%)", value: 0 },
+    { label: "管理总表（只）", value: analysisData.manageMainMeterCount ?? 0 },
+    { label: "管理分表（只）", value: analysisData.manageSubMeterCount ?? 0 },
+    { label: "用水表（只）", value: analysisData.waterMeterCount ?? 0 },
+    { label: "抄见率（%)", value: analysisData.readingRate ?? 0 },
   ];
+
   useEffect(() => {
+    Guage_Data.series[0].data[0]["value"] = analysisData.leakageRateTarget ?? 0;
     drawEcharts(guageRef.current, {
       ...Guage_Data,
       type: 2,
@@ -145,6 +158,8 @@ export const Leakage = () => {
 
 //漏损分析部分的组件
 const LeakageContent = ({ title, type = "warn", textList = [] }) => {
+  // const analysisData = useContext(CustContext)
+
   return (
     <div className="leakage-content">
       <div className="leakage-title">
@@ -171,21 +186,37 @@ const LeakageContent = ({ title, type = "warn", textList = [] }) => {
 };
 
 //漏损趋势
-export const LeakageTrend = () => {
+export const LeakageTrend = ({ trendData }) => {
   const [type, setType] = useState("1");
-  const [dataSource, setDataSource] = useState([
-    { key: "1", name: "张三", age: 32 },
-    { key: "2", name: "李四", age: 42 },
-  ]);
+  console.log("trendData", trendData);
   const lineChartRef = useRef();
   const changeType = (e) => {
     setType(e.target.value);
   };
   useEffect(() => {
     let myChart = null;
-    if (type == "1" && lineChartRef.current) {
-      myChart = echarts.init(lineChartRef.current);
-      myChart.setOption(Double_Option);
+    let xAxis = [];
+    let topData1 = [];
+    let topData2 = [];
+    let bottomData1 = [];
+    let bottomData2 = [];
+    if (type == "1") {
+      if (trendData.data && Array.isArray(trendData.data)) {
+        xAxis = trendData.data.map((it) => it.partitionTime);
+        topData1 = trendData.data.map((it) => it.leakageValue);
+        topData2 = trendData.data.map((it) => it.leakageRate);
+        bottomData1 = trendData.data.map((it) => it.supplyValue);
+        bottomData2 = trendData.data.map((it) => it.useValue);
+      }
+      if (lineChartRef.current) {
+        Double_Option.xAxis[0].data = Double_Option.xAxis[1].data = xAxis;
+        Double_Option.series[0].data = topData1;
+        Double_Option.series[1].data = topData2;
+        Double_Option.series[2].data = bottomData1;
+        Double_Option.series[3].data = bottomData2;
+        myChart = echarts.init(lineChartRef.current);
+        myChart.setOption(Double_Option);
+      }
     }
   }, [type]);
   return (
@@ -214,12 +245,12 @@ export const LeakageTrend = () => {
           style={{ display: type == "1" ? "block" : "none" }}
         ></div>
         <div
-          style={{ display: type == "2" ? "block" : "none" }}
+          style={{ display: type == "2" ? "flex" : "none" }}
           className="table"
         >
           <UseTable
             columns={TbHeader}
-            dataSource={dataSource}
+            dataSource={trendData}
             pagination={{ defaultPageSize: 10, defaultCurrent: 1 }}
           ></UseTable>
         </div>
@@ -229,13 +260,34 @@ export const LeakageTrend = () => {
 };
 
 //分区报警
-export const PartAlarm = (props) => {
+export const PartAlarm = ({ pageInfo, onChangeTbValues, alarmData }) => {
   const { RangePicker } = DatePicker;
+  const warnList = ["一级 (特别严重)", "二级 (严重)", "三级 (较重)", "四级 (一般)"];
+  const warnRules=["持续多天未生成漏损","分区漏损率连续超限","分区漏损量连续超限"]
+  const Warn = ({ warnState }) => {
+    return (<div className="warn"><div className="warnState">{warnList[warnState-1]}</div></div>);
+  };
+
+  PartitionAlarmTableColumns[1]["render"] = (text, record) => {
+   return(<Warn warnState={text}></Warn>) ;
+  };
+
+
+  const WarnRules=({children})=>{
+    return <span>{warnRules[children]}</span>
+  }
+  PartitionAlarmTableColumns[0]["render"] = (text, record) => {
+    return <WarnRules>{text-1}</WarnRules>
+  };
   return (
     <AlarmWrapper>
-      <Form layout="inline">
+      <Form
+        layout="inline"
+        onValuesChange={onChangeTbValues}
+        initialValues={AlarmHeader}
+      >
         {/* inline 布局自动水平排列子元素 */}
-        <Form.Item name="dateRange">
+        {/* <Form.Item name="dateRange">
           <RangePicker style={{ width: 376 }} />
         </Form.Item>
         <Form.Item style={{ marginLeft: 16 }}>
@@ -251,11 +303,11 @@ export const PartAlarm = (props) => {
           >
             查询
           </Button>
-        </Form.Item>
-        <Divider
+        </Form.Item> */}
+        {/* <Divider
           type="vertical"
           style={{ borderColor: "#e4e4e4", height: 32, margin: "0 24px" }}
-        ></Divider>
+        ></Divider> */}
         <Form.Item label="报警等级" name="type">
           <Select
             placeholder="请选择类型"
@@ -267,8 +319,8 @@ export const PartAlarm = (props) => {
       <div className="tableWrapper">
         <UseTable
           columns={PartitionAlarmTableColumns}
-          dataSource={PartitionAlarmTableData}
-          pagination={{ defaultPageSize: 10, defaultCurrent: 1 }}
+          dataSource={alarmData}
+          pagination={pageInfo}
         ></UseTable>
       </div>
     </AlarmWrapper>

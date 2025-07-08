@@ -4145,4 +4145,6 @@ export class Cabinets {
 export class DMAPartition{
   static DMAGetTree =(projectId)=>server.get(`DMA/DMAPartition/GetTree?projectId=${projectId}`);//获取DMA树
   static LeakageChart =(params)=>server.get(`DMA/DMAPartition/LeakageChart`,{params});//获取分区漏损图表
+  static LeakageInfo =(params)=>server.get(`/DMA/DMAPartition/LeakageInfo`,{params});//获取分区漏损概览
+  static GetListPartitionAlarmPaged =(params)=>server.get(`/DMA/DMAPartition/GetListPartitionAlarmPaged`,{params});//获取DMA分区报警列表
 }
