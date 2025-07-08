@@ -14,8 +14,12 @@ export const Container = styled.div`
     margin-left: 18px;
     display: grid;
     grid-template-rows: 48px 233px 1fr;
+    .card{
+      width: 100%;
+    }
     .card2 {
       margin-top: 16px;
+      width: 100%;
     }
   }
 `;
@@ -28,12 +32,25 @@ export const Header = styled.div`
   align-items: center;
   border: 1px solid #dedede;
   padding-right: 18px;
+  overflow: hidden;
+  border-radius: 4px;
   .ant-radio-button-wrapper {
     border: none;
     height: 100%;
     box-shadow: none;
     border-radius: 0;
     background: #f0f0f0;
+    height: 48px;
+    line-height: 48px;
+    width: 144px;
+    text-align:center;
+    font-size:14px;
+    &:nth-of-type(1) {
+      margin-right: 16px;
+    }
+    .ant-radio-button-checked::before{
+       background:#fff;
+    }
   }
 `;
 export const Card = styled.div`
@@ -96,8 +113,10 @@ export const Card = styled.div`
 export const StyledRadioGroup = styled(Radio.Group)`
   .ant-radio-button-wrapper {
     margin-left: auto;
-    /* border-radius: 20px; */
-    /* margin-right: 8px; */
+    height: 32px;
+    line-height: 32px;
+    font-size:14px;
+    border-radius: 2px;
 
     &:first-child {
       border-radius: 0;

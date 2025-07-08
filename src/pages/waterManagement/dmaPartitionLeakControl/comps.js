@@ -1,6 +1,7 @@
 import { useEffect, useState, useRef, useContext } from "react";
 import { Header, Card, StyledRadioGroup, AlarmWrapper } from "./style";
-import { SearchOutlined } from "@ant-design/icons";
+import i18 from '../../../i18n'
+import { SearchOutlined ,DownloadOutlined} from "@ant-design/icons";
 import CustContext from "@com/content";
 import {
   Form,
@@ -29,6 +30,7 @@ import {
 import BlueColumn from "@com/bluecolumn";
 import UseTable from "@com/useTable";
 import { drawEcharts } from "@com/useEcharts";
+import {AllExportButton} from "@com/useButton"
 
 //头部标签
 export const Tabs = ({ onValuesChange, setTabId, form }) => {
@@ -186,10 +188,11 @@ const LeakageContent = ({ title, type = "warn", textList = [] }) => {
 };
 
 //漏损趋势
-export const LeakageTrend = ({ trendData }) => {
+export const LeakageTrend = ({ trendData ,getLeakageChart}) => {
   const [type, setType] = useState("1");
   console.log("trendData", trendData);
   const lineChartRef = useRef();
+  const tableRef=useRef();
   const changeType = (e) => {
     setType(e.target.value);
   };
@@ -226,7 +229,10 @@ export const LeakageTrend = ({ trendData }) => {
         fontWeight="bold"
         name="漏损趋势"
         styled={{ color: "#515151" }}
-      >
+      > 
+      <div  style={{ marginLeft: "auto",display: "flex",alignItems: "center" }}>
+      <Button  icon={<DownloadOutlined />} style={{borderRadius: "2px",width: "96px",display:type==1?"none":"block"}} onClick={()=>{tableRef.current.downloadAll()}} >
+      {i18.t('export', {ns: "button"})}</Button>
         <StyledRadioGroup
           block
           options={Type_Options}
@@ -234,9 +240,12 @@ export const LeakageTrend = ({ trendData }) => {
           optionType="button"
           buttonStyle="solid"
           size="large"
-          style={{ marginLeft: "auto" }}
+          style={{marginLeft: "24px"}}
           onChange={changeType}
+          
         />
+      </div>
+        
       </BlueColumn>
       <div className="context">
         <div
@@ -252,6 +261,8 @@ export const LeakageTrend = ({ trendData }) => {
             columns={TbHeader}
             dataSource={trendData}
             pagination={{ defaultPageSize: 10, defaultCurrent: 1 }}
+            onExport={getLeakageChart}
+            ref={tableRef}
           ></UseTable>
         </div>
       </div>

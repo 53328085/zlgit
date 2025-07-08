@@ -130,7 +130,6 @@ export default memo(function Index({ areaId, setTreeId, setLine, showline = true
         setExpandedKeys(expand)
         setTreeId(arr);
         return
-        console.log(data)
       }
       let hander = [QuerySpaceTrees, LineManagerQuery, queryEnergyCategoryTree,DMAGetTree][idx]
 
@@ -304,7 +303,7 @@ export default memo(function Index({ areaId, setTreeId, setLine, showline = true
 
 
 /**
- * 前端过滤树结构数据
+ * 前端过滤树结构数据(本地过滤)
  */
 const filterTreeIterative=(tree,keyword)=>{
   if(!keyword) return tree

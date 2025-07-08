@@ -78,10 +78,17 @@ export default function Index() {
     try {
       const res = await DMAPartition.LeakageChart(parmas);
       if (res.success) {
-
         setTrendData(res.data)
+        return {
+          list:res.data??[],
+          total:res.data?res.data.length:0
+        }
       } else {
         message.error(res.errMsg);
+        return {
+          list:[],
+          total:0
+        }
       }
     } catch (error) {
       throw new Error(error);
@@ -138,6 +145,7 @@ export default function Index() {
             setTabId={setTabId}
             onValuesChange={onValuesChange}
             form={form}
+          
           ></Tabs>
           {tabId == "1" ? (
             <>
@@ -147,7 +155,7 @@ export default function Index() {
               </div>
             {/* </CustContext.Provider> */}
               <div className="card2">
-                <LeakageTrend trendData={trendData}/>
+                <LeakageTrend trendData={trendData}   getLeakageChart={getLeakageChart}/>
               </div>
             </>
           ) : (

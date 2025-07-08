@@ -42,7 +42,7 @@ export const Guage_Data = {
       },
       axisLine: {
         lineStyle: {
-          width: 6,
+          width: 10,
           color: [
             [0.33, "#3d94ff"],
             [0.66, "#ffac2a"],
@@ -222,34 +222,54 @@ export const TbHeader = [
     dataIndex: "partitionTime",
     key: "partitionTime",
     sorter: {
-      compare: (a, b) => a.name - b.name,
-      multiple: 3,
+      compare: (a, b) => a.partitionTime - b.partitionTime,
+      multiple: 1,
     },
   },
   {
     title: "分区供水量（m³）",
     dataIndex: "supplyValue",
     key: "supplyValue",
+    sorter: {
+      compare: (a, b) => a.supplyValue - b.supplyValue,
+      multiple: 2,
+    },
   },
   {
     title: "分区用水量（m³）",
     dataIndex: "useValue",
     key: "useValue",
+    sorter: {
+      compare: (a, b) => a.useValue - b.useValue,
+      multiple: 3,
+    },
   },
   {
     title: "漏损水量（m³）",
     dataIndex: "leakageValue",
     key: "leakageValue",
+    sorter: {
+      compare: (a, b) => a.leakageValue - b.leakageValue,
+      multiple: 4,
+    },
   },
   {
     title: "漏损率（%）",
     dataIndex: "leakageRate",
     key: "leakageRate",
+    sorter: {
+      compare: (a, b) => a.leakageRate - b.leakageRate,
+      multiple: 5,
+    },
   },
   {
     title: "抄见率（%）",
     dataIndex: "readingRate",
     key: "readingRate",
+    sorter: {
+      compare: (a, b) => a.readingRate - b.readingRate,
+      multiple: 6,
+    },
   },
 ];
 //分区报警表格头部
