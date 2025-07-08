@@ -97,7 +97,7 @@ export default memo(function Index({ areaId, setTreeId, setLine, showline = true
   console.log("expand",expand,"fieldNames",fieldNames)
   const getTreeData = async (name = '') => {
     let idx = Number.isInteger(datatype) ? datatype : typeTree;
-
+    console.log(name)
     if (Number.isInteger(datatype) && !energytype) return
     try {
       if (name != keyword) setKeyword(name)
@@ -120,7 +120,17 @@ export default memo(function Index({ areaId, setTreeId, setLine, showline = true
       projectId
 
       ][idx]
-
+      if(idx ==3 && name){
+        const data = filterTreeIterative(treeData,name)
+        treeIdRef.current = arr
+        setIndeterminate(false)
+        setChecked(true)
+        setTreeData(data)
+        setCheckedKeys(arr);
+        setExpandedKeys(expand)
+        setTreeId(arr);
+        return
+      }
       let hander = [QuerySpaceTrees, LineManagerQuery, queryEnergyCategoryTree,DMAGetTree][idx]
 
       /*  if(lineType == "3") {
@@ -290,5 +300,32 @@ export default memo(function Index({ areaId, setTreeId, setLine, showline = true
   )
 })
 
+
+
+
+/**
+ * 前端过滤树结构数据(本地过滤)
+ */
+const filterTreeIterative=(tree,keyword)=>{
+  if(!keyword) return tree
+  const result = []
+  const stack = [...tree]
+  while(stack.length){
+    const node =stack.pop()
+    const isMatch = node.name.includes(keyword)
+    if(isMatch){
+      result.push(node)
+    }else if(node.children?.length){
+      const filteredChildren = filterTreeIterative(node.children,keyword);
+      if(filteredChildren.length){
+        result.push({
+          ...node,
+          children: filteredChildren
+        })
+      }
+    }
+  }
+  return result.reverse();
+}
 
 
