@@ -1,5 +1,5 @@
 import React, { useRef, useState, useEffect, useMemo } from "react";
-import { Space, Form, Select, Input,Radio } from "antd";
+import { Space, Form, Select, Input,Radio ,Typography} from "antd";
 import Pagecount from "@com/pagecontent";
 import {useNavigate, useLocation} from "react-router-dom"
 import {useSelector} from "react-redux"
@@ -16,6 +16,7 @@ import { Mainwrap, TitleBox } from "./style";
 
 import { useAntdTable, useRequest} from "ahooks";
 import Newdma from "./newdma"
+ const {Link} = Typography
  
 export default function Index() { 
     const navigate = useNavigate();
@@ -89,10 +90,15 @@ const Ctitle = <TitleBox>
   <CustButton onClick={()=>addDma("new")}>新建分区</CustButton>
 </TitleBox>
  
- const columns = [...cols, {
-  
- }]
+ const columns = [...cols,  {
+  title: "操作",
+  dataIndex: "operation",
+  key: "operation",
+  render: ()=><Space></Space>
+},]
+ const sortChnage=()=> {
 
+ }
   return (
     <Pagecount pd="0" bgcolor="none">
     {listnew ?  <Mainwrap>
@@ -123,7 +129,7 @@ const Ctitle = <TitleBox>
               </Form>
            </div>
           <Titlelayout layout="flex" title={Ctitle}  dr="column"> 
-              <UserTable columns={cols} {...tableProps} ></UserTable> 
+              <UserTable columns={cols} {...tableProps} onChange={sortChnage}></UserTable> 
           </Titlelayout>
         </div>
       </Mainwrap>

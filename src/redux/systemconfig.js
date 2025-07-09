@@ -622,6 +622,7 @@ export const iszhCN = state => state.system.iszhCN // 是否中文
 export const enterprise = state => state.system.enterprise // 碳排企业信息
 export const Time = state => state.system.environmentTime // 碳排企业信息
 export const filterDeviceStyle = state => state.system.filterDeviceStyle?.filter(f => f.deviceStyle!=6)
+export const curDeviceStyle = state => state.system.filterDeviceStyle
 export const adaptation = state => state.system.adaptation
 export const sidershow = state => state.system.sidershow
 export const collapsed = state => state.system.collapsed

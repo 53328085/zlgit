@@ -15,8 +15,10 @@ export default function index({addDma, projectId}) {
   let Com = useMemo(
     ()=> {
       return {
-        "1": Record
-      }[value]
+        "1": Record,
+        "2":()=> <div>开发中……</div>,
+        "3":()=> <div>开发中……</div>
+      }[value] || <div>开发中……</div>
     }, [value])
   return (
     <Newcontent>

@@ -437,7 +437,8 @@ const onSureEditModal=async()=>{
     dataSource,
     getDeviceQueryCategoryFull,
     defaultTableData,
-    isShow:false
+    isShow:true,
+    metering: true,
   }
   let deviceProps = {
     value: 0,
@@ -459,7 +460,7 @@ const onSureEditModal=async()=>{
     editForm,
     ref:editFromRef,
     editDefaultTableData,
-    isShow:false
+    isShow:true,
   }
   let editModalProps={
    ref:EditModalRef,
