@@ -1,41 +1,41 @@
 import React, { useEffect, useRef, useState } from 'react'
-import {useTranslation} from 'react-i18next'
-import {   Space, message, Form, Input, Typography } from 'antd';
+import { useTranslation } from 'react-i18next'
+import { Space, message, Form, Input, Typography } from 'antd';
 import style from './style.module.less'
 import SearchTree from '@com/searchTree'
 import Custmodl from '@com/useModal'
 import dashed from '@imgs/dashed.png'
 import { energyQuota, Area } from '@api/api.js'
 import { useRequest, useAntdTable } from 'ahooks';
-import {useOutletContext} from 'react-router-dom'  
+import { useOutletContext } from 'react-router-dom'
 import Pagecount from "@com/pagecontent";
-import {Cspin, Serach, Cdivider} from '@com/comstyled'
-import {CustButton} from '@com/useButton'
+import { Cspin, Serach, Cdivider } from '@com/comstyled'
+import { CustButton } from '@com/useButton'
 import UseTable from '@com/useTable'
-const {Link} = Typography
+const { Link } = Typography
 export default function Index() {
-  const {t} = useTranslation(["button"])
-  let {exparams, setCustview} = useOutletContext()
-  let {areaId, projectId } = exparams 
+  const { t } = useTranslation(["button"])
+  let { exparams, setCustview } = useOutletContext()
+  let { areaId, projectId } = exparams
   const setRef = useRef()
   const [messageApi, contextHolder] = message.useMessage();
   const [form] = Form.useForm()
-  const Item = Form.Item  
- 
+  const Item = Form.Item
+
   const { AllLevel } = Area
   const { querySpaceTrees, queryRoomQuotas, updateRoomQuotas } = energyQuota
 
   //园区
- 
+
 
   const getTreeData = () => {
-    if(!Number.isFinite(areaId)) return;
+    if (!Number.isFinite(areaId)) return;
     return querySpaceTrees(projectId, areaId, '').then(res => {
-      const {success, data} = res
-      if(success){
+      const { success, data } = res
+      if (success) {
         return Array.isArray(data) ? data : []
-       // setTreeData(res.data)
-      }else{       
+        // setTreeData(res.data)
+      } else {
         messageApi.open({
           type: 'error',
           content: res.errMsg
@@ -44,20 +44,20 @@ export default function Index() {
       }
     })
   }
-  
-  const {data: treeData} = useRequest(getTreeData, {
-     refreshDeps: [projectId, areaId]
+
+  const { data: treeData } = useRequest(getTreeData, {
+    refreshDeps: [projectId, areaId]
   })
 
 
- useEffect(()=>{
-    if(areaId > 0  && Number.isInteger(areaId)){
-      setParams([{id:areaId, level: 1}])
+  useEffect(() => {
+    if (areaId > 0 && Number.isInteger(areaId)) {
+      setParams([{ id: areaId, level: 1 }])
     }
-  },[areaId]) 
+  }, [areaId])
   //const [treeData, setTreeData] = useState([])
   const fieldNames = {
-    title:'name',
+    title: 'name',
     key: 'areaId',
     children: 'nodes'
   }
@@ -65,204 +65,224 @@ export default function Index() {
   const [params, setParams] = useState([])
   const [treeValues, setTreeValues] = useState([])
   const getFromChild = values => {
-   
+
     setTreeValues(values)
-    if(values.length == 0){
-      setParams([{level: 1, id: areaId}])
-    }else{
+    if (values.length == 0) {
+      setParams([{ level: 1, id: areaId }])
+    } else {
       let arr = []
       values.map(item => {
-        if(item?.pos?.length === 3){
+        if (item?.pos?.length === 3) {
           arr.push({
             level: 1,
             id: item.node.areaId
           })
         }
-        if(item?.pos?.length == 5){
+        if (item?.pos?.length == 5) {
           arr.push({
             level: 2,
             id: item.node.areaId
           })
         }
-        if(item?.pos?.length == 7){
+        if (item?.pos?.length == 7) {
           arr.push({
             level: 3,
             id: item.node.areaId
           })
         }
       })
-      if(arr.length == 0){
+      if (arr.length == 0) {
         return;
-      }else{
+      } else {
         setParams(arr)
       }
-      
-    }  
+
+    }
   }
- const [columns, setColumns] = useState([
-  {
-    title: '园区',
-    dataIndex:'area',
-    key:'area',
-    align:'center',
-  },{
-    title:'建筑物',
-    dataIndex:'building',
-    key:'building',
-    align:'center'
-  },{
-    title:'房间',
-    dataIndex:'room',
-    key:'room',
-    align:'center',
-    width: '128px',
-  },{
-    title:'年度综合能耗定额(吨标煤)',
-    dataIndex:'quotaComprehensive',
-    key:'quotaComprehensive',
-    align:'center',
-    width: '148px',
-  },{
-    title:'年度用电定额(kWh)',
-    dataIndex:'quotaElectric',
-    key:'quotaElectric',
-    align:'center',
-    width: '128px',
-  },{
-    title:(<div>水(m³)<br/>剩余/定额 </div>),
-    dataIndex:'quotaWater',
-    key:'quotaWater',
-    align:'center',
-    width: '128px',
-    render: (_, record) => (
-      <Space size="middle">
-        <span>{ record.quotaWaterLeave + '/' + record.quotaWater }</span>
-      </Space>)
-  },{
-    title:(<div>燃气(m³)<br/>剩余/定额 </div>),
-    dataIndex:'quotaGas',
-    key:'quotaGas',
-    align:'center',
-    width: '128px',
-    render: (_, record) => (
-      <Space size="middle">
-        <span>{ record.quotaGasLeave + '/' + record.quotaGas }</span>
-      </Space>)
-  },{
-    title:(<div>煤炭(吨)<br/>剩余/定额 </div>),
-    dataIndex:'quotaCoal',
-    key:'quotaCoal',
-    align:'center',
-    width: '128px',
-    render: (_, record) => (
-      <Space size="middle">
-        <span>{ record.quotaCoalLeave + '/' + record.quotaCoal }</span>
-      </Space>)
-  },{
-    title:'操作',
-    key: 'action',
-    align:'center',
-    width: '128px',
-    render: (_, record) => (
-      <Space size="middle">
-        <Link onClick={()=>setAll(record)}>{t("button:edit")}</Link>
-      </Space>)
-  }
-])
-  useEffect(()=>{
-    if(!Number.isFinite(projectId)) return;
+  const [columns, setColumns] = useState([
+    {
+      title: '园区',
+      dataIndex: 'area',
+      key: 'area',
+      align: 'center',
+    }, {
+      title: '建筑物',
+      dataIndex: 'building',
+      key: 'building',
+      align: 'center'
+    }, {
+      title: '房间',
+      dataIndex: 'room',
+      key: 'room',
+      align: 'center',
+      width: '128px',
+    }, {
+      title: '年度综合能耗定额(吨标煤)',
+      dataIndex: 'quotaComprehensive',
+      key: 'quotaComprehensive',
+      align: 'center',
+      width: '148px',
+    }, {
+      title: '年度用电定额(kWh)',
+      dataIndex: 'quotaElectric',
+      key: 'quotaElectric',
+      align: 'center',
+      width: '128px',
+    }, {
+      title: (<div>冷水(m³)<br />剩余/定额 </div>),
+      dataIndex: 'quotaWaterCold',
+      key: 'quotaWaterCold',
+      align: 'center',
+      width: '128px',
+      render: (_, record) => (
+        <Space size="middle">
+          <span>{record.quotaWaterColdLeave + '/' + record.quotaWaterCold}</span>
+        </Space>)
+    }, {
+      title: (<div>热水(m³)<br />剩余/定额 </div>),
+      dataIndex: 'quotaWaterHot',
+      key: 'quotaWaterHot',
+      align: 'center',
+      width: '128px',
+      render: (_, record) => (
+        <Space size="middle">
+          <span>{record.quotaWaterHotLeave + '/' + record.quotaWaterHot}</span>
+        </Space>)
+    }, {
+      title: (<div>燃气(m³)<br />剩余/定额 </div>),
+      dataIndex: 'quotaGas',
+      key: 'quotaGas',
+      align: 'center',
+      width: '128px',
+      render: (_, record) => (
+        <Space size="middle">
+          <span>{record.quotaGasLeave + '/' + record.quotaGas}</span>
+        </Space>)
+    }, {
+      title: (<div>煤炭(吨)<br />剩余/定额 </div>),
+      dataIndex: 'quotaCoal',
+      key: 'quotaCoal',
+      align: 'center',
+      width: '128px',
+      render: (_, record) => (
+        <Space size="middle">
+          <span>{record.quotaCoalLeave + '/' + record.quotaCoal}</span>
+        </Space>)
+    }, {
+      title: '操作',
+      key: 'action',
+      align: 'center',
+      width: '128px',
+      render: (_, record) => (
+        <Space size="middle">
+          <Link onClick={() => setAll(record)}>{t("button:edit")}</Link>
+        </Space>)
+    }
+  ])
+  useEffect(() => {
+    if (!Number.isFinite(projectId)) return;
     AllLevel(projectId).then(res => {
-      if(res.success){
+      if (res.success) {
         setColumns([
           {
             title: res.data[0]?.name || '园区',
-            dataIndex:'area',
-            key:'area',
-            align:'center',
-          },{
+            dataIndex: 'area',
+            key: 'area',
+            align: 'center',
+          }, {
             title: res.data[1]?.name || '建筑物',
-            dataIndex:'building',
-            key:'building',
-            align:'center'
-          },{
+            dataIndex: 'building',
+            key: 'building',
+            align: 'center'
+          }, {
             title: res.data[2]?.name || '房间',
-            dataIndex:'room',
-            key:'room',
-            align:'center',
+            dataIndex: 'room',
+            key: 'room',
+            align: 'center',
             width: '128px',
-          },{
-            title:'年度综合能耗定额(吨标煤)',
-            dataIndex:'quotaComprehensive',
-            key:'quotaComprehensive',
-            align:'center',
+          }, {
+            title: '年度综合能耗定额(吨标煤)',
+            dataIndex: 'quotaComprehensive',
+            key: 'quotaComprehensive',
+            align: 'center',
             width: '148px',
-          },{
-            title:'年度用电定额(kWh)',
-            dataIndex:'quotaElectric',
-            key:'quotaElectric',
-            align:'center',
+          }, {
+            title: '年度用电定额(kWh)',
+            dataIndex: 'quotaElectric',
+            key: 'quotaElectric',
+            align: 'center',
             width: '128px',
-          },{
-            title:(<div>水(m³)<br/>剩余/定额 </div>),
-            dataIndex:'quotaWater',
-            key:'quotaWater',
-            align:'center',
-            width: '128px',
-            render: (_, record) => (
-              <Space size="middle">
-                <span>{ record.quotaWaterLeave + '/' + record.quotaWater }</span>
-              </Space>)
-          },{
-            title:(<div>燃气(m³)<br/>剩余/定额 </div>),
-            dataIndex:'quotaGas',
-            key:'quotaGas',
-            align:'center',
+          }, {
+            title: (<div>冷水(m³)<br />剩余/定额 </div>),
+            dataIndex: 'quotaWaterCold',
+            key: 'quotaWaterCold',
+            align: 'center',
             width: '128px',
             render: (_, record) => (
               <Space size="middle">
-                <span>{ record.quotaGasLeave + '/' + record.quotaGas }</span>
+                <span>{record.quotaWaterColdLeave + '/' + record.quotaWaterCold}</span>
               </Space>)
-          },{
-            title:(<div>煤炭(吨)<br/>剩余/定额 </div>),
-            dataIndex:'quotaCoal',
-            key:'quotaCoal',
-            align:'center',
+          }, {
+            title: (<div>热水(m³)<br />剩余/定额 </div>),
+            dataIndex: 'quotaWaterHot',
+            key: 'quotaWaterHot',
+            align: 'center',
             width: '128px',
             render: (_, record) => (
               <Space size="middle">
-                <span>{ record.quotaCoalLeave + '/' + record.quotaCoal }</span>
+                <span>{record.quotaWaterHotLeave + '/' + record.quotaWaterHot}</span>
               </Space>)
-          },{
-            title:'操作',
+          }, {
+            title: (<div>燃气(m³)<br />剩余/定额 </div>),
+            dataIndex: 'quotaGas',
+            key: 'quotaGas',
+            align: 'center',
+            width: '128px',
+            render: (_, record) => (
+              <Space size="middle">
+                <span>{record.quotaGasLeave + '/' + record.quotaGas}</span>
+              </Space>)
+          }, {
+            title: (<div>煤炭(吨)<br />剩余/定额 </div>),
+            dataIndex: 'quotaCoal',
+            key: 'quotaCoal',
+            align: 'center',
+            width: '128px',
+            render: (_, record) => (
+              <Space size="middle">
+                <span>{record.quotaCoalLeave + '/' + record.quotaCoal}</span>
+              </Space>)
+          }, {
+            title: '操作',
             key: 'action',
-            align:'center',
+            align: 'center',
             width: '128px',
             render: (_, record) => (
               <Space size="middle">
-                <Link underline onClick={()=>setAll(record)}>{t("button:edit")}</Link>
+                <Link underline onClick={() => setAll(record)}>{t("button:edit")}</Link>
               </Space>)
           }
         ])
-      }else{
+      } else {
         message.error(res.errMsg)
       }
     })
-  },[projectId])
- 
-  const getTableData = ({current, pageSize}) => {    
-    if(!(Number.isInteger(projectId) && Number.isInteger(areaId) && params.length == 1)) return
+  }, [projectId])
+
+  const getTableData = ({ current, pageSize }) => {
+    if (!(Number.isInteger(projectId) && Number.isInteger(areaId) && params.length == 1)) return
     return queryRoomQuotas(projectId, current, pageSize, params).then(res => {
-      const {success, data, total} = res
-      if(success){
+      const { success, data, total } = res
+      if (success) {
         setSelectedKeys([])
         let f = Array.isArray(data)
         return {
           list: f ? data : [],
           total: f ? total : 0
         }
-      }else{
+      } else {
         messageApi.open({
-          type:'error',
+          type: 'error',
           content: res.errMsg
         })
         return {
@@ -270,19 +290,19 @@ export default function Index() {
           total: 0,
         }
       }
-    } )
+    })
   }
-  const { run: runTable, tableProps } = useAntdTable(getTableData,{
+  const { run: runTable, tableProps } = useAntdTable(getTableData, {
     refreshDeps: [projectId, areaId, params],
     defaultPageSize: 20
   })
-/*   useEffect(()=>{
-    if(params.length == 0){
-      return
-    }else{
-      runTable()
-    }
-  },[params, pageNum]) */
+  /*   useEffect(()=>{
+      if(params.length == 0){
+        return
+      }else{
+        runTable()
+      }
+    },[params, pageNum]) */
 
   const [selectedKeys, setSelectedKeys] = useState([]);
   const [copyKeys, setCopyKeys] = useState([]);
@@ -296,7 +316,7 @@ export default function Index() {
   };
 
   const setAll = (record) => {
-    if(record){
+    if (record) {
       form.resetFields()
       setSelectedKeys([record])
       form.setFieldsValue({
@@ -304,29 +324,31 @@ export default function Index() {
         TotalWarningValue: record.totalWarningValue,
         ElectricValue: record.quotaElectric,
         ElectricWarningValue: record.electricWarningValue,
-        WaterColdValue: record.quotaWater,
+        WaterColdValue: record.quotaWaterCold,
         WaterColdWarningValue: record.waterColdWarningValue,
+        WaterHotValue: record.quotaWaterHot,
+        WaterHotWarningValue: record.waterHotWarningValue,
         GasValue: record.quotaGas,
         GasWarningValue: record.gasWarningValue,
         CoalValue: record.quotaCoal,
         CoalWarningValue: record.coalWarningValue,
       })
-    }else if(!record && treeValues.length == 0 && copyKeys.length == 0){
+    } else if (!record && treeValues.length == 0 && copyKeys.length == 0) {
       messageApi.open({
-        type:'warning',
-        content:'请至少选择一项配置项'
+        type: 'warning',
+        content: '请至少选择一项配置项'
       })
       return;
-    }else{
+    } else {
       form.resetFields()
     }
     setRef.current.onOpen()
   }
-  const onOk = async() => {
-    try{
+  const onOk = async () => {
+    try {
       const values = await form.validateFields();
       let param = [];
-      if(selectedKeys.length > 0){
+      if (selectedKeys.length > 0) {
         selectedKeys.map(item => {
           param.push({
             id: item.id,
@@ -335,9 +357,9 @@ export default function Index() {
             ...values
           })
         })
-      }else if(params.length > 0 && copyKeys.length == 0){
+      } else if (params.length > 0 && copyKeys.length == 0) {
         params.map(item => {
-          if(item.level == 3){
+          if (item.level == 3) {
             param.push({
               areaId: item.id,
               areaLevel: item.level,
@@ -347,15 +369,15 @@ export default function Index() {
         })
       }
       updateRoomQuotas(projectId, param).then(res => {
-        if(res.success){
+        if (res.success) {
           messageApi.open({
-            type:'success',
-            content:'能耗定额配置成功!'
+            type: 'success',
+            content: '能耗定额配置成功!'
           })
           setRef.current.onCancel()
           form.resetFields()
           runTable()
-        }else{
+        } else {
           // messageApi.open({
           //   type:'error',
           //   content:res.errMsg
@@ -363,26 +385,26 @@ export default function Index() {
           message.error(res.errMsg)
         }
       })
-      
-    }catch(errorInfo){}
-    
+
+    } catch (errorInfo) { }
+
   }
-  const view =  (<CustButton style={{marginLeft: 'auto'}} wh="auto" onClick={setAll}>{t("button:batchConfiguration")}</CustButton>)
+  const view = (<CustButton style={{ marginLeft: 'auto' }} wh="auto" onClick={setAll}>{t("button:batchConfiguration")}</CustButton>)
   useEffect(() => {
     setCustview(view)
   }, [])
   const handelValidate = (rule, value, callback) => {
-    if(!Number.isNaN(Number(value))){
+    if (!Number.isNaN(Number(value))) {
       // callback()
       return Promise.resolve();
-    }else{
+    } else {
       // callback('值只能为数字！')
       return Promise.reject('值只能为数字')
     }
   }
 
- 
- 
+
+
 
   return (
     <Pagecount bgcolor="transparent" pd="0">
@@ -390,43 +412,49 @@ export default function Index() {
       <div className={style.mainContent}>
         <SearchTree treeData={treeData} fieldNames={fieldNames} getValues={getFromChild}></SearchTree>
         <div className={style.rightContent}>
-          <UseTable   columns={columns}   rowKey='id' rowSelection={rowSelection}  {...tableProps} hbg="#ecf5ff" hbc="#515151"></UseTable>
+          <UseTable columns={columns} rowKey='id' rowSelection={rowSelection}  {...tableProps} hbg="#ecf5ff" hbc="#515151"></UseTable>
         </div>
       </div>
-      <Custmodl title='设置能耗定额' ref={setRef}  mold="cust" width={640} onOk={onOk}>
-        <Form name='editform'  form={form}  requiredMark={false} autoComplete='off' style={{display:'flex',justifyContent:'space-between',flexWrap:'wrap'}}>
-          <Item label='综合能耗(吨标煤)' labelCol={{span:14}} labelAlign={'left'} name='TotalValue' style={{width: 240}}>
-            <Input style={{width:'128px', textAlign:'right'}}></Input>
+      <Custmodl title='设置能耗定额' ref={setRef} mold="cust" width={640} onOk={onOk}>
+        <Form name='editform' form={form} requiredMark={false} autoComplete='off' style={{ display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap' }}>
+          <Item label='综合能耗(吨标煤)' labelCol={{ span: 14 }} labelAlign={'left'} name='TotalValue' style={{ width: 240 }}>
+            <Input style={{ width: '128px', textAlign: 'right' }}></Input>
           </Item>
-          <Item label='预警值' name='TotalWarningValue' labelCol={{span:8}} labelAlign={'right'} rules={[{required:true, message:'请输入预警值'},{validator:handelValidate }]}>
-            <Input style={{width:'128px', textAlign:'right'}} ></Input>
+          <Item label='预警值' name='TotalWarningValue' labelCol={{ span: 8 }} labelAlign={'right'} rules={[{ required: true, message: '请输入预警值' }, { validator: handelValidate }]}>
+            <Input style={{ width: '128px', textAlign: 'right' }} ></Input>
           </Item>
-          <img src={dashed} style={{width:'100%',marginBottom: 16}}></img>
-          <Item label='年度用电定额(kWh)' labelCol={{span:14}} labelAlign={'left'} name='ElectricValue' style={{width: 240}} rules={[{required:true, message:'请输入用电定额'}]}>
-            <Input style={{width:'128px', textAlign:'right'}}></Input>
+          <img src={dashed} style={{ width: '100%', marginBottom: 16 }}></img>
+          <Item label='年度用电定额(kWh)' labelCol={{ span: 14 }} labelAlign={'left'} name='ElectricValue' style={{ width: 240 }} rules={[{ required: true, message: '请输入用电定额' }]}>
+            <Input style={{ width: '128px', textAlign: 'right' }}></Input>
           </Item>
-          <Item label='预警值' name='ElectricWarningValue' labelCol={{span:8}} labelAlign={'right'} rules={[{required:true, message:'请输入预警值'}]}>
-            <Input style={{width:'128px', textAlign:'right'}}></Input>
+          <Item label='预警值' name='ElectricWarningValue' labelCol={{ span: 8 }} labelAlign={'right'} rules={[{ required: true, message: '请输入预警值' }]}>
+            <Input style={{ width: '128px', textAlign: 'right' }}></Input>
           </Item>
-          <Item label='年度用水定额(m³)' labelCol={{span:14}} labelAlign={'left'} name='WaterColdValue' style={{width: 240}} rules={[{required:true, message:'请输入用水定额'}]}>
-            <Input style={{width:'128px', textAlign:'right'}}></Input>
+          <Item label='年度冷水定额(m³)' labelCol={{ span: 14 }} labelAlign={'left'} name='WaterColdValue' style={{ width: 240 }} rules={[{ required: true, message: '请输入冷水定额' }]}>
+            <Input style={{ width: '128px', textAlign: 'right' }}></Input>
           </Item>
-          <Item label='预警值' name='WaterColdWarningValue' labelCol={{span:8}} labelAlign={'right'} rules={[{required:true, message:'请输入预警值'}]}>
-            <Input style={{width:'128px', textAlign:'right'}}></Input>
+          <Item label='预警值' name='WaterColdWarningValue' labelCol={{ span: 8 }} labelAlign={'right'} rules={[{ required: true, message: '请输入预警值' }]}>
+            <Input style={{ width: '128px', textAlign: 'right' }}></Input>
           </Item>
-          <Item label='年度用气定额(m³)' labelCol={{span:14}} labelAlign={'left'} name='GasValue' style={{width: 240}} rules={[{required:true, message:'请输入用气定额'}]}>
-            <Input style={{width:'128px', textAlign:'right'}}></Input>
+          <Item label='年度热水定额(m³)' labelCol={{ span: 14 }} labelAlign={'left'} name='WaterHotValue' style={{ width: 240 }} rules={[{ required: true, message: '请输入热水定额' }]}>
+            <Input style={{ width: '128px', textAlign: 'right' }}></Input>
           </Item>
-          <Item label='预警值' name='GasWarningValue' labelCol={{span:8}} labelAlign={'right'} rules={[{required:true, message:'请输入预警值'}]}>
-            <Input style={{width:'128px', textAlign:'right'}}></Input>
+          <Item label='预警值' name='WaterColdWarningValue' labelCol={{ span: 8 }} labelAlign={'right'} rules={[{ required: true, message: '请输入预警值' }]}>
+            <Input style={{ width: '128px', textAlign: 'right' }}></Input>
           </Item>
-          <Item label='年度用煤定额(吨)' labelCol={{span:14}} labelAlign={'left'} name='CoalValue' style={{width: 240}} rules={[{required:true, message:'请输入用煤定额'}]}>
-            <Input style={{width:'128px', textAlign:'right'}}></Input>
+          <Item label='年度用气定额(m³)' labelCol={{ span: 14 }} labelAlign={'left'} name='GasValue' style={{ width: 240 }} rules={[{ required: true, message: '请输入用气定额' }]}>
+            <Input style={{ width: '128px', textAlign: 'right' }}></Input>
           </Item>
-          <Item label='预警值' name='CoalWarningValue' labelCol={{span:8}} labelAlign={'right'} rules={[{required:true, message:'请输入预警值'}]}>
-            <Input style={{width:'128px', textAlign:'right'}}></Input>
+          <Item label='预警值' name='GasWarningValue' labelCol={{ span: 8 }} labelAlign={'right'} rules={[{ required: true, message: '请输入预警值' }]}>
+            <Input style={{ width: '128px', textAlign: 'right' }}></Input>
           </Item>
-        </Form>      
+          <Item label='年度用煤定额(吨)' labelCol={{ span: 14 }} labelAlign={'left'} name='CoalValue' style={{ width: 240 }} rules={[{ required: true, message: '请输入用煤定额' }]}>
+            <Input style={{ width: '128px', textAlign: 'right' }}></Input>
+          </Item>
+          <Item label='预警值' name='CoalWarningValue' labelCol={{ span: 8 }} labelAlign={'right'} rules={[{ required: true, message: '请输入预警值' }]}>
+            <Input style={{ width: '128px', textAlign: 'right' }}></Input>
+          </Item>
+        </Form>
       </Custmodl>
     </Pagecount>
   )

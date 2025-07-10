@@ -3,8 +3,8 @@ import CommonTab from './commonTab'
 
 export default function Electric(props) {
     const dataprops = {
-        type: 2,
-        title: '能耗分类(冷水)'
+        type: 7,
+        title: '能耗分类(热水)'
     }
     const getFromChild = val => {
         props.getValues(val)
