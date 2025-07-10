@@ -76,6 +76,32 @@ export const Newcontent = styled.div`
         column-gap: 16px;
       }
     }
+    .alarm {
+      flex:1;
+      .item {
+        min-height: 50px;
+        display: flex;
+        justify-content: space-between;
+        color:rgba(0, 0, 0, 0.847058823529412);
+        padding: 0 128px 0 16px;
+        align-items: center;
+        .ant-form-item {
+          margin-bottom: 0px;
+        }
+        .tip {
+          color:#B8B2B2
+        }
+      }
+      .item.bg {
+        background-color: rgba(19, 90, 189, 0.129411764705882)
+      }
+      .item.column {
+        padding: 16px;
+        align-items: flex-start;
+        flex-direction: column;
+        row-gap: 16px;
+      }
+    }
   }
 `
  

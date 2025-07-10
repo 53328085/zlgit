@@ -8,7 +8,7 @@ export const { useetDetail } = new Apimethod( //获取分区详情
     "get",
     "/DMA/DMAPartition/GetListPaged"
   );
-  export const { useGetTree} = new Apimethod( // 获取分区列表
+  export const { useGetTree} = new Apimethod( // 获取分区列表树
     "get",
     "/DMA/DMAPartition/GetTree"
   );
@@ -17,8 +17,21 @@ export const { useetDetail } = new Apimethod( //获取分区详情
     "post",
     "DMA/DMAPartition/Insert"
   );
-
-  export const { useGetAlarmSettings} = new Apimethod( // 新建分区
+  export const { useUpdate} = new Apimethod( // 修改分区
+    "post",
+    "/DMA/DMAPartition/Update"
+  )
+  export const { useDelete} = new Apimethod( // 删除分区
+    "post",
+    "/DMA/DMAPartition/Delete"
+  );
+  export const { useGetAlarmSettings} = new Apimethod( // 获取分区预警配置
     "get",
     "/DMA/DMAPartition/GetAlarmSettings"
   );
+ 
+  export const { useUpdateAlarmSetting} = new Apimethod( // 获取分区预警配置
+    "post",
+    "/DMA/DMAPartition/UpdateAlarmSetting"
+  );
+

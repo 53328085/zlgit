@@ -38,11 +38,13 @@ export const cols = [
     title: "分区编号",
     dataIndex: "code",
     key: "code",
+    sorter: true,
   },
   {
     title: "分区级别",
     dataIndex: "level",
     key: "level",
+    sorter: true,
   },
   {
     title: "分区类型",
@@ -138,4 +140,22 @@ export const iscomputer =[
     value: "2"
   },
 
+]
+export const alarmoption =[
+  {
+    label: "一级(特别严重)",
+    value: "1"
+  },
+  {
+    label: "二级(严重)",
+    value: "2"
+  },
+  {
+    label: "三级(较重)",
+    value: "3"
+  },
+  {
+    label: "一般",
+    value: "4"
+  },
 ]

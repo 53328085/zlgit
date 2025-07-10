@@ -5,6 +5,7 @@ import {Newcontent} from "../style"
 import {tabs} from "../data"
 import CustContext from '@com/content.js'
 import Record from "./record"
+import Alarm from './alarm'
 export default function index({addDma, projectId}) {
   const [value, setvalue] = useState("1")
   const dataProps ={
@@ -17,7 +18,7 @@ export default function index({addDma, projectId}) {
       return {
         "1": Record,
         "2":()=> <div>开发中……</div>,
-        "3":()=> <div>开发中……</div>
+        "3": Alarm
       }[value] || <div>开发中……</div>
     }, [value])
   return (
