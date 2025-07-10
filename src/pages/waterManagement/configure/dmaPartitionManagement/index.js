@@ -1,5 +1,5 @@
 import React, { useRef, useState, useEffect, useMemo } from "react";
-import { Space, Form, Select, Input,Radio ,Typography} from "antd";
+import { Space, Form, Select, Input,Radio ,Typography, message} from "antd";
 import Pagecount from "@com/pagecontent";
 import {useNavigate, useLocation} from "react-router-dom"
 import {useSelector} from "react-redux"
@@ -10,27 +10,30 @@ import UseTree from "@com/useTree";
 import {RadiogroupB} from "@com/comstyled"
 import { cols, options,loptions } from "./data";
  import {CustButton} from "@com/useButton"
- import {  useGetListPaged } from "./api.js";
+ import {  useGetListPaged,useDelete } from "./api.js";
  
 import { Mainwrap, TitleBox } from "./style";
-
+import CModal from '@com/useModal'
 import { useAntdTable, useRequest} from "ahooks";
 import Newdma from "./newdma"
+ 
  const {Link} = Typography
  
 export default function Index() { 
     const navigate = useNavigate();
     const { pathname, state,hash } = useLocation();
-  console.log(useLocation())
+  
   const [form] = Form.useForm()
   const  projectId  =  useSelector(selectProjectId)  
   const [treeId, setTreeId] = useState(null)
+  const [sorting, setsorting] = useState("")
   const [level, setLevle] = useState("0")
   const  listnew = useMemo(()=> {
     return !hash || hash=="#list"
   }, [hash])
   const getDetail =async ({current, pageSize}, formData)=> {
      try {
+       console.log(treeId)
        if(!(Number.isInteger(projectId) && Array.isArray(treeId))) {
         return  {
         list:[],
@@ -46,7 +49,7 @@ export default function Index() {
         name,
         partitionType,
         level,
-        sorting: ""
+        sorting,
        }
        let {data,success, total} = await useGetListPaged(body,{})
        if(success && Array.isArray(data) ) {         
@@ -66,19 +69,47 @@ export default function Index() {
      }
   }
   
-const {tableProps} =  useAntdTable(getDetail, {
+const {tableProps, search} =  useAntdTable(getDetail, {
     form,
     defaultPageSize: 14,
-    refreshDeps: [projectId, treeId, level]
+    refreshDeps: [projectId, treeId, level,sorting]
   })
-
+const {submit} = search
 const dmachange =(v) => {
   setLevle(v.target.value)
 }
 const addDma =(type) => {
   navigate(pathname + "#" + type, { state: state, replace: true });
 }
- 
+const goAlarm = (row) => {
+  navigate(pathname+"?item=3" + "#new", { state: {...state, id:row.id}, replace: true });
+} 
+const delRef = useRef()
+const idRef = useRef()
+const onDel=(id)=> {
+    idRef.current = id;
+    delRef.current.onOpen()
+}
+const delOk =async ()=> {
+  console.log("del")
+  try {
+    let params = {
+      projectId,
+      id:idRef.current
+    }
+   let {success,errMsg} =  await useDelete(params,{})
+   if(success) {
+     message.success("删除成功")
+     refresh()
+   }else {
+     message.warning(errMsg || "数据出错")
+   }
+  } catch (error) {
+    console.log(error)
+  }
+
+
+}
 const Ctitle = <TitleBox>
   <Space size={16}>
     <span>分区列表</span>
@@ -94,10 +125,16 @@ const Ctitle = <TitleBox>
   title: "操作",
   dataIndex: "operation",
   key: "operation",
-  render: ()=><Space></Space>
+  render: (_,row)=><Space size={24}><Link>档案</Link><Link>表具</Link><Link onClick={()=>goAlarm(row)}>告警</Link><Link type="danger" onClick={()=>onDel(row.id)}>删除</Link></Space>
 },]
- const sortChnage=()=> {
-
+ const sortChnage=(_, filters, sorter)=> {    
+    const {order,field} = sorter
+    if(order=="descend") {
+      setsorting(field + " desc")
+    }else {
+      setsorting(field)
+    }
+    
  }
   return (
     <Pagecount pd="0" bgcolor="none">
@@ -123,19 +160,24 @@ const Ctitle = <TitleBox>
                     <Input ></Input>
                   </Form.Item>
                   <Form.Item label="分区类型" name="partitionType" initialValue={1}>
-                    <Select options={options} style={{width: "200px"}}></Select>
+                    <Select options={options} style={{width: "200px"}}  ></Select>
+                  </Form.Item>
+                  <Form.Item>
+                    <CustButton onClick={submit}>查询</CustButton>
                   </Form.Item>
                   </Space>
               </Form>
            </div>
           <Titlelayout layout="flex" title={Ctitle}  dr="column"> 
-              <UserTable columns={cols} {...tableProps} onChange={sortChnage}></UserTable> 
+              <UserTable columns={columns} {...tableProps} onChange={sortChnage}></UserTable> 
           </Titlelayout>
         </div>
       </Mainwrap>
      : <Newdma projectId={projectId} addDma={addDma} />
     }
-      
+      <CModal ref={delRef} type="warn" mold="cust" title="分区删除提示" onOk={()=>delOk()} >
+      删除该DMA管理分区，对应分区将不参与分区控漏计算
+      </CModal>
     </Pagecount>
   );
 }

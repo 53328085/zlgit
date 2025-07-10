@@ -1,192 +1,180 @@
 import React from 'react'
-import {Form, Select, Row, Col, Input,InputNumber, Cascader, Radio, message} from "antd" 
+import {Form, Select, Row, Col, Input,InputNumber, Cascader, Radio, Space, Switch, message} from "antd" 
 import {useRequest} from "ahooks"
-import {useGetTree,useInsert} from "../api"
-import {rules, options,partType,rateType, iscomputer} from "../data"
+import {useLocation} from "react-router-dom"
+import {useUpdateAlarmSetting,useGetAlarmSettings} from "../api"
+import { alarmoption} from "../data"
 import { CustButton } from '@com/useButton'
 import {isObject} from "@com/usehandler"
+import Titlelayout from "@com/titlelayout";
+import {TitleBox} from "../style"
 export default function Index({projectId}) {
  const [form] = Form.useForm()
+const {state} = useLocation()
+const {id} = state ||{}
 
-  const getTree =async()=> {
+ const getData = async()=> {
     try {
-        if(!Number.isInteger(projectId)) return
-        const {success, data, errMsg} = await useGetTree({projectId})
-        if(success, Array.isArray(data)) {
-            return data
-        }else {
-            
-            if(!success) return Promise.reject(errMsg)
-            return []
-        }
+      if(![projectId,id].some(d => Number.isInteger(d))) return
+      let {success, data, errMsg} = await useGetAlarmSettings({projectId, id})
+      if(success) {
+        return Array.isArray(data) ? data : []
+      }return Promise.reject(errMsg)
     } catch (error) {
-        
+      return Promise.reject(error)
     }
-    
-     
-  }
-  const {data} = useRequest(getTree, {
-    refreshDeps: [projectId]
-  })
-  const onRest =()=> {
-    form.resetFields()
-  }
-  const onSubmit=async()=> {
-   try {
-    let {code,level,parentId,...values} = await form.validateFields()
-   
-    values["parentId"] = parentId[parentId?.length - 1]
-    values["isComputeLeakage"] = values["isComputeLeakage"]=="1"
-     values["isComputeNrw"] = values["isComputeNrw"]=="1"
-  
-    let {success, data,errMsg} = await useInsert({projectId}, {...values, projectId})
-    if(success && isObject(data)) {
-        message.success("新增成功")
-        data["isComputeLeakage"] = Number(data["isComputeLeakage"])?.toString()
-        data["isComputeNrw"] = Number(data["isComputeNrw"])?.toString()
-        form.setFieldsValue(data)
-    }else{
-        if(!success) {
-            message.warning(errMsg || "数据错错")
-        }
+
+ }
+ 
+
+ const {data, refresh} =  useRequest(getData, {
+  refreshDeps: [projectId,id]
+})
+
+const onRest = ()=> {}
+const onSubmit= async()=> {
+  try {
+    let values =  await form.validateFields()
+     values.length =4
+    let params = Array.from(values)?.map?.(v => ({...v, alarmSettingJson: JSON.stringify(v.alarmSettingJson)}))
+    let body ={
+      projectId,
+      id,
+      alarmSettings: params
     }
-   } catch (error) {
-    
+   let {success, errMsg} =  await useUpdateAlarmSetting({},body)
+   if(success) {
+    refresh()
+   }else {
+     message.warning(errMsg)
    }
+  } catch (error) {
+    
   }
+}
+  const Ctitle =(<TitleBox ><span>分区报警设置</span><Space> <CustButton onClick={onRest} type="default">重置</CustButton>
+           <CustButton onClick={onSubmit}>提交</CustButton></Space></TitleBox>)
   return (
-      <Form form={form} className='record' labelCol={{flex: "6em"}}  >
-        <div className="head">
-            <div className="title">
-                分区基本信息
-            </div>
-        </div>
-        <Row gutter={32}>
-            <Col span={8}>
-            <Form.Item label="上级节点" name="parentId" rules={rules}>
-<Cascader options={data} fieldNames={{label: "name", value: "id"}}></Cascader>
+    <Titlelayout title={Ctitle} layout="flex" pv="16px">
+      <Form form={form} className='alarm' labelCol={{flex:"5em"}} colon={false}>
+        <div className="item bg">
+          <span>分区持续多天未生成漏损</span>
+          <Space align='center' size={16}>
+            <Form.Item name={["0", "alarmType"]} initialValue={1}>
+<Input hidden></Input>
             </Form.Item>
-            </Col>
-            <Col>
-            <Form.Item label="分区名称" name="name" rules={[
-                ...rules,
-                {
-                    whitespace: true
-                }
-            ]}>
-<Input style={{width: "100%"}}></Input>
+            <Form.Item label="报警级别" name={["0", "level"]} initialValue="1">
+              <Select options={alarmoption} style={{width: "160px"}}></Select>
             </Form.Item>
-            </Col>
-        </Row>
-        <Row gutter={32}>
-          <Col span={8}>
-          <Form.Item label="分区编号" name="code" >
-<Input placeholder='自动生成' disabled />
-          </Form.Item> 
-          </Col>
-          <Col span={8}>
-          <Form.Item label="分区级别" name="level" >
-            <Input disabled placeholder="自动生成"></Input>
-          </Form.Item> 
-          </Col>
-        </Row>
-        <Row gutter={32}>
-          <Col span={8}>
-          <Form.Item label="所属类型"  name="partitionType" rules={rules} initialValue={1}>
-<Select options={options} style={{width: "100%"}} />
-          </Form.Item> 
-          </Col>
-          <Col span={8}>
-          <Form.Item label="分区类别" name="partitionCategory" initialValue="1"   >
-            <Radio.Group  optionType="button" options={partType}
-        buttonStyle="solid"></Radio.Group>
-          </Form.Item> 
-          </Col>
-        </Row>
-        <Row gutter={32}>
-          <Col span={8}>
-          <Form.Item label="管网总长度"  name="pipeLength"  >
- <Input></Input>
-          </Form.Item> 
-          </Col>
-          <Col span={8}>
-          <Form.Item label="大用户数量" name="population"   >
-            <Input></Input>
-          </Form.Item> 
-          </Col>
-        </Row>
-        <Row gutter={32}>
-          <Col span={8}>
-          <Form.Item label="分区面积"  name="area"  >
- <Input></Input>
-          </Form.Item> 
-          </Col>
-          <Col span={8}>
-          <Form.Item label="备注" name="remark"   >
-            <Input></Input>
-          </Form.Item> 
-          </Col>
-        </Row>
-        <div className="head">
-            <div className="title">
-                分区配置
-            </div>
+            <Form.Item name={["0", "isEnabled"]} valuePropName='checked' initialValue={false}>
+<Switch checkedChildren="开" unCheckedChildren="关" style={{width: "46px"}}></Switch>
+            </Form.Item>
+          </Space>          
         </div>
-        <Row gutter={32}>
-        <Col span={8}>
-          <Form.Item label="是否计算漏损" name="isComputeLeakage"  labelCol={{flex: "7em"}} initialValue="1"   >
-            <Radio.Group  optionType="button" options={iscomputer}
-        buttonStyle="solid"></Radio.Group>
-          </Form.Item> 
-          </Col>
-          <Col span={8}>
-          <Form.Item label="计算产销差"  name="isComputeNrw"  labelCol={{flex: "9em"}} initialValue="1"  >
-          <Radio.Group  optionType="button" options={iscomputer}
-        buttonStyle="solid"></Radio.Group>
-          </Form.Item> 
-          </Col>
-        </Row>
-        <Row gutter={32}>
-        <Col span={8}>
-          <Form.Item label="MNF区间"   labelCol={{flex: "7em"}} style={{marginBottom: "0px"}} >
-            <Row gutter={16}>
-                <Col span={10}>
-                <Form.Item name="mnfStart">
-                    <InputNumber addonAfter="点  至"></InputNumber>
-                </Form.Item>
-                </Col>
-                <Col span={10}>
-                <Form.Item name="mnfEnd">
-                    <InputNumber addonAfter="点"></InputNumber>
-                </Form.Item>
-                </Col>
-            </Row>
-          </Form.Item> 
-          </Col>
-          <Col span={8}>
-          <Form.Item label="用水表抄见率下限"  name="waterMeterReadingRateLowerLimit" rules={rules} labelCol={{flex: "9em"}} >
-   <InputNumber addonAfter="%"></InputNumber>
-          </Form.Item> 
-          </Col>
-        </Row>
-        <Row gutter={32}>
-            <Col span={8}>
-            <Form.Item label="漏损生成频率" name="createLeakageRateBy" initialValue="1" labelCol={{flex: "7em"}}   >
-            <Radio.Group  optionType="button" options={rateType}
-        buttonStyle="solid"></Radio.Group>
-          </Form.Item> 
-            </Col>
-            <Col span={8}>
-          <Form.Item label="漏损率控漏目标"  name="leakageRateTarget" rules={rules} labelCol={{flex: "9em"}} >
-   <InputNumber addonAfter="%"></InputNumber>
-          </Form.Item> 
-          </Col>
-        </Row>
-        <div className='opt'>
-           <CustButton onClick={onRest} type="default">重置</CustButton>
-           <CustButton onClick={onSubmit}>提交</CustButton>
+        <div className="item">
+         <Space size={16}><Form.Item label="持续天数" name={["0", "alarmSettingJson", "continuousHours"]}>
+            <InputNumber addonAfter="天"></InputNumber>
+          </Form.Item>
+          <span className='tip'>漏损大于设置的天数未生成产生报警；阈值不能为负数；</span>
+          </Space>
+        </div>
+{/* 2 */}
+        <div className="item bg">
+          <span>分区漏损率连续超限</span>
+          <Space align='center' size={16}>
+          <Form.Item name={["1", "alarmType"]} initialValue={2}>
+          <Input hidden></Input>
+          </Form.Item>
+            <Form.Item label="报警级别" name={["1", "level"]} initialValue="1">
+              <Select options={alarmoption} style={{width: "160px"}}></Select>
+            </Form.Item>
+            <Form.Item name={["1", "isEnabled"]} valuePropName='checked' initialValue={false}>
+<Switch checkedChildren="开" unCheckedChildren="关" style={{width: "46px"}}></Switch>
+            </Form.Item>
+          </Space>          
+        </div>
+        <div className="item column">
+         <Space size={16}><Form.Item label="持续天数" name={["1", "alarmSettingJson", "continuousHours"]}>
+            <InputNumber addonAfter="天"></InputNumber>
+          </Form.Item>
+          <span className='tip'>漏损率不在设置区间产生报警；</span>
+          </Space>
+          <Space size={16}>
+             <Form.Item label="阈值范围" name={["1", "alarmSettingJson", "reasonableRange","min"]}>
+              <InputNumber min={0} max={100} addonAfter="%"></InputNumber>
+             </Form.Item>
+             <Form.Item label="-" name={["1", "alarmSettingJson", "reasonableRange","max"]}>
+              <InputNumber min={0} max={100} addonAfter="%"></InputNumber>
+             </Form.Item>
+             <span className='tip'>阈值范围0-100；</span>
+          </Space>
+        </div>
+        {/* 3 */}
+        <div className="item bg">
+          <span>分区漏损量连续超限</span>
+          <Space align='center' size={16}>
+          <Form.Item name={["2", "alarmType"]} initialValue={3}>
+          <Input hidden></Input>
+          </Form.Item>
+            <Form.Item label="报警级别" name={["2", "level"]} initialValue="1">
+              <Select options={alarmoption} style={{width: "160px"}}></Select>
+            </Form.Item>
+            <Form.Item name={["2", "isEnabled"]} valuePropName='checked' initialValue={false}>
+<Switch checkedChildren="开" unCheckedChildren="关" style={{width: "46px"}}></Switch>
+            </Form.Item>
+          </Space>          
+        </div>
+
+        <div className="item column">
+         <Space size={16}><Form.Item label="持续天数" name={["2", "alarmSettingJson", "continuousHours"]}>
+            <InputNumber addonAfter="天"></InputNumber>
+          </Form.Item>
+          <span className='tip'>漏损率不在设置区间产生报警；</span>
+          </Space>
+          <Space size={16}>
+             <Form.Item label="阈值范围" name={["2", "alarmSettingJson", "reasonableRange","min"]}>
+              <InputNumber min={0} addonAfter="吨"></InputNumber>
+             </Form.Item>
+             <Form.Item label="-" name={["2", "alarmSettingJson", "reasonableRange","max"]}>
+              <InputNumber min={0} addonAfter="吨"></InputNumber>
+             </Form.Item>
+             <span className='tip'>阈值不能为负数；</span>
+          </Space>
+        </div>
+  {/* 4 */}
+        
+      <div className="item bg">
+          <span>分区漏损量连续超限</span>
+          <Space align='center' size={16}>
+          <Form.Item name={["3", "alarmType"]} initialValue={4}>
+          <Input hidden></Input>
+          </Form.Item>
+            <Form.Item label="报警级别" name={["3", "level"]} initialValue="1">
+              <Select options={alarmoption} style={{width: "160px"}}></Select>
+            </Form.Item>
+            <Form.Item name={["3", "isEnabled"]} valuePropName='checked' initialValue={false}>
+<Switch checkedChildren="开" unCheckedChildren="关" style={{width: "46px"}}></Switch>
+            </Form.Item>
+          </Space>          
+        </div>
+
+        <div className="item column">
+         <Space size={16}><Form.Item label="持续天数" name={["3", "alarmSettingJson", "continuousHours"]}>
+            <InputNumber addonAfter="天"></InputNumber>
+          </Form.Item>
+          <span className='tip'>日供水量未在区间阈值内产生报警；</span>
+          </Space>
+          <Space size={16}>
+             <Form.Item label="阈值范围" name={["3", "alarmSettingJson", "reasonableRange","min"]}>
+              <InputNumber min={0} addonAfter="吨"></InputNumber>
+             </Form.Item>
+             <Form.Item label="-" name={["3", "alarmSettingJson", "reasonableRange","max"]}>
+              <InputNumber min={0} addonAfter="吨"></InputNumber>
+             </Form.Item>
+             <span className='tip'>阈值不能为负数；</span>
+          </Space>
         </div>
       </Form>
-    
+      </Titlelayout>
   )
 }

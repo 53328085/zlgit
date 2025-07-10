@@ -16,6 +16,7 @@ const {Link} = Typography
 export default function Index() {
   const {t} = useTranslation(["button"])
   let {exparams, setCustview} = useOutletContext()
+  console.log(exparams)
   let {areaId, projectId } = exparams 
   const setRef = useRef()
   const [messageApi, contextHolder] = message.useMessage();

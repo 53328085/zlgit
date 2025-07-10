@@ -285,6 +285,9 @@ export default function Index() {
           case "energyRank":
             setConfig({ isAreaId: false, custview: true });
             break;
+            case "energy":
+            setConfig({  custview: true });
+            break;
         }
 
       }
