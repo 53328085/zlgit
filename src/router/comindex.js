@@ -84,6 +84,7 @@ export default function Index() {
     designerEnergy: [ // 能源管理
       "price",
       "norm",
+      "energy",
       "type", "energyRank"
     ],
     runtimeCarbonEmissionManager: [  //碳排管理
