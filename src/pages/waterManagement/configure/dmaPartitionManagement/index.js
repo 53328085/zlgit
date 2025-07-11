@@ -16,13 +16,15 @@ import { Mainwrap, TitleBox } from "./style";
 import CModal from '@com/useModal'
 import { useAntdTable, useRequest} from "ahooks";
 import Newdma from "./newdma"
+import { IDrawer } from "@pages/cabinet/diskChartMonitor/comstyle";
  
  const {Link} = Typography
  
 export default function Index() { 
     const navigate = useNavigate();
+    const [id, setId] = useState(NaN)
     const { pathname, state,hash } = useLocation();
-  
+ 
   const [form] = Form.useForm()
   const  projectId  =  useSelector(selectProjectId)  
   const [treeId, setTreeId] = useState(null)
@@ -51,7 +53,7 @@ export default function Index() {
         level,
         sorting,
        }
-       let {data,success, total} = await useGetListPaged(body,{})
+       let {data,success, total} = await useGetListPaged({},body)
        if(success && Array.isArray(data) ) {         
           return {
              list:  data,
@@ -78,12 +80,18 @@ const {submit} = search
 const dmachange =(v) => {
   setLevle(v.target.value)
 }
-const addDma =(type) => {
-  navigate(pathname + "#" + type, { state: state, replace: true });
+const addDma =() => {
+  navigate(pathname+ `?item=1` + "#new", { state, replace: true });
 }
-const goAlarm = (row) => {
-  navigate(pathname+"?item=3" + "#new", { state: {...state, id:row.id}, replace: true });
+const goAlarm = (row) => { 
+  navigate(pathname+`?item=3&id=${row.id}` + "#edit", { state, replace: true });
 } 
+const editRecod = (row) => {
+  navigate(pathname+ `?item=1&id=${row.id}` + "#edit", { state, replace: true });
+} 
+const editDrive =(row) => {
+  navigate(pathname+ `?item=2&id=${row.id}` + "#edit", { state, replace: true });
+}
 const delRef = useRef()
 const idRef = useRef()
 const onDel=(id)=> {
@@ -100,6 +108,7 @@ const delOk =async ()=> {
    let {success,errMsg} =  await useDelete(params,{})
    if(success) {
      message.success("删除成功")
+     idRef.current.onCancle()
      refresh()
    }else {
      message.warning(errMsg || "数据出错")
@@ -125,7 +134,7 @@ const Ctitle = <TitleBox>
   title: "操作",
   dataIndex: "operation",
   key: "operation",
-  render: (_,row)=><Space size={24}><Link>档案</Link><Link>表具</Link><Link onClick={()=>goAlarm(row)}>告警</Link><Link type="danger" onClick={()=>onDel(row.id)}>删除</Link></Space>
+  render: (_,row)=><Space size={24}><Link onClick={()=> editRecod(row)}>档案</Link><Link onClick={()=>editDrive(row)}>表具</Link><Link onClick={()=>goAlarm(row)}>告警</Link><Link type="danger" onClick={()=>onDel(row.id)}>删除</Link></Space>
 },]
  const sortChnage=(_, filters, sorter)=> {    
     const {order,field} = sorter
@@ -136,6 +145,8 @@ const Ctitle = <TitleBox>
     }
     
  }
+
+
   return (
     <Pagecount pd="0" bgcolor="none">
     {listnew ?  <Mainwrap>
@@ -173,7 +184,7 @@ const Ctitle = <TitleBox>
           </Titlelayout>
         </div>
       </Mainwrap>
-     : <Newdma projectId={projectId} addDma={addDma} />
+     : <Newdma projectId={projectId}  addDma={addDma} />
     }
       <CModal ref={delRef} type="warn" mold="cust" title="分区删除提示" onOk={()=>delOk()} >
       删除该DMA管理分区，对应分区将不参与分区控漏计算

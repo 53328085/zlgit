@@ -1,11 +1,11 @@
 import {Apimethod} from "@api/api.js"
 
-export const { useetDetail } = new Apimethod( //获取分区详情
+export const { useGetDetail } = new Apimethod( //获取分区详情
     "get",
     "/DMA/DMAPartition/GetDetail"
   );
   export const { useGetListPaged } = new Apimethod( // 获取分区列表
-    "get",
+    "post",
     "/DMA/DMAPartition/GetListPaged"
   );
   export const { useGetTree} = new Apimethod( // 获取分区列表树
@@ -20,11 +20,22 @@ export const { useetDetail } = new Apimethod( //获取分区详情
   export const { useUpdate} = new Apimethod( // 修改分区
     "post",
     "/DMA/DMAPartition/Update"
-  )
+  );
   export const { useDelete} = new Apimethod( // 删除分区
     "post",
     "/DMA/DMAPartition/Delete"
   );
+
+  export const {useGetListDeviceCount} = new Apimethod( // 获取分区设备数量
+    "get",
+    "/DMA/DMAPartition/GetListDeviceCount"
+  );
+
+  export const {useGetListDevicePaged }= new Apimethod( // 获取分区设备数量
+    "post",
+    "/DMA/DMAPartition/GetListDevicePaged"
+  );
+
   export const { useGetAlarmSettings} = new Apimethod( // 获取分区预警配置
     "get",
     "/DMA/DMAPartition/GetAlarmSettings"
