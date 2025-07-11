@@ -113,18 +113,20 @@ export default function Index() {
     });
   };
   useEffect(() => {
-    if (tabId == "1") {
-      if (treeId) {
+  
+      if (treeId && tabId=="1") {
         getLeakageChart();
         getLeakageAnalysis();
       }
-    }
-  }, [treeId, JSON.stringify(formState)]);
+
+  }, [tabId,treeId, JSON.stringify(formState)]);
   useEffect(()=>{
-    if(tabId == "2" && treeId){
-      GetListPartitionAlarmPaged()
+    if(tabId=="2"){
+      treeId&&GetListPartitionAlarmPaged()
     }
-  },[tabId,JSON.stringify(formState),alarmForm.type,JSON.stringify(pageInfo)])
+    
+
+  },[tabId,treeId,JSON.stringify(formState),alarmForm.type,JSON.stringify(pageInfo)])
   return (
     <Pagecount bgcolor="transparent" pd="0 0 0 0">
       <Container>
@@ -152,10 +154,11 @@ export default function Index() {
             {/* <CustContext.Provider value={analysisData}> */}
               <div className="card1">
                 <Leakage analysisData={analysisData}/>
+                
               </div>
             {/* </CustContext.Provider> */}
               <div className="card2">
-                <LeakageTrend trendData={trendData}   getLeakageChart={getLeakageChart}/>
+              <LeakageTrend trendData={trendData}   getLeakageChart={getLeakageChart}/>
               </div>
             </>
           ) : (
@@ -168,7 +171,10 @@ export default function Index() {
                 ></PartAlarm>
               </div>
             </>
-          )}
+          )
+          }
+
+
         </div>
       </Container>
     </Pagecount>
