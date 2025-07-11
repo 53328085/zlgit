@@ -1,8 +1,8 @@
 import React, { useState } from 'react'
 import {Form, Select, Row, Col, Input,InputNumber, Cascader, Radio, Space, Switch, message} from "antd" 
-import {useRequest} from "ahooks"
+import {useRequest, useAntdTable} from "ahooks"
 import {useLocation} from "react-router-dom"
-import {useUpdateAlarmSetting,useGetAlarmSettings,useGetListDeviceCount} from "../api"
+import {useUpdateAlarmSetting,useGetAlarmSettings,useGetListDeviceCount,useGetListDevicePaged} from "../api"
 import { alarmoption, custvalidfn, rules} from "../data"
 import { CustButton } from '@com/useButton'
 import {isObject} from "@com/usehandler"
@@ -27,10 +27,34 @@ export default function Index({projectId,id}) {
  }
  
 
- const {data, refresh} =  useRequest(getData, {
+ const { refresh} =  useRequest(getData, {
   refreshDeps: [projectId,id]
 })
 
+
+const [sorting, setSorting] = useState("")
+const [filterInfo, setFilterInfo] = useState("")
+const [partitionType, setPartitionType] = useState("")
+const getListData = async({current, pageSize}, formData)=> {
+    try {
+      let body = {
+        pageNum: current,
+        pageSize,
+        sorting,
+        projectId,
+        id,
+        filterInfo,
+        partitionType
+      }
+      let {} = await useGetListDevicePaged()  
+    } catch (error) {
+        
+    }
+}
+
+useAntdTable(getListData, {
+    refreshDeps: [projectId,id, sorting, filterInfo, partitionType]
+})
 const onRest = ()=> {}
  
 

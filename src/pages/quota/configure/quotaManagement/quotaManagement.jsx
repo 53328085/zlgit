@@ -6,7 +6,7 @@ import Titlelayout from "@com/titlelayout"
 import { useSelector } from 'react-redux'
 import { selectProjectId ,themeColor} from '@redux/systemconfig.js'
 import { cloneDeep, isObject } from 'lodash';
-import { CustButtonT, CustButton, TreeBtnN, TreeBtnW } from "@com/useButton"
+import { CustButtonT, CustButton, TreeBtn, TreeBtnW } from "@com/useButton"
 import CModal from "@com/useModal"
 import Bluecolumn from "@com/bluecolumn"
 import CustomDraw from "./draw.js"
@@ -256,10 +256,10 @@ export default function QuotaManagement() {
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
         {parentId === 0 ? <CustButton wh="auto">{data.name}</CustButton> : <Custtitle><Text ellipsis={{tooltip: {title: data.name, color: primaryColor}}}>{data.name}</Text></Custtitle>}
         <Space >
-          {areaLevel < 3 && <TreeBtnN text="addSubitem" wh="auto" onClick={() => addSubitem(quotaAreaId, valName)} key="add" />}
-          <TreeBtnN text="edit" key="edit" onClick={() => editSubitem(quotaAreaId, valName)} />
-          {areaLevel > 0 ? <TreeBtnW text="delete" key="delete" onClick={() => onDelete(quotaAreaId)} /> : <TreeBtnW style={{ opacity: 0 }} />}
-          <TreeBtnN text="configure" key="configure" onClick={() => onConfig(quotaAreaId)} />
+          {areaLevel < 3 && <TreeBtn text="addSubitem" wh="auto" onClick={() => addSubitem(quotaAreaId, valName)} key="add" />}
+          <TreeBtn text="edit" key="edit" onClick={() => editSubitem(quotaAreaId, valName)} />
+          {areaLevel > 0 ? <TreeBtnW text="delete" key="delete" onClick={() => onDelete(quotaAreaId)} /> : <TreeBtn style={{ opacity: 0 }} />}
+          <TreeBtn text="configure" key="configure" onClick={() => onConfig(quotaAreaId)} />
         </Space>
       </div>
     )
