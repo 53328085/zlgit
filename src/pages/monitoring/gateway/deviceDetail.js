@@ -1,4 +1,4 @@
-import { React, useState, useEffect, useRef } from "react";
+import { React, useState, useEffect, useRef, useMemo } from "react";
 import mqtt from "mqtt";
 import styled, {css} from "styled-components";
 import style from "./style.module.less";
@@ -38,6 +38,7 @@ import {
   currProject,
   selectOneLevelDefaultId,
   adaptation,
+  curDeviceStyle
 } from "@redux/systemconfig.js";
 import { isObject, disabledDate } from "@com/usehandler";
 import { selectUser } from "@redux/user.js";
@@ -235,13 +236,14 @@ const Ctitlec = styled.div`
     justify-content: center;
   }
 `;
-const deviceList = [
+/* const deviceList = [
   "",
   "电表",
   "冷水表",
   "燃气表",
   "传感器",
   "变压器",
+  "视频",
   "热水表",
   "蒸汽表",
   "煤炭表",
@@ -255,7 +257,7 @@ const deviceList = [
   "",
   "",
   "流量计",
-];
+]; */
 
 const Chartbox = styled.div`
   display: grid;
@@ -340,7 +342,17 @@ const Chartin = (props) => {
   );
 };
 export default function GatewayDetail(props) {
-  let devess = useSelector((state) => state.system.deviceStyle);
+  let devess = useSelector(curDeviceStyle);
+  
+  const deviceList = useMemo(()=> {
+    let obj ={}
+    if(Array.isArray(devess)) {
+      devess.forEach(d => {
+        obj[d?.deviceStyle] = d?.name
+      })
+    }
+    return obj
+  },[devess])
 
   let location = useLocation();
   // let [searchParams, setSearchParams] = useSearchParams()
@@ -1199,8 +1211,8 @@ export default function GatewayDetail(props) {
           <div className={style.leftBottom}>
             <p>
               <span className={style.leftBottomSpan}>设备类型：</span>
-              <Textbox ellipsis={{ tooltip: deviceList[detail.deviceStyle] }}>
-                {deviceList[detail.deviceStyle] || ""}
+              <Textbox ellipsis={{ tooltip: detail.deviceStyleName }}>
+                {detail.deviceStyleName || ""}
               </Textbox>
             </p>
             <p>

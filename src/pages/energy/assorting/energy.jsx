@@ -78,7 +78,7 @@ const Mainbox=styled.div`
             .pdlf16 {
                 padding-left: 8px;
                 padding-right: 2px;
-                color: #fff;
+                color: #303133;
             }
         }
     }
@@ -183,7 +183,7 @@ const Boxchart = ({ index, showType, data, date }) => {
           source: [xaxis, y],
           sourceHeader: false,
         },
-        color: color[index]
+        color: color[index % 4]
 
       })
     }

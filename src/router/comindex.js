@@ -84,6 +84,7 @@ export default function Index() {
     designerEnergy: [ // 能源管理
       "price",
       "norm",
+      "energy",
       "type", "energyRank"
     ],
     runtimeCarbonEmissionManager: [  //碳排管理
@@ -284,6 +285,9 @@ export default function Index() {
             break;
           case "energyRank":
             setConfig({ isAreaId: false, custview: true });
+            break;
+            case "energy":
+            setConfig({  custview: true });
             break;
         }
 

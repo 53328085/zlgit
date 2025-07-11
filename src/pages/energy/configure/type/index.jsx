@@ -10,7 +10,7 @@ import UseTransfer from './transfer';
 import Mask from '@com/mask.jsx'
 import { Ptag, Wtag } from '@com/comstyled'
 import { useOutletContext } from 'react-router-dom'
-import { CustButton ,TreeBtn} from "@com/useButton"
+import { CustButton, TreeBtn } from "@com/useButton"
 import Pagecount from "@com/pagecontent";
 import CustContext from '@com/content.js'
 import Titlelayout from '@com/titlelayout'
@@ -22,7 +22,8 @@ export default function Index() {
 
   const tabs = [
     { label: '电', key: 1 },
-    { label: '水', key: 2 },
+    { label: '冷水', key: 2 },
+    { label: '热水', key: 7 },
   ]
   const [energyType, setvalue] = useState(1)
   const propsData = {
@@ -97,9 +98,9 @@ export default function Index() {
           <span style={item.parentId == 0 ? mainStyle : null}>{item.name}</span>
           <div style={nodeAction}>
             <TreeBtn onClick={() => addSon(item.id)} wh="60px" text="new" />
-            <TreeBtn onClick={() => edit(item.id, valName)} wh="60px" text="edit" /> 
-            <TreeBtn onClick={() => settingClick(item.id, valName)} wh="auto" text="configure" /> 
-            <TreeBtn onClick={() => deleteRecord(item.id)} wh="60px" text="delete" type={3}   /> 
+            <TreeBtn onClick={() => edit(item.id, valName)} wh="60px" text="edit" />
+            <TreeBtn onClick={() => settingClick(item.id, valName)} wh="auto" text="configure" />
+            <TreeBtn onClick={() => deleteRecord(item.id)} wh="60px" text="delete" type={3} />
           </div>
         </div>
       )
@@ -282,17 +283,17 @@ export default function Index() {
     setTransTag(false)
     setTimeout(() => { setDeleteDom(false) }, 600)
   }
-    const Title = (
-      <div style={{display: 'flex',justifyContent: "space-between", alignContent: "center"}}>
-        <span style={{lineHeight: "32px"}}>能源结构</span>
-        <CustButton wh="auto" onClick={() => addMain()}>{t("button:addMasterNode")}</CustButton>
-      </div>
-    )
+  const Title = (
+    <div style={{ display: 'flex', justifyContent: "space-between", alignContent: "center" }}>
+      <span style={{ lineHeight: "32px" }}>能源结构</span>
+      <CustButton wh="auto" onClick={() => addMain()}>{t("button:addMasterNode")}</CustButton>
+    </div>
+  )
   return (
     <CustContext.Provider value={propsData}>
       <Pagecount value={energyType}>
-        {contextHolder} 
-          <Titlelayout title= {Title}  layout="flex" dr="column" pv="0" bordered="n" rad="0px">
+        {contextHolder}
+        <Titlelayout title={Title} layout="flex" dr="column" pv="0" bordered="n" rad="0px">
           <div className={style.lineTree}>
             <div className={style.treeTitle}>
               <span className={style.treeItem}>线路图</span>
