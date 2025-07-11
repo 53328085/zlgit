@@ -2,24 +2,27 @@ import styled from "styled-components";
 import { Radio } from "antd";
 export const Container = styled.div`
   display: flex;
+  flex: 1;
   .tree-box {
     height: 864px;
     flex-shrink: 0;
     max-width: 210px;
     display: flex;
     flex-direction: column;
+    width: 210px;
   }
   .right-box {
     flex: 1;
     margin-left: 18px;
     display: grid;
     grid-template-rows: 48px 233px 1fr;
-    .card{
-      width: 100%;
+    .card1{
+      /* width: 100%; */
     }
     .card2 {
       margin-top: 16px;
-      width: 100%;
+      display: flex;
+      overflow: hidden;
     }
   }
 `;
@@ -59,6 +62,11 @@ export const Card = styled.div`
   background-color: #fff;
   margin-top: 10px;
   margin-bottom: 12px;
+  flex:1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+
   .leakage {
     display: flex;
     .leakage-item1 {
@@ -96,13 +104,13 @@ export const Card = styled.div`
     }
   }
   .context {
-    height: 502px;
-    margin: 0 auto;
     display: flex;
     flex-direction: column;
+    overflow: hidden; 
+    position: relative;
+    flex:1;
     .chart {
       height: 100%;
-      width: 100%;
     }
     .table {
       margin-top: 16px;

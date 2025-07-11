@@ -68,7 +68,6 @@ export const Guage_Data = {
           width: 2,
         },
       },
-    
 
       splitLine: {
         length: 0,
@@ -111,10 +110,20 @@ export const Type_Options = [
 export const Double_Option = {
   // 共享的 legend 配置
   legend: {
-    data: ["漏损量", "漏损率", "分区供水量","分区用水量"], // 两个图表共用的图例项
+    data: ["漏损量", "漏损率", "分区供水量", "分区用水量"], // 两个图表共用的图例项
     top: 0, // 图例位置
   },
-
+  tooltip: {
+    trigger: "axis", // 触发方式（'axis'表示坐标轴触发）
+    axisPointer: {
+      type: "line", // 虚线类型：'line'（直线）| 'cross'（十字）| 'shadow'（阴影）
+      lineStyle: {
+        color: "#999", // 虚线颜色
+        type: "dashed", // 虚线样式
+        width: 1, // 虚线宽度
+      },
+    },
+  },
   // 定义两个图表的位置和大小
   grid: [
     // 上方图表 grid 配置
@@ -123,6 +132,7 @@ export const Double_Option = {
       height: "40%", // 高度占比
       left: "5%", // 左右边距
       right: "1%",
+      containLabel: true,
     },
     // 下方图表 grid 配置
     {
@@ -131,6 +141,7 @@ export const Double_Option = {
       left: "5%",
       right: "1%",
       bottom: "0%",
+      containLabel: true,
     },
   ],
 
@@ -139,16 +150,18 @@ export const Double_Option = {
     // 上方图表的x轴
     {
       type: "category",
-      data: ["周一", "周二", "周三", "周四", "周五", "周六", "周日"],
+      data: [],
       gridIndex: 0, // 关联到第一个grid
-      axisLabel: { interval: 0 },
+      boundaryGap: true,
+      // axisLabel: { interval: 0 },
     },
     // 下方图表的x轴
     {
       type: "category",
-      data: ["一月", "二月", "三月", "四月", "五月", "六月"],
+      data: [],
       gridIndex: 1, // 关联到第二个grid
-      axisLabel: { interval: 0 },
+      boundaryGap: true,
+      // axisLabel: { interval: 0 },
     },
   ],
 
@@ -176,40 +189,50 @@ export const Double_Option = {
   series: [
     // 上方图表的数据系列
     {
-      name: "数据A",
+      name: "漏损量",
       type: "bar",
       xAxisIndex: 0, // 使用第一个x轴
       yAxisIndex: 0, // 使用第一个y轴
-      data: [120, 132, 101, 134, 90, 230, 210],
+      data: [],
       symbol: "circle",
       symbolSize: 8,
     },
     {
-      name: "数据B",
-      type: "bar",
+      name: "漏损率",
+      type: "line",
       xAxisIndex: 0,
       yAxisIndex: 0,
-      data: [220, 182, 191, 234, 290, 330, 310],
+      data: [],
       symbol: "circle",
       symbolSize: 8,
+      symbolKeepAspect: true,
+      // 自定义路径：圆形 + 左右横线
+      symbolPath: `
+    M -10,0    // 移动到左横线起点
+    L -5,0     // 画左横线（5px长）
+    M 5,0      // 移动到右横线起点
+    L 10,0     // 画右横线（5px长）
+    M 0,0      // 移动到圆心
+    a 3,3 0 1,0 0.1,0  // 画半径3px的圆（避免零半径）
+  `,
     },
 
     // 下方图表的数据系列
     {
-      name: "数据A",
+      name: "分区供水量",
       type: "bar",
       xAxisIndex: 1, // 使用第二个x轴
       yAxisIndex: 1, // 使用第二个y轴
-      data: [1200, 1600, 1500, 1800, 2000, 1900],
+      data: [],
       symbol: "circle",
       symbolSize: 8,
     },
     {
-      name: "数据C",
+      name: "分区用水量",
       type: "bar",
       xAxisIndex: 1,
       yAxisIndex: 1,
-      data: [800, 900, 1000, 1100, 1200, 1300],
+      data: [],
       symbol: "circle",
       symbolSize: 8,
     },
