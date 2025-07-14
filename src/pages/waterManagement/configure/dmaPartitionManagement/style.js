@@ -157,3 +157,13 @@ export const Newcontent = styled.div`
   }
 `
  
+export const Mcontent= styled.div`
+ display: grid;
+ grid-template-columns: 642px 1fr;
+ column-gap: 32px;
+ .mleft {
+  display: flex;
+  flex-direction: column;
+  row-gap: 16px;
+ }
+`

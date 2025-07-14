@@ -1,7 +1,7 @@
-import React, {useState, useEffect, useCallback} from 'react'
+import React, { useState, useEffect, useCallback } from 'react'
 import { useRequest } from 'ahooks';
 import style from './style.module.less';
-import { Select,DatePicker,Button, message, Radio } from 'antd';
+import { Select, DatePicker, Button, message, Radio } from 'antd';
 import dayjs from 'dayjs'
 import { useSelector, useDispatch } from 'react-redux'
 import { selectProjectId, selectOneLevel, levelDefaultLabel, selectOneLevelDefaultId, setCurrentlevel } from '@redux/systemconfig.js'
@@ -25,31 +25,31 @@ export default function Index(props) {
   const projectId = useSelector(selectProjectId);
   let areaList;
   let oneLevelDefaultId;
-  if(props.allarea){
+  if (props.allarea) {
     areaList = props.allarea
     oneLevelDefaultId = 0
-  }else{
+  } else {
     areaList = useSelector(selectOneLevel)
     oneLevelDefaultId = useSelector(selectOneLevelDefaultId)
   }
-   
+
   const areaName = useSelector(levelDefaultLabel) || '园区'
-  
+
   const { queryShifts } = eneryShift
   //园区
   const [defaultArea, setDefaultArea] = useState(oneLevelDefaultId ? oneLevelDefaultId : undefined)
-  const [areaId,setAreaId] = useState(oneLevelDefaultId ? oneLevelDefaultId : undefined)
+  const [areaId, setAreaId] = useState(oneLevelDefaultId ? oneLevelDefaultId : undefined)
   const changeArea = (value) => {
     console.log(value)
     areaList.map(item => {
-      if(item.id == value){
+      if (item.id == value) {
         dispatch(setCurrentlevel(item))
       }
     })
-    
+
     setAreaId(value);
   };
-  
+
   //能源类型
   const [energyType, setEnergyType] = useState(props.comprehensive ? 0 : 1)
   const changeEnergyType = val => {
@@ -71,16 +71,16 @@ export default function Index(props) {
     if (val == "date") setDate(year + "-" + month + "-" + day);
   };
   const changeDate = (date, dateString) => {
-    if(type == 'year') setDate(dateString+'-01-01')
-    if(type == 'month') setDate(dateString+'-01')
-    if(type == 'date') setDate(dateString)
+    if (type == 'year') setDate(dateString + '-01-01')
+    if (type == 'month') setDate(dateString + '-01')
+    if (type == 'date') setDate(dateString)
   }
 
   const PickerWithType = useCallback(({ type, onChange }) => {
-    if (type === 'date') return <DatePicker allowClear={false}  picker={type} value={dayjs(date, 'YYYY-MM-DD')} format={'YYYY-MM-DD'} onChange={onChange} />;
-    if (type === 'month') return <DatePicker allowClear={false}  picker={type} value={dayjs(date, 'YYYY-MM')} format={'YYYY-MM'} onChange={onChange} />;
-    if (type === 'year') return <DatePicker allowClear={false}  picker={type} value={dayjs(date, 'YYYY')} format={'YYYY'} onChange={onChange} />;
-  },[date])
+    if (type === 'date') return <DatePicker allowClear={false} picker={type} value={dayjs(date, 'YYYY-MM-DD')} format={'YYYY-MM-DD'} onChange={onChange} />;
+    if (type === 'month') return <DatePicker allowClear={false} picker={type} value={dayjs(date, 'YYYY-MM')} format={'YYYY-MM'} onChange={onChange} />;
+    if (type === 'year') return <DatePicker allowClear={false} picker={type} value={dayjs(date, 'YYYY')} format={'YYYY'} onChange={onChange} />;
+  }, [date])
   //班次
   const [shift, setShift] = useState(0);
   const changeShift = (val) => {
@@ -99,10 +99,10 @@ export default function Index(props) {
   };
   const { data: shiftsData, run: runShift } = useRequest(getShifts, {
     manual: true,
-    onSuccess: (result, params) => {},
+    onSuccess: (result, params) => { },
   });
   useEffect(() => {
-    if(areaList.length == 0 || !areaList){
+    if (areaList.length == 0 || !areaList) {
       message.error('当前项目尚未创建园区!')
       return;
     }
@@ -124,7 +124,7 @@ export default function Index(props) {
   };
 
   useEffect(() => {
-    if(props.allarea){
+    if (props.allarea) {
       let params = {
         projectId,
         areaId,
@@ -135,7 +135,7 @@ export default function Index(props) {
         tab,
       };
       props.getValues(params);
-    }else{
+    } else {
       if (areaId == 0) {
         return;
       } else {
@@ -151,7 +151,7 @@ export default function Index(props) {
         props.getValues(params);
       }
     }
-    
+
   }, [areaId, shift, energyType, type, date, tab]);
   return (
     <div>
@@ -179,22 +179,22 @@ export default function Index(props) {
             <div className={style.line}></div>
             <span>能源类型</span>
             <Select
-            size="middle"
-            style={{width: '126px', marginLeft: '16px'}}
-            defaultValue={1}
-            onChange={changeEnergyType}
-          >
-            <Option value={1}>电</Option>
-            <Option value={2}>水</Option>
-            <Option value={3}>燃气</Option>
-          </Select> 
-        </>) : null}
+              size="middle"
+              style={{ width: '126px', marginLeft: '16px' }}
+              defaultValue={1}
+              onChange={changeEnergyType}
+            >
+              <Option value={1}>电</Option>
+              <Option value={2}>水</Option>
+              <Option value={3}>燃气</Option>
+            </Select>
+          </>) : null}
         {(props.isEnergy == false && props.comprehensive) ? <>
           <div className={style.line}></div>
           <span>能源类型</span>
-            <Select
+          <Select
             size="middle"
-            style={{width: '126px', marginLeft: '16px'}}
+            style={{ width: '126px', marginLeft: '16px' }}
             defaultValue={0}
             onChange={changeEnergyType}
           >
@@ -202,7 +202,7 @@ export default function Index(props) {
             <Option value={1}>电</Option>
             <Option value={2}>水</Option>
             <Option value={3}>燃气</Option>
-          </Select> 
+          </Select>
         </> : null}
         {
           props.isTab ? <>
@@ -211,7 +211,7 @@ export default function Index(props) {
               <Radio.Button style={{ width: '96px', textAlign: 'center', borderRadius: 16, borderTopLeftRadius: 0, borderBottomLeftRadius: 0 }} value="cost">费用</Radio.Button>
             </Radio.Group>
           </>
-         : null}
+            : null}
         {props.isDate ? (
           <>
             <div className={style.line}></div>

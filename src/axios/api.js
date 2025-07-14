@@ -5,21 +5,21 @@ export class Test {
 }
 // zl api start
 // 登录
-export  class Apimethod {
+export class Apimethod {
   constructor(method, url) {
     try {
       this.url = url
-      this.method=method
-    
-       let methodname ='use'+ url.slice(url.lastIndexOf("/")+1);
-       this[methodname]= (function(params, body){
-        if(method=="post"){
-          return server[this.method](this.url,body, {params} )
-         }else  {
-          return server[this.method](this.url,  {params})
-         }
-         
-       }).bind(this)
+      this.method = method
+
+      let methodname = 'use' + url.slice(url.lastIndexOf("/") + 1);
+      this[methodname] = (function (params, body) {
+        if (method == "post") {
+          return server[this.method](this.url, body, { params })
+        } else {
+          return server[this.method](this.url, { params })
+        }
+
+      }).bind(this)
     } catch (error) {
       console.log(error)
     }
@@ -1923,7 +1923,7 @@ export const Monitoring = {
     ImportBreaker: (data) => server.post(`/Monitor/Device/ImportBreaker`, data), //导入电表
     ImportWater: (data) => server.post(`/Monitor/Device/ImportWater`, data), //导入水表
     ImportGas: (data) => server.post(`/Monitor/Device/ImportGas`, data), //导入燃气表
-    ImportHotWater:(data) => server.post(`/Monitor/Device/ImportHotWater`, data), //导入热水表
+    ImportHotWater: (data) => server.post(`/Monitor/Device/ImportHotWater`, data), //导入热水表
     ImportSensor: (data) => server.post(`/Monitor/Device/ImportSensor`, data), //导入传感器
     ImportTransformer: (data) =>
       server.post(`/Monitor/Device/ImportTransformer`, data), //导入变压器
@@ -2478,7 +2478,7 @@ export class energyShare {
 
   static queryLine = (data) =>
     server.post(`Energy/EnergyTimeShareRuntime/QueryElectricByLine`, data); //线路查询
-  
+
 }
 //数据报表
 export class energyReport {
@@ -3134,9 +3134,9 @@ export class EnergyFlowRuntime {
       `Energy/EnergyFlowRunTime/QueryElectric?projectId=${projectId}&type=${type}&date=${date}`,
       data
     );
-  static queryWater = ({ projectId, type, date }, data) =>
+  static queryWater = ({ projectId, type, meterType, date }, data) =>
     server.post(
-      `Energy/EnergyFlowRunTime/QueryWater?projectId=${projectId}&type=${type}&date=${date}`,
+      `Energy/EnergyFlowRunTime/QueryWater?projectId=${projectId}&type=${type}&meterType=${meterType}&date=${date}`,
       data
     );
   static queryGas = ({ projectId, type, date }, data) =>
@@ -4142,9 +4142,9 @@ export class Cabinets {
   //设计态
 }
 
-export class DMAPartition{
-  static DMAGetTree =(projectId)=>server.get(`DMA/DMAPartition/GetTree?projectId=${projectId}`);//获取DMA树
-  static LeakageChart =(params)=>server.get(`DMA/DMAPartition/LeakageChart`,{params});//获取分区漏损图表
-  static LeakageInfo =(params)=>server.get(`/DMA/DMAPartition/LeakageInfo`,{params});//获取分区漏损概览
-  static GetListPartitionAlarmPaged =(params)=>server.get(`/DMA/DMAPartition/GetListPartitionAlarmPaged`,{params});//获取DMA分区报警列表
+export class DMAPartition {
+  static DMAGetTree = (projectId) => server.get(`DMA/DMAPartition/GetTree?projectId=${projectId}`);//获取DMA树
+  static LeakageChart = (params) => server.get(`DMA/DMAPartition/LeakageChart`, { params });//获取分区漏损图表
+  static LeakageInfo = (params) => server.get(`/DMA/DMAPartition/LeakageInfo`, { params });//获取分区漏损概览
+  static GetListPartitionAlarmPaged = (params) => server.get(`/DMA/DMAPartition/GetListPartitionAlarmPaged`, { params });//获取DMA分区报警列表
 }

@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import { useRequest } from "ahooks";
 import style from "./style.module.less";
-import { message, Radio ,Button} from "antd";
+import { message, Radio, Button } from "antd";
 import styled from "styled-components";
 import Searchtree from "@com/searchTree";
 import Barchart from "./barChart";
@@ -55,10 +55,10 @@ export default function Index(props) {
     queryEnergyCategoryTree,
     queryElectricYear,
     queryElectricRangeDay,
-   // queryElectricDay,
+    // queryElectricDay,
     queryElectricMonth,
-   // queryWaterDay,
-   queryWaterRange,
+    // queryWaterDay,
+    queryWaterRange,
     queryWaterMonth,
     queryWaterYear,
     queryGasDay,
@@ -68,7 +68,7 @@ export default function Index(props) {
 
   let { exparams } = useOutletContext()
   let { areaId, projectId, type, date, energytype, shiftNo } = exparams
-  const chartTitle = ["用电量 (kWh)", "用电量 (kWh)", '用水量 (m³)', '用气量 (m³)'][energytype] || "用电量 (kWh)"
+  const chartTitle = ["用电量 (kWh)", "用电量 (kWh)", '用水量 (m³)', '用气量 (m³)', '', '', '', '用水量 (m³)'][energytype] || "用电量 (kWh)"
   const isElectric = energytype === 1;
   const [treeIdList, setTreeIdList] = useState(null);
   //右下角 公共能耗同比  能耗数据展示
@@ -108,13 +108,13 @@ export default function Index(props) {
   })
   //自定义调用方法
   const pageInfo = () => {
-    console.log(exparams.type)
+    console.log(exparams)
     if (Object.values(exparams)?.length < 6 || !Array.isArray(treeIdList)) return;
     let energy = Number(energytype) - 1;
     let api = Number(type) - 1
     let hander = [
       [
-       // queryElectricDay,
+        // queryElectricDay,
         queryElectricRangeDay,
         queryElectricMonth,
         queryElectricYear,
@@ -128,20 +128,27 @@ export default function Index(props) {
         queryGasDay,
         queryGasMonth,
         queryGasYear
-      ]][energy][api]
-    const params = type==1  ? {
-      projectId, 
+      ], [], [], [], [
+        queryWaterRange,
+        queryWaterMonth,
+        queryWaterYear
+      ],
+    ][energy][api]
+    const params = type == 1 ? {
+      projectId,
       areaId,
       startDate: date?.[0]?.format("YYYY-MM-DD"),
-      endDate:date?.[1]?.format("YYYY-MM-DD"),
+      endDate: date?.[1]?.format("YYYY-MM-DD"),
       shiftNo,
-    }: {
-      projectId, 
+      meterType: energytype
+    } : {
+      projectId,
       areaId,
-      date:  data&&type ?  getTime(date, type) : "", //date().startOf(type==2 ? "month" : "year").format("YYYY-MM-DD"),
+      date: data && type ? getTime(date, type) : "", //date().startOf(type==2 ? "month" : "year").format("YYYY-MM-DD"),
       shiftNo,
+      meterType: energytype
     }
-  
+
     return hander(params, treeIdList).then(res => {
       let { success, data, errMsg } = res;
       if (success) {
@@ -149,7 +156,7 @@ export default function Index(props) {
         let { x = [], y = [] } = detail
         setEnergySub(energySub);
         setEnergyTotal(energyTotal);
-      
+
         const tableData = x.map((time, index) => ({
           time: time,
           value: y[index]
@@ -205,9 +212,9 @@ export default function Index(props) {
   const onChange = (e) => {
     setMode(e.target.value)
   }
-const exportData = () => {
-  tbref.current.download()
-}
+  const exportData = () => {
+    tbref.current.download()
+  }
 
   return (
     <Pagecount pd="0" bgcolor="transparent" >
@@ -226,25 +233,25 @@ const exportData = () => {
         </Titlelayout>
 
         <Titlelayout title={<div style={{ width: '100%', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-          <span>公共能耗</span> <div style={{width:260, display: 'flex', alignItems: 'center',justifyContent: 'space-between' }}>
+          <span>公共能耗</span> <div style={{ width: 260, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
             <Radiogroup options={[
-            {
-              label: "图表模式",
-              value: 1
-            },
-            {
-              label: "列表模式",
-              value: 2
-            }
-          ]}
-            optionType="button"
-            buttonStyle="solid"
-            onChange={onChange}
-            value={mode}
-          ></Radiogroup>
+              {
+                label: "图表模式",
+                value: 1
+              },
+              {
+                label: "列表模式",
+                value: 2
+              }
+            ]}
+              optionType="button"
+              buttonStyle="solid"
+              onChange={onChange}
+              value={mode}
+            ></Radiogroup>
             {/* <ExportExcel tb={tbref} /> */}
             <Button type="primary" onClick={exportData}>导出</Button>
-            </div></div>} layout="flex">
+          </div></div>} layout="flex">
           <div className="chart">
             {mode == 1 ? <Ichart {...options} /> : <UseTable ref={tbref} dataSource={tableData} columns={columns} key="table" />}
           </div>

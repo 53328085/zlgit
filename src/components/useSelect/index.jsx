@@ -20,17 +20,17 @@ export default function Index({
                 EnergyType: null,
                 Time: null,
                 Plan: "1",
-            }} 
-            >
+            }}
+        >
             <Form.Item label="园区选择" name="RegionId">
-                <Select  style={{ width: 320 }} allowClear>
+                <Select style={{ width: 320 }} allowClear>
                     <Option value="1">正泰园区</Option>
                     <Option value="2">滨江园区</Option>
                 </Select>
             </Form.Item>
             <div className={selectStyle.line}></div>
             <Item label="能源类型" name="EnergyType">
-                <Select  style={{ width: 120 }} allowClear>
+                <Select style={{ width: 120 }} allowClear>
                     <Option value="1">水</Option>
                     <Option value="2">电</Option>
                     <Option value="3">燃气</Option>
@@ -38,28 +38,28 @@ export default function Index({
             </Item>
             <div className={selectStyle.line}></div>
             {
-               isplan? <>
-               <Item  name="Plan">
-                 <Select  style={{ width: 120 }} allowClear>
-                     <Option value="1">全部班次</Option>
-                     <Option value="2">早班</Option>
-                     <Option value="3">中班</Option>
-                     <Option value="4">晚班</Option>
-                 </Select>
-             </Item> <div className={selectStyle.line}></div>
-               </> :null
-             
+                isplan ? <>
+                    <Item name="Plan">
+                        <Select style={{ width: 120 }} allowClear>
+                            <Option value="1">全部班次</Option>
+                            <Option value="2">早班</Option>
+                            <Option value="3">中班</Option>
+                            <Option value="4">晚班</Option>
+                        </Select>
+                    </Item> <div className={selectStyle.line}></div>
+                </> : null
+
             }
-            
+
             <Item label="时间" name="Time">
-                <Select  style={{ width: 120 }} allowClear>
+                <Select style={{ width: 120 }} allowClear>
                     <Option value="1">日</Option>
                     <Option value="2">月</Option>
                     <Option value="3">年</Option>
                 </Select>
             </Item>
             <div className={selectStyle.line}></div>
-           
+
             <div className={selectStyle.btnStyle}>
                 {
                     isexports ? <Item style={!isset ? { marginRight: 0 } : {}}>
@@ -72,7 +72,7 @@ export default function Index({
             </div>
         </Form>
 
-      
+
     )
 
 }
