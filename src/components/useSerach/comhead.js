@@ -251,9 +251,10 @@ export default function UseSerach(props) {
     label: '热水',
     value: 7
   }]
-  const energyChange = (e) => {
-    // form.setFieldValue("type", e)
-    // changetype(e)
+  const energyChange = (v) => {
+    let  e = v==7 ? (v-5) : v
+    form.setFieldValue("type", e)
+    changetype(e)
   }
   const energytype = (
     <Item label="能源类型" name="energytype" initialValue={1}>
