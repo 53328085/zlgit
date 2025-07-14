@@ -1,12 +1,31 @@
-import React from 'react'
+import React, {useMemo} from 'react'
 import {Form, Select, Row, Col, Input,InputNumber, Cascader, Radio, message} from "antd" 
 import {useRequest} from "ahooks"
-import {useGetTree,useInsert} from "../api"
+import {useGetTree,useInsert,useGetDetail,useUpdate} from "../api"
 import {rules, options,partType,rateType, iscomputer} from "../data"
 import { CustButton } from '@com/useButton'
 import {isObject} from "@com/usehandler"
-export default function Index({projectId}) {
+export default function Index({projectId, id}) {
  const [form] = Form.useForm()
+
+const isEdit = useMemo(()=> {
+ return  Number.isInteger(parseInt(id))
+}, [id])
+
+const getRecordDtl =async() => {
+    try {
+       if(![id, projectId].some(d => Number.isInteger(d))) return
+      let {data, success} = await useGetDetail({id, projectId})
+      if(success && isObject(data)) {
+         form.setFieldsValue(data)
+      }
+    } catch (error) {
+      
+    }
+}
+const {refresh}  =  useRequest(getRecordDtl, {
+  refreshDeps: [id, projectId],
+})
 
   const getTree =async()=> {
     try {
@@ -38,13 +57,18 @@ export default function Index({projectId}) {
     values["parentId"] = parentId[parentId?.length - 1]
     values["isComputeLeakage"] = values["isComputeLeakage"]=="1"
      values["isComputeNrw"] = values["isComputeNrw"]=="1"
-  
-    let {success, data,errMsg} = await useInsert({projectId}, {...values, projectId})
-    if(success && isObject(data)) {
-        message.success("新增成功")
-        data["isComputeLeakage"] = Number(data["isComputeLeakage"])?.toString()
-        data["isComputeNrw"] = Number(data["isComputeNrw"])?.toString()
-        form.setFieldsValue(data)
+    let handler =isEdit ? useUpdate : useInsert
+    let {success, data,errMsg} = await handler({projectId}, {...values, projectId})
+    if(success) {
+        message.success(isEdit ? "修改成功" : "新增成功")
+        if(isObject(data)) {
+          data["isComputeLeakage"] = Number(data["isComputeLeakage"])?.toString()
+          data["isComputeNrw"] = Number(data["isComputeNrw"])?.toString()
+          form.setFieldsValue(data)
+        }     
+        if(isEdit) {
+          refresh()
+       }  
     }else{
         if(!success) {
             message.warning(errMsg || "数据错错")
@@ -97,7 +121,7 @@ export default function Index({projectId}) {
           </Form.Item> 
           </Col>
           <Col span={8}>
-          <Form.Item label="分区类别" name="partitionCategory" initialValue="1"   >
+          <Form.Item label="分区类别" name="partitionCategory" initialValue={1}   >
             <Radio.Group  optionType="button" options={partType}
         buttonStyle="solid"></Radio.Group>
           </Form.Item> 

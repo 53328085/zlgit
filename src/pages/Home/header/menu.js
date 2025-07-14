@@ -30,13 +30,16 @@ font-size: 12px;
         width: auto;
         padding: 4px 2px;
         .custicon {
-          g path:nth-of-type(1) {
+          g path:nth-of-type(1)  {
+                fill: ${props => props.theme.menusfontcolor || '#b2c1d1'}; 
+              }
+         path {
                 fill: ${props => props.theme.menusfontcolor || '#b2c1d1'}; 
               }
         }
         &:hover, &:active {
           .custicon {
-              g path:nth-of-type(1) {
+              g path:nth-of-type(1),path {
                 fill: ${props => props.theme.menusactivefontcolor || '#fff'}; 
               }
         }

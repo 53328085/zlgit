@@ -102,6 +102,30 @@ export const Newcontent = styled.div`
         row-gap: 16px;
       }
     }
+    .device {
+      display: grid;
+      grid-template-rows: 86px 1fr;
+      row-gap: 16px;
+      .up {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(402px, 1fr));
+        column-gap: 16px;
+        grid-template-rows: 1fr;
+        .item {
+          background-color:#fff; 
+         border-radius: 5px; 
+         box-shadow: 3px 3px 5px rgba(178, 188, 202, 1);
+         height: 100%;
+         cursor: pointer;
+         &:hover {
+          background-color:#deedff ; 
+         }
+        }
+        .item.active {
+          background-color:#deedff ; 
+        }
+      }
+    }
   }
 `
  
