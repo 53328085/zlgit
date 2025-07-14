@@ -161,9 +161,11 @@ export default function Index(props) {
   const onCheck = (checkedKeys, info) => {
     // console.log(info,checkedKeys)
     // getTreeKey(checkedKeys)
+    console.log(checkedKeys, info)
     
     setCheckedKeys(checkedKeys)
-    getValues(checkedKeys);
+    // getValues(checkedKeys);
+    getValues(info.checkedNodesPositions)
   };
 
   return (
