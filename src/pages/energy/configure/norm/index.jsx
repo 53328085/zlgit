@@ -67,6 +67,7 @@ export default function Index() {
   const [treeValues, setTreeValues] = useState([])
   const getFromChild = values => {
     setTreeValues(values)
+    console.log(values)
     if (values.length == 0) {
       setParams([{ level: 1, id: areaId }])
     } else {
@@ -105,11 +106,13 @@ export default function Index() {
       dataIndex: 'area',
       key: 'area',
       align: 'center',
+      width: '128px',
     }, {
       title: '建筑物',
       dataIndex: 'building',
       key: 'building',
-      align: 'center'
+      align: 'center',
+      width: '128px',
     }, {
       title: '房间',
       dataIndex: 'room',
@@ -175,7 +178,7 @@ export default function Index() {
       width: '128px',
       render: (_, record) => (
         <Space size="middle">
-          <Link onClick={() => setAll(record)}>{t("button:edit")}</Link>
+          <Link onClick={() => setAll('only', record)}>{t("button:edit")}</Link>
         </Space>)
     }
   ])
@@ -189,11 +192,13 @@ export default function Index() {
             dataIndex: 'area',
             key: 'area',
             align: 'center',
+            width: '128px',
           }, {
             title: res.data[1]?.name || '建筑物',
             dataIndex: 'building',
             key: 'building',
-            align: 'center'
+            align: 'center',
+            width: '128px',
           }, {
             title: res.data[2]?.name || '房间',
             dataIndex: 'room',
@@ -259,7 +264,7 @@ export default function Index() {
             width: '128px',
             render: (_, record) => (
               <Space size="middle">
-                <Link underline onClick={() => setAll(record)}>{t("button:edit")}</Link>
+                <Link underline onClick={() => setAll('only', record)}>{t("button:edit")}</Link>
               </Space>)
           }
         ])
@@ -270,7 +275,8 @@ export default function Index() {
   }, [projectId])
 
   const getTableData = ({ current, pageSize }) => {
-    if (!(Number.isInteger(projectId) && Number.isInteger(areaId) && params.length == 1)) return
+    console.log(params.length, Number.isInteger(projectId), Number.isInteger(areaId), params.length == 1)
+    if (!(Number.isInteger(projectId) && Number.isInteger(areaId) && params.length > 0)) return
     return queryRoomQuotas(projectId, current, pageSize, params).then(res => {
       const { success, data, total } = res
       if (success) {
@@ -304,19 +310,31 @@ export default function Index() {
       }
     },[params, pageNum]) */
 
+  // const [selectedKeys, setSelectedKeys] = useState([]);
+  // const [copyKeys, setCopyKeys] = useState([]);
+  // const onSelect = (record, selected, selectedRows, nativeEvent) => {
+  //   setCopyKeys(record)
+  //   setSelectedKeys(selected);
+  // };
+  // const rowSelection = {
+  //   selectedKeys,
+  //   onChange: onSelect,
+  // };
+  const SelectedRows = useRef([])
+  const [selectedRowKeys, setSelectedRowKeys] = useState([])
   const [selectedKeys, setSelectedKeys] = useState([]);
   const [copyKeys, setCopyKeys] = useState([]);
-  const onSelect = (record, selected, selectedRows, nativeEvent) => {
-    setCopyKeys(record)
-    setSelectedKeys(selected);
-  };
   const rowSelection = {
-    selectedKeys,
-    onChange: onSelect,
-  };
+    selectedRowKeys,
+    onChange: (selectedRowKeys, selectedRows, info) => {
+      SelectedRows.current = selectedRows;
+      setSelectedRowKeys([...selectedRowKeys])
 
-  const setAll = (record) => {
-    if (record) {
+    },
+  };
+  const setAll = (type, record) => {
+    console.log(type, selectedRowKeys, SelectedRows.current, selectedKeys)
+    if (type == 'only') {
       form.resetFields()
       setSelectedKeys([record])
       form.setFieldsValue({
@@ -333,7 +351,7 @@ export default function Index() {
         CoalValue: record.quotaCoal,
         CoalWarningValue: record.coalWarningValue,
       })
-    } else if (!record && treeValues.length == 0 && copyKeys.length == 0) {
+    } else if (type == 'selected' && SelectedRows.current.length == 0) {
       messageApi.open({
         type: 'warning',
         content: '请至少选择一项配置项'
@@ -345,6 +363,7 @@ export default function Index() {
     setRef.current.onOpen()
   }
   const onOk = async () => {
+    console.log(selectedKeys, params, SelectedRows.current)
     try {
       const values = await form.validateFields();
       let param = [];
@@ -357,8 +376,11 @@ export default function Index() {
             ...values
           })
         })
-      } else if (params.length > 0 && copyKeys.length == 0) {
-        params.map(item => {
+      } else if (params.length > 0 && SelectedRows.current.length != 0) {
+        const bAreaIds = new Set(SelectedRows.current.map(item => item.areaId));
+        const commonItems = params.filter(item => bAreaIds.has(item.id));
+        commonItems.map(item => {
+          console.log(item)
           if (item.level == 3) {
             param.push({
               areaId: item.id,
@@ -389,7 +411,7 @@ export default function Index() {
     } catch (errorInfo) { }
 
   }
-  const view = (<CustButton style={{ marginLeft: 'auto' }} wh="auto" onClick={setAll}>{t("button:batchConfiguration")}</CustButton>)
+  const view = (<CustButton style={{ marginLeft: 'auto' }} wh="auto" onClick={() => setAll('selected')}>{t("button:batchConfiguration")}</CustButton>)
   useEffect(() => {
     setCustview(view)
   }, [])
@@ -439,7 +461,7 @@ export default function Index() {
           <Item label='年度热水定额(m³)' labelCol={{ span: 14 }} labelAlign={'left'} name='WaterHotValue' style={{ width: 240 }} rules={[{ required: true, message: '请输入热水定额' }]}>
             <Input style={{ width: '128px', textAlign: 'right' }}></Input>
           </Item>
-          <Item label='预警值' name='WaterColdWarningValue' labelCol={{ span: 8 }} labelAlign={'right'} rules={[{ required: true, message: '请输入预警值' }]}>
+          <Item label='预警值' name='WaterHotWarningValue' labelCol={{ span: 8 }} labelAlign={'right'} rules={[{ required: true, message: '请输入预警值' }]}>
             <Input style={{ width: '128px', textAlign: 'right' }}></Input>
           </Item>
           <Item label='年度用气定额(m³)' labelCol={{ span: 14 }} labelAlign={'left'} name='GasValue' style={{ width: 240 }} rules={[{ required: true, message: '请输入用气定额' }]}>

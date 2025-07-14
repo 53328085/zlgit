@@ -37,7 +37,7 @@ const Headcom = memo(() => {
 
 export default function Index() {
   let { exparams = {}, setCustview } = useOutletContext() || {}
-  let { type, date, projectId, energytype } =  exparams
+  let { type, date, projectId, energytype } = exparams
   const imgs = [first, second, third, fourth, fifth]
 
   const levelone = useSelector(selectOneLevel)
@@ -66,7 +66,7 @@ export default function Index() {
     return () => {
       setCustview(null)
     }
-  }, [Type]) 
+  }, [Type])
 
   const [options, setOptions] = useState({
     tooltip: {
@@ -98,7 +98,7 @@ export default function Index() {
   })
 
   const getData = async () => {
-    
+
     let store = {};
     if (isfull) {
       store = JSON.parse(window.localStorage.getItem('exparams'))
@@ -107,11 +107,12 @@ export default function Index() {
     let { type, date, projectId, energytype } = isfull ? store : exparams
     let params = {
       projectId,
+      meterType: energytype,
       type,
       date: getTime(moment(date), type)
     }
     try {
-      let hander = ['', queryElectric, queryWater][energytype]
+      let hander = ['', queryElectric, queryWater, '', '', '', '', queryWater][energytype]
       let { success, data } = await hander(params, areaId)
       if (success && data.constructor == Object) {
 
@@ -223,7 +224,7 @@ export default function Index() {
   }
   useEffect(() => {
     let f = type && date && Number.isInteger(projectId) && Number.isInteger(parseInt(energytype))
-    if (!f) return 
+    if (!f) return
     window.localStorage.setItem('exparams', JSON.stringify(exparams))
     getData()
     getRankData()

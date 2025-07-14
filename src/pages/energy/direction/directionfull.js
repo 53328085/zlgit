@@ -37,8 +37,10 @@ export default function Index() {
   const [dateData, setdateData] = useState() // 日、月、年 1， 2， 3
   const [op, setOp] = useState(0)
   const picker = ['', 'date', 'month', 'year'][timetype];
+  console.log(op)
   const [params, setParams] = useState({
     type: 1,
+    meterType: op,
     date: moment().format('yyyy-MM-DD'),
     projectId
   })
@@ -67,9 +69,9 @@ export default function Index() {
   })
 
   const getData = async () => {
-
+    console.log(params)
     try {
-      let hander = [queryElectric, queryWater][op]
+      let hander = ['', queryElectric, queryWater, '', '', '', '', queryWater][op]
       let { success, data } = await hander(params, areaId)
       if (success && data.constructor == Object) {
 
@@ -117,8 +119,11 @@ export default function Index() {
 
   useEffect(() => {
     getData()
-  }, [params, op])
+  }, [params])
 
+  useEffect(() => {
+    setParams(prev => ({ ...prev, meterType: op }));
+  }, [op])
 
   const datechange = (e) => {
     let date = getTime(moment(e), timetype)
@@ -147,7 +152,7 @@ export default function Index() {
     })
   }
   const opchange = (e) => {
-
+    console.log(e)
     setOp(e)
   }
   const CustView = () => {
@@ -168,12 +173,16 @@ export default function Index() {
             value={op}
             options={[
               {
-                label: '电',
+                label: '用电',
                 value: 0,
               },
               {
-                label: '水',
-                value: 1,
+                label: '冷水',
+                value: 2,
+              },
+              {
+                label: '热水',
+                value: 7,
               }
             ]}
 
