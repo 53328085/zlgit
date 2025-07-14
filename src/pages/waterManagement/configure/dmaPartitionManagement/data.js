@@ -111,11 +111,11 @@ export const rules = [
 export const partType =[
   {
     label: "普通",
-    value: "1"
+    value: 1
   },
   {
     label: "DMA",
-    value: "2"
+    value: 2
   },
 
 ]
@@ -159,3 +159,18 @@ export const alarmoption =[
     value: "4"
   },
 ]
+export const custvalidfn = (filed) => {
+  return  ({getFieldValue})=>  ({
+    validator(_, value) {
+      let minValue =  getFieldValue(filed)
+      if( value &&  minValue) {
+         if(value > minValue) {
+          return Promise.resolve
+         }else {
+          return Promise.reject("最大值必须大于最小值")
+         }
+      }
+    }
+  })
+}
+ 

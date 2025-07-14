@@ -66,7 +66,6 @@ export default function Index() {
   const [params, setParams] = useState([])
   const [treeValues, setTreeValues] = useState([])
   const getFromChild = values => {
-    console.log(values)
     setTreeValues(values)
     if (values.length == 0) {
       setParams([{ level: 1, id: areaId }])
@@ -297,13 +296,13 @@ export default function Index() {
     refreshDeps: [projectId, areaId, params],
     defaultPageSize: 20
   })
-    //  useEffect(()=>{
-    //   if(params.length == 0){
-    //     return
-    //   }else{
-    //     runTable()
-    //   }
-    // },[params]) 
+  /*   useEffect(()=>{
+      if(params.length == 0){
+        return
+      }else{
+        runTable()
+      }
+    },[params, pageNum]) */
 
   const [selectedKeys, setSelectedKeys] = useState([]);
   const [copyKeys, setCopyKeys] = useState([]);

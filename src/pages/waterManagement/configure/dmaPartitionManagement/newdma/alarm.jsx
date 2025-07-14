@@ -3,19 +3,19 @@ import {Form, Select, Row, Col, Input,InputNumber, Cascader, Radio, Space, Switc
 import {useRequest} from "ahooks"
 import {useLocation} from "react-router-dom"
 import {useUpdateAlarmSetting,useGetAlarmSettings} from "../api"
-import { alarmoption} from "../data"
+import { alarmoption, custvalidfn, rules} from "../data"
 import { CustButton } from '@com/useButton'
 import {isObject} from "@com/usehandler"
 import Titlelayout from "@com/titlelayout";
 import {TitleBox} from "../style"
-export default function Index({projectId}) {
+export default function Index({projectId,id}) {
  const [form] = Form.useForm()
-const {state} = useLocation()
-const {id} = state ||{}
-
+ 
+ console.log("id",id)
  const getData = async()=> {
     try {
-      if(![projectId,id].some(d => Number.isInteger(d))) return
+      let fag = [projectId,id].some(d => Number.isInteger(parseInt(d)))
+      if(!fag) return
       let {success, data, errMsg} = await useGetAlarmSettings({projectId, id})
       if(success) {
         return Array.isArray(data) ? data : []
@@ -49,9 +49,12 @@ const onSubmit= async()=> {
      message.warning(errMsg)
    }
   } catch (error) {
-    
+    console.log(error)
   }
 }
+
+ 
+
   const Ctitle =(<TitleBox ><span>分区报警设置</span><Space> <CustButton onClick={onRest} type="default">重置</CustButton>
            <CustButton onClick={onSubmit}>提交</CustButton></Space></TitleBox>)
   return (
@@ -72,7 +75,7 @@ const onSubmit= async()=> {
           </Space>          
         </div>
         <div className="item">
-         <Space size={16}><Form.Item label="持续天数" name={["0", "alarmSettingJson", "continuousHours"]}>
+         <Space size={16}><Form.Item label="持续天数" name={["0", "alarmSettingJson", "continuousHours"]} rules={rules}>
             <InputNumber addonAfter="天"></InputNumber>
           </Form.Item>
           <span className='tip'>漏损大于设置的天数未生成产生报警；阈值不能为负数；</span>
@@ -94,16 +97,19 @@ const onSubmit= async()=> {
           </Space>          
         </div>
         <div className="item column">
-         <Space size={16}><Form.Item label="持续天数" name={["1", "alarmSettingJson", "continuousHours"]}>
+         <Space size={16}><Form.Item label="持续天数" name={["1", "alarmSettingJson", "continuousHours"]} rules={rules} >
             <InputNumber addonAfter="天"></InputNumber>
           </Form.Item>
           <span className='tip'>漏损率不在设置区间产生报警；</span>
           </Space>
           <Space size={16}>
-             <Form.Item label="阈值范围" name={["1", "alarmSettingJson", "reasonableRange","min"]}>
+             <Form.Item label="阈值范围" name={["1", "alarmSettingJson", "reasonableRange","min"]} rules={rules} >
               <InputNumber min={0} max={100} addonAfter="%"></InputNumber>
              </Form.Item>
-             <Form.Item label="-" name={["1", "alarmSettingJson", "reasonableRange","max"]}>
+             <Form.Item label="-" name={["1", "alarmSettingJson", "reasonableRange","max"]} rules={[
+              ...rules,
+              custvalidfn(["1", "alarmSettingJson", "reasonableRange","min"])
+             ]}>
               <InputNumber min={0} max={100} addonAfter="%"></InputNumber>
              </Form.Item>
              <span className='tip'>阈值范围0-100；</span>
@@ -116,7 +122,7 @@ const onSubmit= async()=> {
           <Form.Item name={["2", "alarmType"]} initialValue={3}>
           <Input hidden></Input>
           </Form.Item>
-            <Form.Item label="报警级别" name={["2", "level"]} initialValue="1">
+            <Form.Item label="报警级别" name={["2", "level"]} initialValue="1" >
               <Select options={alarmoption} style={{width: "160px"}}></Select>
             </Form.Item>
             <Form.Item name={["2", "isEnabled"]} valuePropName='checked' initialValue={false}>
@@ -126,16 +132,19 @@ const onSubmit= async()=> {
         </div>
 
         <div className="item column">
-         <Space size={16}><Form.Item label="持续天数" name={["2", "alarmSettingJson", "continuousHours"]}>
+         <Space size={16}><Form.Item label="持续天数" name={["2", "alarmSettingJson", "continuousHours"]} rules={rules} >
             <InputNumber addonAfter="天"></InputNumber>
           </Form.Item>
           <span className='tip'>漏损率不在设置区间产生报警；</span>
           </Space>
           <Space size={16}>
-             <Form.Item label="阈值范围" name={["2", "alarmSettingJson", "reasonableRange","min"]}>
+             <Form.Item label="阈值范围" name={["2", "alarmSettingJson", "reasonableRange","min"]} rules={rules}>
               <InputNumber min={0} addonAfter="吨"></InputNumber>
              </Form.Item>
-             <Form.Item label="-" name={["2", "alarmSettingJson", "reasonableRange","max"]}>
+             <Form.Item label="-" name={["2", "alarmSettingJson", "reasonableRange","max"]} rules={[
+              ...rules,
+              custvalidfn(["2", "alarmSettingJson", "reasonableRange","min"])
+             ]}>
               <InputNumber min={0} addonAfter="吨"></InputNumber>
              </Form.Item>
              <span className='tip'>阈值不能为负数；</span>
@@ -159,16 +168,21 @@ const onSubmit= async()=> {
         </div>
 
         <div className="item column">
-         <Space size={16}><Form.Item label="持续天数" name={["3", "alarmSettingJson", "continuousHours"]}>
+         <Space size={16}><Form.Item label="持续天数" name={["3", "alarmSettingJson", "continuousHours"]} rules={rules}>
             <InputNumber addonAfter="天"></InputNumber>
           </Form.Item>
           <span className='tip'>日供水量未在区间阈值内产生报警；</span>
           </Space>
           <Space size={16}>
-             <Form.Item label="阈值范围" name={["3", "alarmSettingJson", "reasonableRange","min"]}>
+             <Form.Item label="阈值范围" name={["3", "alarmSettingJson", "reasonableRange","min"]} rules={rules} >
               <InputNumber min={0} addonAfter="吨"></InputNumber>
              </Form.Item>
-             <Form.Item label="-" name={["3", "alarmSettingJson", "reasonableRange","max"]}>
+             <Form.Item label="-" name={["3", "alarmSettingJson", "reasonableRange","max"]} rules={[
+              {
+                required: true,
+              },
+              custvalidfn(["3", "alarmSettingJson", "reasonableRange","min"])
+             ]} >
               <InputNumber min={0} addonAfter="吨"></InputNumber>
              </Form.Item>
              <span className='tip'>阈值不能为负数；</span>

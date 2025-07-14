@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef, useContext } from "react";
+import React,{ useEffect, useState, useRef, useContext } from "react";
 import { Header, Card, StyledRadioGroup, AlarmWrapper } from "./style";
 import i18 from '../../../i18n'
 import { SearchOutlined ,DownloadOutlined} from "@ant-design/icons";
@@ -89,7 +89,7 @@ export const Tabs = ({ onValuesChange, setTabId, form }) => {
 };
 
 //漏损分析
-export const Leakage = ({ analysisData }) => {
+export const Leakage = React.memo(({ analysisData }) => {
   console.log("analysisData", analysisData);
   const dviderCss = {
     height: "174px", // 控制高度
@@ -156,7 +156,7 @@ export const Leakage = ({ analysisData }) => {
       </div>
     </Card>
   );
-};
+});
 
 //漏损分析部分的组件
 const LeakageContent = ({ title, type = "warn", textList = [] }) => {
@@ -188,7 +188,7 @@ const LeakageContent = ({ title, type = "warn", textList = [] }) => {
 };
 
 //漏损趋势
-export const LeakageTrend = ({ trendData ,getLeakageChart}) => {
+export const LeakageTrend = React.memo(({ trendData ,getLeakageChart}) => {
   const [type, setType] = useState("1");
   console.log("trendData", trendData);
   const lineChartRef = useRef();
@@ -203,32 +203,37 @@ export const LeakageTrend = ({ trendData ,getLeakageChart}) => {
     let topData2 = [];
     let bottomData1 = [];
     let bottomData2 = [];
+
+
     if (type == "1") {
-      if (trendData.data && Array.isArray(trendData.data)) {
-        xAxis = trendData.data.map((it) => it.partitionTime);
-        topData1 = trendData.data.map((it) => it.leakageValue);
-        topData2 = trendData.data.map((it) => it.leakageRate);
-        bottomData1 = trendData.data.map((it) => it.supplyValue);
-        bottomData2 = trendData.data.map((it) => it.useValue);
+      if (trendData && Array.isArray(trendData)) {
+        xAxis = trendData.map((it) => it.partitionTime);
+        topData1 = trendData.map((it) => it.leakageValue);
+        topData2 = trendData.map((it) => it.leakageRate);
+        bottomData1 = trendData.map((it) => it.supplyValue);
+        bottomData2 = trendData.map((it) => it.useValue);
       }
       if (lineChartRef.current) {
+        console.log(xAxis)
         Double_Option.xAxis[0].data = Double_Option.xAxis[1].data = xAxis;
         Double_Option.series[0].data = topData1;
         Double_Option.series[1].data = topData2;
         Double_Option.series[2].data = bottomData1;
         Double_Option.series[3].data = bottomData2;
+        console.log("Double_Option",Double_Option)
         myChart = echarts.init(lineChartRef.current);
         myChart.setOption(Double_Option);
+        // window.addEventListener("resize", () => myChart.resize());
       }
     }
-  }, [type]);
+  }, [type,trendData]);
   return (
     <Card>
       <BlueColumn
         bg={{ height: 13, width: 3 }}
         fontWeight="bold"
         name="漏损趋势"
-        styled={{ color: "#515151" }}
+        styled={{ color: "#515151",height:32 }}
       > 
       <div  style={{ marginLeft: "auto",display: "flex",alignItems: "center" }}>
       <Button  icon={<DownloadOutlined />} style={{borderRadius: "2px",width: "96px",display:type==1?"none":"block"}} onClick={()=>{tableRef.current.downloadAll()}} >
@@ -248,6 +253,7 @@ export const LeakageTrend = ({ trendData ,getLeakageChart}) => {
         
       </BlueColumn>
       <div className="context">
+
         <div
           ref={lineChartRef}
           className="chart"
@@ -268,7 +274,7 @@ export const LeakageTrend = ({ trendData ,getLeakageChart}) => {
       </div>
     </Card>
   );
-};
+});
 
 //分区报警
 export const PartAlarm = ({ pageInfo, onChangeTbValues, alarmData }) => {
@@ -296,6 +302,7 @@ export const PartAlarm = ({ pageInfo, onChangeTbValues, alarmData }) => {
         layout="inline"
         onValuesChange={onChangeTbValues}
         initialValues={AlarmHeader}
+        style={{marginLeft:'auto'}}
       >
         {/* inline 布局自动水平排列子元素 */}
         {/* <Form.Item name="dateRange">
