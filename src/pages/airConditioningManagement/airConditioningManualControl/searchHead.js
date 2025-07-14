@@ -42,13 +42,13 @@ export const Tabs = ({ onValuesChange, form }) => {
                         <Input placeholder="请输入空调名称"></Input>
                     </Item>
                     <Item name="name" label="空调编号" style={{ marginLeft: 16 }}>
-                        <Input placeholder="请输入编号"></Input>
+                        <Input placeholder="请输入空调编号"></Input>
                     </Item>
                     <Item name="name" label="空调类型" style={{ marginLeft: 16 }}>
-                        <Select options={typeOptions} style={{ width: "200px" }}></Select>
+                        <Select options={typeOptions} style={{ width: "140px" }}></Select>
                     </Item>
                     <Item name="name" label="开关状态" style={{ marginLeft: 16 }}>
-                        <Select options={switchOptions} style={{ width: "200px" }}></Select>
+                        <Select options={switchOptions} style={{ width: "140px" }}></Select>
                     </Item>
                     <Item style={{ marginLeft: 16 }}>
                         <CustButtonT text="search" onClick={getAirData}></CustButtonT>
@@ -88,13 +88,13 @@ export const Tabs2 = ({ onValuesChange, form }) => {
                     <Switch checkedChildren="开" unCheckedChildren="关" defaultChecked />
                 </Item>
                 <Item name="model" label="模式" style={{ marginLeft: 16 }}>
-                    <Select options={modelOptions} style={{ width: "200px" }}></Select>
+                    <Select options={modelOptions} style={{ width: "140px" }}></Select>
                 </Item>
                 <Item name="wind" label="风速" style={{ marginLeft: 16 }}>
-                    <Select options={windOptions} style={{ width: "200px" }}></Select>
+                    <Select options={windOptions} style={{ width: "140px" }}></Select>
                 </Item>
                 <Item name="temperature" label="温度" style={{ marginLeft: 16 }}>
-                    <InputNumber addonAfter="℃" />
+                    <InputNumber style={{ width: "140px" }} addonAfter="℃" />
                 </Item>
                 <Item style={{ marginLeft: 16 }}>
                     <CustButtonT text="控制" onClick={getAirData}></CustButtonT>
