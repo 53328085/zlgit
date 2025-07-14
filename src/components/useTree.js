@@ -26,7 +26,7 @@ const Treebox = styled.div`
        }
 `
 
-export default memo(function Index({ areaId, setTreeId, setLine, showline = true, datatype = NaN, energytype, sty = { bordered: 'y', pv: '16px' },allselect=true,selectobj,multiple=false, ...restprop }) {
+export default memo(function Index({ areaId, setTreeId, setLine, showline = true, datatype = NaN, energytype, sty = { bordered: 'y', pv: '16px' },allselect=true,selectobj,multiple=true, ...restprop }) {
   // datatype =0 或 =2
   const [treeData, setTreeData] = useState([])
 
