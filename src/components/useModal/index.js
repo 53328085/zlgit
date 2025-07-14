@@ -7,6 +7,7 @@ import Useform from "./useform";
 import redwarn from '@imgs/redwarn.png'
 import Ok from "./ok.svg"
 import Drag from "./upload"
+import question from './question.svg'
 //const theme =(type) =>   `4px solid ${custCorle[type]}`
 const sty = css`
 .ant-modal-header{
@@ -212,6 +213,7 @@ function Custmodal({
     >
       {type == "warn" && warnimg && <img src={redwarn} style={{ width: '54px', marginRight: "32px" }} />}
       {type == "ok" && warnimg && <img src={Ok} style={{ width: '48px', marginRight: "16px", marginLeft: "32px" }} />}
+      {type == "question" && warnimg && <img src={question} style={{ width: '48px', marginRight: "16px", marginLeft: "32px" }} />}
       {
         type=="drag" && <Drag {...dragprops} />
       }

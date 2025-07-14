@@ -172,7 +172,7 @@ const Boxchart = ({ index, showType, data, date }) => {
       let hours = new Date().getHours();
       let today = new Date().getDate();
       let ptoday = date.date()
-      console.log(ptoday)
+    //  console.log(ptoday)
       let xaxis = istoday ? x.filter(h => parseInt(h) <= hours) : x
 
       setOptions({
@@ -201,18 +201,28 @@ const Boxchart = ({ index, showType, data, date }) => {
 export default function Energy({ showData, dateType, showType, date }) {
   let {laptop} = useSelector(adaptation)
  
-  let consumeTotal
+/*   let consumeTotal
   let consumeDetail
   let proportion
 
-
+  console.log(showData)
   if (showData) {
 
     consumeTotal = [...showData.consumeTotal].sort((a, b) => parseFloat(b.periodValue) - parseFloat(a.periodValue))
     consumeDetail = showData.consumeDetail
     proportion = showData.proportion
 
+  } */
+  const [consumeTotal=[], consumeDetail=[], proportion=[]] = useMemo(()=> {
+  if(showData) {
+   let consumeTotal = Array.isArray(showData?.consumeTotal) ? [...showData?.consumeTotal]?.sort?.((a, b) => parseFloat(b.periodValue) - parseFloat(a.periodValue)) :[]
+   let consumeDetail = showData?.consumeDetail
+   let proportion = showData?.proportion
+   return [consumeTotal, consumeDetail, proportion]
+  }else {
+    return [[],[],[]]
   }
+  }, [showData])
 
   const [options, setOptions] = useState({
     type: 3,
@@ -308,7 +318,7 @@ export default function Energy({ showData, dateType, showType, date }) {
            {/*  <Cdivider type="h" margin="16px 0" /> */}
             <div style={{ height: 237, display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
               {
-                consumeTotal?.map((it, index) => (<Card index={index} {...it} showtype={showType} laptop={laptop} />))
+                consumeTotal?.map?.((it, index) => (<Card index={index} {...it} showtype={showType} laptop={laptop} />))
               }
             </div>
           </Titlelayout>
