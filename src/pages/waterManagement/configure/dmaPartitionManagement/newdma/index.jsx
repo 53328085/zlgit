@@ -8,6 +8,7 @@ import CustContext from '@com/content.js'
 import Record from "./record"
 import Alarm from './alarm'
 import Device from "./device"
+
 export default function index({addDma, projectId}) {
   const [value, setvalue] = useState("1")
   const {search,pathname, state} = useLocation()
