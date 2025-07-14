@@ -26,7 +26,7 @@ const Treebox = styled.div`
        }
 `
 
-export default memo(function Index({ areaId, setTreeId, setLine, showline = true, datatype = NaN, energytype, sty = { bordered: 'y', pv: '16px' },allselect=true,selectobj,multiple, ...restprop }) {
+export default memo(function Index({ areaId, setTreeId, setLine, showline = true, datatype = NaN, energytype, sty = { bordered: 'y', pv: '16px' },allselect=true,selectobj,multiple=true, ...restprop }) {
   // datatype =0 或 =2
   const [treeData, setTreeData] = useState([])
 
@@ -42,7 +42,9 @@ export default memo(function Index({ areaId, setTreeId, setLine, showline = true
   const projectId = useSelector(selectProjectId)
   const [typeTree, setTypeTree] = useState(0)
 
-  const treekey = datatype === 0 ? 'areaId' : datatype === 2||3 ? 'id' :  typeTree == 0 ? "areaId" : "id";
+  //const treekey = datatype === 0 ? 'areaId' : datatype === 2||3 ? 'id' :  typeTree == 0 ? "areaId" : "id";
+  const treekey = datatype === 0 ? 'areaId' : (datatype === 2 || datatype === 3) ? 'id' : typeTree == 0 ? "areaId" : "id";
+
 
   // const treekey =  typeTree == 0 ?  "areaId" : "id" ; 
   const [expandedKeys, setExpandedKeys] = useState([]);
@@ -97,7 +99,7 @@ export default memo(function Index({ areaId, setTreeId, setLine, showline = true
   console.log("expand",expand,"fieldNames",fieldNames)
   const getTreeData = async (name = '') => {
     let idx = Number.isInteger(datatype) ? datatype : typeTree;
-    console.log(name)
+    console.log(name,idx)
     if (Number.isInteger(datatype) && !energytype) return
     try {
       if (name != keyword) setKeyword(name)
@@ -126,7 +128,7 @@ export default memo(function Index({ areaId, setTreeId, setLine, showline = true
         setIndeterminate(false)
         setChecked(true)
         setTreeData(data)
-        setCheckedKeys(arr);
+        setCheckedKeys(()=>arr);
         setExpandedKeys(expand)
         setTreeId(arr);
         return
@@ -163,12 +165,11 @@ export default memo(function Index({ areaId, setTreeId, setLine, showline = true
 
         }
 
-
         treeIdRef.current = arr
         setIndeterminate(false)
         setChecked(true)
         setTreeData(data)
-        setCheckedKeys(arr);
+        setCheckedKeys(()=>arr);
         setExpandedKeys(expand)
         setTreeId(arr);
 

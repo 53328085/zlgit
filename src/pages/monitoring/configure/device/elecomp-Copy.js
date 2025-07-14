@@ -63,47 +63,52 @@ let Com = ({ form, deviceStyle }) => {
                     <Input />
                 </Form.Item>
             ) :  null} */}
-            <>
-                <Form.Item label="通讯端口" name="commPort" rules={rules}>
-                    <Select
-                        options={options}
-                        placeholder
-                    ></Select>
-                </Form.Item>
-                {category === 'ZTWL376-E' || category === 'DDSH666-MULTIUSER' ? null :
-                    <Form.Item label="通讯协议" name="commProtocol" rules={rules}>
+            <Form.Item shouldUpdate={(pre, cur) => pre.gatewayId !== cur.gatewayId} noStyle>
+                {({ getFieldValue }) => ( 
+                    getFieldValue("gatewayId") ?<>
+                    <Form.Item label="通讯端口" name="commPort" rules={rules}>
                         <Select
-                            onChange={changeProtocol}
-                            options={[{
-                                label: 'Modbus',
-                                value: 1
-                            }, {
-                                label: 'DL645',
-                                value: 2
-                            }]}
+                            options={options}
+                            placeholder
                         ></Select>
-                    </Form.Item>}
-                {
-                    isaddress ? <Form.Item label="通讯地址" name="commAddress"
-                        rules={[{ required: true }, {
-                            validator: (_, value) => {
-                                if (!value) {
-                                    return Promise.resolve()
-                                } else {
-                                    if (Number(value) < 255 && Number(value) > 0) {
+                    </Form.Item>
+                    {category === 'ZTWL376-E' || category === 'DDSH666-MULTIUSER' ? null :
+                        <Form.Item label="通讯协议" name="commProtocol" rules={rules}>
+                            <Select
+                                onChange={changeProtocol}
+                                options={[{
+                                    label: 'Modbus',
+                                    value: 1
+                                }, {
+                                    label: 'DL645',
+                                    value: 2
+                                }]}
+                            ></Select>
+                        </Form.Item>}
+                    {
+                        isaddress ? <Form.Item label="通讯地址" name="commAddress"
+                            rules={[{ required: true }, {
+                                validator: (_, value) => {
+                                    if (!value) {
                                         return Promise.resolve()
                                     } else {
-                                        return Promise.reject(new Error("通讯地址范围(0-255)"))
+                                        if (Number(value) < 255 && Number(value) > 0) {
+                                            return Promise.resolve()
+                                        } else {
+                                            return Promise.reject(new Error("通讯地址范围(0-255)"))
+                                        }
                                     }
                                 }
-                            }
-                        }]}>
-                        <Input placeholder='通讯地址范围(0-255)' />
-                        {/* 默认1-255 */}
-                    </Form.Item> : null
-                }
-
-            </>
+                            }]}>
+                            <Input placeholder='通讯地址范围(0-255)' />
+                            {/* 默认1-255 */}
+                        </Form.Item> : null
+                    }
+    
+                </>:null
+                )}
+            </Form.Item>
+            
             {
                 (deviceStyle == 1 || deviceStyle == 12) &&
                 (<>

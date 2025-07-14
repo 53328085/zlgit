@@ -31,11 +31,14 @@ export const { useGetDetail } = new Apimethod( //获取分区详情
     "/DMA/DMAPartition/GetListDeviceCount"
   );
 
-  export const {useGetListDevicePaged }= new Apimethod( // 获取分区设备数量
+  export const {useGetListDevicePaged }= new Apimethod( // 获取DMA分区设备列表
     "post",
     "/DMA/DMAPartition/GetListDevicePaged"
   );
-
+  export const {useGetListUnboundDevicePaged }= new Apimethod( // 分区表具选择（排除已选）
+    "post",
+    "/DMA/DMAPartition/GetListUnboundDevicePaged"
+  );
   export const { useGetAlarmSettings} = new Apimethod( // 获取分区预警配置
     "get",
     "/DMA/DMAPartition/GetAlarmSettings"

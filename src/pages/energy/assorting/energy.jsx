@@ -15,19 +15,22 @@ import downpng from './imgs/down.png'
 import imgurl from './imgs'
 
 const sty= css`
-  grid-template-columns: repeat(5, 1fr);
+//  grid-template-columns: repeat(5, 1fr);
   gap: 8px;
 `
 
 const Mainbox=styled.div`
 
-    display: grid;
-    grid-template-columns: repeat(4, 304px) 1fr;
- //   grid-template-rows: 800px;
+   // display: grid;
+   // grid-template-columns: repeat(4, 304px) 1fr;
+    display: flex;
+    flex-wrap: wrap;
     gap:16px;
     flex:1;
+    min-height: 753px;
     ${props => props.laptop ? sty : null}
     .bdcolor {
+        flex-basis: 304px;
         border: 1px solid #d7d7d7;
         border-radius: 4px;
         padding-top: 1px;
@@ -291,7 +294,7 @@ export default function Energy({ showData, dateType, showType, date }) {
         )
       }
       {
-        consumeTotal ? (<div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-between', flex: 1, rowGap: '16px' }}>
+        consumeTotal ? (<div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-between',flexBasis: "394px",   rowGap: '16px' }}>
           <Titlelayout title={showType === 1 ? "分类能耗占比" : "分类能耗费用占比"} layout="flex">
 
             <div style={{ flex: 1, marginTop: 16 }}>
