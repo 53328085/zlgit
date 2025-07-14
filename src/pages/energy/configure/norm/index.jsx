@@ -66,7 +66,6 @@ export default function Index() {
   const [params, setParams] = useState([])
   const [treeValues, setTreeValues] = useState([])
   const getFromChild = values => {
-
     setTreeValues(values)
     if (values.length == 0) {
       setParams([{ level: 1, id: areaId }])

@@ -106,7 +106,7 @@ export const Newcontent = styled.div`
       display: grid;
       grid-template-rows: 86px 1fr;
       row-gap: 16px;
-      .up {
+      .deviceUp {
         display: grid;
         grid-template-columns: repeat(4, minmax(402px, 1fr));
         column-gap: 16px;
@@ -117,6 +117,34 @@ export const Newcontent = styled.div`
          box-shadow: 3px 3px 5px rgba(178, 188, 202, 1);
          height: 100%;
          cursor: pointer;
+         display: flex;
+         align-items: center;
+         padding-left: 32px;
+         column-gap: 16px;
+         .imgbg{
+           height: 35px;
+           width: 35px;
+           display: flex;
+           align-items: center;
+           justify-content: center;
+           border-radius: 3px;
+           background-color: rgba(19, 90, 189, 1);
+           .img {
+            width: 24px;
+            height: 24px;
+           }
+         }
+         .info {
+          display: flex;
+          flex-direction: column; 
+          .num {
+            color:#135ABD;
+            font-size: 18px;
+          }
+          .tip {
+            color:rgba(15, 15, 15, 0.898039215686275);
+          }
+         }
          &:hover {
           background-color:#deedff ; 
          }
