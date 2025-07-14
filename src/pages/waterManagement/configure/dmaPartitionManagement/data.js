@@ -173,4 +173,10 @@ export const custvalidfn = (filed) => {
     }
   })
 }
- 
+export const unbindcols = [
+  {
+    title: "分区名称",
+    dataIndex: "name",
+    key: "name",
+  },
+]

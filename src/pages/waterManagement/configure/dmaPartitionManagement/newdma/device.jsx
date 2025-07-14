@@ -2,17 +2,19 @@ import React, { useRef, useState } from 'react'
 import {Form, Select, Row, Col, Input,InputNumber, Cascader, Radio, Space, Switch, message} from "antd" 
 import {useRequest, useAntdTable} from "ahooks"
 import {useLocation} from "react-router-dom"
-import {useUpdateAlarmSetting,useGetAlarmSettings,useGetListDeviceCount,useGetListDevicePaged} from "../api"
+import {useUpdateAlarmSetting,useGetListUnboundDevicePaged,useGetListDeviceCount,useGetListDevicePaged} from "../api"
 import { alarmoption, custvalidfn, rules} from "../data"
 import { CustButton } from '@com/useButton'
 import {isObject} from "@com/usehandler"
 import Titlelayout from "@com/titlelayout";
 import Custmodal from '@com/useModal'
-import {TitleBox} from "../style"
+import Usetabel from "@com/useTable"
+import {TitleBox,Mcontent} from "../style"
 import icon1 from '../icon/12.png'
 import icon2 from '../icon/22.png'
 import icon3 from '../icon/33.png'
 import icon4 from '../icon/44.png'
+import {AreaSelect} from "@com/useSerach/comhead" 
 export default function Index({projectId,id}) {
  const [form] = Form.useForm()
  const [devices, setDevices] = useState({})
@@ -42,6 +44,9 @@ const [filterInfo, setFilterInfo] = useState("")
 const [partitionType, setPartitionType] = useState("")
 const getListData = async({current, pageSize}, formData)=> {
     try {
+      let fag = [parseInt(id), parseInt(projectId)].every((d)=>Number.isInteger(d))
+      console.log("fag",fag)
+      if(!fag) return // 没有id是新增
       let body = {
         pageNum: current,
         pageSize,
@@ -60,6 +65,35 @@ const getListData = async({current, pageSize}, formData)=> {
 useAntdTable(getListData, {
     refreshDeps: [projectId,id, sorting, filterInfo, partitionType]
 })
+
+// 未绑定表具
+
+ 
+const getunbindData = async({current, pageSize}, formData)=> {
+  try {
+    let {areaId=0, filterInfo=""} = formData
+    let fag = [parseInt(id), parseInt(projectId)].every((d)=>Number.isInteger(d))
+     
+    if(!fag) return // 没有id是新增
+    let body ={
+      pageNum:current,
+      pageSize,
+      sorting:"",
+      projectId,
+      id,
+      filterInfo,
+      areaId,
+    }
+    await useGetListUnboundDevicePaged({},body)
+  } catch (error) {
+    
+  }
+}
+const {tableProps: unbiddata, search} =  useAntdTable(getunbindData, {
+  form,
+  refreshDeps: [projectId,id,]
+})
+
 const onRest = ()=> {}
 const onSearch =(v)=> {
  console.log(v)
@@ -69,9 +103,11 @@ const onOK=()=> {
 
 }
  
-
+const onAdd = ()=> {
+  mRef.current.onOpen()
+}
   const Ctitle =(<TitleBox ><span>关联表具</span><Space><span>表具查询</span> <Input.Search placeholder='请输入表具名称或编号' allowClear  onSearch={setFilterInfo}></Input.Search> <CustButton onClick={()=>{}} type="danger">删除</CustButton>
-           <CustButton onClick={()=>{}}>新增</CustButton></Space></TitleBox>)
+           <CustButton onClick={onAdd}>新增</CustButton></Space></TitleBox>)
   return (
     <div className='device'>
         <div className="deviceUp" >
@@ -127,7 +163,19 @@ const onOK=()=> {
       
       </Titlelayout>
       <Custmodal title="表具选择"  ref={mRef}  mold="cust" width={1086}  onOk={onOK} >
-        
+<Mcontent>
+  <div className='mleft'>
+  <Form form={form} layout="inline">
+<Form.Item label="区域选择" name="areaId">
+  <AreaSelect isall={{name: "全部",id: 0}} style={{width: "200px"}} />
+</Form.Item>
+<Form.Item label="表具" name="filterInfo">
+  <Input placeholder='请输入表具编号/名称'></Input>
+</Form.Item>
+  </Form>
+   <Usetabel {...unbiddata}></Usetabel>
+  </div>
+</Mcontent>
        </Custmodal>
     </div>
 
