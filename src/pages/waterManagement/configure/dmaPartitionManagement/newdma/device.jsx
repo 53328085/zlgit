@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useRef, useState } from 'react'
 import {Form, Select, Row, Col, Input,InputNumber, Cascader, Radio, Space, Switch, message} from "antd" 
 import {useRequest, useAntdTable} from "ahooks"
 import {useLocation} from "react-router-dom"
@@ -7,6 +7,7 @@ import { alarmoption, custvalidfn, rules} from "../data"
 import { CustButton } from '@com/useButton'
 import {isObject} from "@com/usehandler"
 import Titlelayout from "@com/titlelayout";
+import Custmodal from '@com/useModal'
 import {TitleBox} from "../style"
 import icon1 from '../icon/12.png'
 import icon2 from '../icon/22.png'
@@ -63,7 +64,10 @@ const onRest = ()=> {}
 const onSearch =(v)=> {
  console.log(v)
 }
+const mRef=useRef()
+const onOK=()=> {
 
+}
  
 
   const Ctitle =(<TitleBox ><span>关联表具</span><Space><span>表具查询</span> <Input.Search placeholder='请输入表具名称或编号' allowClear  onSearch={setFilterInfo}></Input.Search> <CustButton onClick={()=>{}} type="danger">删除</CustButton>
@@ -96,7 +100,7 @@ const onSearch =(v)=> {
         </div>
         <div className="item">
         <div className='imgbg'>
-          <img src={icon2} alt='' className='img'></img>
+          <img src={icon3} alt='' className='img'></img>
           </div>
           <div className='info'>
            <span className='num'>{deviceCount?.largeConsumerCount}</span>
@@ -108,7 +112,7 @@ const onSearch =(v)=> {
         </div>
         <div className="item">
         <div className='imgbg'>
-          <img src={icon2} alt='' className='img'></img>
+          <img src={icon4} alt='' className='img'></img>
           </div>
           <div className='info'>
            <span className='num'>  {deviceCount?.waterMeterCount}</span>
@@ -122,6 +126,10 @@ const onSearch =(v)=> {
       <Titlelayout title={Ctitle} layout="flex" pv="16px">
       
       </Titlelayout>
+      <Custmodal title="表具选择"  ref={mRef}  mold="cust" width={1086}  onOk={onOK} >
+        
+       </Custmodal>
     </div>
+
   )
 }

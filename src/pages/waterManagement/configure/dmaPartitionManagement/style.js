@@ -157,3 +157,6 @@ export const Newcontent = styled.div`
   }
 `
  
+export const Mcontent= styled.div`
+
+`
