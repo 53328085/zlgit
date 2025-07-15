@@ -12,7 +12,7 @@ import {
     Space,
 } from "antd";
 import { CustButtonT, ExportExcel, ChartList } from "@com/useButton";
-export const Tabs = ({ onValuesChange, form }) => {
+export const Tabs = ({ onValuesChange, form, onSearchAirData }) => {
     const { Item } = Form;
 
     const typeOptions = [
@@ -26,9 +26,6 @@ export const Tabs = ({ onValuesChange, form }) => {
         { label: "开启", value: "2" },
         { label: "关闭", value: "3" },
     ];
-    const getAirData = () => {
-
-    }
     return (
         <Header>
             <div className="form">
@@ -51,14 +48,14 @@ export const Tabs = ({ onValuesChange, form }) => {
                         <Select options={switchOptions} style={{ width: "140px" }}></Select>
                     </Item>
                     <Item style={{ marginLeft: 16 }}>
-                        <CustButtonT text="search" onClick={getAirData}></CustButtonT>
+                        <CustButtonT text="search" onClick={onSearchAirData}></CustButtonT>
                     </Item>
                 </Form>
             </div>
         </Header>
     )
 }
-export const Tabs2 = ({ onValuesChange, form }) => {
+export const Tabs2 = ({ onValuesChange, form, onControlClick }) => {
     const { Item } = Form;
 
     const modelOptions = [
@@ -73,9 +70,6 @@ export const Tabs2 = ({ onValuesChange, form }) => {
         { label: "中速", value: "3" },
         { label: "高速", value: "4" },
     ];
-    const getAirData = () => {
-
-    }
     return (
         <div>
             <Form
@@ -97,7 +91,7 @@ export const Tabs2 = ({ onValuesChange, form }) => {
                     <InputNumber style={{ width: "140px" }} addonAfter="℃" />
                 </Item>
                 <Item style={{ marginLeft: 16 }}>
-                    <CustButtonT text="控制" onClick={getAirData}></CustButtonT>
+                    <CustButtonT text="控制" onClick={onControlClick}></CustButtonT>
                 </Item>
             </Form>
         </div>

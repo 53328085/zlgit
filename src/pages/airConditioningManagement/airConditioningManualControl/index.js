@@ -6,11 +6,13 @@ import { Tabs, Tabs2 } from "./searchHead"
 import { Form, message, Checkbox, Row, Col, Card } from "antd";
 import BlueColumn from '@com/bluecolumn'
 import { Cspin, Cdivider } from "@com/comstyled"
+import CModal from "@com/useModal";
 import multAir from './icon/multi-splitAir.png'
 import splitAir from './icon/splitAir.png'
 import centralAir from './icon/centralAirPanel.png'
 export default function Index() {
   const [form] = Form.useForm();
+  const controlRef = useRef();
   const [treeId, setTreeId] = useState();
   const [checkedList, setCheckedList] = useState([]);
   const roomData = [
@@ -28,18 +30,16 @@ export default function Index() {
 
   const [indeterminate, setIndeterminate] = useState(false);
   const [checkAll, setCheckAll] = useState(false);
-  const getAirData = () => {
+  const handleControlClick = () => {
+    console.log(222)
+    controlRef.current.onOpen()
+  }
+  const handleSearchAirData = () => {
 
   }
   const onValuesChange = () => {
 
   }
-  const onCheckAllChange = e => {
-    setCheckedList(e.target.checked ? plainOptions : []);
-  };
-  const onChange = list => {
-    setCheckedList(list);
-  };
   // 处理单个会议室选择
   const handleSingleSelect = (roomId, checked) => {
     const newSelected = checked
@@ -68,6 +68,10 @@ export default function Index() {
     setCheckAll(selectedCount === total);
     setIndeterminate(selectedCount > 0 && selectedCount < total);
   };
+  const onOkControl = () => {
+    controlRef.current.onCancel()
+
+  }
   return (
     <Pagecount bgcolor="transparent" pd="0 0 0 0">
       <Container>
@@ -84,16 +88,19 @@ export default function Index() {
         <div className="right-box">
           <Tabs
             onValuesChange={onValuesChange}
-            getAirData={getAirData}
-            form={form}>
-
+            form={form}
+            onSearchAirData={handleSearchAirData}>
           </Tabs>
           <CardBox>
             <div style={{ display: 'flex', justifyContent: "space-between", alignItems: "center" }}>
               <BlueColumn bg={{ height: 13, width: 3 }}
                 className="lightData" name='空调列表'></BlueColumn>
 
-              <Tabs2 /></div>
+              <Tabs2
+                onControlClick={handleControlClick} // 传递处理函数
+                form={form}      // 确保其他需要的props
+                onValuesChange={onValuesChange} // 确保其他需要的props 
+              /></div>
             <Cdivider type="h" margin="10px 0px" />
             <div className="watchNum"> <div>
               <Checkbox
@@ -148,6 +155,9 @@ export default function Index() {
 
           </CardBox>
         </div>
+        <CModal title="远程控制" ref={controlRef} width={512} warnimg={true} mold="cust" type="question" onOk={onOkControl} >
+          是否确认控制所选空调？
+        </CModal>
       </Container>
     </Pagecount>
   )
