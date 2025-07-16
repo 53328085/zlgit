@@ -165,5 +165,14 @@ export const Mcontent= styled.div`
   display: flex;
   flex-direction: column;
   row-gap: 16px;
+  .form.ant-form-inline {
+     .ant-form-item {
+      margin-right: 16px;
+    }
+  }
+ }
+ .mright {
+   padding-left: 32px;
+   border-left: 1px dotted #d7d7d7;
  }
 `

@@ -39,6 +39,11 @@ export const { useGetDetail } = new Apimethod( //获取分区详情
     "post",
     "/DMA/DMAPartition/GetListUnboundDevicePaged"
   );
+
+  export const {useAddDevices }= new Apimethod( // 添加分区设备
+    "post",
+    "/DMA/DMAPartition/AddDevices"
+  );
   export const { useGetAlarmSettings} = new Apimethod( // 获取分区预警配置
     "get",
     "/DMA/DMAPartition/GetAlarmSettings"
