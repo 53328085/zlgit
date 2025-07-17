@@ -47,16 +47,44 @@ export const Mainwrap = styled.div`
            color:#515151;
            padding-left: 8px;
          }
-         .content {
-           color:#333;
-           display: flex;
-           flex-direction: column;
-           padding: 16px;
-           ol {
-            padding-left: 16px;
-            margin-bottom: 0px;
+           .titleName{
+           color:var(--ant-primary-color);
+           margin:6px 0px;
+           padding-left: 8px;
+          
            }
-         }
+           .time{
+           padding:15px 8px;
+           border-radius: 3px;
+           background-color: rgba(247, 251, 254, 0.752941176470588);
+           border: none;
+           .day{
+           display: flex;
+           .daybox{
+           width: 46px;
+           height: 22px;
+           border-radius: 4px;
+           border:1px solid rgba(81, 81, 81, 1);
+           text-align: center;
+           margin-right: 10px;
+           }
+           }
+           }
+           .schemeName{
+           display: flex;
+           lign-items: center;
+           .schemeTitle{
+           font-weight: 700;
+           padding-left: 8px;
+           width: 100px;
+           }
+            .con{
+           margin-left: 8px;
+           height: 28px;
+           line-height: 28px;
+
+           }
+           }
        }
      } 
     } 
@@ -74,7 +102,9 @@ export const Mainwrap = styled.div`
        padding:16px;
        .schemeName{
        margin-bottom: 10px;
+       .title{
        font-weight: 700;
+       }
        }
     }
     }

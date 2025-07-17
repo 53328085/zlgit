@@ -44,7 +44,9 @@ export const CardBox = styled.div`
    justify-content: space-between;
    margin-bottom: 16px;
   }
-   .airBox{
+   .airBox{    
+    height: 702px;
+    overflow-y: scroll;
    .airIcon{
    width:30px;
    height:30px;

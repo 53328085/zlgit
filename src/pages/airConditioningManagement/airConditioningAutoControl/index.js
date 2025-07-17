@@ -6,7 +6,7 @@ import { selectProjectId } from "@redux/systemconfig"
 import UserTable from "@com/useTable";
 import Titlelayout from "@com/titlelayout";
 import BlueColumn from '@com/bluecolumn'
-
+import Cempty from '@com/useEmpty'
 import { cols, schemeNameData } from "./data";
 
 import { useList, useDetail } from "./api.js";
@@ -17,12 +17,27 @@ import { useAntdTable, useRequest } from "ahooks";
 
 export default function Index() {
 
+  const week = [
+    { label: '周一', value: 1 },
+    { label: '周二', value: 2 },
+    { label: '周三', value: 3 },
+    { label: '周四', value: 4 },
+    { label: '周五', value: 5 },
+    { label: '周六', value: 6 },
+    { label: '周日', value: 0 },
+  ]
+  const getweek = new Map();
+  week.forEach(w => {
+    getweek.set(w.value, `${w.label}`)
+  })
+  console.log(getweek.get(0))
   const projectId = useSelector(selectProjectId)
 
   const [schemeId, setSchemeId] = useState(null)
   const [schemeName, setSchemeName] = useState('')
   const [alike, setAlike] = useState("")
-  const [explains, setExplains] = useState([])
+  const [controlInfos, setControlInfos] = useState([])
+  const [savingInfo, setSavingInfo] = useState([])
   const getDetail = async ({ current, pageSize }) => {
     try {
       if (!(Number.isInteger(projectId) && Number.isInteger(schemeId))) {
@@ -33,13 +48,15 @@ export default function Index() {
       }
       let { data, success, total } = await useDetail({}, { projectId, schemeId, pageNum: current, pageSize })
       if (success && Array.isArray(data) && data.length) {
-        setExplains(Array.isArray(data[0].senceDes) ? data[0].senceDes : [])
+        setControlInfos(Array.isArray(data[0].controlInfos) ? data[0].controlInfos : [])
+        setSavingInfo(Array.isArray(data[0].savingInfo) ? data[0].savingInfo : [])
         return {
-          list: Array.isArray(data[0].streetLightInfo) ? data[0].streetLightInfo : [],
+          list: Array.isArray(data[0].airConditionerInfo) ? data[0].airConditionerInfo : [],
           total
         }
       } else {
-        setExplains([])
+        setControlInfos([])
+        setSavingInfo([])
         return {
           list: [],
           total
@@ -119,26 +136,34 @@ export default function Index() {
               <div className="scheme_left">
                 <BlueColumn bg={{ height: 13, width: 3 }}
                   className="lightData" name='控制方案'></BlueColumn>
-                <div className="desc">
-                  {
-                    explains?.map?.(e => <div className="item">
-                      <div className="title">{e.title}</div>
-                      <div className="content">
-                        <ol>
-                          {e.description?.split("\n").map(t => t ? <li>{t}</li> : null)}
-                        </ol>
-
-                      </div>
-                    </div>)
-                  }
-                </div>
+                {controlInfos.length != 0 ?
+                  <div className="desc">
+                    {
+                      controlInfos?.map?.(e => <div className="item">
+                        <div className="title">{e.name}</div>
+                        <div className="titleName">时间区间</div>
+                        <div className="time">
+                          <div>{e.desc}</div>
+                          <div className="day">
+                            {e.weeks.map?.(time => <div key={time} className="daybox">{getweek.get(time)}</div>)}
+                          </div>
+                        </div>
+                        <div className="titleName">方案内容</div>
+                        {e.contentInfo.map?.(info => <div className="schemeName">
+                          <div className="schemeTitle">{info.content}</div>
+                          <div className="con">{info.description}</div>
+                        </div>)}
+                      </div>)
+                    }
+                  </div> : <div className="desc"> <Cempty tip='暂无数据' /></div>}
               </div>
               <div className="scheme_right">
                 <BlueColumn bg={{ height: 13, width: 3 }}
                   className="lightData" name='节能方案'></BlueColumn>
-                <div className="desc">
-                  {schemeNameData.map?.(e => <div className="schemeName">{e}</div>)}
-                </div>
+                {savingInfo.length != 0 ?
+                  <div className="desc">
+                    {savingInfo.map?.(e => <div className="schemeName"><div className="title">{e.content}</div>{e.description}</div>)}
+                  </div> : <div className="desc"> <Cempty tip='暂无数据' /></div>}
               </div>
             </div>
             <Titlelayout title="空调绑定明细" bg="transparent" pv="0px 24px 16px 16px">

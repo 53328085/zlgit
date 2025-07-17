@@ -1,4 +1,6 @@
 import moment from "moment";
+import { Typography } from 'antd'
+const { Link } = Typography
 export const Radio_Options = [
   {
     label: "自动控制",
@@ -95,57 +97,63 @@ export const AirManualControlTableColumns = [
 ];
 
 //空调自动控制记录表格表头
-export const AirAutomaticControlTableColumns = [
-  {
-    title: "设备名称",
-    dataIndex: "name",
-    key: "name",
-  },
-  {
-    title: "通信地址",
-    dataIndex: "address",
-    key: "address",
-    align: "center",
-  },
-  {
-    title: "安装地址",
-    dataIndex: "location",
-    key: "location",
-  },
-  {
-    title: "操作类型",
-    dataIndex: "operation",
-    key: "operation",
-  },
-  {
-    title: "模式",
-    dataIndex: "mode",
-    key: "mode",
-  }, {
-    title: "空调温度（℃）",
-    dataIndex: "temp",
-    key: "temp",
-  }, {
-    title: "当前室内温度（℃）",
-    dataIndex: "currentTemp",
-    key: "currentTemp",
-  },
-  {
-    title: "空调方案",
-    dataIndex: "operator",
-    key: "operator",
-  },
-  {
-    title: "控制状态",
-    dataIndex: "status",
-    key: "status",
-  },
-  {
-    title: "操作时间",
-    dataIndex: "time",
-    key: "time",
-  },
-];
+export const AirAutomaticControlTableColumns =
+  ({ OpenAirScheme }) => [
+    {
+      title: "设备名称",
+      dataIndex: "name",
+      key: "name",
+    },
+    {
+      title: "通信地址",
+      dataIndex: "address",
+      key: "address",
+      align: "center",
+    },
+    {
+      title: "安装地址",
+      dataIndex: "location",
+      key: "location",
+    },
+    {
+      title: "操作类型",
+      dataIndex: "operation",
+      key: "operation",
+    },
+    {
+      title: "模式",
+      dataIndex: "mode",
+      key: "mode",
+    }, {
+      title: "空调温度（℃）",
+      dataIndex: "temp",
+      key: "temp",
+    }, {
+      title: "当前室内温度（℃）",
+      dataIndex: "currentTemp",
+      key: "currentTemp",
+    },
+    {
+      title: "空调方案",
+      dataIndex: "operator",
+      key: "operator",
+      render: (_, record) => {
+        return (
+          <Link onClick={() => OpenAirScheme(record)}>{record.operator}</Link>
+        )
+      }
+    },
+    {
+      title: "控制状态",
+      dataIndex: "status",
+      key: "status",
+    },
+    {
+      title: "操作时间",
+      dataIndex: "time",
+      key: "time",
+    },
+  ];
 
 
 //报警头部初始化信息

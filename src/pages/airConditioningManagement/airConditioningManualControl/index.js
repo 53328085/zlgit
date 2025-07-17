@@ -16,14 +16,25 @@ export default function Index() {
   const [treeId, setTreeId] = useState();
   const [checkedList, setCheckedList] = useState([]);
   const roomData = [
-    { id: 'room1', state: 1, modeType: 1, name: '101会议室', deviceId: 2850, temp: 24, mode: '制冷', fan: 1, type: 1 },
-    { id: 'room2', state: 1, modeType: 2, name: '102会议室', deviceId: 2840, temp: 24, mode: '制冷', fan: 2, type: 1 },
-    { id: 'room3', state: 1, modeType: 3, name: '103会议室', deviceId: 2850, temp: 26, mode: '制冷', fan: 3, type: 2 },
-    { id: 'room4', state: 1, modeType: 4, name: '103会议室', deviceId: 2860, temp: 28, mode: '制热', fan: 4, type: 3 },
-    { id: 'room5', state: 1, modeType: 1, name: '104会议室', deviceId: 2560, temp: 28, mode: '送风', fan: 1, type: 3 },
-    { id: 'room6', state: 2, modeType: 2, name: '203会议室', deviceId: 2850, temp: 28, mode: '除湿', fan: 2, type: 3 },
-    { id: 'room7', state: 2, modeType: 3, name: '283会议室', deviceId: 2560, temp: 28, mode: '制热', fan: 3, type: 3 },
-    { id: 'room8', state: 2, modeType: 4, name: '303会议室', deviceId: 2560, temp: 28, mode: '制热', fan: 4, type: 3 }
+    { id: '1', state: 1, modeType: 1, name: '101会议室', deviceId: 2850, temp: 24, mode: '制冷', fan: 1, type: 1 },
+    { id: '2', state: 1, modeType: 2, name: '102会议室', deviceId: 2840, temp: 24, mode: '制冷', fan: 2, type: 1 },
+    { id: '3', state: 1, modeType: 3, name: '103会议室', deviceId: 2850, temp: 26, mode: '制冷', fan: 3, type: 2 },
+    { id: '4', state: 1, modeType: 4, name: '103会议室', deviceId: 2860, temp: 28, mode: '制热', fan: 4, type: 3 },
+    { id: '5', state: 1, modeType: 1, name: '104会议室', deviceId: 2560, temp: 28, mode: '送风', fan: 1, type: 3 },
+    { id: '6', state: 2, modeType: 2, name: '203会议室', deviceId: 2850, temp: 28, mode: '除湿', fan: 2, type: 3 },
+    { id: '7', state: 2, modeType: 3, name: '283会议室', deviceId: 2560, temp: 28, mode: '制热', fan: 3, type: 3 },
+    { id: '8', state: 2, modeType: 4, name: '303会议室', deviceId: 2560, temp: 28, mode: '制热', fan: 4, type: 3 },
+    { id: '9', state: 2, modeType: 2, name: '203会议室', deviceId: 2850, temp: 28, mode: '除湿', fan: 2, type: 3 },
+    { id: '10', state: 2, modeType: 3, name: '283会议室', deviceId: 2560, temp: 28, mode: '制热', fan: 3, type: 3 },
+    { id: '11', state: 2, modeType: 4, name: '303会议室', deviceId: 2560, temp: 28, mode: '制热', fan: 4, type: 3 },
+    { id: '12', state: 2, modeType: 2, name: '203会议室', deviceId: 2850, temp: 28, mode: '除湿', fan: 2, type: 3 },
+    { id: '13', state: 2, modeType: 3, name: '283会议室', deviceId: 2560, temp: 28, mode: '制热', fan: 3, type: 3 },
+    { id: '14', state: 2, modeType: 4, name: '303会议室', deviceId: 2560, temp: 28, mode: '制热', fan: 4, type: 3 },
+    { id: '1', state: 1, modeType: 1, name: '101会议室', deviceId: 2850, temp: 24, mode: '制冷', fan: 1, type: 1 },
+    { id: '2', state: 1, modeType: 2, name: '102会议室', deviceId: 2840, temp: 24, mode: '制冷', fan: 2, type: 1 },
+    { id: '3', state: 1, modeType: 3, name: '103会议室', deviceId: 2850, temp: 26, mode: '制冷', fan: 3, type: 2 },
+    { id: '4', state: 1, modeType: 4, name: '103会议室', deviceId: 2860, temp: 28, mode: '制热', fan: 4, type: 3 },
+    { id: '5', state: 1, modeType: 1, name: '104会议室', deviceId: 2560, temp: 28, mode: '送风', fan: 1, type: 3 },
   ];
   const [selectedRooms, setSelectedRooms] = useState([]);
   const plainOptions = ['Apple', 'Pear', 'Orange'];
@@ -81,8 +92,11 @@ export default function Index() {
             setTreeId={setTreeId}
             setLine={() => { }}
             showline={false}
-            multiple={true}
+            datatype={3}
+            energytype={1}
+            multiple={false}
             allselect={false}
+            treeName={'空调设备列表'}
           />
         </div>
         <div className="right-box">

@@ -14,6 +14,7 @@ export const Container = styled.div`
     display: flex;
     justify-content: space-between;
     }
+    
     }
 `;
 
@@ -129,40 +130,4 @@ export const StyledRadioGroup = styled(Radio.Group)`
   }
 `;
 
-export const AlarmWrapper = styled.div`
-  display: flex;
-  flex-direction: column;
-  height: 100%;
-  width: 100%;
-  background-color: #fff;
-  padding: 16px;
-  margin-top: 16px;
-  min-height: 808px;
 
-  .tableWrapper {
-    margin-top: 16px;
-    flex: 1;
-    display: flex;
-    .warn {
-      display: flex;
-      justify-content: center;
-      .warnState {
-        width: 103px;
-        height: 20px;
-        font-size: 11px;
-        color: #fff;
-        text-align: center;
-        line-height: 20px;
-        border-radius: 4px;
-        background-color: ${(props) =>
-    props.warnState === "1"
-      ? "#f10303"
-      : props.warnState === "2"
-        ? "#f16d03"
-        : props.warnState === "3"
-          ? "#f1c603"
-          : "#039df1"};
-      }
-    }
-  }
-`;
