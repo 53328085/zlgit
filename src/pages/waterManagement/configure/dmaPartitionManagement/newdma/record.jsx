@@ -1,11 +1,16 @@
 import React, {useMemo} from 'react'
 import {Form, Select, Row, Col, Input,InputNumber, Cascader, Radio, message} from "antd" 
 import {useRequest} from "ahooks"
+import {useNavigate,  useLocation} from "react-router-dom"
 import {useGetTree,useInsert,useGetDetail,useUpdate} from "../api"
 import {rules, options,partType,rateType, iscomputer} from "../data"
 import { CustButton } from '@com/useButton'
 import {isObject} from "@com/usehandler"
 export default function Index({projectId, id}) {
+
+ const { pathname, state,hash } = useLocation();
+ const navigate = useNavigate()
+
  const [form] = Form.useForm()
 
 const isEdit = useMemo(()=> {
@@ -65,10 +70,13 @@ const {refresh}  =  useRequest(getRecordDtl, {
           data["isComputeLeakage"] = Number(data["isComputeLeakage"])?.toString()
           data["isComputeNrw"] = Number(data["isComputeNrw"])?.toString()
           form.setFieldsValue(data)
-        }     
+        }  
+
         if(isEdit) {
           refresh()
-       }  
+        }else {
+          navigate(pathname+`?item=1&id=${data.id}` + "#edit", { state, replace: true });
+        } 
     }else{
         if(!success) {
             message.warning(errMsg || "数据错错")
@@ -134,7 +142,7 @@ const {refresh}  =  useRequest(getRecordDtl, {
           </Form.Item> 
           </Col>
           <Col span={8}>
-          <Form.Item label="大用户数量" name="population"   >
+          <Form.Item label="大用户数量" name="largeConsumerNumber"   >
             <Input></Input>
           </Form.Item> 
           </Col>
@@ -195,7 +203,7 @@ const {refresh}  =  useRequest(getRecordDtl, {
         </Row>
         <Row gutter={32}>
             <Col span={8}>
-            <Form.Item label="漏损生成频率" name="createLeakageRateBy" initialValue="1" labelCol={{flex: "7em"}}   >
+            <Form.Item label="漏损生成频率" name="createLeakageRateBy" initialValue={2} labelCol={{flex: "7em"}}   >
             <Radio.Group  optionType="button" options={rateType}
         buttonStyle="solid"></Radio.Group>
           </Form.Item> 
