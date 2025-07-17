@@ -44,6 +44,12 @@ export const { useGetDetail } = new Apimethod( //获取分区详情
     "post",
     "/DMA/DMAPartition/AddDevices"
   );
+
+  export const {useReomveDevices }= new Apimethod( // 移除分区设备
+    "post",
+    "/DMA/DMAPartition/ReomveDevices"
+  );
+
   export const { useGetAlarmSettings} = new Apimethod( // 获取分区预警配置
     "get",
     "/DMA/DMAPartition/GetAlarmSettings"

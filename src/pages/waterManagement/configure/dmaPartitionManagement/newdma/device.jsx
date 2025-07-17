@@ -1,8 +1,8 @@
 import React, { useRef, useState } from 'react'
-import {Form, Select, Row, Col, Input,InputNumber, Cascader, Radio, Space, Switch, message} from "antd" 
+import {Form, Select, Row, Col, Input,InputNumber, Cascader, Radio, Space, Popconfirm, message} from "antd" 
 import {useRequest, useAntdTable} from "ahooks"
-import {useLocation} from "react-router-dom"
-import {useGetListUnboundDevicePaged,useGetListDeviceCount,useGetListDevicePaged, useAddDevices} from "../api"
+import {useLocation, useNavigate} from "react-router-dom"
+import {useGetListUnboundDevicePaged,useGetListDeviceCount,useGetListDevicePaged, useAddDevices,useReomveDevices} from "../api"
 import {unbindcols,purpose,direction,userType,bindcols} from "../data"
 import { CustButton } from '@com/useButton'
 import {isObject} from "@com/usehandler"
@@ -19,7 +19,10 @@ export default function Index({projectId,id}) {
  const [form] = Form.useForm()
  const [rform] = Form.useForm()
  const [devices, setDevices] = useState({})
- console.log("id",id)
+ const [sorting, setSorting] = useState("")
+const [filterInfo, setFilterInfo] = useState("")
+const [partitionType, setPartitionType] = useState("")
+ 
  const getData = async()=> {
     try {
       let fag = [projectId,id].some(d => Number.isInteger(parseInt(d)))
@@ -40,9 +43,7 @@ export default function Index({projectId,id}) {
 })
 
 
-const [sorting, setSorting] = useState("")
-const [filterInfo, setFilterInfo] = useState("")
-const [partitionType, setPartitionType] = useState("")
+
 
 
 // 绑定的表具
@@ -87,8 +88,42 @@ const rowSelectioned = {
   onChange: onSelectChanged,
 }
   const {tableProps:bindtable, refresh:bindrefresh} =useAntdTable(getListData, {
+    defaultPageSize:20,
     refreshDeps: [projectId,id, sorting, filterInfo, partitionType]
 })
+const bindChange =(pagination, filters, sorter)=> {
+   const {order, field} = sorter
+   if(order=="descend") {
+    setSorting(field + " desc")
+   }else {
+    setSorting(field)
+   }
+   
+}
+
+// 删除DMA分区设备
+const reomveDevices = async()=> {
+  try {
+    if(selectedRowKeysed.length==0) return message.warning("请选择要删除的表具")
+    let body = {
+      deviceIdList: selectedRowKeysed,
+      projectId,
+      id,
+    }
+    let {success, errMsg} = await useReomveDevices({}, body)
+    if(success) {
+      message.success("删除成功")
+      bindrefresh()
+      refresh()
+    }else {
+      message.warning(errMsg || "数据出错")
+    }
+  } catch (error) {
+    
+  }
+
+}
+
 
 // 未绑定表具
 const [open, setOpen] = useState({open: false})
@@ -175,12 +210,14 @@ const onOK=async()=> {
   }
  
 }
-  const Ctitle =(<TitleBox ><span>关联表具</span><Space><span>表具查询</span> <Input.Search placeholder='请输入表具名称或编号' allowClear  onSearch={setFilterInfo}></Input.Search> <CustButton onClick={()=>{}} type="danger">删除</CustButton>
+
+  const Ctitle =(<TitleBox >
+    <span>关联表具</span><Space><span>表具查询</span> <Input.Search placeholder='请输入表具名称或编号' allowClear  onSearch={setFilterInfo}></Input.Search><Popconfirm title="确认删除" onConfirm={reomveDevices}><CustButton   type="danger">删除</CustButton></Popconfirm>
            <CustButton onClick={onAdd}>新增</CustButton></Space></TitleBox>)
   return (
     <div className='device'>
         <div className="deviceUp" >
-        <div className={"item "}  >
+        <div className={`item ${partitionType=="" ? 'active' : ""}`} onClick={()=> setPartitionType("")} >
           <div className='imgbg'>
           <img src={icon1} alt='' className='img'></img>
           </div>
@@ -191,7 +228,7 @@ const onOK=async()=> {
            </span>
           </div>
         </div>
-        <div className="item">
+        <div className={`item ${partitionType==1 ? 'active' : ""}`} onClick={()=> setPartitionType(1)}>
         <div className='imgbg'>
           <img src={icon2} alt='' className='img'></img>
           </div>
@@ -203,7 +240,7 @@ const onOK=async()=> {
           </div>
        
         </div>
-        <div className="item">
+        <div className={`item ${partitionType==3 ? 'active' : ""}`} onClick={()=> setPartitionType(3)}>
         <div className='imgbg'>
           <img src={icon3} alt='' className='img'></img>
           </div>
@@ -215,7 +252,7 @@ const onOK=async()=> {
           </div>
       
         </div>
-        <div className="item">
+        <div className={`item ${partitionType==2 ? 'active' : ""}`} onClick={()=> setPartitionType(2)}>
         <div className='imgbg'>
           <img src={icon4} alt='' className='img'></img>
           </div>
@@ -231,6 +268,7 @@ const onOK=async()=> {
       <Titlelayout title={Ctitle} layout="flex" pv="16px">
       <Usetabel columns={bindcols}  {...bindtable} rowKey={(row)=>row.id} 
     rowSelection={rowSelectioned}
+    onChange={bindChange}
    scroll={{
     y:580
    }}></Usetabel>
@@ -276,7 +314,7 @@ const onOK=async()=> {
                 <Radio.Group options={direction}></Radio.Group>
               </Form.Item>
               )
-            }else if(type==3) {
+            }else if(type==2) {
               return (
                 <Form.Item label="用水类型" name="waterType" initialValue={1}>
                   <Select options={userType}></Select>

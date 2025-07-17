@@ -122,11 +122,11 @@ export const partType =[
 export const rateType =[
   {
     label: "按天生成",
-    value: "1"
+    value: 2
   },
   {
     label: "按月生成",
-    value: "2"
+    value: 3
   },
 
 ]
@@ -202,11 +202,11 @@ export const purpose=[
  },
  {
   label: "管理分表",
-  value:2,
+  value:3,
  },
  {
   label: "用水表",
-  value:3,
+  value:2,
  }
 ]
 export const direction =[
@@ -253,6 +253,7 @@ export const bindcols = [
     title: "表具名称",
     dataIndex: "name",
     key: "name",
+    sorter:true
   },
   {
     title: "表具用途",
@@ -276,7 +277,7 @@ export const bindcols = [
     title: "用水类型",
     dataIndex: "waterType",
     key: "waterType",
-    render: (t) => userType?.find(o=>o.value==t)?.value
+    render: (t) => userType?.find(o=>o.value==t)?.label
   },
   {
     title: "表具型号",
@@ -287,5 +288,6 @@ export const bindcols = [
     title: "安装地址",
     dataIndex: "address",
     key: "address",
+    sorter:true,
   },
 ]
