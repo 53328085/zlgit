@@ -26,6 +26,18 @@ export default function Index() {
   const { AllLevel } = Area
   const { querySpaceTrees, queryRoomQuotas, updateRoomQuotas } = energyQuota
 
+  const SelectedRows = useRef([])
+  const [selectedRowKeys, setSelectedRowKeys] = useState([])
+  const [selectedKeys, setSelectedKeys] = useState([]);
+  const tableData = useRef([])
+  const rowSelection = {
+    selectedRowKeys,
+    onChange: (selectedRowKeys, selectedRows, info) => {
+      SelectedRows.current = selectedRows;
+      setSelectedRowKeys([...selectedRowKeys])
+
+    },
+  };
   //园区
 
 
@@ -281,12 +293,15 @@ export default function Index() {
       const { success, data, total } = res
       if (success) {
         setSelectedKeys([])
+        tableData.current = data
         let f = Array.isArray(data)
         return {
           list: f ? data : [],
           total: f ? total : 0
         }
       } else {
+
+        tableData.current = []
         messageApi.open({
           type: 'error',
           content: res.errMsg
@@ -302,38 +317,8 @@ export default function Index() {
     refreshDeps: [projectId, areaId, params],
     defaultPageSize: 20
   })
-  /*   useEffect(()=>{
-      if(params.length == 0){
-        return
-      }else{
-        runTable()
-      }
-    },[params, pageNum]) */
-
-  // const [selectedKeys, setSelectedKeys] = useState([]);
-  // const [copyKeys, setCopyKeys] = useState([]);
-  // const onSelect = (record, selected, selectedRows, nativeEvent) => {
-  //   setCopyKeys(record)
-  //   setSelectedKeys(selected);
-  // };
-  // const rowSelection = {
-  //   selectedKeys,
-  //   onChange: onSelect,
-  // };
-  const SelectedRows = useRef([])
-  const [selectedRowKeys, setSelectedRowKeys] = useState([])
-  const [selectedKeys, setSelectedKeys] = useState([]);
-  const [copyKeys, setCopyKeys] = useState([]);
-  const rowSelection = {
-    selectedRowKeys,
-    onChange: (selectedRowKeys, selectedRows, info) => {
-      SelectedRows.current = selectedRows;
-      setSelectedRowKeys([...selectedRowKeys])
-
-    },
-  };
   const setAll = (type, record) => {
-    console.log(type, selectedRowKeys, SelectedRows.current, selectedKeys)
+    console.log(tableProps, tableData.current, tableProps.dataSource.length != 0, SelectedRows.current.length == 0)
     if (type == 'only') {
       form.resetFields()
       setSelectedKeys([record])
@@ -351,7 +336,7 @@ export default function Index() {
         CoalValue: record.quotaCoal,
         CoalWarningValue: record.coalWarningValue,
       })
-    } else if (type == 'selected' && SelectedRows.current.length == 0) {
+    } else if (type == 'selected' && (tableData.current.length != 0 && SelectedRows.current.length == 0)) {
       messageApi.open({
         type: 'warning',
         content: '请至少选择一项配置项'
@@ -362,8 +347,20 @@ export default function Index() {
     }
     setRef.current.onOpen()
   }
+  const getThree = (nodes, array) => {
+    if (Array.isArray(nodes)) {
+      for (let node of nodes) {
+        array?.push(node)
+        if (node.nodes?.length > 0) {
+          // console.log(node.nodes)
+          getThree(node.nodes, array)
+        }
+      }
+    }
+
+  }
   const onOk = async () => {
-    console.log(selectedKeys, params, SelectedRows.current)
+    console.log(treeValues, treeData, params, selectedKeys, SelectedRows.current)
     try {
       const values = await form.validateFields();
       let param = [];
@@ -376,29 +373,68 @@ export default function Index() {
             ...values
           })
         })
-      } else if (params.length > 0 && SelectedRows.current.length != 0) {
+      } else if (params[0].level == 1 && params[0].id == 1 && params.length == 1) {
+        //全选、全不选时将level=3的解析出来
+        const nodes = [];
+        getThree(treeData, nodes)
+        const list = nodes.filter(item => item.level == 3);
         const bAreaIds = new Set(SelectedRows.current.map(item => item.areaId));
-        const commonItems = params.filter(item => bAreaIds.has(item.id));
+        const commonItems = list.filter(item => bAreaIds.has(item.areaId));
         commonItems.map(item => {
-          console.log(item)
           if (item.level == 3) {
             param.push({
-              areaId: item.id,
+              areaId: item.areaId,
               areaLevel: item.level,
               ...values
             })
           }
         })
       }
+      else if (params.length > 0) {
+        const bAreaIds = new Set(SelectedRows.current.map(item => item.areaId));
+        const commonItems = params.filter(item => bAreaIds.has(item.id));
+        console.log(commonItems, bAreaIds)
+        if (commonItems.length > 0) {
+          commonItems.map(item => {
+            console.log(item)
+            if (item.level == 3) {
+              param.push({
+                areaId: item.id,
+                areaLevel: item.level,
+                ...values
+              })
+            }
+          })
+        } else {
+          params.map(item => {
+            if (item.level == 3) {
+              param.push({
+                areaId: item.id,
+                areaLevel: item.level,
+                ...values
+              })
+            }
+          })
+        }
+
+      }
       updateRoomQuotas(projectId, param).then(res => {
         if (res.success) {
-          messageApi.open({
-            type: 'success',
-            content: '能耗定额配置成功!'
-          })
-          setRef.current.onCancel()
-          form.resetFields()
-          runTable()
+          if (res.data.success) {
+            messageApi.open({
+              type: 'success',
+              content: '能耗定额配置成功!'
+            })
+            setRef.current.onCancel()
+            form.resetFields()
+            runTable({ current: 1, pageSize: 20 })
+          } else {
+            messageApi.open({
+              type: 'error',
+              content: res.data.errMsg
+            })
+          }
+
         } else {
           // messageApi.open({
           //   type:'error',
