@@ -3,16 +3,16 @@ import { useSelector } from 'react-redux'
 
 import styled from 'styled-components'
 
-import { energyShare, Monitoring, EnergyPublicRuntime ,DMAPartition} from '@api/api'
+import { energyShare, Monitoring, EnergyPublicRuntime, DMAPartition } from '@api/api'
 import { selectProjectId, selectOneLevel } from '@redux/systemconfig.js'
-import { message, Input, Tree, Radio, Checkbox , Switch} from 'antd'
+import { message, Input, Tree, Radio, Checkbox, Switch } from 'antd'
 
 import Titlelayout from "@com/titlelayout";
-import {useLocation} from "react-router-dom"
+import { useLocation } from "react-router-dom"
 const { Search } = Input;
 
 const { QuerySpaceTrees, } = energyShare
-const {DMAGetTree} = DMAPartition
+const { DMAGetTree } = DMAPartition
 const { LineManagerQuery } = Monitoring.LineManager // 线路查询
 const { queryEnergyCategoryTree } = EnergyPublicRuntime
 const Treebox = styled.div`
@@ -26,15 +26,15 @@ const Treebox = styled.div`
        }
 `
 
-export default memo(function Index({ areaId, setTreeId, setLine, showline = true, datatype = NaN, energytype, sty = { bordered: 'y', pv: '16px' },allselect=true,selectobj,multiple=true, ...restprop }) {
+export default memo(function Index({ areaId, setTreeId, setLine, showline = true, datatype = NaN, energytype, sty = { bordered: 'y', pv: '16px' }, allselect = true, selectobj, multiple = true, treeName = '', ...restprop }) {
   // datatype =0 或 =2
   const [treeData, setTreeData] = useState([])
 
   const location = useLocation();
-  const {state} = location
-  const isshow =  useMemo(()=> {
-    const {nested, primary} = state
-    return nested=="report" && primary=="runtimeEnergy"
+  const { state } = location
+  const isshow = useMemo(() => {
+    const { nested, primary } = state
+    return nested == "report" && primary == "runtimeEnergy"
   }, [state])
   const [checkedKeys, setCheckedKeys] = useState([])
 
@@ -53,7 +53,7 @@ export default memo(function Index({ areaId, setTreeId, setLine, showline = true
   const [checked, setChecked] = useState(false)
   const [schecked, setschecked] = useState(1)
   const strictyly = schecked == 1
- 
+
   const allSelected = ({ target: { checked } }) => {
 
     if (checked) {
@@ -79,10 +79,10 @@ export default memo(function Index({ areaId, setTreeId, setLine, showline = true
         } else if (treekey == 'id') {
           expand.push(id)
         }
-        if(allselect){
+        if (allselect) {
           arr.push(node[type])
         }
-        if(!allselect&&arr.length==0){
+        if (!allselect && arr.length == 0) {
           arr.push(nodes[0][type])
         }
         if (node[child] && Array.isArray(node[child]) && node[child]?.length > 0) {
@@ -92,14 +92,14 @@ export default memo(function Index({ areaId, setTreeId, setLine, showline = true
     }
   }
 
-  const fieldNames = datatype === 2 ? { title: 'name', key: treekey, children: 'childs' } :datatype === 3?{title:'name',key:treekey,children:'children'}: { title: 'name', key: treekey, children: 'nodes' }
+  const fieldNames = datatype === 2 ? { title: 'name', key: treekey, children: 'childs' } : datatype === 3 ? { title: 'name', key: treekey, children: 'children' } : { title: 'name', key: treekey, children: 'nodes' }
   //const fieldNames= {title:'name',key: treekey,children:'nodes'}  
 
   //获取树的数据，0 网格, 1 线路, 2 公共能耗分类
-  console.log("expand",expand,"fieldNames",fieldNames)
+  console.log("expand", expand, "fieldNames", fieldNames)
   const getTreeData = async (name = '') => {
     let idx = Number.isInteger(datatype) ? datatype : typeTree;
-    console.log(name,idx)
+    console.log(name, idx)
     if (Number.isInteger(datatype) && !energytype) return
     try {
       if (name != keyword) setKeyword(name)
@@ -119,21 +119,21 @@ export default memo(function Index({ areaId, setTreeId, setLine, showline = true
         categoryType: energytype,
         name
       },
-      projectId
+        projectId
 
       ][idx]
-      if(idx ==3 && name){
-        const data = filterTreeIterative(treeData,name)
+      if (idx == 3 && name) {
+        const data = filterTreeIterative(treeData, name)
         treeIdRef.current = arr
         setIndeterminate(false)
         setChecked(true)
         setTreeData(data)
-        setCheckedKeys(()=>arr);
+        setCheckedKeys(() => arr);
         setExpandedKeys(expand)
         setTreeId(arr);
         return
       }
-      let hander = [QuerySpaceTrees, LineManagerQuery, queryEnergyCategoryTree,DMAGetTree][idx]
+      let hander = [QuerySpaceTrees, LineManagerQuery, queryEnergyCategoryTree, DMAGetTree][idx]
 
       /*  if(lineType == "3") {
          hander = QuerySpaceTrees
@@ -169,7 +169,7 @@ export default memo(function Index({ areaId, setTreeId, setLine, showline = true
         setIndeterminate(false)
         setChecked(true)
         setTreeData(data)
-        setCheckedKeys(()=>arr);
+        setCheckedKeys(() => arr);
         setExpandedKeys(expand)
         setTreeId(arr);
 
@@ -195,19 +195,19 @@ export default memo(function Index({ areaId, setTreeId, setLine, showline = true
 
   }
   // 根据区域查询
-  const onCheck = (data,e) => { // 受控
-    console.log(data,e)
-    let checked 
-    if(multiple){
-      if(schecked==1) {
-        checked =data.checked
-     }else {
+  const onCheck = (data, e) => { // 受控
+    console.log(data, e)
+    let checked
+    if (multiple) {
+      if (schecked == 1) {
+        checked = data.checked
+      } else {
         checked = data;
-     }
-    }else{
+      }
+    } else {
       checked = [e.node.id]
     }
-    
+
 
     let f = checked?.length > 0 && checked?.length < treeIdRef.current?.length
     setIndeterminate(f)
@@ -216,17 +216,17 @@ export default memo(function Index({ areaId, setTreeId, setLine, showline = true
     setChecked(checked?.length === treeIdRef.current?.length)
 
   }
- 
+
   // 树搜索
   const onExpand = (newExpandedKeys, obj) => {
 
     setExpandedKeys(newExpandedKeys);
 
   };
-  const Relevancy = (e)=> { 
-        setschecked(e.target.value)
+  const Relevancy = (e) => {
+    setschecked(e.target.value)
   }
- 
+
   useEffect(() => {
     let f = [areaId, projectId].every(v => Number.isInteger(v))
     if (f) {
@@ -246,7 +246,7 @@ export default memo(function Index({ areaId, setTreeId, setLine, showline = true
     display: 'grid',
     gridTemplateColumns: '1fr 1fr',
     alignContent: 'center',
-    
+
   }
   const switchLine = (e) => {
     setTypeTree(e.target.value)
@@ -262,40 +262,42 @@ export default memo(function Index({ areaId, setTreeId, setLine, showline = true
   return (
 
     <Titlelayout key="line" layout="flex" bordered={sty.bordered} pv={sty.pv}>
-      <Treebox showline={showline.toString()}>
-        {showline && <Radio.Group onChange={switchLine} style={radiosty} value={typeTree}>
-          <Radio value={0}>按网格</Radio>
-          <Radio value={1}>按线路</Radio>
+      <div>
+        {treeName ? <div style={{ color: '#515151', fontWeight: 'bold', marginBottom: '8px' }}>{treeName}</div> : null}
+        <Treebox showline={showline.toString()}>
+          {showline && <Radio.Group onChange={switchLine} style={radiosty} value={typeTree}>
+            <Radio value={0}>按网格</Radio>
+            <Radio value={1}>按线路</Radio>
 
-        </Radio.Group>
-        }
-        <Search
-          placeholder='请输入关键字查询'
-          allowClear
-          value={keyword}
-          onChange={onChange}
-          onSearch={getTreeData}
-        />
-    
-   {allselect && <div style={{display: "flex", alignItems: "center", justifyContent: "space-between"}}>  <Checkbox onChange={allSelected} indeterminate={indeterminate} checked={checked}>全部选中</Checkbox>
-       {isshow && <Radio.Group style={radiosty2} onChange={Relevancy} value={schecked}>
-      <Radio value={1}>不关联</Radio>
-      <Radio value={2}>关联</Radio>
-    </Radio.Group> }</div>
-    }
-        <Tree
-          treeData={treeData}
-          checkable
-          onExpand={onExpand}
-          expandedKeys={expandedKeys}
-          checkedKeys={checkedKeys}
-          onCheck={onCheck}
-          fieldNames={fieldNames}
-          checkStrictly={strictyly} // true : 完全受控，父子节点不关联, false : 父子节点关联
-          indeterminate={indeterminate}
-          {...restprop}
-        />
-      </Treebox>
+          </Radio.Group>
+          }
+          <Search
+            placeholder='请输入关键字查询'
+            allowClear
+            value={keyword}
+            onChange={onChange}
+            onSearch={getTreeData}
+          />
+
+          {allselect && <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>  <Checkbox onChange={allSelected} indeterminate={indeterminate} checked={checked}>全部选中</Checkbox>
+            {isshow && <Radio.Group style={radiosty2} onChange={Relevancy} value={schecked}>
+              <Radio value={1}>不关联</Radio>
+              <Radio value={2}>关联</Radio>
+            </Radio.Group>}</div>
+          }
+          <Tree
+            treeData={treeData}
+            checkable
+            onExpand={onExpand}
+            expandedKeys={expandedKeys}
+            checkedKeys={checkedKeys}
+            onCheck={onCheck}
+            fieldNames={fieldNames}
+            checkStrictly={strictyly} // true : 完全受控，父子节点不关联, false : 父子节点关联
+            indeterminate={indeterminate}
+            {...restprop}
+          />
+        </Treebox></div>
     </Titlelayout>
 
   )
@@ -307,18 +309,18 @@ export default memo(function Index({ areaId, setTreeId, setLine, showline = true
 /**
  * 前端过滤树结构数据(本地过滤)
  */
-const filterTreeIterative=(tree,keyword)=>{
-  if(!keyword) return tree
+const filterTreeIterative = (tree, keyword) => {
+  if (!keyword) return tree
   const result = []
   const stack = [...tree]
-  while(stack.length){
-    const node =stack.pop()
+  while (stack.length) {
+    const node = stack.pop()
     const isMatch = node.name.includes(keyword)
-    if(isMatch){
+    if (isMatch) {
       result.push(node)
-    }else if(node.children?.length){
-      const filteredChildren = filterTreeIterative(node.children,keyword);
-      if(filteredChildren.length){
+    } else if (node.children?.length) {
+      const filteredChildren = filterTreeIterative(node.children, keyword);
+      if (filteredChildren.length) {
         result.push({
           ...node,
           children: filteredChildren
