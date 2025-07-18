@@ -133,11 +133,11 @@ export const rateType =[
 export const iscomputer =[
   {
     label: "计算",
-    value: "1"
+    value: 1
   },
   {
     label: "不计算",
-    value: "2"
+    value: 2
   },
 
 ]
