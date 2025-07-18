@@ -33,62 +33,54 @@ export const Header = styled.div`
   border-radius: 4px;
   }
 `;
-export const Card = styled.div`
+export const CardBox = styled.div`
   border: 1px solid #d7d7d7;
   padding: 14px;
   background-color: #fff;
   margin-top: 10px;
   margin-bottom: 12px;
-  .leakage {
-    display: flex;
-    .leakage-item1 {
-      width: 247px;
-      height: 157px;
-    }
-    .leakage-item {
-      margin: 0 34px 0 44px;
-      flex: 1;
-      .leakage-content {
-        .leakage-title {
-          display: flex;
-          align-items: center;
-          .leakage-title-icon {
-            width: 11px;
-            height: 11px;
-            border-radius: 50%;
-            margin-right: 2px;
-          }
-          .leakage-title-red {
-            background-color: #f66f59;
-          }
-          .leakage-title-blue {
-            background: #135abd;
-          }
-        }
-        .leakage-text {
-          margin-top: 18px;
-          padding: 16px 0 16px 16px;
-          display: grid;
-          grid-template-columns: 120px 1fr;
-          grid-gap: 20px 64px;
-        }
-      }
-    }
+  .watchNum{
+   display: flex;
+   justify-content: space-between;
+   margin-bottom: 16px;
   }
-  .context {
-    height: 502px;
-    margin: 0 auto;
-    display: flex;
-    flex-direction: column;
-    .chart {
-      height: 100%;
-      width: 100%;
-    }
-    .table {
-      margin-top: 16px;
-      flex: 1;
-    }
-  }
+   .airBox{    
+    height: 702px;
+    overflow-y: scroll;
+   .airIcon{
+   width:30px;
+   height:30px;
+   }
+   .airCardCold{
+    border:none;
+   color: #FFFFFF;
+   background: linear-gradient(180deg, rgba(0, 51, 204, 1) 0%, rgba(0, 51, 204, 1) 0%, rgba(51, 204, 255, 1) 100%, rgba(51, 204, 255, 1) 100%);
+   }
+   .airCardHot{
+        border:none;
+       color: #FFFFFF;
+       background: linear-gradient(180deg, rgba(0, 51, 204, 1) 0%, rgba(255, 150, 1, 1) 0%, rgba(243, 203, 116, 1) 81%, rgba(255, 201, 109, 1) 100%);
+   }
+   .airCardWindy{
+       border:none;
+       background: linear-gradient(180deg, rgba(163, 255, 231, 1) 0%, rgba(247, 247, 247, 1) 100%);
+   }
+   .airCardDehumidification{
+       border:none;
+       background: linear-gradient(180deg, rgba(240, 179, 181, 1) 0%, rgba(247, 247, 247, 1) 100%);
+   }
+    .closeAir{
+      border:none;
+       color: #5D5D5D;
+       background: linear-gradient(180deg, rgba(218, 218, 218, 1) 0%, rgba(247, 247, 247, 1) 100%);
+   }
+   .airCardCold,.airCardHot,.airCardWindy,.airCardDehumidification{ 
+   .content{
+   display: flex;
+   justify-content: space-between;
+   }
+   }
+   }
 `;
 
 export const AlarmWrapper = styled.div`

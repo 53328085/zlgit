@@ -6,3 +6,9 @@ export const options = [
     { label: "景观灯", value: 4 },
     { label: "其他", value: 5 },
   ];
+
+export const states = [
+  {label: "全部", value:0},
+  {label: "开启", value:1},
+  {label: "关闭", value:2},
+]

@@ -516,6 +516,7 @@ export function ExportExcel({tb,  single=false,defined=false,setIsrange,getDates
     try {
       await form.validateFields()
       tb.current.downloadAll()
+      setIsrange({range:false})
       mref.current.onCancel()
     } catch (e) {
       Promise.reject()

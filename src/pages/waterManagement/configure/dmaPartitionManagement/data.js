@@ -122,22 +122,22 @@ export const partType =[
 export const rateType =[
   {
     label: "按天生成",
-    value: "1"
+    value: 2
   },
   {
     label: "按月生成",
-    value: "2"
+    value: 3
   },
 
 ]
 export const iscomputer =[
   {
     label: "计算",
-    value: "1"
+    value: 1
   },
   {
     label: "不计算",
-    value: "2"
+    value: 2
   },
 
 ]
@@ -175,8 +175,119 @@ export const custvalidfn = (filed) => {
 }
 export const unbindcols = [
   {
-    title: "分区名称",
+    title: "表具名称",
     dataIndex: "name",
     key: "name",
+  },
+  {
+    title: "表具编号",
+    dataIndex: "sn",
+    key: "sn",
+  },
+  {
+    title: "表具型号",
+    dataIndex: "category",
+    key: "category",
+  },
+  {
+    title: "安装地址",
+    dataIndex: "address",
+    key: "address",
+  },
+]
+export const purpose=[
+ {
+  label: "管理总表",
+  value:1,
+ },
+ {
+  label: "管理分表",
+  value:3,
+ },
+ {
+  label: "用水表",
+  value:2,
+ }
+]
+export const direction =[
+  {
+    label: "进水",
+    value:1,
+   },
+   {
+    label: "出水",
+    value:2,
+   }
+]
+export const userType=[
+  {
+    label: "住户表",
+    value:1,
+  },
+  {
+    label: "商铺",
+    value:2,
+  }, 
+  {
+    label: "消防",
+    value:3,
+  },
+  {
+    label: "绿化",
+    value:4,
+  },
+  {
+    label: "物业",
+    value:5,
+  }
+]
+
+export const bindcols = [
+  {
+    title: "表具编号",
+    dataIndex: "sn",
+    key: "sn",
+    sorter:true,
+  },
+  {
+    title: "表具名称",
+    dataIndex: "name",
+    key: "name",
+    sorter:true
+  },
+  {
+    title: "表具用途",
+    dataIndex: "meterPurpose",
+    key: "meterPurpose",
+    render: (t) => purpose?.find(o=>o.value==t)?.label
+  },
+  {
+    title: "供水方向",
+    dataIndex: "waterSupplyDirection",
+    key: "waterSupplyDirection",
+    render: (t) => direction?.find(o=>o.value==t)?.label
+  },
+ /*  {
+    title: "清洗区间",
+    dataIndex: "",
+    key: "waterSupplyDirection",
+    render: (t) => direction?.find(o=>o.value==t)?.value
+  }, */
+  {
+    title: "用水类型",
+    dataIndex: "waterType",
+    key: "waterType",
+    render: (t) => userType?.find(o=>o.value==t)?.label
+  },
+  {
+    title: "表具型号",
+    dataIndex: "category",
+    key: "category",
+  },
+  {
+    title: "安装地址",
+    dataIndex: "address",
+    key: "address",
+    sorter:true,
   },
 ]

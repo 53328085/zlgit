@@ -12,48 +12,48 @@ export default function Index(props) {
   const { Search } = Input;
   let dataList = [];
 
-  let arr = [], seracharr=[];
-  let stair = props.treeData?.map(t => t.id); // 一级id
- 
+  let arr = [], seracharr = [];
+  let stair = props.treeData?.map(t => t.areaId); // 一级id
+
   const getId = (nodes, array) => {
-      console.log(array)
-      if(Array.isArray(nodes)) {
-         for(let node of nodes) {
-          array?.push(node.id)
-            if(node.childs && Array.isArray(node.childs) && node.childs.length >0) {
-              getId(node.childs)
-            }
-         }
-        
-         
+    console.log(array)
+    if (Array.isArray(nodes)) {
+      for (let node of nodes) {
+        array?.push(node.areaId)
+        if (node.childs && Array.isArray(node.childs) && node.childs.length > 0) {
+          getId(node.childs)
+        }
       }
- 
+
+
+    }
+
   }
   const getbyname = (data, name) => {
 
-     if(Array.isArray(data) && data?.length >0) {
-        for(let node of data) {
-           let id = node.id
-           if(node.name.includes(name)) seracharr.push(id)
-           if(stair.includes(id)) {
-              let childs = data.find(d => d.id == id)?.childs
-              getId(childs, seracharr)
-           }else {
-             if(Array.isArray(node.childs) && node.childs?.length >0) getbyname(node.childs, name)
-           }
-          
+    if (Array.isArray(data) && data?.length > 0) {
+      for (let node of data) {
+        let id = node.areaId
+        if (node.name.includes(name)) seracharr.push(id)
+        if (stair.includes(id)) {
+          let childs = data.find(d => d.areaId == id)?.childs
+          getId(childs, seracharr)
+        } else {
+          if (Array.isArray(node.childs) && node.childs?.length > 0) getbyname(node.childs, name)
         }
-     }
+
+      }
+    }
 
   }
   useEffect(() => {
-     if(!Array.isArray(props.treeData)) return;
-     getId(props.treeData, arr);
-     setCheckedKeys(arr);
-     getValues(arr)
+    if (!Array.isArray(props.treeData)) return;
+    getId(props.treeData, arr);
+    setCheckedKeys(arr);
+    getValues(arr)
   }, [props.treeData])
   const generateList = (data) => {
-    if(!Array.isArray(data)) return;
+    if (!Array.isArray(data)) return;
     for (let i = 0; i < data.length; i++) {
       const node = data[i];
       dataList.push({
@@ -103,8 +103,8 @@ export default function Index(props) {
   const onSearch = (value) => {
     setCheckedKeys([])
     getbyname(props.treeData, value);
-   
-    
+
+
     setCheckedKeys(seracharr);
     getValues(seracharr)
     const expandedKeys = dataList
@@ -115,7 +115,7 @@ export default function Index(props) {
         return null;
       })
       .filter((item, i, self) => item && self.indexOf(item) === i);
-    console.log(expandedKeys)   
+    console.log(expandedKeys)
     setstate({
       expandedKeys: expandedKeys,
       searchValue: value,
@@ -127,7 +127,7 @@ export default function Index(props) {
   //搜索结果重新渲染Treenode，存在一个问题，如果搜索功能和编辑树功能同时需要的话，树组件中
   //tree={loop(treeData)}会造成编辑树功能无法重新渲染树，node中input渲染不出来
   const loop = (data) =>
-     
+
     data.map((item) => {
       const index = item[props.fieldNames.title].indexOf(searchValue);
       const beforeStr = item[props.fieldNames.title].substr(0, index);
@@ -162,7 +162,7 @@ export default function Index(props) {
     // console.log(info,checkedKeys)
     // getTreeKey(checkedKeys)
     console.log(checkedKeys, info)
-    
+
     setCheckedKeys(checkedKeys)
     // getValues(checkedKeys);
     getValues(info.checkedNodesPositions)
