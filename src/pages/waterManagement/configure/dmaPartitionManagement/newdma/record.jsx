@@ -21,6 +21,8 @@ const getRecordDtl =async() => {
     try {
        if(![id, projectId].some(d => Number.isInteger(d))) return
       let {data, success} = await useGetDetail({id, projectId})
+      data["isComputeLeakage"] = Number(data["isComputeLeakage"])
+     data["isComputeNrw"] = Number(data["isComputeNrw"])
       if(success && isObject(data)) {
          form.setFieldsValue(data)
       }
@@ -58,12 +60,12 @@ const {refresh}  =  useRequest(getRecordDtl, {
   const onSubmit=async()=> {
    try {
     let {code,level,parentId,...values} = await form.validateFields()
-   
+    console.log(parentId)
     values["parentId"] = parentId[parentId?.length - 1]
-    values["isComputeLeakage"] = values["isComputeLeakage"]=="1"
-     values["isComputeNrw"] = values["isComputeNrw"]=="1"
+    values["isComputeLeakage"] = values["isComputeLeakage"]==1
+     values["isComputeNrw"] = values["isComputeNrw"]==2
     let handler =isEdit ? useUpdate : useInsert
-    let {success, data,errMsg} = await handler({projectId}, {...values, projectId})
+    let {success, data,errMsg} = await handler({projectId}, {...values, projectId,id})
     if(success) {
         message.success(isEdit ? "修改成功" : "新增成功")
         if(isObject(data)) {
@@ -138,19 +140,19 @@ const {refresh}  =  useRequest(getRecordDtl, {
         <Row gutter={32}>
           <Col span={8}>
           <Form.Item label="管网总长度"  name="pipeLength"  >
- <Input></Input>
+ <InputNumber></InputNumber>
           </Form.Item> 
           </Col>
           <Col span={8}>
           <Form.Item label="大用户数量" name="largeConsumerNumber"   >
-            <Input></Input>
+            <Input readOnly></Input>
           </Form.Item> 
           </Col>
         </Row>
         <Row gutter={32}>
           <Col span={8}>
           <Form.Item label="分区面积"  name="area"  >
- <Input></Input>
+ <InputNumber></InputNumber>
           </Form.Item> 
           </Col>
           <Col span={8}>
