@@ -1,4 +1,5 @@
 import moment from "moment";
+import imgUrl from "./imgs/index"
 export const Init_Value = {
   dtype: "1",
   date: moment(),
@@ -20,6 +21,7 @@ export const EnergyData =[
     value2:"0.0",
     thrTitle:"上一日累计用电量",
     value3:"0.0",
+    imgurl:imgUrl.energy,
   },
   {
     title:"节能情况",
@@ -28,6 +30,7 @@ export const EnergyData =[
     secTitle:"当日累计节能电量",
     thrTitle:"节能率",
     value3:"0.0",
+    imgurl:imgUrl.save,
   }, {
     title:"碳排情况",
     value1:"0.0",
@@ -35,6 +38,7 @@ export const EnergyData =[
     secTitle:"当日累计碳排",
     thrTitle:"昨日碳排",
     value3:"0.0",
+    imgurl:imgUrl.co2,
   }
 ] 
 
@@ -86,13 +90,6 @@ export const Radio_Options= [
   { label: "列表模式", value: "2" },
 ];
 export const Chart_Options = {
-  // 标题配置
-  // title: {
-  //   text: '销售与访问量分析',
-  //   subtext: '2023年数据',
-  //   left: 'center'
-  // },
-  
   // 提示框配置
   tooltip: {
     trigger: 'axis',
@@ -213,3 +210,42 @@ export const Chart_Options = {
     }
   ]
 };
+
+
+export const TbHeader = [
+  {
+    title: "时间",
+    dataIndex: "partitionTime",
+    key: "partitionTime",
+    sorter: {
+      compare: (a, b) => a.partitionTime - b.partitionTime,
+      multiple: 1,
+    },
+  },
+  {
+    title: "用电量（kWh）",
+    dataIndex: "supplyValue",
+    key: "supplyValue",
+    sorter: {
+      compare: (a, b) => a.supplyValue - b.supplyValue,
+      multiple: 2,
+    },
+  },
+  {
+    title: "环比",
+    dataIndex: "useValue",
+    key: "useValue",
+    sorter: {
+      compare: (a, b) => a.useValue - b.useValue,
+      multiple: 3,
+    },
+  },
+  {
+    title: "同比",
+    dataIndex: "leakageValue",
+    key: "leakageValue",
+    sorter: {
+      compare: (a, b) => a.leakageValue - b.leakageValue,
+      multiple: 4,
+    },
+  }]
