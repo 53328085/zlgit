@@ -12,7 +12,6 @@ import { cols, schemeNameData } from "./data";
 import { useList, useDetail } from "./api.js";
 
 import { Mainwrap, TitleBox } from "./style";
-import useTable from "@com/useTable";
 import { useAntdTable, useRequest } from "ahooks";
 
 export default function Index() {

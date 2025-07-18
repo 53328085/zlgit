@@ -168,7 +168,7 @@ export default function Index(props) {
     },
   ]
 
-  const [rangerTime, setRangerTime] = useState([moment().subtract('day', 7), moment()])
+  const [rangerTime, setRangerTime] = useState([moment().subtract(1, 'months'), moment()])
   const airNameChange = () => {
 
   }
@@ -300,9 +300,7 @@ export default function Index(props) {
           />
         </Header>
         <div className='content'>
-          <Form form={searchForm} layout='inline' initialValues={{
-            date: [moment().subtract(7, 'day'), moment()],
-          }}>
+          <Form form={searchForm} layout='inline' >
             <Space size={16}>
               <Item label="空调名称" name="deviceStyle" >
 
@@ -333,8 +331,8 @@ export default function Index(props) {
                 />
               </Item>
               <Item name="date" style={{ marginRight: '0px' }}>
-                <RangePicker separator={<>至</>} size="default" style={{ width: 376 }} format="YYYY-MM-DD" onChange={(e) => {
-                  setRangerTime([...e])
+                <RangePicker separator={<>至</>} size="default" style={{ width: 376 }} defaultValue={rangerTime} format="YYYY-MM-DD" onChange={(e) => {
+                  setRangerTime([e[0], e[1]])
                 }} />
               </Item>
               <Item>
