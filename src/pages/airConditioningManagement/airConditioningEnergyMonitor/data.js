@@ -25,26 +25,28 @@ export const Table_Option = [
   },
   { label: "图表模式", value: "2" },
 ];
+
 //空调用能表头
 export const TbCol = [
   {
     title: "设备名称",
-    dataIndex: "partitionTime",
-    key: "partitionTime",
+    dataIndex: "name",
+    key: "name",
     width: 138,
     fixed: 'left',
   },
   {
     title: "通讯地址",
-    dataIndex: "partitionTime",
-    key: "partitionTime",
+    dataIndex: "address",
+    key: "address",
     width: 122,
     fixed: 'left',
   },
   {
     title: "总开机时长 （h）",
-    dataIndex: "partitionTime",
-    key: "partitionTime",
+    dataIndex: "time",
+    key: "time",
+    width: 122,
     sorter: {
       compare: (a, b) => a.partitionTime - b.partitionTime,
       multiple: 1,
@@ -52,33 +54,39 @@ export const TbCol = [
   },
   {
     title: "电量(kWh)",
-    dataIndex: "partitionTime",
-    key: "partitionTime",
+    dataIndex: "elec",
+    key: "elec",
+    width: 109,
   },
   {
     title: "开机时段",
-    dataIndex: "partitionTime",
-    key: "partitionTime",
+    dataIndex: "timecol",
+    key: "timecol",
+    width: 639,
   },
   {
     title: "开启频次",
-    dataIndex: "partitionTime",
-    key: "partitionTime",
+    dataIndex: "enable",
+    key: "enable",
+    width: 79,
   },
   {
     title: "关闭频次",
-    dataIndex: "partitionTime",
-    key: "partitionTime",
+    dataIndex: "close",
+    key: "close",
+    width: 93,
   },
   {
     title: "空调类型",
-    dataIndex: "partitionTime",
-    key: "partitionTime",
+    dataIndex: "type",
+    key: "type",
+    width: 110,
   },
   {
     title: "安装地址",
-    dataIndex: "partitionTime",
-    key: "partitionTime",
+    dataIndex: "address2",
+    key: "address2",
+
   },
 ];
 //空调节能表头
