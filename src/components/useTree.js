@@ -22,7 +22,7 @@ const Treebox = styled.div`
        flex: 1;
        height: 100%;
        .ant-tree{
-         overflow-y: auto; 
+       //  overflow-y: auto; 
        }
 `
 
