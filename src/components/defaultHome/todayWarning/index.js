@@ -1,13 +1,15 @@
 import React, {useRef, useEffect} from 'react'
 import {useSelector} from 'react-redux'
 
-import { selectProjectId } from '@redux/systemconfig.js'
+import { selectProjectId, themeColor } from '@redux/systemconfig.js'
 import styled from 'styled-components';
 import {TitlelayoutOv as Titlelayout} from '@com/titlelayout';
 import { drawEcharts } from "@com/useEcharts"; 
-import { HomeRuntime } from '@api/api.js'
+import {hextodec} from "@com/usehandler"
+import {HomeRuntime } from '@api/api.js'
 import { useReactive } from 'ahooks';
  import {useTranslation} from "react-i18next"
+ 
 const Mainbox = styled.div`
   position: relative;
   display: grid;
@@ -77,6 +79,7 @@ const fs = {
 export default function DefaultHome(props){
   const {type} = props
   const projectId = useSelector(selectProjectId)
+  const {warningColor} = useSelector(themeColor)
   const ref= useRef()
   const {t} = useTranslation(["overview","comm"])
   const state = useReactive({
@@ -86,29 +89,47 @@ export default function DefaultHome(props){
     confirmPercent: 0,
     unconfirmPercent: 0,
   })
-
+  const rgb = hextodec(warningColor);
+ console.log(rgb)
   const tdrawEcharts = () => {
     return drawEcharts(ref.current, {
       type: 4,
+      
       liuqiu: {
         series: {
          data: [(state.alarmCount/50)],
          waveLength: "89%",
+         backgroundStyle: {
+          borderWidth: 2,
+          borderColor: warningColor,
+          color: rgb?.length==3 ? `rgba(${rgb[0]}, ${rgb[1]}, ${rgb[2]},0.15)` : "#fff"
+         },
+         color: [warningColor],
+         outline: {
+            show:false
+         },
         label: {
           normal: {
-            formatter: function() {
-                return `${t("overview:AlarmOfToday")}\n\n\n${state.alarmCount}次`;
-            },
+       formatter: function() {
+                return `${t("overview:AlarmOfToday")}\n {a|${state.alarmCount}次}`;
+            },  
             textStyle: {
                 fontSize: 16,
                 color: '#333'
             },
-            position: ['50%', '65%']
+            position: ['50%', '65%'],
+            rich: {
+              a: {
+                lineHeight: 22,
+                fontSize: "small",
+                fontWeight: "bold"
+              }
+            }
          }
         },
         
       },
-      
+     
     }
     })
   }
@@ -136,7 +157,7 @@ export default function DefaultHome(props){
       tdrawEcharts()
     }
     
-  },[projectId, type])
+  },[projectId, type,warningColor])
   
   return (
          <Titlelayout title={t("overview:AlarmOfToday")} {...fs} style={{height: "200px"}}>
