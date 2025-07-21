@@ -1,5 +1,8 @@
 import {Apimethod} from "@api/api.js"
-
+export const { useList } = new Apimethod( //查询   路灯型号
+  "get",
+  "Light/StreetLightModel/List"
+);
 export const { usePage } = new Apimethod( //查询  路灯档案
     "post",
     "Light/StreetLight/Page"

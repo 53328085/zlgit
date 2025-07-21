@@ -63,7 +63,7 @@ const options = [
   { label: "景观灯", value: 4 },
   { label: "其他", value: 5 },
 ];
-export const items = (
+export const items =(option)=> (
   <Frombox>
     <div>
       <Form.Item label="所属园区" rules={rules} name="areaId">
@@ -80,8 +80,8 @@ export const items = (
       <Form.Item label="路灯名称" rules={rules} name="name">
         <Input style={w224} />
       </Form.Item>
-      <Form.Item label="路灯型号" rules={rules} name="model">
-        <Input></Input>
+      <Form.Item label="路灯型号" rules={rules} name="model" >
+        <Select options={option} fieldNames={{label: "model", value:"model"}}></Select>
       </Form.Item>
       <Form.Item label="路灯编号" rules={rules} name="no">
         <Input></Input>
