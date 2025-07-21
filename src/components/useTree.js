@@ -26,7 +26,7 @@ const Treebox = styled.div`
        }
 `
 
-export default memo(function Index({ areaId, setTreeId, setLine, showline = true, datatype = NaN, energytype, sty = { bordered: 'y', pv: '16px' }, allselect = true, selectobj, multiple = true, treeName = '', ...restprop }) {
+export default memo(function Index({ areaId, setTreeId, setLine, showline = true, datatype = NaN, energytype, sty = { bordered: 'y', pv: '16px' }, allselect = true, selectobj, multiple = true, treeName = '',title="", ...restprop }) {
   // datatype =0 或 =2
   const [treeData, setTreeData] = useState([])
 
@@ -195,15 +195,24 @@ export default memo(function Index({ areaId, setTreeId, setLine, showline = true
 
   }
   // 根据区域查询
+
+  // 复选框模式
   const onCheck = (data, e) => { // 受控
+<<<<<<< HEAD
     console.log(data, e, treeIdRef.current)
     let checked 
     if (multiple) {
+=======
+    console.log(data, e)
+    let checked
+    
+>>>>>>> 1a0d581ecb734ed2de2b7bd9920705e351ee736e
       if (schecked == 1) {
         checked = data.checked
       } else {
         checked = data;
       }
+<<<<<<< HEAD
     } else {
       if(e.node.id==checked[0]){
         checked=[]
@@ -212,6 +221,9 @@ export default memo(function Index({ areaId, setTreeId, setLine, showline = true
       }
      
     }
+=======
+    
+>>>>>>> 1a0d581ecb734ed2de2b7bd9920705e351ee736e
 
 
     let f = checked?.length > 0 && checked?.length < treeIdRef.current?.length
@@ -221,6 +233,15 @@ export default memo(function Index({ areaId, setTreeId, setLine, showline = true
     setChecked(checked?.length === treeIdRef.current?.length)
 
   }
+
+//  单选模式
+const onSelect=(selectedKeys, e)=> {
+ //  console.log(selectedKeys)
+  // console.log(e)
+  setTreeId(selectedKeys)
+}
+
+
 
   // 树搜索
   const onExpand = (newExpandedKeys, obj) => {
@@ -266,7 +287,7 @@ export default memo(function Index({ areaId, setTreeId, setLine, showline = true
 
   return (
 
-    <Titlelayout key="line" layout="flex" bordered={sty.bordered} pv={sty.pv}>
+    <Titlelayout key="line" layout="flex" bordered={sty.bordered} pv={sty.pv} hv="20px" bg="none" title={title}>
       <div>
         {treeName ? <div style={{ color: '#515151', fontWeight: 'bold', marginBottom: '8px' }}>{treeName}</div> : null}
         <Treebox showline={showline.toString()}>
@@ -292,15 +313,16 @@ export default memo(function Index({ areaId, setTreeId, setLine, showline = true
           }
           <Tree
             treeData={treeData}
-            checkable
+            checkable={multiple}
             onExpand={onExpand}
             expandedKeys={expandedKeys}
             checkedKeys={checkedKeys}
             onCheck={onCheck}
+            onSelect={onSelect}
             fieldNames={fieldNames}
             checkStrictly={strictyly} // true : 完全受控，父子节点不关联, false : 父子节点关联
-            indeterminate={indeterminate}
-            {...restprop}
+            indeterminate={indeterminate}  
+            {...restprop}         
           />
         </Treebox></div>
     </Titlelayout>

@@ -13,6 +13,7 @@ export  const Mainwrap = styled.div`
      display: flex;
      flex-direction: column;
      row-gap: 8px;
+     padding-top: 8px;
      .title{
         color: #515151;
         font-weight: bold;

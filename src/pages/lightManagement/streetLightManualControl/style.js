@@ -12,6 +12,8 @@ export  const Mainwrap = styled.div`
      .title{
         color: #515151;
         font-weight: bold;
+        padding: 8px;
+        line-height: 2;
      }
      overflow: auto;
    }

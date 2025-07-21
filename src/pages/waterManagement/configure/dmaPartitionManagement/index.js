@@ -149,9 +149,10 @@ const Ctitle = <TitleBox>
   return (
     <Pagecount pd="0" bgcolor="none">
     {listnew ?  <Mainwrap>
-        <div className="left">
-            <span className="title">选择区域</span> 
+        <div className="left"> 
             <UseTree
+            title="选择区域"
+            sty = {{ bordered: 'n', pv: '8px' }}
             areaId={0}
             setTreeId={setTreeId}
             setLine={() => {}}
@@ -169,7 +170,7 @@ const Ctitle = <TitleBox>
                   <Form.Item label="分区名称" name="name">
                     <Input ></Input>
                   </Form.Item>
-                  <Form.Item label="分区类型" name="partitionType" initialValue={1}>
+                  <Form.Item label="分区类型" name="partitionType" initialValue={0}>
                     <Select options={options} style={{width: "200px"}}  ></Select>
                   </Form.Item>
                   <Form.Item>
