@@ -107,7 +107,7 @@ export default function Index() {
 <Space><CustButtonT text="new" onClick={onAdd}></CustButtonT><ExportExcel></ExportExcel></Space>
   </TitleBox>)
   return (
-    <Pagecount>
+    <Pagecount pd="0px">
       <Titlelayout layout="flex" title={ctitle}>
         <UserTable columns={columns} dataSource={lists}></UserTable>
       </Titlelayout>

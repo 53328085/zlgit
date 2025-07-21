@@ -1,6 +1,9 @@
  
 export const options = [
   {
+    label: "全部", value:0,
+  },
+  {
     label: "区域", value:1,
   },
   {

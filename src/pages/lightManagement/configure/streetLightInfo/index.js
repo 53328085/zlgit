@@ -1,4 +1,4 @@
-import React,{useMemo, useRef, useState, useCallback} from 'react'
+import React,{useMemo, useRef, useState, useCallback, useEffect} from 'react'
 import {Space, Form, message, Typography, Select, Input} from 'antd'
 import {useAntdTable} from "ahooks"
 import {useOutletContext} from "react-router-dom"
@@ -10,7 +10,7 @@ import {CustButtonT,CustButton, ExportExcel} from "@com/useButton"
 import CModal from '@com/useModal'
 import {Serach} from "@com/comstyled"
 import {AreaSelect} from "@com/useSerach/comhead"
-import {usePage,useAdd,useUpdate,useDelete, useImport } from "./api"
+import {usePage,useAdd,useUpdate,useDelete, useImport, useList } from "./api"
 import {cols,  items} from "./data"
 import {Mainbox } from './style'
  const {Link} = Typography
@@ -24,6 +24,7 @@ export default function Index() {
   const {projectId} =useOutletContext()
   const [isadd, setIsadd] =useState(false)
   const [total, setTotal] = useState(0)
+  const [lists, setLists] = useState([])
   const editRef = useRef()
   const tbref = useRef()
   const [Ctitle,msg] = useMemo(()=> {
@@ -32,6 +33,22 @@ export default function Index() {
    return [title, msg]
   },[isadd])
   const downParams = useRef()
+  const getList = async()=> {
+    try {
+      let {success, data, errMsg} = await useList({projectId})
+      if(success && Array.isArray(data)) {
+        setLists(data)
+      }else  {
+       setLists([])
+       if(!success) message.warning(errMsg)
+      }
+    } catch (error) {
+      
+    }
+ }
+ const fromitem = useMemo(()=> {
+  return items(lists)
+ },[lists])
   const getData= async ({current, pageSize }, formData)=> { 
     try {
       if(!Number.isInteger(parseInt(projectId))) return
@@ -185,6 +202,12 @@ export default function Index() {
 
     })
  }, [total])
+ useEffect(()=> {
+  if(Number.isInteger(parseInt(projectId))){
+    getList()
+  }
+
+ }, [projectId])
   return (
     <Pagecount pd="0">
       <Titlelayout layout="flex" title="路灯档案">
@@ -210,7 +233,7 @@ export default function Index() {
       </Titlelayout>
        <CModal title={Ctitle}   onOk={onOk}   width={832} mold="cust" custft={isadd}  ref={editRef}>
         <Form form={newform} labelAlign="right" labelCol={{flex: "7em"}} preserve={false}>
-          {items}
+          {fromitem}
         </Form>
        </CModal>
         <CModal title="删除"  ref={delref} width={512} mold="cust" type="warn" onOk={onOkDel} >
