@@ -268,7 +268,7 @@ export const bindcols = [
     title: "供水方向",
     dataIndex: "waterSupplyDirection",
     key: "waterSupplyDirection",
-    render: (t) => direction?.find(o=>o.value==t)?.label
+    render: (t, row) => row.meterPurpose==1 ? direction?.find(o=>o.value==t)?.label : ""
   },
  /*  {
     title: "清洗区间",
