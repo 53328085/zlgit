@@ -4,7 +4,7 @@ export default function Index({ name = '', children, styled = {}, bg = {}, fontS
   return (
     <div className={style.title} style={styled}>
       <div className={bac == '' ? style.columns : style.red} style={bg}></div>
-      <div className={style.name} style={{ fontSize, fontWeight}}>{name}</div>
+      <div className={style.name} style={{ fontSize, fontWeight}} >{name}</div>
       {children}
     </div>
   )

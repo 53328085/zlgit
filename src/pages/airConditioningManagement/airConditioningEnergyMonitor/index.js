@@ -3,7 +3,7 @@ import Pagecount from "@com/pagecontent";
 import UseTree from "@com/useTree";
 import { Form, Select, DatePicker, Button, Radio } from "antd";
 import { Radio_Options, Init_Value, Date_Value,Table_Option } from "./data";
-import {AirTable,AirChart} from "./comp";
+import {AirTable,AirChart,AirEnergyDetail,Frequency} from "./comp";
 import { Container, Header, Main } from "./style";
 import { DownloadOutlined} from "@ant-design/icons";
 import BlueColumn from "@com/bluecolumn/index.jsx"
@@ -16,7 +16,25 @@ export default function Index() {
   const [type, setType] = useState("date");
   const { Item } = Form;
   const [form] = Form.useForm();
+  const energyRef=useRef()  //空调用能明细弹框
+  const enableRef=useRef()  //开启频次
+  const closeRef =useRef()  //关闭频次
+  let [num,setNum] =useState(0)
+  //打开空调用能明细弹框
+  const openEnergyModal =()=>{
+    energyRef.current?.onOpen().then(()=>{
+      setNum(pre=>pre+1)
+    })
+  }
+  const openFrModal=()=>{enableRef.current?.onOpen()}
+  const openFreModal=()=>{closeRef.current?.onOpen()}
   const onFinish = () => {};
+
+  const [enableVal,setEnableVal] =useState(0)
+  const enableChange=(e)=>{setEnableVal(e.target.value)}
+
+  const [offVal,setOffVal] =useState(0)
+  const offChange=(e)=>{setOffVal(e.target.value)}
   return (
     <Pagecount bgcolor="#eeeff4" pd={0}>
       <Container>
@@ -125,12 +143,21 @@ export default function Index() {
               </div>
             </BlueColumn>
             <div style={{width:"100%",flex:1,overflow:"hidden",display:"flex" }}>
-              {tbmodel==1?<AirTable tabId={tabId}></AirTable>:<AirChart tabId={tabId}></AirChart>}
+              {tbmodel==1?
+              <AirTable tabId={tabId} 
+              openEnergyModal={openEnergyModal}
+              openFrModal={openFrModal}
+              openFreModal={openFreModal}
+              ></AirTable>:<AirChart tabId={tabId}></AirChart>}
             </div>
             
           </div>
         </Main>
+        <AirEnergyDetail energyRef={energyRef} num={num}></AirEnergyDetail>
+        <Frequency domRef={enableRef} onChange={enableChange} value={enableVal}></Frequency>
+        <Frequency domRef={closeRef} onChange={offChange} value={offVal}></Frequency>
       </Container>
+     
     </Pagecount>
   );
 }

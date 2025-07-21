@@ -59,6 +59,8 @@ export const Main = styled.div`
     height: 100%;
     margin-left:16px;
     padding:16px;
+    max-width:1465px;
+    overflow: hidden;
     ${borderBox};
     ${flexBox({jc:"flex-start",fd:"column"})}
     .chart{
@@ -103,4 +105,21 @@ export const Main = styled.div`
 export const Container = styled.div`
   ${flexBox({ jc: "space-between", fd: "column" })}
   flex: 1;
+  .ant-table-cell .bg{
+    background: #f6f9ff;
+  }
 `;
+export const  AirModal=styled.div`
+ .ant-table-tbody .ant-table-row .ant-table-cell.bg{
+  background-color: #f6f9ff;
+}
+`
+export const BasicInfo =styled.div`
+display:grid;
+grid-template-columns:repeat(3,1fr);
+grid-gap:16px;
+margin:16px 0;
+.flexbox{
+${flexBox({jc:"flex-start"})}
+}
+`

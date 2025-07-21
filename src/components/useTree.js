@@ -58,7 +58,7 @@ export default memo(function Index({ areaId, setTreeId, setLine, showline = true
 
     if (checked) {
       setCheckedKeys(treeIdRef.current)
-      setTreeId(treeIdRef.current)
+      setTreeId(treeIdRef.current) 
       setChecked(true)
     } else {
       setCheckedKeys([])
@@ -196,8 +196,8 @@ export default memo(function Index({ areaId, setTreeId, setLine, showline = true
   }
   // 根据区域查询
   const onCheck = (data, e) => { // 受控
-    console.log(data, e)
-    let checked
+    console.log(data, e, treeIdRef.current)
+    let checked 
     if (multiple) {
       if (schecked == 1) {
         checked = data.checked
@@ -205,7 +205,12 @@ export default memo(function Index({ areaId, setTreeId, setLine, showline = true
         checked = data;
       }
     } else {
-      checked = [e.node.id]
+      if(e.node.id==checked[0]){
+        checked=[]
+      }else{
+        checked = [e.node.id]
+      }
+     
     }
 
 

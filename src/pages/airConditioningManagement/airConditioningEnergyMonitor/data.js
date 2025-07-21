@@ -46,7 +46,7 @@ export const TbCol = [
     title: "总开机时长 （h）",
     dataIndex: "time",
     key: "time",
-    width: 122,
+    width: 140,
     sorter: {
       compare: (a, b) => a.partitionTime - b.partitionTime,
       multiple: 1,
@@ -330,3 +330,119 @@ export const Column_Options={
     }
   ]
 }
+
+export const MdTbCol=[
+  {
+    title: "时间",
+    dataIndex: "address2",
+    key: "address2",
+
+  },{
+    title: "起始示值",
+    dataIndex: "address2",
+    key: "address2",
+
+  },
+  {
+    title: "结束示值",
+    dataIndex: "address2",
+    key: "address2",
+
+  },{
+    title: "综合倍率",
+    dataIndex: "address2",
+    key: "address2",
+
+  },{
+    title: "用电量",
+    dataIndex: "address2",
+    key: "address2",
+
+  }
+]
+export const MdOptions= {
+  grid:{
+    left:'5%',
+    right:'5%',
+    bottom:'3%'
+  },
+  xAxis: {
+    type: 'category',
+    data: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
+  },
+  yAxis: {
+    type: 'value'
+  },
+  series: [
+    {
+      data: [120, 200, 150, 80, 70, 110, 130],
+      type: 'bar'
+    }
+  ]
+};
+export const MdColHidden=[
+  {
+    title: "",
+    dataIndex: "name",
+    key: "name",
+    width:203,
+    className:"bg"
+  },
+  {
+    title: "",
+    dataIndex: "age",
+    key: "age",
+    width:203
+  },
+  {
+    title: "",
+    dataIndex: "address",
+    key: "address",
+    width:203,
+     className:"bg"
+  }, {
+    title: "",
+    dataIndex: "key",
+    key: "key",
+    width:203
+  }
+]
+export const MdTbData=[{
+  key: '1',
+  name: '设备名称',
+  age: 32,
+  address: '通信地址',
+},{
+  key: '1',
+  name: '所属区域',
+  age: 32,
+  address: '安装地址',
+}]
+
+export const PlainOptions=[{ label: '全部', value: 0},{ label: '开启', value: 1},{ label: '关闭', value: 2}]
+export const PlainColumns=[{
+  title: "操作时间",
+  dataIndex: "age",
+  key: "age",
+  width:203
+},{
+  title: "开关状态",
+  dataIndex: "age",
+  key: "age",
+  width:122
+},{
+  title: "设定温度",
+  dataIndex: "age",
+  key: "age",
+  width:122
+},{
+  title: "操作人",
+  dataIndex: "age",
+  key: "age",
+  width:122
+},{
+  title: "控制类型",
+  dataIndex: "age",
+  key: "age",
+  width:122
+}]

@@ -1,4 +1,4 @@
-import React, { useState, useRef, useImperativeHandle, forwardRef, memo } from "react";
+import React, { useState, useRef, useImperativeHandle, forwardRef, memo,useEffect } from "react";
 import { useTranslation } from 'react-i18next'
 import { Button, Modal, Space } from "antd";
 import styled, { css } from "styled-components";
@@ -41,8 +41,8 @@ const CModal = styled(Modal)`
   //  background-color: ${(props) => props.type == 'dark' ? '#1b1d23' : '#fff'};
     .ant-modal-title {
       font-size: 16px;
-      color: ${custCorle};;
-      padding-left: ${props => props.nolf ? 0 : '16px'} ;
+      color: ${custCorle};
+      padding-left: ${props => props.nolf ? 0 : '16px'};
     //  border-left: ${props => props.nolf ? 'none' : `4px solid  ${theme(props)}`};
       height: 22px;
       line-height: 22px;
@@ -134,6 +134,7 @@ function Custmodal({
   }
   const onOpen = () => {
     setOpen(true)
+    return new Promise(resolve=>setTimeout(resolve,100))
   }
   // const onResetform = () => formref.current.resetfrom()
 

@@ -13,7 +13,7 @@ export default function Index() {
 
   const onFinish = () => {};
   return (
-    <Pagecount bgcolor="#eeeff4">
+    <Pagecount bgcolor="#eeeff4" pd={0}>
       <Container>
         <div className="tree-box">
           <UseTree
