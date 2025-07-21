@@ -116,6 +116,11 @@ export default function Index() {
       name: '微机保护',
     },
     {
+      meterType: 21,
+      imageUrl: imgurl.aircotrl,
+      name: '空调控制',
+    },
+    {
       meterType: 23,
       imageUrl: imgurl.device,
       name: '智能控制',

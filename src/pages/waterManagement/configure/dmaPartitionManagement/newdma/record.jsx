@@ -65,7 +65,7 @@ const {refresh}  =  useRequest(getRecordDtl, {
     values["isComputeLeakage"] = values["isComputeLeakage"]==1
      values["isComputeNrw"] = values["isComputeNrw"]==2
     let handler =isEdit ? useUpdate : useInsert
-    let {success, data,errMsg} = await handler({projectId}, {...values, projectId,id})
+    let {success, data,errMsg} = await handler({projectId}, {...values, projectId,id:isEdit? id : 0})
     if(success) {
         message.success(isEdit ? "修改成功" : "新增成功")
         if(isObject(data)) {

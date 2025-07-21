@@ -161,6 +161,7 @@ export const Mcontent= styled.div`
  display: grid;
  grid-template-columns: 642px 1fr;
  column-gap: 32px;
+ min-height: 680px;
  .mleft {
   display: flex;
   flex-direction: column;

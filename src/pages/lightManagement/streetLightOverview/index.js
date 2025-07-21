@@ -110,35 +110,35 @@ export default function Index() {
             <img src={imgurl["todayLightRate"]}></img>
             <div className='data'>
               <span className='title'>今日亮灯率</span>
-              <span className='num'>{datas?.todayLightRate}%</span>
+              <span className='num'>{datas?.todayLightRate? `${datas?.todayLightRate}%`: "--" }</span>
             </div>
           </div>
           <div className="shownum">
             <img src={imgurl["todayLightNum"]}></img>
             <div className='data'>
               <span className='title'>今日亮灯数</span>
-              <span className='num'>{datas?.todayLightNum}</span>
+              <span className='num'>{datas?.todayLightNum ? datas?.todayLightNum : "--"}</span>
             </div>
           </div>
           <div className="shownum">
             <img src={imgurl["todayLightNum"]}></img>
             <div className='data'>
               <span className='title'>今日路灯用电（kWh）</span>
-              <span className='num'>{datas?.todayEnergy}</span>
+              <span className='num'>{datas?.todayEnergy ? datas?.todayEnergy : "--"}</span>
             </div>
           </div>
           <div className="shownum">
             <img src={imgurl["todayCarbon"]}></img>
             <div className='data'>
               <span className='title'>今日碳排量（kg）</span>
-              <span className='num'>{datas?.todayCarbon}</span>
+              <span className='num'>{datas?.todayCarbon ? datas?.todayCarbon : "--"}</span>
             </div>
           </div>
           <div className="shownum">
             <img src={imgurl["alarmNum"]}></img>
             <div className='data'>
               <span className='title'>异常告警</span>
-              <span className='num'>{datas?.alarmNum}</span>
+              <span className='num'>{datas?.alarmNum ? datas?.alarmNum : '--'}</span>
             </div>
           </div>
         </div>
