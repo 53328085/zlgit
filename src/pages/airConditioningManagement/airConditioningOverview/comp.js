@@ -2,6 +2,7 @@ import React,{ useState, useRef, useEffect,useLayoutEffect  } from 'react'
 import { Detail ,FooterChart} from "./style.js";
 import { EnergyData,AirChartData,Radio_Options ,Chart_Options,TbHeader} from "./data.js";
 import {drawEcharts} from "@com/useEcharts/index"
+import Icharts from "@com/useEcharts/Ichart.js"
 import BlueColumn from "@com/bluecolumn/index.jsx"
 import {Radio,Button} from"antd"
 import { DownloadOutlined} from "@ant-design/icons";
@@ -38,12 +39,12 @@ const CusCard = ({
 export const DetailComp = ({}) => {
   const chartRef = useRef();
   useEffect (() => {
-    const chart =  drawEcharts(chartRef.current,AirChartData);
-    const resizeObserver = new ResizeObserver(() => {
-      chart.resize();
-    });
-    resizeObserver.observe(chartRef.current);
-    return () => resizeObserver.disconnect();
+    // const chart =  drawEcharts(chartRef.current,AirChartData);
+    // const resizeObserver = new ResizeObserver(() => {
+    //   chart.resize();
+    // });
+    // resizeObserver.observe(chartRef.current);
+    // return () => resizeObserver.disconnect();
   }, []);
 
   return (
@@ -54,7 +55,8 @@ export const DetailComp = ({}) => {
 
       <div className="chart">
         <div className="head"><img src={air} alt=""  style={{width:23,height:23,marginRight:6}}/><span>空调用能排名</span></div>
-        <div className="chart-box" ref={chartRef}></div>
+        {/* <div className="chart-box" ref={chartRef}></div> */}
+        <Icharts {...AirChartData}></Icharts>
       </div>
     </Detail>
   );

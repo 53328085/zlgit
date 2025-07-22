@@ -19,6 +19,8 @@ import {
 import UseModal from "@com/useModal";
 import tip from "@imgs/tips.png";
 import { AirModal, BasicInfo } from "./style.js";
+import IChart from "@com/useEcharts/Ichart"
+
 
 export const AirTable = ({
   tabId,
@@ -105,17 +107,17 @@ export const AirChart = ({ tabId }) => {
   );
 };
 
-export const AirEnergyDetail = ({ energyRef, num }) => {
-  const chartRef = useRef();
-  let chart = useRef();
-  useEffect(() => {
-    if (chartRef.current) {
-      chart.current = drawEcharts(chartRef.current, MdOptions);
-    }
-    return () => {
-      chart.current?.dispose();
-    };
-  }, [num]);
+export const AirEnergyDetail = ({ energyRef }) => {
+  // const chartRef = useRef();
+  // let chart = useRef();
+  // useEffect(() => {
+  //   if (chartRef.current) {
+  //     chart.current = drawEcharts(chartRef.current, MdOptions);
+  //   }
+  //   return () => {
+  //     chart.current?.dispose();
+  //   };
+  // }, []);
   return (
     <UseModal
       title="空调电量明细"
@@ -134,9 +136,10 @@ export const AirEnergyDetail = ({ energyRef, num }) => {
         </AirModal>
         <div
           className="chart"
-          style={{ width: 814, height: 274 }}
-          ref={chartRef}
-        ></div>
+          style={{ width: 814, height: 274,display:"flex" }}
+         
+        > <IChart {...MdOptions} type={2} ></IChart></div>
+       
         <BlueColumn
           name="电量明细表-2024-01-01"
           bg={{ width: 3, height: 16 }}

@@ -19,12 +19,10 @@ export default function Index() {
   const energyRef=useRef()  //空调用能明细弹框
   const enableRef=useRef()  //开启频次
   const closeRef =useRef()  //关闭频次
-  let [num,setNum] =useState(0)
+
   //打开空调用能明细弹框
   const openEnergyModal =()=>{
-    energyRef.current?.onOpen().then(()=>{
-      setNum(pre=>pre+1)
-    })
+    energyRef.current?.onOpen()
   }
   const openFrModal=()=>{enableRef.current?.onOpen()}
   const openFreModal=()=>{closeRef.current?.onOpen()}
@@ -153,7 +151,7 @@ export default function Index() {
             
           </div>
         </Main>
-        <AirEnergyDetail energyRef={energyRef} num={num}></AirEnergyDetail>
+        <AirEnergyDetail energyRef={energyRef} ></AirEnergyDetail>
         <Frequency domRef={enableRef} onChange={enableChange} value={enableVal}></Frequency>
         <Frequency domRef={closeRef} onChange={offChange} value={offVal}></Frequency>
       </Container>

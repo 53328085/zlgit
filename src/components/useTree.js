@@ -198,32 +198,15 @@ export default memo(function Index({ areaId, setTreeId, setLine, showline = true
 
   // 复选框模式
   const onCheck = (data, e) => { // 受控
-<<<<<<< HEAD
-    console.log(data, e, treeIdRef.current)
-    let checked 
-    if (multiple) {
-=======
     console.log(data, e)
     let checked
     
->>>>>>> 1a0d581ecb734ed2de2b7bd9920705e351ee736e
       if (schecked == 1) {
         checked = data.checked
       } else {
         checked = data;
       }
-<<<<<<< HEAD
-    } else {
-      if(e.node.id==checked[0]){
-        checked=[]
-      }else{
-        checked = [e.node.id]
-      }
-     
-    }
-=======
     
->>>>>>> 1a0d581ecb734ed2de2b7bd9920705e351ee736e
 
 
     let f = checked?.length > 0 && checked?.length < treeIdRef.current?.length
