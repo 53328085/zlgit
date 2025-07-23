@@ -18,7 +18,7 @@ import {AreaSelect} from "@com/useSerach/comhead"
 export default function Index({projectId,id}) {
  const [form] = Form.useForm()
  const [rform] = Form.useForm()
- const [devices, setDevices] = useState({})
+
  const [sorting, setSorting] = useState("")
 const [filterInfo, setFilterInfo] = useState("")
 const [partitionType, setPartitionType] = useState("")
@@ -141,7 +141,7 @@ const getunbindData = async({current, pageSize}, formData)=> {
       projectId,
       id:parseInt(id),
       filterInfo,
-      areaId,
+      areaId: areaId==0 ? null : areaId,
     }
     let {success, data, total, errMsg} = await useGetListUnboundDevicePaged({},body)
     if(success && Array.isArray(data)) {
@@ -278,7 +278,7 @@ const onOK=async()=> {
   <div className='mleft'>
   <Form form={form} layout="inline" className='form'   preserve={false}>
     
-<Form.Item label="区域选择" name="areaId">
+<Form.Item label="区域选择" name="areaId" initialValue={0}>
   <AreaSelect isall={{name: "全部",id: 0}} style={{width: "160px"}} />
 </Form.Item>
 <Form.Item label="表具" name="filterInfo">

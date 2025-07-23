@@ -58,7 +58,7 @@ const Boxdiv = styled(Card)`
  //  padding: ${props => props.bodypad || "20px"};
   display: ${props => props.layout || 'block'};
   flex-direction: ${props => props.dr || 'row'};
-   
+  overflow: auto; 
   & .flex {
     display: flex;
     flex: 1;
