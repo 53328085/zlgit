@@ -51,7 +51,7 @@ export default function Ichart(props={}) {
     }
   }
   if(typechart == 2) {
-    let f = Array.isArray(series) && series?.length>0 && series?.every(s => Array.isArray(s?.data) && s?.data?.length ==0)
+    let f = Array.isArray(series) && series?.length>0 && series?.every(s => Array.isArray(s?.data) && s?.data?.length >0)
     console.log("f", f)
     if(!Array.isArray(xAxis.data) || (Array.isArray(xAxis.data) && xAxis.data?.length ===0) || !f) {
       return <Cempty tip={info} />

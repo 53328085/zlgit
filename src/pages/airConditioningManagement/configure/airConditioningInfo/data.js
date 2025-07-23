@@ -63,6 +63,18 @@ const options = [
   { label: "景观灯", value: 4 },
   { label: "其他", value: 5 },
 ];
+export const airconditioner = [
+  { label: "全部空调类型", value: 0 },
+  { label: "分体式空调", value: 1 },
+  { label: "多联机空调", value: 2 },
+  { label: "中央空调面板", value: 3 },
+];
+
+export const useTypeopt =[
+  { label: "全部用能类型", value: 0 },
+  { label: "客户用能", value: 1 },
+  { label: "公共用能", value: 2 },
+]
 export const items =(option)=> (
   <Frombox>
     <div>
@@ -77,23 +89,29 @@ export const items =(option)=> (
       </Form.Item>
     </div>
     <div>
-      <Form.Item label="路灯名称" rules={rules} name="name">
+      <Form.Item label="空调名称" rules={rules} name="name">
         <Input style={w224} />
       </Form.Item>
-      <Form.Item label="路灯型号" rules={rules} name="model" >
-        <Select options={option} fieldNames={{label: "model", value:"model"}}></Select>
-      </Form.Item>
-      <Form.Item label="路灯编号" rules={rules} name="no">
+      <Form.Item label="空调编号" rules={rules} name="sn" >
         <Input></Input>
       </Form.Item>
-      <Form.Item label="所属计量设备" rules={rules} name="mSn">
-        <Input placeholder="请输入电表sn"></Input>
+      <Form.Item label="空调型号" rules={rules} name="model">
+        <Select options={[]}></Select>
       </Form.Item>
-      <Form.Item label="所属控制器编号" name="cSn">
-        <Input placeholder="请输入路灯控制器"></Input>
+      <Form.Item label="空调类型" rules={rules} name="type">
+        <Select options={airconditioner.slice(1)} placeholder="请选择"></Select>
       </Form.Item>
-      <Form.Item label="路灯类型" name="type">
-        <Select options={options}></Select>
+      <Form.Item label="空调控制器" name="csn">
+        <Input  ></Input>
+      </Form.Item>
+      <Form.Item label="所属网关" name="type">{/*  */}
+        <Input></Input>
+      </Form.Item>
+      <Form.Item label="计量设备" name="msn">
+        <Input></Input>
+      </Form.Item>
+      <Form.Item label="用能类型" rules={rules} name="useType">
+        <Select options={useTypeopt.slice(1)} placeholder="请选择"></Select>
       </Form.Item>
       <Form.Item name="id" noStyle initialValue={0}>
         <Input hidden></Input>
@@ -107,6 +125,6 @@ export const items =(option)=> (
 
 export const arieTypeopt =[
   {
-    
+
   }
 ]

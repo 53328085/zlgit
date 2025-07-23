@@ -29,6 +29,7 @@ const {
 } = Monitoring
 
 export default function gateway({ deviceStyle }) {
+    console.log("deviceStyle",deviceStyle)
     const { t } = useTranslation(["button"])
     const publish = useSelector(publishState)
     const [selectopts, setSelectopts] = useState([])
@@ -418,7 +419,7 @@ export default function gateway({ deviceStyle }) {
             pageSize: pageSize ? pageSize : pageRef.current.pageSize,
             areaId: id ? id : 0,
             alike: like ? like : '',
-            deviceStyle: 20,
+            deviceStyle,
             customerType: customerType ? customerType : 0
         }
         const resp = await QueryByPageAirconditioner(params)

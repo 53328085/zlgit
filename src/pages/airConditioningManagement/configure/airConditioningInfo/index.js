@@ -10,8 +10,8 @@ import {CustButtonT,CustButton, ExportExcel} from "@com/useButton"
 import CModal from '@com/useModal'
 import {Serach} from "@com/comstyled"
 import {AreaSelect} from "@com/useSerach/comhead"
-import {usePage,useAdd,useUpdate,useDelete, useImport, useList } from "./api"
-import {cols,  items} from "./data"
+import {usePage,useAdd,useUpdate,useDelete, useImport, useQueryExteriorACsByPage } from "./api"
+import {cols,  items,airconditioner,useTypeopt } from "./data"
 import {Mainbox } from './style'
  const {Link} = Typography
 
@@ -52,16 +52,18 @@ export default function Index() {
   const getData= async ({current, pageSize }, formData)=> { 
     try {
       if(!Number.isInteger(parseInt(projectId))) return
-      const {alike="", areaId} = formData
+      const {alike="", areaId, type=0, useTyPE=0} = formData
       let params ={
         projectId,
         areaId,
         alike,
        pageNum: current,
        pageSize,
+       type, 
+       useTyPE
     }
     downParams.current = params
-    let {data, success, total, errMsg} =await usePage({},params)
+    let {data, success, total, errMsg} =await useQueryExteriorACsByPage({},params)
 
     if(success && Array.isArray(data)) {
       setTotal(total)
@@ -214,13 +216,20 @@ export default function Index() {
         <Mainbox>
          <div className="search">
           <Form form={form} layout="inline"  >
+            <Space size={16}>
             <Form.Item name="areaId" initialValue={0}>
             <AreaSelect style={{width: "264px"}} isall={{name: "全部", id:0}} onChange={submit} />
             </Form.Item>
             <Form.Item label="设备查询" name="alike" style={{marginLeft: "16px"}} >
          <Serach onSearch={submit} placeholder='请输入设备编号/安装地址'  />
             </Form.Item>
-            <Form.Item></Form.Item>
+            <Form.Item name="type" initialValue={0}>
+              <Select options={airconditioner} style={{width:"200px"}}></Select>
+              </Form.Item> 
+            <Form.Item name="useType" initialValue={0}>
+<Select options={useTypeopt} style={{width:"200px"}}></Select>
+            </Form.Item>
+            </Space>
           </Form>
           <Space size={16}>
             <CustButtonT text="new" onClick={()=> onAdd()}></CustButtonT>
