@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect, useCallback, memo } from 'react'
 import { useAntdTable } from 'ahooks';
 import styled from 'styled-components';
-import { Space,Button } from 'antd';
+import { Space, Button } from 'antd';
 
 import { useOutletContext } from 'react-router-dom'
 import columns, { onDesc } from './columns';
@@ -90,13 +90,13 @@ export default function Index() {
 
     return getTableData({ current: 1, pageSize: pageTotal.current })
   }, [exparams, treeId, line])
-  
+
 
   return (
-    <Pagecount pd="0">
+    <Pagecount pd="0" bgcolor="transparent" >
       <Mainbox>
         <UserTree areaId={areaId} setTreeId={setTreeId} setLine={setLine} energytype={energytype} />
-        <Titlelayout title={<div style={{width:'100%',display:'flex',justifyContent:'space-between',alignItems:'center'}}>
+        <Titlelayout title={<div style={{ width: '100%', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
           <span>损耗分析</span>
           <ExportExcel tb={tbref} /></div>} layout="flex" exa>
           <div className='tablebox'>
