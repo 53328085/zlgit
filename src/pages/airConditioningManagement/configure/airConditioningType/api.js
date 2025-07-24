@@ -10,7 +10,7 @@ export const { useQueryACModels} = new Apimethod( //查询   空调型号
   );
  
 
-  export const { useDeleteACModel } = new Apimethod( //删除  路灯型号
+  export const { useDeleteACModel } = new Apimethod( //删除  空调型号
     "delete",
     "AirConditioner/AirConditionerManage/DeleteACModel"
   );

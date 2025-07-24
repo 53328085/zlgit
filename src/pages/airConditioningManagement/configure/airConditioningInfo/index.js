@@ -1,6 +1,6 @@
 import React,{useMemo, useRef, useState, useCallback, useEffect} from 'react'
-import {Space, Form, message, Typography, Select, Input} from 'antd'
-import {useAntdTable} from "ahooks"
+import {Space, Form, message, Typography, Select, Descriptions} from 'antd'
+import {useAntdTable, useRequest} from "ahooks"
 import {useOutletContext} from "react-router-dom"
 import Pagecount from '@com/pagecontent'
 
@@ -10,8 +10,8 @@ import {CustButtonT,CustButton, ExportExcel} from "@com/useButton"
 import CModal from '@com/useModal'
 import {Serach} from "@com/comstyled"
 import {AreaSelect} from "@com/useSerach/comhead"
-import {usePage,useAdd,useUpdate,useDelete, useImport, useList } from "./api"
-import {cols,  items} from "./data"
+import {usePage,useInsertOrUpdateExteriorAC,useUpdate,useDeleteAC, useImport, useQueryExteriorACsByPage,useQueryCSnsList,useQueryMSnsList,useQueryModelsList } from "./api"
+import {cols,  items,airconditioner,useTypeopt,initems } from "./data"
 import {Mainbox } from './style'
  const {Link} = Typography
 
@@ -21,47 +21,100 @@ export default function Index() {
   const exprotref = useRef()
   const [form] = Form.useForm()
   const [newform] = Form.useForm()
+  const [innewform] = Form.useForm()
   const {projectId} =useOutletContext()
   const [isadd, setIsadd] =useState(false)
   const [total, setTotal] = useState(0)
-  const [lists, setLists] = useState([])
+  const [lists, setLists] = useState([]) //空调控制器
+  const [mlist, setMlist] = useState([]) // 计量设备
+  const [model, setmodel] = useState([])
   const editRef = useRef()
   const tbref = useRef()
-  const [Ctitle,msg] = useMemo(()=> {
-   let title = isadd ? "新增园区路灯" : "编辑园区路灯"
+  const inRef =useRef() //空调内机
+  const [curRow, setCurRow] = useState({})
+  const areaId = Form.useWatch("areaId", newform)
+
+ 
+
+  const [Ctitle,msg,operate] = useMemo(()=> {
+   let title = isadd ? "新增空调" : "编辑空调"
    let msg = isadd ? "新增成功" : "编辑成功"
-   return [title, msg]
+   let operate = isadd ?1:2
+   return [title, msg,operate]
   },[isadd])
   const downParams = useRef()
-  const getList = async()=> {
+
+  const getTypeList =async ()=> {
     try {
-      let {success, data, errMsg} = await useList({projectId})
-      if(success && Array.isArray(data)) {
+      if(!Number.isInteger(parseInt(projectId))) return
+      let {success, data} = await  useQueryModelsList({projectId})
+      setmodel(data)
+    } catch (error) {
+      
+    }
+    
+  }
+  useRequest(getTypeList, {
+    refreshDeps:[projectId]
+  })
+  const getList = async()=> { //  空调控制器列表/计量设备
+    try {
+      let fag = Number.isInteger(parseInt(projectId)) && parseInt(areaId)>0
+      if(!fag) {
+        setLists([])
+        setMlist([])
+        return
+      }
+      let params ={projectId, areaId}
+      let {success, data, errMsg} = await useQueryCSnsList(params)
+      let {success:suc, data:msns} = await useQueryMSnsList(params)
+      if(suc && Array.isArray(msns) && msns.length) {
+          setMlist(msns)
+          newform.setFieldValue("msn", msns[0].sn)
+      }else {
+        setMlist([])
+        newform.resetFields(["msn"])
+      }
+      if(success && Array.isArray(data) && data?.length) {
         setLists(data)
+        newform.setFieldValue("csn", data[0].sn)
       }else  {
        setLists([])
+       newform.resetFields(["csn"])
        if(!success) message.warning(errMsg)
       }
     } catch (error) {
       
     }
  }
+ useRequest(getList, {
+  refreshDeps: [projectId, areaId]
+ })
+
+
+
+
  const fromitem = useMemo(()=> {
-  return items(lists)
- },[lists])
+  return items({csn:lists, msn:mlist, model})
+ },[lists, mlist, model])
+ const infromitem = useMemo(()=> {
+  return initems(model)
+ },[model])
   const getData= async ({current, pageSize }, formData)=> { 
     try {
       if(!Number.isInteger(parseInt(projectId))) return
-      const {alike="", areaId} = formData
+      const {alike="", areaId, type=0, useTyPE=0} = formData
       let params ={
         projectId,
         areaId,
         alike,
        pageNum: current,
        pageSize,
+       type, 
+       useTyPE
     }
     downParams.current = params
-    let {data, success, total, errMsg} =await usePage({},params)
+    let {data, success, total, errMsg} =await useQueryExteriorACsByPage({},params)
 
     if(success && Array.isArray(data)) {
       setTotal(total)
@@ -110,9 +163,8 @@ export default function Index() {
   const onOk= async()=> {
     try {
       let values = await newform.validateFields()
-      
-      let hander = isadd ? useAdd : useUpdate;
-      let {success, errMsg} =await hander({}, values)
+     
+      let {success, errMsg} =await useInsertOrUpdateExteriorAC({operate}, values)
       if(success) {
         message.success(msg)
         if(!isadd) {
@@ -130,7 +182,7 @@ export default function Index() {
   }
   const onOkDel=async()=> {
      try {
-      let {success, errMsg} = await useDelete(delparams.current)
+      let {success, errMsg} = await useDeleteAC(delparams.current)
       if(success) {
         message.success("删除成功")
         delref.current.onCancel()
@@ -173,19 +225,32 @@ export default function Index() {
   const onexport = ()=> {
     exprotref.current.onOpen()
   }
+
+
+
+ const addInac =(row)=> {
+    setCurRow(row)
+    innewform.setFieldsValue(row)
+    inRef.current.onOpen()
+ }
+
+
   const columns = [
     ...cols,
     {
       title: '操作', 
       key:'option',
-      render: (_, row)=> <Space><Link onClick={()=> onEdit(row)}>编辑</Link><Link type="danger" onClick={()=> onDel(row)}>删除</Link></Space>
+      render: (_, row)=> <Space size={16}>
+        <Link onClick={()=> onEdit(row)}>编辑</Link>
+         {row.type==2 ?  <Link underline onClick={()=> addInac(row)}>内机</Link> : null}
+         <Link type="danger" onClick={()=> onDel(row)}>删除</Link></Space>
     },
   ]
   
   const onExport =useCallback(() => {  
     downParams.current.pageSize=1;
     downParams.current.pageSize=total
-    return   usePage({}, downParams.current).then(res => {
+    return   useQueryExteriorACsByPage({}, downParams.current).then(res => {
       let {success, data, total} =res
       if(success && Array.isArray(data)) { 
         return {
@@ -202,25 +267,29 @@ export default function Index() {
 
     })
  }, [total])
- useEffect(()=> {
-  if(Number.isInteger(parseInt(projectId))){
-    getList()
-  }
+ 
 
- }, [projectId])
+
   return (
     <Pagecount pd="0">
       
         <Mainbox>
          <div className="search">
           <Form form={form} layout="inline"  >
+            <Space size={16}>
             <Form.Item name="areaId" initialValue={0}>
             <AreaSelect style={{width: "264px"}} isall={{name: "全部", id:0}} onChange={submit} />
             </Form.Item>
             <Form.Item label="设备查询" name="alike" style={{marginLeft: "16px"}} >
          <Serach onSearch={submit} placeholder='请输入设备编号/安装地址'  />
             </Form.Item>
-            <Form.Item></Form.Item>
+            <Form.Item name="type" initialValue={0}>
+              <Select options={airconditioner} style={{width:"200px"}} onChange={submit}></Select>
+              </Form.Item> 
+            <Form.Item name="useType" initialValue={0}>
+<Select options={useTypeopt} style={{width:"200px"}} onChange={submit}></Select>
+            </Form.Item>
+            </Space>
           </Form>
           <Space size={16}>
             <CustButtonT text="new" onClick={()=> onAdd()}></CustButtonT>
@@ -228,17 +297,33 @@ export default function Index() {
             <ExportExcel tb={tbref}></ExportExcel>
           </Space>
          </div>
-        <UserTable columns={columns} {...tableProps} onExport={onExport} ref={tbref}  sheetName="路灯档案"></UserTable>
+        <UserTable columns={columns} {...tableProps} onExport={onExport} rowKey={row=>row.id} ref={tbref}  sheetName="路灯档案"></UserTable>
         </Mainbox>
        
-      
-       <CModal title={Ctitle}   onOk={onOk}   width={832} mold="cust" custft={isadd}  ref={editRef}>
+         {/* 新增/编辑空调内机 */}
+
+       <CModal title="新增空调内机"   onOk={onOk}   width={732} mold="cust" custft={true}   ref={inRef} key="inref">
+         <Descriptions>
+           <Descriptions.Item label="设备名称">{curRow?.name}</Descriptions.Item>
+           <Descriptions.Item label="设备编号">{curRow?.sn}</Descriptions.Item>
+           <Descriptions.Item label="所属园区">{curRow?.areaName}</Descriptions.Item>
+           <Descriptions.Item label="安装地址" span={3}>{curRow?.address}</Descriptions.Item>
+         </Descriptions>
+        <Form form={innewform} labelAlign="right" labelCol={{flex: "7em"}} preserve={false}>
+          {infromitem}
+        </Form>
+       </CModal>
+
+       {/* 新增/编辑空调外机 */}
+
+       <CModal title={Ctitle}   onOk={onOk}   width={832} mold="cust"  custft={isadd}   ref={editRef} key="ediref">
         <Form form={newform} labelAlign="right" labelCol={{flex: "7em"}} preserve={false}>
           {fromitem}
         </Form>
        </CModal>
-        <CModal title="删除"  ref={delref} width={512} mold="cust" type="warn" onOk={onOkDel} >
-                 是否确认删除备件？
+
+        <CModal title="删除提示"  ref={delref} width={512} mold="cust" type="warn" onOk={onOkDel} key="del" >
+        删除该空调将同步删除关联内机空调，是否继续？
                </CModal>
                <CModal title="批量导入"  ref={exprotref} width={512} dragprops={dragprops}  type="drag" onOk={onUpload} > 
                </CModal>
