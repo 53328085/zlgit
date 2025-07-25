@@ -44,32 +44,66 @@ export const CardBox = styled.div`
    margin-bottom: 16px;
   }
    .airBox{    
-    height: 690px;
+    height: 680px;
     overflow-y: scroll;
-   .airIcon{
-   width:30px;
-   height:30px;
-   }
+    
+         flex:1;
+         display: grid;
+         grid-template-columns: repeat(auto-fill,185px);
+         grid-auto-rows: 220px;
+         justify-content: space-between;
+         gap:16px;
+        .airIcon{
+        width:30px;
+        height:30px;
+        }
+   
+       .cardCommon{
+        width: 185px;
+        height:220px;
+        padding: 8px;
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+        row-gap: 16px;
+        cursor: pointer;
+        .top{
+        display: flex;
+        align-items: baseline;
+        .topInfo{
+        margin-left: 16px;
+        .address{
+        font-size: 16px;
+        font-weight: 500;
+        }
+        .sn{
+        font-size: 12px;
+        }
+        }
+        }
+        .content{
+        font-size: 25px;
+        .temperature{
+        font-size: 40px;
+        margin-right: 5px;
+        }
+        }
+       }
    .airCardCold{
-    border:none;
-   color: #FFFFFF;
-   background: linear-gradient(180deg, rgba(0, 51, 204, 1) 0%, rgba(0, 51, 204, 1) 0%, rgba(51, 204, 255, 1) 100%, rgba(51, 204, 255, 1) 100%);
+       color: #FFFFFF;
+       background: linear-gradient(180deg, rgba(0, 51, 204, 1) 0%, rgba(0, 51, 204, 1) 0%, rgba(51, 204, 255, 1) 100%, rgba(51, 204, 255, 1) 100%);
    }
    .airCardHot{
-        border:none;
        color: #FFFFFF;
        background: linear-gradient(180deg, rgba(0, 51, 204, 1) 0%, rgba(255, 150, 1, 1) 0%, rgba(243, 203, 116, 1) 81%, rgba(255, 201, 109, 1) 100%);
    }
    .airCardWindy{
-       border:none;
        background: linear-gradient(180deg, rgba(163, 255, 231, 1) 0%, rgba(247, 247, 247, 1) 100%);
    }
    .airCardDehumidification{
-       border:none;
        background: linear-gradient(180deg, rgba(240, 179, 181, 1) 0%, rgba(247, 247, 247, 1) 100%);
    }
     .closeAir{
-      border:none;
        color: #5D5D5D;
        background: linear-gradient(180deg, rgba(218, 218, 218, 1) 0%, rgba(247, 247, 247, 1) 100%);
    }
