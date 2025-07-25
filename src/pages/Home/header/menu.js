@@ -10,6 +10,7 @@ import useJump from "./useJump";
 import svgurl from './icon/svg'
 import {hextodec} from '@com/usehandler'
 import * as svgcom from './icon' 
+console.log("svgcom",svgcom)
 const Micon = ({iconname}) => {
    const location = useLocation()
    let {nested} = location.state || {}   
@@ -33,13 +34,13 @@ font-size: 12px;
           g path:nth-of-type(1)  {
                 fill: ${props => props.theme.menusfontcolor || '#b2c1d1'}; 
               }
-         path {
+       /*   path {
                 fill: ${props => props.theme.menusfontcolor || '#b2c1d1'}; 
-              }
+              } */
         }
         &:hover, &:active {
           .custicon {
-              g path:nth-of-type(1),path {
+              g path:nth-of-type(1) {
                 fill: ${props => props.theme.menusactivefontcolor || '#fff'}; 
               }
         }
