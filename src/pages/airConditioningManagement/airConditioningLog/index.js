@@ -343,13 +343,13 @@ export default function Index(props) {
               </Item>
             </Space>
           </Form>
-          <Cdivider type="h" margin="16px 0px" />
+          <Cdivider type="h" />
           <div className='control'>
             <BlueColumn bg={{ height: 13, width: 3 }}
               name={tabId == 1 ? '空调自动控制记录' : '空调手动控制记录'}></BlueColumn>
             <CustButtonT text="重新控制" onClick={RecontrolAir}></CustButtonT>
           </div>
-          <UserTable rowKey={(columns) => columns.key} style={{ marginTop: '16px' }} columns={tabId == 1 ? AirAutomaticControlTableColumns({ OpenAirScheme: handleOpenAirScheme }) : AirManualControlTableColumns} {...tableProps}
+          <UserTable ref={tableRef} rowKey={(columns) => columns.key} columns={tabId == 1 ? AirAutomaticControlTableColumns({ OpenAirScheme: handleOpenAirScheme }) : AirManualControlTableColumns} {...tableProps}
             rowSelection={{
               type: 'checkbox',
               ...rowSelectionCheckbox,

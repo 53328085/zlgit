@@ -1,11 +1,15 @@
 import styled from "styled-components";
 import { Radio } from "antd";
 export const Container = styled.div`
-  display: grid;
-  row-gap: 16px;
+ flex:1;
+   display: flex;
+   flex-direction: column;
+   row-gap: 16px;
     .content{
-    width: 100%;
-    height: 750px;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    row-gap: 16px;
     background-color: #fff;
     border-radius: 4px;
     border: 1px solid #dedede;
@@ -14,7 +18,6 @@ export const Container = styled.div`
     display: flex;
     justify-content: space-between;
     }
-    
     }
 `;
 
