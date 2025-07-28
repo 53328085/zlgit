@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react'
+import React, { useState, useRef, useEffect, useCallback } from 'react'
 import Pagecount from '@com/pagecontent'
 import { useAntdTable } from 'ahooks'
 import CModal from '@com/useModal'
@@ -122,6 +122,7 @@ export default function Index(props) {
   const tableRef = useRef()
   const tableRefs = useRef([])
   const schemeRef = useRef()
+  const pageTotal = useRef()
   const [searchForm] = Form.useForm()
   const { Item } = Form
   const [tabId, setTabId] = useState("1");
@@ -163,7 +164,7 @@ export default function Index(props) {
       temp: 26,
       currentTemp: 26,
       operator: '方案3',
-      status: '成功',
+      status: '失败',
       time: '20250101 00:00:00'
     },
   ]
@@ -205,6 +206,7 @@ export default function Index(props) {
   const getAirData = ({ current, pageSize }, form = {}) => {
     let { alike, deviceStyle } = form
     console.log(dataSource, "-----AllMeter")
+    pageTotal.current = dataSource.length
     return {
       list: dataSource,
       total: dataSource.length,
@@ -215,11 +217,13 @@ export default function Index(props) {
 
     //     if (success && Array.isArray(data) && data.length > 0) {
     //         console.log('suceess')
+    // pageTotal.current = total
     //         return {
     //             list: data,
     //             total,
     //         }
     //     } else {
+    // pageTotal.current = 0;
     //         return {
     //             list: [],
     //             total: 0,
@@ -227,6 +231,7 @@ export default function Index(props) {
     //     }
     // }).catch(e => {
     //     console.log(e)
+    // pageTotal.current = 0;
     // })
 
   }
@@ -276,7 +281,9 @@ export default function Index(props) {
     defaultPageSize: 20,
     refreshDeps: [],
   })
-
+  const onExport = useCallback(() => {
+    return getAirData({ current: 1, pageSize: pageTotal.current })
+  }, [])
   useEffect(() => {
     if (!schemeModalState.current) return;
     getSchemeData()
@@ -289,7 +296,7 @@ export default function Index(props) {
           <Radio.Group
             block
             options={Radio_Options}
-            defaultValue="1"
+            defaultValue={1}
             optionType="button"
             buttonStyle="solid"
             size="large"
@@ -300,37 +307,33 @@ export default function Index(props) {
           />
         </Header>
         <div className='content'>
-          <Form form={searchForm} layout='inline' >
+          <Form form={searchForm} layout='inline' colon={false}>
             <Space size={16}>
-              <Item label="空调名称" name="deviceStyle" >
-
-                <Input placeholder='请输入空调名称/通信地址' />
+              <Item label="空调名称" name="name" >
+                <Input style={{ width: "260px" }} placeholder='请输入空调名称/通信地址' />
               </Item>
               {tabId == 1 ?
                 <Item label="空调方案" name="deviceStyle" >
-
                   <Select
-                    style={{ width: "128px" }}
+                    style={{ width: "148px" }}
                     onChange={airNameChange}
                     options={AirScheme}
-                    defaultValue={'1'}
+                    defaultValue={1}
                   />
                 </Item> :
-                <Item label="操作人" name="deviceStyle" >
-
+                <Item label="操作人" name="operator" >
                   <Input placeholder='请输入姓名'
                     style={{ width: "128px" }} />
                 </Item>}
-              <Item label="控制状态" name="deviceStyle" >
-
+              <Item label="控制状态" name="status" >
                 <Select
                   style={{ width: "128px" }}
                   onChange={airNameChange}
                   options={incontrol}
-                  defaultValue={'1'}
+                  defaultValue={1}
                 />
               </Item>
-              <Item name="date" style={{ marginRight: '0px' }}>
+              <Item label="操作时间" name="operatorTime" style={{ marginRight: '0px' }}>
                 <RangePicker separator={<>至</>} size="default" style={{ width: 376 }} defaultValue={rangerTime} format="YYYY-MM-DD" onChange={(e) => {
                   setRangerTime([e[0], e[1]])
                 }} />
@@ -349,7 +352,7 @@ export default function Index(props) {
               name={tabId == 1 ? '空调自动控制记录' : '空调手动控制记录'}></BlueColumn>
             <CustButtonT text="重新控制" onClick={RecontrolAir}></CustButtonT>
           </div>
-          <UserTable ref={tableRef} rowKey={(columns) => columns.key} columns={tabId == 1 ? AirAutomaticControlTableColumns({ OpenAirScheme: handleOpenAirScheme }) : AirManualControlTableColumns} {...tableProps}
+          <UserTable ref={tableRef} sheetName={tabId == 1 ? '空调自动控制记录' : '空调手动控制记录'} onExport={onExport} rowKey={(columns) => columns.key} columns={tabId == 1 ? AirAutomaticControlTableColumns({ OpenAirScheme: handleOpenAirScheme }) : AirManualControlTableColumns} {...tableProps}
             rowSelection={{
               type: 'checkbox',
               ...rowSelectionCheckbox,
