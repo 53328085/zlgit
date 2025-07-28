@@ -128,15 +128,14 @@ export const items = (
                           ></Select>
                         </Form.Item >
             <Form.List name={[field.name, "tasks"]} initialValue={[{}]}>
-              {(inerfileds, inmethods) => {
-                console.log(inerfileds)
+              {(inerfileds, inmethods) => {                
                 return (
                   <div className="scene" key={field.key}>
                     <div className="hander">
                       <div className="list">                      
                         <div className="tags">
                           {inerfileds?.map((i, idx, arr) => {
-                            console.log(i);
+                            
                             return (
                               <CTag
                                 key={i.key}

@@ -1,19 +1,20 @@
-import { Form,  Select, Input, Typography, InputNumber} from 'antd'
-const {Text} = Typography
-import { Frombox } from "./style";
-import {AreaSelect} from "@com/useSerach/comhead"
- 
+import { Form, Select, Input, Typography, InputNumber } from "antd";
+import {PlusCircleOutlined} from "@ant-design/icons"
+const { Text, Link } = Typography;
+import { Formbox, CTag } from "./style";
+import { AreaSelect } from "@com/useSerach/comhead";
+
 export const airconditioner = [
   { label: "全部空调类型", value: 0 },
   { label: "分体式空调", value: 1 },
   { label: "多联机空调", value: 2 },
   { label: "中央空调面板", value: 3 },
 ];
-export const useTypeopt =[
+export const useTypeopt = [
   { label: "全部用能类型", value: 0 },
   { label: "客户用能", value: 1 },
   { label: "公共用能", value: 2 },
-]
+];
 export const cols = [
   {
     title: "园区名称",
@@ -54,13 +55,13 @@ export const cols = [
     title: "空调类型",
     dataIndex: "type",
     key: "type",
-    render: (type) => airconditioner.find(a => a.value==type)?.label,
+    render: (type) => airconditioner.find((a) => a.value == type)?.label,
   },
   {
     title: "用能类型",
     dataIndex: "useType",
     key: "useType",
-    render: (type) => useTypeopt.find(a => a.value==type)?.label,
+    render: (type) => useTypeopt.find((a) => a.value == type)?.label,
   },
   {
     title: "备注",
@@ -74,18 +75,15 @@ const rules = [
   },
 ];
 const w224 = { width: "224px" }; //0：道路灯 1：高杆路灯 2：太阳能路灯 3：景观灯
- 
 
-
-
- 
 // 空调控制器跟所属网关 关联， 计量设备跟用能类型 关联
 
-export const items =({csn=[], msn=[],model=[]})=> (
-  <Frombox>
+export const items = ({ csn = [], msn = [], model = [] }) => (
+  <Formbox>
+    <div className="formbox">
     <div>
       <Form.Item label="所属园区" rules={rules} name="areaId">
-        <AreaSelect style={w224}  />
+        <AreaSelect style={w224} />
       </Form.Item>
       <Form.Item label="安装地址" rules={rules} name="address">
         <Input style={w224} />
@@ -98,44 +96,52 @@ export const items =({csn=[], msn=[],model=[]})=> (
       <Form.Item label="空调名称" rules={rules} name="name">
         <Input style={w224} />
       </Form.Item>
-      <Form.Item label="空调编号" rules={rules} name="sn" >
+      <Form.Item label="空调编号" rules={rules} name="sn">
         <Input></Input>
       </Form.Item>
       <Form.Item label="空调型号" rules={rules} name="modelId">
-        <Select options={model} fieldNames={{label: "model", value: "id"}}></Select>
+        <Select
+          options={model}
+          fieldNames={{ label: "model", value: "id" }}
+        ></Select>
       </Form.Item>
       <Form.Item label="空调类型" rules={rules} name="type">
         <Select options={airconditioner.slice(1)} placeholder="请选择"></Select>
-      </Form.Item>  
+      </Form.Item>
       <Form.Item label="空调控制器" name="csn">
-        <Select options={csn} fieldNames={{label: "name", value: "sn"}} ></Select>
+        <Select
+          options={csn}
+          fieldNames={{ label: "name", value: "sn" }}
+        ></Select>
       </Form.Item>
-      <Form.Item label="所属网关" shouldUpdate={(cur, pre)=> cur.csn!=pre.csn}>
-        {
-          ({getFieldValue})=> {
-            let sn = getFieldValue("csn")
-            let gatewaySn = csn?.find?.(c=> c.sn ==sn)?.gatewaySn
-            return <Text strong>{gatewaySn}</Text>
-          }
-        }
-      </Form.Item>    
+      <Form.Item
+        label="所属网关"
+        shouldUpdate={(cur, pre) => cur.csn != pre.csn}
+      >
+        {({ getFieldValue }) => {
+          let sn = getFieldValue("csn");
+          let gatewaySn = csn?.find?.((c) => c.sn == sn)?.gatewaySn;
+          return <Text strong>{gatewaySn}</Text>;
+        }}
+      </Form.Item>
       <Form.Item label="计量设备" name="msn">
-        <Select options={msn} fieldNames={{label: "name", value: "sn"}}></Select>
+        <Select
+          options={msn}
+          fieldNames={{ label: "name", value: "sn" }}
+        ></Select>
       </Form.Item>
-      <Form.Item noStyle shouldUpdate={(cur, pre)=>cur.msn!=pre.msn}>
-        {
-          ({getFieldValue,setFieldValue, resetFields})=> {
-               let  sn=getFieldValue("msn")
-               let useType = msn?.find?.(m=>m.sn==sn)?.customerType
-               if(Number.isInteger(useType)) {
-                setFieldValue("useType", useType)
-               }else{
-                resetFields(["useType"])
-               }
-              
-               return null
+      <Form.Item noStyle shouldUpdate={(cur, pre) => cur.msn != pre.msn}>
+        {({ getFieldValue, setFieldValue, resetFields }) => {
+          let sn = getFieldValue("msn");
+          let useType = msn?.find?.((m) => m.sn == sn)?.customerType;
+          if (Number.isInteger(useType)) {
+            setFieldValue("useType", useType);
+          } else {
+            resetFields(["useType"]);
           }
-        }
+
+          return null;
+        }}
       </Form.Item>
       <Form.Item label="用能类型" rules={rules} name="useType">
         <Select options={useTypeopt.slice(1)} placeholder="请选择"></Select>
@@ -147,55 +153,154 @@ export const items =({csn=[], msn=[],model=[]})=> (
         <Input hidden></Input>
       </Form.Item>
     </div>
-  </Frombox>
+    </div>
+  </Formbox>
 );
 
-export const initems =({model=[]})=> (
-  
-  <Frombox style={{columnGap: "64px"}}>
-    <div>
-      <Form.Item label="所属园区" rules={rules} name="areaId">
-        <AreaSelect style={{width: "100%"}} disabled  />
-      </Form.Item>
-      <Form.Item label="安装地址" rules={rules} name="address">
-        <Input  />
-      </Form.Item>
-      <Form.Item label="备注" name="remark">
-        <Input.TextArea rows={2}  />
-      </Form.Item>
-    </div>
-    <div>
-      <Form.Item label="设备名称" rules={rules} name="name">
-        <Input  />
-      </Form.Item>
-      <Form.Item label="设备编号" rules={rules} name="sn" >
-        <Input></Input>
-      </Form.Item>
-      <Form.Item label="设备型号" rules={rules} name="modelId">
-        <Select options={model} fieldNames={{label: "model", value: "id"}}></Select>
-      </Form.Item>
-      <Form.Item label="空调类型" rules={rules} name="type">
-        <Select options={airconditioner.slice(1)} placeholder="请选择"></Select>
-      </Form.Item>
-      <Form.Item label="所属网关" name="gateWay"  >
-        <Input disabled></Input>
-      </Form.Item>    
-      <Form.Item label="用能分摊" name="shareRatio">
-        <InputNumber addonAfter="%" />
-      </Form.Item> 
-      <Form.Item label="用能类型" rules={rules} name="useType">
-        <Select options={useTypeopt.slice(1)} placeholder="请选择" disabled></Select>
-      </Form.Item>
-      <Form.Item name="id" noStyle initialValue={null}>
-        <Input hidden></Input>
-      </Form.Item>
-      <Form.Item name="projectId" noStyle>
-        <Input hidden></Input>
-      </Form.Item>
-      <Form.Item name="shareRatio" noStyle>
-        <Input hidden></Input>
-      </Form.Item>
-    </div>
-  </Frombox>
-  
+export const initems = ({ model = [],cusac, setcusac }) => (
+  <Form.List name="acs" initialValue={[{}]}>
+    {(fileds, { add,remove }) => {
+      return (
+        <Formbox>
+          <div className="hander">
+            <div className="list">
+              <div className="tags">
+                {fileds?.map((i, idx, arr) => {
+                  return (
+                    <CTag
+                      key={i.key}
+                      closable={arr.length !== 1 || arr.length>64}
+                      onClose={() => {
+                        setcusac(idx)
+                        remove(i.name)
+                      }}
+                    >
+                      <Form.Item
+                        noStyle
+                        shouldUpdate={(cur, pre) => {
+                          return (
+                            cur["acs"]?.[i.name]?.["name"] !=
+                            pre["acs"]?.[i.name]?.["name"] 
+                          );
+                        }}
+                      >
+                        {({ getFieldValue }) => {
+                          const name = getFieldValue(["acs", i.name ])?.["name"];
+                          console.log(name); 
+                          if (name) {
+                            return (
+                              <span>
+                                 {name}
+                              </span>
+                            );
+                          }else {
+                            return <span> 内机{idx + 1}</span>;
+                          }
+                        }}
+                      </Form.Item>
+                    </CTag>
+                  );
+                })}
+              </div>
+            </div>
+            <Link
+              disabled={fileds?.length > 64}
+              onClick={() => add()}
+            >
+             <PlusCircleOutlined style={{fontSize: "24px"}} />
+            </Link>
+          </div>
+          {fileds.map(({key, name, ...rest}) => (
+            <div className="formbox" style={{ columnGap: "64px", display: key==cusac? "" : "none"}} key={key}>
+              <div key="left">
+                <Form.Item
+                  label="所属园区"
+                  rules={rules}
+                  name={[name, "areaId"]}
+                >
+                  <AreaSelect style={{ width: "100%" }} disabled />
+                </Form.Item>
+                <Form.Item
+                  label="安装地址"
+                  rules={rules}
+                  name={[name, "address"]}
+                >
+                  <Input />
+                </Form.Item>
+                <Form.Item label="备注" name={[name, "remark"]}>
+                  <Input.TextArea rows={2} />
+                </Form.Item>
+              </div>
+              <div key="right">
+                <Form.Item label="设备名称" rules={rules} name={[name, "name"]}>
+                  <Input />
+                </Form.Item>
+                <Form.Item label="设备编号" rules={rules} name={[name, "sn"]}>
+                  <Input></Input>
+                </Form.Item>
+                <Form.Item
+                  label="设备型号"
+                  rules={rules}
+                  name={[name, "modelId"]}
+                >
+                  <Select
+                    options={model}
+                    fieldNames={{ label: "model", value: "id" }}
+                  ></Select>
+                </Form.Item>
+                <Form.Item
+                  label="空调类型"
+                  rules={rules}
+                  name={[name, "type"]}
+                  initialValue={3}
+                >
+                  <Select
+                    options={[{ label: "多联机空调", value: 3 }]}
+                    placeholder="请选择"
+                  ></Select>
+                </Form.Item>
+                <Form.Item label="所属网关" name={[name, "gateWay"]}>
+                  <Input disabled></Input>
+                </Form.Item>
+                <Form.Item label="用能分摊" name={[name, "shareRatio"]}>
+                  <InputNumber min={0} max={100} addonAfter="%" />
+                </Form.Item>
+                <Form.Item
+                  label="用能类型"
+                  rules={rules}
+                  name={[name, "useType"]}
+                >
+                  <Select
+                    options={useTypeopt.slice(1)}
+                    placeholder="请选择"
+                    disabled
+                  ></Select>
+                </Form.Item>
+                <Form.Item name={[name, "id"]} noStyle initialValue={null}>
+                  {" "}
+                  {/* 内机的id exteriorId */}
+                  <Input hidden></Input>
+                </Form.Item>
+                <Form.Item
+                  name={[name, "exteriorId"]}
+                  noStyle
+                  initialValue={null}
+                >
+                  {" "}
+                  {/* 外机的id exteriorId */}
+                  <Input hidden></Input>
+                </Form.Item>
+                <Form.Item name={[name, "projectId"]} noStyle>
+                  <Input hidden></Input>
+                </Form.Item>
+                <Form.Item name={[name, "shareRatio"]} noStyle>
+                  <Input hidden></Input>
+                </Form.Item>
+              </div>
+            </div>
+          ))}
+        </Formbox>
+      );
+    }}
+  </Form.List>
 );

@@ -455,7 +455,7 @@ const onFinish = async (values) => {
    }
  
   } catch (error) {
-    
+    console.log(error)
   }
     
 }

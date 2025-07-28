@@ -25,12 +25,22 @@ export const { useQueryModelsList } = new Apimethod( // 查询空调型号列表
   "AirConditioner/AirConditionerManage/QueryModelsList"
 )
 
+export const { useQueryInteriorACs } = new Apimethod( // 查询空调内机
+  "get",
+  "AirConditioner/AirConditionerManage/QueryInteriorACs"
+)
 
  
   export const { useInsertOrUpdateExteriorAC} = new Apimethod( //新增/编辑  空调外机
     "post",
     "AirConditioner/AirConditionerManage/InsertOrUpdateExteriorAC"
   );
+
+  export const { useInsertOrUpdateInteriorAC} = new Apimethod( //新增/编辑  空调内机
+    "post",
+    "AirConditioner/AirConditionerManage/InsertOrUpdateInteriorAC"
+  );
+
 
   export const { useDeleteAC} = new Apimethod( // 删除空调 档案
     "delete",

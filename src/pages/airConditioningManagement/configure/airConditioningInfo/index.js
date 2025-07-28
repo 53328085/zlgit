@@ -10,7 +10,7 @@ import {CustButtonT,CustButton, ExportExcel} from "@com/useButton"
 import CModal from '@com/useModal'
 import {Serach} from "@com/comstyled"
 import {AreaSelect} from "@com/useSerach/comhead"
-import {usePage,useInsertOrUpdateExteriorAC,useUpdate,useDeleteAC, useImport, useQueryExteriorACsByPage,useQueryCSnsList,useQueryMSnsList,useQueryModelsList } from "./api"
+import {usePage,useInsertOrUpdateExteriorAC,  useInsertOrUpdateInteriorAC, useQueryInteriorACs,useDeleteAC, useImport, useQueryExteriorACsByPage,useQueryCSnsList,useQueryMSnsList,useQueryModelsList } from "./api"
 import {cols,  items,airconditioner,useTypeopt,initems } from "./data"
 import {Mainbox } from './style'
  const {Link} = Typography
@@ -33,7 +33,7 @@ export default function Index() {
   const inRef =useRef() //空调内机
   const [curRow, setCurRow] = useState({})
   const areaId = Form.useWatch("areaId", newform)
-
+  const [cusac, setcusac] = useState(0)
  
 
   const [Ctitle,msg,operate] = useMemo(()=> {
@@ -97,13 +97,14 @@ export default function Index() {
  const fromitem = useMemo(()=> {
   return items({csn:lists, msn:mlist, model})
  },[lists, mlist, model])
+
  const infromitem = useMemo(()=> {
-  return initems(model)
- },[model])
+  return initems({model, isadd,cusac, setcusac})
+ },[model, isadd,cusac, setcusac])
   const getData= async ({current, pageSize }, formData)=> { 
     try {
       if(!Number.isInteger(parseInt(projectId))) return
-      const {alike="", areaId, type=0, useTyPE=0} = formData
+      const {alike="", areaId, type=0, useType=0} = formData
       let params ={
         projectId,
         areaId,
@@ -111,7 +112,7 @@ export default function Index() {
        pageNum: current,
        pageSize,
        type, 
-       useTyPE
+       useType
     }
     downParams.current = params
     let {data, success, total, errMsg} =await useQueryExteriorACsByPage({},params)
@@ -226,14 +227,65 @@ export default function Index() {
     exprotref.current.onOpen()
   }
 
+// 内机
 
+ const addInac =async(row)=> {
+   try {
+    const {id,areaId,gateWay,useType,
 
- const addInac =(row)=> {
-    setCurRow(row)
-    innewform.setFieldsValue(row)
-    inRef.current.onOpen()
+      ...rest} = row
+    if(!Number.isInteger(projectId)) return message.warning("没有创建项目")
+     setCurRow(row)
+     let {success, data, errMsg} =  await  useQueryInteriorACs({id, projectId})
+     if(success && Array.isArray(data)&&data.length) { 
+       
+       setIsadd(false)
+       innewform.setFieldValue("acs", data)
+     }else {
+      let params =[{
+        exteriorId:id,
+        projectId,
+        areaId,gateWay,useType,
+      }]
+      setIsadd(true)
+      innewform.setFieldsValue("acs", params)
+      if(!success)   message.warning(errMsg || "获取空调内机数据出错")
+     }
+     
+      
+     inRef.current.onOpen()
+   } catch (error) {
+    console.log(error)
+   }
+  
  }
 
+ const inonOk= async()=> {
+  try {
+    let {id, ...values} = await innewform.validateFields()
+    let params = isadd ?  values : {
+      id,
+      ...values
+    }
+    let {success, errMsg} =await useInsertOrUpdateInteriorAC({operate}, params)
+    if(success) {
+      message.success(msg)
+      if(!isadd) {
+        editRef.current.onCancel()
+      }
+      refresh()
+    }else {
+      message.warning(errMsg || "数据出错")
+    }
+
+  } catch (error) {
+    return Promise.reject("")
+  }
+
+}
+
+
+ // 内机 end
 
   const columns = [
     ...cols,
@@ -302,7 +354,7 @@ export default function Index() {
        
          {/* 新增/编辑空调内机 */}
 
-       <CModal title="新增空调内机"   onOk={onOk}   width={732} mold="cust" custft={true}   ref={inRef} key="inref">
+       <CModal title="新增空调内机"   onOk={inonOk}   width={732} mold="cust" custft={true}   ref={inRef} key="inref">
          <Descriptions>
            <Descriptions.Item label="设备名称">{curRow?.name}</Descriptions.Item>
            <Descriptions.Item label="设备编号">{curRow?.sn}</Descriptions.Item>
