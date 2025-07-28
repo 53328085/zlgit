@@ -10,7 +10,7 @@ import useJump from "./useJump";
 import svgurl from './icon/svg'
 import {hextodec} from '@com/usehandler'
 import * as svgcom from './icon' 
-console.log("svgcom",svgcom)
+ 
 const Micon = ({iconname}) => {
    const location = useLocation()
    let {nested} = location.state || {}   
