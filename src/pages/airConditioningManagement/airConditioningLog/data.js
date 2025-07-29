@@ -4,26 +4,26 @@ const { Link } = Typography
 export const Radio_Options = [
   {
     label: "自动控制",
-    value: "1",
+    value: 1,
   },
-  { label: "手动控制", value: "2" },
+  { label: "手动控制", value: 2 },
 ];
 //空调方案
 export const AirScheme = [
   {
-    value: "1",
+    value: 1,
     label: "全部",
   },
   {
-    value: "2",
+    value: 2,
     label: "会议室空调方案",
   },
   {
-    value: "3",
+    value: 3,
     label: "展厅空调方案",
   },
   {
-    value: "4",
+    value: 4,
     label: "产线空调方案",
   },
 ];
@@ -31,14 +31,14 @@ export const AirScheme = [
 export const incontrol = [
   {
     label: "全部",
-    value: "1",
+    value: 1,
   },
-  { label: "成功", value: "2" },
-  { label: "失败", value: "3" },
+  { label: "成功", value: 2 },
+  { label: "失败", value: 3 },
 ];
 
 export const Init_Value = {
-  dtype: "1",
+  dtype: 1,
   date: moment(),
 };
 
@@ -88,6 +88,9 @@ export const AirManualControlTableColumns = [
     title: "控制状态",
     dataIndex: "status",
     key: "status",
+    render: (_, record) => {
+      return (<span style={{ color: record.status == '失败' ? '#ff0000fe' : '' }}>{record.status}</span>)
+    }
   },
   {
     title: "操作时间",
@@ -147,6 +150,9 @@ export const AirAutomaticControlTableColumns =
       title: "控制状态",
       dataIndex: "status",
       key: "status",
+      render: (_, record) => {
+        return (<span style={{ color: record.status == '失败' ? '#ff0000fe' : '' }}>{record.status}</span>)
+      }
     },
     {
       title: "操作时间",
