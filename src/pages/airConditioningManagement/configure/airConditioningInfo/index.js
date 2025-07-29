@@ -10,9 +10,10 @@ import {CustButtonT,CustButton, ExportExcel} from "@com/useButton"
 import CModal from '@com/useModal'
 import {Serach} from "@com/comstyled"
 import {AreaSelect} from "@com/useSerach/comhead"
-import {usePage,useInsertOrUpdateExteriorAC,  useInsertOrUpdateInteriorAC, useQueryInteriorACs,useDeleteAC, useImport, useQueryExteriorACsByPage,useQueryCSnsList,useQueryMSnsList,useQueryModelsList } from "./api"
+import {useInsertOrUpdateExteriorAC,  useInsertOrUpdateInteriorACs, useQueryInteriorACs,useDeleteAC, useImportACs, useQueryExteriorACsByPage,useQueryCSnsList,useQueryMSnsList,useQueryModelsList } from "./api"
 import {cols,  items,airconditioner,useTypeopt,initems } from "./data"
 import {Mainbox } from './style'
+import gateway from '@pages/monitoring/configure/device/electric'
  const {Link} = Typography
 
 
@@ -34,7 +35,7 @@ export default function Index() {
   const [curRow, setCurRow] = useState({})
   const areaId = Form.useWatch("areaId", newform)
   const [cusac, setcusac] = useState(0)
- 
+  
 
   const [Ctitle,msg,operate] = useMemo(()=> {
    let title = isadd ? "新增空调" : "编辑空调"
@@ -99,8 +100,16 @@ export default function Index() {
  },[lists, mlist, model])
 
  const infromitem = useMemo(()=> {
-  return initems({model, isadd,cusac, setcusac})
- },[model, isadd,cusac, setcusac])
+  const {id, areaId, gateWay, useType} = curRow
+  let params ={
+    exteriorId:id, // 外机的Id
+    projectId,
+    areaId,gateWay,useType,
+    id:null, //内机的id
+  }
+  console.log("params", params)
+  return initems({model, isadd,cusac, setcusac, params})
+ },[model, isadd,cusac, setcusac, curRow, projectId])
   const getData= async ({current, pageSize }, formData)=> { 
     try {
       if(!Number.isInteger(parseInt(projectId))) return
@@ -197,7 +206,7 @@ export default function Index() {
   }
   const files = useRef()
   const dragprops = {
-    link: '/deviceExcel/streetLight2.xlsx',
+    link: '/deviceExcel/airConditoner.xlsx',
     maxCount: 1,
     beforeUpload(file) {
         files.current = file
@@ -209,13 +218,16 @@ export default function Index() {
       let formdata = new FormData()
       formdata.append("projectId", projectId)
       formdata.append("file", files.current)
-       let {success, errMsg} =  await  useImport({projectId}, formdata)
+       let {data} =  await  useImportACs({projectId}, formdata)
+       console.log(data)
+       const {success, errMsg, data:errdata} = data
+       let msg=errdata?.map?.(e=> e.cause)?.join()
        if(success) {
         message.success("导入成功")
         exprotref.current.onCancel()
         refresh()
        }else {
-        message.warning(errMsg || "数据出错")
+        message.warning(msg || "数据出错")
        }
      } catch (error) {
       console.log(error)
@@ -231,20 +243,17 @@ export default function Index() {
 
  const addInac =async(row)=> {
    try {
-    const {id,areaId,gateWay,useType,
-
-      ...rest} = row
+    const {id,areaId,gateWay,useType, } = row
     if(!Number.isInteger(projectId)) return message.warning("没有创建项目")
      setCurRow(row)
      let {success, data, errMsg} =  await  useQueryInteriorACs({id, projectId})
      if(success && Array.isArray(data)&&data.length) { 
-       
+      // let datas = data.map(d =>({...d}))
        setIsadd(false)
        innewform.setFieldValue("acs", data)
      }else {
       let params =[{
-        exteriorId:id,
-        projectId,
+        exteriorId:id, 
         areaId,gateWay,useType,
       }]
       setIsadd(true)
@@ -252,7 +261,7 @@ export default function Index() {
       if(!success)   message.warning(errMsg || "获取空调内机数据出错")
      }
      
-      
+     setcusac(0)
      inRef.current.onOpen()
    } catch (error) {
     console.log(error)
@@ -262,13 +271,52 @@ export default function Index() {
 
  const inonOk= async()=> {
   try {
-    let {id, ...values} = await innewform.validateFields()
-    let params = isadd ?  values : {
-      id,
-      ...values
+    let {acs} = await innewform.validateFields()
+    console.log(acs)
+    let editarc = acs?.filter?.(v => v.id!==null)
+    let newarc = acs?.filter?.(v=>v.id===null)
+    let msg ={}
+    if(editarc?.length>0)  {
+      let eparams = editarc.map(e => {
+        let  {areaName,model,gateWay, ...rest} = e
+        return {...rest, operate:2}
+      })
+      try {
+       let data =   await useInsertOrUpdateInteriorACs({projectId}, eparams)
+       msg["edit"] = data
+      } catch (error) {
+        console.log(error)
+      }
     }
-    let {success, errMsg} =await useInsertOrUpdateInteriorAC({operate}, params)
-    if(success) {
+    if(newarc?.length >0) {
+      let nparams = newarc.map(n=> {
+        let   {areaName,model,gateWay,id, ...rest} =n
+         return { ...rest, operate:1}
+      })
+      try {
+        let data =  await useInsertOrUpdateInteriorACs({projectId}, nparams)
+        msg["new"] =data
+      } catch (error) {
+        console.log(error)
+      }
+      
+    }
+    if (msg?.edit ) {
+       if(msg.edit.success){
+        message.success("编辑成功")
+       }else {
+        message.warning(msg.edit?.errMsg || "编辑数据出错")
+       }
+      
+    }
+    if(msg?.new) {
+      if(msg.new.success) {
+        message.success("新增成功")
+      }else {
+        message.warning(msg.new?.errMsg || "新增出错")
+      }
+    }
+ /*    if(success) {
       message.success(msg)
       if(!isadd) {
         editRef.current.onCancel()
@@ -276,9 +324,10 @@ export default function Index() {
       refresh()
     }else {
       message.warning(errMsg || "数据出错")
-    }
+    } */
 
   } catch (error) {
+    console.log(error)
     return Promise.reject("")
   }
 
@@ -349,12 +398,12 @@ export default function Index() {
             <ExportExcel tb={tbref}></ExportExcel>
           </Space>
          </div>
-        <UserTable columns={columns} {...tableProps} onExport={onExport} rowKey={row=>row.id} ref={tbref}  sheetName="路灯档案"></UserTable>
+        <UserTable columns={columns} {...tableProps} onExport={onExport} rowKey={row=>row.id} ref={tbref}  sheetName="空调档案"></UserTable>
         </Mainbox>
        
          {/* 新增/编辑空调内机 */}
 
-       <CModal title="新增空调内机"   onOk={inonOk}   width={732} mold="cust" custft={true}   ref={inRef} key="inref">
+       <CModal title="新增空调内机"   onOk={inonOk}    width={732} mold="cust" custft={true}   ref={inRef} key="inref">
          <Descriptions>
            <Descriptions.Item label="设备名称">{curRow?.name}</Descriptions.Item>
            <Descriptions.Item label="设备编号">{curRow?.sn}</Descriptions.Item>

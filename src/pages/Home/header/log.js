@@ -238,7 +238,7 @@ export default function Log() {
  const themelists = useSelector(themelist)
  let Themes = useSelector(themes);
   
-   let item = themelists?.length> 0 ? {label: '主题', key:"theme", children: themelists} : null
+   let item = themelists?.length> 0 ? {label: '主题', key:"theme", children: themelists,popupClassName: "custsubclass"} : null
 
   const items=process.env.NODE_ENV === 'development' ? [   // 王工正式线屏蔽语言切换
     {label: '账户管理', key:"mg"},

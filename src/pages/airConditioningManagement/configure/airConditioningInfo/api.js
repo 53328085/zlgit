@@ -36,9 +36,9 @@ export const { useQueryInteriorACs } = new Apimethod( // 查询空调内机
     "AirConditioner/AirConditionerManage/InsertOrUpdateExteriorAC"
   );
 
-  export const { useInsertOrUpdateInteriorAC} = new Apimethod( //新增/编辑  空调内机
+  export const { useInsertOrUpdateInteriorACs} = new Apimethod( //新增/编辑  空调内机
     "post",
-    "AirConditioner/AirConditionerManage/InsertOrUpdateInteriorAC"
+    "AirConditioner/AirConditionerManage/InsertOrUpdateInteriorACs"
   );
 
 
@@ -47,15 +47,8 @@ export const { useQueryInteriorACs } = new Apimethod( // 查询空调内机
     "AirConditioner/AirConditionerManage/DeleteAC"
   );
 
-  export const { useUpdate} = new Apimethod( //编辑  路灯档案
+
+  export const { useImportACs} = new Apimethod( //上传  路灯档案
     "post",
-    "Light/StreetLight/Update"
-  );
-  export const { useDelete} = new Apimethod( //编辑  路灯档案
-    "delete",
-    "Light/StreetLight/Delete"
-  );
-  export const { useImport} = new Apimethod( //上传  路灯档案
-    "post",
-    "Light/StreetLight/Import"
+    "AirConditioner/AirConditionerManage/ImportACs"
   );

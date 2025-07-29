@@ -54,5 +54,8 @@ export const CTag = styled(Tag)`
   
   justify-content: space-between;
   cursor: pointer;
+  .active {
+     color:${props => props.theme.primaryColor}
+  }
  }
 `
