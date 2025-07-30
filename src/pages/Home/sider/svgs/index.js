@@ -148,3 +148,11 @@ export { ReactComponent as lightManagementstreetLightAutoControl } from './light
 export { ReactComponent as lightManagementstreetLightLog } from './lightManagement/lightManagementstreetLightLog.svg'
 export { ReactComponent as lightManagementlightControl } from './lightManagement/lightManagementlightControl.svg'
 //照明控制
+
+
+export { ReactComponent as smartIndustrycoldWaterSystem } from './smartIndustry/coldWaterSystem.svg'
+export { ReactComponent as smartIndustryeastHotWaterSystem } from './smartIndustry/eastHotWaterSystem.svg'
+export { ReactComponent as smartIndustrywasteHeatRecoverySystem } from './smartIndustry/wasteHeatRecoverySystem.svg'
+export { ReactComponent as smartIndustrywestHotWaterSystem } from './smartIndustry/westHotWaterSystem.svg'
+
+// 智慧工业

@@ -1,7 +1,7 @@
 import React, {useRef,  useCallback, useState, useEffect} from "react";
 import { Dropdown, Space, Form, Input, message, Typography, Radio } from "antd";
 
-import styled, {css} from "styled-components";
+import styled, {css, createGlobalStyle} from "styled-components";
 import { useSelector, useDispatch } from "react-redux";
 import {useNavigate, useLocation} from "react-router-dom"
 import { clearToken, selectUser, userRest, platformLang} from "@redux/user";
@@ -39,6 +39,57 @@ const Micon = ({iconname}) => {
 }
 
 const {Text} = Typography 
+
+const CDropdown=createGlobalStyle`
+.ant-dropdown-menu-submenu-popup ul {
+  border-radius: 8px;
+}
+.custDropdown {
+    .ant-dropdown-menu {
+       padding: 0px;
+       width: 158px;
+       padding: 8px 6px;
+
+       .ant-dropdown-menu-item  {
+      //  line-height: 40px;
+        height: 40px;
+        font-size: 14px;
+        display: flex;
+        align-items: center;
+        transition: all 0.1s;
+        padding: 0px 16px;
+        column-gap: 8px;
+        &:hover {
+            background-color:  ${props => props.theme.primaryColor};
+            color: #ffffff;
+            g path:nth-of-type(1){
+                fill:  #ffffff; 
+              }
+          } 
+      }
+      .ant-dropdown-menu-submenu-title {
+        display: flex;
+        align-items: center;
+        column-gap: 8px;
+        &:hover {
+            background-color:  ${props => props.theme.primaryColor};
+            color: #ffffff;
+            g path:nth-of-type(1){
+                fill:  #ffffff; 
+              }
+             .ant-dropdown-menu-submenu-arrow-icon {
+              path {
+                fill: #ffffff;
+              }
+             }
+          } 
+      }
+   
+    }
+  
+}
+   
+`
 const Lngdiv = styled.div`
   display: flex;
   padding: 16px 0;
@@ -89,22 +140,14 @@ let style = css`width: 58px;
                 fill: ${props => props.theme.menusbgcolorRfont || '#ffffff'}; 
               }
         }
-        .custicon.user{
-         &> g {
-                fill: ${props => props.theme.menusbgcolorRfont || '#ffffff'}; 
-              }
-        }
+       
     &:hover {
       .custicon {
           g path:nth-of-type(1) {
                 fill: ${props => props.theme.menusbgcolorRA || '#3988e7'}; 
               }
         }
-        .custicon.user {
-          g {
-                fill: ${props => props.theme.menusbgcolorRA || '#ffffff'}; 
-              }
-        }
+       
     }
        `
 
@@ -140,44 +183,19 @@ const Logbox = styled.div`
       }
     }
     .custicon {
-          g path:nth-of-type(1) {
+          g path:nth-of-type(1){
                 fill: ${props => props.theme.menusbgcolorRfont || '#ffffff'}; 
               }
         }
-        .custicon.user {
-          &>g{
-            &>g {
-              display: none;
-            }
-            path {
-              fill: ${props => props.theme.menusbgcolorRfont || '#ffffff'}; 
-            }
-                
-              }
-        }
-/*     .logo {
-              height: 36px;
-             // width: 36px;
-              line-height: 36px;
-              overflow: hidden;
-              transition: all 0.3s;
-              .shadow {
-              transform: translateX(-36px);
-              filter: drop-shadow(36px 0 0  ${props => props.theme.menusbgcolorRfont || '#ffffff'});
-            }
-           
-        } */
+     
+ 
   &:hover {
     .custicon {
           g path:nth-of-type(1) {
                 fill: ${props => props.theme.menusbgcolorRA || '#3988e7'}; 
               }
         }
-        .custicon.user {
-          g {
-                fill: ${props => props.theme.menusbgcolorRA || '#3988e7'}; 
-              }
-        } 
+     
         span {
        color: ${props => props.theme.menusbgcolorRA || '#3988e7'}
     }
@@ -238,16 +256,16 @@ export default function Log() {
  const themelists = useSelector(themelist)
  let Themes = useSelector(themes);
   
-   let item = themelists?.length> 0 ? {label: '主题', key:"theme", children: themelists,popupClassName: "custsubclass"} : null
+   let item = themelists?.length> 0 ? {label: '主题', key:"theme", children: themelists, icon: <Micon iconname="theme" />} : null
 
   const items=process.env.NODE_ENV === 'development' ? [   // 王工正式线屏蔽语言切换
-    {label: '账户管理', key:"mg"},
-    {label: '语言切换', key:"lng"},
-    {label: '退出系统', key:"exit"},
+    {label: '账户管理', key:"mg", icon:  <Micon iconname="account" />},
+    {label: '语言切换', key:"lng",icon:  <Micon iconname="lang" />},
+    {label: '退出系统', key:"exit", icon:  <Micon iconname="exit" />},
     item
   ]: [
-    {label: '账户管理', key:"mg"},
-    {label: '退出系统', key:"exit"},
+    {label: '账户管理', key:"mg",icon:  <Micon iconname="account" />},
+    {label: '退出系统', key:"exit",icon:  <Micon iconname="exit" />},
     item
   ]
  // const [items, setItems] = useState(inita)
@@ -589,6 +607,7 @@ const settheme = async (themeId) => {
         </Logbox>):null}
         </>
         }
+        <CDropdown />
         <Dropdown
          menu={{items, 
          onClick, 

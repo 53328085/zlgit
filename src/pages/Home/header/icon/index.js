@@ -53,6 +53,8 @@ export {ReactComponent as streetLightManagement} from './streetLightManagement.s
 export {ReactComponent as airConditioningManagement} from './airConditioningManagement.svg'
  
 export {ReactComponent as lightManagement} from './streetLightManagement.svg'
+ export {ReactComponent as moremenu} from './more.svg'
+ export {ReactComponent as smartIndustry} from "./smartIndustry.svg"
 
 // 右边图标
 
@@ -64,6 +66,12 @@ export {ReactComponent as back} from './back.svg'
 
  export {ReactComponent as def}   from './default.svg'
 
+ // 右边下拉
+
+ export {ReactComponent as exit} from './exit.svg'
+ export {ReactComponent as account} from "./account.svg"
+ export {ReactComponent as theme} from "./theme.svg"
+  export {ReactComponent as lang} from "./lang.svg"
  // 以下 香炉山项目
 
  export {ReactComponent as remote} from './remote.svg'
