@@ -201,9 +201,9 @@ export const section =({ cusac, setcusac, params })=> (
                          </Form.Item>
                         </Space>
                       }else {
-                        return <Form.Item>
+                        return <Space><Form.Item>
                           <Checkbox>法定节假日</Checkbox>
-                        </Form.Item>
+                        </Form.Item></Space>
                       }
                    }
                  }
