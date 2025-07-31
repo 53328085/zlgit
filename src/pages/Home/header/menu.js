@@ -73,7 +73,7 @@ font-size: 12px;
     display: flex;
      column-gap: 2px;;
     .ant-menu-item{
-        width: auto;
+        flex: 0 1 74px;
         padding: 4px 2px;
         .custicon {
           g path:nth-of-type(1)  {
@@ -150,7 +150,7 @@ const Cmenu = styled(Menu)`
         justify-content:space-evenly;
         align-items: center;
        // width: 100px;
-        flex: 0 0 74px;
+        flex: 0 1 74px; // flex: 0 0 74px 小屏下面引起抖动！！！
         overflow: hidden; // 英语状态下可能会撑开
       //  padding: 4px 0; 
         height: 66px;

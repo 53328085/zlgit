@@ -12,7 +12,7 @@ import CModal from "@com/useModal";
 import { selectUser } from "@redux/user";
 import { selectOneLevelDefaultId } from "@redux/systemconfig";
 import { usePage, useAdd, useUpdate, useDelete } from "./api";
-import { cols, section,rules, w255,timings} from "./data";
+import { cols, section,rules, w255,timings,forbidControls} from "./data";
 import { Mainbox, Title, Scene } from "./style";
 import BindLight from "./bind";
 import { Serach } from "@com/comstyled";
@@ -52,6 +52,12 @@ export default function Index() {
     let params = {};
 
     return timings({ cusac, setcusac, params });
+  }, [cusac, setcusac]);
+
+  const forbidControlsItems = useMemo(() => {
+    let params = {};
+
+    return forbidControls({ cusac, setcusac, params });
   }, [cusac, setcusac]);
   const downParams = useRef();
   const getData = async ({ current, pageSize }, formData) => {
@@ -325,14 +331,14 @@ export default function Index() {
               <div className="leftlayout">
                 {sectionItems}
                 {timingsItems}
-                <Form.Item></Form.Item>
+                {forbidControlsItems} 
                 <Form.Item name="id" initialValue={0} noStyle>
                   <Input hidden />
                 </Form.Item>
-                <Form.Item name="creater" initialValue="">
+                <Form.Item name="creater" initialValue="" noStyle>
                   <Input hidden></Input>
                 </Form.Item>
-                <Form.Item name="projectId">
+                <Form.Item name="projectId" noStyle>
                   <Input hidden></Input>
                 </Form.Item>
               </div>

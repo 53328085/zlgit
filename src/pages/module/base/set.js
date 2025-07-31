@@ -287,11 +287,11 @@ export default function ProjectSet({projectId}) {
     { label:  t("common:StorageManagement"), value: 'storageEnabled' },
     { label: t("common:CarbonEmissionManagement"), value: 'carbonEnabled' },  
     { label: t("common:OperationMaintenanceManagement"), value: 'maintenanceEnabled' },
+    { label: t("common:waterAffairsEnabled"), value: 'waterAffairsEnabled' },  //水务管理
     { label: t("common:airConditionerEnabled"), value: 'airConditionerEnabled' }, // 空调
-   // { label: t("common:digitalTwinEnabled"), value: 'digitalTwinEnabled' }, // 数字孪生
-    { label: t("common:smartIndustryEnabled"), value: 'smartIndustryEnabled' }, // 智慧工业
+   // { label: t("common:digitalTwinEnabled"), value: 'digitalTwinEnabled' }, // 数字孪生    
     { label: t("common:streetlightEnabled"), value: 'streetlightEnabled' }, // 路灯管理
-    { label: t("common:waterAffairsEnabled"), value: 'waterAffairsEnabled' }  //水务管理
+    { label: t("common:smartIndustryEnabled"), value: 'smartIndustryEnabled' }, // 智慧工业
 
   ]
   const energyType = [

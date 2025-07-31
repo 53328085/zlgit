@@ -92,7 +92,10 @@ const timingopt=[
   { label: "开", value: 1 },
   { label: "关", value: 2 },
 ]
-
+const forbidopt=[
+  { label: "禁止启动", value: 1 },
+  { label: "禁止关闭", value: 2 },
+]
 const wokeType=[
   { label: "制冷", value: 1 },
   { label: "制热", value: 2 },
@@ -242,15 +245,15 @@ export const timings =({ cusac, setcusac, params })=> (
                     <Form.Item
                       noStyle
                       shouldUpdate={(cur, pre) => {
-                        console.log(cur)
-                        console.log(pre)
-                        return  (cur["timings"]?.[i.name]?.["type"] !=pre["timings"]?.[i.name]?.["type"]) ||  (cur["timings"]?.[i.name]?.["time"] != cur["timings"]?.[i.name]?.["time"])
+                        let curtime=  cur["timings"]?.[i.name]?.["time"]?.format?.("HH:mm")
+                        let pretime = pre["timings"]?.[i.name]?.["time"]?.format?.("HH:mm")
+                        return  (cur["timings"]?.[i.name]?.["type"] !=pre["timings"]?.[i.name]?.["type"]) || curtime!==pretime
                         
                       }}
                     >
                       {({ getFieldValue }) => {
                         const name = getFieldValue(["timings", i.name ])?.["type"]===1 ? "开启": "关闭";
-                        const time = getFieldValue(["timings", i.name ])?.["time"]?.format("HH:mm")??"";
+                        const time = getFieldValue(["timings", i.name ])?.["time"]?.format?.("HH:mm")||"--";
                           return (
                             <span className={cusac==i.name ? "active" : ""}>
                               {time} {name}
@@ -273,19 +276,19 @@ export const timings =({ cusac, setcusac, params })=> (
         </div>
         {fileds.map(({key, name, ...rest}) => (
           <div className="formbox" style={{ columnGap: "64px", display: name==cusac? "" : "none"}} key={key}> 
-              <Form.Item label="定时任务" rules={rules} name={[name, "type"]} initialValue={1}>
+              <Form.Item label="定时任务"   name={[name, "type"]} initialValue={1}>
                  <Radio.Group options={timingopt} optionType="button"  buttonStyle="solid"></Radio.Group>
               </Form.Item>
-              <Form.Item label="时间点设置" rules={rules} name={[name, "time"]}>
+              <Form.Item label="时间点设置"   name={[name, "time"]}>
                 <TimePicker style={w255} format="HH:mm" /> 
               </Form.Item> 
               <Form.Item label="工作模式"   name={[name, "workMode"]} initialValue={1} >
                 <Radio.Group options={wokeType}></Radio.Group>
               </Form.Item>
-              <Form.Item label="风速设置" rules={rules} name={[name, "windSpeed"]} initialValue={1} >
+              <Form.Item label="风速设置"   name={[name, "windSpeed"]} initialValue={1} >
                  <Radio.Group options={windSpeed} optionType="button"  buttonStyle="solid"></Radio.Group>
               </Form.Item>
-              <Form.Item label="温度设置" rules={rules} name={[name, "temperature"]} >
+              <Form.Item label="温度设置"   name={[name, "temperature"]} >
                   <InputNumber min={15} max={35} addonAfter="℃" style={w255} ></InputNumber>
               </Form.Item>
               <Form.Item label=" " name={[name, "temperature"]}>
@@ -301,3 +304,76 @@ export const timings =({ cusac, setcusac, params })=> (
 </Form.List>
 )
 
+export const forbidControls =({ cusac, setcusac, params })=> (
+  <Form.List name="forbidControls" initialValue={[{}]}>
+  {(fileds, { add,remove }) => {
+    return (
+      <div className="formboxwrap">
+        <Form.Item name={["forbidControls","open"]}>
+          <Checkbox>禁止开关</Checkbox>
+        </Form.Item>
+        <div className="header">
+          <div className="list">
+            <div className="tags">
+              {fileds?.map((i, idx, arr) => {
+                return (
+                  <CTag
+                    key={i.key}
+                    closable={arr.length !== 1 || arr.length>64}
+                    onClose={() => {
+                      setcusac(0)
+                      remove(i.name)
+                    }}
+                   onClick={()=> {
+                    setcusac(i.name)
+                   }}
+                  >
+                    <Form.Item
+                      noStyle
+                      shouldUpdate={(cur, pre) => {
+
+                      //  let curtime=  cur["formboxwrap"]?.[i.name]?.["time"]
+                       // let pretime = pre["formboxwrap"]?.[i.name]?.["time"]
+                        console.log(pre["forbidControls"]?.[i.name])
+                        return  (cur["forbidControls"]?.[i.name]?.["type"] !=pre["forbidControls"]?.[i.name]?.["type"]) 
+                        
+                      }}
+                    >
+                      {({ getFieldValue }) => {
+                        const name = getFieldValue(["forbidControls", i.name ])?.["type"]===1 ? "禁止启动": "禁止关闭";
+                        const time ="--"   // getFieldValue(["formboxwrap", i.name ])?.["time"]?.format("HH:mm")||"--";
+                          return (
+                            <span className={cusac==i.name ? "active" : ""}>
+                              {time} {name}
+                            </span>
+                          );
+                        
+                      }}
+                    </Form.Item>
+                  </CTag>
+                );
+              })}
+            </div>
+          </div>
+          <Link
+            disabled={fileds?.length > 64}
+            onClick={() => add(params, fileds?.length) }
+          >
+           添加
+          </Link>
+        </div>
+        {fileds.map(({key, name, ...rest}) => (
+          <div className="formbox" style={{ columnGap: "64px", display: name==cusac? "" : "none"}} key={key}> 
+              <Form.Item label="禁止状态"   name={[name, "type"]} initialValue={1}>
+                 <Radio.Group options={forbidopt} optionType="button"  buttonStyle="solid"></Radio.Group>
+              </Form.Item>
+              <Form.Item label="时间段设置"   name={[name, "time"]}>
+                <TimePicker.RangePicker style={w255} format="HH:mm" /> 
+              </Form.Item>             
+          </div>
+        ))}
+      </div>
+    );
+  }}
+</Form.List>
+)

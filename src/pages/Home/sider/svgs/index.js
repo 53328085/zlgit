@@ -146,7 +146,7 @@ export { ReactComponent as lightManagementstreetLightEnergyMonitor } from './lig
 export { ReactComponent as lightManagementstreetLightManualControl } from './lightManagement/lightManagementstreetLightManualControl.svg'
 export { ReactComponent as lightManagementstreetLightAutoControl } from './lightManagement/lightManagementstreetLightAutoControl.svg'
 export { ReactComponent as lightManagementstreetLightLog } from './lightManagement/lightManagementstreetLightLog.svg'
-export { ReactComponent as lightManagementlightControl } from './lightManagement/lightManagementlightControl.svg'
+export { ReactComponent as lightManagementstreetLightControl } from './lightManagement/lightManagementlightControl.svg'
 //照明控制
 
 

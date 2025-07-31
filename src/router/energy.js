@@ -34,9 +34,9 @@ export let runtimeEnergy = {
     '010909': Quota, //定额能耗
     '010910': Comm, // 公共能耗
 
-    '010911': Air, // 空调控制
-    '010912': Streetlight, // 路灯控制
-    '010913': LightingC, //照明控制
+  //  '010911': Air, // 空调控制
+   // '010912': Streetlight, // 路灯控制
+   // '010913': LightingC, //照明控制
     '010914': Runreport, // 运行报告
     '010915': Region, // 区域能耗
     '010916': Device, // 重点设备
