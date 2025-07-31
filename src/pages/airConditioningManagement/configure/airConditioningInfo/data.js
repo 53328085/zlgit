@@ -157,7 +157,7 @@ export const items = ({ csn = [], msn = [], model = [] }) => (
   </Formbox>
 );
 
-export const initems = ({ model = [],cusac, setcusac }) => (
+export const initems = ({ model = [],cusac, setcusac, params }) => (
   <Form.List name="acs" initialValue={[{}]}>
     {(fileds, { add,remove }) => {
       return (
@@ -171,9 +171,12 @@ export const initems = ({ model = [],cusac, setcusac }) => (
                       key={i.key}
                       closable={arr.length !== 1 || arr.length>64}
                       onClose={() => {
-                        setcusac(idx)
+                        setcusac(0)
                         remove(i.name)
                       }}
+                     onClick={()=> {
+                      setcusac(i.name)
+                     }}
                     >
                       <Form.Item
                         noStyle
@@ -186,15 +189,15 @@ export const initems = ({ model = [],cusac, setcusac }) => (
                       >
                         {({ getFieldValue }) => {
                           const name = getFieldValue(["acs", i.name ])?.["name"];
-                          console.log(name); 
+                           
                           if (name) {
                             return (
-                              <span>
+                              <span className={cusac==i.name ? "active" : ""}>
                                  {name}
                               </span>
                             );
                           }else {
-                            return <span> 内机{idx + 1}</span>;
+                            return <span className={cusac==i.name ? "active" : ""}> 内机{idx + 1}</span>;
                           }
                         }}
                       </Form.Item>
@@ -205,27 +208,25 @@ export const initems = ({ model = [],cusac, setcusac }) => (
             </div>
             <Link
               disabled={fileds?.length > 64}
-              onClick={() => add()}
+              onClick={() => add(params, fileds?.length) }
             >
              <PlusCircleOutlined style={{fontSize: "24px"}} />
             </Link>
           </div>
           {fileds.map(({key, name, ...rest}) => (
-            <div className="formbox" style={{ columnGap: "64px", display: key==cusac? "" : "none"}} key={key}>
+            <div className="formbox" style={{ columnGap: "64px", display: name==cusac? "" : "none"}} key={key}>
               <div key="left">
                 <Form.Item
                   label="所属园区"
                   rules={rules}
                   name={[name, "areaId"]}
-                >
-                  <AreaSelect style={{ width: "100%" }} disabled />
+                ><AreaSelect style={{ width: "100%" }} disabled />
                 </Form.Item>
                 <Form.Item
                   label="安装地址"
                   rules={rules}
                   name={[name, "address"]}
-                >
-                  <Input />
+                ><Input />
                 </Form.Item>
                 <Form.Item label="备注" name={[name, "remark"]}>
                   <Input.TextArea rows={2} />
@@ -242,9 +243,9 @@ export const initems = ({ model = [],cusac, setcusac }) => (
                   label="设备型号"
                   rules={rules}
                   name={[name, "modelId"]}
-                >
-                  <Select
+                ><Select
                     options={model}
+                    labelInValue={false}
                     fieldNames={{ label: "model", value: "id" }}
                   ></Select>
                 </Form.Item>
@@ -262,23 +263,20 @@ export const initems = ({ model = [],cusac, setcusac }) => (
                 <Form.Item label="所属网关" name={[name, "gateWay"]}>
                   <Input disabled></Input>
                 </Form.Item>
-                <Form.Item label="用能分摊" name={[name, "shareRatio"]}>
-                  <InputNumber min={0} max={100} addonAfter="%" />
+                <Form.Item label="自设电价" name={[name, "ePrice"]}>
+                  <InputNumber min={0} precision={4}  addonAfter="元" />
                 </Form.Item>
                 <Form.Item
                   label="用能类型"
                   rules={rules}
                   name={[name, "useType"]}
-                >
-                  <Select
+                ><Select
                     options={useTypeopt.slice(1)}
                     placeholder="请选择"
                     disabled
                   ></Select>
                 </Form.Item>
-                <Form.Item name={[name, "id"]} noStyle initialValue={null}>
-                  {" "}
-                  {/* 内机的id exteriorId */}
+                <Form.Item name={[name, "id"]} noStyle initialValue={null}> {/* 内机的id */}
                   <Input hidden></Input>
                 </Form.Item>
                 <Form.Item
@@ -290,9 +288,9 @@ export const initems = ({ model = [],cusac, setcusac }) => (
                   {/* 外机的id exteriorId */}
                   <Input hidden></Input>
                 </Form.Item>
-                <Form.Item name={[name, "projectId"]} noStyle>
+             {/*    <Form.Item name={[name, "projectId"]} noStyle>
                   <Input hidden></Input>
-                </Form.Item>
+                </Form.Item> */}
                 <Form.Item name={[name, "shareRatio"]} noStyle>
                   <Input hidden></Input>
                 </Form.Item>

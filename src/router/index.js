@@ -24,6 +24,7 @@ import {ledger} from './ledger.js'
 import {cabinets} from './cabinets.js'
 import {runtimeWaterManagement} from './waterManagement.js'
 import {airConditioningManagement} from './airConditioningManagement'
+import {smartIndustry} from "./smartIndustry"
  let runRoutes = {
   runtimeMonitor,
   runtimeEnergy,
@@ -41,6 +42,7 @@ import {airConditioningManagement} from './airConditioningManagement'
   lightManagement,
   runtimeWaterManagement,
   airConditioningManagement,
+  smartIndustry,
  }
 
 
@@ -121,6 +123,7 @@ const loginrouter =  [{
   "0118": Comindex,
   "0119": Comindex,
    "0120":Comindex,
+   "0121":Comindex,
 } 
 
  

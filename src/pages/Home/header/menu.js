@@ -1,8 +1,9 @@
 import React, {useState, useMemo, useEffect} from "react";
 import {useNavigate, useLocation, useResolvedPath} from 'react-router-dom'
+import {UnorderedListOutlined} from '@ant-design/icons'
 import { useDispatch, useSelector } from "react-redux";
 import { Menu, Image } from "antd";
-import styled, {css} from "styled-components";
+import styled, {css, createGlobalStyle} from "styled-components";
 //import './style.less'
 import {getJump, runMenus,themeColor, designerMenus, siderDesignerMenus, siderRunMenus, configState, configProject,adaptation} from '@redux/systemconfig'
 import useJump from "./useJump";
@@ -10,7 +11,7 @@ import useJump from "./useJump";
 import svgurl from './icon/svg'
 import {hextodec} from '@com/usehandler'
 import * as svgcom from './icon' 
- 
+
 const Micon = ({iconname}) => {
    const location = useLocation()
    let {nested} = location.state || {}   
@@ -23,12 +24,56 @@ const Micon = ({iconname}) => {
    return   Com ?  <Com  className={iconname + " custicon "+nested}/> :   <Def className="def" ></Def>
   // return <span className="custicon">&#9673;</span>
 }
+const Morecom =() => {
+  return <div className="custmoremenu">
+    <Micon iconname="moremenu" ></Micon>
+    <span>更 多</span>
+  </div>
+}
+const Poppuclss =createGlobalStyle`
+.ant-menu-submenu.ant-menu-submenu-popup {
+     border-radius: 8px;
+     overflow: hidden;
+    .ant-menu.ant-menu-sub.ant-menu-vertical {
+        .ant-menu-item.custsubmenu {
+            display: flex;
+            align-items: center;
+            justify-content: space-evenly;
+            .ant-menu-title-content {
+              width: 74px;
+            }
+            .custicon { 
+              width: 16px;  
+            g path:nth-of-type(1)  {
+                  fill: ${props => props.theme.menusfontcolor || '#b2c1d1'}; 
+                } 
+            }
+            &:hover, &:active {
+          .custicon {
+              g path:nth-of-type(1) {
+                fill: ${props => props.theme.menusactivefontcolor || '#fff'}; 
+              }
+            }
+        }  
+        }
+        .ant-menu-item.ant-menu-item-selected { 
+        color:${props => props.theme.menusactivefontcolor || '#ffffff'};
+        border-radius: 6px;
+        .custicon {
+              g path:nth-of-type(1) {
+                fill: ${props => props.theme.menusactivefontcolor || '#fff'}; 
+              }
+        }
+    }
+    }
+}
+`
 const msty =css`
 font-size: 12px;
     display: flex;
      column-gap: 2px;;
     .ant-menu-item{
-        width: auto;
+        flex: 0 1 74px;
         padding: 4px 2px;
         .custicon {
           g path:nth-of-type(1)  {
@@ -69,6 +114,9 @@ const Cmenu = styled(Menu)`
     height: inherit;
     display: flex;
     column-gap: 4px;
+    &:not(.ant-menu-dark)>.ant-menu-submenu-selected:after {
+      border-bottom: none;
+    }
     .ant-menu-item.ant-menu-item-selected {
         background-color: rgba(${props => props.rgba[0]},${props => props.rgba[1]},${props => props.rgba[2]}, 0.2) ;
       //  border-bottom: 2px solid ${props => props.theme.menusborder || '#00ff66'};
@@ -86,13 +134,23 @@ const Cmenu = styled(Menu)`
          }
         
     }
-    .ant-menu-item{
+    .custmoremenu {
+      padding: 0 8px;
+      span {
+        line-height: 1;
+      }
+    }
+    .ant-menu-submenu::after {
+       border-bottom: none;
+       content: none;
+    }
+    .ant-menu-item,.ant-menu-submenu .custmoremenu,.ant-menu-submenu.ant-menu-submenu-popup .ant-menu-item{
         display: flex;
         flex-direction: column;
         justify-content:space-evenly;
         align-items: center;
        // width: 100px;
-        flex: 0 1 74px;
+        flex: 0 1 74px; // flex: 0 0 74px 小屏下面引起抖动！！！
         overflow: hidden; // 英语状态下可能会撑开
       //  padding: 4px 0; 
         height: 66px;
@@ -178,8 +236,8 @@ export default function Hmenu() {
     label: item.label,
     key: item.key,
     icon:   <Micon iconname={item.key}/>,  // <Ciocn url={svgurl[item.no]} />,
-    className: 'custsubmenu',
-    danger: true,
+    className: 'custsubmenu',  
+  //  danger: true,   
     nested: siderrunmenus[item.key]?.length > 0 ?  siderrunmenus[item.key][0]?.['key'] : ''
   }))
   const designer = designermenus?.map(item => ({
@@ -187,8 +245,8 @@ export default function Hmenu() {
    label: item.label,
    key: item.key,
    icon:  <Micon iconname={item.key}/>, // <Ciocn url={svgurl[item.no]} />,
-   className: 'custsubmenu',
-   danger: true,
+   className: 'custsubmenu', 
+  // danger: true,  
    nested: siderdesignermenus[item.key]?.length > 0 ?  siderdesignermenus[item.key][0]?.['key'] : ''
   }))
   const menus = isconfig ? designer : run
@@ -255,7 +313,10 @@ export default function Hmenu() {
     }  
    },[location]) 
 
-  return <Cmenu laptop={laptop} onClick={onSelect} selectedKeys={[current]} mode="horizontal" items={menus} rgba={menusactiveoc}   />;
+  return <>
+  <Poppuclss />
+  <Cmenu laptop={laptop} onClick={onSelect} selectedKeys={[current]} mode="horizontal" items={menus} rgba={menusactiveoc}    overflowedIndicator={<Morecom />}  />
+  </>
 
 
 }

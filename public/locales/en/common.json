@@ -19,7 +19,11 @@
     "EnergyManagement":"Energy Management",
     "PhotovoltaicEnergy":"Photovoltaic Energy",
     "StorageManagement": "Storage Management",
-    
+    "airConditionerEnabled":"Air Conditioner",
+    "digitalTwinEnabled":"Digital Twin",
+    "martIndustryEnabled":"Smart Industry",
+    "streetlightEnabled":"Streetlight",
+    "waterAffairsEnabled":"Water Affairs",
     "CarbonEmissionManagement":"Carbon Emission",
     "OperationMaintenanceManagement":"Operation and Maintenance",
 	

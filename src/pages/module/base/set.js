@@ -254,6 +254,11 @@ export default function ProjectSet({projectId}) {
    'gasEnabled',
    'coalEnabled',
    'oilEnabled',
+   'airConditionerEnabled',
+  //  'digitalTwinEnabled',
+  'smartIndustryEnabled',
+  'streetlightEnabled',
+  'waterAffairsEnabled',
   ])
  
   let bkmenus = useRef([
@@ -265,6 +270,11 @@ export default function ProjectSet({projectId}) {
     { label:  t("common:StorageManagement"), key: 'storageEnabled', value: 0 },
     { label: t("common:CarbonEmissionManagement"), key: 'carbonEnabled', value: 0 },  
     { label: t("common:OperationMaintenanceManagement"), key: 'maintenanceEnabled', value: 0 },
+    { label: t("common:airConditionerEnabled"), key: 'airConditionerEnabled', value:0 }, // 空调
+  //  { label: t("common:digitalTwinEnabled"), value: 'digitalTwinEnabled', value:0 }, // 数字孪生
+    { label: t("common:martIndustryEnabled"), key: 'smartIndustryEnabled', value:0 }, // 智慧工业
+    { label: t("common:streetlightEnabled"), key: 'streetlightEnabled', value:0 }, // 路灯管理
+    { label: t("common:waterAffairsEnabled"), key: 'waterAffairsEnabled', value: 0 }  //水务管理
   ])
 
 
@@ -277,6 +287,12 @@ export default function ProjectSet({projectId}) {
     { label:  t("common:StorageManagement"), value: 'storageEnabled' },
     { label: t("common:CarbonEmissionManagement"), value: 'carbonEnabled' },  
     { label: t("common:OperationMaintenanceManagement"), value: 'maintenanceEnabled' },
+    { label: t("common:waterAffairsEnabled"), value: 'waterAffairsEnabled' },  //水务管理
+    { label: t("common:airConditionerEnabled"), value: 'airConditionerEnabled' }, // 空调
+   // { label: t("common:digitalTwinEnabled"), value: 'digitalTwinEnabled' }, // 数字孪生    
+    { label: t("common:streetlightEnabled"), value: 'streetlightEnabled' }, // 路灯管理
+    { label: t("common:smartIndustryEnabled"), value: 'smartIndustryEnabled' }, // 智慧工业
+
   ]
   const energyType = [
     { label: t("common:Electricity"), value: 'electricEnabled' },
@@ -286,6 +302,7 @@ export default function ProjectSet({projectId}) {
     { label: t("common:Gas"), value: 'gasEnabled' },
     { label: t("common:Coal"), value: 'coalEnabled' },
     { label: t("common:Fuel"), value: 'oilEnabled' },   
+     
   ]
 
   const chChnage =(value) => {

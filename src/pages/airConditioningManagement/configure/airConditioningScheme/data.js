@@ -5,29 +5,23 @@ import {
   Slider,
   Radio,
   InputNumber,
-  TimePicker,
+  DatePicker,
   Typography,
   Tag,
   Space,
+  Checkbox,
+  Tooltip,
+  TimePicker,
+
 } from "antd";
-import { DeleteOutlined } from "@ant-design/icons";
+import { InfoCircleFilled } from "@ant-design/icons";
 import { CSlider, Scene, CTag,  } from "./style";
 import imgsrc from "@svgs/index";
 import { CustButton } from "@com/useButton";
 const { Link } = Typography;
 
 
-const Custslider = ({value, onChange, ...rest}) => {
-  console.log(value)
-  const vchange = (e) => { 
-    onChange(e)
-  }
-  return (
-    <CSlider value={value} onChange={vchange} {...rest}></CSlider>
-  )
-
-
-}
+ 
 export const cols = [
   //
   {
@@ -36,14 +30,14 @@ export const cols = [
     key: "strategyName",
   },
   {
-    title: "场景",
-    dataIndex: "sceneDesc",
-    key: "sceneDesc",
+    title: "方案应用周期",
+    dataIndex: "strategiesDesc",
+    key: "strategiesDesc",
   },
   {
-    title: "绑定路灯数",
-    dataIndex: "bindLightNum",
-    key: "bindLightNum",
+    title: "绑定空调数",
+    dataIndex: "bindConditionerNum",
+    key: "bindConditionerNum",
   },
   {
     title: "创建人",
@@ -78,258 +72,308 @@ export const rules = [
     required: true,
   },
 ];
-const w255 = { width: "255px" }; //0：道路灯 1：高杆路灯 2：太阳能路灯 3：景观灯
-const options = [
-  { label: "全夜灯", value: "全夜灯" },
-  { label: "半夜灯", value: "半夜灯" },
-  { label: "景观灯", value: "景观灯" },
-  { label: "泛光灯", value: "泛光灯" },
+export const w255 = { width: "255px" }; //0：道路灯 1：高杆路灯 2：太阳能路灯 3：景观灯
+const weeks = [
+  { label: "周一", value: 1 },
+  { label: "周二", value: 2 },
+  { label: "周三", value: 3 },
+  { label: "周四", value: 4 },
+  { label: "周五", value: 5 },
+  { label: "周六", value: 6 },
+  { label: "周日", value: 0 },
 ];
 const timeType = [
-  { label: "日出前", value: "日出前" },
-  { label: "日出后", value: "日出后" },
-  { label: "日落前", value: "日落前" },
-  { label: "日落后", value: "日落后" },
+  { label: "应用星期", value: 1 },
+  { label: "特殊日期设置", value: 2 },
+ 
 ];
-const marks = {
-  0: '0',
-  10: '10',
-  20: '20',
-  30: '30',
-  40: '40',
-  50: '50',
-  60: '60',
-  70: '70',
-  80: '80',
-  90: '90',
-  100: '100',
-};
-export const items = (
-  <>
-    <Form.Item label="方案名称" name="schemeName" rules={rules} labelAlign="left">
-      <Input placeholder="请输入" style={w255}></Input>
-    </Form.Item>
-    <Form.List name="scenes" initialValue={[{}]}>
-      {(fileds, { add, remove }) => (
-        <Scene>
-          {fileds.map((field, _, arr) => (
-            <div>
-              <Form.Item
-              labelAlign="left"
-              style={{marginBottom: "4px"}}
-                          label={`场景${new Intl.NumberFormat(
-                            "zh-Hans-CN-u-nu-hanidec"
-                          ).format(field.name + 1)}`}
-                          rules={rules}
-                          name={[field.name, "sName"]}
-                        ><Select
-                            options={options}
-                            style={{ width: "200px" }}
-                          ></Select>
-                        </Form.Item >
-            <Form.List name={[field.name, "tasks"]} initialValue={[{}]}>
-              {(inerfileds, inmethods) => {
-                console.log(inerfileds)
+ 
+const timingopt=[
+  { label: "开", value: 1 },
+  { label: "关", value: 2 },
+]
+const forbidopt=[
+  { label: "禁止启动", value: 1 },
+  { label: "禁止关闭", value: 2 },
+]
+const wokeType=[
+  { label: "制冷", value: 1 },
+  { label: "制热", value: 2 },
+  { label: "送风", value: 3 },
+  { label: "除湿", value: 4 },
+]
+const windSpeed=[
+  { label: "自动", value: 1 },
+  { label: "低", value: 2 },
+  { label: "中", value: 3 },
+  { label: "高", value: 4 },
+]
+export const section =({ cusac, setcusac, params })=> (
+  <Form.List name="section" initialValue={[{}]}>
+  {(fileds, { add,remove }) => {
+    return (
+      <div className="formboxwrap">
+        <div className="header">
+          <div className="list">
+            <div className="tags">
+              {fileds?.map((i, idx, arr) => {
                 return (
-                  <div className="scene" key={field.key}>
-                    <div className="hander">
-                      <div className="list">                      
-                        <div className="tags">
-                          {inerfileds?.map((i, idx, arr) => {
-                            console.log(i);
-                            return (
-                              <CTag
-                                key={i.key}
-                                closable={arr.length !== 1}
-                                onClose={() => inmethods.remove(i.name)}
-                              >
-                                <Form.Item noStyle  shouldUpdate={(cur, pre) => {                            
-                              return (
-                                cur["scenes"]?.[field.name]?.["tasks"]?.[i.name] != pre["scenes"]?.[field.name]?.["tasks"]?.[i.name]
-                              );
-                            }}>
-                              {
-                                ({getFieldValue})=> {
-                                   const values  = getFieldValue([
-                                    "scenes",
-                                    field.name,
-                                  ])?.["tasks"]?.[i.name] ;
-                                  console.log(values)
-                                  const {timeType, excueTime, timing, excueTime2,taskType} = values
-                                  const type = ["开","关"][taskType]
-                                  if(timeType==0 && (excueTime || timing)) {
-                                    return  <span>{excueTime}{timing}{type}</span>
-                                  }else if(timeType==1 && excueTime2) {
-                                    return <span> {excueTime2?.format?.("HH:mm")}{type}</span>
-                                  }else {
-                                   return <span> 时间点{idx + 1}</span> 
-                                  }
-                                 
-                                }
-                              }
-                            </Form.Item>
-                               
-                              </CTag>
-                            );
-                          })}
-                        </div>
-                      </div>
-                      <Link
-                        disabled={inerfileds?.length > 3}
-                        onClick={() => inmethods.add()}
-                      >
-                        添加时间点
-                      </Link>
-                    </div>
-                    <div className="contents">
-                      {inerfileds?.map?.((inerfiled, index, arr) => (
-                        <div className="content" key={inerfiled.key}>
-                          <Form.Item
-                            label="定时任务"
-                            name={[inerfiled.name, "taskType"]}
-                            initialValue={0}
-                          >
-                            <Radio.Group>
-                              <Radio value={0}>开</Radio>
-                              <Radio value={1}>关</Radio>
-                            </Radio.Group>
-                          </Form.Item>
-                          <Form.Item
-                            label="时间点设置"
-                            name={[inerfiled.name, "timeType"]}
-                            initialValue={0}
-                          >
-                            <Radio.Group>
-                              <Radio value={0}>相对值</Radio>
-                              <Radio value={1}>固定值</Radio>
-                            </Radio.Group>
-                          </Form.Item>
-                          <Form.Item
-                            label="时间点"
-                            shouldUpdate={(cur, pre) => {                            
-                              return (
-                                cur["scenes"]?.[field.name]?.["tasks"]?.[
-                                  inerfiled.name
-                                ]?.timeType !=
-                                pre["scenes"]?.[field.name]?.["tasks"]?.[
-                                  inerfiled.name
-                                ]?.timeType
-                              );
-                            }}
-                          >
-                            {({ getFieldValue }) => {
-                              let type = getFieldValue([
-                                "scenes",
-                                field.name,
-                              ])?.["tasks"]?.[inerfiled.name]?.timeType;
-                             
-                              if (type == 0) {
-                                return (
-                                  <Space>
-                                    <Form.Item
-                                      name={[inerfiled.name, "excueTime"]}
-                                      rules={rules}
-                                    >
-                                      <Select
-                                        options={timeType}
-                                        style={{ width: "200px" }}
-                                      ></Select>
-                                    </Form.Item>
-                                    <Form.Item
-                                      name={[inerfiled.name, "timing"]}
-                                      rules={rules}
-                                    >
-                                      <InputNumber
-                                        min={0}
-                                        max={60}
-                                        precision={0}
-                                        style={{width: "140px"}}
-                                        addonAfter="分钟"
-                                      ></InputNumber>
-                                    </Form.Item>
-                                  </Space>
-                                );
-                              } else {
-                                return (
-                                  <Form.Item
-                                    name={[inerfiled.name, "excueTime2"]}
-                                    rules={rules}
-                                  ><TimePicker format="HH:mm" />
-                                  </Form.Item>
-                                );
-                              }
-                            }}
-                          </Form.Item>
-                     
-                      <Form.Item noStyle   shouldUpdate={(cur, pre) => {                            
-                              return (
-                                cur["scenes"]?.[field.name]?.["tasks"]?.[
-                                  inerfiled.name
-                                ]?.taskType !=
-                                pre["scenes"]?.[field.name]?.["tasks"]?.[
-                                  inerfiled.name
-                                ]?.taskType
-                              );
-                            }}>{
-                          ({getFieldValue})=> {
-                            let type = getFieldValue([
-                              "scenes",
-                              field.name,
-                            ])?.["tasks"]?.[inerfiled.name]?.taskType;
-                          
-                          if(type == 0) return <div
-                              style={{ position: "relative", width: "548px" }}
-                            >
-                              <img
-                                src={imgsrc["light"]}
-                                style={{ position: "absolute",left:"98px" }}
-                              />
-                              <Form.Item
-                               label="亮度设置"
-                                name={[inerfiled.name, "light"]}
-                                labelCol={{flex: "98px"}}
-                                rules={[
-                                  {
-                                    required: type===0
-                                  }
-                                ]} 
-                              ><Custslider step={null} marks={marks} /></Form.Item>
-                            </div>
-                          }
-                            }
-                          </Form.Item>
-                        </div>
-                      ))}
-                    </div>
-                    {arr.length > 1 && (
-                      <img
-                        src={imgsrc["del"]}
-                        onClick={() => remove(field.name)}
-                        className="del"
-                      />
-                    )}
-                  </div>
+                  <CTag
+                    key={i.key}
+                    closable={arr.length !== 1 || arr.length>64}
+                    onClose={() => {
+                      setcusac(0)
+                      remove(i.name)
+                    }}
+                   onClick={()=> {
+                    setcusac(i.name)
+                   }}
+                  >
+                    <Form.Item
+                      noStyle
+                      shouldUpdate={(cur, pre) => {
+                        return (
+                          cur["section"]?.[i.name]?.["sectionName"] !=
+                          pre["section"]?.[i.name]?.["sectionName"] 
+                        );
+                      }}
+                    >
+                      {({ getFieldValue }) => {
+                        const name = getFieldValue(["section", i.name ])?.["sectionName"];
+                         
+                        if (name) {
+                          return (
+                            <span className={cusac==i.name ? "active" : ""}>
+                               {name}
+                            </span>
+                          );
+                        }else {
+                          return <span className={cusac==i.name ? "active" : ""}>方案{new Intl.NumberFormat(
+                            "zh-Hans-CN-u-nu-hanidec"
+                          ).format(idx + 1)}区间</span>;
+                        }
+                      }}
+                    </Form.Item>
+                  </CTag>
                 );
-              }}
-            </Form.List>
-            </div> 
-          ))}
-          <Form.Item>
-            <div style={{ display: "flex", justifyContent: "center" }}>
-              <CustButton disabled={fileds?.length >3 } onClick={() => add()}>添加场景</CustButton>
+              })}
             </div>
-          </Form.Item>
-        </Scene>
-      )}
-    </Form.List>
-    <Form.Item name="id" initialValue={0} noStyle>
-      <Input hidden />
-    </Form.Item>
-    <Form.Item name="creater" initialValue="">
-      <Input hidden></Input>
-    </Form.Item>
-    <Form.Item name="projectId">
-      <Input hidden></Input>
-    </Form.Item>
-  </>
-);
+          </div>
+          <Link
+            disabled={fileds?.length > 64}
+            onClick={() => add(params, fileds?.length) }
+          >
+           添加时间区间
+          </Link>
+        </div>
+        {fileds.map(({key, name, ...rest}) => (
+          <div className="formbox" style={{ columnGap: "64px", display: name==cusac? "" : "none"}} key={key}> 
+              <Form.Item label="区间名称" rules={rules} name={[name, "sectionName"]}>
+                <Input style={w255} />
+              </Form.Item>
+              <Form.Item label="时间设置" rules={rules} name={[name, "date"]}>
+                <DatePicker.RangePicker></DatePicker.RangePicker>
+              </Form.Item> 
+              <Form.Item   name={[name, "type"]}>
+                <Radio.Group options={timeType}></Radio.Group>
+              </Form.Item>
+              <Form.Item  noStyle  shouldUpdate={(cur, pre)=>cur.section[name]?.type!=pre.section[name]?.type}>
+                 {
+                   ({getFieldValue, setFieldValue})=> {
+                      let type = getFieldValue(["section",name])?.type
+                      const allchange=(e)=> { 
+                         if(e.target.checked) {                         
+                           setFieldValue(["section",name, "weeks"], [1,2,3,4,5,6,0])
+                         }else {
+                          setFieldValue(["section",name, "weeks"], null)
+                         }
+                      }
+                      const onChange=(v) => {
+                        setFieldValue(["section",name, "checked"], v?.length==7)
+                      }
+                      if(type==1) {
+                        return <Space>
+                          <Form.Item noStyle name={[name,"checked" ]} valuePropName="checked">
+                             <Checkbox onChange={allchange}>全选</Checkbox>
+                          </Form.Item>
+                          <Form.Item name={[name, "weeks"]}>
+                            <Checkbox.Group options={weeks} onChange={onChange}></Checkbox.Group>
+                         </Form.Item>
+                        </Space>
+                      }else {
+                        return  <Form.Item>
+                          <Checkbox>法定节假日<Tooltip title="获取国家法定节假日信息,可设置法定节假日的控制策略"><InfoCircleFilled /></Tooltip></Checkbox>
+                        </Form.Item>
+                      }
+                   }
+                 }
+              </Form.Item>
+                      
+            
+          </div>
+        ))}
+      </div>
+    );
+  }}
+</Form.List>
+)
+
+export const timings =({ cusac, setcusac, params })=> (
+  <Form.List name="timings" initialValue={[{}]}>
+  {(fileds, { add,remove }) => {
+    return (
+      <div className="formboxwrap">
+        <Form.Item name={["timings","open"]}>
+          <Checkbox>定时开关</Checkbox>
+        </Form.Item>
+        <div className="header">
+          <div className="list">
+            <div className="tags">
+              {fileds?.map((i, idx, arr) => {
+                return (
+                  <CTag
+                    key={i.key}
+                    closable={arr.length !== 1 || arr.length>64}
+                    onClose={() => {
+                      setcusac(0)
+                      remove(i.name)
+                    }}
+                   onClick={()=> {
+                    setcusac(i.name)
+                   }}
+                  >
+                    <Form.Item
+                      noStyle
+                      shouldUpdate={(cur, pre) => {
+                        let curtime=  cur["timings"]?.[i.name]?.["time"]?.format?.("HH:mm")
+                        let pretime = pre["timings"]?.[i.name]?.["time"]?.format?.("HH:mm")
+                        return  (cur["timings"]?.[i.name]?.["type"] !=pre["timings"]?.[i.name]?.["type"]) || curtime!==pretime
+                        
+                      }}
+                    >
+                      {({ getFieldValue }) => {
+                        const name = getFieldValue(["timings", i.name ])?.["type"]===1 ? "开启": "关闭";
+                        const time = getFieldValue(["timings", i.name ])?.["time"]?.format?.("HH:mm")||"--";
+                          return (
+                            <span className={cusac==i.name ? "active" : ""}>
+                              {time} {name}
+                            </span>
+                          );
+                        
+                      }}
+                    </Form.Item>
+                  </CTag>
+                );
+              })}
+            </div>
+          </div>
+          <Link
+            disabled={fileds?.length > 64}
+            onClick={() => add(params, fileds?.length) }
+          >
+           添加
+          </Link>
+        </div>
+        {fileds.map(({key, name, ...rest}) => (
+          <div className="formbox" style={{ columnGap: "64px", display: name==cusac? "" : "none"}} key={key}> 
+              <Form.Item label="定时任务"   name={[name, "type"]} initialValue={1}>
+                 <Radio.Group options={timingopt} optionType="button"  buttonStyle="solid"></Radio.Group>
+              </Form.Item>
+              <Form.Item label="时间点设置"   name={[name, "time"]}>
+                <TimePicker style={w255} format="HH:mm" /> 
+              </Form.Item> 
+              <Form.Item label="工作模式"   name={[name, "workMode"]} initialValue={1} >
+                <Radio.Group options={wokeType}></Radio.Group>
+              </Form.Item>
+              <Form.Item label="风速设置"   name={[name, "windSpeed"]} initialValue={1} >
+                 <Radio.Group options={windSpeed} optionType="button"  buttonStyle="solid"></Radio.Group>
+              </Form.Item>
+              <Form.Item label="温度设置"   name={[name, "temperature"]} >
+                  <InputNumber min={15} max={35} addonAfter="℃" style={w255} ></InputNumber>
+              </Form.Item>
+              <Form.Item label=" " name={[name, "temperature"]}>
+                  <Slider min={15} max={35} range={{draggableTrack: true}} style={w255} />
+              </Form.Item>
+                      
+            
+          </div>
+        ))}
+      </div>
+    );
+  }}
+</Form.List>
+)
+
+export const forbidControls =({ cusac, setcusac, params })=> (
+  <Form.List name="forbidControls" initialValue={[{}]}>
+  {(fileds, { add,remove }) => {
+    return (
+      <div className="formboxwrap">
+        <Form.Item name={["forbidControls","open"]}>
+          <Checkbox>禁止开关</Checkbox>
+        </Form.Item>
+        <div className="header">
+          <div className="list">
+            <div className="tags">
+              {fileds?.map((i, idx, arr) => {
+                return (
+                  <CTag
+                    key={i.key}
+                    closable={arr.length !== 1 || arr.length>64}
+                    onClose={() => {
+                      setcusac(0)
+                      remove(i.name)
+                    }}
+                   onClick={()=> {
+                    setcusac(i.name)
+                   }}
+                  >
+                    <Form.Item
+                      noStyle
+                      shouldUpdate={(cur, pre) => {
+
+                      //  let curtime=  cur["formboxwrap"]?.[i.name]?.["time"]
+                       // let pretime = pre["formboxwrap"]?.[i.name]?.["time"]
+                        console.log(pre["forbidControls"]?.[i.name])
+                        return  (cur["forbidControls"]?.[i.name]?.["type"] !=pre["forbidControls"]?.[i.name]?.["type"]) 
+                        
+                      }}
+                    >
+                      {({ getFieldValue }) => {
+                        const name = getFieldValue(["forbidControls", i.name ])?.["type"]===1 ? "禁止启动": "禁止关闭";
+                        const time ="--"   // getFieldValue(["formboxwrap", i.name ])?.["time"]?.format("HH:mm")||"--";
+                          return (
+                            <span className={cusac==i.name ? "active" : ""}>
+                              {time} {name}
+                            </span>
+                          );
+                        
+                      }}
+                    </Form.Item>
+                  </CTag>
+                );
+              })}
+            </div>
+          </div>
+          <Link
+            disabled={fileds?.length > 64}
+            onClick={() => add(params, fileds?.length) }
+          >
+           添加
+          </Link>
+        </div>
+        {fileds.map(({key, name, ...rest}) => (
+          <div className="formbox" style={{ columnGap: "64px", display: name==cusac? "" : "none"}} key={key}> 
+              <Form.Item label="禁止状态"   name={[name, "type"]} initialValue={1}>
+                 <Radio.Group options={forbidopt} optionType="button"  buttonStyle="solid"></Radio.Group>
+              </Form.Item>
+              <Form.Item label="时间段设置"   name={[name, "time"]}>
+                <TimePicker.RangePicker style={w255} format="HH:mm" /> 
+              </Form.Item>             
+          </div>
+        ))}
+      </div>
+    );
+  }}
+</Form.List>
+)

@@ -1,8 +1,8 @@
 import {Apimethod} from "@api/api.js"
 
-export const { usePage } = new Apimethod( //查询  路灯控制方案
+export const { usePage } = new Apimethod( //查询  空调控制方案
     "post",
-    "Light/StreetLightScheme/Page"
+    "Conditioner/AirConditionerScheme/Page"
   );
   export const { useAdd} = new Apimethod( //新增  控制方案
     "post",
