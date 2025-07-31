@@ -79,12 +79,10 @@ export default function Index() {
         alike,
       });
       if (success && Array.isArray(data) && data.length) {
-        //  setOptions(data)
         setSchemeId(data[0]?.id)
         setSchemeName(data[0]?.name)
         return data
       } else {
-        // setOptions([])
         setSchemeId(null)
         setSchemeName('')
         if (!success) {
