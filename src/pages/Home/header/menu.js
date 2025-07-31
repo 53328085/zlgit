@@ -39,7 +39,11 @@ const Poppuclss =createGlobalStyle`
             display: flex;
             align-items: center;
             justify-content: space-evenly;
-            .custicon {
+            .ant-menu-title-content {
+              width: 74px;
+            }
+            .custicon { 
+              width: 16px;  
             g path:nth-of-type(1)  {
                   fill: ${props => props.theme.menusfontcolor || '#b2c1d1'}; 
                 } 

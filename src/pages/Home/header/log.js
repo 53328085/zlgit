@@ -216,7 +216,8 @@ const Triangle = styled.div`
      border-color: transparent  ${props => props.theme.menusbgcolorR || '#135abd'} transparent transparent;
      display: ${props => props.laptop ? "none" : 'block'}; */
      height: 70px;
-     width:232px;
+    // width:232px;
+    flex: 0 1 auto;
      display: flex;
      justify-content: flex-end;
      background-image: linear-gradient(to right, rgba(${props=>props.srgb[0]}, ${props=>props.srgb[1]}, ${props=>props.srgb[2]}, ${props=>props.startOpacity}),rgba(${props=>props.ergb[0]}, ${props=>props.ergb[1]}, ${props=>props.ergb[2]}, ${props=>props.endOpacity})) ;

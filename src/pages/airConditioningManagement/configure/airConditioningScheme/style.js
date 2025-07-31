@@ -56,8 +56,14 @@ export const Scene = styled.div`
     .leftlayout {
       display: flex;
       flex-direction: column;
-      row-gap: 16px;
-      .formboxwrap {
+      row-gap: 12px;
+      padding: 4px;
+      border:1px solid #dedede;
+      .formboxwrap { 
+        border-bottom: 1px solid ${props=>props.theme.primaryColor};
+        .ant-form-item{
+            margin-bottom: 12px;
+          }
         .header {
           display: flex;
           justify-content: space-between;
@@ -65,7 +71,7 @@ export const Scene = styled.div`
           border-bottom: 1px solid #d7d7d7;
           column-gap: 2px;
           padding: 2px 4px;
-          margin-bottom: 16px;
+          margin-bottom: 12px;
           .list {
             display: flex;
             align-items: center;
@@ -81,7 +87,9 @@ export const Scene = styled.div`
           }
         }
         .formbox {
-         
+          .ant-form-item{
+            margin-bottom: 12px;
+          }
         }
       }
     }
@@ -89,7 +97,7 @@ export const Scene = styled.div`
 `;
 export const CTag = styled(Tag)`
   && {
-    height: 32px;
+    height: 24px;
     width: 127px;
     display: flex;
     align-items: center;

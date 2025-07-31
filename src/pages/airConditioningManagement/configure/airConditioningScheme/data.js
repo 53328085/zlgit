@@ -10,25 +10,18 @@ import {
   Tag,
   Space,
   Checkbox,
+  Tooltip,
+  TimePicker,
+
 } from "antd";
-import { DeleteOutlined } from "@ant-design/icons";
+import { InfoCircleFilled } from "@ant-design/icons";
 import { CSlider, Scene, CTag,  } from "./style";
 import imgsrc from "@svgs/index";
 import { CustButton } from "@com/useButton";
 const { Link } = Typography;
 
 
-const Custslider = ({value, onChange, ...rest}) => {
-  console.log(value)
-  const vchange = (e) => { 
-    onChange(e)
-  }
-  return (
-    <CSlider value={value} onChange={vchange} {...rest}></CSlider>
-  )
-
-
-}
+ 
 export const cols = [
   //
   {
@@ -37,14 +30,14 @@ export const cols = [
     key: "strategyName",
   },
   {
-    title: "场景",
-    dataIndex: "sceneDesc",
-    key: "sceneDesc",
+    title: "方案应用周期",
+    dataIndex: "strategiesDesc",
+    key: "strategiesDesc",
   },
   {
-    title: "绑定路灯数",
-    dataIndex: "bindLightNum",
-    key: "bindLightNum",
+    title: "绑定空调数",
+    dataIndex: "bindConditionerNum",
+    key: "bindConditionerNum",
   },
   {
     title: "创建人",
@@ -94,20 +87,24 @@ const timeType = [
   { label: "特殊日期设置", value: 2 },
  
 ];
-const marks = {
-  0: '0',
-  10: '10',
-  20: '20',
-  30: '30',
-  40: '40',
-  50: '50',
-  60: '60',
-  70: '70',
-  80: '80',
-  90: '90',
-  100: '100',
-};
+ 
+const timingopt=[
+  { label: "开", value: 1 },
+  { label: "关", value: 2 },
+]
 
+const wokeType=[
+  { label: "制冷", value: 1 },
+  { label: "制热", value: 2 },
+  { label: "送风", value: 3 },
+  { label: "除湿", value: 4 },
+]
+const windSpeed=[
+  { label: "自动", value: 1 },
+  { label: "低", value: 2 },
+  { label: "中", value: 3 },
+  { label: "高", value: 4 },
+]
 export const section =({ cusac, setcusac, params })=> (
   <Form.List name="section" initialValue={[{}]}>
   {(fileds, { add,remove }) => {
@@ -201,9 +198,9 @@ export const section =({ cusac, setcusac, params })=> (
                          </Form.Item>
                         </Space>
                       }else {
-                        return <Space><Form.Item>
-                          <Checkbox>法定节假日</Checkbox>
-                        </Form.Item></Space>
+                        return  <Form.Item>
+                          <Checkbox>法定节假日<Tooltip title="获取国家法定节假日信息,可设置法定节假日的控制策略"><InfoCircleFilled /></Tooltip></Checkbox>
+                        </Form.Item>
                       }
                    }
                  }
@@ -218,4 +215,89 @@ export const section =({ cusac, setcusac, params })=> (
 </Form.List>
 )
 
- 
+export const timings =({ cusac, setcusac, params })=> (
+  <Form.List name="timings" initialValue={[{}]}>
+  {(fileds, { add,remove }) => {
+    return (
+      <div className="formboxwrap">
+        <Form.Item name={["timings","open"]}>
+          <Checkbox>定时开关</Checkbox>
+        </Form.Item>
+        <div className="header">
+          <div className="list">
+            <div className="tags">
+              {fileds?.map((i, idx, arr) => {
+                return (
+                  <CTag
+                    key={i.key}
+                    closable={arr.length !== 1 || arr.length>64}
+                    onClose={() => {
+                      setcusac(0)
+                      remove(i.name)
+                    }}
+                   onClick={()=> {
+                    setcusac(i.name)
+                   }}
+                  >
+                    <Form.Item
+                      noStyle
+                      shouldUpdate={(cur, pre) => {
+                        console.log(cur)
+                        console.log(pre)
+                        return  (cur["timings"]?.[i.name]?.["type"] !=pre["timings"]?.[i.name]?.["type"]) ||  (cur["timings"]?.[i.name]?.["time"] != cur["timings"]?.[i.name]?.["time"])
+                        
+                      }}
+                    >
+                      {({ getFieldValue }) => {
+                        const name = getFieldValue(["timings", i.name ])?.["type"]===1 ? "开启": "关闭";
+                        const time = getFieldValue(["timings", i.name ])?.["time"]?.format("HH:mm")??"";
+                          return (
+                            <span className={cusac==i.name ? "active" : ""}>
+                              {time} {name}
+                            </span>
+                          );
+                        
+                      }}
+                    </Form.Item>
+                  </CTag>
+                );
+              })}
+            </div>
+          </div>
+          <Link
+            disabled={fileds?.length > 64}
+            onClick={() => add(params, fileds?.length) }
+          >
+           添加
+          </Link>
+        </div>
+        {fileds.map(({key, name, ...rest}) => (
+          <div className="formbox" style={{ columnGap: "64px", display: name==cusac? "" : "none"}} key={key}> 
+              <Form.Item label="定时任务" rules={rules} name={[name, "type"]} initialValue={1}>
+                 <Radio.Group options={timingopt} optionType="button"  buttonStyle="solid"></Radio.Group>
+              </Form.Item>
+              <Form.Item label="时间点设置" rules={rules} name={[name, "time"]}>
+                <TimePicker style={w255} format="HH:mm" /> 
+              </Form.Item> 
+              <Form.Item label="工作模式"   name={[name, "workMode"]} initialValue={1} >
+                <Radio.Group options={wokeType}></Radio.Group>
+              </Form.Item>
+              <Form.Item label="风速设置" rules={rules} name={[name, "windSpeed"]} initialValue={1} >
+                 <Radio.Group options={windSpeed} optionType="button"  buttonStyle="solid"></Radio.Group>
+              </Form.Item>
+              <Form.Item label="温度设置" rules={rules} name={[name, "temperature"]} >
+                  <InputNumber min={15} max={35} addonAfter="℃" style={w255} ></InputNumber>
+              </Form.Item>
+              <Form.Item label=" " name={[name, "temperature"]}>
+                  <Slider min={15} max={35} range={{draggableTrack: true}} style={w255} />
+              </Form.Item>
+                      
+            
+          </div>
+        ))}
+      </div>
+    );
+  }}
+</Form.List>
+)
+
