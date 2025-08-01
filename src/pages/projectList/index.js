@@ -422,7 +422,8 @@ export default function Index() {
      dispatch(getWebsiteState({id, userId}))
     // dispatch(configProject(type === 1))
      let {runMenus, designerMenus,siderRunMenus, siderDesignerMenus, homeMenuNO} = await dispatch(getWebsiteMenu(id)).unwrap()
-    
+     console.log(runMenus)
+     console.log(homeMenuNO)
      let menu;
      let  jumpath, substate;
      if (type == 2) {

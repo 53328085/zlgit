@@ -12,7 +12,7 @@ import CModal from "@com/useModal";
 import { selectUser } from "@redux/user";
 import { selectOneLevelDefaultId } from "@redux/systemconfig";
 import { usePage, useAdd, useUpdate, useDelete } from "./api";
-import { cols, section,rules, w255,timings,forbidControls} from "./data";
+import { cols, section,rules, w255,timings,forbidControls,esaving} from "./data";
 import { Mainbox, Title, Scene } from "./style";
 import BindLight from "./bind";
 import { Serach } from "@com/comstyled";
@@ -31,6 +31,8 @@ export default function Index() {
   const areaId = useSelector(selectOneLevelDefaultId);
   const sence = Form.useWatch("scenes", newform);
   const [cusac, setcusac] = useState(0);
+  const [cusac1, setcusac1] = useState(0);
+  const [cusac2, setcusac2] = useState(0);
   console.log(JSON.parse(json))
   const [isadd, setIsadd] = useState(1); // 0 新增 1 编辑 2 克隆
   const [total, setTotal] = useState(0);
@@ -49,16 +51,20 @@ export default function Index() {
     return section({ cusac, setcusac, params });
   }, [cusac, setcusac]);
   const timingsItems = useMemo(() => {
-    let params = {};
+    let params = {
+      type:1
+    };
 
-    return timings({ cusac, setcusac, params });
-  }, [cusac, setcusac]);
+    return timings({ cusac1, setcusac1, params });
+  }, [cusac1, setcusac1]);
 
   const forbidControlsItems = useMemo(() => {
-    let params = {};
+    let params = {
+      type:1
+    };
 
-    return forbidControls({ cusac, setcusac, params });
-  }, [cusac, setcusac]);
+    return forbidControls({ cusac2, setcusac2, params });
+  }, [cusac2, setcusac2]);
   const downParams = useRef();
   const getData = async ({ current, pageSize }, formData) => {
     try {
@@ -158,30 +164,55 @@ export default function Index() {
   const onOk = async () => {
     try {
       let values = await newform.validateFields();
-      const { schemeName, scenes, ...rest } = values;
-      scenes.forEach((element) => {
-        let { tasks, sName } = element;
+      console.log(values)
+     
+      const { schemeName,projectId,creater, section,timings,forbidControls, esaving,   } = values;
+      const {cold, hight, ...erest} = esaving
+      const strategies ={
+        controls: [{
+           section: section.map(s => {
+            let {checked, date, ...rest} = s
+             return {
+               dtStart:date?.[0]?.format?.("YYYY-MM-DD"),
+               dtEnd:date?.[1]?.format?.("YYYY-MM-DD"),
+               ...rest
+             }
+           }),
+           timings: timings.map(t=> {
+            const {temperature, time, ...ret} =t
+             return {
+               temperature: Array.isArray(temperature) ? temperature?.[0] : temperature,
+               time: time?.format?.("HH:mm"),
+               ...ret
+             }
+           }),
+           forbidControls: forbidControls.map(f=> {
+             const {type, time} = f
+             return {
+               type,
+               dtStart: time?.[0]?.format?.("HH:mm"),
+               dtEnd: time?.[1]?.format?.("HH:mm")
+             }
 
-        let task = tasks.map(
-          ({ timing, excueTime, excueTime2, light, ...rest }, index) => ({
-            taskName: `时间点${index + 1}`,
-            excueTime:
-              rest.timeType == 0
-                ? `${excueTime}|${timing}`
-                : excueTime2?.format?.("HH:mm"),
-            brightness: light,
-            ...rest,
-          })
-        );
-        delete element.sName;
-        element.tasks = task;
-        element.sceneName = sName;
-      });
+           })
+        }],
+        esaving: {
+          coldLower: cold?.[0],
+          coldUpper: cold?.[1],
+          hotLower:hight?.[0],
+          hotUpper:hight?.[1],
+          ...erest,
+
+        },
+
+      }
       let params = {
-        schemeName,
-        scenes: JSON.stringify(scenes),
-        ...rest,
+          projectId,
+          creater,
+          schemeName,
+          strategies: JSON.stringify(strategies)
       };
+     
       let hander = [useAdd, useUpdate, useAdd][isadd];
       let { success, errMsg } = await hander({}, params);
       if (success) {
@@ -317,7 +348,7 @@ export default function Index() {
           colon={false}
         >
           <Scene>
-            <div className="scname">
+            <div className="scname" key="scname">
               <Form.Item
                 label="方案名称"
                 name="schemeName"
@@ -327,8 +358,8 @@ export default function Index() {
                 <Input placeholder="请输入" style={w255}></Input>
               </Form.Item>
             </div>
-            <div className="mainbox">
-              <div className="leftlayout">
+            <div className="mainbox" key="maibox">
+              <div className="layout" key="leftlayout">
                 {sectionItems}
                 {timingsItems}
                 {forbidControlsItems} 
@@ -342,6 +373,10 @@ export default function Index() {
                   <Input hidden></Input>
                 </Form.Item>
               </div>
+              <div className="layout" key="rightlayout">
+              {esaving}
+              </div>
+             
             </div>
           </Scene>
         </Form>

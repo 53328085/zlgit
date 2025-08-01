@@ -4,13 +4,13 @@ export const { usePage } = new Apimethod( //查询  空调控制方案
     "post",
     "Conditioner/AirConditionerScheme/Page"
   );
-  export const { useAdd} = new Apimethod( //新增  控制方案
+  export const { useAdd} = new Apimethod( //新增  空调控制方案
     "post",
-    "Light/StreetLightScheme/Add"
+    "Conditioner/AirConditionerScheme/Add"
   );
   export const { useUpdate} = new Apimethod( //编辑  控制方案
     "post",
-    "Light/StreetLightScheme/Update"
+    "Conditioner/AirConditionerScheme/Update"
   );
   export const { useDelete} = new Apimethod( //删除  控制方案
     "delete",
