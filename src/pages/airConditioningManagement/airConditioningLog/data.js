@@ -4,26 +4,26 @@ const { Link } = Typography
 export const Radio_Options = [
   {
     label: "自动控制",
-    value: 1,
+    value: 0,
   },
-  { label: "手动控制", value: 2 },
+  { label: "手动控制", value: 1 },
 ];
 //空调方案
 export const AirScheme = [
   {
-    value: 1,
+    value: 0,
     label: "全部",
   },
   {
-    value: 2,
+    value: 1,
     label: "会议室空调方案",
   },
   {
-    value: 3,
+    value: 2,
     label: "展厅空调方案",
   },
   {
-    value: 4,
+    value: 3,
     label: "产线空调方案",
   },
 ];
@@ -31,10 +31,10 @@ export const AirScheme = [
 export const incontrol = [
   {
     label: "全部",
-    value: 1,
+    value: 0,
   },
-  { label: "成功", value: 2 },
-  { label: "失败", value: 3 },
+  { label: "成功", value: 1 },
+  { label: "失败", value: 2 },
 ];
 
 export const Init_Value = {
@@ -52,32 +52,38 @@ export const AirManualControlTableColumns = [
   },
   {
     title: "通信地址",
-    dataIndex: "address",
-    key: "address",
+    dataIndex: "csn",
+    key: "csn",
     align: "center",
   },
   {
     title: "安装地址",
-    dataIndex: "location",
-    key: "location",
+    dataIndex: "address",
+    key: "address",
   },
   {
     title: "操作类型",
-    dataIndex: "operation",
-    key: "operation",
+    dataIndex: "ioName",
+    key: "ioName",
   },
   {
     title: "模式",
-    dataIndex: "mode",
-    key: "mode",
-  }, {
+    dataIndex: "workModeName",
+    key: "workModeName",
+  },
+  {
+    title: "风速",
+    dataIndex: "windSpeedName",
+    key: "windSpeedName",
+  },
+  {
     title: "空调温度（℃）",
-    dataIndex: "temp",
-    key: "temp",
+    dataIndex: "temperature",
+    key: "temperature",
   }, {
     title: "当前室内温度（℃）",
-    dataIndex: "currentTemp",
-    key: "currentTemp",
+    dataIndex: "ambientTemp",
+    key: "ambientTemp",
   },
   {
     title: "操作人",
@@ -86,16 +92,16 @@ export const AirManualControlTableColumns = [
   },
   {
     title: "控制状态",
-    dataIndex: "status",
-    key: "status",
+    dataIndex: "resultDesc",
+    key: "resultDesc",
     render: (_, record) => {
-      return (<span style={{ color: record.status == '失败' ? '#ff0000fe' : '' }}>{record.status}</span>)
+      return (<span style={{ color: record.resultDesc == '失败' ? '#ff0000fe' : '' }}>{record.resultDesc}</span>)
     }
   },
   {
     title: "操作时间",
-    dataIndex: "time",
-    key: "time",
+    dataIndex: "createTime",
+    key: "createTime",
   },
 ];
 
@@ -109,55 +115,61 @@ export const AirAutomaticControlTableColumns =
     },
     {
       title: "通信地址",
-      dataIndex: "address",
-      key: "address",
+      dataIndex: "csn",
+      key: "csn",
       align: "center",
     },
     {
       title: "安装地址",
-      dataIndex: "location",
-      key: "location",
+      dataIndex: "address",
+      key: "address",
     },
     {
       title: "操作类型",
-      dataIndex: "operation",
-      key: "operation",
+      dataIndex: "ioName",
+      key: "ioName",
     },
     {
       title: "模式",
-      dataIndex: "mode",
-      key: "mode",
-    }, {
+      dataIndex: "workModeName",
+      key: "workModeName",
+    },
+    {
+      title: "风速",
+      dataIndex: "windSpeedName",
+      key: "windSpeedName",
+    },
+    {
       title: "空调温度（℃）",
-      dataIndex: "temp",
-      key: "temp",
+      dataIndex: "temperature",
+      key: "temperature",
     }, {
       title: "当前室内温度（℃）",
-      dataIndex: "currentTemp",
-      key: "currentTemp",
+      dataIndex: "ambientTemp",
+      key: "ambientTemp",
     },
     {
       title: "空调方案",
-      dataIndex: "operator",
-      key: "operator",
+      dataIndex: "sourceName",
+      key: "sourceName",
       render: (_, record) => {
         return (
-          <Link onClick={() => OpenAirScheme(record)}>{record.operator}</Link>
+          <Link onClick={() => OpenAirScheme(record)}>{record.sourceName}</Link>
         )
       }
     },
     {
       title: "控制状态",
-      dataIndex: "status",
-      key: "status",
+      dataIndex: "resultDesc",
+      key: "resultDesc",
       render: (_, record) => {
-        return (<span style={{ color: record.status == '失败' ? '#ff0000fe' : '' }}>{record.status}</span>)
+        return (<span style={{ color: record.resultDesc == '失败' ? '#ff0000fe' : '' }}>{record.resultDesc}</span>)
       }
     },
     {
       title: "操作时间",
-      dataIndex: "time",
-      key: "time",
+      dataIndex: "createTime",
+      key: "createTime",
     },
   ];
 

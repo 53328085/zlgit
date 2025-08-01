@@ -127,7 +127,7 @@ export default function Index() {
     getAirSearch(params)
   }, [projectId, treeId])
   return (
-    <Pagecount bgcolor="transparent" pd="0 0 0 0">
+    <Pagecount pd="0 0 16px 0" bgcolor="none">
       <Container>
         <div className="tree-box">
           <UseTree
