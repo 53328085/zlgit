@@ -8,25 +8,6 @@ export const Radio_Options = [
   },
   { label: "手动控制", value: 1 },
 ];
-//空调方案
-export const AirScheme = [
-  {
-    value: 0,
-    label: "全部",
-  },
-  {
-    value: 1,
-    label: "会议室空调方案",
-  },
-  {
-    value: 2,
-    label: "展厅空调方案",
-  },
-  {
-    value: 3,
-    label: "产线空调方案",
-  },
-];
 //控制状态
 export const incontrol = [
   {

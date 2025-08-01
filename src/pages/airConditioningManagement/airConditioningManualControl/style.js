@@ -89,23 +89,31 @@ export const CardBox = styled.div`
         }
         }
        }
+        .airOffline{
+          background: linear-gradient(227deg, rgb(242 244 252) 0%, rgb(230 234 234) 0%, rgb(61 60 60) 100%, rgb(236 237 238) 100%);
+          color: #fff;
+
+        }
+         .airAlarm{
+            background: linear-gradient(227deg, rgb(220 156 161) 0%, rgb(246 65 65) 0%, rgb(243 199 199) 100%, rgb(230 177 177) 100%);
+            color: #fff;
+        }
    .airCardCold{
        color: #FFFFFF;
-       background: linear-gradient(180deg, rgba(0, 51, 204, 1) 0%, rgba(0, 51, 204, 1) 0%, rgba(51, 204, 255, 1) 100%, rgba(51, 204, 255, 1) 100%);
-   }
+       background: linear-gradient(180deg, rgb(64 102 216) 0%, rgb(16 161 248) 0%, rgb(126 202 227) 100%, rgb(151 205 221) 100%);
    .airCardHot{
        color: #FFFFFF;
-       background: linear-gradient(180deg, rgba(0, 51, 204, 1) 0%, rgba(255, 150, 1, 1) 0%, rgba(243, 203, 116, 1) 81%, rgba(255, 201, 109, 1) 100%);
+       background: linear-gradient(180deg, rgb(228 231 239) 0%, rgb(223 219 5) 0%, rgb(248 205 109) 81%, rgba(255, 201, 109, 1) 100%);
    }
    .airCardWindy{
-       background: linear-gradient(180deg, rgba(163, 255, 231, 1) 0%, rgba(247, 247, 247, 1) 100%);
+       background: linear-gradient(180deg, rgb(176 255 163) 0%, rgba(247, 247, 247, 1) 100%);
    }
    .airCardDehumidification{
-       background: linear-gradient(180deg, rgba(240, 179, 181, 1) 0%, rgba(247, 247, 247, 1) 100%);
+           background: linear-gradient(180deg, rgb(138 170 187) 0%, rgba(247, 247, 247, 1) 100%);
    }
     .closeAir{
        color: #5D5D5D;
-       background: linear-gradient(180deg, rgba(218, 218, 218, 1) 0%, rgba(247, 247, 247, 1) 100%);
+           background: linear-gradient(180deg, rgb(239 238 238) 0%, rgba(247, 247, 247, 1) 100%);
    }
    }
 `;

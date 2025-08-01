@@ -81,9 +81,8 @@ export const Mainwrap = styled.div`
            }
             .con{
            margin-left: 8px;
-           height: 28px;
            line-height: 28px;
-
+           white-space: pre-line;
            }
            }
        }

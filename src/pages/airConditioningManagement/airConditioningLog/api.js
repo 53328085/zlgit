@@ -8,11 +8,11 @@ export const { useDetail } = new Apimethod( //控制日志-空调方案
   "post",
   "Conditioner/AirConditionerAutoControl/Detail"
 );
-export const { useList } = new Apimethod( //自动控制
+export const { useList } = new Apimethod( ///控制日志-获取空调方案
   "get",
   "Conditioner/AirConditionerAutoControl/List"
 );
-export const { useSetControl } = new Apimethod( //控制日志--重新控制
+export const { useSetReControl } = new Apimethod( //控制日志--重新控制
   "post",
-  "Conditioner/AirConditionerManualControl/SetControl"
+  "Conditioner/AirConditionerAnalysis/SetReControl"
 );

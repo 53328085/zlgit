@@ -28,6 +28,12 @@ export default function Index() {
   const [checkAll, setCheckAll] = useState(false);
   const [searchParams, setSearchParams] = useState({})
   const [controlParams, setControlParams] = useState({})
+  // 设备状态常量
+  const DEVICE_STATE = {
+    OFFLINE: 1,     // 离线
+    ONLINE: 2,      // 在线
+    ALARM: 3        // 告警
+  };
   const onValuesChangeSearch = (values, allValues) => {
     setSearchParams(allValues)
   }
@@ -57,24 +63,34 @@ export default function Index() {
     setSelectedAirs(newSelected);
     updateMasterCheckboxState(newSelected);
   };
-
+  // 获取所有在线设备ID
+  const getOnlineDeviceIds = () => {
+    return airData
+      .filter(device => (device.state === DEVICE_STATE.ONLINE || device.state === DEVICE_STATE.ALARM))
+      .map(device => device.id);
+  };
   // 处理全选/取消全选
   const handleSelectAll = e => {
     const checked = e.target.checked;
+    const onlineIds = getOnlineDeviceIds();
     const allIds = airData.map(airItem => airItem.cSn);
 
-    setSelectedAirs(checked ? allIds : []);
+    setSelectedAirs(checked ? onlineIds : []);
     setCheckAll(checked);
     setIndeterminate(false);
   };
 
   // 更新全选复选框状态
   const updateMasterCheckboxState = (currentSelected) => {
-    const total = airData.length;
+    const onlineIds = getOnlineDeviceIds();
+    const onlineCount = onlineIds.length;
     const selectedCount = currentSelected.length;
-
-    setCheckAll(selectedCount === total);
-    setIndeterminate(selectedCount > 0 && selectedCount < total);
+    setCheckAll(onlineCount > 0 && selectedCount === onlineCount);
+    setIndeterminate(selectedCount > 0 && selectedCount < onlineCount);
+    // const total = airData.length;
+    // const selectedCount = currentSelected.length;
+    // setCheckAll(selectedCount === total);
+    // setIndeterminate(selectedCount > 0 && selectedCount < total);
   };
   const onOkControl = async () => {
     try {
@@ -82,7 +98,7 @@ export default function Index() {
         projectId,
         ioState: controlParams.ioState ? controlParams.ioState : 1,
         workMode: controlParams.workMode ? controlParams.workMode : 1,
-        windSpeed: controlParams.windSpeed ? controlParams.windSpeed : 0,
+        windSpeed: controlParams.windSpeed ? controlParams.windSpeed : 5,
         temperature: controlParams.temperature ? controlParams.temperature : 24,
         csn: selectedAirs
       }
@@ -104,8 +120,8 @@ export default function Index() {
       let { data, success, errMsg } = await useList({}, params)
       if (success) {
         setAirData(Array.isArray(data.details) ? data.details : [])
-        setOpenNum(data.closeNum)
-        setCloseNum(data.openNum)
+        setOpenNum(data.openNum)
+        setCloseNum(data.closeNum)
       } else {
         message.error(errMsg);
         setAirData([])
@@ -172,39 +188,91 @@ export default function Index() {
             {airData?.length != 0 ?
               <div className="airBox">
                 {airData?.map?.(airItem =>
-                  <div
-                    key={airItem.id}
-                    size="small"
-                    className={
-                      `${(airItem.fields[0].value == '制冷' && airItem.ioState == 1)
-                        ? 'airCardCold' : (airItem.fields[0].value == '制热' && airItem.ioState == 1)
-                          ? 'airCardHot' : (airItem.fields[0].value == '送风' && airItem.ioState == 1)
-                            ? 'airCardWindy' : (airItem.fields[0].value == '除湿' && airItem.ioState == 1)
-                              ? 'airCardDehumidification' : 'closeAir'} cardCommon`}>
-                    <div style={{
-                      display: 'flex', justifyContent: 'space-between', color: ((airItem.fields[0].value == '制冷'
-                        || airItem.fields[0].value == '制热') && airItem.state == 1) ? '#fff' : ''
-                    }} >
-                      <div className="top">
-                        <Checkbox
-                          checked={selectedAirs.includes(airItem.cSn)}
-                          onChange={e => handleSingleSelect(airItem.cSn, e.target.checked)}
-                        />
-                        <div className="topInfo">
-                          <div className="address">{airItem.name}</div>
-                          <div className="sn"> ({airItem.cSn})</div>
+                  <div>
+                    {airItem.state == 2 ?
+                      <div
+                        key={airItem.id}
+                        size="small"
+                        className={
+                          `${(airItem?.fields[0]?.value == '制冷' && airItem.ioState == 1)
+                            ? 'airCardCold' : (airItem?.fields[0]?.value == '制热' && airItem.ioState == 1)
+                              ? 'airCardHot' : (airItem?.fields[0]?.value == '送风' && airItem.ioState == 1)
+                                ? 'airCardWindy' : (airItem?.fields[0]?.value == '除湿' && airItem.ioState == 1)
+                                  ? 'airCardDehumidification' : 'closeAir'} cardCommon`}>
+                        <div style={{
+                          display: 'flex', justifyContent: 'space-between', color: ((airItem?.fields[0]?.value == '制冷'
+                            || airItem?.fields[0]?.value == '制热') && airItem.state == 1) ? '#fff' : ''
+                        }} >
+                          <div className="top">
+                            <Checkbox
+                              checked={selectedAirs.includes(airItem.cSn)}
+                              onChange={e => handleSingleSelect(airItem.cSn, e.target.checked)}
+                            />
+                            <div className="topInfo">
+                              <div className="address">{airItem.name}</div>
+                              <div className="sn"> ({airItem.cSn})</div>
+                            </div>
+                          </div>
+                          <img className="airIcon" src={airItem.type == 1 ? multAir : (airItem.type == 2 || airItem.type == 3) ? splitAir : airItem.type == 4 ? centralAir : null} ></img>
                         </div>
+                        <div className="content">
+                          <span className="temperature" >{airItem.temperature ? `${airItem.temperature}` : ''}</span>℃
+                        </div>
+                        {airItem?.fields?.map(fields =>
+                          <div>{fields.name}：{fields.value || '-'}</div>
+                        )}
                       </div>
-                      <img className="airIcon" src={airItem.type == 1 ? multAir : (airItem.type == 2 || airItem.type == 3) ? splitAir : airItem.type == 4 ? centralAir : null} ></img>
-                    </div>
-                    <div className="content">
-                      <span className="temperature" >{airItem.temperature ? `${airItem.temperature}` : ''}</span>℃
-                    </div>
-                    {airItem?.fields?.map(fields =>
-                      <div>{fields.name}：{fields.value || '-'}</div>
-                    )}
-                  </div>
-                )} </div>
+                      : airItem.state == 1 ?
+                        <div
+                          key={airItem.id}
+                          size="small"
+                          className=
+                          'cardCommon airOffline'>
+                          <div style={{
+                            display: 'flex', justifyContent: 'space-between'
+                          }} >
+                            <div className="top">
+                              {/* <Checkbox
+                              checked={selectedAirs.includes(airItem.cSn)}
+                              onChange={e => handleSingleSelect(airItem.cSn, e.target.checked)}
+                            /> */}
+                              <div className="topInfo">
+                                <div className="address">{airItem.name}</div>
+                                <div className="sn"> ({airItem.cSn})</div>
+                              </div>
+                            </div>
+                            <img className="airIcon" src={airItem.type == 1 ? multAir : (airItem.type == 2 || airItem.type == 3) ? splitAir : airItem.type == 4 ? centralAir : null} ></img>
+                          </div>
+                          <div className="content">
+                            <span className="temperature" >-</span>℃
+                          </div>
+                          <div>空调离线</div>
+                        </div> :
+                        <div
+                          key={airItem.id}
+                          size="small"
+                          className=
+                          'cardCommon airAlarm'>
+                          <div style={{
+                            display: 'flex', justifyContent: 'space-between'
+                          }} >
+                            <div className="top">
+                              <Checkbox
+                                checked={selectedAirs.includes(airItem.cSn)}
+                                onChange={e => handleSingleSelect(airItem.cSn, e.target.checked)}
+                              />
+                              <div className="topInfo">
+                                <div className="address">{airItem.name}</div>
+                                <div className="sn"> ({airItem.cSn})</div>
+                              </div>
+                            </div>
+                            <img className="airIcon" src={airItem.type == 1 ? multAir : (airItem.type == 2 || airItem.type == 3) ? splitAir : airItem.type == 4 ? centralAir : null} ></img>
+                          </div>
+                          <div className="content">
+                            <span className="temperature" >-</span>℃
+                          </div>
+                          <div>空调告警</div></div>
+                    }</div>)} </div>
               : <div style={{ height: '670px', display: 'flex' }}><Cempty tip='暂无数据' /></div>}
 
 

@@ -28,7 +28,7 @@ import {
   incontrol
 } from "./data";
 
-import { usePage, useDetail, useList, useSetControl } from "./api.js";
+import { usePage, useDetail, useList, useSetReControl } from "./api.js";
 import moment from 'moment'
 import { Container, Header } from "./style";
 import UserTable from '@com/useTable'
@@ -91,9 +91,8 @@ const ModalBoX = styled.div`
            }
             .con{
            margin-left: 8px;
-           height: 28px;
            line-height: 28px;
-
+           white-space: pre-line;
            }
            }
        }
@@ -261,15 +260,11 @@ export default function Index(props) {
       tableRefs.current = selectedRows
       selectedRowKeys.current = selectedRowKeys
     },
-    getCheckboxProps: record => ({
-      disabled: record.resultDesc === '成功', // Column configuration not to be checked
-    }),
+    // getCheckboxProps: record => ({
+    //   disabled: record.resultDesc === '成功', // Column configuration not to be checked
+    // }),
   }
   const getAirData = async ({ current, pageSize }, formDate) => {
-
-    console.log(moment(formDate.operatorTime[0]).format('YYYY-MM-DD 00:00:00'))
-    // formDate.operatorTime && formDate.operatorTime[0] ? moment(formDate.operatorTime[0]).format('YYYY-MM-DD 00:00:00') : moment().format('YYYY-MM-DD 00:00:00')
-    console.log(dataSource, "-----AllMeter", formDate)
     pageTotal.current = dataSource.length
     // if (tabId == 0) {
     //   return {
@@ -319,7 +314,7 @@ export default function Index(props) {
     // 这里添加实际业务逻辑
     schemeModalState.current = true
     setSchemeModalItem(record)
-    setSchemeModalId(3)
+    setSchemeModalId(record.schemeId)
     schemeRef.current.onOpen()
   };
   const [controlInfos, setControlInfos] = useState([])
@@ -358,26 +353,34 @@ export default function Index(props) {
   };
 
   const onOkControl = async () => {
-    // try {
-    //   let params = {
-    //     projectId,
-    //     ioState: controlParams.ioState ? controlParams.ioState : 1,
-    //     workMode: controlParams.workMode ? controlParams.workMode : 1,
-    //     windSpeed: controlParams.windSpeed ? controlParams.windSpeed : 0,
-    //     temperature: controlParams.temperature ? controlParams.temperature : 24,
-    //     csn:  selectedRowKeys.current
-    //   }
-    //   let { data, success, errMsg } = await useSetControl({}, params)
-    //   if (success) {
-    //     message.success('所选空调控制成功')
-    //     handleSearchClick()
-    //   } else {
-    //     message.error(errMsg);
-    //   }
-    // } catch {
+    try {
+      const newArray = tableRefs.current.map(item => ({
+        csn: item.csn,
+        ioState: item.ioState ? item.ioState : 1,
+        workMode: item.workMode ? item.workMode : 1,
+        windSpeed: item.windSpeed ? item.windSpeed : 1,
+        temperature: item.temperature
+      }));
+      // let params = {
+      //   ioState: controlParams.ioState ? controlParams.ioState : 1,
+      //   workMode: controlParams.workMode ? controlParams.workMode : 1,
+      //   windSpeed: controlParams.windSpeed ? controlParams.windSpeed : 0,
+      //   temperature: controlParams.temperature ? controlParams.temperature : 24,
+      //   csn: selectedRowKeys.current
+      // }
+      console.log(tableRefs.current, newArray, useSetReControl)
+      let { data, success, errMsg } = await useSetReControl({},
+        { projectId, conditons: newArray })
+      if (success) {
+        message.success('所选空调控制成功')
+        handleSearchClick()
+      } else {
+        message.error(errMsg);
+      }
+    } catch {
 
 
-    // }
+    }
 
     messageApi.open({
       type: 'success',
@@ -542,7 +545,10 @@ export default function Index(props) {
                         </div>
                       </div>
                       <div className="titleName">方案内容</div>
-                      {e.contentInfo.map?.(info => <div className="schemeName"><div className="schemeTitle">{info.content}</div>{info.description}</div>)}
+                      {e.contentInfo.map?.(info => <div className="schemeName">
+                        <div className="schemeTitle">{info.content}</div>
+                        <div className="con">{info.description}</div>
+                      </div>)}
                     </div>)
                   }
                 </div> : <div style={{ height: '300px', display: 'flex' }}><Cempty tip='暂无数据' /></div>}
