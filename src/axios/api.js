@@ -37,6 +37,8 @@ export class Editapi {
     server.post(`/Distribution/DistributionRoomRuntime/AlarmList`, body, {
       params,
     });
+ static QueryEnergyType = (projectId) =>
+      server.get(`/General/ProjectSetting/QueryEnergyType?projectId=${projectId}`);
 }
 // 主题配色
 export class CustTheme {

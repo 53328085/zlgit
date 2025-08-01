@@ -53,7 +53,7 @@ export const Scene = styled.div`
     height: 709px;
     flex: 1;
     overflow-y: auto;
-    .leftlayout {
+    .layout {
       display: flex;
       flex-direction: column;
       row-gap: 12px;
@@ -86,11 +86,40 @@ export const Scene = styled.div`
             }
           }
         }
+        .formbox.bgcolor {
+          background-color: #eef3fa;
+          padding: 16px 8px;
+          margin-bottom: 12px;          
+          .ant-form-item{
+            margin-bottom: 0px;
+            }
+            display: flex;
+           flex-direction: column;
+           row-gap: 12px;
+          .temp {
+            display: flex;
+            align-items: center;
+           
+          }
+        }
         .formbox {
           .ant-form-item{
             margin-bottom: 12px;
           }
         }
+
+        .inwrap {
+          padding: 8px;
+          
+        }
+        &:last-of-type {
+          border-bottom: none;
+        }
+      }
+      .formboxwrap.md8 {
+         margin: 8px;
+         padding: 8px;
+         border:1px solid #dedede;
       }
     }
   }

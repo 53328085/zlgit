@@ -4,7 +4,7 @@ import { Image, Space, Tabs, Typography, Radio } from "antd";
 import styled, { css } from "styled-components";
 import { useOutletContext } from 'react-router-dom'
 import { drawEcharts } from "@com/useEcharts";
-import { EnergyComprehensive } from "@api/api.js"
+import { EnergyComprehensive,Editapi } from "@api/api.js"
 import Titlelayout from "@com/titlelayout";
 import { useSelector } from 'react-redux'
 import { selectOneLevel, adaptation } from '@redux/systemconfig.js'
@@ -586,20 +586,26 @@ export default function Index() {
       </Titlelayout>
     )
   }
+  const [tabs, setTabs] = useState([{ label: "综合能耗", key: 1, }])
+ 
 
-  const tabs = [
-    { label: "综合能耗", key: 1, },
-    { label: "电", key: 2, },
-    { label: "冷水", key: 3 },
-    { label: "热水", key: 4 },
-    /*  { label: "热力", key: 4 },
-     { label: "气体燃料", key: 5 },
-     { label: "液体燃料", key: 6 },
-     { label: "固态燃料", key: 7 },
-     { label: "碳酸盐", key: 8 }, */
-  ];
-
-
+ const getTabs =async ()=> {
+   try {
+    if(!Number.isInteger(parseInt(projectId))) return
+     let {success, data} = await Editapi.QueryEnergyType(projectId)
+     if(success && Array.isArray(data) && data?.length) {
+        let types = data.map( (d,index) => ({label:d.name, key:index+2}))
+        setTabs([{ label: "综合能耗", key: 1}, ...types])
+     }else {
+        setTabs([{ label: "综合能耗", key: 1}])
+     }
+   } catch (error) {
+     console.log(error)
+   }
+ }
+useEffect(()=> {
+  getTabs()
+},[projectId])
   const getData = async ({ areaId, date, dateType, shiftNo, view, projectId }) => {
 
     let id = areaId == 0 ? areaIds?.filter(a => a.id != 0)?.map(a => a.id) : [areaId];

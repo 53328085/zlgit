@@ -112,7 +112,7 @@ export const section =({ cusac, setcusac, params })=> (
   <Form.List name="section" initialValue={[{}]}>
   {(fileds, { add,remove }) => {
     return (
-      <div className="formboxwrap">
+      <div className="formboxwrap" key="section">
         <div className="header">
           <div className="list">
             <div className="tags">
@@ -174,7 +174,7 @@ export const section =({ cusac, setcusac, params })=> (
               <Form.Item label="时间设置" rules={rules} name={[name, "date"]}>
                 <DatePicker.RangePicker></DatePicker.RangePicker>
               </Form.Item> 
-              <Form.Item   name={[name, "type"]}>
+              <Form.Item   name={[name, "type"]} initialValue={1}>
                 <Radio.Group options={timeType}></Radio.Group>
               </Form.Item>
               <Form.Item  noStyle  shouldUpdate={(cur, pre)=>cur.section[name]?.type!=pre.section[name]?.type}>
@@ -193,7 +193,7 @@ export const section =({ cusac, setcusac, params })=> (
                       }
                       if(type==1) {
                         return <Space>
-                          <Form.Item noStyle name={[name,"checked" ]} valuePropName="checked">
+                          <Form.Item  name={[name,"checked" ]} valuePropName="checked">
                              <Checkbox onChange={allchange}>全选</Checkbox>
                           </Form.Item>
                           <Form.Item name={[name, "weeks"]}>
@@ -218,12 +218,12 @@ export const section =({ cusac, setcusac, params })=> (
 </Form.List>
 )
 
-export const timings =({ cusac, setcusac, params })=> (
+export const timings =({ cusac1, setcusac1, params })=> (
   <Form.List name="timings" initialValue={[{}]}>
   {(fileds, { add,remove }) => {
     return (
-      <div className="formboxwrap">
-        <Form.Item name={["timings","open"]}>
+      <div className="formboxwrap" key="timings">
+        <Form.Item name={["timings","eTiming"]}>
           <Checkbox>定时开关</Checkbox>
         </Form.Item>
         <div className="header">
@@ -235,11 +235,11 @@ export const timings =({ cusac, setcusac, params })=> (
                     key={i.key}
                     closable={arr.length !== 1 || arr.length>64}
                     onClose={() => {
-                      setcusac(0)
+                      setcusac1(0)
                       remove(i.name)
                     }}
                    onClick={()=> {
-                    setcusac(i.name)
+                    setcusac1(i.name)
                    }}
                   >
                     <Form.Item
@@ -255,7 +255,7 @@ export const timings =({ cusac, setcusac, params })=> (
                         const name = getFieldValue(["timings", i.name ])?.["type"]===1 ? "开启": "关闭";
                         const time = getFieldValue(["timings", i.name ])?.["time"]?.format?.("HH:mm")||"--";
                           return (
-                            <span className={cusac==i.name ? "active" : ""}>
+                            <span className={cusac1==i.name ? "active" : ""}>
                               {time} {name}
                             </span>
                           );
@@ -275,7 +275,7 @@ export const timings =({ cusac, setcusac, params })=> (
           </Link>
         </div>
         {fileds.map(({key, name, ...rest}) => (
-          <div className="formbox" style={{ columnGap: "64px", display: name==cusac? "" : "none"}} key={key}> 
+          <div className="formbox" style={{ columnGap: "64px", display: name==cusac1? "" : "none"}} key={key}> 
               <Form.Item label="定时任务"   name={[name, "type"]} initialValue={1}>
                  <Radio.Group options={timingopt} optionType="button"  buttonStyle="solid"></Radio.Group>
               </Form.Item>
@@ -292,7 +292,7 @@ export const timings =({ cusac, setcusac, params })=> (
                   <InputNumber min={15} max={35} addonAfter="℃" style={w255} ></InputNumber>
               </Form.Item>
               <Form.Item label=" " name={[name, "temperature"]}>
-                  <Slider min={15} max={35} range={{draggableTrack: true}} style={w255} />
+                  <Slider min={15} max={35} range={{draggableTrack: true}}  style={w255} />
               </Form.Item>
                       
             
@@ -304,12 +304,12 @@ export const timings =({ cusac, setcusac, params })=> (
 </Form.List>
 )
 
-export const forbidControls =({ cusac, setcusac, params })=> (
+export const forbidControls =({ cusac2, setcusac2, params })=> (
   <Form.List name="forbidControls" initialValue={[{}]}>
   {(fileds, { add,remove }) => {
     return (
-      <div className="formboxwrap">
-        <Form.Item name={["forbidControls","open"]}>
+      <div className="formboxwrap" key="forbidControls">
+        <Form.Item name={["forbidControls","eForbid"]}>
           <Checkbox>禁止开关</Checkbox>
         </Form.Item>
         <div className="header">
@@ -321,30 +321,33 @@ export const forbidControls =({ cusac, setcusac, params })=> (
                     key={i.key}
                     closable={arr.length !== 1 || arr.length>64}
                     onClose={() => {
-                      setcusac(0)
+                      setcusac2(0)
                       remove(i.name)
                     }}
                    onClick={()=> {
-                    setcusac(i.name)
+                    setcusac2(i.name)
                    }}
                   >
                     <Form.Item
                       noStyle
                       shouldUpdate={(cur, pre) => {
-
-                      //  let curtime=  cur["formboxwrap"]?.[i.name]?.["time"]
-                       // let pretime = pre["formboxwrap"]?.[i.name]?.["time"]
-                        console.log(pre["forbidControls"]?.[i.name])
-                        return  (cur["forbidControls"]?.[i.name]?.["type"] !=pre["forbidControls"]?.[i.name]?.["type"]) 
+                       let curtime=  cur["forbidControls"]?.[i.name]?.["time"]
+                      let pretime = pre["forbidControls"]?.[i.name]?.["time"]
+                       let equality = curtime?.[0]?.format?.("HH:mm")!=pretime?.[0]?.format?.("HH:mm") || curtime?.[1]?.format?.("HH:mm")!=pretime?.[1]?.format?.("HH:mm")
+                        return  (cur["forbidControls"]?.[i.name]?.["type"] !=pre["forbidControls"]?.[i.name]?.["type"]) || equality
                         
                       }}
                     >
                       {({ getFieldValue }) => {
                         const name = getFieldValue(["forbidControls", i.name ])?.["type"]===1 ? "禁止启动": "禁止关闭";
-                        const time ="--"   // getFieldValue(["formboxwrap", i.name ])?.["time"]?.format("HH:mm")||"--";
+                        const time =getFieldValue(["forbidControls", i.name ])?.["time"] 
+                        console.log(time)
+                        const time1 = time?.[0]?.format("HH:mm") || "--"
+                         const time2 = time?.[1]?.format("HH:mm") || "--"
+                         const text = time1+'-'+time2
                           return (
-                            <span className={cusac==i.name ? "active" : ""}>
-                              {time} {name}
+                            <span className={cusac2==i.name ? "active" : ""}>
+                              {text} {name}
                             </span>
                           );
                         
@@ -363,7 +366,7 @@ export const forbidControls =({ cusac, setcusac, params })=> (
           </Link>
         </div>
         {fileds.map(({key, name, ...rest}) => (
-          <div className="formbox" style={{ columnGap: "64px", display: name==cusac? "" : "none"}} key={key}> 
+          <div className="formbox" style={{ columnGap: "64px", display: name==cusac2? "" : "none"}} key={key}> 
               <Form.Item label="禁止状态"   name={[name, "type"]} initialValue={1}>
                  <Radio.Group options={forbidopt} optionType="button"  buttonStyle="solid"></Radio.Group>
               </Form.Item>
@@ -376,4 +379,60 @@ export const forbidControls =({ cusac, setcusac, params })=> (
     );
   }}
 </Form.List>
+)
+/* 
+"tempAllow": true,  // 温度限制
+        "coldLower": 18, 制冷
+        "coldUpper": 29,
+        "hotLower": 10,制热
+        "hotUpper": 16,
+
+        "airTemperatureColse": true, // 合理控温
+        "lowTemp": 10, 低于
+        "highTemp": 10 高于
+
+*/
+const marks = {
+  15: '15',
+  35: '35',
+   
+};
+const w60={
+  width: "60px"
+}
+export const esaving = (
+      <div className="formboxwrap" key="esaving">
+        <div className="header">注：节能策略设置用于节能电量统计，请根据实际情况合理设置。
+        </div>
+        <div className="formboxwrap md8">
+        <Form.Item name={["esaving","tempAllow"]} valuePropName="checked" initialValue={false}>
+          <Checkbox>温度限制</Checkbox>
+        </Form.Item> 
+          <div className="formbox bgcolor" > 
+              <Form.Item label="空调处于制冷模式时，温度上下限（℃）" labelCol={{flex:"20em"}}   name={["esaving","cold"]}  initialValue={[15, 35]}>
+                 <Slider marks={marks}    range={{draggableTrack: true}} min={15} max={35}  />
+              </Form.Item>
+              <Form.Item label="空调处于制热模式时，温度上下限（℃）" labelCol={{flex:"20em"}} name={["esaving","hight"]}  initialValue={[15, 35]} >
+              <Slider marks={marks}   range={{draggableTrack: true}} min={15} max={35}  />
+              </Form.Item>             
+          </div>
+          <Form.Item name={["esaving","airTemperatureColse"]} valuePropName="checked" initialValue={false}><Checkbox>合理控温</Checkbox></Form.Item> 
+        <div className="formbox bgcolor"  >
+             <div className="temp"  >
+              <span>当室外(内)温度低于</span>
+             <Form.Item  name={["esaving","lowTemp"]}  >
+                 <InputNumber min={0} style={w60} />
+              </Form.Item>
+              <span>℃,且空调处于制冷模式，自动关闭空调。</span>
+              </div> 
+              <div className="temp">
+              <span>当室外(内)温度高于</span>
+             <Form.Item    name={["esaving","highTemp"]}  >
+                 <InputNumber min={0} style={w60}  />
+              </Form.Item>
+              <span>℃,且空调处于制热模式，自动关闭空调。</span>
+              </div>            
+          </div>
+          </div>
+      </div>
 )
