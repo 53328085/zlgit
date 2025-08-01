@@ -1,10 +1,4 @@
 export const schemeNameData = ["温度上下限", "无人关闭", "超时关闭", "关窗提醒", "合理控温"]
-export const airTypeOptions = [
-  { label: "全部", value: 0 },
-  { label: "分体式空调", value: 1 },
-  { label: "多联机空调", value: 3 },
-  { label: "中央空调面板", value: 4 },
-];
 export const cols = [
   {
     title: "园区名称",
@@ -45,7 +39,6 @@ export const cols = [
     title: "空调类型",
     dataIndex: "typeName",
     key: "typeName",
-    render: (type) => airTypeOptions.find((a) => a.value == type)?.label,
   },
   {
     title: "备注",

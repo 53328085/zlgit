@@ -119,7 +119,6 @@ export default function Index(props) {
   const projectId = useSelector(selectProjectId)
   const tableRef = useRef()
   const tableRefs = useRef([])
-  const selectedRowKeys = useRef([])
   const schemeRef = useRef()
   const controlRef = useRef();
   const pageTotal = useRef()
@@ -133,106 +132,6 @@ export default function Index(props) {
     label: "全部",
   }]); 0
   const schemeModalState = useRef(false); // 记录是否是第一次打开
-  const dataSource = [
-    {
-      key: '1',
-      name: '101会议室空调',
-      csn: '202303000121',
-      address: '1号楼203',
-      ioName: '开',
-      workModeName: '制冷',
-      windSpeedName: '自动',
-      temperature: 26,
-      ambientTemp: 26,
-      sourceName: '方案1',
-      resultDesc: '成功',
-      time: '20250101 00:00:00',
-      app: '泰极付'
-    }, {
-      key: '2',
-      name: '101会议室空调',
-      csn: '202303000121',
-      address: '1号楼203',
-      ioName: '开',
-      workModeName: '制冷',
-      windSpeedName: '自动',
-      temperature: 26,
-      ambientTemp: 26,
-      sourceName: '方案2',
-      resultDesc: '成功',
-      time: '20250101 00:00:00',
-      app: '正泰电务'
-    }, {
-      key: '3',
-      name: '101会议室空调',
-      csn: '202303000121',
-      address: '1号楼203',
-      ioName: '开',
-      workModeName: '制冷',
-      windSpeedName: '中速',
-      temperature: 26,
-      ambientTemp: 26,
-      sourceName: '方案3',
-      resultDesc: '失败',
-      time: '20250101 00:00:00',
-      app: '泰极电务'
-    },
-  ]
-  const dataSource2 = [
-    {
-      key: 1,
-      name: '101会议室空调',
-      csn: '202303000121',
-      address: '1号楼203',
-      ioName: '开',
-      workModeName: '制冷',
-      windSpeedName: '高速',
-      temperature: 26,
-      ambientTemp: 26,
-      sourceName: '方案1',
-      resultDesc: '成功',
-      time: '20250101 00:00:00'
-    }, {
-      key: 2,
-      name: '101会议室空调',
-      csn: '202303000121',
-      address: '1号楼203',
-      ioName: '开',
-      workModeName: '制冷',
-      windSpeedName: '自动',
-      temperature: 26,
-      ambientTemp: 26,
-      sourceName: '方案2',
-      resultDesc: '成功',
-      time: '20250101 00:00:00'
-    }, {
-      key: 3,
-      name: '101会议室空调',
-      csn: '202303000121',
-      address: '1号楼203',
-      ioName: '开',
-      workModeName: '制冷',
-      windSpeedName: '自动',
-      temperature: 26,
-      ambientTemp: 26,
-      sourceName: '方案3',
-      resultDesc: '失败',
-      time: '20250101 00:00:00'
-    }, , {
-      key: 4,
-      name: '101会议室空调',
-      csn: '202303000121',
-      address: '1号楼203',
-      ioName: '关',
-      workModeName: '制冷',
-      windSpeedName: 'dis3',
-      temperature: 27,
-      ambientTemp: 26,
-      sourceName: '方案4',
-      resultDesc: '失败',
-      time: '20250101 00:00:00'
-    },
-  ]
   const [rangerTime, setRangerTime] = useState([moment().subtract(2, 'months'), moment()])
   const airNameChange = () => {
 
@@ -265,22 +164,11 @@ export default function Index(props) {
     // }),
   }
   const getAirData = async ({ current, pageSize }, formDate) => {
-    pageTotal.current = dataSource.length
-    // if (tabId == 0) {
-    //   return {
-    //     list: dataSource,
-    //     total: dataSource.length,
-    //   }
-    // } else if (tabId == 1) {
-    //   return {
-    //     list: dataSource2,
-    //     total: dataSource2.length,
-    //   }
-    // }
     try {
       let params = {
         pageNum: current,
-        pageSize, projectId,
+        pageSize,
+        projectId,
         type: tabId,
         name: formDate.name,
         schemeId: formDate.scheme,
@@ -368,12 +256,12 @@ export default function Index(props) {
       //   temperature: controlParams.temperature ? controlParams.temperature : 24,
       //   csn: selectedRowKeys.current
       // }
-      console.log(tableRefs.current, newArray, useSetReControl)
       let { data, success, errMsg } = await useSetReControl({},
         { projectId, conditons: newArray })
       if (success) {
+        let values = searchForm.getFieldsValue();
+        run({ current: 1, pageSize: 20 }, values)
         message.success('所选空调控制成功')
-        handleSearchClick()
       } else {
         message.error(errMsg);
       }
@@ -381,15 +269,9 @@ export default function Index(props) {
 
 
     }
-
-    messageApi.open({
-      type: 'success',
-      content: '成功！',
-    })
     controlRef.current.onCancel()
   }
   const getSchemeList = async () => {
-    console.log(useList, useDetail)
     try {
       let alike = ''
       let { success, data, errMsg } = await useList({
@@ -428,8 +310,36 @@ export default function Index(props) {
   })
   const { submit } = search
   const onExport = useCallback(() => {
-    return getAirData({ current: 1, pageSize: pageTotal.current })
-  }, [])
+    const formDate = searchForm.getFieldValue()
+    let params = {
+      pageNum: 1,
+      pageSize: pageTotal.current,
+      projectId,
+      type: tabId,
+      name: formDate.name,
+      schemeId: formDate.scheme,
+      operater: formDate.operator,
+      ioState: formDate.status,
+      dtSatrt: formDate.operatorTime && formDate.operatorTime[0] ? moment(formDate.operatorTime[0]).format('YYYY-MM-DD 00:00:00') : moment().format('YYYY-MM-DD 00:00:00'),
+      dtEnd: formDate.operatorTime && formDate.operatorTime[1] ? moment(formDate.operatorTime[1]).format('YYYY-MM-DD 00:00:00') : moment().format('YYYY-MM-DD 00:00:00'),
+    }
+    return usePage({}, params).then((res) => {
+
+      let { success, data, total } = res;
+      if (success && Array.isArray(data)) {
+        return {
+          list: data,
+          total,
+        };
+      } else {
+        if (!success) message.warning(errMsg || "接口出错");
+        return {
+          list: [],
+          total: 0,
+        };
+      }
+    });
+  }, [pageTotal.current])
   useEffect(() => {
     getSchemeList();
   }, [])
@@ -503,7 +413,6 @@ export default function Index(props) {
               </Item>
             </Space>
           </Form>
-          <Cdivider type="h" />
           <div className='control'>
             <BlueColumn bg={{ height: 13, width: 3 }}
               name={tabId == 0 ? '空调自动控制记录' : '空调手动控制记录'}></BlueColumn>

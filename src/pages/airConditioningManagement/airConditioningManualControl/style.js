@@ -41,7 +41,7 @@ export const CardBox = styled.div`
   .watchNum{
    display: flex;
    justify-content: space-between;
-   margin-bottom: 16px;
+   margin: 16px 0px;
   }
    .airBox{    
     height: 680px;
@@ -90,8 +90,8 @@ export const CardBox = styled.div`
         }
        }
         .airOffline{
-          background: linear-gradient(227deg, rgb(242 244 252) 0%, rgb(230 234 234) 0%, rgb(61 60 60) 100%, rgb(236 237 238) 100%);
-          color: #fff;
+            background: linear-gradient(227deg, rgb(227 228 233) 0%, rgb(217 218 218) 0%, rgb(157 153 153) 100%, rgb(236 237 238) 100%);
+            color: #fff;
 
         }
          .airAlarm{

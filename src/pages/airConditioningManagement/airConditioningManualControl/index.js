@@ -5,7 +5,6 @@ import { Container, CardBox } from "./style";
 import { Tabs, Tabs2 } from "./searchHead"
 import { Form, message, Checkbox } from "antd";
 import BlueColumn from '@com/bluecolumn'
-import { Cspin, Cdivider } from "@com/comstyled"
 import Cempty from '@com/useEmpty'
 import CModal from "@com/useModal";
 import { useSelector } from "react-redux"
@@ -172,7 +171,6 @@ export default function Index() {
                 form={formControl}      // 确保其他需要的props
                 onValuesChangeControl={onValuesChangeControl} // 确保其他需要的props 
               /></div>
-            <Cdivider type="h" margin="10px 0px" />
             <div className="watchNum"> <div>
               <Checkbox
                 indeterminate={indeterminate}
