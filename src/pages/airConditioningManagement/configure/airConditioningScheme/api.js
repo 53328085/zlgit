@@ -14,7 +14,7 @@ export const { usePage } = new Apimethod( //查询  空调控制方案
   );
   export const { useDelete} = new Apimethod( //删除  控制方案
     "delete",
-    "Light/StreetLightScheme/Delete"
+    "Conditioner/AirConditionerScheme/Delete"
   );
   export const { useUnBindLight} = new Apimethod( // 方案解除绑定路灯
     "post",
