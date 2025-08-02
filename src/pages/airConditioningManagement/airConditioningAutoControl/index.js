@@ -7,7 +7,7 @@ import UserTable from "@com/useTable";
 import Titlelayout from "@com/titlelayout";
 import BlueColumn from '@com/bluecolumn'
 import Cempty from '@com/useEmpty'
-import { cols, schemeNameData } from "./data";
+import { cols } from "./data";
 
 import { useList, useDetail } from "./api.js";
 
@@ -45,20 +45,20 @@ export default function Index() {
           total: 0
         }
       }
-      let { data, success, total } = await useDetail({}, { projectId, schemeId, pageNum: current, pageSize })
+      let { data, success } = await useDetail({}, { projectId, schemeId, pageNum: current, pageSize })
       if (success && Array.isArray(data) && data.length) {
         setControlInfos(Array.isArray(data[0].controlInfos) ? data[0].controlInfos : [])
         setSavingInfo(Array.isArray(data[0].savingInfo) ? data[0].savingInfo : [])
         return {
           list: Array.isArray(data[0].airConditionerInfo) ? data[0].airConditionerInfo : [],
-          total
+          total: data[0].airConditionerInfo.length
         }
       } else {
         setControlInfos([])
         setSavingInfo([])
         return {
           list: [],
-          total
+          total: 0
         }
 
       }
