@@ -139,7 +139,12 @@ export const section = ({
                       key={i.key}
                       closable={arr.length !== 1 || arr.length > 64}
                       onClose={() => {
-                        setcusac(0);
+                     
+                       let active = fileds.filter(f=>f.name!=i.name)?.[0]?.name 
+                   
+                        setcusac(active);
+                        setcusac1({[active]:0})
+                        setcusac2({[active]:0})
                         remove(i.name);
                       }}
                       onClick={() => {
@@ -188,7 +193,14 @@ export const section = ({
             </div>
             <Link
               disabled={fileds?.length > 64}
-              onClick={() => add(params, fileds?.length)}
+              onClick={() => {
+                let name=parseInt(fileds[fileds.length - 1]?.name) + 1
+
+                setcusac(name);
+                setcusac1({[name]:0})
+                setcusac2({[name]:0})
+                add(params, fileds?.length)
+              }}
             >
               添加时间区间
             </Link>
@@ -210,7 +222,7 @@ export const section = ({
                 <Input style={w255} />
               </Form.Item>
               <Form.Item label="时间设置" rules={rules} name={[filed.name, "date"]}>
-                <DatePicker.RangePicker></DatePicker.RangePicker>
+                <DatePicker.RangePicker style={w255}></DatePicker.RangePicker>
               </Form.Item>
               <Form.Item name={[filed.name, "type"]} initialValue={1}>
                 <Radio.Group options={timeType}></Radio.Group>
@@ -272,9 +284,8 @@ export const section = ({
                 initialValue={[{}]}
               >
                 {(tfileds, tmethod) => {
-                 console.log(tfileds)
                   return (
-                    <div className="formboxwrap" key={`timings${tfileds.name}`}>
+                    <div className="formboxwrap inbox" key={`timings${tfileds.name}`}>
                       <Form.Item name={[tfileds.name, "eTiming"]}>
                         <Checkbox>定时开关</Checkbox>
                       </Form.Item>
@@ -287,7 +298,9 @@ export const section = ({
                                   key={i.key}
                                   closable={arr.length !== 1 || arr.length > 64}
                                   onClose={() => {
-                                    setcusac1({"0":0});
+                                    let active = tfileds.filter(f=>f.name!=i.name)?.[0]?.name 
+
+                                    setcusac1({[filed.name]:active});
                                     tmethod.remove(i.name);
                                   }}
                                   onClick={() => {
@@ -297,12 +310,10 @@ export const section = ({
                                   <Form.Item
                                     noStyle
                                     shouldUpdate={(cur, pre) => cur["section"][filed.name]?.["timings"]?.[i.name]!= pre["section"][filed.name]?.["timings"]?.[i.name]   }
-                                      
                                   >
                                     {({ getFieldValue }) => {
                                       let values = getFieldValue(["section",filed.name,])?.["timings"]?.[i.name] ;
                                       const {type, time} = values
-                                      console.log(values)
                                       const name = type == 1 ? "开启":"关闭"
                                       const stime = time?.format?.("HH:mm") || "--"
                                      /*  const name =
@@ -332,7 +343,11 @@ export const section = ({
                           </div>
                         </div>
                         <Link 
-                          onClick={() => tmethod.add(params, tfileds?.length)}
+                          onClick={() => {
+                            let name = parseInt(tfileds[tfileds?.length-1]?.name) + 1
+                            setcusac1({[filed.name]: name});
+                            tmethod.add({type:1}, tfileds?.length)
+                          }}
                         >
                           添加
                         </Link>
@@ -357,6 +372,15 @@ export const section = ({
                           <Form.Item label="时间点设置" name={[name, "time"]}>
                             <TimePicker style={w255} format="HH:mm" />
                           </Form.Item>
+                          <Form.Item shouldUpdate={(cur, pre)=> { 
+                              return  cur["section"]?.[filed.name]?.["timings"]?.[name]?.type !==pre["section"]?.[filed.name]?.["timings"]?.[name]?.type
+                            }}>
+                          {
+                            ({getFieldValue})=> {
+                                  let type = getFieldValue(["section",filed.name,])?.["timings"]?.[name]?.type
+                                  console.log(type)
+                                  if (type==1) {
+                                    return <>
                           <Form.Item
                             label="工作模式"
                             name={[name, "workMode"]}
@@ -380,20 +404,29 @@ export const section = ({
                             name={[name, "temperature"]}
                           >
                             <InputNumber
-                              min={15}
-                              max={35}
+                              min={16}
+                              max={30}
                               addonAfter="℃"
                               style={w255}
                             ></InputNumber>
                           </Form.Item>
-                          <Form.Item label=" " name={[name, "temperature"]}>
+                          </>
+                                  }else {
+                              return  null
+                            }
+                          
+                          }
+                        }
+                          
+                          </Form.Item>
+                        {/*   <Form.Item label=" " name={[name, "temperature"]}>
                             <Slider
                               min={15}
                               max={35}
                               range={{ draggableTrack: true }}
                               style={w255}
                             />
-                          </Form.Item>
+                          </Form.Item> */}
                         </div>
                       ))}
                     </div>
@@ -406,7 +439,7 @@ export const section = ({
               >
                 {(ffileds, fmethod) => {
                   return (
-                    <div className="formboxwrap" key="forbidControls">
+                    <div className="formboxwrap noboder" key="forbidControls">
                       <Form.Item name={["forbidControls", "eForbid"]}>
                         <Checkbox>禁止开关</Checkbox>
                       </Form.Item>
@@ -419,7 +452,10 @@ export const section = ({
                                   key={i.key}
                                   closable={arr.length !== 1 || arr.length > 64}
                                   onClose={() => {
-                                    setcusac2({"0":0});
+                                    let active = ffileds.filter(f=>f.name!=i.name)?.[0]?.name 
+
+                                    setcusac2({[filed.name]:active});
+                                  
                                     fmethod.remove(i.name);
                                   }}
                                   onClick={() => {
@@ -432,29 +468,12 @@ export const section = ({
                                   >
                                     {({ getFieldValue }) => {
                                        let values = getFieldValue(["section",filed.name,])?.["forbidControls"]?.[i.name] ;
-                                       console.log(values)
+                                       
                                        const {type, time} = values
                                        const name = type == 1 ? "禁止启动": "禁止关闭"
                                        const time1 = time?.[0]?.format("HH:mm") || "--";
                                        const time2 = time?.[1]?.format("HH:mm") || "--";
-                                       const text = time1 + "-" + time2;
-                                     /*  const name =
-                                        getFieldValue([
-                                          "forbidControls",
-                                          i.name,
-                                        ])?.["type"] === 1
-                                          ? "禁止启动"
-                                          : "禁止关闭";
-                                      const time = getFieldValue([
-                                        "forbidControls",
-                                        i.name,
-                                      ])?.["time"];
-                                      console.log(time);
-                                      const time1 =
-                                        time?.[0]?.format("HH:mm") || "--";
-                                      const time2 =
-                                        time?.[1]?.format("HH:mm") || "--";
-                                      const text = time1 + "-" + time2; */
+                                       const text = time1 + "-" + time2;                                    
                                       return (
                                         <span
                                           className={
@@ -472,7 +491,11 @@ export const section = ({
                           </div>
                         </div>
                         <Link 
-                          onClick={() => fmethod.add(params, ffileds?.length)}
+                          onClick={() => {
+                            let name = parseInt(ffileds[ffileds?.length-1]?.name) + 1
+                            setcusac2({[filed.name]: name});
+                            fmethod.add(params, ffileds?.length)
+                          }}
                         >
                           添加
                         </Link>
@@ -627,20 +650,20 @@ export const timings = ({ cusac1, setcusac1, params }) => (
               </Form.Item>
               <Form.Item label="温度设置" name={[name, "temperature"]}>
                 <InputNumber
-                  min={15}
-                  max={35}
+                  min={16}
+                  max={30}
                   addonAfter="℃"
                   style={w255}
                 ></InputNumber>
               </Form.Item>
-              <Form.Item label=" " name={[name, "temperature"]}>
+            {/*   <Form.Item label=" " name={[name, "temperature"]}>
                 <Slider
-                  min={15}
-                  max={35}
+                  min={16}
+                  max={30}
                   range={{ draggableTrack: true }}
                   style={w255}
                 />
-              </Form.Item>
+              </Form.Item> */}
             </div>
           ))}
         </div>
@@ -703,7 +726,6 @@ export const forbidControls = ({ cusac2, setcusac2, params }) => (
                             "forbidControls",
                             i.name,
                           ])?.["time"];
-                          console.log(time);
                           const time1 = time?.[0]?.format("HH:mm") || "--";
                           const time2 = time?.[1]?.format("HH:mm") || "--";
                           const text = time1 + "-" + time2;
@@ -758,8 +780,8 @@ export const forbidControls = ({ cusac2, setcusac2, params }) => (
 );
 
 const marks = {
-  15: "15",
-  35: "35",
+  16: "16",
+  30: "30",
 };
 const w60 = {
   width: "60px",
@@ -782,26 +804,26 @@ export const esaving = (
           label="空调处于制冷模式时，温度上下限（℃）"
           labelCol={{ flex: "20em" }}
           name={["esaving", "cold"]}
-          initialValue={[15, 35]}
+          initialValue={[16, 30]}
         >
           <Slider
             marks={marks}
             range={{ draggableTrack: true }}
-            min={15}
-            max={35}
+            min={16}
+            max={30}
           />
         </Form.Item>
         <Form.Item
           label="空调处于制热模式时，温度上下限（℃）"
           labelCol={{ flex: "20em" }}
           name={["esaving", "hight"]}
-          initialValue={[15, 35]}
+          initialValue={[16, 30]}
         >
           <Slider
             marks={marks}
             range={{ draggableTrack: true }}
-            min={15}
-            max={35}
+            min={16}
+            max={30}
           />
         </Form.Item>
       </div>
@@ -816,14 +838,14 @@ export const esaving = (
         <div className="temp">
           <span>当室外(内)温度低于</span>
           <Form.Item name={["esaving", "lowTemp"]}>
-            <InputNumber min={0} style={w60} />
+            <InputNumber min={0} max={30} style={w60} />
           </Form.Item>
           <span>℃,且空调处于制冷模式，自动关闭空调。</span>
         </div>
         <div className="temp">
           <span>当室外(内)温度高于</span>
           <Form.Item name={["esaving", "highTemp"]}>
-            <InputNumber min={0} style={w60} />
+            <InputNumber min={0} max={30} style={w60} />
           </Form.Item>
           <span>℃,且空调处于制热模式，自动关闭空调。</span>
         </div>

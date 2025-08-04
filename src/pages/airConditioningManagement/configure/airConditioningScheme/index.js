@@ -49,6 +49,9 @@ export default function Index() {
     return [title, msg];
   }, [isadd, strategyName]);
 
+ 
+
+
   const sectionItems = useMemo(() => {
     let params = {};
 
@@ -108,6 +111,9 @@ export default function Index() {
 
   const onAdd = () => {
     setIsadd(0);
+    setcusac(0)
+    setcusac1({"0":0})
+    setcusac2({"0":0})
     newform.setFieldsValue({ projectId, creater: name, id: 0 });
 
     editRef.current.onOpen();
@@ -243,6 +249,7 @@ export default function Index() {
       return Promise.reject("");
     }
   };
+
   const onOkDel = async () => {
     try {
       let { success, errMsg } = await useDelete(delparams.current);
@@ -374,6 +381,7 @@ export default function Index() {
             </div>
             <div className="mainbox" key="maibox">
               <div className="layout" key="leftlayout">
+                <div className="title">控制策略</div>
                 {sectionItems}
               {/*   {timingsItems}
                 {forbidControlsItems}  */}
@@ -388,6 +396,9 @@ export default function Index() {
                 </Form.Item>
               </div>
               <div className="layout" key="rightlayout">
+                <div className="title">
+                  节能策略
+                </div>
               {esaving}
               </div>
              
@@ -417,6 +428,7 @@ export default function Index() {
         strategyId={strategyId}
         projectId={projectId}
         areaId={areaId}
+        onrefresh={refresh}
         ref={bindRef}
       />
     </Pagecount>

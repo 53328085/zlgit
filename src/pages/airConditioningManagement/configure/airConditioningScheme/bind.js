@@ -10,21 +10,20 @@ import UseTree from "@com/useTree"
 import {Bindwrap} from "./style"
 import {Serach} from "@com/comstyled"
 import {bindcol} from './data'
-import {useBindLight, useUnBindLight,usePageBind, usePageUnBind} from './api'
-export default forwardRef(function Index({strategyId, projectId, areaId}, ref){
+import {useBindConditioner, useUnBindConditioner,usePageBind, usePageUnBind} from './api'
+ 
+export default forwardRef(function Index({strategyId, projectId, areaId,onrefresh}, ref){
   const mRef = useRef()
   const [form] = Form.useForm()
   const [formed] = Form.useForm()
    const [treeId, setTreeId] = useState([])
-  const onOk =()=> {
 
-  }
   
   const getUnBind = async ({current, pageSize}, formDate)=> {
     let fag = Number.isInteger(parseInt(projectId))&&Number.isInteger(parseInt(strategyId?.[0]))
     if(!fag) return
     try {
-      const {alike} = formDate
+      const {alike=""} = formDate
       let body = {
         projectId,
         schemeId: strategyId?.[0],
@@ -57,7 +56,7 @@ export default forwardRef(function Index({strategyId, projectId, areaId}, ref){
     try {
       let fag = Number.isInteger(parseInt(projectId))&&Number.isInteger(parseInt(strategyId?.[0]))
       if(!fag) return
-      const {alike} = formData
+      const {alike=""} = formData
       let body = {
         projectId,
         schemeId: strategyId?.[0],
@@ -128,15 +127,15 @@ const  {tableProps, run, search, refresh} = useAntdTable(getUnBind, {
   };
   const addbind= async(type)=> {
     try {
-      if(unbindkey?.current?.length ==0 && type==0) return message.warning("请选择未选中的路灯")
-      if(bindkey?.current?.length ==0 && type==1) return message.warning("请选择已选中的路灯")
+      if(unbindkey?.current?.length ==0 && type==0) return message.warning("请选择未选中的空调")
+      if(bindkey?.current?.length ==0 && type==1) return message.warning("请选择已选中的空调")
       if(strategyId?.length==0) return
         let body ={
           projectId ,
           schemeId:strategyId?.[0] ,
-          lightIds :  [unbindkey.current,bindkey.current][type]
+          ConditionerIds :  [unbindkey.current,bindkey.current][type]
         }
-       let {success,errMsg} = await  [useBindLight, useUnBindLight][type]({}, body)
+       let {success,errMsg} = await  [useBindConditioner, useUnBindConditioner][type]({}, body)
        if(success) {
          refresh()
          refreshed()
@@ -148,7 +147,10 @@ const  {tableProps, run, search, refresh} = useAntdTable(getUnBind, {
     }
    
   }
-
+  const onOk =()=> {
+    mRef.current.onCancel()
+    onrefresh()
+  }
 
  
   useImperativeHandle(ref, ()=> ({
@@ -156,15 +158,15 @@ const  {tableProps, run, search, refresh} = useAntdTable(getUnBind, {
   }))
   return (
     <div>
-          <CModal title="路灯绑定"   onOk={onOk}   width={1380} mold="cust"    ref={mRef}>
+          <CModal title="空调绑定"   onOk={onOk} onCancel={onOk}   width={1380} mold="cust"    ref={mRef}>
             <Bindwrap>
               <div style={{overflow: "auto"}}>
                <UseTree areaId={0} setTreeId={setTreeId} setLine={()=>{}} showline={false} datatype={NaN} energytype={1} ></UseTree>
                </div>
                <div className='tbwrap'> 
                    <Form form={form} layout="inline">
-                        <Form.Item label="未选中的路灯" name="alike">
-                        <Serach   onSearch={submit} placeholder="请输入路灯名称或控制器编号"></Serach>
+                        <Form.Item label="未选中的空调" name="alike">
+                        <Serach   onSearch={submit} placeholder="请输入空调名称或控制器编号"></Serach>
                         </Form.Item>
                    </Form>                  
                  <UserTable columns={bindcol} {...tableProps} rowSelection={rowSelection} rowKey={row => row.id}></UserTable>
@@ -175,8 +177,8 @@ const  {tableProps, run, search, refresh} = useAntdTable(getUnBind, {
                </div>
                <div className='tbwrap'>
                <Form form={formed} layout="inline">
-                        <Form.Item label="已选中的路灯" name="alike">
-                        <Serach   onSearch={searched.submit}  placeholder="请输入路灯名称或控制器编号"></Serach>
+                        <Form.Item label="已选中的空调" name="alike">
+                        <Serach   onSearch={searched.submit}  placeholder="请输入空调名称或控制器编号"></Serach>
                         </Form.Item>
                    </Form>
                  <UserTable columns={bindcol} {...tablePropsed} rowSelection={rowSelectioned} rowKey={row=>row.id} ></UserTable>
