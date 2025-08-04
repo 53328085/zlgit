@@ -361,7 +361,6 @@ export const section = ({
                           <Form.Item
                             label="定时任务"
                             name={[name, "type"]}
-                            initialValue={1}
                           >
                             <Radio.Group
                               options={timingopt}
@@ -509,7 +508,6 @@ export const section = ({
                           <Form.Item
                             label="禁止状态"
                             name={[name, "type"]}
-                            initialValue={1}
                           >
                             <Radio.Group
                               options={forbidopt}

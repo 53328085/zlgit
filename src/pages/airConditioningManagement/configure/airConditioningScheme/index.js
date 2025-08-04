@@ -179,21 +179,20 @@ export default function Index() {
   const onOk = async () => {
     try {
       let values = await newform.validateFields();
-      console.log(values)
-     
      
       const { schemeName,projectId,creater, section,  esaving,id, } = values;
       const {cold, hight, ...erest} = esaving
       const controls = section.map(se => {
         let {checked, date, forbidControls,timings, ...rest} = se
-          
+        let forbid=forbidControls.filter(f => Array.isArray(f?.time)&&f?.time?.length==2)  
+        let timeing = timings.filter(t=> t.time)
         return {
            section: {
             dtStart:date?.[0]?.format?.("YYYY-MM-DD"),
             dtEnd:date?.[1]?.format?.("YYYY-MM-DD"),
             ...rest
            },
-           timings: timings.map(t=> {
+           timings: timeing.map(t=> {
             const {temperature, time, ...ret} =t
              return {
                temperature: Array.isArray(temperature) ? temperature?.[0] : temperature,
@@ -201,7 +200,7 @@ export default function Index() {
                ...ret
              }
            }),
-           forbidControls: forbidControls.map(f=> {
+           forbidControls: forbid.map(f=> {
              const {type, time} = f
              return {
                type,
