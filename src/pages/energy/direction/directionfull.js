@@ -71,7 +71,7 @@ export default function Index() {
   const getData = async () => {
     console.log(params)
     try {
-      let hander = [queryElectric, queryWater, '', '', '', '', queryWater][op]
+      let hander = [queryElectric,"", queryWater, '', '', '', '', queryWater][op]
       let { success, data } = await hander(params, areaId)
       if (success && data.constructor == Object) {
 
