@@ -17,7 +17,7 @@ import { InfoCircleFilled } from "@ant-design/icons";
 import { CSlider, Scene, CTag } from "./style";
 import imgsrc from "@svgs/index";
 import { CustButton } from "@com/useButton";
-const { Link } = Typography;
+const { Link , Text} = Typography;
 
 export const cols = [
   //
@@ -137,6 +137,7 @@ export const section = ({
                   return (
                     <CTag
                       key={i.key}
+                      style={{width: "155px"}}
                       closable={arr.length !== 1 || arr.length > 64}
                       onClose={() => {
                      
@@ -169,13 +170,13 @@ export const section = ({
 
                           if (name) {
                             return (
-                              <span className={cusac == i.name ? "active" : ""}>
+                              <Text className={cusac == i.name ? "active" : ""} ellipsis={{tooltip:name}}>
                                 {name}
-                              </span>
+                              </Text>
                             );
                           } else {
                             return (
-                              <span className={cusac == i.name ? "active" : ""}>
+                              <span className={cusac == i.name ? "active" : ""} >
                                 方案
                                 {new Intl.NumberFormat(
                                   "zh-Hans-CN-u-nu-hanidec"
@@ -327,13 +328,14 @@ export const section = ({
                                           "time"
                                         ]?.format?.("HH:mm") || "--"; */
                                       return (
-                                        <span
+                                        <Text
+                                          ellipsis={{tooltip: stime + name}}
                                           className={
                                             cusac1[filed.name] == i.name ? "active" : ""
                                           }
                                         >
                                           {stime} {name}  
-                                        </span>
+                                        </Text>
                                       );
                                     }}
                                   </Form.Item>
@@ -361,6 +363,7 @@ export const section = ({
                           <Form.Item
                             label="定时任务"
                             name={[name, "type"]}
+                            initialValue={1}
                           >
                             <Radio.Group
                               options={timingopt}
@@ -448,6 +451,7 @@ export const section = ({
                             {ffileds?.map((i, idx, arr) => {
                               return (
                                 <CTag
+                                  style={{width: "155px"}}
                                   key={i.key}
                                   closable={arr.length !== 1 || arr.length > 64}
                                   onClose={() => {
@@ -474,11 +478,9 @@ export const section = ({
                                        const time2 = time?.[1]?.format("HH:mm") || "--";
                                        const text = time1 + "-" + time2;                                    
                                       return (
-                                        <span
+                                        <span 
                                           className={
-                                            cusac2[filed.name] == i.name ? "active" : ""
-                                          }
-                                        >
+                                            cusac2[filed.name] == i.name ? "active" : "" }>
                                         {text} {name}
                                         </span>
                                       );
@@ -508,11 +510,12 @@ export const section = ({
                           <Form.Item
                             label="禁止状态"
                             name={[name, "type"]}
+                            initialValue={1}
                           >
                             <Radio.Group
                               options={forbidopt}
                               optionType="button"
-                              buttonStyle="solid"
+                              buttonStyle="solid"                              
                             ></Radio.Group>
                           </Form.Item>
                           <Form.Item label="时间段设置" name={[name, "time"]}>
@@ -587,9 +590,9 @@ export const timings = ({ cusac1, setcusac1, params }) => (
                               "time"
                             ]?.format?.("HH:mm") || "--";
                           return (
-                            <span className={cusac1 == i.name ? "active" : ""}>
+                            <Text className={cusac1 == i.name ? "active" : ""} ellipsis={{tooltip: time + name}}>
                               {time} {name}
-                            </span>
+                            </Text>
                           );
                         }}
                       </Form.Item>

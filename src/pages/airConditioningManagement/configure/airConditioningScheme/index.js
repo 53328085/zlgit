@@ -245,6 +245,9 @@ export default function Index() {
       }
     } catch (error) {
       console.log(error);
+      const {errorFields} = error
+      let msg = errorFields.map(e => e.errors.join()).join("|")
+      message.warning(msg, 2)
       return Promise.reject("");
     }
   };
