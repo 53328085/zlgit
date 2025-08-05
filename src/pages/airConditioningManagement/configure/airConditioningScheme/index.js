@@ -16,9 +16,9 @@ import { cols, section,rules, w255,timings,forbidControls,esaving} from "./data"
 import { Mainbox, Title, Scene } from "./style";
 import BindLight from "./bind";
 import { Serach } from "@com/comstyled";
+ 
 const { Link } = Typography;
-const json =
-  '{"controls":[{"section":{"sectionName":"时间点1","dtStart":"2025-07-14","dtEnd":"2025-07-15","type":1,"Weeks":[1,2,3,4,5,6,0]},"timings":[{"type":1,"time":"14:12","workMode":1,"WindSpeed":0,"Temperature":20}],"forbidControls":[{"type":1,"dtStart":"2025-07-14","dtEnd":"2025-07-15"}]}],"esaving":{"tempAllow":true,"coldLower":18,"coldUpper":29,"hotLower":10,"hotUpper":16,"unmannedColse":true,"unmannedDuration":30,"timeoutColse":true,"runDurationT":10,"windowColseTip":true,"runDurationW":10,"tempChange":3,"airTemperatureColse":true,"lowTemp":10,"highTemp":10}}';
+
 
 export default function Index() {
   const delref = useRef();
@@ -31,9 +31,13 @@ export default function Index() {
   const areaId = useSelector(selectOneLevelDefaultId);
   const sence = Form.useWatch("scenes", newform);
   const [cusac, setcusac] = useState(0);
-  const [cusac1, setcusac1] = useState(0);
-  const [cusac2, setcusac2] = useState(0);
-  console.log(JSON.parse(json))
+  const [cusac1, setcusac1] = useState({
+    "0":0,
+  });
+  const [cusac2, setcusac2] = useState({
+    "0":0,
+  });
+  
   const [isadd, setIsadd] = useState(1); // 0 新增 1 编辑 2 克隆
   const [total, setTotal] = useState(0);
   const [strategyName, setStrategyName] = useState("");
@@ -45,12 +49,15 @@ export default function Index() {
     return [title, msg];
   }, [isadd, strategyName]);
 
+ 
+
+
   const sectionItems = useMemo(() => {
     let params = {};
 
-    return section({ cusac, setcusac, params });
-  }, [cusac, setcusac]);
-  const timingsItems = useMemo(() => {
+    return section({ cusac, setcusac,cusac1, setcusac1,cusac2, setcusac2, params });
+  }, [cusac, setcusac,cusac1, setcusac1,cusac2, setcusac2 ]);
+  /* const timingsItems = useMemo(() => {
     let params = {
       type:1
     };
@@ -61,10 +68,10 @@ export default function Index() {
   const forbidControlsItems = useMemo(() => {
     let params = {
       type:1
-    };
+    }; 
 
     return forbidControls({ cusac2, setcusac2, params });
-  }, [cusac2, setcusac2]);
+  }, [cusac2, setcusac2]);*/
   const downParams = useRef();
   const getData = async ({ current, pageSize }, formData) => {
     try {
@@ -104,6 +111,9 @@ export default function Index() {
 
   const onAdd = () => {
     setIsadd(0);
+    setcusac(0)
+    setcusac1({"0":0})
+    setcusac2({"0":0})
     newform.setFieldsValue({ projectId, creater: name, id: 0 });
 
     editRef.current.onOpen();
@@ -121,64 +131,68 @@ export default function Index() {
     delref.current.onOpen();
   };
   const onEdit = (row, type) => {
+     try {
+      
+ 
     setIsadd(type);
-    // console.log(row)
-    const { scenes, strategyName, strategyId, ...rest } = row;
+     console.log(row)
+    const { strategies, strategyName, creater, strategyId, ...rest } = row;
+    
+    console.log(JSON.parse(strategies))
+    
+    const {controls, esaving} = JSON.parse(strategies)
+    const section = controls.map(co => {
+      const {  section, forbidControls,timings, } = co
+      const {dtEnd,dtStart,Weeks,...rest} =section
+      return {
+         weeks: Array.isArray(Weeks) ? Weeks : null,
+         date: [moment(dtStart, "YYYY-MM-DD"),moment(dtEnd, "YYYY-MM-DD")],
+         forbidControls:forbidControls.map(f => {
+          let {type, dtStart, dtEnd} = f
+          return {type, time: [moment(dtStart, "HH:mm"),moment(dtEnd, "HH:mm")]}
+         }) ,
+         timings:  timings.map(t =>  ({...t, time: moment(t.time, "HH:mm")})),
+         ...rest
 
-    let parseScenes = JSON.parse(scenes);
-    parseScenes.forEach((s, index, arr) => {
-      let { tasks, sceneName } = s;
-      let tsk = tasks.map((t) => {
-        let { timeType, excueTime, brightness, ...r } = t;
-        if (timeType == 0) {
-          let [type, timing] = excueTime.split("|") || [];
-          return { excueTime: type, timing, light: brightness, ...r };
-        } else {
-          return {
-            timeType,
-            excueTime2: moment(excueTime, "HH:mm"),
-            light: brightness,
-            ...r,
-          };
-        }
-      });
-      arr[index] = {
-        tasks: tsk,
-        sName: sceneName,
-      };
-    });
-    //  console.log(parseScenes)
+      }
 
+
+
+    })
+ 
     let params = {
       projectId,
       schemeName: type == 1 ? strategyName : strategyName + "_副本",
-      scenes: parseScenes,
+      section,
+      esaving,
       id: type == 1 ? strategyId : 0,
-      ...rest,
+      creater, 
     };
 
     newform.setFieldsValue(params);
     editRef.current.onOpen();
+  } catch (error) {
+      console.log(error)
+  }
   };
 
   const onOk = async () => {
     try {
       let values = await newform.validateFields();
-      console.log(values)
      
-      const { schemeName,projectId,creater, section,timings,forbidControls, esaving,   } = values;
+      const { schemeName,projectId,creater, section,  esaving,id, } = values;
       const {cold, hight, ...erest} = esaving
-      const strategies ={
-        controls: [{
-           section: section.map(s => {
-            let {checked, date, ...rest} = s
-             return {
-               dtStart:date?.[0]?.format?.("YYYY-MM-DD"),
-               dtEnd:date?.[1]?.format?.("YYYY-MM-DD"),
-               ...rest
-             }
-           }),
-           timings: timings.map(t=> {
+      const controls = section.map(se => {
+        let {checked, date, forbidControls,timings, ...rest} = se
+        let forbid=forbidControls.filter(f => Array.isArray(f?.time)&&f?.time?.length==2)  
+        let timeing = timings.filter(t=> t.time)
+        return {
+           section: {
+            dtStart:date?.[0]?.format?.("YYYY-MM-DD"),
+            dtEnd:date?.[1]?.format?.("YYYY-MM-DD"),
+            ...rest
+           },
+           timings: timeing.map(t=> {
             const {temperature, time, ...ret} =t
              return {
                temperature: Array.isArray(temperature) ? temperature?.[0] : temperature,
@@ -186,7 +200,7 @@ export default function Index() {
                ...ret
              }
            }),
-           forbidControls: forbidControls.map(f=> {
+           forbidControls: forbid.map(f=> {
              const {type, time} = f
              return {
                type,
@@ -195,7 +209,10 @@ export default function Index() {
              }
 
            })
-        }],
+        }
+      })
+      const strategies ={
+        controls,
         esaving: {
           coldLower: cold?.[0],
           coldUpper: cold?.[1],
@@ -206,10 +223,12 @@ export default function Index() {
         },
 
       }
+      console.dir(strategies)
       let params = {
           projectId,
           creater,
           schemeName,
+          id,
           strategies: JSON.stringify(strategies)
       };
      
@@ -226,9 +245,13 @@ export default function Index() {
       }
     } catch (error) {
       console.log(error);
+      const {errorFields} = error
+      let msg = errorFields.map(e => e.errors.join()).join("|")
+      message.warning(msg, 2)
       return Promise.reject("");
     }
   };
+
   const onOkDel = async () => {
     try {
       let { success, errMsg } = await useDelete(delparams.current);
@@ -360,9 +383,10 @@ export default function Index() {
             </div>
             <div className="mainbox" key="maibox">
               <div className="layout" key="leftlayout">
+                <div className="title">控制策略</div>
                 {sectionItems}
-                {timingsItems}
-                {forbidControlsItems} 
+              {/*   {timingsItems}
+                {forbidControlsItems}  */}
                 <Form.Item name="id" initialValue={0} noStyle>
                   <Input hidden />
                 </Form.Item>
@@ -374,6 +398,9 @@ export default function Index() {
                 </Form.Item>
               </div>
               <div className="layout" key="rightlayout">
+                <div className="title">
+                  节能策略
+                </div>
               {esaving}
               </div>
              
@@ -403,6 +430,7 @@ export default function Index() {
         strategyId={strategyId}
         projectId={projectId}
         areaId={areaId}
+        onrefresh={refresh}
         ref={bindRef}
       />
     </Pagecount>

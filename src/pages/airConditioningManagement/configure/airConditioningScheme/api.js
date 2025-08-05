@@ -14,23 +14,23 @@ export const { usePage } = new Apimethod( //查询  空调控制方案
   );
   export const { useDelete} = new Apimethod( //删除  控制方案
     "delete",
-    "Light/StreetLightScheme/Delete"
+    "Conditioner/AirConditionerScheme/Delete"
   );
-  export const { useUnBindLight} = new Apimethod( // 方案解除绑定路灯
+  export const { useUnBindConditioner} = new Apimethod( // 方案解除绑定路灯
     "post",
-    "Light/StreetLightScheme/UnBindLight"
+    "Conditioner/AirConditionerScheme/UnBindConditioner"
   );
-  export const { useBindLight} = new Apimethod( // 方案绑定路灯
+  export const { useBindConditioner} = new Apimethod( // 方案绑定空调
     "post",
-    "Light/StreetLightScheme/BindLight"
+    "Conditioner/AirConditionerScheme/BindConditioner"
   );
-  export const { usePageUnBind} = new Apimethod( //方案 未绑定路灯列表
+  export const { usePageUnBind} = new Apimethod( //方案 未绑定空调列表
     "post",
-    "Light/StreetLightScheme/PageUnBind"
+    "Conditioner/AirConditionerScheme/PageUnBind"
   );
-  export const { usePageBind} = new Apimethod( //方案绑定路灯列表
+  export const { usePageBind} = new Apimethod( //方案绑定空调列表
     "post",
-    "Light/StreetLightScheme/PageBind"
+    "Conditioner/AirConditionerScheme/PageBind"
   );
   export const { useClone} = new Apimethod( //克隆 控制方案
     "get",

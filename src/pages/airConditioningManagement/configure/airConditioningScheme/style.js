@@ -50,17 +50,23 @@ export const Scene = styled.div`
     display: grid;
     grid-template-columns: 802px 1fr;
     column-gap: 16px;
-    height: 709px;
+    min-height: 709px;
     flex: 1;
     overflow-y: auto;
     .layout {
       display: flex;
       flex-direction: column;
       row-gap: 12px;
-      padding: 4px;
-      border:1px solid #dedede;
+     
+      .title {
+        border-left: 4px solid ${props=>props.theme.primaryColor};
+        line-height: 16px;
+        padding-left: 20px;
+      }
       .formboxwrap { 
-        border-bottom: 1px solid ${props=>props.theme.primaryColor};
+        padding: 4px;
+        border:1px solid #dedede;
+      //  border-bottom: 1px solid ${props=>props.theme.primaryColor};
         .ant-form-item{
             margin-bottom: 12px;
           }
@@ -107,14 +113,20 @@ export const Scene = styled.div`
             margin-bottom: 12px;
           }
         }
-
+        
         .inwrap {
           padding: 8px;
           
         }
-        &:last-of-type {
-          border-bottom: none;
-        }
+      
+      }
+      .formboxwrap.inbox {
+        border: none;
+        border-bottom: 1px solid ${props=>props.theme.primaryColor};
+        border-top: 1px solid ${props=>props.theme.primaryColor};
+      }
+      .formboxwrap.noboder {
+        border: none;
       }
       .formboxwrap.md8 {
          margin: 8px;

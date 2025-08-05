@@ -143,7 +143,7 @@ export const items = ({ csn = [], msn = [], model = [] }) => (
           return null;
         }}
       </Form.Item>
-      <Form.Item label="用能类型" rules={rules} name="useType">
+      <Form.Item label="用能类型"  name="useType">
         <Select options={useTypeopt.slice(1)} placeholder="请选择"></Select>
       </Form.Item>
       <Form.Item name="id" noStyle initialValue={0}>
@@ -268,7 +268,6 @@ export const initems = ({ model = [],cusac, setcusac, params }) => (
                 </Form.Item>
                 <Form.Item
                   label="用能类型"
-                  rules={rules}
                   name={[name, "useType"]}
                 ><Select
                     options={useTypeopt.slice(1)}
