@@ -5,14 +5,14 @@ import styled, {css} from 'styled-components'
 import Pagecount from '@com/pagecontent'
 import CustContext from '@com/content.js'
 import { Form, Image, Progress, Timeline, Select, Divider, Space, DatePicker, message } from 'antd'
- 
+import {hextodec} from "@com/usehandler"
 import { drawEcharts } from "@com/useEcharts"
 import { useSelector, useStore } from 'react-redux'
 import first from '../imgs/first.png'
 import second from '../imgs/second.png'
 import third from '../imgs/third.png'
 import { safeElectric } from '@api/api'
-import {  selectOneLevelDefaultId,adaptation } from '@redux/systemconfig.js'
+import {  selectOneLevelDefaultId,adaptation, themeColor} from '@redux/systemconfig.js'
 import moment from 'moment'
 const Dotel =styled.div`
 && {
@@ -245,7 +245,7 @@ const {laptop} = useSelector(adaptation)
   const opref = useRef(null)
   const lref = useRef(null)
   const warnref = useRef();
- 
+  const {warningColor} = useSelector(themeColor)
   const navigate = useNavigate()
   const projectId = useSelector(state => state.system.menus.projectId)
 
@@ -362,23 +362,41 @@ const {laptop} = useSelector(adaptation)
       message.error(res.errMsg)
     }
   }
+
+   const rgb = hextodec(warningColor);
   const tdrawEcharts = () => {
     return drawEcharts(warnref.current, {
       type: 4,
       liuqiu: {
         series: {
          data: [(warnData?.todayWarningCnt/100)],
-       
+         waveLength: "89%",
+         backgroundStyle: {
+          borderWidth: 2,
+          borderColor: warningColor,
+          color: rgb?.length==3 ? `rgba(${rgb[0]}, ${rgb[1]}, ${rgb[2]},0.15)` : "#fff"
+         },
+         color: [warningColor],
+         outline: {
+            show:false
+         },
         label: {
           normal: {
             formatter: function() {
-                return `今日告警\n\n\n${warnData?.todayWarningCnt}次`;
+                return `今日告警\n {a|${warnData?.todayWarningCnt}}次`;
             },
             textStyle: {
                 fontSize: 16,
                 color: '#333'
             },
-            position: ['50%', '65%']
+            position: ['50%', '65%'],
+            rich: {
+              a: {
+                lineHeight: 22,
+                fontSize: "small",
+                fontWeight: "bold"
+              }
+            }
          }
         },
         
@@ -389,7 +407,7 @@ const {laptop} = useSelector(adaptation)
   }
 useEffect(() => {
     tdrawEcharts()
-},[warnData])
+},[warnData,warningColor])
   useEffect(() => {    
     getQueryWarningDetails()
     getQueryMonthWarningTrends()

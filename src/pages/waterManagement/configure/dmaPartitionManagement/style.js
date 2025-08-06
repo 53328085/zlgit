@@ -13,6 +13,7 @@ export  const Mainwrap = styled.div`
      display: flex;
      flex-direction: column;
      row-gap: 8px;
+     padding-top: 8px;
      .title{
         color: #515151;
         font-weight: bold;
@@ -161,9 +162,19 @@ export const Mcontent= styled.div`
  display: grid;
  grid-template-columns: 642px 1fr;
  column-gap: 32px;
+ min-height: 680px;
  .mleft {
   display: flex;
   flex-direction: column;
   row-gap: 16px;
+  .form.ant-form-inline {
+     .ant-form-item {
+      margin-right: 16px;
+    }
+  }
+ }
+ .mright {
+   padding-left: 32px;
+   border-left: 1px dotted #d7d7d7;
  }
 `

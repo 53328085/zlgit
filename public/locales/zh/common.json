@@ -21,7 +21,11 @@
     "StorageManagement": "储能管理",
     "CarbonEmissionManagement":"碳排管理",
     "OperationMaintenanceManagement":"运维管理",
-	
+	"airConditionerEnabled":"空调管理",
+    "digitalTwinEnabled":"数字孪生",
+    "smartIndustryEnabled":"智慧工业",
+    "streetlightEnabled":"路灯管理",
+    "waterAffairsEnabled":"水务管理",
     "EnergyType":"能源种类",
 	"Electricity":"电",
     "Coldwater":"冷水",

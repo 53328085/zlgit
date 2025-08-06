@@ -12,7 +12,7 @@ const FileIssuance = lazy(() => import("@pages/monitoring/configure/fileIssuance
 export let designerMonitor = {
     '020301': DeviceType,
     '020302': Device,
-    '020303': Lighting,
+  //  '020303': Lighting,
     '020304': Line,
     '020305': Control,
     '020306': Ianalyse,

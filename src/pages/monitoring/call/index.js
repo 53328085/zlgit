@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react'
+import React, { useState, useRef, useMemo } from 'react'
 import { useSelector } from 'react-redux'
 import { useAntdTable } from 'ahooks'
 import { Remote } from '@api/api.js'
@@ -148,8 +148,23 @@ export default function Index() {
 
     }
   ]
-
-
+  let watercolumns = [
+    {
+      title: '抄读时间',
+      dataIndex: 'LastSampleTime',
+      key: "LastSampleTime"
+    },
+    {
+      title: '累计流量',
+      dataIndex: 'EP',
+      key: "ep"
+    },
+  ]
+  let  devtype = Form.useWatch("deviceStyle", form)
+  const columns = useMemo(()=> {
+      let cols =  ["",realcolumns, watercolumns]?.[devtype]
+      return Array.isArray(cols) ? cols : []
+  },[devtype])
   let snList = []
   const [isClick, setIsClick] = useState(false)
   const rowSelectionRadio = {
@@ -352,7 +367,7 @@ export default function Index() {
               width={1218}
               footer={[<Button type='primary' style={{ width: 96, height: 36 }} onClick={() => { setreadout(false) }}>关闭</Button>]}
             >
-              <UserTable columns={realcolumns} dataSource={dataSourceRead} rowKey={realcolumns => realcolumns.sn} ></UserTable>
+              <UserTable columns={columns} dataSource={dataSourceRead} rowKey={realcolumns => realcolumns.sn} ></UserTable>
 
             </CModal>
           </div>

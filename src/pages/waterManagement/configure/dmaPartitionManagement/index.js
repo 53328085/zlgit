@@ -16,13 +16,12 @@ import { Mainwrap, TitleBox } from "./style";
 import CModal from '@com/useModal'
 import { useAntdTable, useRequest} from "ahooks";
 import Newdma from "./newdma"
-import { IDrawer } from "@pages/cabinet/diskChartMonitor/comstyle";
+
  
  const {Link} = Typography
  
 export default function Index() { 
-    const navigate = useNavigate();
-    const [id, setId] = useState(NaN)
+    const navigate = useNavigate();  
     const { pathname, state,hash } = useLocation();
  
   const [form] = Form.useForm()
@@ -81,9 +80,9 @@ const dmachange =(v) => {
   setLevle(v.target.value)
 }
 const addDma =() => {
-  navigate(pathname+ `?item=1` + "#new", { state, replace: true });
+  navigate(pathname+ `?item=1` + "#new", { state, replace: true }); // 新建 没有id
 }
-const goAlarm = (row) => { 
+const editAlarm = (row) => { 
   navigate(pathname+`?item=3&id=${row.id}` + "#edit", { state, replace: true });
 } 
 const editRecod = (row) => {
@@ -134,7 +133,7 @@ const Ctitle = <TitleBox>
   title: "操作",
   dataIndex: "operation",
   key: "operation",
-  render: (_,row)=><Space size={24}><Link onClick={()=> editRecod(row)}>档案</Link><Link onClick={()=>editDrive(row)}>表具</Link><Link onClick={()=>goAlarm(row)}>告警</Link><Link type="danger" onClick={()=>onDel(row.id)}>删除</Link></Space>
+  render: (_,row)=><Space size={24}><Link onClick={()=> editRecod(row)}>档案</Link><Link onClick={()=>editDrive(row)}>表具</Link><Link onClick={()=>editAlarm(row)}>告警</Link><Link type="danger" onClick={()=>onDel(row.id)}>删除</Link></Space>
 },]
  const sortChnage=(_, filters, sorter)=> {    
     const {order,field} = sorter
@@ -150,9 +149,10 @@ const Ctitle = <TitleBox>
   return (
     <Pagecount pd="0" bgcolor="none">
     {listnew ?  <Mainwrap>
-        <div className="left">
-            <span className="title">选择区域</span> 
+        <div className="left"> 
             <UseTree
+            title="选择区域"
+            sty = {{ bordered: 'n', pv: '8px' }}
             areaId={0}
             setTreeId={setTreeId}
             setLine={() => {}}
@@ -170,7 +170,7 @@ const Ctitle = <TitleBox>
                   <Form.Item label="分区名称" name="name">
                     <Input ></Input>
                   </Form.Item>
-                  <Form.Item label="分区类型" name="partitionType" initialValue={1}>
+                  <Form.Item label="分区类型" name="partitionType" initialValue={0}>
                     <Select options={options} style={{width: "200px"}}  ></Select>
                   </Form.Item>
                   <Form.Item>
