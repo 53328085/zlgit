@@ -173,7 +173,6 @@ export default function Index() {
   const onOk= async()=> {
     try {
       let values = await newform.validateFields()
-     
       let {success, errMsg} =await useInsertOrUpdateExteriorAC({operate}, values)
       if(success) {
         message.success(msg)
