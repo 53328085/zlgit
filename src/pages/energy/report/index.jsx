@@ -59,7 +59,9 @@ export default function Index() {
 
   let { exparams, setCustview } = useOutletContext()
   const [dates, setDates] = useState([moment().startOf("day"), moment().endOf("hour")]);
-
+  
+  const [startDateTime, setStartDateTime] = useState('')
+  const [endDateTime, setEndDateTime] = useState('')
 
   const [isrange, setIsrange] = useState({ range: false })
 
@@ -140,7 +142,7 @@ export default function Index() {
 
 
 
-  let columns = [cols, [], timecols, typecols, fromlot, shitcols][index] // 
+  let columns = [cols(startDateTime, endDateTime), [], timecols, typecols, fromlot, shitcols][index] // 
 
 
 
@@ -178,6 +180,8 @@ export default function Index() {
       ids: treeId,
       type
     }
+    setStartDateTime(range ? dates?.[0].format("YYYY-MM-DD HH:mm") : date?.startOf(dateType).format("YYYY-MM-DD HH:mm"))
+    setEndDateTime(range ? dates?.[1].format("YYYY-MM-DD HH:mm") : date?.endOf(dateType).format("YYYY-MM-DD HH:mm"))
     if (index == 0) {
       params.filterInfo = alike
     }
@@ -346,7 +350,7 @@ export default function Index() {
     modref.current.onOpen()
   }
   const CustView = useMemo(() => {
-    const showdefined = ["0", "1", "4"].includes(value)
+    const showdefined = ["1", "4"].includes(value)
     return (
       <Space size={16}>
         <ExportExcel tb={tbref} defined={showdefined} setIsrange={setIsrange} getDates={setDates} value={dates} />
@@ -409,11 +413,11 @@ export default function Index() {
           <UserTree areaId={areaId} energytype={energytype} setTreeId={setTreeId} setLine={setLine} showline={value != '3'} datatype={value == '3' ? 0 : NaN} />
           <div style={{ position: "relative", flex: 1 }}>
             <div style={{ position: "absolute", width: "100%" }}>
-              {value == "4" && <div style={{ marginBottom: "16px", display: "flex" }}>
+              {(value == "4" || value == '0') && <div style={{ marginBottom: "16px", display: "flex" }}>
                 <div style={{ marginLeft: "auto" }}>
                   <Checkbox onChange={boxchange} checked={isrange.range}>使用日期范围（优先）</Checkbox>  <RangePicker
                     value={dates || valuet}
-                    disabledDate={disabledDate}
+                    // disabledDate={disabledDate}
                     onCalendarChange={(val) => setDates(val)}
                     onChange={onTimeOk}
                     disabled={!isrange.range}
@@ -427,11 +431,11 @@ export default function Index() {
                 </div>
               </div>
               }
-              {
+              {/* {
                 value == "0" && <div className='search'>
                   <Serach placeholder="请输入设备名称/设备编号/安装地址查询" style={{ width: "362px" }} onSearch={onSearch} />
                 </div>
-              }
+              } */}
               {
                 value == "1" && <div className='search'>
                   <Tooltip title="最多选择三条信息进行对比"><CustButton onClick={oncompare}>勾选对比</CustButton></Tooltip>
