@@ -53,6 +53,10 @@ export default function Index() {
       {
         type: 'sankey',
         layout: "none",
+        left: 16,
+        top: 120,
+        bottom: 32,
+        right: 200,
         emphasis: {
         },
         data: [],

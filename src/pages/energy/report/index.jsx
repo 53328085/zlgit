@@ -35,6 +35,11 @@ const Contentbox = styled.div`
   grid-template-columns: 296px 1fr;
   column-gap: 16px;
   flex: 1;
+  .opt {
+    display: flex;
+    justify-content: flex-end;
+    column-gap: 16px;
+  }
   .search {
    display: flex;
    justify-content: flex-end;
@@ -401,15 +406,16 @@ export default function Index() {
     }
   }, [value])
 
-
+ /* 线上实时抄表， 能耗报表 显示时间范围。 电能报表不显示 */
   return (
     <CustContext.Provider value={dataProps} >
       <Pagecount showSearch={false} custserach={true} >
         <Contentbox>
           <UserTree areaId={areaId} energytype={energytype} setTreeId={setTreeId} setLine={setLine} showline={value != '3'} datatype={value == '3' ? 0 : NaN} />
           <div style={{ position: "relative", flex: 1 }}>
-            <div style={{ position: "absolute", width: "100%" }}>
-              {value == "4" && <div style={{ marginBottom: "16px", display: "flex" }}>
+            <div style={{ position: "absolute", width: "100%",   }}>
+              <div  className='opt'>
+              {["0","1"].includes(value)   && <div style={{ marginBottom: "16px", display: "flex" }}>
                 <div style={{ marginLeft: "auto" }}>
                   <Checkbox onChange={boxchange} checked={isrange.range}>使用日期范围（优先）</Checkbox>  <RangePicker
                     value={dates || valuet}
@@ -437,6 +443,7 @@ export default function Index() {
                   <Tooltip title="最多选择三条信息进行对比"><CustButton onClick={oncompare}>勾选对比</CustButton></Tooltip>
                 </div>
               }
+              </div>
               {
                 ["1", "5"].includes(value) ? <UserTable ref={tbref} rowSelection={value == 1 ? rowSelection : null} columns={concolumns} {...tableProps} rowKey={row => row.sn} key={value} scroll={{
                   scrollToFirstRowOnChange: true,

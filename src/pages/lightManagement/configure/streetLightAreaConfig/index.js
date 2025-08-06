@@ -16,7 +16,7 @@ export default function Index() {
   const [levels, setLevels] = useState([])
  
   const levelData = levels.find(l => l.level == value) || {}
- 
+  console.log(levelData)
 
 
 
