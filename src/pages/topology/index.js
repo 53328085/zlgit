@@ -23,6 +23,7 @@ import '../../assets/css/font_ehfbe2lg8tb/iconfont.css'
 import '../../assets/css/font_ugr1luq01xe/iconfont.css'
 import '../../assets/css/font_nilhyhwpjm9/iconfont.css'
 import '../../assets/css/font_4zc0wpi01ae/iconfont.css'
+import '../../assets/css/font_11h2uuxmplr/iconfont.css'
 // 右侧图形库图标
 import '../../assets/css/fonts/font/libs/iconfont.css'
 import '../../assets/css/font_g4v09lxfde/iconfont.css'
@@ -37,9 +38,9 @@ const {Text} = Typography
 const Custoptionbg = styled.div`
   display: grid;
   //width: 480px;
-  grid-template-columns: repeat(3, 1fr);
-  column-gap: 8px; 
-  padding: 4px;
+  grid-template-columns: repeat(2, 1fr);
+  column-gap: 16px; 
+  padding: 0 4px;
   background-color: ${props => props.theme.primaryColor};
   color: #fff;
 
@@ -260,12 +261,10 @@ export default function index() {
     setTimeout(() => {
       switch (event) {
         case 'node':
-          // if(data.icon == ""){
-          //   data.icon = ""
-          //   data.iconFamily = "ltdx"
-          // }else if(data.icon == ""){
-          //   data.icon = ""
-          //   data.iconFamily = "iconfont"
+          // if(data.icon == ''){
+          //   data.icon = ""
+          // }else if(data.icon == ""){
+          //   data.icon = ''
           // }
           // break
         case 'addNode':
@@ -1005,7 +1004,7 @@ export default function index() {
           </Form>
         </div>
       </CustModal>
-      <CustModal title={nodeType} ref={bindRef} mold="cust" width={480} onOk={() => onbindOk()}>
+      <CustModal title={nodeType} ref={bindRef} mold="cust" width={580} onOk={() => onbindOk()}>
         <div style={{ display: 'flex', alignItems: 'center', marginLeft: 32 }}>
           <Form name='bindForm' form={bindForm} requiredMark={false}>
             <Item name='deviceId' label='设备名称'  labelAlign='left' rules={[{ required: true, message: '请选择绑定设备' }]}>
@@ -1024,12 +1023,11 @@ export default function index() {
                 onSearch={onSearch}
                 placeholder="请选择"
                 size="middle"
-                style={{ marginLeft: 16, width: '280px' }}
+                style={{ marginLeft: 16, width: '380px' }}
                 onChange={changeDevice}
                 dropdownMatchSelectWidth={380}              
-                filterOption={(input, option) =>{    
-                  return (option?.label ?? '').toLowerCase().includes(input.toLowerCase()) || (option?.sn ?? '').toLowerCase().includes(input.toLowerCase()) || (option?.address ?? '').toLowerCase().includes(input.toLowerCase())
-                 }
+                filterOption={(input, option) => (option?.label ?? '').toLowerCase().includes(input.toLowerCase()) || (option?.value ?? '').toLowerCase().includes(input.toLowerCase())
+                //  }
                 }               
               >
                 {
@@ -1040,7 +1038,6 @@ export default function index() {
                     <Custoptionbg >
                         <span>设备名称</span>
                         <span>设备编号</span>
-                        <span>设备地址</span>
                     </Custoptionbg>
                     </Select.Option>
                     { state.deviceList.map((option) => {
@@ -1049,7 +1046,6 @@ export default function index() {
                          <div className={style.custoption} >
                            <Text ellipsis={{tooltip: option.name}}>{option.name}</Text>
                            <Text ellipsis={{tooltip: option.sn}}>{option.sn}</Text>
-                           <Text ellipsis={{tooltip: option.address}}>{option.address}</Text>
                          </div>
 
                       </Select.Option>
@@ -1069,12 +1065,12 @@ export default function index() {
                 })} */}
               </Select>
             </Item>
-            {nodeType == '设备绑定' ? null :
+            {nodeType == '设备绑定' && (selectedNode?.icon != '' && selectedNode?.icon != '' && selectedNode?.icon != "" && selectedNode?.icon != "" ) ? null :
               <Item name='pointId' label='测点名称' labelAlign='left' rules={[{ required: true, message: '请选择绑定测点' }]}>
                 <Select
                   placeholder="请选择"
                   size="middle"
-                  style={{ marginLeft: 16, width: '280px' }}
+                  style={{ marginLeft: 16, width: '380px' }}
                   disabled={!bindForm.getFieldValue('deviceId') ? true : false}
                 >
                   {state.pointList.map(item => {

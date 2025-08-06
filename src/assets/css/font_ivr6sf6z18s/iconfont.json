@@ -1,0 +1,23 @@
+{
+  "id": "",
+  "name": "",
+  "font_family": "iconfont",
+  "css_prefix_text": "icon-",
+  "description": "",
+  "glyphs": [
+    {
+      "icon_id": "44892146",
+      "name": "新抽屉式断路器--合",
+      "font_class": "xinchoutishiduanluqi--he",
+      "unicode": "e603",
+      "unicode_decimal": 58883
+    },
+    {
+      "icon_id": "44892147",
+      "name": "新抽屉式断路器--分",
+      "font_class": "xinchoutishiduanluqi--fen",
+      "unicode": "e604",
+      "unicode_decimal": 58884
+    }
+  ]
+}

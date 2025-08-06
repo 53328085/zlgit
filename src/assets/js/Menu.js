@@ -12385,32 +12385,58 @@ export const normal = [
             "icon": ""
         }
     },
+    // {
+    //     "name": "断路器-开",
+    //     "icon": "iconfont icon-_duanluqi",
+    //     "data": {
+    //         "rect": {
+    //             "width": 100,
+    //             "height": 100
+    //         },
+    //         "name": "image",
+    //         "iconFamily": "iconfont",
+    //         "icon":"\ue632"
+    //     }
+    // },
+    // {
+    //     "name": "断路器-合",
+    //     "icon": "iconfont icon-duanluqi-he",
+    //     "data": {
+    //         "rect": {
+    //             "width": 100,
+    //             "height": 100
+    //         },
+    //         "name": "image",
+    //         "iconFamily": "iconfont",
+    //         // "icon":"\ue64e"
+    //         "icon": ""
+
+    //     }
+    // },
     {
-        "name": "断路器-开",
-        "icon": "iconfont icon-_duanluqi",
-        "data": {
-            "rect": {
-                "width": 100,
-                "height": 100
+        name: '断路器-开',
+        icon: 'ltdx tdx-1-117',
+        data: {
+            rect: {
+                width: 100,
+                height: 100
             },
-            "name": "image",
-            "iconFamily": "iconfont",
-            "icon":"\ue632"
+            name: 'image',
+            iconFamily: 'ltdx',
+            icon: ''
         }
     },
     {
-        "name": "断路器-合",
-        "icon": "iconfont icon-duanluqi-he",
-        "data": {
-            "rect": {
-                "width": 100,
-                "height": 100
+        name: '断路器-合',
+        icon: 'ltdx tdx-1-118',
+        data: {
+            rect: {
+                width: 100,
+                height: 100
             },
-            "name": "image",
-            "iconFamily": "iconfont",
-            // "icon":"\ue64e"
-            "icon": ""
-
+            name: 'image',
+            iconFamily: 'ltdx',
+            icon: ''
         }
     },
     {
@@ -12439,9 +12465,22 @@ export const normal = [
             "icon": ""
         }
     },
+    // {
+    //     "name": "抽屉式断路器",
+    //     "icon": "iconfont icon-a-choutishiduanluqi-21",
+    //     "data": {
+    //         "rect": {
+    //             "width": 100,
+    //             "height": 100
+    //         },
+    //         "name": "image",
+    //         "iconFamily": "iconfont",
+    //         "icon": ""
+    //     }
+    // },
     {
-        "name": "抽屉式断路器",
-        "icon": "iconfont icon-a-choutishiduanluqi-21",
+        "name": "抽屉式断路器--分",
+        "icon": "iconfont icon-a-zu60",
         "data": {
             "rect": {
                 "width": 100,
@@ -12449,7 +12488,22 @@ export const normal = [
             },
             "name": "image",
             "iconFamily": "iconfont",
-            "icon": ""
+            // "icon": "\ue602"
+            "icon": ""
+        }
+    },
+    {
+        "name": "抽屉式断路器--合",
+        "icon": "iconfont icon-a-zu6",
+        "data": {
+            "rect": {
+                "width": 100,
+                "height": 100
+            },
+            "name": "image",
+            "iconFamily": "iconfont",
+            // "icon": "\ue601"
+            "icon": "",
         }
     },
     {
