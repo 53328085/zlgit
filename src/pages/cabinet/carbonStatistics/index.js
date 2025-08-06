@@ -66,8 +66,8 @@ const Mainbox = styled.div`
       align-items: center;
     //  height:100%;
       img {
-        object-fit: cover;
-        width: 100%;
+      max-width: 100%;
+      height: 100%;
         
       }
      
@@ -353,7 +353,7 @@ export default function Index() {
     return (
         <Pagecount bgcolor="#eeeff3" pd={0}>
             <Mainbox laptop={laptop}>
-                <div className='up' key="up" >  
+                <div className='up' key="up" >
                     <Card name={<CustTransO ns="cabinet" text="Annualquota" param="(tCO₂)" />} laptop={laptop} title="" value={Quota.annualQuota} yoy={Quota.annualQuotaYoy} key="a" />
                     <Card name={<CustTransO ns="cabinet" text="Annualee" param="(tCO₂)" />} laptop={laptop} title="" value={Quota.annualEmission} yoy={Quota.annualEmissionYoy} key="b" />
                     <Card title={<CustTransO ns="cabinet" text="Annualce" param="(tCO₂)" />} laptop={laptop} value={Quota.annualResidual} yoy={Quota.annualResidualPct} key="c" />
@@ -362,7 +362,11 @@ export default function Index() {
                 </div>
                 <div className='center' key="center">
                     <div className='imgbox'>
-                        <img src={Quota.siteImage || imgsrcs['cabinet']} alt="" />
+                        <img src={Quota.siteImage &&
+                            Quota.siteImage.startsWith('data:image') &&
+                            Quota.siteImage.length > 30 // 确保不是空base64
+                            ? Quota.siteImage
+                            : imgsrcs['cabinet']} alt="" />
                     </div>
 
 

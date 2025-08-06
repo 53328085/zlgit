@@ -12,7 +12,7 @@ import {
     Space,
 } from "antd";
 import { CustButtonT, ExportExcel, ChartList } from "@com/useButton";
-export const Tabs = ({ onValuesChangeSearch, form, onSearchClick }) => {
+export const Tabs = ({ form, onSearchClick }) => {
     const { Item } = Form;
     // 空调类型 1.分体式空调 2.多联机空调外机 3.多联机空调内机 4.中央空调面板
     const airTypeOptions = [
@@ -32,8 +32,13 @@ export const Tabs = ({ onValuesChangeSearch, form, onSearchClick }) => {
                 <Form
                     form={form}
                     layout="inline"
-                    onValuesChange={onValuesChangeSearch}
                     colon={false}
+                    initialValues={{
+                        alike: '',
+                        cSn: '',
+                        type: 0,
+                        ioState: 0
+                    }}
                 >
                     <Item name="alike" label="空调名称" style={{ marginLeft: 16 }}>
                         <Input placeholder="请输入空调名称"></Input>
@@ -42,10 +47,10 @@ export const Tabs = ({ onValuesChangeSearch, form, onSearchClick }) => {
                         <Input placeholder="请输入空调编号"></Input>
                     </Item>
                     <Item name="type" label="空调类型" style={{ marginLeft: 16 }}>
-                        <Select defaultValue={0} options={airTypeOptions} style={{ width: "140px" }}></Select>
+                        <Select options={airTypeOptions} style={{ width: "140px" }}></Select>
                     </Item>
                     <Item name="ioState" label="开关状态" style={{ marginLeft: 16 }}>
-                        <Select defaultValue={0} options={switchOptions} style={{ width: "140px" }}></Select>
+                        <Select options={switchOptions} style={{ width: "140px" }}></Select>
                     </Item>
                     <Item style={{ marginLeft: 16 }}>
                         <CustButtonT text="search" onClick={onSearchClick}></CustButtonT>
@@ -55,7 +60,7 @@ export const Tabs = ({ onValuesChangeSearch, form, onSearchClick }) => {
         </Header>
     )
 }
-export const Tabs2 = ({ onValuesChangeControl, form, onControlClick }) => {
+export const Tabs2 = ({ form, onControlClick }) => {
     const { Item } = Form;
 
     const modelOptions = [
@@ -77,20 +82,25 @@ export const Tabs2 = ({ onValuesChangeControl, form, onControlClick }) => {
             <Form
                 form={form}
                 layout="inline"
-                onValuesChange={onValuesChangeControl}
                 colon={false}
+                initialValues={{
+                    ioState: 1,
+                    workMode: 1,
+                    windSpeed: 5,
+                    temperature: 24,
+                }}
             >
                 <Item name="ioState" label="开关" style={{ marginLeft: 16 }}>
                     <Switch checkedChildren="开" unCheckedChildren="关" defaultChecked />
                 </Item>
                 <Item name="workMode" label="模式" style={{ marginLeft: 16 }}>
-                    <Select defaultValue={1} options={modelOptions} style={{ width: "140px" }}></Select>
+                    <Select options={modelOptions} style={{ width: "140px" }}></Select>
                 </Item>
                 <Item name="windSpeed" label="风速" style={{ marginLeft: 16 }}>
-                    <Select defaultValue={5} options={windOptions} style={{ width: "140px" }}></Select>
+                    <Select options={windOptions} style={{ width: "140px" }}></Select>
                 </Item>
                 <Item name="temperature" label="温度" style={{ marginLeft: 16 }}>
-                    <InputNumber defaultValue={24} style={{ width: "140px" }} addonAfter="℃" />
+                    <InputNumber style={{ width: "140px" }} addonAfter="℃" />
                 </Item>
                 <Item style={{ marginLeft: 16 }}>
                     <CustButtonT text="控制" onClick={onControlClick}></CustButtonT>

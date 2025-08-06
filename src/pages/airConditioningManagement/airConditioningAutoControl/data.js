@@ -17,18 +17,18 @@ export const cols = [
   },
   {
     title: "通信地址",
-    dataIndex: "csn",
-    key: "csn",
+    dataIndex: "cSn",
+    key: "cSn",
   },
   {
     title: "所属网关",
-    dataIndex: "gsn",
-    key: "gsn",
+    dataIndex: "gSn",
+    key: "gSn",
   },
   {
     title: "所属计量设备",
-    dataIndex: "msn",
-    key: "msn",
+    dataIndex: "mSn",
+    key: "mSn",
   },
   {
     title: "安装地址",

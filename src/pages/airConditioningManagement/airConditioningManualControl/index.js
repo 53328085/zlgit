@@ -15,7 +15,8 @@ import centralAir from './icon/centralAirPanel.png'
 import { useList, useSetControl } from "./api.js";
 export default function Index() {
   const projectId = useSelector(selectProjectId)
-  const [formSearch, formControl] = Form.useForm();
+  const [formSearch] = Form.useForm();
+  const [formControl] = Form.useForm();
   const controlRef = useRef();
   const [treeId, setTreeId] = useState([]);
   const [airData, setAirData] = useState([]);
@@ -25,31 +26,41 @@ export default function Index() {
 
   const [indeterminate, setIndeterminate] = useState(false);
   const [checkAll, setCheckAll] = useState(false);
-  const [searchParams, setSearchParams] = useState({})
-  const [controlParams, setControlParams] = useState({})
   // 设备状态常量
   const DEVICE_STATE = {
     OFFLINE: 1,     // 离线
     ONLINE: 2,      // 在线
     ALARM: 3        // 告警
   };
-  const onValuesChangeSearch = (values, allValues) => {
-    setSearchParams(allValues)
-  }
-  const onValuesChangeControl = (values, allValues) => {
-    setControlParams(allValues)
-  }
-  const handleSearchClick = () => {
-    let params = {
-      projectId,
-      alike: searchParams.alike + searchParams.cSn ? searchParams.alike + searchParams.cSn : '',
-      type: searchParams.type ? searchParams.type : 0,
-      ioState: ioState ? searchParams.ioState : 0,
-      areaIds: treeId
+  const handleSearchClick = async () => {
+    try {
+      let { alike, cSn, type, ioState } = await formSearch.validateFields()
+      let params = {
+        projectId,
+        alike: alike + cSn ? alike + cSn : '',
+        type,
+        ioState,
+        areaIds: treeId
+      }
+      let { data, success, errMsg } = await useList({}, params)
+      if (success) {
+        setAirData(Array.isArray(data.details) ? data.details : [])
+        setOpenNum(data.openNum)
+        setCloseNum(data.closeNum)
+      } else {
+        message.error(errMsg);
+        setAirData([])
+        setOpenNum(0)
+        setCloseNum(0)
+      }
+    } catch {
+
     }
-    getAirSearch(params)
   }
-  const handleControlClick = () => {
+  const handleControlClick = async () => {
+    let { temperature } = await formControl.validateFields()
+    console.log(temperature, formControl.validateFields())
+    if (temperature == null) return message.warning('请输入空调温度');
     if (selectedAirs.length == 0) return message.warning('请选择要控制的空调设备');
     controlRef.current.onOpen()
   }
@@ -93,12 +104,13 @@ export default function Index() {
   };
   const onOkControl = async () => {
     try {
+      let { ioState, workMode, windSpeed, temperature } = await formControl.validateFields()
       let params = {
         projectId,
-        ioState: controlParams.ioState ? controlParams.ioState : 1,
-        workMode: controlParams.workMode ? controlParams.workMode : 1,
-        windSpeed: controlParams.windSpeed ? controlParams.windSpeed : 5,
-        temperature: controlParams.temperature ? controlParams.temperature : 24,
+        ioState,
+        workMode,
+        windSpeed,
+        temperature,
         csn: selectedAirs
       }
       let { data, success, errMsg } = await useSetControl({}, params)
@@ -114,32 +126,8 @@ export default function Index() {
     }
     controlRef.current.onCancel()
   }
-  const getAirSearch = async (params) => {
-    try {
-      let { data, success, errMsg } = await useList({}, params)
-      if (success) {
-        setAirData(Array.isArray(data.details) ? data.details : [])
-        setOpenNum(data.openNum)
-        setCloseNum(data.closeNum)
-      } else {
-        message.error(errMsg);
-        setAirData([])
-        setOpenNum(0)
-        setCloseNum(0)
-      }
-    } catch {
-
-    }
-  }
   useEffect(() => {
-    let params = {
-      projectId,
-      alike: '',
-      type: 0,
-      ioState: 1,
-      areaIds: treeId
-    }
-    getAirSearch(params)
+    handleSearchClick()
   }, [projectId, treeId])
   return (
     <Pagecount pd="0 0 16px 0" bgcolor="none">
@@ -157,7 +145,6 @@ export default function Index() {
         </div>
         <div className="right-box">
           <Tabs
-            onValuesChangeSearch={onValuesChangeSearch}
             form={formSearch}
             onSearchClick={handleSearchClick}>
           </Tabs>
@@ -169,7 +156,6 @@ export default function Index() {
               <Tabs2
                 onControlClick={handleControlClick} // 传递处理函数
                 form={formControl}      // 确保其他需要的props
-                onValuesChangeControl={onValuesChangeControl} // 确保其他需要的props 
               /></div>
             <div className="watchNum"> <div>
               <Checkbox
