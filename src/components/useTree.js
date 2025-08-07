@@ -96,10 +96,10 @@ export default memo(function Index({ areaId, setTreeId, setLine, showline = true
   //const fieldNames= {title:'name',key: treekey,children:'nodes'}  
 
   //获取树的数据，0 网格, 1 线路, 2 公共能耗分类
-  console.log("expand", expand, "fieldNames", fieldNames)
+  //console.log("expand", expand, "fieldNames", fieldNames)
   const getTreeData = async (name = '') => {
     let idx = Number.isInteger(datatype) ? datatype : typeTree;
-    console.log(name, idx)
+  //  console.log(name, idx)
     if (Number.isInteger(datatype) && !energytype) return
     try {
       if (name != keyword) setKeyword(name)
@@ -146,7 +146,7 @@ export default memo(function Index({ areaId, setTreeId, setLine, showline = true
 
       const { success, data, errMsg } = await hander(params)
       if (success && Array.isArray(data)) {
-        console.log(idx)
+      //  console.log(idx)
         switch (idx) {
           case 0:
             getId(data, 'areaId');
@@ -198,7 +198,7 @@ export default memo(function Index({ areaId, setTreeId, setLine, showline = true
 
   // 复选框模式
   const onCheck = (data, e) => { // 受控
-    console.log(data, e)
+   // console.log(data, e)
     let checked
     
       if (schecked == 1) {

@@ -1,6 +1,7 @@
-import React, { useEffect, useRef, useState } from 'react'
-import {  Button,  Form, Input,  Tree, message, Divider, Space, Typography} from 'antd';
+import React, { useEffect, useMemo, useRef, useState } from 'react'
+import {  Button,  Form, Input,  Tree, message, Alert, Space, Typography} from 'antd';
 import { cloneDeep, update } from "lodash";
+import {useOutletContext} from "react-router-dom"
 import {useTranslation} from 'react-i18next'
 import styled from 'styled-components';
 import style from './style.module.less'
@@ -9,11 +10,16 @@ import { useRequest } from 'ahooks';
 import {useSelector} from 'react-redux'
 import {selectProjectId, selectOneLevelDefaultId, publishState, selectcurlRommid} from '@redux/systemconfig.js'
 import { distributionRoom } from '@api/api.js'
+import {useTree, useAdd, useUpdate,useDelete, usePageBind, usePageUnBind, 
+  useLineBindLight,
+  useLineUnBindLight,
+  useLineBindSwitch
+} from "./api"
 import CModal from '@com/useModal'
  
 import Pagecont from "@com/pagecontent"
 import Titlelayout from '@com/titlelayout'
-const {Link} = Typography
+const {Link, Text} = Typography
 const NodeDevice =styled.div`
   position: absolute;
   right: 224px;
@@ -30,8 +36,8 @@ const NodeDevice =styled.div`
 export default function Index() {
   const {t} = useTranslation(["button"])
   const isPublish = useSelector(publishState)
-  const roomId = useSelector(selectcurlRommid)
-  const areaId = useSelector(selectOneLevelDefaultId)
+  let { exparams = {} } = useOutletContext() || {}
+  let { projectId, areaId } = exparams
   const {  queryLine, addLine, updateLine, deleteLine, queryUnusedLineMeter, configLineMeter } = distributionRoom
   const [messageApi, contextHolder] = message.useMessage();
   const messageContent = (type, content)=>{
@@ -40,14 +46,22 @@ export default function Index() {
       content
     })
   }
-  const projectId = useSelector(selectProjectId);
-  const [addModal, setAddModal] = useState(false)
-  const [modalTitle, setModalTitle] = useState('')
+  
+  const [addModal, setAddModal] = useState(1) // 1. 新增 主线路 2. 新增子线路 3. 编辑线路  
+  // const [modalTitle, setModalTitle] = useState('')
   const [form] = Form.useForm()
   const Item = Form.Item
 
- 
-
+  const [modalTitle] = useMemo(()=> {
+    console.log(addModal)
+    let title =  {
+      1: "新增主线路",
+      2: "新增下级线路",
+      3: "编辑主线路"
+    }[addModal]
+    return [title]
+  },addModal )
+  console.log(modalTitle)
   const addref = useRef();
   //配电房下拉框
 
@@ -55,54 +69,50 @@ export default function Index() {
 
 
   //查询线路
-  const getLine = () => {
-    return queryLine(projectId, roomId).then(res=>{
-      if(res.success && res.data){
-        setTreeData(res.data)
-      }else if(res.success && !res.data){
-        setTreeData([])
-      }else{
-        messageApi.open({
-          type: 'error',
-          content: res.errMsg
-        })
+  const getLine =async () => {
+      try {
+        const flag = Number.isInteger(parseInt(projectId)) && Number.isInteger(parseInt(areaId))
+        if(!flag) return 
+        let params ={
+          projectId,
+          areaId,
+          lineType:22
+        }
+        let {success, data, errMsg} =  await  useTree(params)
+        if(success && Array.isArray(data)) {
+          setTreeData(data)
+        }else {
+          if(!success) message.warning(errMsg || "数据出错")
+          setTreeData([])
+        }
+      } catch (error) {
+        
       }
-    }).catch(e => {
-      console.log(e)
-    })
   }
-  const {run: lineQuery } = useRequest(getLine,{
-    manual: true
+  const { refresh} = useRequest(getLine,{
+    refreshDeps: [projectId, areaId]
   })
-  useEffect(()=> {
-    if(roomId){
-      lineQuery()
-    }else {
-      setTreeData([])
-    }
-  },[roomId])
-  const [clickTag, setClickTag] = useState('')
+ 
+ 
   const [subId, setSubId] = useState(null)
   const showAdd = () => {
-     
-    setModalTitle('新增线路')
-    setAddModal(true)
-    setClickTag('addMain')
+    
+    setAddModal(1)
+   
      addref.current.onOpen()
   }
-  const addSon = (record) => {
-    setModalTitle('新增线路')
-    setAddModal(true)
+  const addSon = (id) => {
     
-    setClickTag('addSub')
-    setSubId(record)
+    setAddModal(2)
+    
+    
+    setSubId(id)
     addref.current.onOpen()
     
   }
   const edit = (id, name) => {
-    setModalTitle('编辑线路')
-    setAddModal(false)
-    setClickTag('edit')
+    
+    setAddModal(3)
     setSubId(id)
     form.setFieldValue('name', name)
     addref.current.onOpen()
@@ -110,19 +120,34 @@ export default function Index() {
   const addOk = async () => {
     try {
       
-      return form.validateFields().then(async () => {
-      const values = await form.validateFields();
+       
+      const {name} =  await form.validateFields()  ;
+      console.log(name)
+      let body = {
+          projectId,
+          names: addModal==2 ? name?.split(",") : [name?.trim?.()],
+          lineType:22,
+          parentId: addModal==1 ? 0 : subId,
+          areaId 
       
-      let params = {
-        projectId,
-        roomId,
-        name: values.name?.trim()
       };
-      if(clickTag == 'edit'){
+      let handler = {
+        1: useAdd, 
+        2: useAdd,
+        3:useUpdate
+      }[addModal]
+      const {success, errMsg} = await handler({},body) 
+      if(success) {
+        message.success(modalTitle+"成功")
+        refresh()
+      }else {
+        message.warning(errMsg || "数据出错")
+      }
+      /* if(clickTag == 'edit'){
         updateLine(projectId, subId, encodeURIComponent(values.name)).then(res=> {
           if(res.success){
             messageContent('success', '线路名称修改成功!')
-            lineQuery()
+            refresh()
             addref.current.onCancel();
           }else{
             messageContent('error', res.errMsg)
@@ -138,15 +163,17 @@ export default function Index() {
           if(res.success){
             messageContent('success', '新增线路成功！')
             form.resetFields()
-            lineQuery()
+            refresh()
           }else{
             messageContent('error', res.errMsg)
           }
         })
-      }
-    })
+      } */
+    
      
-    }catch(errorInfo){}
+    }catch(error){
+      console.log(error)
+    }
   }
  
 
@@ -156,7 +183,7 @@ export default function Index() {
     deleteLine(projectId, deleteId).then(res => {
       if(res.success){
         messageContent('success', '线路删除成功')
-        lineQuery()
+        refresh()
       }else{
         messageContent('error', res.errMsg)
       }
@@ -294,7 +321,7 @@ export default function Index() {
       if(res.success){
         messageContent('success', '线路配置保存成功');
         setTransTag('close')
-        lineQuery()
+        refresh()
       }else{
         messageContent('error', res.errMsg)
       }
@@ -331,7 +358,7 @@ export default function Index() {
   const Title = (
     <div style={{display: 'flex', justifyContent: "space-between", alignItems: "center"}}>
        <span>路灯回路</span>
-       { isPublish ? null : <Button type="primary" disabled={!roomId}   onClick={showAdd} style={{marginRight:0}}>{t("button:newMainLine")}</Button> }
+       { isPublish ? null : <Button type="primary" disabled={!areaId}   onClick={showAdd} style={{marginRight:0}}>{t("button:newMainLine")}</Button> }
     </div>
   )
   return (
@@ -353,16 +380,26 @@ export default function Index() {
        
       <UseTransfer  mask={transTag} transferTitle={transferTitle} saveValue={getSaveValue} columns={columns} mainTable={mainTable} subTable={subTable} unknownTable={unknownTable} closeValue={getCloseValue}></UseTransfer>
        
-        <CModal title={modalTitle}  onOk={addOk} width={592}  closable={false}  mold="cust" ref={addref} custft={addModal}  >
+        <CModal title={modalTitle}  onOk={addOk} width={592}  closable={false}  mold="cust" ref={addref} custft={addModal!=3}  >
        
           <Form name='addform' labelCol={{span:5}} form={form} labelAlign={'left'} requiredMark={false} autoComplete='off' preserve={false}>
-            <Item label='线路名称' name='name' rules={[{required:true, message:'请输入线路名称'}, {
+          {addModal!=2 ? <Item label='线路名称' name='name' rules={[{required:true, message:'请输入线路名称'}, {
               type: 'string',
               max: 64,
               message: "名称最多为64个字符"
-            }]}>
+            },
+            {
+              whitespace: true
+            }
+            ]}>
               <Input style={{width:'400px'}}></Input>
             </Item>
+            : <div>
+              <Text type="warning" style={{fontSize: "12px", marginBottom: "12px"}}>提示：批量添加同级线路时请使用英文逗号分隔线路名称，重复添加的线路名称将会被自动删除</Text> 
+               <Item name="name"><Input.TextArea rows={12} allowClear placeholder='请输入线路名称(示例:线路1,线路2,线路3)'  onResize={()=>undefined}></Input.TextArea>
+               </Item>
+            </div>
+    }       
           </Form>
          
         </CModal>
