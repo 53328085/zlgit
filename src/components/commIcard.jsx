@@ -13,7 +13,7 @@ const CardItme = styled.div`
     border: 1px solid rgba(221, 223, 230, 1);
     border-radius: 8px;
     display: flex;
-    column-gap: 17px;
+    column-gap: 12px;
     justify-content: flex-start;
     position: relative;
     overflow: hidden;
@@ -22,7 +22,7 @@ const CardItme = styled.div`
       left: 14;
     }
     .cardImg {
-      flex: 0 0 100px;
+      flex: 0 0 80px;
       height: 136px;
       justify-content: center;
       align-items: center;
@@ -55,6 +55,8 @@ const CardItme = styled.div`
         }
       }
       .sp.line {
+        display: grid;
+        grid-template-columns: 1fr 160px;
         justify-content: space-between;
       }
       .values {
@@ -66,13 +68,14 @@ const CardItme = styled.div`
        // border: 1px solid rgba(${props => props.rgb[0]},${props => props.rgb[1]},${props => props.rgb[2]},0.2);
         border-radius: 6px;
         .item {
-          padding: 0 8px;
+          padding: 0 4px;
           display: flex;
           align-items: center;
           justify-content: space-between;
           .field {
             color: ${(props) => props.theme.fieldname || "#ffffff"};
             font-size: 14px;
+            
           }
           .value {
             color: ${(props) => props.theme.fieldvalue || "#1E50E6"};

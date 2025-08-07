@@ -2,6 +2,7 @@ import React, {
   useState,
   useRef,
   useEffect,
+  useMemo,
 } from "react";
 import {
   Input,
@@ -25,6 +26,7 @@ import { selectOneLevel, selectOneLevelDefaultId, getOnelevel, publishState, fil
 import { useSelector, useDispatch } from 'react-redux'
 import Mask from '@com/mask.jsx'
 import { CustLink, CancelButton , CustButton} from "@com/useButton"
+import {useListUnBindLight, useListBindLight, useAddConfig , useRemoveConfig} from "./api"
 const Mainbox = styled.div`
   position: relative;
   display: grid;
@@ -138,7 +140,7 @@ const Inptserach = styled(Input.Search)`
 `;
 const { Link, Text, Paragraph } = Typography;
 const { Item } = Form;
-export default function Index({ projectId, level, CModal, name, allLevel }) {
+export default function Index({ projectId, level,  name,id, allLevel }) {
 
   const dispatch = useDispatch();
   const oneLevel = useSelector(selectOneLevel) // 一级 
@@ -153,7 +155,7 @@ export default function Index({ projectId, level, CModal, name, allLevel }) {
 
   const boxref = useRef();
   const [Record, setRecord] = useState({});
-  const [isAdd, setIsAdd] = useState(true);
+ 
   const [open, setOpen] = useState(false);
   const [deviceSummary, setDeviceSummary] = useState([]);
   const [deviceSub, setDeviceSub] = useState([]);
@@ -161,12 +163,9 @@ export default function Index({ projectId, level, CModal, name, allLevel }) {
 
   const [tabelData, setTableData] = useState([])
   const [columns, setColumns] = useState([]);
-  //const [topAreaId, setTopAreaId] = useState(() => level == 1 ? 0 : leveloption[0]?.id)
+ 
   const [topAreaId, setTopAreaId] = useState(oneLevelDefaultId)
-  /*   const [fields, setFields] = useState({
-      field: [],
-      type: [],
-    }); */
+ 
 
   const [pagination, setPagination] = useState({
     current: 1,
@@ -221,8 +220,8 @@ export default function Index({ projectId, level, CModal, name, allLevel }) {
   const deviceColumns = [
     {
       title: "设备编号",
-      dataIndex: "sn",
-      key: "sn",
+      dataIndex: "no",
+      key: "no",
     },
     {
       title: "设备名称",
@@ -249,29 +248,31 @@ export default function Index({ projectId, level, CModal, name, allLevel }) {
   const getUNselect = async ({ type = devietype, areaId, alike = "" } = {}) => {
     curareaId.current = areaId;
     try {
-      let { success, data } = await Area.QueryUnusedMeter({
+      let { success, data } = await useListUnBindLight({},{
         projectId,
-        type,
-        areaId,
-        alike,
+        rId:id,
       }); // 未选中
       if (success && Array.isArray(data)) {
         setUnSelected([...data]);
-        devices.current.unselected = data;
+      //  devices.current.unselected = data;
       } else {
         setUnSelected([]);
       }
-    } catch (error) { }
+    } catch (error) {
+      console.log(error)
+     }
   };
 
-  const getSelected = async ({ areaId, type = devietype }) => {
+  const getSelected = async () => {
+     try {
+  
     let {
       data: { deviceSummary, deviceSub },
       success,
-    } = await Area.QueryUsedMeter({ projectId, type, areaId }); // 已选中 type: 0
+    } = await useListBindLight({},{ projectId, rId:id }); // 已选中 type: 0
     if (success && Array.isArray(deviceSummary)) {
       setDeviceSummary([...deviceSummary]);
-      devices.current.deviceSub = deviceSub;
+    //  devices.current.deviceSub = deviceSub;
     } else {
       setDeviceSummary([]);
     }
@@ -280,30 +281,18 @@ export default function Index({ projectId, level, CModal, name, allLevel }) {
     } else {
       setDeviceSub([]);
     }
-
+        
+  } catch (error) {
+      console.log(error)
+  }
 
   }
 
 
   const deviceData = async (record) => {
     try {
-      /*  let {type, areaId} = record   
-  let {success, data} = await Area.QueryUnusedMeter({projectId, type:1, areaId}) // 未选中 
-   if (success && Array.isArray(data)) {
-    setUnSelected([...data])
-    devices.current.unselected = data
-   }else {
-    setUnSelected([])
-   } */
-
-
-      let { areaId } = record;
-      // let  topareaid = form.getFieldValue('topAreaId');
-      // let topid = level == 1 ? areaId : topareaid
-      //  await getUNselect({ areaId: topid });
-
-      await getUNselect({ areaId });
-      await getSelected({ areaId })
+      await getUNselect();
+      await getSelected()
 
     } catch (error) {
       console.log(error);
@@ -323,7 +312,7 @@ export default function Index({ projectId, level, CModal, name, allLevel }) {
   const [rowSelectionData, setRowSelection] = useState([])
   const [maindata, setMaindata] = useState([])
   const rowSelection = {   // 总表
-    selectedRowKeys: rowSelectionData,
+  //  selectedRowKeys: rowSelectionData,
     onChange: (selectedRowKeys, selectedRows, info) => {
       setRowSelection(selectedRowKeys)
       setMaindata([...selectedRows]);
@@ -332,7 +321,7 @@ export default function Index({ projectId, level, CModal, name, allLevel }) {
   const [subrowSelectionData, setSubRowSelection] = useState([])
   const [subdata, setSubdata] = useState([])
   const subrowSelection = {   // 分表
-    selectedRowKeys: subrowSelectionData,
+  //  selectedRowKeys: subrowSelectionData,
     onChange: (selectedRowKeys, selectedRows, info) => {
       setSubRowSelection(selectedRowKeys)
       setSubdata([...selectedRows]);
@@ -341,56 +330,42 @@ export default function Index({ projectId, level, CModal, name, allLevel }) {
 
   const [unrowSelectionData, setUnRowSelection] = useState([])
   const [undata, setUndata] = useState([])
-  const unrowSelection = {   // 分表
-    selectedRowKeys: unrowSelectionData,
+  const unrowSelection = {   // 未选中
+   // selectedRowKeys: unrowSelectionData,
     onChange: (selectedRowKeys, selectedRows, info) => {
-      setUnRowSelection(selectedRowKeys)
+       setUnRowSelection(selectedRowKeys)
       setUndata([...selectedRows]);
     },
   };
 
 
 
-  const onMove = async (type) => {
+  const onMove = async (type,h, m) => {  // h: 1, 绑定 2. 解绑 m, 1 总表 2. 分表
 
-    let { areaId } = Record
+    console.log(type)
     let selected = [[], undata, maindata, undata, subdata][type]
     // let selected = devices.current.selected; 
 
     if (selected.length < 1) return message.warning('请选择设备', 2)
-    if (type == 2 || type == 4) setUnRowSelection([])
-    if (type == 1) setRowSelection([])
-    if (type == 3) setSubRowSelection([])
-    let params = selected.map(s => s.sn);
-    let handler = ['', 'AddSummaryDevice', 'RemoveSummaryDevice', 'AddSubDevice', 'RemoveSubDevice'][type]
-    let { success, errMsg } = await Area[handler](projectId, areaId, params)
+     setUnRowSelection([])
+     setRowSelection([])
+     setSubRowSelection([])
+    let body = selected.map(s => s.id);
+    let handler = ['', useAddConfig , useRemoveConfig][h]  
+    let { success, errMsg } = await handler({projectId, type:m, rid:id}, body )
     if (success) {
-      devices.current.selected = [];
-      getSelected({ areaId })
-      getUNselect({ areaId })
+     console.log(subrowSelectionData)
+    //  devices.current.selected = [];
+      getSelected()
+      getUNselect()
+      message.success(h==1 ? "绑定成功" : "解绑成功")
     } else {
       message.error(errMsg || '数据出错', 2)
     }
 
   };
 
-  /*   const configureMeter = async () => {
-      let params = {
-        projectId,
-        areaId: Record.areaId,
-        deviceSummary: deviceSummary.map((i) => i.sn),
-        deviceSub: deviceSub.map((i) => i.sn),
-      };
-      let { success, errMsg } = await Area.ConfigureMeter(params);
-      success &&
-        custMsg({
-          content: "保存成功",
-          onClose: () => {
-            deviceData(Record);
-          },
-        });
-      !success && custMsg({ success, content: errMsg || "数据出错" });
-    }; */
+
   const handlersearch = (e) => {
     let str = e.trim();
     str &&
@@ -404,8 +379,8 @@ export default function Index({ projectId, level, CModal, name, allLevel }) {
     let { type } = params
     setDevietype(type)
     try {
-      getUNselect({ areaId: curareaId.current, ...params });
-      getSelected({ areaId: curareaId.current, type })
+      getUNselect();
+      getSelected()
     } catch (error) {
       console.log(e);
     }
@@ -616,7 +591,10 @@ const savesty = laptop
                 <div className="inwrap">
                 <UserTable
                 columns={deviceColumns}
-                rowSelection={rowSelection}
+                rowSelection={{
+                  selectedRowKeys: rowSelectionData,
+                  ...rowSelection
+                }}
                 dataSource={deviceSummary}
                 rowKey="id"
               />
@@ -639,7 +617,10 @@ const savesty = laptop
                 <div className="inwrap">
                 <UserTable
                 columns={deviceColumns}
-                rowSelection={subrowSelection}
+                rowSelection={{
+                  selectedRowKeys: subrowSelectionData,
+                  ...subrowSelection,
+                }}
                 dataSource={deviceSub}
                 rowKey="id"
 
@@ -649,18 +630,19 @@ const savesty = laptop
              
             </div>
           </div>
+
           <div className="optab">
             <div>
               <Paragraph>选中{name}总表</Paragraph>
               <Space>
                 <CustButton
                   icon={<LeftOutlined  />}
-                  onClick={() => onMove(1)}
+                  onClick={() => onMove(1, 1, 1)}
                   style={btnsty}
                 ></CustButton>
                 <CustButton
                   icon={<RightOutlined />}
-                  onClick={() => onMove(2)}
+                  onClick={() => onMove(2, 2, 1)}
                   style={btnsty}
                 ></CustButton>
               </Space>
@@ -671,14 +653,14 @@ const savesty = laptop
                 <CustButton
                  icon={<LeftOutlined />} 
                  style={btnsty}
-                 onClick={() => onMove(3)}
+                 onClick={() => onMove(3, 1, 2)}
                     />
                  
                 
                 <CustButton
                  icon={<RightOutlined />} 
                  style={btnsty}
-                 onClick={() => onMove(4)}
+                 onClick={() => onMove(4, 2, 2)}
                  
                 /> 
               </Space>
@@ -746,7 +728,10 @@ const savesty = laptop
               <div className="inwrap">
               <UserTable
               columns={deviceColumns}
-              rowSelection={unrowSelection}
+              rowSelection={{
+                selectedRowKeys: unrowSelectionData,
+                ...unrowSelection,
+              }}
               dataSource={Unselected}
               rowKey="id"
             />

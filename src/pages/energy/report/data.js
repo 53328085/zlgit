@@ -200,9 +200,9 @@ export   let conscols =[   //  conscols 能耗报表
           key: "end",
         },
         {
-          title: '用能(kWh)',
-          dataIndex: 'consume',
-          key: "consume",
+          title: '倍率',
+          dataIndex: 'magnification',
+          key: "magnification",
         }, 
         {
           title: '设备编号',
