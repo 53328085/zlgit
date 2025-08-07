@@ -137,7 +137,7 @@ export default function Index() {
     let f = ["0", "1", "4"].includes(value)
     //  console.log(dates)
     if (Array.isArray(dates) && dates?.[0] && dates?.[1]) {
-      filename = getTime(dates?.[0], 1).toString() + "-" + getTime(dates?.[1], 1).toString() + tabs[index]?.label
+      filename = getTime(dates?.[0], 1)?.toString() + "-" + getTime(dates?.[1], 1)?.toString() + tabs[index]?.label
     }
     return (f && isrange.range && dates?.length) ? filename : (tabs[index]?.label ?? 'sheet')
 
@@ -181,7 +181,7 @@ export default function Index() {
       pageSize,
       queryType: line,
       ids: treeId,
-      type
+      type: range ? 1 : type
     }
     if (index == 0) {
       params.filterInfo = alike

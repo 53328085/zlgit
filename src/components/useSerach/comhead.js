@@ -399,7 +399,7 @@ export default function UseSerach(props) {
     if (nested == "public" && primary == 'runtimeEnergy') {
       form.setFieldValue('date', [moment().startOf("day"), moment()])
     } else {
-      form.setFieldValue('date', moment())
+      form.setFieldValue('date', moment(new Date(), "YYYY-MM-DD"))
     }
   }, [nested, primary])
   return (

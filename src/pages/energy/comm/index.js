@@ -67,7 +67,7 @@ export default function Index(props) {
     QueryAllRangeByType
   } = EnergyPublicRuntime;
 
-  let { exparams } = useOutletContext()
+  let { exparams,setConfig } = useOutletContext()
   let { areaId, projectId, type, date, energytype, shiftNo } = exparams
   const chartTitle = ["用电量 (kWh)", "用电量 (kWh)", '用冷水量 (m³)', '用气量 (m³)', '', '', '', '用热水量 (m³)', '', '', '', '', '', '', '', '', '', '', '用蒸汽量 (m³)'][energytype] || "用电量 (kWh)"
   const isElectric = energytype === 1;
@@ -162,8 +162,8 @@ export default function Index(props) {
     const params = type == 1 ? {
       projectId,
       areaId,
-      startDate: date?.[0]?.format("YYYY-MM-DD"),
-      endDate: date?.[1]?.format("YYYY-MM-DD"),
+      startDate: date?.[0]?.format?.("YYYY-MM-DD"),
+      endDate: date?.[1]?.format?.("YYYY-MM-DD"),
       shiftNo,
       meterType: energytype,
       type,
@@ -243,7 +243,11 @@ export default function Index(props) {
   const exportData = () => {
     tbref.current.download()
   }
-
+  useEffect(()=> {
+    return ()=> {
+      setConfig?.({isdaterange:false, dadateType:1})
+    }
+  }, [])
   return (
     <Pagecount pd="0" bgcolor="transparent" >
       <Mainbox energy={energytype}>

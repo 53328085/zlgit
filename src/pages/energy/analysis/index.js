@@ -50,7 +50,10 @@ export default function Index() {
   const getTableData = ({ current, pageSize }) => {
     // 0 建筑 1线路
 
-    if (Object.values(exparams)?.length < 6) return;
+    //if (Object.values(exparams)?.length < 6) return;
+
+    let flag = [areaId, projectId, type,  energytype, shiftNo].some(i => Number.isInteger(parseInt(i))) && date
+    if(!flag) return
     if (!Array.isArray(treeId) || !isFinite(line)) return
     let time = getTime(date, type)
     let params = {
@@ -79,6 +82,8 @@ export default function Index() {
         }
 
       }
+    }).catch((e)=> {
+       console.log(e)
     })
   }
   const { tableProps } = useAntdTable(getTableData, {
