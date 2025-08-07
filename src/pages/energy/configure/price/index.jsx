@@ -53,6 +53,7 @@ export default function Index() {
   const [waterPrice, setWaterPrice] = useState()
   const [hotWaterPrice, setHotWaterPrice] = useState()
   const [gasPrice, setGasPrice] = useState()
+  const [steamPrice, setSteamPrice] = useState()
   const [coalPrice, setCoalPrice] = useState()
   const [fuelPrice, setFuelPrice] = useState()
   const [changeTag, setChangeTag] = useState()
@@ -78,6 +79,7 @@ export default function Index() {
         setWaterPrice()
         setHotWaterPrice()
         setGasPrice()
+        setSteamPrice()
         setCoalPrice()
         setFuelPrice()
         let { data } = res
@@ -102,6 +104,9 @@ export default function Index() {
             }
             if (item.priceType == 10) {
               setFuelPrice(item)
+            }
+            if (item.priceType == 18) {
+              setSteamPrice(item)
             }
           })
         }
@@ -171,6 +176,10 @@ export default function Index() {
         params.PriceType = 10
         params.Price = parseFloat(values.price)
       }
+      if (changeTag == 'steam') {
+        params.PriceType = 18
+        params.Price = parseFloat(values.price)
+      }
       insertPriceSolution(projectId, params).then(res => {
         if (res.success) {
           messageApi.open({
@@ -223,6 +232,10 @@ export default function Index() {
       }
       if (changeTag == 'fuel') {
         params.PriceType = 10
+        params.Price = parseFloat(values.price)
+      }
+      if (changeTag == 'steam') {
+        params.PriceType = 18
         params.Price = parseFloat(values.price)
       }
       updatePriceSolution(projectId, params).then(res => {
@@ -332,6 +345,21 @@ export default function Index() {
               </div>
             </div> : <div className={style.contentMiddle}></div>}
             <Actions valueJson={gasPrice} title={'gas'}></Actions>
+          </div>
+        </div>
+        <div className={style.card}>
+          <div className={style.cardTitle}>{areaName}蒸汽价</div>
+          <div className={style.cardContent}>
+            <div className={style.contentLeft}>蒸汽价&nbsp;(元/m³)</div>
+            {steamPrice ? <div className={style.contentMiddle}>
+              <div>
+                <span>蒸汽价&nbsp;</span>
+              </div>
+              <div>
+                <span>{steamPrice.price}</span>
+              </div>
+            </div> : <div className={style.contentMiddle}></div>}
+            <Actions valueJson={steamPrice} title={'steam'}></Actions>
           </div>
         </div>
         <div className={style.card}>
@@ -446,6 +474,19 @@ export default function Index() {
           </Form>
         </div> : null}
 
+        {changeTag == 'steam' ? <div style={{ display: "flex", alignItems: "center" }}>
+          <Form name='addform' labelCol={{ span: 6 }} form={form} labelAlign={'left'} requiredMark={false} autoComplete='off' >
+            <Item label='蒸汽价' rules={[{ required: true, message: '蒸汽价不能为空！' }]}>
+              <Space>
+                <Item name='price' rules={[{ required: true, message: '蒸汽价不能为空！' }]}>
+                  <Input style={{ width: '112px' }}></Input>
+                </Item>
+                <span style={{ fontSize: 14, color: '#999' }}>(元/m³)</span>
+              </Space>
+            </Item>
+          </Form>
+        </div> : null}
+
         {changeTag == 'coal' ? <div style={{ display: "flex", alignItems: "center" }}>
           <Form name='addform' labelCol={{ span: 6 }} form={form} labelAlign={'left'} requiredMark={false} autoComplete='off' >
             <Item label='煤炭价' rules={[{ required: true, message: '煤炭价不能为空！' }]}>
@@ -552,6 +593,18 @@ export default function Index() {
             </Item>
           </Form>
         </div> : null}
+        {changeTag == 'steam' ? <div style={{ display: "flex", alignItems: "center" }}>
+          <Form name='editform' ref={formRef} labelCol={{ span: 6 }} form={editform} labelAlign={'left'} requiredMark={false} autoComplete='off' >
+            <Item label='蒸汽价' rules={[{ required: true, message: '蒸汽价不能为空！' }]}>
+              <Space>
+                <Item name='price' rules={[{ required: true, message: '蒸汽价不能为空！' }]}>
+                  <Input style={{ width: '112px' }}></Input>
+                </Item>
+                <span style={{ fontSize: 14, color: '#999' }}>(元/m³)</span>
+              </Space>
+            </Item>
+          </Form>
+        </div> : null}
 
         {changeTag == 'coal' ? <div style={{ display: "flex", alignItems: "center" }}>
           <Form name='editform' ref={formRef} labelCol={{ span: 6 }} form={editform} labelAlign={'left'} requiredMark={false} autoComplete='off' >
@@ -580,7 +633,7 @@ export default function Index() {
         </div> : null}
       </Custmodl>
       <Custmodl title='删除价格' ref={dref} mold="cust" width={512} type="warn" onOk={() => onDelete()}>
-        <span> 是否删除{changeTag == 'electric' ? '电价' : changeTag == 'water' ? '冷水价' : changeTag == 'hotWater' ? '热水价' : changeTag == 'gas' ? '燃气价' : changeTag == 'coal' ? '煤炭价' : changeTag == 'fuel' ? '燃油价' : ''}? </span>
+        <span> 是否删除{changeTag == 'electric' ? '电价' : changeTag == 'water' ? '冷水价' : changeTag == 'hotWater' ? '热水价' : changeTag == 'gas' ? '燃气价' : changeTag == 'steam' ? '蒸汽价' : changeTag == 'coal' ? '煤炭价' : changeTag == 'fuel' ? '燃油价' : ''}? </span>
       </Custmodl>
     </Pagecount>
   )

@@ -64,11 +64,12 @@ export default function Index(props) {
     queryGasDay,
     queryGasMonth,
     queryGasYear,
+    QueryAllRangeByType
   } = EnergyPublicRuntime;
 
   let { exparams } = useOutletContext()
   let { areaId, projectId, type, date, energytype, shiftNo } = exparams
-  const chartTitle = ["用电量 (kWh)", "用电量 (kWh)", '用水量 (m³)', '用气量 (m³)', '', '', '', '用水量 (m³)'][energytype] || "用电量 (kWh)"
+  const chartTitle = ["用电量 (kWh)", "用电量 (kWh)", '用冷水量 (m³)', '用气量 (m³)', '', '', '', '用热水量 (m³)', '', '', '', '', '', '', '', '', '', '', '用蒸汽量 (m³)'][energytype] || "用电量 (kWh)"
   const isElectric = energytype === 1;
   const [treeIdList, setTreeIdList] = useState(null);
   //右下角 公共能耗同比  能耗数据展示
@@ -128,28 +129,55 @@ export default function Index(props) {
         queryGasDay,
         queryGasMonth,
         queryGasYear
-      ], [], [], [], [
+      ],
+      [], [], [],
+      [
         queryWaterRange,
         queryWaterMonth,
         queryWaterYear
       ],
+      [], [], [], [], [], [], [], [], [], [],
+      [
+        queryElectricRangeDay,
+        queryElectricMonth,
+        queryElectricYear
+      ]
     ][energy][api]
+    // const params = type == 1 ? {
+    //   projectId,
+    //   areaId,
+    //   startDate: date?.[0]?.format("YYYY-MM-DD"),
+    //   endDate: date?.[1]?.format("YYYY-MM-DD"),
+    //   shiftNo,
+    //   meterType: energytype
+    // } : {
+    //   projectId,
+    //   areaId,
+    //   date: date && type ? getTime(date, type) : "", //date().startOf(type==2 ? "month" : "year").format("YYYY-MM-DD"),
+    //   shiftNo,
+    //   meterType: energytype
+    // }
+
+    // return hander(params, treeIdList).then(res => {
     const params = type == 1 ? {
       projectId,
       areaId,
       startDate: date?.[0]?.format("YYYY-MM-DD"),
       endDate: date?.[1]?.format("YYYY-MM-DD"),
       shiftNo,
-      meterType: energytype
+      meterType: energytype,
+      type,
     } : {
       projectId,
       areaId,
-      date: data && type ? getTime(date, type) : "", //date().startOf(type==2 ? "month" : "year").format("YYYY-MM-DD"),
+      startDate: date && type ? getTime(date, type) : "", //date().startOf(type==2 ? "month" : "year").format("YYYY-MM-DD"),
+      endDate: date && type ? getTime(date, type) : "",
       shiftNo,
-      meterType: energytype
+      meterType: energytype,
+      type,
     }
 
-    return hander(params, treeIdList).then(res => {
+    return QueryAllRangeByType(params, treeIdList).then(res => {
       let { success, data, errMsg } = res;
       if (success) {
         let { detail = {}, energySub = [], energyTotal = [], proportion = [] } = Object.prototype.toString.call(data).slice(8, -1) == 'Object' ? data : {}
@@ -253,7 +281,7 @@ export default function Index(props) {
             <Button type="primary" onClick={exportData}>导出</Button>
           </div></div>} layout="flex">
           <div className="chart">
-            {mode == 1 ? <Ichart {...options} /> : <UseTable ref={tbref} dataSource={tableData} columns={columns} key="table" />}
+            {mode == 1 ? <Ichart {...options} /> : <UseTable ref={tbref} dataSource={tableData} columns={columns} key="table" scroll={{ y: 652 }} />}
           </div>
         </Titlelayout>
 
