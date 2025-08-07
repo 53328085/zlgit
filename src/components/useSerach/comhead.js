@@ -67,6 +67,8 @@ export default function UseSerach(props) {
   const varlabel = useSelector(levelDefaultLabel)
   const oneLevelDefaultId = useSelector(selectOneLevelDefaultId) // 选择后的值 
   let [AreaID, setAreaid] = useState(oneLevelDefaultId)
+  const [energyoptions, setEnergyoptions] = useState([])
+  const energyTypeDefault = useRef(1)
   const levelone = useSelector(selectOneLevel)
   const { laptop } = useSelector(adaptation)
   //const DeviceStyle = useSelector(filterDeviceStyle)  
@@ -109,7 +111,22 @@ export default function UseSerach(props) {
 
   }
 
-
+  const getEnergyType = async () => {
+    try {
+      if (!Number.isInteger(parseInt(projectId))) return
+      let { success, data } = await Editapi.QueryEnergyType(projectId)
+      if (success && Array.isArray(data) && data?.length) {
+        let types = data.map((d, index) => ({ label: d.name, value: d.type }))
+        energyTypeDefault.current = types[0].value
+        setEnergyoptions(types)
+      } else {
+        energyTypeDefault.current = 1
+        setEnergyoptions([])
+      }
+    } catch (error) {
+      console.log(error)
+    }
+  }
   const getopti = async () => { // 站点选择
     try {
       let { success, data, errMsg } = await SiteManagerDesigner.FindSiteList(projectId, AreaID)
@@ -152,6 +169,9 @@ export default function UseSerach(props) {
 
   }, [projectId, props.config?.isdevsty])
 
+  useEffect(() => {
+    getEnergyType()
+  }, [projectId])
 
   const onChange = (e, option) => {
     dispatch(setCurrentlevel(option))
@@ -229,35 +249,35 @@ export default function UseSerach(props) {
   )
   // 能源类型
 
-  const energyoptions = gas ? [{
-    label: '用电',
-    value: 1
-  }, {
-    label: '冷水',
-    value: 2
-  }, {
-    label: '热水',
-    value: 7
-  }, /* {
-  label: '燃气',
-  value: 3
-} */] : [{
-    label: '用电',
-    value: 1
-  }, {
-    label: '冷水',
-    value: 2
-  }, {
-    label: '热水',
-    value: 7
-  }]
+  //   const energyoptions = gas ? [{
+  //     label: '用电',
+  //     value: 1
+  //   }, {
+  //     label: '冷水',
+  //     value: 2
+  //   }, {
+  //     label: '热水',
+  //     value: 7
+  //   }, /* {
+  //   label: '燃气',
+  //   value: 3
+  // } */] : [{
+  //     label: '用电',
+  //     value: 1
+  //   }, {
+  //     label: '冷水',
+  //     value: 2
+  //   }, {
+  //     label: '热水',
+  //     value: 7
+  //   }]
   const energyChange = (v) => {
-    let  e = v==7 ? (v-5) : v
+    let e = v > 1 ? 2 : 1 //电表默认日，其他设备默认月
     form.setFieldValue("type", e)
     changetype(e)
   }
   const energytype = (
-    <Item label="能源类型" name="energytype" initialValue={1}>
+    <Item label="能源类型" name="energytype" initialValue={energyTypeDefault.current}>
       <Select style={{ width: 112 }} options={energyoptions} onChange={energyChange}></Select>
     </Item>
   )

@@ -16,7 +16,7 @@ import third from '../ranking/img/third.png'
 import fourth from '../ranking/img/fourth.png'
 import fifth from '../ranking/img/fifth.png'
 
-const { queryElectric, queryWater, QueryConsumeRankByDevice } = EnergyFlowRuntime
+const { QueryFlowByEnergyType, queryElectric, queryWater, QueryConsumeRankByDevice } = EnergyFlowRuntime
 
 
 const Headcom = memo(() => {
@@ -118,13 +118,14 @@ export default function Index() {
     let { type, date, projectId, energytype } = isfull ? store : exparams
     let params = {
       projectId,
-      meterType: energytype,
+      energyType: energytype,
       type,
       date: getTime(moment(date), type)
     }
     try {
-      let hander = ['', queryElectric, queryWater, '', '', '', '', queryWater][energytype]
-      let { success, data } = await hander(params, areaId)
+      // let hander = ['', queryElectric, queryWater, '', '', '', '', queryWater][energytype]
+      // let { success, data } = await hander(params, areaId)
+      let { success, data } = await QueryFlowByEnergyType(params, areaId)
       if (success && data.constructor == Object) {
 
         const { link = [] } = data

@@ -1,11 +1,11 @@
-import React, { useState, useEffect, } from "react";
+import React, { useState, useRef, useEffect, } from "react";
 
 import { Form, Space, DatePicker, Select } from "antd";
 import moment from 'moment';
 import Pagecount from '@com/pagecontent'
 import CustContext from "@com/content.js";
 
-import { EnergyFlowRuntime } from "@api/api"
+import { EnergyFlowRuntime, Editapi } from "@api/api"
 import { useSelector } from 'react-redux'
 import { selectProjectId, selectOneLevel } from '@redux/systemconfig.js'
 import { getTime } from '@com/usehandler'
@@ -13,15 +13,7 @@ import Titlelayout from '@com/titlelayout'
 
 import Ichart from '@com/useEcharts/Ichart';
 
-const { queryElectric, queryWater } = EnergyFlowRuntime
-
-
-
-
-
-
-
-
+const { QueryFlowByEnergyType, queryElectric, queryWater } = EnergyFlowRuntime
 
 export default function Index() {
   const projectId = useSelector(selectProjectId);
@@ -32,15 +24,17 @@ export default function Index() {
   const { Item } = Form
 
 
+  const [energyoptions, setEnergyoptions] = useState([])
+  const energyTypeDefault = useRef(1)
   const [timetype, setTimetype] = useState(1) // 日、月、年 1， 2， 3
 
   const [dateData, setdateData] = useState() // 日、月、年 1， 2， 3
-  const [op, setOp] = useState(0)
+  const [op, setOp] = useState(1)
   const picker = ['', 'date', 'month', 'year'][timetype];
   console.log(op)
   const [params, setParams] = useState({
     type: 1,
-    meterType: op,
+    energyType: energyTypeDefault.current,
     date: moment().format('yyyy-MM-DD'),
     projectId
   })
@@ -72,11 +66,28 @@ export default function Index() {
     type: 5,
   })
 
+  const getEnergyType = async () => {
+    try {
+      if (!Number.isInteger(parseInt(projectId))) return
+      let { success, data } = await Editapi.QueryEnergyType(projectId)
+      if (success && Array.isArray(data) && data?.length) {
+        let types = data.map((d, index) => ({ label: d.name, value: d.type }))
+        energyTypeDefault.current = types[0].value
+        setEnergyoptions(types)
+      } else {
+        energyTypeDefault.current = 1
+        setEnergyoptions([])
+      }
+    } catch (error) {
+      console.log(error)
+    }
+  }
   const getData = async () => {
     console.log(params)
     try {
-      let hander = [queryElectric,"", queryWater, '', '', '', '', queryWater][op]
-      let { success, data } = await hander(params, areaId)
+      // let hander = [queryElectric, "", queryWater, '', '', '', '', queryWater][op]
+      // let { success, data } = await hander(params, areaId)
+      let { success, data } = await QueryFlowByEnergyType(params, areaId)
       if (success && data.constructor == Object) {
 
         const { link = [] } = data
@@ -120,13 +131,15 @@ export default function Index() {
 
 
   }
-
+  useEffect(() => {
+    getEnergyType()
+  }, [projectId])
   useEffect(() => {
     getData()
   }, [params])
 
   useEffect(() => {
-    setParams(prev => ({ ...prev, meterType: op }));
+    setParams(prev => ({ ...prev, energyType: op }));
   }, [op])
 
   const datechange = (e) => {
@@ -170,25 +183,12 @@ export default function Index() {
     }
     return (
       <div style={viewstyle}>
-        <Item label="能源类型" initialValue={0} name="energy">
+        <Item label="能源类型" initialValue={energyTypeDefault.current} name="energy">
           <Select
             style={{ width: '112px' }}
             onChange={opchange}
             value={op}
-            options={[
-              {
-                label: '用电',
-                value: 0,
-              },
-              {
-                label: '冷水',
-                value: 2,
-              },
-              {
-                label: '热水',
-                value: 7,
-              }
-            ]}
+            options={energyoptions}
 
           />
         </Item>

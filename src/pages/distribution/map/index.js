@@ -16,6 +16,8 @@ import { SearchOutlined } from '@ant-design/icons';
 import { drawEcharts } from "@com/useEcharts"
 import style from './style.module.less'
 import CustModal from '@com/useModal'
+import { cipher } from "@com/usehandler"
+import { deepClone } from '@topology/core'
 
 //子栏目
 import DialogContent from './DialogContent'
@@ -31,6 +33,8 @@ import '../../../assets/css/font_c44gejdj174/iconfont.css'
 import '../../../assets/css/font_ehfbe2lg8tb/iconfont.css'
 import '../../../assets/css/font_ugr1luq01xe/iconfont.css'
 import '../../../assets/css/font_nilhyhwpjm9/iconfont.css'
+// import '../../../assets/css/font_4zc0wpi01ae/iconfont.css'
+import '../../../assets/css/font_11h2uuxmplr/iconfont.css'
 // 右侧图形库图标
 import '../../../assets/css/fonts/font/libs/iconfont.css'
 import '../../../assets/css/font_g4v09lxfde/iconfont.css'
@@ -212,19 +216,58 @@ export default function Index() {
 
       for (let key in mqttData.Points) {
         // console.log(mqttData.DeviceId + "_" +key)
-        if (window.topology.find(mqttData.SN + "_" + key)) {
-          if (Array.isArray(window.topology.find(mqttData.SN + "_" + key))) {
-            let arrlist = window.topology.find(mqttData.SN + "_" + key)
-            arrlist.map(item => {
-              item.text = mqttData.Points[key].Value;
-            })
+        if (key.indexOf('DI') != -1 && key != 'DlqOpen') {
+          if (window.topology.find(mqttData.SN + "_" + key)) {
+            if (Array.isArray(window.topology.find(mqttData.SN + "_" + key))) {
+              let arrlist = window.topology.find(mqttData.SN + "_" + key)
+              arrlist.map(item => {
+                if (item.icon == '' || item.icon == '') {
+                  item.icon = mqttData.Points[key].Value == 1 ? '' : '';
+                  item.fontColor = mqttData.Points[key].Value == 1 ? '#ff0000' : '#00ff00';
+                }
+              })
 
-          } else {
-            window.topology.find(mqttData.SN + "_" + key).text =
-              mqttData.Points[key].Value;
+            } else {
+              let topoData = window.topology.find(mqttData.SN + "_" + key)
+              if (topoData.icon == '' || topoData.icon == '') {
+                topoData.icon = mqttData.Points[key].Value == 1 ? '' : '';
+                topoData.fontColor = mqttData.Points[key].Value == 1 ? '#ff0000' : '#00ff00';
+              }
+            }
+          }
+        } else if (key == 'DlqOpen') {
+          if (window.topology.find(mqttData.SN + "_" + key)) {
+            if (Array.isArray(window.topology.find(mqttData.SN + "_" + key))) {
+              let arrlist = window.topology.find(mqttData.SN + "_" + key)
+              arrlist.map(item => {
+                if (item.icon == '' || item.icon == '') {
+                  item.icon = mqttData.Points[key].Value == '2.00' ? '' : '';
+                  item.fontColor = mqttData.Points[key].Value == '2.00' ? '#ff0000' : '#00ff00';
+                }
+              })
+
+            } else {
+              let topoData = window.topology.find(mqttData.SN + "_" + key)
+              if (topoData.icon == '' || topoData.icon == '') {
+                topoData.icon = mqttData.Points[key].Value == '2.00' ? '' : '';
+                topoData.fontColor = mqttData.Points[key].Value == '2.00' ? '#ff0000' : '#00ff00';
+              }
+            }
+          }
+        } else {
+          if (window.topology.find(mqttData.SN + "_" + key)) {
+            if (Array.isArray(window.topology.find(mqttData.SN + "_" + key))) {
+              let arrlist = window.topology.find(mqttData.SN + "_" + key)
+              arrlist.map(item => {
+                item.text = mqttData.Points[key].Value;
+              })
+
+            } else {
+              window.topology.find(mqttData.SN + "_" + key).text =
+                mqttData.Points[key].Value;
+            }
           }
         }
-        let value = mqttData.Points[key].Value;
       }
 
       canvas.render();

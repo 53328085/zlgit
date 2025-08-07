@@ -57,7 +57,7 @@ const Chartwrap = styled.div`
     align-items: center;
     column-gap: 8px;
   }
-
+ 
 `
 
 export default function Index() {
@@ -190,9 +190,7 @@ export default function Index() {
     // //  cols 实时抄表，  conscols 能耗报表 , typecols 分类能耗
     if (energytype == 1) {
       setTabs([...etabs])
-    } else if (energytype == 2) {
-      setTabs([...wtabs])
-    } else if (energytype == 7) {
+    } else {
       setTabs([...wtabs])
     }
 
@@ -406,43 +404,43 @@ export default function Index() {
     }
   }, [value])
 
- /* 线上实时抄表， 能耗报表 显示时间范围。 电能报表不显示 */
+  /* 线上实时抄表， 能耗报表 显示时间范围。 电能报表不显示 */
   return (
     <CustContext.Provider value={dataProps} >
       <Pagecount showSearch={false} custserach={true} >
         <Contentbox>
           <UserTree areaId={areaId} energytype={energytype} setTreeId={setTreeId} setLine={setLine} showline={value != '3'} datatype={value == '3' ? 0 : NaN} />
           <div style={{ position: "relative", flex: 1 }}>
-            <div style={{ position: "absolute", width: "100%",   }}>
-              <div  className='opt'>
-              {["0","1"].includes(value)   && <div style={{ marginBottom: "16px", display: "flex" }}>
-                <div style={{ marginLeft: "auto" }}>
-                  <Checkbox onChange={boxchange} checked={isrange.range}>使用日期范围（优先）</Checkbox>  <RangePicker
-                    value={dates || valuet}
-                    disabledDate={disabledDate}
-                    onCalendarChange={(val) => setDates(val)}
-                    onChange={onTimeOk}
-                    disabled={!isrange.range}
-                    defaultValue={[moment().startOf("day"), moment().endOf("hour")]}
-                    format="YYYY-MM-DD HH:mm"
-                    showTime={{
-                      format: 'HH:mm',
-                      minuteStep: 15
-                    }}
-                  />
+            <div style={{ position: "absolute", width: "100%", }}>
+              <div className='opt'>
+                {["0", "1"].includes(value) && <div style={{ marginBottom: "16px", display: "flex" }}>
+                  <div style={{ marginLeft: "auto" }}>
+                    <Checkbox onChange={boxchange} checked={isrange.range}>使用日期范围（优先）</Checkbox>  <RangePicker
+                      value={dates || valuet}
+                      disabledDate={disabledDate}
+                      onCalendarChange={(val) => setDates(val)}
+                      onChange={onTimeOk}
+                      disabled={!isrange.range}
+                      defaultValue={[moment().startOf("day"), moment().endOf("hour")]}
+                      format="YYYY-MM-DD HH:mm"
+                      showTime={{
+                        format: 'HH:mm',
+                        minuteStep: 15
+                      }}
+                    />
+                  </div>
                 </div>
-              </div>
-              }
-              {
-                value == "0" && <div className='search'>
-                  <Serach placeholder="请输入设备名称/设备编号/安装地址查询" style={{ width: "362px" }} onSearch={onSearch} />
-                </div>
-              }
-              {
-                value == "1" && <div className='search'>
-                  <Tooltip title="最多选择三条信息进行对比"><CustButton onClick={oncompare}>勾选对比</CustButton></Tooltip>
-                </div>
-              }
+                }
+                {
+                  value == "0" && <div className='search'>
+                    <Serach placeholder="请输入设备名称/设备编号/安装地址查询" style={{ width: "362px" }} onSearch={onSearch} />
+                  </div>
+                }
+                {
+                  value == "1" && <div className='search'>
+                    <Tooltip title="最多选择三条信息进行对比"><CustButton onClick={oncompare}>勾选对比</CustButton></Tooltip>
+                  </div>
+                }
               </div>
               {
                 ["1", "5"].includes(value) ? <UserTable ref={tbref} rowSelection={value == 1 ? rowSelection : null} columns={concolumns} {...tableProps} rowKey={row => row.sn} key={value} scroll={{
@@ -483,5 +481,3 @@ export default function Index() {
     </CustContext.Provider>
   )
 }
-
-

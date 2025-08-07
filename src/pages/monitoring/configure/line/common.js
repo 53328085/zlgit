@@ -1,9 +1,9 @@
 import React, { useEffect, useState, useRef, forwardRef, useImperativeHandle, Fragment, useMemo } from 'react'
 import { useSelector } from 'react-redux'
 import { useTranslation } from "react-i18next"
-import { Divider, Select, Tree, Row, Col, Input, Form, message, Space,   Button, Typography, Popconfirm } from 'antd'
+import { Divider, Select, Tree, Row, Col, Input, Form, message, Space, Button, Typography, Popconfirm } from 'antd'
 import { useAntdTable } from 'ahooks'
-import styled,{css} from 'styled-components'
+import styled, { css } from 'styled-components'
 import commonstyle from './commonstyle.module.less'
 import Modal from '@com/useModal';
 import BlueColumn from '@com/bluecolumn'
@@ -12,7 +12,7 @@ import { Monitoring } from '@api/api'
 import Mask from '@com/mask'
 import Ctable from '@com/useTable'
 import { LeftOutlined, RightOutlined } from '@ant-design/icons';
-import { publishState,adaptation } from '@redux/systemconfig'
+import { publishState, adaptation } from '@redux/systemconfig'
 import { Serach } from "@com/comstyled";
 import Table from "@com/useTable";
 const { LineManager: {
@@ -28,7 +28,7 @@ const { LineManager: {
 } } = Monitoring
 
 const { Link } = Typography
- 
+
 const sty = css`
 padding: 16px;
  .content {
@@ -116,7 +116,7 @@ position: absolute;
       
      }
   }
-  ${props=> props.theme.laptop ? sty : null}
+  ${props => props.theme.laptop ? sty : null}
 `
 
 export default function Common({ type }) {
@@ -131,7 +131,7 @@ export default function Common({ type }) {
     const projectId = useSelector(state => state.system.menus.projectId)
     const publish = useSelector(publishState)
     const oneLevel = useSelector(state => state.system.onelevel)
-    const {laptop} = useSelector(adaptation)
+    const { laptop } = useSelector(adaptation)
     const addmianRef = useRef()
     const setforwardRef = useRef()
     const titlelinecss = {
@@ -162,7 +162,7 @@ export default function Common({ type }) {
     ]
     const linedevicePage = async ({ current, pageSize }, formdata) => {
         try {
-           
+
             let { alike = '' } = formdata
             if ([projectId, areaId].every(d => Number.isInteger(d))) {
                 let params = {
@@ -276,12 +276,12 @@ export default function Common({ type }) {
             if (!it.nodes) {
                 return {
                     ...it,
-                    title: <Treeline tree={it} alldata={tdata} openDrawer={openDrawer} getLineManagerQuery={getLineManagerQuery} selform={selform} type={type}></Treeline>
+                    title: <Treeline tree={it} alldata={tdata} params={params} openDrawer={openDrawer} getLineManagerQuery={getLineManagerQuery} refresh={refresh} selform={selform} lineform={lineform} type={type}></Treeline>
                 }
             } else {
                 return {
                     ...it,
-                    title: <Treeline tree={it} alldata={tdata} openDrawer={openDrawer} getLineManagerQuery={getLineManagerQuery} selform={selform} type={type}></Treeline>,
+                    title: <Treeline tree={it} alldata={tdata} params={params} openDrawer={openDrawer} getLineManagerQuery={getLineManagerQuery} refresh={refresh} selform={selform} lineform={lineform} type={type}></Treeline>,
                     children: maptreeData(it.nodes)
                 }
             }
@@ -370,14 +370,15 @@ export default function Common({ type }) {
         gettablelineData,
         treelist,
         lineName,
-        refresh
+        refresh,
+
     }
     return (
-        <div style={{ flex:1 }}>
+        <div style={{ flex: 1 }}>
 
             <div style={{ display: 'flex', justifyContent: 'space-between' }}>
                 <Form form={selform}>
-                    <Form.Item name="area" style={{marginBottom: "16px"}}>
+                    <Form.Item name="area" style={{ marginBottom: "16px" }}>
                         <Select
                             showSearch
                             filterOption={(val, opts) => {
@@ -396,7 +397,7 @@ export default function Common({ type }) {
                 {publish ? null : <CustButton onClick={addMainLine} wh="auto">{t("button:newMainLine")}</CustButton>}
 
             </div>
-          {/*   <Divider style={{ borderColor: '#d7d7d7', margin: '0 0 16px 0' }} dashed></Divider> */}
+            {/*   <Divider style={{ borderColor: '#d7d7d7', margin: '0 0 16px 0' }} dashed></Divider> */}
             <div style={{ display: 'flex', columnGap: "32px", flexDirection: laptop ? "column" : "row", overflow: "auto" }}>
                 <div style={{ overflow: "auto" }}>
                     <div style={{ display: 'flex', margin: '0 0 24px 0' }}>
@@ -405,7 +406,7 @@ export default function Common({ type }) {
                         <div style={{ ...titlelinecss, width: 208, textAlign: 'center' }}>操作</div>
                     </div>
 
-                    <div style={{ height:  "600px", overflow: "auto" }}>
+                    <div style={{ height: "600px", overflow: "auto" }}>
                         <Tree
                             className={commonstyle.treeclass}
                             selectable={false}
@@ -414,7 +415,7 @@ export default function Common({ type }) {
                         />
                     </div>
                 </div>
-                <div style={{ display: 'flex', flex: 1, flexDirection: "column", rowGap: '16px',   }}>
+                <div style={{ display: 'flex', flex: 1, flexDirection: "column", rowGap: '16px', }}>
                     <Form form={lineform} layout='line' >
                         <Form.Item name="alike" initialValue=''>
                             <Serach
@@ -437,7 +438,7 @@ export default function Common({ type }) {
 
 //树节点
 let Treeline = forwardRef(
-    ({ tree, alldata, openDrawer, getLineManagerQuery, selform, type }, ref) => {
+    ({ tree, alldata, params, openDrawer, getLineManagerQuery, refresh, selform, lineform, type }, ref) => {
         const { t } = useTranslation(['button'])
         const [addform] = Form.useForm()
         const [editform] = Form.useForm()
@@ -515,16 +516,18 @@ let Treeline = forwardRef(
         }
         //确认删除
         const delOk = async () => {
-            let params = {
+            let paramsDel = {
                 projectId,
                 id: tree.id
             }
-            const res = await LineManagerDelete(params)
+            const res = await LineManagerDelete(paramsDel)
             console.log(res)
             if (res.success) {
                 message.success('删除成功')
                 delmodalRef.current.onCancel()
                 getLineManagerQuery()
+                let formdata = lineform.getFieldsValue()
+                refresh({ ...params[0] }, formdata)
             } else {
                 message.error(res.errMsg)
             }
@@ -660,15 +663,15 @@ let SetLine = forwardRef(({ open, lineName, closeDrawer, getLineManagerQuery, tr
     const [lineId, setLineId] = useState(null);
     const [searchValue, setSearchValue] = useState(""); //搜索值
     const projectId = useSelector(state => state.system.menus.projectId)
-    const {laptop} = useSelector(adaptation)
+    const { laptop } = useSelector(adaptation)
     const columns = [
-        { title: '设备编号', dataIndex: 'sn', align: "center",   },
-        { title: '设备名称', dataIndex: 'name', align: "center",   },
+        { title: '设备编号', dataIndex: 'sn', align: "center", },
+        { title: '设备名称', dataIndex: 'name', align: "center", },
         { title: '安装地址', dataIndex: 'address', align: "center", },
 
     ]
-    const btncss =laptop ? {
-        width:48,
+    const btncss = laptop ? {
+        width: 48,
         height: 32
     } : {
         width: 68,
@@ -727,7 +730,7 @@ let SetLine = forwardRef(({ open, lineName, closeDrawer, getLineManagerQuery, tr
             return
         }
         const arr = subMeter.filter(it => !subMeterRowKeys.includes(it.id))
-       
+
         setDataSource([...subSelectedRows, ...dataSource])
         setCopydataSource([...subSelectedRows, ...copydataSource])
         setSubMeter([...arr])
@@ -825,78 +828,78 @@ let SetLine = forwardRef(({ open, lineName, closeDrawer, getLineManagerQuery, tr
                 {lineName}
             </div>
             <div className="content">
-            <div className='left'>
-                <div  className='leftup' key="up" >
-                    <BlueColumn name="线路总表" styled={{ marginBottom: 16 }}></BlueColumn>
-                    <Table
-                        bordered
-                        pagination={false}
-                        rowSelection={{ selectedRowKeys: summaryRowKeys, onChange: summarySelectChange }}
-                        columns={columns}
-                     
-                        size={'small'}
-                        rowKey={record => record.id}
-                        
-                        dataSource={summaryMeter}
-                    ></Table>
-                </div>
-                <div className='leftdown' key="down">
-                    <BlueColumn name="线路分表" styled={{ marginBottom: 16 }}></BlueColumn>
-                    <Table
-                        bordered
-                        pagination={false}
-                        rowSelection={{ onChange: subMeterSelectChange, selectedRowKeys: subMeterRowKeys }}
-                        columns={columns}
-                      
-                        size={'small'}
-                        dataSource={subMeter}
-                        rowKey={record => record.id}
-                    ></Table>
-                </div>
+                <div className='left'>
+                    <div className='leftup' key="up" >
+                        <BlueColumn name="线路总表" styled={{ marginBottom: 16 }}></BlueColumn>
+                        <Table
+                            bordered
+                            pagination={false}
+                            rowSelection={{ selectedRowKeys: summaryRowKeys, onChange: summarySelectChange }}
+                            columns={columns}
 
-            </div>
-            <div className='middle'>
-                {publish ? null : <>
-                    <div >
-                        <div style={{ color: '#fff', marginBottom: 16 }}>选择线路总表</div>
-                        <Space size={16}>
-                            <Button type='primary' icon={<LeftOutlined />} onClick={summaryToLeft} style={btncss} />
-                            <Button type='primary' icon={<RightOutlined />} onClick={summaryToRight} style={btncss} />
-                        </Space>
-                    </div>
-                    <div >
-                        <div style={{ color: '#fff', marginBottom: 16 }}>选择线路分表</div>
-                        <Space size={16}>
-                            <Button type="primary" style={btncss} onClick={subToLeft} icon={<LeftOutlined />} />
-                            <Button type="primary" style={btncss} onClick={subToRight} icon={<RightOutlined />} />
-                        </Space>
-                    </div>
-                </>}
+                            size={'small'}
+                            rowKey={record => record.id}
 
-                <Space direction="vertical" size={16}>
-                    {publish ? null : <Button   type="primary" block onClick={saveConfig}>保存</Button>}
-                    <Button   block onClick={close}>关闭</Button>
-                </Space>
-            </div>
-            <div className='right'> 
+                            dataSource={summaryMeter}
+                        ></Table>
+                    </div>
+                    <div className='leftdown' key="down">
+                        <BlueColumn name="线路分表" styled={{ marginBottom: 16 }}></BlueColumn>
+                        <Table
+                            bordered
+                            pagination={false}
+                            rowSelection={{ onChange: subMeterSelectChange, selectedRowKeys: subMeterRowKeys }}
+                            columns={columns}
+
+                            size={'small'}
+                            dataSource={subMeter}
+                            rowKey={record => record.id}
+                        ></Table>
+                    </div>
+
+                </div>
+                <div className='middle'>
+                    {publish ? null : <>
+                        <div >
+                            <div style={{ color: '#fff', marginBottom: 16 }}>选择线路总表</div>
+                            <Space size={16}>
+                                <Button type='primary' icon={<LeftOutlined />} onClick={summaryToLeft} style={btncss} />
+                                <Button type='primary' icon={<RightOutlined />} onClick={summaryToRight} style={btncss} />
+                            </Space>
+                        </div>
+                        <div >
+                            <div style={{ color: '#fff', marginBottom: 16 }}>选择线路分表</div>
+                            <Space size={16}>
+                                <Button type="primary" style={btncss} onClick={subToLeft} icon={<LeftOutlined />} />
+                                <Button type="primary" style={btncss} onClick={subToRight} icon={<RightOutlined />} />
+                            </Space>
+                        </div>
+                    </>}
+
+                    <Space direction="vertical" size={16}>
+                        {publish ? null : <Button type="primary" block onClick={saveConfig}>保存</Button>}
+                        <Button block onClick={close}>关闭</Button>
+                    </Space>
+                </div>
+                <div className='right'>
                     <div className='rightup'>
                         <BlueColumn name="未选中的设备" ></BlueColumn>
                         <div style={{ marginBottom: 16 }} className="searchinp">
                             <span>设备搜索</span>
-                            <Search style={{flexBasis: "320px"}} placeholder="请设备编号/安装地址" onSearch={onSearch} value={searchValue} onChange={(e) => { setSearchValue(e.target.value) }}></Search>
+                            <Search style={{ flexBasis: "320px" }} placeholder="请设备编号/安装地址" onSearch={onSearch} value={searchValue} onChange={(e) => { setSearchValue(e.target.value) }}></Search>
                         </div>
                     </div>
                     <Table
-                        style={{overflow: "auto"}}
+                        style={{ overflow: "auto" }}
                         bordered
                         pagination={false}
                         rowSelection={{ selectedRowKeys, onChange: onSelectChange }}
                         columns={columns}
-                        dataSource={dataSource} 
+                        dataSource={dataSource}
                         size={'small'}
                         rowKey={record => record.id}
                     ></Table>
-                </div> 
+                </div>
             </div>
         </Mainbox>
     )
