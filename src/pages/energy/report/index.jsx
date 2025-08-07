@@ -185,11 +185,16 @@ export default function Index() {
     // //  cols 实时抄表，  conscols 能耗报表 , typecols 分类能耗
     if (energytype == 1) {
       setTabs([...etabs])
-    } else if (energytype == 2) {
-      setTabs([...wtabs])
-    } else if (energytype == 7) {
+    } else {
       setTabs([...wtabs])
     }
+    // else if (energytype == 2) {
+    //   setTabs([...wtabs])
+    // } else if (energytype == 7) {
+    //   setTabs([...wtabs])
+    // } else if (energytype == 18) {
+    //   setTabs([...wtabs])
+    // }
 
     columns.forEach(c => {
       if (c.dataIndex == 'consume' && index == 0) { // 实时抄表

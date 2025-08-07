@@ -4,7 +4,7 @@ import { Select, Button, Space, message, Form, Input, Tree } from 'antd';
 import style from './style.module.less'
 import { useRequest } from 'ahooks';
 import Custmodl from '@com/useModal'
-import { AreaSetting, energyStructure } from '@api/api.js'
+import { AreaSetting, energyStructure, Editapi } from '@api/api.js'
 import { cloneDeep } from 'lodash';
 import UseTransfer from './transfer';
 import Mask from '@com/mask.jsx'
@@ -20,17 +20,11 @@ const Main = styled.div`
 `
 export default function Index() {
 
-  const tabs = [
-    { label: '电', key: 1 },
-    { label: '冷水', key: 2 },
-    { label: '热水', key: 7 },
-  ]
-  const [energyType, setvalue] = useState(1)
-  const propsData = {
-    tabs,
-    energyType,
-    setvalue
-  }
+  // const tabs = [
+  //   { label: '电', key: 1 },
+  //   { label: '冷水', key: 2 },
+  //   { label: '热水', key: 7 },
+  // ]
   const { t } = useTranslation(["button"])
   let { exparams } = useOutletContext()
   let { areaId, projectId } = exparams
@@ -45,6 +39,34 @@ export default function Index() {
       type,
       content
     })
+  }
+
+  const [tabs, setTabs] = useState([])
+
+
+  const getTabs = async () => {
+    try {
+      if (!Number.isInteger(parseInt(projectId))) return
+      let { success, data } = await Editapi.QueryEnergyType(projectId)
+      if (success && Array.isArray(data) && data?.length) {
+        let types = data.map((d, index) => ({ label: d.name, key: d.type }))
+        setTabs(types)
+      } else {
+        setTabs([])
+      }
+    } catch (error) {
+      console.log(error)
+    }
+  }
+  useEffect(() => {
+    getTabs()
+  }, [projectId])
+
+  const [energyType, setvalue] = useState(1)
+  const propsData = {
+    tabs,
+    energyType,
+    setvalue
   }
   const { QueryAllArea } = AreaSetting
   const { queryEnergyStructure,

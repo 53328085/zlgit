@@ -107,8 +107,8 @@ const nf = new Intl.NumberFormat("en-US", { maximumFractionDigits: 2 });
 export default function Index() {
   let { exparams } = useOutletContext()
   let { energytype, areaId, date, type: dateType, projectId } = exparams
-  const chartTitle = ["用电量 (kWh)", "用电量 (kWh)", '用水量 (m³)', '用气量 (m³)', '', '', '', '用水量 (m³)'][energytype] || "用电量 (kWh)"
-  const unit = ["kWh", "kWh", "m³", '', '', '', '', 'm³'][energytype] || "kWh"
+  const chartTitle = ["用电量 (kWh)", "用电量 (kWh)", '用冷水量 (m³)', '用气量 (m³)', '', '', '', '用热水量 (m³)', '', '', '', '', '', '', '', '', '', '', '用蒸汽量(m³)'][energytype] || "用电量 (kWh)"
+  const unit = ["kWh", "kWh", "m³", '', '', '', '', 'm³', '', '', '', '', '', '', '', '', '', '', 'm³'][energytype] || "kWh"
   const [tableData, setTableData] = useState([])
   const [boptions, setOptions] = useState({
     series: [],
@@ -284,7 +284,7 @@ export default function Index() {
         <Titlelayout title={Title} key="up" layout="flex" className="left">
           <div style={{ paddingTop: "16px", flex: 1, display: "flex", justifyContent: "center" }}>
             {
-              mode == 1 ? <Ichart {...boptions} /> : <UseTable dataSource={tableData} columns={columns} key="table" />
+              mode == 1 ? <Ichart {...boptions} /> : <UseTable dataSource={tableData} columns={columns} key="table" scroll={{ y: 652 }} />
             }
 
           </div>
