@@ -10,13 +10,10 @@ import { useRequest } from 'ahooks';
 import {useSelector} from 'react-redux'
 import {selectProjectId, selectOneLevelDefaultId, publishState, selectcurlRommid} from '@redux/systemconfig.js'
 import { distributionRoom } from '@api/api.js'
-import {useTree, useAdd, useUpdate,useDelete, usePageBind, usePageUnBind, 
-  useLineBindLight,
-  useLineUnBindLight,
-  useLineBindSwitch
+import {useTree, useAdd, useUpdate,useDelete
 } from "./api"
 import CModal from '@com/useModal'
- 
+import BindLight from './bind'
 import Pagecont from "@com/pagecontent"
 import Titlelayout from '@com/titlelayout'
 const {Link, Text} = Typography
@@ -38,6 +35,7 @@ export default function Index() {
   const isPublish = useSelector(publishState)
   let { exparams = {} } = useOutletContext() || {}
   let { projectId, areaId } = exparams
+  const [nodename, setNodename] = useState("")
   const {  queryLine, addLine, updateLine, deleteLine, queryUnusedLineMeter, configLineMeter } = distributionRoom
   const [messageApi, contextHolder] = message.useMessage();
   const messageContent = (type, content)=>{
@@ -57,10 +55,10 @@ export default function Index() {
     let title =  {
       1: "新增主线路",
       2: "新增下级线路",
-      3: "编辑主线路"
+      3: "编辑线路"
     }[addModal]
     return [title]
-  },addModal )
+  },[addModal] )
   console.log(modalTitle)
   const addref = useRef();
   //配电房下拉框
@@ -123,13 +121,17 @@ export default function Index() {
        
       const {name} =  await form.validateFields()  ;
       console.log(name)
-      let body = {
+      let body = addModal !== 3 ?{
           projectId,
-          names: addModal==2 ? name?.split(",") : [name?.trim?.()],
+          names:  [...new Set(name?.split(","))],
           lineType:22,
           parentId: addModal==1 ? 0 : subId,
           areaId 
       
+      }: {
+         projectId,
+         id:subId,
+         name: name?.trim?.()
       };
       let handler = {
         1: useAdd, 
@@ -139,71 +141,50 @@ export default function Index() {
       const {success, errMsg} = await handler({},body) 
       if(success) {
         message.success(modalTitle+"成功")
+        if(addModal==3) {
+          addref.current.onCancel()
+        }
         refresh()
       }else {
         message.warning(errMsg || "数据出错")
       }
-      /* if(clickTag == 'edit'){
-        updateLine(projectId, subId, encodeURIComponent(values.name)).then(res=> {
-          if(res.success){
-            messageContent('success', '线路名称修改成功!')
-            refresh()
-            addref.current.onCancel();
-          }else{
-            messageContent('error', res.errMsg)
-          }
-        })
-      }else{
-        if(clickTag == 'addMain'){
-          params.parentId = 0
-        }else if(clickTag == 'addSub'){
-          params.parentId = subId
-        }
-        addLine(params).then(res=> {
-          if(res.success){
-            messageContent('success', '新增线路成功！')
-            form.resetFields()
-            refresh()
-          }else{
-            messageContent('error', res.errMsg)
-          }
-        })
-      } */
-    
      
     }catch(error){
       console.log(error)
+      return Promise.reject(error)
+      
     }
   }
  
-
-  const [deleteModal, setDeleteModal] = useState(false)
+  const delRef = useRef()
+ // const [deleteModal, setDeleteModal] = useState(false)
   const [deleteId, setDeleteId] = useState(null)
-  const deleteOk = () => {
-    deleteLine(projectId, deleteId).then(res => {
-      if(res.success){
-        messageContent('success', '线路删除成功')
+  const deleteOk = async () => {
+     try {
+       let {success, errMsg} = await useDelete({projectId, id:deleteId})
+       if(success) {
+        delRef.current.onCancel()
+        message.success('线路删除成功')
         refresh()
-      }else{
-        messageContent('error', res.errMsg)
-      }
-    })
-    setDeleteModal(false)
+       }else {
+        message.warning(errMsg || "数据出错")
+       }
+     } catch (error) {
+      
+     }
+ 
   }
-  const handleDelete = () => {
-    setDeleteModal(false)
-  }
-  const deleteRecord = (record) => {
-    setDeleteId(record)
-    setDeleteModal(true)
+ 
+  const deleteRecord = (id, name) => {
+    setDeleteId(id)
+    setNodename(name)
+    delRef.current.onOpen()
   }
 
   //线路图
   const {TreeNode} = Tree;
   const [treeData, setTreeData] = useState([])
-  const onSelect = (selectedKeys, info) => {
-    console.log('selected', selectedKeys, info);
-  };
+ 
 
   const nodeTitle = {
     display: 'flex',
@@ -230,20 +211,35 @@ export default function Index() {
     justifyContent:'space-around',
     fontSize:'14px',
   }
-
+  const bindRef = useRef()
+  const [config, setConfig] = useState({})
+  const showlineconfig =(id,switchId ) => {
+      setConfig({
+        lineId:id,
+        initId:switchId
+      })
+     bindRef.current.onOpen()
+  }
+  const lineprop = useMemo(()=> {
+     return {
+       projectId, 
+       updata:refresh,
+       ...config
+     }
+  }, [projectId, config])
   const renderTreeNodes = (data) => {
     data = cloneDeep(data);
     let nodeArr = data.map((item) => {
       let valName = cloneDeep(item.name);
         item.name = (
             <div style={nodeTitle}>
-                <span>{item.name}</span>
+                <span>{valName}</span>
                 <NodeDevice>{item.deviceCount}</NodeDevice>
                 { isPublish ? null : <div style={nodeAction}>
                     <Link onClick={()=>addSon(item.id)}>{t("button:new")}</Link>
                     <Link onClick={()=>edit(item.id, valName)}>{t("button:edit")}</Link>
-                    <Link onClick={()=>settingClick(item.id, item.deviceSummary, item.deviceSub)}>{t("button:configure")}</Link>
-                    <Link type="danger" onClick={()=>deleteRecord(item.id)}>{t("button:delete")}</Link>
+                    <Link onClick={()=>showlineconfig(item.id, item.switchId)}>{t("button:configure")}</Link>
+                    <Link type="danger" onClick={()=>deleteRecord(item.id,valName)}>{t("button:delete")}</Link>
                 </div>}
             </div>
         )
@@ -259,102 +255,7 @@ export default function Index() {
     return nodeArr;
   }
   
-  //穿梭框
-  const [transTag, setTransTag] = useState('')
-  const [lineId, setLineId] = useState()
-  const settingClick =(id, deviceSummary, deviceSub) => {
-    queryUnusedLineMeter(projectId, 1, areaId).then(res => {
-      if(res.success){
-        if(!res.data && !deviceSummary && !deviceSub){
-          messageContent('warning', '当前园区无设备!')
-          return
-        }
-        if(deviceSummary){
-          setMainTable(deviceSummary)
-        }else{
-          setMainTable([])
-        }
-        if(deviceSub){
-          setSubTable(deviceSub)
-        }else{
-          setSubTable([])
-        }
-        if(res.data){
-          setUnknownTable(res.data)
-        }else{
-          setUnknownTable([])
-        }
-        setLineId(id)
-        setTransTag('open');
-      }else{
-        messageContent('error', res.errMsg)
-      }
-    })
-    
-  }
-
-  const getCloseValue = params => {
-    console.log(params);
-    setTransTag(params)
-  }
-  const getSaveValue = params => {
-    let deviceSummary = []
-    let deviceSub = []
-    if(params.subData.length > 0){
-      params.subData.map(item => {
-        deviceSub.push(item.sn)
-      })
-    }
-    if(params.mainData.length > 0){
-      params.mainData.map(item => {
-        deviceSummary.push(item.sn)
-      })
-    }
-    let data = {
-      projectId,
-      lineId,
-      deviceSummary,
-      deviceSub
-    }
-
-    configLineMeter(data).then(res => {
-      if(res.success){
-        messageContent('success', '线路配置保存成功');
-        setTransTag('close')
-        refresh()
-      }else{
-        messageContent('error', res.errMsg)
-      }
-    })
-  }
-  const [mainTable, setMainTable] = useState([])
-  const [subTable, setSubTable] = useState([])
-
-  const [unknownTable,setUnknownTable] = useState([])
-
-  const columns = [
-    {   
-        align:'center',
-        title: '设备编号',
-        dataIndex:'sn',
-        key:'sn'
-    },{
-        align:'center',
-        title: '设备名称',
-        dataIndex:'name',
-        key:'name'
-    },{
-        align:'center',
-        title: '安装地址',
-        dataIndex:'address',
-        key:'address'
-    }
-  ]
-  const transferTitle = {
-    mainTitle:'线路总表',
-    subTitle:'线路分表',
-    unknownTitle:'未选中设备'
-  }  
+  
   const Title = (
     <div style={{display: 'flex', justifyContent: "space-between", alignItems: "center"}}>
        <span>路灯回路</span>
@@ -378,36 +279,54 @@ export default function Index() {
             </div>
         </div>
        
-      <UseTransfer  mask={transTag} transferTitle={transferTitle} saveValue={getSaveValue} columns={columns} mainTable={mainTable} subTable={subTable} unknownTable={unknownTable} closeValue={getCloseValue}></UseTransfer>
        
+       
+       
+
         <CModal title={modalTitle}  onOk={addOk} width={592}  closable={false}  mold="cust" ref={addref} custft={addModal!=3}  >
        
           <Form name='addform' labelCol={{span:5}} form={form} labelAlign={'left'} requiredMark={false} autoComplete='off' preserve={false}>
           {addModal!=2 ? <Item label='线路名称' name='name' rules={[{required:true, message:'请输入线路名称'}, {
               type: 'string',
-              max: 64,
-              message: "名称最多为64个字符"
+              min: 1,
+              message: "名字至少一个字符"
             },
             {
-              whitespace: true
+              whitespace: true,
+              message: "线路名称不能为空字符串"
             }
             ]}>
               <Input style={{width:'400px'}}></Input>
             </Item>
             : <div>
               <Text type="warning" style={{fontSize: "12px", marginBottom: "12px"}}>提示：批量添加同级线路时请使用英文逗号分隔线路名称，重复添加的线路名称将会被自动删除</Text> 
-               <Item name="name"><Input.TextArea rows={12} allowClear placeholder='请输入线路名称(示例:线路1,线路2,线路3)'  onResize={()=>undefined}></Input.TextArea>
+               <Item name="name" rules={[
+                {
+                required:true,
+                message: "请输入线路名称"
+               },
+               {
+                type: 'string',
+                min: 1,
+                message: "名字至少一个字符"
+               },
+               {
+                whitespace: true,
+                message: "线路名称不能为空字符串"
+               }
+               ]}><Input.TextArea rows={12} allowClear placeholder='请输入线路名称(示例:线路1,线路2,线路3),中文逗号"，"视为字符串一部分'  onResize={()=>undefined}></Input.TextArea>
                </Item>
             </div>
     }       
           </Form>
          
         </CModal>
-        <CModal  title="删除提示" open={deleteModal} onOk={deleteOk} onCancel={handleDelete} width={512} mold="cust" type="warn">
-           是否确认删除选中线路？
+        <CModal  title="删除提示" ref={delRef} onOk={deleteOk}   width={512} mold="cust" type="warn">
+           是否确认删除{nodename}线路？
         </CModal>
       
       </Titlelayout>
+      <BindLight   {...lineprop}   ref={bindRef} />
     </Pagecont>
   )
 }
