@@ -157,7 +157,7 @@ export default function Index() {
     let f = [areaId, projectId, type, energytype, index, line].every(v => Number.isInteger(v)) && Array.isArray(treeId) && date
 
 
-    let range = [0, 1, 4].includes(index) && isrange.range && Array.isArray(dates) && dates?.length > 1
+    let range = [0, 1].includes(index) && isrange.range && Array.isArray(dates) && dates?.length > 1
     if (!f) return;
     if (index === 0 && isrange.range && !Array.isArray(dates)) {
       return
