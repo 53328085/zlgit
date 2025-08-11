@@ -123,3 +123,20 @@ margin:16px 0;
 ${flexBox({jc:"flex-start"})}
 }
 `
+
+export const  CellDiv=styled.div`
+  height:42px;
+  position:relative;
+  display: flex;
+  .bg-segment {
+      position: absolute;
+      top: 0;
+      height: 100%;
+      z-index: 3;
+    } 
+`
+export const TbEchartDiv=styled.div`
+flex:1;
+height: 100%;
+z-index:4;
+`
