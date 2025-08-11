@@ -70,6 +70,7 @@ export default function Index() {
   }
   const onEdit=(row)=> {
      setIsAdd(false)
+     row.image = row.imageBase64
      form.setFieldsValue(row)
      aref.current.onOpen()     
   }
@@ -84,7 +85,7 @@ export default function Index() {
   ]
   const onOkDel=async()=> {
      try {
-      let {success, errMsg} = await useDelete({projectId, id:idRef.current})
+      let {success, errMsg} = await useDeleteACModel({projectId, id:idRef.current})
       if(success) {
         message.success("删除成功")
         delref.current.onCancel()
@@ -116,8 +117,8 @@ export default function Index() {
          {items}
         </Form>
         </CModal>
-        <CModal title="删除路灯类型"  ref={delref} width={512} mold="cust" type="warn" onOk={onOkDel} >
-        是否确认删除路灯类型？
+        <CModal title="删除空调类型"  ref={delref} width={512} mold="cust" type="warn" onOk={onOkDel} >
+        是否确认删除空调类型？
                </CModal>
     </Pagecount>
   )

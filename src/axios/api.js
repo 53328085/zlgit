@@ -36,6 +36,8 @@ export class Editapi {
     server.post(`/Distribution/DistributionRoomRuntime/AlarmList`, body, {
       params,
     });
+  static QueryEnergyType = (projectId) =>
+    server.get(`/General/ProjectSetting/QueryEnergyType?projectId=${projectId}`);
 }
 // 主题配色
 export class CustTheme {
@@ -641,6 +643,19 @@ export class EnergyArea {
 
 // 能源管理--园区能耗
 export class EnergyComprehensive {
+  // 更新为统一接口除过综合能源其他使用：QueryEnergyByEnergyType和QueryEneryCost（后端：顾单浩）
+  static QueryEnergyByEnergyType = ({ projectId, type, date, shiftNo, energyType } = {}, params) =>
+    server.post(
+      `/Energy/EnergyComprehensiveRuntime/QueryEnergyByEnergyType?projectId=${projectId}&type=${type}&date=${date}&shiftNo=${shiftNo}&energyType=${energyType}`,
+      params
+    );
+  static QueryEneryCost = ({ projectId, type, date, shiftNo, energyType } = {}, params) =>
+    server.post(
+      `/Energy/EnergyComprehensiveRuntime/QueryEneryCost?projectId=${projectId}&type=${type}&date=${date}&shiftNo=${shiftNo}&energyType=${energyType}`,
+      params
+    );
+
+
   // 能耗
   static QueryOverview = ({ projectId, type, date, shiftNo } = {}, params) =>
     server.post(
@@ -3195,6 +3210,11 @@ export class EnergyFlowRuntime {
       `Energy/EnergyFlowRunTime/QueryElectric?projectId=${projectId}&type=${type}&date=${date}`,
       data
     );
+  static QueryFlowByEnergyType = ({ projectId, type, date, energyType }, data) =>
+    server.post(
+      `Energy/EnergyFlowRunTime/QueryFlowByEnergyType?projectId=${projectId}&type=${type}&date=${date}&energyType=${energyType}`,
+      data
+    );
   static queryWater = ({ projectId, type, meterType, date }, data) =>
     server.post(
       `Energy/EnergyFlowRunTime/QueryWater?projectId=${projectId}&type=${type}&meterType=${meterType}&date=${date}`,
@@ -3271,6 +3291,18 @@ export class EnergyQuotaRuntime {
 }
 //公共能耗
 export class EnergyPublicRuntime {
+  // 更新为统一接口QueryAllRangeByType（后端：顾单浩）
+
+  static QueryAllRangeByType = (params, data) =>
+    server.post(
+      `Energy/EnergyPublicRuntime/QueryAllRangeByType`,
+      data, { params }
+    );
+
+  // static QueryAllRangeByType = (params = {}) =>
+  //   server.post(
+  //     `Energy/EnergyPublicRuntime/QueryAllRangeByType`, params
+  //   );
   static queryEnergyCategoryTree = ({ projectId, categoryType, name }) =>
     server.post(
       `Energy/EnergyPublicRuntime/QueryEnergyCategoryTree?projectId=${projectId}&categoryType=${categoryType}&name=${name}`

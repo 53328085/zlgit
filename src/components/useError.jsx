@@ -46,9 +46,11 @@ export function Fallack({error, custmsg}) {
    const {resetBoundary} = useErrorBoundary()
   // let error=props.error ?? '抱歉！页面出错'
    let msg =custmsg || "抱歉！页面出错"
+   let count = 0
    useEffect(() => {
-     if(error?.message) {
-     // resetBoundary()
+      count++
+     if(error?.message && count<2) {
+       resetBoundary()
      }
    }, [location])
    return (<Empty image={imgurl.error}

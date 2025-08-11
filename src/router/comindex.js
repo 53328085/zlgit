@@ -98,7 +98,10 @@ export default function Index() {
     lightManagement: [  // 照明控制
       "streetLightEnergyMonitor",
       "lightControl",
-    ]
+    ],
+    streetLightManagement: [ // 照明控制 设置态
+"streetLightLineConfig",
+    ],
   }); // 需要显示搜索的页面
 
   const [showRoom, setShowroom] = useState(true); // 是否显示配电房选择框
@@ -291,6 +294,14 @@ export default function Index() {
             break;
         }
 
+      }else if(primary == "streetLightManagement") {
+        switch(nested) {
+          case "streetLightLineConfig" : 
+            setConfig({});
+            break;
+          default:
+            break;
+        }
       }
 
       // custview

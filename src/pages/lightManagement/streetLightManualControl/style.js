@@ -21,6 +21,7 @@ export  const Mainwrap = styled.div`
      display: grid;
      grid-template-rows: 65px 1fr;
      row-gap: 16px;
+     height: 817px;
      .up {
         height: 65px;
         padding: 16px;
@@ -31,6 +32,7 @@ export  const Mainwrap = styled.div`
        display: flex;
        flex-direction: column;
        row-gap: 16px;
+     
        .tip {
         display: flex;
         align-items: center;
@@ -42,6 +44,8 @@ export  const Mainwrap = styled.div`
          grid-template-columns: repeat(auto-fill,170px);
          grid-auto-rows: 201px;
          justify-content: space-between;
+         gap:16px 32px;
+         overflow: auto;
          .light { 
         width: 170px;
         height: 201px;
@@ -49,14 +53,28 @@ export  const Mainwrap = styled.div`
         color:#fff;
         padding: 8px;
         overflow: hidden;
+        display: flex;
+        flex-direction: column;
+        row-gap: 8px;
+        cursor: pointer;
+         
         .ant-checkbox-wrapper {
           span {
             color: #fff;
           }
         }
-        .img {
-          width: 50%;
+        .imgbox {
+          padding-right: 16px;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          justify-content: center;
+          row-gap: 16px;
+          .img {
+          width: 80%;
         }
+        }
+     
        }
        .light.close { 
          color:rgb(13, 12, 12);

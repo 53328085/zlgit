@@ -14,6 +14,7 @@ export const Container = styled.div`
     margin-left: 18px;
     display: grid;
     grid-template-rows: 48px 1fr;
+    row-gap: 16px;
     .lightData {
       margin-top: 16px;
       width: 100%;
@@ -37,86 +38,82 @@ export const CardBox = styled.div`
   border: 1px solid #d7d7d7;
   padding: 14px;
   background-color: #fff;
-  margin-top: 10px;
-  margin-bottom: 12px;
   .watchNum{
    display: flex;
    justify-content: space-between;
-   margin-bottom: 16px;
+   margin: 16px 0px;
   }
    .airBox{    
-    height: 702px;
+    height: 680px;
     overflow-y: scroll;
-   .airIcon{
-   width:30px;
-   height:30px;
-   }
+    
+         flex:1;
+         display: grid;
+         grid-template-columns: repeat(auto-fill,185px);
+         grid-auto-rows: 220px;
+         justify-content: space-between;
+         gap:16px;
+        .airIcon{
+        width:30px;
+        height:30px;
+        }
+   
+       .cardCommon{
+        width: 185px;
+        height:220px;
+        padding: 8px;
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+        row-gap: 16px;
+        cursor: pointer;
+        .top{
+        display: flex;
+        align-items: baseline;
+        .topInfo{
+        margin-left: 16px;
+        .address{
+        font-size: 16px;
+        font-weight: 500;
+        }
+        .sn{
+        font-size: 12px;
+        }
+        }
+        }
+        .content{
+        font-size: 25px;
+        .temperature{
+        font-size: 40px;
+        margin-right: 5px;
+        }
+        }
+       }
+        .airOffline{
+            background: linear-gradient(227deg, rgb(227 228 233) 0%, rgb(217 218 218) 0%, rgb(157 153 153) 100%, rgb(236 237 238) 100%);
+            color: #fff;
+
+        }
+         .airAlarm{
+            background: linear-gradient(227deg, rgb(220 156 161) 0%, rgb(246 65 65) 0%, rgb(243 199 199) 100%, rgb(230 177 177) 100%);
+            color: #fff;
+        }
    .airCardCold{
-    border:none;
-   color: #FFFFFF;
-   background: linear-gradient(180deg, rgba(0, 51, 204, 1) 0%, rgba(0, 51, 204, 1) 0%, rgba(51, 204, 255, 1) 100%, rgba(51, 204, 255, 1) 100%);
-   }
-   .airCardHot{
-        border:none;
        color: #FFFFFF;
-       background: linear-gradient(180deg, rgba(0, 51, 204, 1) 0%, rgba(255, 150, 1, 1) 0%, rgba(243, 203, 116, 1) 81%, rgba(255, 201, 109, 1) 100%);
+       background: linear-gradient(180deg, rgb(64 102 216) 0%, rgb(16 161 248) 0%, rgb(126 202 227) 100%, rgb(151 205 221) 100%);
+   .airCardHot{
+       color: #FFFFFF;
+       background: linear-gradient(180deg, rgb(228 231 239) 0%, rgb(223 219 5) 0%, rgb(248 205 109) 81%, rgba(255, 201, 109, 1) 100%);
    }
    .airCardWindy{
-       border:none;
-       background: linear-gradient(180deg, rgba(163, 255, 231, 1) 0%, rgba(247, 247, 247, 1) 100%);
+       background: linear-gradient(180deg, rgb(176 255 163) 0%, rgba(247, 247, 247, 1) 100%);
    }
    .airCardDehumidification{
-       border:none;
-       background: linear-gradient(180deg, rgba(240, 179, 181, 1) 0%, rgba(247, 247, 247, 1) 100%);
+           background: linear-gradient(180deg, rgb(138 170 187) 0%, rgba(247, 247, 247, 1) 100%);
    }
     .closeAir{
-      border:none;
        color: #5D5D5D;
-       background: linear-gradient(180deg, rgba(218, 218, 218, 1) 0%, rgba(247, 247, 247, 1) 100%);
-   }
-   .airCardCold,.airCardHot,.airCardWindy,.airCardDehumidification{ 
-   .content{
-   display: flex;
-   justify-content: space-between;
+           background: linear-gradient(180deg, rgb(239 238 238) 0%, rgba(247, 247, 247, 1) 100%);
    }
    }
-   }
-`;
-
-export const AlarmWrapper = styled.div`
-  display: flex;
-  flex-direction: column;
-  height: 100%;
-  width: 100%;
-  background-color: #fff;
-  padding: 16px;
-  margin-top: 16px;
-  min-height: 808px;
-
-  .tableWrapper {
-    margin-top: 16px;
-    flex: 1;
-    display: flex;
-    .warn {
-      display: flex;
-      justify-content: center;
-      .warnState {
-        width: 103px;
-        height: 20px;
-        font-size: 11px;
-        color: #fff;
-        text-align: center;
-        line-height: 20px;
-        border-radius: 4px;
-        background-color: ${(props) =>
-    props.warnState === "1"
-      ? "#f10303"
-      : props.warnState === "2"
-        ? "#f16d03"
-        : props.warnState === "3"
-          ? "#f1c603"
-          : "#039df1"};
-      }
-    }
-  }
 `;

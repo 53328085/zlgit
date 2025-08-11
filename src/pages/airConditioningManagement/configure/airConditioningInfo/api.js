@@ -1,25 +1,54 @@
 import {Apimethod} from "@api/api.js"
-export const { useList } = new Apimethod( //查询   路灯型号
-  "get",
-  "Light/StreetLightModel/List"
+ 
+export const { useQueryExteriorACsByPage } = new Apimethod( //查询空调 档案
+  "post",
+  "AirConditioner/AirConditionerManage/QueryExteriorACsByPage"
 );
-export const { usePage } = new Apimethod( //查询  路灯档案
+
+export const { useQueryCSnsList } = new Apimethod( //查询空调控制器列表
+  "get",
+  "AirConditioner/AirConditionerManage/QueryCSnsList"
+);
+
+export const { useQueryMSnsList } = new Apimethod( //查询空调控制器列表
+  "get",
+  "AirConditioner/AirConditionerManage/QueryMSnsList"
+);
+
+export const { useQueryMSns } = new Apimethod( // 查询空调计量设备列表
+  "get",
+  "AirConditioner/AirConditionerManage/QueryMSns"
+);
+
+export const { useQueryModelsList } = new Apimethod( // 查询空调型号列表
+  "get",
+  "AirConditioner/AirConditionerManage/QueryModelsList"
+)
+
+export const { useQueryInteriorACs } = new Apimethod( // 查询空调内机
+  "get",
+  "AirConditioner/AirConditionerManage/QueryInteriorACs"
+)
+
+ 
+  export const { useInsertOrUpdateExteriorAC} = new Apimethod( //新增/编辑  空调外机
     "post",
-    "Light/StreetLight/Page"
+    "AirConditioner/AirConditionerManage/InsertOrUpdateExteriorAC"
   );
-  export const { useAdd} = new Apimethod( //新增  路灯档案
+
+  export const { useInsertOrUpdateInteriorACs} = new Apimethod( //新增/编辑  空调内机
     "post",
-    "Light/StreetLight/Add"
+    "AirConditioner/AirConditionerManage/InsertOrUpdateInteriorACs"
   );
-  export const { useUpdate} = new Apimethod( //编辑  路灯档案
-    "post",
-    "Light/StreetLight/Update"
-  );
-  export const { useDelete} = new Apimethod( //编辑  路灯档案
+
+
+  export const { useDeleteAC} = new Apimethod( // 删除空调 档案
     "delete",
-    "Light/StreetLight/Delete"
+    "AirConditioner/AirConditionerManage/DeleteAC"
   );
-  export const { useImport} = new Apimethod( //上传  路灯档案
+
+
+  export const { useImportACs} = new Apimethod( //上传  路灯档案
     "post",
-    "Light/StreetLight/Import"
+    "AirConditioner/AirConditionerManage/ImportACs"
   );

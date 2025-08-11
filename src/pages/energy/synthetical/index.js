@@ -4,7 +4,7 @@ import { Image, Space, Tabs, Typography, Radio } from "antd";
 import styled, { css } from "styled-components";
 import { useOutletContext } from 'react-router-dom'
 import { drawEcharts } from "@com/useEcharts";
-import { EnergyComprehensive } from "@api/api.js"
+import { EnergyComprehensive, Editapi } from "@api/api.js"
 import Titlelayout from "@com/titlelayout";
 import { useSelector } from 'react-redux'
 import { selectOneLevel, adaptation } from '@redux/systemconfig.js'
@@ -132,8 +132,8 @@ const Engbox = styled.div`
   grid-template-columns: 64px 1fr;
   column-gap: 32px;
 //  height: 100%;
-  align-items:   ${props => props.type == 2 ? 'center' : 'start'};
-  padding-top:${props => props.type == 2 ? '0px' : '35px'}; 
+  align-items:   ${props => props.type == 1 ? 'center' : 'start'};
+  padding-top:${props => props.type == 1 ? '0px' : '35px'}; 
   .imgbox {
     width: 64px;
     height: 64px;
@@ -255,7 +255,7 @@ const Echartbox = styled.div`
 `
 const ElectricRight = styled.div`
    display: grid;
-   grid-template-rows: ${props => props.type == 2 ? '200px minmax(440px, 1fr) 128px' : 'minmax(656px, 1fr)  128px'} ;
+   grid-template-rows: ${props => props.type == 1 ? '200px minmax(440px, 1fr) 128px' : 'minmax(656px, 1fr)  128px'} ;
    row-gap: 16px;
    
 `
@@ -267,7 +267,7 @@ export default function Index() {
   let { exparams } = useOutletContext()
   const { areaId, date, type: dateType, shiftNo, view, projectId } = exparams
   const [qverview, setOverview] = useState({})
-  const [tabvalue, setTabvalue] = useState(1)
+  const [tabvalue, setTabvalue] = useState(0)
   const { detail, total = '', proportion, coalStandard, consume = {}, analysisDes = '', consumes = [], ...energyitem } = qverview;
   let type = ['', '日', '月', '年'][exparams.type]
   let my = ['', '昨', '上', '去'][exparams.type]
@@ -285,27 +285,59 @@ export default function Index() {
 
     let { x = [], y = [], y1 = [] } = data || {}
 
-    let cost = ['',
-      ["time", `本${type}(元)`, `${my}${type}(元)`],
-      ["time", `本${type}(元)`, `${my}${type}(元)`],
-      ["time", `本${type}(元)`, `${my}${type}(元)`],
-      ["time", `本${type}(元)`, `${my}${type}(元)`],
+    // let cost = ['',
+    //   ["time", `本${type}(元)`, `${my}${type}(元)`],
+    //   ["time", `本${type}(元)`, `${my}${type}(元)`],
+    //   ["time", `本${type}(元)`, `${my}${type}(元)`],
+    //   ["time", `本${type}(元)`, `${my}${type}(元)`],
+    //   ["time", `本${type}(元)`, `${my}${type}(元)`],
+    //   ["time", `本${type}(元)`, `${my}${type}(元)`],
+    //   ["time", `本${type}(元)`, `${my}${type}(元)`],
+    //   ["time", `本${type}(元)`, `${my}${type}(元)`],
+    // ]
+    // let energy = ['',
+    //   ["time", datetype == 1 ? `本${type}能耗(千克标煤)` : `本${type}能耗(吨标煤)`, datetype == 1 ? `${my}${type}能耗(千克标煤)` : `${my}${type}能耗(吨标煤)`],
+    //   ["time", `本${type}(kWh)`, `${my}${type}(kWh)`],
+    //   ["time", `今${type}(m³)`, `${my}${type}(m³)`],
+    //   ["time", `今${type}(m³)`, `${my}${type}(m³)`],
+    //   ["time", `今${type}(m³)`, `${my}${type}(m³)`],
+    //   ["time", `今${type}(m³)`, `${my}${type}(m³)`],
+    //   ["time", `今${type}(吨)`, `${my}${type}(吨)`],
+    //   ["time", `今${type}(吨)`, `${my}${type}(吨)`],
+    // ]
+
+    // let dimensions = ['', energy, cost][op][tabvalue]
+    let cost = [
       ["time", `本${type}(元)`, `${my}${type}(元)`],
       ["time", `本${type}(元)`, `${my}${type}(元)`],
       ["time", `本${type}(元)`, `${my}${type}(元)`],
       ["time", `本${type}(元)`, `${my}${type}(元)`],
     ]
-    let energy = ['',
+
+    let energy = [
       ["time", datetype == 1 ? `本${type}能耗(千克标煤)` : `本${type}能耗(吨标煤)`, datetype == 1 ? `${my}${type}能耗(千克标煤)` : `${my}${type}能耗(吨标煤)`],
       ["time", `本${type}(kWh)`, `${my}${type}(kWh)`],
       ["time", `今${type}(m³)`, `${my}${type}(m³)`],
-      ["time", `今${type}(m³)`, `${my}${type}(m³)`],
-      ["time", `今${type}(m³)`, `${my}${type}(m³)`],
-      ["time", `今${type}(m³)`, `${my}${type}(m³)`],
-      ["time", `今${type}(吨)`, `${my}${type}(吨)`],
       ["time", `今${type}(吨)`, `${my}${type}(吨)`],
     ]
-    let dimensions = ['', energy, cost][op][tabvalue]
+    let dimensions = []
+    if (tabvalue < 1) {
+      dimensions = ['', energy, cost][op][tabvalue]
+    } else if (tabvalue === 1) {
+      /// 9  煤炭
+      /// 10 燃油
+      dimensions = ['', energy, cost][view][1]
+    }
+    else if ((tabvalue === 9 || tabvalue === 10)) {
+      /// 9  煤炭
+      /// 10 燃油
+      dimensions = ['', energy, cost][view][3]
+    }
+    else {
+      dimensions = ['', energy, cost][view][2]
+    }
+    // dimensions = ['', energy, cost][op][tabvalue]
+    console.log(dimensions, ['', energy, cost][view])
     let source = x.map((v, index) => ({ time: v, [dimensions[1]]: y[index], [dimensions[2]]: y1[index] }))
     const charw = () => {
       try {
@@ -353,8 +385,8 @@ export default function Index() {
     let type = ['', '日', '月', '年'][datetype]
     let my = ['', '昨', '上', '去'][datetype]
     let lasttime = ['', lastDayPeriodValue, lastMonthPeriodValue, lastYearPeriodValue][datetype]
-    let icon = unit.indexOf("kWh") > -1 ? 'electric' : unit.indexOf("m³") > -1 ? 'water' : '';
-
+    // let icon = unit.indexOf("kWh") > -1 ? 'electric' : unit.indexOf("m³") > -1 ? 'water' : '';
+    let icon = name.indexOf("电") > -1 ? 'electric' : name.indexOf("水") > -1 ? 'water' : '';
     return (
       <Titlelayout
         title={<Title title={name} subtitle={unit} jc={exparams.view} />}
@@ -427,7 +459,7 @@ export default function Index() {
 
     let { lastDayPeriodValue, lastMonthPeriodValue, lastYearPeriodValue } = data
     let timetype = ['', lastDayPeriodValue, lastMonthPeriodValue, lastYearPeriodValue][datetype]
-    let icon = tabvalue == 2 ? 'electric' : 'water';
+    let icon = tabvalue == 1 ? 'electric' : 'water';
     const pieref = useRef()
     useEffect(() => {
       drawEcharts(pieref.current, {
@@ -484,16 +516,16 @@ export default function Index() {
           </div>
 
         </Titlelayout>
-        {tabvalue == 2 && <Titlelayout
+        {tabvalue == 1 ? <Titlelayout
           type="inner"
           title={<Title title={`本${type}能耗占比`} />}
           key="pie"
         >
           <div
-            style={{ width: laptop ? "300px" : "368px", height: "356px" }}
+            style={{ width: laptop ? "300px" : "348px", height: "356px" }}
             ref={pieref}
           ></div>
-        </Titlelayout>
+        </Titlelayout> : null
         }
         <Titlelayout title="能耗分析" key="analysis" layout="flex">
           <div style={{ flex: 1, display: 'flex' }}>
@@ -586,35 +618,57 @@ export default function Index() {
       </Titlelayout>
     )
   }
-
-  const tabs = [
-    { label: "综合能耗", key: 1, },
-    { label: "电", key: 2, },
-    { label: "冷水", key: 3 },
-    { label: "热水", key: 4 },
-    /*  { label: "热力", key: 4 },
-     { label: "气体燃料", key: 5 },
-     { label: "液体燃料", key: 6 },
-     { label: "固态燃料", key: 7 },
-     { label: "碳酸盐", key: 8 }, */
-  ];
+  const [tabs, setTabs] = useState([{ label: "综合能耗", key: 0, }])
 
 
+  const getTabs = async () => {
+    try {
+      if (!Number.isInteger(parseInt(projectId))) return
+      let { success, data } = await Editapi.QueryEnergyType(projectId)
+      if (success && Array.isArray(data) && data?.length) {
+        let types = data.map((d, index) => ({ label: d.name, key: d.type }))
+        setTabs([{ label: "综合能耗", key: 0 }, ...types])
+      } else {
+        setTabs([{ label: "综合能耗", key: 0 }])
+      }
+    } catch (error) {
+      console.log(error)
+    }
+  }
+  useEffect(() => {
+    getTabs()
+  }, [projectId])
   const getData = async ({ areaId, date, dateType, shiftNo, view, projectId }) => {
 
     let id = areaId == 0 ? areaIds?.filter(a => a.id != 0)?.map(a => a.id) : [areaId];
     let time = getTime(date, dateType);
 
+    // const querys = {
+    //   type: dateType,
+    //   shiftNo,
+    //   projectId,
+    //   date: time
+    // }
+
+    // let energy = ['', 'QueryOverview', 'QueryElectric', 'QueryWaterCold', 'QueryWaterHot', 'QuerySteam', 'QueryGas', 'QueryCoal', 'QueryOil']
+    // let cost = ['', 'QueryOverviewCost', 'QueryElectricCost', 'QueryWaterColdCost', 'QueryWaterHotCost', 'QuerySteamCost', 'QueryGasCost', 'QueryCoalCost', 'QueryOilCost']
+    // let handler = ['', energy, cost][view][tabvalue]
     const querys = {
       type: dateType,
       shiftNo,
       projectId,
-      date: time
+      date: time,
+      energyType: tabvalue
     }
-
-    let energy = ['', 'QueryOverview', 'QueryElectric', 'QueryWaterCold', 'QueryWaterHot', 'QuerySteam', 'QueryGas', 'QueryCoal', 'QueryOil']
-    let cost = ['', 'QueryOverviewCost', 'QueryElectricCost', 'QueryWaterColdCost', 'QueryWaterHotCost', 'QuerySteamCost', 'QueryGasCost', 'QueryCoalCost', 'QueryOilCost']
-    let handler = ['', energy, cost][view][tabvalue]
+    let energy = ['QueryOverview', 'QueryEnergyByEnergyType']
+    let cost = ['QueryOverviewCost', 'QueryEneryCost']
+    let handler = []
+    if (tabvalue === 0) {
+      handler = ['', energy, cost][view][0]
+    } else {
+      handler = ['', energy, cost][view][1]
+    }
+    console.log(handler, tabvalue)
     try {
       let { success, data } = await EnergyComprehensive[handler](querys, id)
 
@@ -650,17 +704,17 @@ export default function Index() {
   return (
     <Pagecount bgcolor="transparent" pd="0">
       <div style={{ display: 'flex', flex: 1 }}>
-        <Laybox className={tabvalue == 1 ? 'zonghe' : 'classify'} laptop={laptop}>
+        <Laybox className={tabvalue == 0 ? 'zonghe' : 'classify'} laptop={laptop}>
           <div className="up">
             <div className="upleft">
-              <Tabsbox defaultActiveKey={1} items={tabs} onChange={ontabChange}>
+              <Tabsbox defaultActiveKey={0} items={tabs} onChange={ontabChange}>
               </Tabsbox>
               <Chartbox data={detail} op={exparams.view} type={type} my={my} datetype={exparams.type} tabvalue={tabvalue} />
             </div>
-            {tabvalue == 1 ? <CoalStandard op={exparams.view} data={coalStandard} datetype={exparams.type} key="CoalStandard" laptop={laptop} /> : <Electric data={consume} des={analysisDes} datetype={exparams.type} laptop={laptop} key="Electric" />}
+            {tabvalue == 0 ? <CoalStandard op={exparams.view} data={coalStandard} datetype={exparams.type} key="CoalStandard" laptop={laptop} /> : <Electric data={consume} des={analysisDes} datetype={exparams.type} laptop={laptop} key="Electric" />}
           </div>
 
-          {tabvalue == 1 && <div className="down">
+          {tabvalue == 0 && <div className="down">
             <Energyitem key="12" op={exparams.view} />
           </div>
           }

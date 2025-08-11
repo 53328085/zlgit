@@ -124,7 +124,7 @@
     "xlsx": "^0.18.5"
   },
   "scripts": {
-    "start": "set PORT=3001 && node scripts/start.js",
+    "start": "set PORT=3008 && node scripts/start.js",
     "build": "node scripts/build.js",
     "test": "node scripts/test.js",
     "buildaly": "source-map-explorer 'build/static/js/*.js'"

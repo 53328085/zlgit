@@ -1,0 +1,23 @@
+{
+  "id": "",
+  "name": "",
+  "font_family": "iconfont",
+  "css_prefix_text": "icon-",
+  "description": "",
+  "glyphs": [
+    {
+      "icon_id": "44850746",
+      "name": "抽屉式断路器--合",
+      "font_class": "a-zu6",
+      "unicode": "e601",
+      "unicode_decimal": 58881
+    },
+    {
+      "icon_id": "44851522",
+      "name": "抽屉式断路器--分",
+      "font_class": "a-zu60",
+      "unicode": "e602",
+      "unicode_decimal": 58882
+    }
+  ]
+}

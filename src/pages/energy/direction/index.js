@@ -16,7 +16,7 @@ import third from '../ranking/img/third.png'
 import fourth from '../ranking/img/fourth.png'
 import fifth from '../ranking/img/fifth.png'
 
-const { queryElectric, queryWater, QueryConsumeRankByDevice } = EnergyFlowRuntime
+const { QueryFlowByEnergyType, queryElectric, queryWater, QueryConsumeRankByDevice } = EnergyFlowRuntime
 
 
 const Headcom = memo(() => {
@@ -73,6 +73,10 @@ export default function Index() {
       trigger: 'item',
       triggerOn: 'mousemove'
     },
+    label: {
+      avoidLabelOverlap: true,  // 自动避让
+      padding: [5, 10]
+    },
     series: [
       {
         type: 'sankey',
@@ -86,11 +90,18 @@ export default function Index() {
           curveness: 0.5
         },
         left: 16,
-        top: 32,
+        top: 120,
         bottom: 32,
         right: 200,
-        nodeGap: 8,
-        // layoutIterations: 0,
+        nodeGap: 28,
+        containLabel: true,
+        label: {
+          height:12,
+          offset: [0, 12],
+          fontSize:12,
+          padding: [4,0],
+        },
+      // layoutIterations: 0,
 
       }
     ],
@@ -107,13 +118,14 @@ export default function Index() {
     let { type, date, projectId, energytype } = isfull ? store : exparams
     let params = {
       projectId,
-      meterType: energytype,
+      energyType: energytype,
       type,
       date: getTime(moment(date), type)
     }
     try {
-      let hander = ['', queryElectric, queryWater, '', '', '', '', queryWater][energytype]
-      let { success, data } = await hander(params, areaId)
+      // let hander = ['', queryElectric, queryWater, '', '', '', '', queryWater][energytype]
+      // let { success, data } = await hander(params, areaId)
+      let { success, data } = await QueryFlowByEnergyType(params, areaId)
       if (success && data.constructor == Object) {
 
         const { link = [] } = data
@@ -289,7 +301,7 @@ export default function Index() {
       </Titlelayout> :
         <Titlelayout title='能耗排名' layout="flex" >
           <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'start', justifyContent: 'space-between', }} >
-            <div style={{ width: '1028px', height: '100%', padding: '16px 0' }}>
+            <div style={{ width: '100%', height: '100%', padding: '16px 0' }}>
               <Ichart {...optionsRank} />
             </div>
             <div className="chart">

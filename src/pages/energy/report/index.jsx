@@ -35,6 +35,11 @@ const Contentbox = styled.div`
   grid-template-columns: 296px 1fr;
   column-gap: 16px;
   flex: 1;
+  .opt {
+    display: flex;
+    justify-content: flex-end;
+    column-gap: 16px;
+  }
   .search {
    display: flex;
    justify-content: flex-end;
@@ -52,7 +57,7 @@ const Chartwrap = styled.div`
     align-items: center;
     column-gap: 8px;
   }
-
+ 
 `
 
 export default function Index() {
@@ -132,7 +137,7 @@ export default function Index() {
     let f = ["0", "1", "4"].includes(value)
     //  console.log(dates)
     if (Array.isArray(dates) && dates?.[0] && dates?.[1]) {
-      filename = getTime(dates?.[0], 1).toString() + "-" + getTime(dates?.[1], 1).toString() + tabs[index]?.label
+      filename = getTime(dates?.[0], 1)?.toString() + "-" + getTime(dates?.[1], 1)?.toString() + tabs[index]?.label
     }
     return (f && isrange.range && dates?.length) ? filename : (tabs[index]?.label ?? 'sheet')
 
@@ -152,7 +157,7 @@ export default function Index() {
     let f = [areaId, projectId, type, energytype, index, line].every(v => Number.isInteger(v)) && Array.isArray(treeId) && date
 
 
-    let range = [0, 1, 4].includes(index) && isrange.range && Array.isArray(dates) && dates?.length > 1
+    let range = [0, 1].includes(index) && isrange.range && Array.isArray(dates) && dates?.length > 1
     if (!f) return;
     if (index === 0 && isrange.range && !Array.isArray(dates)) {
       return
@@ -176,7 +181,7 @@ export default function Index() {
       pageSize,
       queryType: line,
       ids: treeId,
-      type
+      type: range ? 1 : type
     }
     if (index == 0) {
       params.filterInfo = alike
@@ -185,9 +190,7 @@ export default function Index() {
     // //  cols 实时抄表，  conscols 能耗报表 , typecols 分类能耗
     if (energytype == 1) {
       setTabs([...etabs])
-    } else if (energytype == 2) {
-      setTabs([...wtabs])
-    } else if (energytype == 7) {
+    } else {
       setTabs([...wtabs])
     }
 
@@ -401,42 +404,44 @@ export default function Index() {
     }
   }, [value])
 
-
+  /* 线上实时抄表， 能耗报表 显示时间范围。 电能报表不显示 */
   return (
     <CustContext.Provider value={dataProps} >
       <Pagecount showSearch={false} custserach={true} >
         <Contentbox>
           <UserTree areaId={areaId} energytype={energytype} setTreeId={setTreeId} setLine={setLine} showline={value != '3'} datatype={value == '3' ? 0 : NaN} />
           <div style={{ position: "relative", flex: 1 }}>
-            <div style={{ position: "absolute", width: "100%" }}>
-              {value == "4" && <div style={{ marginBottom: "16px", display: "flex" }}>
-                <div style={{ marginLeft: "auto" }}>
-                  <Checkbox onChange={boxchange} checked={isrange.range}>使用日期范围（优先）</Checkbox>  <RangePicker
-                    value={dates || valuet}
-                    disabledDate={disabledDate}
-                    onCalendarChange={(val) => setDates(val)}
-                    onChange={onTimeOk}
-                    disabled={!isrange.range}
-                    defaultValue={[moment().startOf("day"), moment().endOf("hour")]}
-                    format="YYYY-MM-DD HH:mm"
-                    showTime={{
-                      format: 'HH:mm',
-                      minuteStep: 15
-                    }}
-                  />
+            <div style={{ position: "absolute", width: "100%", }}>
+              <div className='opt'>
+                {["0", "1"].includes(value) && <div style={{ marginBottom: "16px", display: "flex" }}>
+                  <div style={{ marginLeft: "auto" }}>
+                    <Checkbox onChange={boxchange} checked={isrange.range}>使用日期范围（优先）</Checkbox>  <RangePicker
+                      value={dates || valuet}
+                      disabledDate={disabledDate}
+                      onCalendarChange={(val) => setDates(val)}
+                      onChange={onTimeOk}
+                      disabled={!isrange.range}
+                      defaultValue={[moment().startOf("day"), moment().endOf("hour")]}
+                      format="YYYY-MM-DD HH:mm"
+                      showTime={{
+                        format: 'HH:mm',
+                        minuteStep: 15
+                      }}
+                    />
+                  </div>
                 </div>
+                }
+                {
+                  value == "0" && <div className='search'>
+                    <Serach placeholder="请输入设备名称/设备编号/安装地址查询" style={{ width: "362px" }} onSearch={onSearch} />
+                  </div>
+                }
+                {
+                  value == "1" && <div className='search'>
+                    <Tooltip title="最多选择三条信息进行对比"><CustButton onClick={oncompare}>勾选对比</CustButton></Tooltip>
+                  </div>
+                }
               </div>
-              }
-              {
-                value == "0" && <div className='search'>
-                  <Serach placeholder="请输入设备名称/设备编号/安装地址查询" style={{ width: "362px" }} onSearch={onSearch} />
-                </div>
-              }
-              {
-                value == "1" && <div className='search'>
-                  <Tooltip title="最多选择三条信息进行对比"><CustButton onClick={oncompare}>勾选对比</CustButton></Tooltip>
-                </div>
-              }
               {
                 ["1", "5"].includes(value) ? <UserTable ref={tbref} rowSelection={value == 1 ? rowSelection : null} columns={concolumns} {...tableProps} rowKey={row => row.sn} key={value} scroll={{
                   scrollToFirstRowOnChange: true,
@@ -476,5 +481,3 @@ export default function Index() {
     </CustContext.Provider>
   )
 }
-
-

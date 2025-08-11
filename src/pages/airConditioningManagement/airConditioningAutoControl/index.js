@@ -7,7 +7,7 @@ import UserTable from "@com/useTable";
 import Titlelayout from "@com/titlelayout";
 import BlueColumn from '@com/bluecolumn'
 import Cempty from '@com/useEmpty'
-import { cols, schemeNameData } from "./data";
+import { cols } from "./data";
 
 import { useList, useDetail } from "./api.js";
 
@@ -45,20 +45,20 @@ export default function Index() {
           total: 0
         }
       }
-      let { data, success, total } = await useDetail({}, { projectId, schemeId, pageNum: current, pageSize })
+      let { data, success } = await useDetail({}, { projectId, schemeId, pageNum: current, pageSize })
       if (success && Array.isArray(data) && data.length) {
         setControlInfos(Array.isArray(data[0].controlInfos) ? data[0].controlInfos : [])
         setSavingInfo(Array.isArray(data[0].savingInfo) ? data[0].savingInfo : [])
         return {
           list: Array.isArray(data[0].airConditionerInfo) ? data[0].airConditionerInfo : [],
-          total
+          total: data[0].airConditionerInfo.length
         }
       } else {
         setControlInfos([])
         setSavingInfo([])
         return {
           list: [],
-          total
+          total: 0
         }
 
       }
@@ -79,12 +79,10 @@ export default function Index() {
         alike,
       });
       if (success && Array.isArray(data) && data.length) {
-        //  setOptions(data)
         setSchemeId(data[0]?.id)
         setSchemeName(data[0]?.name)
         return data
       } else {
-        // setOptions([])
         setSchemeId(null)
         setSchemeName('')
         if (!success) {
@@ -144,11 +142,11 @@ export default function Index() {
                         <div className="time">
                           <div>{e.desc}</div>
                           <div className="day">
-                            {e.weeks.map?.(time => <div key={time} className="daybox">{getweek.get(time)}</div>)}
+                            {e?.weeks?.map?.(time => <div key={time} className="daybox">{getweek.get(time)}</div>)}
                           </div>
                         </div>
                         <div className="titleName">方案内容</div>
-                        {e.contentInfo.map?.(info => <div className="schemeName">
+                        {e?.contentInfo?.map?.(info => <div className="schemeName">
                           <div className="schemeTitle">{info.content}</div>
                           <div className="con">{info.description}</div>
                         </div>)}

@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect, useCallback, memo } from 'react'
 import { useAntdTable } from 'ahooks';
 import styled from 'styled-components';
-import { Space,Button } from 'antd';
+import { Space, Button } from 'antd';
 
 import { useOutletContext } from 'react-router-dom'
 import columns, { onDesc } from './columns';
@@ -50,7 +50,10 @@ export default function Index() {
   const getTableData = ({ current, pageSize }) => {
     // 0 建筑 1线路
 
-    if (Object.values(exparams)?.length < 6) return;
+    //if (Object.values(exparams)?.length < 6) return;
+
+    let flag = [areaId, projectId, type,  energytype, shiftNo].some(i => Number.isInteger(parseInt(i))) && date
+    if(!flag) return
     if (!Array.isArray(treeId) || !isFinite(line)) return
     let time = getTime(date, type)
     let params = {
@@ -79,6 +82,8 @@ export default function Index() {
         }
 
       }
+    }).catch((e)=> {
+       console.log(e)
     })
   }
   const { tableProps } = useAntdTable(getTableData, {
@@ -90,13 +95,13 @@ export default function Index() {
 
     return getTableData({ current: 1, pageSize: pageTotal.current })
   }, [exparams, treeId, line])
-  
+
 
   return (
-    <Pagecount pd="0">
+    <Pagecount pd="0" bgcolor="transparent" >
       <Mainbox>
         <UserTree areaId={areaId} setTreeId={setTreeId} setLine={setLine} energytype={energytype} />
-        <Titlelayout title={<div style={{width:'100%',display:'flex',justifyContent:'space-between',alignItems:'center'}}>
+        <Titlelayout title={<div style={{ width: '100%', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
           <span>损耗分析</span>
           <ExportExcel tb={tbref} /></div>} layout="flex" exa>
           <div className='tablebox'>

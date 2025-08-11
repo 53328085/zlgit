@@ -201,6 +201,7 @@ const CheckAuthorization = async (value, type=0, codekey, setLoading,getCode) =>
          dispatch(getWebsiteState({id: projectId, userId})) 
        //  dispatch(configProject(false)) // 项目是否处于设计状态
          let {runMenus,siderRunMenus, homeMenuNO} = await dispatch(getWebsiteMenu(projectId)).unwrap()
+       
          let ismenu = runMenus?.find(item => item.no == homeMenuNO) || runMenus[0]  
          if(!ismenu) return message.error({content:  t("comm:NoSetMenu"), duration: 0.5})
         //  navigate("/websitmap", {})

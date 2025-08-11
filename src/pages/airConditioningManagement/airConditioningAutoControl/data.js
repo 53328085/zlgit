@@ -1,4 +1,3 @@
-const lightType = ["", "道路灯", "高杆路灯", "太阳能路灯", "景观灯", "其他"];
 export const schemeNameData = ["温度上下限", "无人关闭", "超时关闭", "关窗提醒", "合理控温"]
 export const cols = [
   {
@@ -8,8 +7,8 @@ export const cols = [
   },
   {
     title: "空调名称",
-    dataIndex: "lightName",
-    key: "lightName",
+    dataIndex: "conditionerName",
+    key: "conditionerName",
   },
   {
     title: "空调型号",
@@ -18,13 +17,13 @@ export const cols = [
   },
   {
     title: "通信地址",
-    dataIndex: "no",
-    key: "no",
+    dataIndex: "cSn",
+    key: "cSn",
   },
   {
     title: "所属网关",
-    dataIndex: "mSn",
-    key: "mSn",
+    dataIndex: "gSn",
+    key: "gSn",
   },
   {
     title: "所属计量设备",

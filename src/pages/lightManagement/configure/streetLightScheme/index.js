@@ -254,7 +254,7 @@ export default function Index() {
       <Titlelayout layout="flex" title={title}>
       
        
-        <UserTable columns={columns} {...tableProps} onExport={onExport} rowKey={row => row.strategyId}  ref={tbref} rowSelection={rowSelection}  sheetName="路灯档案"></UserTable>
+        <UserTable columns={columns} {...tableProps} onExport={onExport} rowKey={row => row.strategyId}  ref={tbref} rowSelection={rowSelection}  sheetName="路灯方案"></UserTable>
         
        
       </Titlelayout>
