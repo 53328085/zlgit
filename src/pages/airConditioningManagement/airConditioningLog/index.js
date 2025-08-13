@@ -422,7 +422,8 @@ export default function Index(props) {
             rowSelection={{
               type: 'checkbox',
               ...rowSelectionCheckbox,
-            }} bordered></UserTable>
+            }} bordered
+            scroll={{ y: 520 }}></UserTable>
         </div>
         <CModal
           title={(
@@ -472,7 +473,7 @@ export default function Index(props) {
           </ModalBoX>
         </CModal>
         <CModal title={tabId == 0 ? '自动控制空调' : '手动控制空调'} ref={controlRef} width={512} warnimg={true} mold="cust" type="question" onOk={onOkControl} >
-          是否确认重新{tabId == 0 ? '自动' : '手动'}控制所选空调？
+          是否确认{tabId == 0 ? '自动' : '手动'}控制所选空调？
         </CModal>
       </Container>
     </Pagecount >

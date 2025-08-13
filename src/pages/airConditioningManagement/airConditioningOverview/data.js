@@ -1,4 +1,5 @@
 import moment from "moment";
+import imgUrl from "./imgs/index";
 export const Init_Value = {
   dtype: "1",
   date: moment(),
@@ -12,73 +13,79 @@ export const Date_Value = [
   { label: "年", value: "3" },
 ];
 //三张卡片内静态数据
-export const EnergyData =[
+export const EnergyData = [
   {
-    title:"能耗情况",
-    secTitle:"当日累计用电量",
-    value1:"0.0",
-    value2:"0.0",
-    thrTitle:"上一日累计用电量",
-    value3:"0.0",
+    title: "能耗情况",
+    secTitle: "当日累计用电量",
+    value1: "0.1",
+    value2: "0.2",
+    thrTitle: "上一日累计用电量",
+    value3: "0.3",
+    imgurl: imgUrl.energy,
   },
   {
-    title:"节能情况",
-    value1:"0.0",
-    value2:"0.0",
-    secTitle:"当日累计节能电量",
-    thrTitle:"节能率",
-    value3:"0.0",
-  }, {
-    title:"碳排情况",
-    value1:"0.0",
-    value2:"0.0",
-    secTitle:"当日累计碳排",
-    thrTitle:"昨日碳排",
-    value3:"0.0",
-  }
-] 
+    title: "节能情况",
+    value1: "0.0",
+    value2: "0.0",
+    secTitle: "当日累计节能电量",
+    thrTitle: "节能率",
+    value3: "0.0",
+    imgurl: imgUrl.save,
+  },
+  {
+    title: "碳排情况",
+    value1: "0.0",
+    value2: "0.0",
+    secTitle: "当日累计碳排",
+    thrTitle: "昨日碳排",
+    value3: "0.0",
+    imgurl: imgUrl.co2,
+  },
+];
 
-export const  AirChartData={
+export const AirChartData = {
   tooltip: {
-    trigger: 'axis',
+    trigger: "axis",
     axisPointer: {
-      type: 'shadow'
-    }
+      type: "shadow",
+    },
   },
   grid: {
-    left: '0%',
-    right: '0%',
-    bottom: '0%',
-    containLabel: true
+    left: "0%",
+    right: "0%",
+    bottom: "0%",
+    top: "6%",
+    containLabel: true,
   },
   xAxis: [
     {
-      type: 'category',
-      data: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+      type: "category",
+      data: ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"],
       axisTick: {
-        alignWithLabel: true
-      }
-    }
+        alignWithLabel: true,
+      },
+    },
   ],
   yAxis: [
     {
-      type: 'value'
-    }
+      type: "value",
+    },
   ],
   series: [
     {
-      name: 'Direct',
-      type: 'bar',
-      barWidth: '60%',
+      name: "Direct",
+      type: "bar",
+      barWidth: "60%",
       data: [10, 52, 200, 334, 390, 330, 220],
       itemStyle: {
-        borderRadius: [10 ,10, 0, 0]
-      }
-    }
-  ]
+        borderRadius: [10, 10, 0, 0],
+        color: "#10c6ee",
+      },
+    },
+  ],
 };
 
-export const Radio_Options= [
+export const Radio_Options = [
   {
     label: "图表模式",
     value: "1",
@@ -86,130 +93,196 @@ export const Radio_Options= [
   { label: "列表模式", value: "2" },
 ];
 export const Chart_Options = {
-  // 标题配置
-  // title: {
-  //   text: '销售与访问量分析',
-  //   subtext: '2023年数据',
-  //   left: 'center'
-  // },
-  
   // 提示框配置
   tooltip: {
-    trigger: 'axis',
+    trigger: "axis",
     axisPointer: {
-      type: 'shadow' // 阴影指示器
+      type: "shadow", // 阴影指示器
     },
     // 自定义提示框内容
-    formatter: function(params) {
-      let result = params[0].name + '<br/>';
-      params.forEach(function(item) {
+    formatter: function (params) {
+      let result = params[0].name + "<br/>";
+      params.forEach(function (item) {
         let marker = item.marker;
         let seriesName = item.seriesName;
         let value = item.value;
         // 格式化数值
-        if (seriesName.includes('金额')) {
-          value = '¥' + value.toLocaleString();
-        } else if (seriesName.includes('率')) {
-          value = value + '%';
+        if (seriesName.includes("金额")) {
+          value = "¥" + value.toLocaleString();
+        } else if (seriesName.includes("率")) {
+          value = value + "%";
         }
         result += `${marker} ${seriesName}: ${value}<br/>`;
       });
       return result;
-    }
+    },
   },
-  
+
   // 图例配置
   legend: {
-    data: ['今日能耗', '昨日能耗', '环比率'],
-    top: 10
+    data: ["今日能耗", "昨日能耗", "环比率"],
+    top: 10,
   },
-  
+
   // 网格配置
   grid: {
-    top: '10%',
-    left: '5%',
-    right: '5%',
-    bottom: '3%',
-    containLabel: true
+    top: "10%",
+    left: "5%",
+    right: "5%",
+    bottom: "3%",
+    containLabel: true,
   },
-  
+
   // X轴配置
   xAxis: {
-    type: 'category',
-    data: ['1月', '2月', '3月', '4月', '5月', '6月', '7月', '8月', '9月', '10月', '11月', '12月'],
+    type: "category",
+    data: [
+      "1月",
+      "2月",
+      "3月",
+      "4月",
+      "5月",
+      "6月",
+      "7月",
+      "8月",
+      "9月",
+      "10月",
+      "11月",
+      "12月",
+    ],
     axisPointer: {
-      type: 'shadow'
-    }
+      type: "shadow",
+    },
   },
-  
+
   // Y轴配置（双Y轴）
   yAxis: [
     {
-      type: 'value',
-      name: '电量(kWh)',
+      type: "value",
+      name: "电量(kWh)",
       min: 0,
       axisLabel: {
-        formatter: '¥{value}'
+        formatter: "¥{value}",
       },
       nameLocation: "middle",
       nameGap: 45,
       splitLine: {
-        show: false // 不显示分割线
-      }
+        show: false, // 不显示分割线
+      },
     },
     {
-      type: 'value',
-      name: '环比率',
+      type: "value",
+      name: "环比率",
       nameLocation: "middle",
       nameGap: 45,
       min: 0,
       axisLabel: {
-        formatter: function(value) {
-          return value % 1 === 0 ? value : value + '%'; // 整数显示数量，小数显示百分比
-        }
-      }
-    }
+        formatter: function (value) {
+          return value % 1 === 0 ? value : value + "%"; // 整数显示数量，小数显示百分比
+        },
+      },
+    },
   ],
-  
+
   // 系列配置
   series: [
     // 第一个柱状图（左Y轴）
     {
-      name: '销售额',
-      type: 'bar',
-      barWidth: '30%',
+      name: "今日能耗",
+      type: "bar",
+      barWidth: "30%",
       itemStyle: {
-        color: '#5470C6'
+        color: "#6395fa",
       },
-      data: [12000, 15000, 18000, 21000, 25000, 28000, 31000, 34000, 37000, 40000, 43000, 46000]
+      data: [10, 52, 200, 334, 390, 330, 220],
     },
-    
+
     // 第二个柱状图（右Y轴）
     {
-      name: '订单量',
-      type: 'bar',
-      barWidth: '30%',
+      name: "昨日能耗",
+      type: "bar",
+      barWidth: "30%",
       yAxisIndex: 1, // 使用第二个Y轴
       itemStyle: {
-        color: '#91CC75'
+        color: "#63daab",
       },
-      data: [120, 150, 180, 210, 250, 280, 310, 340, 370, 400, 430, 460]
+      data: [390, 330, 220, 10, 52, 200, 334],
     },
-    
+
     // 折线图（右Y轴）
     {
-      name: '转化率',
-      type: 'line',
+      name: "环比率",
+      type: "line",
       yAxisIndex: 1, // 使用第二个Y轴
-      symbol: 'circle',
+      symbol: "circle",
       symbolSize: 8,
       itemStyle: {
-        color: '#EE6666'
+        color: "#5d7092",
       },
       lineStyle: {
-        width: 3
+        width: 3,
       },
-      data: [2.5, 2.8, 3.0, 3.2, 3.5, 3.7, 4.0, 4.2, 4.5, 4.7, 5.0, 5.2]
-    }
-  ]
+      data: [],
+    },
+  ],
 };
+
+export const TbHeader = [
+  {
+    title: "时间",
+    dataIndex: "date",
+    key: "date",
+
+    sorter: {
+      compare: (a, b) => a.date - b.date,
+      multiple: 1,
+    },
+  },
+  {
+    title: "用电量（kWh）",
+    dataIndex: "periodUseE",
+    key: "periodUseE",
+    defaultSortOrder: "ascend",
+    sorter: {
+      compare: (a, b) => a.periodUseE - b.periodUseE,
+      multiple: 2,
+    },
+  },
+  {
+    title: "环比昨日用电量 (kWh)",
+    dataIndex: "lastPeriodUseE",
+    key: "lastPeriodUseE",
+    sorter: {
+      compare: (a, b) => a.lastPeriodUseE - b.lastPeriodUseE,
+      multiple: 3,
+    },
+  },
+  {
+    title: "环比",
+    dataIndex: "mom",
+    key: "mom",
+    sorter: {
+      compare: (a, b) =>
+        parseFloat(a.lastPeriodUseE) - parseFloat(b.lastPeriodUseE),
+      multiple: 3,
+    },
+  },
+  {
+    title: "同比去年用电量 (kWh)",
+    dataIndex: "lastYearPeriodUseE",
+    key: "lastYearPeriodUseE",
+    sorter: {
+      compare: (a, b) => a.lastYearPeriodUseE - b.lastYearPeriodUseE,
+      multiple: 3,
+    },
+  },
+  {
+    title: "同比",
+    dataIndex: "yoy",
+    key: "yoy",
+    sorter: {
+      compare: (a, b) => parseFloat(a.yoy) - parseFloat(b.yoy),
+      multiple: 4,
+    },
+  },
+];

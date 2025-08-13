@@ -8,20 +8,19 @@ export class Test {
 export class Apimethod {
   constructor(method, url) {
     try {
-      this.url = url
-      this.method = method
+      this.url = url;
+      this.method = method;
 
-      let methodname = 'use' + url.slice(url.lastIndexOf("/") + 1);
-      this[methodname] = (function (params, body) {
+      let methodname = "use" + url.slice(url.lastIndexOf("/") + 1);
+      this[methodname] = function (params, body) {
         if (method == "post") {
-          return server[this.method](this.url, body, { params })
+          return server[this.method](this.url, body, { params });
         } else {
-          return server[this.method](this.url, { params })
+          return server[this.method](this.url, { params });
         }
-
-      }).bind(this)
+      }.bind(this);
     } catch (error) {
-      console.log(error)
+      console.log(error);
     }
   }
 }
@@ -54,8 +53,6 @@ export class CustTheme {
   static DeleteTheme = (params) =>
     server.get(`Energy/Theme/DeleteTheme`, { params }); //删除主题
 
-
-
   // 下面为新的接口
 
   static QueryMainTheme = (params) =>
@@ -73,13 +70,11 @@ export class CustTheme {
     server.post(`Energy/Theme/SetProjectTheme`, null, { params }); // 选择项目主题
   static GetProjectMainTheme = (params) =>
     server.get(`Energy/MainTheme/GetProjectMainTheme`, { params }); // 获取项目公共主题
-
 }
-
 
 // 盘面图监控 （lot数据查询）
 export class DiskChart {
-  static prefix = 'DistributionCabinet/DistributionCabinetAIotRuntime'
+  static prefix = "DistributionCabinet/DistributionCabinetAIotRuntime";
   static QueryDeviceDataAll = (devSn) =>
     server.post(`${DiskChart.prefix}/QueryDeviceDataAll?devSn=${devSn}`); // 获取设备所有属性值
   static QueryDevicesDataAll = (body) =>
@@ -87,15 +82,16 @@ export class DiskChart {
   static QueryDevicePointTrend = (params) =>
     server.post(`${DiskChart.prefix}/QueryDevicePointTrend`, null, { params }); // 获取测点历史趋势
   static DoOpenClose = ({ devSn, operation }) =>
-    server.post(`${DiskChart.prefix}/DoOpenClose?devSn=${devSn}&operation=${operation}`); // 断路器分合闸
+    server.post(
+      `${DiskChart.prefix}/DoOpenClose?devSn=${devSn}&operation=${operation}`
+    ); // 断路器分合闸
   static QueryServiceResult = ({ tm, key }) =>
-    server.post(`${DiskChart.prefix}/QueryServiceResult?startTM=${tm}&resultKey=${key}`); // 断路器分合闸
-  static QueryMqtt = () =>
-    server.get(`${DiskChart.prefix}/QueryMqtt`); //获取mqtt参数
+    server.post(
+      `${DiskChart.prefix}/QueryServiceResult?startTM=${tm}&resultKey=${key}`
+    ); // 断路器分合闸
+  static QueryMqtt = () => server.get(`${DiskChart.prefix}/QueryMqtt`); //获取mqtt参数
   static GetHMIHeart = (body) =>
     server.post(`${DiskChart.prefix}/SendDevicesHeart`, body); //获取mqtt参数
-
-
 }
 // 电能质量
 export class PowerQuality {
@@ -136,14 +132,17 @@ export class PowerQuality {
 export class WorkTicketRuntime {
   //  word 文档
   static GetWrokTicketWrold = (params) =>
-    server.get(`/Distribution/DistributionWorkTicketRuntime/GetWrokTicketWrold`, {
-      params,
+    server.get(
+      `/Distribution/DistributionWorkTicketRuntime/GetWrokTicketWrold`,
+      {
+        params,
 
-      headers: {
-        "Content-Type": "application/json;charset=UTF-8;application/msword",
-      },
-      responseType: "arraybuffer",
-    });
+        headers: {
+          "Content-Type": "application/json;charset=UTF-8;application/msword",
+        },
+        responseType: "arraybuffer",
+      }
+    );
   //  运行态工作票
   static GetWorkTickets = (params) =>
     server.get(`/Distribution/DistributionWorkTicketRuntime/GetWorkTickets`, {
@@ -516,14 +515,21 @@ export class UpdateEnergyImage {
 export class EnergyRankingDesign {
   static QueryAllLevelSetting = (projectId) =>
     server.get(
-      `Energy/EnergyRankingDesign/QueryAllLevelSetting?projectId=${projectId}`,
+      `Energy/EnergyRankingDesign/QueryAllLevelSetting?projectId=${projectId}`
     ); // 获得区能耗设置信息
   static QueryDeviceSetting = (projectId) =>
-    server.get(`/Energy/EnergyRankingDesign/QueryDeviceSetting?projectId=${projectId}`);//获得设备能耗设置信息
+    server.get(
+      `/Energy/EnergyRankingDesign/QueryDeviceSetting?projectId=${projectId}`
+    ); //获得设备能耗设置信息
   static UpdateDeviceSetting = (projectId, rankConut, leaderboardCount) =>
-    server.get(`/Energy/EnergyRankingDesign/UpdateDeviceSetting?projectId=${projectId}&rankCount=${rankConut}&leaderboardCount=${leaderboardCount}`);//编辑设备能耗展示设置
+    server.get(
+      `/Energy/EnergyRankingDesign/UpdateDeviceSetting?projectId=${projectId}&rankCount=${rankConut}&leaderboardCount=${leaderboardCount}`
+    ); //编辑设备能耗展示设置
   static UpdateAreaLevelSetting = (projectId, data) =>
-    server.post(`/Energy/EnergyRankingDesign/UpdateAreaLevelSetting?projectId=${projectId}`, data);//编辑区域显示设置
+    server.post(
+      `/Energy/EnergyRankingDesign/UpdateAreaLevelSetting?projectId=${projectId}`,
+      data
+    ); //编辑区域显示设置
 }
 
 // 能源管理--重点设备 -- 设计态
@@ -1789,14 +1795,16 @@ export class UISummary {
 }
 //运行监控
 export const Monitoring = {
-
   PowerNeed: (params) => server.get(`Monitor/UserPower/PowerNeed`, { params }),
-  CheckPowerOnce: (body) => server.post(`Monitor/UserPower/CheckPowerOnce`, body),//输入密码
+  CheckPowerOnce: (body) =>
+    server.post(`Monitor/UserPower/CheckPowerOnce`, body), //输入密码
 
-  SetUserPower: (body) => server.post(`Monitor/UserPower/SetUserPower`, body),//设置密码
+  SetUserPower: (body) => server.post(`Monitor/UserPower/SetUserPower`, body), //设置密码
 
-  GetPointList: (params) => server.get(`Monitor/RuntimeDevice/GetPointList`, { params }),//分类测点
-  HistoryCurve: (data) => server.post(`Monitor/RuntimeDevice/HistoryCurve`, data),//监控趋势（传感器、流量计）
+  GetPointList: (params) =>
+    server.get(`Monitor/RuntimeDevice/GetPointList`, { params }), //分类测点
+  HistoryCurve: (data) =>
+    server.post(`Monitor/RuntimeDevice/HistoryCurve`, data), //监控趋势（传感器、流量计）
   //设备类型管理
   DeviceTypeManager: {
     GatewayCategory: (data) =>
@@ -1938,7 +1946,8 @@ export const Monitoring = {
     ImportBreaker: (data) => server.post(`/Monitor/Device/ImportBreaker`, data), //导入电表
     ImportWater: (data) => server.post(`/Monitor/Device/ImportWater`, data), //导入水表
     ImportGas: (data) => server.post(`/Monitor/Device/ImportGas`, data), //导入燃气表
-    ImportHotWater: (data) => server.post(`/Monitor/Device/ImportHotWater`, data), //导入热水表
+    ImportHotWater: (data) =>
+      server.post(`/Monitor/Device/ImportHotWater`, data), //导入热水表
     ImportSensor: (data) => server.post(`/Monitor/Device/ImportSensor`, data), //导入传感器
     ImportTransformer: (data) =>
       server.post(`/Monitor/Device/ImportTransformer`, data), //导入变压器
@@ -1965,8 +1974,7 @@ export const Monitoring = {
     QueryByPageFlow: (data) =>
       server.post(`/Monitor/Device/QueryByPageFlow`, data), //查询流量计
     AddFlow: (data) => server.post(`/Monitor/Device/AddFlow`, data), //新增流量计
-    UpdateFlow: (data) =>
-      server.post(`/Monitor/Device/UpdateFlow`, data), //更新流量计
+    UpdateFlow: (data) => server.post(`/Monitor/Device/UpdateFlow`, data), //更新流量计
     ImportFlow: (data) => server.post(`/Monitor/Device/ImportFlow`, data), //批量导入流量计
 
     DeleteMic: (data) =>
@@ -1974,56 +1982,65 @@ export const Monitoring = {
     QueryByPageMic: (data) =>
       server.post(`/Monitor/Device/QueryByPageMic`, data), //查询微机保护
     AddMic: (data) => server.post(`/Monitor/Device/AddMic`, data), //新增微机保护
-    UpdateMic: (data) =>
-      server.post(`/Monitor/Device/UpdateMic`, data), //更新微机保护
+    UpdateMic: (data) => server.post(`/Monitor/Device/UpdateMic`, data), //更新微机保护
     ImportMic: (data) => server.post(`/Monitor/Device/ImportMic`, data), //批量导入微机保护
-
 
     DeleteAirconditioner: (data) =>
       server.delete(`/Monitor/Device/DeleteAirconditioner`, { params: data }), //删除空调
     QueryByPageAirconditioner: (data) =>
       server.post(`/Monitor/Device/QueryByPageAirconditioner`, data), //查询空调
-    AddAirconditioner: (data) => server.post(`/Monitor/Device/AddAirconditioner`, data), //新增空调
+    AddAirconditioner: (data) =>
+      server.post(`/Monitor/Device/AddAirconditioner`, data), //新增空调
     UpdateAirconditioner: (data) =>
       server.post(`/Monitor/Device/UpdateAirconditioner`, data), //更新空调
-    ImportAirconditioner: (data) => server.post(`/Monitor/Device/ImportAirconditioner`, data), //批量导入空调
-
-
+    ImportAirconditioner: (data) =>
+      server.post(`/Monitor/Device/ImportAirconditioner`, data), //批量导入空调
 
     DeleteLight: (data) =>
       server.delete(`/Monitor/Device/DeleteLight`, { params: data }), //删除路灯
     QueryByPageLight: (data) =>
       server.post(`/Monitor/Device/QueryByPageLight`, data), //查询路灯
     AddLight: (data) => server.post(`/Monitor/Device/AddLight`, data), //新增路灯
-    UpdateLight: (data) =>
-      server.post(`/Monitor/Device/UpdateLight`, data), //更新路灯
+    UpdateLight: (data) => server.post(`/Monitor/Device/UpdateLight`, data), //更新路灯
     ImportLight: (data) => server.post(`/Monitor/Device/ImportLight`, data), //批量导入路灯
-
 
     DeleteSmartControl: (data) =>
       server.delete(`/Monitor/Device/DeleteSmartControl`, { params: data }), //删除智能控制
     QueryByPageSmartControl: (data) =>
       server.post(`/Monitor/Device/QueryByPageSmartControl`, data), //查询智能控制
-    AddSmartControl: (data) => server.post(`/Monitor/Device/AddSmartControl`, data), //新增智能控制
+    AddSmartControl: (data) =>
+      server.post(`/Monitor/Device/AddSmartControl`, data), //新增智能控制
     UpdateSmartControl: (data) =>
       server.post(`/Monitor/Device/UpdateSmartControl`, data), //更新智能控制
-    ImportSmartControl: (data) => server.post(`/Monitor/Device/ImportSmartControl`, data), //批量导入智能控制
-
+    ImportSmartControl: (data) =>
+      server.post(`/Monitor/Device/ImportSmartControl`, data), //批量导入智能控制
 
     //376协议
     QueryDeviceIncreaseParams: ({ projectId, gatewayId, port, alike }) =>
-      server.post(`/Monitor/Device/QueryDeviceIncreaseParams?projectId=${projectId}&gatewayId=${gatewayId}&port=${port}&alike=${alike}`), //查询查询新增参数
+      server.post(
+        `/Monitor/Device/QueryDeviceIncreaseParams?projectId=${projectId}&gatewayId=${gatewayId}&port=${port}&alike=${alike}`
+      ), //查询查询新增参数
     InsertOrUpdateDeviceParam: (projectId, gatewaySn, data) =>
-      server.post(`/Monitor/Device/InsertOrUpdateDeviceParam?projectId=${projectId}&gatewaySn=${gatewaySn}`, data) // 376协议新增参数
+      server.post(
+        `/Monitor/Device/InsertOrUpdateDeviceParam?projectId=${projectId}&gatewaySn=${gatewaySn}`,
+        data
+      ), // 376协议新增参数
   },
   FileDistribution: {
     //档案下发
     QueryDeviceIncreaseParams: ({ projectId, gatewayId, port, alike }) =>
-      server.post(`/Monitor/Device/QueryDeviceIncreaseParams?projectId=${projectId}&gatewayId=${gatewayId}&port=${port}&alike=${alike}`), //查询查询新增参数
+      server.post(
+        `/Monitor/Device/QueryDeviceIncreaseParams?projectId=${projectId}&gatewayId=${gatewayId}&port=${port}&alike=${alike}`
+      ), //查询查询新增参数
     DataInitialization: (projectId, gatewaySn, port, data) =>
-      server.post(`/Monitor/Device/DataInitialization?projectId=${projectId}&gatewaySn=${gatewaySn}&port=${port}`, data), //数据区初始化
+      server.post(
+        `/Monitor/Device/DataInitialization?projectId=${projectId}&gatewaySn=${gatewaySn}&port=${port}`,
+        data
+      ), //数据区初始化
     ClearPoint: ({ projectId, gatewaySn, port }) =>
-      server.post(`/Monitor/Device/ClearPoint?projectId=${projectId}&gatewaySn=${gatewaySn}&port=${port}`), //清除测量点
+      server.post(
+        `/Monitor/Device/ClearPoint?projectId=${projectId}&gatewaySn=${gatewaySn}&port=${port}`
+      ), //清除测量点
     Query376CommandSettingResult: (seq) =>
       server.get(`/Monitor/Device/Query376CommandSettingResult?seq=${seq}`), //查询命令设置结果
   },
@@ -2123,7 +2140,7 @@ export const Monitoring = {
       ), //网关详情
     Children: (data) => server.post(`/Monitor/RuntimeGateway/Children`, data), //网关子设备
     Log: (data) => server.post(`/Monitor/RuntimeGateway/Log`, data), //日志
-    RTGCall: (data) => server.post(`/Monitor/RuntimeGateway/RTGCall`, data)
+    RTGCall: (data) => server.post(`/Monitor/RuntimeGateway/RTGCall`, data),
   },
   RuntimeDevice: {
     Statistics: (data) =>
@@ -2215,13 +2232,11 @@ export const Monitoring = {
     //     `/Monitor/RuntimeDevice/QueryCompareDevice?projectId=${projectId}&type=${type}&alike=${alike}`
     //   ), //
     QueryCompareDevice: (projectId, type, alike) =>
-      server.post(
-        `/Monitor/Compare/QueryCompareDevice`, {
+      server.post(`/Monitor/Compare/QueryCompareDevice`, {
         meterType: type,
         alike,
-        projectId
-      }
-      ),
+        projectId,
+      }),
     AllDeviceStyle: (projectId) =>
       server.get(
         `/Monitor/RuntimeDevice/AllDeviceStyle?projectId=${projectId}`
@@ -2232,12 +2247,19 @@ export const Monitoring = {
   },
   IAnalyse: {
     Configure: (data) => server.post(`/Monitor/Compare/Configure`, data),
-    UpdateComparePlan: (data) => server.post(`/Monitor/Compare/UpdateComparePlan`, data),
-    CompareQuery: (projectId) => server.get(`/Monitor/Compare/Query?projectId=${projectId}`),
-    QueryPlanList: (projectId) => server.get(`/Monitor/Compare/QueryPlanList?projectId=${projectId}`),
-    DeleteComparePlan: (projectId, planId) => server.get(`/Monitor/Compare/DeleteComparePlan?projectId=${projectId}&planId=${planId}`),
-    HistoryCompare: (data) => server.post(`Monitor/Compare/HistoryCompareSmart`, data)
-  }//
+    UpdateComparePlan: (data) =>
+      server.post(`/Monitor/Compare/UpdateComparePlan`, data),
+    CompareQuery: (projectId) =>
+      server.get(`/Monitor/Compare/Query?projectId=${projectId}`),
+    QueryPlanList: (projectId) =>
+      server.get(`/Monitor/Compare/QueryPlanList?projectId=${projectId}`),
+    DeleteComparePlan: (projectId, planId) =>
+      server.get(
+        `/Monitor/Compare/DeleteComparePlan?projectId=${projectId}&planId=${planId}`
+      ),
+    HistoryCompare: (data) =>
+      server.post(`Monitor/Compare/HistoryCompareSmart`, data),
+  }, //
 };
 
 //运维管理(运行)
@@ -2466,14 +2488,23 @@ export class energyRanking {
     server.post(`/Energy/EnergyRankingRuntime/Query`, data); //能耗排名
 
   static QueryEnergyRankByArea = (data) =>
-    server.get(`/Energy/EnergyRankingRuntime/QueryEnergyRankByArea?projectId=${data.projectId}&start=${data.start}&end=${data.end}`); //能耗排名按区域
+    server.get(
+      `/Energy/EnergyRankingRuntime/QueryEnergyRankByArea?projectId=${data.projectId}&start=${data.start}&end=${data.end}`
+    ); //能耗排名按区域
 
   static QueryAreaSetting = (projectId) =>
-    server.get(`/Energy/EnergyRankingRuntime/QueryAreaSetting?projectId=${projectId}`); //获取区域列表
+    server.get(
+      `/Energy/EnergyRankingRuntime/QueryAreaSetting?projectId=${projectId}`
+    ); //获取区域列表
   static QueryAreaSettingTrees = (projectId) =>
-    server.get(`/Energy/EnergyRankingRuntime/QueryAreaSettingTrees?projectId=${projectId}`); //获取区域列表
+    server.get(
+      `/Energy/EnergyRankingRuntime/QueryAreaSettingTrees?projectId=${projectId}`
+    ); //获取区域列表
   static QueryEnergyRankByDevice = (data, params) =>
-    server.post(`/Energy/EnergyRankingRuntime/QueryEnergyRankByDevice?projectId=${data.projectId}&start=${data.start}&end=${data.end}`, params); //能耗排名按设备
+    server.post(
+      `/Energy/EnergyRankingRuntime/QueryEnergyRankByDevice?projectId=${data.projectId}&start=${data.start}&end=${data.end}`,
+      params
+    ); //能耗排名按设备
 }
 //分时能耗
 export class energyShare {
@@ -2493,20 +2524,26 @@ export class energyShare {
 
   static queryLine = (data) =>
     server.post(`Energy/EnergyTimeShareRuntime/QueryElectricByLine`, data); //线路查询
-
 }
 //数据报表
 export class energyReport {
   static QueryReadingByAreaCustomize = (params, body) =>
-    server.post(`Energy/DataReportRuntime/QueryReadingByAreaCustomize`, body, { params }); //实时抄表自定义-区域
+    server.post(`Energy/DataReportRuntime/QueryReadingByAreaCustomize`, body, {
+      params,
+    }); //实时抄表自定义-区域
   static QueryReadingByLineCustomize = (params, body) =>
-    server.post(`Energy/DataReportRuntime/QueryReadingByLineCustomize`, body, { params }); //实时抄表自定义-线路
-
+    server.post(`Energy/DataReportRuntime/QueryReadingByLineCustomize`, body, {
+      params,
+    }); //实时抄表自定义-线路
 
   static QueryConsumeByAreaCustomize = (params, body) =>
-    server.post(`Energy/DataReportRuntime/QueryConsumeByAreaCustomize`, body, { params }); //能耗报表自定义-区域
+    server.post(`Energy/DataReportRuntime/QueryConsumeByAreaCustomize`, body, {
+      params,
+    }); //能耗报表自定义-区域
   static QueryConsumeByLineCustomize = (params, body) =>
-    server.post(`Energy/DataReportRuntime/QueryConsumeByLineCustomize`, body, { params }); //能耗报表自定义-线路
+    server.post(`Energy/DataReportRuntime/QueryConsumeByLineCustomize`, body, {
+      params,
+    }); //能耗报表自定义-线路
 
   static AeraQueryAll = (projectId) =>
     server.get(`/General/Area/QueryAll?projectId=${projectId}&level=1`); //获取区域
@@ -2572,32 +2609,33 @@ export class energyReport {
     ); //分类能耗
 
   static QueryByAreaFromIot = (params, body) =>
-    server.post(
-      `Energy/DataReportRuntime/QueryByAreaFromIot`,
-      body,
-      { params }
-    ); //能电报表--区域
+    server.post(`Energy/DataReportRuntime/QueryByAreaFromIot`, body, {
+      params,
+    }); //能电报表--区域
   static QueryByLineFromIot = (params, body) =>
-    server.post(
-      `Energy/DataReportRuntime/QueryByLineFromIot`,
-      body,
-      { params }
-    ); //能电报表--线路
+    server.post(`Energy/DataReportRuntime/QueryByLineFromIot`, body, {
+      params,
+    }); //能电报表--线路
 
   // 新的接口
 
-  static QueryConsumeRegion = (body) => server.post(`Energy/DataReportRuntime/QueryConsumeRegion`, body) // 实时抄表
+  static QueryConsumeRegion = (body) =>
+    server.post(`Energy/DataReportRuntime/QueryConsumeRegion`, body); // 实时抄表
 
-  static QueryConsumeHourTime = (body) => server.post(`Energy/DataReportRuntime/QueryConsumeHourTime`, body) // 能耗报表
+  static QueryConsumeHourTime = (body) =>
+    server.post(`Energy/DataReportRuntime/QueryConsumeHourTime`, body); // 能耗报表
 
-  static QueryConsumeByTime = (body) => server.post(`Energy/DataReportRuntime/QueryConsumeByTime`, body) // 分时能耗
+  static QueryConsumeByTime = (body) =>
+    server.post(`Energy/DataReportRuntime/QueryConsumeByTime`, body); // 分时能耗
 
-  static QueryConsumeClassify = (body) => server.post(`Energy/DataReportRuntime/QueryConsumeClassify`, body) // 分类能耗
+  static QueryConsumeClassify = (body) =>
+    server.post(`Energy/DataReportRuntime/QueryConsumeClassify`, body); // 分类能耗
 
-  static QueryConsumeFromIot = (body) => server.post(`Energy/DataReportRuntime/QueryConsumeFromIot`, body) // 电能报表
+  static QueryConsumeFromIot = (body) =>
+    server.post(`Energy/DataReportRuntime/QueryConsumeFromIot`, body); // 电能报表
 
-
-  static QueryConsumeDeviceShit = (body) => server.post(`Energy/DataReportRuntime/QueryConsumeDeviceShit`, body) // 班次能耗
+  static QueryConsumeDeviceShit = (body) =>
+    server.post(`Energy/DataReportRuntime/QueryConsumeDeviceShit`, body); // 班次能耗
 }
 //energyDesigner能耗管理
 export class energyDesigner {
@@ -2706,53 +2744,69 @@ export class energyQuota {
     );
   static QueryParkList = (params) =>
     server.get(
-      `Quota/ParkQuotaRuntime/QueryParkList`, { params }       // 获取项目园区列表
+      `Quota/ParkQuotaRuntime/QueryParkList`,
+      { params } // 获取项目园区列表
     );
   static QueryStructureList = (params) =>
     server.get(
-      `Quota/QuotaDetailRuntime/QueryStructureList`, { params }       // 获取园区下建筑列表
+      `Quota/QuotaDetailRuntime/QueryStructureList`,
+      { params } // 获取园区下建筑列表
     );
   static QueryRoomQuota = (params) =>
     server.get(
-      `Quota/QuotaDetailRuntime/QueryRoomQuota`, { params }       // 获取房间定额信息
+      `Quota/QuotaDetailRuntime/QueryRoomQuota`,
+      { params } // 获取房间定额信息
     );
   static QueryRoomQuotaDetail = (params) =>
     server.get(
-      `Quota/QuotaDetailRuntime/QueryRoomQuotaDetail`, { params }       // 获取房间详细信息
+      `Quota/QuotaDetailRuntime/QueryRoomQuotaDetail`,
+      { params } // 获取房间详细信息
     );
   static QueryParkQuota = (params) =>
-    server.get(
-      `Quota/ParkQuotaRuntime/QueryParkQuota`, { params }
-    );
-  static QueryStructureWarn = (params) =>   // 获取园区下全部建筑告警数量
-    server.get(
-      `Quota/QuotaWarnRuntime/QueryStructureWarn`, { params }
-    );
-  static QueryRoomWarn = (params) =>   // 获取建筑下全部房间告警信息
-    server.get(
-      `Quota/QuotaWarnRuntime/QueryRoomWarn`, { params }
-    );
-
+    server.get(`Quota/ParkQuotaRuntime/QueryParkQuota`, { params });
+  static QueryStructureWarn = (
+    params // 获取园区下全部建筑告警数量
+  ) => server.get(`Quota/QuotaWarnRuntime/QueryStructureWarn`, { params });
+  static QueryRoomWarn = (
+    params // 获取建筑下全部房间告警信息
+  ) => server.get(`Quota/QuotaWarnRuntime/QueryRoomWarn`, { params });
 }
 // 定额管理 设计态
 export class QuotaManage {
-  static QueryQuotaAreaTree = (projectId) => server.get(`Quota/QuotaManage/QueryQuotaAreaTree?projectId=${projectId}`) //   查询项目区域树
-  static AddQuotaArea = (params) => server.post(`Quota/QuotaManage/AddQuotaArea`, params) //   新增区域
-  static UpdateQuotaArea = ({ projectId, quotaAreaId, name }) => server.post(`Quota/QuotaManage/UpdateQuotaArea?projectId=${projectId}&quotaAreaId=${quotaAreaId}&name=${name}`) //   编辑区域名称
+  static QueryQuotaAreaTree = (projectId) =>
+    server.get(`Quota/QuotaManage/QueryQuotaAreaTree?projectId=${projectId}`); //   查询项目区域树
+  static AddQuotaArea = (params) =>
+    server.post(`Quota/QuotaManage/AddQuotaArea`, params); //   新增区域
+  static UpdateQuotaArea = ({ projectId, quotaAreaId, name }) =>
+    server.post(
+      `Quota/QuotaManage/UpdateQuotaArea?projectId=${projectId}&quotaAreaId=${quotaAreaId}&name=${name}`
+    ); //   编辑区域名称
 
-  static DeleteQuotaArea = ({ projectId, quotaAreaId }) => server.delete(`Quota/QuotaManage/DeleteQuotaArea?projectId=${projectId}&quotaAreaId=${quotaAreaId}`) //   删除区域名称
+  static DeleteQuotaArea = ({ projectId, quotaAreaId }) =>
+    server.delete(
+      `Quota/QuotaManage/DeleteQuotaArea?projectId=${projectId}&quotaAreaId=${quotaAreaId}`
+    ); //   删除区域名称
 
-  static QueryQuotaAreaConfig = ({ projectId, quotaAreaId }) => server.get(`Quota/QuotaManage/QueryQuotaAreaConfig?projectId=${projectId}&quotaAreaId=${quotaAreaId}`) //   查询区域能耗定额和负责人
+  static QueryQuotaAreaConfig = ({ projectId, quotaAreaId }) =>
+    server.get(
+      `Quota/QuotaManage/QueryQuotaAreaConfig?projectId=${projectId}&quotaAreaId=${quotaAreaId}`
+    ); //   查询区域能耗定额和负责人
 
-  static SaveQuotaAreaConfig = (data) => server.post(`Quota/QuotaManage/SaveQuotaAreaConfig`, data) // 配置区域能耗定额和负责人
+  static SaveQuotaAreaConfig = (data) =>
+    server.post(`Quota/QuotaManage/SaveQuotaAreaConfig`, data); // 配置区域能耗定额和负责人
 
-  static QueryQuotaAreaDeviceConfig = ({ projectId, quotaAreaId }) => server.get(`Quota/QuotaManage/QueryQuotaAreaDeviceConfig?projectId=${projectId}&quotaAreaId=${quotaAreaId}`) // 查询区域绑定设备
+  static QueryQuotaAreaDeviceConfig = ({ projectId, quotaAreaId }) =>
+    server.get(
+      `Quota/QuotaManage/QueryQuotaAreaDeviceConfig?projectId=${projectId}&quotaAreaId=${quotaAreaId}`
+    ); // 查询区域绑定设备
 
-  static SaveQuotaAreaDeviceConfig = (params) => server.post(`Quota/QuotaManage/SaveQuotaAreaDeviceConfig`, params) // 为区域绑定设备
-  static QueryProjectQuotaWarn = (projectId) => server.get(`Quota/QuotaWarn/QueryProjectQuotaWarn?projectId=${projectId}`)//查询项目定额能耗
-  static SaveProjectQuotaWarn = (data) => server.post(`Quota/QuotaWarn/SaveProjectQuotaWarn`, data)//保存项目定额能耗
+  static SaveQuotaAreaDeviceConfig = (params) =>
+    server.post(`Quota/QuotaManage/SaveQuotaAreaDeviceConfig`, params); // 为区域绑定设备
+  static QueryProjectQuotaWarn = (projectId) =>
+    server.get(`Quota/QuotaWarn/QueryProjectQuotaWarn?projectId=${projectId}`); //查询项目定额能耗
+  static SaveProjectQuotaWarn = (data) =>
+    server.post(`Quota/QuotaWarn/SaveProjectQuotaWarn`, data); //保存项目定额能耗
 }
-
 
 //能源结构
 export class energyStructure {
@@ -2776,7 +2830,12 @@ export class energyStructure {
       `Energy/EnergyStructureDesigner/ConfigEnergyStructure?projectId=${projectId}`,
       data
     );
-  static queryEnergyStructureConfig = (projectId, energyStructureId, areaId, energyType) =>
+  static queryEnergyStructureConfig = (
+    projectId,
+    energyStructureId,
+    areaId,
+    energyType
+  ) =>
     server.get(
       `Energy/EnergyStructureDesigner/QueryEnergyStructureConfig?projectId=${projectId}&energyStructureId=${energyStructureId}&areaId=${areaId}&energyType=${energyType}`
     );
@@ -3014,20 +3073,22 @@ export class DistributionRoomRuntime {
       body // 运行报表 -- 回路详情, 实时监测 --数据趋势
     );
 
-
   static DeviceList = (params) =>
     server.get(
-      `Distribution/DistributionHighRuntime/DeviceList`, { params }
+      `Distribution/DistributionHighRuntime/DeviceList`,
+      { params }
       // 实时监测 -- 查询配电房设备
     );
   static RuntimePointsH = (params) =>
     server.get(
-      `Distribution/DistributionHighRuntime/RuntimePoints`, { params }
+      `Distribution/DistributionHighRuntime/RuntimePoints`,
+      { params }
       // 实时监测 -- 查询设备实时值
     );
   static HistoryTableH = (body) =>
     server.post(
-      `Distribution/DistributionHighRuntime/HistoryTable`, body
+      `Distribution/DistributionHighRuntime/HistoryTable`,
+      body
       // 实时监测 -- 查询设备实时值
     );
   static GetEnvironment = (projectId, roomId) => {
@@ -3247,59 +3308,41 @@ export class EnergyPublicRuntime {
       `Energy/EnergyPublicRuntime/QueryEnergyCategoryTree?projectId=${projectId}&categoryType=${categoryType}&name=${name}`
     );
   static queryElectricYear = (params, data) =>
-    server.post(
-      `/Energy/EnergyPublicRuntime/QueryElectric_Year`,
-      data, { params }
-    );
+    server.post(`/Energy/EnergyPublicRuntime/QueryElectric_Year`, data, {
+      params,
+    });
   static queryElectricDay = (params, data) =>
-    server.post(
-      `/Energy/EnergyPublicRuntime/QueryElectric_Day`,
-      data, { params }
-    );
-  static queryElectricRangeDay = (params, data) => server.post(
-    `/Energy/EnergyPublicRuntime/QueryElectric_Range`, data, { params }
-
-  );
+    server.post(`/Energy/EnergyPublicRuntime/QueryElectric_Day`, data, {
+      params,
+    });
+  static queryElectricRangeDay = (params, data) =>
+    server.post(`/Energy/EnergyPublicRuntime/QueryElectric_Range`, data, {
+      params,
+    });
   static queryElectricMonth = (params, data) =>
-    server.post(
-      `/Energy/EnergyPublicRuntime/QueryElectric_Month`,
-      data, { params }
-    );
+    server.post(`/Energy/EnergyPublicRuntime/QueryElectric_Month`, data, {
+      params,
+    });
   static queryWaterDay = (params, data) =>
-    server.post(
-      `/Energy/EnergyPublicRuntime/QueryWater_Day`,
-      data, { params }
-    );
+    server.post(`/Energy/EnergyPublicRuntime/QueryWater_Day`, data, { params });
   static queryWaterRange = (params, data) =>
-    server.post(
-      `/Energy/EnergyPublicRuntime/QueryWater_Range`,
-      data, { params }
-    );
+    server.post(`/Energy/EnergyPublicRuntime/QueryWater_Range`, data, {
+      params,
+    });
   static queryWaterMonth = (params, data) =>
-    server.post(
-      `/Energy/EnergyPublicRuntime/QueryWater_Month`,
-      data, { params }
-    );
+    server.post(`/Energy/EnergyPublicRuntime/QueryWater_Month`, data, {
+      params,
+    });
   static queryWaterYear = (params, data) =>
-    server.post(
-      `/Energy/EnergyPublicRuntime/QueryWater_Year`,
-      data, { params }
-    );
+    server.post(`/Energy/EnergyPublicRuntime/QueryWater_Year`, data, {
+      params,
+    });
   static queryGasDay = (params, data) =>
-    server.post(
-      `/Energy/EnergyPublicRuntime/QueryGas_Day`,
-      data, { params }
-    );
+    server.post(`/Energy/EnergyPublicRuntime/QueryGas_Day`, data, { params });
   static queryGasMonth = (params, data) =>
-    server.post(
-      `/Energy/EnergyPublicRuntime/QueryGas_Month`,
-      data, { params }
-    );
+    server.post(`/Energy/EnergyPublicRuntime/QueryGas_Month`, data, { params });
   static queryGasYear = (params, data) =>
-    server.post(
-      `/Energy/EnergyPublicRuntime/QueryGas_Year`,
-      data, { params }
-    );
+    server.post(`/Energy/EnergyPublicRuntime/QueryGas_Year`, data, { params });
 }
 //储能概述
 export class SiteSummaryRuntime {
@@ -3456,11 +3499,19 @@ export class AlarmManagement {
   static SetAlarmValveDevice = (data) =>
     server.post(`Safe/AlarmValveDevice/SetAlarmValveDevice`, data);
   static GetAlarmValveDevice = (projectId, alarmId) =>
-    server.get(`Safe/AlarmValveDevice/GetAlarmValveDevice?projectId=${projectId}&alarmId=${alarmId}`);
+    server.get(
+      `Safe/AlarmValveDevice/GetAlarmValveDevice?projectId=${projectId}&alarmId=${alarmId}`
+    );
 }
 export class StorageEnvironmentRuntime {
-  static queryEnvironmentInfo = (projectId, areaId, siteId) => server.get(`/Storage/StorageEnvironmentRuntime/QueryEnvironmentInfo?projectId=${projectId}&areaId=${areaId}&siteId=${siteId}`)
-  static queryTrends = (projectId, storageRoomId, date) => server.get(`/Storage/StorageEnvironmentRuntime/QueryTrends?projectId=${projectId}&storageRoomId=${storageRoomId}&date=${date}`)
+  static queryEnvironmentInfo = (projectId, areaId, siteId) =>
+    server.get(
+      `/Storage/StorageEnvironmentRuntime/QueryEnvironmentInfo?projectId=${projectId}&areaId=${areaId}&siteId=${siteId}`
+    );
+  static queryTrends = (projectId, storageRoomId, date) =>
+    server.get(
+      `/Storage/StorageEnvironmentRuntime/QueryTrends?projectId=${projectId}&storageRoomId=${storageRoomId}&date=${date}`
+    );
 }
 //储能--环境监控
 export class DeviceRuler {
@@ -4094,11 +4145,13 @@ export class DistributionCabinet {
     ); //站点结构
   static QueryLineMeterReading = (data) =>
     server.post(
-      `DistributionCabinet/DistributionMeterReadingRuntime/QueryLineMeterReading`, data
+      `DistributionCabinet/DistributionMeterReadingRuntime/QueryLineMeterReading`,
+      data
     ); //线路抄表
   static QueryLineEnergy = (data) =>
     server.post(
-      `DistributionCabinet/DistributionLineEnergyRuntime/QueryLineEnergy`, data
+      `DistributionCabinet/DistributionLineEnergyRuntime/QueryLineEnergy`,
+      data
     ); //回路能耗
   static QueryTransformerList = (siteId) =>
     server.get(
@@ -4110,19 +4163,23 @@ export class DistributionCabinet {
     ); //变压器信息
   static QueryTransformerLoadRateRealtime = (data) =>
     server.post(
-      `DistributionCabinet/DistributionTransformerDiagnosisRuntime/QueryTransformerLoadRateRealtime`, data
+      `DistributionCabinet/DistributionTransformerDiagnosisRuntime/QueryTransformerLoadRateRealtime`,
+      data
     ); //变压器实时负载率
   static QueryTransformerUnbalanceRateRealtime = (data) =>
     server.post(
-      `DistributionCabinet/DistributionTransformerDiagnosisRuntime/QueryTransformerUnbalanceRateRealtime`, data
+      `DistributionCabinet/DistributionTransformerDiagnosisRuntime/QueryTransformerUnbalanceRateRealtime`,
+      data
     ); //变压器实时不平衡率
   static QueryCircuitBreakerOverview = (data) =>
     server.post(
-      `DistributionCabinet/DistributionCircuitBreakerDiagnosisRuntime/QueryCircuitBreakerOverview`, data
+      `DistributionCabinet/DistributionCircuitBreakerDiagnosisRuntime/QueryCircuitBreakerOverview`,
+      data
     ); //断路器概览
   static QueryCircuitBreakerDiagnosis = (data) =>
     server.post(
-      `DistributionCabinet/DistributionCircuitBreakerDiagnosisRuntime/QueryCircuitBreakerDiagnosis`, data
+      `DistributionCabinet/DistributionCircuitBreakerDiagnosisRuntime/QueryCircuitBreakerDiagnosis`,
+      data
     ); //断路器诊断
   static QueryAlarmOverview = (siteId) =>
     server.get(
@@ -4130,7 +4187,8 @@ export class DistributionCabinet {
     ); //告警信息概览
   static QueryAlarmInformation = (data) =>
     server.post(
-      `DistributionCabinet/DistributionAlarmInformationRuntime/QueryAlarmList`, data
+      `DistributionCabinet/DistributionAlarmInformationRuntime/QueryAlarmList`,
+      data
     ); //告警信息列表
   static QueryAlarmDetail = (alarmId) =>
     server.get(
@@ -4140,7 +4198,7 @@ export class DistributionCabinet {
     server.post(
       `DistributionCabinet/DistributionAlarmInformationRuntime/ConfirmAlarmState?alarmId=${alarmId}&alarmRecord=${alarmRecord}`
     ); //确认告警状态
-}//DistributionCabinet/DistributionAlarmInformationRuntime/ConfirmAlarmState?alarmId=1
+} //DistributionCabinet/DistributionAlarmInformationRuntime/ConfirmAlarmState?alarmId=1
 
 export class Cabinets {
   //运行态
@@ -4155,7 +4213,8 @@ export class Cabinets {
     );
   static QueryTemperatureHumidityTrend = (data) =>
     server.post(
-      `DistributionCabinet/DistributionEnvironmentMonitorRuntime/QueryTemperatureHumidityTrend`, data,
+      `DistributionCabinet/DistributionEnvironmentMonitorRuntime/QueryTemperatureHumidityTrend`,
+      data
     );
   //---碳排统计
   static QuerySiteCarbonOverview = (siteId) =>
@@ -4175,8 +4234,34 @@ export class Cabinets {
 }
 
 export class DMAPartition {
-  static DMAGetTree = (projectId) => server.get(`DMA/DMAPartition/GetTree?projectId=${projectId}`);//获取DMA树
-  static LeakageChart = (params) => server.get(`DMA/DMAPartition/LeakageChart`, { params });//获取分区漏损图表
-  static LeakageInfo = (params) => server.get(`/DMA/DMAPartition/LeakageInfo`, { params });//获取分区漏损概览
-  static GetListPartitionAlarmPaged = (params) => server.get(`/DMA/DMAPartition/GetListPartitionAlarmPaged`, { params });//获取DMA分区报警列表
+  static DMAGetTree = (projectId) =>
+    server.get(`DMA/DMAPartition/GetTree?projectId=${projectId}`); //获取DMA树
+  static LeakageChart = (params) =>
+    server.get(`DMA/DMAPartition/LeakageChart`, { params }); //获取分区漏损图表
+  static LeakageInfo = (params) =>
+    server.get(`/DMA/DMAPartition/LeakageInfo`, { params }); //获取分区漏损概览
+  static GetListPartitionAlarmPaged = (params) =>
+    server.post(`/DMA/DMAPartition/GetListPartitionAlarmPaged`, { params }); //获取DMA分区报警列表
+}
+export class AirConditioningManagement {
+  static QueryEnergyOverview = (data) =>
+    server.post(
+      `AirConditioner/AirConditionerOverview/QueryEnergyOverview`,
+      data
+    ); //空调用电总览
+  static QueryElectricTrendChart = (data) =>
+    server.post(
+      `AirConditioner/AirConditionerOverview/QueryElectricTrendChart`,
+      data
+    ); //空调能耗趋势图表
+  static QueryElectricTrendTable = (data) =>
+    server.post(
+      `AirConditioner/AirConditionerOverview/QueryElectricTrendTable`,
+      data
+    ); //空调能耗趋势列表
+  static QueryEnergyConsumptionRanking = (data) =>
+    server.post(
+      `AirConditioner/AirConditionerEnergy/QueryEnergyConsumptionRanking`,
+      data
+    );
 }

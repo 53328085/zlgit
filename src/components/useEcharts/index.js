@@ -460,7 +460,7 @@ export const drawEcharts = (
     }
   }
  
-  const setoption = ['', option, baseoption, pieOption({...pieData, grid, legend}), liuqiuOption(liuqiu)][type];
+  const setoption = [{}, option, baseoption, pieOption({...pieData, grid, legend}), liuqiuOption(liuqiu)][type];
   /*   type == 1
       ? option
       : type == 2
