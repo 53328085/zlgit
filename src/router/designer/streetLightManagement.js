@@ -7,6 +7,7 @@ const StreetLightScheme = lazy(() => import("@pages/lightManagement/configure/st
 const StreetLightType = lazy(() => import("@pages/lightManagement/configure/streetLightType")) 
 const StreetLightLineConfig = lazy(() => import("@pages/lightManagement/configure/streetLightLineConfig")) 
 const StreetLightAreaConfig = lazy(() => import("@pages/lightManagement/configure/streetLightAreaConfig")) 
+const StreetLightOverviewConfig = lazy(() => import("@pages/lightManagement/configure/streetLightOverviewConfig")) 
   
 export const streetLightManagement = {
     "021701": StreetLightType, //路灯类型
@@ -14,4 +15,5 @@ export const streetLightManagement = {
     "021703": StreetLightScheme, // 路灯控制方案
     "021704": StreetLightLineConfig, // 线路设置
     "021705": StreetLightAreaConfig, // 区域设置
+    "021706": StreetLightOverviewConfig, // 总览设置
 }

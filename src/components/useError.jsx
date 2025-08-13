@@ -39,19 +39,20 @@ export default class ErrorBoundary extends Component {
     return this.props.children;
   }
 }
-
+ 
 export function Fallack({error, custmsg}) {
    let location = useLocation
    console.log(error?.message)
    const {resetBoundary} = useErrorBoundary()
   // let error=props.error ?? '抱歉！页面出错'
    let msg =custmsg || "抱歉！页面出错"
-   let count = 0
+   
    useEffect(() => {
-      count++
-     if(error?.message && count<2) {
-       resetBoundary()
+    
+     if(error?.message) {
+        // resetBoundary()
      }
+    
    }, [location])
    return (<Empty image={imgurl.error}
    imageStyle={{width: '200px', height: '180px'}}
