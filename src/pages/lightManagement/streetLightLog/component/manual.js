@@ -75,7 +75,13 @@ const onControl =async()=> {
      projectId,
      conditons
    }
-   let {} = await useSetReControl({}, body)
+   let {success, errMsg} = await useSetReControl({}, body)
+   if(success) {
+    message.success("重新控制成功")
+    refresh()
+   }else {
+     message.warning(errMsg || "数据出错")
+   }
   
  } catch (error) {
   

@@ -18,5 +18,5 @@ import {Apimethod} from "@api/api.js"
 
   export const { useSetReControl } = new Apimethod( // 重新控制
     "post",
-    "Conditioner/StreetLightAnalysis/SetReControl"
+    "Light/StreetLightAnalysis/SetReControl"
   );
