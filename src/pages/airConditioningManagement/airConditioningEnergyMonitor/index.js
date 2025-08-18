@@ -6,34 +6,45 @@ import { Radio_Options, Init_Value, Date_Value, Table_Option } from "./data";
 import { AirTable, AirChart, AirEnergyDetail, Frequency } from "./comp";
 import { Container, Header, Main } from "./style";
 import { DownloadOutlined } from "@ant-design/icons";
-import BlueColumn from "@com/bluecolumn/index.jsx"
-import i18 from '../../../i18n'
-import CusContext from  "@com/content"
+import BlueColumn from "@com/bluecolumn/index.jsx";
+import i18 from "../../../i18n";
+import CusContext from "@com/content";
+import { ExportData } from "./util";
 export default function Index() {
   const [treeId, setTreeId] = useState();
   const [tabId, setTabId] = useState("1"); //1：空调用能；2：空调节能
-  const [tbmodel, setTbmodel] = useState(1);//1：列表模式；2：图表模式
+  const [tbmodel, setTbmodel] = useState(1); //1：列表模式；2：图表模式
   const tableRef = useRef();
   const [type, setType] = useState("date");
   const { Item } = Form;
   const [form] = Form.useForm();
-  const energyRef = useRef()  //空调用能明细弹框
-  const enableRef = useRef()  //开启频次
-  const closeRef = useRef()  //关闭频次
+  const energyRef = useRef(); //空调用能明细弹框
+  const enableRef = useRef(); //开启频次
+  const closeRef = useRef(); //关闭频次
 
   //打开空调用能明细弹框
   const openEnergyModal = () => {
-    energyRef.current?.onOpen()
-  }
-  const openFrModal = () => { enableRef.current?.onOpen() }
-  const openFreModal = () => { closeRef.current?.onOpen() }
-  const onFinish = () => { };
+    energyRef.current?.onOpen();
+  };
+  const openFrModal = () => {
+    enableRef.current?.onOpen();
+  };
+  const openFreModal = () => {
+    closeRef.current?.onOpen();
+  };
+  const onFinish = () => {};
 
-  const [enableVal, setEnableVal] = useState(0)
-  const enableChange = (e) => { setEnableVal(e.target.value) }
+  const [enableVal, setEnableVal] = useState(0);
+  const enableChange = (e) => {
+    setEnableVal(e.target.value);
+  };
 
-  const [offVal, setOffVal] = useState(0)
-  const offChange = (e) => { setOffVal(e.target.value) }
+  const [offVal, setOffVal] = useState(0);
+  const offChange = (e) => {
+    setOffVal(e.target.value);
+  };
+
+  const exportExcel = () => {};
   return (
     <Pagecount bgcolor="#eeeff4" pd={0}>
       <Container>
@@ -94,7 +105,7 @@ export default function Index() {
             <UseTree
               areaId={0}
               setTreeId={setTreeId}
-              setLine={() => { }}
+              setLine={() => {}}
               showline={false}
               datatype={3}
               energytype={1}
@@ -122,7 +133,10 @@ export default function Index() {
                     display: tbmodel == 2 ? "none" : "block",
                   }}
                   onClick={() => {
-                   console.log(tableRef.current.tablechartRef)
+                    const { datasource, columns, tablechartRef } =
+                      tableRef.current;
+                    console.log(datasource, columns, tablechartRef);
+                    ExportData(datasource, columns, tablechartRef);
                   }}
                 >
                   {i18.t("export", { ns: "button" })}
@@ -141,24 +155,43 @@ export default function Index() {
                 />
               </div>
             </BlueColumn>
-            <div style={{ width: "100%", flex: 1, overflow: "hidden", display: "flex" }}>
-              {tbmodel == 1 ?
-              <CusContext.Provider>
-                <AirTable tabId={tabId}
-                  openEnergyModal={openEnergyModal}
-                  openFrModal={openFrModal}
-                  openFreModal={openFreModal}
-                  ref={tableRef}
-                ></AirTable></CusContext.Provider> : <AirChart tabId={tabId}></AirChart>}
+            <div
+              style={{
+                width: "100%",
+                flex: 1,
+                overflow: "hidden",
+                display: "flex",
+              }}
+            >
+              {tbmodel == 1 ? (
+                <CusContext.Provider>
+                  <AirTable
+                    tabId={tabId}
+                    openEnergyModal={openEnergyModal}
+                    openFrModal={openFrModal}
+                    openFreModal={openFreModal}
+                    ref={tableRef}
+                    key={tabId}
+                  ></AirTable>
+                </CusContext.Provider>
+              ) : (
+                <AirChart tabId={tabId} key={tabId}></AirChart>
+              )}
             </div>
-
           </div>
         </Main>
-        <AirEnergyDetail energyRef={energyRef} ></AirEnergyDetail>
-        <Frequency domRef={enableRef} onChange={enableChange} value={enableVal}></Frequency>
-        <Frequency domRef={closeRef} onChange={offChange} value={offVal}></Frequency>
+        <AirEnergyDetail energyRef={energyRef}></AirEnergyDetail>
+        <Frequency
+          domRef={enableRef}
+          onChange={enableChange}
+          value={enableVal}
+        ></Frequency>
+        <Frequency
+          domRef={closeRef}
+          onChange={offChange}
+          value={offVal}
+        ></Frequency>
       </Container>
-
     </Pagecount>
   );
 }
