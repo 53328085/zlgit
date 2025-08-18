@@ -31,3 +31,14 @@ export const TitleBox = styled.div`
   justify-content: space-between;
   align-items: center;
 `;
+export const Detail = styled.div`
+&& {
+  display: flex;
+  flex-direction: column;
+  row-gap: 16px;
+  .contrl {
+    display: flex;
+    justify-content: flex-end;
+  }
+}
+`

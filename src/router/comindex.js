@@ -98,6 +98,7 @@ export default function Index() {
     lightManagement: [  // 照明控制
       "streetLightEnergyMonitor",
       "lightControl",
+      "streetLightDataReport",
     ],
     streetLightManagement: [ // 照明控制 设置态
 "streetLightLineConfig",
@@ -267,7 +268,11 @@ export default function Index() {
          case "lightControl":
               setConfig({ isview: true, isdate: true, shiftNo: true });
               break;
+        case "streetLightDataReport":
+                setConfig({ isview: true, isdate: true, shiftNo: true });
+                break;
         }
+        
       }
       /*  if (primary == "runtimeQuota") {
          switch (nested) {
