@@ -36,6 +36,11 @@ export const { useTree } = new Apimethod( //查询 线路树
     "post",
     "Light/StreetLightLine/LineUnBindLight"
   );
+
+  export const { useLoadSwitch} = new Apimethod( //  获取断路器
+    "get",
+    "Light/StreetLightLine/LoadSwitch"
+  );
   export const { useLineBindSwitch} = new Apimethod( //  线路断路器设置
     "get",
     "Light/StreetLightLine/LineBindSwitch"

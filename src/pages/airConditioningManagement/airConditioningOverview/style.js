@@ -45,7 +45,7 @@ export const Detail = styled.div`
   grid-template-rows: 201px;
   grid-gap: 16px;
   margin: 16px 0;
-  
+
   .card {
     ${borderBox}
     padding: 18px 16px;
@@ -72,10 +72,10 @@ export const Detail = styled.div`
     padding: 20px 16px;
     width: 100%;
     overflow: hidden;
-    min-width: 0; 
+    min-width: 0;
     .head {
       height: 25px;
-      width:100%;
+      width: 100%;
     }
     .chart-box {
       flex: 1;
@@ -92,6 +92,9 @@ export const FooterChart = styled.div`
   overflow: hidden;
   display: flex;
   flex-direction: column;
+  height: 583px;
+  max-height: 583px;
+
   .ant-radio-button-wrapper {
     margin-left: auto;
     height: 32px;
@@ -111,7 +114,7 @@ export const FooterChart = styled.div`
       display: none;
     }
   }
-  .chartdom{
+  .chartdom {
     flex: 1;
     overflow: hidden;
     position: relative;

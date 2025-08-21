@@ -164,7 +164,7 @@ export default function Index() {
               </div>
             </div>
             <Titlelayout title="空调绑定明细" bg="transparent" pv="0px 24px 16px 16px">
-              <UserTable columns={cols} {...tableProps} ></UserTable>
+              <UserTable columns={cols} {...tableProps} scroll={{ y: 195 }}></UserTable>
             </Titlelayout>
           </Titlelayout>
         </div>

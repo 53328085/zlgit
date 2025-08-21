@@ -17,7 +17,6 @@ const Micon = ({iconname}) => {
    let {nested} = location.state || {}   
   //  let normal=["camera","report","environment"]
   //  const Com = !normal.includes(iconname) ?  svgcom[primary+iconname] : svgcom[iconname]
-      
       const Com = svgcom[iconname]
     
     const Def = svgcom["def"]
