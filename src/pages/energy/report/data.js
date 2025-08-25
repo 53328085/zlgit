@@ -309,14 +309,14 @@ export const etabs = [
   { key: '1', label: '能耗报表' },
   { key: '2', label: '分时能耗' },
   { key: '3', label: '分类能耗' },
-  // { key: '4', label: '电能报表' },
-  // { key: '5', label: '班次能耗' },
+  { key: '4', label: '电能报表' },
+  { key: '5', label: '班次能耗' },
 ]
 export const wtabs = [
   { key: '0', label: '实时抄表' },
   { key: '1', label: '能耗报表' },
   { key: '3', label: '分类能耗' },
-  // { key: '5', label: '班次能耗' },
+  { key: '5', label: '班次能耗' },
 ]
 export const labelStyle = { width: "65px", padding: "4px 16px", background: "#ecf5ff" }
 export const contentStyle = { padding: "4px 16px" } 
