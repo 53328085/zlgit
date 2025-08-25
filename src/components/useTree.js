@@ -271,7 +271,7 @@ const onSelect=(selectedKeys, e)=> {
   return (
 
     <Titlelayout key="line" layout="flex" bordered={sty.bordered} pv={sty.pv} hv="20px" bg="none" title={title}>
-      <div>
+      <div style={{height:'750px', overflow:'auto'}}>
         {treeName ? <div style={{ color: '#515151', fontWeight: 'bold', marginBottom: '8px' }}>{treeName}</div> : null}
         <Treebox showline={showline.toString()}>
           {showline && <Radio.Group onChange={switchLine} style={radiosty} value={typeTree}>
