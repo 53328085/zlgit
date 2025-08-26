@@ -19,7 +19,7 @@ align-items: stretch;
  flex: 1;
 //box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.349019607843137);
 .company{
-  width: 188px;
+  min-width: 188px;
   height: 100%;
    
   .dataItem{
@@ -76,7 +76,7 @@ export default function DefaultHome(props) {
 }, [currproject, type])
  
   return (
-    <Titlelayout layout="flex"  style={{height: "200px"}}>
+    <Titlelayout layout="flex"  style={{minHeight: "200px"}}>
     <MainBox laptop={laptop}>
       <div className='company'>
         <Borderleft>{state.projectName}</Borderleft>

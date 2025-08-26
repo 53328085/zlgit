@@ -62,8 +62,8 @@ import {isObject} from '@com/usehandler'
 import Context from "@com/content"
 import RGL, { WidthProvider } from 'react-grid-layout'
 const ReactGridLayout = WidthProvider(RGL);
-import './configure/style.css';
-import './index.css';
+//import './configure/style.css';
+//import './index.css';
 import { message } from 'antd';
 
 const {GetDistributionInfo} = HomeRuntime

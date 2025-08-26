@@ -23,11 +23,11 @@ const CardItme = styled.div`
     }
     .cardImg {
       flex: 0 0 80px;
-      height: 136px;
+      height: 110px;
       justify-content: center;
       align-items: center;
       display: flex;
-      padding-top: 24px;
+      margin-top: 26px;
     //  background-color: #fff;
       overflow: hidden;
       .img {
@@ -63,7 +63,8 @@ const CardItme = styled.div`
         flex: 1;
         display: grid;
         grid-template-columns: 1fr 1fr;
-        grid-template-rows: 1fr 1fr;
+        grid-auto-rows: 1fr;
+       // grid-template-rows: 1fr 1fr;
         background-color: rgba(${props => props.rgb[0]},${props => props.rgb[1]},${props => props.rgb[2]},0.15);
        // border: 1px solid rgba(${props => props.rgb[0]},${props => props.rgb[1]},${props => props.rgb[2]},0.2);
         border-radius: 6px;
@@ -146,7 +147,7 @@ const Gateway = (props) => {
   );
 };
 const Device = (props) => {
-  const {fields:datas,state,deviceStyle} = props
+  const {fields:datas,state,deviceStyle} = props   // deviceStyle:22 太阳能路灯
   const fields = useMemo(()=> {
     /* let t='' ;
     if(deviceStyle == 12) {
@@ -167,6 +168,29 @@ const Device = (props) => {
     return []
    }
   }, [datas])
+  const items = deviceStyle==22 ? fields?.map?.(f=>( <div className="item">
+    <Text ellipsis={{ellipsis: f?.name}} className="field">{f?.name}</Text>
+    <span className="value">{f?.value}</span>
+  </div> )) : (<>
+    <div className="item">
+              <Text ellipsis={{ellipsis: fields?.[0]?.name}} className="field">{fields?.[0]?.name}</Text>
+              <span className="value">{fields?.[0]?.value}</span>
+            </div> 
+            <div className="item">
+            <Text ellipsis={{ellipsis: fields?.[1]?.name}} className="field">{fields?.[1]?.name}</Text>
+              <span className="value">{fields?.[1]?.value}</span>
+            </div> 
+            <div className="item">
+            <Text ellipsis={{ellipsis: fields?.[2]?.name}} className="field">{fields?.[2]?.name}</Text>
+              <span className="value">{fields?.[2]?.value}</span>
+            </div> 
+            <div className="item">
+            <Text ellipsis={{ellipsis: fields?.[3]?.name}} className="field">{fields?.[3]?.name}</Text>
+              <span className="value">{fields?.[3]?.value}</span>
+            </div> 
+  </>
+
+  )
   return (
     <>
       <div className="line sp">
@@ -190,22 +214,7 @@ const Device = (props) => {
         <span>{props.lastSampleTime}</span>
       </div>
       <div className="values"> 
-            <div className="item">
-              <Text ellipsis={{ellipsis: fields?.[0]?.name}} className="field">{fields?.[0]?.name}</Text>
-              <span className="value">{fields?.[0]?.value}</span>
-            </div> 
-            <div className="item">
-            <Text ellipsis={{ellipsis: fields?.[1]?.name}} className="field">{fields?.[1]?.name}</Text>
-              <span className="value">{fields?.[1]?.value}</span>
-            </div> 
-            <div className="item">
-            <Text ellipsis={{ellipsis: fields?.[2]?.name}} className="field">{fields?.[2]?.name}</Text>
-              <span className="value">{fields?.[2]?.value}</span>
-            </div> 
-            <div className="item">
-            <Text ellipsis={{ellipsis: fields?.[3]?.name}} className="field">{fields?.[3]?.name}</Text>
-              <span className="value">{fields?.[3]?.value}</span>
-            </div> 
+        { items }    
       </div>
     </>
   );
