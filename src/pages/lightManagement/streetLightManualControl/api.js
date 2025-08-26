@@ -8,4 +8,9 @@ export const { useList } = new Apimethod( //查询列表
     "post",
     "Light/StreetLightManualControl/SetControl"
   );
+
+  export const { useTree } = new Apimethod( //手动控制
+    "get",
+    "Light/StreetLightCommon/Tree"
+  );
  

@@ -11,7 +11,7 @@ import UseTree from "@com/useTree"
 import { options,states } from "./data";
 import CModal from "@com/useModal";
 import {isObject} from "@com/usehandler"
- import { useList,useSetControl } from "./api.js";
+ import { useList,useSetControl, useTree } from "./api.js";
  import opensvg from './svgs/open.svg'
  import closesvg from './svgs/close.svg'
 import { Mainwrap, TitleBox } from "./style";
@@ -36,7 +36,8 @@ export default function Index() {
   const getData = async () => {
     const {alike="", type=0,ioState} = form.getFieldsValue()
     try {
-      let { success,data } = await useList({},{areaIds:treeId,
+      let { success,data } = await useList({},{
+        areaIds:treeId,
         projectId,
         alike,
          type,
