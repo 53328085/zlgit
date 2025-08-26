@@ -215,8 +215,7 @@ export default function Index() {
       let mqttData = JSON.parse(message.toString());
 
       for (let key in mqttData.Points) {
-        // console.log(mqttData.DeviceId + "_" +key)
-        if (key.indexOf('DI') != -1 && key != 'DlqOpen') {
+        if ((key.indexOf('DI') != -1 || key.indexOf('Relay1') != -1) && key != 'DlqOpen') {
           if (window.topology.find(mqttData.SN + "_" + key)) {
             if (Array.isArray(window.topology.find(mqttData.SN + "_" + key))) {
               let arrlist = window.topology.find(mqttData.SN + "_" + key)

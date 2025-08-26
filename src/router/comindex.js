@@ -54,6 +54,7 @@ export default function Index() {
       "grading",
       "light",
       "region",
+      "comm"
     ],
     runtimeStorage: [ // 储能管理
       "station",
@@ -161,6 +162,9 @@ export default function Index() {
           case "range":
             setConfig({ energytype: false, isdate: false, custview: true, isAreaId: false, });
             break;
+          case "comm":
+            setConfig({ shiftNo: true });
+            break;
           case "time":
             setConfig({ shiftNo: true, isdate: true }); // shiftNo: true 不显示
             break;
@@ -190,7 +194,7 @@ export default function Index() {
             setConfig({ custview: true });
             break;
           case "public":
-            setConfig({ energytype: true, isdate: true,  isdaterange:true });
+            setConfig({ energytype: true, isdate: true, shiftNo: true,  isdaterange:true });
             break;
           case "air":
           case "grading":

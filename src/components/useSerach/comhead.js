@@ -63,6 +63,11 @@ export default function UseSerach(props) {
   const { nested, primary } = state
 
   const [form] = Form.useForm()
+
+  if(JSON.stringify(form.getFieldsValue()) === '{}'){
+    form.setFieldValue('date', moment())
+  }
+
   const projectId = useSelector(selectProjectId)
   const varlabel = useSelector(levelDefaultLabel)
   const oneLevelDefaultId = useSelector(selectOneLevelDefaultId) // 选择后的值 
@@ -104,6 +109,7 @@ export default function UseSerach(props) {
         if (!success) return
         if (filte?.length == 0) message.warning('没有设置设备')
       }
+    
       props.setexparams({ ...form.getFieldsValue(true) })
     } catch (error) {
       console.log(error)

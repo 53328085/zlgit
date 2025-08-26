@@ -4,6 +4,7 @@ import React, {
   useEffect,
   useLayoutEffect,
   useImperativeHandle,
+  forwardRef,
 } from "react";
 import { drawEcharts } from "@com/useEcharts/index";
 import { Radio, Button, Tooltip, ConfigProvider, Divider } from "antd";
@@ -28,90 +29,115 @@ import { AirModal, BasicInfo, TbEchartDiv, CellDiv } from "./style.js";
 import IChart from "@com/useEcharts/Ichart";
 import * as echarts from "echarts";
 
-export const AirTable = (
-  { tabId, openEnergyModal, openFrModal, openFreModal },
-  ref
-) => {
-  const [columns, setColumns] = useState([]);
-  const datasource = [
-    {
-      name: "123",
-      address: "ceshi",
-      time: "2020-12-13",
-      elec: "200",
-      timecol: "2020-12-13",
-      enable: "200",
-      close: "200",
-      type: "200",
-      address2: "200",
-    },
-  ];
-  const HandleCol = (index, event) => {
-    return (TbCol[index]["render"] = (text, record, index) => {
-      return (
-        <span onClick={event} style={{ cursor: "pointer", color: "#237ae4" }}>
-          {text}
-        </span>
-      );
-    });
-  };
-  const tablechartRef = useRef([]);
-  useEffect(() => {
-    if (tabId == 1) {
-      HandleCol(3, openEnergyModal);
-      HandleCol(5, openFrModal);
-      HandleCol(6, openFreModal);
-      TbCol[4]["render"] = () => {
+export const AirTable = forwardRef(
+  ({ tabId, openEnergyModal, openFrModal, openFreModal }, ref) => {
+    const [columns, setColumns] = useState([]);
+    const datasource = [
+      {
+        name: "123",
+        address: "ceshi",
+        time: "2020-12-13",
+        elec: "200",
+        timecol: "",
+        enable: "200",
+        close: "200",
+        type: "200",
+        address2: "200",
+      },
+      {
+        name: "123",
+        address: "ceshi",
+        time: "2020-12-13",
+        elec: "200",
+        timecol: "",
+        enable: "200",
+        close: "200",
+        type: "200",
+        address2: "200",
+      },
+      {
+        name: "123",
+        address: "ceshi",
+        time: "2020-12-13",
+        elec: "200",
+        timecol: "",
+        enable: "200",
+        close: "200",
+        type: "200",
+        address2: "200",
+      },
+    ];
+    const tablechartRef = useRef([]);
+
+    const HandleCol = (index, event) => {
+      return (TbCol[index]["render"] = (text, record, index) => {
         return (
-          <CellDiv>
-            <div
-              className="bg-segment"
-              style={{
-                left: "0%",
-                width: "33.3%",
-                background: "RGB(227,239,255)",
-              }}
-            ></div>
-            <div
-              className="bg-segment"
-              style={{
-                left: "33.3%",
-                width: "33.4%",
-                background: "RGB(227,250,231)",
-              }}
-            ></div>
-            <div
-              className="bg-segment"
-              style={{
-                left: "66.7%",
-                width: "33.3%",
-                background: "RGB(250,248,222)",
-              }}
-            ></div>
-            <TbEcharts tablechartRef={tablechartRef} />
-          </CellDiv>
+          <span onClick={event} style={{ cursor: "pointer", color: "#237ae4" }}>
+            {text}
+          </span>
         );
-      };
-      setColumns(TbCol);
-    }
-    if (tabId == 2) {
-      setColumns(TbColAir);
-    }
-  }, [tabId]);
-  // useImperativeHandle(ref,()=>{
-  //     return {
-  //       tablechartRef:tablechartRef?.current,
-  //     }
-  // },[])
-  return (
-    <UseTable
-      style={{ overflow: "hidden" }}
-      columns={columns}
-      dataSource={datasource}
-      scroll={{ x: tabId == 1 ? "1565px" : "100%" }}
-    ></UseTable>
-  );
-};
+      });
+    };
+
+    useEffect(() => {
+      if (tabId == 1) {
+        HandleCol(3, openEnergyModal);
+        HandleCol(5, openFrModal);
+        HandleCol(6, openFreModal);
+        TbCol[4]["render"] = () => {
+          return (
+            <CellDiv>
+              <div
+                className="bg-segment"
+                style={{
+                  left: "0%",
+                  width: "33.3%",
+                  background: "RGB(227,239,255)",
+                }}
+              ></div>
+              <div
+                className="bg-segment"
+                style={{
+                  left: "33.3%",
+                  width: "33.4%",
+                  background: "RGB(227,250,231)",
+                }}
+              ></div>
+              <div
+                className="bg-segment"
+                style={{
+                  left: "66.7%",
+                  width: "33.3%",
+                  background: "RGB(250,248,222)",
+                }}
+              ></div>
+              <TbEcharts tablechartRef={tablechartRef} columns={columns} />
+            </CellDiv>
+          );
+        };
+        setColumns(TbCol);
+      }
+      if (tabId == 2) {
+        setColumns(TbColAir);
+      }
+    }, [tabId]);
+    useImperativeHandle(
+      ref,
+      () => {
+        return { tablechartRef: tablechartRef.current, columns, datasource };
+      },
+      [columns, tablechartRef.current.length]
+    );
+    return (
+      <UseTable
+        style={{ overflow: "hidden" }}
+        columns={columns}
+        dataSource={datasource}
+        scroll={{ x: tabId == 1 ? "1565px" : "100%" }}
+      ></UseTable>
+    );
+  }
+);
 
 export const AirChart = ({ tabId }) => {
   const chartRef = useRef();
@@ -147,7 +173,7 @@ export const AirChart = ({ tabId }) => {
   );
 };
 
-const TbEcharts = ({ tablechartRef }) => {
+const TbEcharts = ({ tablechartRef, columns }) => {
   // 模拟数据（随机值示例）
   const hours = Array.from({ length: 24 }, (_, i) => i);
   const values = hours.map(() => Math.floor(Math.random() * 100));
@@ -224,7 +250,10 @@ const TbEcharts = ({ tablechartRef }) => {
     const chartIns = echarts.init(chartRef.current);
     tablechartRef.current.push(chartIns); //保存echarts实例到父组件变量
     chartIns.setOption(option);
-  }, []);
+    return () => {
+      chartIns.dispose();
+    };
+  }, [columns]);
 
   return <TbEchartDiv ref={chartRef}></TbEchartDiv>;
 };

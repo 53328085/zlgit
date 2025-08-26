@@ -57,14 +57,16 @@ const Chartwrap = styled.div`
     align-items: center;
     column-gap: 8px;
   }
- 
+
 `
 
 export default function Index() {
 
   let { exparams, setCustview } = useOutletContext()
   const [dates, setDates] = useState([moment().startOf("day"), moment().endOf("hour")]);
-
+  
+  const [startDateTime, setStartDateTime] = useState('')
+  const [endDateTime, setEndDateTime] = useState('')
 
   const [isrange, setIsrange] = useState({ range: false })
 
@@ -80,13 +82,14 @@ export default function Index() {
   }
   // 对比分析 start
   const Ctitle = useMemo(() => {
+    console.log(date, type)
     if (!(date && type)) return ""
     let format = {
       1: "YYYY-MM-DD",
       2: "YYYY-MM",
       3: "YYYY"
     }[type]
-    return `对比分析（${date.format(format)})`
+    return `对比分析()` //${date.format(format)}
   }, [date, type])
 
   const [selectedRowKeys, setSelectedRowKeys] = useState([]);
@@ -137,7 +140,7 @@ export default function Index() {
     let f = ["0", "1", "4"].includes(value)
     //  console.log(dates)
     if (Array.isArray(dates) && dates?.[0] && dates?.[1]) {
-      filename = getTime(dates?.[0], 1)?.toString() + "-" + getTime(dates?.[1], 1)?.toString() + tabs[index]?.label
+      filename = getTime(dates?.[0], 1).toString() + "-" + getTime(dates?.[1], 1).toString() + tabs[index]?.label
     }
     return (f && isrange.range && dates?.length) ? filename : (tabs[index]?.label ?? 'sheet')
 
@@ -145,7 +148,7 @@ export default function Index() {
 
 
 
-  let columns = [cols, [], timecols, typecols, fromlot, shitcols][index] // 
+  let columns = [cols(startDateTime, endDateTime), [], timecols, typecols, fromlot, shitcols][index] // 
 
 
 
@@ -157,7 +160,7 @@ export default function Index() {
     let f = [areaId, projectId, type, energytype, index, line].every(v => Number.isInteger(v)) && Array.isArray(treeId) && date
 
 
-    let range = [0, 1].includes(index) && isrange.range && Array.isArray(dates) && dates?.length > 1
+    let range = [0, 1, 4].includes(index) && isrange.range && Array.isArray(dates) && dates?.length > 1
     if (!f) return;
     if (index === 0 && isrange.range && !Array.isArray(dates)) {
       return
@@ -181,8 +184,10 @@ export default function Index() {
       pageSize,
       queryType: line,
       ids: treeId,
-      type: range ? 1 : type
+      type
     }
+    setStartDateTime(range ? dates?.[0].format("YYYY-MM-DD HH:mm") : date?.startOf(dateType).format("YYYY-MM-DD HH:mm"))
+    setEndDateTime(range ? dates?.[1].format("YYYY-MM-DD HH:mm") : date?.endOf(dateType).format("YYYY-MM-DD HH:mm"))
     if (index == 0) {
       params.filterInfo = alike
     }
@@ -190,7 +195,9 @@ export default function Index() {
     // //  cols 实时抄表，  conscols 能耗报表 , typecols 分类能耗
     if (energytype == 1) {
       setTabs([...etabs])
-    } else {
+    } else if (energytype == 2) {
+      setTabs([...wtabs])
+    } else if (energytype == 7) {
       setTabs([...wtabs])
     }
 
@@ -349,7 +356,7 @@ export default function Index() {
     modref.current.onOpen()
   }
   const CustView = useMemo(() => {
-    const showdefined = ["0", "1", "4"].includes(value)
+    const showdefined = ["1", "4"].includes(value)
     return (
       <Space size={16}>
         <ExportExcel tb={tbref} defined={showdefined} setIsrange={setIsrange} getDates={setDates} value={dates} />
@@ -404,43 +411,48 @@ export default function Index() {
     }
   }, [value])
 
-  /* 线上实时抄表， 能耗报表 显示时间范围。 电能报表不显示 */
+ /* 线上实时抄表， 能耗报表 显示时间范围。 电能报表不显示 */
   return (
     <CustContext.Provider value={dataProps} >
       <Pagecount showSearch={false} custserach={true} >
         <Contentbox>
           <UserTree areaId={areaId} energytype={energytype} setTreeId={setTreeId} setLine={setLine} showline={value != '3'} datatype={value == '3' ? 0 : NaN} />
           <div style={{ position: "relative", flex: 1 }}>
-            <div style={{ position: "absolute", width: "100%", }}>
-              <div className='opt'>
-                {["0", "1"].includes(value) && <div style={{ marginBottom: "16px", display: "flex" }}>
-                  <div style={{ marginLeft: "auto" }}>
-                    <Checkbox onChange={boxchange} checked={isrange.range}>使用日期范围（优先）</Checkbox>  <RangePicker
-                      value={dates || valuet}
-                      disabledDate={disabledDate}
-                      onCalendarChange={(val) => setDates(val)}
-                      onChange={onTimeOk}
-                      disabled={!isrange.range}
-                      defaultValue={[moment().startOf("day"), moment().endOf("hour")]}
-                      format="YYYY-MM-DD HH:mm"
-                      showTime={{
-                        format: 'HH:mm',
-                        minuteStep: 15
-                      }}
-                    />
-                  </div>
+{/* <<<<<<< HEAD
+            <div style={{ position: "absolute", width: "100%" }}>
+              {(value == "4" || value == '0') && <div style={{ marginBottom: "16px", display: "flex" }}>
+======= */}
+            <div style={{ position: "absolute", width: "100%",   }}>
+              <div  className='opt'>
+              {["0","1"].includes(value)   && <div style={{ marginBottom: "16px", display: "flex" }}>
+{/* >>>>>>> 2ab556180a9ea6d65aae11e6fb55715de1ae0f38 */}
+                <div style={{ marginLeft: "auto" }}>
+                  <Checkbox onChange={boxchange} checked={isrange.range}>使用日期范围（优先）</Checkbox>  <RangePicker
+                    value={dates || valuet}
+                    // disabledDate={disabledDate}
+                    onCalendarChange={(val) => setDates(val)}
+                    onChange={onTimeOk}
+                    disabled={!isrange.range}
+                    defaultValue={[moment().startOf("day"), moment().endOf("hour")]}
+                    format="YYYY-MM-DD HH:mm"
+                    showTime={{
+                      format: 'HH:mm',
+                      minuteStep: 15
+                    }}
+                  />
                 </div>
-                }
-                {
-                  value == "0" && <div className='search'>
-                    <Serach placeholder="请输入设备名称/设备编号/安装地址查询" style={{ width: "362px" }} onSearch={onSearch} />
-                  </div>
-                }
-                {
-                  value == "1" && <div className='search'>
-                    <Tooltip title="最多选择三条信息进行对比"><CustButton onClick={oncompare}>勾选对比</CustButton></Tooltip>
-                  </div>
-                }
+              </div>
+              }
+              {/* {
+                value == "0" && <div className='search'>
+                  <Serach placeholder="请输入设备名称/设备编号/安装地址查询" style={{ width: "362px" }} onSearch={onSearch} />
+                </div>
+              } */}
+              {
+                value == "1" && <div className='search'>
+                  <Tooltip title="最多选择三条信息进行对比"><CustButton onClick={oncompare}>勾选对比</CustButton></Tooltip>
+                </div>
+              }
               </div>
               {
                 ["1", "5"].includes(value) ? <UserTable ref={tbref} rowSelection={value == 1 ? rowSelection : null} columns={concolumns} {...tableProps} rowKey={row => row.sn} key={value} scroll={{
@@ -481,3 +493,5 @@ export default function Index() {
     </CustContext.Provider>
   )
 }
+
+

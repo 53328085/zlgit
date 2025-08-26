@@ -425,25 +425,7 @@ export default function Index() {
   const Energyitem = ({ op }) => {
 
 
-    let extra = [{
-      lastMonthPeriodValue: "0.00",
-      lastYearPeriodValue: "0.00",
-      mom: "100.00%",
-      name: "公共服务用水",
-      periodValue: "0.00",
-      unit: op == 1 ? "(m³)" : '元',
-      yoy: "100.00%",
-    },
-    {
-      lastMonthPeriodValue: "0.00",
-      lastYearPeriodValue: "0.00",
-      mom: "100.00%",
-      name: "消费及其他特殊用水(m³)",
-      periodValue: "0.00",
-      unit: op == 1 ? "(m³)" : '元',
-      yoy: "100.00%",
-    }
-    ]
+    let extra = []
 
     return (
       <>

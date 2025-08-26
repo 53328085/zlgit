@@ -110,7 +110,7 @@ export default function Index(props) {
   //自定义调用方法
   const pageInfo = () => {
     console.log(exparams)
-    if (Object.values(exparams)?.length < 6 || !Array.isArray(treeIdList)) return;
+    if (Object.values(exparams)?.length < 5 || !Array.isArray(treeIdList)) return;
     let energy = Number(energytype) - 1;
     let api = Number(type) - 1
     let hander = [
@@ -164,7 +164,7 @@ export default function Index(props) {
       areaId,
       startDate: date?.[0]?.format?.("YYYY-MM-DD"),
       endDate: date?.[1]?.format?.("YYYY-MM-DD"),
-      shiftNo,
+      shiftNo: 0,
       meterType: energytype,
       type,
     } : {
@@ -172,7 +172,7 @@ export default function Index(props) {
       areaId,
       startDate: date && type ? getTime(date, type) : "", //date().startOf(type==2 ? "month" : "year").format("YYYY-MM-DD"),
       endDate: date && type ? getTime(date, type) : "",
-      shiftNo,
+      shiftNo: 0,
       meterType: energytype,
       type,
     }
