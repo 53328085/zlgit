@@ -26,9 +26,9 @@ export default function Index() {
    const [checked, setChecked] = useState(false)
    const [checkedLen, lightName] = useMemo(()=> {
        let len =  checkedList?.length
-       let names = lingts.details?.filter?.(d =>checkedList.includes(d.id))?.map?.(d=> d.name) || []
+       let names = lingts?.details?.filter?.(d =>checkedList.includes(d.id))?.map?.(d=> d.name) || []
        return [len, names]
-   }, [checkedList])
+   }, [checkedList, lingts])
   const [form] = Form.useForm();
  
   const  projectId  =  useSelector(selectProjectId)
@@ -36,24 +36,44 @@ export default function Index() {
  // console.log(lingts)
   const getData = async () => {
     if(!Array.isArray(treeId)) return;
-
+    console.log("treeId",treeId)
     const {alike="", type=0,ioState} = form.getFieldsValue()
     try {
-      let { success,data } = await useList({},{
+      let body = line==0 ? {
         areaIds:treeId,
         projectId,
         alike,
          type,
          ioState
-      });
+      }: {
+        lineId: treeId?.[0] || 0 ,
+        projectId,
+        alike,
+         type,
+         ioState,
+         areaIds:[]
+         
+      }
+      let { success,data } = await useList({},body);
       if(success && isObject(data)) {
         data?.details?.forEach?.(d => {
           d.close = d.fields?.some(f => f?.name?.includes?.("亮度") && f.value==0)
         })
         data.idlist = data?.details?.map(d => d.id)
+        if(Array.isArray(data?.details) && data?.details?.length>0) {
+           let ids = data.details.map(d =>d.id)
+           let checked = checkedList.filter(d => ids.includes(d))
+           setCheckedList(checked)
+           setChecked(ids?.length==checked?.length)
+        }else {
+          setCheckedList([])
+          setChecked(false)
+        }
         setLights(data)
       }else {
         setLights({})
+        setCheckedList([])
+        setChecked(false)
       }
     } catch (error) {
        console.log(error)
@@ -66,9 +86,9 @@ export default function Index() {
    }
  },[projectId, treeId, line])
  const checkChange=(c)=> {
-  // console.log(c)
+   console.log(c)
    setCheckedList(c)
-   setIndeterminate(c.length !== lingts.idlist?.length)
+   setIndeterminate(c.length !== lingts.idlist?.length&& c.length >0)
    setChecked(c.length == lingts.idlist?.length)
    
  }
@@ -132,7 +152,7 @@ const lingthChnage=(v)=> {
     <Pagecount pd="0" bgcolor="none">
       <Mainwrap>
         <div className="left">
-           <UseTree areaId={0} title="路灯设备列表" setTreeId={setTreeId} setLine={setLine} showline={true} datatype={line==0 ? 0 : 4} energytype={1} ></UseTree>
+           <UseTree areaId={0} title="路灯设备列表" setTreeId={setTreeId} setLine={setLine} showline={true} allselect={line==0}  multiple={line==0}   datatype={line==0 ? 0 : 4} energytype={1} ></UseTree>
         </div>
         <div className="right">
           <div className="up">
