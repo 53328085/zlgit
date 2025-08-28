@@ -3,14 +3,17 @@ import { useSelector } from 'react-redux'
 
 import styled from 'styled-components'
 
-import { energyShare, Monitoring, EnergyPublicRuntime, DMAPartition } from '@api/api'
+import { energyShare, Monitoring, EnergyPublicRuntime, DMAPartition,Apimethod } from '@api/api'
 import { selectProjectId, selectOneLevel } from '@redux/systemconfig.js'
 import { message, Input, Tree, Radio, Checkbox, Switch } from 'antd'
 
 import Titlelayout from "@com/titlelayout";
 import { useLocation } from "react-router-dom"
 const { Search } = Input;
-
+const { useTree:lightTree } = new Apimethod( //照明管理 手动控制 查询线路
+  "get",
+  "Light/StreetLightCommon/Tree"
+);
 const { QuerySpaceTrees, } = energyShare
 const { DMAGetTree } = DMAPartition
 const { LineManagerQuery } = Monitoring.LineManager // 线路查询
@@ -43,7 +46,7 @@ export default memo(function Index({ areaId, setTreeId, setLine, showline = true
   const [typeTree, setTypeTree] = useState(0)
 
   //const treekey = datatype === 0 ? 'areaId' : datatype === 2||3 ? 'id' :  typeTree == 0 ? "areaId" : "id";
-  const treekey = datatype === 0 ? 'areaId' : (datatype === 2 || datatype === 3) ? 'id' : typeTree == 0 ? "areaId" : "id";
+  const treekey = datatype === 0 ? 'areaId' : (datatype === 2 || datatype === 3 || datatype === 4) ? 'id' : typeTree == 0 ? "areaId" : "id";
 
 
   // const treekey =  typeTree == 0 ?  "areaId" : "id" ; 
@@ -92,7 +95,17 @@ export default memo(function Index({ areaId, setTreeId, setLine, showline = true
     }
   }
 
-  const fieldNames = datatype === 2 ? { title: 'name', key: treekey, children: 'childs' } : datatype === 3 ? { title: 'name', key: treekey, children: 'children' } : { title: 'name', key: treekey, children: 'nodes' }
+ // const fieldNames = datatype === 2 ? { title: 'name', key: treekey, children: 'childs' } : datatype === 3 ? { title: 'name', key: treekey, children: 'children' } : { title: 'name', key: treekey, children: 'nodes' }
+  
+ const fieldNames =useMemo(()=> {
+  return {
+    "2":{ title: 'name', key: treekey, children: 'childs' },
+    "3":{ title: 'name', key: treekey, children: 'children' },
+    "4":{ title: 'name', key: treekey, children: 'nodes' },
+  }[datatype?.toString()] || { title: 'name', key: treekey, children: 'nodes' }
+ },[datatype, treekey]) 
+ 
+ 
   //const fieldNames= {title:'name',key: treekey,children:'nodes'}  
 
   //获取树的数据，0 网格, 1 线路, 2 公共能耗分类
@@ -119,7 +132,13 @@ export default memo(function Index({ areaId, setTreeId, setLine, showline = true
         categoryType: energytype,
         name
       },
-        projectId
+        projectId,
+      {
+        projectId,
+        areaId,
+        lineType: 22,
+        keyword:name,
+      }
 
       ][idx]
       if (idx == 3 && name) {
@@ -133,7 +152,7 @@ export default memo(function Index({ areaId, setTreeId, setLine, showline = true
         setTreeId(arr);
         return
       }
-      let hander = [QuerySpaceTrees, LineManagerQuery, queryEnergyCategoryTree, DMAGetTree][idx]
+      let hander = [QuerySpaceTrees, LineManagerQuery, queryEnergyCategoryTree, DMAGetTree, lightTree][idx]
 
       /*  if(lineType == "3") {
          hander = QuerySpaceTrees
@@ -159,6 +178,9 @@ export default memo(function Index({ areaId, setTreeId, setLine, showline = true
             break;
           case 3:
             getId(data, 'id', 'children')
+            break;
+          case 4:
+            getId(data, 'id', 'nodes')
             break;
           default:
             break
@@ -270,7 +292,7 @@ const onSelect=(selectedKeys, e)=> {
 
   return (
 
-    <Titlelayout key="line" layout="flex" bordered={sty.bordered} pv={sty.pv} hv="20px" bg="none" title={title}>
+    <Titlelayout key="line" layout="flex" bordered={sty.bordered} pv={sty.pv} hv="32px" bg="none" title={title}>
       <div style={{height:'750px', overflow:'auto'}}>
         {treeName ? <div style={{ color: '#515151', fontWeight: 'bold', marginBottom: '8px' }}>{treeName}</div> : null}
         <Treebox showline={showline.toString()}>
