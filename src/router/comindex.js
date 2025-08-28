@@ -100,6 +100,7 @@ export default function Index() {
       "streetLightEnergyMonitor",
       "lightControl",
       "streetLightDataReport",
+      "solarStreetLightOverview",
     ],
     streetLightManagement: [ // 照明控制 设置态
 "streetLightLineConfig",

@@ -115,3 +115,6 @@ export { ReactComponent as airConditioningManagementairConditioningScheme } from
 export { ReactComponent as streetLightManagementstreetLightModel } from './streetLightType.svg'
 export { ReactComponent as streetLightManagementstreetLightInfo } from './streetLightInfo.svg'
 export { ReactComponent as streetLightManagementstreetLightScheme } from './streetLightScheme.svg'
+export { ReactComponent as streetLightManagementstreetLightLineConfig} from './streetLightLineConfig.svg'
+export { ReactComponent as streetLightManagementstreetLightAreaConfig} from './streetLightAreaConfig.svg'
+export { ReactComponent as streetLightManagementstreetLightOverviewConfig } from './image.svg'

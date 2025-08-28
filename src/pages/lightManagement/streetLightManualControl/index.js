@@ -11,45 +11,69 @@ import UseTree from "@com/useTree"
 import { options,states } from "./data";
 import CModal from "@com/useModal";
 import {isObject} from "@com/usehandler"
- import { useList,useSetControl } from "./api.js";
+ import { useList,useSetControl, useTree } from "./api.js";
  import opensvg from './svgs/open.svg'
  import closesvg from './svgs/close.svg'
 import { Mainwrap, TitleBox } from "./style";
+ 
 const {Text} = Typography
 export default function Index() {
-   const [treeId, setTreeId] = useState([])
+   const [treeId, setTreeId] = useState(null)
    const [lingts, setLights] = useState({})
    const [indeterminate, setIndeterminate] = useState(false)
    const [checkedList, setCheckedList] = useState([]);
-   
+   const [line, setLine] = useState(0)
    const [checked, setChecked] = useState(false)
    const [checkedLen, lightName] = useMemo(()=> {
        let len =  checkedList?.length
-       let names = lingts.details?.filter?.(d =>checkedList.includes(d.cSn))?.map?.(d=> d.name) || []
+       let names = lingts?.details?.filter?.(d =>checkedList.includes(d.id))?.map?.(d=> d.name) || []
        return [len, names]
-   }, [checkedList])
+   }, [checkedList, lingts])
   const [form] = Form.useForm();
  
   const  projectId  =  useSelector(selectProjectId)
   const mRef=useRef()
  // console.log(lingts)
   const getData = async () => {
+    if(!Array.isArray(treeId)) return;
+    console.log("treeId",treeId)
     const {alike="", type=0,ioState} = form.getFieldsValue()
     try {
-      let { success,data } = await useList({},{areaIds:treeId,
+      let body = line==0 ? {
+        areaIds:treeId,
         projectId,
         alike,
          type,
          ioState
-      });
+      }: {
+        lineId: treeId?.[0] || 0 ,
+        projectId,
+        alike,
+         type,
+         ioState,
+         areaIds:[]
+         
+      }
+      let { success,data } = await useList({},body);
       if(success && isObject(data)) {
         data?.details?.forEach?.(d => {
           d.close = d.fields?.some(f => f?.name?.includes?.("亮度") && f.value==0)
         })
-        data.idlist = data?.details?.map(d => d.cSn)
+        data.idlist = data?.details?.map(d => d.id)
+        if(Array.isArray(data?.details) && data?.details?.length>0) {
+           let ids = data.details.map(d =>d.id)
+           let checked = checkedList.filter(d => ids.includes(d))
+           setCheckedList(checked)
+           setChecked(ids?.length==checked?.length)
+        }else {
+          setCheckedList([])
+          setChecked(false)
+        }
         setLights(data)
       }else {
         setLights({})
+        setCheckedList([])
+        setChecked(false)
       }
     } catch (error) {
        console.log(error)
@@ -60,11 +84,11 @@ export default function Index() {
    if(Number.isInteger(projectId)&& Array.isArray(treeId)) {
     getData()
    }
- },[projectId, treeId])
+ },[projectId, treeId, line])
  const checkChange=(c)=> {
-   
+   console.log(c)
    setCheckedList(c)
-   setIndeterminate(c.length !== lingts.idlist?.length)
+   setIndeterminate(c.length !== lingts.idlist?.length&& c.length >0)
    setChecked(c.length == lingts.idlist?.length)
    
  }
@@ -96,11 +120,12 @@ const lingthChnage=(v)=> {
     mRef.current.onOpen()
  }
  const onOk= async()=> {
+   let points =  lingts?.details?.filter(l => checkedList.includes(l.id))?.map(m => ({gateway:m.gateway, dev:m.dev}))
    try {
     let body ={
        projectId,
        brightness,
-       csn:checkedList 
+       points, 
     }
      let {success, errMsg} = await  useSetControl({}, body)
      if(success) {
@@ -127,7 +152,7 @@ const lingthChnage=(v)=> {
     <Pagecount pd="0" bgcolor="none">
       <Mainwrap>
         <div className="left">
-           <UseTree areaId={0} title="路灯设备列表" setTreeId={setTreeId} setLine={()=>{}} showline={false} datatype={NaN} energytype={1} ></UseTree>
+           <UseTree areaId={0} title="路灯设备列表" setTreeId={setTreeId} setLine={setLine} showline={true} allselect={line==0}  multiple={line==0}   datatype={line==0 ? 0 : 4} energytype={1} ></UseTree>
         </div>
         <div className="right">
           <div className="up">
@@ -158,7 +183,7 @@ const lingthChnage=(v)=> {
               <div className="lights">
                    {
                     lingts?.details?.map?.(l => (<div className={l.close ? "light close" : "light" }>
-                       <Checkbox value={l.cSn}>
+                       <Checkbox value={l.id}>
                       <div>
                         {l.name}
                       <div > {`(${l.cSn})`} </div>

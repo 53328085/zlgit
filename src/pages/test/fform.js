@@ -1,54 +1,68 @@
-import { Checkbox, Col, Row } from 'antd';
-import { set } from 'lodash';
-import React,{useState} from 'react';
+import React from "react";
+import _ from "lodash";
+import RGL, { WidthProvider } from "react-grid-layout";
+import "./drag.css"
+const ReactGridLayout = WidthProvider(RGL);
 
-const App = () => {
-  const allval =["A","B","C","D","E"]
-  const [checkedlist, setCheckedlist] =useState(["A","B"])
-  const [indeterminate, setIndeterminate] = useState(true)
-  const [checked, setChecked] = useState(false)
-  const onChange = (checkedValues) => {
-      setCheckedlist(checkedValues)
-      setIndeterminate(checkedValues?.length!=allval?.length)
-      setChecked(checkedValues.length == allval?.length)
+export default class ResizableHandles extends React.PureComponent {
+  static defaultProps = {
+    className: "layout",
+    items: 20,
+    rowHeight: 30,
+    onLayoutChange: function() {},
+    cols: 12
   };
-  const allOnchange = (e) => {
-    let f = e.target.checked
-    setChecked(f)
-    setCheckedlist(f ? allval: [])
-    setIndeterminate(false)
+
+  constructor(props) {
+    super(props);
+
+    const layout = this.generateLayout();
+    this.state = { layout };
   }
-  return (
-  
-   <div>
-    <Checkbox indeterminate={indeterminate} checked={checked} onChange={allOnchange}>全选</Checkbox>
-  <Checkbox.Group
-    style={{
-      width: '100%',
-    }}
-    onChange={onChange}
-    defaultValue={checkedlist}
-    value={checkedlist}
-  >
-    <Row>
-      <Col span={8}>
-        <Checkbox value="A">A</Checkbox>
-      </Col>
-      <Col span={8}>
-        <Checkbox value="B">B</Checkbox>
-      </Col>
-      <Col span={8}>
-        <Checkbox value="C">C</Checkbox>
-      </Col>
-      <Col span={8}>
-        <Checkbox value="D">D</Checkbox>
-      </Col>
-      <Col span={8}>
-        <Checkbox value="E">E</Checkbox>
-      </Col>
-    </Row>
-  </Checkbox.Group>
-  </div>
-)
-};
-export default App;
+
+  generateDOM() {
+    return _.map(_.range(this.props.items), function(i) {
+      return (
+        <div key={i}>
+          <span className="text">{i}</span>
+        </div>
+      );
+    });
+  }
+
+  generateLayout() {
+    const p = this.props;
+    const availableHandles = ["s", "w", "e", "n", "sw", "nw", "se", "ne"];
+
+    return _.map(new Array(p.items), function(item, i) {
+      const y = _.result(p, "y") || Math.ceil(Math.random() * 4) + 1;
+      return {
+        x: (i * 2) % 12,
+        y: Math.floor(i / 6) * y,
+        w: 2,
+        h: y,
+        i: i.toString(),
+        resizeHandles: availableHandles
+      };
+    });
+  }
+
+  onLayoutChange(layout) {
+    this.props.onLayoutChange(layout);
+  }
+
+  render() {
+   console.log(this.state.layout)
+    return (
+      <ReactGridLayout
+        layout={this.state.layout}
+        onLayoutChange={this.onLayoutChange}
+        {...this.props}
+      >
+        {this.generateDOM()}
+      </ReactGridLayout>
+    );
+  }
+}
+
+ 
