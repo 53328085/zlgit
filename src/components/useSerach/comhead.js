@@ -12,6 +12,9 @@ const { RangePicker } = DatePicker;
 import { SiteManagerDesigner, PCSMonitorRuntime, StorageContainerDesigner, Editapi } from '@api/api'
 import { Cdivider, Radiogroup } from '@com/comstyled'
 import { filterProps } from '@com/usehandler'
+import {
+  SyncOutlined,
+} from '@ant-design/icons';
 
 
 import Enery from "./enery";
@@ -366,6 +369,11 @@ export default function UseSerach(props) {
   </Item>)
 
 
+  const refresh = (
+    <Item name="refresh">
+      <SyncOutlined style={{ color: '' }} />
+    </Item>
+  )
 
 
 
@@ -427,7 +435,9 @@ export default function UseSerach(props) {
         {props.config?.isdevsty && deviceStyleNode}
         {props.config?.isview && viewtype}
         {props.config?.energytype && energytype}
-
+        {props.config?.refresh && refresh}
+        {/* {props.config?.powerStation && powerStation}
+        {props.config?.inverter && inverter} */}
       </Space>
 
       {
