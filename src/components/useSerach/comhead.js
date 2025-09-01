@@ -12,6 +12,9 @@ const { RangePicker } = DatePicker;
 import { SiteManagerDesigner, PCSMonitorRuntime, StorageContainerDesigner, Editapi } from '@api/api'
 import { Cdivider, Radiogroup } from '@com/comstyled'
 import { filterProps } from '@com/usehandler'
+import {
+  SyncOutlined,
+} from '@ant-design/icons';
 
 import {publicdateType,Daterange} from "./data"
 import Enery from "./enery";
@@ -106,7 +109,7 @@ export default function UseSerach(props) {
         if (!success) return
         if (filte?.length == 0) message.warning('没有设置设备')
       }
-    
+
       props.setexparams({ ...form.getFieldsValue(true) })
     } catch (error) {
       console.log(error)
@@ -393,10 +396,15 @@ const changepublic=(e)=> {
     </Form.Item> 
    
  
-    </Space>
+    </Space>  
 
 
+  const refresh = (
+    <Item name="refresh">
+      <SyncOutlined style={{ color: '' }} />
+    </Item>
 
+  )
 
 
   useEffect(() => {
@@ -456,7 +464,9 @@ const changepublic=(e)=> {
         {props.config?.isdevsty && deviceStyleNode}
         {props.config?.isview && viewtype}
         {props.config?.energytype && energytype}
-
+        {props.config?.refresh && refresh}
+        {/* {props.config?.powerStation && powerStation}
+        {props.config?.inverter && inverter} */}
       </Space>
 
       {

@@ -64,51 +64,51 @@ let Com = ({ form, deviceStyle }) => {
                 </Form.Item>
             ) :  null} */}
             <Form.Item shouldUpdate={(pre, cur) => pre.gatewayId !== cur.gatewayId} noStyle>
-                {({ getFieldValue }) => ( 
-                    getFieldValue("gatewayId") ?<>
-                    <Form.Item label="通讯端口" name="commPort" rules={rules}>
-                        <Select
-                            options={options}
-                            placeholder
-                        ></Select>
-                    </Form.Item>
-                    {category === 'ZTWL376-E' || category === 'DDSH666-MULTIUSER' ? null :
-                        <Form.Item label="通讯协议" name="commProtocol" rules={rules}>
+                {({ getFieldValue }) => (
+                    getFieldValue("gatewayId") ? <>
+                        <Form.Item label="通讯端口" name="commPort" rules={rules}>
                             <Select
-                                onChange={changeProtocol}
-                                options={[{
-                                    label: 'Modbus',
-                                    value: 1
-                                }, {
-                                    label: 'DL645',
-                                    value: 2
-                                }]}
+                                options={options}
+                                placeholder
                             ></Select>
-                        </Form.Item>}
-                    {
-                        isaddress ? <Form.Item label="通讯地址" name="commAddress"
-                            rules={[{ required: true }, {
-                                validator: (_, value) => {
-                                    if (!value) {
-                                        return Promise.resolve()
-                                    } else {
-                                        if (Number(value) < 255 && Number(value) > 0) {
+                        </Form.Item>
+                        {category === 'ZTWL376-E' || category === 'DDSH666-MULTIUSER' ? null :
+                            <Form.Item label="通讯协议" name="commProtocol" rules={rules}>
+                                <Select
+                                    onChange={changeProtocol}
+                                    options={[{
+                                        label: 'Modbus',
+                                        value: 1
+                                    }, {
+                                        label: 'DL645',
+                                        value: 2
+                                    }]}
+                                ></Select>
+                            </Form.Item>}
+                        {
+                            isaddress ? <Form.Item label="通讯地址" name="commAddress"
+                                rules={[{ required: true }, {
+                                    validator: (_, value) => {
+                                        if (!value) {
                                             return Promise.resolve()
                                         } else {
-                                            return Promise.reject(new Error("通讯地址范围(0-255)"))
+                                            if (Number(value) < 255 && Number(value) > 0) {
+                                                return Promise.resolve()
+                                            } else {
+                                                return Promise.reject(new Error("通讯地址范围(0-255)"))
+                                            }
                                         }
                                     }
-                                }
-                            }]}>
-                            <Input placeholder='通讯地址范围(0-255)' />
-                            {/* 默认1-255 */}
-                        </Form.Item> : null
-                    }
-    
-                </>:null
+                                }]}>
+                                <Input placeholder='通讯地址范围(0-255)' />
+                                {/* 默认1-255 */}
+                            </Form.Item> : null
+                        }
+
+                    </> : null
                 )}
             </Form.Item>
-            
+
             {
                 (deviceStyle == 1 || deviceStyle == 12) &&
                 (<>
@@ -205,7 +205,7 @@ export const FormComp = (props) => {
             form={form}
             colon={false}
             labelCol={{
-                span: 6
+                span: 9
             }}
         /*  initialValues={{
              channel1:'通道1',
@@ -530,7 +530,7 @@ export let AddModalForm = ({ addform, modalFormRef, transitionName, maskTransiti
                         [<Button key="back" onClick={handleCancel}>
                             取消
                         </Button>,
-                        gatewayId && (category === 'ZTWL376-E' || category === 'DDSH666-MULTIUSER') ? <Button key="next" type="primary" onClick={() => onOk('next')}>
+                        gatewayId && (category === 'ZTWL376-E') ? <Button key="next" type="primary" onClick={() => onOk('next')}>
                             下一步
                         </Button> : [<Button key="apply" type="primary" onClick={() => onOk('apply')}>
                             应用
@@ -562,7 +562,7 @@ export const EditModalForm = ({ editform, EditModalFormRef, isfiber = false, ope
                 <Button key="submit" type="primary" onClick={() => onOk('submit')}>
                     确定
                 </Button>,
-                gatewayId && (category === 'ZTWL376-E' || category === 'DDSH666-MULTIUSER') ?
+                gatewayId && (category === 'ZTWL376-E') ?
                     <Button key="next" type="primary" onClick={() => onOk('next')}>
                         下一步
                     </Button> : null
@@ -722,7 +722,7 @@ export const EditFormComp = (props) => {
             form={form}
             colon={false}
             labelCol={{
-                span: 6
+                span: 9
             }}
             preserve={false}
         >

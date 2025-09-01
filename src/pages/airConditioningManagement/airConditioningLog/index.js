@@ -130,7 +130,7 @@ export default function Index(props) {
   const [airSchemeList, setAirSchemeList] = useState([{
     value: 0,
     label: "全部",
-  }]); 0
+  }]);
   const schemeModalState = useRef(false); // 记录是否是第一次打开
   const [rangerTime, setRangerTime] = useState([moment().subtract(2, 'months'), moment()])
   const airNameChange = () => {
@@ -476,7 +476,7 @@ export default function Index(props) {
           是否确认{tabId == 0 ? '自动' : '手动'}控制所选空调？
         </CModal>
       </Container>
-    </Pagecount >
+    </Pagecount>
   )
 }
 
