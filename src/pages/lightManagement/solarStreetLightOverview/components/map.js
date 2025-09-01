@@ -2,8 +2,9 @@ import React, {useState, useMemo, useEffect, useContext} from 'react'
 import {Radio, Image, Typography, message} from 'antd'
 import {CloseOutlined} from "@ant-design/icons"
 import {isObject} from "@com/usehandler"
-import { Cspin} from '@com/comstyled'
+import { Point} from '@com/comstyled'
 import {tabs} from "../data"
+ 
 import {Ctag,TitP} from '../style'
 import {useDetail,useDetails} from "../api"
 import  light from "./icon/light.png"
@@ -28,7 +29,7 @@ export default function Index() {
   }
   const maps = useMemo(()=> {
     if (Array.isArray(lightdata?.locationInfos)) {
-        return lightdata?.locationInfos?.map(l => <Ctag left={l.x} top={l.y} key={l.lightId} onClick={() => onPoint(l.lightId, {x:l.x, y:l.y}) } ><Link><img src={light} className='lighticon'></img></Link></Ctag>)
+        return lightdata?.locationInfos?.map(l => <Point left={l.x} top={l.y} key={l.lightId} onClick={() => onPoint(l.lightId, {x:l.x, y:l.y}) } /> )
     }else {
         return null
     }

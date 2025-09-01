@@ -10,12 +10,12 @@ export const custsty = css`
  `
 export  const Mainwrap = styled.div`
   display: grid;
-  grid-template-rows: 80px minmax(721px, 1fr);
+  grid-template-rows: 73px minmax(721px, 1fr);
   row-gap: 16px;
   flex:1;
   .up {
     display: grid;
-    grid-template-columns: repeat(5,324px);
+    grid-template-columns: repeat(7,minmax(203px, 1fr));
     grid-template-rows: 1fr;
     column-gap: 16px;
     .shownum {
@@ -25,6 +25,15 @@ export  const Mainwrap = styled.div`
         display: flex;
         align-items: center;
         column-gap: 14px;
+        .imgwrap {
+            width: 42px;
+            height: 42px;
+            overflow: hidden;
+            .img {
+            max-width: 100%;
+        }
+        }
+      
         .data {
             display: flex;
             flex-direction: column;
@@ -41,37 +50,53 @@ export  const Mainwrap = styled.div`
   }
   .down {
     display: grid;
-    grid-template-columns: 1006px 1fr;
+    grid-template-columns: minmax(478px, 1fr) 716px minmax(478px, 1fr);
     grid-template-rows: 1fr;
     column-gap: 16px;
-    .left{
-        background-image: url(${lights});
-        background-repeat: no-repeat;
-        background-size: cover;
+  
+    .middler{ 
         border-radius: 8px;
+        overflow: auto;
+        position: relative;
+        .img {
+            position: absolute;
+        }
+
     }
-    .right{
-        background-image: linear-gradient(90deg, rgba(19, 85, 253, 0.15) , rgba(3, 160, 255, 0.15) ), url(${imgurl.title});         
+    .left, .right {
+        background-image: linear-gradient(90deg, rgba(19, 85, 253, 0.15) , rgba(3, 160, 255, 0.15) ), url(${imgurl.circle});         
         background-position: 0%  0%, left top;
         background-repeat: no-repeat, no-repeat;
-        .titleUp {
-            background-image: url(${imgurl.circle});
-            background-repeat: no-repeat;
-            background-position: 10px;
+        .titleUp { 
             height: 40px;
-            padding-left: 32px;
+           
             display: flex;
             align-items: center;
             font-size: 17px;
-            color: #fff;
-            font-weight: bold;
-            font-style: italic;
+            justify-content: flex-end;
+            .manger {
+                        display: flex;
+                        align-items: center; 
+                        column-gap: 4px;
+                        .label{
+                            color: #9ED8DC;
+                            font-size: 11px;
+                        }
+                        .value{
+                            color:#0AEEFF;
+                            font-size: 14px;
+                        }
+                    }
         }
         .content {
             padding: 28px 24px 24px 24px;
             display: grid;
             grid-template-rows: 56px 28px minmax(226px, 1fr) 28px minmax(226px, 1fr);
-            row-gap: 16px;
+            row-gap: 16px;        
+            .infobox {
+                display: flex;
+                flex-direction: column;
+            }
             .info {
                 display: flex;
                 .item {
@@ -84,11 +109,11 @@ export  const Mainwrap = styled.div`
                         align-items: center;
                         flex-direction: column;
                         .label{
-                            color: rgba(158, 216, 220, 1);
+                            color: #9ED8DC;
                             font-size: 11px;
                         }
                         .value{
-                            color:rgba(10, 238, 255, 1);
+                            color:#0AEEFF;
                             font-size: 18px;
                         }
                     }
@@ -109,6 +134,16 @@ export  const Mainwrap = styled.div`
                 height: 226px;
                 display: flex;
             }
+        }
+    }
+    .right {
+        background-image: linear-gradient(90deg, rgba(19, 85, 253, 0.15) , rgba(3, 160, 255, 0.15) );         
+        background-position: 0%  0% ;
+        background-repeat: no-repeat ;
+      
+        .content {
+            grid-template-rows:  28px minmax(226px, 1fr) 28px minmax(226px, 1fr);
+            row-gap: 16px;   
         }
     }
   }

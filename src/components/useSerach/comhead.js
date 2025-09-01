@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef, useMemo, Fragment } from "react";
-import { useLocation } from "react-router-dom"
+
 import { Form, Select, Space, DatePicker, message, Input, Button, } from "antd";
 import { useRequest } from 'ahooks'
 import styled from "styled-components";
@@ -13,7 +13,7 @@ import { SiteManagerDesigner, PCSMonitorRuntime, StorageContainerDesigner, Edita
 import { Cdivider, Radiogroup } from '@com/comstyled'
 import { filterProps } from '@com/usehandler'
 
-
+import {publicdateType,Daterange} from "./data"
 import Enery from "./enery";
 
 const { FindContainerList } = StorageContainerDesigner  //储能柜
@@ -54,19 +54,16 @@ export const AreaSelect = ({ value, onChange, isall, ...otherProps }) => {
 export default function UseSerach(props) {
 
 
-  const { config = {}, custview = null, record = null } = props
+  const { config = {}, custview = null, record = null  } = props
 
-  const { isAreaId = true, gas = true, daterang = 'day', isdaterange = false } = config
+  const { isAreaId = true, gas = true, daterang = 'day',formsty={} } = config
   const dispatch = useDispatch()
 
-  const { state = {} } = useLocation()
-  const { nested, primary } = state
+
 
   const [form] = Form.useForm()
 
-  if(JSON.stringify(form.getFieldsValue()) === '{}'){
-    form.setFieldValue('date', moment())
-  }
+
 
   const projectId = useSelector(selectProjectId)
   const varlabel = useSelector(levelDefaultLabel)
@@ -193,11 +190,7 @@ export default function UseSerach(props) {
     { value: 3, label: i18t("comm", "year") },
   ]
   const changetype = (v) => {
-    if (v == 1 && isdaterange) {
-      form.setFieldValue("date", [moment().subtract(7, "day"), moment()])
-    } else {
       form.setFieldValue("date", moment())
-    }
     props.setexparams({ ...form.getFieldsValue(true) })
   }
   const dateselect = (
@@ -210,8 +203,8 @@ export default function UseSerach(props) {
           ({ getFieldValue, setFieldValue }) => {
             let type = (daterang == 'week' ? ['week', 'week', 'month', 'year'] : ['date', 'date', 'month', 'year'])[getFieldValue('type')]
             return (
-              <Item name="date" >
-                {(type == 'date' && isdaterange) ? <RangePicker></RangePicker> : <DatePicker picker={type} style={{ width: '160px' }} />}
+              <Item name="date" initialValue={moment()} >
+               <DatePicker picker={type} style={{ width: '160px' }} />
               </Item>
             )
           }
@@ -366,7 +359,41 @@ export default function UseSerach(props) {
   </Item>)
 
 
-
+// 能源管理 --公共能耗
+const changepublic=(e)=> {
+   if(e==4) {
+    form.setFieldValue("publicrangedate", [moment().subtract("day",7), moment().endOf("day")])
+   }else {
+    form.setFieldValue("publicdate", moment())
+   }
+   props.setexparams({ ...form.getFieldsValue(true) })
+}
+  const publicDate =  <Space size={16}>
+          <Form.Item name="publictype" initialValue={1}>
+       <Select options={publicdateType} style={{width: "140px"}} onChange={changepublic}></Select>
+    </Form.Item>
+     <Form.Item noStyle shouldUpdate={(cur, pre)=> cur.publictype!=pre.publictype}>
+      {
+        ({getFieldValue, setFieldValue})=> {
+            let type = getFieldValue("publictype")
+            console.log("type", type)
+            const picker={"1": "date", "2": "month", "3": "year"}[type?.toString()]
+               
+            if(type==4) { 
+              return <Form.Item  name="publicrangedate" initialValue={[moment().startOf("day"), moment().endOf("day")]}  >
+              <Daterange rangeDate={31}  />
+              </Form.Item> 
+            }else { 
+              return <Form.Item name="publicdate"  initialValue={moment()}>
+              <DatePicker picker={picker} />
+              </Form.Item>
+            }
+        }
+      }
+    </Form.Item> 
+   
+ 
+    </Space>
 
 
 
@@ -377,11 +404,13 @@ export default function UseSerach(props) {
   }, [levelone])
 
   const onValuesChange = (_, allValues) => {
-
+    console.log("allValues")
+    console.log(allValues)
     props.setexparams({ ...allValues })
   }
 
   useEffect(() => {
+    form.resetFields()
     if (!config.gas) {
       let v = form.getFieldValue('energytype');
       if (v == 3) form.setFieldValue('energytype', 1)
@@ -400,19 +429,19 @@ export default function UseSerach(props) {
 
   }, [props.config, projectId])
 
-  useEffect(() => {
+/*   useEffect(() => {
 
     if (nested == "public" && primary == 'runtimeEnergy') {
       form.setFieldValue('date', [moment().startOf("day"), moment()])
     } else {
       form.setFieldValue('date', moment(new Date(), "YYYY-MM-DD"))
     }
-  }, [nested, primary])
+  }, [nested, primary]) */
   return (
 
     <Cform layout="inline" form={form}   {...props.formprop}
       onValuesChange={onValuesChange}
-      style={{ displey: 'flex', justifyContent: 'space-between' }} >
+      style={{ displey: 'flex', justifyContent: 'space-between', ...formsty }} >
       <Space size={16} >
         {isAreaId && <Item label={varlabel} name='areaId' initialValue={AreaID}>
           <Select style={{ width: "200px" }} onChange={onChange} options={levelone} fieldNames={{ label: 'name', value: 'id', options: 'options' }}>
@@ -444,6 +473,9 @@ export default function UseSerach(props) {
       }
       {
         props.config?.dateR && carbonDateR // 碳排管理-- 碳排分析
+      }
+      {
+        props.config.publicDate && publicDate // 能源管理--公共能耗
       }
 
       <Item noStyle name="projectId" initialValue={projectId}>

@@ -194,8 +194,8 @@ export default function Index() {
             setConfig({ custview: true });
             break;
           case "public":
-            setConfig({ energytype: true, isdate: true, shiftNo: true,  isdaterange:true });
-            break;
+            setConfig({ energytype: true,   shiftNo: true, publicDate: true, formsty:{justifyContent: "flex-start", columnGap: "16px"}    });
+            break;  
           case "air":
           case "grading":
           case "light":

@@ -71,7 +71,7 @@ export default function DefaultHome(props){
   }, [iszh])
   
   return (
-         <Titlelayout title={<CustTransO text="ElectricityConsumption"  />} {...fs} layout="flex" style={{height: "200px"}}>
+         <Titlelayout title={<CustTransO text="ElectricityConsumption"  />} {...fs} layout="flex" style={{minHeight: "200px"}}>
              <div   style={{flex: 1, display: 'flex'}}>
                  <Ichart {...options} />
              </div>
