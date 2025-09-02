@@ -1,17 +1,11 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState,  useRef, useCallback, useMemo } from "react";
 import { useAntdTable } from "ahooks";
-import moment from "moment";
-import { message, Radio, Button, Form, DatePicker, Select, Space } from "antd";
-import styled from "styled-components";
-import Searchtree from "@com/searchTree";
-import Barchart from "./barChart";
-import Ringchart from "./ringChart";
-import Percent from "./percent";
-import { useSelector } from "react-redux";
-import { selectProjectId,selectOneLevelDefaultId } from "@redux/systemconfig.js";
+
+import { message,  Space } from "antd";
+
 import { ExportExcel } from '@com/useButton'
 import { useOutletContext } from 'react-router-dom'
-import { EnergyPublicRuntime } from "@api/api.js";
+
 import { getTime } from '@com/usehandler'
 import Titlelayout from '@com/titlelayout'
 import Pagecount from "@com/pagecontent";
@@ -29,13 +23,7 @@ export default function Index(props) {
 
   let { exparams = {} } = useOutletContext() || {}
   let {areaId, publictype, publicdate, projectId, energytype,publicrangedate } = exparams
-
-  console.log(exparams)
-  
- 
-  
-   
- // console.log("oneLevelDefaultId",oneLevelDefaultId) 
+  const [pagetotal, setPageTotal] = useState(0) 
 
  const chartTitle={
    1: "用电量 (kWh)",
@@ -43,9 +31,25 @@ export default function Index(props) {
    7: '用热水量 (m³)',
    18: '用气量 (m³)'
  }[energytype] || ""
+  
+  const sheetName = useMemo(()=> {
+     let formmat = {
+      1: "YYYY-MM-DD",
+      2: "YYYY-MM",
+      3: "YYYY"
+     }[publictype]
+     let time = publictype==4 ?  (publicrangedate?.[0]?.format?.("YYYY-MM-DD") + "--"+  publicrangedate?.[1]?.format?.("YYYY-MM-DD") ):   publicdate?.format(formmat)
+     let type ={
+      1: "用电",
+      2: '用冷水',
+      7: '用热水',
+      18: '用气'
+    }[energytype] + "公共能耗"
+    return type +"_" +time
+  }, [publictype, publicdate,  energytype,publicrangedate])
 
   const [treeIdList, setTreeIdList] = useState(null);
-  //右下角 公共能耗同比  能耗数据展示
+ 
  
   const [energyTotal, setEnergyTotal] = useState([]);
  
@@ -95,7 +99,7 @@ export default function Index(props) {
   
     if(!(Array.isArray(treeIdList) &&treeIdList?.length >0&& Number.isInteger(parseInt(projectId)))) return
     if(![publictype,  projectId, energytype, areaId].some(d => Number.isInteger(d))) return
-    if(!publicdate) return;
+    if(!publicdate && publictype!=4) return;
     if(!Array.isArray(publicrangedate)&& publictype==4) return
     const body = {
       projectId,
@@ -112,6 +116,11 @@ export default function Index(props) {
      
    let {data, success, total}  =  await useQueryPublicEnergyData({}, body)
    if(isObject(data) && success) {
+    if(Number.isInteger(parseInt(total))) {
+      setPageTotal(total)
+    } else {
+      setPageTotal(0)
+    }
     let { detail = {}, energySub = [], energyTotal = [], proportion = [] , deviceDetailTable} =data
     const pietotal = proportion.reduce((a, b)=>  a+parseFloat(b.value), 0)
     let { x = [], y = [] } = detail
@@ -169,6 +178,7 @@ export default function Index(props) {
       }
      }else {
        setColumns(dtlcolumns)
+       setPageTotal(0)
        return {
          list :[],
          total:0
@@ -178,6 +188,7 @@ export default function Index(props) {
  
    }else {
     setEnergyTotal([]);
+    setPageTotal(0)
     message.error(errMsg || '数据出错');
     return {
       list:[],
@@ -189,7 +200,7 @@ export default function Index(props) {
     }
   }
 const {tableProps, search, refresh} =  useAntdTable(getData, {
-    defaultPageSize: 12,
+    defaultPageSize: 14,
     refreshDeps: [treeIdList, publictype, publicdate, projectId, energytype,publicrangedate, areaId]
   });
 
@@ -198,19 +209,16 @@ const {tableProps, search, refresh} =  useAntdTable(getData, {
   const onChange = (e) => {
     setMode(e.target.value)
   }
-  const exportData = () => {
-    tbref.current.download()
-  }
+  const onExport = useCallback(()=> {
+    return getData({current:1, pageSize:pagetotal})
+  }, [areaId, publictype, publicdate, projectId, energytype,publicrangedate, pagetotal])
   
 
- 
-    
-    
  
   return (
     <Pagecount pd="0" bgcolor="transparent" >
       <Pagelayout> 
-        <Titlelayout title="公共能耗分类" layout="flex" >
+        <Titlelayout title="公共能耗分类" layout="flex" pv="16px" >
           <div className="chart" >
             <UserTree areaId={0}    setTreeId={setTreeIdList}  energytype={energytype} showline={false} datatype={2} sty={{ bordered: 'n', pv: '0' }} />
           </div>
@@ -231,7 +239,7 @@ const {tableProps, search, refresh} =  useAntdTable(getData, {
           </div>
           <div className="down">
         <Titlelayout title={<div style={{ width: '100%', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-          <span>公共能耗</span> <div style={{ width: 260, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+          <span>公共能耗</span> <Space size={16}>
             <Radiogroup options={[
               {
                 label: "图表模式",
@@ -247,11 +255,21 @@ const {tableProps, search, refresh} =  useAntdTable(getData, {
               onChange={onChange}
               value={mode}
             ></Radiogroup>
-            {/* <ExportExcel tb={tbref} /> */}
-            <Button type="primary"  onClick={exportData}>导出</Button>
-          </div></div>} layout="flex">
+           
+            <ExportExcel disabled={mode==1} tb={tbref}  /> 
+          </Space></div>} layout="flex">
           <div className="chart">
-            {mode == 1 ? <Ichart {...options} /> : <div className="tbwrap"><UseTable ref={tbref} {...tableProps}  columns={columns} key="table" scroll={{x: 1332, y: "max-content" }} /></div>}
+            {mode == 1 ? <Ichart {...options} /> : 
+            <div className="tbwrap">
+              <UseTable 
+            ref={tbref} 
+            {...tableProps}  
+            columns={columns}
+             key="table" 
+             sheetName={sheetName}
+             scroll={{x: 1332, y: "max-content" }}
+             onExport={onExport}
+              /></div>}
           </div>
         </Titlelayout> 
         </div>

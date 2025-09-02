@@ -46,4 +46,18 @@ export  const totalcolumns = [
         width: 140,
         fixed: "left"
       },
+      {
+        title: "安装地址",
+        dataIndex: 'address',
+        key: 'address',
+        width: 140,
+        fixed: "left"
+      },
+      {
+        title: "总能耗",
+        dataIndex: 'total',
+        key: 'total',
+        width: 100,
+        fixed: "left"
+      },
   ]

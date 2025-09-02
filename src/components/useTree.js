@@ -37,7 +37,7 @@ export default memo(function Index({ areaId, setTreeId, setLine, showline = true
   const { state } = location
   const isshow = useMemo(() => {
     const { nested, primary } = state
-    return nested == "report" && primary == "runtimeEnergy"
+    return  ["report","public"].includes(nested) && primary == "runtimeEnergy"
   }, [state])
   const [checkedKeys, setCheckedKeys] = useState([])
 

@@ -417,15 +417,11 @@ export default function Index() {
       <Pagecount showSearch={false} custserach={true} >
         <Contentbox>
           <UserTree areaId={areaId} energytype={energytype} setTreeId={setTreeId} setLine={setLine} showline={value != '3'} datatype={value == '3' ? 0 : NaN} />
-          <div style={{ position: "relative", flex: 1 }}>
-{/* <<<<<<< HEAD
-            <div style={{ position: "absolute", width: "100%" }}>
-              {(value == "4" || value == '0') && <div style={{ marginBottom: "16px", display: "flex" }}>
-======= */}
+          <div style={{ position: "relative", flex: 1 }}> 
             <div style={{ position: "absolute", width: "100%",   }}>
               <div  className='opt'>
               {["0","1"].includes(value)   && <div style={{ marginBottom: "16px", display: "flex" }}>
-{/* >>>>>>> 2ab556180a9ea6d65aae11e6fb55715de1ae0f38 */}
+ 
                 <div style={{ marginLeft: "auto" }}>
                   <Checkbox onChange={boxchange} checked={isrange.range}>使用日期范围（优先）</Checkbox>  <RangePicker
                     value={dates || valuet}
