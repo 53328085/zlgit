@@ -149,3 +149,53 @@ export  const Mainwrap = styled.div`
   }
 
 `
+
+export const TitP = styled.div`
+  && {
+    min-width: 190px;
+    min-height: 115px;
+    color:#2AFAFF;
+    border-radius: 4px;
+    left: ${props => props.left+'px'};
+    top: ${props=> props.top+32+'px'};
+    position: absolute;
+    transition: all 0.3s;
+    display: flex;
+    flex-direction: column;
+    row-gap: 6px;
+    padding: 6px 12px 12px 12px;
+    font-size: 12px;
+    border: 1px solid rgba(139, 197, 241, 1);
+    background-image: linear-gradient(90deg, rgba(37, 64, 125, 0.70),rgba(8, 44, 65, 0.70));
+    .title {
+      padding-left: 18px ;
+      display: flex;
+      align-items: center;
+      font-size: 14px; 
+      color: #2AFAFF;
+      justify-content: space-between;
+      background-image: url(${imgurl["tiny"]});
+      background-position: left;
+      background-repeat: no-repeat;
+    } 
+    .contentbox { 
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      flex:1;
+      .content {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        .key{
+          color:#fff;
+        }
+        .value{
+          font-weight: bold;
+        }
+      
+    }
+    }
+  }
+`
+ 

@@ -10,7 +10,7 @@ import {CustButtonT,CustButton, ExportExcel} from "@com/useButton"
 import CModal from '@com/useModal'
 import {Serach} from "@com/comstyled"
 import {AreaSelect} from "@com/useSerach/comhead"
-import {usePage,useAdd,useUpdate,useDelete, useImport, useList } from "./api"
+import {usePage,useAdd,useUpdate,useDelete, useImport, useList,useQuerySelectList } from "./api"
 import {cols,  items} from "./data"
 import {Mainbox } from './style'
  const {Link} = Typography
@@ -25,6 +25,9 @@ export default function Index() {
   const [isadd, setIsadd] =useState(false)
   const [total, setTotal] = useState(0)
   const [lists, setLists] = useState([])
+ // const [cmsn, setCmsn]=useState({csn:[], msn:[]}) //  控制器，计量设备
+  const [csn, setCsn] = useState([])
+  const [msn, setMsn] = useState([])
   const editRef = useRef()
   const tbref = useRef()
   const [Ctitle,msg] = useMemo(()=> {
@@ -33,6 +36,38 @@ export default function Index() {
    return [title, msg]
   },[isadd])
   const downParams = useRef()
+
+ 
+ const getSn = async()=> {
+     try {
+      let promises = [useQuerySelectList({projectId, deviceStyle:22}),useQuerySelectList({projectId, deviceStyle:1})]
+      let [csn, msn ] = await Promise.allSettled(promises)  // 控制器， 计量设备
+      
+       if(csn?.value?.success) {
+         if(Array.isArray(csn.value?.data)) {
+          console.log(csn.value.data)
+          setCsn(csn.value.data)
+         }else {
+           setCsn([])
+         }
+        
+       }
+       if(msn?.value?.success) {
+        if(Array.isArray(msn.value?.data)) {
+         setMsn( msn.value.data)
+        }else {
+         setMsn([])
+        }
+       
+      }
+     } catch (error) {
+      console.log(error)
+     }
+    
+
+ }
+
+
   const getList = async()=> {
     try {
       let {success, data, errMsg} = await useList({projectId})
@@ -47,8 +82,8 @@ export default function Index() {
     }
  }
  const fromitem = useMemo(()=> {
-  return items(lists)
- },[lists])
+  return items(lists,csn, msn)
+ },[lists,csn, msn])
   const getData= async ({current, pageSize }, formData)=> { 
     try {
       if(!Number.isInteger(parseInt(projectId))) return
@@ -205,6 +240,7 @@ export default function Index() {
  useEffect(()=> {
   if(Number.isInteger(parseInt(projectId))){
     getList()
+    getSn()
   }
 
  }, [projectId])

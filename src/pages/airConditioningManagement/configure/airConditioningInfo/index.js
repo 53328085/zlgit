@@ -152,7 +152,7 @@ export default function Index() {
   const {submit} = search
   const onAdd=()=> {
      setIsadd(true)
-     newform.setFieldValue("projectId", projectId)
+    // newform.setFieldValue("projectId", projectId)
      editRef.current.onOpen()
   }
   const delparams = useRef()
@@ -165,15 +165,15 @@ export default function Index() {
   }
   const onEdit=(row)=> {
     setIsadd(false)
-    const {projectId:id, ...params} = row
+    const { ...params} = row
 
-    newform.setFieldsValue({...params, projectId},)
+    newform.setFieldsValue({...params},)
     editRef.current.onOpen()
   }
   const onOk= async()=> {
     try {
       let values = await newform.validateFields()
-      let {success, errMsg} =await useInsertOrUpdateExteriorAC({operate}, values)
+      let {success, errMsg} =await useInsertOrUpdateExteriorAC({operate, projectId}, values)
       if(success) {
         message.success(msg)
         if(!isadd) {

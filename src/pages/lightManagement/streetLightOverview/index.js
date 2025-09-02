@@ -1,24 +1,24 @@
 import React,{useRef, useEffect, useState, useMemo} from 'react'
- 
+ import {CloseOutlined} from "@ant-design/icons"
 import Pagecount from '@com/pagecontent'
 import {isObject} from "@com/usehandler"
  
 import {useOutletContext} from "react-router-dom"
-import {useOverview} from "./api"
+import {useOverview,useDetail} from "./api"
 import imgurl from './imgs'
-import {custsty,  Mainwrap} from './style'
+import {custsty,  Mainwrap,TitP} from './style'
 import Ichart from "@com/useEcharts/Ichart"
 import {Point} from "@com/comstyled" 
+import { message } from 'antd'
 let timedata = Array.from({length: 10},(_, index)=> `0${index}:0${index}`)
 let randData = Array.from({length:10}, (_, index)=> Math.round(Math.random()*100))
 let randData2 = Array.from({length:10}, (_, index)=> Math.round(Math.random()*100))
-console.log(timedata)
-console.log(randData)
+ 
 export default function Index() {
   const [datas, setDatas] = useState({})
  
   const {projectId} = useOutletContext()
-
+  const [info, setInfo] = useState()
  const [lineopt, baropt, createopt, incomeopt ] = useMemo(()=> { // 亮灯率 ， 市电，绿电, 发电量
    let {
     lightRates, 
@@ -127,9 +127,8 @@ export default function Index() {
         "金额"
       ],
       source:[
-        timedata,
-        randData
-       
+       Array.isArray(incomes?.x) ? incomes?.x : [],
+       Array.isArray(incomes?.y) ? incomes?.y : [],
       ],
       sourceHeader: false,
     },
@@ -152,12 +151,64 @@ export default function Index() {
       
     }
   }
+  const getpoint=async(rid, x, y) => {
+    try {
+      if(!Number.isInteger(Number.parseInt(rid))) return message.warning("路灯Id无效")
+      let {success, data, errMsg} = await useDetail({rid, projectId})
+     if(success && isObject(data)) {
+        setInfo({x, y, ...data})
+     }else {
+      setInfo({x,y})
+      if(!success)  message.warning(errMsg || "数据出错")
+    }
+    } catch (error) {
+      console.log(error)
+    }
+  }
   useEffect(()=> {
     if(Number.isInteger(projectId)){
        getData()
     }
 
   },[projectId])
+  const tref=useRef()
+  useEffect(()=> {
+    console.log(tref)
+  },[])
+  const onMouseDown =(event)=> {
+    try {
+      let ball = tref.current
+      let shiftX = event.clientX - tref.current.getBoundingClientRect().left;
+      let shiftY = event.clientY - tref.current.getBoundingClientRect().top;
+      moveAt(event.pageX, event.pageY);
+  
+      // 移动现在位于坐标 (pageX, pageY) 上的球
+      // 将初始的偏移考虑在内
+      function moveAt(pageX, pageY) {
+        ball.style.left = pageX - shiftX + 'px';
+        ball.style.top = pageY - shiftY + 'px';
+      }
+    
+      function onMouseMove(event) {
+        moveAt(event.pageX, event.pageY);
+      }
+    
+      // 在 mousemove 事件上移动球
+      document.addEventListener('mousemove', onMouseMove);
+    
+      // 放下球，并移除不需要的处理程序
+      ball.onmouseup = function() {
+        document.removeEventListener('mousemove', onMouseMove);
+        ball.onmouseup = null;
+      };
+    } catch (error) {
+      console.log(error)
+    }
+
+  }
+  const onMouseMove=(e)=> {
+    // console.log(e)
+  }
   return (
     <Pagecount custsty={custsty} bgcolor="none">
       <Mainwrap>
@@ -265,8 +316,21 @@ export default function Index() {
           <div className="middler">
             <img src={datas?.image} className='img' onClick={()=>{}}/>
             {
-              datas?.locationInfos?.map(l=><Point left={l.x} top={l.y} key={l.lightName} data-descr={l.lightName}></Point>)
+              datas?.locationInfos?.map(l=><Point left={l.x} top={l.y} key={l.lightName} data-descr={l.lightName} onClick={()=>getpoint(l.lightId, l.x, l.y)}></Point>)
             }
+           {info && <TitP left={info.x} top={info.y}   onDrag={()=> false} ref={tref}>
+          <h5 className="title">{info.name} <CloseOutlined style={{color: "#2AFAFF", position: "absolute", top: "4px", right: "4px"}} onClick={() => setInfo(null)}  /> </h5>
+             <div className="contentbox">
+               {
+                
+                  info?.fields?.map(i => ( <div className="content">
+                    <p className="key">{i.name}</p>
+                    <p className="value">{i.value}</p>
+                </div>))
+
+               } 
+              </div>
+          </TitP>}
           </div>
            <div className="right">
             <div className="content">
