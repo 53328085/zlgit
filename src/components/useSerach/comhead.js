@@ -240,6 +240,7 @@ export default function UseSerach(props) {
       <RangePicker />
     </Item>
   )
+
   const viewtype = (<Item name="view" initialValue={1} >
     <Radiogroup
       options={[
@@ -368,18 +369,12 @@ export default function UseSerach(props) {
     <Select options={pcsoptions} fieldNames={{ label: 'sn', value: 'id' }} style={{ width: laptop ? "160px" : '264px' }} {...filterProps}></Select>
   </Item>)
 
-
+  const { primaryColor } = useSelector(themeColor)
   const refresh = (
-    <Item name="refresh">
-      <SyncOutlined style={{ color: '' }} />
+    <Item name="refresh" style={{ color: `${primaryColor}` }}>
+      <SyncOutlined style={{ color: `${primaryColor}` }} /> 刷新
     </Item>
   )
-
-
-
-
-
-
   useEffect(() => {
     if (levelone.length < 1) message.error('当前项目尚未创建园区!')
   }, [levelone])
@@ -435,27 +430,25 @@ export default function UseSerach(props) {
         {props.config?.isdevsty && deviceStyleNode}
         {props.config?.isview && viewtype}
         {props.config?.energytype && energytype}
-        {props.config?.refresh && refresh}
-        {/* {props.config?.powerStation && powerStation}
-        {props.config?.inverter && inverter} */}
       </Space>
-
-      {
-        props.config?.isdate && dateselect
-      }
-      {
-        props.config?.custview && custview
-      }
-      {
-        props.config?.export ? <ExportExcel /> : null
-      }
-      {
-        props.config?.dateY && carbonDateY // 碳排管理--碳排考核跟踪
-      }
-      {
-        props.config?.dateR && carbonDateR // 碳排管理-- 碳排分析
-      }
-
+      <Space>
+        {
+          props.config?.isdate && dateselect
+        }
+        {
+          props.config?.custview && custview
+        }
+        {
+          props.config?.export ? <ExportExcel /> : null
+        }
+        {
+          props.config?.dateY && carbonDateY // 碳排管理--碳排考核跟踪
+        }
+        {
+          props.config?.dateR && carbonDateR // 碳排管理-- 碳排分析
+        }
+        {props.config?.refresh && refresh}
+      </Space>
       <Item noStyle name="projectId" initialValue={projectId}>
         <Input hidden />
       </Item>

@@ -9,7 +9,7 @@ import BlueColumn from '@com/bluecolumn'
 import { MultImport, ErrorMessage } from './modalCom'
 import { Monitoring } from '@api/api.js'
 import { DeleteModal } from './modalCom'
-import { AddModalForm, MyContext, EditModalForm, AreaOption } from './elecomp'
+import { AddModalForm, MyContext, EditModalForm, AreaOption, SetModalForm } from './lightcomp.js'
 import cutContext from '@com/content'
 import { publishState } from '@redux/systemconfig'
 const { Link } = Typography
@@ -24,11 +24,14 @@ const {
         UpdateLight,
         DeleteLight,
         ImportLight,
-        OneLevel
+        OneLevel,
+        QueryDeviceIncreaseParams,
+        InsertOrUpdateDeviceParam
     }
 } = Monitoring
 
 export default function gateway({ deviceStyle }) {
+    const [cancelStatus, setCancelStatus] = useState(false);
     const { t } = useTranslation(["button"])
     const publish = useSelector(publishState)
     const [selectopts, setSelectopts] = useState([])
@@ -44,8 +47,6 @@ export default function gateway({ deviceStyle }) {
     const [alarmopts, setAlarmopts] = useState()
     const alarmoptsRef = useRef()
     alarmoptsRef.current = alarmopts
-    const [transitionName, setTransition] = useState(undefined)
-    const [maskTransitionName, setMaskTransitionName] = useState(undefined)
     const [loading, setLoading] = useState(false);
     const [page, setPage] = useState({
         current: 1,
@@ -55,11 +56,13 @@ export default function gateway({ deviceStyle }) {
     const pageRef = useRef(page)
     pageRef.current = page
     const [dataSource, setDataSource] = useState([])
+    const [dataSource376, setDataSource376] = useState([])
     const oneLevel = useSelector(state => state.system.onelevel)
     const projectId = useSelector(state => state.system.menus.projectId)
     const compRef = useRef()
     const modalFormRef = useRef()
     const modalImportRef = useRef()
+    const SetmodalFormRef = useRef()
     const DelModalRef = useRef()
     const EditModalFormRef = useRef()
     const ErrModalRef = useRef()
@@ -69,6 +72,9 @@ export default function gateway({ deviceStyle }) {
     const editareaRef = useRef()
     const [addform] = Form.useForm()
     const [editform] = Form.useForm()
+    const [setform] = Form.useForm()
+    const [factorform] = Form.useForm()
+    const [paramsSetId, setParamsSetId] = useState()
     const [channelName1, setChannelName1] = useState('通道1')
     const [channelName2, setChannelName2] = useState('通道2')
     const [channelName3, setChannelName3] = useState('通道3')
@@ -173,6 +179,7 @@ export default function gateway({ deviceStyle }) {
         console.log(record, record.path1Group?.length > 0)
         EditModalFormRef?.current?.onOpen()
 
+        setCancelStatus(false)
         editform.setFieldsValue({
             ...record,
             commProtocol: record.commProtocol ? record.commProtocol : '',
@@ -181,7 +188,7 @@ export default function gateway({ deviceStyle }) {
     }
 
     //确认编辑
-    const editOk = () => {
+    const editOk = (type) => {
         console.log(editform.getFieldsValue())
         editform.validateFields().then(async () => {
             const {
@@ -220,8 +227,59 @@ export default function gateway({ deviceStyle }) {
             console.log(params, editform.getFieldValue(), path1Gruop, path2Gruop, path3Gruop, path4Gruop, pathGruop)
             const resp = await UpdateLight(params)
             if (resp.success) {
-                message.success("更新成功")
-                EditModalFormRef?.current?.onCancel()
+                if (type == 'submit') {
+                    message.success("更新成功")
+                    EditModalFormRef?.current?.onCancel()
+                } else if (type == 'next') {
+                    openSetModal(editform.getFieldsValue())
+                    getQueryByPageElectric376()
+                } else {
+                    message.success("更新成功")
+                }
+                getQueryByPageElectric(pageRef.current.current, pageRef.current.pageNum, compRef.current.selvalue, compRef.current.inpvalue, compRef.current.energyVal)
+            } else {
+                message.error(resp.errMsg)
+            }
+        }).catch(e => { console.log(e) })
+    }
+
+    const editSure = () => {
+        editform.validateFields().then(async () => {
+            const {
+                id,
+                areaId,
+                alarmPlanId,
+                address,
+                remark,
+                gatewayId,
+                category,
+                sn,
+                name,
+                customerType,
+                commPort,
+                commProtocol,
+                commAddress,
+            } = editform.getFieldValue()
+            let params = {
+                id,
+                projectId,
+                areaId,
+                alarmPlanId,
+                address,
+                remark,
+                gatewayId,
+                category,
+                sn,
+                name,
+                commPort: commPort ? commPort : 0,
+                commProtocol: commProtocol ? commProtocol : 0,
+                commAddress,
+                factor: 0,
+                customerType,
+            }
+            const resp = await UpdateLight(params)
+            if (resp.success) {
+                message.success("应用成功")
                 getQueryByPageElectric(pageRef.current.current, pageRef.current.pageNum, compRef.current.selvalue, compRef.current.inpvalue, compRef.current.energyVal)
             } else {
                 message.error(resp.errMsg)
@@ -265,6 +323,7 @@ export default function gateway({ deviceStyle }) {
 
     //打开新增窗口
     const addopen = () => {
+        setCancelStatus(true)
         if (!levelname.current) {
             message.warning('请先添加区域名称')
             return
@@ -289,8 +348,69 @@ export default function gateway({ deviceStyle }) {
 
     }
 
+    const openSetModal = async (form) => {
+        if (!levelname.current) {
+            message.warning('请先添加区域名称')
+            return
+        }
+
+        setform?.setFieldsValue({
+            bautRate: 3, //通讯速率，
+            controlPwd: "000000", //密码
+            controlPwdLevel: 2, //控制密级（1或2）
+            stopBites: 0,//停止位
+            dataBites: 0,//数据位
+            decimalDigits: 1, //电能示值的小数位个数
+            DeviceId: 823, //设备标识
+            Id: 11, //设备标识
+            integerDigits: 2, //电能示值的整数位个数
+            largeCategory: 5, //大类号
+            password: "000000000000", //通信密码，可为空
+            collectSn: "000000000000", //采集器通信地址
+            pn: "1", //所属测量点号，范围0-2040
+            protocolType: 30,
+            rateCount: 4, //费率数（1-12）
+            smallCategory: 0, //小类号
+            parityBites: ''//校验方式
+        })
+        SetmodalFormRef?.current?.onOpen()
+        let params = {
+            projectId,
+            gatewayId: form.gatewayId,
+            port: form.commPort,
+            alike: form.sn,
+        }
+        const res = await QueryDeviceIncreaseParams(params)
+        if (res.success && res.data) {
+            setform?.setFieldsValue(res.data[0])
+            setParamsSetId(res.data.length != 0 ? res.data[0].id : null)
+        } else {
+            message.error(res.errMsg)
+        }
+    }
+
+    //确认设备参数新增
+    const setOk = async () => {
+        let form = Object.keys(addform.getFieldsValue()).length === 0 ? editform.getFieldsValue() : addform.getFieldsValue()
+        const deviceItem = dataSource376.find(item => item.sn === form.sn);
+        const deviceId = deviceItem ? deviceItem.id : null;
+        const gatewayItem = gatewaylist.find(item => item.id === form.gatewayId);
+        const gatewaySn = gatewayItem ? gatewayItem.sn : null;
+
+        const newData = { ...setform.getFieldsValue(), DeviceId: deviceId, ...(paramsSetId ? { Id: paramsSetId } : {}) }
+        const res = await InsertOrUpdateDeviceParam(projectId, gatewaySn, newData)
+        if (res.success) {
+            message.success('参数设置成功')
+            addform.resetFields()
+            modalFormRef?.current?.onCancel()
+            EditModalFormRef?.current?.onCancel()
+            SetmodalFormRef?.current?.onCancel()
+        } else {
+            message.error(res.errMsg)
+        }
+    }
     //确认新增
-    const addOk = async () => {
+    const addOk = async (type) => {
         return addform.validateFields().then(async () => {
             const formvalue = addform.getFieldsValue()
             console.log(formvalue)
@@ -321,10 +441,17 @@ export default function gateway({ deviceStyle }) {
             }
             const res = await AddLight(params)
             if (res.success) {
-                message.success('新增成功!')
-                // addform.resetFields()
-                //  modalFormRef?.current?.onCancel()
                 getQueryByPageElectric(pageRef.current.current, pageRef.current.pageNum, compRef.current.selvalue, compRef.current.inpvalue, compRef.current.energyVal)
+                if (type == 'submit') {
+                    message.success('新增成功!')
+                    modalFormRef?.current?.onCancel()
+                    addform.resetFields()
+                } else if (type == 'next') {
+                    openSetModal(addform.getFieldsValue())
+                    getQueryByPageElectric376()
+                } else {
+                    message.success('新增成功!')
+                }
             } else {
                 message.error(res.errMsg)
             }
@@ -333,12 +460,29 @@ export default function gateway({ deviceStyle }) {
         })
     }
 
+    //获取电表列表(全部)
+    const getQueryByPageElectric376 = async () => {
+        let params = {
+            projectId,
+            pageNum: 1,
+            pageSize: page.total + 1,
+            areaId: compRef.current.selvalue ? compRef.current.selvalue : 0,
+            alike: compRef.current.inpvalue,
+            customerType: compRef.current.energyVal ? compRef.current.energyVal : 0
+        }
+        const resp = await QueryByPageLight(params)
+        if (resp.success && Array.isArray(resp.data)) {
+            setDataSource376([...resp.data.reverse()])
+
+        } else {
+            setDataSource376([])
+        }
+
+    }
     //新增弹窗取消
     const onAddCancel = () => {
         modalFormRef?.current?.onCancel()
         flagref.current = [true, true, true, true]
-        setTransition(undefined)
-        setMaskTransitionName(undefined)
     }
     //打开批量导入窗口
     const multExport = () => {
@@ -494,8 +638,6 @@ export default function gateway({ deviceStyle }) {
             // pathGruop.current =[]
         }
 
-        // setTransition(undefined)
-        // setMaskTransitionName(undefined)
     }
     const areaok = () => {
         console.log(index)
@@ -531,13 +673,19 @@ export default function gateway({ deviceStyle }) {
         modalFormRef,
         width: 732,
         name: '新增路灯控制器',
-        transitionName: transitionName,
-        maskTransitionName: maskTransitionName,
         onOk: addOk,
 
-        onAddCancel: onAddCancel,
+        // onAddCancel: onAddCancel,
         // isfiber:true,
-        openarea,
+        // openarea,
+    }
+
+    //设备参数
+    const SetModalFormProps = {
+        SetmodalFormRef,
+        width: 746,
+        name: '设备参数',
+        onOk: setOk,
     }
     const uploadprops = {
         maxCount: 1,
@@ -560,6 +708,7 @@ export default function gateway({ deviceStyle }) {
         width: 732,
         name: '编辑路灯控制器',
         onOk: editOk,
+        onSure: editSure,
         onEditCancel: onEditCancel,
         isfiber: true,
         openarea,
@@ -601,15 +750,13 @@ export default function gateway({ deviceStyle }) {
                 channelName4,
                 setChannelName4,
                 setIndex,
-                setTransition,
-                setMaskTransitionName,
                 checklistRef,
                 path1Gruop,
                 path2Gruop,
                 path3Gruop,
                 path4Gruop,
             }}>
-                <AddModalForm {...ModalFormProps} >
+                <AddModalForm {...ModalFormProps} addform={addform} >
                 </AddModalForm>
             </MyContext.Provider>
         )
@@ -624,17 +771,15 @@ export default function gateway({ deviceStyle }) {
                 alarmopts: alarmoptsRef.current,
                 form: editform,
                 deviceStyle, levelname,
-                setIndex,
-                setIndex,
-                setTransition,
-                setMaskTransitionName,
+                // setIndex,
                 checklistRef,
 
             }}>
-                <EditModalForm {...EditModalFormProps}></EditModalForm>
+                <EditModalForm {...EditModalFormProps} editform={editform}></EditModalForm>
             </MyContext.Provider>
         )
     }, [addopts, gatewayRef.current, deviceRef.current, alarmoptsRef.current])
+
     return (
         <div>
             <Comp {...ComProps}>
@@ -647,14 +792,22 @@ export default function gateway({ deviceStyle }) {
 
             </Comp>
 
-            {AddModalComp}
+            {/* {AddModalComp} */}
+            <MyContext.Provider value={{ addopts: addoptsRef.current, gatewaylist: gatewayRef.current, devicelist: deviceRef.current, alarmopts: alarmoptsRef.current, form: addform, deviceStyle, levelname }}>
+                <AddModalForm {...ModalFormProps} addform={addform} >
+                </AddModalForm>
+            </MyContext.Provider>
 
+
+            <MyContext.Provider value={{ addopts: addoptsRef.current, gatewaylist: gatewayRef.current, devicelist: deviceRef.current, alarmopts: alarmoptsRef.current, form: setform, deviceStyle, levelname }}>
+                <SetModalForm {...SetModalFormProps} setform={setform} cancelStatus={cancelStatus} >
+                </SetModalForm>
+            </MyContext.Provider>
 
 
             <MultImport {...ImportProps}></MultImport>
             <DeleteModal DelModalRef={DelModalRef} name="删除提示" content="是否确认删除路灯控制器？" onOk={delOk}></DeleteModal>
             {EditModalComp}
-            <ErrorMessage {...ErrModalProps}></ErrorMessage>
             <MyContext.Provider value={{
                 path1Gruop,
                 path2Gruop,
@@ -664,13 +817,12 @@ export default function gateway({ deviceStyle }) {
             }}>
                 <AreaOption {...AreaOptionProps}></AreaOption>
             </MyContext.Provider>
-
-
             {/* <MyContext.Provider value={{
   
       }}>
         <AreaOption {...EditOptionProps}></AreaOption>
       </MyContext.Provider> */}
+            <ErrorMessage {...ErrModalProps}></ErrorMessage>
         </div>
     )
 }

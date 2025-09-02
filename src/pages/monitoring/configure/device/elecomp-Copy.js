@@ -141,18 +141,11 @@ export const FormComp = (props) => {
         form,
         deviceStyle,
         levelname,
-        setChannelName1,
-        setChannelName2,
-        setChannelName3,
-        setChannelName4,
-        setIndex,
         checklistRef,
         path1Gruop,
         path2Gruop,
         path3Gruop,
         path4Gruop,
-        setTransition,
-        setMaskTransitionName
     } = useContext(MyContext)
     const [name1, setName1] = useState('通道1')
     const [name2, setName2] = useState('通道2')
@@ -515,7 +508,7 @@ export const FormComp = (props) => {
     )
 }
 //新增设备
-export let AddModalForm = ({ addform, modalFormRef, transitionName, maskTransitionName, isfiber = false, openarea, onOk, okText, ...other }) => {
+export let AddModalForm = ({ addform, modalFormRef, isfiber = false, openarea, onOk, ...other }) => {
     const category = Form.useWatch('category', addform);
     const gatewayId = Form.useWatch('gatewayId', addform);
     const handleCancel = () => {
@@ -524,7 +517,7 @@ export let AddModalForm = ({ addform, modalFormRef, transitionName, maskTransiti
     return (
         <>
             {
-                <Modal mold='cust' ref={modalFormRef} transitionName={transitionName} maskTransitionName={maskTransitionName} title={other.name} {...other}
+                <Modal mold='cust' ref={modalFormRef} title={other.name} {...other}
                     custft={true}
                     footer={
                         [<Button key="back" onClick={handleCancel}>
@@ -909,11 +902,11 @@ export const EditFormComp = (props) => {
     )
 }
 //设备参数设置
-export let SetModalForm = ({ setform, SetmodalFormRef, cancelStatus, transitionName, maskTransitionName, isfiber = false, openarea, onOk, okText, ...other }) => {
+export let SetModalForm = ({ setform, SetmodalFormRef, cancelStatus, isfiber = false, openarea, onOk, ...other }) => {
     return (
         <>
             {
-                <Modal mold='cust' ref={SetmodalFormRef} transitionName={transitionName} maskTransitionName={maskTransitionName} title={other.name} {...other}
+                <Modal mold='cust' ref={SetmodalFormRef} title={other.name} {...other}
                     onOk={onOk} cancelButtonProps={{
                         disabled: cancelStatus,
                     }}

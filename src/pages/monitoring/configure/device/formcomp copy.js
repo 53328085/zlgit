@@ -84,7 +84,7 @@ export const FormComp = (props) => {
             form={form}
             colon={false}
             labelCol={{
-                span: 6
+                span: 9
             }}
         >
             <Row gutter={16}>
@@ -433,7 +433,7 @@ export const EditFormComp = (props) => {
             form={form}
             colon={false}
             labelCol={{
-                span: 6
+                span: 9
             }}
         >
             <Row className={style.customItem}>
@@ -957,11 +957,11 @@ export const SetFormComp = (props) => {
     )
 }
 //设备参数设置
-export let SetModalForm = ({ setform, SetmodalFormRef, cancelStatus, transitionName, maskTransitionName, isfiber = false, openarea, onOk, okText, ...other }) => {
+export let SetModalForm = ({ setform, SetmodalFormRef, cancelStatus, isfiber = false, openarea, onOk, okText, ...other }) => {
     return (
         <>
             {
-                <Modal mold='cust' ref={SetmodalFormRef} transitionName={transitionName} maskTransitionName={maskTransitionName} title={other.name} {...other}
+                <Modal mold='cust' ref={SetmodalFormRef} title={other.name} {...other}
                     onOk={onOk} cancelButtonProps={{
                         disabled: cancelStatus,
                     }}
