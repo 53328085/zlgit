@@ -202,8 +202,8 @@ export default function Index() {
             setConfig({ custview: true });
             break;
           case "public":
-            setConfig({ energytype: true,   shiftNo: true, publicDate: true, formsty:{justifyContent: "flex-start", columnGap: "16px"}    });
-            break;  
+            setConfig({ energytype: true, shiftNo: true, publicDate: true, formsty: { justifyContent: "flex-start", columnGap: "16px" } });
+            break;
           case "air":
           case "grading":
           case "light":
@@ -290,13 +290,13 @@ export default function Index() {
       else if (primary == "runtimeSolar") {
         switch (nested) {
           case "station":
-            setConfig({})
+            setConfig({ refresh: true })
             break
           case "device":
-            setConfig({});
+            setConfig({ refresh: true });
             break;
           case "propare":
-            setConfig({ isdate: true, shiftNo: true });
+            setConfig({ isdate: true, shiftNo: true, refresh: true });
             break;
           case "aerograph":
             setConfig({ isdate: true, shiftNo: true });

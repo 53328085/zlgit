@@ -16,7 +16,7 @@ import {
   SyncOutlined,
 } from '@ant-design/icons';
 
-import {publicdateType,Daterange} from "./data"
+import { publicdateType, Daterange } from "./data"
 import Enery from "./enery";
 
 const { FindContainerList } = StorageContainerDesigner  //储能柜
@@ -57,9 +57,9 @@ export const AreaSelect = ({ value, onChange, isall, ...otherProps }) => {
 export default function UseSerach(props) {
 
 
-  const { config = {}, custview = null, record = null  } = props
+  const { config = {}, custview = null, record = null } = props
 
-  const { isAreaId = true, gas = true, daterang = 'day',formsty={} } = config
+  const { isAreaId = true, gas = true, daterang = 'day', formsty = {} } = config
   const dispatch = useDispatch()
 
 
@@ -193,7 +193,7 @@ export default function UseSerach(props) {
     { value: 3, label: i18t("comm", "year") },
   ]
   const changetype = (v) => {
-      form.setFieldValue("date", moment())
+    form.setFieldValue("date", moment())
     props.setexparams({ ...form.getFieldsValue(true) })
   }
   const dateselect = (
@@ -207,7 +207,7 @@ export default function UseSerach(props) {
             let type = (daterang == 'week' ? ['week', 'week', 'month', 'year'] : ['date', 'date', 'month', 'year'])[getFieldValue('type')]
             return (
               <Item name="date" initialValue={moment()} >
-               <DatePicker picker={type} style={{ width: '160px' }} />
+                <DatePicker picker={type} style={{ width: '160px' }} />
               </Item>
             )
           }
@@ -233,6 +233,7 @@ export default function UseSerach(props) {
       <RangePicker />
     </Item>
   )
+
   const viewtype = (<Item name="view" initialValue={1} >
     <Radiogroup
       options={[
@@ -361,47 +362,48 @@ export default function UseSerach(props) {
     <Select options={pcsoptions} fieldNames={{ label: 'sn', value: 'id' }} style={{ width: laptop ? "160px" : '264px' }} {...filterProps}></Select>
   </Item>)
 
+  const { primaryColor } = useSelector(themeColor)
 
-// 能源管理 --公共能耗
-const changepublic=(e)=> {
-   if(e==4) {
-    form.setFieldValue("publicrangedate", [moment().subtract("day",7), moment().endOf("day")])
-   }else {
-    form.setFieldValue("publicdate", moment())
-   }
-   props.setexparams({ ...form.getFieldsValue(true) })
-}
-  const publicDate =  <Space size={16}>
-          <Form.Item name="publictype" initialValue={1}>
-       <Select options={publicdateType} style={{width: "140px"}} onChange={changepublic}></Select>
+  // 能源管理 --公共能耗
+  const changepublic = (e) => {
+    if (e == 4) {
+      form.setFieldValue("publicrangedate", [moment().subtract("day", 7), moment().endOf("day")])
+    } else {
+      form.setFieldValue("publicdate", moment())
+    }
+    props.setexparams({ ...form.getFieldsValue(true) })
+  }
+  const publicDate = <Space size={16}>
+    <Form.Item name="publictype" initialValue={1}>
+      <Select options={publicdateType} style={{ width: "140px" }} onChange={changepublic}></Select>
     </Form.Item>
-     <Form.Item noStyle shouldUpdate={(cur, pre)=> cur.publictype!=pre.publictype}>
+    <Form.Item noStyle shouldUpdate={(cur, pre) => cur.publictype != pre.publictype}>
       {
-        ({getFieldValue, setFieldValue})=> {
-            let type = getFieldValue("publictype")
-            console.log("type", type)
-            const picker={"1": "date", "2": "month", "3": "year"}[type?.toString()]
-               
-            if(type==4) { 
-              return <Form.Item  name="publicrangedate" initialValue={[moment().startOf("day"), moment().endOf("day")]}  >
-              <Daterange rangeDate={31}  />
-              </Form.Item> 
-            }else { 
-              return <Form.Item name="publicdate"  initialValue={moment()}>
+        ({ getFieldValue, setFieldValue }) => {
+          let type = getFieldValue("publictype")
+          console.log("type", type)
+          const picker = { "1": "date", "2": "month", "3": "year" }[type?.toString()]
+
+          if (type == 4) {
+            return <Form.Item name="publicrangedate" initialValue={[moment().startOf("day"), moment().endOf("day")]}  >
+              <Daterange rangeDate={31} />
+            </Form.Item>
+          } else {
+            return <Form.Item name="publicdate" initialValue={moment()}>
               <DatePicker picker={picker} />
-              </Form.Item>
-            }
+            </Form.Item>
+          }
         }
       }
-    </Form.Item> 
-   
- 
-    </Space>  
+    </Form.Item>
+
+
+  </Space>
 
 
   const refresh = (
-    <Item name="refresh">
-      <SyncOutlined style={{ color: '' }} />
+    <Item name="refresh" style={{ color: `${primaryColor}` }}>
+      <SyncOutlined style={{ color: `${primaryColor}` }} /> 刷新
     </Item>
 
   )
@@ -437,14 +439,14 @@ const changepublic=(e)=> {
 
   }, [props.config, projectId])
 
-/*   useEffect(() => {
-
-    if (nested == "public" && primary == 'runtimeEnergy') {
-      form.setFieldValue('date', [moment().startOf("day"), moment()])
-    } else {
-      form.setFieldValue('date', moment(new Date(), "YYYY-MM-DD"))
-    }
-  }, [nested, primary]) */
+  /*   useEffect(() => {
+  
+      if (nested == "public" && primary == 'runtimeEnergy') {
+        form.setFieldValue('date', [moment().startOf("day"), moment()])
+      } else {
+        form.setFieldValue('date', moment(new Date(), "YYYY-MM-DD"))
+      }
+    }, [nested, primary]) */
   return (
 
     <Cform layout="inline" form={form}   {...props.formprop}
@@ -464,29 +466,33 @@ const changepublic=(e)=> {
         {props.config?.isdevsty && deviceStyleNode}
         {props.config?.isview && viewtype}
         {props.config?.energytype && energytype}
-        {props.config?.refresh && refresh}
-        {/* {props.config?.powerStation && powerStation}
-        {props.config?.inverter && inverter} */}
+      </Space>
+      <Space>
+        {
+          props.config?.isdate && dateselect
+        }
+        {
+          props.config?.custview && custview
+        }
+        {
+          props.config?.export ? <ExportExcel /> : null
+        }
+        {
+          props.config?.dateY && carbonDateY // 碳排管理--碳排考核跟踪
+        }
+        {
+          props.config?.dateR && carbonDateR // 碳排管理-- 碳排分析
+        }
+        {
+          props.config.publicDate && publicDate // 能源管理--公共能耗
+        }
+
+        {
+          props.config?.refresh && refresh //光伏发电
+        }
       </Space>
 
-      {
-        props.config?.isdate && dateselect
-      }
-      {
-        props.config?.custview && custview
-      }
-      {
-        props.config?.export ? <ExportExcel /> : null
-      }
-      {
-        props.config?.dateY && carbonDateY // 碳排管理--碳排考核跟踪
-      }
-      {
-        props.config?.dateR && carbonDateR // 碳排管理-- 碳排分析
-      }
-      {
-        props.config.publicDate && publicDate // 能源管理--公共能耗
-      }
+
 
       <Item noStyle name="projectId" initialValue={projectId}>
         <Input hidden />

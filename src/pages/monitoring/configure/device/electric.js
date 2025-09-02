@@ -48,8 +48,6 @@ export default function gateway({ deviceStyle }) {
   const [alarmopts, setAlarmopts] = useState()
   const alarmoptsRef = useRef()
   alarmoptsRef.current = alarmopts
-  const [transitionName, setTransition] = useState(undefined)
-  const [maskTransitionName, setMaskTransitionName] = useState(undefined)
   const [loading, setLoading] = useState(false);
   const [page, setPage] = useState({
     current: 1,
@@ -415,6 +413,7 @@ export default function gateway({ deviceStyle }) {
     const res = await InsertOrUpdateDeviceParam(projectId, gatewaySn, newData)
     if (res.success) {
       message.success('参数设置成功')
+      addform.resetFields()
       modalFormRef?.current?.onCancel()
       EditModalFormRef?.current?.onCancel()
       SetmodalFormRef?.current?.onCancel()
@@ -451,11 +450,11 @@ export default function gateway({ deviceStyle }) {
       }
       const res = await AddElectric(params)
       if (res.success) {
-        //   addform.resetFields()
         getQueryByPageElectric(pageRef.current.current, pageRef.current.pageNum, compRef.current.selvalue, compRef.current.inpvalue, compRef.current.energyVal)
         if (type == 'submit') {
           message.success('新增成功!')
           modalFormRef?.current?.onCancel()
+          addform.resetFields()
         } else if (type == 'next') {
           openSetModal(addform.getFieldsValue())
           getQueryByPageElectric376()
@@ -473,8 +472,6 @@ export default function gateway({ deviceStyle }) {
   //新增确认应用
   const onSure = () => {
     addform.validateFields().then(async () => {
-      setTransition("")
-      setMaskTransitionName("")
       const formvalue = addform.getFieldsValue()
       let params = {
         id: 0,
@@ -508,8 +505,6 @@ export default function gateway({ deviceStyle }) {
   //新增弹窗取消
   const onAddCancel = () => {
     modalFormRef?.current?.onCancel()
-    setTransition(undefined)
-    setMaskTransitionName(undefined)
   }
   //打开批量导入窗口
   const multExport = () => {
@@ -702,8 +697,6 @@ export default function gateway({ deviceStyle }) {
     // addopts,
     // gatewaylist,
     // devicelist:deviceRef.current,
-    transitionName: transitionName,
-    maskTransitionName: maskTransitionName,
     onOk: addOk,
   }
   //设备参数
@@ -711,8 +704,6 @@ export default function gateway({ deviceStyle }) {
     SetmodalFormRef,
     width: 746,
     name: '设备参数',
-    transitionName: transitionName,
-    maskTransitionName: maskTransitionName,
     onOk: setOk,
   }
   const uploadprops = {
