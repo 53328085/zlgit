@@ -1,17 +1,38 @@
 import { DatePicker } from 'antd';
 import React, { useState } from 'react';
+import moment from 'moment';
 const { RangePicker } = DatePicker;
-const App = () => {
+
+export const publicdateType=[
+    {
+        value:1,
+        label: "日"
+    },
+    {
+        value:2,
+        label: "月"
+    },
+    {
+        value:3,
+        label: "年"
+    },
+    {
+        value:4,
+        label: "自定义"
+    }
+]
+
+export const Daterange = ({value, onChange,rangeDate}) => {
   const [dates, setDates] = useState(null);
-  console.log("dates", dates)
-  const [value, setValue] = useState(null);
+  
   const disabledDate = (current) => {
     if (!dates) {
       return false;
     }
-    const tooLate = dates[0] && current.diff(dates[0], 'days') > 7;
-    const tooEarly = dates[1] && dates[1].diff(current, 'days') > 7;
-    return !!tooEarly || !!tooLate;
+    
+    const tooLate = dates[0] && current.diff(dates[0], 'days') > rangeDate;
+    const tooEarly = dates[1] && dates[1].diff(current, 'days') > rangeDate;
+    return !!tooEarly || !!tooLate || (current && current> moment().endOf("day"));
   };
   const onOpenChange = (open) => {
     if (open) {
@@ -20,10 +41,7 @@ const App = () => {
       setDates(null);
     }
   };
-  const onChange=(v)=> {
-    console.log("onchange")
-    setValue(v)
-  }
+ 
   const onCalendarChange = (v)=> {
     console.log("onCalendarChange")
     setDates(v)
@@ -34,9 +52,8 @@ const App = () => {
       disabledDate={disabledDate}
       onCalendarChange={onCalendarChange}
       onChange={onChange}
-      onOpenChange={onOpenChange}
-      onBlur={() => console.log('blur has been triggered')}
+      onOpenChange={onOpenChange} 
     />
   );
 };
-export default App;
+ 

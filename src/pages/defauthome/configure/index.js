@@ -348,7 +348,7 @@ export default function Index() {
     const end = i.indexOf('_');
     
     return (
-      <div key={i} data-grid={el}>
+      <div key={i} data-grid={el} style={{display:"flex", felx:1}}>
         <span className="remove" style={removeStyle} onClick={() => onRemoveItem(i)}> X </span>
         {i.substring(0, end)=='公司信息'? <CompanyMessage></CompanyMessage> : null}
         {i.substring(0, end)=='今日告警'? <TodayWarning></TodayWarning> : null}
@@ -409,6 +409,12 @@ export default function Index() {
   '用电量','用水量','用燃气量','碳排放量','网关信息',
   '电表信息','变配电站数量','总额度容量','实时负荷','负荷率','断路器信息','传感器信息','变压器信息','触点测温','光纤测温'
 ]
+const zoom = {
+  minW:1,
+  maxW:8,
+  minH:1,
+  maxH:4, 
+}
   const onAddlayout = (xValue, yValue) => {
     let newlayout;
     let time = new Date()
@@ -420,6 +426,7 @@ export default function Index() {
         y: yValue,
         w: 2,
         h: 2,
+        ...zoom,
         'description': classOfName
       })
       setlayoutItem(newlayout?.map(l => ({...l, resizeHandles: availableHandles,})))
@@ -434,8 +441,9 @@ export default function Index() {
         y: yValue,
         w: 2,
         h: 1,
+        ...zoom,
         'description': classOfName,
-        isResizable: true,
+         
          
       })
       setlayoutItem(newlayout?.map(l => ({...l, resizeHandles: availableHandles,})))
@@ -448,6 +456,7 @@ export default function Index() {
         y: yValue,
         w: 1,
         h: 1,
+        ...zoom,
         'description': classOfName
       })
       setlayoutItem(newlayout?.map(l => ({...l, resizeHandles: availableHandles,})))
@@ -459,6 +468,7 @@ export default function Index() {
         y: yValue,
         w: 4,
         h: 2,
+        ...zoom,
         'description': classOfName
       })
         
@@ -530,8 +540,10 @@ onDrop: (layout: Layout, item: ?LayoutItem, e: Event) => void,
  const onDesgin =()=> {
     Ref.current.onOpen()
  }
- const onResizeStop=()=> {
-  console.log()
+ const onResize=(_, oldItem, newItem)=> {
+   console.log(newItem)
+   if (newItem?.w  >8 ) return false
+   if(newItem?.h >4) return false
  }
   return (
     <div className={style.mainContent} style={{ backgroundColor: '#eee' }}>
@@ -539,7 +551,7 @@ onDrop: (layout: Layout, item: ?LayoutItem, e: Event) => void,
       {contextHolder}
       <ReactGridLayout 
      
-   resizable className='layout' layout={layoutItem} onResize={()=>{}}  onResizeStop={onResizeStop} onLayoutChange={onLayoutChange} {...defaultProps} isDroppable={true} onDrop={onDrop} style={{backgroundColor: previewrbgcolor || '#135abd'}} >
+   resizable className='layout' layout={layoutItem} onResize={onResize}   onLayoutChange={onLayoutChange} {...defaultProps} isDroppable={true} onDrop={onDrop} style={{backgroundColor: previewrbgcolor || '#135abd'}} >
          {_.map(layoutItem, el => createElement(el))}  
       
       </ReactGridLayout>
