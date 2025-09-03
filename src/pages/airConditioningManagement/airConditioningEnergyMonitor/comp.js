@@ -185,6 +185,10 @@ const TbEcharts = ({ tablechartRef, columns }) => {
   ];
 
   const option = {
+    tooltip: {
+      trigger: "item",
+     
+    },
     title: [
       {
         text: segments[0].name,
