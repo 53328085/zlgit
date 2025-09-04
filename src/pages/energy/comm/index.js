@@ -141,7 +141,7 @@ export default function Index(props) {
       pieData: {
         ...poptions.pieData,
         data: proportion,
-        total:pietotal,
+        total:pietotal?.toFixed(2),
       }
     }) 
 
@@ -163,9 +163,16 @@ export default function Index(props) {
      if(Array.isArray(deviceDetailTable) && deviceDetailTable.length > 0) {
       let {detailHeaders} = deviceDetailTable[0]
           let last = detailHeaders.length - 1
-          let col = detailHeaders.map(c => ({ title: c, dataIndex: c, key: c, width: "96px" }))
-          col[last].fixed = "right"
-          setColumns([ ...dtlcolumns,...col])
+          let col = detailHeaders.map(c => ({ title: c, dataIndex: c, key: c, width: "96px", ellipsis:true, }))
+        //  col[last].fixed = "right"
+          setColumns([ ...dtlcolumns,...col, {
+            title: "总能耗",
+            dataIndex: 'total',
+            key: 'total',
+            width: 100,
+            fixed: "right",
+            ellipsis:true,
+          },])
           deviceDetailTable.forEach(item => {
             let { detailHeaders, detailValues } = item;
             for (const [index, val] of detailHeaders?.entries()) {
@@ -177,7 +184,14 @@ export default function Index(props) {
         total,
       }
      }else {
-       setColumns(dtlcolumns)
+       setColumns([...dtlcolumns, {
+        title: "总能耗",
+        dataIndex: 'total',
+        key: 'total',
+        width: 100,
+        fixed: "right",
+        ellipsis:true,
+      }])
        setPageTotal(0)
        return {
          list :[],
@@ -267,7 +281,7 @@ const {tableProps, search, refresh} =  useAntdTable(getData, {
             columns={columns}
              key="table" 
              sheetName={sheetName}
-             scroll={{x: 1332, y: "max-content" }}
+             scroll={{x: 1332, y: 400 }}
              onExport={onExport}
               /></div>}
           </div>

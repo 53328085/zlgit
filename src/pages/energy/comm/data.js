@@ -37,27 +37,24 @@ export  const totalcolumns = [
         dataIndex: 'name',
         key: 'name',
         width: 140,
-         fixed: "left"
+         fixed: "left",
+         ellipsis:true,
       },
       {
         title: "设备编号",
         dataIndex: 'sn',
         key: 'sn',
         width: 140,
-        fixed: "left"
+        fixed: "left",
+        ellipsis:true,
       },
       {
         title: "安装地址",
         dataIndex: 'address',
         key: 'address',
         width: 140,
-        fixed: "left"
+        fixed: "left",
+        ellipsis:true,
       },
-      {
-        title: "总能耗",
-        dataIndex: 'total',
-        key: 'total',
-        width: 100,
-        fixed: "left"
-      },
+     
   ]

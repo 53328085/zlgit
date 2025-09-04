@@ -258,6 +258,53 @@ export const fromlot = [ // 电能报表
     dataIndex: 'name',
     key: "name"
   }, {
+    title: '起始电量',
+    dataIndex: 'eStart',
+    key: "eStart",
+  }, {
+    title: '结束电量',
+    dataIndex: 'eEnd',
+    key: "End",
+  }, {
+    title: '用能(kWh)',
+    dataIndex: 'consume',
+    key: "consume",
+  }, {
+    title: '起始读数',
+    dataIndex: 'start',
+    key: "start",
+  }, {
+    title: '结束读数',
+    dataIndex: 'end',
+    key: "end",
+  },
+  {
+    title: '倍率',
+    dataIndex: 'magnification',
+    key: "magnification",
+  },
+  {
+    title: '设备编号',
+    dataIndex: 'sn',
+    key: "sn"
+  },
+  {
+    title: '安装位置',
+    dataIndex: 'address',
+    key: "address"
+  },
+]
+/* export const fromlot = [ // 电能报表 
+  {
+    title: '区域名称',
+    dataIndex: 'nodeName',
+    key: "nodeName"
+  },
+  {
+    title: '设备名称',
+    dataIndex: 'name',
+    key: "name"
+  }, {
     title: '起始读数',
     dataIndex: 'start',
     key: "start",
@@ -281,7 +328,7 @@ export const fromlot = [ // 电能报表
     dataIndex: 'address',
     key: "address"
   },
-]
+] */
 export const shitcols = [  // 班次能耗 
   {
     title: '区域名称',
