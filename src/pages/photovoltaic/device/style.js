@@ -71,14 +71,42 @@ export const TopBox = styled.div`
     display:flex;
     align-items: center;
     color:#606266;
+    justify-content: space-around;
   .powerIcon{
     width: 36px;
     height: 36px;
+    margin-right:10px;
   }
+    .num2{
+    display:flex;
+    align-items: center;
+    }
     .num{
-    margin-left:10px;
     font-weight: 400;
     font-size: 13px;
+    .status{
+    width: 56px;
+    height: 25px;
+    line-height: 25px;
+    border-radius: 2px;
+    text-align: center;
+    margin-right:10px;
+    color: #FFFFFF;
+    }
+    .circle{
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      margin: 0px 5px;
+      display: inline-block;
+      }
+      
+      .online{
+      background: #1EC373;
+      }
+      .offline{
+      background: #717D96;
+      }
     div:nth-of-type(1){
       font-size: 18px;
       color: #1E50E6;
@@ -125,12 +153,16 @@ export const TopBox = styled.div`
 `
 
 export const FotterBox = styled.div`
-flex: 1;
+  flex: 1;
   display: grid;
   color: #515151;
   grid-template-columns: ${props => props.laptop ? "1fr 1fr" : "660px  1fr"} ;
   gap: 16px;
   justify-content: flex-end;
+  .realTimeData{
+   display:grid;
+   gap: 16px;
+  }
  .infoBox3{
       display:flex;
       align-items: center;

@@ -364,13 +364,13 @@ export default function gateway({ deviceStyle }) {
             DeviceId: 823, //设备标识
             Id: 11, //设备标识
             integerDigits: 2, //电能示值的整数位个数
-            largeCategory: 5, //大类号
+            largeCategory: 8, //大类号
             password: "000000000000", //通信密码，可为空
             collectSn: "000000000000", //采集器通信地址
             pn: "1", //所属测量点号，范围0-2040
             protocolType: 30,
             rateCount: 4, //费率数（1-12）
-            smallCategory: 0, //小类号
+            smallCategory: 1, //小类号
             parityBites: ''//校验方式
         })
         SetmodalFormRef?.current?.onOpen()
