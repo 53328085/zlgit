@@ -93,7 +93,7 @@ export const items =(option, csn, msn)=> (
         <Select options={csn} placeholder="请输入路灯控制器" fieldNames={{label: "name", value:"text"}}></Select>
       </Form.Item>
       <Form.Item label="路灯类型" name="type">
-        <Select options={options}></Select>
+        <Select options={options} allowClear></Select>
       </Form.Item>
       <Form.Item name="id" noStyle initialValue={0}>
         <Input hidden></Input>

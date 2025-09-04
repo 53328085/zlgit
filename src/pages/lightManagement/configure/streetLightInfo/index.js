@@ -137,9 +137,9 @@ export default function Index() {
   }
   const onEdit=(row)=> {
     setIsadd(false)
-    const {projectId:id, ...params} = row
+    const {projectId:id,type, ...params} = row
 
-    newform.setFieldsValue({...params, projectId},)
+    newform.setFieldsValue({...params,type:type==0 ?null :type, projectId},)
     editRef.current.onOpen()
   }
   const onOk= async()=> {
