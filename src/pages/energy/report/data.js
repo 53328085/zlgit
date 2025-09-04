@@ -96,7 +96,7 @@ export const cols = (startDate, endDate) => {
       key: "end",
     },
     {
-      title: '用能(kWh)',
+      title:  '用能(kWh)',
       dataIndex: 'consume',
       key: "consume",
       sorter: (a, b) => parseFloat(a?.consume) - parseFloat(b?.consume)

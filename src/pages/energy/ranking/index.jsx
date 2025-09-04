@@ -8,7 +8,7 @@ import Pagecount from "@com/pagecontent";
 import Titlelayout from '@com/titlelayout';
 import { getTime } from '@com/usehandler'
 import { useRequest } from 'ahooks'
-import { Select, Form, Radio, DatePicker, Divider, message,Cascader } from 'antd'
+import { Select, Form, Radio, DatePicker, Divider, message,Cascader, Space } from 'antd'
 import moment from "moment";
 import first from './img/first.png'
 import second from './img/second.png'
@@ -16,7 +16,7 @@ import third from './img/third.png'
 import fourth from './img/fourth.png'
 import fifth from './img/fifth.png'
 import Cempty from '@com/useEmpty'
-import { use } from 'i18next';
+
 const { RangePicker } = DatePicker;
 const Main = styled.div`
   display: flex;
@@ -315,8 +315,8 @@ export default function Index() {
       form.setFieldValue('dateC', d)
     }, [d])
     return (
-      <>
-        <Form.Item name="sortA" initialValue="a" label="能耗排名" style={{ marginLeft: 'auto', marginRight: '16px' }}>
+      <Space>
+        <Form.Item name="sortA" initialValue="a" label="能耗排名"    style={{ marginLeft: 'auto', marginRight: '16px' }}>
           <Radio.Group defaultValue="a" buttonStyle="solid" onChange={changeType}>
             <Radio.Button value="a">按区域</Radio.Button>
             <Radio.Button value="b">按设备</Radio.Button>
@@ -341,7 +341,7 @@ export default function Index() {
         <Form.Item name="dateC" initialValue={dateRang} label="日期选择">
           <RangePicker format="YYYY-MM-DD" defaultValue={dateRang} disabledDate={disabledDate} />
         </Form.Item>
-      </>
+      </Space>
     )
   }
 

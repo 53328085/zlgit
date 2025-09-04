@@ -23,3 +23,8 @@ export const { usePage } = new Apimethod( //查询  路灯档案
     "post",
     "Light/StreetLight/Import"
   );
+
+  export const { useQuerySelectList} = new Apimethod( //上传  路灯档案
+    "get",
+    "Light/StreetLight/QuerySelectList"
+  );

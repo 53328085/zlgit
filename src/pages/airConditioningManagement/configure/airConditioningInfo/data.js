@@ -149,9 +149,9 @@ export const items = ({ csn = [], msn = [], model = [] }) => (
       <Form.Item name="id" noStyle initialValue={0}>
         <Input hidden></Input>
       </Form.Item>
-      <Form.Item name="projectId" noStyle>
+      {/* <Form.Item name="projectId" noStyle>
         <Input hidden></Input>
-      </Form.Item>
+      </Form.Item> */}
     </div>
     </div>
   </Formbox>

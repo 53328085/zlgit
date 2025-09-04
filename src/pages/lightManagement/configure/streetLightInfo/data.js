@@ -63,7 +63,7 @@ const options = [
   { label: "景观灯", value: 4 },
   { label: "其他", value: 5 },
 ];
-export const items =(option)=> (
+export const items =(option, csn, msn)=> (
   <Frombox>
     <div>
       <Form.Item label="所属园区" rules={rules} name="areaId">
@@ -86,11 +86,11 @@ export const items =(option)=> (
       <Form.Item label="路灯编号" rules={rules} name="no">
         <Input></Input>
       </Form.Item>
-      <Form.Item label="所属计量设备" rules={rules} name="mSn">
-        <Input placeholder="请输入电表sn"></Input>
+      <Form.Item label="所属计量设备" name="mSn" labelCol={{flex: "8em"}}>
+        <Select options={msn} placeholder="请输入电表sn"  fieldNames={{label: "name", value:"text"}}></Select>
       </Form.Item>
-      <Form.Item label="所属控制器编号" name="cSn">
-        <Input placeholder="请输入路灯控制器"></Input>
+      <Form.Item label="所属控制器编号" name="cSn" labelCol={{flex: "8em"}}  rules={rules}>
+        <Select options={csn} placeholder="请输入路灯控制器" fieldNames={{label: "name", value:"text"}}></Select>
       </Form.Item>
       <Form.Item label="路灯类型" name="type">
         <Select options={options}></Select>
