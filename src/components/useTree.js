@@ -244,6 +244,7 @@ const onSelect=(selectedKeys, e)=> {
  
   setNode && setNode?.(e.node)
   setTreeId(selectedKeys)
+  setCheckedKeys(selectedKeys)
 }
 
 
@@ -322,6 +323,7 @@ const onSelect=(selectedKeys, e)=> {
             onExpand={onExpand}
             expandedKeys={expandedKeys}
             checkedKeys={checkedKeys}
+            selectedKeys={checkedKeys}
             onCheck={onCheck}
             onSelect={onSelect}
             fieldNames={fieldNames}

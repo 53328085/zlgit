@@ -45,7 +45,7 @@ export default function Index() {
     try {
       setIsAdd(true)
        defaultimg.current =await imgToBase64(imgurl["aircon"])
-      form.setFieldValue("image", defaultimg)
+      form.setFieldValue("image", defaultimg.current)
       form.setFieldValue("id",0)
       
       aref.current.onOpen()
