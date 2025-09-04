@@ -10,8 +10,8 @@ import CModal from '@com/useModal'
 import {useQueryACModels,useInsertOrUpdateACModel, useDeleteACModel } from "./api"
 import {cols,items} from './data'
 import {TitleBox} from './style'
- 
- 
+import imgurl from '@imgs/index'; 
+import  {imgToBase64} from "@com/useUpload.js" 
 const {Link} = Typography
 export default function Index() {
   const {projectId} = useOutletContext()
@@ -40,14 +40,24 @@ export default function Index() {
        
      }
   }
-  const onAdd =()=> {
-    setIsAdd(true)
-    form.setFieldValue("id",0)
-    aref.current.onOpen()
+  const defaultimg = useRef()
+  const onAdd =async()=> {
+    try {
+      setIsAdd(true)
+       defaultimg.current =await imgToBase64(imgurl["aircon"])
+      form.setFieldValue("image", defaultimg)
+      form.setFieldValue("id",0)
+      
+      aref.current.onOpen()
+    } catch (error) {
+      console.log(error)
+    }
+
   }
   const onOK =async()=> {
     try {
       let values =   await form.validateFields()     
+      values.image = values.image || defaultimg.current
       let {success, errMsg} =   await useInsertOrUpdateACModel({operate}, {...values, projectId})
     
       if(success) {

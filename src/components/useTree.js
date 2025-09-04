@@ -29,7 +29,7 @@ const Treebox = styled.div`
        }
 `
 
-export default memo(function Index({ areaId, setTreeId, setLine, showline = true, datatype = NaN, energytype, sty = { bordered: 'y', pv: '16px' }, allselect = true, selectobj, multiple = true, treeName = '',title="", ...restprop }) {
+export default memo(function Index({ areaId, setTreeId, setLine, setNode, showline = true, datatype = NaN, energytype, sty = { bordered: 'y', pv: '16px' }, allselect = true, selectobj, multiple = true, treeName = '',title="", ...restprop }) {
   // datatype =0 或 =2
   const [treeData, setTreeData] = useState([])
 
@@ -186,15 +186,15 @@ export default memo(function Index({ areaId, setTreeId, setLine, showline = true
             break
 
         }
-
+       setNode &&  setNode?.(data[0])
         treeIdRef.current = arr
         setIndeterminate(false)
         setChecked(true)
         setTreeData(data)
-        setCheckedKeys(() => arr);
+          setCheckedKeys(() => arr);
         setExpandedKeys(expand)
         setTreeId(arr);
-
+       
         /*  if(name) {
              setTreeId(arr)
              setCheckedKeys(arr)
@@ -241,8 +241,8 @@ export default memo(function Index({ areaId, setTreeId, setLine, showline = true
 
 //  单选模式
 const onSelect=(selectedKeys, e)=> {
- //  console.log(selectedKeys)
-  // console.log(e)
+ 
+  setNode && setNode?.(e.node)
   setTreeId(selectedKeys)
 }
 

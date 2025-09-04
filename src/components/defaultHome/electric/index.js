@@ -1,13 +1,14 @@
-import React, {useEffect, useState} from 'react'
+import React, {useEffect, useState, useContext, useMemo} from 'react'
 import {useSelector} from 'react-redux'
 import { selectProjectId, iszhCN } from '@redux/systemconfig.js'
 import {TitlelayoutOv as Titlelayout} from '@com/titlelayout';
- 
+import {isObject} from "@com/usehandler"
 import { HomeRuntime } from '@api/api.js'
 import { message } from 'antd';
 import {CustTransO} from "@com/useButton"
 import {useTranslation} from "react-i18next"
 import Ichart  from '@com/useEcharts/Ichart';
+import Context from "@com/content"
 const fs = {
 //  hv: '24px',
   fc: '#333',
@@ -18,10 +19,16 @@ const fs = {
 
 
 export default function DefaultHome(props){
+  const {change, laptop} = useContext(Context)
+  console.log("change",change)
   const projectId = useSelector(selectProjectId)
+  
   const iszh = useSelector(iszhCN)
   const {t} = useTranslation(["overview", "comm"])
-  const [options, setOptions] = useState({
+  const [data, setData] = useState({})
+  const  options  = useMemo(()=> {
+    const {x=[], y=[]} = data
+    return {
     series: [{ type: "line",  seriesLayoutBy: 'row' }],  
     grid:{
       left: "0px",
@@ -35,11 +42,19 @@ export default function DefaultHome(props){
       itemHeight: 4,
       itemWidth: 16,
     },
-    dataset: {}
-  })
+    dataset: {
+      dimensions: [
+        {name:  t("comm:date"), type: 'time'},
+        {name:   t("overview:ElectricityConsumption") },
+        
+      ],
+      source: [x, y],
+      sourceHeader: false,
+    }
+  }}, [change, laptop, data])
 
  
-  
+ 
  
 
   const { GetUseETrends } = HomeRuntime
@@ -49,24 +64,13 @@ export default function DefaultHome(props){
       GetUseETrends(projectId).then(res => {
         let {success, data} = res
           if(success){
-            if(data.constructor == Object){
-              let {x, y} = data
-              let dataset = {
-                dimensions: [
-                  {name:  t("comm:date"), type: 'time'},
-                  {name:   t("overview:ElectricityConsumption") },
-                  
-                ],
-                source: [x, y],
-                sourceHeader: false,
-              }
-            
-              setOptions({...options, dataset})
-            }
+            if(isObject(data)){
+              setData(data)
           }else{
+            setData({})
             message.error(res.errMsg)
           }
-      }).catch()
+      }}).catch()
    
   }, [iszh])
   

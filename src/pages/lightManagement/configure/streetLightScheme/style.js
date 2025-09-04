@@ -125,3 +125,26 @@ export const Bindwrap = styled.div`
   }
 
 `
+export const Linewrap = styled.div`
+  && {
+   display: grid;
+   grid-template-columns:  1fr 90px 1fr ;
+   column-gap: 16px;
+   grid-template-rows: 712px;
+   .tbwrap {
+    display: flex;
+    flex-direction: column;
+    row-gap: 16px;
+    border: 1px solid #dedede;
+    padding: 8px;
+   }
+   .handler {
+     display: flex;
+     flex-direction: column;
+     justify-content: center;
+     row-gap: 32px;
+    
+   }
+  }
+
+`

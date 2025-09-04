@@ -37,6 +37,7 @@ export  const Mainwrap = styled.div`
         display: flex;
         align-items: center;
         justify-content: space-between;
+        min-height: 22px;
        }
        .lights {
          flex:1;

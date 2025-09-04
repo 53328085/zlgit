@@ -211,7 +211,7 @@ export default function Index() {
 
 
   return (
-    <div className={style.mainContent} >
+    <div className={style.mainContent} style={{backgroundColor: previewrbgcolor || '#135abd'}} >
       <Context.Provider value={{laptop}}>
       <ReactGridLayout layout={layoutItem} {...defaultProps} style={{backgroundColor: previewrbgcolor || '#135abd'}}>
         {_.map( layoutItem, el =>createElement(el) )} 

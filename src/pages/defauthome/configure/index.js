@@ -127,6 +127,7 @@ export default function Index() {
   const Ref = useRef()
   const { Search } = Input
   const {laptop} = useSelector(adaptation)
+  const [change, setChange] = useState() // 组件尺寸修改后
   const [messageApi, contextHolder] = message.useMessage();
   const messageContent = (type, content) => {
     messageApi.open({
@@ -410,9 +411,7 @@ export default function Index() {
   '电表信息','变配电站数量','总额度容量','实时负荷','负荷率','断路器信息','传感器信息','变压器信息','触点测温','光纤测温'
 ]
 const zoom = {
-  minW:1,
   maxW:8,
-  minH:1,
   maxH:4, 
 }
   const onAddlayout = (xValue, yValue) => {
@@ -426,6 +425,8 @@ const zoom = {
         y: yValue,
         w: 2,
         h: 2,
+        minW:2,
+        mnH:2,
         ...zoom,
         'description': classOfName
       })
@@ -441,6 +442,8 @@ const zoom = {
         y: yValue,
         w: 2,
         h: 1,
+        minW:2,
+        minH:1,
         ...zoom,
         'description': classOfName,
          
@@ -456,6 +459,8 @@ const zoom = {
         y: yValue,
         w: 1,
         h: 1,
+        minW:1,
+        minH:1,
         ...zoom,
         'description': classOfName
       })
@@ -468,6 +473,8 @@ const zoom = {
         y: yValue,
         w: 4,
         h: 2,
+        minW:4,
+        minH:2,
         ...zoom,
         'description': classOfName
       })
@@ -545,18 +552,24 @@ onDrop: (layout: Layout, item: ?LayoutItem, e: Event) => void,
    if (newItem?.w  >8 ) return false
    if(newItem?.h >4) return false
  }
+ const onResizeStop=(_, oldItem, newItem)=> {
+    console.log("oldItem",oldItem)
+    console.log("newItem", newItem)
+    if(oldItem.w!=newItem.w || oldItem.y != newItem.y) {
+      setChange({})
+    }
+ }
   return (
-    <div className={style.mainContent} style={{ backgroundColor: '#eee' }}>
-      <Context.Provider value={{laptop}}>
+    <div className={style.mainContent} style={{backgroundColor: previewrbgcolor || '#135abd'}}>
+      <Context.Provider value={{laptop, change }}>
       {contextHolder}
       <ReactGridLayout 
      
-   resizable className='layout' layout={layoutItem} onResize={onResize}   onLayoutChange={onLayoutChange} {...defaultProps} isDroppable={true} onDrop={onDrop} style={{backgroundColor: previewrbgcolor || '#135abd'}} >
+   resizable className='layout' layout={layoutItem} onResize={onResize} onResizeStop={onResizeStop}   onLayoutChange={onLayoutChange} {...defaultProps} isDroppable={true} onDrop={onDrop} style={{backgroundColor: previewrbgcolor || '#135abd'}} >
          {_.map(layoutItem, el => createElement(el))}  
       
       </ReactGridLayout>
       <div className={style.selectMenu}>
-        
         <SelectTab tabName={'基础信息'}></SelectTab>
         <SelectTab tabName={'运行监控'}></SelectTab>
         <SelectTab tabName={'运维工单'}></SelectTab>

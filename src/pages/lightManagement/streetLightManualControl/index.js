@@ -1,5 +1,5 @@
 import React, { useRef, useState, useEffect, useMemo } from "react";
-import { Space, Form, Select, Input,Checkbox,Typography, message } from "antd";
+import { Space, Form, Select, Input,Checkbox,Typography, message, Switch } from "antd";
 import Pagecount from "@com/pagecontent";
 import {useSelector} from "react-redux"
  import {selectProjectId} from "@redux/systemconfig"
@@ -11,7 +11,7 @@ import UseTree from "@com/useTree"
 import { options,states } from "./data";
 import CModal from "@com/useModal";
 import {isObject} from "@com/usehandler"
- import { useList,useSetControl, useTree } from "./api.js";
+ import { useList,useSetControl, useOneByOneControl, useLineControl} from "./api.js";
  import opensvg from './svgs/open.svg'
  import closesvg from './svgs/close.svg'
 import { Mainwrap, TitleBox } from "./style";
@@ -23,7 +23,10 @@ export default function Index() {
    const [indeterminate, setIndeterminate] = useState(false)
    const [checkedList, setCheckedList] = useState([]);
    const [line, setLine] = useState(0)
+   const single = line==1
+   const [node, setNode] = useState()
    const [checked, setChecked] = useState(false)
+   const [onOff, setOnoff] = useState(false)
    const [checkedLen, lightName] = useMemo(()=> {
        let len =  checkedList?.length
        let names = lingts?.details?.filter?.(d =>checkedList.includes(d.id))?.map?.(d=> d.name) || []
@@ -36,7 +39,8 @@ export default function Index() {
  // console.log(lingts)
   const getData = async () => {
     if(!Array.isArray(treeId)) return;
-    console.log("treeId",treeId)
+    if(!treeId?.[0]) return
+  //  console.log("treeId",treeId)
     const {alike="", type=0,ioState} = form.getFieldsValue()
     try {
       let body = line==0 ? {
@@ -46,7 +50,7 @@ export default function Index() {
          type,
          ioState
       }: {
-        lineId: treeId?.[0] || 0 ,
+        lineId: treeId?.[0],
         projectId,
         alike,
          type,
@@ -65,6 +69,11 @@ export default function Index() {
            let checked = checkedList.filter(d => ids.includes(d))
            setCheckedList(checked)
            setChecked(ids?.length==checked?.length)
+           if (single) {
+              setOnoff(data.details[0].state==2 ? 1 :2) // 状态是1 开， 显示 关
+
+           }
+
         }else {
           setCheckedList([])
           setChecked(false)
@@ -105,29 +114,49 @@ export default function Index() {
  }
 const [brightness, setBrightness] = useState(0)
 const copy= useMemo(()=> {
+  let str =""
+  
   if (brightness>0) {
-    return  "开启"+ lightName.join()+ "。亮度值为："+brightness
+    str=  "开启"+ lightName.join()+ "。亮度值为："+brightness
   }else {
-    return "关闭:"+lightName.join()
+    str= "关闭:"+lightName.join()
   }
-},[brightness,lightName])
+  let str2 = onOff==1 ? `开启${node?.name}线路` :  `关闭${node?.name}线路`
+  return single ? str2 : str;
+},[brightness,lightName,single, node,onOff])
 const lingthChnage=(v)=> {
   setBrightness(v)
 }
+ const stateRef = useRef()
+ const onControl=(e)=> {
+   if(single) {
+     if(Array.isArray(treeId) && treeId?.length==0) {
+       return message.warning("请选择要开关的线路")
+     }else if(Array.isArray(treeId) && treeId?.length == 1) {
+       stateRef.current = e ? 1 : 2
+      mRef.current.onOpen()
+     }
+   }else {
+    if(checkedList.length==0) return message.warning("请选择要控制的路灯")
+      mRef.current.onOpen()
+   }
 
- const onControl=()=> {
-   if(checkedList.length==0) return message.warning("请选择要控制的路灯")
-    mRef.current.onOpen()
  }
- const onOk= async()=> {
+ const onOk= async()=> {   // 单灯控制
    let points =  lingts?.details?.filter(l => checkedList.includes(l.id))?.map(m => ({gateway:m.gateway, dev:m.dev}))
    try {
-    let body ={
+    let body =single? {
+      projectId,
+      state:onOff,
+      sn:node.sn
+    } :
+    {
        projectId,
        brightness,
        points, 
     }
-     let {success, errMsg} = await  useSetControl({}, body)
+   
+     let {success, errMsg} =single ? await  useLineControl(body) : await useOneByOneControl({}, body)
      if(success) {
        getData()
        message.success("设置成功")
@@ -139,24 +168,26 @@ const lingthChnage=(v)=> {
     
    }
  }
+ 
+ 
   const title = (
     <TitleBox>
       <span>路灯列表</span>
-      <Space size={16}>
+     {single ? <Switch checkedChildren="开" checked={onOff==1} unCheckedChildren="关" onChange={onControl}></Switch> : <Space size={16}>
         <Cslider onChange={lingthChnage}  />
         <CustButtonT text="control" onClick={onControl}></CustButtonT>
-      </Space>
+      </Space>}
     </TitleBox>
   );
   return (
     <Pagecount pd="0" bgcolor="none">
       <Mainwrap>
         <div className="left">
-           <UseTree areaId={0} title="路灯设备列表" setTreeId={setTreeId} setLine={setLine} showline={true} allselect={line==0}  multiple={line==0}   datatype={line==0 ? 0 : 4} energytype={1} ></UseTree>
+           <UseTree areaId={0} title="路灯设备列表" setTreeId={setTreeId} setNode={setNode} setLine={setLine} showline={true} allselect={line==0}  multiple={line==0}   datatype={line==0 ? 0 : 4} energytype={1} ></UseTree>
         </div>
         <div className="right">
           <div className="up">
-            <Form form={form} layout="inline">
+            <Form form={form} layout="inline" disabled={single}>
               <Space size={32}>
               <Form.Item name="alike" label="路灯名称/编号">
                 <Input placeholder="请输入路灯名称或编号" allowClear></Input>
@@ -174,15 +205,37 @@ const lingthChnage=(v)=> {
             </Form>
           </div>
           <Titlelayout layout="flex" title={title}>
-            <div className="content">
+           {single ?
+           <div className="content">
+            <div className="lights">
+            {
+             lingts?.details?.map?.(l => (<div className={l.state==2 ? "light close" : "light" }>
+               
+               <div>
+                 {l.name}
+               <div > {`(${l.cSn})`} </div>
+               </div>
+               <div className="imgbox">
+               <img src={l.state==1 ? opensvg : closesvg} className="img"></img>
+               {
+                 l.fields?.map(f=> (<span>{f.name}:{f.value}</span>))
+               }
+               </div>
+             
+             </div>))
+            }
+       </div>
+       </div>
+           :
+           <div className="content">
               <div className="tip">
                <Space><Checkbox indeterminate={indeterminate} checked={checked} onChange={allChagne}>全选</Checkbox><Text>已选择{checkedLen}台</Text></Space>
                <Text>开启/关闭: {lingts?.openNum}/{lingts?.closeNum}</Text>
               </div>
-              <Checkbox.Group onChange={checkChange} value={checkedList}>
+              <Checkbox.Group onChange={checkChange} value={checkedList} >
               <div className="lights">
                    {
-                    lingts?.details?.map?.(l => (<div className={l.close ? "light close" : "light" }>
+                    lingts?.details?.map?.(l => (<div className={l.state==2 ? "light close" : "light" }>
                        <Checkbox value={l.id}>
                       <div>
                         {l.name}
@@ -200,11 +253,12 @@ const lingthChnage=(v)=> {
               </div>
               </Checkbox.Group>
             </div>
+}
 
           </Titlelayout>
         </div>
         <CModal mold="cust" type="question" title="远程控制" width={592} ref={mRef} onOk={onOk} >
-        确认要远程<Text strong>{copy}</Text> ？
+             确认要远程<Text strong>{copy}</Text> ？
         </CModal>
       </Mainwrap>
     </Pagecount>

@@ -1,42 +1,12 @@
-import { DatePicker } from 'antd';
-import React, { useState } from 'react';
-const { RangePicker } = DatePicker;
-const App = () => {
-  const [dates, setDates] = useState(null);
-  console.log("dates", dates)
-  const [value, setValue] = useState(null);
-  const disabledDate = (current) => {
-    if (!dates) {
-      return false;
-    }
-    const tooLate = dates[0] && current.diff(dates[0], 'days') > 7;
-    const tooEarly = dates[1] && dates[1].diff(current, 'days') > 7;
-    return !!tooEarly || !!tooLate;
-  };
-  const onOpenChange = (open) => {
-    if (open) {
-      setDates([null, null]);
-    } else {
-      setDates(null);
-    }
-  };
-  const onChange=(v)=> {
-    console.log("onchange")
-    setValue(v)
-  }
-  const onCalendarChange = (v)=> {
-    console.log("onCalendarChange")
-    setDates(v)
-  }
+import React, {useState,memo} from 'react'
+import {Button} from 'antd'
+
+export default function Index() {
+  const [change, setChange] = useState({})
+  console.log("rendr", change)
   return (
-    <RangePicker
-      value={dates || value}
-      disabledDate={disabledDate}
-      onCalendarChange={onCalendarChange}
-      onChange={onChange}
-      onOpenChange={onOpenChange}
-      onBlur={() => console.log('blur has been triggered')}
-    />
-  );
-};
-export default App;
+    <div>
+      <Button onClick={()=>setChange({})}>更改</Button>
+    </div>
+  )
+}

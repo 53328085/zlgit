@@ -306,7 +306,7 @@ const cref = useRef()
 
 export  const imgToBase64 = (url)  => { 
 	return new Promise((resolve, reject) => {
-		const image = new Image()
+		const image = document.createElement("img")
 		image.src = url
 		image.onload = () => {     
 			const canvas = document.createElement('canvas')
