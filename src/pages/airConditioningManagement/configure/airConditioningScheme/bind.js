@@ -161,7 +161,7 @@ const  {tableProps, run, search, refresh} = useAntdTable(getUnBind, {
           <CModal title="空调绑定"   onOk={onOk} onCancel={onOk}   width={1380} mold="cust"    ref={mRef}>
             <Bindwrap>
               <div style={{overflow: "auto"}}>
-               <UseTree areaId={0} setTreeId={setTreeId} setLine={()=>{}} showline={false} datatype={NaN} energytype={1} ></UseTree>
+               <UseTree areaId={NaN} setTreeId={setTreeId} setLine={()=>{}} showline={false} datatype={5} energytype={1} ></UseTree>
                </div>
                <div className='tbwrap'> 
                    <Form form={form} layout="inline">
