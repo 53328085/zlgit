@@ -30,7 +30,15 @@ const Treebox = styled.div`
        }
 `
 
-export default memo(function Index({ areaId, setTreeId, setLine, setNode, showline = true, datatype = NaN, energytype, sty = { bordered: 'y', pv: '16px' }, allselect = true, selectobj, multiple = true, treeName = '',title="", ...restprop }) {
+export default memo(function Index({ areaId, setTreeId, setLine, setNode, showline = true, datatype = NaN, energytype, 
+  sty = { bordered: 'y', pv: '16px' }, 
+  allselect = true, 
+  selectobj, 
+  multiple = true,
+   treeName = '',
+   title="", 
+   mode=null,
+   ...restprop }) {
   // datatype =0 或 =2
   const levelone = useSelector(selectOneLevel)
   console.log(levelone)
@@ -49,7 +57,7 @@ export default memo(function Index({ areaId, setTreeId, setLine, setNode, showli
   const [typeTree, setTypeTree] = useState(0)
 
   //const treekey = datatype === 0 ? 'areaId' : datatype === 2||3 ? 'id' :  typeTree == 0 ? "areaId" : "id";
-  const treekey = datatype === 0 ? 'areaId' : [2, 3, 4,5].includes(datatype) ? 'id' : typeTree == 0 ? "areaId" : "id";
+  const treekey = datatype === 0 ? 'areaId' : [1,2, 3, 4,5].includes(datatype) ? 'id' : typeTree == 0 ? "areaId" : "id";
   // datatype =5 时 展示一级区域 levelone
 
   // const treekey =  typeTree == 0 ?  "areaId" : "id" ; 
@@ -102,6 +110,7 @@ export default memo(function Index({ areaId, setTreeId, setLine, setNode, showli
   
  const fieldNames =useMemo(()=> {
   return {
+    "1":{ title: 'name', key: treekey, children: 'nodes' },
     "2":{ title: 'name', key: treekey, children: 'childs' },
     "3":{ title: 'name', key: treekey, children: 'children' },
     "4":{ title: 'name', key: treekey, children: 'nodes' },
@@ -166,7 +175,11 @@ export default memo(function Index({ areaId, setTreeId, setLine, setNode, showli
            }
        } */
 
-      const { success, data, errMsg } = await hander(params)
+      let { success, data, errMsg } = await hander(params)
+      if(mode) {
+        data=data.filter(d=>mode(d))
+      }
+      console.log(data)
       if (success && Array.isArray(data)) {
       //  console.log(idx)
         switch (idx) {
@@ -223,7 +236,7 @@ export default memo(function Index({ areaId, setTreeId, setLine, setNode, showli
 
   // 复选框模式
   const onCheck = (data, e) => { // 受控
-    console.log(data)
+    
     let checked
     
       if (schecked == 1) {
@@ -243,11 +256,13 @@ export default memo(function Index({ areaId, setTreeId, setLine, setNode, showli
   }
 
 //  单选模式
-const onSelect=(selectedKeys, e)=> {
+const onSelect=(selectedKeys, e)=> {   // 损耗分析 不是一级节点而且没有子节点的不需要查询。传入一个函数
  
-  setNode && setNode?.(e.node)
-  setTreeId(selectedKeys)
-  setCheckedKeys(selectedKeys)
+    setNode && setNode?.(e.node)
+    setTreeId(selectedKeys)
+    setCheckedKeys(selectedKeys)
+
+
 }
 
 
@@ -321,7 +336,6 @@ const onSelect=(selectedKeys, e)=> {
           {showline && <Radio.Group onChange={switchLine} style={radiosty} value={typeTree}>
             <Radio value={0}>按网格</Radio>
             <Radio value={1}>按线路</Radio>
-
           </Radio.Group>
           }
         {datatype!==5 &&  <Search

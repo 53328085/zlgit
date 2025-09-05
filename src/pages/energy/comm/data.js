@@ -33,6 +33,22 @@ export  const totalcolumns = [
   ];
   export const dtlcolumns = [
     {
+        title: "能耗类型",
+        dataIndex: 'energyCategory',
+        key: 'energyCategory',
+        width: 140,
+         fixed: "left",
+         ellipsis:true,
+      },
+      {
+        title: "能耗分项",
+        dataIndex: 'energyCategorySub',
+        key: 'energyCategorySub',
+        width: 140,
+         fixed: "left",
+         ellipsis:true,
+      },
+    {
         title: "设备名称",
         dataIndex: 'name',
         key: 'name',
