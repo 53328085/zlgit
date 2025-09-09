@@ -153,6 +153,6 @@
      "playback":"视频回放",
      "standarddefinition": "标清",
      "highdefinition": "高清",
-     "chart": "图表",
+     "chart": "图表{{text}}",
     "": ""
 }

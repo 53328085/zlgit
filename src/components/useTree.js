@@ -41,7 +41,7 @@ export default memo(function Index({ areaId, setTreeId, setLine, setNode, showli
    ...restprop }) {
   // datatype =0 或 =2
   const levelone = useSelector(selectOneLevel)
-  console.log(levelone)
+  
   const [treeData, setTreeData] = useState([])
   
   const location = useLocation();
@@ -99,6 +99,10 @@ export default memo(function Index({ areaId, setTreeId, setLine, setNode, showli
         if (!allselect && arr.length == 0) {
           arr.push(nodes[0][type])
         }
+        if(mode && node?.[child]?.length > 0) {
+          console.log(node)
+          arr.push(node[type])
+        }
         if (node[child] && Array.isArray(node[child]) && node[child]?.length > 0) {
           getId(node[child], type, child)
         }
@@ -117,7 +121,7 @@ export default memo(function Index({ areaId, setTreeId, setLine, setNode, showli
   }[datatype?.toString()] || { title: 'name', key: treekey, children: 'nodes' }
  },[datatype, treekey]) 
  
- console.log("fieldNames",fieldNames)
+ 
   //const fieldNames= {title:'name',key: treekey,children:'nodes'}  
 
   //获取树的数据，0 网格, 1 线路, 2 公共能耗分类
@@ -176,12 +180,14 @@ export default memo(function Index({ areaId, setTreeId, setLine, setNode, showli
        } */
 
       let { success, data, errMsg } = await hander(params)
-      if(mode) {
-        data=data.filter(d=>mode(d))
-      }
-      console.log(data)
+     
+     
       if (success && Array.isArray(data)) {
       //  console.log(idx)
+       if(mode) {
+         let mdata = data.filter(d=>mode(d))
+         getId(mdata, "id")
+       }else {
         switch (idx) {
           case 0:
             getId(data, 'areaId');
@@ -202,6 +208,8 @@ export default memo(function Index({ areaId, setTreeId, setLine, setNode, showli
             break
 
         }
+      }
+       console.log(arr)
        setNode &&  setNode?.(data[0]) //  获取节点
         treeIdRef.current = arr
         setIndeterminate(false)
@@ -210,6 +218,7 @@ export default memo(function Index({ areaId, setTreeId, setLine, setNode, showli
         setCheckedKeys(() => arr);
         setExpandedKeys(expand)
         setTreeId(arr);
+       
        
         /*  if(name) {
              setTreeId(arr)
@@ -236,28 +245,34 @@ export default memo(function Index({ areaId, setTreeId, setLine, setNode, showli
 
   // 复选框模式
   const onCheck = (data, e) => { // 受控
+    console.log(data)
+    try {
+      if(mode && !mode(e.node))  return message.warning("该线路没有子线路，末级节点没有线损")
+        let checked
+        
+          if (schecked == 1 || restprop?.checkStrictly) {
+            checked = data.checked
+          } else {
+            checked = data;
+          }
+        
+        
     
-    let checked
+        let f = checked?.length > 0 && checked?.length < treeIdRef.current?.length
+        setIndeterminate(f)
+        setTreeId(checked)
+        setCheckedKeys(checked)
+        setChecked(checked?.length === treeIdRef.current?.length)
+    } catch (error) {
+      console.log(error)
+    }
     
-      if (schecked == 1) {
-        checked = data.checked
-      } else {
-        checked = data;
-      }
-    
-    console.log(checked)
-
-    let f = checked?.length > 0 && checked?.length < treeIdRef.current?.length
-    setIndeterminate(f)
-    setTreeId(checked)
-    setCheckedKeys(checked)
-    setChecked(checked?.length === treeIdRef.current?.length)
 
   }
 
 //  单选模式
 const onSelect=(selectedKeys, e)=> {   // 损耗分析 不是一级节点而且没有子节点的不需要查询。传入一个函数
- 
+    if(mode) return
     setNode && setNode?.(e.node)
     setTreeId(selectedKeys)
     setCheckedKeys(selectedKeys)
@@ -290,7 +305,7 @@ const onSelect=(selectedKeys, e)=> {   // 损耗分析 不是一级节点而且�
    if(Number.isNaN(areaId) && Array.isArray(levelone)) {
       setTreeData(levelone)
       let arr = levelone.map(l=>l.id)
-      console.log(arr)
+      
       treeIdRef.current = arr
       setIndeterminate(false)
       setChecked(true)

@@ -138,6 +138,8 @@ export default function Index() {
           mode={modeHandler}
           showline={false}
           datatype={1}
+          allselect={false}
+          checkStrictly={true}
           energytype={energytype} />
         <Titlelayout title={<div style={{ width: '100%', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
           <span>损耗分析</span>
