@@ -71,14 +71,14 @@ export default function Index() {
       let {success:suc, data:msns} = await useQueryMSnsList(params)
       if(suc && Array.isArray(msns) && msns.length) {
           setMlist(msns)
-          newform.setFieldValue("msn", msns[0].sn)
+        //  newform.setFieldValue("msn", msns[0].sn)
       }else {
         setMlist([])
         newform.resetFields(["msn"])
       }
       if(success && Array.isArray(data) && data?.length) {
         setLists(data)
-        newform.setFieldValue("csn", data[0].sn)
+       // newform.setFieldValue("csn", data[0].sn)
       }else  {
        setLists([])
        newform.resetFields(["csn"])

@@ -526,7 +526,7 @@ onDrop: (layout: Layout, item: ?LayoutItem, e: Event) => void,
   const onDrop = (layouts, layoutValue, _event) => { // 从外面拖入
     console.log(layoutValue)
     console.log("_event", _event)
-    return
+  
     onAddlayout(layoutValue.x, layoutValue.y)
   }
  
@@ -602,7 +602,7 @@ onDrop: (layout: Layout, item: ?LayoutItem, e: Event) => void,
       <Context.Provider value={{laptop }}>
       {contextHolder}
       <ReactGridLayout 
-    className='layout'   {...layoutprops} {...defaultProps}   isDroppable={true}  style={{backgroundColor: previewrbgcolor || '#135abd'}} >
+    className='layout'   {...layoutprops} {...defaultProps} onDrop={onDrop}  isDroppable={true}  style={{backgroundColor: previewrbgcolor || '#135abd'}} >
         
          {layoutItem.map(layout => createElement(layout))}
       </ReactGridLayout>

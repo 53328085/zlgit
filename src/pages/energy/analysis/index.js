@@ -1,10 +1,10 @@
-import React, { useState, useRef, useEffect, useCallback, memo } from 'react'
+import React, { useState, useRef, useEffect, useCallback, memo, useMemo } from 'react'
 import { useAntdTable } from 'ahooks';
 import styled from 'styled-components';
 import { Space, Button, message } from 'antd';
 
 import { useOutletContext } from 'react-router-dom'
-import columns, { onDesc } from './columns';
+import cols, { onDesc ,watercol,steamcol} from './columns';
 import UserTable from "@com/useTable";
 import { EnergyLossRuntime } from '@api/api.js'
 import {useQueryByLine} from "./api"
@@ -36,6 +36,17 @@ export default function Index() {
   const [treeId, setTreeId] = useState(null)
   const [line, setLine] = useState(0)
  
+  const columns = useMemo(()=>{
+   if(energytype==1) {
+    return cols
+   }else if(energytype==18) {
+    return steamcol
+   }else {
+    return watercol
+   }
+  },[energytype])
+
+
   const CustView = (
     <Space size={16}>
       <ExportExcel tb={tbref} />

@@ -49,7 +49,7 @@ export const cols = [
 ];
 export const bindcol = [
   {
-    title: "路灯名称",
+    title: "空调名称",
     dataIndex: "name",
     key: "name",
   },
