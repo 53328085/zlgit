@@ -54,7 +54,7 @@ export  const totalcolumns = [
         fixed: "left"
       },
       {
-        title: "总能耗",
+        title: "总能耗(kWh)",
         dataIndex: 'total',
         key: 'total',
         width: 100,
