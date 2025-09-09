@@ -1,5 +1,5 @@
-
-
+ 
+ 
 // export const cols =[ // 实时抄表  
 //     {
 //       title: '区域名称',
@@ -46,9 +46,9 @@
 //         render: (text, record, index) => `2025-07-01`
 //       },
 //     ]
-
+ 
 export const cols = (startDate, endDate) => {
-
+ 
   return [ // 实时抄表  
     {
       title: '设备编号',
@@ -103,10 +103,10 @@ export const cols = (startDate, endDate) => {
     },
     
   ]
-
+ 
 }
-
-
+ 
+ 
 export let conscols = [   //  conscols 能耗报表  
   {
     title: '区域名称',
@@ -201,7 +201,7 @@ export const timecols = [  // 分时能耗
         ...cellstyle
       }
     })
-
+ 
   },
   {
     title: '费用',
@@ -219,7 +219,7 @@ export const timecols = [  // 分时能耗
     key: "address"
   },
 ]
-
+ 
 export const typecols = [  // 分类能耗 
   {
     title: '能耗类型',
