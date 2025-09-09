@@ -1,23 +1,25 @@
 import React, {useRef, forwardRef,useImperativeHandle,useState} from 'react'
-import {Row, Col, message, Button, Form} from "antd"
+import { message, Button, Form} from "antd"
 import {LeftOutlined,RightOutlined} from "@ant-design/icons"
 
 import CModal from '@com/useModal'
 import {useAntdTable} from "ahooks"
 import UserTable from "@com/useTable";
+import {CustButtonT} from "@com/useButton"
  
-import UseTree from "@com/useTree"
-import {Bindwrap} from "./style"
+import {Linewrap} from "./style"
 import {Serach} from "@com/comstyled"
-import {bindcol} from './data'
-import {useBindConditioner, useUnBindConditioner,usePageBind, usePageUnBind} from './api'
+import {bindlinecol} from './data'
  
-export default forwardRef(function Index({strategyId, projectId, areaId,onrefresh}, ref){
+import {useLineBind, useLineUnBind,useUnBindLine, useBindLine } from "./api"
+export default forwardRef(function Index({strategyId, projectId,update}, ref){
   const mRef = useRef()
   const [form] = Form.useForm()
   const [formed] = Form.useForm()
-   const [treeId, setTreeId] = useState([])
+  
+  const onOk =()=> {
 
+  }
   
   const getUnBind = async ({current, pageSize}, formDate)=> {
     let fag = Number.isInteger(parseInt(projectId))&&Number.isInteger(parseInt(strategyId?.[0]))
@@ -30,10 +32,10 @@ export default forwardRef(function Index({strategyId, projectId, areaId,onrefres
         pageSize,
         pageNum:current,
         alike,
-        areaIds:treeId || []
+        
       }
   
-     let {success, data, total,errMsg}  = await  usePageUnBind({}, body)
+     let {success, data, total,errMsg}  = await  useLineUnBind({}, body)
      if(success && Array.isArray(data)) {
         return {
           list: data,
@@ -63,10 +65,10 @@ export default forwardRef(function Index({strategyId, projectId, areaId,onrefres
         pageSize,
         pageNum:current,
         alike,
-        areaIds:treeId || []
+        
       }
   
-     let {success, data, total,errMsg}  = await  usePageBind({}, body)
+     let {success, data, total,errMsg}  = await  useLineBind({}, body)
      if(success && Array.isArray(data)) {
         return {
           list: data,
@@ -84,11 +86,11 @@ export default forwardRef(function Index({strategyId, projectId, areaId,onrefres
     }
 
   }
-const  {tableProps, run, search, refresh} = useAntdTable(getUnBind, {
+const  {tableProps,  search, refresh} = useAntdTable(getUnBind, {
   //  manual:true,
     form,
     defaultPageSize: 14,
-    refreshDeps: [strategyId, projectId,treeId]
+    refreshDeps: [strategyId, projectId ]
   })
   const {submit} = search
 
@@ -97,7 +99,7 @@ const  {tableProps, run, search, refresh} = useAntdTable(getUnBind, {
     form:formed,
     defaultPageSize: 14,
 
-    refreshDeps: [strategyId, projectId,treeId]
+    refreshDeps: [strategyId, projectId ]
   })
   const onOpen =async ()=> {
     try {
@@ -127,18 +129,19 @@ const  {tableProps, run, search, refresh} = useAntdTable(getUnBind, {
   };
   const addbind= async(type)=> {
     try {
-      if(unbindkey?.current?.length ==0 && type==0) return message.warning("请选择未选中的空调")
-      if(bindkey?.current?.length ==0 && type==1) return message.warning("请选择已选中的空调")
+      if(unbindkey?.current?.length ==0 && type==0) return message.warning("请选择未选中的路灯")
+      if(bindkey?.current?.length ==0 && type==1) return message.warning("请选择已选中的路灯")
       if(strategyId?.length==0) return
         let body ={
           projectId ,
           schemeId:strategyId?.[0] ,
-          ConditionerIds :  [unbindkey.current,bindkey.current][type]
+          lineIds :  [unbindkey.current,bindkey.current][type]
         }
-       let {success,errMsg} = await  [useBindConditioner, useUnBindConditioner][type]({}, body)
+       let {success,errMsg} = await  [useBindLine, useUnBindLine][type]({}, body)
        if(success) {
          refresh()
          refreshed()
+         update()
        }else {
          message.warning(errMsg || "数据出错")
        }
@@ -147,29 +150,25 @@ const  {tableProps, run, search, refresh} = useAntdTable(getUnBind, {
     }
    
   }
-  const onOk =()=> {
-    mRef.current.onCancel()
-    onrefresh()
-  }
 
+  const onCancel=()=> {
+    mRef.current.onCancel()
+   }
  
   useImperativeHandle(ref, ()=> ({
     onOpen,
   }))
   return (
     <div>
-          <CModal title="空调绑定"   onOk={onOk} onCancel={onOk}   width={1380} mold="cust"    ref={mRef}>
-            <Bindwrap>
-              <div style={{overflow: "auto"}}>
-               <UseTree areaId={NaN} setTreeId={setTreeId} setLine={()=>{}} showline={false} datatype={5} energytype={1} ></UseTree>
-               </div>
+          <CModal title="线路绑定"   onOk={onOk}   width={998} mold="cust" footer={<CustButtonT text="Cancel" onClick={onCancel} style={{marginLeft: "auto"}}></CustButtonT>}   ref={mRef}>
+            <Linewrap> 
                <div className='tbwrap'> 
                    <Form form={form} layout="inline">
-                        <Form.Item label="未选中的空调" name="alike">
-                        <Serach   onSearch={submit} placeholder="请输入空调名称或控制器编号"></Serach>
+                        <Form.Item label="未选中的线路" name="alike">
+                        <Serach   onSearch={submit} placeholder="请输入线路名称"></Serach>
                         </Form.Item>
                    </Form>                  
-                 <UserTable columns={bindcol} {...tableProps} rowSelection={rowSelection} rowKey={row => row.id}></UserTable>
+                 <UserTable columns={bindlinecol} {...tableProps} rowSelection={rowSelection} rowKey={row => row.id}></UserTable>
                </div>
                <div className='handler'>
                  <Button type="primary" icon={<RightOutlined/>} onClick={()=>addbind(0)} >添加</Button>
@@ -177,13 +176,13 @@ const  {tableProps, run, search, refresh} = useAntdTable(getUnBind, {
                </div>
                <div className='tbwrap'>
                <Form form={formed} layout="inline">
-                        <Form.Item label="已选中的空调" name="alike">
-                        <Serach   onSearch={searched.submit}  placeholder="请输入空调名称或控制器编号"></Serach>
+                        <Form.Item label="已选中的线路" name="alike">
+                        <Serach   onSearch={searched.submit}  placeholder="请输入线路名称"></Serach>
                         </Form.Item>
                    </Form>
-                 <UserTable columns={bindcol} {...tablePropsed} rowSelection={rowSelectioned} rowKey={row=>row.id} ></UserTable>
+                 <UserTable columns={bindlinecol} {...tablePropsed} rowSelection={rowSelectioned} rowKey={row=>row.id} ></UserTable>
                </div>
-            </Bindwrap>
+            </Linewrap>
                 
            </CModal>   
     </div>

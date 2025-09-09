@@ -175,8 +175,8 @@ const  {tableProps,  search, refresh} = useAntdTable(getUnBind, {
                </div>
                <div className='tbwrap'> 
                    <Form form={form} layout="inline">
-                        <Form.Item label="未选中的路灯" name="alike">
-                        <Serach   onSearch={submit} placeholder="请输入路灯名称或控制器编号"></Serach>
+                        <Form.Item label="未选中的空调" name="alike">
+                        <Serach   onSearch={submit} placeholder="请输入空调名称或控制器编号"></Serach>
                         </Form.Item>
                    </Form>                  
                  <UserTable columns={bindcol} {...tableProps} rowSelection={rowSelection} rowKey={row => row.id}></UserTable>
@@ -187,8 +187,8 @@ const  {tableProps,  search, refresh} = useAntdTable(getUnBind, {
                </div>
                <div className='tbwrap'>
                <Form form={formed} layout="inline">
-                        <Form.Item label="已选中的路灯" name="alike">
-                        <Serach   onSearch={searched.submit}  placeholder="请输入路灯名称或控制器编号"></Serach>
+                        <Form.Item label="已选中的空调" name="alike">
+                        <Serach   onSearch={searched.submit}  placeholder="请输入空调名称或控制器编号"></Serach>
                         </Form.Item>
                    </Form>
                  <UserTable columns={bindcol} {...tablePropsed} rowSelection={rowSelectioned} rowKey={row=>row.id} ></UserTable>

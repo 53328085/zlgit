@@ -1,5 +1,5 @@
-
-
+ 
+ 
 // export const cols =[ // 实时抄表  
 //     {
 //       title: '区域名称',
@@ -46,9 +46,9 @@
 //         render: (text, record, index) => `2025-07-01`
 //       },
 //     ]
-
+ 
 export const cols = (startDate, endDate) => {
-
+ 
   return [ // 实时抄表  
     {
       title: '设备编号',
@@ -96,17 +96,17 @@ export const cols = (startDate, endDate) => {
       key: "end",
     },
     {
-      title: '用能(kWh)',
+      title:  '用能(kWh)',
       dataIndex: 'consume',
       key: "consume",
       sorter: (a, b) => parseFloat(a?.consume) - parseFloat(b?.consume)
     },
     
   ]
-
+ 
 }
-
-
+ 
+ 
 export let conscols = [   //  conscols 能耗报表  
   {
     title: '区域名称',
@@ -201,7 +201,7 @@ export const timecols = [  // 分时能耗
         ...cellstyle
       }
     })
-
+ 
   },
   {
     title: '费用',
@@ -219,7 +219,7 @@ export const timecols = [  // 分时能耗
     key: "address"
   },
 ]
-
+ 
 export const typecols = [  // 分类能耗 
   {
     title: '能耗类型',
@@ -247,42 +247,6 @@ export const typecols = [  // 分类能耗
     key: "mom"
   },
 ]
-// export const fromlot = [ // 电能报表 
-//   {
-//     title: '区域名称',
-//     dataIndex: 'nodeName',
-//     key: "nodeName"
-//   },
-//   {
-//     title: '设备名称',
-//     dataIndex: 'name',
-//     key: "name"
-//   }, {
-//     title: '起始读数',
-//     dataIndex: 'start',
-//     key: "start",
-//   }, {
-//     title: '结束读数',
-//     dataIndex: 'end',
-//     key: "end",
-//   },
-//   {
-//     title: '用能(kWh)',
-//     dataIndex: 'consume',
-//     key: "consume",
-//   },
-//   {
-//     title: '设备编号',
-//     dataIndex: 'sn',
-//     key: "sn"
-//   },
-//   {
-//     title: '安装位置',
-//     dataIndex: 'address',
-//     key: "address"
-//   },
-// ]
-
 export const fromlot = [ // 电能报表 
   {
     title: '区域名称',
@@ -330,6 +294,41 @@ export const fromlot = [ // 电能报表
     key: "address"
   },
 ]
+/* export const fromlot = [ // 电能报表 
+  {
+    title: '区域名称',
+    dataIndex: 'nodeName',
+    key: "nodeName"
+  },
+  {
+    title: '设备名称',
+    dataIndex: 'name',
+    key: "name"
+  }, {
+    title: '起始读数',
+    dataIndex: 'start',
+    key: "start",
+  }, {
+    title: '结束读数',
+    dataIndex: 'end',
+    key: "end",
+  },
+  {
+    title: '用能(kWh)',
+    dataIndex: 'consume',
+    key: "consume",
+  },
+  {
+    title: '设备编号',
+    dataIndex: 'sn',
+    key: "sn"
+  },
+  {
+    title: '安装位置',
+    dataIndex: 'address',
+    key: "address"
+  },
+] */
 export const shitcols = [  // 班次能耗 
   {
     title: '区域名称',

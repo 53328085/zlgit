@@ -1,5 +1,8 @@
-import {Image, Form, Select, Typography, Input} from 'antd'
-import Cupload from "@com/useUpload.js" 
+import {Image, Form,   Typography, Input} from 'antd'
+import Cupload  from "@com/useUpload.js" 
+
+ 
+ 
 export  const cols =[ // 实时抄表  
     {
       title: '设备型号',
@@ -13,8 +16,8 @@ export  const cols =[ // 实时抄表
     },
     {
       title: '设备缩略图',
-      dataIndex: 'image', 
-      key:'image',
+      dataIndex: 'imageBase64', 
+      key:'imageBase64',
       render: (text) => <Image src={text} />
     },
     {
@@ -44,8 +47,10 @@ export  const cols =[ // 实时抄表
     <>
      <Form.Item label="空调型号" name="model" rules={[{
         required: true
+     }, {
+      whitespace: true
      }]}>
-        <Select options={options}></Select>
+       <Input></Input>
      </Form.Item>
      <Form.Item label="生产厂家" name="manufacturer" rules={[{
         required: true
@@ -54,11 +59,7 @@ export  const cols =[ // 实时抄表
      }]}>
        <Input allowClear></Input>
      </Form.Item>
-     <Form.Item label="缩略图" name="image" rules={[
-              {
-                validator: checkLog,
-              },
-            ]}>
+     <Form.Item label="缩略图" name="image"  >
         <Cupload wpx={136} hpx={136} swpx={120} shpx={90} style={{padding: '16px'}}    />
      </Form.Item>
      <Form.Item>

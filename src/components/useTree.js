@@ -9,6 +9,7 @@ import { message, Input, Tree, Radio, Checkbox, Switch } from 'antd'
 
 import Titlelayout from "@com/titlelayout";
 import { useLocation } from "react-router-dom"
+import { Area } from '@ant-design/plots'
 const { Search } = Input;
 const { useTree:lightTree } = new Apimethod( //照明管理 手动控制 查询线路
   "get",
@@ -29,10 +30,20 @@ const Treebox = styled.div`
        }
 `
 
-export default memo(function Index({ areaId, setTreeId, setLine, showline = true, datatype = NaN, energytype, sty = { bordered: 'y', pv: '16px' }, allselect = true, selectobj, multiple = true, treeName = '',title="", ...restprop }) {
+export default memo(function Index({ areaId, setTreeId, setLine, setNode, showline = true, datatype = NaN, energytype, 
+  sty = { bordered: 'y', pv: '16px' }, 
+  allselect = true, 
+  selectobj, 
+  multiple = true,
+   treeName = '',
+   title="", 
+   mode=null,
+   ...restprop }) {
   // datatype =0 或 =2
+  const levelone = useSelector(selectOneLevel)
+  console.log(levelone)
   const [treeData, setTreeData] = useState([])
-
+  
   const location = useLocation();
   const { state } = location
   const isshow = useMemo(() => {
@@ -46,8 +57,8 @@ export default memo(function Index({ areaId, setTreeId, setLine, showline = true
   const [typeTree, setTypeTree] = useState(0)
 
   //const treekey = datatype === 0 ? 'areaId' : datatype === 2||3 ? 'id' :  typeTree == 0 ? "areaId" : "id";
-  const treekey = datatype === 0 ? 'areaId' : (datatype === 2 || datatype === 3 || datatype === 4) ? 'id' : typeTree == 0 ? "areaId" : "id";
-
+  const treekey = datatype === 0 ? 'areaId' : [1,2, 3, 4,5].includes(datatype) ? 'id' : typeTree == 0 ? "areaId" : "id";
+  // datatype =5 时 展示一级区域 levelone
 
   // const treekey =  typeTree == 0 ?  "areaId" : "id" ; 
   const [expandedKeys, setExpandedKeys] = useState([]);
@@ -99,13 +110,14 @@ export default memo(function Index({ areaId, setTreeId, setLine, showline = true
   
  const fieldNames =useMemo(()=> {
   return {
+    "1":{ title: 'name', key: treekey, children: 'nodes' },
     "2":{ title: 'name', key: treekey, children: 'childs' },
     "3":{ title: 'name', key: treekey, children: 'children' },
     "4":{ title: 'name', key: treekey, children: 'nodes' },
   }[datatype?.toString()] || { title: 'name', key: treekey, children: 'nodes' }
  },[datatype, treekey]) 
  
- 
+ console.log("fieldNames",fieldNames)
   //const fieldNames= {title:'name',key: treekey,children:'nodes'}  
 
   //获取树的数据，0 网格, 1 线路, 2 公共能耗分类
@@ -163,7 +175,11 @@ export default memo(function Index({ areaId, setTreeId, setLine, showline = true
            }
        } */
 
-      const { success, data, errMsg } = await hander(params)
+      let { success, data, errMsg } = await hander(params)
+      if(mode) {
+        data=data.filter(d=>mode(d))
+      }
+      console.log(data)
       if (success && Array.isArray(data)) {
       //  console.log(idx)
         switch (idx) {
@@ -186,7 +202,7 @@ export default memo(function Index({ areaId, setTreeId, setLine, showline = true
             break
 
         }
-
+       setNode &&  setNode?.(data[0]) //  获取节点
         treeIdRef.current = arr
         setIndeterminate(false)
         setChecked(true)
@@ -194,7 +210,7 @@ export default memo(function Index({ areaId, setTreeId, setLine, showline = true
         setCheckedKeys(() => arr);
         setExpandedKeys(expand)
         setTreeId(arr);
-
+       
         /*  if(name) {
              setTreeId(arr)
              setCheckedKeys(arr)
@@ -220,7 +236,7 @@ export default memo(function Index({ areaId, setTreeId, setLine, showline = true
 
   // 复选框模式
   const onCheck = (data, e) => { // 受控
-   // console.log(data, e)
+    
     let checked
     
       if (schecked == 1) {
@@ -229,7 +245,7 @@ export default memo(function Index({ areaId, setTreeId, setLine, showline = true
         checked = data;
       }
     
-
+    console.log(checked)
 
     let f = checked?.length > 0 && checked?.length < treeIdRef.current?.length
     setIndeterminate(f)
@@ -240,10 +256,13 @@ export default memo(function Index({ areaId, setTreeId, setLine, showline = true
   }
 
 //  单选模式
-const onSelect=(selectedKeys, e)=> {
- //  console.log(selectedKeys)
-  // console.log(e)
-  setTreeId(selectedKeys)
+const onSelect=(selectedKeys, e)=> {   // 损耗分析 不是一级节点而且没有子节点的不需要查询。传入一个函数
+ 
+    setNode && setNode?.(e.node)
+    setTreeId(selectedKeys)
+    setCheckedKeys(selectedKeys)
+
+
 }
 
 
@@ -266,6 +285,24 @@ const onSelect=(selectedKeys, e)=> {
 
 
   }, [areaId, typeTree, datatype, energytype, projectId])
+
+  useEffect(()=> {  //  用一级区域做为树结构数据
+   if(Number.isNaN(areaId) && Array.isArray(levelone)) {
+      setTreeData(levelone)
+      let arr = levelone.map(l=>l.id)
+      console.log(arr)
+      treeIdRef.current = arr
+      setIndeterminate(false)
+      setChecked(true)
+     
+      setCheckedKeys(arr);
+      setExpandedKeys(arr)
+      setTreeId(arr);
+   }
+
+
+
+  }, [areaId, levelone])
 
   const radiosty = {
     display: 'grid',
@@ -299,16 +336,15 @@ const onSelect=(selectedKeys, e)=> {
           {showline && <Radio.Group onChange={switchLine} style={radiosty} value={typeTree}>
             <Radio value={0}>按网格</Radio>
             <Radio value={1}>按线路</Radio>
-
           </Radio.Group>
           }
-          <Search
+        {datatype!==5 &&  <Search
             placeholder='请输入关键字查询'
             allowClear
             value={keyword}
             onChange={onChange}
             onSearch={getTreeData}
-          />
+          />}
 
           {allselect && <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>  <Checkbox onChange={allSelected} indeterminate={indeterminate} checked={checked}>全部选中</Checkbox>
             {isshow && <Radio.Group style={radiosty2} onChange={Relevancy} value={schecked}>
@@ -322,6 +358,7 @@ const onSelect=(selectedKeys, e)=> {
             onExpand={onExpand}
             expandedKeys={expandedKeys}
             checkedKeys={checkedKeys}
+            selectedKeys={checkedKeys}
             onCheck={onCheck}
             onSelect={onSelect}
             fieldNames={fieldNames}

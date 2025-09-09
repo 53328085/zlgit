@@ -5,13 +5,13 @@ import {LeftOutlined,RightOutlined} from "@ant-design/icons"
 import CModal from '@com/useModal'
 import {useAntdTable} from "ahooks"
 import UserTable from "@com/useTable";
- 
+import {CustButtonT} from "@com/useButton" 
 import UseTree from "@com/useTree"
 import {Bindwrap} from "./style"
 import {Serach} from "@com/comstyled"
 import {bindcol} from './data'
 import {useBindLight, useUnBindLight,usePageBind, usePageUnBind} from './api'
-export default forwardRef(function Index({strategyId, projectId, areaId}, ref){
+export default forwardRef(function Index({strategyId, projectId, update}, ref){
   const mRef = useRef()
   const [form] = Form.useForm()
   const [formed] = Form.useForm()
@@ -140,6 +140,7 @@ const  {tableProps, run, search, refresh} = useAntdTable(getUnBind, {
        if(success) {
          refresh()
          refreshed()
+         update()
        }else {
          message.warning(errMsg || "数据出错")
        }
@@ -149,14 +150,16 @@ const  {tableProps, run, search, refresh} = useAntdTable(getUnBind, {
    
   }
 
-
+ const onCancel=()=> {
+  mRef.current.onCancel()
+ }
  
   useImperativeHandle(ref, ()=> ({
     onOpen,
   }))
   return (
     <div>
-          <CModal title="路灯绑定"   onOk={onOk}   width={1380} mold="cust"    ref={mRef}>
+          <CModal title="路灯绑定"   onOk={onOk}   width={1380} mold="cust" footer={<CustButtonT text="Cancel" onClick={onCancel} style={{marginLeft: "auto"}}></CustButtonT>}   ref={mRef}>
             <Bindwrap>
               <div style={{overflow: "auto"}}>
                <UseTree areaId={0} setTreeId={setTreeId} setLine={()=>{}} showline={false} datatype={NaN} energytype={1} ></UseTree>

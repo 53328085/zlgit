@@ -24,6 +24,12 @@ export const { usePage } = new Apimethod( //查询  路灯控制方案
     "post",
     "Light/StreetLightScheme/BindLight"
   );
+
+  export const { useClone} = new Apimethod( //克隆 控制方案
+    "get",
+    "Light/StreetLightScheme/Clone"
+  );
+
   export const { usePageUnBind} = new Apimethod( //方案 未绑定路灯列表
     "post",
     "Light/StreetLightScheme/PageUnBind"
@@ -32,7 +38,22 @@ export const { usePage } = new Apimethod( //查询  路灯控制方案
     "post",
     "Light/StreetLightScheme/PageBind"
   );
-  export const { useClone} = new Apimethod( //克隆 控制方案
-    "get",
-    "Light/StreetLightScheme/Clone"
+
+  // 线路
+  export const { useLineUnBind} = new Apimethod( //方案 未绑定线路列表
+    "post",
+    "Light/StreetLightScheme/LineUnBind"
+  );
+  export const { useLineBind} = new Apimethod( //方案绑定线路灯列表
+    "post",
+    "Light/StreetLightScheme/LineBind"
+  );
+
+  export const { useUnBindLine} = new Apimethod( // 方案解除绑定线路
+    "post",
+    "Light/StreetLightScheme/UnBindLine"
+  );
+  export const { useBindLine} = new Apimethod( // 线路绑定路灯
+    "post",
+    "Light/StreetLightScheme/BindLine"
   );

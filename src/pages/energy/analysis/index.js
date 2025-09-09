@@ -1,12 +1,13 @@
 import React, { useState, useRef, useEffect, useCallback, memo } from 'react'
 import { useAntdTable } from 'ahooks';
 import styled from 'styled-components';
-import { Space, Button } from 'antd';
+import { Space, Button, message } from 'antd';
 
 import { useOutletContext } from 'react-router-dom'
 import columns, { onDesc } from './columns';
 import UserTable from "@com/useTable";
 import { EnergyLossRuntime } from '@api/api.js'
+import {useQueryByLine} from "./api"
 import Titlelayout from '@com/titlelayout'
 import Pagecount from "@com/pagecontent";
 import UserTree from "@com/useTree"
@@ -33,9 +34,8 @@ export default function Index() {
 
 
   const [treeId, setTreeId] = useState(null)
-  const [line, setLine] = useState(null)
-  const { tree, setTree } = useState(null)
-  const { queryByLine, queryByBuilding } = EnergyLossRuntime
+  const [line, setLine] = useState(0)
+ 
   const CustView = (
     <Space size={16}>
       <ExportExcel tb={tbref} />
@@ -47,11 +47,13 @@ export default function Index() {
       setCustview(undefined)
     }
   }, [])
-  const getTableData = ({ current, pageSize }) => {
+  const getTableData =async ({ current, pageSize }) => {
     // 0 建筑 1线路
 
     //if (Object.values(exparams)?.length < 6) return;
-
+    try {
+      
+ 
     let flag = [areaId, projectId, type,  energytype, shiftNo].some(i => Number.isInteger(parseInt(i))) && date
     if(!flag) return
     if (!Array.isArray(treeId) || !isFinite(line)) return
@@ -65,9 +67,31 @@ export default function Index() {
       date: time,
       selectIds: treeId
     }
-    const index = Number(line)
-    const handler = [queryByBuilding, queryByLine][index]
-    return handler(current, pageSize, params).then(res => {
+
+     let {data, success, total,errMsg} =  await useQueryByLine({pageSize, pageNum: current},params)
+      pageTotal.current = total
+      if(success && Array.isArray(data)){
+        return {
+          list: data,
+          total,
+        }
+      }else{
+        if(!success) message.warning(errMsg || "数据出错")
+        return {
+          list:[],
+          total:0
+        }
+      }
+
+
+
+  
+
+
+
+
+
+  /*   return handler(current, pageSize, params).then(res => {
       let { success, data, total = 0 } = res
       pageTotal.current = total
       if (success) {
@@ -84,23 +108,37 @@ export default function Index() {
       }
     }).catch((e)=> {
        console.log(e)
-    })
+    }) */
+
+  } catch (error) {
+      
+  }
   }
   const { tableProps } = useAntdTable(getTableData, {
     defaultParams: [{ current: 1, pageSize: 20 }],
-    refreshDeps: [exparams, treeId, line]
+    refreshDeps: [ areaId, projectId, type, date, energytype, shiftNo , treeId, line]
   })
 
   const onExport = useCallback(() => {
 
     return getTableData({ current: 1, pageSize: pageTotal.current })
-  }, [exparams, treeId, line])
+  }, [ areaId, projectId, type, date, energytype, shiftNo , treeId, line])
 
-
+  const modeHandler=(node) => {
+    
+     return   node.nodes?.length>0
+  }
   return (
     <Pagecount pd="0" bgcolor="transparent" >
       <Mainbox>
-        <UserTree areaId={areaId} setTreeId={setTreeId} setLine={setLine} energytype={energytype} />
+        <UserTree
+          areaId={areaId}
+          setTreeId={setTreeId}
+          setLine={setLine}
+          mode={modeHandler}
+          showline={false}
+          datatype={1}
+          energytype={energytype} />
         <Titlelayout title={<div style={{ width: '100%', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
           <span>损耗分析</span>
           <ExportExcel tb={tbref} /></div>} layout="flex" exa>

@@ -80,20 +80,20 @@ export const items =(option, csn, msn)=> (
       <Form.Item label="路灯名称" rules={rules} name="name">
         <Input style={w224} />
       </Form.Item>
-      <Form.Item label="路灯型号" rules={rules} name="model" >
-        <Select options={option} fieldNames={{label: "model", value:"model"}}></Select>
+      <Form.Item label="路灯型号" rules={rules} name="modelId" >
+        <Select options={option} fieldNames={{label: "model", value:"id"}}></Select>
       </Form.Item>
       <Form.Item label="路灯编号" rules={rules} name="no">
         <Input></Input>
       </Form.Item>
       <Form.Item label="所属计量设备" name="mSn" labelCol={{flex: "8em"}}>
-        <Select options={msn} placeholder="请输入电表sn"  fieldNames={{label: "name", value:"text"}}></Select>
+        <Select options={msn} placeholder="请输入电表sn"  fieldNames={{label: "name", value:"text"}} allowClear></Select>
       </Form.Item>
       <Form.Item label="所属控制器编号" name="cSn" labelCol={{flex: "8em"}}  rules={rules}>
         <Select options={csn} placeholder="请输入路灯控制器" fieldNames={{label: "name", value:"text"}}></Select>
       </Form.Item>
       <Form.Item label="路灯类型" name="type">
-        <Select options={options}></Select>
+        <Select options={options} allowClear></Select>
       </Form.Item>
       <Form.Item name="id" noStyle initialValue={0}>
         <Input hidden></Input>

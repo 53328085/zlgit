@@ -146,11 +146,42 @@ export default function Index() {
 
   }, [value, dates, tabs, isrange])
 
+  let columns = useMemo(()=> {
+    console.log("energytype",energytype)
+    let column = [cols(startDateTime, endDateTime), [], timecols, typecols, fromlot, shitcols][index]
+    if ([0,3].includes(index) ) {
+     return   column.map(c => {
+        if (c.dataIndex == 'consume' && index == 0) { // 实时抄表
+          console.log("实时抄表")
+          c.title = (energytype == 1 ? '用能(kWh)' : '用量(m³)')
+        }
+        if (c.dataIndex == 'consume' && index == 3) {  // 分类报表
+          c.title = (energytype == 1 ? '用能(kWh)' : '用水量（m³）')
+        }  
+      
+        return c
+      })
+    }else {
+      return column
+    }
+   
+  }, [index, energytype,startDateTime, endDateTime])
 
+  console.log(columns)
 
-  let columns = [cols(startDateTime, endDateTime), [], timecols, typecols, fromlot, shitcols][index] // 
+  // let columns = [cols(startDateTime, endDateTime), [], timecols, typecols, fromlot, shitcols][index] // 
 
-
+   /*     columns.forEach(c => {
+      if (c.dataIndex == 'consume' && index == 0) { // 实时抄表
+        console.log("实时抄表")
+        c.title = (energytype == 1 ? '用能(kWh)' : '用水量(m³)')
+      }
+      if (c.dataIndex == 'consume' && index == 3) {  // 分类报表
+        c.title = (energytype == 1 ? '用能(kWh)' : '用水量（m³）')
+      }
+      
+      
+    }) */
 
   const getTableData = ({ current, pageSize, areaId, projectId, type, date, energytype, treeId, index, line, isrange, dates, alike }) => {
     //  console.log(date)
@@ -201,22 +232,16 @@ export default function Index() {
       setTabs([...wtabs])
     }
 
-    columns.forEach(c => {
-      if (c.dataIndex == 'consume' && index == 0) { // 实时抄表
-        c.title = energytype == 1 ? '用能(kWh)' : '差值（m³）'
-      }
-      if (c.dataIndex == 'consume' && index == 3) {  // 分类报表
-        c.title = energytype == 1 ? '用能(kWh)' : '用水量（m³）'
-      }
-    })
 
+   
+   
 
     if (index == 1) {
       conscols.forEach(e => {
         if (e.dataIndex == 'total') {
           e.title = energytype == 1 ? '能耗(kWh)' : '能耗（m³）'
         }
-      })
+      }) 
     }
 
     if (!hander) return message.warning("请求方法不存在")

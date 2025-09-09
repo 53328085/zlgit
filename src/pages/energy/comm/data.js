@@ -1,5 +1,5 @@
  
-
+ 
  
 export  const totalcolumns = [
     {
@@ -33,31 +33,44 @@ export  const totalcolumns = [
   ];
   export const dtlcolumns = [
     {
+        title: "能耗类型",
+        dataIndex: 'energyCategory',
+        key: 'energyCategory',
+        width: 140,
+         fixed: "left",
+         ellipsis:true,
+      },
+      {
+        title: "能耗分项",
+        dataIndex: 'energyCategorySub',
+        key: 'energyCategorySub',
+        width: 140,
+         fixed: "left",
+         ellipsis:true,
+      },
+    {
         title: "设备名称",
         dataIndex: 'name',
         key: 'name',
         width: 140,
-         fixed: "left"
+         fixed: "left",
+         ellipsis:true,
       },
       {
         title: "设备编号",
         dataIndex: 'sn',
         key: 'sn',
         width: 140,
-        fixed: "left"
+        fixed: "left",
+        ellipsis:true,
       },
       {
         title: "安装地址",
         dataIndex: 'address',
         key: 'address',
         width: 140,
-        fixed: "left"
+        fixed: "left",
+        ellipsis:true,
       },
-      {
-        title: "总能耗(kWh)",
-        dataIndex: 'total',
-        key: 'total',
-        width: 100,
-        fixed: "left"
-      },
+     
   ]

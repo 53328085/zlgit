@@ -242,6 +242,7 @@ export default function Index() {
         refresh();
       } else {
         message.warning(errMsg || "数据出错");
+        return Promise.reject("")
       }
     } catch (error) {
       console.log(error);
