@@ -25,6 +25,7 @@ export default function Index() {
   const [isadd, setIsadd] =useState(false)
   const [total, setTotal] = useState(0)
   const [lists, setLists] = useState([])
+  const areaId = Form.useWatch("areaId", newform)
  // const [cmsn, setCmsn]=useState({csn:[], msn:[]}) //  控制器，计量设备
   const [csn, setCsn] = useState([])
   const [msn, setMsn] = useState([])
@@ -40,7 +41,7 @@ export default function Index() {
  
  const getSn = async()=> {
      try {
-      let promises = [useQuerySelectList({projectId, deviceStyle:22}),useQuerySelectList({projectId, deviceStyle:1})]
+      let promises = [useQuerySelectList({projectId, deviceStyle:22,areaId}),useQuerySelectList({projectId, deviceStyle:1, areaId})]
       let [csn, msn ] = await Promise.allSettled(promises)  // 控制器， 计量设备
       
        if(csn?.value?.success) {
@@ -137,9 +138,9 @@ export default function Index() {
   }
   const onEdit=(row)=> {
     setIsadd(false)
-    const {projectId:id, ...params} = row
+    const {projectId:id,type, ...params} = row
 
-    newform.setFieldsValue({...params, projectId},)
+    newform.setFieldsValue({...params,type:type==0 ?null :type, projectId},)
     editRef.current.onOpen()
   }
   const onOk= async()=> {
@@ -240,10 +241,13 @@ export default function Index() {
  useEffect(()=> {
   if(Number.isInteger(parseInt(projectId))){
     getList()
-    getSn()
+   
   }
 
  }, [projectId])
+ useEffect(()=> {
+  getSn()
+ },[projectId,areaId])
   return (
     <Pagecount pd="0">
       <Titlelayout layout="flex" title="路灯档案">

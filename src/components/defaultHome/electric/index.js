@@ -28,6 +28,7 @@ export default function DefaultHome(props){
   const [data, setData] = useState({})
   const  options  = useMemo(()=> {
     const {x=[], y=[]} = data
+    console.log("重新渲染：rander")
     return {
     series: [{ type: "line",  seriesLayoutBy: 'row' }],  
     grid:{
@@ -60,7 +61,7 @@ export default function DefaultHome(props){
   const { GetUseETrends } = HomeRuntime
 
   useEffect(() => {
-   
+     
       GetUseETrends(projectId).then(res => {
         let {success, data} = res
           if(success){
@@ -72,7 +73,7 @@ export default function DefaultHome(props){
           }
       }}).catch()
    
-  }, [iszh])
+  }, [iszh ])
   
   return (
          <Titlelayout title={<CustTransO text="ElectricityConsumption"  />} {...fs} layout="flex" style={{minHeight: "200px"}}>

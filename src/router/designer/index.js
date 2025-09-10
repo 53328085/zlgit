@@ -1,6 +1,6 @@
 import { lazy } from "react";
 
-const Project = lazy(() => import("@pages/defauthome/configure/index")) // 项目概述
+const Project = lazy(() => import("@pages/defauthome/configure")) // 项目概述
 
 const Common = lazy(() => import("@pages/module/index")) // 公共模块
 

@@ -9,6 +9,7 @@ import { message, Input, Tree, Radio, Checkbox, Switch } from 'antd'
 
 import Titlelayout from "@com/titlelayout";
 import { useLocation } from "react-router-dom"
+import { Area } from '@ant-design/plots'
 const { Search } = Input;
 const { useTree: lightTree } = new Apimethod( //照明管理 手动控制 查询线路
   "get",
@@ -31,6 +32,8 @@ const Treebox = styled.div`
 
 export default memo(function Index({ areaId, setTreeId, setLine, setNode, showline = true, scroll = 0, datatype = NaN, energytype, sty = { bordered: 'y', pv: '16px' }, allselect = true, selectobj, multiple = true, treeName = '', title = "", ...restprop }) {
   // datatype =0 或 =2
+  const levelone = useSelector(selectOneLevel)
+
   const [treeData, setTreeData] = useState([])
 
   const location = useLocation();
@@ -46,8 +49,8 @@ export default memo(function Index({ areaId, setTreeId, setLine, setNode, showli
   const [typeTree, setTypeTree] = useState(0)
 
   //const treekey = datatype === 0 ? 'areaId' : datatype === 2||3 ? 'id' :  typeTree == 0 ? "areaId" : "id";
-  const treekey = datatype === 0 ? 'areaId' : (datatype === 2 || datatype === 3 || datatype === 4) ? 'id' : typeTree == 0 ? "areaId" : "id";
-
+  const treekey = datatype === 0 ? 'areaId' : [1, 2, 3, 4, 5].includes(datatype) ? 'id' : typeTree == 0 ? "areaId" : "id";
+  // datatype =5 时 展示一级区域 levelone
 
   // const treekey =  typeTree == 0 ?  "areaId" : "id" ; 
   const [expandedKeys, setExpandedKeys] = useState([]);
@@ -87,6 +90,10 @@ export default memo(function Index({ areaId, setTreeId, setLine, setNode, showli
         }
         if (!allselect && arr.length == 0) {
           arr.push(nodes[0][type])
+        }
+        if (mode && node?.[child]?.length > 0) {
+          console.log(node)
+          arr.push(node[type])
         }
         if (node[child] && Array.isArray(node[child]) && node[child]?.length > 0) {
           getId(node[child], type, child)
@@ -163,7 +170,9 @@ export default memo(function Index({ areaId, setTreeId, setLine, setNode, showli
            }
        } */
 
-      const { success, data, errMsg } = await hander(params)
+      let { success, data, errMsg } = await hander(params)
+
+
       if (success && Array.isArray(data)) {
         //  console.log(idx)
         switch (idx) {
@@ -268,6 +277,24 @@ export default memo(function Index({ areaId, setTreeId, setLine, setNode, showli
 
   }, [areaId, typeTree, datatype, energytype, projectId])
 
+  useEffect(() => {  //  用一级区域做为树结构数据
+    if (Number.isNaN(areaId) && Array.isArray(levelone)) {
+      setTreeData(levelone)
+      let arr = levelone.map(l => l.id)
+
+      treeIdRef.current = arr
+      setIndeterminate(false)
+      setChecked(true)
+
+      setCheckedKeys(arr);
+      setExpandedKeys(arr)
+      setTreeId(arr);
+    }
+
+
+
+  }, [areaId, levelone])
+
   const radiosty = {
     display: 'grid',
     gridTemplateColumns: '1fr 1fr',
@@ -300,16 +327,15 @@ export default memo(function Index({ areaId, setTreeId, setLine, setNode, showli
           {showline && <Radio.Group onChange={switchLine} style={radiosty} value={typeTree}>
             <Radio value={0}>按网格</Radio>
             <Radio value={1}>按线路</Radio>
-
           </Radio.Group>
           }
-          <Search
+          {datatype !== 5 && <Search
             placeholder='请输入关键字查询'
             allowClear
             value={keyword}
             onChange={onChange}
             onSearch={getTreeData}
-          />
+          />}
 
           {allselect && <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>  <Checkbox onChange={allSelected} indeterminate={indeterminate} checked={checked}>全部选中</Checkbox>
             {isshow && <Radio.Group style={radiosty2} onChange={Relevancy} value={schecked}>

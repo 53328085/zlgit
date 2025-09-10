@@ -313,13 +313,17 @@ export const drawEcharts = (
     ...rest
   } = {}
 ) => {  
-  
+ 
   if (!dom) return
   if(type == 0) return message.warning("图表类型错误")
   const {locale} =store.getState()?.system?.intl  // 国际化语言
  
   let lang = locale == 'zh-cn' ? 'ZH' : locale?.locale?.toUpperCase()
-  const chart = echarts.init(dom, 'walden', {locale: lang});
+  let chart
+  if(chart) {
+    chart.dispose()
+  }
+   chart = echarts.init(dom, 'walden', {locale: lang});
   // 对不同图表类型设置不同的格式
 
   let custSeries
@@ -475,6 +479,7 @@ export const drawEcharts = (
     chart.setOption({...setoption, ...rest}, true, chartoption);
   }    
    window.addEventListener('resize', _.throttle(chart?.resize), 300) ;
+   chart?.resize()
   
    
   return chart

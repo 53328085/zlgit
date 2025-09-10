@@ -142,7 +142,7 @@ export default function Index() {
     
     const {controls, esaving} = JSON.parse(strategies)
     const section = controls.map(co => {
-      const {  section, forbidControls,timings, } = co
+      const {  section, forbidControls,timings,eForbid,eTiming } = co
       const {dtEnd,dtStart,Weeks,...rest} =section
       return {
          weeks: Array.isArray(Weeks) ? Weeks : null,
@@ -152,6 +152,8 @@ export default function Index() {
           return {type, time: [moment(dtStart, "HH:mm"),moment(dtEnd, "HH:mm")]}
          }) ,
          timings:  timings.map(t =>  ({...t, time: moment(t.time, "HH:mm")})),
+         eTiming,
+         eForbid,
          ...rest
 
       }
@@ -179,14 +181,16 @@ export default function Index() {
   const onOk = async () => {
     try {
       let values = await newform.validateFields();
-     
+      console.log(values)
       const { schemeName,projectId,creater, section,  esaving,id, } = values;
       const {cold, hight, ...erest} = esaving
       const controls = section.map(se => {
-        let {checked, date, forbidControls,timings, ...rest} = se
+        let {checked, date,eForbid, eTiming,  forbidControls,timings, ...rest} = se
         let forbid=forbidControls.filter(f => Array.isArray(f?.time)&&f?.time?.length==2)  
         let timeing = timings.filter(t=> t.time)
         return {
+           eForbid,
+           eTiming,
            section: {
             dtStart:date?.[0]?.format?.("YYYY-MM-DD"),
             dtEnd:date?.[1]?.format?.("YYYY-MM-DD"),

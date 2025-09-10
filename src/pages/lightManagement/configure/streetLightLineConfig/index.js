@@ -326,7 +326,7 @@ export default function Index() {
         </CModal>
       
       </Titlelayout>
-      <BindLight   {...lineprop}   ref={bindRef} />
+      <BindLight   {...lineprop}   ref={bindRef}  update={refresh} />
     </Pagecont>
   )
 }
