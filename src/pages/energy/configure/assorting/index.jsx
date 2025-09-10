@@ -56,7 +56,6 @@ export default function Index() {
     setTag(val)
   }
   let Com = ProjectCom[value]
-  console.log(Com)
   return (
     <CustContext.Provider value={propsData}>
       <Pagecount showserach={false} pd="16px">

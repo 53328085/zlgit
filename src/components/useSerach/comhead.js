@@ -401,6 +401,22 @@ export default function UseSerach(props) {
   </Space>
 
 
+  const photovoltaicPowerStation = (
+    <Item name="photovoltaicPowerStation" initialValue={1} style={{ color: `${primaryColor}` }} label="光伏站点">
+      {/* powerStationData */}
+      <Select options={publicdateType} style={{ width: "140px" }} onChange={changepublic}></Select>
+    </Item>
+
+  )
+
+  const inverter = (
+    <Item name="inverter" initialValue={1} style={{ color: `${primaryColor}` }} label="逆变器">
+      {/* inverterData */}
+      <Select options={publicdateType} style={{ width: "140px" }} onChange={changepublic}></Select>
+    </Item>
+
+  )
+
   const refresh = (
     <Item name="refresh" style={{ color: `${primaryColor}` }}>
       <SyncOutlined style={{ color: `${primaryColor}` }} /> 刷新
@@ -466,6 +482,12 @@ export default function UseSerach(props) {
         {props.config?.isdevsty && deviceStyleNode}
         {props.config?.isview && viewtype}
         {props.config?.energytype && energytype}
+        {
+          props.config?.photovoltaicPowerStation && photovoltaicPowerStation //光伏发电-光伏电站
+        }
+        {
+          props.config?.inverter && inverter //光伏发电-逆变器
+        }
       </Space>
       <Space>
         {
@@ -486,7 +508,6 @@ export default function UseSerach(props) {
         {
           props.config.publicDate && publicDate // 能源管理--公共能耗
         }
-
         {
           props.config?.refresh && refresh //光伏发电
         }

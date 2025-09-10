@@ -90,41 +90,41 @@ export const TbCol = [
   },
 ];
 //空调节能表头
-export const TbColAir =[
-    {
-        title: "设备名称",
-        dataIndex: "partitionTime",
-        key: "partitionTime",
-      },
-      {
-        title: "通讯地址",
-        dataIndex: "partitionTime",
-        key: "partitionTime",
-      },
-      {
-        title: "节能时长(h)",
-        dataIndex: "partitionTime",
-        key: "partitionTime",
-        sorter: {
-          compare: (a, b) => a.partitionTime - b.partitionTime,
-          multiple: 1,
-        },
-      },
-      {
-        title: "时间段",
-        dataIndex: "partitionTime",
-        key: "partitionTime",
-      },
-      {
-        title: "空调类型",
-        dataIndex: "partitionTime",
-        key: "partitionTime",
-      },
-      {
-        title: "安装地址",
-        dataIndex: "partitionTime",
-        key: "partitionTime",
-      },
+export const TbColAir = [
+  {
+    title: "设备名称",
+    dataIndex: "partitionTime",
+    key: "partitionTime",
+  },
+  {
+    title: "通讯地址",
+    dataIndex: "partitionTime",
+    key: "partitionTime",
+  },
+  {
+    title: "节能时长(h)",
+    dataIndex: "partitionTime",
+    key: "partitionTime",
+    sorter: {
+      compare: (a, b) => a.partitionTime - b.partitionTime,
+      multiple: 1,
+    },
+  },
+  {
+    title: "时间段",
+    dataIndex: "partitionTime",
+    key: "partitionTime",
+  },
+  {
+    title: "空调类型",
+    dataIndex: "partitionTime",
+    key: "partitionTime",
+  },
+  {
+    title: "安装地址",
+    dataIndex: "partitionTime",
+    key: "partitionTime",
+  },
 ]
 
 export const PieOption = {
@@ -133,12 +133,12 @@ export const PieOption = {
     trigger: 'item'
   },
   legend: {
-    top:"28%",
+    top: "28%",
     right: 10,
     orient: 'vertical',
   },
-  xAxis:{
-    show:false
+  xAxis: {
+    show: false
   },
 
   series: [
@@ -180,9 +180,9 @@ export const Chart_Options = {
       type: 'shadow' // 阴影指示器
     },
     // 自定义提示框内容
-    formatter: function(params) {
+    formatter: function (params) {
       let result = params[0].name + '<br/>';
-      params.forEach(function(item) {
+      params.forEach(function (item) {
         let marker = item.marker;
         let seriesName = item.seriesName;
         let value = item.value;
@@ -197,13 +197,13 @@ export const Chart_Options = {
       return result;
     }
   },
-  
+
   // 图例配置
   legend: {
     data: ['今日能耗', '昨日能耗', '环比率'],
     top: 10
   },
-  
+
   // 网格配置
   grid: {
     top: '10%',
@@ -212,7 +212,7 @@ export const Chart_Options = {
     bottom: '3%',
     containLabel: true
   },
-  
+
   // X轴配置
   xAxis: {
     type: 'category',
@@ -221,7 +221,7 @@ export const Chart_Options = {
       type: 'shadow'
     }
   },
-  
+
   // Y轴配置（双Y轴）
   yAxis: [
     {
@@ -244,13 +244,13 @@ export const Chart_Options = {
       nameGap: 45,
       min: 0,
       axisLabel: {
-        formatter: function(value) {
+        formatter: function (value) {
           return value % 1 === 0 ? value : value + '%'; // 整数显示数量，小数显示百分比
         }
       }
     }
   ],
-  
+
   // 系列配置
   series: [
     // 第一个柱状图（左Y轴）
@@ -263,7 +263,7 @@ export const Chart_Options = {
       },
       data: [12000, 15000, 18000, 21000, 25000, 28000, 31000, 34000, 37000, 40000, 43000, 46000]
     },
-    
+
     // 第二个柱状图（右Y轴）
     {
       name: '订单量',
@@ -275,7 +275,7 @@ export const Chart_Options = {
       },
       data: [120, 150, 180, 210, 250, 280, 310, 340, 370, 400, 430, 460]
     },
-    
+
     // 折线图（右Y轴）
     {
       name: '转化率',
@@ -294,7 +294,7 @@ export const Chart_Options = {
   ]
 };
 
-export const Column_Options={
+export const Column_Options = {
   tooltip: {
     trigger: 'axis',
     axisPointer: {
@@ -331,13 +331,13 @@ export const Column_Options={
   ]
 }
 
-export const MdTbCol=[
+export const MdTbCol = [
   {
     title: "时间",
     dataIndex: "address2",
     key: "address2",
 
-  },{
+  }, {
     title: "起始示值",
     dataIndex: "address2",
     key: "address2",
@@ -348,23 +348,23 @@ export const MdTbCol=[
     dataIndex: "address2",
     key: "address2",
 
-  },{
+  }, {
     title: "综合倍率",
     dataIndex: "address2",
     key: "address2",
 
-  },{
+  }, {
     title: "用电量",
     dataIndex: "address2",
     key: "address2",
 
   }
 ]
-export const MdOptions= {
-  grid:{
-    left:'5%',
-    right:'5%',
-    bottom:'3%'
+export const MdOptions = {
+  grid: {
+    left: '5%',
+    right: '5%',
+    bottom: '3%'
   },
   xAxis: {
     type: 'category',
@@ -380,69 +380,69 @@ export const MdOptions= {
     }
   ]
 };
-export const MdColHidden=[
+export const MdColHidden = [
   {
     title: "",
     dataIndex: "name",
     key: "name",
-    width:203,
-    className:"bg"
+    width: 203,
+    className: "bg"
   },
   {
     title: "",
     dataIndex: "age",
     key: "age",
-    width:203
+    width: 203
   },
   {
     title: "",
     dataIndex: "address",
     key: "address",
-    width:203,
-     className:"bg"
+    width: 203,
+    className: "bg"
   }, {
     title: "",
     dataIndex: "key",
     key: "key",
-    width:203
+    width: 203
   }
 ]
-export const MdTbData=[{
+export const MdTbData = [{
   key: '1',
   name: '设备名称',
   age: 32,
   address: '通信地址',
-},{
+}, {
   key: '1',
   name: '所属区域',
   age: 32,
   address: '安装地址',
 }]
 
-export const PlainOptions=[{ label: '全部', value: 0},{ label: '开启', value: 1},{ label: '关闭', value: 2}]
-export const PlainColumns=[{
+export const PlainOptions = [{ label: '全部', value: 0 }, { label: '开启', value: 1 }, { label: '关闭', value: 2 }]
+export const PlainColumns = [{
   title: "操作时间",
   dataIndex: "age",
   key: "age",
-  width:203
-},{
+  width: 203
+}, {
   title: "开关状态",
   dataIndex: "age",
   key: "age",
-  width:122
-},{
+  width: 122
+}, {
   title: "设定温度",
   dataIndex: "age",
   key: "age",
-  width:122
-},{
+  width: 122
+}, {
   title: "操作人",
   dataIndex: "age",
   key: "age",
-  width:122
-},{
+  width: 122
+}, {
   title: "控制类型",
   dataIndex: "age",
   key: "age",
-  width:122
+  width: 122
 }]
