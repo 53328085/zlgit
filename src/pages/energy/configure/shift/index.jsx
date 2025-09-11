@@ -3,6 +3,7 @@ import styled from 'styled-components';
 import style from './style.module.less'
 import { Button, Modal, Form, Input, TimePicker, Space, message } from 'antd'
 import dayjs from 'dayjs';
+import moment from 'moment';
 import customParseFormat from 'dayjs/plugin/customParseFormat';
 dayjs.extend(customParseFormat);
 import dashed from '@imgs/dashed.png'
@@ -97,6 +98,7 @@ const Logbox=styled.div`
   display: flex;
    align-items:center;
   justify-content: space-around;
+  flex-wrap: wrap;
   margin-top: 32px;
   .defaultStyle{
     display: inline-block;
@@ -109,6 +111,7 @@ const Logbox=styled.div`
     color: #515151;
     background-color: #fff;
     cursor: pointer;
+    margin-bottom: 16px;
   }
   .activeStyle { 
     color: #fff;
@@ -144,6 +147,18 @@ export default function Index() {
   const [editform] = Form.useForm()
   const Item = Form.Item
   const format = 'HH:mm';
+
+  const [timeRanges, setTimeRanges] = useState([]);
+
+    const handleTimeChange = (id, field, value) => {
+    const newRanges = timeRanges.map(range => {
+      if (range.id === id) {
+        return { ...range, [field]: value };
+      }
+      return range;
+    });
+    setTimeRanges(newRanges);
+  };
 
  
 
@@ -186,9 +201,7 @@ export default function Index() {
       <div className="cardItem">
         <span className="title">结束时间</span>
         <TimePicker defaultValue={dayjs(itemData.endTime, 'HH:mm')} format={format}  disabled></TimePicker>
-      </div>
-     
-    
+      </div>    
     </div>
   }
 
@@ -198,6 +211,19 @@ export default function Index() {
   const toNext = () => {
     setAddModal(false)
     form.resetFields()
+    let newRange = [];
+
+    for(let i = 0; i < classes; i++){
+      newRange.push({
+        id: i + 1,
+        name:'',
+        start:null,
+        end:null
+      })
+    }
+
+    setTimeRanges(newRange);
+
     setNextModal(true)
   }
   const handleCancel = () => {
@@ -205,33 +231,57 @@ export default function Index() {
     setNextModal(false)
     setEditModal(false)
   }
+
+
+  // 校验时间段是否重叠
+    const validateTimeRanges = () => {
+      // 过滤出已设置的时间段并排序
+      const validRanges = timeRanges
+        .filter(range => range.start && range.end)
+        .map(range => ({
+          id: range.id,
+          start: range.start.valueOf(),
+          end: range.end.valueOf()
+        }))
+        .sort((a, b) => a.start - b.start);
+  
+      // 检查是否有结束时间早于开始时间
+      for (let range of validRanges) {
+        if (range.end <= range.start && moment(range.end).format('HH:mm') != '00:00') {
+          return { isValid: false, message: '结束时间必须晚于开始时间' };
+        }
+      }
+  
+      // 检查时间段是否重叠
+      for (let i = 1; i < validRanges.length; i++) {
+        let newStart = moment(validRanges[i].start).format('HH:mm')
+        let newEnd = moment(validRanges[i - 1].end).format('HH:mm')
+
+        if (newStart.slice(0, 2) < newEnd.slice(0,2) || 
+        (newStart.slice(0, 2) == newEnd.slice(0,2) && newStart.slice(3) < newEnd.slice(3))) {
+          
+          return { isValid: false, message: '时间段不能重叠' };
+        }
+      }
+  
+      return { isValid: true, message: '校验通过' };
+    };
+
   //新增
   const onOk = async () => {
     try{
       const values = await form.validateFields()
-      let params = [];
-      params.push({
-        Name: values.className1,
-        StartTime:time1,
-        EndTime: disabledTime1
-      })
-      params.push({
-        Name: values.className2,
-        StartTime:time2,
-        EndTime: disabledTime2
-      })
-      if(classes >= 3){
-        params.push({
-          Name: values.className3,
-          StartTime:time3,
-          EndTime: disabledTime3
-        })
+      const validation = validateTimeRanges();
+      if (!validation.isValid) {
+        message.error(validation.message);
+        return;
       }
-      if(classes == 4){
+      let params = [];
+      for(let i = 0; i<classes; i++){
         params.push({
-          Name: values.className4,
-          StartTime:time4,
-          EndTime: disabledTime4
+          Name: values['name' + i],
+          StartTime: moment(values['start' + i]).format('HH:mm'),
+          EndTime: moment(values['end' + i]).format('HH:mm'),
         })
       }
       insertShift(projectId, classes, params).then(res => {
@@ -240,14 +290,6 @@ export default function Index() {
             type:'success',
             content:'新增班次成功!'
           })
-          setTime1(null)
-          setTime2(null)
-          setTime3(null)
-          setTime4(null)
-          setDisabledTime1(null)
-          setDisabledTime2(null)
-          setDisabledTime3(null)
-          setDisabledTime4(null)
           shiftQuery()
           setNextModal(false)
         }else{
@@ -258,109 +300,50 @@ export default function Index() {
   }
 
   //编辑
-  const [editTime1, setEditTime1] = useState(null)
-  const [disabledEditTime1, setDisabledEditTime1] = useState(null)
-  const [editTime2, setEditTime2] = useState(null)
-  const [disabledEditTime2, setDisabledEditTime2] = useState(null)
-  const [editTime3, setEditTime3] = useState(null)
-  const [disabledEditTime3, setDisabledEditTime3] = useState(null)
-  const [editTime4, setEditTime4] = useState(null)
-  const [disabledEditTime4, setDisabledEditTime4] = useState(null)
-  const onChangeEdit1 = (time, timeString) =>{
-    setEditTime1(timeString)
-    if(classes == 2){
-      setDisabledEditTime2(timeString)
-    }
-    if(classes == 3){
-      setDisabledEditTime3(timeString)
-    }
-    if(classes == 4){
-      setDisabledEditTime4(timeString)
-    }
-  } 
-  const onChangeEdit2 = (time, timeString) =>{
-    setEditTime2(timeString)
-    setDisabledEditTime1(timeString)
-  } 
-  const onChangeEdit3 = (time, timeString) =>{
-    setEditTime3(timeString)
-    setDisabledEditTime2(timeString)
-  } 
-  const onChangeEdit4 = (time, timeString) =>{
-    setEditTime4(timeString)
-    setDisabledEditTime3(timeString)
-  }
   const onEdit = ()=> {
     setClasses(shiftList.length)
+    let newRanges = []
+    for(let i = 0; i<shiftList.length; i++){
+      editform.setFieldValue(`name${i}`, shiftList[i].name)
+      editform.setFieldValue(`start${i}`, moment(shiftList[i].startTime, 'HH:mm'))
+      editform.setFieldValue(`end${i}`, moment(shiftList[i].endTime, 'HH:mm'))
+      newRanges.push({
+        id: shiftList[i].id,
+        name: shiftList[i].name,
+        start: moment(shiftList[i].startTime, 'HH:mm'),
+        end:  moment(shiftList[i].endTime, 'HH:mm')
+      })
+    }
+    setTimeRanges(newRanges);
+
     setEditModal(true)
-    editform.setFieldValue('className1',shiftList[0].name)
-    editform.setFieldValue('time1', dayjs(shiftList[0].startTime, 'HH:mm'))
-    setEditTime1(shiftList[0].startTime)
-    setDisabledEditTime1(shiftList[0].endTime)
-    editform.setFieldValue('className2',shiftList[1].name)
-    editform.setFieldValue('time2', dayjs(shiftList[1].startTime, 'HH:mm'))
-    setEditTime2(shiftList[1].startTime)
-    setDisabledEditTime2(shiftList[1].endTime)
-    if(shiftList.length >= 3){
-      editform.setFieldValue('className3',shiftList[2].name)
-      editform.setFieldValue('time3', dayjs(shiftList[2].startTime, 'HH:mm'))
-      setEditTime3(shiftList[2].startTime)
-      setDisabledEditTime3(shiftList[2].endTime)
-    }
-    if(shiftList.length == 4){
-      editform.setFieldValue('className4',shiftList[3].name)
-      editform.setFieldValue('time4', dayjs(shiftList[3].startTime, 'HH:mm'))
-      setEditTime4(shiftList[3].startTime)
-      setDisabledEditTime4(shiftList[3].endTime)
-    }
   }
 
   const onUpdate = async () => {
     try{
       const values = await editform.validateFields()
+      console.log(values)
+      const validation = validateTimeRanges();
+      if (!validation.isValid) {
+        message.error(validation.message);
+        return;
+      }
       let params = [];
-      params.push({
-        Id: shiftList[0].id,
-        Name: values.className1,
-        StartTime:editTime1,
-        EndTime: disabledEditTime1
-      })
-      params.push({
-        Id: shiftList[1].id,
-        Name: values.className2,
-        StartTime:editTime2,
-        EndTime: disabledEditTime2
-      })
-      if(classes >= 3){
+      for(let i = 0; i< shiftList.length; i++){
         params.push({
-          Id: shiftList[2].id,
-          Name: values.className3,
-          StartTime:editTime3,
-          EndTime: disabledEditTime3
+          Id: shiftList[i].id,
+          Name: values['name' + i],
+          StartTime: moment(values['start' + i]).format('HH:mm'),
+          EndTime: moment(values['end' + i]).format('HH:mm'),
         })
       }
-      if(classes == 4){
-        params.push({
-          Id: shiftList[3].id,
-          Name: values.className4,
-          StartTime:editTime4,
-          EndTime: disabledEditTime4
-        })
-      }
+
       updateShift(projectId, params).then(res => {
         if(res.success){
           messageApi.open({
             type: 'success',
             content:'班次方案修改成功!'
           })
-          setEditTime1(null)
-          setEditTime2(null)
-          setEditTime3(null)
-          setEditTime4(null)
-          setDisabledEditTime1(null)
-          setDisabledEditTime2(null)
-          setDisabledEditTime3(null)
-          setDisabledEditTime4(null)
           shiftQuery()
           setEditModal(false)
         }else{
@@ -393,54 +376,6 @@ export default function Index() {
     })
   }
 
-  const [time1, setTime1] = useState(null)
-  const [disabledTime1, setDisabledTime1] = useState(null)
-  const [time2, setTime2] = useState(null)
-  const [disabledTime2, setDisabledTime2] = useState(null)
-  const [time3, setTime3] = useState(null)
-  const [disabledTime3, setDisabledTime3] = useState(null)
-  const [time4, setTime4] = useState(null)
-  const [disabledTime4, setDisabledTime4] = useState(null)
-  const onChange1 = (time, timeString) =>{
-    setTime1(timeString)
-    if(classes == 2){
-      setDisabledTime2(timeString)
-    }
-    if(classes == 3){
-      setDisabledTime3(timeString)
-    }
-    if(classes == 4){
-      setDisabledTime4(timeString)
-    }
-  } 
-  const onChange2 = (time, timeString) =>{
-    setTime2(timeString)
-    setDisabledTime1(timeString)
-  } 
-  const onChange3 = (time, timeString) =>{
-    setTime3(timeString)
-    setDisabledTime2(timeString)
-  } 
-  const onChange4 = (time, timeString) =>{
-    setTime4(timeString)
-    setDisabledTime3(timeString)
-  }
-  const disabledHoursFun = (str1, str2) => {
-    let arr = [];
-    if(str1){
-      let value = parseInt(str1.slice(0,2))
-      for(let i = 0;i<= value; i++){
-        arr.push(i)
-      }
-    }
-    if(str2){
-      let value = parseInt(str2.slice(0,2))
-      for(let i = value;i<= 23; i++){
-        arr.push(i)
-      }
-    }
-    return arr   
-  } 
 
 
   return (
@@ -470,6 +405,9 @@ export default function Index() {
             <span className={classes == 2 ? 'activeStyle defaultStyle' : 'defaultStyle' } onClick={()=> {setClasses(2)}}>一天两班</span>
             <span className={classes == 3 ? 'activeStyle defaultStyle' : 'defaultStyle' } onClick={()=> {setClasses(3)}}>一天三班</span>
             <span className={classes == 4 ? 'activeStyle defaultStyle' : 'defaultStyle' } onClick={()=> {setClasses(4)}}>一天四班</span>
+            <span className={classes == 6 ? 'activeStyle defaultStyle' : 'defaultStyle' } onClick={()=> {setClasses(6)}}>一天六班</span>
+            <span className={classes == 8 ? 'activeStyle defaultStyle' : 'defaultStyle' } onClick={()=> {setClasses(8)}}>一天八班</span>
+            <span className={classes == 10 ? 'activeStyle defaultStyle' : 'defaultStyle' } onClick={()=> {setClasses(10)}}>一天十班</span>
           </Logbox>
           <img src={dashed} style={{marginTop: 32, width:'100%'}}></img>
         
@@ -477,61 +415,35 @@ export default function Index() {
       {/* 新增 */}
       <Custmodl title="创建班次"  open={nextModal} onOk={onOk} onCancel={handleCancel} width={530} cancelText={'取消'} centered={true} closable={false} maskClosable={false} okText={'确认'} okType={'primary'} mold="cust" >
         
-        
-          <Formbox>
+        <Formbox>
+          <div style={{maxHeight:'720px', overflowY:'auto', overflowX:'hidden'}}>
             <Form name='addform' labelCol={{span:4}} form={form} labelAlign={'left'} requiredMark={false} autoComplete='off'>
-              <Item label='班次1名称' name='className1' rules={[{required:true, message:'班次名称不能为空'}]}>
-                <Input style={{width:'180px'}} placeholder={'请输入班次名称'}></Input>
-              </Item>
-              <Item label='班次时段'>
-                <Space size={32} style={{display:'flex', alignItems:'flex-start'}}>
-                  <Item name='time1' rules={[{required:true, message:'班次时段不能为空'}]}>
-                    <TimePicker style={{width: 180}} onChange={onChange1} format={format} disabledHours={()=>disabledHoursFun(null, time2)}></TimePicker>
-                  </Item>
-                  <TimePicker style={{width: 180}} disabled value={dayjs(disabledTime1, 'HH:mm')} format={format}></TimePicker>
-                </Space>
-              </Item>
-              <img src={dashed} style={{width:'100%'}}></img>
-              <Item label='班次2名称' name='className2' rules={[{required:true, message:'班次名称不能为空'}]}>
-                <Input style={{width:'180px'}} placeholder={'请输入班次名称'}></Input>
-              </Item>
-              <Item label='班次时段' >
-                <Space size={32} style={{display:'flex', alignItems:'flex-start'}}>
-                  <Item name='time2' rules={[{required:true, message:'班次时段不能为空'}]}>
-                    <TimePicker style={{width: 180}} onChange={onChange2} format={format} disabledHours={()=>disabledHoursFun(time1, classes>=3 ? time3 : null)}></TimePicker>
-                  </Item>
-                  <TimePicker style={{width: 180}} disabled value={dayjs(disabledTime2, 'HH:mm')} format={format}></TimePicker>
-                </Space>
-              </Item>
-              <img src={dashed} style={{width:'100%'}}></img>
-              {classes >= 3 ? <><Item label='班次3名称' name='className3' rules={[{required:true, message:'班次名称不能为空'}]}>
-                  <Input style={{width:'180px'}} placeholder={'请输入班次名称'}></Input>
-                </Item>
-                <Item label='班次时段' >
-                  <Space size={32} style={{display:'flex', alignItems:'flex-start'}}>
-                    <Item name='time3' rules={[{required:true, message:'班次时段不能为空'}]}>
-                      <TimePicker style={{width: 180}} onChange={onChange3} format={format} disabledHours={()=>disabledHoursFun(time2, classes == 4 ? time4 : null)}></TimePicker>
+              {
+                timeRanges.map((item, index) => {
+                  return (
+                    <div key={index}>
+                    <Item label={`班次${index + 1}名称`} name={'name' + index} rules={[{required:true, message:'班次名称不能为空'}]}>
+                      <Input  style={{width:'180px'}} placeholder={'请输入班次名称'}></Input>
                     </Item>
-                    <TimePicker style={{width: 180}} disabled value={dayjs(disabledTime3, 'HH:mm')} format={format}></TimePicker>
-                  </Space>
-                </Item>
-                <img src={dashed} style={{width:'100%'}}></img> </> : null}
-              { classes == 4 ? <>
-                <Item label='班次4名称' name='className4' rules={[{required:true, message:'班次名称不能为空'}]}>
-                  <Input style={{width:'180px'}} placeholder={'请输入班次名称'}></Input>
-                </Item>
-                <Item label='班次时段' >
-                  <Space size={32} style={{display:'flex', alignItems:'flex-start'}}>
-                    <Item name='time4' rules={[{required:true, message:'班次时段不能为空'}]}>
-                      <TimePicker style={{width: 180}} onChange={onChange4} format={format} disabledHours={()=>disabledHoursFun(time3, null)}></TimePicker>
+                    <Item label='班次时段'>
+                      <Space size={32} style={{display:'flex', alignItems:'flex-start'}}>
+                        <Item name={'start' + index} rules={[{required:true, message:'班次时段不能为空'}]}>
+                          <TimePicker style={{width: 180}}  minuteStep={15} onChange={(time) => handleTimeChange(index + 1, 'start', time)} format={format}></TimePicker>
+                        </Item>
+                        <Item name={'end' + index} rules={[{required:true, message:'班次时段不能为空'}]}>
+                          <TimePicker style={{width: 180}}  minuteStep={15} onChange={(time) => handleTimeChange(index + 1, 'end', time)} format={format}></TimePicker>
+                        </Item>
+                      </Space>
                     </Item>
-                    <TimePicker style={{width: 180}} disabled value={dayjs(disabledTime4, 'HH:mm')} format={format}></TimePicker>
-                  </Space>
-                </Item>
-                <img src={dashed} style={{width:'100%'}}></img> 
-                </> : null }
+                    </div>
+                  )
+                })
+              }
+
             </Form>
-          </Formbox>
+          </div>
+        </Formbox>
+        
          
       </Custmodl>
       <Custmodl title='删除班次' ref={dref}  mold="cust" width={512} type="warn" onOk={()=>onDeleteShift()}>
@@ -540,62 +452,37 @@ export default function Index() {
       {/* 编辑 */}
       <Custmodl  title="编辑班次" open={editModal} onOk={onUpdate} onCancel={handleCancel} width={530}  closable={false} mold="cust" >
       <Formbox>
+        <div style={{maxHeight:'720px', overflowY:'auto', overflowX:'hidden'}}>
             <Form name='editform' labelCol={{span:4}} form={editform} labelAlign={'left'} requiredMark={false} autoComplete='off'>
-            
-              <Item label='班次1名称' name='className1' rules={[{required:true, message:'班次名称不能为空'}]}>
-                <Input style={{width:'180px'}} placeholder={'请输入班次名称'}></Input>
-              </Item>
-              <Item label='班次时段' style={{height: 32}} >
-                <Space size={32} style={{display:'flex', alignItems:'flex-start'}}>
-                  <Item name='time1' rules={[{required:true, message:'班次时段不能为空'}]}>
-                    <TimePicker style={{width: 180}} onChange={onChangeEdit1} defaultValue={dayjs(editTime1, 'HH:mm')} format={format} disabledHours={()=>disabledHoursFun(null, editTime2)}></TimePicker>
-                  </Item>
-                  <TimePicker style={{width: 180}} disabled value={dayjs(disabledEditTime1, 'HH:mm')} format={format}></TimePicker>
-                </Space>
-              </Item>
-              <img src={dashed} style={{width:'100%'}}></img>
-              <Item label='班次2名称' name='className2' rules={[{required:true, message:'班次名称不能为空'}]}>
-                <Input style={{width:'180px'}} placeholder={'请输入班次名称'}></Input>
-              </Item>
-              <Item label='班次时段' style={{height: 32}}>
-                <Space size={32} style={{display:'flex', alignItems:'flex-start'}}>
-                  <Item name='time2' rules={[{required:true, message:'班次时段不能为空'}]}>
-                    <TimePicker style={{width: 180}} onChange={onChangeEdit2} defaultValue={dayjs(editTime2, 'HH:mm')} format={format} disabledHours={()=>disabledHoursFun(editTime1, classes>=3 ? editTime3 : null)}></TimePicker>
-                  </Item>
-                  <TimePicker style={{width: 180}} disabled value={dayjs(disabledEditTime2, 'HH:mm')} format={format}></TimePicker>
-                </Space>
-              </Item>
-              <img src={dashed} style={{width:'100%'}}></img>
-              {classes >= 3 ? <><Item label='班次3名称' name='className3' rules={[{required:true, message:'班次名称不能为空'}]}>
-                  <Input style={{width:'180px'}} placeholder={'请输入班次名称'}></Input>
-                </Item>
-                <Item label='班次时段' style={{height: 32}}>
-                  <Space size={32} style={{display:'flex', alignItems:'flex-start'}}>
-                    <Item name='time3' rules={[{required:true, message:'班次时段不能为空'}]}>
-                      <TimePicker style={{width: 180}} defaultValue={dayjs(editTime3, 'HH:mm')} onChange={onChangeEdit3} format={format} disabledHours={()=>disabledHoursFun(editTime2, classes == 4 ? editTime4 : null)}></TimePicker>
+
+              {
+                timeRanges.map((item, index) => {
+                  return (
+                    <div key={index}>
+                    <Item label={`班次${index + 1}名称`} name={'name' + index} rules={[{required:true, message:'班次名称不能为空'}]}>
+                      <Input  style={{width:'180px'}} placeholder={'请输入班次名称'}></Input>
                     </Item>
-                    <TimePicker style={{width: 180}} disabled value={dayjs(disabledEditTime3, 'HH:mm')} format={format}></TimePicker>
-                  </Space>
-                </Item>
-                <img src={dashed} style={{width:'100%'}}></img> </> : null}
-              { classes == 4 ? <>
-                <Item label='班次4名称' name='className4' rules={[{required:true, message:'班次名称不能为空'}]}>
-                  <Input style={{width:'180px'}} placeholder={'请输入班次名称'}></Input>
-                </Item>
-                <Item label='班次时段' style={{height: 32}}>
-                  <Space size={32} style={{display:'flex', alignItems:'flex-start'}}>
-                    <Item name='time4' rules={[{required:true, message:'班次时段不能为空'}]}>
-                      <TimePicker style={{width: 180}} defaultValue={dayjs(editTime4, 'HH:mm')} onChange={onChangeEdit4} format={format} disabledHours={()=>disabledHoursFun(editTime3, null)}></TimePicker>
+                    <Item label='班次时段'>
+                      <Space size={32} style={{display:'flex', alignItems:'flex-start'}}>
+                        <Item name={'start' + index} rules={[{required:true, message:'班次时段不能为空'}]}>
+                          <TimePicker style={{width: 180}}  minuteStep={15} onChange={(time) => handleTimeChange(index + 1, 'start', time)} format={format}></TimePicker>
+                        </Item>
+                        <Item name={'end' + index} rules={[{required:true, message:'班次时段不能为空'}]}>
+                          <TimePicker style={{width: 180}}  minuteStep={15} onChange={(time) => handleTimeChange(index + 1, 'end', time)} format={format}></TimePicker>
+                        </Item>
+                      </Space>
                     </Item>
-                    <TimePicker style={{width: 180}} disabled value={dayjs(disabledEditTime4, 'HH:mm')} format={format}></TimePicker>
-                  </Space>
-                </Item>
-                <img src={dashed} style={{width:'100%'}}></img> 
-                </> : null }
-               
+                    </div>
+                  )
+                })
+              }
             </Form>
+            </div>
             </Formbox>
       </Custmodl>
     </Mainbox>
   )
 }
+
+
+
