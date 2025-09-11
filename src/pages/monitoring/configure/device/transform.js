@@ -150,7 +150,9 @@ export default function gateway({ deviceStyle }) {
         capacity,
         ratedI,
         ratedU,
-        ratedFrequency
+        ratedFrequency,
+        ratedPower,
+        ratedApparentPower
       } = editform.getFieldValue()
       let params = {
         id,
@@ -166,7 +168,9 @@ export default function gateway({ deviceStyle }) {
         capacity,
         ratedI,
         ratedU,
-        ratedFrequency
+        ratedFrequency,
+        ratedPower,
+        ratedApparentPower
       }
       const resp = await UpdateTransformer(params)
       if (resp.success) {
@@ -196,6 +200,8 @@ export default function gateway({ deviceStyle }) {
         ratedI,
         ratedU,
         ratedFrequency,
+        ratedPower,
+        ratedApparentPower,
         commPort,
         commProtocol,
         commAddress
@@ -215,6 +221,8 @@ export default function gateway({ deviceStyle }) {
         ratedI,
         ratedU,
         ratedFrequency,
+        ratedPower,
+        ratedApparentPower,
         commPort,
         commProtocol,
         commAddress
@@ -282,7 +290,9 @@ export default function gateway({ deviceStyle }) {
       capacity:'',
       ratedU:'',
       ratedI:'',
-      ratedFrequency:''
+      ratedFrequency:'',
+      ratedPower: '',
+      ratedApparentPower:''
     })
     modalFormRef?.current?.onOpen()
 
@@ -306,6 +316,8 @@ export default function gateway({ deviceStyle }) {
         ratedU:formvalue.ratedU,
         ratedI:formvalue.ratedI,
         ratedFrequency:formvalue.ratedFrequency,
+        ratedPower: formvalue.ratedPower,
+        ratedApparentPower: formvalue.ratedApparentPower,
         commPort: formvalue.commPort?formvalue.commPort:0,
         commAddress: formvalue.commAddress?formvalue.commAddress:0,
         commProtocol: 0,
@@ -344,6 +356,8 @@ export default function gateway({ deviceStyle }) {
         ratedU:formvalue.ratedU,
         ratedI:formvalue.ratedI,
         ratedFrequency:formvalue.ratedFrequency,
+        ratedPower: formvalue.ratedPower,
+        ratedApparentPower: formvalue.ratedApparentPower,
         commPort: formvalue.commPort?formvalue.commPort:0,
         commAddress: formvalue.commAddress?formvalue.commAddress:0,
         commProtocol: 0,
@@ -756,6 +770,12 @@ export const FormComp = (props) => {
           <Form.Item label="额定频率" name="ratedFrequency" rules={[{ validator:validatorfunc}]}>
             <Input suffix={<span>(Hz)</span>}/>
           </Form.Item>
+          <Form.Item label="额定功率" name="ratedPower" rules={[{required:true, message:'请输入额定功率'}]}>
+            <Input suffix={<span>(kW)</span>}/>
+          </Form.Item>
+          <Form.Item label="额定视在功率" name="ratedApparentPower" rules={[{required:true, message:'请输入额定视在功率'}]}>
+            <Input suffix={<span>(kVA)</span>}/>
+          </Form.Item>
           {
             form.getFieldsValue().gatewayId ? (
               <>
@@ -975,6 +995,12 @@ export const EditFormComp = (props) => {
           </Form.Item>
           <Form.Item label="额定频率" name="ratedFrequency" rules={[{ validator:validatorfunc}]}>
             <Input suffix={<span>(Hz)</span>}/>
+          </Form.Item>
+          <Form.Item label="额定功率" name="ratedPower" rules={[{required:true, message:'请输入额定功率'}]}>
+            <Input suffix={<span>(kW)</span>}/>
+          </Form.Item>
+          <Form.Item label="额定视在功率" name="ratedApparentPower" rules={[{required:true, message:'请输入额定视在功率'}]}>
+            <Input suffix={<span>(kVA)</span>}/>
           </Form.Item>
           {
             form.getFieldsValue().gatewayId ? (
