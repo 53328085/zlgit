@@ -251,3 +251,22 @@ justify-content:flex-end;
 color: #1E50E6;
 }
 `;
+export const HistoricalModal = styled.div`
+.searchBox{
+display:flex;
+align-items:center;
+justify-content: space-between;
+.timeBox{
+display:flex;
+align-items:center;
+}
+}
+.echarts{
+margin-top:16px;
+height:360px;
+}
+.table{
+margin-top:16px;
+height:360px;
+}
+`

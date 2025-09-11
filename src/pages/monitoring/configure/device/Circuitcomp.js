@@ -33,7 +33,6 @@ export const MyContext = createContext({
     devicelist: [],
     alarmopts: [],
 });
-
 //新增com
 let coms = 0;
 // 1 电表, 11 断路器
@@ -74,22 +73,7 @@ let Com = ({ form, deviceStyle }) => {
     }, [form.getFieldsValue().commAddress]);
     return (
         <>
-            {/*  {deviceStyle == 12 ? (
-                <Form.Item label="倍率" name="factor" rules={[...rules,
-                {
-                    validator: (_, value) => {
-                        if (!value) {
-                            return Promise.resolve()
-                        } else if (parseInt(value) < 0) {
-                            return Promise.reject(new Error("请输入正整数"))
-                        } else {
-                            return Promise.resolve()
-                        }
-                    }
-                },]}>
-                    <Input />
-                </Form.Item>
-            ) :  null} */}
+
             {(deviceStyle == 1 || deviceStyle == 12) && (
                 <>
                     <Form.Item label="CT" name="ct" initialValue={1}>
@@ -182,23 +166,8 @@ export const FormComp = (props) => {
         form,
         deviceStyle,
         levelname,
-        setChannelName1,
-        setChannelName2,
-        setChannelName3,
-        setChannelName4,
-        setIndex,
-        checklistRef,
-        path1Gruop,
-        path2Gruop,
-        path3Gruop,
-        path4Gruop,
-        setTransition,
-        setMaskTransitionName,
+        setGatewayCategory,  // 从 Context 中获取
     } = useContext(MyContext);
-    const [name1, setName1] = useState("通道1");
-    const [name2, setName2] = useState("通道2");
-    const [name3, setName3] = useState("通道3");
-    const [name4, setName4] = useState("通道4");
     const [area, setArea] = useState([]);
     //const [coms, setComs] = useState(0)
     const rules = [
@@ -211,39 +180,14 @@ export const FormComp = (props) => {
         if (v) {
             const arr = addopts?.filter((it) => it.id === option.areaId);
             setArea([...arr]);
+            setGatewayCategory(option.category); // 使用 Context 中的更新函数
             coms = option.com;
             form.setFieldsValue({ areaId: arr[0].id, commPort: "" });
         } else {
             setArea([]);
+            setGatewayCategory(''); // 清空
         }
     };
-    const validator = () => ({
-        validator(_, value) {
-            console.log(_, value, checklistRef.current);
-            let count = 0;
-            for (const key in checklistRef.current) {
-                if (Object.hasOwnProperty.call(checklistRef.current, key)) {
-                    if (checklistRef.current[key]) {
-                        count++;
-                    }
-                }
-            }
-            if (
-                path1Gruop.current.length == 0 &&
-                path2Gruop.current.length == 0 &&
-                path3Gruop.current.length == 0 &&
-                path4Gruop.current.length == 0
-            ) {
-                count = 0;
-            }
-            console.log(count);
-            if (count) {
-                return Promise.resolve();
-            } else {
-                return Promise.reject(new Error("通道配置未勾选或未配置"));
-            }
-        },
-    });
     return (
         <Form
             labelAlign="left"
@@ -252,12 +196,6 @@ export const FormComp = (props) => {
             labelCol={{
                 span: 6,
             }}
-        /*  initialValues={{
-               channel1:'通道1',
-               channel2:'通道2',
-               channel3:'通道3',
-               channel4:'通道4'
-           }} */
         >
             <Row className={style.customItem}>
                 <Col span={10}>
@@ -357,23 +295,6 @@ export const FormComp = (props) => {
                     >
                         <Input />
                     </Form.Item>
-                    {/* <Form.Item label="设备编号" name="sn" rules={[...rules, {
-                        validator: (_, value) => {
-                            if (!value) {
-                                return Promise.resolve()
-                            } else {
-                                let val = value.trim()
- 
-                                if (val.split(" ").join("").length !== 12) {
-                                    return Promise.reject(new Error("设备编号长度12位"))
-                                } else {
-                                    return Promise.resolve()
-                                }
-                            } 
-                        }
-                    }]}>
-                        <Input />
-                    </Form.Item> */}
                     <Form.Item label="设备名称" name="name" rules={rules}>
                         <Input />
                     </Form.Item>
@@ -399,21 +320,6 @@ export const FormComp = (props) => {
                             ></Select>
                         </Form.Item>
                     ) : null}
-
-                    {/* {
-                        deviceStyle === 21 ? (
-                            <Form.Item label="计量电表" name="customerType" rules={rules}>
-                                <Select
-                                    options={[{
-                                        label: '客户用能',
-                                        value: 1
-                                    }, {
-                                        label: '公共用能',
-                                        value: 2
-                                    }]}></Select>
-                            </Form.Item>
-                        ) : null
-                    } */}
                     {deviceStyle === 1 ||
                         deviceStyle == 12 ||
                         deviceStyle == 13 ||
@@ -425,89 +331,6 @@ export const FormComp = (props) => {
                         <Com form={form} deviceStyle={deviceStyle}></Com>
                     ) : null}
                 </Col>
-                {/*   {
-                    props.isfiber ? (
-                        <>
-                            <Col >
-                                <Divider type='vertical' style={{ height: '100%', margin: '0 32px', borderColor: '#bcbcbc' }} dashed />
-                            </Col>
-                            <Col span={7}>
-                                <div style={{paddingBottom: 12}}>通道配置</div>
-                                    
-                                    <Form.Item
-                                        label={ <Checkbox onChange={(e)=>{checklistRef.current.check1=e.target.checked}}></Checkbox>}
-                                        name="channel1" rules={[...rules,validator]}
-                                        labelCol={2}
-                                    >   
-                                        <Space size='large'>
-                                            <Input value={name1} onChange={(e) => {
-                                                setChannelName1(e.target.value)
-                                                setName1(e.target.value)
-                                            }}></Input>
-                                            <Button type='primary' onClick={() => {
-                                                props.openarea(1);
-                                                setIndex(1);
-                                            }}>分区配置</Button>
-                                        </Space>
-                                    </Form.Item>
- 
-                                
-                                <Form.Item 
-                                label={<Checkbox onChange={(e)=>{checklistRef.current.check2=e.target.checked}}></Checkbox>} 
-                                name="channel2"  rules={[...rules,validator]}
-                                labelCol={2}
-                                
-                                >
-                                    <Space size='large'>
-                                    <Input value={name2} onChange={(e)=>{
-                                         setChannelName2(e.target.value)
-                                         setName2(e.target.value)
-                                    }}></Input>
-                                    <Button type='primary'onClick={()=>{
-                                        props.openarea(2);
-                                        setIndex(2);
-                                    }}>分区配置</Button>
-                                    </Space>
-                                </Form.Item>
-                                <Form.Item 
-                                label={<Checkbox onChange={(e)=>{checklistRef.current.check3=e.target.checked}}></Checkbox>} 
-                                name="channel3"  rules={[...rules,validator]}
-                                labelCol={2}
-                                
-                                >
-                                    <Space size='large'>
-                                    <Input value={name3} onChange={(e)=>{
-                                         setChannelName3(e.target.value)
-                                         setName3(e.target.value)
-                                    }}></Input>
-                                    <Button type='primary ' onClick={()=>{
-                                        props.openarea(3);
-                                        setIndex(3);
-                                    }}>分区配置</Button>
-                                    </Space>
-                                </Form.Item>
-                                <Form.Item 
-                                label={<Checkbox onChange={(e)=>{checklistRef.current.check4=e.target.checked}}></Checkbox>} 
-                                name="channel4" rules={[...rules,validator]}
-                                labelCol={2}
-                                
-                                >
-                                    <Space size='large'>
-                                    <Input value={name4} onChange={(e)=>{
-                                        setChannelName4(e.target.value)
-                                        setName4(e.target.value)
-                                    }}></Input>
-                                    <Button type='primary' onClick={()=>{
-                                        props.openarea(4);
-                                        setIndex(4);
-                                    }}>分区配置</Button>
-                                    </Space>
-                                </Form.Item>
-                            </Col>
-                        </>
-                        
-                    ) : null
-                } */}
             </Row>
         </Form>
     );
@@ -524,6 +347,7 @@ export let AddModalForm = ({
 }) => {
     const category = Form.useWatch('category', addform);
     const gatewayId = Form.useWatch('gatewayId', addform);
+    const { gatewayCategory } = useContext(MyContext); // 从 Context 中获取
     const handleCancel = () => {
         modalFormRef?.current?.onCancel()
     };
@@ -540,7 +364,7 @@ export let AddModalForm = ({
                         [<Button key="back" onClick={handleCancel}>
                             取消
                         </Button>,
-                        gatewayId && (category === 'ZTWL376-L') ? <Button key="next" type="primary" onClick={() => onOk('next')}>
+                        gatewayId && (gatewayCategory === 'ZTWL376-Gateway') ? <Button key="next" type="primary" onClick={() => onOk('next')}>
                             下一步
                         </Button> : [<Button key="apply" type="primary" onClick={() => onOk('apply')}>
                             应用
@@ -554,45 +378,6 @@ export let AddModalForm = ({
                 </Modal>
             }
         </>
-    );
-};
-//编辑设备
-export const EditModalForm = ({
-    editform,
-    EditModalFormRef,
-    isfiber = false,
-    openarea,
-    onOk,
-    ...other
-}) => {
-    const category = Form.useWatch('category', editform);
-    const gatewayId = Form.useWatch('gatewayId', editform);
-    const handleCancel = () => {
-        EditModalFormRef?.current?.onCancel()
-    };
-    return (
-        <Modal
-            mold="cust"
-            ref={EditModalFormRef}
-            title={other.name}
-            {...other}
-            custft={true}
-            footer={
-                [<Button key="back" onClick={handleCancel}>
-                    取消
-                </Button>, <Button key="submit" type="primary" onClick={() => onOk('submit')}>
-                    确定
-                </Button>,
-                gatewayId && (category === 'ZTWL376-L') ? <Button key="next" type="primary" onClick={() => onOk('next')}>
-                    下一步
-                </Button> : [<Button key="apply" type="primary" onClick={() => onOk('apply')}>
-                    应用
-                </Button>]
-                ]}
-        >
-
-            <EditFormComp isfiber={isfiber} openarea={openarea}></EditFormComp>
-        </Modal>
     );
 };
 //编辑com组件
@@ -715,7 +500,7 @@ export const EditFormComp = (props) => {
         form,
         deviceStyle,
         levelname,
-        setIndex,
+        setEditGatewayCategory,  // 从 Context 中获取
     } = useContext(MyContext);
     const [area, setArea] = useState([]);
     const [coms, setComs] = useState(0);
@@ -734,6 +519,7 @@ export const EditFormComp = (props) => {
         if (v) {
             const arr = addopts?.filter((it) => it.id === option.areaId);
             setArea([...arr]);
+            setEditGatewayCategory(option.category);  // 使用 Context 中的更新函数
             setComs(option.com);
             form.setFieldsValue({
                 areaId: arr[0].id,
@@ -743,6 +529,7 @@ export const EditFormComp = (props) => {
             });
         } else {
             setArea([]);
+            setEditGatewayCategory(''); // 清空
             form.setFieldsValue({ commAddress: 0, commPort: 0, commProtocol: 0 });
         }
     };
@@ -871,22 +658,6 @@ export const EditFormComp = (props) => {
                             ></Select>
                         </Form.Item>
                     ) : null}
-
-                    {/* {
-                        deviceStyle === 21 ? (
-                            <Form.Item label="计量电表" name="customerType" rules={rules}>
-                                <Select
-                                    options={[{
-                                        label: '客户用能',
-                                        value: 1
-                                    }, {
-                                        label: '公共用能',
-                                        value: 2
-                                    }]}></Select>
-                            </Form.Item>
-                        ) : null
-                    } */}
-                    {/* {deviceStyle === 1? <EditCom form={form} coms={coms}></EditCom> : null} */}
                     {deviceStyle === 1 ||
                         deviceStyle == 12 ||
                         deviceStyle == 13 ||
@@ -904,6 +675,48 @@ export const EditFormComp = (props) => {
                 </Col>
             </Row>
         </Form>
+    );
+};
+//编辑设备
+export const EditModalForm = ({
+    editform,
+    EditModalFormRef,
+    isfiber = false,
+    openarea,
+    onOk,
+    ...other
+}) => {
+    const category = Form.useWatch('category', editform);
+    const gatewayId = Form.useWatch('gatewayId', editform);
+    const { editGatewayCategory } = useContext(MyContext); // 从 Context 中获取
+    console.log(editGatewayCategory)
+    const handleCancel = () => {
+        EditModalFormRef?.current?.onCancel()
+    };
+    return (
+        <Modal
+            mold="cust"
+            ref={EditModalFormRef}
+            title={other.name}
+            {...other}
+            custft={true}
+            footer={
+                [<Button key="back" onClick={handleCancel}>
+                    取消
+                </Button>,
+                <Button key="submit" type="primary" onClick={() => onOk('submit')}>
+                    确定
+                </Button>,
+                gatewayId && (editGatewayCategory === 'ZTWL376-Gateway') ? <Button key="next" type="primary" onClick={() => onOk('next')}>
+                    下一步
+                </Button> : [<Button key="apply" type="primary" onClick={() => onOk('apply')}>
+                    应用
+                </Button>]
+                ]}
+        >
+
+            <EditFormComp isfiber={isfiber} openarea={openarea}></EditFormComp>
+        </Modal>
     );
 };
 
@@ -1090,10 +903,10 @@ export const SetFormComp = (props) => {
         label: '0{通配电能表/冷水表/热量表(计热量)/燃气表/其他仪表(如 电度表)}',
         value: 0
     }, {
-        label: '1{全夜灯/单相电能表/中水表/热量表(计冷量)}',
+        label: '1{单相电能表/中水表/热量表(计冷量)/全夜灯}',
         value: 1
     }, {
-        label: '2{半夜灯/三相电能表/纯净水表}',
+        label: '2{三相电能表/纯净水表/半夜灯}',
         value: 2
     }, {
         label: '3{热水表}',

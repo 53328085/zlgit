@@ -3,7 +3,7 @@ import { useSelector } from 'react-redux'
 
 import styled from 'styled-components'
 
-import { energyShare, Monitoring, EnergyPublicRuntime, DMAPartition,Apimethod } from '@api/api'
+import { energyShare, Monitoring, EnergyPublicRuntime, DMAPartition, Apimethod } from '@api/api'
 import { selectProjectId, selectOneLevel } from '@redux/systemconfig.js'
 import { message, Input, Tree, Radio, Checkbox, Switch } from 'antd'
 
@@ -11,7 +11,7 @@ import Titlelayout from "@com/titlelayout";
 import { useLocation } from "react-router-dom"
 import { Area } from '@ant-design/plots'
 const { Search } = Input;
-const { useTree:lightTree } = new Apimethod( //照明管理 手动控制 查询线路
+const { useTree: lightTree } = new Apimethod( //照明管理 手动控制 查询线路
   "get",
   "Light/StreetLightCommon/Tree"
 );
@@ -30,25 +30,17 @@ const Treebox = styled.div`
        }
 `
 
-export default memo(function Index({ areaId, setTreeId, setLine, setNode, showline = true, datatype = NaN, energytype, 
-  sty = { bordered: 'y', pv: '16px' }, 
-  allselect = true, 
-  selectobj, 
-  multiple = true,
-   treeName = '',
-   title="", 
-   mode=null,
-   ...restprop }) {
+export default memo(function Index({ areaId, setTreeId, setLine, setNode, showline = true, scroll = 0, datatype = NaN, energytype, sty = { bordered: 'y', pv: '16px' }, allselect = true, selectobj, multiple = true, treeName = '', title = "", ...restprop }) {
   // datatype =0 或 =2
   const levelone = useSelector(selectOneLevel)
-  
+
   const [treeData, setTreeData] = useState([])
-  
+
   const location = useLocation();
   const { state } = location
   const isshow = useMemo(() => {
     const { nested, primary } = state
-    return  ["report","public"].includes(nested) && primary == "runtimeEnergy"
+    return ["report", "public"].includes(nested) && primary == "runtimeEnergy"
   }, [state])
   const [checkedKeys, setCheckedKeys] = useState([])
 
@@ -57,7 +49,7 @@ export default memo(function Index({ areaId, setTreeId, setLine, setNode, showli
   const [typeTree, setTypeTree] = useState(0)
 
   //const treekey = datatype === 0 ? 'areaId' : datatype === 2||3 ? 'id' :  typeTree == 0 ? "areaId" : "id";
-  const treekey = datatype === 0 ? 'areaId' : [1,2, 3, 4,5].includes(datatype) ? 'id' : typeTree == 0 ? "areaId" : "id";
+  const treekey = datatype === 0 ? 'areaId' : [1, 2, 3, 4, 5].includes(datatype) ? 'id' : typeTree == 0 ? "areaId" : "id";
   // datatype =5 时 展示一级区域 levelone
 
   // const treekey =  typeTree == 0 ?  "areaId" : "id" ; 
@@ -99,7 +91,7 @@ export default memo(function Index({ areaId, setTreeId, setLine, setNode, showli
         if (!allselect && arr.length == 0) {
           arr.push(nodes[0][type])
         }
-        if(mode && node?.[child]?.length > 0) {
+        if (mode && node?.[child]?.length > 0) {
           console.log(node)
           arr.push(node[type])
         }
@@ -110,25 +102,24 @@ export default memo(function Index({ areaId, setTreeId, setLine, setNode, showli
     }
   }
 
- // const fieldNames = datatype === 2 ? { title: 'name', key: treekey, children: 'childs' } : datatype === 3 ? { title: 'name', key: treekey, children: 'children' } : { title: 'name', key: treekey, children: 'nodes' }
-  
- const fieldNames =useMemo(()=> {
-  return {
-    "1":{ title: 'name', key: treekey, children: 'nodes' },
-    "2":{ title: 'name', key: treekey, children: 'childs' },
-    "3":{ title: 'name', key: treekey, children: 'children' },
-    "4":{ title: 'name', key: treekey, children: 'nodes' },
-  }[datatype?.toString()] || { title: 'name', key: treekey, children: 'nodes' }
- },[datatype, treekey]) 
- 
- 
+  // const fieldNames = datatype === 2 ? { title: 'name', key: treekey, children: 'childs' } : datatype === 3 ? { title: 'name', key: treekey, children: 'children' } : { title: 'name', key: treekey, children: 'nodes' }
+
+  const fieldNames = useMemo(() => {
+    return {
+      "2": { title: 'name', key: treekey, children: 'childs' },
+      "3": { title: 'name', key: treekey, children: 'children' },
+      "4": { title: 'name', key: treekey, children: 'nodes' },
+    }[datatype?.toString()] || { title: 'name', key: treekey, children: 'nodes' }
+  }, [datatype, treekey])
+
+
   //const fieldNames= {title:'name',key: treekey,children:'nodes'}  
 
   //获取树的数据，0 网格, 1 线路, 2 公共能耗分类
   //console.log("expand", expand, "fieldNames", fieldNames)
   const getTreeData = async (name = '') => {
     let idx = Number.isInteger(datatype) ? datatype : typeTree;
-  //  console.log(name, idx)
+    //  console.log(name, idx)
     if (Number.isInteger(datatype) && !energytype) return
     try {
       if (name != keyword) setKeyword(name)
@@ -153,7 +144,7 @@ export default memo(function Index({ areaId, setTreeId, setLine, setNode, showli
         projectId,
         areaId,
         lineType: 22,
-        keyword:name,
+        keyword: name,
       }
 
       ][idx]
@@ -180,14 +171,10 @@ export default memo(function Index({ areaId, setTreeId, setLine, setNode, showli
        } */
 
       let { success, data, errMsg } = await hander(params)
-     
-     
+
+
       if (success && Array.isArray(data)) {
-      //  console.log(idx)
-       if(mode) {
-         let mdata = data.filter(d=>mode(d))
-         getId(mdata, "id")
-       }else {
+        //  console.log(idx)
         switch (idx) {
           case 0:
             getId(data, 'areaId');
@@ -208,9 +195,7 @@ export default memo(function Index({ areaId, setTreeId, setLine, setNode, showli
             break
 
         }
-      }
-       console.log(arr)
-       setNode &&  setNode?.(data[0]) //  获取节点
+        setNode && setNode?.(data[0])
         treeIdRef.current = arr
         setIndeterminate(false)
         setChecked(true)
@@ -218,8 +203,7 @@ export default memo(function Index({ areaId, setTreeId, setLine, setNode, showli
         setCheckedKeys(() => arr);
         setExpandedKeys(expand)
         setTreeId(arr);
-       
-       
+
         /*  if(name) {
              setTreeId(arr)
              setCheckedKeys(arr)
@@ -245,40 +229,32 @@ export default memo(function Index({ areaId, setTreeId, setLine, setNode, showli
 
   // 复选框模式
   const onCheck = (data, e) => { // 受控
-    console.log(data)
-    try {
-      if(mode && !mode(e.node))  return message.warning("该线路没有子线路，末级节点没有线损")
-        let checked
-        
-          if (schecked == 1 || restprop?.checkStrictly) {
-            checked = data.checked
-          } else {
-            checked = data;
-          }
-        
-        
-    
-        let f = checked?.length > 0 && checked?.length < treeIdRef.current?.length
-        setIndeterminate(f)
-        setTreeId(checked)
-        setCheckedKeys(checked)
-        setChecked(checked?.length === treeIdRef.current?.length)
-    } catch (error) {
-      console.log(error)
+    // console.log(data, e)
+    let checked
+
+    if (schecked == 1) {
+      checked = data.checked
+    } else {
+      checked = data;
     }
-    
+
+
+
+    let f = checked?.length > 0 && checked?.length < treeIdRef.current?.length
+    setIndeterminate(f)
+    setTreeId(checked)
+    setCheckedKeys(checked)
+    setChecked(checked?.length === treeIdRef.current?.length)
 
   }
 
-//  单选模式
-const onSelect=(selectedKeys, e)=> {   // 损耗分析 不是一级节点而且没有子节点的不需要查询。传入一个函数
-    if(mode) return
+  //  单选模式
+  const onSelect = (selectedKeys, e) => {
+
     setNode && setNode?.(e.node)
     setTreeId(selectedKeys)
     setCheckedKeys(selectedKeys)
-
-
-}
+  }
 
 
 
@@ -301,19 +277,19 @@ const onSelect=(selectedKeys, e)=> {   // 损耗分析 不是一级节点而且�
 
   }, [areaId, typeTree, datatype, energytype, projectId])
 
-  useEffect(()=> {  //  用一级区域做为树结构数据
-   if(Number.isNaN(areaId) && Array.isArray(levelone)) {
+  useEffect(() => {  //  用一级区域做为树结构数据
+    if (Number.isNaN(areaId) && Array.isArray(levelone)) {
       setTreeData(levelone)
-      let arr = levelone.map(l=>l.id)
-      
+      let arr = levelone.map(l => l.id)
+
       treeIdRef.current = arr
       setIndeterminate(false)
       setChecked(true)
-     
+
       setCheckedKeys(arr);
       setExpandedKeys(arr)
       setTreeId(arr);
-   }
+    }
 
 
 
@@ -345,7 +321,7 @@ const onSelect=(selectedKeys, e)=> {   // 损耗分析 不是一级节点而且�
   return (
 
     <Titlelayout key="line" layout="flex" bordered={sty.bordered} pv={sty.pv} hv="32px" bg="none" title={title}>
-      <div style={{height:'750px', overflow:'auto'}}>
+      <div style={{ height: scroll ? scroll : '750px', overflow: 'auto' }}>
         {treeName ? <div style={{ color: '#515151', fontWeight: 'bold', marginBottom: '8px' }}>{treeName}</div> : null}
         <Treebox showline={showline.toString()}>
           {showline && <Radio.Group onChange={switchLine} style={radiosty} value={typeTree}>
@@ -353,7 +329,7 @@ const onSelect=(selectedKeys, e)=> {   // 损耗分析 不是一级节点而且�
             <Radio value={1}>按线路</Radio>
           </Radio.Group>
           }
-        {datatype!==5 &&  <Search
+          {datatype !== 5 && <Search
             placeholder='请输入关键字查询'
             allowClear
             value={keyword}
@@ -378,8 +354,8 @@ const onSelect=(selectedKeys, e)=> {   // 损耗分析 不是一级节点而且�
             onSelect={onSelect}
             fieldNames={fieldNames}
             checkStrictly={strictyly} // true : 完全受控，父子节点不关联, false : 父子节点关联
-            indeterminate={indeterminate}  
-            {...restprop}         
+            indeterminate={indeterminate}
+            {...restprop}
           />
         </Treebox></div>
     </Titlelayout>
