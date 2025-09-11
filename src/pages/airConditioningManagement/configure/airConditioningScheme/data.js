@@ -49,7 +49,7 @@ export const cols = [
 ];
 export const bindcol = [
   {
-    title: "路灯名称",
+    title: "空调名称",
     dataIndex: "name",
     key: "name",
   },
@@ -280,6 +280,9 @@ export const section = ({
                   }
                 }}
               </Form.Item>
+              <Form.Item name={[filed.name, "eTiming"]} valuePropName="checked">
+                        <Checkbox>定时开关</Checkbox>
+                      </Form.Item>
               <Form.List
                 name={[filed.name, "timings"]}
                 initialValue={[{}]}
@@ -287,9 +290,7 @@ export const section = ({
                 {(tfileds, tmethod) => {
                   return (
                     <div className="formboxwrap inbox" key={`timings${tfileds.name}`}>
-                      <Form.Item name={[tfileds.name, "eTiming"]}>
-                        <Checkbox>定时开关</Checkbox>
-                      </Form.Item>
+                     
                       <div className="header">
                         <div className="list">
                           <div className="tags">
@@ -435,6 +436,9 @@ export const section = ({
                   );
                 }}
               </Form.List>
+              <Form.Item name={[filed.name, "eForbid"]} valuePropName="checked">
+                        <Checkbox>禁止开关</Checkbox>
+                      </Form.Item>
               <Form.List
                 name={[filed.name, "forbidControls"]}
                 initialValue={[{}]}
@@ -442,9 +446,7 @@ export const section = ({
                 {(ffileds, fmethod) => {
                   return (
                     <div className="formboxwrap noboder" key="forbidControls">
-                      <Form.Item name={["forbidControls", "eForbid"]}>
-                        <Checkbox>禁止开关</Checkbox>
-                      </Form.Item>
+                     
                       <div className="header">
                         <div className="list">
                           <div className="tags">

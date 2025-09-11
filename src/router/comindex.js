@@ -19,7 +19,7 @@ export default function Index() {
   let { state = {} } = location;
   let { nested = "", primary, meterType } = state; // meterType 从运行监控 =》 运行监控 跳转到 运行监控-》 设备管理
 
-  let whole = ["runtimeMonitor", "runtimeSafe", "runtimeEnergy", "runtimeStorage", "runtimeMaintenance", "runtimeSolar"]; // 需要显示搜索 ***（全部）的模块
+  let whole = ["runtimeMonitor", "runtimeSafe", "runtimeEnergy", "runtimeStorage", "runtimeMaintenance", "runtimeSolar", "designerSolar"]; // 需要显示搜索 ***（全部）的模块
   let include = {
     runtimeEnergy: ["area", "report"], // 模块里不需要显示全部的
     designerDistribution: ['room'],
@@ -113,6 +113,10 @@ export default function Index() {
     streetLightManagement: [ // 照明控制 设置态
       "streetLightLineConfig",
     ],
+    designerSolar: [//光伏发电
+      "station",
+      "inverter"
+    ]
   }); // 需要显示搜索的页面
 
   const [showRoom, setShowroom] = useState(true); // 是否显示配电房选择框
@@ -155,7 +159,7 @@ export default function Index() {
 
   const sethandler = () => {
     try {
-
+      console.log(primary)
       if (primary == "runtimeMonitor" && nested == "point") {
         if (!config.isdevsty) setConfig({ isdevsty: true, meterType });
       } else {
@@ -290,10 +294,10 @@ export default function Index() {
       else if (primary == "runtimeSolar") {
         switch (nested) {
           case "station":
-            setConfig({ refresh: true })
+            setConfig({ refresh: true, photovoltaicPowerStation: true })
             break
           case "device":
-            setConfig({ refresh: true });
+            setConfig({ refresh: true, inverter: true });
             break;
           case "propare":
             setConfig({ isdate: true, shiftNo: true, refresh: true });
@@ -302,7 +306,7 @@ export default function Index() {
             setConfig({ isdate: true, shiftNo: true });
             break;
           case "alarm":
-            setConfig({ isdate: true, shiftNo: true });
+            setConfig({ isdate: true, shiftNo: true, photovoltaicPowerStation: true });
             break;
         }
       }
@@ -337,6 +341,15 @@ export default function Index() {
             setConfig({});
             break;
           default:
+            break;
+        }
+      } else if (primary == "designerSolar") {
+        switch (nested) {
+          case "station":
+            setConfig({ custview: true, photovoltaicPowerStation: true });
+            break;
+          case "inverter":
+            setConfig({ custview: true, inverter: true, });
             break;
         }
       }

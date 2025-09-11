@@ -485,10 +485,11 @@ export default function Index() {
   }
 
   const onDrop = (layouts, layoutValue, _event) => {
+  
     onAddlayout(layoutValue.x, layoutValue.y)
   }
 
-  const onLayoutChange = (layout) => {
+  const onLayoutChange = (layout) => { 
     if (layout.length == 0) return;
     if (layout[layout.length - 1].i == '__dropping-elem__') return;
     setlayoutItem(layout)

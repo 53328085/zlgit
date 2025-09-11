@@ -74,8 +74,8 @@ export default function Index() {
       { type: "line", seriesLayoutBy: 'row', name: '亮灯率(%)',  yAxisIndex: 1, }
     ],
     grid: {
-      left: "0px",
-      right: "40px",
+      left: "20px",
+      right: "20px",
       top: "40px",
       bottom: "0px",
       containLabel: true,
@@ -95,7 +95,10 @@ export default function Index() {
         type: 'value',
         name: '电量(kWh)', 
         nameLocation :"center",
-        nameGap:0,
+        nameGap:30,
+        nameTextStyle:{
+          padding: [0,0,30,0]
+        },
         axisLabel: {
           formatter: '{value} kWh'
         }
@@ -104,6 +107,10 @@ export default function Index() {
         type: 'value',
         name: '亮灯率(%)', 
         nameLocation :"center",
+        nameGap:30,
+        nameTextStyle:{
+          padding: [0,0,-40,0]
+        },
         axisLabel: {
           formatter:  (v) => v*100 + "%"
         }

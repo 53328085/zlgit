@@ -29,7 +29,7 @@ export default function Index() {
   const getOverview = async()=>{
     try {
       if(!Number.isInteger(parseInt(projectId))) return
-      let {success, data,errMsg}= await useOverview({projectId})
+      let {success, data,errMsg}= await useOverview({projectId, areaId})
       if(success && isObject(data)) {
         setOverView(data)
       }else {
@@ -41,7 +41,7 @@ export default function Index() {
     }
   }
   useRequest(getOverview, {
-    refreshDeps:[projectId]
+    refreshDeps:[projectId, areaId]
   })
  
 
