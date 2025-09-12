@@ -689,7 +689,6 @@ export const EditModalForm = ({
     const category = Form.useWatch('category', editform);
     const gatewayId = Form.useWatch('gatewayId', editform);
     const { editGatewayCategory } = useContext(MyContext); // 从 Context 中获取
-    console.log(editGatewayCategory)
     const handleCancel = () => {
         EditModalFormRef?.current?.onCancel()
     };
