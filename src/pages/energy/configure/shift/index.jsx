@@ -444,7 +444,9 @@ export default function Index() {
           </div>
         </Formbox>
         
-         
+        <div style={{marginTop:'16px', color:'#f66'}}>
+          {'(注意：班次管理只可设置一天内时间段，跨天时间段请分为两段设置！)'}
+        </div>
       </Custmodl>
       <Custmodl title='删除班次' ref={dref}  mold="cust" width={512} type="warn" onOk={()=>onDeleteShift()}>
          是否确认删除班次方案？ 
@@ -452,7 +454,7 @@ export default function Index() {
       {/* 编辑 */}
       <Custmodl  title="编辑班次" open={editModal} onOk={onUpdate} onCancel={handleCancel} width={530}  closable={false} mold="cust" >
       <Formbox>
-        <div style={{maxHeight:'720px', overflowY:'auto', overflowX:'hidden'}}>
+        <div style={{maxHeight:'680px', overflowY:'auto', overflowX:'hidden'}}>
             <Form name='editform' labelCol={{span:4}} form={editform} labelAlign={'left'} requiredMark={false} autoComplete='off'>
 
               {
@@ -479,6 +481,9 @@ export default function Index() {
             </Form>
             </div>
             </Formbox>
+        <div style={{marginTop:'16px', color:'#f66'}}>
+          {'(注意：班次管理只可设置一天内时间段，跨天时间段请分为两段设置！)'}
+        </div>
       </Custmodl>
     </Mainbox>
   )
