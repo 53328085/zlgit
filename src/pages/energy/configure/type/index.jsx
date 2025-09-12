@@ -321,8 +321,8 @@ export default function Index() {
               <span className={style.treeItem}>线路图</span>
               <span className={style.actionItem}>操作</span>
             </div>
-            <div className={style.treeContent}>
-              {treeData.length > 0 ? <Tree height={654} defaultExpandedKeys={[treeData[0].id.toString()]} blockNode selectable={false}>{renderTreeNodes(treeData)}</Tree> : null}
+            <div className={style.treeContent} >
+              {treeData.length > 0 ? <Tree  defaultExpandedKeys={[treeData[0].id.toString()]} blockNode selectable={false}>{renderTreeNodes(treeData)}</Tree> : null}
             </div>
           </div>
 
