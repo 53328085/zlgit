@@ -131,17 +131,29 @@ export default function Index(props) {
     value: 0,
     label: "全部",
   }]);
+  const [selectedRowKeys, setSelectedRowKeys] = useState([]); // 新增状态
   const schemeModalState = useRef(false); // 记录是否是第一次打开
   const [rangerTime, setRangerTime] = useState([moment().subtract(2, 'months'), moment()])
   const airNameChange = () => {
 
   }
-  const getAirTable = () => {
-
+  const handleRadioChange = (e) => {
+    setTabId(e.target.value);
+    setSelectedRowKeys([]); // 清空选中状态
+    tableRefs.current = [];
   }
   const RecontrolAir = () => {
-    console.log(tableRefs.current)
-    if (tableRefs.current.length == 0) {
+    // console.log(tableRefs.current)
+    // if (tableRefs.current.length == 0) {
+    //   messageApi.open({
+    //     type: 'warning',
+    //     content: '请至少选择一条记录！',
+    //   })
+    //   return;
+    // } else {
+    //   controlRef.current.onOpen()
+    // }
+    if (selectedRowKeys.length === 0) { // 使用状态判断
       messageApi.open({
         type: 'warning',
         content: '请至少选择一条记录！',
@@ -153,11 +165,12 @@ export default function Index(props) {
 
   }
   const rowSelectionCheckbox = {
+    selectedRowKeys, // 绑定选中状态
     tableRefs,
     onChange: (selectedRowKeys, selectedRows) => {
       console.log(`selectedRowKeys: ${selectedRowKeys}`, 'selectedRows: ', selectedRows);
-      tableRefs.current = selectedRows
-      selectedRowKeys.current = selectedRowKeys
+      setSelectedRowKeys(selectedRowKeys); // 更新状态
+      tableRefs.current = selectedRows;
     },
     // getCheckboxProps: record => ({
     //   disabled: record.resultDesc === '成功', // Column configuration not to be checked
@@ -254,6 +267,7 @@ export default function Index(props) {
       if (success) {
         let values = searchForm.getFieldsValue();
         run({ current: 1, pageSize: 20 }, values)
+        setSelectedRowKeys([]); // 清空选中状态
         message.success('所选空调控制成功')
       } else {
         message.error(errMsg);
@@ -352,10 +366,7 @@ export default function Index(props) {
             optionType="button"
             buttonStyle="solid"
             size="large"
-            onChange={(e) => {
-              setTabId(e.target.value);
-              tableRefs.current = []
-            }}
+            onChange={handleRadioChange} // 使用修改后的处理函数
           />
         </Header>
         <div className='content'>
