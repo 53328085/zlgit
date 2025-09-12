@@ -40,7 +40,7 @@ export default function Index() {
         alike: alike + cSn ? alike + cSn : '',
         type,
         ioState,
-        areaIds: treeId
+        ids: treeId
       }
       let { data, success, errMsg } = await useList({}, params)
       if (success) {
@@ -68,7 +68,7 @@ export default function Index() {
   const handleSingleSelect = (airId, checked) => {
     const newSelected = checked
       ? [...selectedAirs, airId]
-      : selectedAirs.filter(cSn => cSn !== airId);
+      : selectedAirs.filter(id => id !== airId);
 
     setSelectedAirs(newSelected);
     updateMasterCheckboxState(newSelected);
@@ -83,7 +83,7 @@ export default function Index() {
   const handleSelectAll = e => {
     const checked = e.target.checked;
     const onlineIds = getOnlineDeviceIds();
-    const allIds = airData.map(airItem => airItem.cSn);
+    const allIds = airData.map(airItem => airItem.id);
 
     setSelectedAirs(checked ? onlineIds : []);
     setCheckAll(checked);
@@ -111,7 +111,7 @@ export default function Index() {
         workMode,
         windSpeed,
         temperature,
-        csn: selectedAirs
+        conditionerIds: selectedAirs
       }
       let { data, success, errMsg } = await useSetControl({}, params)
       if (success) {
@@ -189,8 +189,8 @@ export default function Index() {
                         }} >
                           <div className="top">
                             <Checkbox
-                              checked={selectedAirs.includes(airItem.cSn)}
-                              onChange={e => handleSingleSelect(airItem.cSn, e.target.checked)}
+                              checked={selectedAirs.includes(airItem.id)}
+                              onChange={e => handleSingleSelect(airItem.id, e.target.checked)}
                             />
                             <div className="topInfo">
                               <div className="address">{airItem.name}</div>
@@ -242,8 +242,8 @@ export default function Index() {
                           }} >
                             <div className="top">
                               <Checkbox
-                                checked={selectedAirs.includes(airItem.cSn)}
-                                onChange={e => handleSingleSelect(airItem.cSn, e.target.checked)}
+                                checked={selectedAirs.includes(airItem.id)}
+                                onChange={e => handleSingleSelect(airItem.id, e.target.checked)}
                               />
                               <div className="topInfo">
                                 <div className="address">{airItem.name}</div>
