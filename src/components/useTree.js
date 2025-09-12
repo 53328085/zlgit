@@ -9,11 +9,15 @@ import { message, Input, Tree, Radio, Checkbox, Switch } from 'antd'
  
 import Titlelayout from "@com/titlelayout";
 import { useLocation } from "react-router-dom"
-import { Area } from '@ant-design/plots'
+
 const { Search } = Input;
 const { useTree:lightTree } = new Apimethod( //照明管理 手动控制 查询线路
   "get",
   "Light/StreetLightCommon/Tree"
+);
+const { useTree:AirTree } = new Apimethod( // 空调管理 手动控制 查询线路
+  "get",
+  "Conditioner/AirConditionerCommon/Tree"
 );
 const { QuerySpaceTrees, } = energyShare
 const { DMAGetTree } = DMAPartition
@@ -30,7 +34,7 @@ const Treebox = styled.div`
        }
 `
  
-export default memo(function Index({ areaId, setTreeId, setLine, setNode, showline = true, datatype = NaN, energytype, 
+export default memo(function Index({ areaId, setTreeId, setLine, setNode, showline = true, datatype = NaN, energytype, showSearch,
   sty = { bordered: 'y', pv: '16px' }, 
   allselect = true, 
   selectobj, 
@@ -48,7 +52,7 @@ export default memo(function Index({ areaId, setTreeId, setLine, setNode, showli
   const { state } = location
   const isshow = useMemo(() => {
     const { nested, primary } = state
-    return  ["report","public"].includes(nested) && primary == "runtimeEnergy"
+    return  ["report","public"].includes(nested) && primary == "runtimeEnergy" || ["airConditioningOverview","public"].includes(nested) && primary == "airConditioningManagement"
   }, [state])
   const [checkedKeys, setCheckedKeys] = useState([])
  
@@ -57,12 +61,13 @@ export default memo(function Index({ areaId, setTreeId, setLine, setNode, showli
   const [typeTree, setTypeTree] = useState(0)
  
   //const treekey = datatype === 0 ? 'areaId' : datatype === 2||3 ? 'id' :  typeTree == 0 ? "areaId" : "id";
-  const treekey = datatype === 0 ? 'areaId' : [1,2, 3, 4,5].includes(datatype) ? 'id' : typeTree == 0 ? "areaId" : "id";
-  // datatype =5 时 展示一级区域 levelone
+  const treekey = datatype === 0 ? 'areaId' : [1,2, 3, 4].includes(datatype) ? 'id' : [5].includes(datatype) ? "key" : typeTree == 0 ? "areaId" : "id";
+ 
  
   // const treekey =  typeTree == 0 ?  "areaId" : "id" ; 
   const [expandedKeys, setExpandedKeys] = useState([]);
   let treeIdRef = useRef([])
+  let postid=useRef(new Set()) //  空调 树
   const [indeterminate, setIndeterminate] = useState(false);
   const [checked, setChecked] = useState(false)
   const [schecked, setschecked] = useState(1)
@@ -71,8 +76,13 @@ export default memo(function Index({ areaId, setTreeId, setLine, setNode, showli
   const allSelected = ({ target: { checked } }) => {
  
     if (checked) {
+      if(datatype==5) {
+        let areId = Array.from(postid.current)?.map(d=>parseInt(d.slice(2)))
+        setTreeId(areaId)
+      }else {
+        setTreeId(treeIdRef.current)
+      }
       setCheckedKeys(treeIdRef.current)
-      setTreeId(treeIdRef.current)
       setChecked(true)
     } else {
       setCheckedKeys([])
@@ -82,7 +92,8 @@ export default memo(function Index({ areaId, setTreeId, setLine, setNode, showli
     setIndeterminate(false)
   }
  
-  let arr = [], expand = []
+  let arr = [], expand = [];
+
   const getId = (nodes, type, child = 'nodes') => {
     if (Array.isArray(nodes)) {
       for (let node of nodes) {
@@ -94,7 +105,18 @@ export default memo(function Index({ areaId, setTreeId, setLine, setNode, showli
           expand.push(id)
         }
         if (allselect) {
-          arr.push(node[type])
+          if(datatype==5) { // 空调
+            if(node.type==2 || (node.type==1 && node[child]?.length >0)) {
+                arr.push(node[type])
+                if (node.type==2) {
+                  postid.current.add(node[type])
+                }
+            }
+
+          }else {
+            arr.push(node[type])
+          }
+         
         }
         if (!allselect && arr.length == 0) {
           arr.push(nodes[0][type])
@@ -118,6 +140,7 @@ export default memo(function Index({ areaId, setTreeId, setLine, setNode, showli
     "2":{ title: 'name', key: treekey, children: 'childs' },
     "3":{ title: 'name', key: treekey, children: 'children' },
     "4":{ title: 'name', key: treekey, children: 'nodes' },
+    "5":{ title: 'name', key: treekey, children: 'nodes' },
   }[datatype?.toString()] || { title: 'name', key: treekey, children: 'nodes' }
  },[datatype, treekey]) 
  
@@ -154,6 +177,10 @@ export default memo(function Index({ areaId, setTreeId, setLine, setNode, showli
         areaId,
         lineType: 22,
         keyword:name,
+      },
+      {
+        projectId,
+        keyword:name,
       }
  
       ][idx]
@@ -168,7 +195,7 @@ export default memo(function Index({ areaId, setTreeId, setLine, setNode, showli
         setTreeId(arr);
         return
       }
-      let hander = [QuerySpaceTrees, LineManagerQuery, queryEnergyCategoryTree, DMAGetTree, lightTree][idx]
+      let hander = [QuerySpaceTrees, LineManagerQuery, queryEnergyCategoryTree, DMAGetTree, lightTree,AirTree][idx]
  
       /*  if(lineType == "3") {
          hander = QuerySpaceTrees
@@ -204,12 +231,15 @@ export default memo(function Index({ areaId, setTreeId, setLine, setNode, showli
           case 4:
             getId(data, 'id', 'nodes')
             break;
+          case 5:
+              getId(data, 'key', 'nodes')
+              break;
           default:
             break
  
         }
       }
-       console.log(arr)
+       
        setNode &&  setNode?.(data[0]) //  获取节点
         treeIdRef.current = arr
         setIndeterminate(false)
@@ -217,7 +247,19 @@ export default memo(function Index({ areaId, setTreeId, setLine, setNode, showli
         setTreeData(data)
         setCheckedKeys(() => arr);
         setExpandedKeys(expand)
-        setTreeId(arr);
+        if(datatype==5) { // 空调树
+          console.log(Array.from(postid.current) )
+          let areId=  Array.from(postid.current)?.map(d=> {
+             let id= parseInt(d.slice(2))
+             console.log(id)
+             return id
+          })
+          
+          setTreeId(areId)
+        }else {
+          setTreeId(arr);
+        }
+        
        
        
         /*  if(name) {
@@ -245,7 +287,7 @@ export default memo(function Index({ areaId, setTreeId, setLine, setNode, showli
  
   // 复选框模式
   const onCheck = (data, e) => { // 受控
-    console.log(data)
+   
     try {
       if(mode && !mode(e.node))  return message.warning("该线路没有子线路，末级节点没有线损")
         let checked
@@ -260,7 +302,15 @@ export default memo(function Index({ areaId, setTreeId, setLine, setNode, showli
     
         let f = checked?.length > 0 && checked?.length < treeIdRef.current?.length
         setIndeterminate(f)
-        setTreeId(checked)
+        if(datatype==5) {
+          console.log(checked)
+          let areId= checked.filter(d=>  Array.from(postid.current)?.includes(d))?.map(i => parseInt(i.slice(2)))
+          console.log(areId)
+          setTreeId(areId)
+        }else {
+          setTreeId(checked)
+        }
+       
         setCheckedKeys(checked)
         setChecked(checked?.length === treeIdRef.current?.length)
     } catch (error) {
@@ -345,7 +395,7 @@ const onSelect=(selectedKeys, e)=> {   // 损耗分析 不是一级节点而且�
   return (
  
     <Titlelayout key="line" layout="flex" bordered={sty.bordered} pv={sty.pv} hv="32px" bg="none" title={title}>
-      <div style={{height:'750px', overflow:'auto'}}>
+      <div style={{height:'750px', overflow:'auto', flex:1}}>
         {treeName ? <div style={{ color: '#515151', fontWeight: 'bold', marginBottom: '8px' }}>{treeName}</div> : null}
         <Treebox showline={showline.toString()}>
           {showline && <Radio.Group onChange={switchLine} style={radiosty} value={typeTree}>
@@ -353,7 +403,7 @@ const onSelect=(selectedKeys, e)=> {   // 损耗分析 不是一级节点而且�
             <Radio value={1}>按线路</Radio>
           </Radio.Group>
           }
-        {datatype!==5 &&  <Search
+        {showSearch &&  <Search
             placeholder='请输入关键字查询'
             allowClear
             value={keyword}
