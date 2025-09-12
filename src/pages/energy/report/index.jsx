@@ -75,7 +75,7 @@ export default function Index() {
   const [treeId, setTreeId] = useState()
   let { areaId, projectId, type, date, energytype } = exparams
 
-  const [concolumns, setConcolumns] = useState(conscols)
+  const [concolumns, setConcolumns] = useState([])
   const [alike, setAlike] = useState("")
   const onSearch = (e) => {
     setAlike(e)
@@ -271,28 +271,31 @@ export default function Index() {
           if (ishead) {
             let shiftcolumn = heads.map(h => ({
               title: `${h.name}`,
-              dataIndex: `shiftname${h.name}`,
+              dataIndex: `${h.name}`,
               //  render: (text)=> Math.round(parseFloat(text)),
             }))
             setConcolumns([...shitcols, ...shiftcolumn])
 
           }
+          console.log("datas", datas.length)
           if (Array.isArray(datas) && ishead) {
-            arrData = datas.map(d => {
-              let { e } = d, Earr = []
+         
+           arrData = datas.map(d => {
+              let { e, ...rest } = d 
               if (Array.isArray(e) && e.length) {
                 e.forEach((v, index) => {
-                  let key = 'shiftname' + heads[index]?.name
-                  d[key] = v
+                  let key = heads[index]?.name
+                  rest[key] = v
                 })
 
               }
-              return d
-            })
+              
+              return rest
+            })    
           }
-
+         console.log("arrData", arrData)
         }
-
+        
 
         return {
           list: index == 5 ? arrData : data,
@@ -314,7 +317,7 @@ export default function Index() {
     defaultParams: [{ current: 1, pageSize: 14 }],
     refreshDeps: [areaId, projectId, type, date, energytype, treeId, index, line, isrange, dates, alike]
   })
-
+   console.log("tableProps", tableProps)
   // 对比分析 图表
   const modref = useRef()
   const [checkvalue, setCheckvalue] = useState(["1"])
@@ -476,15 +479,15 @@ export default function Index() {
               }
               </div>
               {
-                ["1", "5"].includes(value) ? <UserTable ref={tbref} rowSelection={value == 1 ? rowSelection : null} columns={concolumns} {...tableProps} rowKey={row => row.sn} key={value} scroll={{
+                ["1", "5"].includes(value) ? <div key={value}><UserTable ref={tbref} rowSelection={value == 1 ? rowSelection : null} columns={concolumns} {...tableProps} rowKey={row => row.sn + Math.random()} key={value} scroll={{
                   scrollToFirstRowOnChange: true,
                   x: 1400,
                   y: 685
                 }
                 }
                   sheetName={sheetName} onExport={onExport}
-                ></UserTable>
-                  : <UserTable ref={tbref} columns={columns} {...tableProps} key={value} sheetName={sheetName} onExport={onExport}></UserTable>
+                ></UserTable></div>
+                  : <div key={value}><UserTable ref={tbref} columns={columns} {...tableProps} key={value} sheetName={sheetName} onExport={onExport}  ></UserTable></div>
               }
             </div>
           </div>
