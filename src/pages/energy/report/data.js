@@ -140,7 +140,7 @@ export let conscols = [   //  conscols 能耗报表
     dataIndex: 'total',
     key: 'total',
     width: 92,
-    sorter: (a, b) => parseFloat(a.total) - parseFloat(b.total)
+    sorter: (a, b) => parseFloat(a?.total) - parseFloat(b?.total)
   },
 ]
 const cellstyle = {
