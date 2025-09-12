@@ -243,21 +243,14 @@ export default function Index(props) {
   const onOkControl = async () => {
     try {
       const newArray = tableRefs.current.map(item => ({
-        csn: item.csn,
+        conditionerId: item.conditionerId,
         ioState: item.ioState ? item.ioState : 1,
         workMode: item.workMode ? item.workMode : 1,
         windSpeed: item.windSpeed ? item.windSpeed : 1,
         temperature: item.temperature
       }));
-      // let params = {
-      //   ioState: controlParams.ioState ? controlParams.ioState : 1,
-      //   workMode: controlParams.workMode ? controlParams.workMode : 1,
-      //   windSpeed: controlParams.windSpeed ? controlParams.windSpeed : 0,
-      //   temperature: controlParams.temperature ? controlParams.temperature : 24,
-      //   csn: selectedRowKeys.current
-      // }
       let { data, success, errMsg } = await useSetReControl({},
-        { projectId, conditons: newArray })
+        { projectId, conditions: newArray })
       if (success) {
         let values = searchForm.getFieldsValue();
         run({ current: 1, pageSize: 20 }, values)

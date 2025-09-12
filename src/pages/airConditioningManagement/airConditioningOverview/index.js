@@ -99,7 +99,7 @@ export default function Index() {
     getAPiFunc();
   };
   useEffect(() => {
-    if (Array.isArray(treeId) && treeId.length > 0) {
+    if (Array.isArray(treeId)) {
       getAPiFunc();
     }
   }, [treeId]);
@@ -112,9 +112,10 @@ export default function Index() {
             setTreeId={setTreeId}
             setLine={() => {}}
             showline={false}
-            datatype={3}
+            datatype={5}
             energytype={1}
-            allselect={false}
+            allselect={true}
+            showSearch={true}
             treeName="空调设备列表"
           />
         </div>

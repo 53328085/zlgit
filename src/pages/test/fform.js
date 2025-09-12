@@ -1,47 +1,156 @@
-import React, {useState,memo} from 'react'
-import {Button} from 'antd'
-import RGL, {Responsive, WidthProvider} from 'react-grid-layout'
+import React from "react";
+import _ from "lodash";
+import RGL, { Responsive, WidthProvider } from "react-grid-layout";
 import "./drag.css"
- 
-const ResponsiveGridLayout=  WidthProvider(RGL)
-export default function Index() {
-  const layout = [
-    {i: 'a', x: 0, y: 0, w: 1, h: 1, static: true},
-    {i: 'b', x: 1, y: 0, w: 3, h: 1, minW: 2, maxW: 4},
-    {i: 'c', x: 4, y: 0, w: 2, h: 1}
+const ResponsiveReactGridLayout = WidthProvider(Responsive);
 
- 
-  ]
-  const layout2 = [
-    {i: 'a', x: 0, y: 0, w: 2, h: 1, static: true},
-    {i: 'b', x: 2, y: 0, w: 2, h: 1, minW: 2, maxW: 4, static:true},
-    {i: 'c', x: 4, y: 0, w: 4, h: 1}
+  class DragFromOutsideLayout extends React.Component {
+  static defaultProps = {
+    className: "layout",
+    rowHeight: 30,
+    onLayoutChange: function() {},
+    cols: { lg: 12, md: 10, sm: 6, xs: 4, xxs: 2 },
+  };
 
- 
-  ]
-  const onLayoutChange=(a, b, c) => {
-    console.log(a)
-    console.log(b)
-    console.log(c)
+  state = {
+    currentBreakpoint: "lg",
+    compactType: "vertical",
+    mounted: false,
+    layouts: { lg: generateLayout() }
+  };
+
+  componentDidMount() {
+    this.setState({ mounted: true });
   }
-  const onDrop=(layout, item, e)=> {
-    console.log(layout)
-    console.log(item)
-    console.log(e)
+
+  generateDOM() {
+    return _.map(this.state.layouts.lg, function(l, i) {
+      return (
+        <div key={i} className={l.static ? "static" : ""}>
+          {l.static ? (
+            <span
+              className="text"
+              title="This item is static and cannot be removed or resized."
+            >
+              Static - {i}
+            </span>
+          ) : (
+            <span className="text">{i}</span>
+          )}
+        </div>
+      );
+    });
   }
-  return (
-    <div>
-      <ResponsiveGridLayout className="layout" isDraggable={true} onLayoutChange={onLayoutChange}  cols={16}   rowHeight={100} onDrop={onDrop} >
-        <div key="a" data-grid={ {i: 'a', x: 0, y: 0, w: 1, h: 2, static: false}} className='zl'>grid 拖拽组件直接在组件设置A</div>
-        <div key="b" data-grid={{i: 'b', x: 1, y: 0, w: 3, h: 2, minW: 2, maxW: 4}} className='zl'>grid 拖拽组件B</div>
-        <div key="c" data-grid={ {i: 'c', x: 4, y: 0, w: 1, h: 2}} className='zl'>grid 拖拽组件C</div>
-        <div key="d" data-grid={ {i: 'd', x: 5, y: 2, w: 1, h: 2}} className='zl'> 拖拽组件D</div>
-        <div key="e" data-grid={ {i: 'e', x: 6, y: 1, w: 1, h: 2}} className='zl'> 拖拽组件E</div>
-        <div key="f" data-grid={ {i: 'f', x: 7, y: 1, w: 1, h: 2}} className='zl'> 拖拽组件F</div>
-      </ResponsiveGridLayout>
-      <div style={{width: "100px", height: "100px", border:"1px solid #dedede", cursor: "copy"}} draggable={true} >
-        可拖拽
+
+  onBreakpointChange = breakpoint => {
+    this.setState({
+      currentBreakpoint: breakpoint
+    });
+  };
+
+  onCompactTypeChange = () => {
+    const { compactType: oldCompactType } = this.state;
+    const compactType =
+      oldCompactType === "horizontal"
+        ? "vertical"
+        : oldCompactType === "vertical"
+        ? null
+        : "horizontal";
+    this.setState({ compactType });
+  };
+
+  onLayoutChange = (layout, layouts) => {
+    this.props.onLayoutChange(layout, layouts);
+  };
+
+  onNewLayout = () => {
+    this.setState({
+      layouts: { lg: generateLayout() }
+    });
+  };
+
+  onDrop = (layout, layoutItem, _event) => {
+    alert(`Dropped element props:\n${JSON.stringify(layoutItem, ['x', 'y', 'w', 'h'], 2)}`);
+  };
+
+  render() {
+    return (
+      <div>
+        <div>
+          Current Breakpoint: {this.state.currentBreakpoint} (
+          {this.props.cols[this.state.currentBreakpoint]} columns)
+        </div>
+        <div>
+          Compaction type:{" "}
+          {_.capitalize(this.state.compactType) || "No Compaction"}
+        </div>
+        <button onClick={this.onNewLayout}>Generate New Layout</button>
+        <button onClick={this.onCompactTypeChange}>
+          Change Compaction Type
+        </button>
+        <div
+          className="droppable-element"
+          draggable={true}
+          unselectable="on"
+          // this is a hack for firefox
+          // Firefox requires some kind of initialization
+          // which we can do by adding this attribute
+          // @see https://bugzilla.mozilla.org/show_bug.cgi?id=568313
+          onDragStart={e => e.dataTransfer.setData("text/plain", "")}
+        >
+          Droppable Element (Drag me!)
+        </div>
+        <ResponsiveReactGridLayout
+          {...this.props}
+          layouts={this.state.layouts}
+          onBreakpointChange={this.onBreakpointChange}
+          onLayoutChange={this.onLayoutChange}
+          onDrop={this.onDrop}
+          // WidthProvider option
+          measureBeforeMount={false}
+          // I like to have it animate on mount. If you don't, delete `useCSSTransforms` (it's default `true`)
+          // and set `measureBeforeMount={true}`.
+          useCSSTransforms={this.state.mounted}
+          compactType={this.state.compactType}
+          preventCollision={!this.state.compactType}
+          isDroppable={true}
+        >
+          {this.generateDOM()}
+        </ResponsiveReactGridLayout>
       </div>
-    </div>
-  )
+    );
+  }
+}
+
+function generateLayout() {
+  return _.map(_.range(0, 25), function(item, i) {
+    var y = Math.ceil(Math.random() * 4) + 1;
+    return {
+      x: Math.round(Math.random() * 5) * 2,
+      y: Math.floor(i / 6) * y,
+      w: 2,
+      h: y,
+      i: i.toString(),
+      static: Math.random() < 0.05
+    };
+  });
+}
+ 
+export default function Index() {
+  const ResponsiveReact = WidthProvider(RGL)
+  const defaultProps = {
+    className: "layout",
+    rowHeight: 30, 
+    cols:  12,
+  };
+  const layouts = generateLayout()
+  console.log(layouts)
+  return  <div>
+    <ResponsiveReact {...defaultProps} layout={layouts} >
+      {
+        Array.from({length:25},(_, idx)=><div key={idx.toString()}>{idx}</div>)
+      }
+    </ResponsiveReact>
+  </div>
+
 }

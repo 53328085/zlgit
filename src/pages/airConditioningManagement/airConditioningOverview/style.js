@@ -12,10 +12,10 @@ export const Container = styled.div`
   .tree-box {
     height: 864px;
     flex-shrink: 0;
-    max-width: 210px;
+    max-width: 296px;
     display: flex;
     flex-direction: column;
-    width: 210px;
+    width: 296px;
   }
   .right-box {
     flex: 1;
