@@ -73,7 +73,7 @@ export default function Index() {
   const [value, setvalue] = useState('0')
   const [line, setLine] = useState(0)
   const [treeId, setTreeId] = useState()
-  let { areaId, projectId, type, date, energytype } = exparams
+  let { areaId, projectId, type, date, energytype } = exparams // projectId = 30 安庆旺旺 项目需定制
 
   const [concolumns, setConcolumns] = useState([])
   const [alike, setAlike] = useState("")

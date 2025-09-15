@@ -13,7 +13,7 @@ import {bindcol,rules,w255} from './data'
 import {useQueryACsUnConfigByPage, useQueryACsConfigByPage,useAddACsConfig,
   useRemoveACsConfig,
   } from './api'
-export default forwardRef(function Index({projectId,areaId, update}, ref){
+export default forwardRef(function Index({projectId,areaId,update}, ref){
  
   const mRef = useRef()
   const [form] = Form.useForm()
@@ -38,7 +38,7 @@ export default forwardRef(function Index({projectId,areaId, update}, ref){
         type:1,
         pageNum:current,
         alike,
-      //  rId,
+        areaIds: treeId,
       }
   
      let {success, data, total,errMsg}  = await  useQueryACsUnConfigByPage({}, body)
@@ -63,8 +63,9 @@ export default forwardRef(function Index({projectId,areaId, update}, ref){
   const getBind = async ({current, pageSize}, formData={})=> {
     try {
       let fag = Number.isInteger(parseInt(projectId)) && Number.isInteger(parseInt(areaId))
+    
       if(!fag) return
-      console.log(formData)
+   
       const {alike=""} = formData
       let body = {
         projectId,
@@ -149,6 +150,7 @@ const  {tableProps,  search, refresh} = useAntdTable(getUnBind, {
        if(success) {
          refresh()
          refreshed()
+         update?.()
        }else {
          message.warning(errMsg || "数据出错")
        }
@@ -171,7 +173,7 @@ const  {tableProps,  search, refresh} = useAntdTable(getUnBind, {
             <Bindwrap> 
               <div className='inwrap'>
               <div style={{overflow: "auto"}}>
-               <UseTree areaId={0} setTreeId={setTreeId} setLine={()=>{}} showline={false} datatype={NaN} energytype={1} ></UseTree>
+               <UseTree areaId={NaN} setTreeId={setTreeId} setLine={()=>{}} showline={false} datatype={NaN} energytype={1} ></UseTree>
                </div>
                <div className='tbwrap'> 
                    <Form form={form} layout="inline">

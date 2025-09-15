@@ -238,7 +238,7 @@ export default function Index({ projectId, level, name, id, allLevel }) {
       areaId: Record?.areaId
       // ...config
     }
-  }, [projectId])
+  }, [projectId, Record])
 
   return (
     <Mainbox ref={boxref}>

@@ -110,6 +110,7 @@ export default function Index() {
   console.log("params", params)
   return initems({model, isadd,cusac, setcusac, params})
  },[model, isadd,cusac, setcusac, curRow, projectId])
+
   const getData= async ({current, pageSize }, formData)=> { 
     try {
       if(!Number.isInteger(parseInt(projectId))) return
@@ -242,11 +243,12 @@ export default function Index() {
 
  const addInac =async(row)=> {
    try {
+    console.log(row)
     const {id,areaId,gateWay,useType, } = row
     if(!Number.isInteger(projectId)) return message.warning("没有创建项目")
      setCurRow(row)
      let {success, data, errMsg} =  await  useQueryInteriorACs({id, projectId})
-     if(success && Array.isArray(data)&&data.length) { 
+     if(success && Array.isArray(data)&&data.length>0) { 
       // let datas = data.map(d =>({...d}))
        setIsadd(false)
        innewform.setFieldValue("acs", data)
@@ -256,6 +258,7 @@ export default function Index() {
         areaId,gateWay,useType,
       }]
       setIsadd(true)
+      console.log(params)
       innewform.setFieldsValue("acs", params)
       if(!success)   message.warning(errMsg || "获取空调内机数据出错")
      }

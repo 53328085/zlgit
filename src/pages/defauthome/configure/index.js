@@ -277,11 +277,10 @@ export default function Index() {
 
   //RGL布局
   const [defaultProps, setDefaultProps] = useState({
-   // className: 'layout',
+    className: 'layout',
     rowHeight: 200,
-   
     cols: 8,
-    margin: [16, 16],
+    margin: [16, 16]
    
   })
 
@@ -601,11 +600,9 @@ onDrop: (layout: Layout, item: ?LayoutItem, e: Event) => void,
     <div className={style.mainContent} style={{backgroundColor: previewrbgcolor || '#135abd'}}>
       <Context.Provider value={{laptop }}>
       {contextHolder}
-      <ReactGridLayout 
-    className='layout'   {...layoutprops} {...defaultProps} onDrop={onDrop}  isDroppable={true}  style={{backgroundColor: previewrbgcolor || '#135abd'}} >
-        
-         {layoutItem.map(layout => createElement(layout))}
-      </ReactGridLayout>
+           <ReactGridLayout layout={layoutItem} onLayoutChange={onLayoutChange} {...defaultProps} isDroppable={true} onDrop={onDrop} style={{backgroundColor: previewrbgcolor || '#135abd'}} >
+             {_.map(layoutItem, el => createElement(el))}
+           </ReactGridLayout>
    {/*    <ReactGridLayout 
    resizable className='layout'  onLayoutChange={onLayoutChange} {...defaultProps}   isDroppable={true} onDrop={onDrop} style={{backgroundColor: previewrbgcolor || '#135abd'}} >
          {_.map(layoutItem, el => createElement(el))}

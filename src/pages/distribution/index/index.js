@@ -28,6 +28,7 @@ export default function Index() {
  const [dateval, setDateVal] = useState(moment())
  const [showRoom, setShowroom] = useState(true) // 是否显示配电房选择框
  const [showArea, setShowarea] = useState(true)
+ const [showSite, setShowSite] = useState(false)
  const [exparams, setexparams] = useState({});
  let show = !inpage.includes(nested) || showroute[primary]?.includes(nested)
  let style = show ? {
@@ -47,6 +48,7 @@ export default function Index() {
  const props = {
   showRoom,
   showArea,
+  showSite,
   setDateVal,
   custview,
   deviceStyle,
@@ -68,9 +70,14 @@ export default function Index() {
     
     setShowroom(false)
     setShowarea(false)
-   }  else {
+   }else if(primary == 'runtimeDistribution' && nested == 'transformer'){  // runtimeDistribution/transformer
     setShowarea(true)
     setShowroom(true)
+    setShowSite(true)
+   }else {
+    setShowarea(true)
+    setShowroom(true)
+    setShowSite(false)
    } 
 }
   useEffect(() => {

@@ -74,11 +74,11 @@ export default memo(function Index({ areaId, setTreeId, setLine, setNode, showli
   const strictyly = schecked == 1
  
   const allSelected = ({ target: { checked } }) => {
- 
+    console.log(treeIdRef.current)
     if (checked) {
       if(datatype==5) {
         let areId = Array.from(postid.current)?.map(d=>parseInt(d.slice(2)))
-        setTreeId(areaId)
+        setTreeId(areId)
       }else {
         setTreeId(treeIdRef.current)
       }
@@ -135,14 +135,18 @@ export default memo(function Index({ areaId, setTreeId, setLine, setNode, showli
  // const fieldNames = datatype === 2 ? { title: 'name', key: treekey, children: 'childs' } : datatype === 3 ? { title: 'name', key: treekey, children: 'children' } : { title: 'name', key: treekey, children: 'nodes' }
   
  const fieldNames =useMemo(()=> {
-  return {
+  if(Number.isNaN(areaId)) {
+    return {title: "name", key: "id" }  //  一级
+  }else{  
+    return {
     "1":{ title: 'name', key: treekey, children: 'nodes' },
     "2":{ title: 'name', key: treekey, children: 'childs' },
     "3":{ title: 'name', key: treekey, children: 'children' },
     "4":{ title: 'name', key: treekey, children: 'nodes' },
     "5":{ title: 'name', key: treekey, children: 'nodes' },
   }[datatype?.toString()] || { title: 'name', key: treekey, children: 'nodes' }
- },[datatype, treekey]) 
+}
+ },[datatype, treekey, areaId]) 
  
  
   //const fieldNames= {title:'name',key: treekey,children:'nodes'}  
@@ -303,9 +307,9 @@ export default memo(function Index({ areaId, setTreeId, setLine, setNode, showli
         let f = checked?.length > 0 && checked?.length < treeIdRef.current?.length
         setIndeterminate(f)
         if(datatype==5) {
-          console.log(checked)
+     
           let areId= checked.filter(d=>  Array.from(postid.current)?.includes(d))?.map(i => parseInt(i.slice(2)))
-          console.log(areId)
+         
           setTreeId(areId)
         }else {
           setTreeId(checked)
@@ -322,9 +326,16 @@ export default memo(function Index({ areaId, setTreeId, setLine, setNode, showli
  
 //  单选模式
 const onSelect=(selectedKeys, e)=> {   // 损耗分析 不是一级节点而且没有子节点的不需要查询。传入一个函数
+    console.log(selectedKeys)
     if(mode) return
     setNode && setNode?.(e.node)
-    setTreeId(selectedKeys)
+    if(datatype==5) {
+      let areId= selectedKeys.filter(d=>  Array.from(postid.current)?.includes(d))?.map(i => parseInt(i.slice(2)))
+      console.log(areId)   
+      setTreeId(areId)
+    }else {
+      setTreeId(selectedKeys)
+    }
     setCheckedKeys(selectedKeys)
  
  
@@ -354,12 +365,13 @@ const onSelect=(selectedKeys, e)=> {   // 损耗分析 不是一级节点而且�
   useEffect(()=> {  //  用一级区域做为树结构数据
    if(Number.isNaN(areaId) && Array.isArray(levelone)) {
       setTreeData(levelone)
+     
       let arr = levelone.map(l=>l.id)
       
       treeIdRef.current = arr
       setIndeterminate(false)
       setChecked(true)
-     
+      
       setCheckedKeys(arr);
       setExpandedKeys(arr)
       setTreeId(arr);
