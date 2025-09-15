@@ -405,8 +405,11 @@ export default function Index() {
             <span className={classes == 2 ? 'activeStyle defaultStyle' : 'defaultStyle' } onClick={()=> {setClasses(2)}}>一天两班</span>
             <span className={classes == 3 ? 'activeStyle defaultStyle' : 'defaultStyle' } onClick={()=> {setClasses(3)}}>一天三班</span>
             <span className={classes == 4 ? 'activeStyle defaultStyle' : 'defaultStyle' } onClick={()=> {setClasses(4)}}>一天四班</span>
+            <span className={classes == 5 ? 'activeStyle defaultStyle' : 'defaultStyle' } onClick={()=> {setClasses(5)}}>一天五班</span>
             <span className={classes == 6 ? 'activeStyle defaultStyle' : 'defaultStyle' } onClick={()=> {setClasses(6)}}>一天六班</span>
+            <span className={classes == 7 ? 'activeStyle defaultStyle' : 'defaultStyle' } onClick={()=> {setClasses(7)}}>一天七班</span>
             <span className={classes == 8 ? 'activeStyle defaultStyle' : 'defaultStyle' } onClick={()=> {setClasses(8)}}>一天八班</span>
+            <span className={classes == 9 ? 'activeStyle defaultStyle' : 'defaultStyle' } onClick={()=> {setClasses(9)}}>一天九班</span>
             <span className={classes == 10 ? 'activeStyle defaultStyle' : 'defaultStyle' } onClick={()=> {setClasses(10)}}>一天十班</span>
           </Logbox>
           <img src={dashed} style={{marginTop: 32, width:'100%'}}></img>
