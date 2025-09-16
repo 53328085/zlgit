@@ -84,7 +84,7 @@ export const FormComp = (props) => {
             form={form}
             colon={false}
             labelCol={{
-                span: 6
+                span: 9
             }}
         >
             <Row gutter={16}>
@@ -433,7 +433,7 @@ export const EditFormComp = (props) => {
             form={form}
             colon={false}
             labelCol={{
-                span: 6
+                span: 9
             }}
         >
             <Row className={style.customItem}>
@@ -688,6 +688,9 @@ export const SetFormComp = (props) => {
     }, {
         label: '5{电力公变考核计量}',
         value: 5
+    }, {
+        label: '8{路灯}',
+        value: 8
     }]
     const ProtocolTypeData = [{
         label: '无需对本序号的电能表/交流采样装置进行抄表',
@@ -753,13 +756,6 @@ export const SetFormComp = (props) => {
         label: '正泰定制MQTT协议',
         value: 255
     }]
-    const ControlPwdLevelData = [{
-        label: '01',
-        value: 1
-    }, {
-        label: '02',
-        value: 2
-    }]
     const StopBitesData = [{
         label: '1停止位',
         value: 0
@@ -797,14 +793,20 @@ export const SetFormComp = (props) => {
         label: '0{通配电能表/冷水表/热量表(计热量)/燃气表/其他仪表(如 电度表)}',
         value: 0
     }, {
-        label: '1{单相电能表/中水表/热量表(计冷量)}',
+        label: '1{单相电能表/中水表/热量表(计冷量)/全夜灯}',
         value: 1
     }, {
-        label: '2{三相电能表/纯净水表}',
+        label: '2{三相电能表/纯净水表/半夜灯}',
         value: 2
     }, {
         label: '3{热水表}',
         value: 3
+    }, {
+        label: '4{景观灯}',
+        value: 4
+    }, {
+        label: '8{泛光灯}',
+        value: 8
     }, {
         label: '9{电子水表}',
         value: 9
@@ -957,11 +959,11 @@ export const SetFormComp = (props) => {
     )
 }
 //设备参数设置
-export let SetModalForm = ({ setform, SetmodalFormRef, cancelStatus, transitionName, maskTransitionName, isfiber = false, openarea, onOk, okText, ...other }) => {
+export let SetModalForm = ({ setform, SetmodalFormRef, cancelStatus, isfiber = false, openarea, onOk, okText, ...other }) => {
     return (
         <>
             {
-                <Modal mold='cust' ref={SetmodalFormRef} transitionName={transitionName} maskTransitionName={maskTransitionName} title={other.name} {...other}
+                <Modal mold='cust' ref={SetmodalFormRef} title={other.name} {...other}
                     onOk={onOk} cancelButtonProps={{
                         disabled: cancelStatus,
                     }}

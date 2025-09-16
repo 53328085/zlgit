@@ -107,9 +107,11 @@ export default function Index() {
               setTreeId={setTreeId}
               setLine={() => {}}
               showline={false}
-              datatype={3}
+              datatype={5}
               energytype={1}
-              allselect={false}
+              allselect={true}
+              showSearch={true}
+              treeName="空调设备列表"
             />
           </div>
           <div className="right-box">

@@ -2,19 +2,19 @@ import React, { useState, useRef ,useMemo, useEffect } from 'react'
 import { Select ,Space,Divider,DatePicker,Radio, Button, message } from 'antd'
 import styled from 'styled-components'
 import {useSelector,  } from 'react-redux'
-import { selectcurlRommid,adaptation } from "@redux/systemconfig";
+import { selectcurlRommid,adaptation, site } from "@redux/systemconfig";
 import style from './style.module.less'
 import TranCard from './transcard'
 import UseTable from '@com/useTable'
 import { columns } from './columns'
 import Pagecount from '@com/pagecontent'
 import CustContext from '@com/content.js'
- 
+import {useRequest} from "ahooks"
 import { drawEcharts } from "@com/useEcharts"
 import {DistributionRoomRuntime} from '@api/api.js'
 import  imgurl from '@imgs'
 import moment from 'moment'
- 
+import {isObject} from "@com/usehandler" 
 import Titlelayout from '@com/titlelayout' 
 
 import { cloneDeep } from 'lodash';
@@ -23,11 +23,13 @@ const MainDiv =styled.div`
 background-color: #fff;
 flex: 1;
 padding: 16px;
-display: flex;
-flex-direction: column;
+display: grid;
+grid-template-rows: 220px 1fr;
 row-gap: 16px;
 .trancss{
-  display: flex;
+  display: grid;
+  grid-template-columns: 472px 1fr;
+  column-gap: 16px;
   .ant-table-thead .ant-table-cell{
     padding: 3px;
   }
@@ -124,6 +126,7 @@ export default function Index() {
   const projectId = useSelector(state => state.system.menus.projectId)  
   const chartRef =useRef()
   const roomId = useSelector(selectcurlRommid)
+  const siteData = useSelector(site)
   const [pattern,setPattern]=useState(1)
   const [tabs,setTabs] =useState([])
  
@@ -140,13 +143,7 @@ export default function Index() {
   const transInfo =useRef({
     capacity:null
   })
-  const dataprop={
-    tabs,
-  //  setTabs,
-    value,
-    setvalue,
-    initialval: '0'
-  }
+ const [lastSampleTime, setLastSampleTime] =useState(null)
   const opts = [
     {
       value:1,
@@ -221,11 +218,13 @@ export default function Index() {
   }
  
   //变压器 表格数据
-  const RuntimePoints =async(sn)=>{
-    if(!sn) return;
-    const res = await DistributionRoomRuntime.RuntimePoints(projectId,sn)
+  const RuntimePoints =async( )=>{
+    if(!siteData) return;
+    if(!Number.isInteger(parseInt(projectId))) return
+    const res = await DistributionRoomRuntime.RuntimePoints(projectId,siteData?.sn)
  
     if(res.success){
+      setLastSampleTime(res.data?.lastSampleTime)
       if(res.data.data){
         const dataes = cloneDeep(res.data)
         dataes.data?.forEach((it, i) => {
@@ -245,6 +244,9 @@ export default function Index() {
       message.error(res.errMsg)
     }
   }
+useRequest(RuntimePoints, {
+  refreshDeps: [siteData, projectId]
+})
   //变压器列表
   const getTransformer =async ()=>{
    const res = await DistributionRoomRuntime.TransformerList(projectId,roomId)
@@ -433,12 +435,12 @@ export default function Index() {
   useEffect(()=>{
     chartRef.current&& drawEcharts(chartRef.current,{...chartOpt,type:2})
   },[tabs,pattern])
-  useEffect(()=>{
+/*   useEffect(()=>{
     
     if(tabs&&tabs.length>0){
       RuntimePoints(tabs[value]?.sn)
     }  
-  },[tabs,value])
+  },[tabs,value])  */
   useEffect(()=>{
     if(tabs&&tabs.length>0){
       pattern===1&& HistoryTrends(tabs[value]?.sn)
@@ -449,13 +451,14 @@ export default function Index() {
     <>
  
         {
-          tabs.length>0?(
-            <CustContext.Provider value={dataprop}>
-            <Pagecount bgcolor="#eeeff3" pd="0px" custserach={true} > 
+          isObject(siteData) ?( 
+            <Pagecount bgcolor="#eeeff3" pd="0px"   > 
             <MainDiv>
              <div className='trancss'>
-             <TranCard  device={tabs[value]}/>
-             <UseTable columns={columns} bordered className={style.transformerTable} dataSource={tabledata}></UseTable>
+             <TranCard  site={siteData} lastSampleTime={lastSampleTime} />
+             <Titlelayout title='实时数据'>
+             <UseTable columns={columns} bordered   dataSource={tabledata}></UseTable>
+             </Titlelayout>
              </div>
            
              <Titlelayout title={<div style={{display: 'flex', alignItems: 'center', justifyContent: "space-between"}}>
@@ -502,8 +505,7 @@ export default function Index() {
                </div>
              </Titlelayout>
             </MainDiv>
-         </Pagecount>
-         </CustContext.Provider>
+         </Pagecount> 
           ):(
             <div style={{flex:1,display: 'flex',justifyContent:'center',alignItems:'center',flexDirection:'column'}}>
               <img src={imgurl.empty} alt="" style={{width:200}}/>

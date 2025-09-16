@@ -18,11 +18,12 @@ export default function Index() {
   const location = useLocation();
   let { state = {} } = location;
   let { nested = "", primary, meterType } = state; // meterType 从运行监控 =》 运行监控 跳转到 运行监控-》 设备管理
- 
-  let whole = ["runtimeMonitor", "runtimeSafe", "runtimeEnergy", "runtimeStorage", "runtimeMaintenance"]; // 需要显示搜索 ***（全部）的模块
+
+  let whole = ["runtimeMonitor", "runtimeSafe", "runtimeEnergy", "runtimeStorage", "runtimeMaintenance", "runtimeSolar", "designerSolar"]; // 需要显示搜索 ***（全部）的模块
   let include = {
     runtimeEnergy: ["area", "report"], // 模块里不需要显示全部的
-    designerDistribution: ['room']
+    designerDistribution: ['room'],
+    runtimeSolar: ["summary"]
   };
   const onelevel = useSelector(selectOneLevel);
   const varlabel = useSelector(levelDefaultLabel);
@@ -54,6 +55,7 @@ export default function Index() {
       "grading",
       "light",
       "region",
+      "comm"
     ],
     runtimeStorage: [ // 储能管理
       "station",
@@ -74,6 +76,13 @@ export default function Index() {
       "inspection",
       "class",
       "chart"
+    ],
+    runtimeSolar: [//光伏发电
+      "station",
+      "device",
+      "propare",
+      "aerograph",
+      "alarm"
     ],
     /*    runtimeQuota: [
          "runtimeParkQuota", //园区是专门的接口
@@ -99,10 +108,15 @@ export default function Index() {
       "streetLightEnergyMonitor",
       "lightControl",
       "streetLightDataReport",
+      "solarStreetLightOverview",
     ],
     streetLightManagement: [ // 照明控制 设置态
-"streetLightLineConfig",
+      "streetLightLineConfig",
     ],
+    designerSolar: [//光伏发电
+      "station",
+      "inverter"
+    ]
   }); // 需要显示搜索的页面
 
   const [showRoom, setShowroom] = useState(true); // 是否显示配电房选择框
@@ -145,7 +159,7 @@ export default function Index() {
 
   const sethandler = () => {
     try {
-      
+      console.log(primary)
       if (primary == "runtimeMonitor" && nested == "point") {
         if (!config.isdevsty) setConfig({ isdevsty: true, meterType });
       } else {
@@ -159,6 +173,9 @@ export default function Index() {
             break;
           case "range":
             setConfig({ energytype: false, isdate: false, custview: true, isAreaId: false, });
+            break;
+          case "comm":
+            setConfig({ shiftNo: true });
             break;
           case "time":
             setConfig({ shiftNo: true, isdate: true }); // shiftNo: true 不显示
@@ -189,7 +206,7 @@ export default function Index() {
             setConfig({ custview: true });
             break;
           case "public":
-            setConfig({ energytype: true, isdate: true,  isdaterange:true });
+            setConfig({ energytype: true, shiftNo: true, publicDate: true, formsty: { justifyContent: "flex-start", columnGap: "16px" } });
             break;
           case "air":
           case "grading":
@@ -258,21 +275,40 @@ export default function Index() {
       if (primary == "runtimeMaintenance") {
 
         setConfig({});
-      }else if(primary == "cabinets") {
+      } else if (primary == "cabinets") {
         setConfig({})
-      }else if(primary == "lightManagement") {
-        switch(nested) {
-          case "streetLightEnergyMonitor" :
-            setConfig({isdate: true, shiftNo: true})
+      } else if (primary == "lightManagement") {
+        switch (nested) {
+          case "streetLightEnergyMonitor":
+            setConfig({ isdate: true, shiftNo: true })
             break
-         case "lightControl":
-              setConfig({ isview: true, isdate: true, shiftNo: true });
-              break;
-        case "streetLightDataReport":
-                setConfig({ isview: true, isdate: true, shiftNo: true });
-                break;
+          case "lightControl":
+            setConfig({ isview: true, isdate: true, shiftNo: true });
+            break;
+          case "streetLightDataReport":
+            setConfig({ isview: true, isdate: true, shiftNo: true });
+            break;
         }
-        
+
+      }
+      else if (primary == "runtimeSolar") {
+        switch (nested) {
+          case "station":
+            setConfig({ refresh: true, photovoltaicPowerStation: true })
+            break
+          case "device":
+            setConfig({ refresh: true, inverter: true });
+            break;
+          case "propare":
+            setConfig({ isdate: true, shiftNo: true, refresh: true });
+            break;
+          case "aerograph":
+            setConfig({ isdate: true, shiftNo: true });
+            break;
+          case "alarm":
+            setConfig({ isdate: true, shiftNo: true, photovoltaicPowerStation: true });
+            break;
+        }
       }
       /*  if (primary == "runtimeQuota") {
          switch (nested) {
@@ -294,17 +330,26 @@ export default function Index() {
           case "energyRank":
             setConfig({ isAreaId: false, custview: true });
             break;
-            case "energy":
-            setConfig({  custview: true });
+          case "energy":
+            setConfig({ custview: true });
             break;
         }
 
-      }else if(primary == "streetLightManagement") {
-        switch(nested) {
-          case "streetLightLineConfig" : 
+      } else if (primary == "streetLightManagement") {
+        switch (nested) {
+          case "streetLightLineConfig":
             setConfig({});
             break;
           default:
+            break;
+        }
+      } else if (primary == "designerSolar") {
+        switch (nested) {
+          case "station":
+            setConfig({ custview: true, photovoltaicPowerStation: true });
+            break;
+          case "inverter":
+            setConfig({ custview: true, inverter: true, });
             break;
         }
       }

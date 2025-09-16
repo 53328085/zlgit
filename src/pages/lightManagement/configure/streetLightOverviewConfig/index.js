@@ -7,9 +7,10 @@ import Cupload from "@com/useUpload.js"
 import {selectProjectId} from '@redux/systemconfig.js'
 import { message, Form, Input, InputNumber, Space, Select, Divider, Button, Checkbox,   Alert} from 'antd';
 import {UpdateEnergyImage } from '@api/api.js'
-import {Cspin} from "@com/comstyled"
+import {Cspin,Point} from "@com/comstyled"
 import {isObject} from '@com/usehandler'
-import {Ctag, Main} from "./style"
+
+import { Main} from "./style"
 import {useList,useSetStreetLightImageLocation} from './api'
 const options = [
    {
@@ -221,7 +222,7 @@ export default function Index() {
          
            <div className="set">
               <img src={ lightImage?.image} onClick={getPoint} className='img' />
-              {list.map(l => <Ctag left={l.x} top={l.y} key={l.lightName}>{l.lightName}</Ctag>)}
+              {list.map(l => <Point left={l.x} top={l.y} key={l.lightName} data-descr={l.lightName}></Point>)}
            </div>
            <div className='point'>
            <Form form={form}>

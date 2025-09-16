@@ -1,14 +1,8 @@
 import styled from "styled-components"
 import {Tag} from 'antd'
+import imgurl from "@imgs/index"
+ 
 
-export const Ctag = styled(Tag)`
-  &&{
-    position: absolute;
-    left: ${props => props.left+'px'};
-    top: ${props=> props.top+'px'};
-    transform: translate(-50%, -50%);
-  }
-`
 export const Main = styled.div`
    display: grid;
    grid-template-rows: 64px 364px auto  1fr;

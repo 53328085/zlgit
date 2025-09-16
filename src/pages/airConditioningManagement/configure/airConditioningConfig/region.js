@@ -15,32 +15,32 @@ import {
   Drawer,
 } from "antd";
 
-import styled, {css} from "styled-components";
+import styled, { css } from "styled-components";
 import UserTable from "@com/useTable";
 import { Area } from "@api/api.js";
 import { WarningFilled, LeftOutlined, RightOutlined } from "@ant-design/icons";
- 
+
 import { Serach } from '@com/comstyled'
-import {useAntdTable} from "ahooks"
-import { selectOneLevel, selectOneLevelDefaultId, getOnelevel, publishState, filterDeviceStyle,adaptation } from '@redux/systemconfig.js'
+import { useAntdTable } from "ahooks"
+import { selectOneLevel, selectOneLevelDefaultId, getOnelevel, publishState, filterDeviceStyle, adaptation } from '@redux/systemconfig.js'
 import { useSelector, useDispatch } from 'react-redux'
 import Mask from '@com/mask.jsx'
-import { CustLink, CancelButton , CustButton} from "@com/useButton"
-import {useQueryACsUnConfigByPage, useQueryACsConfigByPage, useAddACsConfig, useRemoveACsConfig} from "./api"
-import {Mainbox} from "./style"
- 
-import BindAir from './bind' 
- 
+import { CustLink, CancelButton, CustButton } from "@com/useButton"
+import { useQueryACsUnConfigByPage, useQueryACsConfigByPage, useAddACsConfig, useRemoveACsConfig } from "./api"
+import { Mainbox } from "./style"
+
+import BindAir from './bind'
+
 const { Link, Text, Paragraph } = Typography;
 const { Item } = Form;
-export default function Index({ projectId, level,  name,id, allLevel }) {
+export default function Index({ projectId, level, name, id, allLevel }) {
 
   const dispatch = useDispatch();
   const oneLevel = useSelector(selectOneLevel) // 一级 
   const oneLevelDefaultId = useSelector(selectOneLevelDefaultId) // 一级默认id
   const ispublish = useSelector(publishState)
   const [levelone] = useState(allLevel[0]);
-  const {laptop} = useSelector(adaptation)
+  const { laptop } = useSelector(adaptation)
   const limitlevle = allLevel.slice(0, level - 1);
   const fields = allLevel?.find(item => item.level == level)?.fields || [];
   const [form] = Form.useForm();
@@ -48,14 +48,14 @@ export default function Index({ projectId, level,  name,id, allLevel }) {
 
   const boxref = useRef();
   const [Record, setRecord] = useState({});
- 
+
 
 
   const [tabelData, setTableData] = useState([])
   const [columns, setColumns] = useState([]);
   const airRef = useRef()
   const [topAreaId, setTopAreaId] = useState(oneLevelDefaultId)
- 
+
 
   const [pagination, setPagination] = useState({
     current: 1,
@@ -63,10 +63,10 @@ export default function Index({ projectId, level,  name,id, allLevel }) {
     total: 0
   })
 
- 
 
 
- 
+
+
   let params = {
     //查询
     pageNum: pagination.current,
@@ -76,8 +76,6 @@ export default function Index({ projectId, level,  name,id, allLevel }) {
     name: "",
     projectId,
   };
- 
- 
 
 
 
@@ -85,26 +83,28 @@ export default function Index({ projectId, level,  name,id, allLevel }) {
 
 
 
- 
-  
- 
- 
+
+
+
+
+
+
   const config = async (record) => {
-   console.log(record)
-   airRef.current.onOpen()
+    console.log(record)
+    airRef.current.onOpen()
     try {
       setRecord({ ...record });
-     
+
     } catch (error) {
       console.log(error);
     }
   };
- 
- 
- 
- 
 
- 
+
+
+
+
+
 
   //  配置 end
 
@@ -115,7 +115,7 @@ export default function Index({ projectId, level,  name,id, allLevel }) {
     let value = form.getFieldsValue()
     //setTopAreaId(value.topAreaId)
     params = { ...params, ...value }
-   
+
     Area.QueryByPage(params)
       .then((res) => {
         let { success, data, total } = res;
@@ -230,16 +230,16 @@ export default function Index({ projectId, level,  name,id, allLevel }) {
     }
 
   }, [level]);
-   const airprop = useMemo(()=> {
-      return {
-        projectId, 
-        updata:getTableData,
+  const airprop = useMemo(() => {
+    return {
+      projectId,
+      updata: getTableData,
       //  rId:id,
-        areaId: Record?.areaId
-       // ...config
-      }
-   }, [projectId, config, id])
-  
+      areaId: Record?.areaId
+      // ...config
+    }
+  }, [projectId, Record])
+
   return (
     <Mainbox ref={boxref}>
 
@@ -281,8 +281,8 @@ export default function Index({ projectId, level,  name,id, allLevel }) {
         </Space>
       </Form>
       <UserTable columns={columns} dataSource={tabelData} pagination={pagination} onChange={tableOnchange} rowKey="areaId" />
-     <BindAir   {...airprop}   ref={airRef} />
-      
+      <BindAir   {...airprop} ref={airRef} />
+
     </Mainbox>
   );
 }

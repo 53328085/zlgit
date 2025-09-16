@@ -8,10 +8,45 @@ import {Input, Select, DatePicker, Radio, Form, Button, Checkbox, Spin, Divider,
 import {useTranslation} from "react-i18next"
 import {useSelector} from 'react-redux'
 import {adaptation} from "@redux/systemconfig"
+import imgurl from "@imgs/index";
 import moment from "moment";
 const {Search, Password, TextArea} = Input
 const { Item } = Form;
 const $color= '#237AE4'
+
+export const Point = styled.div`
+  &&{
+    position: absolute;
+    left: ${props => props.left+'px'};
+    top: ${props=> props.top+'px'};
+    transform: translate(-50%, -50%);
+    width: 33px;
+    height: 39px;
+    background-image: url(${imgurl["point"]});
+    background-size: 100%;
+    background-repeat: no-repeat;
+    cursor: pointer;
+    &[data-descr]:hover::after,
+&[data-descr]:focus::after {
+  content: attr(data-descr);
+  position: absolute;
+  right: 0;
+  top: 42px;
+  min-width: 100px;
+  border: 1px  ${props=> props.theme.primaryColor} solid;
+  border-radius: 10px;
+  background-color: rgba(0, 102, 255, 0.56); 
+      border: 1px solid #0099cc; 
+      border-radius: 8px;
+      display: flex; 
+      justify-content: center;
+      align-items: center;
+      padding: 8px;
+  z-index: 3;
+}
+    
+  }
+`
 export const Ipticon = styled.span`
   display: inline-block;
   width: 32px;

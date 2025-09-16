@@ -1,26 +1,25 @@
 import React, { useEffect } from 'react'
-import style from './style.module.less'
-import transform from '@imgs/transform.png'
-import RightArrow from  '@imgs/rightArrow.png'
-export default function TransCard({message,device}) {
-  useEffect(()=>{
-    
-  },[])
+import {Transbox} from "./style"
+import transform from '@imgs/sitetrans.png'
+import Titlelayout from  '@com/titlelayout'
+export default function TransCard({site,lastSampleTime}) {
+ 
   return (
-    <div className={style.card}>
-      <img src={transform} alt="" style={{width:107,height:87}}/>
-      <div className={style.title}>
-        <div style={{marginBottom:16}}>
-            <p className={style.txtline}>{device?.name}</p>
-            <p>{device?.sn}</p>
-        </div>
-        <div>
-            <p className={style.tag}>最佳经济运行</p>
-           
-        </div>
-        
-      </div>
-      {/* <img src={RightArrow} style={{paddingLeft:6}}></img> */}
-    </div>
+    <Titlelayout  layout="flex" title={site?.name}>
+      <Transbox>
+       <div className='imgbox'>
+         <img src={transform} className='img' />
+       </div>
+       <div className='list'>
+         <div className="item">
+         设备编号：<span className='value'>{site?.sn}</span>       
+         </div>
+       <div className='item'>额定容量：<span className='value'>{site?.capacity}</span></div>  
+       <div className="item">网关状态：<span className='value'>{site?.state==2 ? "正常": site?.state==1 ? "离线" : ""}</span></div> 
+        <div className="item">在线时长：<span className='value'>{site?.onlineTime}</span></div> 
+        <div className="item">更新时间：<span className='value'>{lastSampleTime}</span></div> 
+       </div>
+       </Transbox> 
+    </Titlelayout>
   )
 }

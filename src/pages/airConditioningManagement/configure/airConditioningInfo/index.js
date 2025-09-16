@@ -71,14 +71,14 @@ export default function Index() {
       let {success:suc, data:msns} = await useQueryMSnsList(params)
       if(suc && Array.isArray(msns) && msns.length) {
           setMlist(msns)
-          newform.setFieldValue("msn", msns[0].sn)
+        //  newform.setFieldValue("msn", msns[0].sn)
       }else {
         setMlist([])
         newform.resetFields(["msn"])
       }
       if(success && Array.isArray(data) && data?.length) {
         setLists(data)
-        newform.setFieldValue("csn", data[0].sn)
+       // newform.setFieldValue("csn", data[0].sn)
       }else  {
        setLists([])
        newform.resetFields(["csn"])
@@ -100,6 +100,7 @@ export default function Index() {
  },[lists, mlist, model])
 
  const infromitem = useMemo(()=> {
+  console.log("curRow",curRow)
   const {id, areaId, gateWay, useType} = curRow
   let params ={
     exteriorId:id, // 外机的Id
@@ -110,6 +111,7 @@ export default function Index() {
   console.log("params", params)
   return initems({model, isadd,cusac, setcusac, params})
  },[model, isadd,cusac, setcusac, curRow, projectId])
+
   const getData= async ({current, pageSize }, formData)=> { 
     try {
       if(!Number.isInteger(parseInt(projectId))) return
@@ -152,7 +154,7 @@ export default function Index() {
   const {submit} = search
   const onAdd=()=> {
      setIsadd(true)
-     newform.setFieldValue("projectId", projectId)
+    // newform.setFieldValue("projectId", projectId)
      editRef.current.onOpen()
   }
   const delparams = useRef()
@@ -165,15 +167,15 @@ export default function Index() {
   }
   const onEdit=(row)=> {
     setIsadd(false)
-    const {projectId:id, ...params} = row
+    const { ...params} = row
 
-    newform.setFieldsValue({...params, projectId},)
+    newform.setFieldsValue({...params},)
     editRef.current.onOpen()
   }
   const onOk= async()=> {
     try {
       let values = await newform.validateFields()
-      let {success, errMsg} =await useInsertOrUpdateExteriorAC({operate}, values)
+      let {success, errMsg} =await useInsertOrUpdateExteriorAC({projectId}, {operate,...values})
       if(success) {
         message.success(msg)
         if(!isadd) {
@@ -242,21 +244,26 @@ export default function Index() {
 
  const addInac =async(row)=> {
    try {
+    console.log(row)
     const {id,areaId,gateWay,useType, } = row
     if(!Number.isInteger(projectId)) return message.warning("没有创建项目")
      setCurRow(row)
      let {success, data, errMsg} =  await  useQueryInteriorACs({id, projectId})
-     if(success && Array.isArray(data)&&data.length) { 
+     if(success && Array.isArray(data)&&data.length>0) { 
       // let datas = data.map(d =>({...d}))
        setIsadd(false)
        innewform.setFieldValue("acs", data)
      }else {
       let params =[{
         exteriorId:id, 
-        areaId,gateWay,useType,
+        areaId,
+        gateWay,
+        useType,
       }]
       setIsadd(true)
-      innewform.setFieldsValue("acs", params)
+      console.log(params)
+      innewform.setFieldValue("acs", params) 
+      
       if(!success)   message.warning(errMsg || "获取空调内机数据出错")
      }
      
@@ -272,10 +279,18 @@ export default function Index() {
   try {
     let {acs} = await innewform.validateFields()
     console.log(acs)
-    let editarc = acs?.filter?.(v => v.id!==null)
-    let newarc = acs?.filter?.(v=>v.id===null)
+    let editarc = acs?.filter?.(v => v.id!==null) || []
+    let newarc = acs?.filter?.(v=>v.id===null) || []
     let msg ={}
-    if(editarc?.length>0)  {
+    let eparams = editarc.map(e => {
+      let  {areaName,model,gateWay, ...rest} = e
+      return {...rest, operate:2}
+    })
+    let nparams = newarc.map(n=> {
+      let   {areaName,model,gateWay,id, ...rest} =n
+       return { ...rest, operate:1}
+    })
+    /* if(editarc?.length>0)  {
       let eparams = editarc.map(e => {
         let  {areaName,model,gateWay, ...rest} = e
         return {...rest, operate:2}
@@ -285,22 +300,29 @@ export default function Index() {
        msg["edit"] = data
       } catch (error) {
         console.log(error)
-      }
+      } 
     }
     if(newarc?.length >0) {
       let nparams = newarc.map(n=> {
         let   {areaName,model,gateWay,id, ...rest} =n
          return { ...rest, operate:1}
       })
-      try {
+     try {
         let data =  await useInsertOrUpdateInteriorACs({projectId}, nparams)
         msg["new"] =data
       } catch (error) {
         console.log(error)
-      }
+      } 
       
+    }*/
+    let {success, errMsg} =  await useInsertOrUpdateInteriorACs({projectId}, [...nparams, ...eparams])
+    if(success) {
+      message.success("设置成功")
+      editRef.current.onCancel()
+    }else {
+      message.warning(errMsg ||"数据出错")
     }
-    if (msg?.edit ) {
+    /* if (msg?.edit ) {
        if(msg.edit.success){
         message.success("编辑成功")
        }else {
@@ -314,7 +336,7 @@ export default function Index() {
       }else {
         message.warning(msg.new?.errMsg || "新增出错")
       }
-    }
+    } */
  /*    if(success) {
       message.success(msg)
       if(!isadd) {
@@ -326,6 +348,15 @@ export default function Index() {
     } */
 
   } catch (error) {
+    const {errorFields } = error
+    
+    errorFields?.forEach(err => {
+      let  errmsg = err.errors?.join()
+      
+      let  hostname = innewform.getFieldValue(err.name[0])[[err.name[1]]]?.["name"] || `内机${err.name[1] + 1}`
+      message.warning(hostname+"内机"+errmsg)
+
+    })
     console.log(error)
     return Promise.reject("")
   }
@@ -402,7 +433,7 @@ export default function Index() {
        
          {/* 新增/编辑空调内机 */}
 
-       <CModal title="新增空调内机"   onOk={inonOk}    width={732} mold="cust" custft={true}   ref={inRef} key="inref">
+       <CModal title="新增空调内机"   onOk={inonOk}    width={732} mold="cust"    ref={inRef} key="inref">
          <Descriptions>
            <Descriptions.Item label="设备名称">{curRow?.name}</Descriptions.Item>
            <Descriptions.Item label="设备编号">{curRow?.sn}</Descriptions.Item>

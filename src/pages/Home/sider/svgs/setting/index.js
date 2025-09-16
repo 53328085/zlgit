@@ -109,9 +109,13 @@ export { ReactComponent as designerWaterManagementdmaPartitionManagement } from 
 export { ReactComponent as airConditioningManagementairConditioningType } from './airConditioningType.svg'
 export { ReactComponent as airConditioningManagementairConditioningInfo } from './airConditioningInfo.svg'
 export { ReactComponent as airConditioningManagementairConditioningScheme } from './airConditioningScheme.svg'
+export { ReactComponent as airConditioningManagementairConditioningConfig } from './statistics.svg'
 
 //路灯管理
 
 export { ReactComponent as streetLightManagementstreetLightModel } from './streetLightType.svg'
 export { ReactComponent as streetLightManagementstreetLightInfo } from './streetLightInfo.svg'
 export { ReactComponent as streetLightManagementstreetLightScheme } from './streetLightScheme.svg'
+export { ReactComponent as streetLightManagementstreetLightLineConfig} from './streetLightLineConfig.svg'
+export { ReactComponent as streetLightManagementstreetLightAreaConfig} from './streetLightAreaConfig.svg'
+export { ReactComponent as streetLightManagementstreetLightOverviewConfig } from './image.svg'

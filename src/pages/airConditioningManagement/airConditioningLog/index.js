@@ -130,18 +130,30 @@ export default function Index(props) {
   const [airSchemeList, setAirSchemeList] = useState([{
     value: 0,
     label: "全部",
-  }]); 0
+  }]);
+  const [selectedRowKeys, setSelectedRowKeys] = useState([]); // 新增状态
   const schemeModalState = useRef(false); // 记录是否是第一次打开
   const [rangerTime, setRangerTime] = useState([moment().subtract(2, 'months'), moment()])
   const airNameChange = () => {
 
   }
-  const getAirTable = () => {
-
+  const handleRadioChange = (e) => {
+    setTabId(e.target.value);
+    setSelectedRowKeys([]); // 清空选中状态
+    tableRefs.current = [];
   }
   const RecontrolAir = () => {
-    console.log(tableRefs.current)
-    if (tableRefs.current.length == 0) {
+    // console.log(tableRefs.current)
+    // if (tableRefs.current.length == 0) {
+    //   messageApi.open({
+    //     type: 'warning',
+    //     content: '请至少选择一条记录！',
+    //   })
+    //   return;
+    // } else {
+    //   controlRef.current.onOpen()
+    // }
+    if (selectedRowKeys.length === 0) { // 使用状态判断
       messageApi.open({
         type: 'warning',
         content: '请至少选择一条记录！',
@@ -153,11 +165,12 @@ export default function Index(props) {
 
   }
   const rowSelectionCheckbox = {
+    selectedRowKeys, // 绑定选中状态
     tableRefs,
     onChange: (selectedRowKeys, selectedRows) => {
       console.log(`selectedRowKeys: ${selectedRowKeys}`, 'selectedRows: ', selectedRows);
-      tableRefs.current = selectedRows
-      selectedRowKeys.current = selectedRowKeys
+      setSelectedRowKeys(selectedRowKeys); // 更新状态
+      tableRefs.current = selectedRows;
     },
     // getCheckboxProps: record => ({
     //   disabled: record.resultDesc === '成功', // Column configuration not to be checked
@@ -243,24 +256,18 @@ export default function Index(props) {
   const onOkControl = async () => {
     try {
       const newArray = tableRefs.current.map(item => ({
-        csn: item.csn,
+        conditionerId: item.conditionerId,
         ioState: item.ioState ? item.ioState : 1,
         workMode: item.workMode ? item.workMode : 1,
         windSpeed: item.windSpeed ? item.windSpeed : 1,
         temperature: item.temperature
       }));
-      // let params = {
-      //   ioState: controlParams.ioState ? controlParams.ioState : 1,
-      //   workMode: controlParams.workMode ? controlParams.workMode : 1,
-      //   windSpeed: controlParams.windSpeed ? controlParams.windSpeed : 0,
-      //   temperature: controlParams.temperature ? controlParams.temperature : 24,
-      //   csn: selectedRowKeys.current
-      // }
       let { data, success, errMsg } = await useSetReControl({},
-        { projectId, conditons: newArray })
+        { projectId, conditions: newArray })
       if (success) {
         let values = searchForm.getFieldsValue();
         run({ current: 1, pageSize: 20 }, values)
+        setSelectedRowKeys([]); // 清空选中状态
         message.success('所选空调控制成功')
       } else {
         message.error(errMsg);
@@ -359,10 +366,7 @@ export default function Index(props) {
             optionType="button"
             buttonStyle="solid"
             size="large"
-            onChange={(e) => {
-              setTabId(e.target.value);
-              tableRefs.current = []
-            }}
+            onChange={handleRadioChange} // 使用修改后的处理函数
           />
         </Header>
         <div className='content'>
@@ -476,7 +480,7 @@ export default function Index(props) {
           是否确认{tabId == 0 ? '自动' : '手动'}控制所选空调？
         </CModal>
       </Container>
-    </Pagecount >
+    </Pagecount>
   )
 }
 

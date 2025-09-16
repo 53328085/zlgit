@@ -57,36 +57,39 @@ const Chartwrap = styled.div`
     align-items: center;
     column-gap: 8px;
   }
- 
+
 `
 
 export default function Index() {
 
   let { exparams, setCustview } = useOutletContext()
   const [dates, setDates] = useState([moment().startOf("day"), moment().endOf("hour")]);
-
+  
+  const [startDateTime, setStartDateTime] = useState('')
+  const [endDateTime, setEndDateTime] = useState('')
 
   const [isrange, setIsrange] = useState({ range: false })
 
   const [value, setvalue] = useState('0')
   const [line, setLine] = useState(0)
   const [treeId, setTreeId] = useState()
-  let { areaId, projectId, type, date, energytype } = exparams
+  let { areaId, projectId, type, date, energytype } = exparams // projectId = 30 安庆旺旺 项目需定制
 
-  const [concolumns, setConcolumns] = useState(conscols)
+  const [concolumns, setConcolumns] = useState([])
   const [alike, setAlike] = useState("")
   const onSearch = (e) => {
     setAlike(e)
   }
   // 对比分析 start
   const Ctitle = useMemo(() => {
+    console.log(date, type)
     if (!(date && type)) return ""
     let format = {
       1: "YYYY-MM-DD",
       2: "YYYY-MM",
       3: "YYYY"
     }[type]
-    return `对比分析（${date.format(format)})`
+    return `对比分析()` //${date.format(format)}
   }, [date, type])
 
   const [selectedRowKeys, setSelectedRowKeys] = useState([]);
@@ -137,17 +140,48 @@ export default function Index() {
     let f = ["0", "1", "4"].includes(value)
     //  console.log(dates)
     if (Array.isArray(dates) && dates?.[0] && dates?.[1]) {
-      filename = getTime(dates?.[0], 1)?.toString() + "-" + getTime(dates?.[1], 1)?.toString() + tabs[index]?.label
+      filename = getTime(dates?.[0], 1).toString() + "-" + getTime(dates?.[1], 1).toString() + tabs[index]?.label
     }
     return (f && isrange.range && dates?.length) ? filename : (tabs[index]?.label ?? 'sheet')
 
   }, [value, dates, tabs, isrange])
 
+  let columns = useMemo(()=> {
+    console.log("energytype",energytype)
+    let column = [cols(startDateTime, endDateTime), [], timecols, typecols, fromlot, shitcols][index]
+    if ([0,3].includes(index) ) {
+     return   column.map(c => {
+        if (c.dataIndex == 'consume' && index == 0) { // 实时抄表
+          console.log("实时抄表")
+          c.title = (energytype == 1 ? '用能(kWh)' : '用量(m³)')
+        }
+        if (c.dataIndex == 'consume' && index == 3) {  // 分类报表
+          c.title = (energytype == 1 ? '用能(kWh)' : '用水量（m³）')
+        }  
+      
+        return c
+      })
+    }else {
+      return column
+    }
+   
+  }, [index, energytype,startDateTime, endDateTime])
 
+  console.log(columns)
 
-  let columns = [cols, [], timecols, typecols, fromlot, shitcols][index] // 
+  // let columns = [cols(startDateTime, endDateTime), [], timecols, typecols, fromlot, shitcols][index] // 
 
-
+   /*     columns.forEach(c => {
+      if (c.dataIndex == 'consume' && index == 0) { // 实时抄表
+        console.log("实时抄表")
+        c.title = (energytype == 1 ? '用能(kWh)' : '用水量(m³)')
+      }
+      if (c.dataIndex == 'consume' && index == 3) {  // 分类报表
+        c.title = (energytype == 1 ? '用能(kWh)' : '用水量（m³）')
+      }
+      
+      
+    }) */
 
   const getTableData = ({ current, pageSize, areaId, projectId, type, date, energytype, treeId, index, line, isrange, dates, alike }) => {
     //  console.log(date)
@@ -157,7 +191,7 @@ export default function Index() {
     let f = [areaId, projectId, type, energytype, index, line].every(v => Number.isInteger(v)) && Array.isArray(treeId) && date
 
 
-    let range = [0, 1].includes(index) && isrange.range && Array.isArray(dates) && dates?.length > 1
+    let range = [0, 1, 4].includes(index) && isrange.range && Array.isArray(dates) && dates?.length > 1
     if (!f) return;
     if (index === 0 && isrange.range && !Array.isArray(dates)) {
       return
@@ -181,8 +215,10 @@ export default function Index() {
       pageSize,
       queryType: line,
       ids: treeId,
-      type: range ? 1 : type
+      type
     }
+    setStartDateTime(range ? dates?.[0].format("YYYY-MM-DD HH:mm") : date?.startOf(dateType).format("YYYY-MM-DD HH:mm"))
+    setEndDateTime(range ? dates?.[1].format("YYYY-MM-DD HH:mm") : date?.endOf(dateType).format("YYYY-MM-DD HH:mm"))
     if (index == 0) {
       params.filterInfo = alike
     }
@@ -190,26 +226,22 @@ export default function Index() {
     // //  cols 实时抄表，  conscols 能耗报表 , typecols 分类能耗
     if (energytype == 1) {
       setTabs([...etabs])
-    } else {
+    } else if (energytype == 2) {
+      setTabs([...wtabs])
+    } else if (energytype == 7) {
       setTabs([...wtabs])
     }
 
-    columns.forEach(c => {
-      if (c.dataIndex == 'consume' && index == 0) { // 实时抄表
-        c.title = energytype == 1 ? '用能(kWh)' : '差值（m³）'
-      }
-      if (c.dataIndex == 'consume' && index == 3) {  // 分类报表
-        c.title = energytype == 1 ? '用能(kWh)' : '用水量（m³）'
-      }
-    })
 
+   
+   
 
     if (index == 1) {
-      conscols.forEach(e => {
-        if (e.dataIndex == 'total') {
+      conscols?.forEach(e => {
+        if (e?.dataIndex == 'total') {
           e.title = energytype == 1 ? '能耗(kWh)' : '能耗（m³）'
         }
-      })
+      }) 
     }
 
     if (!hander) return message.warning("请求方法不存在")
@@ -221,7 +253,8 @@ export default function Index() {
       let arrData = []
       if (success && ((Array.isArray(data) && data.length > 0) || fag)) {
         if (index == 1) {
-          let { detailHeaders } = data[0]
+          let { detailHeaders          } = data?.[0]
+          if(!Array.isArray(detailHeaders)) return
           let last = detailHeaders.length - 1
           let column = detailHeaders.map(col => ({ title: col, dataIndex: col, key: col, width: "96px" }))
           // let column = detailHeaders.map(col => ({title: col, dataIndex: col, key: col,width: "96px", render: (text)=> Math.round(parseFloat(text))}))  
@@ -239,28 +272,31 @@ export default function Index() {
           if (ishead) {
             let shiftcolumn = heads.map(h => ({
               title: `${h.name}`,
-              dataIndex: `shiftname${h.name}`,
+              dataIndex: `${h.name}`,
               //  render: (text)=> Math.round(parseFloat(text)),
             }))
             setConcolumns([...shitcols, ...shiftcolumn])
 
           }
+          console.log("datas", datas.length)
           if (Array.isArray(datas) && ishead) {
-            arrData = datas.map(d => {
-              let { e } = d, Earr = []
+         
+           arrData = datas.map(d => {
+              let { e, ...rest } = d 
               if (Array.isArray(e) && e.length) {
                 e.forEach((v, index) => {
-                  let key = 'shiftname' + heads[index]?.name
-                  d[key] = v
+                  let key = heads[index]?.name
+                  rest[key] = v
                 })
 
               }
-              return d
-            })
+              
+              return rest
+            })    
           }
-
+         console.log("arrData", arrData)
         }
-
+        
 
         return {
           list: index == 5 ? arrData : data,
@@ -282,7 +318,7 @@ export default function Index() {
     defaultParams: [{ current: 1, pageSize: 14 }],
     refreshDeps: [areaId, projectId, type, date, energytype, treeId, index, line, isrange, dates, alike]
   })
-
+   console.log("tableProps", tableProps)
   // 对比分析 图表
   const modref = useRef()
   const [checkvalue, setCheckvalue] = useState(["1"])
@@ -349,7 +385,7 @@ export default function Index() {
     modref.current.onOpen()
   }
   const CustView = useMemo(() => {
-    const showdefined = ["0", "1", "4"].includes(value)
+    const showdefined = ["1", "4"].includes(value)
     return (
       <Space size={16}>
         <ExportExcel tb={tbref} defined={showdefined} setIsrange={setIsrange} getDates={setDates} value={dates} />
@@ -404,54 +440,55 @@ export default function Index() {
     }
   }, [value])
 
-  /* 线上实时抄表， 能耗报表 显示时间范围。 电能报表不显示 */
+ /* 线上实时抄表， 能耗报表 显示时间范围。 电能报表不显示 */
   return (
     <CustContext.Provider value={dataProps} >
       <Pagecount showSearch={false} custserach={true} >
         <Contentbox>
           <UserTree areaId={areaId} energytype={energytype} setTreeId={setTreeId} setLine={setLine} showline={value != '3'} datatype={value == '3' ? 0 : NaN} />
-          <div style={{ position: "relative", flex: 1 }}>
-            <div style={{ position: "absolute", width: "100%", }}>
-              <div className='opt'>
-                {["0", "1"].includes(value) && <div style={{ marginBottom: "16px", display: "flex" }}>
-                  <div style={{ marginLeft: "auto" }}>
-                    <Checkbox onChange={boxchange} checked={isrange.range}>使用日期范围（优先）</Checkbox>  <RangePicker
-                      value={dates || valuet}
-                      disabledDate={disabledDate}
-                      onCalendarChange={(val) => setDates(val)}
-                      onChange={onTimeOk}
-                      disabled={!isrange.range}
-                      defaultValue={[moment().startOf("day"), moment().endOf("hour")]}
-                      format="YYYY-MM-DD HH:mm"
-                      showTime={{
-                        format: 'HH:mm',
-                        minuteStep: 15
-                      }}
-                    />
-                  </div>
+          <div style={{ position: "relative", flex: 1 }}> 
+            <div style={{ position: "absolute", width: "100%",   }}>
+              <div  className='opt'>
+              {["0","1"].includes(value)   && <div style={{ marginBottom: "16px", display: "flex" }}>
+ 
+                <div style={{ marginLeft: "auto" }}>
+                  <Checkbox onChange={boxchange} checked={isrange.range}>使用日期范围（优先）</Checkbox>  <RangePicker
+                    value={dates || valuet}
+                    // disabledDate={disabledDate}
+                    onCalendarChange={(val) => setDates(val)}
+                    onChange={onTimeOk}
+                    disabled={!isrange.range}
+                    defaultValue={[moment().startOf("day"), moment().endOf("hour")]}
+                    format="YYYY-MM-DD HH:mm"
+                    showTime={{
+                      format: 'HH:mm',
+                      minuteStep: 15
+                    }}
+                  />
                 </div>
-                }
-                {
-                  value == "0" && <div className='search'>
-                    <Serach placeholder="请输入设备名称/设备编号/安装地址查询" style={{ width: "362px" }} onSearch={onSearch} />
-                  </div>
-                }
-                {
-                  value == "1" && <div className='search'>
-                    <Tooltip title="最多选择三条信息进行对比"><CustButton onClick={oncompare}>勾选对比</CustButton></Tooltip>
-                  </div>
-                }
+              </div>
+              }
+              {/* {
+                value == "0" && <div className='search'>
+                  <Serach placeholder="请输入设备名称/设备编号/安装地址查询" style={{ width: "362px" }} onSearch={onSearch} />
+                </div>
+              } */}
+              {
+                value == "1" && <div className='search'>
+                  <Tooltip title="最多选择三条信息进行对比"><CustButton onClick={oncompare}>勾选对比</CustButton></Tooltip>
+                </div>
+              }
               </div>
               {
-                ["1", "5"].includes(value) ? <UserTable ref={tbref} rowSelection={value == 1 ? rowSelection : null} columns={concolumns} {...tableProps} rowKey={row => row.sn} key={value} scroll={{
+                ["1", "5"].includes(value) ? <div key={value}><UserTable ref={tbref} rowSelection={value == 1 ? rowSelection : null} columns={concolumns} {...tableProps} rowKey={row => row.sn} key={value} scroll={{
                   scrollToFirstRowOnChange: true,
                   x: 1400,
                   y: 685
                 }
                 }
                   sheetName={sheetName} onExport={onExport}
-                ></UserTable>
-                  : <UserTable ref={tbref} columns={columns} {...tableProps} key={value} sheetName={sheetName} onExport={onExport}></UserTable>
+                ></UserTable></div>
+                  : <div key={value}><UserTable ref={tbref} columns={columns} {...tableProps} key={value} sheetName={sheetName} onExport={onExport}  ></UserTable></div>
               }
             </div>
           </div>
@@ -481,3 +518,5 @@ export default function Index() {
     </CustContext.Provider>
   )
 }
+
+

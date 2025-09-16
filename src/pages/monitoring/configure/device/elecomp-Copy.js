@@ -64,51 +64,51 @@ let Com = ({ form, deviceStyle }) => {
                 </Form.Item>
             ) :  null} */}
             <Form.Item shouldUpdate={(pre, cur) => pre.gatewayId !== cur.gatewayId} noStyle>
-                {({ getFieldValue }) => ( 
-                    getFieldValue("gatewayId") ?<>
-                    <Form.Item label="通讯端口" name="commPort" rules={rules}>
-                        <Select
-                            options={options}
-                            placeholder
-                        ></Select>
-                    </Form.Item>
-                    {category === 'ZTWL376-E' || category === 'DDSH666-MULTIUSER' ? null :
-                        <Form.Item label="通讯协议" name="commProtocol" rules={rules}>
+                {({ getFieldValue }) => (
+                    getFieldValue("gatewayId") ? <>
+                        <Form.Item label="通讯端口" name="commPort" rules={rules}>
                             <Select
-                                onChange={changeProtocol}
-                                options={[{
-                                    label: 'Modbus',
-                                    value: 1
-                                }, {
-                                    label: 'DL645',
-                                    value: 2
-                                }]}
+                                options={options}
+                                placeholder
                             ></Select>
-                        </Form.Item>}
-                    {
-                        isaddress ? <Form.Item label="通讯地址" name="commAddress"
-                            rules={[{ required: true }, {
-                                validator: (_, value) => {
-                                    if (!value) {
-                                        return Promise.resolve()
-                                    } else {
-                                        if (Number(value) < 255 && Number(value) > 0) {
+                        </Form.Item>
+                        {category === 'ZTWL376-E' || category === 'DDSH666-MULTIUSER' ? null :
+                            <Form.Item label="通讯协议" name="commProtocol" rules={rules}>
+                                <Select
+                                    onChange={changeProtocol}
+                                    options={[{
+                                        label: 'Modbus',
+                                        value: 1
+                                    }, {
+                                        label: 'DL645',
+                                        value: 2
+                                    }]}
+                                ></Select>
+                            </Form.Item>}
+                        {
+                            isaddress ? <Form.Item label="通讯地址" name="commAddress"
+                                rules={[{ required: true }, {
+                                    validator: (_, value) => {
+                                        if (!value) {
                                             return Promise.resolve()
                                         } else {
-                                            return Promise.reject(new Error("通讯地址范围(0-255)"))
+                                            if (Number(value) < 255 && Number(value) > 0) {
+                                                return Promise.resolve()
+                                            } else {
+                                                return Promise.reject(new Error("通讯地址范围(0-255)"))
+                                            }
                                         }
                                     }
-                                }
-                            }]}>
-                            <Input placeholder='通讯地址范围(0-255)' />
-                            {/* 默认1-255 */}
-                        </Form.Item> : null
-                    }
-    
-                </>:null
+                                }]}>
+                                <Input placeholder='通讯地址范围(0-255)' />
+                                {/* 默认1-255 */}
+                            </Form.Item> : null
+                        }
+
+                    </> : null
                 )}
             </Form.Item>
-            
+
             {
                 (deviceStyle == 1 || deviceStyle == 12) &&
                 (<>
@@ -141,18 +141,11 @@ export const FormComp = (props) => {
         form,
         deviceStyle,
         levelname,
-        setChannelName1,
-        setChannelName2,
-        setChannelName3,
-        setChannelName4,
-        setIndex,
         checklistRef,
         path1Gruop,
         path2Gruop,
         path3Gruop,
         path4Gruop,
-        setTransition,
-        setMaskTransitionName
     } = useContext(MyContext)
     const [name1, setName1] = useState('通道1')
     const [name2, setName2] = useState('通道2')
@@ -205,7 +198,7 @@ export const FormComp = (props) => {
             form={form}
             colon={false}
             labelCol={{
-                span: 6
+                span: 9
             }}
         /*  initialValues={{
              channel1:'通道1',
@@ -515,7 +508,7 @@ export const FormComp = (props) => {
     )
 }
 //新增设备
-export let AddModalForm = ({ addform, modalFormRef, transitionName, maskTransitionName, isfiber = false, openarea, onOk, okText, ...other }) => {
+export let AddModalForm = ({ addform, modalFormRef, isfiber = false, openarea, onOk, ...other }) => {
     const category = Form.useWatch('category', addform);
     const gatewayId = Form.useWatch('gatewayId', addform);
     const handleCancel = () => {
@@ -524,13 +517,13 @@ export let AddModalForm = ({ addform, modalFormRef, transitionName, maskTransiti
     return (
         <>
             {
-                <Modal mold='cust' ref={modalFormRef} transitionName={transitionName} maskTransitionName={maskTransitionName} title={other.name} {...other}
+                <Modal mold='cust' ref={modalFormRef} title={other.name} {...other}
                     custft={true}
                     footer={
                         [<Button key="back" onClick={handleCancel}>
                             取消
                         </Button>,
-                        gatewayId && (category === 'ZTWL376-E' || category === 'DDSH666-MULTIUSER') ? <Button key="next" type="primary" onClick={() => onOk('next')}>
+                        gatewayId && (category === 'ZTWL376-E') ? <Button key="next" type="primary" onClick={() => onOk('next')}>
                             下一步
                         </Button> : [<Button key="apply" type="primary" onClick={() => onOk('apply')}>
                             应用
@@ -562,7 +555,7 @@ export const EditModalForm = ({ editform, EditModalFormRef, isfiber = false, ope
                 <Button key="submit" type="primary" onClick={() => onOk('submit')}>
                     确定
                 </Button>,
-                gatewayId && (category === 'ZTWL376-E' || category === 'DDSH666-MULTIUSER') ?
+                gatewayId && (category === 'ZTWL376-E') ?
                     <Button key="next" type="primary" onClick={() => onOk('next')}>
                         下一步
                     </Button> : null
@@ -722,7 +715,7 @@ export const EditFormComp = (props) => {
             form={form}
             colon={false}
             labelCol={{
-                span: 6
+                span: 9
             }}
             preserve={false}
         >
@@ -909,11 +902,11 @@ export const EditFormComp = (props) => {
     )
 }
 //设备参数设置
-export let SetModalForm = ({ setform, SetmodalFormRef, cancelStatus, transitionName, maskTransitionName, isfiber = false, openarea, onOk, okText, ...other }) => {
+export let SetModalForm = ({ setform, SetmodalFormRef, cancelStatus, isfiber = false, openarea, onOk, ...other }) => {
     return (
         <>
             {
-                <Modal mold='cust' ref={SetmodalFormRef} transitionName={transitionName} maskTransitionName={maskTransitionName} title={other.name} {...other}
+                <Modal mold='cust' ref={SetmodalFormRef} title={other.name} {...other}
                     onOk={onOk} cancelButtonProps={{
                         disabled: cancelStatus,
                     }}
@@ -986,6 +979,9 @@ export const SetFormComp = (props) => {
     }, {
         label: '5{电力公变考核计量}',
         value: 5
+    }, {
+        label: '8{路灯}',
+        value: 8
     }]
     const ProtocolTypeData = [{
         label: '无需对本序号的电能表/交流采样装置进行抄表',
@@ -1088,14 +1084,20 @@ export const SetFormComp = (props) => {
         label: '0{通配电能表/冷水表/热量表(计热量)/燃气表/其他仪表(如 电度表)}',
         value: 0
     }, {
-        label: '1{单相电能表/中水表/热量表(计冷量)}',
+        label: '1{单相电能表/中水表/热量表(计冷量)/全夜灯}',
         value: 1
     }, {
-        label: '2{三相电能表/纯净水表}',
+        label: '2{三相电能表/纯净水表/半夜灯}',
         value: 2
     }, {
         label: '3{热水表}',
         value: 3
+    }, {
+        label: '4{景观灯}',
+        value: 4
+    }, {
+        label: '8{泛光灯}',
+        value: 8
     }, {
         label: '9{电子水表}',
         value: 9

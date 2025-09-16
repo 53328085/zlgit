@@ -15,6 +15,16 @@ export const useTypeopt = [
   { label: "客户用能", value: 1 },
   { label: "公共用能", value: 2 },
 ];
+const dataSource =[
+  {
+  label: "本地",
+  value:1
+},
+{
+  label: "天创达",
+  value:2
+}
+]
 export const cols = [
   {
     title: "园区名称",
@@ -146,12 +156,15 @@ export const items = ({ csn = [], msn = [], model = [] }) => (
       <Form.Item label="用能类型"  name="useType">
         <Select options={useTypeopt.slice(1)} placeholder="请选择"></Select>
       </Form.Item>
+      <Form.Item label="数据来源"  name="dataSource" rules={rules}>
+        <Select options={dataSource} placeholder="请选择"></Select>
+      </Form.Item>
       <Form.Item name="id" noStyle initialValue={0}>
         <Input hidden></Input>
       </Form.Item>
-      <Form.Item name="projectId" noStyle>
+      {/* <Form.Item name="projectId" noStyle>
         <Input hidden></Input>
-      </Form.Item>
+      </Form.Item> */}
     </div>
     </div>
   </Formbox>

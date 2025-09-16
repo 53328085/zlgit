@@ -271,6 +271,7 @@ export default function gateway({ deviceStyle }) {
     const res = await InsertOrUpdateDeviceParam(projectId, gatewaySn, newData)
     if (res.success) {
       message.success('参数设置成功')
+      addform.resetFields()
       modalFormRef?.current?.onCancel()
       EditModalFormRef?.current?.onCancel()
       SetmodalFormRef?.current?.onCancel()
@@ -406,6 +407,7 @@ export default function gateway({ deviceStyle }) {
         if (type == 'submit') {
           message.success('新增成功!')
           modalFormRef?.current?.onCancel()
+          addform.resetFields()
         } else if (type == 'next') {
           openSetModal(addform.getFieldsValue())
           getQueryByPageWater376()

@@ -63,7 +63,7 @@ export default forwardRef(function Index({strategyId, projectId, areaId,onrefres
         pageSize,
         pageNum:current,
         alike,
-        areaIds:treeId || []
+      //  areaIds:treeId || []
       }
   
      let {success, data, total,errMsg}  = await  usePageBind({}, body)
@@ -97,7 +97,7 @@ const  {tableProps, run, search, refresh} = useAntdTable(getUnBind, {
     form:formed,
     defaultPageSize: 14,
 
-    refreshDeps: [strategyId, projectId,treeId]
+    refreshDeps: [strategyId, projectId ]
   })
   const onOpen =async ()=> {
     try {
@@ -161,7 +161,7 @@ const  {tableProps, run, search, refresh} = useAntdTable(getUnBind, {
           <CModal title="空调绑定"   onOk={onOk} onCancel={onOk}   width={1380} mold="cust"    ref={mRef}>
             <Bindwrap>
               <div style={{overflow: "auto"}}>
-               <UseTree areaId={0} setTreeId={setTreeId} setLine={()=>{}} showline={false} datatype={NaN} energytype={1} ></UseTree>
+               <UseTree areaId={0} setTreeId={setTreeId} setLine={()=>{}} showline={false} showSearch={false} energytype={1} ></UseTree>
                </div>
                <div className='tbwrap'> 
                    <Form form={form} layout="inline">

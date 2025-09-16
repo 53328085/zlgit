@@ -213,10 +213,11 @@ export default function Index() {
     state.client.on("message", (topic, message) => {
       console.log('接所消息')
       let mqttData = JSON.parse(message.toString());
-
+      if(mqttData.SN== 'FBZX22710001'){
+        console.log(mqttData)
+      }
       for (let key in mqttData.Points) {
-        // console.log(mqttData.DeviceId + "_" +key)
-        if (key.indexOf('DI') != -1 && key != 'DlqOpen') {
+        if ((key.indexOf('DI') != -1) && key != 'DlqOpen') {
           if (window.topology.find(mqttData.SN + "_" + key)) {
             if (Array.isArray(window.topology.find(mqttData.SN + "_" + key))) {
               let arrlist = window.topology.find(mqttData.SN + "_" + key)
@@ -235,6 +236,35 @@ export default function Index() {
               }
             }
           }
+        }else if( key.indexOf('Relay1') != -1 && key != 'DlqOpen'){
+
+          if (window.topology.find(mqttData.SN + "_" + key)) {
+            if (Array.isArray(window.topology.find(mqttData.SN + "_" + key))) {
+              let arrlist = window.topology.find(mqttData.SN + "_" + key)
+              arrlist.map(item => {
+                if (item.icon == '' || item.icon == '') {
+                  item.icon = mqttData.Points[key].Value == 1 ? '' : '';
+                  item.fontColor = mqttData.Points[key].Value == 1 ? '#ff0000' : '#00ff00';
+                }
+                if (item.icon == '' || item.icon == '') {
+                  item.icon = mqttData.Points[key].Value == '1.00' ? '' : '';
+                  item.fontColor = mqttData.Points[key].Value == '1.00' ? '#ff0000' : '#00ff00';
+                }
+              })
+
+            } else {
+              let topoData = window.topology.find(mqttData.SN + "_" + key)
+              if (topoData.icon == '' || topoData.icon == '') {
+                topoData.icon = mqttData.Points[key].Value == 1 ? '' : '';
+                topoData.fontColor = mqttData.Points[key].Value == 1 ? '#ff0000' : '#00ff00';
+              }
+              if (topoData.icon == '' || topoData.icon == '') {
+                topoData.icon = mqttData.Points[key].Value == '1.00' ? '' : '';
+                topoData.fontColor = mqttData.Points[key].Value == '1.00' ? '#ff0000' : '#00ff00';
+              }
+            }
+          }
+          
         } else if (key == 'DlqOpen') {
           if (window.topology.find(mqttData.SN + "_" + key)) {
             if (Array.isArray(window.topology.find(mqttData.SN + "_" + key))) {

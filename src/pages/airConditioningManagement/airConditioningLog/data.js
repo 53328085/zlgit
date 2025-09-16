@@ -68,8 +68,8 @@ export const AirManualControlTableColumns = [
   },
   {
     title: "操作人",
-    dataIndex: "operator",
-    key: "operator",
+    dataIndex: "sourceName",
+    key: "sourceName",
   },
   {
     title: "控制状态",

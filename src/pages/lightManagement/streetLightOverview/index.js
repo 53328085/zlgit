@@ -1,25 +1,33 @@
 import React,{useRef, useEffect, useState, useMemo} from 'react'
- 
+ import {CloseOutlined} from "@ant-design/icons"
 import Pagecount from '@com/pagecontent'
 import {isObject} from "@com/usehandler"
  
 import {useOutletContext} from "react-router-dom"
-import {useOverview} from "./api"
+import {useOverview,useDetail} from "./api"
 import imgurl from './imgs'
-import {custsty,  Mainwrap} from './style'
+import {custsty,  Mainwrap,TitP} from './style'
 import Ichart from "@com/useEcharts/Ichart"
- 
+import {Point} from "@com/comstyled" 
+import { message } from 'antd'
 let timedata = Array.from({length: 10},(_, index)=> `0${index}:0${index}`)
 let randData = Array.from({length:10}, (_, index)=> Math.round(Math.random()*100))
-console.log(timedata)
-console.log(randData)
+let randData2 = Array.from({length:10}, (_, index)=> Math.round(Math.random()*100))
+ 
 export default function Index() {
   const [datas, setDatas] = useState({})
  
   const {projectId} = useOutletContext()
+  const [info, setInfo] = useState()
+ const [lineopt, baropt, createopt, incomeopt ] = useMemo(()=> { // 亮灯率 ， 市电，绿电, 发电量
+   let {
+    lightRates, 
+    useds,
+    creates,
+    incomes,
 
- const [lineopt, baropt] = useMemo(()=> {
-   let {lightRate, lightEnergy} = isObject(datas) ? datas : {}
+   } = isObject(datas) ? datas : {}
+   
    const comm ={
     grid: {
       left: "0px",
@@ -38,13 +46,16 @@ export default function Index() {
       axisLabel: {
         showMaxLabel: true,
         hideOverlap: true,
-        interval: "auto"
+        interval: "auto",
+        fontSize: "10px",
+        color: "#fff"
       }
     },
    }
-   let lopt ={
-    series: [{ type: "line", seriesLayoutBy: 'row',smooth:false }],
+   let lopt ={  // 亮灯率
+    series: [{ type: "line", seriesLayoutBy: 'row',smooth:false,  symbolSize: 8, showSymbol:true }],
     ...comm,
+    color: ["#1098FF"],
     dataset: {
       dimensions:[
         {
@@ -53,33 +64,77 @@ export default function Index() {
         "亮灯率"
       ],
       source:[
-        timedata,
-        randData
+      
+       lightRates?.x,
+       lightRates?.y
       ],
       sourceHeader: false,
     },
 
   }
-  let bopt ={
-    series: [{ type: "bar", seriesLayoutBy: 'row' }],
+  let bopt ={ // 用电量
+    series: [{ type: "bar", seriesLayoutBy: 'row', stack: "ec" },{ type: "bar", seriesLayoutBy: 'row' , stack: "ec"}],
     ...comm,
+    color: ["#5372FF", "#47DC73"],
     dataset: {
       dimensions:[
         {
           name: "时间", type: "time"
         },
-        "用水量"
+        "市电",
+        "绿电"
       ],
       source:[
-        timedata,
-        randData
+      useds?.x , 
+        useds?.y,
+        useds?.y1,
       ],
       sourceHeader: false,
     },
 
   }
+  let copt ={ // 发电量
+    series: [{ type: "bar", seriesLayoutBy: 'row'} ],
+    ...comm,
+    color: ["#5372FF", "#47DC73"],
+    dataset: {
+      dimensions:[
+        {
+          name: "时间", type: "time"
+        },
+        "发电量",
+        
+      ],
+      source:[
+        Array.isArray(creates?.x) ? creates?.x : [],
+        Array.isArray(creates?.y) ? creates?.y :[],
+       /*  timedata,
+        randData */
+      ],
+      sourceHeader: false,
+    },
 
- return [lopt,bopt]
+  }
+  let inopt = {  // 发电收益
+    series: [{ type: "line", seriesLayoutBy: 'row',smooth:false,  symbolSize: 8, showSymbol:true }],
+    ...comm,
+    color: ["#05C06E"],
+    dataset: {
+      dimensions:[
+        {
+          name: "时间", type: "time"
+        },
+        "金额"
+      ],
+      source:[
+       Array.isArray(incomes?.x) ? incomes?.x : [],
+       Array.isArray(incomes?.y) ? incomes?.y : [],
+      ],
+      sourceHeader: false,
+    },
+
+  }
+ return [lopt,bopt, copt, inopt]
  }, [datas])
 
 
@@ -96,12 +151,64 @@ export default function Index() {
       
     }
   }
+  const getpoint=async(rid, x, y) => {
+    try {
+      if(!Number.isInteger(Number.parseInt(rid))) return message.warning("路灯Id无效")
+      let {success, data, errMsg} = await useDetail({rid, projectId})
+     if(success && isObject(data)) {
+        setInfo({x, y, ...data})
+     }else {
+      setInfo({x,y})
+      if(!success)  message.warning(errMsg || "数据出错")
+    }
+    } catch (error) {
+      console.log(error)
+    }
+  }
   useEffect(()=> {
     if(Number.isInteger(projectId)){
        getData()
     }
 
   },[projectId])
+  const tref=useRef()
+  useEffect(()=> {
+    console.log(tref)
+  },[])
+  const onMouseDown =(event)=> {
+    try {
+      let ball = tref.current
+      let shiftX = event.clientX - tref.current.getBoundingClientRect().left;
+      let shiftY = event.clientY - tref.current.getBoundingClientRect().top;
+      moveAt(event.pageX, event.pageY);
+  
+      // 移动现在位于坐标 (pageX, pageY) 上的球
+      // 将初始的偏移考虑在内
+      function moveAt(pageX, pageY) {
+        ball.style.left = pageX - shiftX + 'px';
+        ball.style.top = pageY - shiftY + 'px';
+      }
+    
+      function onMouseMove(event) {
+        moveAt(event.pageX, event.pageY);
+      }
+    
+      // 在 mousemove 事件上移动球
+      document.addEventListener('mousemove', onMouseMove);
+    
+      // 放下球，并移除不需要的处理程序
+      ball.onmouseup = function() {
+        document.removeEventListener('mousemove', onMouseMove);
+        ball.onmouseup = null;
+      };
+    } catch (error) {
+      console.log(error)
+    }
+
+  }
+  const onMouseMove=(e)=> {
+    // console.log(e)
+  }
   return (
     <Pagecount custsty={custsty} bgcolor="none">
       <Mainwrap>
@@ -109,22 +216,39 @@ export default function Index() {
           <div className="shownum">
             <img src={imgurl["todayLightRate"]}></img>
             <div className='data'>
-              <span className='title'>今日亮灯率</span>
-              <span className='num'>{datas?.todayLightRate? `${datas?.todayLightRate}%`: "--" }</span>
+              <span className='title'>亮灯率</span>
+              <span className='num'>{Number.isInteger(parseFloat(datas?.lightRate))? `${parseFloat(datas?.lightRate)*100?.toFixed(2)}%`: "--" }</span>
             </div>
           </div>
           <div className="shownum">
             <img src={imgurl["todayLightNum"]}></img>
             <div className='data'>
-              <span className='title'>今日亮灯数</span>
-              <span className='num'>{datas?.todayLightNum ? datas?.todayLightNum : "--"}</span>
+              <span className='title'>亮灯数</span>
+              <span className='num'>{datas?.lightUpNum ? datas?.lightUpNum : "--"}</span>
             </div>
           </div>
           <div className="shownum">
-            <img src={imgurl["todayLightNum"]}></img>
+            <img src={imgurl["todayEUsed"]}></img>
             <div className='data'>
               <span className='title'>今日路灯用电（kWh）</span>
-              <span className='num'>{datas?.todayEnergy ? datas?.todayEnergy : "--"}</span>
+              <span className='num'>{datas?.todayEUsed ? datas?.todayEUsed : "--"}</span>
+            </div>
+          </div>
+          <div className="shownum">
+            <img src={imgurl["todayEUsed"]}></img>
+            <div className='data'>
+              <span className='title'>今日路灯发电（kWh）</span>
+              <span className='num'>{datas?.todayECreate ? datas?.todayECreate : "--"}</span>
+            </div>
+          </div>
+          <div className="shownum">
+            <div className="imgwrap">
+            <img src={imgurl["todayIncome"]} className='img'></img>
+            </div>
+          
+            <div className='data'>
+              <span className='title'>今日发电收益（元）</span>
+              <span className='num'>{datas?.todayIncome ? datas?.todayIncome : "--"}</span>
             </div>
           </div>
           <div className="shownum">
@@ -143,47 +267,83 @@ export default function Index() {
           </div>
         </div>
         <div className="down">
-          <div className='left'>
-          </div>
-          <div className="right">
-            <div className="titleUp">
-              平台概况
+        <div className="left">
+        <div className="titleUp">
+                 <div className='manger'>
+                        <span className='label'>管理单位</span>
+                        <span className='value'>{datas?.department || "=="}</span>
+                  </div>
             </div>
             <div className="content">
+            <div className="infobox">
+           
               <div className="info">
-                <div className="item">
-                     <img src={imgurl?.["departNum"]}></img>
+              <div className="item">
+                     <img src={imgurl?.["lineNum"]}></img>
                      <div className='data'>
-                        <span className='label'>管理单位</span>
-                        <span className='value'>{datas?.departNum}</span>
+                        <span className='label'>回路</span>
+                        <span className='value'>{datas?.loopNum}</span>
                      </div>
                 </div>
                 <div className="item">
                      <img src={imgurl?.["lightNum"]}></img>
                      <div className='data'>
                         <span className='label'>路灯</span>
-                        <span className='value'>{datas?.lightNum}</span>
+                        <span className='value'>{datas?.highPoleNum}</span>
                      </div>
                 </div>
+               
                 <div className="item">
-                     <img src={imgurl?.["lineNum"]}></img>
+                     <img src={imgurl?.["sun"]}></img>
                      <div className='data'>
-                        <span className='label'>回路</span>
-                        <span className='value'>{datas?.lineNum}</span>
+                        <span className='label'>太阳能路灯</span>
+                        <span className='value'>{datas?.solarNum}</span>
                      </div>
                 </div>
+              </div>
               </div>
                <div className='chartTitle'>近7日亮灯率(%)</div>
                <div className="chartWrap">
 <Ichart {...lineopt} />
                </div>
-               <div className='chartTitle'>近7日用电量(kWh)</div>
+               <div className='chartTitle mt-4'>近7日用电量(kWh)</div>
                <div className="chartWrap">
 <Ichart {...baropt} />
                </div>
 
             </div>
           </div>
+          <div className="middler">
+            <img src={datas?.image} className='img' onClick={()=>{}}/>
+            {
+              datas?.locationInfos?.map(l=><Point left={l.x} top={l.y} key={l.lightName} data-descr={l.lightName} onClick={()=>getpoint(l.lightId, l.x, l.y)}></Point>)
+            }
+           {info && <TitP left={info.x} top={info.y}   onDrag={()=> false} ref={tref}>
+          <h5 className="title">{info.name} <CloseOutlined style={{color: "#2AFAFF", position: "absolute", top: "4px", right: "4px"}} onClick={() => setInfo(null)}  /> </h5>
+             <div className="contentbox">
+               {
+                
+                  info?.fields?.map(i => ( <div className="content">
+                    <p className="key">{i.name}</p>
+                    <p className="value">{i.value}</p>
+                </div>))
+
+               } 
+              </div>
+          </TitP>}
+          </div>
+           <div className="right">
+            <div className="content">
+           <div className='chartTitle'>发电量统计</div>
+               <div className="chartWrap">
+<Ichart {...createopt} />
+               </div>
+               <div className='chartTitle mt-4'>发电收益折算(元)</div>
+               <div className="chartWrap">
+<Ichart {...incomeopt} />
+               </div>
+           </div>
+           </div>
         </div>
       </Mainwrap>
          
