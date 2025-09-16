@@ -75,6 +75,11 @@ export const CardBox = styled.div`
         .address{
         font-size: 16px;
         font-weight: 500;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        width: 100px;
+        overflow: hidden;
+        cursor:pointer;
         }
         .sn{
         font-size: 12px;
@@ -90,20 +95,21 @@ export const CardBox = styled.div`
         }
        }
         .airOffline{
-            background: linear-gradient(227deg, rgb(227 228 233) 0%, rgb(217 218 218) 0%, rgb(157 153 153) 100%, rgb(236 237 238) 100%);
+            background: #b2acac;
             color: #fff;
 
         }
          .airAlarm{
-            background: linear-gradient(227deg, rgb(220 156 161) 0%, rgb(246 65 65) 0%, rgb(243 199 199) 100%, rgb(230 177 177) 100%);
+            background: #f64141;
             color: #fff;
         }
-   .airCardCold{
+      .airCardCold{
        color: #FFFFFF;
-       background: linear-gradient(180deg, rgb(64 102 216) 0%, rgb(16 161 248) 0%, rgb(126 202 227) 100%, rgb(151 205 221) 100%);
+           background: linear-gradient(180deg, rgb(58 101 228) 0%, rgb(23 135 244) 0%, rgb(230 235 244) 100%, rgb(235 243 245) 100%);
+       }
    .airCardHot{
        color: #FFFFFF;
-       background: linear-gradient(180deg, rgb(228 231 239) 0%, rgb(223 219 5) 0%, rgb(248 205 109) 81%, rgba(255, 201, 109, 1) 100%);
+      background: linear-gradient(180deg, rgb(228 231 239) 0%, rgb(240 116 6) 0%, rgb(232 206 71) 81%, rgb(242 221 89) 100%);
    }
    .airCardWindy{
        background: linear-gradient(180deg, rgb(176 255 163) 0%, rgba(247, 247, 247, 1) 100%);
@@ -113,7 +119,7 @@ export const CardBox = styled.div`
    }
     .closeAir{
        color: #5D5D5D;
-           background: linear-gradient(180deg, rgb(239 238 238) 0%, rgba(247, 247, 247, 1) 100%);
+       background: linear-gradient(180deg, rgb(239 238 238) 0%, rgba(247, 247, 247, 1) 100%);
    }
    }
 `;

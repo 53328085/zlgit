@@ -192,7 +192,7 @@ export default function Index() {
             {airData?.length != 0 ? (
               <div className="airBox">
                 {airData?.map?.((airItem) => (
-                  <div>
+                  <>
                     {airItem.state == 2 ? (
                       <div
                         key={airItem.id}
@@ -230,7 +230,7 @@ export default function Index() {
                               onChange={e => handleSingleSelect(airItem.id, e.target.checked)}
                             />
                             <div className="topInfo">
-                              <div className="address">{airItem.name}</div>
+                              <div className="address" title={airItem.name}>{airItem.name}</div>
                               <div className="sn"> ({airItem.cSn})</div>
                             </div>
                           </div>
@@ -279,8 +279,8 @@ export default function Index() {
                               onChange={e => handleSingleSelect(airItem.cSn, e.target.checked)}
                             /> */}
                             <div className="topInfo">
-                              <div className="address">{airItem.name}</div>
-                              <div className="sn"> ({airItem.cSn})</div>
+                              <div className="address" title={airItem.name}>{airItem.name}</div>
+                              <div className="sn">  ({airItem.cSn})</div>
                             </div>
                           </div>
                           <img className="airIcon" src={airItem.type == 1 ? multAir : (airItem.type == 2 || airItem.type == 3) ? splitAir : airItem.type == 4 ? centralAir : null} ></img>
@@ -304,7 +304,7 @@ export default function Index() {
                               onChange={e => handleSingleSelect(airItem.id, e.target.checked)}
                             />
                             <div className="topInfo">
-                              <div className="address">{airItem.name}</div>
+                              <div className="address" title={airItem.name}>{airItem.name}</div>
                               <div className="sn"> ({airItem.cSn})</div>
                             </div>
                           </div>
@@ -315,7 +315,7 @@ export default function Index() {
                         </div>
                         <div>空调告警</div>
                       </div>}
-                  </div>
+                  </>
                 ))}
               </div>)
               : <div style={{ height: '670px', display: 'flex' }}><Cempty tip='暂无数据' /></div>}

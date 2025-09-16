@@ -1,21 +1,21 @@
 import React, { useEffect, useState, useRef, memo, useMemo } from 'react'
 import { useSelector } from 'react-redux'
- 
+
 import styled from 'styled-components'
- 
-import { energyShare, Monitoring, EnergyPublicRuntime, DMAPartition,Apimethod } from '@api/api'
+
+import { energyShare, Monitoring, EnergyPublicRuntime, DMAPartition, Apimethod } from '@api/api'
 import { selectProjectId, selectOneLevel } from '@redux/systemconfig.js'
 import { message, Input, Tree, Radio, Checkbox, Switch } from 'antd'
- 
+
 import Titlelayout from "@com/titlelayout";
 import { useLocation } from "react-router-dom"
 
 const { Search } = Input;
-const { useTree:lightTree } = new Apimethod( //照明管理 手动控制 查询线路
+const { useTree: lightTree } = new Apimethod( //照明管理 手动控制 查询线路
   "get",
   "Light/StreetLightCommon/Tree"
 );
-const { useTree:AirTree } = new Apimethod( // 空调管理 手动控制 查询线路
+const { useTree: AirTree } = new Apimethod( // 空调管理 手动控制 查询线路
   "get",
   "Conditioner/AirConditionerCommon/Tree"
 );
@@ -33,53 +33,53 @@ const Treebox = styled.div`
        //  overflow-y: auto; 
        }
 `
- 
-export default memo(function Index({ areaId, setTreeId, setLine, setNode, showline = true, datatype = NaN, energytype, showSearch,
-  sty = { bordered: 'y', pv: '16px' }, 
-  allselect = true, 
-  selectobj, 
+
+export default memo(function Index({ areaId, setTreeId, setLine, setNode, showline = true, scroll = 0, datatype = NaN, energytype, showSearch,
+  sty = { bordered: 'y', pv: '16px' },
+  allselect = true,
+  selectobj,
   multiple = true,
-   treeName = '',
-   title="", 
-   mode=null,
-   ...restprop }) {
+  treeName = '',
+  title = "",
+  mode = null,
+  ...restprop }) {
   // datatype =0 或 =2
   const levelone = useSelector(selectOneLevel)
-  
+
   const [treeData, setTreeData] = useState([])
-  
+
   const location = useLocation();
   const { state } = location
   const isshow = useMemo(() => {
     const { nested, primary } = state
-    return  ["report","public"].includes(nested) && primary == "runtimeEnergy" || ["airConditioningOverview","public"].includes(nested) && primary == "airConditioningManagement"
+    return ["report", "public"].includes(nested) && primary == "runtimeEnergy" || ["airConditioningOverview", "public"].includes(nested) && primary == "airConditioningManagement"
   }, [state])
   const [checkedKeys, setCheckedKeys] = useState([])
- 
+
   const [keyword, setKeyword] = useState('')
   const projectId = useSelector(selectProjectId)
   const [typeTree, setTypeTree] = useState(0)
- 
+
   //const treekey = datatype === 0 ? 'areaId' : datatype === 2||3 ? 'id' :  typeTree == 0 ? "areaId" : "id";
-  const treekey = datatype === 0 ? 'areaId' : [1,2, 3, 4].includes(datatype) ? 'id' : [5].includes(datatype) ? "key" : typeTree == 0 ? "areaId" : "id";
- 
- 
+  const treekey = datatype === 0 ? 'areaId' : [1, 2, 3, 4].includes(datatype) ? 'id' : [5].includes(datatype) ? "key" : typeTree == 0 ? "areaId" : "id";
+
+
   // const treekey =  typeTree == 0 ?  "areaId" : "id" ; 
   const [expandedKeys, setExpandedKeys] = useState([]);
   let treeIdRef = useRef([])
-  let postid=useRef(new Set()) //  空调 树
+  let postid = useRef(new Set()) //  空调 树
   const [indeterminate, setIndeterminate] = useState(false);
   const [checked, setChecked] = useState(false)
   const [schecked, setschecked] = useState(1)
   const strictyly = schecked == 1
- 
+
   const allSelected = ({ target: { checked } }) => {
- 
+
     if (checked) {
-      if(datatype==5) {
-        let areId = Array.from(postid.current)?.map(d=>parseInt(d.slice(2)))
+      if (datatype == 5) {
+        let areId = Array.from(postid.current)?.map(d => parseInt(d.slice(2)))
         setTreeId(areaId)
-      }else {
+      } else {
         setTreeId(treeIdRef.current)
       }
       setCheckedKeys(treeIdRef.current)
@@ -91,37 +91,37 @@ export default memo(function Index({ areaId, setTreeId, setLine, setNode, showli
     }
     setIndeterminate(false)
   }
- 
+
   let arr = [], expand = [];
 
   const getId = (nodes, type, child = 'nodes') => {
     if (Array.isArray(nodes)) {
       for (let node of nodes) {
         let { level, areaId, id } = node
- 
+
         if (level <= 2 && treekey == 'areaId') {
           expand.push(areaId)
         } else if (treekey == 'id') {
           expand.push(id)
         }
         if (allselect) {
-          if(datatype==5) { // 空调
-            if(node.type==2 || (node.type==1 && node[child]?.length >0)) {
-                arr.push(node[type])
-                if (node.type==2) {
-                  postid.current.add(node[type])
-                }
+          if (datatype == 5) { // 空调
+            if (node.type == 2 || (node.type == 1 && node[child]?.length > 0)) {
+              arr.push(node[type])
+              if (node.type == 2) {
+                postid.current.add(node[type])
+              }
             }
 
-          }else {
+          } else {
             arr.push(node[type])
           }
-         
+
         }
         if (!allselect && arr.length == 0) {
           arr.push(nodes[0][type])
         }
-        if(mode && node?.[child]?.length > 0) {
+        if (mode && node?.[child]?.length > 0) {
           console.log(node)
           arr.push(node[type])
         }
@@ -131,27 +131,27 @@ export default memo(function Index({ areaId, setTreeId, setLine, setNode, showli
       }
     }
   }
- 
- // const fieldNames = datatype === 2 ? { title: 'name', key: treekey, children: 'childs' } : datatype === 3 ? { title: 'name', key: treekey, children: 'children' } : { title: 'name', key: treekey, children: 'nodes' }
-  
- const fieldNames =useMemo(()=> {
-  return {
-    "1":{ title: 'name', key: treekey, children: 'nodes' },
-    "2":{ title: 'name', key: treekey, children: 'childs' },
-    "3":{ title: 'name', key: treekey, children: 'children' },
-    "4":{ title: 'name', key: treekey, children: 'nodes' },
-    "5":{ title: 'name', key: treekey, children: 'nodes' },
-  }[datatype?.toString()] || { title: 'name', key: treekey, children: 'nodes' }
- },[datatype, treekey]) 
- 
- 
+
+  // const fieldNames = datatype === 2 ? { title: 'name', key: treekey, children: 'childs' } : datatype === 3 ? { title: 'name', key: treekey, children: 'children' } : { title: 'name', key: treekey, children: 'nodes' }
+
+  const fieldNames = useMemo(() => {
+    return {
+      "1": { title: 'name', key: treekey, children: 'nodes' },
+      "2": { title: 'name', key: treekey, children: 'childs' },
+      "3": { title: 'name', key: treekey, children: 'children' },
+      "4": { title: 'name', key: treekey, children: 'nodes' },
+      "5": { title: 'name', key: treekey, children: 'nodes' },
+    }[datatype?.toString()] || { title: 'name', key: treekey, children: 'nodes' }
+  }, [datatype, treekey])
+
+
   //const fieldNames= {title:'name',key: treekey,children:'nodes'}  
- 
+
   //获取树的数据，0 网格, 1 线路, 2 公共能耗分类
   //console.log("expand", expand, "fieldNames", fieldNames)
   const getTreeData = async (name = '') => {
     let idx = Number.isInteger(datatype) ? datatype : typeTree;
-  //  console.log(name, idx)
+    //  console.log(name, idx)
     if (Number.isInteger(datatype) && !energytype) return
     try {
       if (name != keyword) setKeyword(name)
@@ -176,13 +176,13 @@ export default memo(function Index({ areaId, setTreeId, setLine, setNode, showli
         projectId,
         areaId,
         lineType: 22,
-        keyword:name,
+        keyword: name,
       },
       {
         projectId,
-        keyword:name,
+        keyword: name,
       }
- 
+
       ][idx]
       if (idx == 3 && name) {
         const data = filterTreeIterative(treeData, name)
@@ -195,8 +195,8 @@ export default memo(function Index({ areaId, setTreeId, setLine, setNode, showli
         setTreeId(arr);
         return
       }
-      let hander = [QuerySpaceTrees, LineManagerQuery, queryEnergyCategoryTree, DMAGetTree, lightTree,AirTree][idx]
- 
+      let hander = [QuerySpaceTrees, LineManagerQuery, queryEnergyCategoryTree, DMAGetTree, lightTree, AirTree][idx]
+
       /*  if(lineType == "3") {
          hander = QuerySpaceTrees
          params = {
@@ -205,63 +205,63 @@ export default memo(function Index({ areaId, setTreeId, setLine, setNode, showli
              areaName:name,
            }
        } */
- 
+
       let { success, data, errMsg } = await hander(params)
-     
-     
+
+
       if (success && Array.isArray(data)) {
-      //  console.log(idx)
-       if(mode) {
-         let mdata = data.filter(d=>mode(d))
-         getId(mdata, "id")
-       }else {
-        switch (idx) {
-          case 0:
-            getId(data, 'areaId');
-            break;
-          case 1:
-            getId(data, 'id');
-            break;
-          case 2:
-            getId(data, 'id', 'childs')
-            break;
-          case 3:
-            getId(data, 'id', 'children')
-            break;
-          case 4:
-            getId(data, 'id', 'nodes')
-            break;
-          case 5:
+        //  console.log(idx)
+        if (mode) {
+          let mdata = data.filter(d => mode(d))
+          getId(mdata, "id")
+        } else {
+          switch (idx) {
+            case 0:
+              getId(data, 'areaId');
+              break;
+            case 1:
+              getId(data, 'id');
+              break;
+            case 2:
+              getId(data, 'id', 'childs')
+              break;
+            case 3:
+              getId(data, 'id', 'children')
+              break;
+            case 4:
+              getId(data, 'id', 'nodes')
+              break;
+            case 5:
               getId(data, 'key', 'nodes')
               break;
-          default:
-            break
- 
+            default:
+              break
+
+          }
         }
-      }
-       
-       setNode &&  setNode?.(data[0]) //  获取节点
+
+        setNode && setNode?.(data[0]) //  获取节点
         treeIdRef.current = arr
         setIndeterminate(false)
         setChecked(true)
         setTreeData(data)
         setCheckedKeys(() => arr);
         setExpandedKeys(expand)
-        if(datatype==5) { // 空调树
-          console.log(Array.from(postid.current) )
-          let areId=  Array.from(postid.current)?.map(d=> {
-             let id= parseInt(d.slice(2))
-             console.log(id)
-             return id
+        if (datatype == 5) { // 空调树
+          console.log(Array.from(postid.current))
+          let areId = Array.from(postid.current)?.map(d => {
+            let id = parseInt(d.slice(2))
+            console.log(id)
+            return id
           })
-          
+
           setTreeId(areId)
-        }else {
+        } else {
           setTreeId(arr);
         }
-        
-       
-       
+
+
+
         /*  if(name) {
              setTreeId(arr)
              setCheckedKeys(arr)
@@ -276,99 +276,99 @@ export default memo(function Index({ areaId, setTreeId, setLine, setNode, showli
         setCheckedKeys([])
         // message.error(errMsg || '数据出错')
       }
- 
+
     } catch (error) {
       console.log(error)
     }
- 
- 
+
+
   }
   // 根据区域查询
- 
+
   // 复选框模式
   const onCheck = (data, e) => { // 受控
-   
+
     try {
-      if(mode && !mode(e.node))  return message.warning("该线路没有子线路，末级节点没有线损")
-        let checked
-        
-          if (schecked == 1 || restprop?.checkStrictly) {
-            checked = data.checked
-          } else {
-            checked = data;
-          }
-        
-        
-    
-        let f = checked?.length > 0 && checked?.length < treeIdRef.current?.length
-        setIndeterminate(f)
-        if(datatype==5) {
-          console.log(checked)
-          let areId= checked.filter(d=>  Array.from(postid.current)?.includes(d))?.map(i => parseInt(i.slice(2)))
-          console.log(areId)
-          setTreeId(areId)
-        }else {
-          setTreeId(checked)
-        }
-       
-        setCheckedKeys(checked)
-        setChecked(checked?.length === treeIdRef.current?.length)
+      if (mode && !mode(e.node)) return message.warning("该线路没有子线路，末级节点没有线损")
+      let checked
+
+      if (schecked == 1 || restprop?.checkStrictly) {
+        checked = data.checked
+      } else {
+        checked = data;
+      }
+
+
+
+      let f = checked?.length > 0 && checked?.length < treeIdRef.current?.length
+      setIndeterminate(f)
+      if (datatype == 5) {
+        console.log(checked)
+        let areId = checked.filter(d => Array.from(postid.current)?.includes(d))?.map(i => parseInt(i.slice(2)))
+        console.log(areId)
+        setTreeId(areId)
+      } else {
+        setTreeId(checked)
+      }
+
+      setCheckedKeys(checked)
+      setChecked(checked?.length === treeIdRef.current?.length)
     } catch (error) {
       console.log(error)
     }
-    
- 
+
+
   }
- 
-//  单选模式
-const onSelect=(selectedKeys, e)=> {   // 损耗分析 不是一级节点而且没有子节点的不需要查询。传入一个函数
-    if(mode) return
+
+  //  单选模式
+  const onSelect = (selectedKeys, e) => {   // 损耗分析 不是一级节点而且没有子节点的不需要查询。传入一个函数
+    if (mode) return
     setNode && setNode?.(e.node)
     setTreeId(selectedKeys)
     setCheckedKeys(selectedKeys)
- 
- 
-}
- 
- 
- 
+
+
+  }
+
+
+
   // 树搜索
   const onExpand = (newExpandedKeys, obj) => {
- 
+
     setExpandedKeys(newExpandedKeys);
- 
+
   };
   const Relevancy = (e) => {
     setschecked(e.target.value)
   }
- 
+
   useEffect(() => {
     let f = [areaId, projectId].every(v => Number.isInteger(v))
     if (f) {
       getTreeData()
     }
- 
- 
+
+
   }, [areaId, typeTree, datatype, energytype, projectId])
- 
-  useEffect(()=> {  //  用一级区域做为树结构数据
-   if(Number.isNaN(areaId) && Array.isArray(levelone)) {
+
+  useEffect(() => {  //  用一级区域做为树结构数据
+    if (Number.isNaN(areaId) && Array.isArray(levelone)) {
       setTreeData(levelone)
-      let arr = levelone.map(l=>l.id)
-      
+      let arr = levelone.map(l => l.id)
+
       treeIdRef.current = arr
       setIndeterminate(false)
       setChecked(true)
-     
+
       setCheckedKeys(arr);
       setExpandedKeys(arr)
       setTreeId(arr);
-   }
- 
- 
- 
+    }
+
+
+
   }, [areaId, levelone])
- 
+
   const radiosty = {
     display: 'grid',
     gridTemplateColumns: '1fr 1fr',
@@ -379,7 +379,7 @@ const onSelect=(selectedKeys, e)=> {   // 损耗分析 不是一级节点而且�
     display: 'grid',
     gridTemplateColumns: '1fr 1fr',
     alignContent: 'center',
- 
+
   }
   const switchLine = (e) => {
     setTypeTree(e.target.value)
@@ -391,11 +391,11 @@ const onSelect=(selectedKeys, e)=> {   // 损耗分析 不是一级节点而且�
   const onChange = (e) => {
     setKeyword(e.target.value)
   }
- 
+
   return (
- 
+
     <Titlelayout key="line" layout="flex" bordered={sty.bordered} pv={sty.pv} hv="32px" bg="none" title={title}>
-      <div style={{height:'750px', overflow:'auto', flex:1}}>
+      <div style={{ height: scroll ? scroll : '750px', overflow: 'auto', flex: 1 }}>
         {treeName ? <div style={{ color: '#515151', fontWeight: 'bold', marginBottom: '8px' }}>{treeName}</div> : null}
         <Treebox showline={showline.toString()}>
           {showline && <Radio.Group onChange={switchLine} style={radiosty} value={typeTree}>
@@ -403,14 +403,14 @@ const onSelect=(selectedKeys, e)=> {   // 损耗分析 不是一级节点而且�
             <Radio value={1}>按线路</Radio>
           </Radio.Group>
           }
-        {showSearch &&  <Search
+          {showSearch && <Search
             placeholder='请输入关键字查询'
             allowClear
             value={keyword}
             onChange={onChange}
             onSearch={getTreeData}
           />}
- 
+
           {allselect && <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>  <Checkbox onChange={allSelected} indeterminate={indeterminate} checked={checked}>全部选中</Checkbox>
             {isshow && <Radio.Group style={radiosty2} onChange={Relevancy} value={schecked}>
               <Radio value={1}>不关联</Radio>
@@ -428,18 +428,18 @@ const onSelect=(selectedKeys, e)=> {   // 损耗分析 不是一级节点而且�
             onSelect={onSelect}
             fieldNames={fieldNames}
             checkStrictly={strictyly} // true : 完全受控，父子节点不关联, false : 父子节点关联
-            indeterminate={indeterminate}  
-            {...restprop}         
+            indeterminate={indeterminate}
+            {...restprop}
           />
         </Treebox></div>
-    </Titlelayout>
- 
+    </Titlelayout >
+
   )
 })
- 
- 
- 
- 
+
+
+
+
 /**
  * 前端过滤树结构数据(本地过滤)
  */

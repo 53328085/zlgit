@@ -300,7 +300,7 @@ export default function Index() {
             setConfig({ refresh: true, inverter: true });
             break;
           case "propare":
-            setConfig({ isdate: true, shiftNo: true, refresh: true });
+            setConfig({ isdate: true, shiftNo: true });
             break;
           case "aerograph":
             setConfig({ isdate: true, shiftNo: true });
