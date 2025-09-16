@@ -100,6 +100,7 @@ export default function Index() {
  },[lists, mlist, model])
 
  const infromitem = useMemo(()=> {
+  console.log("curRow",curRow)
   const {id, areaId, gateWay, useType} = curRow
   let params ={
     exteriorId:id, // 外机的Id
@@ -255,11 +256,14 @@ export default function Index() {
      }else {
       let params =[{
         exteriorId:id, 
-        areaId,gateWay,useType,
+        areaId,
+        gateWay,
+        useType,
       }]
       setIsadd(true)
       console.log(params)
-      innewform.setFieldsValue("acs", params)
+      innewform.setFieldValue("acs", params) 
+      
       if(!success)   message.warning(errMsg || "获取空调内机数据出错")
      }
      
