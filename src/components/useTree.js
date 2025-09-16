@@ -74,11 +74,11 @@ export default memo(function Index({ areaId, setTreeId, setLine, setNode, showli
   const strictyly = schecked == 1
 
   const allSelected = ({ target: { checked } }) => {
-
+    console.log(treeIdRef.current)
     if (checked) {
       if (datatype == 5) {
         let areId = Array.from(postid.current)?.map(d => parseInt(d.slice(2)))
-        setTreeId(areaId)
+        setTreeId(areId)
       } else {
         setTreeId(treeIdRef.current)
       }
@@ -324,7 +324,13 @@ export default memo(function Index({ areaId, setTreeId, setLine, setNode, showli
   const onSelect = (selectedKeys, e) => {   // 损耗分析 不是一级节点而且没有子节点的不需要查询。传入一个函数
     if (mode) return
     setNode && setNode?.(e.node)
-    setTreeId(selectedKeys)
+    if (datatype == 5) {
+      let areId = selectedKeys.filter(d => Array.from(postid.current)?.includes(d))?.map(i => parseInt(i.slice(2)))
+      console.log(areId)
+      setTreeId(areId)
+    } else {
+      setTreeId(selectedKeys)
+    }
     setCheckedKeys(selectedKeys)
 
 

@@ -176,7 +176,8 @@ const initialState = {
   filterDeviceStyle: [], // 运行态 运行监控 设备监测 表计类型
   sidershow: true,
   collapsed:false,
-  pgTitle: ""
+  pgTitle: "",
+  site: "", // 站点 配电模块 
 }
  
 export const getWebsiteState = createAsyncThunk(
@@ -399,7 +400,10 @@ const system = createSlice({
       },
       getPgTitle(state, {payload}){
         state.pgTitle = payload
-      }
+      },
+      getSite(state, {payload}){
+        state.site = payload
+      },
     },
      extraReducers: {
       [getWebsiteState.fulfilled]: (state, action) => {
@@ -551,6 +555,7 @@ export const custconfig = state => state.system.siteConfig
 
 export const themes = state => state.system.themes
 export const themeId= state => state.system.themeId
+export const site= state => state.system.site
 /*  export const themelist = state => {
   try {
     let {themes, themeId,themeColor} = state.system
@@ -662,6 +667,7 @@ export const {
     getThemeId,
     getThemes,
     getCollapsed,
-    getPgTitle
+    getPgTitle,
+    getSite,
 } = actions
 export default system.reducer

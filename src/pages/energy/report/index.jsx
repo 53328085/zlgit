@@ -73,7 +73,7 @@ export default function Index() {
   const [value, setvalue] = useState('0')
   const [line, setLine] = useState(0)
   const [treeId, setTreeId] = useState()
-  let { areaId, projectId, type, date, energytype } = exparams
+  let { areaId, projectId, type, date, energytype } = exparams // projectId = 30 安庆旺旺 项目需定制
 
   const [concolumns, setConcolumns] = useState([])
   const [alike, setAlike] = useState("")
@@ -237,8 +237,8 @@ export default function Index() {
    
 
     if (index == 1) {
-      conscols.forEach(e => {
-        if (e.dataIndex == 'total') {
+      conscols?.forEach(e => {
+        if (e?.dataIndex == 'total') {
           e.title = energytype == 1 ? '能耗(kWh)' : '能耗（m³）'
         }
       }) 
@@ -253,7 +253,8 @@ export default function Index() {
       let arrData = []
       if (success && ((Array.isArray(data) && data.length > 0) || fag)) {
         if (index == 1) {
-          let { detailHeaders } = data[0]
+          let { detailHeaders          } = data?.[0]
+          if(!Array.isArray(detailHeaders)) return
           let last = detailHeaders.length - 1
           let column = detailHeaders.map(col => ({ title: col, dataIndex: col, key: col, width: "96px" }))
           // let column = detailHeaders.map(col => ({title: col, dataIndex: col, key: col,width: "96px", render: (text)=> Math.round(parseFloat(text))}))  
@@ -479,7 +480,7 @@ export default function Index() {
               }
               </div>
               {
-                ["1", "5"].includes(value) ? <div key={value}><UserTable ref={tbref} rowSelection={value == 1 ? rowSelection : null} columns={concolumns} {...tableProps} rowKey={row => row.sn + Math.random()} key={value} scroll={{
+                ["1", "5"].includes(value) ? <div key={value}><UserTable ref={tbref} rowSelection={value == 1 ? rowSelection : null} columns={concolumns} {...tableProps} rowKey={row => row.sn} key={value} scroll={{
                   scrollToFirstRowOnChange: true,
                   x: 1400,
                   y: 685

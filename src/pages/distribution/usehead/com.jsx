@@ -5,11 +5,12 @@ import { useSelector, useDispatch } from 'react-redux'
 import { Select, Button, DatePicker, Form, Divider, message,Space } from 'antd'
 import {useLocation} from 'react-router-dom'
 import {DistributionRoomRuntime,distributionRoom, Area} from '@api/api.js'
-import {  getcurlRommid,setCurrentlevel, levelDefaultLabel,  getRoomId, roomId,adaptation, selectcurlRommid,selectcurlRommidl, getcurlRommidl} from "@redux/systemconfig";
+import {  getcurlRommid,setCurrentlevel, levelDefaultLabel,  getRoomId, roomId,adaptation, selectcurlRommid,selectcurlRommidl, getcurlRommidl,getSite} from "@redux/systemconfig";
 import Textloop from '@com/textloop'
 import Devicelist from './devicelist'
 import {filterProps} from '@com/usehandler'
 import {Cdivider} from '@com/comstyled'
+import {useTransformerList} from './api'
 const Mainbox =styled.div`
 && {
   background-color:#fff;
@@ -36,14 +37,14 @@ export default   function Index(props) {
   //const roomid =  isline ? curidl : curid
   const [RommId, setRoomId] = useState(curid)
   let { showRoom = true, showArea=true, setDateVal, custview, deviceStyle,
-    setDeviceStyle, } = props
+    setDeviceStyle, showSite=false} = props
   const dispacth = useDispatch();
   const projectId = useSelector(state => state.system.menus.projectId)
 
   const [oneLevel, setOnelevel] = useState([])
 
   const levelName = useSelector(levelDefaultLabel) || '园区'
-
+  const [sites, setSites] = useState([])
   const [roomlist, setRoomList] = useState([])
  
   const [form] = Form.useForm()
@@ -65,6 +66,28 @@ export default   function Index(props) {
   
   const changeTime = (time, option) => {
     setDateVal(time)
+  }
+  const changeSite=(_,option) => {
+    dispacth(getSite(option))
+  }
+  const getSites = async(roomId)=> {
+    try {
+       let {success, data} =   await  useTransformerList({projectId, roomId})
+       if(success && Array.isArray(data) && data?.length>0) {
+        setSites(data)
+        form.setFieldValue("site", data[0]?.sn)
+        dispacth(getSite(data[0]))
+       }else {
+         setSites([])
+         form.setFieldValue("site", null)
+         dispacth(getSite(null))
+       }
+    } catch (error) {
+      setSites([])
+      form.setFieldValue("site", null)
+      dispacth(getSite(null))
+    }
+     
   }
 
   const getOnelevel = async () => {
@@ -109,6 +132,7 @@ export default   function Index(props) {
      
         form.setFieldValue("roomId", data[0].id)
         dispacth(getcurlRommid(data[0].id));
+        getSites(data[0].id)
     }else {
       dispacth(getRoomId([]))
       form.setFieldValue('roomId', null)
@@ -195,6 +219,11 @@ return (
                    </Form.Item>
                   }
                   </>
+                  }
+                  {
+                    showSite && <Form.Item name="site">
+                      <Select options={sites} style={{ width: laptop ? 160 : 240 }} fieldNames={{label: "name", value: "sn"}} onChange={changeSite}></Select>
+                    </Form.Item>
                   }
                   {
                     showDevlist &&<Devicelist roomId={curid} projectId={projectId} /> 

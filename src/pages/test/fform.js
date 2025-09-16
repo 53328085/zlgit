@@ -131,7 +131,7 @@ function generateLayout() {
       w: 2,
       h: y,
       i: i.toString(),
-      static: Math.random() < 0.05
+      static: false
     };
   });
 }
@@ -143,12 +143,18 @@ export default function Index() {
     rowHeight: 30, 
     cols:  12,
   };
+  const config ={
+    measureBeforeMount:false,
+   
+    useCSSTransforms: true,
+    compactType:true
+  }
   const layouts = generateLayout()
   console.log(layouts)
   return  <div>
-    <ResponsiveReact {...defaultProps} layout={layouts} >
+    <ResponsiveReact {...defaultProps} {...config} layout={layouts} >
       {
-        Array.from({length:25},(_, idx)=><div key={idx.toString()}>{idx}</div>)
+        Array.from({length:25},(_, idx)=><div key={idx.toString()} style={{border: "1px solid #dedede"}}>{idx}</div>)
       }
     </ResponsiveReact>
   </div>

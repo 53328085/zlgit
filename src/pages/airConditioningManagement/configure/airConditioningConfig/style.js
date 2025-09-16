@@ -46,7 +46,7 @@ export const Bindwrap = styled.div`
   }
  .inwrap {
    display: grid;
-   grid-template-columns: 200px 1fr 90px 1fr ;
+   grid-template-columns: 246px 1fr 90px 1fr ;
    column-gap: 16px;
    grid-template-rows: 520px;
    .tbwrap {
