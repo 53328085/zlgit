@@ -15,7 +15,7 @@ import { energyReport } from '@api/api'
 import CModal from '@com/useModal'
 import { ExportExcel, CustButton } from '@com/useButton'
 import { Serach } from "@com/comstyled"
-import { cols, conscols, timecols, typecols, fromlot, shitcols, etabs, wtabs, labelStyle, contentStyle } from './data'
+import { cols, conscols, timecols, typecols, fromlot, shitcols,aqtabs, etabs, wtabs, labelStyle, contentStyle } from './data'
 import Ichart from '@com/useEcharts/Ichart';
 
 
@@ -73,7 +73,7 @@ export default function Index() {
   const [value, setvalue] = useState('0')
   const [line, setLine] = useState(0)
   const [treeId, setTreeId] = useState()
-  let { areaId, projectId, type, date, energytype } = exparams // projectId = 30 安庆旺旺 项目需定制
+  let { areaId, projectId, type, date, energytype } = exparams // projectId = 30 安庆旺旺 项目定制 水电 只显示电能报表
 
   const [concolumns, setConcolumns] = useState([])
   const [alike, setAlike] = useState("")
@@ -82,7 +82,7 @@ export default function Index() {
   }
   // 对比分析 start
   const Ctitle = useMemo(() => {
-    console.log(date, type)
+    
     if (!(date && type)) return ""
     let format = {
       1: "YYYY-MM-DD",
@@ -116,43 +116,53 @@ export default function Index() {
 
   const [total, setTotal] = useState(0)
   const tbref = useRef()
-  /*   const etabs = [
-      { key: '0', label: '实时抄表' },
-      { key: '1', label: '能耗报表' },
-      { key: '2', label: '分时能耗' },
-      { key: '3', label: '分类能耗' },
-      { key: '4', label: '电能报表' },
-      { key: '5', label: '班次能耗' },
-    ]
-    const wtabs = [
-      { key: '0', label: '实时抄表' },
-      { key: '1', label: '能耗报表' },
-      { key: '3', label: '分类能耗' },
-      { key: '5', label: '班次能耗' },
-    ] */
-  const [tabs, setTabs] = useState(etabs)
-  const index = Number(value)
+ 
+// const [tabs, setTabs] = useState(etabs)
+  const index =projectId==30 ? 4 : Number(value)
 
+ 
 
+const tabs = useMemo(()=> {
+ 
+  if( projectId==30) {
+     
+    return []
+  }else if(energytype==1) {
+     return etabs
+  }else   {
+    return wtabs
+  } 
+
+}, [projectId, energytype])
+
+/* 
+ if (energytype == 1) {
+      setTabs([...etabs])
+    } else if (energytype == 2) {
+      setTabs([...wtabs])
+    } else if (energytype == 7) {
+      setTabs([...wtabs])
+    }
+ */
 
   const sheetName = useMemo(() => {
     let filename = "sheet"
     let f = ["0", "1", "4"].includes(value)
     //  console.log(dates)
     if (Array.isArray(dates) && dates?.[0] && dates?.[1]) {
-      filename = getTime(dates?.[0], 1).toString() + "-" + getTime(dates?.[1], 1).toString() + tabs[index]?.label
+      filename = getTime(dates?.[0], 1).toString() + "-" + getTime(dates?.[1], 1).toString() + tabs?.[index]?.label
     }
-    return (f && isrange.range && dates?.length) ? filename : (tabs[index]?.label ?? 'sheet')
+    return (f && isrange.range && dates?.length) ? filename : (tabs?.[index]?.label ?? 'sheet')
 
   }, [value, dates, tabs, isrange])
 
   let columns = useMemo(()=> {
-    console.log("energytype",energytype)
+    
     let column = [cols(startDateTime, endDateTime), [], timecols, typecols, fromlot, shitcols][index]
     if ([0,3].includes(index) ) {
      return   column.map(c => {
         if (c.dataIndex == 'consume' && index == 0) { // 实时抄表
-          console.log("实时抄表")
+          
           c.title = (energytype == 1 ? '用能(kWh)' : '用量(m³)')
         }
         if (c.dataIndex == 'consume' && index == 3) {  // 分类报表
@@ -167,7 +177,7 @@ export default function Index() {
    
   }, [index, energytype,startDateTime, endDateTime])
 
-  console.log(columns)
+ 
 
   // let columns = [cols(startDateTime, endDateTime), [], timecols, typecols, fromlot, shitcols][index] // 
 
@@ -224,6 +234,8 @@ export default function Index() {
     }
 
     // //  cols 实时抄表，  conscols 能耗报表 , typecols 分类能耗
+ /*    if(parseInt(projectId)!==30) {
+    
     if (energytype == 1) {
       setTabs([...etabs])
     } else if (energytype == 2) {
@@ -231,8 +243,8 @@ export default function Index() {
     } else if (energytype == 7) {
       setTabs([...wtabs])
     }
-
-
+  } 
+ */
    
    
 
@@ -278,7 +290,7 @@ export default function Index() {
             setConcolumns([...shitcols, ...shiftcolumn])
 
           }
-          console.log("datas", datas.length)
+          
           if (Array.isArray(datas) && ishead) {
          
            arrData = datas.map(d => {
@@ -294,7 +306,7 @@ export default function Index() {
               return rest
             })    
           }
-         console.log("arrData", arrData)
+         
         }
         
 
@@ -318,7 +330,7 @@ export default function Index() {
     defaultParams: [{ current: 1, pageSize: 14 }],
     refreshDeps: [areaId, projectId, type, date, energytype, treeId, index, line, isrange, dates, alike]
   })
-   console.log("tableProps", tableProps)
+  
   // 对比分析 图表
   const modref = useRef()
   const [checkvalue, setCheckvalue] = useState(["1"])
@@ -449,7 +461,7 @@ export default function Index() {
           <div style={{ position: "relative", flex: 1 }}> 
             <div style={{ position: "absolute", width: "100%",   }}>
               <div  className='opt'>
-              {["0","1"].includes(value)   && <div style={{ marginBottom: "16px", display: "flex" }}>
+              {(["0","1"].includes(value)&&projectId!=30)   && <div style={{ marginBottom: "16px", display: "flex" }}>
  
                 <div style={{ marginLeft: "auto" }}>
                   <Checkbox onChange={boxchange} checked={isrange.range}>使用日期范围（优先）</Checkbox>  <RangePicker

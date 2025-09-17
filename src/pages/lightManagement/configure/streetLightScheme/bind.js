@@ -57,14 +57,14 @@ export default forwardRef(function Index({strategyId, projectId, update}, ref){
     try {
       let fag = Number.isInteger(parseInt(projectId))&&Number.isInteger(parseInt(strategyId?.[0]))
       if(!fag) return
-      const {alike} = formData
+      const {alike=""} = formData
       let body = {
         projectId,
         schemeId: strategyId?.[0],
         pageSize,
         pageNum:current,
         alike,
-        areaIds:treeId || []
+      //  areaIds:treeId || []
       }
   
      let {success, data, total,errMsg}  = await  usePageBind({}, body)
@@ -98,7 +98,7 @@ const  {tableProps, run, search, refresh} = useAntdTable(getUnBind, {
     form:formed,
     defaultPageSize: 14,
 
-    refreshDeps: [strategyId, projectId,treeId]
+    refreshDeps: [strategyId, projectId]
   })
   const onOpen =async ()=> {
     try {

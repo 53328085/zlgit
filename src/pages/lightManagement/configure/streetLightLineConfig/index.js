@@ -216,7 +216,7 @@ export default function Index() {
   const showlineconfig =(id,switchId ) => {
       setConfig({
         lineId:id,
-        initId:switchId
+        initId:{switchId}
       })
      bindRef.current.onOpen()
   }

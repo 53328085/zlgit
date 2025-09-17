@@ -118,7 +118,15 @@ export const items = ({ csn = [], msn = [], model = [] }) => (
       <Form.Item label="空调类型" rules={rules} name="type">
         <Select options={airconditioner.slice(1)} placeholder="请选择"></Select>
       </Form.Item>
-      <Form.Item label="空调控制器" name="csn">
+      <Form.Item noStyle shouldUpdate={(cur, pre)=>cur.type!=pre.type }>
+        {
+          ({getFieldValue})=>{
+               let type = getFieldValue("type")
+               if(type==2) {
+                return null
+               }else {
+                return <>
+                    <Form.Item label="空调控制器" name="csn">
         <Select
           options={csn}
           fieldNames={{ label: "name", value: "sn" }}
@@ -133,6 +141,11 @@ export const items = ({ csn = [], msn = [], model = [] }) => (
           let gatewaySn = csn?.find?.((c) => c.sn == sn)?.gatewaySn;
           return <Text strong>{gatewaySn}</Text>;
         }}
+      </Form.Item>
+                </>
+               }
+          }
+        }
       </Form.Item>
       <Form.Item label="计量设备" name="msn">
         <Select
@@ -153,8 +166,8 @@ export const items = ({ csn = [], msn = [], model = [] }) => (
           return null;
         }}
       </Form.Item>
-      <Form.Item label="用能类型"  name="useType">
-        <Select options={useTypeopt.slice(1)} placeholder="请选择"></Select>
+      <Form.Item label="用能类型"  name="useType"  >
+        <Select options={useTypeopt.slice(1)} placeholder="请选择" disabled ></Select>
       </Form.Item>
       <Form.Item label="数据来源"  name="dataSource" rules={rules}>
         <Select options={dataSource} placeholder="请选择"></Select>
@@ -170,7 +183,7 @@ export const items = ({ csn = [], msn = [], model = [] }) => (
   </Formbox>
 );
 
-export const initems = ({ model = [],cusac, setcusac, params }) => (
+export const initems = ({ model = [],cusac, setcusac, params,csn, }) => (
   <Form.List name="acs" initialValue={[{}]}>
     {(fileds, { add,remove }) => {
       return (
@@ -205,9 +218,9 @@ export const initems = ({ model = [],cusac, setcusac, params }) => (
                            
                           if (name) {
                             return (
-                              <span className={cusac==i.name ? "active" : ""}>
+                              <Text ellipsis={{tooltip: name}} className={cusac==i.name ? "active" : ""}>
                                  {name}
-                              </span>
+                              </Text>
                             );
                           }else {
                             return <span className={cusac==i.name ? "active" : ""}> 内机{idx + 1}</span>;
@@ -221,7 +234,10 @@ export const initems = ({ model = [],cusac, setcusac, params }) => (
             </div>
             <Link
               disabled={fileds?.length > 64}
-              onClick={() => add(params, fileds?.length) }
+              onClick={() => {
+                add(params, fileds?.length)
+                setcusac(fileds?.length)
+              } }
             >
              <PlusCircleOutlined style={{fontSize: "24px"}} />
             </Link>
@@ -241,14 +257,16 @@ export const initems = ({ model = [],cusac, setcusac, params }) => (
                   name={[name, "address"]}
                 ><Input />
                 </Form.Item>
-                <Form.Item label="备注" name={[name, "remark"]}>
-                  <Input.TextArea rows={2} />
-                </Form.Item>
-              </div>
-              <div key="right">
                 <Form.Item label="设备名称" rules={rules} name={[name, "name"]}>
                   <Input />
                 </Form.Item>
+                <Form.Item label="备注" name={[name, "remark"]}>
+                  <Input.TextArea rows={2} />
+                </Form.Item>
+               
+              </div>
+              <div key="right">
+                
                 <Form.Item label="设备编号" rules={rules} name={[name, "sn"]}>
                   <Input></Input>
                 </Form.Item>
@@ -273,11 +291,30 @@ export const initems = ({ model = [],cusac, setcusac, params }) => (
                     placeholder="请选择"
                   ></Select>
                 </Form.Item>
-                <Form.Item label="所属网关" name={[name, "gateWay"]}>
-                  <Input disabled></Input>
-                </Form.Item>
-                <Form.Item label="自设电价" name={[name, "ePrice"]}>
+                <Form.Item label="空调控制器"  name={[name, "csn"]} >
+                <Select
+                  options={csn}
+                  fieldNames={{ label: "name", value: "sn" }}
+                ></Select>
+              </Form.Item>
+              <Form.Item
+        label="所属网关"
+        shouldUpdate={(cur, pre) => cur.acs  != pre.acs}
+      >
+        {({ getFieldValue }) => {
+          let sn = getFieldValue("acs")?.[name]?.csn;
+          console.log(sn)
+          let gatewaySn = csn?.find?.((c) => c.sn == sn)?.gatewaySn;
+          return <Text strong>{gatewaySn}</Text>;
+        }}
+      </Form.Item>
+               
+     
+              {/*   <Form.Item label="自设电价" name={[name, "ePrice"]}>
                   <InputNumber min={0} precision={4}  addonAfter="元" />
+                </Form.Item> */}
+                 <Form.Item label="数据来源"  name={[name,"dataSource"]}  >
+                  <Select options={dataSource} placeholder="请选择" disabled></Select>
                 </Form.Item>
                 <Form.Item
                   label="用能类型"
