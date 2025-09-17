@@ -38,7 +38,8 @@ export default function Index() {
       let { alike, cSn, type, ioState } = await formSearch.validateFields();
       let params = {
         projectId,
-        alike: alike + cSn ? alike + cSn : "",
+        // alike: alike + cSn ? alike + cSn : "",
+        alike: alike,
         type,
         ioState,
         ids: treeId,
@@ -64,7 +65,7 @@ export default function Index() {
       return message.warning("请选择要控制的空调设备");
     controlRef.current.onOpen();
   };
-  // 处理单个会议室选择
+  // 处理单个选择
   const handleSingleSelect = (airId, checked) => {
     const newSelected = checked
       ? [...selectedAirs, airId]
@@ -87,8 +88,8 @@ export default function Index() {
   const handleSelectAll = (e) => {
     const checked = e.target.checked;
     const onlineIds = getOnlineDeviceIds();
-    const allIds = airData.map(airItem => airItem.id);
-
+    // const allIds = airData.map(airItem => airItem.id);
+    // console.log(checked, onlineIds)
     setSelectedAirs(checked ? onlineIds : []);
     setCheckAll(checked);
     setIndeterminate(false);
@@ -261,7 +262,7 @@ export default function Index() {
                           </div>
                         ))}
                       </div>
-                    ) : airItem.state == 1 ? (
+                    ) : (airItem.state == 1 || airItem.state == 0) ? (
                       <div
                         key={airItem.id}
                         size="small"

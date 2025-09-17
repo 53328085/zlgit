@@ -306,7 +306,7 @@ export default function Index() {
             setConfig({ isdate: true, shiftNo: true });
             break;
           case "alarm":
-            setConfig({ isdate: true, shiftNo: true, photovoltaicPowerStation: true });
+            setConfig({ dateR: true, shiftNo: true, photovoltaicPowerStation: true });
             break;
         }
       }

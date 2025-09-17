@@ -36,11 +36,14 @@ export const Tabs = ({ form, onSearchClick }) => {
                         ioState: 0
                     }}
                 >
-                    <Item name="alike" label="空调名称" style={{ marginLeft: 16 }}>
+                    {/* <Item name="alike" label="空调名称" style={{ marginLeft: 16 }}>
                         <Input placeholder="请输入空调名称"></Input>
                     </Item>
                     <Item name="cSn" label="空调编号" style={{ marginLeft: 16 }}>
                         <Input placeholder="请输入空调编号"></Input>
+                    </Item> */}
+                    <Item name="alike" label="关键字" style={{ marginLeft: 16 }}>
+                        <Input style={{ width: "240px" }} placeholder="请输入空调名称/空调编号" allowClear ></Input>
                     </Item>
                     <Item name="type" label="空调类型" style={{ marginLeft: 16 }}>
                         <Select options={airTypeOptions} style={{ width: "140px" }}></Select>
