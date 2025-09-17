@@ -218,9 +218,9 @@ export const initems = ({ model = [],cusac, setcusac, params,csn, }) => (
                            
                           if (name) {
                             return (
-                              <span className={cusac==i.name ? "active" : ""}>
+                              <Text ellipsis={{tooltip: name}} className={cusac==i.name ? "active" : ""}>
                                  {name}
-                              </span>
+                              </Text>
                             );
                           }else {
                             return <span className={cusac==i.name ? "active" : ""}> 内机{idx + 1}</span>;
@@ -234,7 +234,10 @@ export const initems = ({ model = [],cusac, setcusac, params,csn, }) => (
             </div>
             <Link
               disabled={fileds?.length > 64}
-              onClick={() => add(params, fileds?.length) }
+              onClick={() => {
+                add(params, fileds?.length)
+                setcusac(fileds?.length)
+              } }
             >
              <PlusCircleOutlined style={{fontSize: "24px"}} />
             </Link>
@@ -254,14 +257,16 @@ export const initems = ({ model = [],cusac, setcusac, params,csn, }) => (
                   name={[name, "address"]}
                 ><Input />
                 </Form.Item>
-                <Form.Item label="备注" name={[name, "remark"]}>
-                  <Input.TextArea rows={2} />
-                </Form.Item>
-              </div>
-              <div key="right">
                 <Form.Item label="设备名称" rules={rules} name={[name, "name"]}>
                   <Input />
                 </Form.Item>
+                <Form.Item label="备注" name={[name, "remark"]}>
+                  <Input.TextArea rows={2} />
+                </Form.Item>
+               
+              </div>
+              <div key="right">
+                
                 <Form.Item label="设备编号" rules={rules} name={[name, "sn"]}>
                   <Input></Input>
                 </Form.Item>
@@ -308,6 +313,9 @@ export const initems = ({ model = [],cusac, setcusac, params,csn, }) => (
               {/*   <Form.Item label="自设电价" name={[name, "ePrice"]}>
                   <InputNumber min={0} precision={4}  addonAfter="元" />
                 </Form.Item> */}
+                 <Form.Item label="数据来源"  name={[name,"dataSource"]}  >
+                  <Select options={dataSource} placeholder="请选择" disabled></Select>
+                </Form.Item>
                 <Form.Item
                   label="用能类型"
                   name={[name, "useType"]}

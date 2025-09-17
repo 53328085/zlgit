@@ -255,7 +255,7 @@ export default function Index() {
  const addInac =async(row)=> {
    try {
     console.log(row)
-    const {id,areaId,gateWay,useType, } = row
+    const {id,areaId,gateWay,useType,dataSource, } = row
     let csn=[]
     if(!Number.isInteger(projectId)) return message.warning("没有创建项目")
       let  csnData = await useQueryCSnsList({projectId, areaId})
@@ -267,14 +267,19 @@ export default function Index() {
      let {success, data, errMsg} =  await  useQueryInteriorACs({id, projectId})
      if(success && Array.isArray(data)&&data.length>0) { 
       // let datas = data.map(d =>({...d}))
+       let datas = data.map(d => {
+        let {cSn, ...rest} = d
+        return {csn:cSn, ...rest}
+       })
        setIsadd('edit')
-       innewform.setFieldValue("acs", data)
+       innewform.setFieldValue("acs", datas)
      }else {
       let params =[{
         exteriorId:id, 
         areaId,
         gateWay,
         useType, 
+        dataSource,
       }]
       setIsadd('add')
      // console.log(params)
