@@ -152,8 +152,8 @@ export { ReactComponent as lightManagementstreetLightDataReport } from './lightM
 //照明控制
 
 
-export { ReactComponent as smartIndustrycoldWaterSystem } from './smartIndustry/eastHotWaterSystem.svg' 
-export { ReactComponent as smartIndustryeastHotWaterSystem } from './smartIndustry/coldWaterSystem.svg'
+export { ReactComponent as smartIndustrycoldWaterSystem } from './smartIndustry/coldWaterSystem.svg'
+export { ReactComponent as smartIndustryeastHotWaterSystem } from './smartIndustry/eastHotWaterSystem.svg'
 export { ReactComponent as smartIndustrywasteHeatRecoverySystem } from './smartIndustry/wasteHeatRecoverySystem.svg'
 export { ReactComponent as smartIndustrywestHotWaterSystem } from './smartIndustry/westHotWaterSystem.svg'
 

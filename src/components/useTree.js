@@ -9,6 +9,7 @@ import { message, Input, Tree, Radio, Checkbox, Switch } from 'antd'
  
 import Titlelayout from "@com/titlelayout";
 import { useLocation } from "react-router-dom"
+ 
 
 const { Search } = Input;
 const { useTree:lightTree } = new Apimethod( //照明管理 手动控制 查询线路
@@ -178,7 +179,7 @@ export default memo(function Index({ areaId, setTreeId, setLine, setNode, showli
         projectId,
       {
         projectId,
-        areaId,
+        areaId:Number.isNaN(areaId) ? 0 : areaId,
         lineType: 22,
         keyword:name,
       },
@@ -354,28 +355,36 @@ const onSelect=(selectedKeys, e)=> {   // 损耗分析 不是一级节点而且�
   }
  
   useEffect(() => {
+    if(Number.isNaN(areaId) && typeTree==0) return
     let f = [areaId, projectId].every(v => Number.isInteger(v))
-    if (f) {
+    let f2 = Number.isNaN(areaId) && typeTree==1
+    if (f || f2) {
       getTreeData()
     }
  
  
   }, [areaId, typeTree, datatype, energytype, projectId])
+
+
+ const leveloneTree =()=> {
+  if(Number.isNaN(areaId) && Array.isArray(levelone)) {
+    setTreeData(levelone)
+   
+    let arr = levelone.map(l=>l.id)
+    
+    treeIdRef.current = arr
+    setIndeterminate(false)
+    setChecked(true)
+    
+    setCheckedKeys(arr);
+    setExpandedKeys(arr)
+    setTreeId(arr);
+ }
+ }
+
  
   useEffect(()=> {  //  用一级区域做为树结构数据
-   if(Number.isNaN(areaId) && Array.isArray(levelone)) {
-      setTreeData(levelone)
-     
-      let arr = levelone.map(l=>l.id)
-      
-      treeIdRef.current = arr
-      setIndeterminate(false)
-      setChecked(true)
-      
-      setCheckedKeys(arr);
-      setExpandedKeys(arr)
-      setTreeId(arr);
-   }
+    leveloneTree()
  
  
  
@@ -394,10 +403,15 @@ const onSelect=(selectedKeys, e)=> {   // 损耗分析 不是一级节点而且�
  
   }
   const switchLine = (e) => {
+    console.log(e.target.value)
+    if(Number.isNaN(areaId) && e.target.value==0) {
+      leveloneTree()
+    }else {
+      setTreeId([])
+      setCheckedKeys([])
+    }
     setTypeTree(e.target.value)
     setLine(e.target.value)
-    setTreeId([])
-    setCheckedKeys([])
     setKeyword('')
   }
   const onChange = (e) => {

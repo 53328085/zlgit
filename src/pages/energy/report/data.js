@@ -365,5 +365,8 @@ export const wtabs = [
   { key: '3', label: '分类能耗' },
   { key: '5', label: '班次能耗' },
 ]
+export const aqtabs = [   //安庆旺旺
+  { key: '4', label: '电能报表' },
+]
 export const labelStyle = { width: "65px", padding: "4px 16px", background: "#ecf5ff" }
 export const contentStyle = { padding: "4px 16px" } 
