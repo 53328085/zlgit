@@ -1,15 +1,11 @@
 import { useEffect, useState, useRef, useContext } from "react";
-import { Header, Card, StyledRadioGroup, AlarmWrapper } from "./style";
+import { Header } from "./style";
 import {
     Form,
     Select,
     Input,
     InputNumber,
     Switch,
-    Divider,
-    Button,
-    ConfigProvider,
-    Space,
 } from "antd";
 import { CustButtonT, ExportExcel, ChartList } from "@com/useButton";
 export const Tabs = ({ form, onSearchClick }) => {

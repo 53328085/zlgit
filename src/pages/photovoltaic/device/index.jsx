@@ -14,7 +14,7 @@ import inverter from './images/inverter.png'
 import installedCapacity from './images/installedCapacity.png'
 import runtimeDuration from './images/runtimeDuration.png'
 import { DatePicker, Table, Checkbox, Space, Radio, Divider, Select, Tree, Button, message } from "antd";
-import { ExportExcel, CustButton, ExportButton } from '@com/useButton'
+import { ExportExcel, CustButton, ExportButton, CustButtonT } from '@com/useButton'
 import { Container, TopBox, FotterBox, Header } from "./style";
 import moment from "moment";
 import dayjs from 'dayjs';
@@ -392,25 +392,10 @@ export default function Index() {
     }
   ]
   //导出
-  const onexprot = useCallback(() => {
 
-    // let tbdata = tabledata.map(t => {
-    //   let row = {
-    //     '值班人员': t.userName,
-    //     '班次': "早班 中班 晚班"
-    //   }
-    //   Array.from({ length: 31 }, (_, i) => {
-    //     let text1 = t[i].no1 == 1 ? reactive.plans.name1 : ''
-    //     let text2 = t[i].no2 == 1 ? reactive.plans.name2 : ''
-    //     let text3 = t[i].no3 == 1 ? reactive.plans.name3 : ''
-    //     let text4 = t[i]?.no4 == 1 ? reactive.plans.name4 : ''
-    //     row[i + 1] = text1 + text2 + text3 + text4;
-    //   })
-    //   return row
-    // })
-
-    // tableRef.current.downloadByData({ header: excolums, data: tbdata, skipHeader: false })
-  }, [tabledata])
+  const onExport = async () => {
+    tableRef.current.download()
+  }
 
   const HistoricalRef = useRef()
   const onOpenModal = (type) => {
@@ -603,14 +588,12 @@ export default function Index() {
                 }}
                 style={{ marginRight: "16px" }}
               />
-              {/* tb={tableRef} */}
-              {/* <ExportExcel ></ExportExcel> */}
-              <ExportButton onClick={onexprot} disabled={state.timeType == 1} />
+              <CustButtonT text="export" src='export' onClick={onExport} disabled={state.timeType == 1} />
             </Header>
           }>
             {state.timeType == 1 ?
               <SolarPowerGenerationChart /> :
-              <UserTable scroll={{ y: 280 }} columns={columns} dataSource={tabledata} ref={tableRef}
+              <UserTable scroll={{ y: 280 }} columns={columns} dataSource={tabledata}
                 summary={(pageData) => {
                   let eleTotal = 0
                   pageData?.forEach(({ kWh }) => {
@@ -626,6 +609,26 @@ export default function Index() {
                     </Table.Summary>)
                 }}>
               </UserTable>}
+            <UserTable
+              style={{ display: 'none' }} // 隐藏表格
+              columns={columns} dataSource={tabledata}
+              ref={tableRef} sheetName='光伏发电量趋势.xlsx'
+              summary={(pageData) => {
+                let eleTotal = 0
+                pageData?.forEach(({ kWh }) => {
+                  eleTotal = Math.round((eleTotal + kWh) * 100) / 100
+                });
+
+                return (
+                  <Table.Summary fixed>
+                    <Table.Summary.Row style={{ backgroundColor: "#f6f6f6", textAlign: "center" }}>
+                      <Table.Summary.Cell index={0} >汇总</Table.Summary.Cell>
+                      <Table.Summary.Cell index={1} colSpan={2} >{eleTotal}</Table.Summary.Cell>
+                    </Table.Summary.Row>
+                  </Table.Summary>)
+              }}
+            >
+            </UserTable>
           </Titlelayout>
         </FotterBox>
       </Container >
