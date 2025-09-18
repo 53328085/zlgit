@@ -8,7 +8,7 @@ export const airconditioner = [
   { label: "全部空调类型", value: 0 },
   { label: "分体式空调", value: 1 },
   { label: "多联机空调", value: 2 },
-  { label: "中央空调面板", value: 3 },
+  { label: "中央空调面板", value: 4 },
 ];
 export const useTypeopt = [
   { label: "全部用能类型", value: 0 },
@@ -255,10 +255,11 @@ export const initems = ({ model = [],cusac, setcusac, params,csn, }) => (
                   label="安装地址"
                   rules={rules}
                   name={[name, "address"]}
-                ><Input />
+                  tooltip="安装地址与控制器安装地址一致"
+                ><Input  disabled />
                 </Form.Item>
-                <Form.Item label="设备名称" rules={rules} name={[name, "name"]}>
-                  <Input />
+                <Form.Item label="设备名称" rules={rules} name={[name, "name"]}  tooltip="设备名称与控制器名称一致">
+                  <Input disabled />
                 </Form.Item>
                 <Form.Item label="备注" name={[name, "remark"]}>
                   <Input.TextArea rows={2} />
@@ -267,8 +268,8 @@ export const initems = ({ model = [],cusac, setcusac, params,csn, }) => (
               </div>
               <div key="right">
                 
-                <Form.Item label="设备编号" rules={rules} name={[name, "sn"]}>
-                  <Input></Input>
+                <Form.Item label="设备编号" rules={rules} name={[name, "sn"]}  tooltip="设备编号与控制器编号一致">
+                  <Input disabled></Input>
                 </Form.Item>
                 <Form.Item
                   label="设备型号"
@@ -299,12 +300,18 @@ export const initems = ({ model = [],cusac, setcusac, params,csn, }) => (
               </Form.Item>
               <Form.Item
         label="所属网关"
-        shouldUpdate={(cur, pre) => cur.acs  != pre.acs}
+        shouldUpdate={(cur, pre) =>  cur["acs"]?.[name]?.["csn"]  !=pre["acs"]?.[name]?.["csn"]}
       >
-        {({ getFieldValue }) => {
-          let sn = getFieldValue("acs")?.[name]?.csn;
-          console.log(sn)
-          let gatewaySn = csn?.find?.((c) => c.sn == sn)?.gatewaySn;
+        {({ getFieldValue, setFieldValue }) => {
+          let no = getFieldValue("acs")?.[name]?.csn;
+         
+         // let gatewaySn = csn?.find?.((c) => c.sn == sn)?.gatewaySn;
+          let device = csn?.find?.((c) => c.sn == no) || {} ;
+          const {gatewaySn,sn,address,name:devname } = device
+          setFieldValue(["acs", name, "sn"],sn )
+          setFieldValue(["acs", name, "name"],devname )
+          setFieldValue(["acs", name, "address"],address )
+        //  setFieldValue(["acs", name, "sn"],sn )
           return <Text strong>{gatewaySn}</Text>;
         }}
       </Form.Item>
