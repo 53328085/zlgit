@@ -5,7 +5,7 @@ import { useSearchParams, useOutletContext } from 'react-router-dom'
 import { EnergyFlowRuntime } from "@api/api"
 import { useSelector } from 'react-redux'
 import { selectOneLevel, currProject } from '@redux/systemconfig.js'
-import { getTime } from '@com/usehandler'
+import { getTime, isObject } from '@com/usehandler'
 import Titlelayout from '@com/titlelayout'
 import { CustButton } from '@com/useButton'
 import Ichart from '@com/useEcharts/Ichart';
@@ -90,16 +90,18 @@ export default function Index() {
           curveness: 0.5
         },
         left: 16,
-        top: 120,
+        top: 16,
         bottom: 32,
         right: 200,
-        nodeGap: 28,
+        nodeGap: 10,
         containLabel: true,
+        nodeAlign: "left",
         label: {
-          height:12,
+        //  height:18,
           offset: [0, 12],
-          fontSize:12,
-          padding: [4,0],
+          fontSize:10,
+       //  padding: [5,0], 
+          
         },
       // layoutIterations: 0,
 
@@ -126,10 +128,10 @@ export default function Index() {
       // let hander = ['', queryElectric, queryWater, '', '', '', '', queryWater][energytype]
       // let { success, data } = await hander(params, areaId)
       let { success, data } = await QueryFlowByEnergyType(params, areaId)
-      if (success && data.constructor == Object) {
+      if (success &&  isObject(data)) {
 
-        const { link = [] } = data
-        let arr = []
+        const { link = []  } = data
+       /*  let arr = []
         let sources = Array.from(new Set([...link.map(i => i.source)]))
 
 
@@ -141,30 +143,30 @@ export default function Index() {
 
         })
 
-        let datas = Array.from(new Set([...arr])).map(name => ({ name }))
+        let datas = Array.from(new Set([...arr])).map(name => ({ name })) */
 
-        /*    let source =  link.map(i => i.source)
+          let source =  link.map(i => i.source)
            let target = link.map(i => i.target)
            let nodes =Array.from(new Set([...source, ...target])).map(name => ({name}))
    
-           console.log(nodes) */
+           console.log(nodes)  
 
 
 
 
-        let links = link.map(l => ({ ...l, value: parseFloat(l.value) }))
+        let links = link.map(l => ({ ...l, value: parseFloat(l.value)?.toFixed(2) }))
         setOptions({
           ...options,
           series: [
             {
               ...options.series[0],
-              data: datas,
+              data: nodes,
               links,
-              label: {
+             /*  label: {
                 fontSize: 10
               },
               nodeAlign: "left",
-              nodeGap: 12,
+              nodeGap: 12, */
               lineStyle: {
                 color: "source"
               }
@@ -295,7 +297,7 @@ export default function Index() {
       {/* title={ (!isfull) && <CustButton onClick={full} style={{marginLeft: "auto" }}>全屏显示</CustButton>} pv={isfull? "0px" : "16px"}   layout="flex" bl="none" dr="column" */}
       {exparams.viewType == 'a' ? <Titlelayout title={<div style={{ height: '32px', display: 'flex', flexDirection: 'row', alignItems: 'center' }}><p style={{ lineHeight: '32px' }}>能源流向</p> <CustButton onClick={full} style={{ marginLeft: "auto" }}>全屏显示</CustButton></div>} layout="flex" >
         {isfull && <Headcom />}
-        <div style={{ display: 'flex', flex: 1, alignItems: 'center', justifyContent: 'center', }} ref={mapref}>
+        <div style={{  width: "100%",minHeight: "150%", position: "relative"}} ref={mapref}>
           <Ichart custoption={options} />
         </div>
       </Titlelayout> :
