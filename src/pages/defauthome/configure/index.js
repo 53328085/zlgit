@@ -2,8 +2,7 @@ import React, { useEffect, useState, useRef } from 'react'
 import style from './style.module.less';
 import styled from 'styled-components';
 import configIcon from './configIcon.png'
-import { Drawer, Input, message,   Empty, Form, InputNumber, Alert } from 'antd';
-
+import { Drawer, Input, message, Modal, Empty, Divider } from 'antd';
 import _, { result } from 'lodash'
 import { useSelector } from 'react-redux'
 import { selectProjectId,themeColor,adaptation } from '@redux/systemconfig.js'
@@ -37,21 +36,21 @@ import GatewayMessage from '@com/defaultHome/gatewayMessage'
 import DeviceMessage from '@com/defaultHome/deviceMessage'
 import ChooperMessage from '@com/defaultHome/chooperMessage'
 import EnergyRanking from '@com/defaultHome/energyRank'
-
+ 
 import Sensor from '@com/defaultHome/sensorMessage' //传感器信息
-
+ 
 import Transformer from '@com/defaultHome/transformerMessage' //变压器信息
-
+ 
 import Gxcwmg from '@com/defaultHome/gxcwMessage' //光纤测温信息
 import Cdcwmg from '@com/defaultHome/cdcwMessage' //光纤测温信息
-
-
+ 
+ 
 import TodayElectricity from "@com/defaultHome/todayElectricity" // TodayElectricity 今日用电量
-
+ 
 import TransformerTotal from "@com/defaultHome/transformerTotal" // TransformerTotal 变压器总负荷
-
+ 
 import TransformerNum from "@com/defaultHome/transformerNum" // TransformerNum 变压器数量
-
+ 
 import Inspection from "@com/defaultHome/inspection" // Inspection 本月巡检
 import RoomNum from '@com/defaultHome/roomNum' // 变配电站数量（个）
 import RoomCapacity from '@com/defaultHome/roomCapacity' // 总额度容量
@@ -60,15 +59,14 @@ import Loadlate from "@com/defaultHome/loadlate" // 负荷率
 import {useTranslation} from "react-i18next"
 import Context from "@com/content"
 // TodayElectricity 今日用电量  TransformerTotal 变压器总负荷 TransformerNum 变压器数量  Inspection 本月巡检
-
-
-import RGL, {Responsive, WidthProvider } from 'react-grid-layout'
+ 
+ 
+import RGL, { WidthProvider } from 'react-grid-layout'
 const ReactGridLayout = WidthProvider(RGL);
 import { MenuUnfoldOutlined } from '@ant-design/icons';
-//import './style.css';
-//import './index.css';
-//import './style.css';
-
+import './style.css';
+import './index.css';
+ 
 import company from './itemImgs/company.png'
 import device from './itemImgs/device.png'
 import safe from './itemImgs/safe.png'
@@ -89,7 +87,7 @@ import transformer from './itemImgs/transformer.png';
 import humiture from './itemImgs/humiture.png'
 import energyCost from './itemImgs/energyCost.png'
 import energyTrend from './itemImgs/energyTrend.png'
-
+ 
 import energyRank from './itemImgs/energyRank.png'
 import charge from './itemImgs/charge.png'
 import discharge from './itemImgs/discharge.png'
@@ -111,23 +109,44 @@ import roomnumv from './itemImgs/roomnum.svg'
 import capacityv from './itemImgs/capacity.svg'
 import roomloadv from './itemImgs/roomload.svg'
 import transformerTota from './itemImgs/transformerTotal.svg' // 变压器总负荷
-
+ 
 import { useRequest } from 'ahooks';
 import Cmodal from "@com/useModal"
 import {Serach} from "@com/comstyled"
-import {CDrawer} from "./style"
-import {layout} from "./data"
-import "./drag.css"
-const availableHandles = ["s", "w", "e", "n", "sw", "nw", "se", "ne"];
+const CDrawer = styled(Drawer)`
+  && {
+    font-size: 14px;
+    .ant-drawer-content-wrapper{
+        top: 80px!important;
+        width: 284px!important;
+        height: calc(100% - 80px);
+    //    height: 848px!important;
+        // position: relative;
+        margin-left: 48px;
+        background: transparent;
+        overflow: auto;
+    }
+    .ant-drawer-header{
+        display: none;
+    }
+    .ant-drawer-content{
+        background: transparent;
+    }
+    .ant-drawer-wrapper-body{
+        background: transparent;
+    }
+    .ant-drawer-body{
+ 
+        background-color: rgba(0, 0, 0, 0.6);
+        padding: 16px!important;
+    }
+  }
+ 
+`
 export default function Index() {
-
-//  console.log(layout)
   const {t} = useTranslation(["button","overview", "comm"])
-  const [form] = Form.useForm()
-  const Ref = useRef()
   const { Search } = Input
   const {laptop} = useSelector(adaptation)
- 
   const [messageApi, contextHolder] = message.useMessage();
   const messageContent = (type, content) => {
     messageApi.open({
@@ -139,9 +158,9 @@ export default function Index() {
   const [confirmModal, setConfirmModal] = useState(false);
   const projectId = useSelector(selectProjectId)
   const {previewrbgcolor} =useSelector(themeColor)
-
+ 
   const { InsertUISummary, QueryUISummary } = UISummary
-
+ 
   const [activeName, setactiveName] = useState(null);
   const SelectTab = (props) => {
     return <div className={style.selectTab} style={{ backgroundColor: props.tabName == activeName ? '#237ae4' : '#003366' }} onClick={() => changeTab(props.tabName)}>
@@ -183,9 +202,9 @@ export default function Index() {
     { img: spread, itemName: '告警分布', draggable: false },
     { img: inspection, itemName: '本月巡检', draggable: false },
   ]
-
+ 
   // 配电房信息
-
+ 
   const disItems = [
     { img: distribution, itemName: '配电房监测', draggable: false },  // 变压器数量
   /*   { img: transformer, itemName: '变压器监控', draggable: false },
@@ -200,7 +219,7 @@ export default function Index() {
   ]
  
   // 能耗统计
-
+ 
   const energyItems = [
     { img: energyCost, itemName: '今日用电量', draggable: true }, // 今日用电量
     { img: energyTrend, itemName: '月度能耗', draggable: true },  
@@ -253,9 +272,9 @@ export default function Index() {
       setDragListCopy(storageItems)
     }
   }
-
+ 
   const [basicOpen, setbasicOpen] = useState(false);
-
+ 
   const [layoutItem, setlayoutItem] = useState([])
   const [newCounter, setNewCounter] = useState(0)
   const [classOfName, setclassOfName] = useState('')
@@ -264,7 +283,7 @@ export default function Index() {
     setbasicOpen(false);
     setactiveName('');
   }
-
+ 
   const AddItem = (props) => {
     //props.dragTag
     return (
@@ -274,26 +293,19 @@ export default function Index() {
       </div>
     )
   }
-
+ 
   //RGL布局
   const [defaultProps, setDefaultProps] = useState({
     className: 'layout',
     rowHeight: 200,
     cols: 8,
     margin: [16, 16]
-   
   })
-
-  const layoutprops ={
-    isResizable: true,
-    compactType:null, // 禁用自动紧凑布局
-    preventCollision:true, // 防止元素碰撞
-  }
-
+ 
   // useEffect(()=>{
   //   JSON.parse(sessionStorage.getItem('layoutItem')) ? setlayoutItem(JSON.parse(sessionStorage.getItem('layoutItem'))) : null
   // },[])
-
+ 
   const getLayoutData = () => {
     return QueryUISummary(projectId).then(res => {
       let { success, data } = res
@@ -308,15 +320,14 @@ export default function Index() {
       }
     })
   }
-
+ 
   const { queryData } = useRequest(getLayoutData, {
     onSuccess: (result, params) => {
       sessionStorage.setItem('layoutItem', JSON.stringify(result.list))
-    //  let layouts = result.list?.map(r => ({...r, minw:r.w,}))
       setlayoutItem(result.list)
     }
   });
-
+ 
   const InsertLayoutData = () => {
     return InsertUISummary(projectId, layoutItem).then(res => {
       let { success } = res
@@ -331,16 +342,15 @@ export default function Index() {
       }
     })
   }
-
+ 
   const { run } = useRequest(InsertLayoutData, {
     manual: true,
     onSuccess: (result, params) => {
       showConfirmModal()
     }
   })
-
+ 
   const createElement = el => {
-   console.log("el",el)
     const removeStyle = {
       position: "absolute",
       right: "5px",
@@ -353,7 +363,7 @@ export default function Index() {
     const end = i.indexOf('_');
     
     return (
-      <div key={i} data-grid={el} style={{display:"flex", felx:1}}>
+      <div key={i} data-grid={el}>
         <span className="remove" style={removeStyle} onClick={() => onRemoveItem(i)}> X </span>
         {i.substring(0, end)=='公司信息'? <CompanyMessage></CompanyMessage> : null}
         {i.substring(0, end)=='今日告警'? <TodayWarning></TodayWarning> : null}
@@ -366,20 +376,20 @@ export default function Index() {
         {i.substring(0, end)=='网关信息' ? <GatewayMessage></GatewayMessage> : null}
         {i.indexOf('电表信息') != -1 ? <DeviceMessage></DeviceMessage> : null}
         {i.indexOf('断路器信息') != -1 ? <ChooperMessage></ChooperMessage> : null}
-
+ 
         {i.indexOf('传感器信息') != -1 ? <Sensor></Sensor> : null} 
         {i.indexOf('变压器信息') != -1 ? <Transformer></Transformer> : null} 
         {i.indexOf('触点测温') != -1 ? <Cdcwmg></Cdcwmg> : null} 
         {i.indexOf('光纤测温') != -1 ? <Gxcwmg></Gxcwmg> : null} 
-
+ 
         {i.substring(0, end)=='今日用电量' ? <TodayElectricity></TodayElectricity> : null} 
-
+ 
         {i.indexOf('变压器总负荷') != -1 ? <TransformerTotal></TransformerTotal> : null} 
-
+ 
         {i.indexOf('配电房监测') != -1 ? <TransformerNum></TransformerNum> : null} 
-
+ 
         {i.substring(0, end)=='本月巡检' ? <Inspection></Inspection> : null} 
-
+ 
         {i.indexOf('月度能耗') != -1 ? <EnergyTrend></EnergyTrend> : null}     
         {i.indexOf('实时负荷率') != -1 ? <RealLoad></RealLoad> : null}
         {i.indexOf('告警分布') != -1 ? <WarningSpread></WarningSpread> : null}
@@ -406,42 +416,14 @@ export default function Index() {
   const onRemoveItem = (i) => {
     setlayoutItem(_.reject(layoutItem, { i: i }));
   }
-
+ 
  // TodayElectricity 今日用电量  TransformerTotal 变压器总负荷 TransformerNum 配电房监测  Inspection 本月巡检
- let layouts_2_1 =[
+ let layouts =[
   '告警分布','本月巡检','配电房监测','变压器总负荷',
   '今日用电量','月度能耗','公司信息','今日告警','本月工单', '告警信息','能耗排名','分类能耗',
   '用电量','用水量','用燃气量','碳排放量','网关信息',
   '电表信息','变配电站数量','总额度容量','实时负荷','负荷率','断路器信息','传感器信息','变压器信息','触点测温','光纤测温'
 ]
-let layouts_2_2 =['实时负荷率','分时电量分析', '充放电量趋势','站点soc']
-let layouts_1_1=['总充电量','总放电量','总充电金额','总放电金额','储能总收益','储能日收益','储能月收益']
-let layouts_4_2=['储能收益统计']
-let layoutMap = new Map()
-layoutMap.set(layouts_2_2,{
-  minW:2,
-  minH:2,
-})
-layoutMap.set(layouts_2_1, {
-  minW:2,
-  minH:1,
-}) 
-layoutMap.set(
- layouts_1_1, {
-        minW:1,
-        minH:1,
- }
-)
-layoutMap.set(
-  layouts_4_2, {
-         minW:4,
-         minH:2,
-  }
- )
-const zoom = {
-  maxW:8,
-  maxH:4, 
-}
   const onAddlayout = (xValue, yValue) => {
     let newlayout;
     let time = new Date()
@@ -453,14 +435,11 @@ const zoom = {
         y: yValue,
         w: 2,
         h: 2,
-        minW:2,
-        minH:2,
-        ...zoom,
         'description': classOfName
       })
-      setlayoutItem(newlayout?.map(l => ({...l, resizeHandles: availableHandles,})))
+      setlayoutItem(newlayout)
       setNewCounter(newCounter + 1);
-    } else if(layouts_2_1.includes(classOfName)) /* (classOfName == '告警分布' || classOfName == '本月巡检' || classOfName == '配电房监测' || classOfName == '变压器总负荷' 
+    } else if(layouts.includes(classOfName)) /* (classOfName == '告警分布' || classOfName == '本月巡检' || classOfName == '配电房监测' || classOfName == '变压器总负荷' 
       || classOfName == '今日用电量' || classOfName == '月度能耗' || classOfName == '公司信息' || classOfName == '今日告警' || classOfName == '本月工单' || classOfName == '告警信息' || classOfName == '能耗排名' || classOfName == '分类能耗' ||
       classOfName == '用电量' || classOfName == '用水量' || classOfName == '用燃气量' || classOfName == '碳排放量' || 
       classOfName == '网关信息' || classOfName == '电表信息' ||  classOfName == '变配电站数量' || classOfName == '断路器信息' || classOfName == '传感器信息' || classOfName == '变压器信息' || classOfName == '触点测温' || classOfName == '光纤测温') */ {
@@ -470,14 +449,9 @@ const zoom = {
         y: yValue,
         w: 2,
         h: 1,
-        minW:2,
-        minH:1,
-        ...zoom,
-        'description': classOfName,
-         
-         
+        'description': classOfName
       })
-      setlayoutItem(newlayout?.map(l => ({...l, resizeHandles: availableHandles,})))
+      setlayoutItem(newlayout)
       setNewCounter(newCounter + 1);
     } else if (classOfName == '总充电量' || classOfName == '总放电量' || classOfName == '总充电金额' || classOfName == '总放电金额' ||
       classOfName == '储能总收益' || classOfName == '储能日收益' || classOfName == '储能月收益') {
@@ -487,12 +461,9 @@ const zoom = {
         y: yValue,
         w: 1,
         h: 1,
-        minW:1,
-        minH:1,
-        ...zoom,
         'description': classOfName
       })
-      setlayoutItem(newlayout?.map(l => ({...l, resizeHandles: availableHandles,})))
+      setlayoutItem(newlayout)
       setNewCounter(newCounter + 1);
     } else if (classOfName == '储能收益统计') {
       newlayout = layoutItem.concat({
@@ -501,60 +472,46 @@ const zoom = {
         y: yValue,
         w: 4,
         h: 2,
-        minW:4,
-        minH:2,
-        ...zoom,
         'description': classOfName
       })
-        
-        
-      setlayoutItem(newlayout?.map(l => ({...l, resizeHandles: availableHandles,})))
-     setNewCounter(newCounter + 1);
+      setlayoutItem(newlayout)
+      setNewCounter(newCounter + 1);
     } else {
       message.warning('当前模块尚未配置，请等待后续版本更新!')
       return;
     }
-
-
+ 
+ 
   }
-/*  type ItemCallback = (layout: Layout, oldItem: LayoutItem, newItem: LayoutItem,
-placeholder: LayoutItem, e: MouseEvent, element: HTMLElement) => void
-onDrop: (layout: Layout, item: ?LayoutItem, e: Event) => void,
-
-*/
-  const onDrop = (layouts, layoutValue, _event) => { // 从外面拖入
-    console.log(layoutValue)
-    console.log("_event", _event)
-  
+ 
+  const onDrop = (layouts, layoutValue, _event) => {
     onAddlayout(layoutValue.x, layoutValue.y)
   }
  
-  const onLayoutChange = (layout) => { 
-    console.log("layout")
-    console.log(layout)
+  const onLayoutChange = (layout) => {
     if (layout.length == 0) return;
     if (layout[layout.length - 1].i == '__dropping-elem__') return;
     setlayoutItem(layout)
   }
-
+ 
   const showResetModal = () => {
     setResetModal(true);
   }
-
+ 
   const showConfirmModal = () => {
     // sessionStorage.setItem('layoutItem', JSON.stringify(layoutItem))
     setConfirmModal(true);
   }
-
+ 
   const resetOk = () => {
     setlayoutItem(JSON.parse(sessionStorage.getItem('layoutItem')))
     setResetModal(false)
   }
-
+ 
   const confirmOk = () => {
     setConfirmModal(false)
   }
-
+ 
   const handleCancel = () => {
     setResetModal(false)
     setConfirmModal(false)
@@ -572,41 +529,14 @@ onDrop: (layout: Layout, item: ?LayoutItem, e: Event) => void,
       setDragList(arr)
     }
   }
- const onDesgin =()=> {
-    Ref.current.onOpen()
- }
- const onResize=(_, oldItem, newItem)=> {
-  console.log("resize………………")
-  console.log(newItem)
-   if (newItem?.w  >8 )  {
-  //  console.log("宽度超出限制")
-    return false
-   }
-   if(newItem?.h >4) {
-  //  console.log("高度超出限制")
-    return false
-   }
- }
- const onResizeStop=(_, oldItem, newItem)=> {
-
-  // console.log("oldItem",oldItem)
- // console.log("newItem", newItem)
-   if(newItem?.h >4) return false
-    if(oldItem.w!=newItem.w || oldItem.y != newItem.y) {
-       
-    }
- }
+ 
   return (
-    <div className={style.mainContent} style={{backgroundColor: previewrbgcolor || '#135abd'}}>
-      <Context.Provider value={{laptop }}>
+    <div className={style.mainContent} style={{ backgroundColor: '#eee' }}>
+      <Context.Provider value={{laptop}}>
       {contextHolder}
-           <ReactGridLayout layout={layoutItem} onLayoutChange={onLayoutChange} {...defaultProps} isDroppable={true} onDrop={onDrop} style={{backgroundColor: previewrbgcolor || '#135abd'}} >
-             {_.map(layoutItem, el => createElement(el))}
-           </ReactGridLayout>
-   {/*    <ReactGridLayout 
-   resizable className='layout'  onLayoutChange={onLayoutChange} {...defaultProps}   isDroppable={true} onDrop={onDrop} style={{backgroundColor: previewrbgcolor || '#135abd'}} >
-         {_.map(layoutItem, el => createElement(el))}
-      </ReactGridLayout> */}
+      <ReactGridLayout layout={layoutItem} onLayoutChange={onLayoutChange} {...defaultProps}   onDrop={onDrop} style={{backgroundColor: previewrbgcolor || '#135abd'}} >
+        {_.map(layoutItem, el => createElement(el))}
+      </ReactGridLayout>
       <div className={style.selectMenu}>
         <SelectTab tabName={'基础信息'}></SelectTab>
         <SelectTab tabName={'运行监控'}></SelectTab>
@@ -615,17 +545,13 @@ onDrop: (layout: Layout, item: ?LayoutItem, e: Event) => void,
         <SelectTab tabName={'能耗统计'}></SelectTab>
         <SelectTab tabName={'储能管理'}></SelectTab>
       </div>
-      <div className={style.layout}>
-      <div className={`${style.confirm} ${style.btn}`} onClick={run}>{t("button:save")}</div>
-      <div className={`${style.reset} ${style.btn}`} onClick={() => showResetModal()}>{t("button:reset")}</div>
-      <div className={`${style.confirm} ${style.btn}`} onClick={onDesgin}>{t("button:layout")}</div>
-        </div>
-     
-     
+      <div className={style.reset} onClick={() => showResetModal()}>{t("button:reset")}</div>
+      <div className={style.confirm} onClick={run}>{t("button:save")}</div>
+ 
       <Cmodal title={t("comm:Resetprompt")} mold="cust" type="warn" open={resetModal} onOk={resetOk} onCancel={handleCancel} width={512}  closable={false}  okText={t("button:reset")} >        
            {t("overview:resetlayout")}
       </Cmodal>
-
+ 
       <Cmodal title={t("overview:Saveinterface")} mold="cust" open={confirmModal} onOk={confirmOk} onCancel={handleCancel} width={512}  closable={false}  okText={t("comm:Close")}   cancelButtonProps={{ style: { display: 'none' } }}>
         
         <div className={style.confirmBody}>
@@ -633,7 +559,7 @@ onDrop: (layout: Layout, item: ?LayoutItem, e: Event) => void,
           <span >{t("overview:layoutsuccessfully")}</span>
         </div>
       </Cmodal>
-
+ 
       <CDrawer placement='left' onClose={onClose} open={basicOpen} mask={false} destroyOnClose={true} >
         <div className={style.searchInput}>
           <Serach
@@ -652,20 +578,6 @@ onDrop: (layout: Layout, item: ?LayoutItem, e: Event) => void,
           <MenuUnfoldOutlined onClick={onClose} />
         </div>
       </CDrawer>
-      <Cmodal title="设置布局"       width={832} mold="cust"    ref={Ref}>
-        <Alert style={{marginBottom: "16px"}} message="行的高度为" type="warning"> </Alert>
-        <Form form={form} labelAlign="left" labelCol={{flex: "7em"}} preserve={false}>
-          <Form.Item label="设置列数" name="cols">
-             <InputNumber min={1} max={8} placeholder="请列数1~8之间" ></InputNumber>
-          </Form.Item>
-          <Form.Item label="设置行数" name="rowheight">
-             <InputNumber min={1} max={4} placeholder="请行数1~4之间" addonAfter="px" ></InputNumber>
-          </Form.Item>
-          <Form.Item label="设置间距" name="gap">
-             <InputNumber min={1} max={4} placeholder="请行数1~4之间" addonAfter="px" ></InputNumber>
-          </Form.Item>
-        </Form>
-       </Cmodal>
       </Context.Provider>
     </div>
   )
