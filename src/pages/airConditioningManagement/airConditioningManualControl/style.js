@@ -100,7 +100,7 @@ export const CardBox = styled.div`
 
         }
          .airAlarm{
-            background: #f64141;
+            background: #ec5050;
             color: #fff;
         }
       .airCardCold{

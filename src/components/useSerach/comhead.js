@@ -229,7 +229,7 @@ export default function UseSerach(props) {
     </Item>
   )
   const carbonDateR = (
-    <Item label="" name="">
+    <Item label="" name="" initialValue={[moment().subtract(1, 'months'), moment()]}>
       <RangePicker />
     </Item>
   )
@@ -503,7 +503,7 @@ export default function UseSerach(props) {
           props.config?.dateY && carbonDateY // 碳排管理--碳排考核跟踪
         }
         {
-          props.config?.dateR && carbonDateR // 碳排管理-- 碳排分析
+          props.config?.dateR && carbonDateR // 碳排管理-- 碳排分析  光伏发电--告警消息
         }
         {
           props.config.publicDate && publicDate // 能源管理--公共能耗
