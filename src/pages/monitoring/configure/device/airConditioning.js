@@ -29,7 +29,7 @@ const {
 } = Monitoring
 
 export default function gateway({ deviceStyle }) {
-    console.log("deviceStyle",deviceStyle)
+    console.log("deviceStyle", deviceStyle)
     const { t } = useTranslation(["button"])
     const publish = useSelector(publishState)
     const [selectopts, setSelectopts] = useState([])
@@ -551,7 +551,7 @@ export default function gateway({ deviceStyle }) {
     const ImportProps = {
         modalImportRef,
         width: 560,
-        link: '/deviceExcel/flow.xlsx',
+        link: '/deviceExcel/aircondition.xlsx',
         name: '空调导入',
         uploadprops,
         onOk: onImportOk
