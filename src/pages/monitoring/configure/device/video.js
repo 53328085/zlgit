@@ -1,18 +1,18 @@
-import React, { useEffect, useRef, useState, useContext,   useMemo } from 'react'
+import React, { useEffect, useRef, useState, useContext, useMemo } from 'react'
 import { useSelector } from 'react-redux'
-import { Form, Row, Col, Select, Input, Divider, message,Button, Space, Typography } from 'antd'
-import {useTranslation} from 'react-i18next'
+import { Form, Row, Col, Select, Input, Divider, message, Button, Space, Typography } from 'antd'
+import { useTranslation } from 'react-i18next'
 import Comp from './comp'
 import Table from '@com/useTable'
 import Modal from '@com/useModal'
- 
-import { MultImport,ErrorMessage } from './modalCom'
+
+import { MultImport, ErrorMessage } from './modalCom'
 import { Monitoring } from '@api/api.js'
 import { DeleteModal } from './modalCom'
 import { MyContext } from './formcomp'
 import style from './style.module.less'
-import {publishState} from '@redux/systemconfig'
-const {Link} = Typography
+import { publishState } from '@redux/systemconfig'
+const { Link } = Typography
 const {
   DeviceManager: {
     QueryByPageCamera,
@@ -29,7 +29,7 @@ const {
 } = Monitoring
 
 export default function gateway({ deviceStyle }) {
-  const {t} = useTranslation(["button"])
+  const { t } = useTranslation(["button"])
   const publish = useSelector(publishState)
   const [selectopts, setSelectopts] = useState([])
   const [gatewaylist, setGatewaylist] = useState()
@@ -40,12 +40,12 @@ export default function gateway({ deviceStyle }) {
   const [page, setPage] = useState({
     current: 1,
     pageSize: 10,
-    hideOnSinglePage:false
+    hideOnSinglePage: false
   })
-  const pageRef= useRef(page)
-  pageRef.current=page
+  const pageRef = useRef(page)
+  pageRef.current = page
   const [dataSource, setDataSource] = useState([])
-  const oneLevel = useSelector(state=>state.system.onelevel)
+  const oneLevel = useSelector(state => state.system.onelevel)
   const projectId = useSelector(state => state.system.menus.projectId)
   const compRef = useRef()
   const modalFormRef = useRef()
@@ -53,14 +53,14 @@ export default function gateway({ deviceStyle }) {
   const DelModalRef = useRef()
   const EditModalFormRef = useRef()
   const ErrModalRef = useRef()
-  const errlistRef =useRef()
+  const errlistRef = useRef()
   const tableLoadRef = useRef()
   const [addform] = Form.useForm()
   const [editform] = Form.useForm()
-  const levelname =useRef("")
-  let delid= useRef();
+  const levelname = useRef("")
+  let delid = useRef();
   let flies;
-  let edittag=false
+  let edittag = false
   const optcss = {
     color: '#237ae4',
     textDecoration: 'underline',
@@ -68,7 +68,7 @@ export default function gateway({ deviceStyle }) {
   }
   let columns = [
     {
-      title: oneLevel[0]?.levelName?oneLevel[0].levelName:'园区名称',
+      title: oneLevel[0]?.levelName ? oneLevel[0].levelName : '园区名称',
       dataIndex: 'areaName'
     },
     {
@@ -124,7 +124,7 @@ export default function gateway({ deviceStyle }) {
   for (let val of columns) {
     val.align = 'center'
   }
-  if(publish){
+  if (publish) {
     columns.pop()
   }
   //打开编辑窗口
@@ -142,7 +142,7 @@ export default function gateway({ deviceStyle }) {
         accessMode,
         channel,
         serverAddress,
-        port=0,
+        port = 0,
         ip,
         account,
         pwd,
@@ -177,21 +177,21 @@ export default function gateway({ deviceStyle }) {
       if (resp.success) {
         message.success("更新成功")
         EditModalFormRef?.current?.onCancel()
-        getQueryByPageCamera(pageRef.current.current,pageRef.current.pageNum,compRef.current.selvalue,compRef.current.inpvalue,compRef.current.energyVal)
+        getQueryByPageCamera(pageRef.current.current, pageRef.current.pageNum, compRef.current.selvalue, compRef.current.inpvalue, compRef.current.energyVal)
       } else {
         message.error(resp.errMsg)
       }
     })
 
   }
-  const editSure=()=>{
+  const editSure = () => {
     editform.validateFields().then(async () => {
       let { id, areaId, address, remark, gatewayId, category, sn,
         name,
         accessMode,
         channel,
         serverAddress,
-        port=0,
+        port = 0,
         ip,
         account,
         pwd,
@@ -225,15 +225,15 @@ export default function gateway({ deviceStyle }) {
       const resp = await UpdateCamera(params)
       if (resp.success) {
         message.success("更新成功")
-        getQueryByPageCamera(pageRef.current.current,pageRef.current.pageNum,compRef.current.selvalue,compRef.current.inpvalue,compRef.current.energyVal)
-        
-       
+        getQueryByPageCamera(pageRef.current.current, pageRef.current.pageNum, compRef.current.selvalue, compRef.current.inpvalue, compRef.current.energyVal)
+
+
       } else {
         message.error(resp.errMsg)
       }
     })
   }
-  const  editCancel=()=>{
+  const editCancel = () => {
 
     EditModalFormRef?.current?.onCancel()
   }
@@ -251,18 +251,18 @@ export default function gateway({ deviceStyle }) {
     })
     if (success) {
       message.success('删除成功')
-      if(page.total%(page.pageSize*(page.current-1 ))===1){
+      if (page.total % (page.pageSize * (page.current - 1)) === 1) {
         setPage({
           ...page,
-          current:page.current-1
+          current: page.current - 1
         })
       }
       DelModalRef?.current?.onCancel()
-      setTimeout(()=>{
-        getQueryByPageCamera(pageRef.current.current,pageRef.current.pageNum,compRef.current.selvalue,compRef.current.inpvalue,compRef.current.energyVal)
-      },0)
-      
- 
+      setTimeout(() => {
+        getQueryByPageCamera(pageRef.current.current, pageRef.current.pageNum, compRef.current.selvalue, compRef.current.inpvalue, compRef.current.energyVal)
+      }, 0)
+
+
     } else {
       message.error(errMsg)
     }
@@ -271,9 +271,9 @@ export default function gateway({ deviceStyle }) {
 
   //打开新增窗口
   const addopen = () => {
-    if(!levelname.current){
+    if (!levelname.current) {
       message.warning('请添加区域')
-      return 
+      return
     }
     addform.setFieldsValue({
       areaId: '',
@@ -298,7 +298,7 @@ export default function gateway({ deviceStyle }) {
   }
   //确认新增
   const addOk = async () => {
-   return  addform.validateFields().then(async () => {
+    return addform.validateFields().then(async () => {
       const formvalue = addform.getFieldsValue()
       let params = {
         id: 0,
@@ -312,7 +312,7 @@ export default function gateway({ deviceStyle }) {
         name: formvalue.name,
         manufacturer: 0,
         accessMode: formvalue.accessMode,
-        serverAddress: formvalue.serverAddress ? formvalue.serverAddress+':'+ formvalue.port : "",
+        serverAddress: formvalue.serverAddress ? formvalue.serverAddress + ':' + formvalue.port : "",
         port: formvalue.port ? formvalue.port : 0,
         ip: formvalue.ip ? formvalue.ip : "",
         account: formvalue.account ? formvalue.account : "",
@@ -323,8 +323,8 @@ export default function gateway({ deviceStyle }) {
       const res = await AddCamera(params)
       if (res.success) {
         message.success('新增成功!')
-      //  modalFormRef?.current?.onCancel()
-        getQueryByPageCamera(pageRef.current.current,pageRef.current.pageNum,compRef.current.selvalue,compRef.current.inpvalue,compRef.current.energyVal)
+        //  modalFormRef?.current?.onCancel()
+        getQueryByPageCamera(pageRef.current.current, pageRef.current.pageNum, compRef.current.selvalue, compRef.current.inpvalue, compRef.current.energyVal)
       } else {
         message.error(res.errMsg)
       }
@@ -335,7 +335,7 @@ export default function gateway({ deviceStyle }) {
 
 
   }
-  const addSure=async ()=>{
+  const addSure = async () => {
     addform.validateFields().then(async () => {
       const formvalue = addform.getFieldsValue()
       let params = {
@@ -350,7 +350,7 @@ export default function gateway({ deviceStyle }) {
         name: formvalue.name,
         manufacturer: 0,
         accessMode: formvalue.accessMode,
-        serverAddress:formvalue.serverAddress ? formvalue.serverAddress+':'+ formvalue.port : "",
+        serverAddress: formvalue.serverAddress ? formvalue.serverAddress + ':' + formvalue.port : "",
         port: formvalue.port ? formvalue.port : 0,
         ip: formvalue.ip ? formvalue.ip : "",
         account: formvalue.account ? formvalue.account : "",
@@ -361,14 +361,14 @@ export default function gateway({ deviceStyle }) {
       const res = await AddCamera(params)
       if (res.success) {
         message.success('新增成功!')
-        getQueryByPageCamera(pageRef.current.current,pageRef.current.pageNum,compRef.current.selvalue,compRef.current.inpvalue,compRef.current.energyVal)
-       
+        getQueryByPageCamera(pageRef.current.current, pageRef.current.pageNum, compRef.current.selvalue, compRef.current.inpvalue, compRef.current.energyVal)
+
       } else {
         message.error(res.errMsg)
       }
     })
   }
-  const addCancel=()=>{
+  const addCancel = () => {
 
     modalFormRef?.current?.onCancel()
   }
@@ -376,16 +376,16 @@ export default function gateway({ deviceStyle }) {
   const multExport = () => {
     modalImportRef?.current?.onOpen()
   }
-   //获取第一级区域名
-   const getOneLevel=async()=>{
-    const res =  await OneLevel(projectId)
-    if(res.success &&res.data){
-      levelname.current=res.data.name
+  //获取第一级区域名
+  const getOneLevel = async () => {
+    const res = await OneLevel(projectId)
+    if (res.success && res.data) {
+      levelname.current = res.data.name
       getAeraQueryAll(res.data.name)
-    }else{
-     message.error(res.errMsg)
+    } else {
+      message.error(res.errMsg)
     }
-   }
+  }
   //获取园区
   const getAeraQueryAll = async (name) => {
     try {
@@ -439,38 +439,38 @@ export default function gateway({ deviceStyle }) {
     }
   }
   //获取视频监控列表
-  const getQueryByPageCamera = async (curpage=0,pageSize=0,id, like, customerType) => {
+  const getQueryByPageCamera = async (curpage = 0, pageSize = 0, id, like, customerType) => {
     setLoading(true)
     let params = {
       projectId,
-      pageNum: curpage?curpage:pageRef.current.current,
-      pageSize:pageSize?pageSize:pageRef.current.pageSize,
-      areaId: id ? id: 0,
+      pageNum: curpage ? curpage : pageRef.current.current,
+      pageSize: pageSize ? pageSize : pageRef.current.pageSize,
+      areaId: id ? id : 0,
       alike: like ? like : '',
       customerType: customerType ? customerType : 0
     }
     const resp = await QueryByPageCamera(params)
     setPage(() => ({
       ...page,
-      current:resp.pageNum,
+      current: resp.pageNum,
       pageSize: resp.pageSize,
       total: resp.total
     }))
     setLoading(false)
     if (resp.success && Array.isArray(resp.data)) {
       setDataSource([...resp.data])
-      
+
     } else {
       setDataSource([])
     }
   }
   //分页跳转
-  const changePage=(page, pageSize) => {
-      setPage(()=>({
-        ...page
-      }))
-      getQueryByPageCamera(page.current,page.pageSize,compRef.current.selvalue,compRef.current.inpvalue,compRef.current.energyVal)
-    }
+  const changePage = (page, pageSize) => {
+    setPage(() => ({
+      ...page
+    }))
+    getQueryByPageCamera(page.current, page.pageSize, compRef.current.selvalue, compRef.current.inpvalue, compRef.current.energyVal)
+  }
   //导出
   const exportExecel = () => {
     tableLoadRef.current.download()
@@ -480,16 +480,16 @@ export default function gateway({ deviceStyle }) {
       let params = {
         projectId,
         pageNum: 1,
-        pageSize:page.total,
-        areaId:  compRef.current.selvalue?compRef.current.selvalue:0,
+        pageSize: page.total,
+        areaId: compRef.current.selvalue ? compRef.current.selvalue : 0,
         alike: compRef.current.inpvalue,
 
       }
-     
+
       const resp = await QueryByPageCamera(params)
-      if(resp.success){
-        resolve({list:resp.data?resp.data:[],total:resp.total})
-      }else{
+      if (resp.success) {
+        resolve({ list: resp.data ? resp.data : [], total: resp.total })
+      } else {
         reject(resp.errMsg)
       }
     })
@@ -500,32 +500,32 @@ export default function gateway({ deviceStyle }) {
     formData.append("file", flies[0])
     formData.append("projectId", projectId)
     const res = await ImportCamera(formData)
-    if(res.success) {
+    if (res.success) {
       if (res.data.success) {
         message.success("上传成功")
         modalImportRef.current.onCancel()
         getQueryByPageCamera(pageRef.current.current, pageRef.current.pageNum, compRef.current.selvalue, compRef.current.inpvalue, compRef.current.energyVal)
-      }else if(res.data.data && Array.isArray(res.data.data)){
+      } else if (res.data.data && Array.isArray(res.data.data)) {
         errlistRef.current.setList([...res.data.data])
         ErrModalRef.current.onOpen()
-      } else{
+      } else {
         message.error(res.data.errMsg)
       }
-    }else{
+    } else {
       message.error(res.errMsg)
     }
   }
 
 
   useEffect(() => {
-    if(oneLevel?.length>0){
+    if (oneLevel?.length > 0) {
       getOneLevel()
-    getQueryUsedDeviceCategory()
-    getQueryPlanList()
-    getQueryListGateWay()
-    getQueryByPageCamera()
+      getQueryUsedDeviceCategory()
+      getQueryPlanList()
+      getQueryListGateWay()
+      getQueryByPageCamera()
     }
-    
+
   }, [])
 
   //传入props对象
@@ -539,7 +539,7 @@ export default function gateway({ deviceStyle }) {
     page,
     exportExecel,
     getList: getQueryByPageCamera,
-    tb:tableLoadRef
+    tb: tableLoadRef
   }
   const ModalFormProps = {
     modalFormRef,
@@ -549,58 +549,58 @@ export default function gateway({ deviceStyle }) {
     gatewaylist,
     devicelist,
     onOk: addOk,
-    onSure:addSure,
-    onCancel:addCancel,
-   
+    onSure: addSure,
+    onCancel: addCancel,
+
   }
   const uploadprops = {
     maxCount: 1,
-    beforeUpload(file,fileList){
-      console.log(file,fileList)
-      flies=[...fileList]
+    beforeUpload(file, fileList) {
+      console.log(file, fileList)
+      flies = [...fileList]
       return false
     }
   };
   const ImportProps = {
     modalImportRef,
     width: 560,
-    link:'/deviceExcel/camera.xlsx',
-    name:'视频监控设备导入',
+    link: '/deviceExcel/camera.xlsx',
+    name: '视频监控设备导入',
     uploadprops,
-    onOk:onImportOk
+    onOk: onImportOk
   }
   const EditModalFormProps = {
     EditModalFormRef,
     width: 746,
     name: '编辑视频监控',
     onOk: editOk,
-    onSure:editSure,
+    onSure: editSure,
     onCancel: editCancel
   }
   const ErrModalProps = {
     ErrModalRef,
-    ref:errlistRef,
-    onOk:()=>{ErrModalRef.current.onCancel()}
+    ref: errlistRef,
+    onOk: () => { ErrModalRef.current.onCancel() }
   }
-  const AddModalComp=useMemo(()=>{
+  const AddModalComp = useMemo(() => {
     return (
       <MyContext.Provider value={{ addopts, gatewaylist, devicelist, alarmopts, form: addform, deviceStyle, levelname }}>
         <AddModalForm {...ModalFormProps} >
         </AddModalForm>
       </MyContext.Provider>
     )
-  },[addopts, gatewaylist, devicelist, alarmopts])
-  const EditFormComp=useMemo(()=>{
-    return  (
-      <MyContext.Provider value={{ addopts, gatewaylist, devicelist, alarmopts, form: editform, deviceStyle,levelname }}>
+  }, [addopts, gatewaylist, devicelist, alarmopts])
+  const EditFormComp = useMemo(() => {
+    return (
+      <MyContext.Provider value={{ addopts, gatewaylist, devicelist, alarmopts, form: editform, deviceStyle, levelname }}>
         <EditModalForm {...EditModalFormProps}></EditModalForm>
       </MyContext.Provider>
     )
-},[addopts, gatewaylist, devicelist, alarmopts])
+  }, [addopts, gatewaylist, devicelist, alarmopts])
   return (
     <div>
       <Comp {...ComProps}>
-        <Table columns={columns}  dataSource={dataSource} pagination={page} paginationShow={true} loading={loading} onChange={changePage } ref={tableLoadRef} onExport={onExport}></Table>
+        <Table columns={columns} dataSource={dataSource} pagination={page} paginationShow={true} loading={loading} onChange={changePage} ref={tableLoadRef} onExport={onExport}></Table>
       </Comp>
       {AddModalComp}
       {/* <MyContext.Provider value={{ addopts, gatewaylist, devicelist, alarmopts, form: addform, deviceStyle, levelname }}>
@@ -627,8 +627,8 @@ export const FormComp = (props) => {
   const rules = [{
     required: true
   }]
-  console.log(583,levelname)
-  const channelList = Array.from({length: 16},(item, index) => ({ label: index + 1, value: index + 1 })) // 需求： 通道号由8个改成16个。提出者： 毕工， 理由： 有些设备可以有16个设备。存在问题： 无法判断设备可以新建8个还是16个
+  console.log(583, levelname)
+  const channelList = Array.from({ length: 16 }, (item, index) => ({ label: index + 1, value: index + 1 })) // 需求： 通道号由8个改成16个。提出者： 毕工， 理由： 有些设备可以有16个设备。存在问题： 无法判断设备可以新建8个还是16个
   const pattern = /(25[0-5]|2[0-4]\d|[0-1]\d{2}|[1-9]?\d)\.(25[0-5]|2[0-4]\d|[0-1]\d{2}|[1-9]?\d)\.(25[0-5]|2[0-4]\d|[0-1]\d{2}|[1-9]?\d)\.(25[0-5]|2[0-4]\d|[0-1]\d{2}|[1-9]?\d)/;
 
   const changeCameraType = (v, option) => {
@@ -648,14 +648,14 @@ export const FormComp = (props) => {
         <Col flex={1} style={{ minHeight: 536 }}>
           <Form.Item label={levelname.current} name="areaId" rules={rules} >
             <Select
-             showSearch
-             filterOption={(val, opts) => {
-               if (opts.name.includes(val)) {
-                 return true
-               } else {
-                 return false
-               }
-             }}
+              showSearch
+              filterOption={(val, opts) => {
+                if (opts.name.includes(val)) {
+                  return true
+                } else {
+                  return false
+                }
+              }}
               fieldNames={{
                 label: 'name',
                 value: 'id',
@@ -706,7 +706,7 @@ export const FormComp = (props) => {
               <Form.Item label="流媒体服务器" name="serverAddress" rules={[{ required: true, message: '流媒体服务器地址必须' }]}>
                 <Input placeholder='请输入地址和端口号' />
               </Form.Item>
-             {/*  <Form.Item label="端口号" name="port" rules={[{ required: true }, {
+              {/*  <Form.Item label="端口号" name="port" rules={[{ required: true }, {
                 validator: (_, value) => {
                   if (!value) {
                     return Promise.resolve()
@@ -749,7 +749,7 @@ export const FormComp = (props) => {
 //新增设备
 export let AddModalForm = ({ modalFormRef, ...other }) => {
   return (
-    <Modal mold='cust' ref={modalFormRef} {...other} title={other.name} custft={true}  onOk={other.onOk}>
+    <Modal mold='cust' ref={modalFormRef} {...other} title={other.name} custft={true} onOk={other.onOk}>
       <FormComp >
       </FormComp>
     </Modal>
@@ -774,7 +774,7 @@ export const EditModalForm = ({ EditModalFormRef, ...other }) => {
 //编辑form表单组件
 export const EditFormComp = (props) => {
   const { TextArea } = Input
-  const { addopts, gatewaylist, devicelist, alarmopts, form, deviceStyle,levelname } = useContext(MyContext)
+  const { addopts, gatewaylist, devicelist, alarmopts, form, deviceStyle, levelname } = useContext(MyContext)
   const [camera, setCamera] = useState(2)
   const rules = [{
     required: true
@@ -801,14 +801,14 @@ export const EditFormComp = (props) => {
         <Col flex={1}>
           <Form.Item label={levelname.current} name="areaId" rules={rules}>
             <Select
-             showSearch
-             filterOption={(val, opts) => {
-               if (opts.name.includes(val)) {
-                 return true
-               } else {
-                 return false
-               }
-             }}
+              showSearch
+              filterOption={(val, opts) => {
+                if (opts.name.includes(val)) {
+                  return true
+                } else {
+                  return false
+                }
+              }}
               fieldNames={{
                 label: 'name',
                 value: 'id',
@@ -830,8 +830,8 @@ export const EditFormComp = (props) => {
         <Col flex={1}>
           <Form.Item label="设备型号" name="category" rules={rules}>
             <Select
-            disabled
-            showSearch
+              disabled
+              showSearch
               options={devicelist}
             ></Select>
           </Form.Item>
@@ -851,7 +851,7 @@ export const EditFormComp = (props) => {
             ></Select>
           </Form.Item>
           <Form.Item label="设备编号" name="sn" rules={rules}>
-            <Input disabled/>
+            <Input disabled />
           </Form.Item>
           <Form.Item label="设备名称" name="name" rules={rules}>
             <Input />
@@ -861,7 +861,7 @@ export const EditFormComp = (props) => {
               <Form.Item label="流媒体服务器" name="serverAddress" rules={[{ required: true }, { pattern: pattern, message: '请输入正确的IP地址' }]}>
                 <Input placeholder='请输入地址和端口号' />
               </Form.Item>
-            {/*   <Form.Item label="端口号" name="port" rules={[{ required: true }, {
+              {/*   <Form.Item label="端口号" name="port" rules={[{ required: true }, {
                 validator: (_, value) => {
                   if (!value) {
                     return Promise.resolve()

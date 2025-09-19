@@ -194,7 +194,7 @@ export const FormComp = (props) => {
             form={form}
             colon={false}
             labelCol={{
-                span: 6,
+                span: 9
             }}
         >
             <Row className={style.customItem}>
@@ -558,7 +558,7 @@ export const EditFormComp = (props) => {
             form={form}
             colon={false}
             labelCol={{
-                span: 6,
+                span: 9
             }}
             preserve={false}
         >

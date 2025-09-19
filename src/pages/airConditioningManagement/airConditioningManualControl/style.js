@@ -50,7 +50,7 @@ export const CardBox = styled.div`
          flex:1;
          display: grid;
          grid-template-columns: repeat(auto-fill,185px);
-         grid-auto-rows: 220px;
+         grid-auto-rows: 255px;
          justify-content: space-between;
          gap:16px;
         .airIcon{
@@ -60,7 +60,6 @@ export const CardBox = styled.div`
    
        .cardCommon{
         width: 185px;
-        height:220px;
         padding: 8px;
         overflow: hidden;
         display: flex;
@@ -72,7 +71,7 @@ export const CardBox = styled.div`
         align-items: baseline;
         .topInfo{
         margin-left: 16px;
-        .address{
+        .name{
         font-size: 16px;
         font-weight: 500;
         text-overflow: ellipsis;
@@ -81,7 +80,7 @@ export const CardBox = styled.div`
         overflow: hidden;
         cursor:pointer;
         }
-        .sn{
+        .value{
         font-size: 12px;
         }
         }
@@ -105,14 +104,14 @@ export const CardBox = styled.div`
         }
       .airCardCold{
        color: #FFFFFF;
-           background: linear-gradient(180deg, rgb(58 101 228) 0%, rgb(23 135 244) 0%, rgb(230 235 244) 100%, rgb(235 243 245) 100%);
+       background: linear-gradient(180deg, rgb(113 146 241) 0%, rgb(77 158 236) 0%, rgb(230 235 244) 100%, rgb(235 243 245) 100%);
        }
    .airCardHot{
        color: #FFFFFF;
-      background: linear-gradient(180deg, rgb(228 231 239) 0%, rgb(240 116 6) 0%, rgb(232 206 71) 81%, rgb(242 221 89) 100%);
+       background: linear-gradient(180deg, rgb(228 231 239) 0%, rgb(240 116 6) 0%, rgb(232 206 71) 81%, rgb(242 221 89) 100%);
    }
    .airCardWindy{
-       background: linear-gradient(180deg, rgb(176 255 163) 0%, rgba(247, 247, 247, 1) 100%);
+         background:linear-gradient(180deg, rgb(190 231 183) 0%, rgba(247, 247, 247, 1) 100%);
    }
    .airCardDehumidification{
            background: linear-gradient(180deg, rgb(138 170 187) 0%, rgba(247, 247, 247, 1) 100%);

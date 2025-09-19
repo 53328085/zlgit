@@ -200,12 +200,6 @@ export const FormComp = (props) => {
             labelCol={{
                 span: 9
             }}
-        /*  initialValues={{
-             channel1:'通道1',
-             channel2:'通道2',
-             channel3:'通道3',
-             channel4:'通道4'
-         }} */
         >
             <Row className={style.customItem}>
                 <Col span={10}>
