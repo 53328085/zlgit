@@ -186,9 +186,9 @@ export default function Index(props) {
         name: formDate.name,
         schemeId: formDate.scheme,
         operater: formDate.operator,
-        ioState: formDate.status,
-        dtSatrt: formDate.operatorTime && formDate.operatorTime[0] ? moment(formDate.operatorTime[0]).format('YYYY-MM-DD 00:00:00') : moment().format('YYYY-MM-DD 00:00:00'),
-        dtEnd: formDate.operatorTime && formDate.operatorTime[1] ? moment(formDate.operatorTime[1]).format('YYYY-MM-DD 00:00:00') : moment().format('YYYY-MM-DD 00:00:00'),
+        result: formDate.status,
+        dtStart: formDate.operatorTime && formDate.operatorTime[0] ? moment(formDate.operatorTime[0]).format('YYYY-MM-DD 00:00:00') : moment().format('YYYY-MM-DD 00:00:00'),
+        dtEnd: formDate.operatorTime && formDate.operatorTime[1] ? moment(formDate.operatorTime[1]).format('YYYY-MM-DD 23:59:59') : moment().format('YYYY-MM-DD 23:59:59'),
       }
       let { data, success, total, errMsg } = await usePage({}, params)
       if (success && Array.isArray(data) && data.length) {
@@ -326,9 +326,9 @@ export default function Index(props) {
       name: formDate.name,
       schemeId: formDate.scheme,
       operater: formDate.operator,
-      ioState: formDate.status,
-      dtSatrt: formDate.operatorTime && formDate.operatorTime[0] ? moment(formDate.operatorTime[0]).format('YYYY-MM-DD 00:00:00') : moment().format('YYYY-MM-DD 00:00:00'),
-      dtEnd: formDate.operatorTime && formDate.operatorTime[1] ? moment(formDate.operatorTime[1]).format('YYYY-MM-DD 00:00:00') : moment().format('YYYY-MM-DD 00:00:00'),
+      result: formDate.status,
+      dtStart: formDate.operatorTime && formDate.operatorTime[0] ? moment(formDate.operatorTime[0]).format('YYYY-MM-DD 00:00:00') : moment().format('YYYY-MM-DD 00:00:00'),
+      dtEnd: formDate.operatorTime && formDate.operatorTime[1] ? moment(formDate.operatorTime[1]).format('YYYY-MM-DD 23:59:59') : moment().format('YYYY-MM-DD 23:59:59'),
     }
     return usePage({}, params).then((res) => {
 
@@ -381,7 +381,7 @@ export default function Index(props) {
           >
             <Space size={16}>
               <Item label="空调名称" name="name" >
-                <Input style={{ width: "260px" }} placeholder='请输入空调名称/通信地址' />
+                <Input style={{ width: "260px" }} placeholder='请输入设备名称/通信地址' allowClear />
               </Item>
               <Item name="operator" hidden>
                 <Input type="hidden" />
@@ -395,7 +395,7 @@ export default function Index(props) {
                   />
                 </Item> :
                 <Item label="操作人" name="operator">
-                  <Input style={{ width: "128px" }} placeholder='请输入姓名' />
+                  <Input style={{ width: "128px" }} placeholder='请输入姓名' allowClear />
                 </Item>}
               <Item label="控制状态" name="status" >
                 <Select
@@ -422,7 +422,7 @@ export default function Index(props) {
               name={tabId == 0 ? '空调自动控制记录' : '空调手动控制记录'}></BlueColumn>
             <CustButtonT text="重新控制" onClick={RecontrolAir}></CustButtonT>
           </div>
-          <UserTable ref={tableRef} sheetName={tabId == 0 ? '空调自动控制记录' : '空调手动控制记录'} onExport={onExport} rowKey={(columns) => columns.key} columns={tabId == 0 ? AirAutomaticControlTableColumns({ OpenAirScheme: handleOpenAirScheme }) : AirManualControlTableColumns} {...tableProps}
+          <UserTable ref={tableRef} sheetName={tabId == 0 ? '空调自动控制记录' : '空调手动控制记录'} onExport={onExport} rowKey={(columns) => columns.id} columns={tabId == 0 ? AirAutomaticControlTableColumns({ OpenAirScheme: handleOpenAirScheme }) : AirManualControlTableColumns} {...tableProps}
             rowSelection={{
               type: 'checkbox',
               ...rowSelectionCheckbox,
