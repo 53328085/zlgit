@@ -64,6 +64,7 @@ export default function Index() {
     if (selectedAirs.length == 0)
       return message.warning("请选择要控制的空调设备");
     controlRef.current.onOpen();
+    console.log(formControl.validateFields())
   };
   // 处理单个选择
   const handleSingleSelect = (airId, checked) => {
@@ -148,6 +149,7 @@ export default function Index() {
             energytype={1}
             allselect={true}
             showSearch={true}
+            scroll={820}
             treeName="空调设备列表"
           />
         </div>
@@ -198,17 +200,13 @@ export default function Index() {
                       <div
                         key={airItem.id}
                         size="small"
-                        className={`${airItem?.fields[0]?.value == "制冷" &&
-                          airItem.ioState == 1
+                        className={`${airItem?.fields[1]?.value == "制冷"
                           ? "airCardCold"
-                          : airItem?.fields[0]?.value == "制热" &&
-                            airItem.ioState == 1
+                          : airItem?.fields[1]?.value == "制热"
                             ? "airCardHot"
-                            : airItem?.fields[0]?.value == "送风" &&
-                              airItem.ioState == 1
+                            : airItem?.fields[1]?.value == "送风"
                               ? "airCardWindy"
-                              : airItem?.fields[0]?.value == "除湿" &&
-                                airItem.ioState == 1
+                              : airItem?.fields[1]?.value == "除湿"
                                 ? "airCardDehumidification"
                                 : "closeAir"
                           } cardCommon`}
@@ -218,8 +216,8 @@ export default function Index() {
                             display: "flex",
                             justifyContent: "space-between",
                             color:
-                              (airItem?.fields[0]?.value == "制冷" ||
-                                airItem?.fields[0]?.value == "制热") &&
+                              (airItem?.fields[1]?.value == "制冷" ||
+                                airItem?.fields[1]?.value == "制热") &&
                                 airItem.state == 1
                                 ? "#fff"
                                 : "",
@@ -231,17 +229,17 @@ export default function Index() {
                               onChange={e => handleSingleSelect(airItem.id, e.target.checked)}
                             />
                             <div className="topInfo">
-                              <div className="address" title={airItem.name}>{airItem.name}</div>
-                              <div className="sn"> ({airItem.cSn})</div>
+                              <div className="name" title={airItem.name}>{airItem.name}</div>
+                              <div className="value"> ({airItem.cSn})</div>
                             </div>
                           </div>
                           <img
                             className="airIcon"
                             src={
                               airItem.type == 1
-                                ? multAir
+                                ? splitAir
                                 : airItem.type == 2 || airItem.type == 3
-                                  ? splitAir
+                                  ? multAir
                                   : airItem.type == 4
                                     ? centralAir
                                     : null
@@ -280,11 +278,11 @@ export default function Index() {
                               onChange={e => handleSingleSelect(airItem.cSn, e.target.checked)}
                             /> */}
                             <div className="topInfo">
-                              <div className="address" title={airItem.name}>{airItem.name}</div>
-                              <div className="sn">  ({airItem.cSn})</div>
+                              <div className="name" title={airItem.name}>{airItem.name}</div>
+                              <div className="value">  ({airItem.cSn})</div>
                             </div>
                           </div>
-                          <img className="airIcon" src={airItem.type == 1 ? multAir : (airItem.type == 2 || airItem.type == 3) ? splitAir : airItem.type == 4 ? centralAir : null} ></img>
+                          <img className="airIcon" src={airItem.type == 1 ? splitAir : (airItem.type == 2 || airItem.type == 3) ? multAir : airItem.type == 4 ? centralAir : null} ></img>
                         </div>
                         <div className="content">
                           <span className="temperature" >-</span>℃
@@ -305,11 +303,11 @@ export default function Index() {
                               onChange={e => handleSingleSelect(airItem.id, e.target.checked)}
                             />
                             <div className="topInfo">
-                              <div className="address" title={airItem.name}>{airItem.name}</div>
-                              <div className="sn"> ({airItem.cSn})</div>
+                              <div className="name" title={airItem.name}>{airItem.name}</div>
+                              <div className="value"> ({airItem.cSn})</div>
                             </div>
                           </div>
-                          <img className="airIcon" src={airItem.type == 1 ? multAir : (airItem.type == 2 || airItem.type == 3) ? splitAir : airItem.type == 4 ? centralAir : null} ></img>
+                          <img className="airIcon" src={airItem.type == 1 ? splitAir : (airItem.type == 2 || airItem.type == 3) ? multAir : airItem.type == 4 ? centralAir : null} ></img>
                         </div>
                         <div className="content">
                           <span className="temperature" >-</span>℃

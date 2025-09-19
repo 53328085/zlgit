@@ -250,7 +250,7 @@ export const FormComp = (props) => {
             form={form}
             colon={false}
             labelCol={{
-                span: 6,
+                span: 9
             }}
         /*  initialValues={{
                channel1:'通道1',
@@ -771,7 +771,7 @@ export const EditFormComp = (props) => {
             form={form}
             colon={false}
             labelCol={{
-                span: 6,
+                span: 9
             }}
             preserve={false}
         >
