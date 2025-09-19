@@ -200,13 +200,13 @@ export default function Index() {
                       <div
                         key={airItem.id}
                         size="small"
-                        className={`${airItem?.fields[1]?.value == "制冷"
+                        className={`${airItem?.fields[0]?.value == "制冷"
                           ? "airCardCold"
-                          : airItem?.fields[1]?.value == "制热"
+                          : airItem?.fields[0]?.value == "制热"
                             ? "airCardHot"
-                            : airItem?.fields[1]?.value == "送风"
+                            : airItem?.fields[0]?.value == "送风"
                               ? "airCardWindy"
-                              : airItem?.fields[1]?.value == "除湿"
+                              : airItem?.fields[0]?.value == "除湿"
                                 ? "airCardDehumidification"
                                 : "closeAir"
                           } cardCommon`}
@@ -216,8 +216,8 @@ export default function Index() {
                             display: "flex",
                             justifyContent: "space-between",
                             color:
-                              (airItem?.fields[1]?.value == "制冷" ||
-                                airItem?.fields[1]?.value == "制热") &&
+                              (airItem?.fields[0]?.value == "制冷" ||
+                                airItem?.fields[0]?.value == "制热") &&
                                 airItem.state == 1
                                 ? "#fff"
                                 : "",

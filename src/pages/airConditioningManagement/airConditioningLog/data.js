@@ -59,8 +59,8 @@ export const AirManualControlTableColumns = [
   },
   {
     title: "空调温度（℃）",
-    dataIndex: "temperature",
-    key: "temperature",
+    dataIndex: "temperatureName",
+    key: "temperatureName",
   }, {
     title: "当前室内温度（℃）",
     dataIndex: "ambientTemp",
