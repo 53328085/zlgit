@@ -1,9 +1,9 @@
-import React, {useEffect, useMemo, useState } from 'react'
+import React, {useEffect, useMemo, useState} from 'react'
 import style from './configure/style.module.less';
 import _ from 'lodash'
 import { useRequest } from 'ahooks'; 
 import {useSelector,useDispatch} from 'react-redux'
-import {selectProjectId,getCurrProjectInfo,currProject, getWebsiteState, intl,adaptation,themeColor} from '@redux/systemconfig.js'
+import {selectProjectId,getCurrProjectInfo,currProject, getWebsiteState, intl} from '@redux/systemconfig.js'
 import { UISummary, Monitoring,HomeRuntime} from '@api/api.js'
 import { useReactive } from 'ahooks';
 import {CustTransO} from "@com/useButton"
@@ -59,11 +59,10 @@ import Loadlate from "@com/defaultHome/loadlate" // 负荷率
 // Roomnum, RoomCapacity, Roomload, Loadlate
 
 import {isObject} from '@com/usehandler'
-import Context from "@com/content"
 import RGL, { WidthProvider } from 'react-grid-layout'
 const ReactGridLayout = WidthProvider(RGL);
-//import './configure/style.css';
-//import './index.css';
+import './configure/style.css';
+import './index.css';
 import { message } from 'antd';
 
 const {GetDistributionInfo} = HomeRuntime
@@ -71,8 +70,7 @@ const {GetDistributionInfo} = HomeRuntime
 export default function Index() {
   const lang = useSelector(intl)
   const currproject = useSelector(currProject)
-  const {laptop} = useSelector(adaptation) || {}
-  const {previewrbgcolor} =useSelector(themeColor)
+  const dispatch=useDispatch()
 
   const { RuntimeStatus } = Monitoring.Runtime
   const [layoutItem, setlayoutItem] = useState([])
@@ -115,7 +113,7 @@ export default function Index() {
      if(projectId) {
       getData()
       getDistributionInfo()
-   
+     // dispatch(getWebsiteState(projectId))
     }
    }, [projectId])
   //RGL布局
@@ -126,6 +124,14 @@ export default function Index() {
     margin:[16, 16],
   })
 
+  // useEffect(()=>{
+  //   if(!JSON.parse(sessionStorage.getItem('layoutItem'))) return;
+  //   let itemValue = JSON.parse(sessionStorage.getItem('layoutItem'))
+  //   for(let value = 0 ; value<itemValue.length;value++){
+  //     itemValue[value].static = true;
+  //   }
+  //   setlayoutItem(itemValue)
+  // },[])
 
   const getLayoutData = () => {
     return QueryUISummary(projectId).then(res => {
@@ -195,7 +201,7 @@ export default function Index() {
         { i.indexOf('储能月收益') != -1 ? <MonthIncome type={'runtTime'}></MonthIncome> : null }
         { i.indexOf('储能日收益') != -1 ? <DayIncome type={'runtTime'}></DayIncome> : null }
         { i.indexOf('储能收益统计') != -1 ? <StorageStatistics type={'runtTime'}></StorageStatistics> : null }
-        {i.substring(0, end)=='充放电量趋势' ? <StorageTrend type={'runtTime'}></StorageTrend> : null }
+        { i.indexOf('充放电量趋势') != -1 ? <StorageTrend type={'runtTime'}></StorageTrend> : null }
         { i.indexOf('站点soc') != -1 ? <SocData type={'runtTime'}></SocData> : null }
         {i.indexOf('能耗排名') != -1 ? <EnergyRanking type={'runtTime'}></EnergyRanking> : null}
         { i.indexOf('分类能耗') != -1 ? <EnergyProportion type={'runtTime'}></EnergyProportion> : null }
@@ -206,17 +212,32 @@ export default function Index() {
       </div>
     )
   }
-
+ // Roomnum, RoomCapacity, Roomload, Loadlate
+/*   const GetProjectInfo=async()=>{
+   
+    try {
+  
+     const {data ,success, errMsg} = await HomeRuntime.GetProjectInfo(projectId)
+     if(success){
+         setCurrproject(data??{})
+         dispatch(getCurrProjectInfo(data || {}))
+     }
+    } catch (error) {
+      console.log(error)
+    }
+  }
+  useEffect(() => {
+    GetProjectInfo()
+  }, []) */
+  
 
 
 
   return (
-    <div className={style.mainContent} style={{backgroundColor: previewrbgcolor || '#135abd'}} >
-      <Context.Provider value={{laptop}}>
-      <ReactGridLayout layout={layoutItem} {...defaultProps} style={{backgroundColor: previewrbgcolor || '#135abd'}}>
+    <div className={style.mainContent} style={{backgroundColor:'#135abd'}}>
+      <ReactGridLayout layout={layoutItem} {...defaultProps} >
         {_.map( layoutItem, el =>createElement(el) )} 
       </ReactGridLayout>
-      </Context.Provider>
     </div>
   )
 }
