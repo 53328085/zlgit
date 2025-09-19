@@ -42,19 +42,20 @@ export const cols = [
     key: "name",
   },
   {
+    title: "空调编号",
+    dataIndex: "sn",
+    key: "sn",
+  },
+  {
     title: "空调型号",
     dataIndex: "model",
     key: "model",
   },
   {
-    title: "空调控制器",
-    dataIndex: "cSn",
-    key: "cSn",
-  },
-  {
-    title: "计量设备",
-    dataIndex: "mSn",
-    key: "mSn",
+    title: "空调类型",
+    dataIndex: "type",
+    key: "type",
+    render: (type) => airconditioner.find((a) => a.value == type)?.label,
   },
   {
     title: "所属网关",
@@ -62,10 +63,14 @@ export const cols = [
     key: "gateWay",
   },
   {
-    title: "空调类型",
-    dataIndex: "type",
-    key: "type",
-    render: (type) => airconditioner.find((a) => a.value == type)?.label,
+    title: "控制器",
+    dataIndex: "cSn",
+    key: "cSn",
+  },
+  {
+    title: "计量设备",
+    dataIndex: "mSn",
+    key: "mSn",
   },
   {
     title: "用能类型",
@@ -183,7 +188,7 @@ export const items = ({ csn = [], msn = [], model = [] }) => (
   </Formbox>
 );
 
-export const initems = ({ model = [],cusac, setcusac, params,csn, }) => (
+export const initems = ({ model = [],cusac, setcusac, params,csn,onCsnChange }) => (
   <Form.List name="acs" initialValue={[{}]}>
     {(fileds, { add,remove }) => {
       return (
@@ -266,8 +271,7 @@ export const initems = ({ model = [],cusac, setcusac, params,csn, }) => (
                 </Form.Item>
                
               </div>
-              <div key="right">
-                
+              <div key="right">                
                 <Form.Item label="设备编号" rules={rules} name={[name, "sn"]}  tooltip="设备编号与控制器编号一致">
                   <Input disabled></Input>
                 </Form.Item>
