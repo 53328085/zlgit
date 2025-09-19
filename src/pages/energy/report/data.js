@@ -370,3 +370,18 @@ export const aqtabs = [   //安庆旺旺
 ]
 export const labelStyle = { width: "65px", padding: "4px 16px", background: "#ecf5ff" }
 export const contentStyle = { padding: "4px 16px" } 
+export const reportTypeopt=[
+  {
+    label: "总用电报表",
+    value: 1
+  },
+  {
+    label: "反向有功报表",
+    value: 2
+  },
+  {
+    label: "正向有功报表",
+    value: 3
+  },
+]
+//1.总用电报表  2.反向有功报表 3.正向有功报表

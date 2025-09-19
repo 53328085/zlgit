@@ -1,5 +1,5 @@
 import React, { useState, useCallback, useRef, useEffect, useMemo } from 'react'
-import { Checkbox, DatePicker, message, Tooltip, Descriptions, Radio } from 'antd'
+import { Checkbox, DatePicker, message, Tooltip, Descriptions, Radio, Select } from 'antd'
 import moment from 'moment'
 
 import { useOutletContext } from 'react-router-dom'
@@ -15,7 +15,7 @@ import { energyReport } from '@api/api'
 import CModal from '@com/useModal'
 import { ExportExcel, CustButton } from '@com/useButton'
 import { Serach } from "@com/comstyled"
-import { cols, conscols, timecols, typecols, fromlot, shitcols,aqtabs, etabs, wtabs, labelStyle, contentStyle } from './data'
+import { cols, conscols, timecols, typecols, fromlot, shitcols,aqtabs, etabs, wtabs, labelStyle, contentStyle,reportTypeopt } from './data'
 import Ichart from '@com/useEcharts/Ichart';
 
 
@@ -69,7 +69,7 @@ export default function Index() {
   const [endDateTime, setEndDateTime] = useState('')
 
   const [isrange, setIsrange] = useState({ range: false })
-
+ 
   const [value, setvalue] = useState('0')
   const [line, setLine] = useState(0)
   const [treeId, setTreeId] = useState()
@@ -77,6 +77,7 @@ export default function Index() {
 
   const [concolumns, setConcolumns] = useState([])
   const [alike, setAlike] = useState("")
+  const [reportType, setReportType] = useState(1)
   const onSearch = (e) => {
     setAlike(e)
   }
@@ -193,7 +194,7 @@ const tabs = useMemo(()=> {
       
     }) */
 
-  const getTableData = ({ current, pageSize, areaId, projectId, type, date, energytype, treeId, index, line, isrange, dates, alike }) => {
+  const getTableData = ({ current, pageSize, areaId, projectId, type, date, energytype, treeId, index, line, isrange, dates, alike,reportType }) => {
     //  console.log(date)
 
 
@@ -225,7 +226,8 @@ const tabs = useMemo(()=> {
       pageSize,
       queryType: line,
       ids: treeId,
-      type
+      type,
+      reportType,
     }
     setStartDateTime(range ? dates?.[0].format("YYYY-MM-DD HH:mm") : date?.startOf(dateType).format("YYYY-MM-DD HH:mm"))
     setEndDateTime(range ? dates?.[1].format("YYYY-MM-DD HH:mm") : date?.endOf(dateType).format("YYYY-MM-DD HH:mm"))
@@ -326,9 +328,9 @@ const tabs = useMemo(()=> {
 
 
   }
-  const { tableProps } = useAntdTable((params) => getTableData({ ...params, areaId, projectId, type, date, energytype, treeId, index, line, isrange, dates, alike }), {
+  const { tableProps } = useAntdTable((params) => getTableData({ ...params, areaId, projectId, type, date, energytype, treeId, index, line, isrange, dates, alike,reportType }), {
     defaultParams: [{ current: 1, pageSize: 14 }],
-    refreshDeps: [areaId, projectId, type, date, energytype, treeId, index, line, isrange, dates, alike]
+    refreshDeps: [areaId, projectId, type, date, energytype, treeId, index, line, isrange, dates, alike,reportType]
   })
   
   // 对比分析 图表
@@ -479,6 +481,9 @@ const tabs = useMemo(()=> {
                   />
                 </div>
               </div>
+              }
+              {
+               value=="4" && <Select value={reportType} options={reportTypeopt} onChange={(e)=> setReportType(e)} style={{width: "200px", marginBottom: "16px"}}></Select>
               }
               {/* {
                 value == "0" && <div className='search'>

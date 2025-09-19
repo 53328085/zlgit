@@ -1,7 +1,0 @@
-@import "react-grid-layout/css/styles.css";
-@import "react-resizable/css/styles.css";
-.react-grid-layout {
-    /* background: #eee; */
-    /* height: auto!important; */
-    min-height: 100%!important;
-  }

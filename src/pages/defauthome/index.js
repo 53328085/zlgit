@@ -62,8 +62,8 @@ import {isObject} from '@com/usehandler'
 import Context from "@com/content"
 import RGL, { WidthProvider } from 'react-grid-layout'
 const ReactGridLayout = WidthProvider(RGL);
-//import './configure/style.css';
-//import './index.css';
+import './configure/style.css';
+import './index.css';
 import { message } from 'antd';
 
 const {GetDistributionInfo} = HomeRuntime
@@ -211,7 +211,7 @@ export default function Index() {
 
 
   return (
-    <div className={style.mainContent} style={{backgroundColor: previewrbgcolor || '#135abd'}} >
+    <div className={style.mainContent} >
       <Context.Provider value={{laptop}}>
       <ReactGridLayout layout={layoutItem} {...defaultProps} style={{backgroundColor: previewrbgcolor || '#135abd'}}>
         {_.map( layoutItem, el =>createElement(el) )} 
