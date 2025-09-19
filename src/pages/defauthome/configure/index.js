@@ -534,7 +534,7 @@ export default function Index() {
     <div className={style.mainContent} style={{ backgroundColor: '#eee' }}>
       <Context.Provider value={{laptop}}>
       {contextHolder}
-      <ReactGridLayout layout={layoutItem} onLayoutChange={onLayoutChange} {...defaultProps}   onDrop={onDrop} style={{backgroundColor: previewrbgcolor || '#135abd'}} >
+      <ReactGridLayout layout={layoutItem} onLayoutChange={onLayoutChange} {...defaultProps} isDroppable={true}   onDrop={onDrop} style={{backgroundColor: previewrbgcolor || '#135abd'}} >
         {_.map(layoutItem, el => createElement(el))}
       </ReactGridLayout>
       <div className={style.selectMenu}>
