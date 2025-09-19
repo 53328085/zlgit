@@ -5,7 +5,7 @@ import {useOutletContext} from "react-router-dom"
 import {useTranslation} from 'react-i18next'
 import styled from 'styled-components';
 import style from './style.module.less'
-import UseTransfer from '@com/useTransfer'
+ 
 import { useRequest } from 'ahooks';
 import {useSelector} from 'react-redux'
 import {selectProjectId, selectOneLevelDefaultId, publishState, selectcurlRommid} from '@redux/systemconfig.js'
