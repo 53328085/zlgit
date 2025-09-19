@@ -254,7 +254,7 @@ export default function Index() {
 
  const addInac =async(row)=> {
    try {
-    console.log(row)
+ 
     const {id,areaId,gateWay,useType,dataSource, } = row
     let csn=[]
     if(!Number.isInteger(projectId)) return message.warning("没有创建项目")
@@ -262,7 +262,7 @@ export default function Index() {
       if(csnData.success && Array.isArray(csnData.data) && csnData?.data?.length > 0) {
          csn = csnData.data
       }
-     console.log("csn",csn)
+   
      setCurRow({csn,...row, })
      let {success, data, errMsg} =  await  useQueryInteriorACs({id, projectId})
      if(success && Array.isArray(data)&&data.length>0) { 
