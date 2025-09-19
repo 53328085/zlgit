@@ -7,7 +7,7 @@ import _, { result } from 'lodash'
 import { useSelector } from 'react-redux'
 import { selectProjectId,themeColor,adaptation } from '@redux/systemconfig.js'
 import { UISummary } from '@api/api.js'
- 
+
 import CompanyMessage from '../../../components/defaultHome/companyMessage'
 import TodayWarning from '../../../components/defaultHome/todayWarning'
 import OrderDetail from '../../../components/defaultHome/orderDetail'
@@ -36,21 +36,21 @@ import GatewayMessage from '@com/defaultHome/gatewayMessage'
 import DeviceMessage from '@com/defaultHome/deviceMessage'
 import ChooperMessage from '@com/defaultHome/chooperMessage'
 import EnergyRanking from '@com/defaultHome/energyRank'
- 
+
 import Sensor from '@com/defaultHome/sensorMessage' //传感器信息
- 
+
 import Transformer from '@com/defaultHome/transformerMessage' //变压器信息
- 
+
 import Gxcwmg from '@com/defaultHome/gxcwMessage' //光纤测温信息
 import Cdcwmg from '@com/defaultHome/cdcwMessage' //光纤测温信息
- 
- 
+
+
 import TodayElectricity from "@com/defaultHome/todayElectricity" // TodayElectricity 今日用电量
- 
+
 import TransformerTotal from "@com/defaultHome/transformerTotal" // TransformerTotal 变压器总负荷
- 
+
 import TransformerNum from "@com/defaultHome/transformerNum" // TransformerNum 变压器数量
- 
+
 import Inspection from "@com/defaultHome/inspection" // Inspection 本月巡检
 import RoomNum from '@com/defaultHome/roomNum' // 变配电站数量（个）
 import RoomCapacity from '@com/defaultHome/roomCapacity' // 总额度容量
@@ -59,14 +59,14 @@ import Loadlate from "@com/defaultHome/loadlate" // 负荷率
 import {useTranslation} from "react-i18next"
 import Context from "@com/content"
 // TodayElectricity 今日用电量  TransformerTotal 变压器总负荷 TransformerNum 变压器数量  Inspection 本月巡检
- 
- 
+
+
 import RGL, { WidthProvider } from 'react-grid-layout'
 const ReactGridLayout = WidthProvider(RGL);
 import { MenuUnfoldOutlined } from '@ant-design/icons';
 import './style.css';
 import './index.css';
- 
+
 import company from './itemImgs/company.png'
 import device from './itemImgs/device.png'
 import safe from './itemImgs/safe.png'
@@ -87,7 +87,7 @@ import transformer from './itemImgs/transformer.png';
 import humiture from './itemImgs/humiture.png'
 import energyCost from './itemImgs/energyCost.png'
 import energyTrend from './itemImgs/energyTrend.png'
- 
+
 import energyRank from './itemImgs/energyRank.png'
 import charge from './itemImgs/charge.png'
 import discharge from './itemImgs/discharge.png'
@@ -109,7 +109,7 @@ import roomnumv from './itemImgs/roomnum.svg'
 import capacityv from './itemImgs/capacity.svg'
 import roomloadv from './itemImgs/roomload.svg'
 import transformerTota from './itemImgs/transformerTotal.svg' // 变压器总负荷
- 
+
 import { useRequest } from 'ahooks';
 import Cmodal from "@com/useModal"
 import {Serach} from "@com/comstyled"
@@ -136,12 +136,12 @@ const CDrawer = styled(Drawer)`
         background: transparent;
     }
     .ant-drawer-body{
- 
+
         background-color: rgba(0, 0, 0, 0.6);
         padding: 16px!important;
     }
   }
- 
+
 `
 export default function Index() {
   const {t} = useTranslation(["button","overview", "comm"])
@@ -158,9 +158,9 @@ export default function Index() {
   const [confirmModal, setConfirmModal] = useState(false);
   const projectId = useSelector(selectProjectId)
   const {previewrbgcolor} =useSelector(themeColor)
- 
+
   const { InsertUISummary, QueryUISummary } = UISummary
- 
+
   const [activeName, setactiveName] = useState(null);
   const SelectTab = (props) => {
     return <div className={style.selectTab} style={{ backgroundColor: props.tabName == activeName ? '#237ae4' : '#003366' }} onClick={() => changeTab(props.tabName)}>
@@ -202,9 +202,9 @@ export default function Index() {
     { img: spread, itemName: '告警分布', draggable: false },
     { img: inspection, itemName: '本月巡检', draggable: false },
   ]
- 
+
   // 配电房信息
- 
+
   const disItems = [
     { img: distribution, itemName: '配电房监测', draggable: false },  // 变压器数量
   /*   { img: transformer, itemName: '变压器监控', draggable: false },
@@ -219,7 +219,7 @@ export default function Index() {
   ]
  
   // 能耗统计
- 
+
   const energyItems = [
     { img: energyCost, itemName: '今日用电量', draggable: true }, // 今日用电量
     { img: energyTrend, itemName: '月度能耗', draggable: true },  
@@ -272,9 +272,9 @@ export default function Index() {
       setDragListCopy(storageItems)
     }
   }
- 
+
   const [basicOpen, setbasicOpen] = useState(false);
- 
+
   const [layoutItem, setlayoutItem] = useState([])
   const [newCounter, setNewCounter] = useState(0)
   const [classOfName, setclassOfName] = useState('')
@@ -283,7 +283,7 @@ export default function Index() {
     setbasicOpen(false);
     setactiveName('');
   }
- 
+
   const AddItem = (props) => {
     //props.dragTag
     return (
@@ -293,7 +293,7 @@ export default function Index() {
       </div>
     )
   }
- 
+
   //RGL布局
   const [defaultProps, setDefaultProps] = useState({
     className: 'layout',
@@ -301,11 +301,11 @@ export default function Index() {
     cols: 8,
     margin: [16, 16]
   })
- 
+
   // useEffect(()=>{
   //   JSON.parse(sessionStorage.getItem('layoutItem')) ? setlayoutItem(JSON.parse(sessionStorage.getItem('layoutItem'))) : null
   // },[])
- 
+
   const getLayoutData = () => {
     return QueryUISummary(projectId).then(res => {
       let { success, data } = res
@@ -320,14 +320,14 @@ export default function Index() {
       }
     })
   }
- 
+
   const { queryData } = useRequest(getLayoutData, {
     onSuccess: (result, params) => {
       sessionStorage.setItem('layoutItem', JSON.stringify(result.list))
       setlayoutItem(result.list)
     }
   });
- 
+
   const InsertLayoutData = () => {
     return InsertUISummary(projectId, layoutItem).then(res => {
       let { success } = res
@@ -342,14 +342,14 @@ export default function Index() {
       }
     })
   }
- 
+
   const { run } = useRequest(InsertLayoutData, {
     manual: true,
     onSuccess: (result, params) => {
       showConfirmModal()
     }
   })
- 
+
   const createElement = el => {
     const removeStyle = {
       position: "absolute",
@@ -376,20 +376,20 @@ export default function Index() {
         {i.substring(0, end)=='网关信息' ? <GatewayMessage></GatewayMessage> : null}
         {i.indexOf('电表信息') != -1 ? <DeviceMessage></DeviceMessage> : null}
         {i.indexOf('断路器信息') != -1 ? <ChooperMessage></ChooperMessage> : null}
- 
+
         {i.indexOf('传感器信息') != -1 ? <Sensor></Sensor> : null} 
         {i.indexOf('变压器信息') != -1 ? <Transformer></Transformer> : null} 
         {i.indexOf('触点测温') != -1 ? <Cdcwmg></Cdcwmg> : null} 
         {i.indexOf('光纤测温') != -1 ? <Gxcwmg></Gxcwmg> : null} 
- 
+
         {i.substring(0, end)=='今日用电量' ? <TodayElectricity></TodayElectricity> : null} 
- 
+
         {i.indexOf('变压器总负荷') != -1 ? <TransformerTotal></TransformerTotal> : null} 
- 
+
         {i.indexOf('配电房监测') != -1 ? <TransformerNum></TransformerNum> : null} 
- 
+
         {i.substring(0, end)=='本月巡检' ? <Inspection></Inspection> : null} 
- 
+
         {i.indexOf('月度能耗') != -1 ? <EnergyTrend></EnergyTrend> : null}     
         {i.indexOf('实时负荷率') != -1 ? <RealLoad></RealLoad> : null}
         {i.indexOf('告警分布') != -1 ? <WarningSpread></WarningSpread> : null}
@@ -416,7 +416,7 @@ export default function Index() {
   const onRemoveItem = (i) => {
     setlayoutItem(_.reject(layoutItem, { i: i }));
   }
- 
+
  // TodayElectricity 今日用电量  TransformerTotal 变压器总负荷 TransformerNum 配电房监测  Inspection 本月巡检
  let layouts =[
   '告警分布','本月巡检','配电房监测','变压器总负荷',
@@ -480,38 +480,38 @@ export default function Index() {
       message.warning('当前模块尚未配置，请等待后续版本更新!')
       return;
     }
- 
- 
+
+
   }
- 
+
   const onDrop = (layouts, layoutValue, _event) => {
     onAddlayout(layoutValue.x, layoutValue.y)
   }
- 
+
   const onLayoutChange = (layout) => {
     if (layout.length == 0) return;
     if (layout[layout.length - 1].i == '__dropping-elem__') return;
     setlayoutItem(layout)
   }
- 
+
   const showResetModal = () => {
     setResetModal(true);
   }
- 
+
   const showConfirmModal = () => {
     // sessionStorage.setItem('layoutItem', JSON.stringify(layoutItem))
     setConfirmModal(true);
   }
- 
+
   const resetOk = () => {
     setlayoutItem(JSON.parse(sessionStorage.getItem('layoutItem')))
     setResetModal(false)
   }
- 
+
   const confirmOk = () => {
     setConfirmModal(false)
   }
- 
+
   const handleCancel = () => {
     setResetModal(false)
     setConfirmModal(false)
@@ -529,12 +529,12 @@ export default function Index() {
       setDragList(arr)
     }
   }
- 
+
   return (
     <div className={style.mainContent} style={{ backgroundColor: '#eee' }}>
       <Context.Provider value={{laptop}}>
       {contextHolder}
-      <ReactGridLayout layout={layoutItem} onLayoutChange={onLayoutChange} {...defaultProps} isDroppable={true}   onDrop={onDrop} style={{backgroundColor: previewrbgcolor || '#135abd'}} >
+      <ReactGridLayout layout={layoutItem} onLayoutChange={onLayoutChange} {...defaultProps} isDroppable={true} onDrop={onDrop} style={{backgroundColor: previewrbgcolor || '#135abd'}} >
         {_.map(layoutItem, el => createElement(el))}
       </ReactGridLayout>
       <div className={style.selectMenu}>
@@ -547,11 +547,11 @@ export default function Index() {
       </div>
       <div className={style.reset} onClick={() => showResetModal()}>{t("button:reset")}</div>
       <div className={style.confirm} onClick={run}>{t("button:save")}</div>
- 
+
       <Cmodal title={t("comm:Resetprompt")} mold="cust" type="warn" open={resetModal} onOk={resetOk} onCancel={handleCancel} width={512}  closable={false}  okText={t("button:reset")} >        
            {t("overview:resetlayout")}
       </Cmodal>
- 
+
       <Cmodal title={t("overview:Saveinterface")} mold="cust" open={confirmModal} onOk={confirmOk} onCancel={handleCancel} width={512}  closable={false}  okText={t("comm:Close")}   cancelButtonProps={{ style: { display: 'none' } }}>
         
         <div className={style.confirmBody}>
@@ -559,7 +559,7 @@ export default function Index() {
           <span >{t("overview:layoutsuccessfully")}</span>
         </div>
       </Cmodal>
- 
+
       <CDrawer placement='left' onClose={onClose} open={basicOpen} mask={false} destroyOnClose={true} >
         <div className={style.searchInput}>
           <Serach
