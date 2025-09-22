@@ -59,8 +59,8 @@
   }
   
   .react-resizable-hide > .react-resizable-handle {
-    display: none;
-  }
+   display: none;
+  } 
   
   .react-grid-item > .react-resizable-handle.react-resizable-handle-sw {
     bottom: 0;
