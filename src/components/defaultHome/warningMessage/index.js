@@ -114,7 +114,7 @@ export default function DefaultHome(props) {
 
   }, [state.alarmList.length])
   const sty = {
-    height: '200px'
+    minHeight: '200px'
   }
   return (
     <Titlelayout title={t("LatestAlarm")} {...fs} style={sty}>

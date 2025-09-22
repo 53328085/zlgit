@@ -86,7 +86,7 @@ export default function DefaultHome(props){
   }, [iszh])
   
   return (
-         <Titlelayout title={t("overview:WaterConsumption")} {...fs} style={{height: "200px"}} layout="flex">
+         <Titlelayout title={t("overview:WaterConsumption")} {...fs} style={{minHeight: "200px"}} layout="flex">
           <div  style={{flex: 1, display: 'flex'}}>
            <Ichart  {...option}/>
            </div>

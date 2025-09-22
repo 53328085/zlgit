@@ -168,7 +168,7 @@ export const custvalidfn = (filed) => {
       let minValue =  getFieldValue(filed)
       if( value &&  minValue) {
          if(value > minValue) {
-          return Promise.resolve
+          return Promise.resolve()
          }else {
           return Promise.reject("最大值必须大于最小值")
          }

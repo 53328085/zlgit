@@ -88,7 +88,7 @@ export default function DefaultHome(props) {
       }
  
   return (
-    <Titlelayout title="负荷率" {...fs} style={{height: '200px'}}>
+    <Titlelayout title="负荷率" {...fs} style={{minHeight: '200px'}}>
       <Divorder>
          <Ichart  custoption={custoption}/> 
       </Divorder>

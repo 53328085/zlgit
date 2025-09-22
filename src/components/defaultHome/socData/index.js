@@ -127,7 +127,7 @@ export default function DefaultHome(props){
   
   return (
     <Titlelayout title={t("sitesoc")} {...fs}>
-        <div style={{width: '424px', height: '338px', display: "flex"}}>
+        <div style={{width: '424px', minHeight: '338px', display: "flex"}}>
         <div style={{flex:1}} ref={ref}>
         </div>
             {/*   <DemoLiquid data={Number(state.socData)}></DemoLiquid> */}

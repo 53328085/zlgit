@@ -157,6 +157,8 @@ export default function Index() {
         refresh()
       }else {
         message.warning(errMsg || "数据出错")
+        return Promise.reject("")
+       
       }
 
     } catch (error) {
@@ -178,27 +180,28 @@ export default function Index() {
       
      }
   }
-  const files = useRef()
+  let files 
   const dragprops = {
     link: '/deviceExcel/streetLight2.xlsx',
     maxCount: 1,
-    beforeUpload(file) {
-        files.current = file
+    beforeUpload(file, fileList) {
+        files  = fileList[0] 
         return false
     }
   }
   const onUpload=async()=> {
      try {
-      let formdata = new FormData()
-      formdata.append("projectId", projectId)
-      formdata.append("file", files.current)
-       let {success, errMsg} =  await  useImport({projectId}, formdata)
-       if(success) {
+      let formData = new FormData()
+      formData.append("projectId", projectId)
+      formData.append("file", files  )       
+       let {data} =await useImport({},formData)
+       if(data?.success) {
         message.success("导入成功")
         exprotref.current.onCancel()
         refresh()
        }else {
-        message.warning(errMsg || "数据出错")
+        let msg = data?.data?.map(d => d.cause).join() || ""
+        message.warning(msg || "数据出错")
        }
      } catch (error) {
       console.log(error)
@@ -219,7 +222,7 @@ export default function Index() {
   ]
   
   const onExport =useCallback(() => {  
-    downParams.current.pageSize=1;
+    downParams.current.pageNum=1;
     downParams.current.pageSize=total
     return   usePage({}, downParams.current).then(res => {
       let {success, data, total} =res

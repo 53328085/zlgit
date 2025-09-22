@@ -6,7 +6,7 @@ import imgUrl from '@imgs'
 
 const Mainbox = styled.div`
   width: 222px;
-  height: 200px;
+  min-height: 200px;
   //padding: 16px;
   background-color: #ff6642;
   border-radius: 4px;

@@ -61,7 +61,7 @@ export default function DefaultHome(props) {
   let {state={}} = props
   const {t} = useTranslation("overview")
   return (
-    <Titlelayout title={t("Transformerinformation")} {...fs} style={{height: "200px"}}>
+    <Titlelayout title={t("Transformerinformation")} {...fs} style={{minHeight: "200px"}}>
       <Divorder>
         <img src={ gatewayRuntime } className='card_icon'></img>
         <div className='totalCount'>

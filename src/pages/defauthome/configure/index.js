@@ -2,7 +2,7 @@ import React, { useEffect, useState, useRef } from 'react'
 import style from './style.module.less';
 import styled from 'styled-components';
 import configIcon from './configIcon.png'
-import { Drawer, Input, message,   Empty, Form, InputNumber, Alert } from 'antd';
+import { Drawer, Input, message,   Empty, Form, InputNumber, Alert,Space } from 'antd';
 
 import _, { result } from 'lodash'
 import { useSelector } from 'react-redux'
@@ -118,6 +118,7 @@ import {Serach} from "@com/comstyled"
 import {CDrawer} from "./style"
 import {layout} from "./data"
 import "./drag.css"
+ 
 const availableHandles = ["s", "w", "e", "n", "sw", "nw", "se", "ne"];
 export default function Index() {
 
@@ -127,7 +128,7 @@ export default function Index() {
   const Ref = useRef()
   const { Search } = Input
   const {laptop} = useSelector(adaptation)
- 
+  const [change, setChange] = useState(false)
   const [messageApi, contextHolder] = message.useMessage();
   const messageContent = (type, content) => {
     messageApi.open({
@@ -260,6 +261,7 @@ export default function Index() {
   const [newCounter, setNewCounter] = useState(0)
   const [classOfName, setclassOfName] = useState('')
   const [layoutValue, setlayoutValue] = useState([])
+  console.log("layoutItem",layoutItem)
   const onClose = () => {
     setbasicOpen(false);
     setactiveName('');
@@ -277,9 +279,9 @@ export default function Index() {
 
   //RGL布局
   const [defaultProps, setDefaultProps] = useState({
-    className: 'layout',
+   
     rowHeight: 200,
-    cols: 8,
+   // cols: 8,
     margin: [16, 16]
    
   })
@@ -349,7 +351,9 @@ export default function Index() {
       cursor: "pointer",
       outline: "10px solid transparent"
     }
-    const i = el.i;
+    const i = el?.i;
+    if(!i) return;
+
     const end = i.indexOf('_');
     
     return (
@@ -535,6 +539,7 @@ onDrop: (layout: Layout, item: ?LayoutItem, e: Event) => void,
     if (layout.length == 0) return;
     if (layout[layout.length - 1].i == '__dropping-elem__') return;
     setlayoutItem(layout)
+    setChange(!change)
   }
 
   const showResetModal = () => {
@@ -596,11 +601,49 @@ onDrop: (layout: Layout, item: ?LayoutItem, e: Event) => void,
        
     }
  }
+
+ /* 
+    rowHeight: 200,
+    cols: 8,
+    margin: [16, 16] */
+ const layoutOk=async()=> {
+    try {
+      let  {cols, margin, rowHeight, rows} = await form.validateFields();
+      console.log(Object.values(margin))
+      
+      setDefaultProps({
+        rowHeight,
+        cols,
+        margin:Object.values(margin),
+      })
+
+      let newlayout =[]
+      let i=0;
+
+       layout:for(let j=0;j<rows;j++){
+            for(let k=0;k<cols;k++){
+                if(k*j >= layoutItem?.length) break layout;
+                let layout={...layoutItem[i++],w:1, h:1, x:k, y:j}
+                newlayout.push(layout)
+            }
+        }
+
+    
+      setlayoutItem(newlayout)
+      setChange(!change)
+    } catch (error) {
+      
+    }
+ }
+ const rules =[{
+  required: true,
+ }]
+ const w220= {width: "220px"}
   return (
     <div className={style.mainContent} style={{backgroundColor: previewrbgcolor || '#135abd'}}>
-      <Context.Provider value={{laptop }}>
+      <Context.Provider value={{laptop,change }}>
       {contextHolder}
-           <ReactGridLayout layout={layoutItem} onLayoutChange={onLayoutChange} {...defaultProps} isDroppable={true} onDrop={onDrop} style={{backgroundColor: previewrbgcolor || '#135abd'}} >
+           <ReactGridLayout    className='layout' layout={layoutItem} onLayoutChange={onLayoutChange} {...defaultProps} isDroppable={true} onDrop={onDrop} style={{backgroundColor: previewrbgcolor || '#135abd'}} >
              {_.map(layoutItem, el => createElement(el))}
            </ReactGridLayout>
    {/*    <ReactGridLayout 
@@ -652,18 +695,25 @@ onDrop: (layout: Layout, item: ?LayoutItem, e: Event) => void,
           <MenuUnfoldOutlined onClick={onClose} />
         </div>
       </CDrawer>
-      <Cmodal title="设置布局"       width={832} mold="cust"    ref={Ref}>
-        <Alert style={{marginBottom: "16px"}} message="行的高度为" type="warning"> </Alert>
+      <Cmodal title="设置布局"  onOk={layoutOk}     width={832} mold="cust"    ref={Ref}> 
         <Form form={form} labelAlign="left" labelCol={{flex: "7em"}} preserve={false}>
-          <Form.Item label="设置列数" name="cols">
-             <InputNumber min={1} max={8} placeholder="请列数1~8之间" ></InputNumber>
+        <Form.Item label="设置行高" name="rowHeight" rules={rules} initialValue={200}>
+             <InputNumber min={200}   placeholder="行高最小为150px" addonAfter="px" style={w220}></InputNumber>
           </Form.Item>
-          <Form.Item label="设置行数" name="rowheight">
-             <InputNumber min={1} max={4} placeholder="请行数1~4之间" addonAfter="px" ></InputNumber>
+          <Form.Item label="设置列数" name="cols" rules={rules} initialValue={8}>
+             <InputNumber min={1} max={8} placeholder="请列数1~8之间" style={w220} ></InputNumber>
           </Form.Item>
-          <Form.Item label="设置间距" name="gap">
-             <InputNumber min={1} max={4} placeholder="请行数1~4之间" addonAfter="px" ></InputNumber>
+          <Form.Item label="设置行数" name="rows" rules={rules} initialValue={4} >
+             <InputNumber min={1} max={4} placeholder="请行数1~4之间" addonAfter="px" style={w220} ></InputNumber>
           </Form.Item>
+          <Space size={16}>
+          <Form.Item label="设置行间距" name={["margin", "row"]} rules={rules} initialValue={16} >
+             <InputNumber min={16} max={32} placeholder="行间距为16~~32px" addonAfter="px" style={w220} ></InputNumber>
+          </Form.Item>
+          <Form.Item label="设置列间距" name={["margin", "col"]} rules={rules} initialValue={16} >
+             <InputNumber min={16} max={32} placeholder="列间距为16~~32px" addonAfter="px" style={w220} ></InputNumber>
+          </Form.Item>
+          </Space>
         </Form>
        </Cmodal>
       </Context.Provider>
