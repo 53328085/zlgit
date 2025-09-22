@@ -4,6 +4,7 @@ import UseTree from "@com/useTree";
 import { Container, CardBox } from "./style";
 import { Tabs, Tabs2 } from "./searchHead";
 import { Form, message, Checkbox } from "antd";
+import { ExportExcel, CustButton, CustButtonT } from '@com/useButton'
 import BlueColumn from "@com/bluecolumn";
 import Cempty from "@com/useEmpty";
 import CModal from "@com/useModal";
@@ -18,6 +19,7 @@ export default function Index() {
   const [formSearch] = Form.useForm();
   const [formControl] = Form.useForm();
   const controlRef = useRef();
+  const tipRef = useRef();
   const [treeId, setTreeId] = useState([]);
   const [airData, setAirData] = useState([]);
   const [openNum, setOpenNum] = useState();
@@ -122,7 +124,11 @@ export default function Index() {
       }
       let { data, success, errMsg } = await useSetControl({}, params)
       if (success) {
-        message.success("所选空调控制成功");
+        if (ioState == 1) {
+          message.success("所选空调控制成功");
+        } else {
+          tipRef.current.onOpen();
+        }
         handleSearchClick();
       } else {
         message.error(errMsg);
@@ -130,6 +136,9 @@ export default function Index() {
     } catch { }
     controlRef.current.onCancel();
   };
+  const onConfirmTip = async () => {
+    tipRef.current.onCancel();
+  }
   useEffect(() => {
     if (Number.isInteger(projectId) && Array.isArray(treeId)) {
       handleSearchClick();
@@ -149,8 +158,7 @@ export default function Index() {
             energytype={1}
             allselect={true}
             showSearch={true}
-            scroll={820}
-            treeName="空调设备列表"
+            title="空调设备列表"
           />
         </div>
         <div className="right-box">
@@ -333,6 +341,18 @@ export default function Index() {
           onOk={onOkControl}
         >
           是否确认控制所选空调？
+        </CModal>
+
+        <CModal
+          title="提示"
+          ref={tipRef}
+          width={312}
+          mold="cust"
+          closable={false}
+          footer={<div ><CustButton style={{ marginLeft: "auto" }} onClick={onConfirmTip}>确认</CustButton></div>}
+        >
+          <div>所选空调控制成功！</div>
+          <div style={{ marginTop: '5px' }}>空调关闭状态会在5分钟后更新！</div>
         </CModal>
       </Container>
     </Pagecount>
