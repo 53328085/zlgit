@@ -118,7 +118,7 @@ export default function Index(props) {
   const [messageApi, contextHolder] = message.useMessage();
   const projectId = useSelector(selectProjectId)
   const tableRef = useRef()
-  const tableRefs = useRef([])
+  const [selectedTableRows, setSelectedTableRows] = useState([]); // 存储选中的行数据
   const schemeRef = useRef()
   const controlRef = useRef();
   const pageTotal = useRef()
@@ -134,25 +134,23 @@ export default function Index(props) {
   const [selectedRowKeys, setSelectedRowKeys] = useState([]); // 新增状态
   const schemeModalState = useRef(false); // 记录是否是第一次打开
   const [rangerTime, setRangerTime] = useState([moment().subtract(2, 'months'), moment()])
+
+  // 清空选中状态的函数
+  const clearSelectedRows = useCallback(() => {
+    setSelectedRowKeys([]);
+    setSelectedTableRows([])
+  }, []);
+
   const airNameChange = () => {
 
   }
+
   const handleRadioChange = (e) => {
     setTabId(e.target.value);
-    setSelectedRowKeys([]); // 清空选中状态
-    tableRefs.current = [];
+    clearSelectedRows(); // 只在切换tab时清空选中状态
   }
+
   const RecontrolAir = () => {
-    // console.log(tableRefs.current)
-    // if (tableRefs.current.length == 0) {
-    //   messageApi.open({
-    //     type: 'warning',
-    //     content: '请至少选择一条记录！',
-    //   })
-    //   return;
-    // } else {
-    //   controlRef.current.onOpen()
-    // }
     if (selectedRowKeys.length === 0) { // 使用状态判断
       messageApi.open({
         type: 'warning',
@@ -162,20 +160,22 @@ export default function Index(props) {
     } else {
       controlRef.current.onOpen()
     }
-
   }
+
   const rowSelectionCheckbox = {
-    selectedRowKeys, // 绑定选中状态
-    tableRefs,
-    onChange: (selectedRowKeys, selectedRows) => {
-      console.log(`selectedRowKeys: ${selectedRowKeys}`, 'selectedRows: ', selectedRows);
-      setSelectedRowKeys(selectedRowKeys); // 更新状态
-      tableRefs.current = selectedRows;
+    selectedRowKeys,
+    preserveSelectedRowKeys: true, // 关键配置：跨页/查询时保留选中的 rowKey
+    onChange: (currentSelectedKeys, currentSelectedRows) => {
+      console.log("当前选中Keys:", currentSelectedKeys, "当前选中Rows:", currentSelectedRows);
+      setSelectedRowKeys(currentSelectedKeys);
+      setSelectedTableRows(currentSelectedRows); // 同步更新选中行数据
     },
+
     // getCheckboxProps: record => ({
     //   disabled: record.resultDesc === '成功', // Column configuration not to be checked
     // }),
   }
+
   const getAirData = async ({ current, pageSize }, formDate) => {
     try {
       let params = {
@@ -183,7 +183,7 @@ export default function Index(props) {
         pageSize,
         projectId,
         type: tabId,
-        name: formDate.name,
+        name: formDate.alike,
         schemeId: formDate.scheme,
         operater: formDate.operator,
         result: formDate.status,
@@ -192,14 +192,14 @@ export default function Index(props) {
       }
       let { data, success, total, errMsg } = await usePage({}, params)
       if (success && Array.isArray(data) && data.length) {
-
+        // 移除这里的清空选中状态逻辑，保持选中状态
         pageTotal.current = total
         return {
           list: data,
           total,
         }
-
       } else {
+        // 移除这里的清空选中状态逻辑，保持选中状态
         pageTotal.current = 0;
         return {
           list: [],
@@ -210,6 +210,7 @@ export default function Index(props) {
       pageTotal.current = 0;
     }
   }
+
   const handleOpenAirScheme = (record) => {
     console.log("打开空调方案", record);
     // 这里添加实际业务逻辑
@@ -218,6 +219,7 @@ export default function Index(props) {
     setSchemeModalId(record.schemeId)
     schemeRef.current.onOpen()
   };
+
   const [controlInfos, setControlInfos] = useState([])
   const [savingInfo, setSavingInfo] = useState([])
   const week = [
@@ -233,51 +235,51 @@ export default function Index(props) {
   week.forEach(w => {
     getweek.set(w.value, `${w.label}`)
   })
+
   const getSchemeData = async () => {
     try {
       let { data, success, total } = await useDetail({}, { projectId, schemeId: schemeModalId, pageNum: 1, pageSize: 10 })
       if (success && Array.isArray(data) && data.length) {
         setControlInfos(Array.isArray(data[0].controlInfos) ? data[0].controlInfos : [])
         setSavingInfo(Array.isArray(data[0].savingInfo) ? data[0].savingInfo : [])
-
       } else {
         setControlInfos([])
         setSavingInfo([])
       }
     } catch (error) {
-
     }
   }
+
   const handleClose = () => {
     schemeRef.current.onCancel()
     schemeModalState.current = false
   };
 
   const onOkControl = async () => {
+    console.log(selectedTableRows)
     try {
-      const newArray = tableRefs.current.map(item => ({
+      const newArray = selectedTableRows.map(item => ({
         conditionerId: item.conditionerId,
         ioState: item.ioState ? item.ioState : 1,
         workMode: item.workMode ? item.workMode : 1,
         windSpeed: item.windSpeed ? item.windSpeed : 1,
         temperature: item.temperature
       }));
-      let { data, success, errMsg } = await useSetReControl({},
+      const { data, success, errMsg } = await useSetReControl({},
         { projectId, conditions: newArray })
       if (success) {
         let values = searchForm.getFieldsValue();
-        run({ current: 1, pageSize: 20 }, values)
-        setSelectedRowKeys([]); // 清空选中状态
+        run({ current: 1, pageSize: 20 }, values)// 重新查询表格
+        clearSelectedRows(); // 控制成功后清空选中
         message.success('所选空调控制成功')
       } else {
         message.error(errMsg);
       }
     } catch {
-
-
     }
     controlRef.current.onCancel()
   }
+
   const getSchemeList = async () => {
     try {
       let alike = ''
@@ -304,18 +306,25 @@ export default function Index(props) {
         } else {
           setAirSchemeList([])
         }
-
       }
     } catch (error) {
       return Promise.reject(error)
     }
   }
+
   const { tableProps, refresh, run, search } = useAntdTable(getAirData, {
     form: searchForm,
     defaultPageSize: 20,
     refreshDeps: [tabId],
   })
+
   const { submit } = search
+
+  // 直接使用submit，不在查询时清空选中状态
+  const handleSubmit = useCallback(() => {
+    submit(); // 只执行查询，不清空选中状态
+  }, [submit]);
+
   const onExport = useCallback(() => {
     const formDate = searchForm.getFieldValue()
     let params = {
@@ -323,7 +332,7 @@ export default function Index(props) {
       pageSize: pageTotal.current,
       projectId,
       type: tabId,
-      name: formDate.name,
+      name: formDate.alike,
       schemeId: formDate.scheme,
       operater: formDate.operator,
       result: formDate.status,
@@ -331,7 +340,6 @@ export default function Index(props) {
       dtEnd: formDate.operatorTime && formDate.operatorTime[1] ? moment(formDate.operatorTime[1]).format('YYYY-MM-DD 23:59:59') : moment().format('YYYY-MM-DD 23:59:59'),
     }
     return usePage({}, params).then((res) => {
-
       let { success, data, total } = res;
       if (success && Array.isArray(data)) {
         return {
@@ -347,13 +355,16 @@ export default function Index(props) {
       }
     });
   }, [pageTotal.current])
+
   useEffect(() => {
     getSchemeList();
   }, [])
+
   useEffect(() => {
     if (!schemeModalState.current) return;
     getSchemeData()
   }, [schemeModalState.current, schemeModalId])
+
   return (
     <Pagecount pd="0" bgcolor="none">
       {contextHolder}
@@ -372,7 +383,7 @@ export default function Index(props) {
         <div className='content'>
           <Form form={searchForm} layout='inline' colon={false}
             initialValues={{
-              name: '',
+              alike: '',
               scheme: 0,
               operator: '',
               status: 0,
@@ -380,7 +391,7 @@ export default function Index(props) {
             }}
           >
             <Space size={16}>
-              <Item label="空调名称" name="name" >
+              <Item label="关键字" name="alike" >
                 <Input style={{ width: "260px" }} placeholder='请输入设备名称/通信地址' allowClear />
               </Item>
               <Item name="operator" hidden>
@@ -410,6 +421,7 @@ export default function Index(props) {
                 }} />
               </Item>
               <Item>
+                {/* 直接使用submit，不在查询时清空选中状态 */}
                 <CustButtonT text="search" onClick={submit}></CustButtonT>
               </Item>
               <Item>
@@ -483,4 +495,3 @@ export default function Index(props) {
     </Pagecount>
   )
 }
-
