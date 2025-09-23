@@ -146,7 +146,7 @@ export default function DefaultHome(props){
   }, [type])
   
   return (
-         <Titlelayout title={<CustTransO text="EnergyConsumptionRankingthismonth" />} {...fs} style={{minHeight: "200px"}}>
+         <Titlelayout title={<CustTransO text="EnergyConsumptionRankingthismonth" />} {...fs} style={{minHeight: "200px",height: "100%"}}>
             <Divorder>
                 <Ichart {...option}/>
             </Divorder>

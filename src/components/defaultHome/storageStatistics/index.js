@@ -9,11 +9,15 @@ import { message } from 'antd';
 import Ichart  from '@com/useEcharts/Ichart';
 const Mainbox = styled.div`
   width: 936px;
-  height: 416px;
+  width:100%;
+  min-height: 416px;
+  height: 100%;
   padding: 16px;
   background-color: #fff;
   border-radius: 4px;
   box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.349019607843137);
+  display: flex;
+  flex-direction: column;
   .headerTitle{
     padding-left: 16px;
     border-left: 4px solid ${props => props.theme.primaryColor};
@@ -107,7 +111,7 @@ export default function DefaultHome(props){
   return (
          <Mainbox>
             <div className='headerTitle'>{t("overview:EnergyStorageRevenueStatistics")}</div>
-            <div style={{width:896,height:338, display: 'flex'}} id='barChart'  >
+            <div style={{flex:1, display: 'flex'}} id='barChart'  >
             <Ichart {...options} />
 
             </div>

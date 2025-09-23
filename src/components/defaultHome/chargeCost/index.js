@@ -8,9 +8,10 @@ import { HomeRuntime } from '@api/api.js'
 import { message } from 'antd';
 import {CustTransO} from "@com/useButton"
 const Mainbox = styled.div`
-  width: 222px;
+   min-width: 222px;
+   width: 100%;
   min-height: 200px;
-  
+  height: "100%";
   background-color: rgba(254, 165, 38, 1);
   border-radius: 4px;
   box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.349019607843137);

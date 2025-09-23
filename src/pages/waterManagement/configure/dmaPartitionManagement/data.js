@@ -82,23 +82,23 @@ export const cols = [
 export const loptions = [
   {
     label: '全部',
-    value: '0',
+    value: 0,
   },
   {
     label: '一级',
-    value: '1',
+    value: 1,
   },
   {
     label: '二级',
-    value: '2',
+    value: 2,
   },
   {
     label: '三级',
-    value: '3',
+    value: 3,
   },
   {
     label: '四级',
-    value: '4',
+    value: 4,
   },
 ];
 export const tabs =[
@@ -147,19 +147,19 @@ export const iscomputer =[
 export const alarmoption =[
   {
     label: "一级(特别严重)",
-    value: "1"
+    value: 1
   },
   {
     label: "二级(严重)",
-    value: "2"
+    value: 2
   },
   {
     label: "三级(较重)",
-    value: "3"
+    value: 3
   },
   {
     label: "一般",
-    value: "4"
+    value: 4
   },
 ]
 export const custvalidfn = (filed) => {
