@@ -576,7 +576,7 @@ const savesty = laptop
       {/* 抽屉 */}
       {/*  devices.current.deviceSummary = [];
         devices.current.deviceSub = [] */}
-      <Mask task={open} >
+     
         <Drawerbox
           onClose={drawClose}
           open={open}         
@@ -740,7 +740,7 @@ const savesty = laptop
            
           </div>
         </Drawerbox>
-      </Mask>
+     
     </Mainbox>
   );
 }

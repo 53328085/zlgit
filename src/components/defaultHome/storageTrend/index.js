@@ -65,7 +65,7 @@ export default function DefaultHome(props){
   
   return (
          <Titlelayout title={t("ChargeAndDischargeVolumeTrend")} {...fs}   layout="flex">
-            <div style={{flex: 1,height: '362px', overflow: 'hidden%'}}  >
+            <div style={{flex: 1,minHeight: '362px', overflow: 'hidden%'}}  >
                 <Ichart {...options} />
             </div>
          </Titlelayout>

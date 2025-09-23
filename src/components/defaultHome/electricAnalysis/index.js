@@ -27,7 +27,7 @@ export default function DefaultHome(){
   
   return (
          <Titlelayout title={'分时电量分析'} {...fs}>
-         <div ref={tmref} style={{width: '422px', height: '300px'}}>
+         <div ref={tmref} style={{width: '422px', minHeight: '300px'}}>
 
          </div>
          <div className='tips'>

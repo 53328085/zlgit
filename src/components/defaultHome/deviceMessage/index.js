@@ -92,7 +92,7 @@ export default function DefaultHome(props) {
    }
 
   return (
-    <Titlelayout title={<CustTransO  text="MeterInformation" />} {...fs} style={{height: "200px"}}>
+    <Titlelayout title={<CustTransO  text="MeterInformation" />} {...fs} style={{minHeight: "200px"}}>
       <Divorder laptop={laptop}>
        {laptop ? null : <img src={ deviceRuntime } className='card_icon'></img>} 
         <div className='totalCount'>

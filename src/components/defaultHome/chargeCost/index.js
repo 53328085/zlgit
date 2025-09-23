@@ -9,7 +9,7 @@ import { message } from 'antd';
 import {CustTransO} from "@com/useButton"
 const Mainbox = styled.div`
   width: 222px;
-  height: 200px;
+  min-height: 200px;
   
   background-color: rgba(254, 165, 38, 1);
   border-radius: 4px;

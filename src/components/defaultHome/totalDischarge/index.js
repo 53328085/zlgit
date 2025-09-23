@@ -9,7 +9,7 @@ import { message } from 'antd';
 import {useTranslation} from 'react-i18next'
 const Mainbox = styled.div`
   width: 222px;
-  height: 200px;
+  min-height: 200px;
   
   background-color: #4370ff;
   border-radius: 4px;

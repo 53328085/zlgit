@@ -1,5 +1,5 @@
 import React from 'react'
-import {Form, Select, Row, Col, Input,InputNumber, Cascader, Radio, Space, Switch, message} from "antd" 
+import {Form, Select, Row, Col, Input,InputNumber, Cascader, Radio, Space, Switch, message,Button} from "antd" 
 import {useRequest} from "ahooks"
 import {useLocation} from "react-router-dom"
 import {useUpdateAlarmSetting,useGetAlarmSettings} from "../api"
@@ -35,6 +35,7 @@ const onRest = ()=> {}
 const onSubmit= async()=> {
   try {
     let values =  await form.validateFields()
+   
      values.length =4
     let params = Array.from(values)?.map?.(v => ({...v, alarmSettingJson: JSON.stringify(v.alarmSettingJson)}))
     let body ={
@@ -44,6 +45,7 @@ const onSubmit= async()=> {
     }
    let {success, errMsg} =  await useUpdateAlarmSetting({},body)
    if(success) {
+    message.success("设置成功")
     refresh()
    }else {
      message.warning(errMsg)

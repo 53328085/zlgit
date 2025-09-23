@@ -92,7 +92,7 @@ export default function DefaultHome(props) {
     getData()
    }, [projectId])
   return (
-    <Titlelayout title={t("overview:Numberoftransformers")} {...fs} style={{height: '200px'}}>
+    <Titlelayout title={t("overview:Numberoftransformers")} {...fs} style={{minHeight: '200px'}}>
       <Divorder laptop={laptop}>
       {laptop ? null : <img src={ transformerNum } className='card_icon'></img>}  
         
