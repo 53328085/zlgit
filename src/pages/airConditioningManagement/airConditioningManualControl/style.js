@@ -94,31 +94,32 @@ export const CardBox = styled.div`
         }
        }
         .airOffline{
-            background: #b2acac;
-            color: #fff;
-
+       color: #5D5D5D;
+       background: #eeecec;
         }
          .airAlarm{
             background: #ec5050;
             color: #fff;
         }
       .airCardCold{
-       color: #FFFFFF;
+       color: #fff;
        background: linear-gradient(180deg, rgb(113 146 241) 0%, rgb(77 158 236) 0%, rgb(230 235 244) 100%, rgb(235 243 245) 100%);
        }
    .airCardHot{
-       color: #FFFFFF;
+       color: #fff;
        background: linear-gradient(180deg, rgb(228 231 239) 0%, rgb(240 116 6) 0%, rgb(232 206 71) 81%, rgb(242 221 89) 100%);
    }
    .airCardWindy{
-         background:linear-gradient(180deg, rgb(190 231 183) 0%, rgba(247, 247, 247, 1) 100%);
+       color: #fff;
+       background:linear-gradient(180deg, rgb(154 216 142) 0%, rgba(247, 247, 247, 1) 100%);
    }
    .airCardDehumidification{
-           background: linear-gradient(180deg, rgb(138 170 187) 0%, rgba(247, 247, 247, 1) 100%);
+       color: #fff;
+       background: linear-gradient(180deg, rgb(115 137 148) 0%, rgb(230 230 230) 100%);
    }
     .closeAir{
-       color: #5D5D5D;
-       background: linear-gradient(180deg, rgb(239 238 238) 0%, rgba(247, 247, 247, 1) 100%);
+            background: #b2acac;
+            color: #fff;
    }
    }
 `;
