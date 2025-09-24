@@ -60,7 +60,7 @@ export const AirChartData = {
   xAxis: [
     {
       type: "category",
-      data: ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"],
+      data: [],
       axisTick: {
         alignWithLabel: true,
       },
@@ -76,7 +76,7 @@ export const AirChartData = {
       name: "Direct",
       type: "bar",
       barWidth: "60%",
-      data: [10, 52, 200, 334, 390, 330, 220],
+      data: [],
       itemStyle: {
         borderRadius: [10, 10, 0, 0],
         color: "#10c6ee",
@@ -269,10 +269,10 @@ export const TbHeader = [
   },
   {
     title: "同比去年用电量 (kWh)",
-    dataIndex: "lastYearPeriodUseE",
-    key: "lastYearPeriodUseE",
+    dataIndex: "lastSamePeriodUseE",
+    key: "lastSamePeriodUseE",
     sorter: {
-      compare: (a, b) => a.lastYearPeriodUseE - b.lastYearPeriodUseE,
+      compare: (a, b) => a.lastSamePeriodUseE - b.lastSamePeriodUseE,
       multiple: 3,
     },
   },

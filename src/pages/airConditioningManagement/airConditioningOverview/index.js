@@ -10,6 +10,7 @@ import { useOutletContext } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { selectProjectId } from "@redux/systemconfig";
 import { useReactive } from "ahooks";
+import moment from "moment";
 export default function Index() {
   const projectId = useSelector(selectProjectId);
   const [treeId, setTreeId] = useState([]);
@@ -23,77 +24,46 @@ export default function Index() {
 
   const getAPiFunc = () => {
     const values = form.getFieldsValue();
+    const date =
+      values.dtype == 1
+        ? moment(values.date).format("YYYY-MM-DD")
+        : values.dtype == 2
+        ? moment().format("YYYY-MM-01")
+        : moment().format("YYYY-01-01");
     const params = {
       projectId,
-      areaIds: treeId,
-      type: values.dtype,
-      date: values.date,
+      ids: treeId,
+      dayMonthYear: values.dtype,
+      date,
     };
-    getOverview(params);
-    getQueryElectricTrendChart(params);
-    getQueryElectricTrendTable(params);
-    QueryEnergyConsumptionRanking(params)
+    AirConditionerOverview(params);
   };
-
-  //获取空调纵览数据
-  const getOverview = async (params) => {
+  const AirConditionerOverview = async (params) => {
     try {
-      const res = await AirConditioningManagement.QueryEnergyOverview(params);
-      if (res.success && res.data) {
-        setOverData(res.data);
-      } else {
-        setOverData({});
-      }
-    } catch (e) {
-      console.log(e);
-    }
-  };
-  //获取空调能耗趋势图表
-  const getQueryElectricTrendChart = async (params) => {
-    try {
-      const res = await AirConditioningManagement.QueryElectricTrendChart(
-        params
-      );
-      if (res.success && res.data) {
-        setChartData(res.data);
-      } else {
-        setChartData(null);
-      }
-    } catch (e) {
-      console.log(e);
-    }
-  };
-  //获取空调能耗趋势列表
-  const getQueryElectricTrendTable = async (params) => {
-    try {
-      const res = await AirConditioningManagement.QueryElectricTrendTable(
+      const res = await AirConditioningManagement.AirConditionerOverview(
         params
       );
       if (res.success) {
-        const arr = res.data.map((item, index) => ({
-          ...item,
-          periodUseE: parseFloat(item.periodUseE) + index,
-          yoy: item.yoy,
-          lastPeriodUseE: parseFloat(item.lastPeriodUseE) + index,
-          lastYearPeriodUseE: parseFloat(item.lastYearPeriodUseE) + index,
-          mom: item.mom,
-        }));
-        setTableData(arr || res.data);
-      } else {
-        setTableData(null);
+        const propsToRemove = [ "table", "trend"];
+        let filteredObj;
+        if (res.data) {
+          filteredObj = Object.fromEntries(
+            Object.entries(res.data).filter(
+              ([key]) => !propsToRemove.includes(key)
+            )
+          );
+          //空调纵览数据
+          setOverData(filteredObj ?? {});
+          //获取空调能耗趋势列表
+          setTableData(res.data.table)
+          //获取空调能耗趋势图表
+          setChartData(res.data.trend)
+        }
+       
       }
-    } catch (e) {
-      console.log(e);
+    } catch (error) {
+      throw error;
     }
-  };
-  //获取能耗排名
-  const QueryEnergyConsumptionRanking = async (params) => {
-    try {
-      const res = await AirConditioningManagement.QueryEnergyConsumptionRanking(params)
-      if(res.success){
-        
-      }
-    } catch (e) {}
   };
   const onFinish = (values) => {
     getAPiFunc();
@@ -161,7 +131,8 @@ export default function Index() {
               </Item>
             </Form>
           </Header>
-          {overData ? <DetailComp overData={overData}></DetailComp> : null}
+          <DetailComp overData={overData}></DetailComp>
+          {/* {overData ? <DetailComp overData={overData}></DetailComp> : null} */}
           {chartData ? (
             <FooterChartComp
               chartData={chartData}
