@@ -116,7 +116,9 @@ import { useRequest } from 'ahooks';
 import Cmodal from "@com/useModal"
 import {Serach} from "@com/comstyled"
 import {CDrawer} from "./style"
+import {isObject} from "@com/usehandler"
 import {layout} from "./data"
+import {useSetDefaultParam, useQueryParam} from './api'
 import "./drag.css"
  
 const availableHandles = ["s", "w", "e", "n", "sw", "nw", "se", "ne"];
@@ -279,12 +281,35 @@ export default function Index() {
 
   //RGL布局
   const [defaultProps, setDefaultProps] = useState({
-   
     rowHeight: 200,
-   // cols: 8,
-    margin: [16, 16]
-   
+    cols: 8,
+    margin: [16, 16]   
   })
+  const getLayoutparams = async () => { 
+     try {
+      if(!Number.isInteger(parseInt(projectId))) return
+      let {success, data}  =  await useQueryParam({projectId})
+      let {context} = data
+      if(success && isObject(JSON.parse(context))) {
+        setDefaultProps({
+          ...defaultProps,
+          ...JSON.parse(context)
+        })
+      }else {
+       // message.info('请设置布局参数')
+        //setLayoutparams({})
+      }
+     } catch (error) {
+        console.log(error)
+     }
+      
+  }
+const {refresh} = useRequest(getLayoutparams, {
+  refreshDeps: [projectId]
+})
+ 
+
+
 
   const layoutprops ={
     isResizable: true,
@@ -464,10 +489,7 @@ const zoom = {
       })
       setlayoutItem(newlayout?.map(l => ({...l, resizeHandles: availableHandles,})))
       setNewCounter(newCounter + 1);
-    } else if(layouts_2_1.includes(classOfName)) /* (classOfName == '告警分布' || classOfName == '本月巡检' || classOfName == '配电房监测' || classOfName == '变压器总负荷' 
-      || classOfName == '今日用电量' || classOfName == '月度能耗' || classOfName == '公司信息' || classOfName == '今日告警' || classOfName == '本月工单' || classOfName == '告警信息' || classOfName == '能耗排名' || classOfName == '分类能耗' ||
-      classOfName == '用电量' || classOfName == '用水量' || classOfName == '用燃气量' || classOfName == '碳排放量' || 
-      classOfName == '网关信息' || classOfName == '电表信息' ||  classOfName == '变配电站数量' || classOfName == '断路器信息' || classOfName == '传感器信息' || classOfName == '变压器信息' || classOfName == '触点测温' || classOfName == '光纤测温') */ {
+    } else if(layouts_2_1.includes(classOfName)) {
       newlayout = layoutItem.concat({
         i: classOfName + '_' + Date.now(),
         x: xValue,
@@ -483,8 +505,7 @@ const zoom = {
       })
       setlayoutItem(newlayout?.map(l => ({...l, resizeHandles: availableHandles,})))
       setNewCounter(newCounter + 1);
-    } else if (classOfName == '总充电量' || classOfName == '总放电量' || classOfName == '总充电金额' || classOfName == '总放电金额' ||
-      classOfName == '储能总收益' || classOfName == '储能日收益' || classOfName == '储能月收益') {
+    } else if (layouts_1_1.includes(classOfName)) {
       newlayout = layoutItem.concat({
         i: classOfName + '_' + Date.now(),
         x: xValue,
@@ -580,46 +601,29 @@ onDrop: (layout: Layout, item: ?LayoutItem, e: Event) => void,
  const onDesgin =()=> {
     Ref.current.onOpen()
  }
- const onResize=(_, oldItem, newItem)=> {
-  console.log("resize………………")
-  console.log(newItem)
-   if (newItem?.w  >8 )  {
-  //  console.log("宽度超出限制")
-    return false
-   }
-   if(newItem?.h >4) {
-  //  console.log("高度超出限制")
-    return false
-   }
- }
- const onResizeStop=(_, oldItem, newItem)=> {
-
-  // console.log("oldItem",oldItem)
- // console.log("newItem", newItem)
-   if(newItem?.h >4) return false
-    if(oldItem.w!=newItem.w || oldItem.y != newItem.y) {
-       
-    }
- }
-
+ 
+ 
  /* 
     rowHeight: 200,
     cols: 8,
     margin: [16, 16] */
  const layoutOk=async()=> {
     try {
-      let  {cols, margin, rowHeight, rows} = await form.validateFields();
-      console.log(Object.values(margin))
-      
-      setDefaultProps({
-        rowHeight,
+      let  {cols, margin, rowHeight, rows} = await form.validateFields(); 
+     
+     const body={
+      projectId,
+      context:JSON.stringify(
+        {rowHeight,
         cols,
         margin:Object.values(margin),
-      })
-
+      
+        })
+    }
+     let {success,errMsg} = await useSetDefaultParam({},body)
+     if(success){
       let newlayout =[]
       let i=0;
-
        layout:for(let j=0;j<rows;j++){
             for(let k=0;k<cols;k++){
                 if(k*j >= layoutItem?.length) break layout;
@@ -631,8 +635,14 @@ onDrop: (layout: Layout, item: ?LayoutItem, e: Event) => void,
     
       setlayoutItem(newlayout)
       setChange(!change)
+      refresh()
+      //Ref.current.onCancel()
+     }else {
+       message.error(errMsg || '布局设置错误')
+       return Promise.reject(error);
+     }
     } catch (error) {
-      
+      return  Promise.reject(error);
     }
  }
  const rules =[{
@@ -695,22 +705,22 @@ onDrop: (layout: Layout, item: ?LayoutItem, e: Event) => void,
           <MenuUnfoldOutlined onClick={onClose} />
         </div>
       </CDrawer>
-      <Cmodal title="设置布局"  onOk={layoutOk}     width={832} mold="cust"    ref={Ref}> 
+      <Cmodal title="设置布局"  onOk={layoutOk}     width={832} mold="cust" custft={true}   ref={Ref}> 
         <Form form={form} labelAlign="left" labelCol={{flex: "7em"}} preserve={false}>
         <Form.Item label="设置行高" name="rowHeight" rules={rules} initialValue={200}>
              <InputNumber min={200}   placeholder="行高最小为150px" addonAfter="px" style={w220}></InputNumber>
           </Form.Item>
-          <Form.Item label="设置列数" name="cols" rules={rules} initialValue={8}>
+          <Form.Item label="设置列数" name="cols" rules={rules} initialValue={4}>
              <InputNumber min={1} max={8} placeholder="请列数1~8之间" style={w220} ></InputNumber>
           </Form.Item>
           <Form.Item label="设置行数" name="rows" rules={rules} initialValue={4} >
-             <InputNumber min={1} max={4} placeholder="请行数1~4之间" addonAfter="px" style={w220} ></InputNumber>
+             <InputNumber min={1} max={4} placeholder="请行数1~4之间"  style={w220} ></InputNumber>
           </Form.Item>
           <Space size={16}>
-          <Form.Item label="设置行间距" name={["margin", "row"]} rules={rules} initialValue={16} >
+          <Form.Item label="设置列间距" name={["margin", "col"]} rules={rules} initialValue={16} >
              <InputNumber min={16} max={32} placeholder="行间距为16~~32px" addonAfter="px" style={w220} ></InputNumber>
           </Form.Item>
-          <Form.Item label="设置列间距" name={["margin", "col"]} rules={rules} initialValue={16} >
+          <Form.Item label="设置行间距" name={["margin", "row"]} rules={rules} initialValue={16} >
              <InputNumber min={16} max={32} placeholder="列间距为16~~32px" addonAfter="px" style={w220} ></InputNumber>
           </Form.Item>
           </Space>

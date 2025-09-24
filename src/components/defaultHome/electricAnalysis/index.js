@@ -26,7 +26,7 @@ export default function DefaultHome(){
   }, [])
   
   return (
-         <Titlelayout title={'分时电量分析'} {...fs}>
+         <Titlelayout title={'分时电量分析'} {...fs} style={{minHeight: '200px',height: "100%"}}>
          <div ref={tmref} style={{width: '422px', minHeight: '300px'}}>
 
          </div>

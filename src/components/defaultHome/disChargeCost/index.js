@@ -5,8 +5,10 @@ import styled from 'styled-components';
 import imgUrl from '@imgs'
 
 const Mainbox = styled.div`
-  width: 222px;
+   min-width: 222px;
+   width: 100%;
   min-height: 200px;
+  height: "100%";
   //padding: 16px;
   background-color: #ff6642;
   border-radius: 4px;

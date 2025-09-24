@@ -87,7 +87,7 @@ export default function DefaultHome(props) {
   }
 
   return (
-    <Titlelayout title={<CustTransO text="CircuitBreakerInformation" />} {...fs} style={{minHeight: "200px"}}>
+    <Titlelayout title={<CustTransO text="CircuitBreakerInformation" />} {...fs} style={{minHeight: "200px",height: "100%"}}>
       <Divorder laptop={laptop}>
        {laptop ? null : <img src={ chooperRuntime } className='card_icon'></img>}
         <div className='totalCount'>

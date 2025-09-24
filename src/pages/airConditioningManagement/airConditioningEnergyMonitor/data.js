@@ -37,15 +37,15 @@ export const TbCol = [
   },
   {
     title: "通讯地址",
-    dataIndex: "address",
-    key: "address",
+    dataIndex: "csn",
+    key: "csn",
     width: 122,
     fixed: 'left',
   },
   {
     title: "总开机时长 （h）",
-    dataIndex: "time",
-    key: "time",
+    dataIndex: "tu",
+    key: "tu",
     width: 140,
     sorter: {
       compare: (a, b) => a.partitionTime - b.partitionTime,
@@ -54,8 +54,8 @@ export const TbCol = [
   },
   {
     title: "电量(kWh)",
-    dataIndex: "elec",
-    key: "elec",
+    dataIndex: "eu",
+    key: "eu",
     width: 109,
   },
   {
@@ -66,26 +66,26 @@ export const TbCol = [
   },
   {
     title: "开启频次",
-    dataIndex: "enable",
-    key: "enable",
+    dataIndex: "openNum",
+    key: "openNum",
     width: 79,
   },
   {
     title: "关闭频次",
-    dataIndex: "close",
-    key: "close",
+    dataIndex: "closeNum",
+    key: "closeNum",
     width: 93,
   },
   {
     title: "空调类型",
-    dataIndex: "type",
-    key: "type",
+    dataIndex: "typeName",
+    key: "typeName",
     width: 110,
   },
   {
     title: "安装地址",
-    dataIndex: "address2",
-    key: "address2",
+    dataIndex: "address",
+    key: "address",
 
   },
 ];
@@ -93,37 +93,42 @@ export const TbCol = [
 export const TbColAir = [
   {
     title: "设备名称",
-    dataIndex: "partitionTime",
-    key: "partitionTime",
+    dataIndex: "name",
+    key: "name",
   },
   {
     title: "通讯地址",
-    dataIndex: "partitionTime",
-    key: "partitionTime",
+    dataIndex: "csn",
+    key: "csn",
   },
   {
     title: "节能时长(h)",
-    dataIndex: "partitionTime",
-    key: "partitionTime",
+    dataIndex: "ts",
+    key: "ts",
     sorter: {
       compare: (a, b) => a.partitionTime - b.partitionTime,
       multiple: 1,
     },
   },
   {
-    title: "时间段",
-    dataIndex: "partitionTime",
-    key: "partitionTime",
+    title: "节能电量(kWh)",
+    dataIndex: "es",
+    key: "es",
+  },
+    {
+    title: "节能费用(元)",
+    dataIndex: "ms",
+    key: "ms",
   },
   {
     title: "空调类型",
-    dataIndex: "partitionTime",
-    key: "partitionTime",
+    dataIndex: "typeName",
+    key: "typeName",
   },
   {
     title: "安装地址",
-    dataIndex: "partitionTime",
-    key: "partitionTime",
+    dataIndex: "address",
+    key: "address",
   },
 ]
 
@@ -133,9 +138,25 @@ export const PieOption = {
     trigger: 'item'
   },
   legend: {
-    top: "28%",
+    top: 'middle',   // 垂直居中
     right: 10,
     orient: 'vertical',
+    type: 'scroll',
+    // 当图例过长时的滚动配置
+    height: '60%',  // 限制图例高度，避免覆盖饼图
+    itemGap: 8,     // 减小图例项间距
+    textStyle: {
+      fontSize: 12,  // 保持原始字体大小
+      width: 80,     // 限制文字宽度，超出则截断
+      overflow: 'truncate',  // 文字超出时截断
+      ellipsis: '...'        // 添加省略号
+    },
+    // 滚动分页配置
+    pageButtonItemGap: 5,
+    pageIconSize: 12,
+    pageTextStyle: {
+      fontSize: 10
+    }
   },
   xAxis: {
     show: false
@@ -143,31 +164,20 @@ export const PieOption = {
 
   series: [
     {
-      name: 'Access From',
+      // name: 'Access From',
       type: 'pie',
-      center: ['38%', '50%'],
-      radius: ['50%', '70%'],
-      avoidLabelOverlap: false,
+      center: ['40%', '50%'],  // 调整为更居中的位置，与垂直居中的图例配合
+      radius: ['45%', '65%'],  // 稍微缩小饼图半径
+      avoidLabelOverlap: true,
       label: {
         show: false,
         position: 'center'
-      },
-      emphasis: {
-        label: {
-          show: true,
-          fontSize: 40,
-          fontWeight: 'bold'
-        },
       },
       labelLine: {
         show: false
       },
       data: [
-        { value: 1048, name: 'Search Engine' },
-        { value: 735, name: 'Direct' },
-        { value: 580, name: 'Email' },
-        { value: 484, name: 'Union Ads' },
-        { value: 300, name: 'Video Ads' }
+      
       ]
     }
   ]
@@ -216,7 +226,7 @@ export const Chart_Options = {
   // X轴配置
   xAxis: {
     type: 'category',
-    data: ['1月', '2月', '3月', '4月', '5月', '6月', '7月', '8月', '9月', '10月', '11月', '12月'],
+    data: [],
     axisPointer: {
       type: 'shadow'
     }
@@ -229,7 +239,7 @@ export const Chart_Options = {
       name: '电量(kWh)',
       min: 0,
       axisLabel: {
-        formatter: '¥{value}'
+        formatter: '{value}'
       },
       nameLocation: "middle",
       nameGap: 60,
@@ -255,41 +265,41 @@ export const Chart_Options = {
   series: [
     // 第一个柱状图（左Y轴）
     {
-      name: '销售额',
+      name: '今日能耗(kWh)',
       type: 'bar',
       barWidth: '30%',
       itemStyle: {
-        color: '#5470C6'
+        color: '#6395fa'
       },
-      data: [12000, 15000, 18000, 21000, 25000, 28000, 31000, 34000, 37000, 40000, 43000, 46000]
+      data: []
     },
 
     // 第二个柱状图（右Y轴）
     {
-      name: '订单量',
+      name: '昨日能耗(kWh)',
       type: 'bar',
       barWidth: '30%',
-      yAxisIndex: 1, // 使用第二个Y轴
+      yAxisIndex: 0, 
       itemStyle: {
-        color: '#91CC75'
+        color: '#63daab'
       },
-      data: [120, 150, 180, 210, 250, 280, 310, 340, 370, 400, 430, 460]
+      data: []
     },
 
     // 折线图（右Y轴）
     {
-      name: '转化率',
+      name: '环比率',
       type: 'line',
       yAxisIndex: 1, // 使用第二个Y轴
       symbol: 'circle',
       symbolSize: 8,
       itemStyle: {
-        color: '#EE6666'
+        color: '#5d7092'
       },
       lineStyle: {
         width: 3
       },
-      data: [2.5, 2.8, 3.0, 3.2, 3.5, 3.7, 4.0, 4.2, 4.5, 4.7, 5.0, 5.2]
+      data: []
     }
   ]
 };
@@ -310,7 +320,7 @@ export const Column_Options = {
   xAxis: [
     {
       type: 'category',
-      data: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+      data: [],
       axisTick: {
         alignWithLabel: true
       }
@@ -323,10 +333,14 @@ export const Column_Options = {
   ],
   series: [
     {
-      name: 'Direct',
+      name: '节能电量(kWh)',
       type: 'bar',
       barWidth: '60%',
-      data: [10, 52, 200, 334, 390, 330, 220]
+      itemStyle: {
+        color: '#63daab',  // 绿色 - 代表节能环保
+
+      },
+      data: []
     }
   ]
 }
@@ -368,14 +382,14 @@ export const MdOptions = {
   },
   xAxis: {
     type: 'category',
-    data: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
+    data: []
   },
   yAxis: {
     type: 'value'
   },
   series: [
     {
-      data: [120, 200, 150, 80, 70, 110, 130],
+      data: [],
       type: 'bar'
     }
   ]
@@ -383,66 +397,54 @@ export const MdOptions = {
 export const MdColHidden = [
   {
     title: "",
-    dataIndex: "name",
-    key: "name",
+    dataIndex: "value1",
+    key: "value1",
     width: 203,
     className: "bg"
   },
   {
     title: "",
-    dataIndex: "age",
-    key: "age",
+    dataIndex: "value2",
+    key: "value2",
     width: 203
   },
   {
     title: "",
-    dataIndex: "address",
-    key: "address",
+    dataIndex: "value3",
+    key: "value3",
     width: 203,
     className: "bg"
   }, {
     title: "",
-    dataIndex: "key",
-    key: "key",
+    dataIndex: "value4",
+    key: "value4",
     width: 203
   }
 ]
-export const MdTbData = [{
-  key: '1',
-  name: '设备名称',
-  age: 32,
-  address: '通信地址',
-}, {
-  key: '1',
-  name: '所属区域',
-  age: 32,
-  address: '安装地址',
-}]
-
-export const PlainOptions = [{ label: '全部', value: 0 }, { label: '开启', value: 1 }, { label: '关闭', value: 2 }]
 export const PlainColumns = [{
   title: "操作时间",
-  dataIndex: "age",
-  key: "age",
+  dataIndex: "createTime",
+  key: "createTime",
   width: 203
 }, {
   title: "开关状态",
-  dataIndex: "age",
-  key: "age",
+  dataIndex: "ioName",
+  key: "ioName",
   width: 122
 }, {
   title: "设定温度",
-  dataIndex: "age",
-  key: "age",
-  width: 122
+  dataIndex: "tempset",
+  key: "tempset",
+  width: 122,
+  render: (text) => <>{text}℃</>
 }, {
   title: "操作人",
-  dataIndex: "age",
-  key: "age",
+  dataIndex: "sourceName",
+  key: "sourceName",
   width: 122
 }, {
   title: "控制类型",
-  dataIndex: "age",
-  key: "age",
+  dataIndex: "controlType",
+  key: "controlType",
   width: 122
 }]

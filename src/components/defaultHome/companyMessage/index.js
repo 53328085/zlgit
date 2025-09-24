@@ -48,7 +48,7 @@ align-items: stretch;
 .img {
     width: 100%;
     height: 100%;
-    object-fit: cover;
+   //object-fit: cover;
   }
 `
 
@@ -76,7 +76,7 @@ export default function DefaultHome(props) {
 }, [currproject, type])
  
   return (
-    <Titlelayout layout="flex"  style={{minHeight: "200px"}}>
+    <Titlelayout layout="flex"  style={{minHeight: "200px",height: "100%"}}>
     <MainBox laptop={laptop}>
       <div className='company'>
         <Borderleft>{state.projectName}</Borderleft>
@@ -97,7 +97,7 @@ export default function DefaultHome(props) {
           <div className='items'>{state.address}</div>
         </div>
       </div>
-      <div>
+      <div style={{overflow: 'hidden'}}>
       {laptop ? null : <img src={ state.projectImage ? state.projectImage : companyImg}  className='img' /> } 
       
       </div>

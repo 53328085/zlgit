@@ -4,7 +4,7 @@ import _ from 'lodash'
 import { useRequest } from 'ahooks'; 
 import {useSelector,useDispatch} from 'react-redux'
 import {selectProjectId,getCurrProjectInfo,currProject, getWebsiteState, intl,adaptation,themeColor} from '@redux/systemconfig.js'
-import { UISummary, Monitoring,HomeRuntime} from '@api/api.js'
+import { UISummary, Monitoring,HomeRuntime, Apimethod} from '@api/api.js'
 import { useReactive } from 'ahooks';
 import {CustTransO} from "@com/useButton"
 import CompanyMessage from '../../components/defaultHome/companyMessage'
@@ -65,9 +65,9 @@ const ReactGridLayout = WidthProvider(RGL);
 //import './configure/style.css';
 //import './index.css';
 import { message } from 'antd';
-
+import {useQueryParam} from "./configure/api.js"
 const {GetDistributionInfo} = HomeRuntime
-
+ 
 export default function Index() {
   const lang = useSelector(intl)
   const currproject = useSelector(currProject)
@@ -83,6 +83,13 @@ export default function Index() {
   })
 
   const projectId = useSelector(selectProjectId)
+    //RGL布局
+    const [defaultProps, setDefaultProps]  = useState({
+      className:'layout',
+      rowHeight: 200,
+      cols: 4,
+      margin:[16, 16],
+    })
  
   const { QueryUISummary } = UISummary
   const [distribution, setDistribution] = useState({})
@@ -98,6 +105,26 @@ export default function Index() {
         console.log(error)
      }
   }
+ const getLayoutparams = async () => { 
+     try {
+      if(!Number.isInteger(parseInt(projectId))) return
+      let {success, data}  =  await useQueryParam({projectId})
+      let {context} = data
+      if(success && isObject(JSON.parse(context))) {
+        setDefaultProps({
+          ...defaultProps,
+          ...JSON.parse(context)
+        })
+      } 
+     } catch (error) {
+        console.log(error)
+     }
+      
+  }
+const {refresh} = useRequest(getLayoutparams, {
+  refreshDeps: [projectId]
+})
+
   const getData = async () => {
     try {
        let {success, data} = await RuntimeStatus({projectId: projectId,areaId: 0})
@@ -112,19 +139,14 @@ export default function Index() {
        
   }
    useEffect(() => {
-     if(projectId) {
+     if(Number.isInteger(projectId)) {
+      getLayoutparams()
       getData()
       getDistributionInfo()
    
     }
    }, [projectId])
-  //RGL布局
-  const [defaultProps, setDefaultProps]  = useState({
-    className:'layout',
-    rowHeight: 200,
-    cols: 8,
-    margin:[16, 16],
-  })
+
 
 
   const getLayoutData = () => {

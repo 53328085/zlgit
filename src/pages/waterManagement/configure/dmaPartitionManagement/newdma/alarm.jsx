@@ -17,9 +17,17 @@ export default function Index({projectId,id}) {
       let fag = [projectId,id].some(d => Number.isInteger(parseInt(d)))
       if(!fag) return
       let {success, data, errMsg} = await useGetAlarmSettings({projectId, id})
-      if(success) {
+      if(success && Array.isArray(data) && data.length)  {
+        let values = data.reduce((pre,cur, index)=>{ 
+          pre[index]= {...cur,alarmSettingJson:JSON.parse(cur.alarmSettingJson)}
+         
+          return pre
+        },{})
+        form.setFieldsValue(values)
         return Array.isArray(data) ? data : []
-      }return Promise.reject(errMsg)
+      }else{
+        return Promise.reject(errMsg)
+      }
     } catch (error) {
       return Promise.reject(error)
     }
@@ -35,7 +43,7 @@ const onRest = ()=> {}
 const onSubmit= async()=> {
   try {
     let values =  await form.validateFields()
-   
+     console.log("values",values)
      values.length =4
     let params = Array.from(values)?.map?.(v => ({...v, alarmSettingJson: JSON.stringify(v.alarmSettingJson)}))
     let body ={

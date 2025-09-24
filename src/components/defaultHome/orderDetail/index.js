@@ -88,7 +88,7 @@ export default function DefaultHome(props) {
 
 
   return (
-    <Titlelayout title={t("overview:Workorderinformation")} {...fs} style={{minHeight: "200px"}}>
+    <Titlelayout title={t("overview:Workorderinformation")} {...fs} style={{minHeight: "200px",height: "100%"}}>
       <Divorder>
         <div className='order'>
           <p>{t("overview:Monthlyworkorder")}</p>

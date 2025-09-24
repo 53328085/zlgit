@@ -67,7 +67,6 @@ const CusCard = ({
 };
 export const DetailComp = React.memo(({ overData }) => {
   const [energyData, setEnergyData] = useState(EnergyData);
-
   useEffect(() => {
     if (overData && typeof overData === "object") {
       const {
@@ -80,6 +79,7 @@ export const DetailComp = React.memo(({ overData }) => {
         periodCarbon = "",
         carbonMom = "",
         lastPeriodCarbon = "",
+        ranking = [],
       } = overData;
       const arr = [
         {
@@ -102,6 +102,10 @@ export const DetailComp = React.memo(({ overData }) => {
         },
       ];
       setEnergyData(arr);
+      const xAxis = ranking?.map((it) => it?.name);
+      const sdata = ranking?.map((it) => it?.value);
+      AirChartData["xAxis"][0]["data"] = xAxis;
+      AirChartData["series"][0]["data"] = sdata;
     }
   }, [overData]);
 
@@ -138,23 +142,22 @@ export const FooterChartComp = React.memo(({ tableData, chartData }) => {
       ...Chart_Options,
       xAxis: {
         type: "category",
-        data: chartData?.detail?.x || [],
+        data: chartData?.x || [],
         axisPointer: {
           type: "shadow",
         },
       },
       series: [
-        { ...Chart_Options.series[0], data: chartData?.detail?.y || [] },
-        { ...Chart_Options.series[1], data: chartData?.detail?.y1 || [] },
+        { ...Chart_Options.series[0], data: chartData?.y || [] },
+        { ...Chart_Options.series[1], data: chartData?.y1 || [] },
         {
           ...Chart_Options.series[2],
-          data: chartData?.detail?.y2.map((it) => parseFloat(it)) || [],
+          data: chartData?.y2.map((it) => parseFloat(it)) || [],
         },
       ],
     }),
     [chartData]
   );
-  console.log("chartOptions", chartOptions);
   const MemoChart = useCallback(() => {
     return <Icharts custoption={chartOptions} type={5}></Icharts>;
   }, [chartOptions]);
@@ -228,22 +231,28 @@ export const FooterChartComp = React.memo(({ tableData, chartData }) => {
           summary={(pageData) => {
             let summaryData = ["汇总", ...Array(5).fill(0)];
             pageData.forEach(
-              ({ periodUseE, lastPeriodUseE, lastYearPeriodUseE }) => {
-                console.log(parseFloat(periodUseE), summaryData[1]);
+              ({ periodUseE, lastPeriodUseE, lastSamePeriodUseE }) => {
                 summaryData[1] += parseFloat(periodUseE || 0);
                 summaryData[2] += parseFloat(lastPeriodUseE || 0);
 
-                summaryData[4] += parseFloat(lastYearPeriodUseE || 0);
+                summaryData[4] += parseFloat(lastSamePeriodUseE || 0);
               }
             );
-            summaryData[3] = (
-              ((summaryData[1] - summaryData[2]) / summaryData[2]) *
-              100
-            ).toFixed(2);
-            summaryData[5] = (
-              ((summaryData[1] - summaryData[4]) / summaryData[2]) *
-              100
-            ).toFixed(2);
+            console.log("summaryData", summaryData[1], summaryData[2]);
+            summaryData[3] =
+              summaryData[2] == 0
+                ? 0
+                : (
+                    ((summaryData[1] - summaryData[2]) / summaryData[2]) *
+                    100
+                  ).toFixed(2);
+            summaryData[5] =
+              summaryData[2] == 0
+                ? 0
+                : (
+                    ((summaryData[1] - summaryData[4]) / summaryData[2]) *
+                    100
+                  ).toFixed(2);
             return (
               <Table.Summary.Row>
                 {summaryData.map((item, index) => (

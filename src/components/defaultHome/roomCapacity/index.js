@@ -68,7 +68,7 @@ export default function DefaultHome(props) {
    const items = (Array.isArray(roomCapacity) && roomCapacity?.length >0) ? roomCapacity : []
        
   return (
-    <Titlelayout title="总容量 (KVA)" {...fs} style={{minHeight: '200px',alignItems:'center' }}>
+    <Titlelayout title="总容量 (KVA)" {...fs} style={{minHeight: '200px', height: "100%",alignItems:'center' }}>
       <Divorder laptop={laptop}>
         <div className='card_icon'><Text ellipsis={{tooltip: props.sumCapacity}}>{props.sumCapacity}</Text></div>
         <div className='details'>

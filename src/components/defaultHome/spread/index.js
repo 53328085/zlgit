@@ -64,7 +64,8 @@ export default function DefaultHome(props) {
     } 
   }, [])
   const sty = {
-    minHeight: '200px' 
+    minHeight: '200px',
+    height: "100%",
   }
   return (
     <Titlelayout title={t("AlarmDistribution")} {...fs} layout="flex" style={sty}>
