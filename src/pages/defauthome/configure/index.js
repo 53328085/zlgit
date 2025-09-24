@@ -636,11 +636,13 @@ onDrop: (layout: Layout, item: ?LayoutItem, e: Event) => void,
       setlayoutItem(newlayout)
       setChange(!change)
       refresh()
+      //Ref.current.onCancel()
      }else {
        message.error(errMsg || '布局设置错误')
+       return Promise.reject(error);
      }
     } catch (error) {
-      
+      return  Promise.reject(error);
     }
  }
  const rules =[{
@@ -703,22 +705,22 @@ onDrop: (layout: Layout, item: ?LayoutItem, e: Event) => void,
           <MenuUnfoldOutlined onClick={onClose} />
         </div>
       </CDrawer>
-      <Cmodal title="设置布局"  onOk={layoutOk}     width={832} mold="cust"    ref={Ref}> 
+      <Cmodal title="设置布局"  onOk={layoutOk}     width={832} mold="cust" custft={true}   ref={Ref}> 
         <Form form={form} labelAlign="left" labelCol={{flex: "7em"}} preserve={false}>
         <Form.Item label="设置行高" name="rowHeight" rules={rules} initialValue={200}>
              <InputNumber min={200}   placeholder="行高最小为150px" addonAfter="px" style={w220}></InputNumber>
           </Form.Item>
-          <Form.Item label="设置列数" name="cols" rules={rules} initialValue={8}>
+          <Form.Item label="设置列数" name="cols" rules={rules} initialValue={4}>
              <InputNumber min={1} max={8} placeholder="请列数1~8之间" style={w220} ></InputNumber>
           </Form.Item>
           <Form.Item label="设置行数" name="rows" rules={rules} initialValue={4} >
-             <InputNumber min={1} max={4} placeholder="请行数1~4之间" addonAfter="px" style={w220} ></InputNumber>
+             <InputNumber min={1} max={4} placeholder="请行数1~4之间"  style={w220} ></InputNumber>
           </Form.Item>
           <Space size={16}>
-          <Form.Item label="设置行间距" name={["margin", "row"]} rules={rules} initialValue={16} >
+          <Form.Item label="设置列间距" name={["margin", "col"]} rules={rules} initialValue={16} >
              <InputNumber min={16} max={32} placeholder="行间距为16~~32px" addonAfter="px" style={w220} ></InputNumber>
           </Form.Item>
-          <Form.Item label="设置列间距" name={["margin", "col"]} rules={rules} initialValue={16} >
+          <Form.Item label="设置行间距" name={["margin", "row"]} rules={rules} initialValue={16} >
              <InputNumber min={16} max={32} placeholder="列间距为16~~32px" addonAfter="px" style={w220} ></InputNumber>
           </Form.Item>
           </Space>
