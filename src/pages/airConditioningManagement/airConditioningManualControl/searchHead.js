@@ -1,15 +1,11 @@
 import { useEffect, useState, useRef, useContext } from "react";
-import { Header, Card, StyledRadioGroup, AlarmWrapper } from "./style";
+import { Header } from "./style";
 import {
     Form,
     Select,
     Input,
     InputNumber,
     Switch,
-    Divider,
-    Button,
-    ConfigProvider,
-    Space,
 } from "antd";
 import { CustButtonT, ExportExcel, ChartList } from "@com/useButton";
 export const Tabs = ({ form, onSearchClick }) => {
@@ -40,11 +36,14 @@ export const Tabs = ({ form, onSearchClick }) => {
                         ioState: 0
                     }}
                 >
-                    <Item name="alike" label="空调名称" style={{ marginLeft: 16 }}>
+                    {/* <Item name="alike" label="空调名称" style={{ marginLeft: 16 }}>
                         <Input placeholder="请输入空调名称"></Input>
                     </Item>
                     <Item name="cSn" label="空调编号" style={{ marginLeft: 16 }}>
                         <Input placeholder="请输入空调编号"></Input>
+                    </Item> */}
+                    <Item name="alike" label="关键字" style={{ marginLeft: 16 }}>
+                        <Input style={{ width: "240px" }} placeholder="请输入空调名称/空调编号" allowClear ></Input>
                     </Item>
                     <Item name="type" label="空调类型" style={{ marginLeft: 16 }}>
                         <Select options={airTypeOptions} style={{ width: "140px" }}></Select>
@@ -77,6 +76,11 @@ export const Tabs2 = ({ form, onControlClick }) => {
         // { label: "微风", value: 4 },
         { label: "自动", value: 5 },
     ];
+    // 监听开关变化并手动设置表单值
+    const handleSwitchChange = (checked) => {
+        // 明确设置值：开->1，关->2
+        form.setFieldValue('ioState', checked ? 1 : 2);
+    };
     return (
         <div>
             <Form
@@ -91,7 +95,8 @@ export const Tabs2 = ({ form, onControlClick }) => {
                 }}
             >
                 <Item name="ioState" label="开关" style={{ marginLeft: 16 }}>
-                    <Switch checkedChildren="开" unCheckedChildren="关" defaultChecked />
+                    <Switch checkedChildren="开" unCheckedChildren="关"
+                        onChange={handleSwitchChange} defaultChecked />
                 </Item>
                 <Item name="workMode" label="模式" style={{ marginLeft: 16 }}>
                     <Select options={modelOptions} style={{ width: "140px" }}></Select>

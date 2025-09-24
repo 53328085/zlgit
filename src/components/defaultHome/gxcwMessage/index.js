@@ -92,7 +92,7 @@ export default function DefaultHome(props) {
   }
   const {t} = useTranslation(["overview"])
   return (
-    <Titlelayout title={t("OpticalFiberTemperatureMeasurement")} {...fs} style={{height: "200px"}} layout="flex">
+    <Titlelayout title={t("OpticalFiberTemperatureMeasurement")} {...fs} style={{minHeight: "200px",height: "100%"}} layout="flex">
       <Divorder laptop={laptop}>
        {laptop ? null : <img src={ gatewayRuntime } className='card_icon'></img>} 
         <div className='totalCount'>

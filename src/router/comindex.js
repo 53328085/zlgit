@@ -80,6 +80,7 @@ export default function Index() {
     runtimeSolar: [//光伏发电
       "station",
       "device",
+      "data",
       "propare",
       "aerograph",
       "alarm"
@@ -299,14 +300,17 @@ export default function Index() {
           case "device":
             setConfig({ refresh: true, inverter: true });
             break;
+          case "data":
+            setConfig({});
+            break;
           case "propare":
-            setConfig({ isdate: true, shiftNo: true, refresh: true });
+            setConfig({ isdate: true, shiftNo: true });
             break;
           case "aerograph":
             setConfig({ isdate: true, shiftNo: true });
             break;
           case "alarm":
-            setConfig({ isdate: true, shiftNo: true, photovoltaicPowerStation: true });
+            setConfig({ dateR: true, shiftNo: true, photovoltaicPowerStation: true });
             break;
         }
       }

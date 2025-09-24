@@ -1,0 +1,182 @@
+.photovoltaic-station {
+    padding: 20px;
+    font-family: 'Arial', sans-serif;
+    display: grid;
+    grid-template-columns: 340px 1fr;
+    align-items: center;
+}
+
+.station-box {
+    display: flex;
+    align-items: center;
+}
+
+.station-line {
+    width: 50px;
+    height: 5px;
+    background-color: rgba(19, 90, 189, 1);
+}
+
+.station-header {
+    height: 192px;
+    padding: 16px;
+    background-color: rgba(19, 90, 189, 1);
+    border-radius: 4px;
+    font-size: 16px;
+    color: rgba(255, 255, 255, 0.996078431372549);
+}
+
+.station-header h2 {
+    margin-bottom: 15px;
+    font-size: 1.5rem;
+    font-weight: 600;
+    text-align: center;
+    color: #ffffff;
+}
+
+.station-summary {
+    display: flex;
+    gap: 15px;
+    flex-wrap: wrap;
+}
+
+.summary-card {
+    min-width: 140px;
+    text-align: center;
+}
+
+.summary-card span:first-child {
+    display: block;
+    font-size: 0.875rem;
+    margin-bottom: 5px;
+}
+
+.summary-value {
+    font-size: 1.25rem;
+    font-weight: 600;
+}
+
+.cabinets-container {
+    display: grid;
+    overflow-y: auto;
+    height: 710px;
+}
+
+.grid-cabinet {
+    display: grid;
+    gap: 20px;
+    grid-template-columns: 350px 1fr;
+    align-items: center;
+}
+
+.cabinet-header {
+    background-color: #1e40af;
+    padding: 15px;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    height: 120px;
+    color: white;
+
+    .name {
+        width: 80px;
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+    }
+}
+
+
+
+.cabinet-stats {
+    display: flex;
+    gap: 15px;
+    font-size: 0.875rem;
+}
+
+
+/* 红框区域 - 可滚动的逆变器列表 */
+.inverters-scrollable {}
+
+.inverters-header {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr;
+    background-color: #f1f5f9;
+    padding: 12px 15px;
+    font-weight: 600;
+    color: #334155;
+    font-size: 0.875rem;
+    border-bottom: 1px solid #e2e8f0;
+}
+
+/* 滚动区域 */
+.inverters-list {
+    max-height: calc(400px - 45px);
+    /* 减去表头高度 */
+    overflow-y: auto;
+    scrollbar-width: thin;
+    scrollbar-color: #94a3b8 #f1f5f9;
+}
+
+/* 自定义滚动条 */
+.inverters-list::-webkit-scrollbar {
+    width: 6px;
+}
+
+.inverters-list::-webkit-scrollbar-track {
+    background: #f1f5f9;
+}
+
+.inverters-list::-webkit-scrollbar-thumb {
+    background-color: #94a3b8;
+    border-radius: 3px;
+}
+
+.inverter-item {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr;
+    padding: 12px 15px;
+    border-bottom: 1px solid #f1f5f9;
+    font-size: 0.875rem;
+    color: #1e293b;
+}
+
+.inverter-item:hover {
+    background-color: #f8fafc;
+}
+
+.inverter-id {
+    font-weight: 500;
+}
+
+.inverter-efficiency {
+    font-weight: 600;
+}
+
+/* 效率状态颜色 */
+.inverter-efficiency.green {
+    color: #10b981;
+}
+
+.inverter-efficiency.orange {
+    color: #f59e0b;
+}
+
+.inverter-efficiency.red {
+    color: #ef4444;
+}
+
+/* 响应式调整 */
+@media (max-width: 768px) {
+
+    .inverters-header,
+    .inverter-item {
+        font-size: 0.75rem;
+        padding: 10px 8px;
+    }
+
+    .cabinet-stats {
+        flex-direction: column;
+        gap: 5px;
+    }
+}

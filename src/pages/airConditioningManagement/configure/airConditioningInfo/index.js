@@ -5,7 +5,7 @@ import {useOutletContext} from "react-router-dom"
 import Pagecount from '@com/pagecontent'
 
 import UserTable from "@com/useTable";
-import Titlelayout from '@com/titlelayout';
+
 import {CustButtonT,CustButton, ExportExcel} from "@com/useButton"
 import CModal from '@com/useModal'
 import {Serach} from "@com/comstyled"
@@ -13,7 +13,7 @@ import {AreaSelect} from "@com/useSerach/comhead"
 import {useInsertOrUpdateExteriorAC,  useInsertOrUpdateInteriorACs, useQueryInteriorACs,useDeleteAC, useImportACs, useQueryExteriorACsByPage,useQueryCSnsList,useQueryMSnsList,useQueryModelsList } from "./api"
 import {cols,  items,airconditioner,useTypeopt,initems } from "./data"
 import {Mainbox } from './style'
-import gateway from '@pages/monitoring/configure/device/electric'
+
  const {Link} = Typography
 
 
@@ -24,7 +24,7 @@ export default function Index() {
   const [newform] = Form.useForm()
   const [innewform] = Form.useForm()
   const {projectId} =useOutletContext()
-  const [isadd, setIsadd] =useState(false)
+  const [isadd, setIsadd] =useState(null)
   const [total, setTotal] = useState(0)
   const [lists, setLists] = useState([]) //空调控制器
   const [mlist, setMlist] = useState([]) // 计量设备
@@ -36,11 +36,10 @@ export default function Index() {
   const areaId = Form.useWatch("areaId", newform)
   const [cusac, setcusac] = useState(0)
   
-
   const [Ctitle,msg,operate] = useMemo(()=> {
-   let title = isadd ? "新增空调" : "编辑空调"
-   let msg = isadd ? "新增成功" : "编辑成功"
-   let operate = isadd ?1:2
+   let title = isadd=='add' ? "新增空调" : "编辑空调"
+   let msg = isadd=='add' ? "新增成功" : "编辑成功"
+   let operate = isadd=='add' ?1:2
    return [title, msg,operate]
   },[isadd])
   const downParams = useRef()
@@ -84,8 +83,9 @@ export default function Index() {
        newform.resetFields(["csn"])
        if(!success) message.warning(errMsg)
       }
+    
     } catch (error) {
-      
+      console.log(error)
     }
  }
  useRequest(getList, {
@@ -99,9 +99,8 @@ export default function Index() {
   return items({csn:lists, msn:mlist, model})
  },[lists, mlist, model])
 
- const infromitem = useMemo(()=> {
-  console.log("curRow",curRow)
-  const {id, areaId, gateWay, useType} = curRow
+ const infromitem = useMemo(()=> {  
+  const {id, areaId, gateWay, useType,csn} = curRow
   let params ={
     exteriorId:id, // 外机的Id
     projectId,
@@ -109,8 +108,8 @@ export default function Index() {
     id:null, //内机的id
   }
   console.log("params", params)
-  return initems({model, isadd,cusac, setcusac, params})
- },[model, isadd,cusac, setcusac, curRow, projectId])
+  return initems({model, cusac, setcusac, params, csn})
+ },[model,cusac, setcusac, curRow, projectId])
 
   const getData= async ({current, pageSize }, formData)=> { 
     try {
@@ -153,7 +152,7 @@ export default function Index() {
   })
   const {submit} = search
   const onAdd=()=> {
-     setIsadd(true)
+     setIsadd('add')
     // newform.setFieldValue("projectId", projectId)
      editRef.current.onOpen()
   }
@@ -166,11 +165,20 @@ export default function Index() {
      delref.current.onOpen()
   }
   const onEdit=(row)=> {
-    setIsadd(false)
-    const { ...params} = row
+    try {
+      setIsadd('edit')
+     const {cSn,mSn, ...params} = row
 
-    newform.setFieldsValue({...params},)
+   //  outrow.current=params
+   newform.setFieldsValue({csn:cSn, msn:mSn, ...params})
+   //  console.log(id)
+   //  newform.setFieldValue("areaId", id)
     editRef.current.onOpen()
+      
+    } catch (error) {
+      console.log(error)
+    }
+
   }
   const onOk= async()=> {
     try {
@@ -178,12 +186,14 @@ export default function Index() {
       let {success, errMsg} =await useInsertOrUpdateExteriorAC({projectId}, {operate,...values})
       if(success) {
         message.success(msg)
-        if(!isadd) {
+        if(isadd=='edit') {
           editRef.current.onCancel()
         }
         refresh()
       }else {
+
         message.warning(errMsg || "数据出错")
+        return Promise.reject("")
       }
 
     } catch (error) {
@@ -244,24 +254,35 @@ export default function Index() {
 
  const addInac =async(row)=> {
    try {
-    console.log(row)
-    const {id,areaId,gateWay,useType, } = row
+ 
+    const {id,areaId,gateWay,useType,dataSource, } = row
+    let csn=[]
     if(!Number.isInteger(projectId)) return message.warning("没有创建项目")
-     setCurRow(row)
+      let  csnData = await useQueryCSnsList({projectId, areaId})
+      if(csnData.success && Array.isArray(csnData.data) && csnData?.data?.length > 0) {
+         csn = csnData.data
+      }
+   
+     setCurRow({csn,...row, })
      let {success, data, errMsg} =  await  useQueryInteriorACs({id, projectId})
      if(success && Array.isArray(data)&&data.length>0) { 
       // let datas = data.map(d =>({...d}))
-       setIsadd(false)
-       innewform.setFieldValue("acs", data)
+       let datas = data.map(d => {
+        let {cSn, ...rest} = d
+        return {csn:cSn, ...rest}
+       })
+       setIsadd('edit')
+       innewform.setFieldValue("acs", datas)
      }else {
       let params =[{
         exteriorId:id, 
         areaId,
         gateWay,
-        useType,
+        useType, 
+        dataSource,
       }]
-      setIsadd(true)
-      console.log(params)
+      setIsadd('add')
+     // console.log(params)
       innewform.setFieldValue("acs", params) 
       
       if(!success)   message.warning(errMsg || "获取空调内机数据出错")
@@ -447,7 +468,7 @@ export default function Index() {
 
        {/* 新增/编辑空调外机 */}
 
-       <CModal title={Ctitle}   onOk={onOk}   width={832} mold="cust"  custft={isadd}   ref={editRef} key="ediref">
+       <CModal title={Ctitle}   onOk={onOk}   width={832} mold="cust"  custft={isadd=='add'}   ref={editRef} key="ediref">
         <Form form={newform} labelAlign="right" labelCol={{flex: "7em"}} preserve={false}>
           {fromitem}
         </Form>

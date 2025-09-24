@@ -25,7 +25,9 @@ import {
   selectOneLevel,
   levelDefaultLabel
 } from "@redux/systemconfig.js";
+import { useOutletContext } from 'react-router-dom'
 import { SiteManagerDesigner } from '@api/api.js'
+import { GetPVStationList, AddPVStation, UpdatePVStation, DeletePVStation, useQueryACsUnConfigByPage } from "./api.js";
 import Pagecont from "@com/pagecontent"
 import Titlelayout from '@com/titlelayout'
 import CModal from '@com/useModal'
@@ -43,7 +45,8 @@ const Formbox = styled.div`
 export default function Index() {
   const tableRef = useRef();
   const [form] = Form.useForm();
-  const projectId = useSelector(selectProjectId);
+  let { exparams } = useOutletContext()
+  let { areaId, projectId } = exparams
   const ispublish = useSelector(publishState);
   const areaFirstName = useSelector(levelDefaultLabel) || '园区'
 
@@ -53,7 +56,7 @@ export default function Index() {
   const curPage = useRef();
   const PageSize = 14
 
-  const getTableData = ({ current, pageSize }) => {
+  const getTableData = async ({ current, pageSize }) => {
     curPage.current = current
     if (!projectId) return new Promise((resolve) => {
       resolve({
@@ -61,27 +64,25 @@ export default function Index() {
         total: 0
       })
     })
-    return GetSites(projectId, current, pageSize).then(res => {
-      let { success, data, total } = res
-      totalItem.current = Number.isInteger(total) ? total : 0
-      if (success) {
-        if (Array.isArray(data) && data?.length > 0) {
-          //setDataSource(data)
-          //setTotal(res.total)
-          return {
-            list: data,
-            total
-          }
-        } else {
-          return {
-            list: [],
-            total: 0
-          }
+    let { success, data, errMsg } = await GetPVStationList(projectId, areaId, current, pageSize)
+    totalItem.current = Number.isInteger(total) ? total : 0
+    if (success) {
+      if (Array.isArray(data) && data?.length > 0) {
+        //setDataSource(data)
+        //setTotal(res.total)
+        return {
+          list: data,
+          total
         }
       } else {
-        message.error(res.errMsg)
+        return {
+          list: [],
+          total: 0
+        }
       }
-    })
+    } else {
+      message.error(res.errMsg)
+    }
   }
   const { tableProps, refresh, run } = useAntdTable(getTableData, {
     defaultPageSize: PageSize,

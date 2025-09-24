@@ -87,7 +87,7 @@ export const FormComp = (props) => {
                 span: 9
             }}
         >
-            <Row gutter={16}>
+            <Row className={style.customItem}>
                 <Col span={10}>
                     <Form.Item label={levelname.current} name="areaId" rules={rules}>
                         {

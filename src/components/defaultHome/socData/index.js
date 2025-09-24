@@ -2,7 +2,6 @@ import React, {useRef, useEffect} from 'react'
 import {useSelector} from 'react-redux'
 import { selectProjectId, themeColor } from '@redux/systemconfig.js'
 import {TitlelayoutOv as Titlelayout} from '@com/titlelayout';
-import {Liquid} from "@ant-design/charts"
 import { drawEcharts } from "@com/useEcharts"; 
 import {hextodec} from "@com/usehandler"
 import { useReactive } from 'ahooks';
@@ -23,41 +22,7 @@ export default function DefaultHome(props){
   const {t} = useTranslation("overview")
   const { GetSiteSoc } = HomeRuntime
   const ref=useRef()
-  const DemoLiquid = (props) => {
-    const config = {
-      percent: props.data,
-      outline: {
-        border: 2,
-        distance: 2,
-      },
-      wave: {
-        length: 128,
-      },
-    
-        statistic: {
-          title: {
-            formatter: () => 'SOC',
-            style: {
-              fontSize: 32,
-              color: '#515151',
-              
-            }
-          },
-          
-          content: {
-            style: {
-              fontSize: 32,
-              color: '#515151'
-            },
-            customHtml: () => {
-              return <span>{ (props.data * 100).toFixed(2)}%</span>
-            }
-          }
-        }
-     
-    };
-    return <Liquid {...config} />;
-  };
+ 
 
   const state = useReactive({
     socData: 0.56
@@ -84,7 +49,7 @@ export default function DefaultHome(props){
           label: {
             normal: {
          formatter: function() {
-                  return `SOC\n {a|${state.socData*100?.toFixed(2)}%}`;
+                  return `SOC\n {a|${(state.socData*100)?.toFixed(2)}%}`;
               },  
               textStyle: {
                   fontSize: 16,
@@ -126,12 +91,10 @@ export default function DefaultHome(props){
 
   
   return (
-    <Titlelayout title={t("sitesoc")} {...fs}>
-        <div style={{width: '424px', height: '338px', display: "flex"}}>
+    <Titlelayout title={t("sitesoc")} {...fs} style={{height: '100%'}}>
+        <div style={{width: '424px', minHeight: '338px', display: "flex"}}>
         <div style={{flex:1}} ref={ref}>
-        </div>
-            {/*   <DemoLiquid data={Number(state.socData)}></DemoLiquid> */}
-              
+        </div> 
           </div>
     </Titlelayout>
   )

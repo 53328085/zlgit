@@ -86,10 +86,10 @@ export default function Maincontent(props) {
     const navigate = useNavigate()
     const {tabs, value, setvalue, tabwidth, tabgap, initialval=null} = useContext(CustContext) || {}
 
-    console.log("tabs",tabs)
+   // console.log("tabs",tabs)
     const beTabs = useMemo(() => Array.isArray(tabs) && tabs.length > 0, [tabs])
 
-    console.log("beTabs", beTabs)
+  //  console.log("beTabs", beTabs)
     //const {tabs, value, setvalue} = props
     const [defaultTab, setDefaultTab] = useState(value)
     const [pathName, setPathName] = useState()

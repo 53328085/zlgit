@@ -160,7 +160,7 @@ export default function DefaultHome(props){
   },[projectId, type,warningColor])
   
   return (
-         <Titlelayout title={t("overview:AlarmOfToday")} {...fs} style={{height: "200px"}}>
+         <Titlelayout title={t("overview:AlarmOfToday")} {...fs} style={{minHeight: "200px"}}>
         <Mainbox>
           <div style={{width: '112px', height: '112px'}} ref={ref}>
           </div>

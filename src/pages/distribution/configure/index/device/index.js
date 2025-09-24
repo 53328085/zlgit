@@ -1,7 +1,7 @@
 import React, { useRef, useState, useEffect, useCallback } from 'react'
 import { Button,  Space, message, Typography, Divider} from 'antd';
 import {useTranslation} from 'react-i18next'
-import UseTransfer from '@com/useTransfer'
+//import UseTransfer from '@com/useTransfer'
 import { useAntdTable } from 'ahooks';
 import {useSelector} from 'react-redux'
  

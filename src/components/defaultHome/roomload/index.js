@@ -69,7 +69,7 @@ export default function DefaultHome(props) {
    const items = (Array.isArray(roomLoad) && roomLoad?.length >0) ? roomCapacity : []
        
   return (
-    <Titlelayout title="实时负荷 (kW)" {...fs} style={{height: '200px',alignItems:'center' }}>
+    <Titlelayout title="实时负荷 (kW)" {...fs} style={{minHeight: '200px',height: "100%",alignItems:'center' }}>
       <Divorder laptop={laptop}>
         <div className='card_icon'><Text ellipsis={{tooltip: props.sumLoad}}>{props.sumLoad}</Text></div>
         <div className='details'>

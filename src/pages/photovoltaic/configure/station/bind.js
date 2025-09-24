@@ -44,7 +44,7 @@ export default forwardRef(function Index({ projectId, areaId = 1, update, modalT
         type: 1,
         pageNum: current,
         alike,
-        //  rId,
+        rId,
       }
 
       let { success, data, total, errMsg } = await useQueryACsUnConfigByPage({}, body)
@@ -216,7 +216,7 @@ export default forwardRef(function Index({ projectId, areaId = 1, update, modalT
                   })}
                 </Select>
               </Form.Item>
-              <Form.Item label="路灯编号" name="address">
+              <Form.Item label="站点编号" name="address">
                 <Input placeholder='请输入安装地址' />
               </Form.Item>
             </Form>

@@ -48,7 +48,7 @@ export default function DefaultHome(props) {
  
  
   return (
-    <Titlelayout title="配电房数量" {...fs} style={{height: '200px'}}>
+    <Titlelayout title="配电房数量" {...fs} style={{minHeight: '200px',height: "100%"}}>
       <Divorder>
         <img src={ roomnum } className='card_icon'></img>
         <div className='details'>

@@ -63,7 +63,7 @@ const gauge = {
   }, [])
   
   return (
-         <Titlelayout title={t("overview:Realtimeloadrate")} {...fs} style={{height: "200px"}} layout="flex">
+         <Titlelayout title={t("overview:Realtimeloadrate")} {...fs} style={{minHeight: "200px",height: "100%"}} layout="flex">
          <div ref={guref} style={{flex: 1}}>
           </div>
          </Titlelayout>

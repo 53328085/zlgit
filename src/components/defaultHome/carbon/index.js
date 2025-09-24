@@ -45,7 +45,7 @@ export default function DefaultHome(){
   }, [])
   
   return (
-    <Titlelayout title={<CustTransO text="CarbonEmissions"/>} {...fs} style={{height: "200px"}} layout="flex">
+    <Titlelayout title={<CustTransO text="CarbonEmissions"/>} {...fs} style={{minHeight: "200px",height: "100%"}} layout="flex">
         <div ref={cref} style={{flex:1}}></div>
     </Titlelayout>
   )

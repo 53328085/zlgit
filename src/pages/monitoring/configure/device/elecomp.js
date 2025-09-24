@@ -250,14 +250,14 @@ export const FormComp = (props) => {
       form={form}
       colon={false}
       labelCol={{
-        span: 6,
+        span: 9
       }}
-      /*  initialValues={{
-             channel1:'通道1',
-             channel2:'通道2',
-             channel3:'通道3',
-             channel4:'通道4'
-         }} */
+    /*  initialValues={{
+           channel1:'通道1',
+           channel2:'通道2',
+           channel3:'通道3',
+           channel4:'通道4'
+       }} */
     >
       <Row className={style.customItem}>
         <Col span={10}>
@@ -378,12 +378,12 @@ export const FormComp = (props) => {
             <Input />
           </Form.Item>
           {deviceStyle !== 13 &&
-          deviceStyle !== 14 &&
-          deviceStyle !== 18 &&
-          deviceStyle !== 20 &&
-          deviceStyle !== 21 &&
-          deviceStyle !== 22 &&
-          deviceStyle !== 23 ? (
+            deviceStyle !== 14 &&
+            deviceStyle !== 18 &&
+            deviceStyle !== 20 &&
+            deviceStyle !== 21 &&
+            deviceStyle !== 22 &&
+            deviceStyle !== 23 ? (
             <Form.Item label="用能类型" name="customerType" rules={rules}>
               <Select
                 options={[
@@ -415,13 +415,12 @@ export const FormComp = (props) => {
                         ) : null
                     } */}
           {deviceStyle === 1 ||
-          deviceStyle == 12 ||
-          deviceStyle == 13 ||
-          deviceStyle == 14 ||
-          deviceStyle == 20 ||
-          deviceStyle == 21 ||
-          deviceStyle == 22 ||
-          deviceStyle == 23 ? (
+            deviceStyle == 12 ||
+            deviceStyle == 13 ||
+            deviceStyle == 14 ||
+            deviceStyle == 20 ||
+            deviceStyle == 22 ||
+            deviceStyle == 23 ? (
             <Com form={form} deviceStyle={deviceStyle}></Com>
           ) : null}
         </Col>
@@ -745,7 +744,7 @@ export const EditFormComp = (props) => {
       form={form}
       colon={false}
       labelCol={{
-        span: 6,
+        span: 9
       }}
       preserve={false}
     >
@@ -824,12 +823,12 @@ export const EditFormComp = (props) => {
             <Input />
           </Form.Item>
           {deviceStyle !== 13 &&
-          deviceStyle !== 14 &&
-          deviceStyle !== 18 &&
-          deviceStyle !== 20 &&
-          deviceStyle !== 21 &&
-          deviceStyle !== 22 &&
-          deviceStyle !== 23 ? (
+            deviceStyle !== 14 &&
+            deviceStyle !== 18 &&
+            deviceStyle !== 20 &&
+            deviceStyle !== 21 &&
+            deviceStyle !== 22 &&
+            deviceStyle !== 23 ? (
             <Form.Item label="用能类型" name="customerType" rules={rules}>
               <Select
                 options={[
@@ -862,13 +861,12 @@ export const EditFormComp = (props) => {
                     } */}
           {/* {deviceStyle === 1? <EditCom form={form} coms={coms}></EditCom> : null} */}
           {deviceStyle === 1 ||
-          deviceStyle == 12 ||
-          deviceStyle == 13 ||
-          deviceStyle == 14 ||
-          deviceStyle == 20 ||
-          deviceStyle == 21 ||
-          deviceStyle == 22 ||
-          deviceStyle == 23 ? (
+            deviceStyle == 12 ||
+            deviceStyle == 13 ||
+            deviceStyle == 14 ||
+            deviceStyle == 20 ||
+            deviceStyle == 22 ||
+            deviceStyle == 23 ? (
             <EditCom
               form={form}
               coms={coms}
@@ -895,15 +893,15 @@ export const AreaOption = ({
     return index == 1
       ? `${channelName1}${text}`
       : index == 2
-      ? `${channelName2}${text}`
-      : index == 3
-      ? `${channelName3}${text}`
-      : index == 4
-      ? `${channelName4}${text}`
-      : "";
+        ? `${channelName2}${text}`
+        : index == 3
+          ? `${channelName3}${text}`
+          : index == 4
+            ? `${channelName4}${text}`
+            : "";
   };
 
-  useEffect(() => {}, [channelName1]);
+  useEffect(() => { }, [channelName1]);
   return (
     <Modal
       mold="cust"
@@ -937,12 +935,12 @@ const WrapDiv = ({ channelname }) => {
     rankindex == 1
       ? path1Gruop
       : rankindex == 2
-      ? path2Gruop
-      : rankindex == 3
-      ? path3Gruop
-      : rankindex == 4
-      ? path4Gruop
-      : [{ current: { name: "", remakr: "" } }];
+        ? path2Gruop
+        : rankindex == 3
+          ? path3Gruop
+          : rankindex == 4
+            ? path4Gruop
+            : [{ current: { name: "", remakr: "" } }];
   const cardRef = useRef();
   const [numchannel, setNumChannel] = useState();
   const [list, setList] = useState([]);

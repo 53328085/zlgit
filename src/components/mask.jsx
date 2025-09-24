@@ -2,6 +2,7 @@
 import React from 'react'
 import {createPortal} from 'react-dom'
 import style from './style.module.less'
+
 export default function Msk(props) {
   let {task} = props
   let {maskBack}= props
@@ -14,7 +15,10 @@ export default function Msk(props) {
     height: '100%',
     zIndex: 1978,
   } */
-  // return  createPortal(<div className={`${style.mask} ${task ? style.startAnimation : style.endAnimation}` }>{props.children}</div>, document.body )
-  return (<div className={`${maskBack==undefined?style.mask:style.noneMask} ${task ? style.startAnimation : style.endAnimation}` }>{props.children}</div>)
 
+  if (Object.hasOwn(props,"maskBack")) {
+    return (<div className={`${maskBack==undefined?style.mask:style.noneMask} ${task ? style.startAnimation : style.endAnimation}` }>{props.children}</div>)
+  }else {
+    return  createPortal(<div className={`${style.mask} ${task ? style.startAnimation : style.endAnimation}` }>{props.children}</div>, document.body )
+  }
 }

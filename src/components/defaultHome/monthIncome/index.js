@@ -8,8 +8,10 @@ import { HomeRuntime } from '@api/api.js'
 import { message } from 'antd';
 import {useTranslation} from "react-i18next"
 const Mainbox = styled.div`
-  width: 222px;
-  height: 200px;
+  min-width: 222px;
+  width: 100%;
+  min-height: 200px;
+  height: "100%";
   //padding: 16px;
   background-color: #9951fe;
   border-radius: 4px;

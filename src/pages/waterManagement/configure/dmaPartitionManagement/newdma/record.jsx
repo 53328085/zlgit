@@ -6,6 +6,19 @@ import {useGetTree,useInsert,useGetDetail,useUpdate} from "../api"
 import {rules, options,partType,rateType, iscomputer} from "../data"
 import { CustButton } from '@com/useButton'
 import {isObject} from "@com/usehandler"
+
+function getTreeId(arr, id){
+   
+  for(let i = 0; i < arr.length; i++) {
+    let {children} = arr[i]
+    if (arr[i].id === id) {
+      ids.push(arr[i].id)
+      return ids
+    }else if(Array.isArray(children)&&children.length) {
+       ids.push(...getTreeId(children, id))
+    }
+  }
+}
 export default function Index({projectId, id}) {
 
  const { pathname, state,hash } = useLocation();
@@ -21,8 +34,9 @@ const getRecordDtl =async() => {
     try {
        if(![id, projectId].some(d => Number.isInteger(d))) return
       let {data, success} = await useGetDetail({id, projectId})
-      data["isComputeLeakage"] = Number(data["isComputeLeakage"])
-     data["isComputeNrw"] = Number(data["isComputeNrw"])
+      data["isComputeLeakage"] = data["isComputeLeakage"] ? 1 : 2
+     data["isComputeNrw"] = data["isComputeNrw"] ? 1 : 2
+     data["parentId"]=data["parentIds"]
       if(success && isObject(data)) {
          form.setFieldsValue(data)
       }
@@ -38,6 +52,7 @@ const {refresh}  =  useRequest(getRecordDtl, {
     try {
         if(!Number.isInteger(projectId)) return
         const {success, data, errMsg} = await useGetTree({projectId})
+
         if(success, Array.isArray(data)) {
             return data
         }else {
@@ -60,17 +75,18 @@ const {refresh}  =  useRequest(getRecordDtl, {
   const onSubmit=async()=> {
    try {
     let {code,level,parentId,...values} = await form.validateFields()
-    console.log(parentId)
-    values["parentId"] = parentId[parentId?.length - 1]
+    
+    values["parentId"] = parentId?.[parentId?.length - 1] || 0
+   // values["parentIds"]=parentId;
     values["isComputeLeakage"] = values["isComputeLeakage"]==1
-     values["isComputeNrw"] = values["isComputeNrw"]==2
+     values["isComputeNrw"] = values["isComputeNrw"]==1
     let handler =isEdit ? useUpdate : useInsert
     let {success, data,errMsg} = await handler({projectId}, {...values, projectId,id:isEdit? id : 0})
     if(success) {
         message.success(isEdit ? "修改成功" : "新增成功")
         if(isObject(data)) {
-          data["isComputeLeakage"] = Number(data["isComputeLeakage"])?.toString()
-          data["isComputeNrw"] = Number(data["isComputeNrw"])?.toString()
+          data["isComputeLeakage"] = data["isComputeLeakage"] ? 1 :2
+          data["isComputeNrw"] = data["isComputeNrw"] ? 1 :2   
           form.setFieldsValue(data)
         }  
 
@@ -85,9 +101,10 @@ const {refresh}  =  useRequest(getRecordDtl, {
         }
     }
    } catch (error) {
-    
+    console.log(error)
    }
   }
+
   return (
       <Form form={form} className='record' labelCol={{flex: "6em"}}  >
         <div className="head">
@@ -97,8 +114,8 @@ const {refresh}  =  useRequest(getRecordDtl, {
         </div>
         <Row gutter={32}>
             <Col span={8}>
-            <Form.Item label="上级节点" name="parentId" rules={rules}>
-<Cascader options={data} fieldNames={{label: "name", value: "id"}}></Cascader>
+            <Form.Item label="上级节点" name="parentId" >
+<Cascader options={data} fieldNames={{label: "name", value: "id"}} changeOnSelect={true}></Cascader>
             </Form.Item>
             </Col>
             <Col>
@@ -168,16 +185,15 @@ const {refresh}  =  useRequest(getRecordDtl, {
         </div>
         <Row gutter={32}>
         <Col span={8}>
-          <Form.Item label="是否计算漏损" name="isComputeLeakage"  labelCol={{flex: "7em"}} initialValue="1"   >
+          <Form.Item label="是否计算漏损" name="isComputeLeakage"  labelCol={{flex: "7em"}} initialValue={1}   >
             <Radio.Group  optionType="button" options={iscomputer}
         buttonStyle="solid"></Radio.Group>
           </Form.Item> 
           </Col>
           <Col span={8}>
-          <Form.Item label="计算产销差"  name="isComputeNrw"  labelCol={{flex: "9em"}} initialValue="1"  >
-          <Radio.Group  optionType="button" options={iscomputer}
-        buttonStyle="solid"></Radio.Group>
-          </Form.Item> 
+          <Form.Item label="计算产销差"  name="isComputeNrw"  labelCol={{flex: "9em"}} initialValue={1}  >
+            <Radio.Group  optionType="button" options={iscomputer}
+        buttonStyle="solid"></Radio.Group></Form.Item> 
           </Col>
         </Row>
         <Row gutter={32}>

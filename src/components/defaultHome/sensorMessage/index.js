@@ -6,6 +6,7 @@ import {TitlelayoutOv as Titlelayout} from '@com/titlelayout';
 import {useTranslation} from "react-i18next"
 import gatewayRuntime from '../sensor.svg'
 import Context from "@com/content"
+import { head } from 'lodash';
 const sty = css`
  //margin-top: 16px;
  flex: 1;
@@ -89,7 +90,7 @@ export default function DefaultHome(props) {
   }
 
   return (
-    <Titlelayout title={t("SensorInformation")} {...fs} style={{height: "200px"}}>
+    <Titlelayout title={t("SensorInformation")} {...fs} style={{minHeight: "200px", height: "100%"}}>
       <Divorder laptop={laptop}>
        {laptop ? null : <img src={ gatewayRuntime } className='card_icon'></img>} 
         <div className='totalCount'>

@@ -38,7 +38,7 @@ export default forwardRef(function Index({ projectId, areaId = 1, update, modalT
         type: 1,
         pageNum: current,
         alike,
-        //  rId,
+        rId,
       }
 
       let { success, data, total, errMsg } = await useQueryACsUnConfigByPage({}, body)

@@ -12,7 +12,7 @@ import {Serach} from "@com/comstyled"
 import {bindcol,rules,w255} from './data'
 import {useLineBindLight, useLineUnBindLight,usePageBind, usePageUnBind,useLineBindSwitch,useLoadSwitch} from './api'
 export default forwardRef(function Index({lineId,initId, projectId, update}, ref){
-  console.log(lineId)
+  console.log("initId",initId)
   const mRef = useRef()
   const [form] = Form.useForm()
   const [formed] = Form.useForm()
@@ -29,8 +29,8 @@ export default forwardRef(function Index({lineId,initId, projectId, update}, ref
 
   },[sid,switchids])
   useEffect(()=> {
-    if(parseInt(initId)>0) {
-      sform.setFieldValue("switchId", initId)
+    if(parseInt(initId?.switchId)>0) {
+      sform.setFieldValue("switchId", initId.switchId)
     }
   }, [initId])
 
@@ -110,14 +110,14 @@ export default forwardRef(function Index({lineId,initId, projectId, update}, ref
       let fag = Number.isInteger(parseInt(projectId))&&Number.isInteger(parseInt(lineId))
       if(!fag) return
       console.log(formData)
-      const {alike} = formData
+      const {alike=""} = formData
       let body = {
         projectId,
         lineId,
         pageSize,
         pageNum:current,
         alike,
-        areaIds:treeId || []
+      //  areaIds:treeId || []
       }
   
      let {success, data, total,errMsg}  = await  usePageBind({}, body)
@@ -151,7 +151,7 @@ const  {tableProps,  search, refresh} = useAntdTable(getUnBind, {
     form:formed,
     defaultPageSize: 14,
 
-    refreshDeps: [lineId, projectId,treeId]
+    refreshDeps: [lineId, projectId]
   })
   const onOpen =async ()=> {
     try {
@@ -231,7 +231,7 @@ const  {tableProps,  search, refresh} = useAntdTable(getUnBind, {
               </div>
               <div className='inwrap'>
               <div style={{overflow: "auto"}}>
-               <UseTree areaId={0} setTreeId={setTreeId} setLine={()=>{}} showline={false} datatype={NaN} energytype={1} ></UseTree>
+               <UseTree areaId={NaN} setTreeId={setTreeId} setLine={()=>{}} showline={false} datatype={NaN} energytype={1} ></UseTree>
                </div>
                <div className='tbwrap'> 
                    <Form form={form} layout="inline">
