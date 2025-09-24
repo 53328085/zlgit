@@ -435,7 +435,7 @@ export const Frequency = ({
     ] 
   },[modalData?.deivemes]);
 
-
+    
 
   return (
     <UseModal
