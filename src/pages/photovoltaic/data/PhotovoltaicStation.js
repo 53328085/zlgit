@@ -1,62 +1,97 @@
 import React from 'react';
-import './PhotovoltaicStation.css';
+import './PhotovoltaicStation.less';
 
-// 逆变器组件
-const Inverter = ({ data }) => {
-    // 根据效率值确定状态颜色
+// 并网柜组件 - 添加了position属性标识位置
+const GridCabinet = ({ cabinet, position, totalCabinets }) => {
+    return (
+        <div className="grid-cabinet">
+            <div className='line'>
+                {/* 根据位置添加不同的类名 */}
+                <div className={`cabinet-line1 ${position}`}></div>
+                <div className='cabinet-line2'></div>
+            </div>
+            <div className='cabinet-box'>
+                <div className="cabinet-header">
+                    <div className='name' title={cabinet.id}>并网柜 {cabinet.id}</div>
+                    <div className="cabinet-stats">
+                        <div>正向有功总电能 <div>{cabinet.totalPower} kW</div></div>
+                        <div>反向有功总电能 <div>{cabinet.totalEnergy} kWh</div></div>
+                    </div>
+                </div>
+                <div className='station-line'></div>
+                <div className='inverter'>
+                    {cabinet.inverters.map((inverter, index) => {
+                        // 确定每个并网柜的位置（第一个、中间、最后一个）
+                        let position = 'middle';
+                        if (index === 0) position = 'first';
+                        if (index === cabinet.inverters.length - 1) position = 'last';
+
+                        return (
+                            <InverterComp
+                                key={inverter.id}
+                                inverter={inverter}
+                                position={position}
+                                totalCabinets={cabinet.inverters.length}
+                            />
+                        );
+                    })}
+                </div>
+            </div>
+        </div>
+    );
+};
+const InverterComp = ({ inverter, position, totalCabinets }) => {
+
     const getEfficiencyColor = (efficiency) => {
         if (efficiency > 85) return 'green';
         if (efficiency > 70) return 'orange';
         return 'red';
     };
-
     return (
-        <div className="inverter-item">
-            <span className="inverter-id">逆变器 {data.id}</span>
-            <span className="inverter-value">{data.dcVoltage} V</span>
-            <span className="inverter-value">{data.dcCurrent} A</span>
-            <span className="inverter-value">{data.acPower} kW</span>
-            <span className="inverter-value">{data.dailyEnergy} kWh</span>
-            <span className={`inverter-efficiency ${getEfficiencyColor(data.efficiency)}`}>
-                {data.efficiency}%
-            </span>
-        </div>
-    );
-};
-
-// 并网柜组件
-const GridCabinet = ({ cabinet }) => {
-    return (
-        <div className="grid-cabinet">
-            <div className="cabinet-header">
-                <div className='name' title={cabinet.id}>并网柜 {cabinet.id}</div>
-                <div className="cabinet-stats">
-                    <div>正向有功总电能 <div>{cabinet.totalPower} kW</div></div>
-                    <div>反向有功总电能 <div>{cabinet.totalEnergy} kWh</div></div>
-                </div>
+        <div className="grid-inverter">
+            <div className='line'>
+                {/* 根据位置添加不同的类名 */}
+                <div className={`inverter-line1 ${position}`}></div>
+                <div className='inverter-line2'></div>
             </div>
-
-            {/* 红框区域 - 可滚动的逆变器列表 */}
-            <div className="inverters-scrollable">
-                <div className="inverters-header">
+            <div className='inverter-box'>
+                <div className='inverter-item'>
+                    <span className={`circle ${getEfficiencyColor(inverter.efficiency)}`}></span>
                     <span>逆变器编号</span>
-                    <span>直流电压</span>
-                    <span>直流电流</span>
-                    <span>交流功率</span>
-                    <span>当日发电量</span>
-                    <span>转换效率</span>
                 </div>
-
-                <div className="inverters-list">
-                    {cabinet.inverters.map(inverter => (
-                        <Inverter key={inverter.id} data={inverter} />
-                    ))}
+                <div className='inverter-item'>
+                    <span>直流功率</span>
+                    <div className='inverter-value'>
+                        <span>{inverter.dcCurrent}</span>kW
+                    </div>
+                </div>
+                <div className='inverter-item'>
+                    <span>日发电量</span>
+                    <div className='inverter-value'>
+                        <span>{inverter.acPower}</span>kWh
+                    </div>
+                </div>
+                <div className='inverter-item'>
+                    <span>累计发电量</span>
+                    <div className='inverter-value'>
+                        <span>{inverter.dailyEnergy}</span>kWh
+                    </div>
+                </div>
+                <div className='inverter-item'>
+                    <span>累计发电量</span>
+                    <div className='inverter-value'>
+                        <span>{inverter.efficiency}</span>%
+                    </div>
                 </div>
             </div>
+            {/* <div className="inverters-list">
+                        {inverters.map(inverter => (
+                            <Inverter key={inverter.id} data={inverter} />
+                        ))}
+                    </div> */}
         </div>
-    );
-};
-
+    )
+}
 // 光伏站点主组件
 const PhotovoltaicStation = () => {
     // 模拟光伏站点数据
@@ -143,9 +178,21 @@ const PhotovoltaicStation = () => {
             </div>
 
             <div className="cabinets-container">
-                {stationData.cabinets.map(cabinet => (
-                    <GridCabinet key={cabinet.id} cabinet={cabinet} />
-                ))}
+                {stationData.cabinets.map((cabinet, index) => {
+                    // 确定每个并网柜的位置（第一个、中间、最后一个）
+                    let position = 'middle';
+                    if (index === 0) position = 'first';
+                    if (index === stationData.cabinets.length - 1) position = 'last';
+
+                    return (
+                        <GridCabinet
+                            key={cabinet.id}
+                            cabinet={cabinet}
+                            position={position}
+                            totalCabinets={stationData.cabinets.length}
+                        />
+                    );
+                })}
             </div>
         </div>
     );

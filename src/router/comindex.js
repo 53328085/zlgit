@@ -350,7 +350,7 @@ export default function Index() {
       } else if (primary == "designerSolar") {
         switch (nested) {
           case "station":
-            setConfig({ custview: true, photovoltaicPowerStation: true });
+            setConfig({ custview: true });
             break;
           case "inverter":
             setConfig({ custview: true, inverter: true, });
