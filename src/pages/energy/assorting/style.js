@@ -12,21 +12,24 @@ export const Mainbox =styled.div`
 
     }
     .right {
-        display: grid;
+       display: grid;
        grid-template-rows: 232px 1fr;
        gap:16px;
+       .topwrap {
+        overflow: auto;
        .top { 
         display: grid;
         grid-template-columns: repeat(auto-fill, minmax(229px, 1fr));
-        column-gap: 9px;
+        gap: 9px;
        }
+    }
     }
   }
 
 `
 export const Power= styled.div`
 && {
-    width: 229px;
+    min-width: 229px;
     height: 232px;
     background: #FFFFFF;
     border-radius: 8px;
@@ -80,6 +83,7 @@ export const Power= styled.div`
         grid-template-columns: repeat(2, 1fr);
         grid-auto-rows: 20px;
         justify-content: space-between;
+        align-content: space-between;
         .label {
            color:rgba(96, 98, 102, 1);
            text-align:left;
@@ -95,4 +99,27 @@ export const Power= styled.div`
     }
 }
   
+`
+export const CustTitle=styled.div` 
+&&{
+    display: flex;
+    align-items: center;
+    justify-content:space-between;
+}
+`
+export const ChartWrap = styled.div`
+&&{
+    flex:1;
+    display:flex;
+    gap: 16px;
+    .pip {
+        height: 100%;
+        flex-basis: 354px;
+        display:flex;
+    }
+    .bar {
+        flex:1;
+        display:flex;
+    }
+}
 `
