@@ -1,0 +1,230 @@
+.photovoltaic-station {
+    padding: 20px;
+    font-family: 'Arial', sans-serif;
+    display: grid;
+    grid-template-columns: 400px 1fr;
+    align-items: center;
+}
+
+.station-box {
+    display: flex;
+    align-items: center;
+}
+
+.station-line {
+    width: 90px;
+    height: 2px;
+    background-color: var(--ant-primary-color);
+}
+
+.station-header {
+    height: 192px;
+    padding: 16px;
+    background-color: var(--ant-primary-color);
+    border-radius: 4px;
+    font-size: 16px;
+    color: rgba(255, 255, 255, 0.996078431372549);
+}
+
+.station-header h2 {
+    margin-bottom: 15px;
+    font-size: 1.5rem;
+    font-weight: 600;
+    text-align: center;
+    color: #ffffff;
+}
+
+.station-summary {
+    display: flex;
+    gap: 15px;
+    flex-wrap: wrap;
+}
+
+.summary-card {
+    min-width: 140px;
+    text-align: center;
+}
+
+.summary-card span:first-child {
+    display: block;
+    font-size: 0.875rem;
+    margin-bottom: 5px;
+}
+
+.summary-value {
+    font-size: 1.25rem;
+    font-weight: 600;
+}
+
+.cabinets-container {
+    overflow-y: auto;
+    height: 710px;
+}
+
+.grid-cabinet {
+    display: grid;
+    grid-template-columns: 90px 1fr;
+    /* 增加间距避免连接线重叠 */
+}
+
+.line {
+    display: flex;
+    align-items: center;
+}
+
+/* 竖线样式调整 - 核心修复部分 */
+.cabinet-line1 {
+    width: 2px;
+    background-color: var(--ant-primary-color);
+}
+
+/* 第一个并网柜的竖线只显示下半部分 */
+.cabinet-line1.first {
+    height: 50%;
+    align-self: flex-end;
+    /* 靠下对齐 */
+}
+
+/* 中间并网柜的竖线显示完整高度 */
+.cabinet-line1.middle {
+    height: 100%;
+}
+
+/* 最后一个并网柜的竖线只显示上半部分 */
+.cabinet-line1.last {
+    height: 50%;
+    align-self: flex-start;
+    /* 靠上对齐 */
+}
+
+.cabinet-line2 {
+    width: 90px;
+    height: 2px;
+    background-color: var(--ant-primary-color);
+}
+
+.cabinet-box {
+    display: grid;
+    grid-template-columns: 320px 90px 1fr;
+    align-items: center;
+}
+
+.cabinet-header {
+    background-color: #1e40af;
+    padding: 15px;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    height: 120px;
+    color: white;
+}
+
+.cabinet-header .name {
+    width: 80px;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+
+.cabinet-stats {
+    display: flex;
+    gap: 15px;
+    font-size: 0.875rem;
+}
+
+.inverter {
+    display: grid;
+    gap: 8px;
+    padding: 8px 0;
+    color: #fff;
+}
+
+.grid-inverter {
+    display: grid;
+    grid-template-columns: 90px 1fr;
+    height: 60px;
+}
+
+.inverter-box {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    border-radius: 4px;
+    background-color: rgba(0, 43, 59, 1);
+}
+
+.inverter-item:nth-child(1) {
+    display: flex;
+    align-items: center;
+}
+
+.inverter-value {
+    span {
+        font-size: 16px;
+        margin-right: 5px;
+    }
+}
+
+.inverter-bac {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    border-radius: 4px;
+    background-color: rgba(0, 43, 59, 1);
+}
+
+/* 竖线样式调整 - 核心修复部分 */
+.inverter-line1 {
+    width: 2px;
+    background-color: var(--ant-primary-color);
+}
+
+/* 第一个并网柜的竖线只显示下半部分 */
+.inverter-line1.first {
+    height: 50%;
+    align-self: flex-end;
+    /* 靠下对齐 */
+}
+
+/* 中间并网柜的竖线显示完整高度 */
+.inverter-line1.middle {
+    height: 140%;
+}
+
+/* 最后一个并网柜的竖线只显示上半部分 */
+.inverter-line1.last {
+    height: 50%;
+    align-self: flex-start;
+    /* 靠上对齐 */
+}
+
+.inverter-line2 {
+    width: 90px;
+    height: 2px;
+    background-color: var(--ant-primary-color);
+}
+
+
+/* 红框区域 - 可滚动的逆变器列表 */
+.inverters-scrollable {}
+
+.inverter-item .circle {
+    width: 16px;
+    height: 16px;
+    display: inline-block;
+    border-radius: 50%;
+    margin-right: 10px;
+}
+
+/* 效率状态颜色 */
+.inverter-item .green {
+    background: #10b981;
+}
+
+.inverter-item .orange {
+    background: #f59e0b;
+}
+
+.inverter-item .red {
+    background: #ef4444;
+}

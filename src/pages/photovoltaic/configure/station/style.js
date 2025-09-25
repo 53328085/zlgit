@@ -52,10 +52,18 @@ export const Bindwrap = styled.div`
     }
     }
     }
-    .center{
-    .ant-form-item-control-input-content{
-      color: #868686;
-    }
+      .deviceInfo{
+        background-color: rgba(246, 246, 246, 0.557);
+        border: 1px solid #d7d7d7;
+        border-radius: 5px;
+        padding: 12px 16px;
+      .info{
+      margin-top:16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      }
+      }
     .ant-form-inline {
       background-color: rgba(246, 246, 246, 0.557);    
       border: 1px solid #d7d7d7;
@@ -65,7 +73,7 @@ export const Bindwrap = styled.div`
       .ant-form-item{
       margin-right:55px;
       }
-    }
+    
       .inverter_title{
       color:${props => props.theme.primaryColor};
       font-size: 16px;

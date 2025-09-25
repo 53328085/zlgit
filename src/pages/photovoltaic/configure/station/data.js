@@ -27,3 +27,8 @@ export const rules = [
   },
 ];
 export const w255 = { width: "255px" };
+
+export const GridConnectedTypeData = [
+  { label: "自发自用", value: 1 },
+  { label: "余量上网", value: 2 },
+  { label: "全量上网", value: 3 },]

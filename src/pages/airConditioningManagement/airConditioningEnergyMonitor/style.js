@@ -116,7 +116,7 @@ export const  AirModal=styled.div`
 `
 export const BasicInfo =styled.div`
 display:grid;
-grid-template-columns:repeat(3,1fr);
+grid-template-columns:repeat(2,1fr);
 grid-gap:16px;
 margin:16px 0;
 .flexbox{
