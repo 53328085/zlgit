@@ -8,17 +8,19 @@ import { HomeRuntime } from '@api/api.js'
 import { message } from 'antd';
 import {CustTransO} from "@com/useButton"
 const Mainbox = styled.div`
-   min-width: 222px;
+  
    width: 100%;
   min-height: 200px;
-  height: "100%";
+  height: 100%;
  // padding: 16px;
   background-color: #9951fe;
   border-radius: 4px;
   box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.349019607843137);
+  display: flex;
+  flex-direction: column;
   .headerTitle{
-    padding-left: 24px;
-    border-left: 4px solid #fff;
+    padding-left: 28px;
+   // border-left: 4px solid #fff;
     height: 24px;
     line-height: 24px;
     font-size: 15px;
@@ -37,6 +39,7 @@ const Mainbox = styled.div`
        background-color: #fff;
     }
   .mainData{
+    flex: 1;
     padding: 20px;
     display: flex;
     align-items: center;

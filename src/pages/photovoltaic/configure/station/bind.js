@@ -1,5 +1,5 @@
 import React, { useRef, forwardRef, useImperativeHandle, useState, useMemo, useEffect } from 'react'
-import { Space, Input, message, Button, Form, Select } from "antd"
+import { Space, Input, message, Row, Col, InputNumber, Radio, Button, Form, Select } from "antd"
 import { LeftOutlined, RightOutlined } from "@ant-design/icons"
 import { useSelector, useDispatch } from 'react-redux'
 import CModal from '@com/useModal'
@@ -9,7 +9,7 @@ import { selectProjectId, selectOneLevel, adaptation } from '@redux/systemconfig
 import UseTree from "@com/useTree"
 import { Bindwrap } from "./style"
 import { Serach } from "@com/comstyled"
-import { bindcol, rules, w255 } from './data'
+import { bindcol, rules, w255, GridConnectedTypeData } from './data'
 import {
   useQueryACsUnConfigByPage, useQueryACsConfigByPage, useAddACsConfig,
   useRemoveACsConfig,
@@ -24,7 +24,7 @@ export default forwardRef(function Index({ projectId, areaId = 1, update, modalT
   const [formed] = Form.useForm()
   const [formTop] = Form.useForm()
   const [formCenter] = Form.useForm()
-
+  const [gridConnectedType, setGridConnectedType] = useState(1)
   const [treeId, setTreeId] = useState([])
 
 
@@ -179,65 +179,92 @@ export default forwardRef(function Index({ projectId, areaId = 1, update, modalT
   }))
   return (
     <div>
-      <CModal title={modalTitle} width={1380} mold="cust" ref={mRef} footer={<Button onClick={onCancel}>取消</Button>}>
+      <CModal title={modalTitle} width={880} mold="cust" ref={mRef}
+      >
         <Bindwrap>
           <div className='top'>
-            <Form colon={false} form={formTop} layout="inline">
-              <Form.Item label="站点名称" name="name" rules={[{ required: true }]}>
-                <Input placeholder='请输入站点名称' />
-              </Form.Item>
-              <Form.Item label="路灯编号" name="sn" rules={[{ required: true }]}>
-                <Input placeholder='请输入站点编号' />
-              </Form.Item>
-              <Form.Item name="areaId"
-                label={
-                  oneLevel[0]?.levelName ? '所属' + oneLevel[0]?.levelName : "所属园区"
-                }
-                rules={[
-                  { required: true, message: `请选择${oneLevel[0]?.levelName}` },
-                ]}
-                key="areaId">
-                <Select
-                  // disabled={modalTitle === "编辑站点"}
-                  placeholder={
-                    oneLevel[0]?.levelName
-                      ? `请选择${oneLevel[0].levelName}`
-                      : "园区名称"
-                  }
-                  defaultValue={areaList[0].id}
-                  style={{ width: "180px" }}
-                >
-                  {areaList.map((item) => {
-                    return (
-                      <Select.Option key={item.id} value={item.id}>
-                        {item.name}
-                      </Select.Option>
-                    );
-                  })}
-                </Select>
-              </Form.Item>
-              <Form.Item label="站点编号" name="address">
-                <Input placeholder='请输入安装地址' />
-              </Form.Item>
+            <Form colon={false} preserve={false} form={formTop}
+              labelCol={{ flex: "110px" }}
+            >
+              <Row gutter={16}>
+                <Col span={10}>
+                  <Form.Item label="站点名称" name="name" rules={[{ required: true }]}>
+                    <Input placeholder='请输入站点名称'
+                      style={{ width: "200px" }} />
+                  </Form.Item>
+
+                  <Form.Item name="areaId"
+                    label={
+                      oneLevel[0]?.levelName ? '所属' + oneLevel[0]?.levelName : "所属园区"
+                    }
+                    rules={[
+                      { required: true, message: `请选择${oneLevel[0]?.levelName}` },
+                    ]}
+                    key="areaId">
+                    <Select
+                      placeholder={
+                        oneLevel[0]?.levelName
+                          ? `请选择${oneLevel[0].levelName}`
+                          : "园区名称"
+                      }
+                      defaultValue={areaList[0].id}
+                      style={{ width: "200px" }}
+                    >
+                      {areaList.map((item) => {
+                        return (
+                          <Select.Option key={item.id} value={item.id}>
+                            {item.name}
+                          </Select.Option>
+                        );
+                      })}
+                    </Select>
+                  </Form.Item>
+
+                  <Form.Item label="安装地址" name="address">
+                    <Input placeholder='请输入安装地址'
+                      style={{ width: "200px" }} />
+                  </Form.Item>
+                </Col>
+                <Col span={14}>
+
+                  <Form.Item label="站点编号" name="sn">
+                    <Input placeholder='请输入站点编号'
+                      style={{ width: "200px" }} />
+                  </Form.Item>
+                  <Form.Item label="装机容量" name="cur" rules={[{ required: true }]}>
+                    <InputNumber addonAfter="kW" min={0} style={{ width: '200px' }} />
+                  </Form.Item>
+                  <Form.Item label="并网类型" name="type">
+                    <Radio.Group
+                      block
+                      options={GridConnectedTypeData}
+                      onChange={(e) => {
+                        setGridConnectedType(e.target.value);
+                      }}
+                      defaultValue={1} />
+                  </Form.Item>
+
+                </Col>
+              </Row>
             </Form>
           </div>
-          <div className='center'>
-            <Form form={formCenter} layout="inline">
-              <Form.Item label="总表绑定" name="address">
-                <Serach onSearch={onSearchElectricMeter} placeholder="请输入电表名称/编号"></Serach>
-              </Form.Item>
-              <Form.Item label="电表名称" name="address">
-                光伏逆变器总表1
-              </Form.Item>
-              <Form.Item label="电表编号" name="address">
-                2382938
-              </Form.Item>
-              <Form.Item label="所属网关" name="address">
-                834532938
-              </Form.Item>
-            </Form>
-          </div>
-          <div className='inverter_title'>—— 关联逆变器 ——</div>
+          <div className='deviceInfo'>
+            <Serach onSearch={onSearchElectricMeter}
+              placeholder="请输入电表名称/编号"
+              style={{ width: "280px" }}
+            ></Serach>
+            <div className='info'>
+              <div>
+                电表名称：光伏逆变器总表1
+              </div>
+              <div>
+                电表编号：2382938
+              </div>
+              <div>
+                所属网关：所属网关
+              </div>
+            </div></div>
+          {/* <div className='inverter_title'>—— 关联逆变器 ——</div>
           <div className='inwrap'>
             <div style={{ overflow: "auto" }}>
               <UseTree areaId={0} setTreeId={setTreeId} setLine={() => { }} scroll={485} showline={false} datatype={NaN} energytype={1} ></UseTree>
@@ -262,7 +289,7 @@ export default forwardRef(function Index({ projectId, areaId = 1, update, modalT
               </Form>
               <UserTable columns={bindcol} {...tablePropsed} rowSelection={rowSelectioned} rowKey={row => row.id} ></UserTable>
             </div>
-          </div>
+          </div> */}
         </Bindwrap>
 
       </CModal>

@@ -4,7 +4,7 @@ import styled from 'styled-components';
 import configIcon from './configIcon.png'
 import { Drawer, Input, message,   Empty, Form, InputNumber, Alert,Space } from 'antd';
 
-import _, { result } from 'lodash'
+import _, { max, result } from 'lodash'
 import { useSelector } from 'react-redux'
 import { selectProjectId,themeColor,adaptation } from '@redux/systemconfig.js'
 import { UISummary } from '@api/api.js'
@@ -282,7 +282,8 @@ export default function Index() {
   //RGL布局
   const [defaultProps, setDefaultProps] = useState({
     rowHeight: 200,
-    cols: 8,
+    cols: 4,
+    rows:4,
     margin: [16, 16]   
   })
   const getLayoutparams = async () => { 
@@ -446,6 +447,20 @@ const {refresh} = useRequest(getLayoutparams, {
 let layouts_2_2 =['实时负荷率','分时电量分析', '充放电量趋势','站点soc']
 let layouts_1_1=['总充电量','总放电量','总充电金额','总放电金额','储能总收益','储能日收益','储能月收益']
 let layouts_4_2=['储能收益统计']
+
+let layouts =[
+  '告警分布','本月巡检','配电房监测','变压器总负荷',
+  '今日用电量','月度能耗','公司信息','今日告警','本月工单', '告警信息','能耗排名','分类能耗',
+  '用电量','用水量','用燃气量','碳排放量','网关信息',
+  '电表信息','变配电站数量','总额度容量','实时负荷','负荷率','断路器信息','传感器信息','变压器信息','触点测温','光纤测温',
+  '实时负荷率','分时电量分析', '充放电量趋势','站点soc',
+  '总充电量','总放电量','总充电金额','总放电金额','储能总收益','储能日收益','储能月收益',
+  '储能收益统计',
+]
+
+
+
+
 let layoutMap = new Map()
 layoutMap.set(layouts_2_2,{
   minW:2,
@@ -467,15 +482,39 @@ layoutMap.set(
          minH:2,
   }
  )
-const zoom = {
-  maxW:8,
-  maxH:4, 
+
+const onAddlayout = (xValue, yValue)=>{
+  let newlayout;
+  console.log(layoutItem);
+  if(layoutItem.some(l=> l.i?.split('_')?.[0]?.includes(classOfName))) {
+    message.warning('当前模块已存在！')
+    return;
+  }
+  if(layouts.includes(classOfName)) {
+    newlayout = layoutItem.concat({
+      i: classOfName + '_' + Date.now(),
+      x: xValue,
+      y: yValue,
+      w: 1,
+      h: 1, 
+      minW:1,
+      minH:1,
+      maxW:defaultProps.cols,
+      maxH:defaultProps.rows,
+      resizeHandles: availableHandles,
+      'description': classOfName
+    })
+  }else {
+    message.warning('当前模块尚未配置，请等待后续版本更新!')
+    return;
+  }
+  setlayoutItem(newlayout)
+  setNewCounter(newCounter + 1);
 }
-  const onAddlayout = (xValue, yValue) => {
+/*   const onAddlayout = (xValue, yValue) => {
     let newlayout;
     let time = new Date()
-    if (classOfName == '实时负荷率' || classOfName == '分时电量分析' ||
-      classOfName == '充放电量趋势' || classOfName == '站点soc') {
+    if (layouts_2_2.includes(classOfName)) {
       newlayout = layoutItem.concat({
         i: classOfName + '_' + Date.now(),
         x: xValue,
@@ -541,22 +580,18 @@ const zoom = {
     }
 
 
-  }
+  } */
 /*  type ItemCallback = (layout: Layout, oldItem: LayoutItem, newItem: LayoutItem,
 placeholder: LayoutItem, e: MouseEvent, element: HTMLElement) => void
 onDrop: (layout: Layout, item: ?LayoutItem, e: Event) => void,
 
 */
-  const onDrop = (layouts, layoutValue, _event) => { // 从外面拖入
-    console.log(layoutValue)
-    console.log("_event", _event)
-  
+  const onDrop = (layouts, layoutValue, _event) => { // 从外面拖入    
+   
     onAddlayout(layoutValue.x, layoutValue.y)
   }
  
-  const onLayoutChange = (layout) => { 
-    console.log("layout")
-    console.log(layout)
+  const onLayoutChange = (layout) => {    
     if (layout.length == 0) return;
     if (layout[layout.length - 1].i == '__dropping-elem__') return;
     setlayoutItem(layout)
@@ -599,6 +634,8 @@ onDrop: (layout: Layout, item: ?LayoutItem, e: Event) => void,
     }
   }
  const onDesgin =()=> {
+    const {margin,...rest} = defaultProps
+    form.setFieldsValue({margin:{col:margin[0], row:margin[1]}, ...rest})
     Ref.current.onOpen()
  }
  
@@ -607,15 +644,19 @@ onDrop: (layout: Layout, item: ?LayoutItem, e: Event) => void,
     rowHeight: 200,
     cols: 8,
     margin: [16, 16] */
+const onRest =()=> {
+  form.resetFields()
+}
  const layoutOk=async()=> {
     try {
       let  {cols, margin, rowHeight, rows} = await form.validateFields(); 
-     
+      
      const body={
       projectId,
       context:JSON.stringify(
         {rowHeight,
         cols,
+        rows,
         margin:Object.values(margin),
       
         })
@@ -705,23 +746,23 @@ onDrop: (layout: Layout, item: ?LayoutItem, e: Event) => void,
           <MenuUnfoldOutlined onClick={onClose} />
         </div>
       </CDrawer>
-      <Cmodal title="设置布局"  onOk={layoutOk}     width={832} mold="cust" custft={true}   ref={Ref}> 
+      <Cmodal title="设置布局"  onOk={layoutOk}     width={832} mold="cust" custft={true}   ref={Ref} reset={onRest}> 
         <Form form={form} labelAlign="left" labelCol={{flex: "7em"}} preserve={false}>
         <Form.Item label="设置行高" name="rowHeight" rules={rules} initialValue={200}>
-             <InputNumber min={200}   placeholder="行高最小为150px" addonAfter="px" style={w220}></InputNumber>
+             <InputNumber min={200}   placeholder="行高最小为200px" addonAfter="px" style={w220} precision={0}  ></InputNumber>
           </Form.Item>
           <Form.Item label="设置列数" name="cols" rules={rules} initialValue={4}>
-             <InputNumber min={1} max={8} placeholder="请列数1~8之间" style={w220} ></InputNumber>
+             <InputNumber min={1}   placeholder="列数大于1" style={w220} precision={0} ></InputNumber>
           </Form.Item>
           <Form.Item label="设置行数" name="rows" rules={rules} initialValue={4} >
-             <InputNumber min={1} max={4} placeholder="请行数1~4之间"  style={w220} ></InputNumber>
+             <InputNumber min={1}   placeholder="行数大于1"  style={w220} precision={0} ></InputNumber>
           </Form.Item>
           <Space size={16}>
           <Form.Item label="设置列间距" name={["margin", "col"]} rules={rules} initialValue={16} >
-             <InputNumber min={16} max={32} placeholder="行间距为16~~32px" addonAfter="px" style={w220} ></InputNumber>
+             <InputNumber min={0} placeholder="列间距大于等于0" addonAfter="px" style={w220} precision={0} ></InputNumber>
           </Form.Item>
           <Form.Item label="设置行间距" name={["margin", "row"]} rules={rules} initialValue={16} >
-             <InputNumber min={16} max={32} placeholder="列间距为16~~32px" addonAfter="px" style={w220} ></InputNumber>
+             <InputNumber min={0} placeholder="行间距大于等于0" addonAfter="px" style={w220} precision={0} ></InputNumber>
           </Form.Item>
           </Space>
         </Form>

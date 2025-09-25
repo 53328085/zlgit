@@ -6,6 +6,7 @@ import {TitlelayoutOv as Titlelayout} from '@com/titlelayout';
 
 import gatewayRuntime from '../transformer.svg'
 import {useTranslation} from 'react-i18next'
+import { head } from 'lodash';
 const Divorder = styled.div`
   display: flex;
   align-items: center;
@@ -61,7 +62,7 @@ export default function DefaultHome(props) {
   let {state={}} = props
   const {t} = useTranslation("overview")
   return (
-    <Titlelayout title={t("Transformerinformation")} {...fs} style={{minHeight: "200px"}}>
+    <Titlelayout title={t("Transformerinformation")} {...fs} style={{minHeight: "200px", height: "100%"}}>
       <Divorder>
         <img src={ gatewayRuntime } className='card_icon'></img>
         <div className='totalCount'>

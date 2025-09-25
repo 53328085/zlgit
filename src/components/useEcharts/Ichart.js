@@ -22,7 +22,8 @@ const contidtion = (a) => {
     return f;
 }
 export default function Ichart(props={}) {
-  
+  console.log("liuqiu")
+      console.log(props)
   const ref = useRef()
   const {change} = useContext(custcontext)
  // const langch = useSelector(intl)
@@ -46,6 +47,9 @@ export default function Ichart(props={}) {
     if(typechart == 2 && Array.isArray(xAxis?.data) && xAxis?.data?.length > 0  && f) {
       drawEcharts(ref.current, {...props})
     }
+    if(typechart == 4 && Array.isArray(props?.liuqiu?.series?.data) && props?.liuqiu?.series?.data?.length) { // liuqiu      
+      drawEcharts(ref.current, {...props})
+    }
     
   }, [props, change]) // intl 语言切换时图表需要重绘
   if(typechart == 1) {
@@ -67,6 +71,11 @@ export default function Ichart(props={}) {
   }
   if(typechart==5) {   
     if(!Array.isArray(custoption?.series) || (Array.isArray(custoption?.series?.[0]?.data) && custoption?.series?.[0]?.data?.length ===0)) {
+      return <Cempty tip={info} />
+    }
+  }
+  if(typechart==4) {   
+    if(!Array.isArray(props?.liuqiu?.series?.data) || props?.liuqiu?.series?.data?.length==0 || props?.liuqiu?.series?.data?.every(d => typeof parseFloat(d) !== "number")) {
       return <Cempty tip={info} />
     }
   }

@@ -20,7 +20,8 @@ const fs = {
 export default function DefaultHome(props) {
   const Timelinebox = styled(Timeline)`
    // height: 142px;
-    height: 120px;
+    min-height: 120px;
+    height: 100%;
     overflow-y: hidden;
    padding-top: 16px;
    padding-left: 4px;
@@ -108,13 +109,14 @@ export default function DefaultHome(props) {
       const listdom = document.querySelector('#scrollTimeLine')
       const domstyle = listdom.getBoundingClientRect()
       domRef.current = domstyle.height
-      console.log(domstyle, domstyle.height - 142)
+    //  console.log(domstyle, domstyle.height - 142)
       setDomHeight(domstyle.height - 142)
     }
 
   }, [state.alarmList.length])
   const sty = {
-    minHeight: '200px'
+    minHeight: '200px',
+    height: "100%"
   }
   return (
     <Titlelayout title={t("LatestAlarm")} {...fs} style={sty}>
