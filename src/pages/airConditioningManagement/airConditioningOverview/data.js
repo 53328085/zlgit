@@ -54,7 +54,7 @@ export const AirChartData = {
     left: "0%",
     right: "0%",
     bottom: "0%",
-    top: "6%",
+    top: "7%",
     containLabel: true,
   },
   xAxis: [
@@ -127,9 +127,9 @@ export const Chart_Options = {
   // 网格配置
   grid: {
     top: "10%",
-    left: "5%",
-    right: "5%",
-    bottom: "3%",
+    left: "2%",
+    right: "2%",
+    bottom: "1%",
     containLabel: true,
   },
 
@@ -232,7 +232,7 @@ export const TbHeader = [
     title: "时间",
     dataIndex: "date",
     key: "date",
-
+    width:110,
     sorter: {
       compare: (a, b) => a.date - b.date,
       multiple: 1,
@@ -243,6 +243,7 @@ export const TbHeader = [
     dataIndex: "periodUseE",
     key: "periodUseE",
     defaultSortOrder: "ascend",
+    width: 260,
     sorter: {
       compare: (a, b) => a.periodUseE - b.periodUseE,
       multiple: 2,
@@ -252,6 +253,7 @@ export const TbHeader = [
     title: "环比昨日用电量 (kWh)",
     dataIndex: "lastPeriodUseE",
     key: "lastPeriodUseE",
+    width:346,
     sorter: {
       compare: (a, b) => a.lastPeriodUseE - b.lastPeriodUseE,
       multiple: 3,
@@ -261,6 +263,7 @@ export const TbHeader = [
     title: "环比",
     dataIndex: "mom",
     key: "mom",
+    width: 117,
     sorter: {
       compare: (a, b) =>
         parseFloat(a.lastPeriodUseE) - parseFloat(b.lastPeriodUseE),
@@ -271,6 +274,7 @@ export const TbHeader = [
     title: "同比去年用电量 (kWh)",
     dataIndex: "lastSamePeriodUseE",
     key: "lastSamePeriodUseE",
+    width: 347,
     sorter: {
       compare: (a, b) => a.lastSamePeriodUseE - b.lastSamePeriodUseE,
       multiple: 3,

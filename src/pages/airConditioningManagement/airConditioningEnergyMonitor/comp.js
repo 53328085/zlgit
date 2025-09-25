@@ -378,11 +378,11 @@ export const Frequency = ({
   value = 0,
   onChange = () => {},
   modalData,
-  modalPageInfo ,
+  modalPageInfo,
   onPageChange = () => {},
+  onTableChange = () => {}, // 新增后端表格变化处理函数
   onClose = () => {},
   loading = false,
-
 }) => {
   const initdata = [
     {
@@ -487,12 +487,19 @@ export const Frequency = ({
           columns={PlainColumns}
           dataSource={modalData?.tbdata || []}
           loading={loading}
+          onChange={onTableChange} // 使用后端表格变化处理函数
           pagination={{
             ...modalPageInfo,
             current: modalPageInfo.pageNum,
             onChange: (page, pageSize) => {
-              if (onPageChange) {
-                onPageChange(page, pageSize);
+              // 只有当分页真正发生变化时才执行
+              if (page !== modalPageInfo.pageNum || pageSize !== modalPageInfo.pageSize) {
+                console.log("分页真正发生变化：", page, pageSize);
+                if (onPageChange) {
+                  onPageChange(page, pageSize);
+                }
+              } else {
+                console.log("过滤或其他操作，分页未变化");
               }
             },
           }}
