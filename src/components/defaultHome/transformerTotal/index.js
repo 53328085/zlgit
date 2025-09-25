@@ -41,7 +41,7 @@ export default function DefaultHome(props){
   }, [])
   
   return (
-         <Titlelayout title={t("TotalTransformerLoad")} {...fs} style={{minHeight: '200px'}} layout="flex">
+         <Titlelayout title={t("TotalTransformerLoad")} {...fs} style={{minHeight: '200px', height: "100%"}} layout="flex">
          <div  style={{flex:1, display: 'flex'}}>
                <div style={{display: "flex", flex: 1, alignItems: "center", justifyContent: "space-between", padding: laptop ? "0 8px" : "0 32px"}}>
                   <img src={fuhe} width={64} height={64} />

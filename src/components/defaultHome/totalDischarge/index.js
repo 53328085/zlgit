@@ -8,12 +8,15 @@ import { HomeRuntime } from '@api/api.js'
 import { message } from 'antd';
 import {useTranslation} from 'react-i18next'
 const Mainbox = styled.div`
-  width: 222px;
+  min-width: 222px;
+  width:100%;
   min-height: 200px;
-  
+  height:100%;
   background-color: #4370ff;
   border-radius: 4px;
   box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.349019607843137);
+  display: flex;
+  flex-direction: column;
   .headerTitle{
     padding-left: 24px;
    // border-left: 4px solid #fff;
@@ -35,6 +38,7 @@ const Mainbox = styled.div`
        background-color: #fff;
     }
   .mainData{
+    flex:1;
     display: flex;
     align-items: center;
     justify-content: center;

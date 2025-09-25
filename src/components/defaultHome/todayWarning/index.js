@@ -1,10 +1,11 @@
-import React, {useRef, useEffect} from 'react'
+import React, {useRef, useEffect, useMemo} from 'react'
 import {useSelector} from 'react-redux'
 
 import { selectProjectId, themeColor } from '@redux/systemconfig.js'
 import styled from 'styled-components';
 import {TitlelayoutOv as Titlelayout} from '@com/titlelayout';
 import { drawEcharts } from "@com/useEcharts"; 
+import Ichart from "@com/useEcharts/Ichart"
 import {hextodec} from "@com/usehandler"
 import {HomeRuntime } from '@api/api.js'
 import { useReactive } from 'ahooks';
@@ -13,15 +14,21 @@ import { useReactive } from 'ahooks';
 const Mainbox = styled.div`
   position: relative;
   display: grid;
-  grid-template-columns: 112px auto;
+  grid-template-columns: minmax(116px, 1fr)  minmax(max-content, 1fr);
  column-gap: 16px;
- height: 142px;
+ min-height: 142px;
+ height: 100%;
  align-items: center;
  justify-items: center;
-
+  .chart {
+    height: 100%;
+    width: 100%;
+  }
  .alarm {
-   display: grid;
-   grid-template-rows: repeat(2, 52px);
+   display: flex;
+   flex-direction: column;
+   justify-content: center;
+   align-items: center;
    row-gap: 16px;
    div {
     padding-left: 12px;
@@ -90,9 +97,9 @@ export default function DefaultHome(props){
     unconfirmPercent: 0,
   })
   const rgb = hextodec(warningColor);
- console.log(rgb)
-  const tdrawEcharts = () => {
-    return drawEcharts(ref.current, {
+  
+  const option =useMemo(()=>  ({
+    
       type: 4,
       
       liuqiu: {
@@ -131,8 +138,8 @@ export default function DefaultHome(props){
       },
      
     }
-    })
-  }
+    
+  }), [state?.alarmCount,warningColor, rgb ])
 
   const { GetTodayAlarmInfo } = HomeRuntime
 
@@ -147,22 +154,23 @@ export default function DefaultHome(props){
               state.unconfirmCount = data.unconfirmCount // 没确认
               state.confirmPercent = data.alarmCount > 0 ?   ((data.confirmCount / data.alarmCount)* 100).toFixed(1) : 0
               state.unconfirmPercent =  data.alarmCount > 0 ? ((data.unconfirmCount / data.alarmCount)* 100).toFixed(1) : 0         
-              tdrawEcharts()
+             // tdrawEcharts()
             }
           }else{
             message.error(res.errMsg)
           }
       })
     }else{
-      tdrawEcharts()
+     // tdrawEcharts()
     }
     
   },[projectId, type,warningColor])
   
   return (
-         <Titlelayout title={t("overview:AlarmOfToday")} {...fs} style={{minHeight: "200px"}}>
+         <Titlelayout title={t("overview:AlarmOfToday")} {...fs} style={{minHeight: "200px", height: "100%"}}>
         <Mainbox>
-          <div style={{width: '112px', height: '112px'}} ref={ref}>
+          <div className='chart' >
+            <Ichart {...option} />
           </div>
           <div className='alarm'>
              <div>

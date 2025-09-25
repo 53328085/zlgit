@@ -1,11 +1,12 @@
 // 琉球图
 
-import React, {useEffect, useRef} from 'react'
+import React, {useEffect, useRef, useContext} from 'react'
 import {useSelector} from "react-redux"
 import {isObject} from '@com/usehandler'
 import {drawEcharts} from './index'
 import {intl} from "@redux/systemconfig"
 import Cempty from '@com/useEmpty'
+import custcontext from "@com/content"
 const contidtion = (a) => {
    
     const b  =  Array.isArray(a) || isObject(a)
@@ -27,7 +28,7 @@ const contidtion = (a) => {
 export default function Ichart(props={}) {
   
   const ref = useRef()
-
+  const {change} = useContext(custcontext)
   let {dataset={}, type=1, pieData, custoption, tip='', xAxis={}, series} = props 
   
   let typechart = custoption?.type || type
@@ -48,7 +49,7 @@ export default function Ichart(props={}) {
     if(typechart == 2 && Array.isArray(xAxis?.data) && xAxis?.data?.length > 0  && f) {
       drawEcharts(ref.current, {...props})
     }
-  }, [props]) // intl 语言切换时图表需要重绘
+  }, [props, change]) // intl 语言切换时图表需要重绘
   if(typechart == 1) {
     if(!contidtion(dataset?.source)) {
       return <Cempty tip={info} />

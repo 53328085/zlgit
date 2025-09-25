@@ -7,12 +7,14 @@ import imgUrl from '@imgs'
 const Mainbox = styled.div`
    min-width: 222px;
    width: 100%;
-  min-height: 200px;
-  height: "100%";
+  min-height: 200px; 
   //padding: 16px;
   background-color: #ff6642;
   border-radius: 4px;
   box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.349019607843137);
+  height:  100% ;
+  display: flex;
+  flex-direction: column;
   .headerTitle{
     padding-left: 28px;
   //  border-left: 4px solid #fff;
@@ -34,6 +36,7 @@ const Mainbox = styled.div`
        background-color: #fff;
     }
   .mainData{
+    flex: 1;
     display: flex;
     align-items: center;
     justify-content: center;

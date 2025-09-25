@@ -12,7 +12,7 @@ const fs = {
   fc: '#333',
   shadow: "y",
   
-
+  
 }
 
 export default function DefaultHome(props){
@@ -64,8 +64,8 @@ export default function DefaultHome(props){
   },[])
   
   return (
-         <Titlelayout title={t("ChargeAndDischargeVolumeTrend")} {...fs}   layout="flex">
-            <div style={{flex: 1,minHeight: '362px', overflow: 'hidden%'}}  >
+         <Titlelayout title={t("ChargeAndDischargeVolumeTrend")} {...fs}   layout="flex" style={{height: '100%'}}>
+            <div style={{flex: 1,minHeight: '200px', height: "100%", overflow: 'hidden%'}}  >
                 <Ichart {...options} />
             </div>
          </Titlelayout>
