@@ -24,6 +24,7 @@ import i18 from "../../../i18n";
 import air from "./imgs/air.png";
 import rise from "./imgs/rise.png";
 import down from "./imgs/down.png";
+import exportImg from "./imgs/export.png";
 const CusCard = ({
   title = "能耗情况(kWh)",
   secTitle = "当日累计用电量",
@@ -32,6 +33,7 @@ const CusCard = ({
   value2 = "",
   value3 = "",
   imgurl = "",
+  index,
 }) => {
   return (
     <div className="card">
@@ -41,23 +43,32 @@ const CusCard = ({
           alt=""
           style={{ width: 23, height: 23, marginRight: 6 }}
         />
-        <span>
+        <span style={{ color: "#303133", fontWeight: "bold" }}>
           {title}
-          <span style={{ color: "#999" }}> (kWh)</span>
+          <span style={{ color: "#999" }}> ({index == 2 ? "kg" : "kWh"})</span>
         </span>
       </div>
       <div className="body">
-        <div>{secTitle}</div>
-        <div style={{ color: "#3d94ff" }}>{value1}</div>
+        <div style={{ color: "#909399" }}>{secTitle}</div>
+        <div
+          style={{
+            color: "#1E50E6",
+            fontSize: 28,
+            lineHeight: 1,
+            fontWeight: 500,
+          }}
+        >
+          {value1}
+        </div>
         <div className={`small ${Number(value2) > 0 ? "rise" : "down"}`}>
           环比昨日：<span>{value2}</span>
         </div>
       </div>
       <div className="footer">
-        <div>{thrTitle}</div>
+        <div style={{ color: "#606266" }}>{thrTitle}</div>
         <div
           className={`small ${Number(value2) > 0 ? "rise" : "down"}`}
-          style={{ color: "#3d94ff" }}
+          style={{ color: "#303133", fontWeight: 500 }}
         >
           {value3}
         </div>
@@ -112,7 +123,7 @@ export const DetailComp = React.memo(({ overData }) => {
   return (
     <Detail>
       {energyData.map((item, index) => (
-        <CusCard {...item} key={index} />
+        <CusCard {...item} key={index} index={index} />
       ))}
 
       <div className="chart">
@@ -122,7 +133,7 @@ export const DetailComp = React.memo(({ overData }) => {
             alt=""
             style={{ width: 23, height: 23, marginRight: 6 }}
           />
-          <span>空调用能排名</span>
+          <span>空调用能排名(kWh)</span>
         </div>
         {/* <div className="chart-box"> */}
         <Icharts custoption={AirChartData} type={5}></Icharts>
@@ -192,7 +203,7 @@ export const FooterChartComp = React.memo(({ tableData, chartData }) => {
         <div
           style={{ marginLeft: "auto", display: "flex", alignItems: "center" }}
         >
-          <Button
+          {/* <Button
             icon={<DownloadOutlined />}
             style={{
               borderRadius: "2px",
@@ -204,7 +215,7 @@ export const FooterChartComp = React.memo(({ tableData, chartData }) => {
             }}
           >
             {i18.t("export", { ns: "button" })}
-          </Button>
+          </Button> */}
           <Radio.Group
             block
             options={Radio_Options}
@@ -217,6 +228,20 @@ export const FooterChartComp = React.memo(({ tableData, chartData }) => {
               setTabId(e.target.value);
             }}
           />
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              margin: "0 16px 0 24px",
+              cursor: "pointer"
+            }}
+            onClick={() => {
+              tableRef.current.downloadAll();
+            }}
+          >
+            <img src={exportImg} alt="" style={{ marginRight: 4 }} />
+            <span style={{ fontWeight: 14 }}>导出</span>
+          </div>
         </div>
       </BlueColumn>
       {tabId == "1" ? (
@@ -228,6 +253,7 @@ export const FooterChartComp = React.memo(({ tableData, chartData }) => {
           columns={TbHeader}
           dataSource={tableData}
           style={{ overflow: "auto" }}
+          scroll={{ y: 15 * 31 }}
           summary={(pageData) => {
             let summaryData = ["汇总", ...Array(5).fill(0)];
             pageData.forEach(

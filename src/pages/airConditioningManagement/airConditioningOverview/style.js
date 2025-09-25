@@ -48,15 +48,15 @@ export const Detail = styled.div`
 
   .card {
     ${borderBox}
-    padding: 18px 16px;
+    padding: 12px 14px;
     font-size: 14px;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
     color: #515151;
-
+    background-image: linear-gradient(to top, #DEE5FB 0%, #fff 30%);
     .small {
-      font-size: 10px;
+      font-size: 13px;
     }
     .rise {
       color: #f00;
@@ -69,12 +69,12 @@ export const Detail = styled.div`
     ${borderBox}
     display: flex;
     flex-direction: column;
-    padding: 20px 16px;
+    padding: 12px 14px;
     width: 100%;
     overflow: hidden;
     min-width: 0;
     .head {
-      height: 25px;
+      height: 28px;
       width: 100%;
     }
     .chart-box {

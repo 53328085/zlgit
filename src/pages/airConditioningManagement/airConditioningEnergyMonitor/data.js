@@ -33,14 +33,14 @@ export const TbCol = [
     dataIndex: "name",
     key: "name",
     width: 138,
-    fixed: 'left',
+    fixed: "left",
   },
   {
     title: "通讯地址",
     dataIndex: "csn",
     key: "csn",
     width: 122,
-    fixed: 'left',
+    fixed: "left",
   },
   {
     title: "总开机时长 （h）",
@@ -86,7 +86,6 @@ export const TbCol = [
     title: "安装地址",
     dataIndex: "address",
     key: "address",
-
   },
 ];
 //空调节能表头
@@ -115,7 +114,7 @@ export const TbColAir = [
     dataIndex: "es",
     key: "es",
   },
-    {
+  {
     title: "节能费用(元)",
     dataIndex: "ms",
     key: "ms",
@@ -130,269 +129,263 @@ export const TbColAir = [
     dataIndex: "address",
     key: "address",
   },
-]
+];
 
 export const PieOption = {
-
   tooltip: {
-    trigger: 'item'
+    trigger: "item",
   },
   legend: {
-    top: 'middle',   // 垂直居中
+    top: "middle", // 垂直居中
     right: 10,
-    orient: 'vertical',
-    type: 'scroll',
+    orient: "vertical",
+    type: "scroll",
     // 当图例过长时的滚动配置
-    height: '60%',  // 限制图例高度，避免覆盖饼图
-    itemGap: 8,     // 减小图例项间距
+    height: "60%", // 限制图例高度，避免覆盖饼图
+    itemGap: 8, // 减小图例项间距
     textStyle: {
-      fontSize: 12,  // 保持原始字体大小
-      width: 80,     // 限制文字宽度，超出则截断
-      overflow: 'truncate',  // 文字超出时截断
-      ellipsis: '...'        // 添加省略号
+      fontSize: 12, // 保持原始字体大小
+      width: 80, // 限制文字宽度，超出则截断
+      overflow: "truncate", // 文字超出时截断
+      ellipsis: "...", // 添加省略号
     },
     // 滚动分页配置
     pageButtonItemGap: 5,
     pageIconSize: 12,
     pageTextStyle: {
-      fontSize: 10
-    }
+      fontSize: 10,
+    },
   },
   xAxis: {
-    show: false
+    show: false,
   },
 
   series: [
     {
       // name: 'Access From',
-      type: 'pie',
-      center: ['40%', '50%'],  // 调整为更居中的位置，与垂直居中的图例配合
-      radius: ['45%', '65%'],  // 稍微缩小饼图半径
+      type: "pie",
+      center: ["40%", "50%"], // 调整为更居中的位置，与垂直居中的图例配合
+      radius: ["45%", "65%"], // 稍微缩小饼图半径
       avoidLabelOverlap: true,
       label: {
         show: false,
-        position: 'center'
+        position: "center",
       },
       labelLine: {
-        show: false
+        show: false,
       },
-      data: [
-      
-      ]
-    }
-  ]
+      data: [],
+    },
+  ],
 };
 export const Chart_Options = {
   // 提示框配置
   tooltip: {
-    trigger: 'axis',
+    trigger: "axis",
     axisPointer: {
-      type: 'shadow' // 阴影指示器
+      type: "shadow", // 阴影指示器
     },
     // 自定义提示框内容
     formatter: function (params) {
-      let result = params[0].name + '<br/>';
+      let result = params[0].name + "<br/>";
       params.forEach(function (item) {
         let marker = item.marker;
         let seriesName = item.seriesName;
         let value = item.value;
         // 格式化数值
-        if (seriesName.includes('金额')) {
-          value = '¥' + value.toLocaleString();
-        } else if (seriesName.includes('率')) {
-          value = value + '%';
+        if (seriesName.includes("金额")) {
+          value = "¥" + value.toLocaleString();
+        } else if (seriesName.includes("率")) {
+          value = value + "%";
         }
         result += `${marker} ${seriesName}: ${value}<br/>`;
       });
       return result;
-    }
+    },
   },
 
   // 图例配置
   legend: {
-    data: ['今日能耗', '昨日能耗', '环比率'],
-    top: 10
+    data: ["今日能耗", "昨日能耗", "环比率"],
+    top: 10,
   },
 
   // 网格配置
   grid: {
-    top: '10%',
-    left: '5%',
-    right: '5%',
-    bottom: '3%',
-    containLabel: true
+    top: "10%",
+    left: "5%",
+    right: "5%",
+    bottom: "3%",
+    containLabel: true,
   },
 
   // X轴配置
   xAxis: {
-    type: 'category',
+    type: "category",
     data: [],
     axisPointer: {
-      type: 'shadow'
-    }
+      type: "shadow",
+    },
   },
 
   // Y轴配置（双Y轴）
   yAxis: [
     {
-      type: 'value',
-      name: '电量(kWh)',
+      type: "value",
+      name: "电量(kWh)",
       min: 0,
       axisLabel: {
-        formatter: '{value}'
+        formatter: "{value}",
       },
       nameLocation: "middle",
       nameGap: 60,
       splitLine: {
-        show: false // 不显示分割线
-      }
+        show: false, // 不显示分割线
+      },
     },
     {
-      type: 'value',
-      name: '环比率',
+      type: "value",
+      name: "环比率",
       nameLocation: "middle",
       nameGap: 45,
       min: 0,
       axisLabel: {
         formatter: function (value) {
-          return value % 1 === 0 ? value : value + '%'; // 整数显示数量，小数显示百分比
-        }
-      }
-    }
+          return value % 1 === 0 ? value : value + "%"; // 整数显示数量，小数显示百分比
+        },
+      },
+    },
   ],
 
   // 系列配置
   series: [
     // 第一个柱状图（左Y轴）
     {
-      name: '今日能耗(kWh)',
-      type: 'bar',
-      barWidth: '30%',
+      name: "今日能耗(kWh)",
+      type: "bar",
+      barWidth: "30%",
       itemStyle: {
-        color: '#6395fa'
+        color: "#6395fa",
       },
-      data: []
+      data: [],
     },
 
     // 第二个柱状图（右Y轴）
     {
-      name: '昨日能耗(kWh)',
-      type: 'bar',
-      barWidth: '30%',
-      yAxisIndex: 0, 
+      name: "昨日能耗(kWh)",
+      type: "bar",
+      barWidth: "30%",
+      yAxisIndex: 0,
       itemStyle: {
-        color: '#63daab'
+        color: "#63daab",
       },
-      data: []
+      data: [],
     },
 
     // 折线图（右Y轴）
     {
-      name: '环比率',
-      type: 'line',
+      name: "环比率",
+      type: "line",
       yAxisIndex: 1, // 使用第二个Y轴
-      symbol: 'circle',
+      symbol: "circle",
       symbolSize: 8,
       itemStyle: {
-        color: '#5d7092'
+        color: "#5d7092",
       },
       lineStyle: {
-        width: 3
+        width: 3,
       },
-      data: []
-    }
-  ]
+      data: [],
+    },
+  ],
 };
 
 export const Column_Options = {
   tooltip: {
-    trigger: 'axis',
+    trigger: "axis",
     axisPointer: {
-      type: 'shadow'
-    }
+      type: "shadow",
+    },
   },
   grid: {
-    left: '3%',
-    right: '4%',
-    bottom: '3%',
-    containLabel: true
+    left: "3%",
+    right: "4%",
+    bottom: "3%",
+    containLabel: true,
   },
   xAxis: [
     {
-      type: 'category',
+      type: "category",
       data: [],
       axisTick: {
-        alignWithLabel: true
-      }
-    }
+        alignWithLabel: true,
+      },
+    },
   ],
   yAxis: [
     {
-      type: 'value'
-    }
+      type: "value",
+    },
   ],
   series: [
     {
-      name: '节能电量(kWh)',
-      type: 'bar',
-      barWidth: '60%',
+      name: "节能电量(kWh)",
+      type: "bar",
+      barWidth: "60%",
       itemStyle: {
-        color: '#63daab',  // 绿色 - 代表节能环保
-
+        color: "#63daab", // 绿色 - 代表节能环保
       },
-      data: []
-    }
-  ]
-}
+      data: [],
+    },
+  ],
+};
 
 export const MdTbCol = [
   {
     title: "时间",
     dataIndex: "address2",
     key: "address2",
-
-  }, {
+  },
+  {
     title: "起始示值",
     dataIndex: "address2",
     key: "address2",
-
   },
   {
     title: "结束示值",
     dataIndex: "address2",
     key: "address2",
-
-  }, {
+  },
+  {
     title: "综合倍率",
     dataIndex: "address2",
     key: "address2",
-
-  }, {
+  },
+  {
     title: "用电量",
     dataIndex: "address2",
     key: "address2",
-
-  }
-]
+  },
+];
 export const MdOptions = {
   grid: {
-    left: '5%',
-    right: '5%',
-    bottom: '3%'
+    left: "5%",
+    right: "5%",
+    bottom: "3%",
   },
   xAxis: {
-    type: 'category',
-    data: []
+    type: "category",
+    data: [],
   },
   yAxis: {
-    type: 'value'
+    type: "value",
   },
   series: [
     {
       data: [],
-      type: 'bar'
-    }
-  ]
+      type: "bar",
+    },
+  ],
 };
 export const MdColHidden = [
   {
@@ -400,51 +393,78 @@ export const MdColHidden = [
     dataIndex: "value1",
     key: "value1",
     width: 203,
-    className: "bg"
+    className: "bg",
   },
   {
     title: "",
     dataIndex: "value2",
     key: "value2",
-    width: 203
+    width: 203,
   },
   {
     title: "",
     dataIndex: "value3",
     key: "value3",
     width: 203,
-    className: "bg"
-  }, {
+    className: "bg",
+  },
+  {
     title: "",
     dataIndex: "value4",
     key: "value4",
-    width: 203
-  }
-]
-export const PlainColumns = [{
-  title: "操作时间",
-  dataIndex: "createTime",
-  key: "createTime",
-  width: 203
-}, {
-  title: "开关状态",
-  dataIndex: "ioName",
-  key: "ioName",
-  width: 122
-}, {
-  title: "设定温度",
-  dataIndex: "tempset",
-  key: "tempset",
-  width: 122,
-  render: (text) => <>{text}℃</>
-}, {
-  title: "操作人",
-  dataIndex: "sourceName",
-  key: "sourceName",
-  width: 122
-}, {
-  title: "控制类型",
-  dataIndex: "controlType",
-  key: "controlType",
-  width: 122
-}]
+    width: 203,
+  },
+];
+export const PlainColumns = [
+  {
+    title: "操作时间",
+    dataIndex: "createTime",
+    key: "createTime",
+    width: 203,
+    sorter: (a, b) => {
+      // 返回0以禁用本地排序，但保持排序箭头显示
+      // 实际排序由后端处理
+      return 0;
+    },
+    showSorterTooltip: false, // 禁用排序提示
+    defaultSortOrder: "ascend", // 默认排序方向
+  },
+  {
+    title: "开关状态",
+    dataIndex: "ioName",
+    key: "ioName",
+    width: 122,
+  },
+  {
+    title: "设定温度",
+    dataIndex: "tempset",
+    key: "tempset",
+    width: 122,
+    render: (text) => <>{text}℃</>,
+  },
+  {
+    title: "操作人",
+    dataIndex: "sourceName",
+    key: "sourceName",
+    width: 122,
+  },
+  {
+    title: "控制类型",
+    dataIndex: "controlType",
+    key: "controlType",
+    width: 122,
+    filters: [
+      // { text: "全部", value: "0" },
+      {
+        text: "手动",
+        value: "2",
+      },
+      {
+        text: "系统",
+        value: "1",
+      },
+    ],
+    filterMultiple: false,
+    defaultFilteredValue: [], // 默认选中"系统"筛选项
+  },
+];

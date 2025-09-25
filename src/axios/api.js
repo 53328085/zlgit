@@ -4281,7 +4281,7 @@ export class AirConditioningManagement {
    * "projectId": number,
    * "dayMonthYear":number,
    * "date": string,
-   * "areaIds":number[],
+   * "Ids":number[],
    * "pageNum":number,
    * "pageSize":number
    * } data 
