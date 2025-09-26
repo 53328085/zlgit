@@ -18,9 +18,11 @@ const Mainbox = styled.div`
  column-gap: 16px;
  min-height: 142px;
  height: 100%;
+ width: 100%;
  align-items: center;
  justify-items: center;
   .chart {
+    display: flex;
     height: 100%;
     width: 100%;
   }

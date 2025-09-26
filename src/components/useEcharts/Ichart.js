@@ -22,8 +22,7 @@ const contidtion = (a) => {
     return f;
 }
 export default function Ichart(props={}) {
-  console.log("liuqiu")
-      console.log(props)
+ 
   const ref = useRef()
   const {change} = useContext(custcontext)
  // const langch = useSelector(intl)
