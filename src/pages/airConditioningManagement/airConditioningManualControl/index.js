@@ -124,11 +124,11 @@ export default function Index() {
       }
       let { data, success, errMsg } = await useSetControl({}, params)
       if (success) {
-        if (ioState == 1) {
-          message.success("所选空调控制成功");
-        } else {
-          tipRef.current.onOpen();
-        }
+        // if (ioState == 1) {
+        message.success("所选空调控制成功");
+        // } else {
+        //   tipRef.current.onOpen();
+        // }
         handleSearchClick();
       } else {
         message.error(errMsg);
@@ -234,7 +234,7 @@ export default function Index() {
                             </div>
                             {airItem?.fields?.map((fields) => (
                               <div>
-                                {fields.name}：-
+                                {fields.name}：{fields.name == '开关' ? fields.value : '-'}
                               </div>
                             ))}
                           </div>

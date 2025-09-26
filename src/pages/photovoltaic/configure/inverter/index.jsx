@@ -1,10 +1,13 @@
-import React, { useRef, useState, useMemo, } from "react";
+import React, { useRef, useState, useMemo, useEffect } from "react";
 import styled from "styled-components";
 import { useSelector } from "react-redux";
 import { useAntdTable } from 'ahooks'
+import { useOutletContext } from 'react-router-dom'
 import Usetable from '@com/useTable'
 import moment from "moment";
 import BindAir from './bind'
+import { Mainbox } from './style'
+import { Serach } from "@com/comstyled"
 import { PlusOutlined } from "@ant-design/icons";
 import {
   InputNumber,
@@ -28,20 +31,16 @@ import Pagecont from "@com/pagecontent"
 import Titlelayout from '@com/titlelayout'
 import CModal from '@com/useModal'
 import { CustButtonT, CustLink } from '@com/useButton'
-const { Link } = Typography
+import {
+  useQueryStationList, useGetGridTiedCabinetList
 
-const Formbox = styled.div`
-  && {
-    
-    .ant-form-item {
-      margin-bottom: ${props => props.theme.laptop ? "8px" : "24px"};
-    }
-  }
-`
+} from './api'
+import { cabinetColumns } from './data'
 export default function Index() {
+  let { exparams } = useOutletContext()
+  let { areaId, projectId } = exparams
   const tableRef = useRef();
   const [form] = Form.useForm();
-  const projectId = useSelector(selectProjectId);
   const ispublish = useSelector(publishState);
   const areaFirstName = useSelector(levelDefaultLabel) || '园区'
 
@@ -50,8 +49,37 @@ export default function Index() {
   const totalItem = useRef();
   const curPage = useRef();
   const PageSize = 14
+  const [stationData, setStationData] = useState([]);
 
-  const getTableData = ({ current, pageSize }) => {
+  // 获取站点数据函数
+  const RuntimStation = async () => {
+    if (projectId == undefined || areaId == undefined) return
+    try {
+      const params = {
+        projectId,
+        areaId,
+      }
+
+      let { success, data, total, errMsg } = await useQueryStationList(params)
+
+      if (success) {
+        // 检查数据结构是否正确
+        if (data && Array.isArray(data)) {
+          setStationData(data)
+        } else {
+          setStationData([])
+        }
+      } else {
+        setStationData([])
+        message.warning(errMsg || "获取设备数据失败")
+      }
+    } catch (error) {
+      setStationData([])
+      message.error('网络异常，无法获取设备数据')
+    }
+  }
+  const getTableData = async ({ current, pageSize }) => {
+    console.log(1111)
     curPage.current = current
     if (!projectId) return new Promise((resolve) => {
       resolve({
@@ -59,32 +87,36 @@ export default function Index() {
         total: 0
       })
     })
-    return GetSites(projectId, current, pageSize).then(res => {
-      let { success, data, total } = res
-      totalItem.current = Number.isInteger(total) ? total : 0
-      if (success) {
-        if (Array.isArray(data) && data?.length > 0) {
-          //setDataSource(data)
-          //setTotal(res.total)
-          return {
-            list: data,
-            total
-          }
-        } else {
-          return {
-            list: [],
-            total: 0
-          }
+    const { name, stationId } = await form.validateFields()
+    const params = {
+      projectId,
+      areaId,
+      stationId,
+      name,
+      pageNum: current,
+      pageSize
+
+    }
+    let { success, data, errMsg, total } = await useGetGridTiedCabinetList(params)
+    return
+    totalItem.current = Number.isInteger(total) ? total : 0
+    if (success) {
+      console.log(Array.isArray(data) && data?.length > 0)
+      if (Array.isArray(data) && data?.length > 0) {
+        return {
+          list: data,
+          total
         }
       } else {
-        message.error(res.errMsg)
+        return {
+          list: [],
+          total: 0
+        }
       }
-    })
+    } else {
+      message.error(res.errMsg)
+    }
   }
-  const { tableProps, refresh, run } = useAntdTable(getTableData, {
-    defaultPageSize: PageSize,
-    refreshDeps: [projectId]
-  })
   //删除告警类型弹窗
   const [deleteTypeModal, setDeleteTypeModal] = useState(false);
   //新增 true 修改 false
@@ -93,52 +125,11 @@ export default function Index() {
     [
       {
         align: "center",
-        title: "逆变器名称",
-        dataIndex: "name",
-        key: "name",
-      },
-      {
-        align: "center",
-        title: "逆变器编号",
-        dataIndex: "no",
-        key: "no",
-      },
-      {
-        title: "所属网关",
-        dataIndex: "address",
-        key: "address",
-        align: "center",
-      },
-      {
-        align: "center",
-        title: "并网类型",
-        dataIndex: "no",
-        key: "no",
-      },
-      {
-        title: "光伏消纳电表数",
-        dataIndex: "capacity",
-        key: "capacity",
-        align: "center",
-      },
-      {
-        title: "型号",
-        dataIndex: "areaName",
-        key: "areaName",
-        align: "center",
-      },
-      {
-        align: "center",
-        title: areaFirstName + "名称",
+        title: "所属" + areaFirstName + "名称",
         dataIndex: "areaName",
         key: "areaName",
       },
-      {
-        title: "安装地址",
-        dataIndex: "address",
-        key: "address",
-        align: "center",
-      },
+      ...cabinetColumns,
       {
         title: "操作",
         key: "action",
@@ -165,18 +156,17 @@ export default function Index() {
 
   const ref = useRef()
   //点击新增 打开弹框
-  const showAdd = () => {
-    setModalTitle("新增逆变器关联关系");
+  const onAdd = () => {
+    setEditData({})
+    setModalTitle("新增光伏并网柜");
     ref.current.onOpen()
   };
   //编辑
   const [selectId, setSelectId] = useState(0)
+  const [editData, setEditData] = useState({})
   const editRecord = (record) => {
-
-    record.deliveryTime = moment(record.deliveryTime)
-    form.setFieldsValue(record)
-    setSelectId(record.id)
-    setModalTitle("编辑逆变器关联关系");
+    setEditData(record)
+    setModalTitle("编辑光伏并网柜");
     ref.current.onOpen()
   };
   //删除
@@ -225,35 +215,72 @@ export default function Index() {
 
   const Title = (
     <div style={{ display: 'flex', justifyContent: "space-between", alignItems: "center" }}>
-      <span>逆变器关联关系列表</span>
-      {ispublish ? null : (
+      <span>光伏并网柜列表</span>
+      {/* {ispublish ? null : (
         <CustButtonT
           text="new"
           src="new"
-          onClick={showAdd}
+          onClick={onAdd}
         >
 
         </CustButtonT>
-      )}
+      )} */}
     </div>
   )
 
+  const { tableProps, search, run, refresh } = useAntdTable(getTableData, {
+    defaultPageSize: 18,
+    refreshDeps: [projectId, areaId]
+  })
+  const { submit } = search
   const airprop = useMemo(() => {
     return {
       projectId,
-      updata: getTableData,
-      modalTitle
+      updata: run,
+      modalTitle,
+      curPage: curPage.current,
+      editData: editData
     }
-  }, [projectId, modalTitle])
+  }, [projectId, modalTitle, editData])
+  useEffect(() => {
+
+    RuntimStation()
+    form.setFieldsValue({ stationId: 0 })
+  }, [areaId, projectId])
   return (
     <Pagecont showserach={false} custserach pd="0px" >
       <Titlelayout title={Title} layout="flex" dr="column">
-        <Usetable
-          rowKey={(record) => record.id}
-          ref={tableRef}
-          columns={columns}
-          {...tableProps}
-        ></Usetable>
+        <Mainbox>
+          <div className="search">
+            <Form form={form} layout="inline"  >
+              <Form.Item label="所属站点" name="stationId" initialValue={0}>
+                <Select
+                  style={{ width: "210px" }}
+                  onChange={submit}
+                  options={[{ name: '全部', id: 0 }, ...stationData]}
+                  fieldNames={{
+                    label: "name",
+                    value: "id",
+                    options: "options",
+                  }}
+                />
+              </Form.Item>
+              <Form.Item label="光伏并网柜" name="name" style={{ marginLeft: "16px" }} >
+                <Serach onSearch={submit} />
+              </Form.Item>
+            </Form>
+            <Space size={16}>
+              <CustButtonT text="new"
+                src="new" onClick={() => onAdd()}></CustButtonT>
+            </Space>
+          </div>
+          <Usetable
+            rowKey={(record) => record.id}
+            ref={tableRef}
+            columns={columns}
+            {...tableProps}
+          ></Usetable>
+        </Mainbox>
         <CModal
           open={deleteTypeModal}
           onOk={deleteOk}

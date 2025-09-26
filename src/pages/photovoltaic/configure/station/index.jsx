@@ -26,31 +26,20 @@ import {
   levelDefaultLabel
 } from "@redux/systemconfig.js";
 import { useOutletContext } from 'react-router-dom'
-import { SiteManagerDesigner } from '@api/api.js'
 import { GetPVStationList, AddPVStation, UpdatePVStation, DeletePVStation, useQueryACsUnConfigByPage } from "./api.js";
 import Pagecont from "@com/pagecontent"
 import Titlelayout from '@com/titlelayout'
 import CModal from '@com/useModal'
 import { CustButtonT, CustLink } from '@com/useButton'
-const { Link } = Typography
-
-const Formbox = styled.div`
-  && {
-    
-    .ant-form-item {
-      margin-bottom: ${props => props.theme.laptop ? "8px" : "24px"};
-    }
-  }
-`
+import {
+  useGetPVStationList, useDeletePVStation
+} from './api'
 export default function Index() {
   const tableRef = useRef();
-  const [form] = Form.useForm();
   let { exparams } = useOutletContext()
   let { areaId, projectId } = exparams
   const ispublish = useSelector(publishState);
   const areaFirstName = useSelector(levelDefaultLabel) || '园区'
-
-  const { GetSites, AddSite, UpdateSite, DeleteSite } = SiteManagerDesigner
 
   const totalItem = useRef();
   const curPage = useRef();
@@ -64,12 +53,17 @@ export default function Index() {
         total: 0
       })
     })
-    let { success, data, errMsg } = await GetPVStationList(projectId, areaId, current, pageSize)
+    const params = {
+      projectId,
+      areaId,
+      pageNum: current,
+      pageSize // 增加分页大小，确保获取足够数据
+    }
+    let { success, data, errMsg, total } = await useGetPVStationList(params)
     totalItem.current = Number.isInteger(total) ? total : 0
     if (success) {
+      console.log(Array.isArray(data) && data?.length > 0)
       if (Array.isArray(data) && data?.length > 0) {
-        //setDataSource(data)
-        //setTotal(res.total)
         return {
           list: data,
           total
@@ -86,7 +80,7 @@ export default function Index() {
   }
   const { tableProps, refresh, run } = useAntdTable(getTableData, {
     defaultPageSize: PageSize,
-    refreshDeps: [projectId]
+    refreshDeps: [projectId, areaId]
   })
 
   //删除告警类型弹窗
@@ -95,6 +89,12 @@ export default function Index() {
 
   const columns =
     [
+      {
+        align: "center",
+        title: "所属" + areaFirstName + "名称",
+        dataIndex: "areaName",
+        key: "areaName",
+      },
       {
         align: "center",
         title: "站点名称",
@@ -109,27 +109,27 @@ export default function Index() {
       },
       {
         title: "总表名称",
-        dataIndex: "address",
-        key: "address",
+        dataIndex: "meterName",
+        key: "meterName",
         align: "center",
       },
       {
         align: "center",
         title: "总表编号",
-        dataIndex: "no",
-        key: "no",
+        dataIndex: "meterSn",
+        key: "meterSn",
+      },
+      {
+        align: "center",
+        title: "装机容量(kW)",
+        dataIndex: "capacity",
+        key: "capacity",
       },
       {
         title: "光伏逆变器数",
-        dataIndex: "capacity",
-        key: "capacity",
+        dataIndex: "inverterCount",
+        key: "inverterCount",
         align: "center",
-      },
-      {
-        align: "center",
-        title: areaFirstName + "名称",
-        dataIndex: "areaName",
-        key: "areaName",
       },
       {
         title: "安装地址",
@@ -162,18 +162,17 @@ export default function Index() {
 
 
   const ref = useRef()
-
+  const [selectId, setSelectId] = useState(0)
+  const [editData, setEditData] = useState({})
   //点击新增 打开弹框
   const showAdd = () => {
+    setEditData({})
     setModalTitle("新增站点");
     ref.current.onOpen()
   };
   //编辑
-  const [selectId, setSelectId] = useState(0)
   const editRecord = (record) => {
-    record.deliveryTime = moment(record.deliveryTime)
-    form.setFieldsValue(record)
-    setSelectId(record.id)
+    setEditData(record)
     setModalTitle("编辑站点");
     ref.current.onOpen()
   };
@@ -184,15 +183,14 @@ export default function Index() {
   };
   //删除站点确认
   const deleteOk = async () => {
-    let res = await DeleteSite(projectId, selectId)
+    let res = await useDeletePVStation({ projectId, stationId: selectId })
     if (res.success) {
       message.success('光伏站点删除成功!')
       try {
         let current = Math.ceil((totalItem.current - 1) / PageSize) < curPage.current
 
         if (current) {
-          let values = form.getFieldsValue()
-          run({ current: curPage.current - 1, pageSize: PageSize }, values)
+          run({ current: curPage.current - 1, pageSize: PageSize })
         } else {
           refresh()
         }
@@ -209,8 +207,6 @@ export default function Index() {
   const deleteCancel = () => {
     setDeleteTypeModal(false);
   };
-  const [previewImage, setPreviewImage] = useState("");
-  const [previewOpen, setPreviewOpen] = useState(false);
 
   const Title = (
     <div style={{ display: 'flex', justifyContent: "space-between", alignItems: "center" }}>
@@ -230,13 +226,15 @@ export default function Index() {
   const airprop = useMemo(() => {
     return {
       projectId,
-      updata: getTableData,
-      modalTitle
+      updata: run,
+      modalTitle,
+      curPage: curPage.current,
+      editData: editData
     }
-  }, [projectId, modalTitle])
+  }, [projectId, modalTitle, editData])
   return (
     <Pagecont showserach={false} custserach pd="0px" >
-      <Titlelayout title={Title} layout="flex" dr="column">
+      <Titlelayout title={Title} layout="flex">
         <Usetable
           rowKey={(record) => record.id}
           ref={tableRef}
@@ -256,7 +254,7 @@ export default function Index() {
         >
           是否确认删除光伏站点？
         </CModal>
-        <BindAir   {...airprop} ref={ref} />
+        <BindAir {...airprop} ref={ref} />
 
       </Titlelayout>
     </Pagecont>

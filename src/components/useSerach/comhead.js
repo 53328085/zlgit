@@ -412,9 +412,8 @@ export default function UseSerach(props) {
   const inverter = (
     <Item name="inverter" initialValue={1} style={{ color: `${primaryColor}` }} label="逆变器">
       {/* inverterData */}
-      <Select options={publicdateType} style={{ width: "140px" }} onChange={changepublic}></Select>
+      <Select></Select>
     </Item>
-
   )
 
   const refresh = (

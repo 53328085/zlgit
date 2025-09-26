@@ -78,12 +78,11 @@ export default function Index() {
       "chart"
     ],
     runtimeSolar: [//光伏发电
-      "station",
-      "device",
-      "data",
-      "propare",
-      "aerograph",
-      "alarm"
+      "stationTopo",
+      "cabinetMonitor",
+      "inverterMonitor",
+      "statistic",
+      "warning",
     ],
     /*    runtimeQuota: [
          "runtimeParkQuota", //园区是专门的接口
@@ -294,22 +293,16 @@ export default function Index() {
       }
       else if (primary == "runtimeSolar") {
         switch (nested) {
-          case "station":
-            setConfig({ refresh: true, photovoltaicPowerStation: true })
+          case "cabinetMonitor":
+            setConfig({ refresh: true, inverter: true, photovoltaicPowerStation: true })
             break
-          case "device":
-            setConfig({ refresh: true, inverter: true });
+          case "inverterMonitor":
+            setConfig({ refresh: true, inverter: true, photovoltaicPowerStation: true });
             break;
-          case "data":
-            setConfig({});
+          case "statistic":
+            setConfig({ isdate: true, photovoltaicPowerStation: true });
             break;
-          case "propare":
-            setConfig({ isdate: true, shiftNo: true });
-            break;
-          case "aerograph":
-            setConfig({ isdate: true, shiftNo: true });
-            break;
-          case "alarm":
+          case "warning":
             setConfig({ dateR: true, shiftNo: true, photovoltaicPowerStation: true });
             break;
         }
@@ -353,7 +346,7 @@ export default function Index() {
             setConfig({ custview: true });
             break;
           case "inverter":
-            setConfig({ custview: true, inverter: true, });
+            setConfig({ custview: true });
             break;
         }
       }

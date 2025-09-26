@@ -1,22 +1,16 @@
 import styled, { css } from "styled-components";
-import { Drawer, Input } from 'antd'
 
 export const Mainbox = styled.div`
-  position: relative;
-  display: grid;
-  grid-template-rows: 48px 1fr;
-  row-gap: 16px;
-  flex: 1;
+ display: flex;
+flex:1;
+flex-direction: column;
+row-gap: 16px;
+      .search {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
 `;
-
-const sty = css` 
-      grid-template-columns: 1fr auto 1fr;
-        column-gap: 16px;
-        grid-template-rows:  1fr; 
-        .selected{
-          row-gap:16px;
-        }
-`
 
 
 export const Bindwrap = styled.div`
@@ -44,35 +38,47 @@ export const Bindwrap = styled.div`
       }
     }
   }
-    .search{
-      background-color: rgba(246, 246, 246, 0.557);    
-      border: 1px solid #d7d7d7;
-      border-radius: 5px;
-      padding:12px 16px;
-    .selectInverter{
-    align-items: center;
-    display: flex;
-    margin-bottom: 16px;
+    .top{
+     .ant-form-inline {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
     }
-    .gridConnectedType{
-    margin-top: 16px;
     }
-    .ant-form-item-control-input-content{
-      color: #868686;
-    }
+      .deviceInfo{
+        background-color: rgba(246, 246, 246, 0.557);
+        border: 1px solid #d7d7d7;
+        border-radius: 5px;
+        padding: 12px 16px;
+        margin-top:16px;
+        display: grid;
+        grid-template-columns: 430px 1fr;
+        justify-content: flex-start;
+        align-items: center;
+        
+      .searchDevice {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+      .info{
+      margin-top:16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      }
+      }
     .ant-form-inline {
-    align-items: center;
-    display: flex;
-    justify-content: space-between;
+      padding:12px 16px;
     }
-    }
+      .ant-form-item{
+      margin-right:55px;
+      }
+    
       .inverter_title{
       color:${props => props.theme.primaryColor};
       font-size: 16px;
       margin-bottom: 16px;
-      }
-      .correlationBox{
-      height:555px;
       }
  .inwrap {
    display: grid;
