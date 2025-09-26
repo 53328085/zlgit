@@ -12,26 +12,32 @@ export const Mainbox =styled.div`
 
     }
     .right {
-        display: grid;
+       display: grid;
        grid-template-rows: 232px 1fr;
        gap:16px;
+       .topwrap {
+        overflow: auto;
        .top { 
         display: grid;
         grid-template-columns: repeat(auto-fill, minmax(229px, 1fr));
-        column-gap: 9px;
+        gap: 9px;
        }
+    }
     }
   }
 
 `
 export const Power= styled.div`
 && {
-    width: 229px;
+    min-width: 229px;
     height: 232px;
     background: #FFFFFF;
     border-radius: 8px;
     border: 1px solid #DDDFE6;
+    display: flex;
+    flex-direction: column;
     .powerUp {
+        flex:1;
         display: flex;
         flex-direction: column;
         padding: 8px;
@@ -40,10 +46,80 @@ export const Power= styled.div`
             background-image: url(${power});
             background-repeat: no-repeat;
             background-position: left;
+            display: flex;
+            align-items: center;
+            padding-left: 31px;
+            color:rgba(48, 49, 51, 1);
         }
+        .contentwrap {
+            flex:1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        .content{
+         
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content:center;
+            .num {
+                color:rgba(30, 80, 230, 1);
+                font-size: 24px;
+            }
+            .sub {
+                color:rgba(96, 98, 102, 1);
+                font-size: 12px;
+            }
+        }
+    }
          
     }
-   
+    .powerDown {
+        height: 98px;
+        background: linear-gradient(0deg, rgba(30, 80, 230, 0.15) 0%, rgba(3,160,255,0.03) 100%);
+        border-radius: 0px 0px 8px 8px;
+        padding:14px;
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        grid-auto-rows: 20px;
+        justify-content: space-between;
+        align-content: space-between;
+        .label {
+           color:rgba(96, 98, 102, 1);
+           text-align:left;
+        }
+        .value {
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            color:rgba(48, 49, 51, 1); 
+            font-weight: bold;
+            column-gap: 8px;
+        }
+    }
 }
   
+`
+export const CustTitle=styled.div` 
+&&{
+    display: flex;
+    align-items: center;
+    justify-content:space-between;
+}
+`
+export const ChartWrap = styled.div`
+&&{
+    flex:1;
+    display:flex;
+    gap: 16px;
+    .pip {
+        height: 100%;
+        flex-basis: 354px;
+        display:flex;
+    }
+    .bar {
+        flex:1;
+        display:flex;
+    }
+}
 `

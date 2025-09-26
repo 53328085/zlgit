@@ -20,6 +20,10 @@ const { useTree: AirTree } = new Apimethod( // 空调管理 手动控制 查询�
   "get",
   "Conditioner/AirConditionerCommon/Tree"
 );
+const { useQueryElectricClassifys } = new Apimethod( // 能源类型
+  "get",
+  "/Energy/EnergyClassifyDesigner/QueryElectricClassifys"
+);
 const { QuerySpaceTrees, } = energyShare
 const { DMAGetTree } = DMAPartition
 const { LineManagerQuery } = Monitoring.LineManager // 线路查询
@@ -76,6 +80,7 @@ export default memo(function Index({ areaId, setTreeId, setLine, setNode, showli
 
   const allSelected = ({ target: { checked } }) => {
     console.log(treeIdRef.current)
+    console.log(checked)
     if (checked) {
       if (datatype == 5) {
         let areId = Array.from(postid.current)?.map(d => parseInt(d.slice(2)))
@@ -145,6 +150,7 @@ export default memo(function Index({ areaId, setTreeId, setLine, setNode, showli
         "3": { title: 'name', key: treekey, children: 'children' },
         "4": { title: 'name', key: treekey, children: 'nodes' },
         "5": { title: 'name', key: treekey, children: 'nodes' },
+        "6": { title: 'energyName', key: "energyId", children: 'childs' },
       }[datatype?.toString()] || { title: 'name', key: treekey, children: 'nodes' }
     }
   }, [datatype, treekey, areaId])
@@ -186,8 +192,11 @@ export default memo(function Index({ areaId, setTreeId, setLine, setNode, showli
       {
         projectId,
         keyword: name,
-      }
-
+      },
+      {
+        projectId, 
+        type: energytype, 
+      },
       ][idx]
       if (idx == 3 && name) {
         const data = filterTreeIterative(treeData, name)
@@ -200,7 +209,7 @@ export default memo(function Index({ areaId, setTreeId, setLine, setNode, showli
         setTreeId(arr);
         return
       }
-      let hander = [QuerySpaceTrees, LineManagerQuery, queryEnergyCategoryTree, DMAGetTree, lightTree, AirTree][idx]
+      let hander = [QuerySpaceTrees, LineManagerQuery, queryEnergyCategoryTree, DMAGetTree, lightTree, AirTree,useQueryElectricClassifys][idx]
 
       /*  if(lineType == "3") {
          hander = QuerySpaceTrees
@@ -239,6 +248,9 @@ export default memo(function Index({ areaId, setTreeId, setLine, setNode, showli
             case 5:
               getId(data, 'key', 'nodes')
               break;
+            case 6:
+                getId(data, 'energyId', 'childs')
+                break;
             default:
               break
 
@@ -256,7 +268,7 @@ export default memo(function Index({ areaId, setTreeId, setLine, setNode, showli
           console.log(Array.from(postid.current))
           let areId = Array.from(postid.current)?.map(d => {
             let id = parseInt(d.slice(2))
-            console.log(id)
+             
             return id
           })
 
@@ -420,7 +432,7 @@ export default memo(function Index({ areaId, setTreeId, setLine, setNode, showli
 
   return (
 
-    <Titlelayout key="line" layout="flex" bordered={sty.bordered} pv={sty.pv} hv="32px" bg="none" title={title}>
+    <Titlelayout key="line" layout="flex" bordered={sty.bordered} pv={sty.pv} hv="32px"  title={title}>
       <div style={{ height: scroll ? scroll : '750px', overflow: 'auto', flex: 1 }}>
         {treeName ? <div style={{ color: '#515151', fontWeight: 'bold', marginBottom: '8px' }}>{treeName}</div> : null}
         <Treebox showline={showline.toString()}>

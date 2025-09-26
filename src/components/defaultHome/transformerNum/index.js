@@ -8,6 +8,7 @@ import {TitlelayoutOv as Titlelayout} from '@com/titlelayout';
 import transformerNum from '../transformerNum.svg'
 import { HomeRuntime } from '@api/api.js'
 import Context from "@com/content"
+ 
 
 const sty = css`
  //margin-top: 16px;
@@ -31,6 +32,7 @@ const Divorder = styled.div`
   align-items: center;
  // margin-top: 30px;
   justify-content: space-around;
+  flex:1;
   .card_icon{
    // margin-left: 25px;
     width: 64px;
@@ -41,7 +43,7 @@ const Divorder = styled.div`
   .details{
      display: flex;
      flex-direction: column;
-     width: 200px;
+     min-width: 200px;
      .detail_item {
        display: flex;
        justify-content: space-between;
@@ -92,7 +94,7 @@ export default function DefaultHome(props) {
     getData()
    }, [projectId])
   return (
-    <Titlelayout title={t("overview:Numberoftransformers")} {...fs} style={{minHeight: '200px'}}>
+    <Titlelayout title={t("overview:Numberoftransformers")} {...fs} style={{minHeight: '200px', height: '100%'}}>
       <Divorder laptop={laptop}>
       {laptop ? null : <img src={ transformerNum } className='card_icon'></img>}  
         

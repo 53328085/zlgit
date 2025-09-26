@@ -9,9 +9,6 @@ import { energyClassified } from '@api/api'
 import {selectOneLevel} from '@redux/systemconfig.js'
 import Pagecount from "@com/pagecontent";
 import {getTime} from '@com/usehandler'
-import {Mainbox} from  "./style"
-import UseTree from '@com/useTree'
-import Powercom from "./component/power"
 export default function Index() {
   let {exparams} = useOutletContext()
   let {view, areaId, date, type:dateType, shiftNo, projectId} = exparams 
@@ -75,16 +72,7 @@ export default function Index() {
   }, [view, areaId, date, dateType, shiftNo, projectId])
   return (
     <Pagecount bgcolor="transparent" pd="0">
-      <Mainbox>
-        <UseTree></UseTree>
-        <div className="right">
-           <div className="top">
-                   <Powercom />
-           </div>
-        </div>
-      </Mainbox>
-    
-     {/*  <Energy showData={showData} date={exparams.date} dateType={exparams.type} showType={exparams.view}/>  */}
+      <Energy showData={showData} date={exparams.date} dateType={exparams.type} showType={exparams.view}/> 
     </Pagecount>
 
   )

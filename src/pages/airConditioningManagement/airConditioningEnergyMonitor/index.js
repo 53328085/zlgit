@@ -70,12 +70,6 @@ export default function Index() {
     pageInfo.pageSize = pageSize;
     QueryEnergyConsumptions(); // 重新查询数据
   };
-  // 开关弹窗分页变化处理函数
-  const onPageChange = (page, pageSize) => {
-    modalPageInfo.pageNum = page;
-    modalPageInfo.pageSize = pageSize;
-    PageIO(); // 重新查询数据
-  };
   const getDateType = (type, date) => {
     return type == 1
       ? moment(date).format("YYYY-MM-DD")
@@ -88,7 +82,7 @@ export default function Index() {
     return executeApiCall(
       AirConditioningManagement.QueryEnergyConsumptions,
       {
-        areaIds: treeId,
+        ids: treeId,
         pageNum: pageInfo.pageNum,
         pageSize: pageInfo.pageSize,
       },
@@ -173,24 +167,27 @@ export default function Index() {
     );
   };
 
-  // 分页查询IO数据
-  const PageIO = async (IoState=0) => {
+  // 后端分页查询IO数据（支持排序和过滤）
+  const PageIO = async (IoState = 0, sortField = 0, sortOrder = "ascend") => {
     return executeApiCall(
       AirConditioningManagement.PageIO,
       {
-        IoState, // 始终获取全部数据
+        IoState, // 过滤参数：0-全部，1-开启，2-关闭
         pageNum: modalPageInfo.pageNum,
         pageSize: modalPageInfo.pageSize,
         conditionerId: openTbIdRef.current,
+        // 添加排序参数
+        controlType: sortField, // 排序字段，如 '1-系统 2-手动'
+        asc: sortOrder=='ascend'?true:false, // 排序方向：'ascend' 或 'descend'
       },
       {
         loadingKey: "modalLoading",
         onSuccess: (res) => {
-          modalData.tbdata = res.data;
-          modalData.totalCount = res.total;
-          modalPageInfo.pageNum = res.pageNum;
-          modalPageInfo.pageSize = res.pageSize;
-          modalPageInfo.total = res.total;
+          modalData.tbdata = res.data || [];
+          modalData.totalCount = res.total || 0;
+          modalPageInfo.pageNum = res.pageNum || 1;
+          modalPageInfo.pageSize = res.pageSize || 10;
+          modalPageInfo.total = res.total || 0;
         },
       }
     );
@@ -205,6 +202,7 @@ export default function Index() {
     openTbIdRef.current = record?.id;
     enableRef.current?.onOpen();
     QueryIoDetail();
+    // 初始化时使用默认排序参数调用PageIO
     PageIO();
   };
 
@@ -222,21 +220,93 @@ export default function Index() {
   };
 
   const [enableVal, setEnableVal] = useState(0);
-  const enableChange = (e) => {
-    setEnableVal(e.target.value);
-    modalPageInfo.pageNum=1
-    PageIO(e.target.value)
+  // 添加后端排序状态管理
+  const [sortInfo, setSortInfo] = useState({
+    filter: 0,      //默认不筛选
+    order: true     // 默认升序，对应data.js中的defaultSortOrder
+  });
   
+  const enableChange = (e) => {
+    const newFilterValue = e.target.value;
+    setEnableVal(newFilterValue);
+    // 过滤变化时重置到第一页
+    modalPageInfo.pageNum = 1;
+    // 调用后端过滤接口
+    PageIO(newFilterValue, sortInfo.filter, sortInfo.order);
   };
 
   // modal关闭时重置状态
   const handleModalClose = () => {
     setEnableVal(0);
+    // 重置为默认排序状态，而不是清空
+    setSortInfo({ filter: 1, order: true });
     // 清空modal数据
     modalData.tbdata = [];
     modalData.deivemes = {};
     modalData.totalCount = 0;
     enableRef.current?.onCancel();
+  };
+
+  // 后端分页变化处理函数
+  const onPageChange = (page, pageSize) => {
+    modalPageInfo.pageNum = page;
+    modalPageInfo.pageSize = pageSize;
+    // 调用后端接口，保持当前过滤和排序状态
+    PageIO(enableVal, sortInfo.filter, sortInfo.order);
+  };
+
+  // 后端表格变化处理函数（支持排序）
+  const handleTableChange = (pagination, filters, sorter) => {
+    console.log('表格变化:', { pagination, filters, sorter });
+    
+    let needReload = false;
+    let newSortInfo = { ...sortInfo };
+    
+   
+    //处理过滤变化
+    if(filters?.controlType&&filters?.controlType.length>0 &&filters?.controlType[0]!=sortInfo.filter){
+      newSortInfo = {
+        ...newSortInfo,
+        filter: filters?.controlType[0] || 0
+      };
+      setSortInfo(newSortInfo);
+        // 排序变化时重置到第一页
+      modalPageInfo.pageNum = 1;
+      needReload = true;
+    }
+    if(!filters?.controlType){
+       newSortInfo = {
+        ...newSortInfo,
+        filter:  0
+      };
+      setSortInfo(newSortInfo);
+        // 排序变化时重置到第一页
+      modalPageInfo.pageNum = 1;
+      needReload = true;
+    }
+    // 处理排序变化
+    if (Object.keys(sorter).length>0 && (sorter.order !== sortInfo.order)) {
+      newSortInfo = {
+        ...newSortInfo,
+        order: sorter.order || null
+      };
+      setSortInfo(newSortInfo);
+      
+      // 排序变化时重置到第一页
+      modalPageInfo.pageNum = 1;
+      needReload = true;
+    }
+     // 处理分页变化
+    if (pagination && (pagination.current !== modalPageInfo.pageNum || pagination.pageSize !== modalPageInfo.pageSize)) {
+      modalPageInfo.pageNum = pagination.current;
+      modalPageInfo.pageSize = pagination.pageSize;
+      modalPageInfo.total = pagination.total;
+      needReload = true;
+    }
+    // 调用后端接口
+    if (needReload) {
+      PageIO(enableVal, newSortInfo.filter, newSortInfo.order);
+    }
   };
 
   useEffect(() => {
@@ -408,7 +478,8 @@ export default function Index() {
           value={enableVal}
           modalData={modalData}
           modalPageInfo={modalPageInfo}
-          onPageChange={onPageChange}
+          onPageChange={()=>{}}
+          onTableChange={handleTableChange} // 传递后端表格处理函数
           onClose={handleModalClose}
           loading={loading.modalLoading}
           time={timedate.date}

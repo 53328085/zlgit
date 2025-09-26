@@ -1,13 +1,15 @@
-import React, {useRef, useEffect} from 'react'
+import React, {useRef, useEffect, useMemo} from 'react'
 import {useSelector} from 'react-redux'
 import { selectProjectId, themeColor } from '@redux/systemconfig.js'
 import {TitlelayoutOv as Titlelayout} from '@com/titlelayout';
-import { drawEcharts } from "@com/useEcharts"; 
+ 
+import Ichart from '@com/useEcharts/Ichart';
 import {hextodec} from "@com/usehandler"
 import { useReactive } from 'ahooks';
 import { HomeRuntime } from '@api/api.js'
 import { message } from 'antd';
 import {useTranslation} from 'react-i18next'
+import { use } from 'react';
 const fs = {
  // hv: '24px',
   fc: '#333',
@@ -21,7 +23,7 @@ export default function DefaultHome(props){
   const {primaryColor} = useSelector(themeColor)
   const {t} = useTranslation("overview")
   const { GetSiteSoc } = HomeRuntime
-  const ref=useRef()
+  
  
 
   const state = useReactive({
@@ -29,13 +31,13 @@ export default function DefaultHome(props){
   })
     const rgb = hextodec(primaryColor);
   
-    const tdrawEcharts = () => {
-      return drawEcharts(ref.current, {
+    const option = useMemo(() => {
+      return  {
         type: 4,
         
         liuqiu: {
           series: {
-           data: [state.socData],
+           data: [state?.socData],
            waveLength: "89%",
            backgroundStyle: {
             borderWidth: 2,
@@ -68,9 +70,8 @@ export default function DefaultHome(props){
           
         },
        
-      }
-      })
-    }
+      }}}
+     , [state?.socData,primaryColor,rgb])
   useEffect(()=>{
     if (props.type == 'runtTime') {
       GetSiteSoc(projectId).then(res => {
@@ -78,22 +79,23 @@ export default function DefaultHome(props){
           if(success){
             if(data){
               state.socData = data
-              tdrawEcharts()
+             
             }
           }else{
             message.error(res.errMsg)
           }
       })
     } else {
-      tdrawEcharts()
+      
     }
   },[primaryColor])
 
   
   return (
     <Titlelayout title={t("sitesoc")} {...fs} style={{height: '100%'}}>
-        <div style={{width: '424px', minHeight: '338px', display: "flex"}}>
-        <div style={{flex:1}} ref={ref}>
+        <div style={{  minHeight: '200px',height: "100%", display: "flex"}}>
+        <div style={{flex:1}} >
+          <Ichart {...option} />
         </div> 
           </div>
     </Titlelayout>

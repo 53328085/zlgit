@@ -127,7 +127,7 @@ function Custmodal({
       bottom: clientHeight - (targetRect.bottom - uiData.y),
     });
   };
-  const { onCancel: close, custft = false, onOk, title, bodyStyle, warnimg = true,dragprops={}, ...rest } = props
+  const { onCancel: close, custft = false, onOk, title, bodyStyle, warnimg = true,dragprops={},reset, ...rest } = props
   const formref = useRef()
   const onCancel = () => {
     setOpen(false)
@@ -142,6 +142,7 @@ function Custmodal({
   const [currbtn, setCurrbtn] = useState(1)
   const CustFooter = [
     <Button onClick={onCancel} key="cancel" danger={type == "warn"}>{t('cancel')}</Button>,
+    <>{typeof reset==="function" && <Button onClick={reset} key="restore" style={{width: "auto", padding: "8px"}}  >{t('restore')}</Button>}</>,
     <Button type="primary" loading={currbtn == 1 && loading} onClick={() => {
 
       setCurrbtn(1)

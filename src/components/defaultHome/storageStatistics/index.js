@@ -8,9 +8,9 @@ import { HomeRuntime } from '@api/api.js'
 import { message } from 'antd';
 import Ichart  from '@com/useEcharts/Ichart';
 const Mainbox = styled.div`
-  width: 936px;
+  
   width:100%;
-  min-height: 416px;
+  min-height: 200px;
   height: 100%;
   padding: 16px;
   background-color: #fff;
