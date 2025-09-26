@@ -1,23 +1,4 @@
 import styled, { css } from "styled-components";
-import { Drawer, Input } from 'antd'
-
-export const Mainbox = styled.div`
-  position: relative;
-  display: grid;
-  grid-template-rows: 48px 1fr;
-  row-gap: 16px;
-  flex: 1;
-`;
-
-const sty = css` 
-      grid-template-columns: 1fr auto 1fr;
-        column-gap: 16px;
-        grid-template-rows:  1fr; 
-        .selected{
-          row-gap:16px;
-        }
-`
-
 
 export const Bindwrap = styled.div`
   display: flex;
@@ -56,7 +37,8 @@ export const Bindwrap = styled.div`
         background-color: rgba(246, 246, 246, 0.557);
         border: 1px solid #d7d7d7;
         border-radius: 5px;
-        padding: 12px 16px;
+        padding: 12px 32px;
+      margin-top:16px;
       .info{
       margin-top:16px;
       display: flex;

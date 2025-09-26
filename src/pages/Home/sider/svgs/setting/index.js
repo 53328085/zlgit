@@ -61,7 +61,8 @@ export { ReactComponent as designerEnergyenergyRank } from './energyRank.svg'
 //光伏发电
 export { ReactComponent as designerSolarstation } from './station.svg'
 export { ReactComponent as designerSolarinverter } from './inverter.svg'
-export { ReactComponent as designerSolarchart } from './chart2.svg'
+export { ReactComponent as designerSolarprice } from './price.svg'
+export { ReactComponent as designerSolarparkImg } from './designAreaPicture.svg'
 
 // 储能管理
 
@@ -116,6 +117,6 @@ export { ReactComponent as airConditioningManagementairConditioningConfig } from
 export { ReactComponent as streetLightManagementstreetLightModel } from './streetLightType.svg'
 export { ReactComponent as streetLightManagementstreetLightInfo } from './streetLightInfo.svg'
 export { ReactComponent as streetLightManagementstreetLightScheme } from './streetLightScheme.svg'
-export { ReactComponent as streetLightManagementstreetLightLineConfig} from './streetLightLineConfig.svg'
-export { ReactComponent as streetLightManagementstreetLightAreaConfig} from './streetLightAreaConfig.svg'
+export { ReactComponent as streetLightManagementstreetLightLineConfig } from './streetLightLineConfig.svg'
+export { ReactComponent as streetLightManagementstreetLightAreaConfig } from './streetLightAreaConfig.svg'
 export { ReactComponent as streetLightManagementstreetLightOverviewConfig } from './image.svg'

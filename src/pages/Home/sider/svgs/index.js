@@ -99,15 +99,15 @@ export { ReactComponent as runtimeEnergysummary } from './monitor.svg'
 
 // 能源管理
 
-export { ReactComponent as runtimeSolaraerograph } from './runtimeSolar/aerograph.svg'
-export { ReactComponent as runtimeSolaralarm } from './runtimeSolar/alarm.svg'
-export { ReactComponent as runtimeSolarchart } from './runtimeSolar/chart.svg'
-export { ReactComponent as runtimeSolardata } from './runtimeSolar/data.svg'
-export { ReactComponent as runtimeSolardevice } from './runtimeSolar/device.svg'
-export { ReactComponent as runtimeSolarpropare } from './runtimeSolar/propare.svg'
-export { ReactComponent as runtimeSolarsummary } from './runtimeSolar/summary.svg'
+export { ReactComponent as runtimeSolarstationTopo } from './runtimeSolar/chart.svg'
+export { ReactComponent as runtimeSolarcabinetMonitor } from './runtimeDistributionmonitoring.svg'
+export { ReactComponent as runtimeSolarinverterMonitor } from './runtimeDistributionmonitoring.svg'
+export { ReactComponent as runtimeSolarstatistic } from './runtimeSolar/data.svg'
+export { ReactComponent as runtimeSolarwarning } from './cabinets/alarm.svg'
+// export { ReactComponent as runtimeSolarpropare } from './runtimeSolar/propare.svg'
+// export { ReactComponent as runtimeSolarsummary } from './runtimeSolar/summary.svg'
 
-
+//光伏发电
 
 export { ReactComponent as runtimeCarbonEmissionManagerruntimeCarbonData } from './runtimeCarbonEmissionManager/runtimeCarbonData.svg'
 export { ReactComponent as runtimeCarbonEmissionManagerruntimeCarbonExamine } from './runtimeCarbonEmissionManager/runtimeCarbonExamine.svg'

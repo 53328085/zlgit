@@ -19,6 +19,13 @@ export const Container = styled.div`
     justify-content: space-between;
     }
     }
+    
+    .ant-space-item {
+    &:nth-of-type(1){
+    margin-right: 0px !important;
+    }
+        
+    }
 `;
 
 export const Header = styled.div`

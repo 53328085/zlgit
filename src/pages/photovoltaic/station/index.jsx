@@ -341,7 +341,7 @@ export default function Index() {
     < Pagecount bgcolor="#eeeff4" pd={0} >
       <Container>
         <TopBox>
-          <Titlelayout title={'电站信息'} {...fs}>
+          <Titlelayout title={'并网柜信息'} {...fs}>
             <div className='infoBox1'>
               <img src={powerStation} className='powerStation' />
               <div className='content'>
