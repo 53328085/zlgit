@@ -1,5 +1,5 @@
 import React,{useMemo, useRef, useState, useCallback} from 'react'
-import {Space, Form, message, Typography} from 'antd'
+import {Space, Form, message, Typography, DatePicker} from 'antd'
 import moment from 'moment'
 import {useAntdTable} from "ahooks"
 import {useSelector} from "react-redux"
@@ -11,13 +11,14 @@ import {CustButtonT,CustButton, ExportExcel} from "@com/useButton"
 import CModal from '@com/useModal'
 import {selectUser} from "@redux/user"
 import {selectOneLevelDefaultId} from "@redux/systemconfig"
-import {usePage,useAdd,useUpdate,useDelete } from "./api"
+import {usePage,useAdd,useUpdate,useDelete,useSchemeBatchSend } from "./api"
 import {cols, items} from "./data"
 import {Mainbox, Title } from './style'
 import BindLight from './bind'
 import {Serach} from "@com/comstyled"
+ 
  const {Link} = Typography
-
+const {RangePicker} = DatePicker
 
 export default function Index({formData}) {
   const delref= useRef()
@@ -26,10 +27,11 @@ export default function Index({formData}) {
   const {name} = useSelector(selectUser)
  
   const [newform] = Form.useForm()
+  const [arcform] = Form.useForm()
   const {projectId} =useOutletContext()
   const areaId = useSelector(selectOneLevelDefaultId)
   const sence = Form.useWatch("scenes", newform)
-  console.log(sence)
+  const arcRef = useRef()
   
   const [isadd, setIsadd] =useState(1) // 0 新增 1 编辑 2 克隆
   const [total, setTotal] = useState(0)
@@ -190,14 +192,58 @@ export default function Index({formData}) {
       
      }
   }
-  
+  const schemeId = useRef()
+ const archives=(row)=> {
+  schemeId.current = row.strategyId;
+   arcRef.current.onOpen();
+ }
+ const arcOk =async()=> {
+   try {
+    let {time} = await arcform.validateFields()
+    console.log(time)
+    let params = {
+      projectId,
+      schemeId:schemeId.current,
+      startDate: time?.[0]?.format("YYYY-MM-DD"),
+      endDate: time?.[1]?.format("YYYY-MM-DD"),
+    }
+    let {success, errMsg} =  await useSchemeBatchSend(params)
+    if(success) {
+      message.success("下发成功")
+      arcRef.current.onCancel()
+      refresh()
+
+    }else {
+      message.error(errMsg || "下发失败")
+    }
+   } catch (error) {
+     console.log(error)
+   }
+ }
+const [dates, setDates] = useState([])
+ const disabledDate = (current) => {
+   
+    let curyear = dates?.[0]?.year()
+    let second= current?.year()
+    return (curyear && second && second!== curyear) || ( current && current < moment().startOf('day'));
+};
+ const onCalendarChange=(val)=> {
+   setDates(val)
+   arcform.setFieldValue("time", val)
+ }
+ const onOpenChange=(open)=> {
+  if(open) {
+    setDates(null)
+    arcform.setFieldValue("time", null)
+  }
  
+ }
   const columns = [
     ...cols,
     {
       title: '操作', 
       key:'option',
-      render: (_, row)=> <Space><Link onClick={()=> onEdit(row, 1)}>编辑</Link><Link onClick={()=> onEdit(row, 2)}>克隆</Link><Link type="danger" onClick={()=> onDel(row)}>删除</Link></Space>
+      render: (_, row)=> <Space><Link onClick={()=> archives(row)}>档案下发</Link><Link onClick={()=> onEdit(row, 1)}>编辑</Link><Link onClick={()=> onEdit(row, 2)}>克隆</Link><Link type="danger" onClick={()=> onDel(row)}>删除</Link></Space>
     },
   ]
   const onExport =useCallback(() => {  
@@ -249,6 +295,15 @@ export default function Index({formData}) {
        <CModal title={Ctitle}   onOk={onOk}   width={1380} mold="cust" custft={isadd==0}  ref={editRef}  >
         <Form form={newform} labelAlign="right" labelCol={{flex: "7em"}} preserve={false} size="small" colon={false}>
          {items}
+        </Form>
+       </CModal>
+       <CModal title="档案下发"    onOk={arcOk}   width={512} mold="cust"   ref={arcRef}  >
+        <Form form={arcform} labelAlign="right" labelCol={{flex: "7em"}} preserve={false}   colon={false}>
+           <Form.Item name="time" label="下发时间区间" tooltip="请在当前时间之后一年内,例:2028-01-01-2028-12-31" rules={[{
+            required: true,
+           }]} >
+              <RangePicker   format="YYYY-MM-DD" disabledDate={disabledDate} onCalendarChange={onCalendarChange} onOpenChange={onOpenChange} />
+           </Form.Item>
         </Form>
        </CModal>
         <CModal title="删除"  ref={delref} width={512} mold="cust" type="warn" onOk={onOkDel} >

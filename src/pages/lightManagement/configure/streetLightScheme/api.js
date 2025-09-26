@@ -57,3 +57,7 @@ export const { usePage } = new Apimethod( //查询  路灯控制方案
     "post",
     "Light/StreetLightScheme/BindLine"
   );
+  export const { useSchemeBatchSend} = new Apimethod( // 档案下发
+    "get",
+    "Light/StreetLightScheme/SchemeBatchSend"
+  );
