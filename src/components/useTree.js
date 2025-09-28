@@ -47,6 +47,7 @@ export default memo(function Index({ areaId, setTreeId, setLine, setNode, showli
   treeName = '',
   title = "",
   mode = null,
+  correlation=Number.POSITIVE_INFINITY, // 是否关联 属性
   ...restprop }) {
   // datatype =0 或 =2
   const levelone = useSelector(selectOneLevel)
@@ -75,7 +76,7 @@ export default memo(function Index({ areaId, setTreeId, setLine, setNode, showli
   let postid = useRef(new Set()) //  空调 树
   const [indeterminate, setIndeterminate] = useState(false);
   const [checked, setChecked] = useState(false)
-  const [schecked, setschecked] = useState(1)
+  const [schecked, setschecked] = useState(correlation)
   const strictyly = schecked == 1
 
   const allSelected = ({ target: { checked } }) => {
