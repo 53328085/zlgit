@@ -5,12 +5,13 @@ import { useSelector } from "react-redux";
 import { CustButtonT, CustButton } from '@com/useButton'
 import { useOutletContext } from 'react-router-dom'
 import Cupload from "@com/useUpload.js"
-import { selectProjectId } from '@redux/systemconfig.js'
+import { selectProjectId, selectOneLevel } from '@redux/systemconfig.js'
 import { message, Form, Select, Input, InputNumber, Space, Divider, Button, Checkbox, Tag, Alert } from 'antd';
 import { UpdateEnergyImage } from '@api/api.js'
 import { Cspin } from "@com/comstyled"
 import { isObject } from '@com/usehandler'
-import { useQueryStationList, useGetStationImage, useGetStationHots, useUpdateStationImageAndHot } from './api'
+import { AreaSelect } from "@com/useSerach/comhead"
+import { useQueryStationList, useGetAreaImage, useGetAreaHots, useUpdateAreaImageAndHot } from './api'
 const Ctag = styled(Tag)`
   &&{
     position: absolute;
@@ -86,8 +87,10 @@ const Main = styled.div`
 export default function Index() {
    const [form] = Form.useForm();
    let { exparams } = useOutletContext()
-   let { areaId } = exparams
+   // let { areaId } = exparams
    const projectId = useSelector(selectProjectId)
+
+   const oneLevel = useSelector(selectOneLevel).slice(1);
    const [energyImage, setEnergyImage] = useState('')
    const [loading, setLoading] = useState(false)
    const [spinning, setSpinning] = useState(false)
@@ -96,6 +99,8 @@ export default function Index() {
    const [list, setList] = useState([])
    const [stationData, setStationData] = useState([]);
    const [stationId, setStationId] = useState();
+   const [areaHotsData, setAreaHotsData] = useState();
+   const [areaId, setAreaId] = useState(null);
    const onChnage = (e) => {
       setEnergyImage(e)
    }
@@ -135,32 +140,38 @@ export default function Index() {
    const stationChange = (val) => {
       setStationId(val)
    }
+   const searchAreaChange = (val) => {
+      setAreaId(val)
+   }
+
    const onSave = async () => {
       try {
          if (!energyImage) return message.warning("请选择图片")
 
          setLoading(true)
-         let imageBuildingCoordinate = []
+         let gridTiedCabinetHots = []
          let values = await form.validateFields();
 
          for (let [key, value] of Object.entries(values)) {
+            console.log(key, value)
             if (value.c && value.checked) {
                let [x, y] = value.c.split(',');
                if (parseFloat(x) && parseFloat(y)) {
-                  imageBuildingCoordinate.push({ buildingId: key, x, y, r: value.r })
+                  gridTiedCabinetHots.push({ gridTiedCabinetId: key, hotX: x, hotY: y, hotC: value.r })
                }
             }
          }
          let params = {
-            projectId,
-            energyImage,
-            imageBuildingCoordinate,
+            areaId,
+            base64Image: energyImage,
+            gridTiedCabinetHots,
          }
-         let { success, errMsg } = await UpdateEnergyImage.update(params)
+         let { success, errMsg } = await useUpdateAreaImageAndHot({ projectId }, params)
          if (success) {
             message.success('保存成功')
             setLoading(false)
-            query()
+            GetAreaImage()
+            GetAreaHotsData()
          } else {
             message.warning(errMsg || '数据出错')
             setLoading(false)
@@ -171,64 +182,84 @@ export default function Index() {
       }
 
    }
-   const getArea = async () => {
-      try {
-         let { success, data } = await UpdateEnergyImage.AeraQueryAll(projectId)
-         if (success && Array.isArray(data)) {
-            setArea(data)
-         } else {
-            setArea([])
-         }
-      } catch (error) {
-         console.log(error)
-      }
+   // const getArea = async () => {
+   //    try {
+   //       let { success, data } = await UpdateEnergyImage.AeraQueryAll(projectId)
+   //       if (success && Array.isArray(data)) {
+   //          setArea(data)
+   //       } else {
+   //          setArea([])
+   //       }
+   //    } catch (error) {
+   //       console.log(error)
+   //    }
 
-   }
-   const query = async () => {
+   // }
+   const GetAreaImage = async () => {
       try {
-
-         if (projectId == undefined || stationId == undefined) return
+         if (projectId == undefined || areaId == undefined) return
          setSpinning(true)
-         let { success, data } = await useGetStationImage({ projectId, stationId })
+         let { success, data } = await useGetAreaImage({ projectId, areaId })
 
          if (success && isObject) {
-            // let { fileImage, imageBuildingCoordinateVos } = data;
+            let { base64Image } = data;
 
-            // setEnergyImage(fileImage)
-            // if (Array.isArray(imageBuildingCoordinateVos)) {
-            //    imageBuildingCoordinateVos.forEach(i => {
-            //       form.setFieldValue([i.buildingId, 'c'], [i.x, i.y].join(','));
-            //       form.setFieldValue([i.buildingId, 'r'], i.r);
-            //       form.setFieldValue([i.buildingId, 'checked'], true);
-            //    })
-            //    let checked = imageBuildingCoordinateVos.map(i => ({ id: i.buildingId, name: i.buildName, top: i.y, left: i.x }))
-            //    setList(checked)
-            // }
-
+            setEnergyImage(base64Image)
             setSpinning(false)
          } else {
             setEnergyImage('')
             setSpinning(false)
          }
       } catch (error) {
-         console.log(error)
+         setEnergyImage('')
+         setSpinning(false)
+      }
+
+   }
+   const GetAreaHotsData = async () => {
+      try {
+
+         if (projectId == undefined || areaId == undefined) return
+         setSpinning(true)
+         let { success, data } = await useGetAreaHots({ projectId, areaId })
+         if (success && isObject) {
+            let { areaHots } = data;
+            setAreaHotsData(areaHots)
+            if (Array.isArray(areaHots)) {
+               areaHots.forEach(i => {
+                  form.setFieldValue([i.gridTiedCabinetId, 'c'], [i.hotX, i.hotY].join(','));
+                  form.setFieldValue([i.gridTiedCabinetId, 'r'], i.hotC);
+                  form.setFieldValue([i.gridTiedCabinetId, 'checked'], true);
+               })
+               let checked = areaHots.map(i => ({ id: i.gridTiedCabinetId, name: i.name, top: i.hotY, left: i.hotX }))
+               setList(checked)
+            }
+
+            setSpinning(false)
+         } else {
+            setAreaHotsData([])
+            setSpinning(false)
+         }
+      } catch (error) {
+         // console.log(error)
          setEnergyImage('')
          setSpinning(false)
       }
 
    }
    const getPoint = (e) => {
-      if (!Number.isInteger(curarea?.id)) return message.warning('请点击需要设置的区域')
+      if (!Number.isInteger(curarea?.gridTiedCabinetId)) return message.warning('请点击需要设置的区域')
       let { offsetX, offsetY } = e.nativeEvent
-      let { id, name } = curarea
+      let { gridTiedCabinetId, name } = curarea
       let tip = {
-         id,
+         id: gridTiedCabinetId,
          name,
          left: offsetX,
          top: offsetY
       }
       let arr = [...list]
-      let index = arr.findIndex(l => l.id == curarea.id)
+      console.log(arr)
+      let index = arr.findIndex(l => l.id == curarea.gridTiedCabinetId)
 
 
       if (index >= 0) {
@@ -238,29 +269,39 @@ export default function Index() {
       } else {
          arr = [...arr, tip]
       }
-      console.log(arr)
       setList(arr)
-      form.setFieldValue([curarea.id, 'c'], [offsetX, offsetY].join(','))
+      form.setFieldValue([curarea.gridTiedCabinetId, 'c'], [offsetX, offsetY].join(','))
 
    }
    const onset = (f, ar) => {
-      console.log(f)
+      console.log(f, ar)
       if (f.target.checked) {
          setCurarea(ar)
       } else {
-         form.setFieldValue([ar.id, 'c'], null)
+         form.setFieldValue([ar.gridTiedCabinetId, 'c'], null)
       }
    }
 
    useEffect(() => {
       if (!projectId) return
-      query()
-      getArea()
-   }, [stationId])
+      GetAreaImage()
+      GetAreaHotsData()
+      // getArea()
+   }, [areaId])
    useEffect(() => {
       if (!projectId) return
       RuntimStation()
    }, [projectId])
+   useEffect(() => {
+      if (oneLevel && Array.isArray(oneLevel) && oneLevel.length > 0) {
+         const filter = oneLevel?.filter?.(f => f.id != 0);
+         // 如果有数据，设置第一个选项为默认值
+         if (filter && filter.length > 0) {
+            setAreaId(filter[0].id);
+         }
+      }
+
+   }, []);
    const msg = (<div style={{ color: "#515151" }}>
       <p>鼠标点击获取热点中心</p>
       <p>默认热点半径40px,最小值16px,可以手动修改</p>
@@ -271,7 +312,8 @@ export default function Index() {
             <div className='title'>
                <span className='text'>园区图片</span>
                <div className='operation'>
-                  站点选择 <Select
+                  {/* 站点选择
+                  <Select
                      style={{ width: "210px" }}
                      onChange={stationChange}
                      options={stationData}
@@ -281,7 +323,10 @@ export default function Index() {
                         value: "id",
                         options: "options",
                      }}
-                  />
+                  /> */}
+                  园区选择
+                  {areaId !== null && (
+                     <AreaSelect value={areaId} style={{ width: "264px" }} onChange={searchAreaChange} />)}
                   <CustButton onClick={onSave} loading={loading} wh="auto">保存图片及热点</CustButton>
                </div>
             </div>
@@ -301,18 +346,20 @@ export default function Index() {
                <div className='point'>
                   <Form form={form}>
                      {
-                        area.map(a => <Form.Item label={a.name} key={a.id}>
-                           <Space><Form.Item name={[a.id, 'c']} noStyle>
-                              <Input style={{ width: '80px' }} readOnly />
+                        areaHotsData?.map(a =>
+                           <Form.Item label={a.name} key={a.gridTiedCabinetId}>
+                              <Space><Form.Item name={[a.gridTiedCabinetId, 'c']} noStyle>
+                                 <Input style={{ width: '80px' }} readOnly />
+                              </Form.Item>
+                                 <Form.Item name={[a.gridTiedCabinetId, 'r']} initialValue={40} noStyle>
+                                    <InputNumber min={16} />
+                                 </Form.Item>
+                                 <Form.Item name={[a.gridTiedCabinetId, 'checked']} valuePropName="checked" noStyle>
+                                    <Checkbox onChange={(f) => onset(f, a)} />
+                                 </Form.Item>
+                              </Space>
                            </Form.Item>
-                              <Form.Item name={[a.id, 'r']} initialValue={40} noStyle>
-                                 <InputNumber min={16} />
-                              </Form.Item>
-                              <Form.Item name={[a.id, 'checked']} valuePropName="checked" noStyle>
-                                 <Checkbox onChange={(f) => onset(f, a)} />
-                              </Form.Item>
-                           </Space>
-                        </Form.Item>)
+                        )
                      }
                      <Form.Item >
                         <Alert type="info" message={msg}></Alert>

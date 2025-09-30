@@ -1,37 +1,67 @@
 .photovoltaic-station {
     padding: 20px;
     font-family: 'Arial', sans-serif;
-    display: grid;
-    grid-template-columns: 400px 1fr;
-    align-items: center;
 
+    &.loading {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 700px;
+
+    }
+
+    .stationAll {
+        height: 700px;
+        overflow-y: scroll;
+        color: #ffffffa5;
+
+        .empty-station {
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #000;
+        }
+    }
+
+    .station-container {
+        display: grid;
+        grid-template-columns: 400px 1fr;
+        align-items: center;
+        // display: flex;
+        // align-items: center;
+    }
 
     .station-box {
-        display: flex;
+        display: grid;
         align-items: center;
+        grid-template-columns: 1fr 70px;
     }
 
     .station-line {
-        width: 90px;
+        width: 70px;
         height: 2px;
         background-color: var(--ant-primary-color);
     }
 
+    .inverter-line {
+        width: 50px;
+        height: 2px;
+        background-color: #002b3b;
+    }
+
     .station-header {
-        height: 192px;
         padding: 16px;
         background-color: var(--ant-primary-color);
         border-radius: 4px;
         font-size: 16px;
-        color: rgba(255, 255, 255, 0.996078431372549);
     }
 
-    .station-header h2 {
+    .station-header .name {
         margin-bottom: 15px;
-        font-size: 1.5rem;
+        font-size: 20px;
         font-weight: 600;
         text-align: center;
-        color: #ffffff;
     }
 
     .station-summary {
@@ -47,185 +77,267 @@
 
     .summary-card span:first-child {
         display: block;
-        font-size: 0.875rem;
-        margin-bottom: 5px;
+        font-size: 12px;
     }
 
     .summary-value {
-        font-size: 1.25rem;
-        font-weight: 600;
-    }
-
-    .cabinets-container {
-        overflow-y: auto;
-        height: 710px;
-    }
-
-    .grid-cabinet {
-        display: grid;
-        grid-template-columns: 90px 1fr;
-        /* 增加间距避免连接线重叠 */
-    }
-
-    .line {
         display: flex;
-        align-items: center;
-    }
+        align-items: baseline;
+        font-size: 12px;
+        justify-content: center;
 
-    /* 竖线样式调整 - 核心修复部分 */
-    .cabinet-line1 {
-        width: 2px;
-        background-color: var(--ant-primary-color);
-    }
-
-    /* 第一个并网柜的竖线只显示下半部分 */
-    .cabinet-line1.first {
-        height: 50%;
-        align-self: flex-end;
-        /* 靠下对齐 */
-    }
-
-    /* 中间并网柜的竖线显示完整高度 */
-    .cabinet-line1.middle {
-        height: 100%;
-    }
-
-    /* 最后一个并网柜的竖线只显示上半部分 */
-    .cabinet-line1.last {
-        height: 50%;
-        align-self: flex-start;
-        /* 靠上对齐 */
-    }
-
-    .cabinet-line2 {
-        width: 90px;
-        height: 2px;
-        background-color: var(--ant-primary-color);
+        .num {
+            font-size: 20px;
+            color: #fff;
+            margin-right: 3px;
+        }
     }
 
     .cabinet-box {
         display: grid;
-        grid-template-columns: 320px 90px 1fr;
+        grid-template-columns: 390px 50px 1fr;
         align-items: center;
+        padding: 8px 0;
     }
 
-    .cabinet-header {
-        background-color: #1e40af;
-        padding: 15px;
+    .inverter-empty {
+        display: grid;
+        grid-template-columns: 390px 50px;
+        align-items: center;
+        padding: 8px 0;
+
+    }
+
+    .cabinets-container {
+        overflow-y: auto;
+        height: 700px;
+        margin-right: 16px;
+        padding-right: 16px;
+        display: grid;
+
+        .grid-cabinet {
+            display: grid;
+            grid-template-columns: 70px 1fr;
+
+            /* 增加间距避免连接线重叠 */
+            .inverter {
+                display: grid;
+                gap: 8px;
+                padding: 8px 0;
+            }
+        }
+
+        .inverterLessThan2 {
+            display: grid;
+            grid-template-columns: 70px 1fr;
+            align-items: center;
+
+            .inverter {
+                display: grid;
+                gap: 8px;
+                padding: 8px 0;
+            }
+        }
+
+    }
+
+    .cabinets-empty {
+        overflow-y: auto;
+        height: 310px;
+        display: grid;
+
+        .cabinet-box {
+            display: grid;
+            grid-template-columns: 70px 390px;
+            align-items: center;
+
+            .num {
+                font-size: 20px;
+                color: #fff;
+                margin-right: 3px;
+
+            }
+        }
+
+
+    }
+}
+
+
+
+.line {
+    display: flex;
+    align-items: center;
+}
+
+/* 竖线样式调整 - 核心修复部分 */
+.cabinet-line1 {
+    width: 2px;
+    background-color: var(--ant-primary-color);
+}
+
+/* 第一个并网柜的竖线只显示下半部分 */
+.cabinet-line1.first {
+    height: 50%;
+    align-self: flex-end;
+    /* 靠下对齐 */
+}
+
+/* 中间并网柜的竖线显示完整高度 */
+.cabinet-line1.middle {
+    height: 200%;
+}
+
+/* 最后一个并网柜的竖线只显示上半部分 */
+.cabinet-line1.last {
+    height: 50%;
+    align-self: flex-start;
+    /* 靠上对齐 */
+}
+
+.cabinet-line2 {
+    width: 70px;
+    height: 2px;
+    background-color: var(--ant-primary-color);
+}
+
+
+.cabinet-header {
+    background-color: #1e40af;
+    padding: 15px;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    border-radius: 4px;
+}
+
+.cabinet-header .name {
+    width: 120px;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    color: #fff;
+}
+
+.cabinet-stats {
+    display: flex;
+    width: 270px;
+    font-size: 12px;
+    gap: 5px;
+
+    .ele {
+        width: 135px;
+    }
+
+    .numBox {
         display: flex;
-        justify-content: space-around;
-        align-items: center;
-        height: 120px;
-        color: white;
+        align-items: baseline;
     }
 
-    .cabinet-header .name {
-        width: 80px;
+    .num {
+        font-size: 20px;
+        color: #fff;
+        margin-right: 3px;
+        width: 85px;
         overflow: hidden;
         white-space: nowrap;
         text-overflow: ellipsis;
     }
+}
 
-    .cabinet-stats {
-        display: flex;
-        gap: 15px;
-        font-size: 0.875rem;
-    }
 
-    .inverter {
-        display: grid;
-        gap: 8px;
-        padding: 8px 0;
+.grid-inverter {
+    display: grid;
+    grid-template-columns: 50px 1fr;
+    height: 80px;
+    padding: 8px 0px;
+}
+
+.inverter-box {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    border-radius: 4px;
+    background-color: rgba(0, 43, 59, 1);
+}
+
+.inverter-item:nth-child(1) {
+    display: flex;
+    align-items: center;
+}
+
+.inverter-value {
+    span {
+        font-size: 20px;
         color: #fff;
+        margin-right: 3px;
+        width: 85px;
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
     }
+}
 
-    .grid-inverter {
-        display: grid;
-        grid-template-columns: 90px 1fr;
-        height: 60px;
-    }
+.inverter-bac {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    border-radius: 4px;
+    background-color: rgba(0, 43, 59, 1);
+}
 
-    .inverter-box {
-        display: flex;
-        justify-content: space-around;
-        align-items: center;
-        border-radius: 4px;
-        background-color: rgba(0, 43, 59, 1);
-    }
+/* 竖线样式调整 - 核心修复部分 */
+.inverter-line1 {
+    width: 2px;
+    background-color: #002b3b;
+}
 
-    .inverter-item:nth-child(1) {
-        display: flex;
-        align-items: center;
-    }
+/* 第一个并网柜的竖线只显示下半部分 */
+.inverter-line1.first {
+    height: 50%;
+    align-self: flex-end;
+    /* 靠下对齐 */
+}
 
-    .inverter-value {
-        span {
-            font-size: 16px;
-            margin-right: 5px;
-        }
-    }
+/* 中间并网柜的竖线显示完整高度 */
+.inverter-line1.middle {
+    height: 200%;
+}
 
-    .inverter-bac {
-        display: flex;
-        justify-content: space-around;
-        align-items: center;
-        border-radius: 4px;
-        background-color: rgba(0, 43, 59, 1);
-    }
+/* 最后一个并网柜的竖线只显示上半部分 */
+.inverter-line1.last {
+    height: 50%;
+    align-self: flex-start;
+    /* 靠上对齐 */
+}
 
-    /* 竖线样式调整 - 核心修复部分 */
-    .inverter-line1 {
-        width: 2px;
-        background-color: var(--ant-primary-color);
-    }
-
-    /* 第一个并网柜的竖线只显示下半部分 */
-    .inverter-line1.first {
-        height: 50%;
-        align-self: flex-end;
-        /* 靠下对齐 */
-    }
-
-    /* 中间并网柜的竖线显示完整高度 */
-    .inverter-line1.middle {
-        height: 140%;
-    }
-
-    /* 最后一个并网柜的竖线只显示上半部分 */
-    .inverter-line1.last {
-        height: 50%;
-        align-self: flex-start;
-        /* 靠上对齐 */
-    }
-
-    .inverter-line2 {
-        width: 90px;
-        height: 2px;
-        background-color: var(--ant-primary-color);
-    }
+.inverter-line2 {
+    width: 50px;
+    height: 2px;
+    background-color: #002b3b;
+}
 
 
-    /* 红框区域 - 可滚动的逆变器列表 */
-    .inverters-scrollable {}
+/* 红框区域 - 可滚动的逆变器列表 */
+.inverters-scrollable {}
 
-    .inverter-item .circle {
-        width: 16px;
-        height: 16px;
-        display: inline-block;
-        border-radius: 50%;
-        margin-right: 10px;
-    }
+.inverter-item .circle {
+    width: 16px;
+    height: 16px;
+    display: inline-block;
+    border-radius: 50%;
+    margin-right: 10px;
+}
 
-    /* 效率状态颜色 */
-    .inverter-item .green {
-        background: #10b981;
-    }
+/* 效率状态颜色 */
+.inverter-item .green {
+    background: #10b981;
+}
 
-    .inverter-item .orange {
-        background: #f59e0b;
-    }
+.inverter-item .orange {
+    background: #f59e0b;
+}
 
-    .inverter-item .red {
-        background: #ef4444;
-    }
+.inverter-item .red {
+    background: #ef4444;
 }

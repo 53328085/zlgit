@@ -1,17 +1,17 @@
 import { Apimethod } from "@api/api.js"
 
-export const { useGetStationImage } = new Apimethod( //查询 站点图片
+export const { useGetAreaImage } = new Apimethod( //查询 区域图片
   "get",
-  "Solar/PVAreaImageManager/GetStationImage"
+  "Solar/PVAreaImageManager/GetAreaImage"
 );
-export const { useGetStationHots } = new Apimethod( //查询 站点热点
+export const { useGetAreaHots } = new Apimethod( //查询 区域热点
   "get",
-  "Solar/PVAreaImageManager/GetStationHots"
+  "Solar/PVAreaImageManager/GetAreaHots"
 );
 
-export const { useUpdateStationImageAndHot } = new Apimethod( //更新 站点图片和热点
+export const { useUpdateAreaImageAndHot } = new Apimethod( //更新 站点图片和热点
   "post",
-  "Solar/PVAreaImageManager/UpdateStationImageAndHot"
+  "Solar/PVAreaImageManager/UpdateAreaImageAndHot"
 );
 export const { useQueryStationList } = new Apimethod( // 查询站点列表
   "get",

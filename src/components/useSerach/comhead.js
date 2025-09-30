@@ -9,7 +9,7 @@ import { levelDefaultLabel, selectProjectId, selectshifts, filterDeviceStyle, se
 import moment from "moment";
 import 'moment/locale/zh-cn';
 const { RangePicker } = DatePicker;
-import { SiteManagerDesigner, PCSMonitorRuntime, StorageContainerDesigner, Editapi } from '@api/api'
+import { SiteManagerDesigner, PCSMonitorRuntime, StorageContainerDesigner, Editapi, PhotovoltaicPowerGeneration } from '@api/api'
 import { Cdivider, Radiogroup } from '@com/comstyled'
 import { filterProps } from '@com/usehandler'
 import {
@@ -401,18 +401,105 @@ export default function UseSerach(props) {
   </Space>
 
 
+  useEffect(() => {
+    if (!props.config?.photovoltaicPowerStation) return;
+    if (Number.isInteger(AreaID) && Number.isInteger(projectId)) {
+      getStation();
+    }
+  }, [props.config?.photovoltaicPowerStation, AreaID, projectId])
+  const [powerstationData, setPowerstationData] = useState([]) //光伏电站
+  const [cabinetData, setCabinetData] = useState([])//并网柜
+  const [InverterData, setInverterData] = useState([])//逆变器
+  const getStation = async () => {
+    try {
+      let { success, data, errMsg } = await PhotovoltaicPowerGeneration.QueryStationList(projectId, AreaID)
+      if (success && Array.isArray(data) && data.length > 0) {
+        setPowerstationData([...data])
+        let { name, id } = data[0]
+        form.setFieldValue('photovoltaicPowerStation', { label: name, value: id, })
+
+        props.setexparams({ ...form.getFieldsValue(true) })
+
+        if (props.config.cabinet) getCabinet();
+      } else {
+        setPowerstationData([])
+        form.setFieldsValue({
+          photovoltaicPowerStation: { label: null, value: null, id: null }
+        })
+        props.setexparams({ ...form.getFieldsValue(true) })
+        if (!success) return message.warning(errMsg)
+        if (data?.length < 1) return message.warning("光伏电站暂无数据")
+      }
+    } catch (error) {
+      console.log(error)
+    }
+  }
+  const getCabinet = async () => {
+    try {
+      let { areaId, photovoltaicPowerStation } = form.getFieldsValue(true)
+      console.log(areaId, photovoltaicPowerStation)
+      let { success, data, errMsg } = await PhotovoltaicPowerGeneration.QueryGirdCabientList(projectId, areaId, photovoltaicPowerStation?.value)
+      if (success && Array.isArray(data) && data.length > 0) {
+        setCabinetData(data)
+
+        form.setFieldsValue({
+          cabinet: { value: data[0].id, label: data[0].name }
+        })
+        props.setexparams({ ...form.getFieldsValue(true) })
+        if (props.config.cabinet && props.config.inverter) getInverter();
+      } else {
+        setCabinetData([])
+        form.setFieldValue('cabinet', { label: null, value: null })
+        props.setexparams({ ...form.getFieldsValue(true) })
+        if (!success) return message.warning(errMsg || "数据出错")
+        if (data?.length == 0) return message.warning('当前光伏站点不存在并网柜!')
+      }
+    } catch (error) {
+      console.log(error)
+    }
+
+  }
+  const getInverter = async () => {
+    try {
+      let { cabinet } = form.getFieldsValue(true)
+      if (cabinet == undefined) return
+      let { success, data, errMsg } = await PhotovoltaicPowerGeneration.QueryInverterList(projectId, cabinet?.value)
+      if (success && Array.isArray(data) && data.length > 0) {
+        setInverterData(data)
+
+        form.setFieldsValue({
+          inverter: { value: data[0].id, label: data[0].sn }
+        })
+        props.setexparams({ ...form.getFieldsValue(true) })
+      } else {
+        setInverterData([])
+        form.setFieldValue('inverter', { label: null, value: null })
+        props.setexparams({ ...form.getFieldsValue(true) })
+        if (!success) return message.warning(errMsg || "数据出错")
+        if (data?.length == 0) return message.warning('当前并网柜不存在逆变器!')
+      }
+    } catch (error) {
+      console.log(error)
+    }
+  }
   const photovoltaicPowerStation = (
-    <Item name="photovoltaicPowerStation" initialValue={1} style={{ color: `${primaryColor}` }} label="光伏站点">
+    <Item name="photovoltaicPowerStation" style={{ color: `${primaryColor}` }} label="光伏站点">
       {/* powerStationData */}
-      <Select options={publicdateType} style={{ width: "140px" }} onChange={changepublic}></Select>
+      <Select options={powerstationData} fieldNames={{ label: 'name', value: 'id' }} labelInValue style={{ width: "140px" }} onChange={getCabinet}></Select>
     </Item>
 
   )
 
-  const inverter = (
-    <Item name="inverter" initialValue={1} style={{ color: `${primaryColor}` }} label="逆变器">
+  const cabinet = (
+    <Item name="cabinet" style={{ color: `${primaryColor}` }} label="并网柜">
       {/* inverterData */}
-      <Select></Select>
+      <Select options={cabinetData} fieldNames={{ label: 'name', value: 'id' }} labelInValue style={{ width: "140px" }} onChange={getInverter}></Select>
+    </Item>
+  )
+  const inverter = (
+    <Item name="inverter" style={{ color: `${primaryColor}` }} label="逆变器">
+      {/* inverterData */}
+      <Select options={InverterData} labelInValue style={{ width: "140px" }} onChange={getInverter}></Select>
     </Item>
   )
 
@@ -483,6 +570,9 @@ export default function UseSerach(props) {
         {props.config?.energytype && energytype}
         {
           props.config?.photovoltaicPowerStation && photovoltaicPowerStation //光伏发电-光伏电站
+        }
+        {
+          props.config?.cabinet && cabinet //光伏发电-并网柜
         }
         {
           props.config?.inverter && inverter //光伏发电-逆变器

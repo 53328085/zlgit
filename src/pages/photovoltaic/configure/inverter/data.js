@@ -1,5 +1,5 @@
 
-export const bindcol = [
+export const unbindcol = [
   {
     title: "设备名称",
     dataIndex: "name",
@@ -16,11 +16,18 @@ export const bindcol = [
     dataIndex: "areaName",
     key: "areaName",
   },
-  /*  {
-     title: "安装地址",
-     dataIndex: "address",
-     key: "address",
-   }, */
+];
+export const bindcol = [
+  {
+    title: "设备名称",
+    dataIndex: "name",
+    key: "name",
+  },
+  {
+    title: "设备编号",
+    dataIndex: "sn",
+    key: "sn",
+  },
 ];
 export const GridConnectedTypeData = [
   { label: "自发自用", value: 1 },
@@ -59,8 +66,8 @@ export const cabinetColumns =
     },
     {
       title: "光伏逆变器数",
-      dataIndex: "capacity",
-      key: "capacity",
+      dataIndex: "inverterCount",
+      key: "inverterCount",
       align: "center",
     },
     {

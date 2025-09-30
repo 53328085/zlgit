@@ -294,10 +294,10 @@ export default function Index() {
       else if (primary == "runtimeSolar") {
         switch (nested) {
           case "cabinetMonitor":
-            setConfig({ refresh: true, inverter: true, photovoltaicPowerStation: true })
+            setConfig({ refresh: true, cabinet: true, photovoltaicPowerStation: true })
             break
           case "inverterMonitor":
-            setConfig({ refresh: true, inverter: true, photovoltaicPowerStation: true });
+            setConfig({ refresh: true, cabinet: true, inverter: true, photovoltaicPowerStation: true });
             break;
           case "statistic":
             setConfig({ isdate: true, photovoltaicPowerStation: true });
