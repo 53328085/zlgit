@@ -20,7 +20,7 @@ const fs = {
 
 export default function DefaultHome(props){
   const {change, laptop} = useContext(Context)
-  console.log("change",change)
+ 
   const projectId = useSelector(selectProjectId)
   
   const iszh = useSelector(iszhCN)
@@ -28,7 +28,7 @@ export default function DefaultHome(props){
   const [data, setData] = useState({})
   const  options  = useMemo(()=> {
     const {x=[], y=[]} = data
-    console.log("重新渲染：rander")
+     
     return {
     series: [{ type: "line",  seriesLayoutBy: 'row' }],  
     grid:{

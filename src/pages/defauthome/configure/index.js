@@ -120,6 +120,7 @@ import {isObject} from "@com/usehandler"
 import {layout} from "./data"
 import {useSetDefaultParam, useQueryParam} from './api'
 import "./drag.css"
+import { number } from 'echarts';
  
 const availableHandles = ["s", "w", "e", "n", "sw", "nw", "se", "ne"];
 export default function Index() {
@@ -286,10 +287,12 @@ export default function Index() {
     rows:4,
     margin: [16, 16]   
   })
+ 
   const getLayoutparams = async () => { 
      try {
       if(!Number.isInteger(parseInt(projectId))) return
       let {success, data}  =  await useQueryParam({projectId})
+     
       let {context} = data
       if(success && isObject(JSON.parse(context))) {
         setDefaultProps({
@@ -297,9 +300,11 @@ export default function Index() {
           ...JSON.parse(context)
         })
       }else {
+       
        // message.info('请设置布局参数')
         //setLayoutparams({})
       }
+      
      } catch (error) {
         console.log(error)
      }
@@ -323,6 +328,7 @@ const {refresh} = useRequest(getLayoutparams, {
   // },[])
 
   const getLayoutData = () => {
+    if(!Number.isInteger(projectId)) return
     return QueryUISummary(projectId).then(res => {
       let { success, data } = res
       if (success && data) {
@@ -337,7 +343,8 @@ const {refresh} = useRequest(getLayoutparams, {
     })
   }
 
-  const { queryData } = useRequest(getLayoutData, {
+  const { run:queryData } = useRequest(getLayoutData, {
+     refreshDeps:[projectId],
     onSuccess: (result, params) => {
       sessionStorage.setItem('layoutItem', JSON.stringify(result.list))
     //  let layouts = result.list?.map(r => ({...r, minw:r.w,}))
@@ -345,30 +352,29 @@ const {refresh} = useRequest(getLayoutparams, {
     }
   });
 
-  const InsertLayoutData = () => {
-    return InsertUISummary(projectId, layoutItem).then(res => {
-      let { success } = res
-      if (success) {
-        return {
-          list: true
-        }
-      } else {
-        return {
-          list: false
-        }
-      }
-    })
+  const InsertLayoutData =async (layoutItem) => {
+    try {
+     const {success} =  await   InsertUISummary(projectId, layoutItem) 
+     if (success) {
+      queryData();
+      showConfirmModal()
+     }
+    } catch (error) {
+      
+    }
+   
+       
   }
 
-  const { run } = useRequest(InsertLayoutData, {
+/*   const { run } = useRequest(InsertLayoutData, {
     manual: true,
     onSuccess: (result, params) => {
       showConfirmModal()
     }
-  })
+  }) */
 
   const createElement = el => {
-   console.log("el",el)
+   // console.log("el",el)
     const removeStyle = {
       position: "absolute",
       right: "5px",
@@ -438,15 +444,7 @@ const {refresh} = useRequest(getLayoutparams, {
   }
 
  // TodayElectricity 今日用电量  TransformerTotal 变压器总负荷 TransformerNum 配电房监测  Inspection 本月巡检
- let layouts_2_1 =[
-  '告警分布','本月巡检','配电房监测','变压器总负荷',
-  '今日用电量','月度能耗','公司信息','今日告警','本月工单', '告警信息','能耗排名','分类能耗',
-  '用电量','用水量','用燃气量','碳排放量','网关信息',
-  '电表信息','变配电站数量','总额度容量','实时负荷','负荷率','断路器信息','传感器信息','变压器信息','触点测温','光纤测温'
-]
-let layouts_2_2 =['实时负荷率','分时电量分析', '充放电量趋势','站点soc']
-let layouts_1_1=['总充电量','总放电量','总充电金额','总放电金额','储能总收益','储能日收益','储能月收益']
-let layouts_4_2=['储能收益统计']
+ 
 
 let layouts =[
   '告警分布','本月巡检','配电房监测','变压器总负荷',
@@ -461,32 +459,12 @@ let layouts =[
 
 
 
-let layoutMap = new Map()
-layoutMap.set(layouts_2_2,{
-  minW:2,
-  minH:2,
-})
-layoutMap.set(layouts_2_1, {
-  minW:2,
-  minH:1,
-}) 
-layoutMap.set(
- layouts_1_1, {
-        minW:1,
-        minH:1,
- }
-)
-layoutMap.set(
-  layouts_4_2, {
-         minW:4,
-         minH:2,
-  }
- )
+ 
 
 const onAddlayout = (xValue, yValue)=>{
   let newlayout;
-  console.log(layoutItem);
-  if(layoutItem.some(l=> l.i?.split('_')?.[0]?.includes(classOfName))) {
+ 
+  if(layoutItem?.filter(l=> l.i)?.some(l=> l.i?.split('_')?.[0]?.includes(classOfName))) {
     message.warning('当前模块已存在！')
     return;
   }
@@ -587,11 +565,12 @@ onDrop: (layout: Layout, item: ?LayoutItem, e: Event) => void,
 
 */
   const onDrop = (layouts, layoutValue, _event) => { // 从外面拖入    
-   
+    console.log("onDrop")
     onAddlayout(layoutValue.x, layoutValue.y)
   }
  
-  const onLayoutChange = (layout) => {    
+  const onLayoutChange = (layout) => {   
+    console.log("layoutChange", layout)
     if (layout.length == 0) return;
     if (layout[layout.length - 1].i == '__dropping-elem__') return;
     setlayoutItem(layout)
@@ -665,19 +644,21 @@ const onRest =()=> {
      if(success){
       let newlayout =[]
       let i=0;
-       layout:for(let j=0;j<rows;j++){
+       console.log(rows,cols)
+      for(let j=0;j<rows;j++){ 
             for(let k=0;k<cols;k++){
-                if(k*j >= layoutItem?.length) break layout;
+              //  if(k*j >= layoutItem?.length) break layout;
                 let layout={...layoutItem[i++],w:1, h:1, x:k, y:j}
                 newlayout.push(layout)
             }
         }
-
-    
-      setlayoutItem(newlayout)
+      console.log(newlayout)
+     
+     // setlayoutItem(newlayout)
       setChange(!change)
-      refresh()
-      //Ref.current.onCancel()
+       refresh()
+       InsertLayoutData(newlayout)
+     
      }else {
        message.error(errMsg || '布局设置错误')
        return Promise.reject(error);
@@ -710,7 +691,7 @@ const onRest =()=> {
         <SelectTab tabName={'储能管理'}></SelectTab>
       </div>
       <div className={style.layout}>
-      <div className={`${style.confirm} ${style.btn}`} onClick={run}>{t("button:save")}</div>
+      <div className={`${style.confirm} ${style.btn}`} onClick={()=>InsertLayoutData(layoutItem)}>{t("button:save")}</div>
       <div className={`${style.reset} ${style.btn}`} onClick={() => showResetModal()}>{t("button:reset")}</div>
       <div className={`${style.confirm} ${style.btn}`} onClick={onDesgin}>{t("button:layout")}</div>
         </div>
