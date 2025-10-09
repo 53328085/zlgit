@@ -33,6 +33,11 @@ export const { useGetInverterList } = new Apimethod( // 查询并网柜下逆变
   "get",
   "Solar/PVGridTiedCabinetManager/GetInverterList"
 );
+export const { useGetAreaInverterList } = new Apimethod( // 查询区域下所有逆变器列表
+  "get",
+  "Solar/PVGridTiedCabinetManager/GetAreaInverterList"
+);
+
 export const { useAddGridTiedCabinet } = new Apimethod( // 添加并网柜
   "post",
   "Solar/PVGridTiedCabinetManager/AddGridTiedCabinet"

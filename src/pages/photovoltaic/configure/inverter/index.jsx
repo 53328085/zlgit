@@ -1,4 +1,4 @@
-import React, { useRef, useState, useMemo, useEffect } from "react";
+import React, { useRef, useState, useMemo, useEffect, useCallback } from "react";
 import styled from "styled-components";
 import { useSelector } from "react-redux";
 import { useAntdTable } from 'ahooks'
@@ -79,7 +79,6 @@ export default function Index() {
     }
   }
   const getTableData = async ({ current, pageSize }) => {
-    console.log(1111)
     curPage.current = current
     if (!projectId) return new Promise((resolve) => {
       resolve({
@@ -98,7 +97,7 @@ export default function Index() {
 
     }
     let { success, data, errMsg, total } = await useGetGridTiedCabinetList(params)
-    return
+
     totalItem.current = Number.isInteger(total) ? total : 0
     if (success) {
       console.log(Array.isArray(data) && data?.length > 0)
@@ -156,19 +155,23 @@ export default function Index() {
 
   const ref = useRef()
   //点击新增 打开弹框
-  const onAdd = () => {
+  const onAdd = useCallback(() => {
     setEditData({})
     setModalTitle("新增光伏并网柜");
-    ref.current.onOpen()
-  };
+    setTimeout(() => {
+      ref.current?.onOpen()
+    }, 0)
+  }, [])
   //编辑
   const [selectId, setSelectId] = useState(0)
   const [editData, setEditData] = useState({})
-  const editRecord = (record) => {
+  const editRecord = useCallback((record) => {
     setEditData(record)
     setModalTitle("编辑光伏并网柜");
-    ref.current.onOpen()
-  };
+    setTimeout(() => {
+      ref.current?.onOpen()
+    }, 0)
+  }, [])
   //删除
   const deleteRecord = (record) => {
     setSelectId(record.id)
@@ -236,12 +239,12 @@ export default function Index() {
   const airprop = useMemo(() => {
     return {
       projectId,
-      updata: run,
+      updata: run, // 确保 run 函数是稳定的引用
       modalTitle,
       curPage: curPage.current,
-      editData: editData
+      editData
     }
-  }, [projectId, modalTitle, editData])
+  }, [projectId, modalTitle, editData, run])
   useEffect(() => {
 
     RuntimStation()
@@ -266,7 +269,7 @@ export default function Index() {
                 />
               </Form.Item>
               <Form.Item label="光伏并网柜" name="name" style={{ marginLeft: "16px" }} >
-                <Serach onSearch={submit} />
+                <Serach onSearch={submit} placeholder="输入光伏站点名称/编号" />
               </Form.Item>
             </Form>
             <Space size={16}>

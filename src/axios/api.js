@@ -752,6 +752,22 @@ export class EnergyComprehensive {
       params
     );
 }
+//光伏发电
+export class PhotovoltaicPowerGeneration {
+  static QueryStationList = (projectId, areaId) =>
+    server.get(
+      `/Solar/RuntimeOverview/QueryStationList?projectId=${projectId}&areaId=${areaId}`
+    );
+  static QueryGirdCabientList = (projectId, areaId, stationId) =>
+    server.get(
+      `/Solar/RuntimeOverview/QueryGirdCabientList?projectId=${projectId}&areaId=${areaId}&stationId=${stationId}`
+    );
+  static QueryInverterList = (projectId, cabinetId) =>
+    server.get(
+      `/Solar/RuntimeOverview/QueryInverterList?projectId=${projectId}&cabinetId=${cabinetId}`
+    );
+
+}
 // 储能管理-- 储能控制
 export class StorageControlRuntime {
   // /Storage/StorageControlRuntime/QueryPcsList?projectId=2&areaId=2
@@ -4274,7 +4290,7 @@ export class AirConditioningManagement {
    * }  data
    * @returns any
    */
-  static AirConditionerOverview=(data)=>server.post(`Conditioner/AirConditionerOverview/Overview`,data)
+  static AirConditionerOverview = (data) => server.post(`Conditioner/AirConditionerOverview/Overview`, data)
 
   /**
    * @param {
@@ -4287,7 +4303,7 @@ export class AirConditioningManagement {
    * } data 
    * @returns Object<any>
    */
-  static QueryEnergyConsumptions=(data)=>server.post(`Conditioner/AirConditionerEnergy/QueryEnergyConsumptions`,data)
+  static QueryEnergyConsumptions = (data) => server.post(`Conditioner/AirConditionerEnergy/QueryEnergyConsumptions`, data)
 
   /**
    * @param {number} projectId
@@ -4295,20 +4311,20 @@ export class AirConditioningManagement {
    * @param {string} date
    * @param {number} conditionerId
    */
- static QueryEnergyDetail=(params)=>server.get(`Conditioner/AirConditionerEnergy/QueryEnergyDetail`,{params})
- /**
-  * 
-  * @param {
-  * "projectId":number,
-  * "dayMonthYear":number,
-  * "date":"string",
-  * "IoState":number,
-  * "pageNum":number,
-  * "pageSize":number
-  * } data 
-  * @returns 
-  */
- static PageIO=(data)=>server.post(`Conditioner/AirConditionerEnergy/PageIO`,data)
- 
- static QueryIoDetail=(params)=>server.get(`Conditioner/AirConditionerEnergy/QueryIoDetail`,{params})
+  static QueryEnergyDetail = (params) => server.get(`Conditioner/AirConditionerEnergy/QueryEnergyDetail`, { params })
+  /**
+   * 
+   * @param {
+   * "projectId":number,
+   * "dayMonthYear":number,
+   * "date":"string",
+   * "IoState":number,
+   * "pageNum":number,
+   * "pageSize":number
+   * } data 
+   * @returns 
+   */
+  static PageIO = (data) => server.post(`Conditioner/AirConditionerEnergy/PageIO`, data)
+
+  static QueryIoDetail = (params) => server.get(`Conditioner/AirConditionerEnergy/QueryIoDetail`, { params })
 }
