@@ -44,8 +44,10 @@ export  const cols =[ // 实时抄表
     <>
      <Form.Item label="路灯型号" name="model" rules={[{
         required: true
+     }, {
+      whitespace: true
      }]}>
-        <Select options={options}></Select>
+         <Input allowClear></Input>
      </Form.Item>
      <Form.Item label="生产厂家" name="manufacturer" rules={[{
         required: true

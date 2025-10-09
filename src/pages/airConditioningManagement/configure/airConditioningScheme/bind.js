@@ -169,7 +169,9 @@ const  {tableProps, run, search, refresh} = useAntdTable(getUnBind, {
                         <Serach   onSearch={submit} placeholder="请输入空调名称或控制器编号"></Serach>
                         </Form.Item>
                    </Form>                  
-                 <UserTable columns={bindcol} {...tableProps} rowSelection={rowSelection} rowKey={row => row.id}></UserTable>
+                 <UserTable columns={bindcol} {...tableProps} rowSelection={rowSelection} scroll={{
+                  y:580
+                 }} rowKey={row => row.id}></UserTable>
                </div>
                <div className='handler'>
                  <Button type="primary" icon={<RightOutlined/>} onClick={()=>addbind(0)} >添加</Button>
@@ -181,7 +183,9 @@ const  {tableProps, run, search, refresh} = useAntdTable(getUnBind, {
                         <Serach   onSearch={searched.submit}  placeholder="请输入空调名称或控制器编号"></Serach>
                         </Form.Item>
                    </Form>
-                 <UserTable columns={bindcol} {...tablePropsed} rowSelection={rowSelectioned} rowKey={row=>row.id} ></UserTable>
+                 <UserTable columns={bindcol} {...tablePropsed} rowSelection={rowSelectioned} scroll={{
+                  y:580
+                 }} rowKey={row=>row.id} ></UserTable>
                </div>
             </Bindwrap>
                 

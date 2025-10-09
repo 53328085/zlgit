@@ -60,6 +60,8 @@ export  const Mainwrap = styled.div`
         cursor: pointer;
          
         .ant-checkbox-wrapper {
+          flex:1;
+          display: flex;
           span {
             color: #fff;
           }

@@ -407,8 +407,10 @@ const tabs = useMemo(()=> {
     )
   }, [value])
   const onExport = useCallback(() => {
-    return getTableData({ current: 1, pageSize: total, areaId, projectId, type, date, energytype, treeId, index, line, isrange, dates })
-  }, [total, concolumns, type, date, energytype, areaId, treeId, index, line, isrange, dates, sheetName])
+    return getTableData({ current: 1, pageSize: total, areaId, projectId, type, date, energytype, treeId, index, line, isrange, dates,reportType
+    })
+  }, [total, concolumns, type, date, energytype, areaId, treeId, index, line, isrange, dates, sheetName,reportType
+  ])
 
   const boxchange = (e) => {
     const f = e.target.checked
