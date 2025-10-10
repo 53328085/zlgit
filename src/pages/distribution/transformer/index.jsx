@@ -1,12 +1,10 @@
 import React, { useState, useRef ,useMemo, useEffect } from 'react'
 import { Select ,Space,Divider,DatePicker,Radio, Button, message } from 'antd'
-import styled from 'styled-components'
+ 
 import {useSelector,  } from 'react-redux'
-import { selectcurlRommid,adaptation, site } from "@redux/systemconfig";
-import style from './style.module.less'
+import { selectcurlRommid,adaptation, site } from "@redux/systemconfig"; 
 import TranCard from './transcard'
 import UseTable from '@com/useTable'
-import { columns } from './columns'
 import Pagecount from '@com/pagecontent'
 import CustContext from '@com/content.js'
 import {useRequest} from "ahooks"
@@ -16,62 +14,10 @@ import  imgurl from '@imgs'
 import moment from 'moment'
 import {isObject} from "@com/usehandler" 
 import Titlelayout from '@com/titlelayout' 
-
+import Ichart from '@com/useEcharts/Ichart';
 import { cloneDeep } from 'lodash';
- 
-const MainDiv =styled.div`
-background-color: #fff;
-flex: 1;
-padding: 16px;
-display: grid;
-grid-template-rows: 220px 1fr;
-row-gap: 16px;
-.trancss{
-  display: grid;
-  grid-template-columns: 472px 1fr;
-  column-gap: 16px;
-  .ant-table-thead .ant-table-cell{
-    padding: 3px;
-  }
-  .ant-table-tbody .ant-table-placeholder .ant-table-cell{
-    padding: 3px
-  }
-  .ant-empty-normal{
-    margin: 0;
-  }
-  .ant-empty{
-    .ant-empty-image{
-      height: 20px;
-    }
-    .ant-empty-description{
-      font-size: 10px;
-    }
-    
-  }
-}
-.datastyle{
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  .filters{
-    display: flex;
-    justify-content: space-between;
-    background-color: #f9f9f9;
-    height: 63px;
-    padding:0 12px;
-    .title{
-      display: flex;
-      align-items: center;
-    }
-  }
-  .filterdate{
-    display: flex;
-    align-items: center;
-    width: 650px;
-    justify-content: space-between;
-  }
-}
-`
+import {tabs,opts,columns } from './data' 
+import {MainDiv} from './style'
 const chartOpt= {
   title: {
     // text: 'Stacked Line'
@@ -127,10 +73,11 @@ export default function Index() {
   const chartRef =useRef()
   const roomId = useSelector(selectcurlRommid)
   const siteData = useSelector(site)
-  const [pattern,setPattern]=useState(1)
-  const [tabs,setTabs] =useState([])
  
-  const [value, setvalue] =useState(0)
+  const [pattern,setPattern]=useState(1)
+  
+ 
+  const [value, setvalue] =useState("1")
   const [tabledata,setTableData]=useState([])
   const [type,setType] =useState(1)
   const [timeRanger,setTimeRanger] = useState([moment().subtract(6,'day'), moment()])
@@ -144,29 +91,7 @@ export default function Index() {
     capacity:null
   })
  const [lastSampleTime, setLastSampleTime] =useState(null)
-  const opts = [
-    {
-      value:1,
-      label:'电压(V)'},
-    {
-      value:2,
-      label:'电流(A)'},
-    {
-      value:3,
-      label:'总负荷(kW)'},
-    {
-      value:4,
-      label:'总有功功率(kW)'},
-    {
-      value:5,
-      label:'总无功功率(kVar)'},
-    {
-      value:6,
-      label:'总视在功率(kVA)'},
-    {
-      value:7,
-      label:'总功率因数'},
-  ]
+
  
   const changeRadio=(e)=>{
     setPattern(e.target.value)
@@ -247,31 +172,10 @@ export default function Index() {
 useRequest(RuntimePoints, {
   refreshDeps: [siteData, projectId]
 })
-  //变压器列表
-  const getTransformer =async ()=>{
-   const res = await DistributionRoomRuntime.TransformerList(projectId,roomId)
-   if(res.success){
-    if(Array.isArray(res.data)&&res.data.length>0){
-      const data = res.data.map((it,i)=>{
-        return {
-          key:i,
-          label:it.name,
-          ...it,
-        }
-      })
-     
-      setTabs(data)
-    }else{
-      setTabs([])
-    }
-   
-   }else{
-    message.error(res.errMsg)
-   }
-  }
+ 
   //数据趋势（echarts）
-  const HistoryTrends =async (sn)=>{
-    if(!sn) return
+  const HistoryTrends =async ()=>{
+    if(!siteData?.sn) return
     try{
       let startTime ,endTime;
       if(Array.isArray(timeRanger)&&timeRanger.length>0){
@@ -286,7 +190,7 @@ useRequest(RuntimePoints, {
    
     let params = {
       projectId,
-      sn,
+      sn:siteData?.sn,
       type,
       start:startTime,
       end:endTime
@@ -334,8 +238,8 @@ useRequest(RuntimePoints, {
     
   }
   //数据趋势（table）
-  const HistoryTable = async (sn) => {
-    if(!sn) return
+  const HistoryTable = async () => {
+    if(!siteData?.sn) return
     try {
       let startTime, endTime;
       startTime = moment(timeRanger[0]).format('YYYY-MM-DD 00:00:00')
@@ -343,7 +247,7 @@ useRequest(RuntimePoints, {
       console.log(startTime)
       let params = {
         projectId,
-        sn,
+        sn:siteData?.sn,
         // type,
         start: startTime,
         end: endTime
@@ -367,38 +271,7 @@ useRequest(RuntimePoints, {
     }
   }
  
-  //导出echarts
-   //导出图片
-  const Export = () => {
  
-    let myChart = initchartRef.current.getDataURL({
-      type: "png",
-      pixelRatio: 1, //放大2倍
-      backgroundColor: "#fff"
-    })
-    console.log()
-    var img = new Image();
-    img.src = myChart
- 
-    img.onload = function () {
-      var canvas = document.createElement("canvas");
-      canvas.width = img.width;
-      canvas.height = img.height;
-      var ctx = canvas.getContext("2d");
-      ctx.drawImage(img, 0, 0);
-      var dataURL = canvas.toDataURL("image/png");
- 
-      var a = document.createElement("a");
-      // 创建一个单击事件
-      var event = new MouseEvent("click");
-      // 将a的download属性设置为我们想要下载的图片名称，若name不存在则使用‘下载图片名称’作为默认名称
-      a.download = "图片.png" || "下载图片名称";
-      // 将生成的URL设置为a.href属性
-      a.href = dataURL;
-      // 触发a的单击事件
-      a.dispatchEvent(event);
-    };
-  }
  
   //数据导出
   const exportData=()=>{
@@ -406,47 +279,33 @@ useRequest(RuntimePoints, {
     pattern ===2 &&tableRef.current.download()
    
     
-  
-    // let arr=[]
-    // chartsRef.current.data.forEach(item=>{
-    //   if(item.data.length>0){
-    //     item.data.forEach(it=>{
-    //       arr.push({
-    //         point:item.point,
-    //         time:it.time,
-    //         value:it.value
-    //       })
-    //     })
-    //   }
-    // })
-    // console.log(arr)
-    // exportExcelFile(arr)
+
   }
   const search=()=>{
-    HistoryTrends(tabs[value]['sn'])
+    HistoryTrends()
   }
   useEffect(()=>{
-    if(roomId) {
-     
-      getTransformer();
+    if(roomId) { 
       TransformerOne()
     }
   },[roomId])
   useEffect(()=>{
     chartRef.current&& drawEcharts(chartRef.current,{...chartOpt,type:2})
   },[tabs,pattern])
-/*   useEffect(()=>{
-    
-    if(tabs&&tabs.length>0){
-      RuntimePoints(tabs[value]?.sn)
-    }  
-  },[tabs,value])  */
+
   useEffect(()=>{
-    if(tabs&&tabs.length>0){
-      pattern===1&& HistoryTrends(tabs[value]?.sn)
-      pattern===2&& HistoryTable(tabs[value]?.sn)
+    if(isObject(siteData) && siteData.sn){
+      pattern===1&& HistoryTrends()
+      pattern===2&& HistoryTable()
     }
-  },[tabs,value,type,pattern])
+  },[type,pattern, siteData])
+
+  let dataProps = {
+    value,
+    setvalue,
+    tabs,
+     
+  }
   return (
     <>
  
@@ -460,8 +319,9 @@ useRequest(RuntimePoints, {
              <UseTable columns={columns} bordered   dataSource={tabledata}></UseTable>
              </Titlelayout>
              </div>
-           
-             <Titlelayout title={<div style={{display: 'flex', alignItems: 'center', justifyContent: "space-between"}}>
+             <CustContext.Provider value={dataProps} >
+              <Pagecount showSearch={false}>
+              {value=="1" ?  <Titlelayout title={<div style={{display: 'flex', alignItems: 'center', justifyContent: "space-between"}}>
                <span>数据趋势</span>
                <Space size={16}>
                 
@@ -491,7 +351,8 @@ useRequest(RuntimePoints, {
              </div>} layout="flex" pv="0" bordered="n">
               <div style={{flex: 1, paddingTop: "16px", display: 'flex'}}>
                {
-                 pattern===1?(<div ref={chartRef} style={{flex: 1}}></div>):
+                 pattern===1?(<div ref={chartRef} style={{flex: 1}}>
+                 </div>):
                  ( <UseTable 
                   columns={header} 
                   bordered  
@@ -504,6 +365,10 @@ useRequest(RuntimePoints, {
                }
                </div>
              </Titlelayout>
+             : <div></div>
+             }
+             </Pagecount>
+             </CustContext.Provider>
             </MainDiv>
          </Pagecount> 
           ):(

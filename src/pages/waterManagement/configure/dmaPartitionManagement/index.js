@@ -70,7 +70,7 @@ export default function Index() {
      }
   }
   
-const {tableProps, search} =  useAntdTable(getDetail, {
+const {tableProps, search, refresh} =  useAntdTable(getDetail, {
     form,
     defaultPageSize: 14,
     refreshDeps: [projectId, treeId, level,sorting]
@@ -107,7 +107,7 @@ const delOk =async ()=> {
    let {success,errMsg} =  await useDelete(params,{})
    if(success) {
      message.success("删除成功")
-     idRef.current.onCancle()
+     delRef.current.onCancel()
      refresh()
    }else {
      message.warning(errMsg || "数据出错")

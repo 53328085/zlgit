@@ -46,3 +46,56 @@ export const Transbox  =styled.div`
 
 
 `
+export const MainDiv =styled.div`
+background-color: #fff;
+flex: 1;
+padding: 16px;
+display: grid;
+grid-template-rows: 220px 1fr;
+row-gap: 16px;
+.trancss{
+  display: grid;
+  grid-template-columns: 472px 1fr;
+  column-gap: 16px;
+  .ant-table-thead .ant-table-cell{
+    padding: 3px;
+  }
+  .ant-table-tbody .ant-table-placeholder .ant-table-cell{
+    padding: 3px
+  }
+  .ant-empty-normal{
+    margin: 0;
+  }
+  .ant-empty{
+    .ant-empty-image{
+      height: 20px;
+    }
+    .ant-empty-description{
+      font-size: 10px;
+    }
+    
+  }
+}
+.datastyle{
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  .filters{
+    display: flex;
+    justify-content: space-between;
+    background-color: #f9f9f9;
+    height: 63px;
+    padding:0 12px;
+    .title{
+      display: flex;
+      align-items: center;
+    }
+  }
+  .filterdate{
+    display: flex;
+    align-items: center;
+    width: 650px;
+    justify-content: space-between;
+  }
+}
+`
