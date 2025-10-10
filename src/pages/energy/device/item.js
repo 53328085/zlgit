@@ -139,7 +139,7 @@ const Itembox = styled.div`
        
      } 
   }
-  ${props=> props.laptop ? sty : null}
+ // ${props=> props.laptop ? sty : null}
 `
 /* total: {
   value: 312.35,

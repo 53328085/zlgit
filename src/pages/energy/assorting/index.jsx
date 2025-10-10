@@ -63,7 +63,7 @@ export default function Index() {
         } */
       } else {
         setDatas({})
-       if(!success) message.error(res.errMsg)
+       if(!res.success) message.error(res.errMsg)
       }
     } catch (e) { console.log(e) }
   }
