@@ -99,3 +99,25 @@ row-gap: 16px;
   }
 }
 `
+export const Loadwrapper = styled.div`
+  flex:1;
+  display: grid;
+   grid-template-rows:1fr;
+   grid-template-columns: 440px 1fr;
+   column-gap: 48px;
+   .leftwrap {
+     display: flex;
+     flex-direction: column;
+     .chart {
+       flex: 1;
+       display: flex;
+     }
+     .bottom {
+      height: 98px;
+     } 
+   }
+   .rightwrap{
+     display: flex;
+     flex-direction: column;
+   }
+`
