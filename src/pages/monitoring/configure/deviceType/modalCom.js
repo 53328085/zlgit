@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef, forwardRef, useImperativeHandle, useContext, useMemo } from 'react'
-import { Button, Form, Input, Row, Col, Upload, Select, Switch, message, Divider } from 'antd';
+import { Button, Form, Input, Row, Col, Upload, Select, Switch, message, Divider,  Space } from 'antd';
 import { useSelector } from 'react-redux'
 import Modal from '@com/useModal'
 import style from './style.module.less'
@@ -61,8 +61,9 @@ let ImageUpload = ({ value = {} }) => {
 }
 
 //表格组件（新增）
-let TableForm = forwardRef(({ defaultTableData, tabledatas }, ref) => {
+let TableForm = forwardRef(({ defaultTableData, tabledatas,sortedInfo }, ref) => {
   const { updateTableRef } = useContext(cusContext)
+ 
   const TableParam = useMemo(() => {
     return { current: 1, pageSize: defaultTableData?.length || 0, hideOnSinglePage: true }
   }, [defaultTableData])
@@ -74,7 +75,7 @@ let TableForm = forwardRef(({ defaultTableData, tabledatas }, ref) => {
   defaultTableData?.forEach(it => { if (it.watchPoint) { checedList.push(it.index) } })
   const [siwtched, setSwitched] = useState([...checedList])
   const [tableParams, setTableParams] = useState({ current: 1, pageSize: 10 })
-
+  
   tableDataRef.current = cloneDeep(pointSource)
   const choosemes = () => {
     let count = 0;
@@ -185,6 +186,8 @@ let TableForm = forwardRef(({ defaultTableData, tabledatas }, ref) => {
       key: 'dataOrder',
       dataIndex: 'dataOrder',
       align: 'center',
+      sorter:(a, b) => a.dataOrder - b.dataOrder,
+      sortOrder: sortedInfo.columnKey === 'dataOrder' ? sortedInfo.order : null,
       render: (text, record, i) => {
         return <Count value={text} record={record} pointSource={pointSource} setPointSource={setPointSource}></Count>
       }
@@ -228,7 +231,7 @@ let TableForm = forwardRef(({ defaultTableData, tabledatas }, ref) => {
 //新增设备类型
 export let AddModal = forwardRef(
   ({ addForm, dataSource, getDeviceQueryCategoryFull, defaultTableData = [], isShow = true, flow = false, metering = true }, ref) => {
-
+    const [sortedInfo, setSortedInfo] = useState({});
     const tableRef = useRef(null)
     const [tabledatas, setTabledatas] = useState([...defaultTableData])
     const handleChange = async (option) => {
@@ -316,10 +319,17 @@ export let AddModal = forwardRef(
           </Col>
         </Row>
         <Divider dashed />
-        <Row style={{ fontWeight: 'bold', marginBottom: 16 }}>数据点表（请启用4项数据标记为菜单【运行监测】卡片核心数据项）</Row>
+        <Row style={{ fontWeight: 'bold', marginBottom: 16 }}>数据点表（请启用4项数据标记为菜单【运行监测】卡片核心数据项），</Row>
+        <Space size={16} style={{marginBottom: "16px"}}><span style={{ fontWeight: 'bold', marginBottom: 16 }}>设置好"数据显示顺序"后点降序/升序。重新设置前先点取消排序</span><Button type="primary" onClick={()=>{setSortedInfo({
+      order: 'descend',
+      columnKey: 'dataOrder',
+    })}}>降序</Button><Button type="primary" onClick={()=>{setSortedInfo({
+      order: 'ascend',
+      columnKey: 'dataOrder',
+    })}}>升序</Button><Button  onClick={()=>{setSortedInfo({})}}>取消排序</Button></Space>
         {/* <Table columns={columns} dataSource={pointSource} rowKey={record=>record.index}></Table> */}
         <div className={style.minHt}>
-          <TableForm ref={tableRef} defaultTableData={defaultTableData} tabledatas={tabledatas}></TableForm>
+          <TableForm ref={tableRef} defaultTableData={defaultTableData} tabledatas={tabledatas} sortedInfo={sortedInfo}></TableForm>
         </div>
 
       </Form>
@@ -327,7 +337,7 @@ export let AddModal = forwardRef(
   }
 )
 //编辑表格（编辑）
-let TableEditForm = forwardRef(({ defaultTableData, tabledatas }, ref) => {
+let TableEditForm = forwardRef(({ defaultTableData, tabledatas,sortedInfo}, ref) => {
   const [pointSource, setPointSource] = useState([...defaultTableData])
   const tableDataRef = useRef()
   const { laptop } = useSelector(adaptation)
@@ -438,8 +448,10 @@ let TableEditForm = forwardRef(({ defaultTableData, tabledatas }, ref) => {
       key: 'dataOrder',
       dataIndex: 'dataOrder',
       align: 'center',
+      sorter:(a, b) => a.dataOrder - b.dataOrder,
+      sortOrder: sortedInfo.columnKey === 'dataOrder' ? sortedInfo.order : null,
       render: (text, record, i) => {
-        return <Count value={text} record={record} pointSource={pointSource} setPointSource={setPointSource}></Count>
+        return <Count value={text} record={record} pointSource={pointSource} setPointSource={setPointSource} ></Count>
       }
     },
   ]
@@ -476,6 +488,7 @@ export let EditModal = forwardRef(
       // setIsControl(editForm.getFieldsValue().Control)
       // setIsCount(editForm.getFieldsValue().IsCount)
     }, [])
+    const [sortedInfo, setSortedInfo] = useState({});
     useImperativeHandle(ref, () => ({
       pointSource: tableRef.current.pointSource,
       setPointSource: tableRef.current.setPointSource,
@@ -540,8 +553,15 @@ export let EditModal = forwardRef(
         </Row>
         <Divider dashed />
         <Row style={{ fontWeight: 'bold', marginBottom: 16 }}>数据点表（请启用4项数据标记为菜单【运行监测】卡片核心数据项）</Row>
+        <Space size={16} style={{marginBottom: "16px"}}><span style={{ fontWeight: 'bold', marginBottom: 16 }}>设置好"数据显示顺序"后点降序/升序。重新设置前先点取消排序</span><Button type="primary" onClick={()=>{setSortedInfo({
+      order: 'descend',
+      columnKey: 'dataOrder',
+    })}}>降序</Button><Button type="primary" onClick={()=>{setSortedInfo({
+      order: 'ascend',
+      columnKey: 'dataOrder',
+    })}}>升序</Button><Button  onClick={()=>{setSortedInfo({})}}>取消排序</Button></Space>
         <div className={style.minHt}>
-          <TableEditForm ref={tableRef} defaultTableData={editDefaultTableData}  ></TableEditForm>
+          <TableEditForm ref={tableRef} defaultTableData={editDefaultTableData} sortedInfo={sortedInfo} ></TableEditForm>
         </div>
 
       </Form>
