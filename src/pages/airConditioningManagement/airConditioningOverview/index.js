@@ -132,13 +132,13 @@ export default function Index() {
             </Form>
           </Header>
           <DetailComp overData={overData}></DetailComp>
-          {/* {overData ? <DetailComp overData={overData}></DetailComp> : null} */}
-          {chartData ? (
-            <FooterChartComp
+          <FooterChartComp
               chartData={chartData}
               tableData={tableData}
             ></FooterChartComp>
-          ) : null}
+          {/* {chartData ? (
+            
+          ) : null} */}
         </div>
       </Container>
     </Pagecount>

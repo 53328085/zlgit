@@ -102,13 +102,14 @@ export const Chart_Options = {
     // 自定义提示框内容
     formatter: function (params) {
       let result = params[0].name + "<br/>";
+      console.log("params",params)
       params.forEach(function (item) {
         let marker = item.marker;
         let seriesName = item.seriesName;
         let value = item.value;
         // 格式化数值
         if (seriesName.includes("金额")) {
-          value = "¥" + value.toLocaleString();
+          value = "¥"+ value.toLocaleString();
         } else if (seriesName.includes("率")) {
           value = value + "%";
         }
@@ -162,7 +163,7 @@ export const Chart_Options = {
       name: "电量(kWh)",
       min: 0,
       axisLabel: {
-        formatter: "¥{value}",
+        formatter: "{value}",
       },
       nameLocation: "middle",
       nameGap: 45,
@@ -194,7 +195,7 @@ export const Chart_Options = {
       itemStyle: {
         color: "#6395fa",
       },
-      data: [10, 52, 200, 334, 390, 330, 220],
+      data: [],
     },
 
     // 第二个柱状图（右Y轴）
@@ -206,7 +207,7 @@ export const Chart_Options = {
       itemStyle: {
         color: "#63daab",
       },
-      data: [390, 330, 220, 10, 52, 200, 334],
+      data: [],
     },
 
     // 折线图（右Y轴）

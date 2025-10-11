@@ -57,6 +57,8 @@ export const Detail = styled.div`
     background-image: linear-gradient(to top, #DEE5FB 0%, #fff 30%);
     .small {
       font-size: 13px;
+      display: flex;
+      align-items: center;
     }
     .rise {
       color: #f00;

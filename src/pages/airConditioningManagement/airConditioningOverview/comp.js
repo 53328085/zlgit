@@ -43,7 +43,7 @@ const CusCard = ({
           alt=""
           style={{ width: 23, height: 23, marginRight: 6 }}
         />
-        <span style={{ color: "#303133", fontWeight: "bold" }}>
+        <span style={{ color: "#303133"}}>
           {title}
           <span style={{ color: "#999" }}> ({index == 2 ? "kg" : "kWh"})</span>
         </span>
@@ -60,14 +60,14 @@ const CusCard = ({
         >
           {value1}
         </div>
-        <div className={`small ${Number(value2) > 0 ? "rise" : "down"}`}>
-          环比昨日：<span>{value2}</span>
+        <div className={`small`}>
+          环比昨日：<span>{parseFloat(value2) > 0?'+':'-'}{value2}</span><img src={parseFloat(value2) > 0 ? rise : down} alt="" />
         </div>
       </div>
       <div className="footer">
         <div style={{ color: "#606266" }}>{thrTitle}</div>
         <div
-          className={`small ${Number(value2) > 0 ? "rise" : "down"}`}
+          className={`small`}
           style={{ color: "#303133", fontWeight: 500 }}
         >
           {value3}
@@ -133,7 +133,7 @@ export const DetailComp = React.memo(({ overData }) => {
             alt=""
             style={{ width: 23, height: 23, marginRight: 6 }}
           />
-          <span>空调用能排名(kWh)</span>
+          <span>空调用能排名<span style={{ color: "#999" }}>(kWh)</span></span>
         </div>
         {/* <div className="chart-box"> */}
         <Icharts custoption={AirChartData} type={5}></Icharts>
