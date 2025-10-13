@@ -3,7 +3,6 @@ import './PhotovoltaicStation.less';
 import { useQueryOverview } from './api';
 import Cempty from '@com/useEmpty'
 import { Spin } from 'antd';
-import { color } from 'echarts';
 // 默认数据（不变）
 const DEFAULT_STATION_DATA = {
     success: true,
@@ -26,7 +25,7 @@ const GridCabinet = ({ cabinet, cabinets, position, totalCabinets }) => {
                 <div className="cabinet-header">
                     <div className='name' title={cabinet.name}>{cabinet.name}</div>
                     <div className="cabinet-stats">
-                        <div className='ele'>{cabinets.length}正向有功总电能
+                        <div className='ele'>正向有功总电能
                             <div className='numBox'>
                                 <div className='num' title={cabinet.imEp + 'kW'}>{cabinet.imEp}</div>kW </div></div>
                         <div className='ele'>反向有功总电能
@@ -37,26 +36,26 @@ const GridCabinet = ({ cabinet, cabinets, position, totalCabinets }) => {
                 {cabinet?.children?.length > 0 ? (
                     <>
                         <div className='inverter-line'></div>
-                        <div className='inverter'>
-                            {cabinet.children.map((inverter, index) => {
-                                // 确定每个并网柜的位置（第一个、中间、最后一个）
-                                let position = 'middle';
-                                if (index === 0) position = 'first';
-                                if (index === cabinet.children.length - 1) position = 'last';
-
-                                return (
-                                    <InverterComp
-                                        key={inverter.id}
-                                        inverter={inverter}
-                                        inverters={cabinet.children}
-                                        position={position}
-                                        totalCabinets={cabinet.children.length}
-                                    />
-                                );
-                            })}
-                        </div>
                     </>
                 ) : null}
+            </div>
+            <div className='inverter'>
+                {cabinet.children.map((inverter, index) => {
+                    // 确定每个并网柜的位置（第一个、中间、最后一个）
+                    let position = 'middle';
+                    if (index === 0) position = 'first';
+                    if (index === cabinet.children.length - 1) position = 'last';
+
+                    return (
+                        <InverterComp
+                            key={inverter.id}
+                            inverter={inverter}
+                            inverters={cabinet.children}
+                            position={position}
+                            totalCabinets={cabinet.children.length}
+                        />
+                    );
+                })}
             </div>
         </div >
     );
@@ -65,8 +64,9 @@ const InverterComp = ({ inverter, inverters, position, totalCabinets }) => {
 
     const getEfficiencyColor = (state) => {
         if (state = 1) return 'green';
-        if (state = 2) return 'orange';
-        return 'red';
+        if (state = 2) return 'gray';
+        if (state = 3) return 'red';
+        return 'gray';
     };
     return (
         <div className="grid-inverter">
@@ -128,8 +128,8 @@ const PhotovoltaicStation = ({ projectId, areaId }) => { // 从 props 接收参�
             try {
                 // 2. 接口请求：传入 projectId 和 areaId（关键！之前未传areaId）
                 const response = await useQueryOverview({
-                    projectId: projectId, // 明确传递 projectId
-                    areaId: areaId         // 补充传递 areaId（解决接口未用areaId的问题）
+                    projectId, // 明确传递 projectId
+                    areaId         // 补充传递 areaId（解决接口未用areaId的问题）
                 });
 
                 // 3. 验证接口返回

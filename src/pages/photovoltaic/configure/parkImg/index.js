@@ -217,7 +217,7 @@ export default function Index() {
    }
    const GetAreaHotsData = async () => {
       try {
-
+         console.log(cabientData)
          if (projectId == undefined || areaId == undefined) return
          setSpinning(true)
          let { success, data } = await useGetAreaHots({ projectId, areaId })
@@ -226,11 +226,11 @@ export default function Index() {
             setAreaHotsData(areaHots)
             if (Array.isArray(areaHots)) {
                areaHots.forEach(i => {
-                  form.setFieldValue([i.id, 'c'], [i.hotX, i.hotY].join(','));
-                  form.setFieldValue([i.id, 'r'], i.hotC);
-                  form.setFieldValue([i.id, 'checked'], true);
+                  form.setFieldValue([i.gridTiedCabinetId, 'c'], [i.hotX, i.hotY].join(','));
+                  form.setFieldValue([i.gridTiedCabinetId, 'r'], i.hotC);
+                  form.setFieldValue([i.gridTiedCabinetId, 'checked'], true);
                })
-               let checked = areaHots.map(i => ({ id: i.id, name: i.name, top: i.hotY, left: i.hotX }))
+               let checked = areaHots.map(i => ({ id: i.gridTiedCabinetId, name: i.name, top: i.hotY, left: i.hotX }))
                setList(checked)
             }
 
@@ -336,7 +336,7 @@ export default function Index() {
                </div>
                <div className='tip'>（图片大小为: 1368*800 png或jpg 格式,不超过800KB）</div>
             </div>
-            <Divider>设置图片热点区域</Divider>
+            <Divider>设置图片热点区域-</Divider>
             <div className='setwrap'>
 
                <div className="set">
@@ -348,9 +348,10 @@ export default function Index() {
                      {
                         cabientData?.map(a =>
                            <Form.Item label={a.name} key={a.id}>
-                              <Space><Form.Item name={[a.id, 'c']} noStyle>
-                                 <Input style={{ width: '80px' }} readOnly />
-                              </Form.Item>
+                              <Space>
+                                 <Form.Item name={[a.id, 'c']} noStyle>
+                                    <Input style={{ width: '80px' }} readOnly />
+                                 </Form.Item>
                                  <Form.Item name={[a.id, 'r']} initialValue={40} noStyle>
                                     <InputNumber min={16} />
                                  </Form.Item>

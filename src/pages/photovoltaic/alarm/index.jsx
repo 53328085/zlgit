@@ -7,6 +7,7 @@ import moment from 'moment'
 import Titlelayout from '@com/titlelayout'
 import Usetable from '@com/useTable'
 import { StorageAlarmRuntime } from '@api/api'
+import { useQueryWarningStatistics, useQueryAlarmDetails } from './api';
 import imgurl from './icon'
 import { ExportExcel } from '@com/useButton'
 import Pagecount from "@com/pagecontent";
@@ -96,6 +97,12 @@ const columns = [
     title: '最新告警事件',
     dataIndex: 'alarmEvent',
     key: 'alarmEvent',
+    align: 'center'
+  },
+  {
+    title: ' 设备编号',
+    dataIndex: 'sn',
+    key: 'sn',
     align: 'center'
   },
   {
