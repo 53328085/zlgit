@@ -26,7 +26,9 @@ import {
   selectOneLevel,
   levelDefaultLabel
 } from "@redux/systemconfig.js";
-import { SiteManagerDesigner } from '@api/api.js'
+import {
+  useDeleteGridTiedCabinet
+} from './api'
 import Pagecont from "@com/pagecontent"
 import Titlelayout from '@com/titlelayout'
 import CModal from '@com/useModal'
@@ -41,11 +43,7 @@ export default function Index() {
   let { areaId, projectId } = exparams
   const tableRef = useRef();
   const [form] = Form.useForm();
-  const ispublish = useSelector(publishState);
   const areaFirstName = useSelector(levelDefaultLabel) || '园区'
-
-  const { GetSites, AddSite, UpdateSite, DeleteSite } = SiteManagerDesigner
-
   const totalItem = useRef();
   const curPage = useRef();
   const PageSize = 14
@@ -163,7 +161,8 @@ export default function Index() {
     }, 0)
   }, [])
   //编辑
-  const [selectId, setSelectId] = useState(0)
+  const [cabinetId, setCabinetId] = useState(0)
+  const [cabinetName, setCabinetName] = useState(0)
   const [editData, setEditData] = useState({})
   const editRecord = useCallback((record) => {
     setEditData(record)
@@ -174,14 +173,15 @@ export default function Index() {
   }, [])
   //删除
   const deleteRecord = (record) => {
-    setSelectId(record.id)
+    setCabinetId(record.id)
+    setCabinetName(record.name)
     setDeleteTypeModal(true);
   };
   //删除站点确认
   const deleteOk = async () => {
-    let res = await DeleteSite(projectId, selectId)
+    let res = await useDeleteGridTiedCabinet({ projectId, gridTiedCabinetId: cabinetId })
     if (res.success) {
-      message.success('逆变器关联关系删除成功!')
+      message.success('并网柜删除成功!')
       try {
         let current = Math.ceil((totalItem.current - 1) / PageSize) < curPage.current
 
@@ -204,18 +204,6 @@ export default function Index() {
   const deleteCancel = () => {
     setDeleteTypeModal(false);
   };
-  const getBase64 = (file) =>
-    new Promise((resolve, reject) => {
-      const reader = new FileReader();
-      if (file.status === "removed") {
-        setImageUrl();
-      } else {
-        reader.readAsDataURL(file);
-        reader.onload = () => resolve(reader.result);
-        reader.onerror = (error) => reject(error);
-      }
-    });
-
   const Title = (
     <div style={{ display: 'flex', justifyContent: "space-between", alignItems: "center" }}>
       <span>光伏并网柜列表</span>
@@ -295,7 +283,7 @@ export default function Index() {
           title="删除提示"
           key="ma"
         >
-          是否确认删除逆变器关联关系？
+          是否确认删除“{cabinetName}”？
         </CModal>
         <BindAir   {...airprop} ref={ref} />
       </Titlelayout>

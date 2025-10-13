@@ -13,7 +13,7 @@ export const { useUpdateAreaImageAndHot } = new Apimethod( //更新 站点图片
   "post",
   "Solar/PVAreaImageManager/UpdateAreaImageAndHot"
 );
-export const { useQueryStationList } = new Apimethod( // 查询站点列表
+export const { useQueryGirdCabientList } = new Apimethod( // 查询并网柜列表
   "get",
-  "Solar/RuntimeOverview/QueryStationList"
+  "Solar/RuntimeOverview/QueryGirdCabientList"
 );
