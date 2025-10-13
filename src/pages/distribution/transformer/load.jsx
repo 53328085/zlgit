@@ -73,7 +73,7 @@ export default function Index({sn, projectId}) {
               valueAnimation: true,
               formatter: '{value}%\n',
               color: "#606266",
-              fontSize: 15, 
+              fontSize: 14, 
             },
             data: [
               {
@@ -82,7 +82,7 @@ export default function Index({sn, projectId}) {
                 title: {
                   offsetCenter: [0, '50%'],
                   show:true,
-                  fontSize:15,
+                  fontSize:14,
                   color: "#606266",
                   fontWeight: "bold",
                 //  lineHeight: 66,
