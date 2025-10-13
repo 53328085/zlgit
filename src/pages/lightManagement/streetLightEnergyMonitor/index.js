@@ -107,12 +107,12 @@ export default function Index() {
         type: 'value',
         name: '亮灯率(%)', 
         nameLocation :"center",
-        nameGap:30,
+        nameGap:48,
         nameTextStyle:{
-          padding: [0,0,-40,0]
+          padding: [0,0,-58,0]
         },
         axisLabel: {
-          formatter:  (v) => v*100 + "%"
+          formatter:  (v) => v + "%"
         }
       },
     ],
