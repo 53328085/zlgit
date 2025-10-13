@@ -2031,6 +2031,21 @@ export const Monitoring = {
     ImportSmartControl: (data) =>
       server.post(`/Monitor/Device/ImportSmartControl`, data), //批量导入智能控制
 
+    // 光伏设备
+
+    AddPV: (data) =>
+      server.post(`/Monitor/Device/AddPV`, data), //新增 
+    UpdatePV: (data) =>
+      server.post(`/Monitor/Device/UpdatePV`, data), //更新
+    DeletePV: (data) =>
+      server.delete(`/Monitor/Device/DeletePV`, { params: data }), //删除 
+    ImportPV: (data) =>
+      server.post(`/Monitor/Device/ImportPV`, data), //批量导入
+
+
+
+
+
     //376协议
     QueryDeviceIncreaseParams: ({ projectId, gatewayId, port, alike }) =>
       server.post(

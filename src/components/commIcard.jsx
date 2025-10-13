@@ -59,7 +59,7 @@ const CardItme = styled.div`
         grid-template-columns: 1fr 160px;
         justify-content: space-between;
       }
-      .values {
+      .gateway {
         flex: 1;
         display: grid;
         grid-template-columns: 1fr 1fr;
@@ -69,7 +69,7 @@ const CardItme = styled.div`
        // border: 1px solid rgba(${props => props.rgb[0]},${props => props.rgb[1]},${props => props.rgb[2]},0.2);
         border-radius: 6px;
         .item {
-          padding: 0 4px;
+          padding: 0 8px;
           display: flex;
           align-items: center;
           justify-content: space-between;
@@ -88,6 +88,34 @@ const CardItme = styled.div`
           grid-row-start: 2;
           grid-column: 1 / -1;
         }
+      }
+      .values {
+        flex: 1;
+        display: grid;
+        grid-template-columns:${props=> props.len < 3 ? "1fr" : "1fr 1fr"};
+        grid-auto-rows: 1fr;
+       // grid-template-rows: 1fr 1fr;
+        background-color: rgba(${props => props.rgb[0]},${props => props.rgb[1]},${props => props.rgb[2]},0.15);
+       // border: 1px solid rgba(${props => props.rgb[0]},${props => props.rgb[1]},${props => props.rgb[2]},0.2);
+        border-radius: 6px;
+        align-items: ${props=> props.len<2 ? "flex-start" : "center"};
+        .item {
+          padding: 0 8px;
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          .field {
+            color: ${(props) => props.theme.fieldname || "#ffffff"};
+            font-size: 14px;
+            
+          }
+          .value {
+            color: ${(props) => props.theme.fieldvalue || "#1E50E6"};
+            font-size: 16px;
+            white-space: nowrap;
+          }
+        }
+       
       }
     }
 
@@ -129,7 +157,7 @@ const Gateway = (props) => {
         )} */}
       </div>
       <div className="line">{props.value}</div>
-      <div className="values">
+      <div className="gateway">
         <div className="item">
           <span className="field">{i18t("comm", "childdevice")}</span>
           <span className="value">{props.childrenCnt}</span>
@@ -168,7 +196,11 @@ const Device = (props) => {
     return []
    }
   }, [datas])
-  const items = deviceStyle==22 ? fields?.map?.(f=>( <div className="item">
+  const items = fields?.map?.(f=>( <div className="item">
+    <Text ellipsis={{ellipsis: f?.name}} className="field">{f?.name}</Text>
+    <span className="value">{f?.value}</span>
+  </div> ))
+/*   const items = deviceStyle==22 ? fields?.map?.(f=>( <div className="item">
     <Text ellipsis={{ellipsis: f?.name}} className="field">{f?.name}</Text>
     <span className="value">{f?.value}</span>
   </div> )) : (<>
@@ -188,9 +220,9 @@ const Device = (props) => {
             <Text ellipsis={{ellipsis: fields?.[3]?.name}} className="field">{fields?.[3]?.name}</Text>
               <span className="value">{fields?.[3]?.value}</span>
             </div> 
-  </>
+  </> 
 
-  )
+  )*/
   return (
     <>
       <div className="line sp">
@@ -225,7 +257,7 @@ export default function Index(props) {
    const mrgb = useSelector(MRGB) 
    const [r, g, b] = Array.isArray(mrgb) ? mrgb : [] 
   return (
-    <CardItme rgb={[r, g, b]}>
+    <CardItme rgb={[r, g, b]} len={props.fields?.length}>
       <div className="cardImg">
         <img src={img} className="img" alt={title}></img>
       </div>

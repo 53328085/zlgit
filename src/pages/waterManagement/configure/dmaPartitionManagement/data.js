@@ -64,8 +64,8 @@ export const cols = [
   },
   {
     title: "管理分表（只）",
-    dataIndex: "LargeConsumerNumbe",
-    key: "LargeConsumerNumbe",
+    dataIndex: "largeConsumerNumber",
+    key: "largeConsumerNumber",
   },
   {
     title: "用水表（只）",
