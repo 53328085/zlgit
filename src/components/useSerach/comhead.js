@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef, useMemo, Fragment } from "react";
 
-import { Form, Select, Space, DatePicker, message, Input, Button, } from "antd";
+import { Form, Select, Space, DatePicker, message, Input, Button, Typography } from "antd";
 import { useRequest } from 'ahooks'
 import styled from "styled-components";
 import { ExportExcel, i18t, CustTransO } from '@com/useButton'
@@ -15,9 +15,10 @@ import { filterProps } from '@com/usehandler'
 import {
   SyncOutlined,
 } from '@ant-design/icons';
-
+const {Link} = Typography
 import { publicdateType, Daterange } from "./data"
 import Enery from "./enery";
+import { name } from "file-loader";
 
 const { FindContainerList } = StorageContainerDesigner  //储能柜
 
@@ -52,6 +53,18 @@ export const AreaSelect = ({ value, onChange, isall, ...otherProps }) => {
     </Select>
   )
 
+}
+
+// 刷新
+const Refresh = ({value, onChange}) => {
+  
+  const { primaryColor } = useSelector(themeColor)
+    const onClick = ()=> {
+    onChange({})
+  }
+  return (
+    <Link onClick={onClick}><SyncOutlined style={{ color: `${primaryColor}` }}  /> 刷新</Link>
+  )
 }
 // 1.   状态中获取
 export default function UseSerach(props) {
@@ -468,12 +481,12 @@ export default function UseSerach(props) {
         setInverterData(data)
 
         form.setFieldsValue({
-          inverter: { value: data[0].id, label: data[0].sn }
+          inverter: data[0].sn 
         })
         props.setexparams({ ...form.getFieldsValue(true) })
       } else {
         setInverterData([])
-        form.setFieldValue('inverter', { label: null, value: null })
+        form.setFieldValue('inverter',null)
         props.setexparams({ ...form.getFieldsValue(true) })
         if (!success) return message.warning(errMsg || "数据出错")
         if (data?.length == 0) return message.warning('当前并网柜不存在逆变器!')
@@ -499,13 +512,15 @@ export default function UseSerach(props) {
   const inverter = (
     <Item name="inverter" style={{ color: `${primaryColor}` }} label="逆变器">
       {/* inverterData */}
-      <Select options={InverterData} labelInValue style={{ width: "140px" }} onChange={getInverter}></Select>
+      <Select options={InverterData}  fieldNames={{ label: 'name', value: 'sn' }} labelInValue style={{ width: "140px" }} onChange={getInverter}></Select>
     </Item>
   )
-
+  const onRefresh=()=> {
+    props.setexparams({...form.getFieldsValue(), refresh: {}});
+  }
   const refresh = (
-    <Item name="refresh" style={{ color: `${primaryColor}` }}>
-      <SyncOutlined style={{ color: `${primaryColor}` }} /> 刷新
+    <Item name="refresh" style={{ color: `${primaryColor}` }} initialValue={{name:"refresh"}}>
+      <Link onClick={onRefresh}><SyncOutlined style={{ color: `${primaryColor}` }}  /> 刷新</Link>
     </Item>
 
   )

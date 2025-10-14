@@ -78,6 +78,7 @@ export  const Mainwrap = styled.div`
                         display: flex;
                         align-items: center; 
                         column-gap: 4px;
+                        padding-right: 10px;
                         .label{
                             color: #9ED8DC;
                             font-size: 11px;
@@ -92,7 +93,8 @@ export  const Mainwrap = styled.div`
             padding: 28px 24px 24px 24px;
             display: grid;
             grid-template-rows: 56px 28px minmax(226px, 1fr) 28px minmax(226px, 1fr);
-            row-gap: 16px;        
+            row-gap: 16px; 
+           
             .infobox {
                 display: flex;
                 flex-direction: column;
@@ -131,7 +133,7 @@ export  const Mainwrap = styled.div`
                 color:#fff;
             }
             .chartWrap{
-                height: 226px;
+                height: 100%;
                 display: flex;
             }
         }
@@ -142,8 +144,9 @@ export  const Mainwrap = styled.div`
         background-repeat: no-repeat ;
       
         .content {
-            grid-template-rows:  28px minmax(226px, 1fr) 28px minmax(226px, 1fr);
+            grid-template-rows:  28px minmax(288px, 1fr) 28px 1fr;
             row-gap: 16px;   
+            height:100% ;
         }
     }
   }

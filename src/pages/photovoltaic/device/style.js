@@ -7,10 +7,10 @@ const borderBox = ({ borderRadius = "4px", bgcolor = "#fff" }) => css`
 
 export const getBackgroundColor = (theme) => {
   const color = theme?.bg || theme.cardHeadBg;
-  if (color && color !== '#ffffff') {
+  if (color && color !== "#ffffff") {
     return color;
   }
-  return 'rgba(229, 236, 245, 0.5)';
+  return "rgba(229, 236, 245, 0.5)";
 };
 export const Container = styled.div`
   display: grid;
@@ -28,9 +28,12 @@ export const TopBox = styled.div`
   justify-content: flex-end;
   .infoBox1{
   display:flex;
+  justify-content: space-between;
+  align-items: center;
+  column-gap: 16px;
   .powerStation{
-    width: 160px;
-    height: 150px;
+    max-width: 100%;
+
   }
 .content{
   display: grid;
@@ -115,7 +118,7 @@ export const TopBox = styled.div`
     }
     }
     
-    background-color:${props => getBackgroundColor(props.theme)};
+    background-color:${(props) => getBackgroundColor(props.theme)};
   }
  .infoBox2{
  display:flex;
@@ -132,7 +135,7 @@ export const TopBox = styled.div`
     height: 62px;
     width: 250px;
     padding-left:16px;
-    background-color:${props => getBackgroundColor(props.theme)};
+    background-color:${(props) => getBackgroundColor(props.theme)};
   .powerIcon{
     width: 36px;
     height: 36px;
@@ -149,124 +152,125 @@ export const TopBox = styled.div`
     }
     }
 }
-   
+ }
 `
 
 export const FotterBox = styled.div`
   flex: 1;
   display: grid;
   color: #515151;
-  grid-template-columns: ${props => props.laptop ? "1fr 1fr" : "660px  1fr"} ;
+  grid-template-columns: ${(props) =>
+    props.laptop ? "1fr 1fr" : "660px  1fr"};
   gap: 16px;
   justify-content: flex-end;
-  .realTimeData{
-   display:grid;
-   gap: 16px;
+  .realTimeData {
+    display: grid;
+    gap: 16px;
   }
- .infoBox3{
-      display:flex;
-      align-items: center;
-      justify-content: space-around;
-      flex-wrap: wrap;
-      .box{
+  .infoBox3 {
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    flex-wrap: wrap;
+    .box {
       border-radius: 8px;
       width: 281px;
       height: 216px;
-      margin-bottom:16px;
-     background-color:${props => getBackgroundColor(props.theme)};
-      .title{
-      border-radius: 8px 8px 0px 0px;
-      width: 281px;
-      height: 36px;
-      line-height: 36px;
-      padding-left: 16px;
-      color: #FFFFFF;
+      margin-bottom: 16px;
+      background-color: ${(props) => getBackgroundColor(props.theme)};
+      .title {
+        border-radius: 8px 8px 0px 0px;
+        width: 281px;
+        height: 36px;
+        line-height: 36px;
+        padding-left: 16px;
+        color: #ffffff;
       }
-      .online{
-      background: #1EC373;
+      .online {
+        background: #1ec373;
       }
-      .offline{
-      background: #717D96;
+      .offline {
+        background: #717d96;
       }
-      .con{ 
-      padding: 16px;
-      font-weight: 400;
-      font-size: 13px;
-      color: #303133;
-      .top{
-      display:flex;
-      align-items: center;
-      .info{
-      margin-left:16px;
-      display: grid;
-      gap: 5px;
-      .name{
-      font-weight: 400;
-      font-size: 13px;
-      color: #606266;
-      }
-      .status{
-      width: 8px;
-      height: 8px;
-      border-radius: 50%;
-      margin: 0px 5px;
-      display: inline-block;
-      }
-      
-      .online{
-      background: #1EC373;
-      }
-      .offline{
-      background: #717D96;
-      }
-      }
-      }
-      .bottom{
-      margin-top:16px;
-      display:flex;
-      align-items: center;
-      justify-content: space-between;
-       .name{
-      color: #606266;
-      }
-      .num{
-      font-weight: 500;
-      font-size: 14px;
-      color: #1E50E6;
-      }
-      }
-      }
+      .con {
+        padding: 16px;
+        font-weight: 400;
+        font-size: 13px;
+        color: #303133;
+        .top {
+          display: flex;
+          align-items: center;
+          .info {
+            margin-left: 16px;
+            display: grid;
+            gap: 5px;
+            .name {
+              font-weight: 400;
+              font-size: 13px;
+              color: #606266;
+            }
+            .status {
+              width: 8px;
+              height: 8px;
+              border-radius: 50%;
+              margin: 0px 5px;
+              display: inline-block;
+            }
+
+            .online {
+              background: #1ec373;
+            }
+            .offline {
+              background: #717d96;
+            }
+          }
+        }
+        .bottom {
+          margin-top: 16px;
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          .name {
+            color: #606266;
+          }
+          .num {
+            font-weight: 500;
+            font-size: 14px;
+            color: #1e50e6;
+          }
+        }
       }
     }
-`
+  }
+`;
 
 export const Header = styled.div`
-width:100%;
-height:32px;
-display:flex;
-flex-direction:row;
-align-items:center;
-justify-content:flex-end;
-.historicalData{
-color: #1E50E6;
-}
+  width: 100%;
+  height: 32px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-end;
+  .historicalData {
+    color: #1e50e6;
+  }
 `;
 export const HistoricalModal = styled.div`
-.searchBox{
-display:flex;
-align-items:center;
-justify-content: space-between;
-.timeBox{
-display:flex;
-align-items:center;
-}
-}
-.echarts{
-margin-top:16px;
-height:360px;
-}
-.table{
-margin-top:16px;
-height:360px;
-}
-`
+  .searchBox {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    .timeBox {
+      display: flex;
+      align-items: center;
+    }
+  }
+  .echarts {
+    margin-top: 16px;
+    height: 360px;
+  }
+  .table {
+    margin-top: 16px;
+    height: 360px;
+  }
+`;

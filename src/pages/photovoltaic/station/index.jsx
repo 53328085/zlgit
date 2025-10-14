@@ -34,7 +34,7 @@ export default function Index() {
     const mode = Form.useWatch('mode', form)
     let { exparams } = useOutletContext()
     
-    const { projectId, cabinet } = exparams || {cabinet:{value: ''}}
+    const { projectId, cabinet, refresh } = exparams || {cabinet:{value: ''}}
     const  {value: cabinetId} = cabinet || {value:NaN}
     const [cabinetDtl, setCabinetDtl] = useState({})
     const {coalInfo={},generationInfo={}  } =cabinetDtl || {}
@@ -155,7 +155,7 @@ export default function Index() {
       getTrend()
     }
    
-  }, [projectId, cabinetId])
+  }, [projectId, cabinetId,refresh])
 
 
 
