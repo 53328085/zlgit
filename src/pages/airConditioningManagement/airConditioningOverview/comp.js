@@ -144,7 +144,6 @@ export const DetailComp = React.memo(({ overData }) => {
 });
 
 export const FooterChartComp = React.memo(({ tableData, chartData }) => {
-  // const chartDomRef = useRef();
   const tableRef = useRef();
   const [tabId, setTabId] = useState("1");
   console.log(chartData);
@@ -187,7 +186,6 @@ export const FooterChartComp = React.memo(({ tableData, chartData }) => {
     };
   };
   useEffect(() => {
-    // tabId == "1" && drawEcharts(chartDomRef.current, Chart_Options);
     if (tabId == "2") {
       ColMap(TbHeader, 3);
       ColMap(TbHeader, 5);
@@ -198,24 +196,12 @@ export const FooterChartComp = React.memo(({ tableData, chartData }) => {
       <BlueColumn
         name="空调能耗趋势"
         bg={{ borderRadius: "4px" }}
-        styled={{ marginBottom: 16 }}
+        styled={{ marginBottom:16,padding:"8px 16px" }}
+        isbgShow={true}
       >
         <div
           style={{ marginLeft: "auto", display: "flex", alignItems: "center" }}
         >
-          {/* <Button
-            icon={<DownloadOutlined />}
-            style={{
-              borderRadius: "2px",
-              width: "96px",
-              display: tabId == "1" ? "none" : "block",
-            }}
-            onClick={() => {
-              tableRef.current.downloadAll();
-            }}
-          >
-            {i18.t("export", { ns: "button" })}
-          </Button> */}
           <Radio.Group
             block
             options={Radio_Options}
@@ -223,7 +209,7 @@ export const FooterChartComp = React.memo(({ tableData, chartData }) => {
             optionType="button"
             buttonStyle="solid"
             size="large"
-            style={{ marginLeft: 16 }}
+            style={{ marginLeft: 16,borderRadius:4 }}
             onChange={(e) => {
               setTabId(e.target.value);
             }}
@@ -245,14 +231,15 @@ export const FooterChartComp = React.memo(({ tableData, chartData }) => {
         </div>
       </BlueColumn>
       {tabId == "1" ? (
-        // <div ref={chartDomRef} className="chartdom">
+        <div  className="chartdom">
         <MemoChart></MemoChart>
+        </div>
       ) : (
         <UseTable
           ref={tableRef}
           columns={TbHeader}
           dataSource={tableData}
-          style={{ overflow: "auto" }}
+          style={{ overflow: "auto" , padding:"0 16px 16px"}}
           scroll={{ y: 15 * 31 }}
           summary={(pageData) => {
             let summaryData = ["汇总", ...Array(5).fill(0)];

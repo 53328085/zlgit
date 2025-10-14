@@ -86,7 +86,7 @@ export default function Index() {
             energytype={1}
             allselect={true}
             showSearch={true}
-            treeName="空调设备列表"
+            title="空调设备列表"
           />
         </div>
         <div className="right-box">

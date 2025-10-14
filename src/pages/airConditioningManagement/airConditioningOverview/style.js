@@ -15,7 +15,7 @@ export const Container = styled.div`
     max-width: 296px;
     display: flex;
     flex-direction: column;
-    width: 296px;
+    /* width: 296px; */
   }
   .right-box {
     flex: 1;
@@ -89,7 +89,7 @@ export const Detail = styled.div`
 `;
 export const FooterChart = styled.div`
   ${borderBox};
-  padding: 16px;
+
   flex: 1;
   overflow: hidden;
   display: flex;
@@ -120,5 +120,6 @@ export const FooterChart = styled.div`
     flex: 1;
     overflow: hidden;
     position: relative;
+    padding:0 16px 16px;
   }
 `;
