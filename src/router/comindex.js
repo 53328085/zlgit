@@ -300,10 +300,10 @@ export default function Index() {
             setConfig({ refresh: true, cabinet: true, inverter: true, photovoltaicPowerStation: true });
             break;
           case "statistic":
-            setConfig({ isdate: true, shiftNo: true, photovoltaicPowerStation: true });
+            setConfig({ isdate: true, cabinet: false, shiftNo: true, photovoltaicPowerStation: false, inverter: false });
             break;
           case "warning":
-            setConfig({ dateR: true, shiftNo: true, photovoltaicPowerStation: true });
+            setConfig({ dateR: true, cabinet: false, shiftNo: true, photovoltaicPowerStation: true, inverter: false });
             break;
         }
       }
