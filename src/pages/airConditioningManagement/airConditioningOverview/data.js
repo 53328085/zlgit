@@ -128,7 +128,7 @@ export const Chart_Options = {
   // 网格配置
   grid: {
     top: "10%",
-    left: "2%",
+    left: "4%",
     right: "2%",
     bottom: "1%",
     containLabel: true,
