@@ -121,6 +121,11 @@ export default function Index() {
       name: '空调控制',
     },
     {
+      meterType: 22,
+      imageUrl: imgurl.light,
+      name: '路灯控制',
+    },
+    {
       meterType: 23,
       imageUrl: imgurl.device,
       name: '智能控制',

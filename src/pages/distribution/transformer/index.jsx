@@ -18,6 +18,7 @@ import Ichart from '@com/useEcharts/Ichart';
 import { cloneDeep } from 'lodash';
 import {tabs,opts,columns } from './data' 
 import {MainDiv} from './style'
+import Load from './load'
 const chartOpt= {
   title: {
     // text: 'Stacked Line'
@@ -73,7 +74,7 @@ export default function Index() {
   const chartRef =useRef()
   const roomId = useSelector(selectcurlRommid)
   const siteData = useSelector(site)
- 
+  console.log("siteData",siteData)
   const [pattern,setPattern]=useState(1)
   
  
@@ -321,7 +322,7 @@ useRequest(RuntimePoints, {
              </div>
              <CustContext.Provider value={dataProps} >
               <Pagecount showSearch={false}>
-              {value=="1" ?  <Titlelayout title={<div style={{display: 'flex', alignItems: 'center', justifyContent: "space-between"}}>
+              {value=="2" ?  <Titlelayout title={<div style={{display: 'flex', alignItems: 'center', justifyContent: "space-between"}}>
                <span>数据趋势</span>
                <Space size={16}>
                 
@@ -365,7 +366,7 @@ useRequest(RuntimePoints, {
                }
                </div>
              </Titlelayout>
-             : <div></div>
+             : <Load sn={siteData?.sn} projectId={projectId}></Load>
              }
              </Pagecount>
              </CustContext.Provider>

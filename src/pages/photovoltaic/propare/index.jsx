@@ -325,11 +325,11 @@ export default function Index() {
       <span className='title'>光伏电站发电量统计</span>
       <Space size={16}>
         <Space><Checkbox checked={showAll} onChange={showAllChagne}>显示明细</Checkbox></Space>
-        <Serach
+        {/* <Serach
           placeholder="请输入设备名称/设备编号/安装地址查询"
           style={{ width: "380px" }}
           onSearch={onChangeValue}
-        />
+        /> */}
         <ExportExcel tb={tableRef} />
       </Space>
     </Ctitle>

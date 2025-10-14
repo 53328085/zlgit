@@ -1,9 +1,10 @@
-import React, { useEffect, useRef, useState, useCallback } from 'react'
+import React, { useEffect, useRef, useState, useCallback, useMemo } from 'react'
 import Building from '@com/building'
 import * as XLSX from "xlsx";
+import { useOutletContext } from 'react-router-dom';
 import { useSelector } from 'react-redux'
 import { adaptation } from "@redux/systemconfig";
-import { useReactive } from "ahooks";
+import { useReactive, useRequest } from "ahooks";
 import Pagecount from "@com/pagecontent";
 import Ichart from "@com/useEcharts/Ichart"
 import Titlelayout from '@com/titlelayout'
@@ -12,36 +13,154 @@ import powerStation from './images/powerStation.png'
 import inverter from './images/inverter.png'
 import installedCapacity from './images/installedCapacity.png'
 import runtimeDuration from './images/runtimeDuration.png'
-import { DatePicker, Table, Checkbox, Space, Radio, Divider, Select, Tree, Button, message } from "antd";
+import { DatePicker, Table, Checkbox, Space, Radio, Divider, Select, Tree, Button, message, Form} from "antd";
 import { CustButtonT, ExportExcel, CustButton, ExportButton } from '@com/useButton'
 import { Container, TopBox, FotterBox, Header } from "./style";
+
+import { isObject,getTime } from '@com/usehandler';
 import moment from "moment";
-import dayjs from 'dayjs';
+ 
 import { useNavigate, Link } from "react-router-dom";
 import SolarPowerGenerationChart from './weatherEcharts.js';
+import  {useQueryGirdCabinetInfo, useQueryInverterList,useQueryEnergyTrend} from './api'
+import {states,options} from './data'
+ 
 const { RangePicker } = DatePicker;
 const fs = {
   fc: '#333'
 }
 export default function Index() {
-  const state = useReactive({
-    devices: [],
-    snGroup: [],
-    timeType: 1,
-    xAxis: [],
-    alltableData: [],
-    detailtableData: [],
-    tableData: [],
-    current: 1,
-    pageSize: 10,
-    disabled: false,
-    groupName: '',
-    btnLength: [1, 2, 3],
-    active: 0,
-    chartsOpts: {
-      type: 1,
-    },
-  });
+    const [form] = Form.useForm()
+    const mode = Form.useWatch('mode', form)
+    let { exparams } = useOutletContext()
+    
+    const { projectId, cabinet } = exparams || {cabinet:{value: ''}}
+    const  {value: cabinetId} = cabinet || {value:NaN}
+    const [cabinetDtl, setCabinetDtl] = useState({})
+    const {coalInfo={},generationInfo={}  } =cabinetDtl || {}
+    const [cabinetList, setCabinetList] = useState([])
+    const [curstate, setCurstate] = useState("1")
+    const [weather, setWeather] = useState({})
+   
+    const filtrlist = useMemo(()=> {
+       if(curstate == 0) {
+        return cabinetList
+       }else {
+        return cabinetList.filter(f => f.state == curstate)
+       }
+    },[cabinetList, curstate])
+    const weatherOpt = useMemo(()=> {
+   
+    return {
+      series: [{ type: "bar", seriesLayoutBy: 'row' }], // [{ type: "bar",seriesLayoutBy: 'row' }], 
+      grid: {
+        left: "0px",
+        right: "0",
+        top: "40px",
+        bottom: "16px",
+        containLabel: true,
+      },
+      legend:{
+        show: false,
+      },
+     /*  legend: {
+        top: "5px",
+      },
+      xAxis: {
+        type: 'category',
+  
+      },
+      yAxis: {
+        type: 'value',
+        axisLabel: {
+          formatter: (value) => value + unit
+        }
+      }, */
+      dataset: {
+        dimensions:[{
+          name: '时间', type: "date",
+        }, {name: "温度"}],
+        source:[Array.isArray(weather?.x) ? weather?.x : [], Array.isArray(weather?.y) ? weather?.y : []],
+        sourceHeader: false,
+      },
+     /*  toolbox: {
+        show: true,
+        feature: {
+          magicType: {
+            type: ['line', 'bar',]
+          },
+          saveAsImage: {},
+  
+        },
+        top: "5px",
+        right: "10px"
+      } */
+    }
+
+
+
+    },[weather])
+ 
+
+  const queryInfo=async()=> {
+    try {
+      
+      let {success, data} =  await useQueryGirdCabinetInfo({projectId, cabinetId})
+      if(success && isObject(data)) {
+        setCabinetDtl(data)
+      }else{
+        setCabinetDtl({})
+      }
+    } catch (error) {
+      
+    }
+  }
+  const getList=async()=> { 
+    try {
+      let {success, data} = await useQueryInverterList({projectId, cabinetId})
+      if(success && Array.isArray(data)){
+        setCabinetList(data)
+      }else {
+        setCabinetList([])
+      }
+    } catch (error) {
+      
+    }
+  }
+  const getTrend =async()=> {
+    try {
+      let values = form.getFieldsValue();
+      const {type, date} = values
+      let body = {
+        projectId,
+        cabinetId,
+        type,
+        date:getTime(date, type)
+      }
+      let {success, data} = await useQueryEnergyTrend({}, body)
+      if(success && isObject(data?.detail)){
+        setWeather(data?.detail)
+      }else {
+        setWeather({})
+      }
+    } catch (error) {
+      console.log(error)
+    }
+    
+   }
+  useEffect(() => {
+    if(Number.isInteger(parseInt(projectId)) && Number.isInteger(parseInt(cabinetId))){
+      queryInfo()
+      getList()
+      getTrend()
+    }
+   
+  }, [projectId, cabinetId])
+
+
+
+
+
   let { laptop } = useSelector(adaptation)
   const comoptionfn = (laptop) => ({
     type: 5,
@@ -90,7 +209,7 @@ export default function Index() {
 
   })
   let comoption = comoptionfn(laptop)
-  const custoption = {
+  const custoption =useMemo(() => ({
     ...comoption,
     series: [
       {
@@ -102,167 +221,27 @@ export default function Index() {
               fontSize: laptop ? "12px" : "14px",
               offsetCenter: [0, "70%"]
             },
-            value: 413,
+            value: cabinetDtl?.curPower,
             name: "实时功率(kW)",
           }
         ]
       }
     ]
-  }
+  }), [cabinetDtl])
 
-  const [indeterminateAll, setIndeterminateAll] = useState(false)
-  const [indeterminateOnline, setIndeterminateOnline] = useState(false)
-  const [indeterminateOffline, setIndeterminateOffline] = useState(false)
+ 
 
-  const [checkedAll, setCheckedAll] = useState(true)
-  const [checkedOnline, setCheckedOnline] = useState(false)
-  const [checkedOffline, setCheckedOffline] = useState(false)
-
-  const allChagne = (e) => {
-    if (e.target.checked) {
-      setCheckedAll(true)
-      setCheckedOnline(false)
-      setCheckedOffline(false)
-    } else {
-      setCheckedAll(false)
-    }
-    setIndeterminateAll(false)
-  }
-  const onlineChagne = (e) => {
-    if (e.target.checked) {
-      setCheckedAll(false)
-      setCheckedOnline(true)
-      setCheckedOffline(false)
-    } else {
-      setCheckedOnline(false)
-    }
-    setIndeterminateOnline(false)
-  }
-  const offlineChagne = (e) => {
-    if (e.target.checked) {
-      setCheckedAll(false)
-      setCheckedOnline(false)
-      setCheckedOffline(true)
-    } else {
-      setCheckedOffline(false)
-    }
-    setIndeterminateOffline(false)
-  }
+ 
   const tableRef = useRef()
-  const today = moment().startOf('day');
-  const tmonth = moment().startOf('month')
-  const tyear = moment().startOf('year')
-  const params = useReactive({
-    siteId: 1,
-    structureIds: [],
-    type: 1,
-    startDate: moment(today).format('YYYY-MM-DD'),
-    endDate: moment(today).format('YYYY-MM-DD'),
-  });
-
-  const changeTime = (e) => {
-    console.log(e)
-    params.type = parseInt(e)
-    if (params.type == 1) {
-      params.startDate = moment(today).format('YYYY-MM-DD')
-      params.endDate = moment(today).format('YYYY-MM-DD')
-    } else if (params.type == 2) {
-      params.startDate = moment(tmonth).format('YYYY-MM') + '-01'
-      params.endDate = moment(tmonth).format('YYYY-MM') + '-01'
-    } else if (params.type == 3) {
-      params.startDate = moment(today).format('YYYY') + '-01-01'
-      params.endDate = moment(today).format('YYYY') + '-01-01'
-    } else {
-      params.startDate = moment(today).format('YYYY-MM-DD')
-      params.endDate = moment(today).format('YYYY-MM-DD')
-    }
-  }//切换日月年
-
-  const onChangeDate = (date, dateString) => {
-    if (!dateString) return;
-    if (params.type == 1) {
-      params.startDate = dateString
-      params.endDate = dateString
-    } else if (params.type == 2) {
-      params.startDate = dateString + '-01'
-      params.endDate = dateString + '-01'
-    } else if (params.type == 3) {
-      params.startDate = dateString + '-01-01'
-      params.endDate = dateString + '-01-01'
-    } else {
-      params.startDate = dateString[0]
-      params.endDate = dateString[1]
-    }
-  };
+  
+  
+ 
+ 
   const disabledDate = (current) => {
-    return current > dayjs().endOf('day');
+    return current > moment().endOf('day');
   };
-  const options = [
-    {
-      label: '图表模式',
-      value: 1,
-    },
-    {
-      label: '列表模式',
-      value: 2,
-    },
-  ];
-  const inverterData = [
-    {
-      name: '1#逆变器',
-      sn: '10232125322',
-      status: 1,
-      category: 'NBQ-293',
-      address: '东区光伏车棚文字较长的情况',
-      kw: 1123.0,
-      kwh: 2893049,
-    },
-    {
-      name: '2#逆变器',
-      sn: '10232125322',
-      status: 1,
-      category: 'NBQ-293',
-      address: '东区光伏车棚文字较长的情况',
-      kw: 1123.0,
-      kwh: 2893049,
-    },
-    {
-      name: '3#逆变器',
-      sn: '10232125322',
-      status: 1,
-      category: 'NBQ-293',
-      address: '东区光伏车棚文字较长的情况',
-      kw: 1123.0,
-      kwh: 2893049,
-    },
-    {
-      name: '4#逆变器',
-      sn: '10232125322',
-      status: 2,
-      category: 'NBQ-293',
-      address: '东区光伏车棚文字较长的情况',
-      kw: 1123.0,
-      kwh: 2893049,
-    },
-    {
-      name: '5#逆变器',
-      sn: '10232125322',
-      status: 2,
-      category: 'NBQ-293',
-      address: '东区光伏车棚文字较长的情况',
-      kw: 1123.0,
-      kwh: 2893049,
-    },
-    {
-      name: '6#逆变器',
-      sn: '10232125322',
-      status: 2,
-      category: 'NBQ-293',
-      address: '东区光伏车棚文字较长的情况',
-      kw: 1123.0,
-      kwh: 2893049,
-    },
-  ]
+
+ 
 
   const columns = [
     {
@@ -346,36 +325,36 @@ export default function Index() {
               <img src={powerStation} className='powerStation' />
               <div className='content'>
                 <div className='info'>
-                  <span></span><span>名  称： </span> <span>东区光伏电站1</span></div>
+                  <span></span><span>名  称： </span> <span>{cabinetDtl?.name}</span></div>
                 <div className='info'>
-                  <span></span> <span>编  号：</span> <span>2893049</span></div>
+                  <span></span> <span>编  号：</span> <span>{cabinetDtl?.no}</span></div>
                 <div className='info'>
-                  <span></span> <span>总表名称：</span><span>东区光伏车棚总表1</span></div>
+                  <span></span> <span>总表名称：</span><span>{cabinetDtl?.meterName}</span></div>
                 <div className='info'>
-                  <span></span> <span>总表编号：</span><span>83894894</span></div>
+                  <span></span> <span>总表编号：</span><span>{cabinetDtl?.meterSn}</span></div>
                 <div className='info'>
-                  <span></span><span>安装地址：</span> <span>东区光伏车棚文字较长的情况是这样的</span></div>
+                  <span></span><span>安装地址：</span> <span>{cabinetDtl?.address}</span></div>
               </div>
             </div>
             <div className='powerNum'>
               <div className='numBox'>
                 <img src={inverter} className='powerIcon' />
                 <div className='num'>
-                  <div>5</div>
+                  <div>{cabinetDtl?.inverterCnt}</div>
                   <div>逆变器(个)</div>
                 </div>
               </div>
               <div className='numBox'>
                 <img src={installedCapacity} className='powerIcon' />
                 <div className='num'>
-                  <div>5000</div>
+                  <div>{cabinetDtl?.installedCapacity}</div>
                   <div>装机容量(kW)</div>
                 </div>
               </div>
               <div className='numBox'>
                 <img src={runtimeDuration} className='powerIcon' />
                 <div className='num'>
-                  <div>125</div>
+                  <div>{cabinetDtl?.workHours}</div>
                   <div>运行时长(h)</div>
                 </div>
               </div>
@@ -404,21 +383,21 @@ export default function Index() {
                 <div className='box'>
                   <img src={runtimeDuration} className='powerIcon' />
                   <div className='num'>
-                    <div>125</div>
+                    <div>{generationInfo?.dayGeneration}</div>
                     <div>本日发电量(kWh)</div>
                   </div>
                 </div>
                 <div className='box'>
                   <img src={runtimeDuration} className='powerIcon' />
                   <div className='num'>
-                    <div>125</div>
+                    <div>{generationInfo?.monthGeneration}</div>
                     <div>本月发电量(kWh)</div>
                   </div>
                 </div>
                 <div className='box'>
                   <img src={runtimeDuration} className='powerIcon' />
                   <div className='num'>
-                    <div>125</div>
+                    <div>{generationInfo?.yearGeneration}</div>
                     <div>本年发电量(kWh)</div>
                   </div>
                 </div>
@@ -428,21 +407,21 @@ export default function Index() {
                 <div className='box'>
                   <img src={runtimeDuration} className='powerIcon' />
                   <div className='num'>
-                    <div>125</div>
+                    <div>{generationInfo?.dayIncome}</div>
                     <div>本日发电收益(元)</div>
                   </div>
                 </div>
                 <div className='box'>
                   <img src={runtimeDuration} className='powerIcon' />
                   <div className='num'>
-                    <div>125</div>
+                    <div>{generationInfo?.monthIncome}</div>
                     <div>本月发电收益(元)</div>
                   </div>
                 </div>
                 <div className='box'>
                   <img src={runtimeDuration} className='powerIcon' />
                   <div className='num'>
-                    <div>125</div>
+                    <div>{generationInfo?.yearIncome}</div>
                     <div>本年发电收益(元)</div>
                   </div>
                 </div>
@@ -455,21 +434,21 @@ export default function Index() {
                 <div className='box'>
                   <img src={runtimeDuration} className='powerIcon' />
                   <div className='num'>
-                    <div>100</div>
+                    <div>{coalInfo?.dayCoal}</div>
                     <div>本日等效碳排(kg)</div>
                   </div>
                 </div>
                 <div className='box'>
                   <img src={runtimeDuration} className='powerIcon' />
                   <div className='num'>
-                    <div>1025</div>
+                    <div>{coalInfo?.monthCoal}</div>
                     <div>本月等效碳排(kg)</div>
                   </div>
                 </div>
                 <div className='box'>
                   <img src={runtimeDuration} className='powerIcon' />
                   <div className='num'>
-                    <div>1955</div>
+                    <div>{coalInfo?.yearCoal}</div>
                     <div>本年等效碳排(kg)</div>
                   </div>
                 </div>
@@ -479,17 +458,18 @@ export default function Index() {
           </Titlelayout>
         </TopBox>
         <FotterBox>
-          <Titlelayout title={'逆变器'} extra={
+          <Titlelayout title={'逆变器'} layout="flex" extra={
             <Header>
               <div style={{ marginRight: "16px" }}>
-                <Checkbox indeterminate={indeterminateAll} checked={checkedAll} onChange={allChagne}>全部</Checkbox>
-                <Checkbox indeterminate={indeterminateOnline} checked={checkedOnline} onChange={onlineChagne}>在线</Checkbox>
-                <Checkbox indeterminate={indeterminateOffline} checked={checkedOffline} onChange={offlineChagne}>离线</Checkbox>
+                <Radio.Group options={states} value={curstate} onChange={(e)=>{
+                  setCurstate(e.target.value)
+                }}  optionType="button"
+        buttonStyle="solid"></Radio.Group>                
               </div>
             </Header>}>
 
             <div className='infoBox3'>
-              {inverterData?.map((item, index) => (
+              {filtrlist?.map((item, index) => (
                 <div className='box' key={index} onClick={() => toDevicePage(item)} >
                   <div className={`title ${item.status == 1 ? 'online' : 'offline'}`}>
                     {item.name} ({item.sn})
@@ -506,18 +486,21 @@ export default function Index() {
                       </div>
                     </div>
                     <div className='bottom'>
-                      <div><span className='name'>实时发电功率(kW)</span><div className='num'>{item.kw}</div></div>
-                      <div><span className='name'>当日发电量(kWh)</span><div className='num'>{item.kwh}</div></div>
+                      <div><span className='name'>实时发电功率(kW)</span><div className='num'>{item.curPower}</div></div>
+                      <div><span className='name'>当日发电量(kWh)</span><div className='num'>{item.curGeneration}</div></div>
                     </div>
                   </div>
                 </div>))}
             </div>
           </Titlelayout>
 
-          <Titlelayout title={'光伏发电量趋势'} extra={
-            <Header>
-              <div style={{ marginRight: "16px" }}>
-                <Select defaultValue="1" style={{ width: 96, marginRight: 16 }} onChange={changeTime}
+          <Titlelayout title={'光伏发电量趋势'} layout="flex" extra={
+            <Header> 
+                <Form form={form} layout='inline'>
+                  <Space size={16}> 
+                  <Form.Item name="type">
+                <Select defaultValue="1" style={{ width: 96}} 
+                  onChange={getTrend}
                   options={[
                     { value: '1', label: '日', },
                     { value: '2', label: '月', },
@@ -525,30 +508,44 @@ export default function Index() {
                     // { value: '4', label: '自定义' },
                   ]}
                 />
-                {params.type == 1 ? <DatePicker style={{ width: 240 }} onChange={onChangeDate} defaultValue={moment(today)} disabledDate={disabledDate} /> :
-                  params.type == 2 ? <DatePicker style={{ width: 240 }} onChange={onChangeDate} defaultValue={moment(tmonth)} picker='month' disabledDate={disabledDate} /> :
-                    params.type == 3 ? <DatePicker style={{ width: 240 }} onChange={onChangeDate} picker='year' defaultValue={moment(tyear)} disabledDate={disabledDate} /> : null
-                  // <RangePicker style={{ width: 240 }} onChange={onChangeDate} defaultValue={[moment(today), moment(today)]} disabledDate={disabledDate} />
-                }
-              </div>
-              <Radio.Group
+                </Form.Item>
+                <Form.Item shouldUpdate={(cur, pre)=>cur.type!=pre.type} noStyle>
+                 {
+                  ({getFieldValue})=> {
+                     const type= getFieldValue('type') 
+                     const picker = {
+                      1:"date",
+                      2: "month",
+                      3: "year",
+                     }[type]
+                      return ( 
+                        <Form.Item name="date" initialValue={moment()} >
+                          <DatePicker picker={picker} style={{ width: 240 }} onChange={getTrend}   disabledDate={disabledDate} />
+                        </Form.Item> 
+                      )
+                  }
+                 }
+                </Form.Item>
+                <Form.Item name="mode" initialValue="1">
+                <Radio.Group
                 block
                 options={options}
                 optionType="button"
                 buttonStyle="solid"
-                value={state.timeType}
-                onChange={(e) => {
-                  state.timeType = e.target.value
-                }}
-                style={{ marginRight: "16px" }}
+                onChange={getTrend}
               />
-              <CustButtonT text="export" src='export' onClick={onExport} disabled={state.timeType == 1} />
+                </Form.Item> 
+              <CustButtonT text="export" src='export' onClick={onExport} disabled={mode == 1} />
+              </Space>
+              </Form>
             </Header>
           }>
-            {state.timeType == 1 ?
-              <SolarPowerGenerationChart /> :
+            {mode == 1 ?
+               <div style={{flex:1, display: "flex"}}>
+                <Ichart  {...weatherOpt} />
+               </div> :
               <UserTable
-                scroll={{ y: 280 }} columns={columns} dataSource={tabledata}
+                scroll={{ y: 280 }} columns={columns} dataSource={[]}
 
                 summary={(pageData) => {
                   let eleTotal = 0

@@ -18,6 +18,7 @@ import Microcomputer from './microcomputer' //微机保护
 import AirConditioning from './airConditioning' //空调
 import Light from './light' //空调
 import IntelligentControl from './intelligentControl' //智能控制
+import Pv from './pv' //光伏设备
 import { Monitoring } from '@api/api.js'
 import { message } from 'antd'
 const { DeviceTypeManager: { AllDeviceStyle, }, DeviceManager: { OneLevel } } = Monitoring
@@ -68,6 +69,7 @@ export default function Index() {
             i == 13 ? arr[i] = <Shock deviceStyle={k.deviceStyle} name={k.name} /> :
               i == 14 ? arr[i] = <Fiber deviceStyle={k.deviceStyle} name={k.name} /> :
                 i == 18 ? arr[i] = <Flowmeter deviceStyle={k.deviceStyle} name={k.name} /> :
+                i == 19 ? arr[i] = <Pv deviceStyle={k.deviceStyle} name={k.name} /> :
                   i == 20 ? arr[i] = <Microcomputer deviceStyle={k.deviceStyle} name={k.name} /> :
                     i == 21 ? arr[i] = <AirConditioning deviceStyle={k.deviceStyle} name={k.name} /> :
                       i == 22 ? arr[i] = <Light deviceStyle={k.deviceStyle} name={k.name} /> :

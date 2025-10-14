@@ -11,7 +11,7 @@ import { UpdateEnergyImage } from '@api/api.js'
 import { Cspin } from "@com/comstyled"
 import { isObject } from '@com/usehandler'
 import { AreaSelect } from "@com/useSerach/comhead"
-import { useQueryStationList, useGetAreaImage, useGetAreaHots, useUpdateAreaImageAndHot } from './api'
+import { useQueryGirdCabientList, useGetAreaImage, useGetAreaHots, useUpdateAreaImageAndHot } from './api'
 const Ctag = styled(Tag)`
   &&{
     position: absolute;
@@ -97,7 +97,7 @@ export default function Index() {
    const [area, setArea] = useState([])
    const [curarea, setCurarea] = useState(null)
    const [list, setList] = useState([])
-   const [stationData, setStationData] = useState([]);
+   const [cabientData, setCabientData] = useState([]);
    const [stationId, setStationId] = useState();
    const [areaHotsData, setAreaHotsData] = useState();
    const [areaId, setAreaId] = useState(null);
@@ -105,34 +105,33 @@ export default function Index() {
       setEnergyImage(e)
    }
    // 获取站点数据函数
-   const RuntimStation = async () => {
+   const RuntimeCabient = async () => {
       if (projectId == undefined) return
       try {
          const params = {
             projectId,
             areaId,
-            pageNum: 1,
+            stationId: 0,
          }
 
-         let { success, data, total, errMsg } = await useQueryStationList(params)
+         let { success, data, total, errMsg } = await useQueryGirdCabientList(params)
 
          if (success) {
             // 检查数据结构是否正确
             if (data && Array.isArray(data) && data.length > 0) {
-               setStationData(data)
-               console.log(data[0])
+               setCabientData(data)
                setStationId(data[0].id)
             } else {
-               setStationData([])
+               setCabientData([])
                setStationId()
             }
          } else {
-            setStationData([])
+            setCabientData([])
 
             setStationId()
          }
       } catch (error) {
-         setStationData([])
+         setCabientData([])
 
          setStationId()
       }
@@ -157,7 +156,7 @@ export default function Index() {
             if (value.c && value.checked) {
                let [x, y] = value.c.split(',');
                if (parseFloat(x) && parseFloat(y)) {
-                  gridTiedCabinetHots.push({ gridTiedCabinetId: key, hotX: x, hotY: y, hotC: value.r })
+                  gridTiedCabinetHots.push({ gridTiedCabinetId: parseInt(key), hotX: x, hotY: y, hotC: value.r })
                }
             }
          }
@@ -218,7 +217,7 @@ export default function Index() {
    }
    const GetAreaHotsData = async () => {
       try {
-
+         console.log(cabientData)
          if (projectId == undefined || areaId == undefined) return
          setSpinning(true)
          let { success, data } = await useGetAreaHots({ projectId, areaId })
@@ -248,18 +247,18 @@ export default function Index() {
 
    }
    const getPoint = (e) => {
-      if (!Number.isInteger(curarea?.gridTiedCabinetId)) return message.warning('请点击需要设置的区域')
+      if (!Number.isInteger(curarea?.id)) return message.warning('请点击需要设置的区域')
       let { offsetX, offsetY } = e.nativeEvent
-      let { gridTiedCabinetId, name } = curarea
+      let { id, name } = curarea
       let tip = {
-         id: gridTiedCabinetId,
+         id: id,
          name,
          left: offsetX,
          top: offsetY
       }
       let arr = [...list]
       console.log(arr)
-      let index = arr.findIndex(l => l.id == curarea.gridTiedCabinetId)
+      let index = arr.findIndex(l => l.id == curarea.id)
 
 
       if (index >= 0) {
@@ -270,7 +269,7 @@ export default function Index() {
          arr = [...arr, tip]
       }
       setList(arr)
-      form.setFieldValue([curarea.gridTiedCabinetId, 'c'], [offsetX, offsetY].join(','))
+      form.setFieldValue([curarea.id, 'c'], [offsetX, offsetY].join(','))
 
    }
    const onset = (f, ar) => {
@@ -278,7 +277,7 @@ export default function Index() {
       if (f.target.checked) {
          setCurarea(ar)
       } else {
-         form.setFieldValue([ar.gridTiedCabinetId, 'c'], null)
+         form.setFieldValue([ar.id, 'c'], null)
       }
    }
 
@@ -286,12 +285,13 @@ export default function Index() {
       if (!projectId) return
       GetAreaImage()
       GetAreaHotsData()
+      RuntimeCabient()
       // getArea()
    }, [areaId])
-   useEffect(() => {
-      if (!projectId) return
-      RuntimStation()
-   }, [projectId])
+   // useEffect(() => {
+   //    if (!projectId) return
+   //    RuntimeCabient()
+   // }, [projectId])
    useEffect(() => {
       if (oneLevel && Array.isArray(oneLevel) && oneLevel.length > 0) {
          const filter = oneLevel?.filter?.(f => f.id != 0);
@@ -316,7 +316,7 @@ export default function Index() {
                   <Select
                      style={{ width: "210px" }}
                      onChange={stationChange}
-                     options={stationData}
+                     options={cabientData}
                      value={stationId}
                      fieldNames={{
                         label: "name",
@@ -336,7 +336,7 @@ export default function Index() {
                </div>
                <div className='tip'>（图片大小为: 1368*800 png或jpg 格式,不超过800KB）</div>
             </div>
-            <Divider>设置图片热点区域</Divider>
+            <Divider>设置图片热点区域-</Divider>
             <div className='setwrap'>
 
                <div className="set">
@@ -346,15 +346,16 @@ export default function Index() {
                <div className='point'>
                   <Form form={form}>
                      {
-                        areaHotsData?.map(a =>
-                           <Form.Item label={a.name} key={a.gridTiedCabinetId}>
-                              <Space><Form.Item name={[a.gridTiedCabinetId, 'c']} noStyle>
-                                 <Input style={{ width: '80px' }} readOnly />
-                              </Form.Item>
-                                 <Form.Item name={[a.gridTiedCabinetId, 'r']} initialValue={40} noStyle>
+                        cabientData?.map(a =>
+                           <Form.Item label={a.name} key={a.id}>
+                              <Space>
+                                 <Form.Item name={[a.id, 'c']} noStyle>
+                                    <Input style={{ width: '80px' }} readOnly />
+                                 </Form.Item>
+                                 <Form.Item name={[a.id, 'r']} initialValue={40} noStyle>
                                     <InputNumber min={16} />
                                  </Form.Item>
-                                 <Form.Item name={[a.gridTiedCabinetId, 'checked']} valuePropName="checked" noStyle>
+                                 <Form.Item name={[a.id, 'checked']} valuePropName="checked" noStyle>
                                     <Checkbox onChange={(f) => onset(f, a)} />
                                  </Form.Item>
                               </Space>

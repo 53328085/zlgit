@@ -1,4 +1,4 @@
-import React, { useRef, forwardRef, useImperativeHandle, useState, useMemo, useEffect } from 'react'
+import React, { useRef, forwardRef, useImperativeHandle, useState, useMemo, useEffect, useCallback } from 'react'
 import { Space, Input, message, Row, Col, InputNumber, Button, Form, Select, Radio } from "antd"
 import { LeftOutlined, RightOutlined } from "@ant-design/icons"
 import { useSelector, useDispatch } from 'react-redux'
@@ -13,8 +13,7 @@ import { unbindcol, bindcol } from './data'
 import {
   useOverview, useQueryStationList, useGetInverterList,
   useGetAreaInverterList, useAddGridTiedCabinet,
-  useUpdateGridTiedCabinet, useAddACsConfig,
-  useRemoveACsConfig,
+  useUpdateGridTiedCabinet,
 } from './api'
 
 export default forwardRef(function Index({ projectId, updata, modalTitle, curPage, editData }, ref) {
@@ -24,7 +23,6 @@ export default forwardRef(function Index({ projectId, updata, modalTitle, curPag
   const [formTop] = Form.useForm()
   const [form] = Form.useForm()
   const [formed] = Form.useForm()
-  const [treeId, setTreeId] = useState([])
 
   const [deviceData, setDeviceData] = useState([])
   const [stationData, setStationData] = useState([])
@@ -41,7 +39,9 @@ export default forwardRef(function Index({ projectId, updata, modalTitle, curPag
   const [editModeData, setEditModeData] = useState(null)
   // 存储已选中表格的数据（用于新增模式）
   const [bindTableData, setBindTableData] = useState([])
-
+  // 编辑模式下已选中数据的本地暂存（未提交到服务器前）
+  // const [editBindTableData, setEditBindTableData] = useState([])
+  const editBindTableData = useRef([])
   // 获取设备数据函数
   const RuntimeDevice = async () => {
     if (!projectId || !areaId) {
@@ -88,7 +88,8 @@ export default forwardRef(function Index({ projectId, updata, modalTitle, curPag
       message.error('网络异常，无法获取设备数据')
     }
   }
-
+  const [unbindSelectedKeys, setUnbindSelectedKeys] = useState([])
+  const [bindSelectedKeys, setBindSelectedKeys] = useState([])
   // 获取站点数据函数
   const RuntimStation = async () => {
     if (projectId == undefined || areaId == undefined) return
@@ -148,12 +149,17 @@ export default forwardRef(function Index({ projectId, updata, modalTitle, curPag
 
       let { success, data, total, errMsg } = await useGetAreaInverterList(params)
       if (success && Array.isArray(data)) {
-        // 过滤掉已选中的逆变器
-        const filteredData = data.filter(item => !selectedInverterIds.includes(item.deviceId))
+        // 使用函数参数获取最新的 selectedInverterIds
+        // const currentSelectedIds = selectedInverterIds
+        // const filteredData = data.filter(item => !currentSelectedIds.includes(item.deviceId))
+        // return {
+        //   list: filteredData,
+        //   total: Number.isInteger(total) ? total : 0
+        // }
         return {
-          list: filteredData,
+          list: data, // 直接返回所有数据
           total: Number.isInteger(total) ? total : 0
-        }
+        };
       } else {
         if (!success) message.warning(errMsg || "数据出错")
         return {
@@ -170,78 +176,81 @@ export default forwardRef(function Index({ projectId, updata, modalTitle, curPag
     }
   }
 
-  // 获取已绑定的逆变器列表（编辑模式使用）
+  // 获取已绑定的逆变器列表（完全重写）
+  // 获取已绑定的逆变器列表（重构后：编辑模式完全本地处理，不调用接口）
   const getBind = async ({ current, pageSize }, formData = {}) => {
     try {
-      if (editModeData == null) return
-      console.log(editModeData)
-      // 新增模式下返回空数据，因为我们用本地状态管理
+      const { alike = "" } = formData;
+
+      // 1. 新增模式：基于本地 bindTableData（原逻辑保留，无接口调用）
       if (modalTitle === '新增光伏并网柜') {
+        const filteredList = bindTableData.filter(item =>
+          (item.name || '').includes(alike) || (item.sn || '').includes(alike)
+        );
+        const paginatedList = filteredList.slice((current - 1) * pageSize, current * pageSize);
         return {
-          list: bindTableData, // 使用本地状态数据
-          total: bindTableData.length
-        }
+          list: paginatedList,
+          total: filteredList.length
+        };
       }
 
-      let fag = Number.isInteger(parseInt(projectId)) && Number.isInteger(parseInt(areaId))
-      if (!fag) return
+      // 2. 编辑模式：强制使用本地 editBindTableData.current，完全不调用接口
+      if (modalTitle === '编辑光伏并网柜') {
+        // 从本地缓存获取数据（初始化时已加载，后续操作均更新本地）
+        const localData = editBindTableData.current || [];
 
-      const { alike = "" } = formData
-      let params = {
-        projectId,
-        pageSize,
-        pageNum: current,
-        gridTiedCabinetId: editModeData?.id,
-        alike
+        // 本地搜索过滤
+        const filteredList = localData.filter(item =>
+          (item.name || '').includes(alike) || (item.sn || '').includes(alike)
+        );
+
+        // 本地分页处理
+        const startIndex = (current - 1) * pageSize;
+        const endIndex = startIndex + pageSize;
+        const paginatedList = filteredList.slice(startIndex, endIndex);
+
+        // 仅返回本地数据，不发起任何接口请求
+        return {
+          list: paginatedList,
+          total: filteredList.length
+        };
       }
 
-      let { success, data, total, errMsg } = await useGetInverterList(params)
-      if (success && Array.isArray(data)) {
-        // 更新已选中的逆变器ID列表
-        const selectedIds = data.map(item => item.deviceId)
-        setSelectedInverterIds(selectedIds)
-
-        return {
-          list: data,
-          total: Number.isInteger(total) ? total : 0
-        }
-      } else {
-        if (!success) message.warning(errMsg || "数据出错")
-        return {
-          list: [],
-          total: 0
-        }
-      }
+      // 其他情况（理论不会进入）
+      return { list: [], total: 0 };
     } catch (error) {
-      console.log(error)
-      return {
-        list: [],
-        total: 0
-      }
+      console.log('getBind 本地处理异常:', error);
+      return { list: [], total: 0 };
     }
-  }
-
-  const { tableProps, search } = useAntdTable(getUnBind, {
+  };
+  const { tableProps, search, refresh: refreshUnbind } = useAntdTable(getUnBind, {
     form,
     defaultPageSize: 14,
-    refreshDeps: [areaId]
+    refreshDeps: [areaId, projectId, selectedInverterIds] // 只保留必要的依赖
+    // 移除 selectedInverterIds，因为它在函数内部已经可以获取到最新值
   })
   const { submit } = search
 
   const { tableProps: tablePropsed, run: runed, search: searched, refresh: refreshed } = useAntdTable(getBind, {
     form: formed,
     defaultPageSize: 14,
-    refreshDeps: [projectId, treeId, areaId, editModeData, bindTableData] // 添加bindTableData依赖
+    manual: true, // 改为手动触发
+    refreshDeps: [] // 清空依赖，改为手动控制
   })
 
   const onOpen = async () => {
     try {
       console.log(Object.keys(editData).length, editData)
       mRef.current.onOpen()
+
       // 重置状态
-      setSelectedInverterIds([])
-      setBindTableData([])
-      setEditModeData(null)
+      setSelectedInverterIds([]);
+      setBindTableData([]);
+      // setEditBindTableData([]); // 清空编辑模式本地暂存
+      editBindTableData.current = []
+      setEditModeData(null);
+      setUnbindSelectedKeys([]);
+      setBindSelectedKeys([]); // 清空已选表格选择状态
 
       // 设置表单默认值
       formTop.setFieldsValue({
@@ -253,142 +262,193 @@ export default forwardRef(function Index({ projectId, updata, modalTitle, curPag
       })
 
       // 如果是编辑模式，设置编辑数据
-      if (modalTitle == '编辑光伏并网柜' && editData && Object.getOwnPropertyNames(editData).length > 0) {
+      if (modalTitle === '编辑光伏并网柜' && editData && Object.getOwnPropertyNames(editData).length > 0) {
         setEditModeData(editData)
         formTop.setFieldsValue(editData)
+        setTimeout(() => {
+          loadTableData();
+        }, 100);
       }
-
-      setTimeout(() => {
-        if (areaId) {
-          RuntimeDevice()
-          RuntimStation()
-        }
-      }, 100)
     } catch (error) {
       console.log(error)
     }
   }
+  // 新增表格数据加载方法
+  // 新增表格数据加载方法（优化：编辑模式仅初始化加载一次接口）
+  const loadTableData = useCallback(() => {
+    // 加载未绑定表格（左边表格，不影响撤回逻辑）
+    refreshUnbind();
 
-  // 添加 / 撤销逆变器
-  const unbindkey = useRef([])
+    if (modalTitle === '新增光伏并网柜') {
+      // 新增模式：加载本地空数据
+      searched.submit();
+    } else if (modalTitle === '编辑光伏并网柜' && editModeData?.id) {
+      // 编辑模式：仅初始化时调用一次接口，后续不再调用
+      if (editBindTableData.current.length === 0) { // 仅本地无数据时加载
+        const fetchInitialData = async () => {
+          try {
+            const params = {
+              projectId,
+              pageSize: 1000, // 一次性加载所有数据（避免分页）
+              pageNum: 1,
+              gridTiedCabinetId: editModeData.id,
+              alike: ""
+            };
+            const { success, data, total } = await useGetInverterList(params);
+            if (success && Array.isArray(data)) {
+              // 初始化本地缓存（后续操作基于此数据，不调用接口）
+              editBindTableData.current = data;
+              setSelectedInverterIds(data.map(item => item.deviceId));
+              // 加载完成后触发表格渲染
+              searched.submit();
+            }
+          } catch (err) {
+            console.log('编辑模式初始化数据失败:', err);
+            editBindTableData.current = []; // 异常时置空，避免后续报错
+            searched.submit();
+          }
+        };
+        fetchInitialData();
+      } else {
+        // 本地已有数据，直接渲染（不调用接口）
+        searched.submit();
+      }
+    }
+  }, [refreshUnbind, searched, modalTitle, editModeData, projectId]);
+
   const rowSelection = {
+    selectedRowKeys: unbindSelectedKeys,
     onChange: (selectedRowKeys, selectedRows) => {
-      unbindkey.current = selectedRowKeys
-    },
-    type: "checkbox",
-  };
+      // 获取当前已选中表格的数据
+      const currentBindData = modalTitle === '新增光伏并网柜' ? bindTableData : editBindTableData.current || []
 
-  const bindkey = useRef([])
+      // 过滤掉已经在已选中表格中的数据
+      const filteredSelectedRows = selectedRows.filter(row =>
+        !currentBindData.some(bindItem => bindItem.deviceId === row.deviceId)
+      )
+
+      const filteredSelectedKeys = filteredSelectedRows.map(row => row.deviceId)
+
+      // 如果有被过滤掉的，提示用户
+      if (filteredSelectedRows.length < selectedRows.length) {
+        message.warning('部分选中的逆变器已存在，已自动过滤')
+      }
+
+      setUnbindSelectedKeys(filteredSelectedKeys)
+    },
+    getCheckboxProps: (record) => ({
+      disabled: selectedInverterIds.includes(record.deviceId) // 禁用已选中的行
+    }),
+    type: "checkbox",
+  }
+
+  // 简化刷新函数
+  const refreshTables = useCallback(() => {
+    form.resetFields(['alike']);
+    formed.resetFields(['alike']);
+    // 只重置搜索条件，不强制刷新数据
+    setBindSelectedKeys([]);
+    setUnbindSelectedKeys([]);
+  }, [form, formed]);
   const rowSelectioned = {
+    selectedRowKeys: bindSelectedKeys,
     onChange: (selectedRowKeys, selectedRows) => {
-      bindkey.current = selectedRowKeys
+      setBindSelectedKeys(selectedRowKeys)
     },
     type: "checkbox",
-  };
+  }
 
   // 添加逆变器到已选中列表
   const addbind = async (type) => {
     try {
-      if (type === 0) { // 添加操作
-        if (unbindkey?.current?.length === 0) {
+      if (type === 0) { // 添加操作（保持原逻辑不变，仅修改撤销逻辑）
+        if (unbindSelectedKeys.length === 0) {
           return message.warning("请选择未选中的逆变器")
         }
 
         // 获取选中的逆变器数据
         const selectedInverters = tableProps.dataSource?.filter(item =>
-          unbindkey.current.includes(item.deviceId)
+          unbindSelectedKeys.includes(item.deviceId)
         ) || []
 
         if (selectedInverters.length === 0) {
           return message.warning("未找到选中的逆变器数据")
         }
 
-        // 获取当前已选中表格的数据
-        const currentBindData = modalTitle === '新增光伏并网柜' ? bindTableData : tablePropsed.dataSource || []
-
-        // 过滤掉已存在的设备（根据deviceId去重）
-        const newInverters = selectedInverters.filter(newItem =>
-          !currentBindData.some(existingItem => existingItem.deviceId === newItem.deviceId)
-        )
-
-        if (newInverters.length === 0) {
-          message.warning("选中的逆变器已在已选中列表中")
-          // 清空选择
-          unbindkey.current = []
-          if (rowSelection.onChange) {
-            rowSelection.onChange([], [])
-          }
-          return
+        // 编辑模式：更新本地暂存数据（去重）
+        if (modalTitle === '编辑光伏并网柜') {
+          const newInverters = selectedInverters.filter(newItem =>
+            !editBindTableData.current.some(existItem => existItem.deviceId === newItem.deviceId)
+          );
+          editBindTableData.current = [...editBindTableData.current, ...newInverters];
+          // 更新已选ID（去重）
+          const newSelectedIds = Array.from(new Set([
+            ...selectedInverterIds,
+            ...newInverters.map(item => item.deviceId)
+          ]));
+          setSelectedInverterIds(newSelectedIds);
+        } else if (modalTitle === '新增光伏并网柜') {
+          // 新增模式：原有逻辑保留
+          const updatedBindData = [...bindTableData, ...selectedInverters];
+          setBindTableData(updatedBindData);
+          const newSelectedIds = Array.from(new Set([
+            ...selectedInverterIds,
+            ...selectedInverters.map(item => item.deviceId)
+          ]));
+          setSelectedInverterIds(newSelectedIds);
         }
 
-        // 更新数据
-        if (modalTitle === '新增光伏并网柜') {
-          // 新增模式：更新本地状态
-          const updatedBindData = [...currentBindData, ...newInverters]
-          setBindTableData(updatedBindData)
-        } else {
-          // 编辑模式：需要调用接口，这里先更新本地状态以便立即显示
-          const updatedBindData = [...currentBindData, ...newInverters]
-          // 这里可以调用接口进行绑定
-        }
-
-        // 更新已选中的逆变器ID列表
-        const newSelectedIds = [...selectedInverterIds, ...newInverters.map(item => item.deviceId)]
-        setSelectedInverterIds(newSelectedIds)
-
-        // 清空选择
-        unbindkey.current = []
-        if (rowSelection.onChange) {
-          rowSelection.onChange([], [])
-        }
-
-        // 刷新未选中表格
-        // refresh()
-
-        // 刷新已选中表格
-        if (modalTitle === '新增光伏并网柜') {
-          // 新增模式手动触发表格更新
-          runed(
-            { current: 1, pageSize: 14 },
-            formed.getFieldsValue()
-          )
-        } else {
-        }
-
-        // message.success(`成功添加 ${newInverters.length} 个逆变器`)
-
-      } else if (type === 1) { // 撤销操作
-        if (bindkey?.current?.length === 0) {
+        // 清空选择+刷新已选中表格（本地数据）
+        setUnbindSelectedKeys([]);
+        searched.submit(); // 仅触发本地数据渲染，不调用接口
+      } else if (type === 1) { // 撤销操作（核心修改部分）
+        if (bindSelectedKeys.length === 0) {
           return message.warning("请选择已选中的逆变器")
         }
 
-        // 更新数据
-        if (modalTitle === '新增光伏并网柜') {
-          // 新增模式：更新本地状态
-          const updatedBindData = bindTableData.filter(item => !bindkey.current.includes(item.deviceId))
-          setBindTableData(updatedBindData)
+        // 1. 获取当前已选中的本地数据（新增用state，编辑用useRef）
+        const currentBoundData = modalTitle === '编辑光伏并网柜'
+          ? editBindTableData.current
+          : bindTableData;
+
+        // 2. 过滤掉“要撤销的选中项”，得到更新后的本地数据
+        const updatedBoundData = currentBoundData.filter(item =>
+          !bindSelectedKeys.includes(item.deviceId)
+        );
+
+        // 3. 更新本地数据存储（不调用接口）
+        if (modalTitle === '编辑光伏并网柜') {
+          // 编辑模式：直接修改useRef的current（本地暂存，不触发重渲染）
+          editBindTableData.current = updatedBoundData;
         } else {
-          // 编辑模式：需要调用接口，这里先更新本地状态
-          const updatedBindData = tablePropsed.dataSource.filter(item => !bindkey.current.includes(item.deviceId))
-          // 这里可以调用接口进行解绑
+          // 新增模式：更新state（触发组件重渲染，表格自动读取新数据）
+          setBindTableData(updatedBoundData);
         }
 
-        // 从已选中的逆变器ID列表中移除
-        const newSelectedIds = selectedInverterIds.filter(id => !bindkey.current.includes(id))
-        setSelectedInverterIds(newSelectedIds)
+        // 4. 更新“已选中逆变器ID列表”（移除被撤销的ID）
+        const updatedSelectedIds = selectedInverterIds.filter(id =>
+          !bindSelectedKeys.includes(id)
+        );
+        setSelectedInverterIds(updatedSelectedIds);
 
-        // 清空选择
-        bindkey.current = []
-        if (rowSelectioned.onChange) {
-          rowSelectioned.onChange([], [])
+        // 5. 清空已选中表格的选择状态
+        setBindSelectedKeys([]);
+
+        // 6. 编辑模式特殊处理：手动触发表格重新读取本地数据
+        // （因useRef变化不触发重渲染，需调用searched.submit()让getBind读取更新后的current）
+        if (modalTitle === '编辑光伏并网柜') {
+          const currentSearchParams = formed.getFieldsValue(); // 保留当前搜索条件
+          searched.submit(currentSearchParams); // 仅处理本地数据，不调用接口
         }
-        // message.success(`成功撤销 ${bindkey.current.length} 个逆变器`)
+
+        // 关键：不调用任何后端接口，不刷新未选中表格（左边表格保持不变）
       }
     } catch (error) {
       console.error('操作逆变器失败:', error)
       message.error('操作失败，请重试')
     }
   }
+
 
   // 保存并网柜配置
   const onOk = async () => {
@@ -402,7 +462,12 @@ export default forwardRef(function Index({ projectId, updata, modalTitle, curPag
         }
 
         const formData = formTop.getFieldsValue()
-
+        let deviceIds = [];
+        console.log(deviceIds)
+        deviceIds = modalTitle === '编辑光伏并网柜'
+          ? editBindTableData.current.map(item => item.deviceId)
+          : selectedInverterIds
+        console.log(deviceIds, editBindTableData.current)
         // 准备请求参数
         const params = {
           areaId: formData.areaId,
@@ -411,12 +476,11 @@ export default forwardRef(function Index({ projectId, updata, modalTitle, curPag
           no: formData.no,
           sn: selectedMeter.sn || selectedMeter.meterSn,
           address: formData.address,
-          deviceIds: selectedInverterIds
+          deviceIds: deviceIds
         }
         if (modalTitle !== '新增光伏并网柜' && editModeData?.id) {
           params.id = editModeData.id
         }
-        console.log('保存参数:', params)
 
         // 这里调用实际的保存接口
         const apiFunction = modalTitle === '新增光伏并网柜' ? useAddGridTiedCabinet : useUpdateGridTiedCabinet
@@ -424,8 +488,8 @@ export default forwardRef(function Index({ projectId, updata, modalTitle, curPag
           { projectId }, params)
         if (success) {
           message.success(modalTitle === '新增光伏并网柜' ? '新增成功' : '编辑成功')
-          mRef.current.onCancel()
           updata({ current: curPage, pageSize: 14 })
+          if (modalTitle != '新增光伏并网柜') return mRef.current.onCancel()
         } else {
           message.warning(errMsg || "保存失败")
         }
@@ -447,6 +511,8 @@ export default forwardRef(function Index({ projectId, updata, modalTitle, curPag
     if (areaId) {
       RuntimeDevice()
       RuntimStation()
+      // 园区变化时重新加载表格数据
+      loadTableData()
     } else {
       setDeviceData([])
       setSelectedMeter(null)
@@ -462,14 +528,18 @@ export default forwardRef(function Index({ projectId, updata, modalTitle, curPag
 
   // 初始化时设置默认站点
   useEffect(() => {
+    console.log(Object.keys(editData || {}).length === 0, editData)
     if (stationData.length > 0 && Object.keys(editData || {}).length === 0) {
       formTop.setFieldsValue({ stationId: stationData[0].id })
+    } else if (stationData.length > 0 && !Object.keys(editData || {}).length === 0) {
+      formTop.setFieldsValue({ stationId: editData.id })
     }
   }, [stationData, formTop, areaId, editData])
 
   return (
     <div>
-      <CModal title={modalTitle} onOk={onOk} custft={modalTitle == '新增光伏并网柜'} width={1380} mold="cust" ref={mRef} key="cabinet">
+      <CModal
+        closable={false} title={modalTitle} onOk={onOk} custft={modalTitle == '新增光伏并网柜'} width={1380} mold="cust" ref={mRef} key="cabinet">
         <Bindwrap>
           <div className='top'>
             <Form

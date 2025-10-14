@@ -15,8 +15,9 @@ const fs = {
 }
 
 const Divorder = styled.div`
-  height: 140px;
+ //height: 140px;
   display: flex;
+  height: 100%;
 `
 
 export default function DefaultHome(props){
