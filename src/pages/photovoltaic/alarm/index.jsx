@@ -7,6 +7,7 @@ import moment from 'moment'
 import Titlelayout from '@com/titlelayout'
 import Usetable from '@com/useTable'
 import { StorageAlarmRuntime } from '@api/api'
+import { useQueryWarningStatistics, useQueryAlarmDetails } from './api';
 import imgurl from './icon'
 import { ExportExcel } from '@com/useButton'
 import Pagecount from "@com/pagecontent";
@@ -99,6 +100,12 @@ const columns = [
     align: 'center'
   },
   {
+    title: ' 设备编号',
+    dataIndex: 'sn',
+    key: 'sn',
+    align: 'center'
+  },
+  {
     title: '设备型号',
     dataIndex: 'category',
     key: 'category',
@@ -134,16 +141,17 @@ const columns = [
 ]
 export default function Index() {
   let { exparams } = useOutletContext()
-  let { stationName, projectId, areaId } = exparams
-  const condition = Number.isInteger(projectId) && Number.isInteger(areaId) && stationName?.value
-  console.log(exparams);
+  let { stationName, projectId, photovoltaicPowerStation, rangePicker } = exparams || { photovoltaicPowerStation: { key: '' } }
+  const { value: stationId } = photovoltaicPowerStation || { value: NaN }
+  const condition = Number.isInteger(projectId) && Number.isInteger(stationId)
+  // console.log(exparams, rangePicker, stationId);
   const [form] = Form.useForm()
   const [statistics, setStatistics] = useState({})
   const [total, setTotal] = useState(0)
   const getData = async () => {
 
     try {
-      let { success, data } = await StorageAlarmRuntime.alarmStatistic(projectId, areaId, stationName?.value)
+      let { success, data } = await useQueryWarningStatistics({ projectId, stationId })
       success && setStatistics({ ...data })
       !success && setStatistics({})
     } catch (error) {
@@ -153,22 +161,19 @@ export default function Index() {
   }
 
 
-  const QueryReports = ({ current, pageSize }, form) => {
-    if (!condition) return;
-    let { time, ...rest } = form
-    let start = time[0].format('YYYY-MM-DD')
-    let end = time[1].format('YYYY-MM-DD')
+  const QueryReports = ({ current, pageSize }) => {
+    if (!condition) return
+    let start = rangePicker[0].format('YYYY-MM-DD')
+    let end = rangePicker[1].format('YYYY-MM-DD')
     let params = {
       pageNum: current,
       pageSize,
       start,
       end,
       projectId,
-      areaId,
-      siteId: stationName?.value,
-      ...rest
+      stationId
     }
-    return StorageAlarmRuntime.QueryStorageAlarmByPage(params).then(res => {
+    return useQueryAlarmDetails({}, params).then(res => {
       let { success, data, total } = res
       setTotal(total)
       if (success && Array.isArray(data) && data.length > 0) {
@@ -188,19 +193,12 @@ export default function Index() {
 
   }
   const { tableProps, search, params } = useAntdTable(QueryReports, {
-    form,
     defaultParams: [{ pageSize: 14, pageNum: 1 }, {
       start: moment().subtract(7, 'day').format('YYYY-MM-DD'),
       end: moment().format('YYYY-MM-DD'),
       projectId,
-      areaId,
-      siteId: stationName?.value,
-      content: "",
-      deviceType: 0,
-      level: 0
-
     }],
-    refreshDeps: [projectId, areaId, stationName],
+    refreshDeps: [projectId, stationId, rangePicker],
     manual: false,
   })
 
@@ -209,7 +207,7 @@ export default function Index() {
 
   const onExport = useCallback(() => {
     let formData = form.getFieldsValue()
-    return QueryReports({ current: 1, pageSize: total }, formData)
+    return QueryReports({ current: 1, pageSize: total })
   }, [total])
 
   useEffect(() => {

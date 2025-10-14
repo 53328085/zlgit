@@ -242,7 +242,7 @@ export default function UseSerach(props) {
     </Item>
   )
   const carbonDateR = (
-    <Item label="" name="" initialValue={[moment().subtract(1, 'months'), moment()]}>
+    <Item label="" name="rangePicker" initialValue={[moment().subtract(1, 'months'), moment()]}>
       <RangePicker />
     </Item>
   )
@@ -419,7 +419,7 @@ export default function UseSerach(props) {
     if (Number.isInteger(AreaID) && Number.isInteger(projectId)) {
       getStation();
     }
-  }, [props.config?.photovoltaicPowerStation, AreaID, projectId])
+  }, [props.config, AreaID, projectId])
   const [powerstationData, setPowerstationData] = useState([]) //光伏电站
   const [cabinetData, setCabinetData] = useState([])//并网柜
   const [InverterData, setInverterData] = useState([])//逆变器
@@ -430,9 +430,8 @@ export default function UseSerach(props) {
         setPowerstationData([...data])
         let { name, id } = data[0]
         form.setFieldValue('photovoltaicPowerStation', { label: name, value: id, })
-
+        console.log(props.config.cabinet)
         props.setexparams({ ...form.getFieldsValue(true) })
-
         if (props.config.cabinet) getCabinet();
       } else {
         setPowerstationData([])
@@ -465,7 +464,7 @@ export default function UseSerach(props) {
         form.setFieldValue('cabinet', { label: null, value: null })
         props.setexparams({ ...form.getFieldsValue(true) })
         if (!success) return message.warning(errMsg || "数据出错")
-        if (data?.length == 0) return message.warning('当前光伏站点不存在并网柜!')
+        if (data?.length == 0 && props.config.cabinet) return message.warning('当前光伏站点不存在并网柜!')
       }
     } catch (error) {
       console.log(error)

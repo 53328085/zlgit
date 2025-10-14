@@ -481,7 +481,6 @@ export default forwardRef(function Index({ projectId, updata, modalTitle, curPag
         if (modalTitle !== '新增光伏并网柜' && editModeData?.id) {
           params.id = editModeData.id
         }
-        console.log('保存参数:', params)
 
         // 这里调用实际的保存接口
         const apiFunction = modalTitle === '新增光伏并网柜' ? useAddGridTiedCabinet : useUpdateGridTiedCabinet
@@ -489,8 +488,8 @@ export default forwardRef(function Index({ projectId, updata, modalTitle, curPag
           { projectId }, params)
         if (success) {
           message.success(modalTitle === '新增光伏并网柜' ? '新增成功' : '编辑成功')
-          mRef.current.onCancel()
           updata({ current: curPage, pageSize: 14 })
+          if (modalTitle != '新增光伏并网柜') return mRef.current.onCancel()
         } else {
           message.warning(errMsg || "保存失败")
         }
@@ -529,14 +528,18 @@ export default forwardRef(function Index({ projectId, updata, modalTitle, curPag
 
   // 初始化时设置默认站点
   useEffect(() => {
+    console.log(Object.keys(editData || {}).length === 0, editData)
     if (stationData.length > 0 && Object.keys(editData || {}).length === 0) {
       formTop.setFieldsValue({ stationId: stationData[0].id })
+    } else if (stationData.length > 0 && !Object.keys(editData || {}).length === 0) {
+      formTop.setFieldsValue({ stationId: editData.id })
     }
   }, [stationData, formTop, areaId, editData])
 
   return (
     <div>
-      <CModal title={modalTitle} onOk={onOk} custft={modalTitle == '新增光伏并网柜'} width={1380} mold="cust" ref={mRef} key="cabinet">
+      <CModal
+        closable={false} title={modalTitle} onOk={onOk} custft={modalTitle == '新增光伏并网柜'} width={1380} mold="cust" ref={mRef} key="cabinet">
         <Bindwrap>
           <div className='top'>
             <Form

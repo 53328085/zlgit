@@ -45,7 +45,7 @@ export default function Index() {
   const [form] = Form.useForm();
   const areaFirstName = useSelector(levelDefaultLabel) || '园区'
   const totalItem = useRef();
-  const curPage = useRef();
+  const curPage = useRef(1); // 初始化页码为1
   const PageSize = 14
   const [stationData, setStationData] = useState([]);
 
@@ -76,14 +76,11 @@ export default function Index() {
       message.error('网络异常，无法获取设备数据')
     }
   }
+
   const getTableData = async ({ current, pageSize }) => {
-    curPage.current = current
-    if (!projectId) return new Promise((resolve) => {
-      resolve({
-        list: [],
-        total: 0
-      })
-    })
+    curPage.current = current; // 更新当前页码
+    if (!projectId) return { list: [], total: 0 };
+
     const { name, stationId } = await form.validateFields()
     const params = {
       projectId,
@@ -92,33 +89,34 @@ export default function Index() {
       name,
       pageNum: current,
       pageSize
-
     }
-    let { success, data, errMsg, total } = await useGetGridTiedCabinetList(params)
 
-    totalItem.current = Number.isInteger(total) ? total : 0
-    if (success) {
-      console.log(Array.isArray(data) && data?.length > 0)
-      if (Array.isArray(data) && data?.length > 0) {
+    try {
+      let { success, data, errMsg, total } = await useGetGridTiedCabinetList(params)
+
+      totalItem.current = Number.isInteger(total) ? total : 0;
+
+      if (success) {
         return {
-          list: data,
-          total
+          list: Array.isArray(data) ? data : [],
+          total: total || 0
         }
       } else {
-        return {
-          list: [],
-          total: 0
-        }
+        message.error(errMsg || "获取数据失败");
+        return { list: [], total: 0 };
       }
-    } else {
-      message.error(res.errMsg)
+    } catch (error) {
+      message.error('获取数据时发生错误');
+      return { list: [], total: 0 };
     }
   }
+
   //删除告警类型弹窗
   const [deleteTypeModal, setDeleteTypeModal] = useState(false);
   //新增 true 修改 false
   const [modalTitle, setModalTitle] = useState("");
-  const columns =
+
+  const columns = useMemo(() =>
     [
       {
         align: "center",
@@ -147,11 +145,10 @@ export default function Index() {
           </Space>
         ),
       },
-    ]
-
-
+    ], [areaFirstName, cabinetColumns])
 
   const ref = useRef()
+
   //点击新增 打开弹框
   const onAdd = useCallback(() => {
     setEditData({})
@@ -160,10 +157,12 @@ export default function Index() {
       ref.current?.onOpen()
     }, 0)
   }, [])
+
   //编辑
   const [cabinetId, setCabinetId] = useState(0)
   const [cabinetName, setCabinetName] = useState(0)
   const [editData, setEditData] = useState({})
+
   const editRecord = useCallback((record) => {
     setEditData(record)
     setModalTitle("编辑光伏并网柜");
@@ -171,51 +170,57 @@ export default function Index() {
       ref.current?.onOpen()
     }, 0)
   }, [])
+
   //删除
   const deleteRecord = (record) => {
     setCabinetId(record.id)
     setCabinetName(record.name)
     setDeleteTypeModal(true);
   };
+
   //删除站点确认
   const deleteOk = async () => {
-    let res = await useDeleteGridTiedCabinet({ projectId, gridTiedCabinetId: cabinetId })
-    if (res.success) {
-      message.success('并网柜删除成功!')
-      try {
-        let current = Math.ceil((totalItem.current - 1) / PageSize) < curPage.current
+    try {
+      let res = await useDeleteGridTiedCabinet({
+        projectId,
+        gridTiedCabinetId: cabinetId
+      });
 
-        if (current) {
-          let values = form.getFieldsValue()
-          run({ current: curPage.current - 1, pageSize: PageSize }, values)
+      if (res.success) {
+        message.success('并网柜删除成功!');
+
+        // 获取当前页数据量
+        const currentPageDataCount = tableProps.dataSource?.length || 0;
+
+        // 如果当前页只有一条数据且不是第一页，则删除后跳转到上一页
+        if (currentPageDataCount === 1 && curPage.current > 1) {
+          run({
+            current: curPage.current - 1,
+            pageSize: PageSize
+          }, form.getFieldsValue());
         } else {
-          refresh()
+          // 否则刷新当前页
+          refresh();
         }
-
-      } catch (error) {
-
+      } else {
+        message.error(res.errMsg || "删除失败");
       }
-    } else {
-      message.error(res.errMsg)
+    } catch (error) {
+      message.error('删除操作发生错误');
+      console.error('删除错误:', error);
+    } finally {
+      setDeleteTypeModal(false);
     }
-    setDeleteTypeModal(false);
   };
+
   //删除站点取消
   const deleteCancel = () => {
     setDeleteTypeModal(false);
   };
+
   const Title = (
     <div style={{ display: 'flex', justifyContent: "space-between", alignItems: "center" }}>
       <span>光伏并网柜列表</span>
-      {/* {ispublish ? null : (
-        <CustButtonT
-          text="new"
-          src="new"
-          onClick={onAdd}
-        >
-
-        </CustButtonT>
-      )} */}
     </div>
   )
 
@@ -223,21 +228,24 @@ export default function Index() {
     defaultPageSize: 18,
     refreshDeps: [projectId, areaId]
   })
+
   const { submit } = search
+
   const airprop = useMemo(() => {
     return {
       projectId,
-      updata: run, // 确保 run 函数是稳定的引用
+      updata: run,
       modalTitle,
       curPage: curPage.current,
       editData
     }
   }, [projectId, modalTitle, editData, run])
-  useEffect(() => {
 
-    RuntimStation()
-    form.setFieldsValue({ stationId: 0 })
-  }, [areaId, projectId])
+  useEffect(() => {
+    RuntimStation();
+    form.setFieldsValue({ stationId: 0 });
+  }, [areaId, projectId, form])
+
   return (
     <Pagecont showserach={false} custserach pd="0px" >
       <Titlelayout title={Title} layout="flex" dr="column">
@@ -281,7 +289,7 @@ export default function Index() {
           type="warn"
           mold="cust"
           title="删除提示"
-          key="ma"
+          key="deleteCabinet"
         >
           是否确认删除“{cabinetName}”？
         </CModal>
