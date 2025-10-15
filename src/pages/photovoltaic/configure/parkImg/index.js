@@ -336,7 +336,7 @@ export default function Index() {
                </div>
                <div className='tip'>（图片大小为: 1368*800 png或jpg 格式,不超过800KB）</div>
             </div>
-            <Divider>设置图片热点区域-</Divider>
+            <Divider>设置图片热点区域</Divider>
             <div className='setwrap'>
 
                <div className="set">
@@ -344,7 +344,7 @@ export default function Index() {
                   {list.map(l => <Ctag left={l.left} top={l.top} key={l.name}>{l.name}</Ctag>)}
                </div>
                <div className='point'>
-                  <Form form={form}>
+                  <Form form={form} colon={false} labelCol={{ flex: "6em" }} labelWrap >
                      {
                         cabientData?.map(a =>
                            <Form.Item label={a.name} key={a.id}>

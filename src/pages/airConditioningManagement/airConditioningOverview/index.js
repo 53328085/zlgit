@@ -87,6 +87,7 @@ export default function Index() {
             allselect={true}
             showSearch={true}
             title="空调设备列表"
+           sty = {{bordered: '', pv: '16px'}  }
           />
         </div>
         <div className="right-box">

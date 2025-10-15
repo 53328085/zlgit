@@ -19,11 +19,11 @@ export default forwardRef(function Index({ projectId, updata, modalTitle, curPag
   const [selectedMeter, setSelectedMeter] = useState(null)
   // 监听areaId变化
   const areaId = Form.useWatch('areaId', formTop);
-
+  const [previousAreaId, setPreviousAreaId] = useState(null) // 记录上一次的areaId
   // 获取设备数据函数
   const RuntimeDevice = async () => {
     // 验证必要参数
-    if (projectId == undefined || areaId == undefined) return
+    if (!projectId || !areaId) return
 
     try {
       const params = {
@@ -45,7 +45,7 @@ export default forwardRef(function Index({ projectId, updata, modalTitle, curPag
         if (data && Array.isArray(data.details)) {
           console.log('获取设备数据成功，共', data.details.length, '条')
           setDeviceData(data.details)
-          setSelectedMeter(data.details[0])
+          // setSelectedMeter(data.details[0])
         } else {
           setDeviceData([])
           setSelectedMeter(null)
@@ -83,7 +83,10 @@ export default forwardRef(function Index({ projectId, updata, modalTitle, curPag
   const onOk = async () => {
     try {
       return formTop.validateFields().then(async () => {
-        if (selectedMeter == null) return message.warning("总表未绑定")
+        if (selectedMeter == null) {
+          message.warning("总表未绑定");
+          throw new Error("总表未绑定"); // 抛出错误阻止关闭
+        }
         const interfaceName = modalTitle == '新增站点' ? useAddPVStation : useUpdatePVStation;
         let { areaId, name, no, capacity, address, type } = await formTop.validateFields()
         const params = {
@@ -94,13 +97,13 @@ export default forwardRef(function Index({ projectId, updata, modalTitle, curPag
           address: address ? address : '',
           type,
           sn: selectedMeter.sn || selectedMeter.meterSn,
-          id: selectedMeter.id
+          id: editData.id || editData.id,
         }
         let { success, errMsg } = await interfaceName({ projectId }, params)
         if (success) {
           message.success(modalTitle + '成功')
           updata({ current: curPage, pageSize: 14 })
-          mRef.current.onCancel()
+          if (modalTitle != '新增站点') return mRef.current.onCancel()
         } else {
           message.warning(errMsg || "数据出错")
           return Promise.reject("")
@@ -115,15 +118,33 @@ export default forwardRef(function Index({ projectId, updata, modalTitle, curPag
   const onOpen = async () => {
     try {
       mRef.current.onOpen()
-      // 打开弹窗时主动加载一次数据
-      formTop.setFieldsValue({ no: 'ZD' + Date.now() })
-      setTimeout(() => {
-        if (areaId) {
-          RuntimeDevice()
+      setPreviousAreaId(null);
+
+      if (modalTitle === '编辑站点' && Object.keys(editData).length > 0) {
+        formTop.setFieldsValue(editData);
+        setSelectedMeter(editData);
+
+        // 设置当前areaId作为基准
+        if (editData.areaId) {
+          setPreviousAreaId(editData.areaId);
+          setTimeout(() => {
+            RuntimeDevice();
+          }, 100);
         }
-      }, 100)
+      } else {
+        setSelectedMeter(null);
+
+        if (areaList.length > 0) {
+          const defaultAreaId = areaList[0].id;
+          // formTop.setFieldsValue({ areaId: defaultAreaId });
+          setPreviousAreaId(defaultAreaId);
+          setTimeout(() => {
+            RuntimeDevice();
+          }, 100);
+        }
+      }
     } catch (error) {
-      console.log(error)
+      console.log('onOpen error:', error)
     }
   }
 
@@ -135,26 +156,39 @@ export default forwardRef(function Index({ projectId, updata, modalTitle, curPag
   useEffect(() => {
     // 确保参数有效
     if (areaId) {
-      RuntimeDevice()
+      if (previousAreaId !== null && previousAreaId !== areaId) {
+        setSelectedMeter(null);
+      }
+      RuntimeDevice();
+      setPreviousAreaId(areaId);
     } else {
-      setDeviceData([])
-      setSelectedMeter(null) // 切换园区时清空选中
+      setDeviceData([]);
+      if (previousAreaId !== null) {
+        setSelectedMeter(null);
+      }
     }
   }, [areaId])
 
   // 初始化时设置默认园区
   useEffect(() => {
-    if (areaList.length > 0 && !areaId && Object.getOwnPropertyNames(editData).length == 0) {
+    if (modalTitle != '新增站点') return
+    if (areaList.length > 0 && !areaId) {
+      formTop.resetFields()
+      setSelectedMeter(null);
       formTop.setFieldsValue({ areaId: areaList[0].id })
-    } else if (areaList.length > 0 && !areaId && !Object.getOwnPropertyNames(editData).length == 0) {
-      formTop.setFieldsValue(editData)
-      setSelectedMeter(editData)
+      formTop.setFieldsValue({ no: 'ZD' + Date.now() });
     }
-  }, [areaList, formTop, areaId])
+  }, [areaList])
+  useEffect(() => {
+    if (Object.keys(editData).length > 0) {
+      formTop.setFieldsValue(editData);
+      setSelectedMeter(editData);
+    }
+  }, [editData])
 
   return (
     <div>
-      <CModal title={modalTitle} width={880} mold="cust" ref={mRef} onOk={onOk}>
+      <CModal closable={false} title={modalTitle} width={880} mold="cust" ref={mRef} onOk={onOk} custft={modalTitle == '新增站点'} key="station">
         <Bindwrap>
           <div className='top'>
             <Form

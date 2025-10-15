@@ -195,8 +195,8 @@ export const FooterChartComp = React.memo(({ tableData, chartData }) => {
     <FooterChart>
       <BlueColumn
         name="空调能耗趋势"
-        bg={{ borderRadius: "4px" }}
-        styled={{ marginBottom:16,padding:"8px 16px" }}
+        bg={{ borderRadius: "4px" ,height:13}}
+        styled={{ marginBottom:16,padding:"0px 16px",height:40 }}
         isbgShow={true}
       >
         <div
@@ -208,7 +208,7 @@ export const FooterChartComp = React.memo(({ tableData, chartData }) => {
             defaultValue="1"
             optionType="button"
             buttonStyle="solid"
-            size="large"
+            size="small"
             style={{ marginLeft: 16,borderRadius:4 }}
             onChange={(e) => {
               setTabId(e.target.value);

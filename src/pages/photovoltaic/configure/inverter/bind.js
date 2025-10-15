@@ -30,9 +30,8 @@ export default forwardRef(function Index({ projectId, updata, modalTitle, curPag
   const [selectedMeter, setSelectedMeter] = useState(null)
   // 监听areaId变化
   const areaId = Form.useWatch('areaId', formTop);
+  const [previousAreaId, setPreviousAreaId] = useState(null) // 记录上一次的areaId
   const stationId = Form.useWatch('stationId', formTop);
-
-  const [gridConnectedType, setGridConnectedType] = useState(1)
   // 存储已选中的逆变器设备ID
   const [selectedInverterIds, setSelectedInverterIds] = useState([])
   // 存储编辑模式下的原始数据
@@ -40,12 +39,10 @@ export default forwardRef(function Index({ projectId, updata, modalTitle, curPag
   // 存储已选中表格的数据（用于新增模式）
   const [bindTableData, setBindTableData] = useState([])
   // 编辑模式下已选中数据的本地暂存（未提交到服务器前）
-  // const [editBindTableData, setEditBindTableData] = useState([])
   const editBindTableData = useRef([])
   // 获取设备数据函数
   const RuntimeDevice = async () => {
     if (!projectId || !areaId) {
-      console.log('缺少必要参数:', { projectId, areaId })
       setDeviceData([])
       return
     }
@@ -56,7 +53,6 @@ export default forwardRef(function Index({ projectId, updata, modalTitle, curPag
         deviceStyle: 1,
         alike: "",
         state: 0,
-        category: "",
         pageNum: 1,
         pageSize: 100
       }
@@ -65,14 +61,13 @@ export default forwardRef(function Index({ projectId, updata, modalTitle, curPag
 
       if (success) {
         if (data && Array.isArray(data.details)) {
-          console.log('获取设备数据成功，共', data.details.length, '条')
           setDeviceData(data.details)
-          if (editModeData && editModeData.sn) {
-            const matchedMeter = data.details.find(item => item.sn === editModeData.sn)
-            setSelectedMeter(matchedMeter || data.details[0])
-          } else {
-            setSelectedMeter(data.details[0])
-          }
+          // if (editModeData && editModeData.sn) {
+          //   const matchedMeter = data.details.find(item => item.sn === editModeData.sn)
+          //   setSelectedMeter(matchedMeter || data.details[0])
+          // } else {
+          //   setSelectedMeter(data.details[0])
+          // }
         } else {
           setDeviceData([])
           setSelectedMeter(null)
@@ -149,13 +144,6 @@ export default forwardRef(function Index({ projectId, updata, modalTitle, curPag
 
       let { success, data, total, errMsg } = await useGetAreaInverterList(params)
       if (success && Array.isArray(data)) {
-        // 使用函数参数获取最新的 selectedInverterIds
-        // const currentSelectedIds = selectedInverterIds
-        // const filteredData = data.filter(item => !currentSelectedIds.includes(item.deviceId))
-        // return {
-        //   list: filteredData,
-        //   total: Number.isInteger(total) ? total : 0
-        // }
         return {
           list: data, // 直接返回所有数据
           total: Number.isInteger(total) ? total : 0
@@ -226,7 +214,7 @@ export default forwardRef(function Index({ projectId, updata, modalTitle, curPag
   const { tableProps, search, refresh: refreshUnbind } = useAntdTable(getUnBind, {
     form,
     defaultPageSize: 14,
-    refreshDeps: [areaId, projectId, selectedInverterIds] // 只保留必要的依赖
+    refreshDeps: [areaId, selectedInverterIds] // 只保留必要的依赖
     // 移除 selectedInverterIds，因为它在函数内部已经可以获取到最新值
   })
   const { submit } = search
@@ -240,13 +228,11 @@ export default forwardRef(function Index({ projectId, updata, modalTitle, curPag
 
   const onOpen = async () => {
     try {
-      console.log(Object.keys(editData).length, editData)
       mRef.current.onOpen()
-
+      setPreviousAreaId(null);
       // 重置状态
       setSelectedInverterIds([]);
       setBindTableData([]);
-      // setEditBindTableData([]); // 清空编辑模式本地暂存
       editBindTableData.current = []
       setEditModeData(null);
       setUnbindSelectedKeys([]);
@@ -262,12 +248,28 @@ export default forwardRef(function Index({ projectId, updata, modalTitle, curPag
       })
 
       // 如果是编辑模式，设置编辑数据
-      if (modalTitle === '编辑光伏并网柜' && editData && Object.getOwnPropertyNames(editData).length > 0) {
+      if (modalTitle === '编辑光伏并网柜' && Object.keys(editData).length > 0) {
         setEditModeData(editData)
+        setSelectedMeter(editData);
         formTop.setFieldsValue(editData)
-        setTimeout(() => {
-          loadTableData();
-        }, 100);
+        if (editData.areaId) {
+          setPreviousAreaId(editData.areaId);
+          setTimeout(() => {
+            RuntimeDevice();
+            loadTableData();
+          }, 100);
+        } else {
+          setSelectedMeter(null);
+
+          if (areaList.length > 0) {
+            const defaultAreaId = areaList[0].id;
+            setPreviousAreaId(defaultAreaId);
+            setTimeout(() => {
+              RuntimeDevice();
+              loadTableData();
+            }, 100);
+          }
+        }
       }
     } catch (error) {
       console.log(error)
@@ -289,7 +291,7 @@ export default forwardRef(function Index({ projectId, updata, modalTitle, curPag
           try {
             const params = {
               projectId,
-              pageSize: 1000, // 一次性加载所有数据（避免分页）
+              pageSize: 100, // 一次性加载所有数据（避免分页）
               pageNum: 1,
               gridTiedCabinetId: editModeData.id,
               alike: ""
@@ -342,14 +344,6 @@ export default forwardRef(function Index({ projectId, updata, modalTitle, curPag
     type: "checkbox",
   }
 
-  // 简化刷新函数
-  const refreshTables = useCallback(() => {
-    form.resetFields(['alike']);
-    formed.resetFields(['alike']);
-    // 只重置搜索条件，不强制刷新数据
-    setBindSelectedKeys([]);
-    setUnbindSelectedKeys([]);
-  }, [form, formed]);
   const rowSelectioned = {
     selectedRowKeys: bindSelectedKeys,
     onChange: (selectedRowKeys, selectedRows) => {
@@ -455,19 +449,15 @@ export default forwardRef(function Index({ projectId, updata, modalTitle, curPag
     try {
       // 验证表单
       return formTop.validateFields().then(async () => {
-
-        if (!selectedMeter) {
-          message.warning('请选择总表设备')
-          return
+        if (selectedMeter == null) {
+          message.warning("总表未绑定");
+          throw new Error("总表未绑定"); // 抛出错误阻止关闭
         }
-
         const formData = formTop.getFieldsValue()
         let deviceIds = [];
-        console.log(deviceIds)
         deviceIds = modalTitle === '编辑光伏并网柜'
           ? editBindTableData.current.map(item => item.deviceId)
           : selectedInverterIds
-        console.log(deviceIds, editBindTableData.current)
         // 准备请求参数
         const params = {
           areaId: formData.areaId,
@@ -509,13 +499,19 @@ export default forwardRef(function Index({ projectId, updata, modalTitle, curPag
   // 监听areaId和projectId变化，重新加载设备数据
   useEffect(() => {
     if (areaId) {
+      if (previousAreaId !== null && previousAreaId !== areaId) {
+        setSelectedMeter(null);
+        formTop.resetFields(['stationId'])
+      }
       RuntimeDevice()
       RuntimStation()
       // 园区变化时重新加载表格数据
       loadTableData()
     } else {
       setDeviceData([])
-      setSelectedMeter(null)
+      if (previousAreaId !== null) {
+        setSelectedMeter(null);
+      }
     }
   }, [areaId])
 
@@ -527,14 +523,13 @@ export default forwardRef(function Index({ projectId, updata, modalTitle, curPag
   }, [areaList, formTop, areaId, editData])
 
   // 初始化时设置默认站点
-  useEffect(() => {
-    console.log(Object.keys(editData || {}).length === 0, editData)
-    if (stationData.length > 0 && Object.keys(editData || {}).length === 0) {
-      formTop.setFieldsValue({ stationId: stationData[0].id })
-    } else if (stationData.length > 0 && !Object.keys(editData || {}).length === 0) {
-      formTop.setFieldsValue({ stationId: editData.id })
-    }
-  }, [stationData, formTop, areaId, editData])
+  // useEffect(() => {
+  //   if (stationData.length > 0 && Object.keys(editData || {}).length === 0) {
+  //     formTop.setFieldsValue({ stationId: stationData[0].id })
+  //   } else if (stationData.length > 0 && !Object.keys(editData || {}).length === 0) {
+  //     formTop.setFieldsValue({ stationId: editData.id })
+  //   }
+  // }, [stationData, formTop, areaId, editData])
 
   return (
     <div>
@@ -608,7 +603,6 @@ export default forwardRef(function Index({ projectId, updata, modalTitle, curPag
                 <Form.Item
                   label="安装地址"
                   name="address"
-                  rules={[{ required: true, message: '请输入安装地址' }]}
                 >
                   <Input placeholder='请输入安装地址' style={{ width: "200px" }} />
                 </Form.Item>
@@ -657,50 +651,45 @@ export default forwardRef(function Index({ projectId, updata, modalTitle, curPag
               </div>
             </div>
           </div>
-
-          {gridConnectedType == 3 ?
-            <div className='correlationBox'></div>
-            :
-            <div className='correlationBox'>
-              <div className='inverter_title'>— 关联逆变器 —</div>
-              <div className='inwrap'>
-                <div className='tbwrap'>
-                  <Form form={form} layout="inline" colon={false}>
-                    <Form.Item label="未选中的逆变器" name="alike">
-                      <Serach onSearch={submit} placeholder="请输入逆变器名称或编号"></Serach>
-                    </Form.Item>
-                  </Form>
-                  <UserTable
-                    columns={unbindcol}
-                    {...tableProps}
-                    rowSelection={rowSelection}
-                    rowKey={row => row.deviceId}
-                  ></UserTable>
-                </div>
-                <div className='handler'>
-                  <Button type="primary" onClick={() => addbind(0)} >
-                    添加 <RightOutlined />
-                  </Button>
-                  <Button icon={<LeftOutlined />} onClick={() => addbind(1)} >
-                    撤销
-                  </Button>
-                </div>
-                <div className='tbwrap'>
-                  <Form form={formed} layout="inline" colon={false}>
-                    <Form.Item label="已选中的逆变器" name="alike">
-                      <Serach onSearch={searched.submit} placeholder="请输入逆变器名称或编号"></Serach>
-                    </Form.Item>
-                  </Form>
-                  <UserTable
-                    columns={bindcol}
-                    {...tablePropsed}
-                    rowSelection={rowSelectioned}
-                    rowKey={row => row.deviceId}
-                  ></UserTable>
-                </div>
+          <div className='correlationBox'>
+            <div className='inverter_title'>— 关联逆变器 —</div>
+            <div className='inwrap'>
+              <div className='tbwrap'>
+                <Form form={form} layout="inline" colon={false}>
+                  <Form.Item label="未选中的逆变器" name="alike">
+                    <Serach onSearch={submit} placeholder="请输入逆变器名称或编号"></Serach>
+                  </Form.Item>
+                </Form>
+                <UserTable
+                  columns={unbindcol}
+                  {...tableProps}
+                  rowSelection={rowSelection}
+                  rowKey={row => row.deviceId}
+                ></UserTable>
+              </div>
+              <div className='handler'>
+                <Button type="primary" onClick={() => addbind(0)} >
+                  添加 <RightOutlined />
+                </Button>
+                <Button icon={<LeftOutlined />} onClick={() => addbind(1)} >
+                  撤销
+                </Button>
+              </div>
+              <div className='tbwrap'>
+                <Form form={formed} layout="inline" colon={false}>
+                  <Form.Item label="已选中的逆变器" name="alike">
+                    <Serach onSearch={searched.submit} placeholder="请输入逆变器名称或编号"></Serach>
+                  </Form.Item>
+                </Form>
+                <UserTable
+                  columns={bindcol}
+                  {...tablePropsed}
+                  rowSelection={rowSelectioned}
+                  rowKey={row => row.deviceId}
+                ></UserTable>
               </div>
             </div>
-          }
+          </div>
         </Bindwrap>
       </CModal>
     </div>

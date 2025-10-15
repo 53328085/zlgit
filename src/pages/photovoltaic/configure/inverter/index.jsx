@@ -264,8 +264,8 @@ export default function Index() {
                   }}
                 />
               </Form.Item>
-              <Form.Item label="光伏并网柜" name="name" style={{ marginLeft: "16px" }} >
-                <Serach onSearch={submit} placeholder="输入光伏站点名称/编号" />
+              <Form.Item label="关键字" name="name" style={{ marginLeft: "16px" }} >
+                <Serach onSearch={submit} placeholder="光伏并网柜名称/编号" />
               </Form.Item>
             </Form>
             <Space size={16}>

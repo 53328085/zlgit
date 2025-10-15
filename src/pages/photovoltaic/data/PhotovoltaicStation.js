@@ -10,13 +10,14 @@ const DEFAULT_STATION_DATA = {
     data: []
 };
 // 并网柜组件 - 添加了position属性标识位置
-const GridCabinet = ({ cabinet, cabinets, position, totalCabinets }) => {
+const GridCabinet = ({ cabinet, cabinets, position }) => {
     return (
-        <div className={cabinets?.length > 1 ? "grid-cabinet" : "inverterLessThan2"} >
+        <div className={cabinets?.length > 1 ? "grid-cabinet" : "inverterLessThan1"} >
             {cabinets.length == 1 ?
                 <div className='line'>
                     <div className='cabinet-line2'></div>
-                </div> : cabinets.length > 1 ?
+                </div>
+                : cabinets.length > 1 ?
                     <div className='line'>
                         <div className={`cabinet-line1 ${position}`}></div>
                         <div className='cabinet-line2'></div>
@@ -201,36 +202,24 @@ const PhotovoltaicStation = ({ projectId, areaId }) => { // 从 props 接收参�
                                             ))}
                                         </div>
                                     </div>
-                                    <div className="station-line"></div>
+                                    {cabinets.length != 0 ? (<div className="station-line"></div>) : null}
+                                    {/* <div className="station-line"></div> */}
                                 </div>
                                 <div className={cabinets.length > 0 ? "cabinets-container" : "cabinets-empty"}  >
-                                    {cabinets.length === 0 ? (
-                                        <div className='cabinet-box'>
-                                            <div className='line'>
-                                                <div className='cabinet-line2'></div>
-                                            </div>
-                                            <div className="cabinet-header">
-                                                <div className='name' title='暂无数据'>暂无数据</div>
-                                                <div className="cabinet-stats">
-                                                    <div className='ele'>正向有功总电能  <div className='numBox'><div className='num'>- </div>kW</div></div>
-                                                    <div className='ele'>反向有功总电能 <div className='numBox'><div className='num'>- </div>kWh</div></div>
-                                                </div>
-                                            </div>
-                                        </div>
-
-                                    ) : (
-                                        cabinets?.map((cabinet, cabIndex) => {
-                                            const cabPosition = cabIndex === 0 ? 'first' : cabIndex === cabinets.length - 1 ? 'last' : 'middle';
-                                            return (
-                                                <GridCabinet
-                                                    key={cabinet.id}
-                                                    cabinet={cabinet}
-                                                    cabinets={cabinets}
-                                                    position={cabPosition}
-                                                />
-                                            );
-                                        })
-                                    )}
+                                    {cabinets.length == 0 ? null :
+                                        (
+                                            cabinets?.map((cabinet, cabIndex) => {
+                                                const cabPosition = cabIndex === 0 ? 'first' : cabIndex === cabinets.length - 1 ? 'last' : 'middle';
+                                                return (
+                                                    <GridCabinet
+                                                        key={cabinet.id}
+                                                        cabinet={cabinet}
+                                                        cabinets={cabinets}
+                                                        position={cabPosition}
+                                                    />
+                                                );
+                                            })
+                                        )}
                                 </div>
                                 {/* {stationIndex !== stations.length - 1 && (
                                     <div className="station-divider"></div>
