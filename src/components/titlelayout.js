@@ -48,7 +48,9 @@ const Boxdiv = styled(Card)`
          padding: 0 0 0 11px;
         
     }
-
+    .ant-card-extra {
+      padding: 0px;
+    }
   }
   .ant-card-type-inner .ant-card-head {
     background-color: transparent;
