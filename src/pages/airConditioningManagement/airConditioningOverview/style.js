@@ -1,7 +1,7 @@
 import styled, { css } from "styled-components";
 
-const borderBox = ({ borderRadius = "4px", bgcolor = "#fff" }) => css`
-  border: 1px solid #d7d7d7;
+const borderBox = ({ borderRadius = "8px", bgcolor = "#fff" }) => css`
+  /* border: 1px solid #d7d7d7; */
   border-radius: ${borderRadius};
   background: ${bgcolor};
 `;
@@ -19,7 +19,7 @@ export const Container = styled.div`
   }
   .right-box {
     flex: 1;
-    margin-left: 18px;
+    margin-left: 16px;
     display: flex;
     flex-direction: column;
     overflow: hidden;
@@ -30,13 +30,13 @@ export const Container = styled.div`
 export const Header = styled.div`
   display: flex;
   background-color: #fff;
-  height: 48px;
+  height: 68px;
   justify-content: space-between;
   align-items: center;
-  border: 1px solid #dedede;
+  /* border: 1px solid #dedede; */
   padding-right: 18px;
   overflow: hidden;
-  border-radius: 4px;
+  border-radius: 8px;
   padding-left: 16px;
 `;
 export const Detail = styled.div`

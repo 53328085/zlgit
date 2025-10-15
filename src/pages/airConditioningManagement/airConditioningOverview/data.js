@@ -84,13 +84,14 @@ export const AirChartData = {
     },
   ],
 };
-
+const labelstyle={height:28,lineHeight:"28px"}
 export const Radio_Options = [
   {
     label: "图表模式",
     value: "1",
+    style:labelstyle
   },
-  { label: "列表模式", value: "2" },
+  { label: "列表模式", value: "2", style:labelstyle },
 ];
 export const Chart_Options = {
   // 提示框配置
