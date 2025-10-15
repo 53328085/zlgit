@@ -20,11 +20,14 @@ export default function Index() {
   let { nested = "", primary, meterType } = state; // meterType 从运行监控 =》 运行监控 跳转到 运行监控-》 设备管理
 
   let whole = ["runtimeMonitor", "runtimeSafe", "runtimeEnergy", "runtimeStorage", "runtimeMaintenance", "runtimeSolar", "designerSolar"]; // 需要显示搜索 ***（全部）的模块
-  let include = {
-    runtimeEnergy: ["area", "report"], // 模块里不需要显示全部的
-    designerDistribution: ['room'],
-    runtimeSolar: ["summary"]
-  };
+  let include =useMemo(() => { // 需要显示搜索 ***（全部）的页面
+   let nesteds = {
+      [primary]:["streetLightEnergyMonitor"]
+    }[primary] || []
+    return  nesteds.includes(nested) ? {} : false
+  }, [primary, nested]);
+
+  console.log("include",include)
   const onelevel = useSelector(selectOneLevel);
   const varlabel = useSelector(levelDefaultLabel);
   const projectId = useSelector(selectProjectId)
@@ -300,7 +303,7 @@ export default function Index() {
             setConfig({ refresh: true, cabinet: true, inverter: true, photovoltaicPowerStation: true });
             break;
           case "statistic":
-            setConfig({ isdate: true, cabinet: false, shiftNo: true, photovoltaicPowerStation: false, inverter: false });
+            setConfig({ isdate: true,   shiftNo: true, photovoltaicPowerStation: false, inverter: false });
             break;
           case "warning":
             setConfig({ dateR: true, cabinet: false, shiftNo: true, photovoltaicPowerStation: true, inverter: false });
@@ -356,7 +359,7 @@ export default function Index() {
   };
 
   useEffect(() => {
-    if (whole.includes(primary)) {
+    if (whole.includes(primary) || include) {
       let isin = onelevel.find((l) => l.id == 0);
       if (!isin) {
         dispatch(
@@ -372,7 +375,7 @@ export default function Index() {
       dispatch(setCurrentlevel(level?.[0]))
       dispatch(getOnelevel([...level]));
     }
-  }, [primary]);
+  }, [primary,include]);
 
   useEffect(() => {
     sethandler();

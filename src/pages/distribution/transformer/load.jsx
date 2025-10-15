@@ -1,9 +1,10 @@
 import React, {useEffect, useMemo,useState} from 'react'
 import {Badge} from 'antd'
-import {Loadwrapper} from './style'
+import {Loadwrapper, Item} from './style'
 import{useTransformerLoadRate} from './api'
 import Ichart from '@com/useEcharts/Ichart';
 import {isObject} from "@com/usehandler"
+import moment from "moment";
 export default function Index({sn, projectId}) {
   const [datas, setDatas,] = useState({})
   const getData =async ()=> {
@@ -94,6 +95,56 @@ export default function Index({sn, projectId}) {
         ]
       };
   },[datas])
+  const lineopt = useMemo(()=>{
+    const {historyTrend} = datas
+    const {point, data=[]} =historyTrend?.[0]?.data?.[0] || {}
+    return {
+        series: [{ type: "line", seriesLayoutBy: 'row',markLine:{
+           
+         
+         
+            data: [
+              {
+                name: "超载",
+                yAxis: datas?.overLoadLine,
+              },
+              {
+                name: "重载",
+                yAxis: datas?.highLoadLine,
+              },
+              {
+                name: "轻载",
+                yAxis: datas?.lightLoadLine,
+              }
+
+            ]
+        } }],
+        grid: {
+            left: "0px",
+            right: "0",
+            top: "40px",
+            bottom: "16px",
+            containLabel: true,
+          },
+          yAxis: { 
+           max: datas?.overLoadLine ,
+          },
+          xAxis: {
+             axisLabel:{
+                formatter: (value) => {
+                    return moment(value).format('HH:mm')
+                }
+             }
+          },
+        dataset: {
+            dimensions:[{
+              name: 'time', displayName: "时间",
+            }, {name: "value", displayName: "视在功率"}],
+            source: Array.isArray(data) ? data : [],
+            sourceHeader: false,
+          },
+      };
+  },[datas])
   return (
     <Loadwrapper>
         <div className='leftwrap'>
@@ -101,10 +152,32 @@ export default function Index({sn, projectId}) {
          <div className="chart">
             <Ichart  custoption={goption}></Ichart>
          </div>
-         <div className="bottom"></div>
+         <div className="bottom"> 
+         </div>
         </div>
         <div className='rightwrap'>
            <Badge status='processing' text="视在功率曲线"></Badge>
+           <div className="chartup">
+             <Item bgcolor="rgba(255,177,43,0.25)" fontcolor="#DF981F">
+                <p className='title'><span className='name'>轻载</span><span>{datas?.lightLoadNum}次</span></p>
+                <span className='per'>{datas?.lightLoadNumRate}%</span>
+             </Item>
+             <Item bgcolor="rgba(255, 112, 38, 0.25)" fontcolor="#FF7026">
+                <p className='title'><span className='name'>重载</span><span>{datas?.highLoadNum}次</span></p>
+                <span className='per'>{datas?.highLoadNumRate}%</span>
+             </Item>
+             <Item bgcolor="rgba(255, 42, 42, 0.25)" fontcolor="#FF2A2A">
+                <p className='title'><span className='name'>超载</span><span>{datas?.overLoadNum}次</span></p>
+                <span className='per'>{datas?.overLoadNumRate}%</span>
+             </Item>
+             <Item bgcolor="rgba(39, 111, 255, 0.25)" fontcolor="#0D59B7">
+                <p className='title'><span className='name'>正常</span><span>{datas?.normalLoadNum}次</span></p>
+                <span className='per'>{datas?.normalLoadNumRate}%</span>
+             </Item>
+           </div>
+           <div className='chart_bottom'> 
+           <Ichart   {...lineopt} /> 
+           </div>
         </div>
     </Loadwrapper>
   )

@@ -47,8 +47,7 @@ export default function Index() {
 
   const getChart = async()=> {
     try {
-      let fag = [areaId, projectId, type].some((v) => Number.isInteger(v)) && date;
-    if (!fag) return;
+    
       
       let {success, data, errMsg} =  await useMonitor({areaId, projectId, type, date: getTime(date, type)})
       if(success &&  isObject(data.detail)) { 
@@ -61,8 +60,15 @@ export default function Index() {
     }
 
   }
-  const {data, loading, error} = useRequest(getChart, {
-    refreshDeps: [areaId, projectId, type, date]
+  const {data, loading,run, error} = useRequest(getChart, {
+    refreshDeps: [areaId, projectId, type, date],
+   // manual: true,
+    refreshDepsAction: () => {
+      let fag = [areaId, projectId, type].some((v) => Number.isInteger(v)) && date;
+       if (!fag) return;
+       run(areaId, projectId, type, date)
+    },
+    throttleWait:1000,
   })
  
  const chartoption = useMemo(()=> {

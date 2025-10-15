@@ -55,17 +55,7 @@ export const AreaSelect = ({ value, onChange, isall, ...otherProps }) => {
 
 }
 
-// 刷新
-const Refresh = ({value, onChange}) => {
-  
-  const { primaryColor } = useSelector(themeColor)
-    const onClick = ()=> {
-    onChange({})
-  }
-  return (
-    <Link onClick={onClick}><SyncOutlined style={{ color: `${primaryColor}` }}  /> 刷新</Link>
-  )
-}
+
 // 1.   状态中获取
 export default function UseSerach(props) {
 
