@@ -8,15 +8,13 @@ import {useOverview,useDetail} from "./api"
 import imgurl from './imgs'
 import {custsty,  Mainwrap,TitP} from './style'
 import Ichart from "@com/useEcharts/Ichart"
-import {Point} from "@com/comstyled" 
+import {Point,Cspin} from "@com/comstyled" 
 import { message } from 'antd'
-let timedata = Array.from({length: 10},(_, index)=> `0${index}:0${index}`)
-let randData = Array.from({length:10}, (_, index)=> Math.round(Math.random()*100))
-let randData2 = Array.from({length:10}, (_, index)=> Math.round(Math.random()*100))
+ 
  
 export default function Index() {
   const [datas, setDatas] = useState({})
- 
+  const [loading, setLoading] = useState(false)
   const {projectId} = useOutletContext()
   const [info, setInfo] = useState()
  const [lineopt, baropt, createopt, incomeopt ] = useMemo(()=> { // 亮灯率 ， 市电，绿电, 发电量
@@ -140,15 +138,17 @@ export default function Index() {
 
   const getData =async ()=> {
     try {
+      setLoading(true)
      let {success, data} = await useOverview({projectId})
      if(success && isObject(data)) {
        setDatas(data)
+
      }else {
       setDatas({})
      }
-
+     setLoading(false)
     } catch (error) {
-      
+      setLoading(false)
     }
   }
   const getpoint=async(rid, x, y) => {
@@ -211,7 +211,9 @@ export default function Index() {
   }
   return (
     <Pagecount custsty={custsty} bgcolor="none">
+        <Cspin spinning={loading}>
       <Mainwrap>
+      
         <div className="up">
           <div className="shownum">
             <img src={imgurl["todayLightRate"]}></img>
@@ -288,7 +290,7 @@ export default function Index() {
                 <div className="item">
                      <img src={imgurl?.["lightNum"]}></img>
                      <div className='data'>
-                        <span className='label'>路灯</span>
+                        <span className='label'>高杆路灯</span>
                         <span className='value'>{datas?.highPoleNum}</span>
                      </div>
                 </div>
@@ -345,8 +347,9 @@ export default function Index() {
            </div>
            </div>
         </div>
+        
       </Mainwrap>
-         
+      </Cspin>
     </Pagecount>
   )
 }

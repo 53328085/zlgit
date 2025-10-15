@@ -395,17 +395,16 @@ export default function Index({ projectId, level,   name, allLevel }) {
 
   //  配置 end
 
-  const getTableData = ({current, pageSize}, formData) => {
+  const getTableData = () => {
     // 列表查询
-    console.log(formData)
     if (isNaN(level)) return;
-    if(!Number.isInteger(parseInt(projectId))) return
-   // let value = form.getFieldsValue()
-   
-  let  params = { pageNum:current,pageSize,level,projectId, ...formData }
-  return  Area.QueryByPage(params)
+
+    let value = form.getFieldsValue()
+    //setTopAreaId(value.topAreaId)
+    params = { ...params, ...value }
+    Area.QueryByPage(params)
       .then((res) => {
-        let { success, data , total } = res;
+        let { success, data, total } = res;
         let {
           body = [],
           header = [],
@@ -462,19 +461,24 @@ export default function Index({ projectId, level,   name, allLevel }) {
           });
           return row;
         });
-        console.log(formart);
-        if (success && Array.isArray(formart) && formart.length) {
-    
-         return {
-             total: total,
+        //  console.log(formart);
+        if (success && data) {
+          setTableData([...formart])
+          // console.log(tabelData);
+          setPagination({
+            ...pagination,
+            total: total,
+          })
+          /*  return {
+             total: colums.length,
              list: formart,
-           };  
+           }; */
         } else {
-         
-           return {
+          setTableData([])
+          /*   return {
               total: 0,
               list: [],
-            }; 
+            }; */
         }
       })
       .catch((e) => {
@@ -482,13 +486,36 @@ export default function Index({ projectId, level,   name, allLevel }) {
       });
   };
 
-  const {tableProps, search} = useAntdTable(getTableData, {
-    form,
-    defaultPageSize:15,
-    refreshDeps: [level,projectId],
-})
- const {submit} = search
- 
+
+
+  const tableOnchange = (e) => {    
+    let { current } = e
+    setPagination({
+      ...pagination,
+      current,
+    })
+
+  }
+  useEffect(() => {
+    getTableData()
+
+  }, [pagination.current])
+  useEffect(() => {
+    // getLevelOption();
+    params.pageNum=1;
+    if (level == 1) {
+      form.setFieldsValue({
+        topAreaId: null,
+      });
+      getTableData()
+    } else if (level > 1) {
+      form.setFieldsValue({
+        topAreaId: 0,
+      });
+      getTableData()
+    }
+
+  }, [level]);
   const btnsty = laptop
     ? {
         height: "32px",
@@ -513,22 +540,17 @@ const savesty = laptop
       <Form form={form} layout="inline" initialValues={{ name: "" }}>
         <Space size={16}>
           {level == 1 && (
-            <>
-            <Form.Item name="name" label={`${name}查询`} initialValue="">
+            <Form.Item name="name" label={`${name}查询`}>
               <Serach
                 placeholder={`请输入${name}名称`}
                 style={{ width: "340px" }}
-                onSearch={submit}
+                onSearch={getTableData}
               />
             </Form.Item>
-            <Item name="topAreaId" initialValue={0} noStyle>
-              <Input hidden />
-            </Item>
-            </>
           )}
           {level > 1 && (
             <>
-              <Item label={`${levelone.name}名称`} name="topAreaId" initialValue={0}>
+              <Item label={`${levelone.name}名称`} name="topAreaId">
                 <Select
                   options={[...oneLevel, { name: '全部', id: 0 }]}
                   fieldNames={{
@@ -537,14 +559,14 @@ const savesty = laptop
                     options: "options",
                   }}
                   style={{ width: "200px" }}
-                  onChange={submit}
+                  onChange={getTableData}
                 ></Select>
               </Item>
-              <Form.Item name="name" label={`${name}查询`} initialValue="">
+              <Form.Item name="name" label={`${name}查询`}>
                 <Serach
                   placeholder={`请输入${name}名称`}
                   style={{ width: "340px" }}
-                  onSearch={submit}
+                  onSearch={getTableData}
                 />
               </Form.Item>
             </>
@@ -552,7 +574,7 @@ const savesty = laptop
 
         </Space>
       </Form>
-      <UserTable columns={columns}  {...tableProps} rowKey="areaId" />
+      <UserTable columns={columns} dataSource={tabelData} pagination={pagination} onChange={tableOnchange} rowKey="areaId" />
       {/*    <UserTable columns={columns} {...tableProps} rowKey='areaId'  style={{display: level==1 ?'block' : 'none' }} /> 
           <UserTable columns={columns} {...tableProps} rowKey='areaId' style={{display: level>1 ?'block' : 'none' }} />   */}
 

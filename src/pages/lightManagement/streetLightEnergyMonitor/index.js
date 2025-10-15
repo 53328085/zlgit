@@ -121,8 +121,8 @@ export default function Index() {
         {
           name: "时间", type: "time"
         },
-        "今日能耗(kWh)",
-        "昨日能耗(kWh)",
+        "市电(kWh)",
+        "绿电(kWh)",
         "亮灯率"
       ],
       source:[
