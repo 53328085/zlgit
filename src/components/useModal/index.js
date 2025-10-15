@@ -1,4 +1,4 @@
-import React, { useState, useRef, useImperativeHandle, forwardRef, memo,useEffect } from "react";
+import React, { useState, useRef, useImperativeHandle, forwardRef, memo, useEffect } from "react";
 import { useTranslation } from 'react-i18next'
 import { Button, Modal, Space } from "antd";
 import styled, { css } from "styled-components";
@@ -127,14 +127,14 @@ function Custmodal({
       bottom: clientHeight - (targetRect.bottom - uiData.y),
     });
   };
-  const { onCancel: close, custft = false, onOk, title, bodyStyle, warnimg = true,dragprops={},reset, ...rest } = props
+  const { onCancel: close, custft = false, onOk, title, bodyStyle, warnimg = true, dragprops = {}, reset, ...rest } = props
   const formref = useRef()
   const onCancel = () => {
     setOpen(false)
   }
   const onOpen = () => {
     setOpen(true)
-    return new Promise(resolve=>setTimeout(resolve,100))
+    return new Promise(resolve => setTimeout(resolve, 100))
   }
   // const onResetform = () => formref.current.resetfrom()
 
@@ -142,7 +142,7 @@ function Custmodal({
   const [currbtn, setCurrbtn] = useState(1)
   const CustFooter = [
     <Button onClick={onCancel} key="cancel" danger={type == "warn"}>{t('cancel')}</Button>,
-    <>{typeof reset==="function" && <Button onClick={reset} key="restore" style={{width: "auto", padding: "8px"}}  >{t('restore')}</Button>}</>,
+    <>{typeof reset === "function" && <Button onClick={reset} key="restore" style={{ width: "auto", padding: "8px" }}  >{t('restore')}</Button>}</>,
     <Button type="primary" loading={currbtn == 1 && loading} onClick={() => {
 
       setCurrbtn(1)
@@ -217,7 +217,7 @@ function Custmodal({
       {type == "ok" && warnimg && <img src={Ok} style={{ width: '48px', marginRight: "16px", marginLeft: "32px" }} />}
       {type == "question" && warnimg && <img src={question} style={{ width: '48px', marginRight: "16px", marginLeft: "32px" }} />}
       {
-        type=="drag" && <Drag {...dragprops} />
+        type == "drag" && <Drag {...dragprops} />
       }
       {mold == 'cust' ? children : mold == 'default' ? <Useform {...fromprops} ref={formref} /> : ''}
 

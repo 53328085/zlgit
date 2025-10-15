@@ -141,10 +141,9 @@ const columns = [
 ]
 export default function Index() {
   let { exparams } = useOutletContext()
-  let { stationName, projectId, photovoltaicPowerStation, rangePicker } = exparams || { photovoltaicPowerStation: { key: '' } }
+  let { projectId, photovoltaicPowerStation, rangePicker } = exparams || { photovoltaicPowerStation: { key: '' } }
   const { value: stationId } = photovoltaicPowerStation || { value: NaN }
-  const condition = Number.isInteger(projectId) && Number.isInteger(stationId)
-  // console.log(exparams, rangePicker, stationId);
+  const condition = Number.isInteger(projectId) && Number.isInteger(stationId) && rangePicker
   const [form] = Form.useForm()
   const [statistics, setStatistics] = useState({})
   const [total, setTotal] = useState(0)

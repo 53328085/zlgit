@@ -97,13 +97,13 @@ export default function Index() {
       },
       {
         align: "center",
-        title: "站点名称",
+        title: "光伏站点名称",
         dataIndex: "name",
         key: "name",
       },
       {
         align: "center",
-        title: "站点编号",
+        title: "光伏站点编号",
         dataIndex: "no",
         key: "no",
       },
@@ -120,16 +120,22 @@ export default function Index() {
         key: "meterSn",
       },
       {
+        title: "光伏并网柜数",
+        dataIndex: "gridTiedCabinetCount",
+        key: "gridTiedCabinetCount",
+        align: "center",
+      },
+      {
+        title: "逆变器数",
+        dataIndex: "inverterCount",
+        key: "inverterCount",
+        align: "center",
+      },
+      {
         align: "center",
         title: "装机容量(kW)",
         dataIndex: "capacity",
         key: "capacity",
-      },
-      {
-        title: "光伏逆变器数",
-        dataIndex: "inverterCount",
-        key: "inverterCount",
-        align: "center",
       },
       {
         title: "安装地址",
@@ -172,9 +178,11 @@ export default function Index() {
   };
   //编辑
   const editRecord = (record) => {
-    setEditData(record)
+    setEditData({ ...record }); // 创建新对象确保引用更新
     setModalTitle("编辑站点");
-    ref.current.onOpen()
+    setTimeout(() => {
+      ref.current.onOpen();
+    }, 0);
   };
   //删除
   const deleteRecord = (record) => {
