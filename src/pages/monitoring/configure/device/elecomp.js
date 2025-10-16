@@ -399,6 +399,11 @@ export const FormComp = (props) => {
               ></Select>
             </Form.Item>
           ) : null}
+          {
+             deviceStyle == 19 &&  <Form.Item label="额定功率" name="power" rules={rules}>
+              <InputNumber min={0} style={{width: "100%"}} />
+           </Form.Item>
+          }
 
           {/* {
                         deviceStyle === 21 ? (
@@ -719,9 +724,7 @@ export const EditFormComp = (props) => {
       form.setFieldsValue({ commAddress: 0, commPort: 0, commProtocol: 0 });
     }
   };
-  useEffect(() => {
-    console.log(form.getFieldsValue());
-  }, []);
+ 
   useEffect(() => {
     if (form?.getFieldsValue().gatewayId !== 0) {
       setIsdisable(true);
@@ -844,7 +847,11 @@ export const EditFormComp = (props) => {
               ></Select>
             </Form.Item>
           ) : null}
-
+           {
+             deviceStyle == 19 &&  <Form.Item label="额定功率" name="power" rules={rules}>
+              <InputNumber min={0} style={{width: "100%"}} />
+           </Form.Item>
+          }
           {/* {
                         deviceStyle === 21 ? (
                             <Form.Item label="计量电表" name="customerType" rules={rules}>

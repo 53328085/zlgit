@@ -321,7 +321,7 @@ useRequest(RuntimePoints, {
              </Titlelayout>
              </div>
              <CustContext.Provider value={dataProps} >
-              <Pagecount showSearch={false}>
+              <Pagecount showSearch={false} pd="0px">
               {value=="2" ?  <Titlelayout title={<div style={{display: 'flex', alignItems: 'center', justifyContent: "space-between"}}>
                <span>数据趋势</span>
                <Space size={16}>

@@ -4,9 +4,10 @@ import { Typography, message, Space, Checkbox } from 'antd'
 import UseTree from "@com/useTree";
 import { useSelector } from 'react-redux'
 import { useAntdTable } from "ahooks";
+import {useOutletContext} from 'react-router-dom'
 import moment from 'moment';
-import { DistributionRoomRuntime } from '@api/api.js'
-import { selectcurlRommidl, roomId, adaptation } from "@redux/systemconfig";
+ 
+import {   adaptation } from "@redux/systemconfig";
 //import {Link} from 'react-router-dom'
 import { ExportExcel, CustButtonT } from '@com/useButton'
 import styled, { css } from 'styled-components';
@@ -15,7 +16,8 @@ import Pagecount from '@com/pagecontent'
 import UseTable from '@com/useTable'
 import { cloneDeep } from 'lodash';
 import { Serach } from "@com/comstyled";
-
+import {useQueryStatisticTable} from "./api"
+import { getTime } from '@com/usehandler';
 const { Link } = Typography
 const sty = css`
     grid-template-columns: 265px 1fr;
@@ -52,14 +54,51 @@ export default function Index() {
 
 
   const [treeId, setTreeId] = useState([]);
-  const projectId = useSelector(state => state.system.menus.projectId)
-  const curid = useSelector(selectcurlRommidl)
-  const roomIds = useSelector(roomId)
+  const [showAll, setShowAll] = useState(false)
+  let { exparams } = useOutletContext()
+  const {projectId, type, date,areaId } = exparams
+ 
   const { laptop } = useSelector(adaptation)
+
+  const getTableData = async({current, pageSize})=>{
+   try {
+     if(!Array.isArray(treeId) )return;
+     if(![projectId, type,  areaId].every(i => Number.isInteger(parseInt(i)))) return;
+     if(!date) return;
+     let body ={
+        pageNum:current,
+        pageSize,
+        projectId,
+        areaId,
+        type,
+        date:getTime(date, type),
+        snGroup:treeId,
+     }
+     let {success, data, total, errMsg}= await useQueryStatisticTable({}, body)
+     if(success && Array.isArray(data)){
+       return {
+         list:data,
+         total,
+       }
+     }else {
+       if(!success) message.warning(errMsg || '数据出错')
+       return {
+         list:[],
+         total:0
+       }
+     }
+   } catch (error) {
+     console.log(error)
+   }
+
+  }
+ const{tableProps, search} = useAntdTable(getTableData, {
+      defaultPageSize:14,
+      refreshDeps:[areaId, treeId, type, date,projectId],
+      
+  })
   //  const roomId = [curid]
-  const RoomId = useMemo(() => {
-    return curid == 0 ? roomIds?.filter(r => r.id != 0).map(m => m.id) : [curid]
-  }, [curid])
+ 
   // const [tableData, setTableData] = useState([])
   const tableRef = useRef()
   // 模拟表格数据
@@ -232,10 +271,7 @@ export default function Index() {
     // }
   }
   const onExport = () => {
-    return {
-      list: tableData,
-      total: tableData.length
-    }
+   
   }
 
   const onChangeValue = (e) => {
@@ -244,7 +280,7 @@ export default function Index() {
     //   alike: e,
     // });
   }; //输入框改变值
-  const [showAll, setShowAll] = useState(false)
+  
   const showAllChagne = (e) => {
     setShowAll(e.target.checked)
   }
@@ -316,10 +352,7 @@ export default function Index() {
     }
     return { x: 'max-content' };
   }, [showAll, scrollX]);
-  useEffect(() => {
-    console.log('RoomId', RoomId)
-    if (Array.isArray(RoomId)) getLinePoint(RoomId, 0);
-  }, [RoomId])
+
   const CustTitle = (
     <Ctitle>
       <span className='title'>光伏电站发电量统计</span>
@@ -342,13 +375,13 @@ export default function Index() {
           setTreeId={setTreeId}
           setLine={() => { }}
           showline={false}
-          datatype={5}
+          datatype={7}
           energytype={1}
           allselect={true}
           showSearch={true}
         />
         <Titlelayout layout="flex" title={CustTitle}>
-          <UseTable columns={columns} dataSource={processedData} ref={tableRef}
+          <UseTable columns={columns}  {...tableProps} ref={tableRef}
             scroll={scrollConfig} style={{
               width: '100%'
             }}  // 确保表格布局固定
