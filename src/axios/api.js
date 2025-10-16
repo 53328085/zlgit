@@ -1871,6 +1871,7 @@ export const Monitoring = {
     QueryByPageHotWater: (data) =>
       server.post(`/Monitor/Device/QueryByPageHotWater`, data), //获取热水表
     QueryByPage: (data) => server.post(`/Monitor/Device/QueryByPage`, data),
+    QueryByPagePV: (data) => server.post(`/Monitor/Device/QueryByPagePV`, data), //光伏设备查询
     QueryByPageGateWay: (data) =>
       server.post(`/Monitor/Gateway/QueryByPage`, data), //获取网关
     QueryListGateWay: (projectId) =>

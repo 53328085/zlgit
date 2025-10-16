@@ -74,7 +74,19 @@ export default function Index() {
         date:getTime(date, type),
         snGroup:treeId,
      }
-     await useQueryStatisticTable({}, body)
+     let {success, data, total, errMsg}= await useQueryStatisticTable({}, body)
+     if(success && Array.isArray(data)){
+       return {
+         list:data,
+         total,
+       }
+     }else {
+       if(!success) message.warning(errMsg || '数据出错')
+       return {
+         list:[],
+         total:0
+       }
+     }
    } catch (error) {
      console.log(error)
    }
@@ -369,7 +381,7 @@ export default function Index() {
           showSearch={true}
         />
         <Titlelayout layout="flex" title={CustTitle}>
-          <UseTable columns={columns} dataSource={processedData} ref={tableRef}
+          <UseTable columns={columns}  {...tableProps} ref={tableRef}
             scroll={scrollConfig} style={{
               width: '100%'
             }}  // 确保表格布局固定

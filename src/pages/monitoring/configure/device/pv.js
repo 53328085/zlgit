@@ -15,17 +15,18 @@ import {publishState} from '@redux/systemconfig'
 const {Link} = Typography
 const {
   DeviceManager: {
-    QueryByPage,
-    QueryByPageHotWater,
+   // QueryByPage,
+    QueryByPagePV,
+  //  QueryByPageHotWater,
     AeraQueryAll,
     QueryListGateWay,
     QueryUsedDeviceCategory,
     QueryPlanList,
-    AddHotWater,
-    UpdateHotWater,
-    UpdateFactor,
-    DeleteHotWater,
-    ImportElectric,
+ //   AddHotWater,
+  //  UpdateHotWater,
+  //  UpdateFactor,
+  //  DeleteHotWater,
+  //  ImportElectric,
     OneLevel,
     AddPV,
     UpdatePV,
@@ -179,7 +180,7 @@ export default function gateway({ deviceStyle, name }) {
         commPort,
         commProtocol,
         commAddress,
-        factor } = editform.getFieldValue()
+        factor, power } = editform.getFieldValue()
       let params = {
         id,
         projectId,
@@ -195,7 +196,8 @@ export default function gateway({ deviceStyle, name }) {
         commPort,
         commProtocol:commProtocol?commProtocol:0,
         commAddress,
-        factor
+        factor,
+        power
       }
       const resp = await UpdatePV(params)
       if(resp.success){
@@ -224,7 +226,7 @@ export default function gateway({ deviceStyle, name }) {
         commPort,
         commProtocol,
         commAddress,
-        factor } = editform.getFieldValue()
+        factor,power } = editform.getFieldValue()
       let params = {
         id,
         projectId,
@@ -240,9 +242,10 @@ export default function gateway({ deviceStyle, name }) {
         commPort,
         commProtocol:commProtocol?commProtocol:0,
         commAddress,
-        factor
+        factor,
+        power,
       }
-      const resp = await UpdateHotWater(params)
+      const resp = await UpdatePV(params)
 
       if(resp.success){
         message.success("应用成功")
@@ -284,28 +287,7 @@ export default function gateway({ deviceStyle, name }) {
       message.error(errMsg)
     }
   }
-  //打开倍率窗口
-  const onFactor=(record)=>{
-    FactorRef?.current?.onOpen()
-    factorform.setFieldsValue({...record})
-  }
-  //确认倍率修改
-  const factorOk=async()=>{
-   
-    const formvalue = factorform.getFieldValue()
-    const res =  await  UpdateFactor({
-      projectId,
-      id: formvalue.id,
-      factor:formvalue.factor
-    })
-    if(res.success){
-      message.success('修改成功')
-      FactorRef?.current?.onCancel()
-      getQueryByPagePv(pageRef.current.current,pageRef.current.pageNum,compRef.current.selvalue,compRef.current.inpvalue,compRef.current.energyVal)
-    }else{
-      message.error(res.errMsg)
-    }
-  }
+ 
   //打开新增窗口
   const addopen = () => {
     if(!levelname.current){
@@ -351,9 +333,10 @@ export default function gateway({ deviceStyle, name }) {
         commPort: formvalue.commPort ? formvalue.commPort : 0,
         commProtocol: formvalue.commProtocol ? formvalue.commProtocol : 0,
         commAddress: formvalue.commAddress ? formvalue.commAddress : 0,
-        factor: formvalue.factor
+        factor: formvalue.factor,
+        power: formvalue.power,
       }
-      const res = await AddHotWater(params)
+      const res = await AddPV(params)
       if (res.success) {
         message.success('新增成功!')
       //  modalFormRef?.current?.onCancel()
@@ -386,13 +369,14 @@ export default function gateway({ deviceStyle, name }) {
         commPort: formvalue.commPort ? formvalue.commPort : 0,
         commProtocol: formvalue.commProtocol ? formvalue.commProtocol : 0,
         commAddress: formvalue.commAddress ? formvalue.commAddress : 0,
-        factor:Number(formvalue.factor) 
+        factor:Number(formvalue.factor) ,
+        power: formvalue.power,
       }
       const res = await AddPV(params)
      
       if (res.success) {
         message.success('应用成功!')
-        getQueryByPagePv(pageRef.current.current,pageRef.current.pageNum,compRef.current.selvalue,compRef.current.inpvalue,compRef.current.energyVal)
+        QueryByPagePV(pageRef.current.current,pageRef.current.pageNum,compRef.current.selvalue,compRef.current.inpvalue,compRef.current.energyVal)
       } else {
         message.error(res.errMsg)
       }
@@ -486,7 +470,7 @@ export default function gateway({ deviceStyle, name }) {
       deviceStyle:19,
      customerType:customerType?customerType:0
     }
-    const resp = await QueryByPage(params)
+    const resp = await QueryByPagePV(params)
     setLoading(false)
     setPage({
       ...page,
@@ -518,7 +502,7 @@ export default function gateway({ deviceStyle, name }) {
         deviceStyle:19,
       }
      
-      const resp = await QueryByPage(params)
+      const resp = await QueryByPagePV(params)
       if(resp.success){
         resolve({list:resp.data?resp.data:[],total:resp.total})
       }else{

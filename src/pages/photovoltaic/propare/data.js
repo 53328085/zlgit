@@ -4,9 +4,9 @@
 const baseColumns = [
     {
       title: '名称',
-      dataIndex: 'lineName',
+      dataIndex: 'name',
       width: 160,
-      key: 'lineName',
+      key: 'name',
     },
     {
       title: "编号",
@@ -34,8 +34,8 @@ const baseColumns = [
     },
     {
       title: "总用电量 (kWh)",
-      dataIndex: 'totalConsumption',
+      dataIndex: 'totalUseEnergy',
       width: 100,
-      key: 'totalConsumption',
+      key: 'totalUseEnergy',
     },
   ]
