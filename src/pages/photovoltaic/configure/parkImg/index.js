@@ -148,23 +148,29 @@ export default function Index() {
          if (!energyImage) return message.warning("请选择图片")
 
          setLoading(true)
-         let gridTiedCabinetHots = []
          let values = await form.validateFields();
-
-         for (let [key, value] of Object.entries(values)) {
-            console.log(key, value)
-            if (value.c && value.checked) {
+         let gridTiedCabinetHots = Object.entries(values)
+            .filter(([key, value]) => value.c && value.checked)
+            .map(([key, value]) => {
                let [x, y] = value.c.split(',');
                if (parseFloat(x) && parseFloat(y)) {
-                  gridTiedCabinetHots.push({ gridTiedCabinetId: parseInt(key), hotX: x, hotY: y, hotC: value.r })
+                  return {
+                     gridTiedCabinetId: parseInt(key),
+                     hotX: x,
+                     hotY: y,
+                     hotC: value.r === 0 ? 40 : value.r  // 关键转换
+                  }
                }
-            }
-         }
+               return null;
+            })
+            .filter(item => item !== null);  // 过滤掉无效项
+
          let params = {
             areaId,
             base64Image: energyImage,
             gridTiedCabinetHots,
          }
+
          let { success, errMsg } = await useUpdateAreaImageAndHot({ projectId }, params)
          if (success) {
             message.success('保存成功')
@@ -179,21 +185,7 @@ export default function Index() {
          console.log(error)
          setLoading(false)
       }
-
    }
-   // const getArea = async () => {
-   //    try {
-   //       let { success, data } = await UpdateEnergyImage.AeraQueryAll(projectId)
-   //       if (success && Array.isArray(data)) {
-   //          setArea(data)
-   //       } else {
-   //          setArea([])
-   //       }
-   //    } catch (error) {
-   //       console.log(error)
-   //    }
-
-   // }
    const GetAreaImage = async () => {
       try {
          if (projectId == undefined || areaId == undefined) return
@@ -217,7 +209,6 @@ export default function Index() {
    }
    const GetAreaHotsData = async () => {
       try {
-         console.log(cabientData)
          if (projectId == undefined || areaId == undefined) return
          setSpinning(true)
          let { success, data } = await useGetAreaHots({ projectId, areaId })
@@ -228,7 +219,7 @@ export default function Index() {
                areaHots.forEach(i => {
                   form.setFieldValue([i.gridTiedCabinetId, 'c'], [i.hotX, i.hotY].join(','));
                   form.setFieldValue([i.gridTiedCabinetId, 'r'], i.hotC);
-                  form.setFieldValue([i.gridTiedCabinetId, 'checked'], true);
+                  form.setFieldValue([i.gridTiedCabinetId, 'checked'], false);
                })
                let checked = areaHots.map(i => ({ id: i.gridTiedCabinetId, name: i.name, top: i.hotY, left: i.hotX }))
                setList(checked)
@@ -286,12 +277,7 @@ export default function Index() {
       GetAreaImage()
       GetAreaHotsData()
       RuntimeCabient()
-      // getArea()
    }, [areaId])
-   // useEffect(() => {
-   //    if (!projectId) return
-   //    RuntimeCabient()
-   // }, [projectId])
    useEffect(() => {
       if (oneLevel && Array.isArray(oneLevel) && oneLevel.length > 0) {
          const filter = oneLevel?.filter?.(f => f.id != 0);
@@ -352,7 +338,13 @@ export default function Index() {
                                  <Form.Item name={[a.id, 'c']} noStyle>
                                     <Input style={{ width: '80px' }} readOnly />
                                  </Form.Item>
-                                 <Form.Item name={[a.id, 'r']} initialValue={40} noStyle>
+                                 <Form.Item name={[a.id, 'r']}
+                                    initialValue={40}
+                                    noStyle
+                                    getValueProps={(value) => ({
+                                       value: value === 0 ? 40 : value
+                                    })}
+                                 >
                                     <InputNumber min={16} />
                                  </Form.Item>
                                  <Form.Item name={[a.id, 'checked']} valuePropName="checked" noStyle>

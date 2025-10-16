@@ -101,9 +101,10 @@ export default forwardRef(function Index({ projectId, updata, modalTitle, curPag
         }
         let { success, errMsg } = await interfaceName({ projectId }, params)
         if (success) {
+          if (modalTitle != '新增站点') return mRef.current.onCancel()
           message.success(modalTitle + '成功')
           updata({ current: curPage, pageSize: 14 })
-          if (modalTitle != '新增站点') return mRef.current.onCancel()
+          formTop.setFieldsValue({ no: 'ZD' + Date.now() });
         } else {
           message.warning(errMsg || "数据出错")
           return Promise.reject("")

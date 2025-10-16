@@ -14,9 +14,10 @@ const GridCabinet = ({ cabinet, cabinets, position }) => {
     return (
         <div className={cabinets?.length > 1 ? "grid-cabinet" : "inverterLessThan1"} >
             {cabinets.length == 1 ?
-                <div className='line'>
-                    <div className='cabinet-line2'></div>
-                </div>
+                // <div className='line'>
+                //     <div className='cabinet-line2'></div>
+                // </div>
+                null
                 : cabinets.length > 1 ?
                     <div className='line'>
                         <div className={`cabinet-line1 ${position}`}></div>
@@ -26,12 +27,16 @@ const GridCabinet = ({ cabinet, cabinets, position }) => {
                 <div className="cabinet-header">
                     <div className='name' title={cabinet.name}>{cabinet.name}</div>
                     <div className="cabinet-stats">
-                        <div className='ele'>正向有功总电能
+                        <div className='ele'>
+                            正向有功总电能
                             <div className='numBox'>
-                                <div className='num' title={cabinet.imEp + 'kW'}>{cabinet.imEp}</div>kW </div></div>
-                        <div className='ele'>反向有功总电能
+                                <div className='num' title={cabinet.imEp + 'kW'}>{cabinet.imEp}</div>kW </div>
+                        </div>
+                        <div className='ele'>
+                            反向有功总电能
                             <div className='numBox'>
-                                <div className='num' title={cabinet.expEp + 'kWh'}>{cabinet.expEp}</div> kWh</div></div>
+                                <div className='num' title={cabinet.expEp + 'kWh'}>{cabinet.expEp}</div> kWh</div>
+                        </div>
                     </div>
                 </div>
                 {cabinet?.children?.length > 0 ? (
@@ -79,32 +84,34 @@ const InverterComp = ({ inverter, inverters, position, totalCabinets }) => {
                 <div className='inverter-line2'></div>
             </div>
             <div className='inverter-box'>
-                <div className='inverter-item'>
+                <div className='inverter-name'>
                     <span className={`circle ${getEfficiencyColor(inverter.state)}`}></span>
-                    <span>{inverter.name}</span>
+                    <span title={inverter.name} className='name'>{inverter.name}</span>
                 </div>
-                <div className='inverter-item'>
-                    <span>直流功率</span>
-                    <div className='inverter-value'>
-                        <span>{inverter.dcPower}</span>kW
+                <div className='inverter-data'>
+                    <div className='inverter-item'>
+                        直流功率
+                        <div className='inverter-value'>
+                            <div title={inverter.dcPower}>{inverter.dcPower}</div>kW
+                        </div>
                     </div>
-                </div>
-                <div className='inverter-item'>
-                    <span>日发电量</span>
-                    <div className='inverter-value'>
-                        <span>{inverter.dayPowerGeneration}</span>kWh
+                    <div className='inverter-item'>
+                        日发电量
+                        <div className='inverter-value'>
+                            <div title={inverter.dayPowerGeneration}>{inverter.dayPowerGeneration}</div>kWh
+                        </div>
                     </div>
-                </div>
-                <div className='inverter-item'>
-                    <span>累计发电量</span>
-                    <div className='inverter-value'>
-                        <span>{inverter.totalPowerGeneration}</span>kWh
+                    <div className='inverter-item'>
+                        累计发电量
+                        <div className='inverter-value'>
+                            <div title={inverter.totalPowerGeneration}>{inverter.totalPowerGeneration}</div>kWh
+                        </div>
                     </div>
-                </div>
-                <div className='inverter-item'>
-                    <span>效率</span>
-                    <div className='inverter-value'>
-                        <span>{inverter.efficiency}</span>
+                    <div className='inverter-item'>
+                        效率
+                        <div className='inverter-value'>
+                            <div title={inverter.efficiency} >{inverter.efficiency}</div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -182,8 +189,8 @@ const PhotovoltaicStation = ({ projectId, areaId }) => { // 从 props 接收参�
                     stations?.map((station, stationIndex) => {
                         const cabinets = station.children || [];
                         return (
-                            <div key={station.id} className="station-container">
-                                <div className="station-box">
+                            <div key={station.id} className={cabinets.length == 1 ? "station-container-TowLine" : "station-container"} >
+                                <div className={cabinets.length == 1 ? "station-box-TowLine" : "station-box"}>
                                     <div className="station-header">
                                         <div className='name'>{station.name}（监控面板）</div>
                                         <div className="station-summary">
@@ -196,7 +203,7 @@ const PhotovoltaicStation = ({ projectId, areaId }) => { // 从 props 接收参�
                                                 <div key={index} className="summary-card">
                                                     <span>{item.label}</span>
                                                     <div className="summary-value">
-                                                        <div className='num'>{formatValue(station[item.key])} </div> {item.unit}
+                                                        <div className='num' title={formatValue(station[item.key])} >{formatValue(station[item.key])} </div> {item.unit}
                                                     </div>
                                                 </div>
                                             ))}
@@ -204,6 +211,9 @@ const PhotovoltaicStation = ({ projectId, areaId }) => { // 从 props 接收参�
                                     </div>
                                     {cabinets.length != 0 ? (<div className="station-line"></div>) : null}
                                     {/* <div className="station-line"></div> */}
+                                    {cabinets.length == 1 ?
+                                        <div className='station-line'></div>
+                                        : null}
                                 </div>
                                 <div className={cabinets.length > 0 ? "cabinets-container" : "cabinets-empty"}  >
                                     {cabinets.length == 0 ? null :
