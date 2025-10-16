@@ -254,20 +254,16 @@ export default forwardRef(function Index({ projectId, updata, modalTitle, curPag
         formTop.setFieldsValue(editData)
         if (editData.areaId) {
           setPreviousAreaId(editData.areaId);
-          setTimeout(() => {
-            RuntimeDevice();
-            loadTableData();
-          }, 100);
         } else {
           setSelectedMeter(null);
 
           if (areaList.length > 0) {
             const defaultAreaId = areaList[0].id;
             setPreviousAreaId(defaultAreaId);
-            setTimeout(() => {
-              RuntimeDevice();
-              loadTableData();
-            }, 100);
+            // setTimeout(() => {
+            //   RuntimeDevice();
+            //   loadTableData();
+            // }, 100);
           }
         }
       }
@@ -477,18 +473,17 @@ export default forwardRef(function Index({ projectId, updata, modalTitle, curPag
         let { success, errMsg } = await apiFunction(
           { projectId }, params)
         if (success) {
+          if (modalTitle != '新增光伏并网柜') return mRef.current.onCancel()
           message.success(modalTitle === '新增光伏并网柜' ? '新增成功' : '编辑成功')
           updata({ current: curPage, pageSize: 14 })
-          if (modalTitle != '新增光伏并网柜') return mRef.current.onCancel()
+          formTop.setFieldsValue({ no: 'BWG' + Date.now() });
         } else {
           message.warning(errMsg || "保存失败")
+          return Promise.reject("")
         }
       })
     } catch (error) {
-      console.error('保存失败:', error)
-      if (error.errorFields) {
-        message.warning('请完善表单信息')
-      }
+      return Promise.reject("")
     }
   }
 

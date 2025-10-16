@@ -2,12 +2,11 @@ import React, { useEffect, useState, useCallback, useMemo } from 'react';
 import Pagecount from '@com/pagecontent';
 import styled from 'styled-components';
 import moment from 'moment';
-import { Trans, useTranslation } from 'react-i18next';
+import { useTranslation } from 'react-i18next';
 import { Form, Space, InputNumber, message } from 'antd';
 import Usetable from "@com/useTable";
 import Titlelayout from "@com/titlelayout";
-import { CustButtonT, CustLink, CustTransO, i18warning, i18success } from "@com/useButton";
-import { Cdivider } from "@com/comstyled";
+import { CustLink, CustTransO, i18warning } from "@com/useButton";
 import { useSelector } from 'react-redux';
 import { selectProjectId, enterprise } from '@redux/systemconfig';
 import { isObject } from '@com/usehandler';
@@ -80,6 +79,7 @@ export default function ElectricityPriceTable() {
       >
         <InputNumber
           min={0}
+          precision={2}
           style={{ width: '100%' }}
           placeholder={t('请输入')}
         />

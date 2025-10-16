@@ -30,14 +30,25 @@
         grid-template-columns: 400px 1fr;
         align-items: center;
         margin-bottom: 16px;
-        // display: flex;
-        // align-items: center;
+    }
+
+    .station-container-TowLine {
+        display: grid;
+        grid-template-columns: 470px 1fr;
+        align-items: center;
+        margin-bottom: 16px;
     }
 
     .station-box {
         display: grid;
         align-items: center;
         grid-template-columns: 1fr 70px;
+    }
+
+    .station-box-TowLine {
+        display: grid;
+        align-items: center;
+        grid-template-columns: 1fr 70px 70px;
     }
 
     .station-line {
@@ -93,6 +104,10 @@
             font-size: 20px;
             color: #fff;
             margin-right: 3px;
+            width: 100px;
+            overflow: hidden;
+            white-space: nowrap;
+            text-overflow: ellipsis;
         }
     }
 
@@ -126,20 +141,22 @@
             /* 增加间距避免连接线重叠 */
             .inverter {
                 display: grid;
+                align-items: center;
                 gap: 8px;
-                padding: 10px 0;
+                padding: 16px 0;
             }
         }
 
         .inverterLessThan1 {
             display: grid;
-            grid-template-columns: 70px 440px 1fr;
+            grid-template-columns: 440px 1fr;
             align-items: center;
+            margin-top: 10px;
 
             .inverter {
                 display: grid;
                 gap: 8px;
-                padding: 8px 0;
+                padding: 16px 0;
             }
         }
 
@@ -196,7 +213,7 @@
 
 /* 最后一个并网柜的竖线只显示上半部分 */
 .cabinet-line1.last {
-    height: 50%;
+    height: 51%;
     align-self: flex-start;
     margin-top: -1px;
     /* 靠上对齐 */
@@ -212,7 +229,7 @@
 
 .cabinet-header {
     background-color: #1e40af;
-    padding: 15px;
+    padding: 20px;
     display: flex;
     justify-content: space-around;
     align-items: center;
@@ -226,21 +243,23 @@
     white-space: nowrap;
     text-overflow: ellipsis;
     color: #fff;
+    margin-right: 16px;
 }
 
 .cabinet-stats {
     display: flex;
-    width: 270px;
     font-size: 12px;
     gap: 5px;
 
     .ele {
-        width: 135px;
+        min-width: 135px;
+        text-align: center;
     }
 
     .numBox {
         display: flex;
         align-items: baseline;
+        justify-content: center;
     }
 
     .num {
@@ -258,37 +277,60 @@
 .grid-inverter {
     display: grid;
     grid-template-columns: 50px 1fr;
-    height: 80px;
 }
 
 .inverter-box {
-    display: flex;
+    display: grid;
     justify-content: space-around;
     align-items: center;
     border-radius: 4px;
     background-color: rgba(0, 43, 59, 1);
-
-    .inverter-item {
-        text-align: center;
-    }
+    grid-template-columns: 96px 1fr;
+    padding: 5px 16px;
+    height: 60px;
 }
 
-.inverter-item:nth-child(1) {
+.inverter-name:nth-child(1) {
     display: flex;
     align-items: center;
 }
 
-.inverter-value {
-    span {
-        font-size: 20px;
-        color: #fff;
-        margin-right: 3px;
-        width: 85px;
-        overflow: hidden;
-        white-space: nowrap;
-        text-overflow: ellipsis;
+.inverter-name .name {
+    // width: 80px;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+
+}
+
+
+.inverter-data {
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+
+    .inverter-item {
+        min-width: 125px;
+        text-align: center;
+
+        .inverter-value {
+            display: flex;
+            align-items: baseline;
+            justify-content: center;
+
+            div {
+                font-size: 20px;
+                color: #fff;
+                margin-right: 3px;
+                width: 70px;
+                overflow: hidden;
+                white-space: nowrap;
+                text-overflow: ellipsis;
+            }
+        }
     }
 }
+
 
 .inverter-bac {
     display: flex;
@@ -307,22 +349,21 @@
 
 /* 第一个并网柜的竖线只显示下半部分 */
 .inverter-line1.first {
-    height: 50%;
-    align-self: flex-end;
-    /* 靠下对齐 */
+    height: 110%;
+    align-self: flex-start;
+    margin-top: 58%;
 }
 
 /* 中间并网柜的竖线显示完整高度 */
 .inverter-line1.middle {
-    height: 190%;
+    height: 115%;
 }
 
 /* 最后一个并网柜的竖线只显示上半部分 */
 .inverter-line1.last {
-    height: 102%;
+    height: 106%;
     align-self: flex-start;
-    margin-top: -41px;
-    /* 靠上对齐 */
+    margin-top: -65%;
 }
 
 .inverter-line2 {
@@ -331,7 +372,7 @@
     background-color: #002b3b;
 }
 
-.inverter-item .circle {
+.inverter-name .circle {
     width: 16px;
     height: 16px;
     display: inline-block;
@@ -340,15 +381,15 @@
 }
 
 /* 效率状态颜色 */
-.inverter-item .green {
+.inverter-name .green {
     background: #10b981;
 }
 
-.inverter-item .gray {
+.inverter-name .gray {
     background: #afadaa;
 }
 
-.inverter-item .red {
+.inverter-name .red {
     background: #ef4444;
 }
 
