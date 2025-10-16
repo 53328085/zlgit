@@ -27,6 +27,8 @@ export const TopBox = styled.div`
   justify-content: flex-end;
   .infoBox1 {
     display: flex;
+    column-gap: 16px;
+    color: #606266;
     .powerStation {
       width: 160px;
       height: 150px;
@@ -34,6 +36,7 @@ export const TopBox = styled.div`
     .content {
       display: grid;
       align-items: center;
+      font-size: 13px;
       .info {
         display: flex;
         align-items: baseline;
@@ -53,6 +56,10 @@ export const TopBox = styled.div`
         span:nth-of-type(3) {
           display: inline-block;
           width: 150px;
+        }
+        .value{
+          color:#303133;
+          font-weight: 500;
         }
       }
     }
