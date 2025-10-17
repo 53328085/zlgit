@@ -15,7 +15,7 @@ import { filterProps } from '@com/usehandler'
 import {
   SyncOutlined,
 } from '@ant-design/icons';
-const {Link} = Typography
+const { Link } = Typography
 import { publicdateType, Daterange } from "./data"
 import Enery from "./enery";
 import { name } from "file-loader";
@@ -438,6 +438,7 @@ export default function UseSerach(props) {
   }
   const getCabinet = async () => {
     try {
+      if (!props.config.cabinet) return
       let { areaId, photovoltaicPowerStation } = form.getFieldsValue(true)
       console.log(areaId, photovoltaicPowerStation)
       let { success, data, errMsg } = await PhotovoltaicPowerGeneration.QueryGirdCabientList(projectId, areaId, photovoltaicPowerStation?.value)
@@ -470,12 +471,12 @@ export default function UseSerach(props) {
         setInverterData(data)
 
         form.setFieldsValue({
-          inverter: data[0].sn 
+          inverter: data[0].sn
         })
         props.setexparams({ ...form.getFieldsValue(true) })
       } else {
         setInverterData([])
-        form.setFieldValue('inverter',null)
+        form.setFieldValue('inverter', null)
         props.setexparams({ ...form.getFieldsValue(true) })
         if (!success) return message.warning(errMsg || "数据出错")
         if (data?.length == 0) return message.warning('当前并网柜不存在逆变器!')
@@ -507,12 +508,12 @@ export default function UseSerach(props) {
       <Select options={InverterData}  fieldNames={{ label: 'name', value: 'sn' }}   style={{ width: "140px" }} onChange={changetInverter}></Select>
     </Item>
   )
-  const onRefresh=()=> {
-    props.setexparams({...form.getFieldsValue(), refresh: {}});
+  const onRefresh = () => {
+    props.setexparams({ ...form.getFieldsValue(), refresh: {} });
   }
   const refresh = (
-    <Item name="refresh" style={{ color: `${primaryColor}` }} initialValue={{name:"refresh"}}>
-      <Link onClick={onRefresh}><SyncOutlined style={{ color: `${primaryColor}` }}  /> 刷新</Link>
+    <Item name="refresh" style={{ color: `${primaryColor}` }} initialValue={{ name: "refresh" }}>
+      <Link onClick={onRefresh}><SyncOutlined style={{ color: `${primaryColor}` }} /> 刷新</Link>
     </Item>
 
   )
