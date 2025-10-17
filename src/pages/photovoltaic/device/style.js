@@ -268,6 +268,7 @@ export const HistoricalModal = styled.div`
   .echarts {
     margin-top: 16px;
     height: 360px;
+    display: flex;
   }
   .table {
     margin-top: 16px;

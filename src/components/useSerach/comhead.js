@@ -484,6 +484,9 @@ export default function UseSerach(props) {
       console.log(error)
     }
   }
+  const changetInverter=(e)=> {
+    props.setexparams({ ...form.getFieldsValue(true) })
+  }
   const photovoltaicPowerStation = (
     <Item name="photovoltaicPowerStation" style={{ color: `${primaryColor}` }} label="光伏站点">
       {/* powerStationData */}
@@ -501,7 +504,7 @@ export default function UseSerach(props) {
   const inverter = (
     <Item name="inverter" style={{ color: `${primaryColor}` }} label="逆变器">
       {/* inverterData */}
-      <Select options={InverterData}  fieldNames={{ label: 'name', value: 'sn' }} labelInValue style={{ width: "140px" }} onChange={getInverter}></Select>
+      <Select options={InverterData}  fieldNames={{ label: 'name', value: 'sn' }}   style={{ width: "140px" }} onChange={changetInverter}></Select>
     </Item>
   )
   const onRefresh=()=> {

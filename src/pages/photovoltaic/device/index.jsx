@@ -40,6 +40,7 @@ export default function Index() {
       let { exparams } = useOutletContext()
       
       const { projectId, inverter,refresh } = exparams 
+      console.log("inverter",inverter)
     const weatherOpt = useMemo(()=> {
    
     return {
@@ -335,9 +336,9 @@ export default function Index() {
     <Pagecount bgcolor="#eeeff4" pd={0} >
       <Container>
         <Modal mold='cust' custft={true} width={1087}
-          closable={true} footer={[]}
+          closable={true} footer={null}
           ref={HistoricalRef} title={modalType === 1 ? '直流侧历史数据' : '交流侧历史数据'}>
-          <HistoricalDataModal modalType={modalType} />
+          <HistoricalDataModal modalType={modalType} sn={inverter} projectId={projectId} />
         </Modal>
         <TopBox>
           <Titlelayout title={'逆变器信息'} {...fs}>
@@ -464,9 +465,9 @@ export default function Index() {
           <div className='realTimeData'>
             <Titlelayout title={'直流侧实时数据'} extra={
               <Header>
-                <Link onClick={() => onOpenModal(1)} style={{ marginRight: "16px" }}>
+                {/* <Link onClick={() => onOpenModal(1)} style={{ marginRight: "16px" }}>
                   历史数据
-                </Link>
+                </Link> */}
               </Header>}>
 
               <div className='infoBox3'>

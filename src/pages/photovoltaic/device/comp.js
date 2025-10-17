@@ -1,265 +1,245 @@
-import React, { useEffect, useRef, useState, useCallback } from 'react'
-import { DatePicker, Table, Radio, Select, Button, message } from "antd";
+import React, {
+  useEffect,
+  useRef,
+  useState,
+  useCallback,
+  useMemo,
+} from "react";
+import { DatePicker, Table, Radio, Select, Space, message, Form } from "antd";
 import UserTable from "@com/useTable";
 import { useReactive } from "ahooks";
 import moment from "moment";
-import dayjs from 'dayjs';
-import { ExportExcel, CustButton, ExportButton } from '@com/useButton'
+import Ichart from "@com/useEcharts/Ichart";
+import { options } from "./data";
+import { useQueryInverterPointTrend } from "./api";
+import { ExportExcel, CustButton, ExportButton } from "@com/useButton";
 import { HistoricalModal } from "./style";
-import HistoricalEcharts from './historicalEcharts.js';
+
+import { getTime, isObject } from "@com/usehandler";
+
 const HistoricalDataModal = (props) => {
-    console.log(props, props.modalType)
-    const { modalType } = props
-    const state = useReactive({
-        devices: [],
-        snGroup: [],
-        timeType: 1,
-        xAxis: [],
-        alltableData: [],
-        detailtableData: [],
-        tableData: [],
-        current: 1,
-        pageSize: 10,
-        disabled: false,
-        groupName: '',
-        btnLength: [1, 2, 3],
-        active: 0,
-        chartsOpts: {
-            type: 1,
-        },
-    });
-    const tableRef = useRef()
-    const today = moment().startOf('day');
-    const tmonth = moment().startOf('month')
-    const tyear = moment().startOf('year')
-    const params = useReactive({
-        siteId: 1,
-        structureIds: [],
-        type: 1,
-        startDate: moment(today).format('YYYY-MM-DD'),
-        endDate: moment(today).format('YYYY-MM-DD'),
-    });
+  console.log(props, props.modalType);
+  const { modalType, sn, projectId } = props;
+  const [form] = Form.useForm();
+  const [modal, setModal] = useState("1");
+  const tableRef = useRef();
+  const ectype = Form.useWatch("point", form);
+  const dateType = Form.useWatch("type", form);
+  const [picker, setPicker] = useState("date");
+  // const [tableData, setTableData]=useState([])
+  const [datas, setDatas] = useState({});
 
-    const options = [
+  const [tableData,columns, lineopt] = useMemo(() => {
+    const format = dateType == 1 ? "HH:mm" : "DD";
+    const { data = [], group } = datas // mock.filter((d) => d.group == ectype)?.[0] || {}; //
+    const points = {
+     "Pt": "总有功功率（kW）",
+     "Ia": "A相电流（A）",
+     "Ib": "B相电流（A）",
+     "Ic": "C相电流（A）",
+     "Ua": "A相电压（V）",
+     "Ub": "B相电压（V）",
+     "Uc": "C相电压（V）",
+     "Freq": "频率（Hz）"
+    }  
+      const cols = [
         {
-            label: '图表模式',
-            value: 1,
+          title: "时间",
+          dataIndex: `time`,
+          align: "center",
+          width: 120,
+          sorter: (a, b) =>
+            moment(a.time, format).diff(
+              moment(b.time, format)
+            ) > 0,
         },
-        {
-            label: '列表模式',
-            value: 2,
-        },
+        ...data.map(item => ({
+            title:points[item.point],
+            dataIndex: item.point,
+
+        }) )
     ];
-
-    const columns = [
-        {
-            title: "时间",
-            dataIndex: `time`,
-            align: 'center',
-            width: 120,
-            sorter: (a, b) => {
-                const aTime = a.time.split(':').map(Number);
-                const bTime = b.time.split(':').map(Number);
-                return aTime[0] * 60 + aTime[1] - (bTime[0] * 60 + bTime[1]);
-            },
-            sortDirections: ['ascend', 'descend'],
-        }, {
-            title: "发电量 (kWh)",
-            dataIndex: `kWh`,
-            align: 'center',
-            sorter: (a, b) => a.kWh - b.kWh,
-        }, {
-            title: "天气状态",
-            dataIndex: `weather`,
-            align: 'center',
-            render(_, record) {
-                return (
-                    <div>{record.weather == 1 ? '晴' :
-                        record.weather == 2 ? '多云' :
-                            record.weather == 3 ? '雨' :
-                                '未知'}</div>
-                )
-            }
-        }
-    ]
-    const tabledata = [
-        {
-            time: "00:00",
-            kWh: "2250.54",
-            weather: 1,
-        }, {
-            time: "01:00",
-            kWh: "22",
-            weather: 1,
-        }, {
-            time: "02:00",
-            kWh: "111",
-            weather: 2,
-        }, {
-            time: "03:00",
-            kWh: "222",
-            weather: 3,
-        }, {
-            time: "04:00",
-            kWh: "3333",
-            weather: 3,
-        }, {
-            time: "00:00",
-            kWh: "2250.54",
-            weather: 1,
-        }, {
-            time: "01:00",
-            kWh: "22",
-            weather: 1,
-        }, {
-            time: "02:00",
-            kWh: "111",
-            weather: 2,
-        }, {
-            time: "03:00",
-            kWh: "222",
-            weather: 3,
-        }, {
-            time: "04:00",
-            kWh: "3333",
-            weather: 3,
-        }, {
-            time: "00:00",
-            kWh: "2250.54",
-            weather: 1,
-        }, {
-            time: "01:00",
-            kWh: "22",
-            weather: 1,
-        }, {
-            time: "02:00",
-            kWh: "111",
-            weather: 2,
-        }, {
-            time: "03:00",
-            kWh: "222",
-            weather: 3,
-        }, {
-            time: "04:00",
-            kWh: "3333",
-            weather: 3,
-        }
-    ]
-    const changephysical1 = (e) => {
-
-    }
-    const changeTime = (e) => {
-        console.log(e)
-        params.type = parseInt(e)
-        if (params.type == 1) {
-            params.startDate = moment(today).format('YYYY-MM-DD')
-            params.endDate = moment(today).format('YYYY-MM-DD')
-        } else if (params.type == 2) {
-            params.startDate = moment(tmonth).format('YYYY-MM') + '-01'
-            params.endDate = moment(tmonth).format('YYYY-MM') + '-01'
-        } else if (params.type == 3) {
-            params.startDate = moment(today).format('YYYY') + '-01-01'
-            params.endDate = moment(today).format('YYYY') + '-01-01'
-        } else {
-            params.startDate = moment(today).format('YYYY-MM-DD')
-            params.endDate = moment(today).format('YYYY-MM-DD')
-        }
-    }//切换日月年
-
-    const onChangeDate = (date, dateString) => {
-        if (!dateString) return;
-        if (params.type == 1) {
-            params.startDate = dateString
-            params.endDate = dateString
-        } else if (params.type == 2) {
-            params.startDate = dateString + '-01'
-            params.endDate = dateString + '-01'
-        } else if (params.type == 3) {
-            params.startDate = dateString + '-01-01'
-            params.endDate = dateString + '-01-01'
-        } else {
-            params.startDate = dateString[0]
-            params.endDate = dateString[1]
-        }
-    };
-    const disabledDate = (current) => {
-        return current > dayjs().endOf('day');
-    };
-    const onexprot = useCallback(() => {
+    let tbdata =[]
+    data.forEach((item,index) =>{
+       let {point,data} = item;
+       if(index==0) {
+        tbdata  = data.map((t) => ({time: moment(t.time, "YYYY-MM-DD HH:mm:ss").format(format),[point]:t.value}))
+       }else if(index>0) {
+         tbdata =data.map((t,i) => ({...tbdata[i],[point]:t.value}))
+       }
+      
     })
-    return (
-        <HistoricalModal>
-            <div className='searchBox'>
-                <div className='physical'>
-                    {modalType == 1 ?
-                        <Select defaultValue={1} style={{ width: 196, marginRight: 16 }} onChange={changephysical1}
-                            options={[
-                                { value: 1, label: '电压', },
-                                { value: 2, label: '电流', },
-                            ]}
-                        /> :
-                        <Select defaultValue={1} style={{ width: 196, marginRight: 16 }} onChange={changephysical1}
-                            options={[
-                                { value: 1, label: '总有功功率', },
-                                { value: 2, label: '电压', },
-                                { value: 3, label: '电流', },
-                                { value: 4, label: '频率', },
-                            ]}
-                        />}
-                </div>
-                <div className='timeBox'>
-                    <Select defaultValue={1} style={{ width: 96, marginRight: 16 }} onChange={changeTime}
-                        options={[
-                            { value: 1, label: '日', },
-                            { value: 2, label: '月', },
-                            { value: 3, label: '年' },
-                            // { value: '4', label: '自定义' },
-                        ]}
-                    />
-                    {params.type == 1 ? <DatePicker style={{ width: 196 }} onChange={onChangeDate} defaultValue={moment(today)} disabledDate={disabledDate} /> :
-                        params.type == 2 ? <DatePicker style={{ width: 196 }} onChange={onChangeDate} defaultValue={moment(tmonth)} picker='month' disabledDate={disabledDate} /> :
-                            params.type == 3 ? <DatePicker style={{ width: 196 }} onChange={onChangeDate} picker='year' defaultValue={moment(tyear)} disabledDate={disabledDate} /> : null
-                        // <RangePicker style={{ width: 196 }} onChange={onChangeDate} defaultValue={[moment(today), moment(today)]} disabledDate={disabledDate} />
-                    }
-                    <Radio.Group
-                        block
-                        options={options}
-                        optionType="button"
-                        buttonStyle="solid"
-                        style={{ marginRight: 16, marginLeft: 16 }}
-                        value={state.timeType}
-                        onChange={(e) => {
-                            state.timeType = e.target.value
-                        }}
-                    />
-                    {/* tb={tableRef} */}
-                    {/* <ExportExcel ></ExportExcel> */}
-                    <ExportButton onClick={onexprot} disabled={state.timeType == 1} />
-                </div>
-            </div>
-            {state.timeType == 1 ?
-                <div className='echarts'>
-                    <HistoricalEcharts />
-                </div> :
-                <div className='table'>
-                    <UserTable scroll={{ y: 280 }} columns={columns} dataSource={tabledata} ref={tableRef}
-                        summary={(pageData) => {
-                            let eleTotal = 0
-                            pageData?.forEach(({ kWh }) => {
-                                eleTotal = Math.round((eleTotal + Number(kWh)) * 100) / 100
-                            });
+    
+    let dimensions = ["time"];
+    let source = [];
+    let series = Array(data.length).fill({
+      type: "line",
+      seriesLayoutBy: "row",
+      areaStyle: null,
+      stack: null,
+    });
 
-                            return (
-                                <Table.Summary fixed>
-                                    <Table.Summary.Row style={{ backgroundColor: "#f6f6f6", textAlign: "center" }}>
-                                        <Table.Summary.Cell index={0} >汇总</Table.Summary.Cell>
-                                        <Table.Summary.Cell index={1} colSpan={2} >{eleTotal}</Table.Summary.Cell>
-                                    </Table.Summary.Row>
-                                </Table.Summary>)
-                        }}>
-                    </UserTable>
-                </div>}
-        </HistoricalModal>
-    )
-}
+    data.forEach((d, index) => {
+      let { point, data } = d;
+      dimensions.push(point);
+      if (index == 0) {
+        source.push(data.map((t) => t.time));
+        source.push(data.map((t) => t.value));
+      } else {
+        source.push(data.map((t) => t.value));
+      }
+    });
+    const lineopt = {
+      series,
+      grid: {
+        left: "0px",
+        right: "0",
+        top: "40px",
+        bottom: "16px",
+        containLabel: true,
+      },
+
+      legend: {
+        top: "5px",
+      },
+      xAxis: {
+        axisLabel: {
+          formatter: (value, index) => {
+            return moment(value, "YYYY-MM-DD HH:mm:ss").format(format);
+          },
+          interval: "auto",
+        },
+      },
+      yAxis: {
+        min: function (value) {
+          return (value.min - 10).toFixed(3);
+        },
+        max: function (value) {
+          return (value.max + 10).toFixed(3);
+        },
+      },
+      dataZoom: {
+        type: "inside",
+      },
+      dataset: {
+        dimensions,
+        source,
+        sourceHeader: false,
+      },
+    };
+
+    return [tbdata,cols, lineopt];
+  }, [datas, ectype, dateType]);
+
+ 
+
+  const getTrend = async () => {
+    try {
+      const { point, type, date, mode } = await form.getFieldsValue();
+      setModal(mode);
+      let body = {
+        point,
+        type,
+        date: getTime(date, type),
+        sn,
+        projectId,
+      };
+      const { success, data } = await useQueryInverterPointTrend({}, body);
+      if (success && isArray(data) && data.length && isObject(data[0])) {
+        setDatas(data[0]);
+      } else {
+        setDatas({});
+      }
+    } catch (error) {}
+  };
+
+  useEffect(() => {
+    if (Number.isInteger(parseInt(projectId)) && typeof sn == "string" && sn) {
+      getTrend();
+    }
+  }, [projectId, sn]);
+
+  const disabledDate = (current) => {
+    return current > moment().endOf("day");
+  };
+  const onexprot = ()=> {
+    tableRef.current.download();
+  };
+
+  const onValuesChange =()=> {
+    getTrend();
+  }
+  return (
+    <HistoricalModal>
+      <div className="searchBox">
+        <Form form={form} layout="inline" onValuesChange={onValuesChange}>
+          <Space size={16}>
+            <Form.Item name="point" initialValue="EP">
+              <Select
+                style={{ width: 196 }}
+                options={[
+                  { value: "EP", label: "电压" },
+                  { value: "EC", label: "电流" },
+                  { value: "PPT", label: "总有功功率" },
+                  { value: "“Freq”", label: "频率" },
+                ]}
+              />
+            </Form.Item>
+            <Form.Item name="type" initialValue={1}>
+              <Select
+                style={{ width: 96 }}
+                options={[
+                  { value: 1, label: "日" },
+                  { value: 2, label: "月" },
+                ]}
+              />
+            </Form.Item>
+            <Form.Item shouldUpdate={(cur,pre)=>cur.type!=pre.type} noStyle>
+                {
+                     ({getFieldValue, setFieldValue}) => {
+                           let type = getFieldValue('type')
+                           setPicker(type == 1 ? "date" : "month");
+                           setFieldValue('date', moment())
+                           return null
+                      }
+ 
+                }
+            </Form.Item>
+            <Form.Item name="date" initialValue={moment()}>
+              <DatePicker
+                picker={picker}
+                style={{ width: 240 }}
+                allowClear={false}
+                disabledDate={disabledDate}
+              />
+            </Form.Item>
+            <Form.Item name="mode" initialValue="1">
+              <Radio.Group
+                block
+                options={options}
+                optionType="button"
+                buttonStyle="solid"
+              />
+            </Form.Item>
+            <ExportButton onClick={onexprot} disabled={modal == "1"} />
+          </Space>
+        </Form>
+      </div>
+      {modal == "1" ? (
+        <div className="echarts">
+          <Ichart {...lineopt} />
+        </div>
+      ) : (
+        <div className="table">
+          <UserTable
+            scroll={{ y: 280 }}
+            columns={columns}
+            dataSource={tableData}
+            ref={tableRef}
+          ></UserTable>
+        </div>
+      )}
+    </HistoricalModal>
+  );
+};
 export default HistoricalDataModal;

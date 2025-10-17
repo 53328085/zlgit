@@ -209,20 +209,23 @@ const lingthChnage=(v)=> {
            <div className="content">
             <div className="lights">
             {
-             lingts?.details?.map?.(l => (<div className={l.state==2 ? "light close" : "light" }>
+             lingts?.details?.map?.(l => {
+               const {name, value}= l.fields?.find(f=> f.name=="亮度") || {}
+               let islight = (typeof parseFloat(value)=="number") && parseFloat(value) >0
+              return (<div className={!islight ? "light close" : "light" }>
                
                <div>
                  {l.name}
                <div > {`(${l.cSn})`} </div>
                </div>
                <div className="imgbox">
-               <img src={l.state==1 ? opensvg : closesvg} className="img"></img>
-               {
-                 l.fields?.map(f=> (<span>{f.name}:{f.value}</span>))
-               }
+               <img src={islight ? opensvg : closesvg} className="img"></img>
+              
+                  <span>{name}:{value}</span>
+               
                </div>
              
-             </div>))
+             </div>)})
             }
        </div>
        </div>
@@ -235,20 +238,21 @@ const lingthChnage=(v)=> {
               <Checkbox.Group onChange={checkChange} value={checkedList} >
               <div className="lights">
                    {
-                    lingts?.details?.map?.(l => (<div className={l.state==2 ? "light close" : "light" }>
+                    lingts?.details?.map?.(l => {
+                      const {name, value}= l.fields?.find(f=> f.name=="亮度") || {}
+                      let islight = (typeof parseFloat(value)=="number") && parseFloat(value) >0
+                    return  (<div className={!islight ? "light close" : "light" }>
                        <Checkbox value={l.id}>
                       <div>
                         {l.name}
                       <div > {`(${l.cSn})`} </div>
                       </div>
                       <div className="imgbox">
-                      <img src={l.state==1 ? opensvg : closesvg} className="img"></img>
-                      {
-                        l.fields?.map(f=> (<span>{f.name}:{f.value}</span>))
-                      }
+                      <img src={islight ? opensvg : closesvg} className="img"></img>
+                        { islight && <span>{name}:{value}</span>}
                       </div>
                       </Checkbox>
-                    </div>))
+                    </div>)})
                    }
               </div>
               </Checkbox.Group>

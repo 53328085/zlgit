@@ -23,7 +23,7 @@ import moment from "moment";
 import { useNavigate, Link } from "react-router-dom";
 import SolarPowerGenerationChart from './weatherEcharts.js';
 import  {useQueryGirdCabinetInfo, useQueryInverterList,useQueryEnergyTrend} from './api'
-import {states,options} from './data'
+import {options} from './data'
 import imgurl from './images/index' 
 const { RangePicker } = DatePicker;
 const fs = {
@@ -42,13 +42,19 @@ export default function Index() {
     const [curstate, setCurstate] = useState("1")
     const [weather, setWeather] = useState({})
    
-    const filtrlist = useMemo(()=> {
+    const [filtrlist, states] = useMemo(()=> {
+       let filtrlist = curstate == 0 ? cabinetList: cabinetList.filter(f => f.state == curstate)
+       let all =  cabinetList?.length;
+       let online= cabinetList.filter(f=>f.state==1)?.length ;
+       let offline = cabinetList.filter(f=>f.state!=1)?.length;
+       let states=[
+        {label:`全部 (${all})`,value:'0'},
+        {label: `在线 (${online})`,value:'1'},
+        {label: `离线 (${offline})`,value:'2'},
+     
+    ]
        
-       if(curstate == 0) {
-        return cabinetList
-       }else {
-        return cabinetList.filter(f => f.state == curstate)
-       }
+      return [filtrlist, states]
     },[cabinetList, curstate])
     const weatherOpt = useMemo(()=> {
    
@@ -472,7 +478,7 @@ export default function Index() {
             <div className='infoBox3'>
               {filtrlist?.map((item, index) => (
                 <div className='box' key={index} onClick={() => toDevicePage(item)} >
-                  <div className={`title ${item.status == 1 ? 'online' : 'offline'}`}>
+                  <div className={`title ${item.state == 1 ? 'online' : 'offline'}`}>
                     {item.name} ({item.sn})
                   </div>
                   <div className='con'>
@@ -480,8 +486,8 @@ export default function Index() {
                       <img src={runtimeDuration} className='powerIcon' />
                       <div className='info'>
                         <div><span className='name'>状 态：</span>
-                          <span className={`status ${item.status == 1 ? 'online' : 'offline'}`}></span>
-                          {item.status == 1 ? '并网' : '等待'}</div>
+                          <span className={`status ${item.state == 1 ? 'online' : 'offline'}`}></span>
+                          {item.state == 1 ? '并网' : '等待'}</div>
                         <div><span>型 号：</span> {item.category}</div>
                         <div><span className='name'>安装地址：</span>{item.address}</div>
                       </div>

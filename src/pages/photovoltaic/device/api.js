@@ -9,3 +9,8 @@ export const { useQueryInverterEnergyTrend } = new Apimethod( //光伏发电趋�
     "post",
     "Solar/RuntimeInverterMonitor/QueryInverterEnergyTrend"
   );
+
+  export const { useQueryInverterPointTrend } = new Apimethod( // 交流测历史数据
+    "post",
+    "Solar/RuntimeInverterMonitor/QueryInverterPointTrend"
+  );
