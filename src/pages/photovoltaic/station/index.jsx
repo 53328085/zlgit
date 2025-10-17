@@ -24,7 +24,7 @@ import { useNavigate, Link } from "react-router-dom";
 import SolarPowerGenerationChart from './weatherEcharts.js';
 import  {useQueryGirdCabinetInfo, useQueryInverterList,useQueryEnergyTrend} from './api'
 import {states,options} from './data'
- 
+import imgurl from './images/index' 
 const { RangePicker } = DatePicker;
 const fs = {
   fc: '#333'
@@ -43,6 +43,7 @@ export default function Index() {
     const [weather, setWeather] = useState({})
    
     const filtrlist = useMemo(()=> {
+       
        if(curstate == 0) {
         return cabinetList
        }else {
@@ -325,15 +326,15 @@ export default function Index() {
               <img src={powerStation} className='powerStation' />
               <div className='content'>
                 <div className='info'>
-                  <span></span><span>名  称： </span> <span>{cabinetDtl?.name}</span></div>
+                  <span></span><span>名  称： </span> <span className='value'>{cabinetDtl?.name}</span></div>
                 <div className='info'>
-                  <span></span> <span>编  号：</span> <span>{cabinetDtl?.no}</span></div>
+                  <span></span> <span>编  号：</span> <span className='value'>{cabinetDtl?.no}</span></div>
                 <div className='info'>
-                  <span></span> <span>总表名称：</span><span>{cabinetDtl?.meterName}</span></div>
+                  <span></span> <span>总表名称：</span><span className='value'>{cabinetDtl?.meterName}</span></div>
                 <div className='info'>
-                  <span></span> <span>总表编号：</span><span>{cabinetDtl?.meterSn}</span></div>
+                  <span></span> <span>总表编号：</span><span className='value'>{cabinetDtl?.meterSn}</span></div>
                 <div className='info'>
-                  <span></span><span>安装地址：</span> <span>{cabinetDtl?.address}</span></div>
+                  <span></span><span>安装地址：</span> <span className='value'>{cabinetDtl?.address}</span></div>
               </div>
             </div>
             <div className='powerNum'>
@@ -381,21 +382,21 @@ export default function Index() {
             <div className='infoBox2'>
               <div className='info'>
                 <div className='box'>
-                  <img src={runtimeDuration} className='powerIcon' />
+                  <img src={imgurl['df']} className='powerIcon' />
                   <div className='num'>
                     <div>{generationInfo?.dayGeneration}</div>
                     <div>本日发电量(kWh)</div>
                   </div>
                 </div>
                 <div className='box'>
-                  <img src={runtimeDuration} className='powerIcon' />
+                  <img src={imgurl['mf']} className='powerIcon' />
                   <div className='num'>
                     <div>{generationInfo?.monthGeneration}</div>
                     <div>本月发电量(kWh)</div>
                   </div>
                 </div>
                 <div className='box'>
-                  <img src={runtimeDuration} className='powerIcon' />
+                  <img src={imgurl['yf']} className='powerIcon' />
                   <div className='num'>
                     <div>{generationInfo?.yearGeneration}</div>
                     <div>本年发电量(kWh)</div>
@@ -405,21 +406,21 @@ export default function Index() {
 
               <div className='info'>
                 <div className='box'>
-                  <img src={runtimeDuration} className='powerIcon' />
+                  <img src={imgurl['ds']} className='powerIcon' />
                   <div className='num'>
                     <div>{generationInfo?.dayIncome}</div>
                     <div>本日发电收益(元)</div>
                   </div>
                 </div>
                 <div className='box'>
-                  <img src={runtimeDuration} className='powerIcon' />
+                  <img src={imgurl['ms']} className='powerIcon' />
                   <div className='num'>
                     <div>{generationInfo?.monthIncome}</div>
                     <div>本月发电收益(元)</div>
                   </div>
                 </div>
                 <div className='box'>
-                  <img src={runtimeDuration} className='powerIcon' />
+                  <img src={imgurl['ys']} className='powerIcon' />
                   <div className='num'>
                     <div>{generationInfo?.yearIncome}</div>
                     <div>本年发电收益(元)</div>
@@ -432,21 +433,21 @@ export default function Index() {
             <div className='infoBox2'>
               <div className='info'>
                 <div className='box'>
-                  <img src={runtimeDuration} className='powerIcon' />
+                  <img src={imgurl['dc']} className='powerIcon' />
                   <div className='num'>
                     <div>{coalInfo?.dayCoal}</div>
                     <div>本日等效碳排(kg)</div>
                   </div>
                 </div>
                 <div className='box'>
-                  <img src={runtimeDuration} className='powerIcon' />
+                  <img src={imgurl['mc']} className='powerIcon' />
                   <div className='num'>
                     <div>{coalInfo?.monthCoal}</div>
                     <div>本月等效碳排(kg)</div>
                   </div>
                 </div>
                 <div className='box'>
-                  <img src={runtimeDuration} className='powerIcon' />
+                  <img src={imgurl['yc']} className='powerIcon' />
                   <div className='num'>
                     <div>{coalInfo?.yearCoal}</div>
                     <div>本年等效碳排(kg)</div>
