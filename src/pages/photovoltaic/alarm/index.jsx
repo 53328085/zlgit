@@ -77,14 +77,8 @@ const P = styled(Paragraph)`
 const columns = [
   {
     title: '最新告警时间',
-    dataIndex: 'warningTime',
-    key: 'warningTime',
-    align: 'center'
-  },
-  {
-    title: '设备编号',
-    dataIndex: 'sn',
-    key: 'sn',
+    dataIndex: 'alarmTime',
+    key: 'alarmTime',
     align: 'center'
   },
   {
@@ -103,7 +97,18 @@ const columns = [
     title: ' 设备编号',
     dataIndex: 'sn',
     key: 'sn',
-    align: 'center'
+    align: 'center',
+    render: (sn) => (
+      <Link
+        to={{
+          pathname: "/deviceDetail",
+          search: `?sn=${encodeURIComponent('12abd1234412')}&deviceStyle=${encodeURIComponent(19)}`,
+        }}
+        target="_blank"
+      >
+        {sn}
+      </Link>
+    ),
   },
   {
     title: '设备型号',
@@ -123,20 +128,20 @@ const columns = [
     key: 'address',
     align: 'center'
   },
-  {
-    title: '操作',
-    key: 'action',
-    align: 'center',
-    render: (_, record) => (
-      <Link
-        className='historicalData'
-        to={`/deviceDetail?sn=${encodeURIComponent("202304220001")}&deviceStyle=${encodeURIComponent(1)}`}
-        target="_blank"
-      >
-        设备信息
-      </Link>
-    )
-  }
+  // {
+  //   title: '操作',
+  //   key: 'action',
+  //   align: 'center',
+  //   render: (_, record) => (
+  //     <Link
+  //       className='historicalData'
+  //       to={`/deviceDetail?sn=${encodeURIComponent("202304220001")}&deviceStyle=${encodeURIComponent(19)}`}
+  //       target="_blank"
+  //     >
+  //       设备信息
+  //     </Link>
+  //   )
+  // }
 
 ]
 export default function Index() {
