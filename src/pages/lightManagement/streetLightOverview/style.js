@@ -29,7 +29,7 @@ export  const Mainwrap = styled.div`
             width: 42px;
             height: 42px;
             overflow: hidden;
-            .img {
+             img {
             max-width: 100%;
         }
         }
@@ -106,6 +106,14 @@ export  const Mainwrap = styled.div`
                     display: flex;
                     align-items: center;
                     column-gap: 16px;
+                    .imgbox {
+                      width: 55px;
+                      height: 56px;
+                      overflow: hidden;
+                      img {
+                        max-width: 100%;
+                      }
+                    }
                     .data {
                         display: flex;
                         align-items: center;
