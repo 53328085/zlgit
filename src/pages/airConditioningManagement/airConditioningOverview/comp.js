@@ -32,9 +32,11 @@ const CusCard = ({
   value1 = "",
   value2 = "",
   value3 = "",
+  value4="",
   imgurl = "",
   index,
-  isextra=false
+  isextra=false,
+  lastTitle=""
 }) => {
   return (
     <div className="card">
@@ -84,12 +86,12 @@ const CusCard = ({
         <div>
           {isextra ? (
             <div>
-              <div style={{ color: "#606266" }}>{thrTitle}</div>
+              <div style={{ color: "#606266" }}>{lastTitle}</div>
               <div
                 className={`small`}
                 style={{ color: "#303133", fontWeight: 500 }}
               >
-                {value3}
+                {value4}
               </div>
             </div>
           ) : null}
@@ -113,6 +115,7 @@ export const DetailComp = React.memo(({ overData }) => {
         carbonMom = "",
         lastPeriodCarbon = "",
         ranking = [],
+        saveMoney="10.00"
       } = overData;
       const arr = [
         {
@@ -120,12 +123,15 @@ export const DetailComp = React.memo(({ overData }) => {
           value1: periodUseE,
           value2: useMom,
           value3: lastPeriodUseE,
+
         },
         {
           ...energyData[1],
           value1: periodSaveE,
           value2: saveMom,
           value3: saveRate,
+          isextra:true,
+          value4:saveMoney 
         },
         {
           ...energyData[2],
@@ -219,7 +225,7 @@ export const FooterChartComp = React.memo(({ tableData, chartData }) => {
     <FooterChart>
       <BlueColumn
         name="空调能耗趋势"
-        bg={{ borderRadius: "4px", height: 13 }}
+        bg={{  height: 13 ,marginRight:8}}
         styled={{ marginBottom: 16, padding: "0px 16px", height: 40 }}
         isbgShow={true}
       >
@@ -233,7 +239,7 @@ export const FooterChartComp = React.memo(({ tableData, chartData }) => {
             optionType="button"
             buttonStyle="solid"
             size="small"
-            style={{ marginLeft: 16, borderRadius: 4 }}
+            style={{ marginLeft: 16 }}
             onChange={(e) => {
               setTabId(e.target.value);
             }}
@@ -264,7 +270,7 @@ export const FooterChartComp = React.memo(({ tableData, chartData }) => {
           columns={TbHeader}
           dataSource={tableData}
           style={{ overflow: "auto", padding: "0 16px 16px" }}
-          scroll={{ y: 15 * 31 }}
+          scroll={{ x: 'max-content', y: 15 * 31 }}
           summary={(pageData) => {
             let summaryData = ["汇总", ...Array(5).fill(0)];
             pageData.forEach(
