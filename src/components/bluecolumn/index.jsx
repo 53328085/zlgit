@@ -7,7 +7,7 @@ export default function Index({ name = '', children, styled = {}, bg = {}, fontS
   console.log("theme",theme)
   const styles = isbgShow?{backgroundColor:theme.cardHeadBg,...styled}:styled
   return (
-    <div className={style.title} style={styles}>
+    <div className={style.title} style={styles} >
       <div className={bac == '' ? style.columns : style.red} style={bg}></div>
       <div className={style.name} style={{ fontSize, fontWeight}} >{name}</div>
       {children}

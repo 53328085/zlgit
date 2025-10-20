@@ -31,6 +31,7 @@ export const EnergyData = [
     thrTitle: "节能率",
     value3: "0.0",
     imgurl: imgUrl.save,
+    lastTitle:"节能费用"
   },
   {
     title: "碳排情况",
@@ -234,7 +235,7 @@ export const TbHeader = [
     title: "时间",
     dataIndex: "date",
     key: "date",
-    width:110,
+    width: 110,
     sorter: {
       compare: (a, b) => a.date - b.date,
       multiple: 1,
@@ -245,7 +246,7 @@ export const TbHeader = [
     dataIndex: "periodUseE",
     key: "periodUseE",
     defaultSortOrder: "ascend",
-    width: 260,
+    width: 150,
     sorter: {
       compare: (a, b) => a.periodUseE - b.periodUseE,
       multiple: 2,
@@ -255,7 +256,7 @@ export const TbHeader = [
     title: "环比昨日用电量 (kWh)",
     dataIndex: "lastPeriodUseE",
     key: "lastPeriodUseE",
-    width:346,
+    width: 180,
     sorter: {
       compare: (a, b) => a.lastPeriodUseE - b.lastPeriodUseE,
       multiple: 3,
@@ -265,7 +266,7 @@ export const TbHeader = [
     title: "环比",
     dataIndex: "mom",
     key: "mom",
-    width: 117,
+    width: 100,
     sorter: {
       compare: (a, b) =>
         parseFloat(a.lastPeriodUseE) - parseFloat(b.lastPeriodUseE),
@@ -276,7 +277,7 @@ export const TbHeader = [
     title: "同比去年用电量 (kWh)",
     dataIndex: "lastSamePeriodUseE",
     key: "lastSamePeriodUseE",
-    width: 347,
+    width: 180,
     sorter: {
       compare: (a, b) => a.lastSamePeriodUseE - b.lastSamePeriodUseE,
       multiple: 3,
@@ -286,6 +287,7 @@ export const TbHeader = [
     title: "同比",
     dataIndex: "yoy",
     key: "yoy",
+    width: 100,
     sorter: {
       compare: (a, b) => parseFloat(a.yoy) - parseFloat(b.yoy),
       multiple: 4,

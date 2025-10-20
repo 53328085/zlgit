@@ -66,6 +66,14 @@ export const Detail = styled.div`
     .down {
       color: #06cc45;
     }
+    .footer{
+      display: flex;
+      justify-content: start;
+      & div{
+        flex: 1;
+        
+      }
+    }
   }
   .chart {
     ${borderBox}
@@ -102,14 +110,13 @@ export const FooterChart = styled.div`
     height: 32px;
     line-height: 32px;
     font-size: 14px;
-    border-radius: 2px;
 
     &:first-child {
-      border-radius: 0;
+      border-radius: 4px 0 0 4px;
     }
 
     &:last-child {
-      border-radius: 0;
+      border-radius: 0 4px 4px 0;
     }
 
     &::before {
