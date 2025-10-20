@@ -34,6 +34,7 @@ const CusCard = ({
   value3 = "",
   imgurl = "",
   index,
+  isextra=false
 }) => {
   return (
     <div className="card">
@@ -43,7 +44,7 @@ const CusCard = ({
           alt=""
           style={{ width: 23, height: 23, marginRight: 6 }}
         />
-        <span style={{ color: "#303133"}}>
+        <span style={{ color: "#303133" }}>
           {title}
           <span style={{ color: "#999" }}> ({index == 2 ? "kg" : "kWh"})</span>
         </span>
@@ -61,16 +62,37 @@ const CusCard = ({
           {value1}
         </div>
         <div className={`small`}>
-          环比昨日：<span>{parseFloat(value2) > 0?'+':'-'}{value2}</span><img src={parseFloat(value2) > 0 ? rise : down} alt="" />
+          环比昨日：
+          <span>
+            {parseFloat(value2) > 0 ? "+" : "-"}
+            {value2}
+          </span>
+          <img src={parseFloat(value2) > 0 ? rise : down} alt="" />
         </div>
       </div>
       <div className="footer">
-        <div style={{ color: "#606266" }}>{thrTitle}</div>
-        <div
-          className={`small`}
-          style={{ color: "#303133", fontWeight: 500 }}
-        >
-          {value3}
+        <div>
+          <div style={{ color: "#606266" }}>{thrTitle}</div>
+          <div
+            className={`small`}
+            style={{ color: "#303133", fontWeight: 500 }}
+          >
+            {value3}
+          </div>
+        </div>
+
+        <div>
+          {isextra ? (
+            <div>
+              <div style={{ color: "#606266" }}>{thrTitle}</div>
+              <div
+                className={`small`}
+                style={{ color: "#303133", fontWeight: 500 }}
+              >
+                {value3}
+              </div>
+            </div>
+          ) : null}
         </div>
       </div>
     </div>
@@ -133,7 +155,9 @@ export const DetailComp = React.memo(({ overData }) => {
             alt=""
             style={{ width: 23, height: 23, marginRight: 6 }}
           />
-          <span>空调用能排名<span style={{ color: "#999" }}>(kWh)</span></span>
+          <span>
+            空调用能排名<span style={{ color: "#999" }}>(kWh)</span>
+          </span>
         </div>
         {/* <div className="chart-box"> */}
         <Icharts custoption={AirChartData} type={5}></Icharts>
@@ -195,8 +219,8 @@ export const FooterChartComp = React.memo(({ tableData, chartData }) => {
     <FooterChart>
       <BlueColumn
         name="空调能耗趋势"
-        bg={{ borderRadius: "4px" ,height:13}}
-        styled={{ marginBottom:16,padding:"0px 16px",height:40 }}
+        bg={{ borderRadius: "4px", height: 13 }}
+        styled={{ marginBottom: 16, padding: "0px 16px", height: 40 }}
         isbgShow={true}
       >
         <div
@@ -209,7 +233,7 @@ export const FooterChartComp = React.memo(({ tableData, chartData }) => {
             optionType="button"
             buttonStyle="solid"
             size="small"
-            style={{ marginLeft: 16,borderRadius:4 }}
+            style={{ marginLeft: 16, borderRadius: 4 }}
             onChange={(e) => {
               setTabId(e.target.value);
             }}
@@ -219,7 +243,7 @@ export const FooterChartComp = React.memo(({ tableData, chartData }) => {
               display: "flex",
               alignItems: "center",
               margin: "0 16px 0 24px",
-              cursor: "pointer"
+              cursor: "pointer",
             }}
             onClick={() => {
               tableRef.current.downloadAll();
@@ -231,15 +255,15 @@ export const FooterChartComp = React.memo(({ tableData, chartData }) => {
         </div>
       </BlueColumn>
       {tabId == "1" ? (
-        <div  className="chartdom">
-        <MemoChart></MemoChart>
+        <div className="chartdom">
+          <MemoChart></MemoChart>
         </div>
       ) : (
         <UseTable
           ref={tableRef}
           columns={TbHeader}
           dataSource={tableData}
-          style={{ overflow: "auto" , padding:"0 16px 16px"}}
+          style={{ overflow: "auto", padding: "0 16px 16px" }}
           scroll={{ y: 15 * 31 }}
           summary={(pageData) => {
             let summaryData = ["汇总", ...Array(5).fill(0)];

@@ -87,7 +87,8 @@ export default function Index() {
             allselect={true}
             showSearch={true}
             title="空调设备列表"
-           sty = {{bordered: '', pv: '16px'}  }
+            sty = {{bordered: '', pv: '16px'}  }
+            hv="40px"
           />
         </div>
         <div className="right-box">
@@ -125,7 +126,7 @@ export default function Index() {
                 <Button
                   type="primary"
                   htmlType="submit"
-                  style={{ marginLeft: 16 }}
+                  style={{ marginLeft: 16,width:88 }}
                 >
                   查询
                 </Button>
