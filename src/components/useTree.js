@@ -52,6 +52,7 @@ export default memo(function Index({ areaId, setTreeId, setLine, setNode, showli
   title = "",
   mode = null,
   correlation=Number.POSITIVE_INFINITY, // 是否关联 属性
+  hv="32px", // 标题高度
   ...restprop }) {
   // datatype =0 或 =2
   const levelone = useSelector(selectOneLevel)
@@ -455,7 +456,7 @@ export default memo(function Index({ areaId, setTreeId, setLine, setNode, showli
 
   return (
 
-    <Titlelayout key="line" layout="flex" bordered={sty.bordered} pv={sty.pv} hv="32px"  title={title}>
+    <Titlelayout key="line" layout="flex" bordered={sty.bordered} pv={sty.pv} hv={hv}  title={title}>
       <div style={{ height: scroll ? scroll : '750px', overflow: 'auto', flex: 1 }}>
         {treeName ? <div style={{ color: '#515151', fontWeight: 'bold', marginBottom: '8px' }}>{treeName}</div> : null}
         <Treebox showline={showline.toString()}>
