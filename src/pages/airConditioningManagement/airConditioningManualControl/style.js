@@ -32,7 +32,7 @@ export const Header = styled.div`
   padding-right: 18px;
   overflow: hidden;
   border-radius: 4px;
-  }
+  
 `;
 export const CardBox = styled.div`
   border: 1px solid #d7d7d7;
@@ -145,5 +145,5 @@ export const CardBox = styled.div`
     .closeAir{
      background: #c2c2c2;
    }
-   }
+    
 `;

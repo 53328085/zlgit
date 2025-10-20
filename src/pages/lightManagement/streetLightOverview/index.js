@@ -216,28 +216,39 @@ export default function Index() {
       
         <div className="up">
           <div className="shownum">
+            <div className='imgwrap'>
             <img src={imgurl["todayLightRate"]}></img>
+            </div>
             <div className='data'>
               <span className='title'>亮灯率</span>
               <span className='num'>{Number.isInteger(parseFloat(datas?.lightRate))? `${parseFloat(datas?.lightRate)*100?.toFixed(2)}%`: "--" }</span>
             </div>
           </div>
           <div className="shownum">
+            <div className="imgwrap">
             <img src={imgurl["todayLightNum"]}></img>
+            </div>           
             <div className='data'>
               <span className='title'>亮灯数</span>
               <span className='num'>{datas?.lightUpNum ? datas?.lightUpNum : "--"}</span>
             </div>
           </div>
           <div className="shownum">
+            <div className="imgwrap">
             <img src={imgurl["todayEUsed"]}></img>
+            </div>
+           
             <div className='data'>
               <span className='title'>今日路灯用电（kWh）</span>
               <span className='num'>{datas?.todayEUsed ? datas?.todayEUsed : "--"}</span>
             </div>
           </div>
           <div className="shownum">
-            <img src={imgurl["todayEUsed"]}></img>
+            <div className="imgwrap">
+            <img src={imgurl["todayEnergy"]}></img>
+            </div>
+
+           
             <div className='data'>
               <span className='title'>今日路灯发电（kWh）</span>
               <span className='num'>{datas?.todayECreate ? datas?.todayECreate : "--"}</span>
@@ -254,14 +265,18 @@ export default function Index() {
             </div>
           </div>
           <div className="shownum">
+            <div className="imgwrap">
             <img src={imgurl["todayCarbon"]}></img>
+            </div>
             <div className='data'>
               <span className='title'>今日碳排量（kg）</span>
               <span className='num'>{datas?.todayCarbon ? datas?.todayCarbon : "--"}</span>
             </div>
           </div>
           <div className="shownum">
+            <div className="imgwrap">
             <img src={imgurl["alarmNum"]}></img>
+            </div>
             <div className='data'>
               <span className='title'>异常告警</span>
               <span className='num'>{datas?.alarmNum ? datas?.alarmNum : '--'}</span>
@@ -281,14 +296,19 @@ export default function Index() {
            
               <div className="info">
               <div className="item">
+                    <div className='imgbox'>
                      <img src={imgurl?.["lineNum"]}></img>
+                     </div>
                      <div className='data'>
                         <span className='label'>回路</span>
                         <span className='value'>{datas?.loopNum}</span>
                      </div>
                 </div>
                 <div className="item">
+                     <div className="imgbox">
                      <img src={imgurl?.["lightNum"]}></img>
+                     </div>
+                    
                      <div className='data'>
                         <span className='label'>高杆路灯</span>
                         <span className='value'>{datas?.highPoleNum}</span>
@@ -296,7 +316,9 @@ export default function Index() {
                 </div>
                
                 <div className="item">
-                     <img src={imgurl?.["sun"]}></img>
+                  <div className="imgbox">
+                  <img src={imgurl?.["sun"]}></img>
+                  </div>
                      <div className='data'>
                         <span className='label'>太阳能路灯</span>
                         <span className='value'>{datas?.solarNum}</span>
