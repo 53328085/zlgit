@@ -10,9 +10,10 @@ import Cempty from "@com/useEmpty";
 import CModal from "@com/useModal";
 import { useSelector } from "react-redux";
 import { selectProjectId } from "@redux/systemconfig";
-import multAir from "./icon/multi-splitAir.png";
-import splitAir from "./icon/splitAir.png";
-import centralAir from "./icon/centralAirPanel.png";
+import multAir from "./icon/vrvIcon.svg";
+import splitAir from "./icon/spacIcon.svg";
+import centralAir from "./icon/caIcon.svg";
+import coolBackground from "./icon/coolBackground.svg";
 import { useList, useSetControl } from "./api.js";
 import { Cspin } from "@com/comstyled"
 
