@@ -72,7 +72,9 @@ export default function Index() {
         setOpenNum(0);
         setCloseNum(0);
       }
-    } catch { }
+    } catch {
+      setSpinning(false)
+    }
   };
 
   const handleControlClick = async () => {
@@ -113,6 +115,8 @@ export default function Index() {
   };
 
   const onOkControl = async () => {
+    controlRef.current.onCancel();
+    setSpinning(true)
     try {
       let { ioState, workMode, windSpeed, temperature } =
         await formControl.validateFields();
@@ -127,16 +131,14 @@ export default function Index() {
       let { data, success, errMsg } = await useSetControl({}, params)
       if (success) {
         message.success("所选空调控制成功");
-        setSpinning(true)
-        setTimeout(() => {
-          handleSearchClick();
-        }, 10000)
+        // setTimeout(() => {
+        handleSearchClick();
+        // }, 10000)
 
       } else {
         message.error(errMsg);
       }
     } catch { }
-    controlRef.current.onCancel();
   };
 
   const onConfirmTip = async () => {
@@ -203,7 +205,7 @@ export default function Index() {
               </div>
             </div>
             {/* state =2 空调在线，state =1/=0空调离线，state =3空调告警 */}
-            {/* ioState=2空调关闭，ioState=1空调打开 */}
+            {/* ioState =2 空调关闭，ioState=1空调打开 */}
             <Cspin spinning={spinning} >
               <div className="airContainer">
                 {airData?.length !== 0 ? (
@@ -219,7 +221,7 @@ export default function Index() {
                                 onChange={(e) => handleCardCheck(airItem.id, e.target.checked)}
                                 style={{ cursor: 'pointer', color: '#303133', height: ' 100%' }}
                               >
-                                <div>
+                                <div className="airInfo">
                                   <div style={{ display: 'flex' }}>
                                     <div className="top">
                                       <div className="topInfo">
@@ -238,7 +240,11 @@ export default function Index() {
                                   {airItem?.fields?.map((fields) => (
                                     <div key={fields.name} className="fields">
                                       <div className="name">{fields.name}</div>
-                                      <div className="value">{fields.name === '开关' ? fields.value : '-'}</div>
+                                      <div className={`${(fields.name === '开关' && fields.value === '开') ? 'open' :
+                                        (fields.name === '开关' && fields.value === '关') ? 'close' : ''} value`}
+                                      >
+                                        {fields.name === '开关' ? fields.value : '-'}
+                                      </div>
 
                                     </div>
                                   ))}
@@ -260,11 +266,9 @@ export default function Index() {
                                 key={airItem.id}
                                 checked={selectedAirs.includes(airItem.id)}
                                 onChange={(e) => handleCardCheck(airItem.id, e.target.checked)}
-                                style={{ cursor: 'pointer', color: '#fff', height: ' 100%' }}
+                                style={{ cursor: 'pointer', color: '#303133', height: ' 100%' }}
                               >
-                                <div
-
-                                >
+                                <div className="airInfo" >
                                   <div style={{ display: "flex" }}>
                                     <div className="top">
                                       <div className="topInfo">
@@ -293,8 +297,10 @@ export default function Index() {
                                   </div>
                                   {airItem?.fields?.map((fields) => (
                                     <div key={fields.name} className="fields">
-                                      <div className="name"> {fields.name}</div>
-                                      <div className="value"> {fields.value || "-"}</div>
+                                      <div className="name">{fields.name}</div>
+                                      <div className={`${(fields.name === '开关' && fields.value === '开') ? 'open' :
+                                        (fields.name === '开关' && fields.value === '关') ? 'close' : ''} value`}
+                                      >{fields.value || "-"}</div>
                                     </div>
                                   ))}
                                 </div>
@@ -326,7 +332,7 @@ export default function Index() {
                             <div className="content">
                               <span className="temperature">-</span>℃
                             </div>
-                            <div className="airOffline">空调离线</div>
+                            <div className="air-Offline">离线</div>
                           </div>
                           {/* </AntCheckbox> */}
                         </div>
@@ -336,9 +342,9 @@ export default function Index() {
                             key={airItem.id}
                             checked={selectedAirs.includes(airItem.id)}
                             onChange={(e) => handleCardCheck(airItem.id, e.target.checked)}
-                            style={{ cursor: 'pointer', color: '#fff', height: ' 100%' }}
+                            style={{ cursor: 'pointer', color: '#303133', height: ' 100%' }}
                           >
-                            <div>
+                            <div className="airInfo">
                               <div style={{ display: 'flex' }}>
                                 <div className="top">
                                   <div className="topInfo">
@@ -354,7 +360,7 @@ export default function Index() {
                               <div className="content">
                                 <span className="temperature">-</span>℃
                               </div>
-                              <div className="airAlarm">空调告警</div>
+                              <div className="air-Alarm">告警</div>
                             </div>
                           </AntCheckbox>
                         </div>
