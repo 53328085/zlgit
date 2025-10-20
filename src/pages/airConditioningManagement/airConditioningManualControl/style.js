@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import { Radio } from "antd";
+import coolBackground from "./icon/coolBackground.svg";
 export const Container = styled.div`
   display: flex;
   .tree-box {
@@ -130,6 +130,8 @@ export const CardBox = styled.div`
         }
       .airCardCold{
        background: linear-gradient(180deg, rgb(113 146 241) 0%, rgb(77 158 236) 0%, rgb(219 227 241) 100%);
+        background: url(${coolBackground})  no-repeat;
+        background-position: bottom;
        }
    .airCardHot{
           background: linear-gradient(180deg, rgb(228 231 239) 0%, rgb(235 146 66) 0%, rgb(230 206 79) 81%, rgb(249 238 166) 100%);
