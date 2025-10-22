@@ -1,6 +1,6 @@
 import { React, useState, useEffect, useRef, useMemo } from "react";
 import mqtt from "mqtt";
-import styled, {css} from "styled-components";
+import styled, { css } from "styled-components";
 import style from "./style.module.less";
 import { useSelector } from "react-redux";
 import { useAntdTable } from "ahooks";
@@ -49,10 +49,10 @@ import moment from "moment";
 
 import deviceDetail3 from "./images/deviceDetail3.jpg";
 import Control from "./Control";
- 
+
 
 const { Text } = Typography;
-const sty=css`
+const sty = css`
 .dataBottom{
     grid-template-columns: repeat(auto-fill, minmax(400px,1fr));
 }
@@ -220,9 +220,9 @@ const Ctitlec = styled.div`
     width: 96px;
     height: 32px;
     background-color: ${(props) =>
-      props.state == 2
-        ? props.theme.successColor
-        : props.state == 3
+    props.state == 2
+      ? props.theme.successColor
+      : props.state == 3
         ? props.theme.errorColor
         : "#666"};
     border-radius: 6px;
@@ -343,16 +343,16 @@ const Chartin = (props) => {
 };
 export default function GatewayDetail(props) {
   let devess = useSelector(curDeviceStyle);
-  
-  const deviceList = useMemo(()=> {
-    let obj ={}
-    if(Array.isArray(devess)) {
+
+  const deviceList = useMemo(() => {
+    let obj = {}
+    if (Array.isArray(devess)) {
       devess.forEach(d => {
         obj[d?.deviceStyle] = d?.name
       })
     }
     return obj
-  },[devess])
+  }, [devess])
 
   let location = useLocation();
   // let [searchParams, setSearchParams] = useSearchParams()
@@ -395,7 +395,22 @@ export default function GatewayDetail(props) {
   const OtherdeviceStyle =
     detail?.deviceStyle == 4 && detail?.category == "ZTWLSENSOR-SL";
   const category = detail?.category;
-  const displaypoint = [4, 18].includes(detail?.deviceStyle);
+  // const displaypoint = [1, 4, 18].includes(detail?.deviceStyle);
+  const [displaypoint, setDisplaypoint] = useState(false)
+
+  const onChangeType = val => {
+    // console.log(val)
+    if(val.target.value == 'normal'){
+      setDisplaypoint(false)
+    }else if(val.target.value == 'profess'){
+      setDisplaypoint(true)
+    }
+  }
+
+  const radioOptions = [
+    { label: '专业', value: 'profess' },
+    { label: '标准', value: 'normal' },
+  ]
   console.log(OtherdeviceStyle, detail);
   // 能耗趋势 文本 1： 电， 2. 7 冷水，热水，3. 燃气 4. 传感器 不显示 5.变压器,6. 视频 7.热水表 后面的不知道用什么单位？？
   // let todayT = ['用电量 (kWh)', '用电量 (kWh)', '用水量 (m³)', '用气量 (m³)', '', '用电量 (kWh)', '', '用水量 (m³)'][deviceStyle] || '用电量 (kWh)'   //今日, 本月, 本年 文本， 数据表格中
@@ -520,7 +535,7 @@ export default function GatewayDetail(props) {
       if (isclude) setreportTypeTime(2);
       getEnergyReport();
     } else if (val == 2) {
-      if ([4, 18].includes(deviceStyle)) {
+      if (displaypoint) { //[4, 18].includes(deviceStyle)
         historycurve(pointval);
       } else {
         getHistoryTrend();
@@ -669,7 +684,7 @@ export default function GatewayDetail(props) {
         setPointval(null);
         setPtrend({});
       }
-    } catch (error) {}
+    } catch (error) { }
   };
   const getData = () => {
     //设备详情
@@ -721,7 +736,7 @@ export default function GatewayDetail(props) {
       if (!success) return message.warning(errMsg);
       message.success("消除告警成功");
       getDetailData();
-    } catch (error) {}
+    } catch (error) { }
   };
 
   let paramsTrend = {
@@ -992,7 +1007,7 @@ export default function GatewayDetail(props) {
     setendTimeAlarm(dataString[1]);
   }; //告警记录选择时间
   const onSearch = () => {
-    if ([4, 18].includes(deviceStyle)) {
+    if (displaypoint) {//[4, 18].includes(deviceStyle)
       historycurve(pointval);
     } else {
       getHistoryTrend();
@@ -1078,7 +1093,7 @@ export default function GatewayDetail(props) {
       sn,
     };
     RuntimeHMI.onHerart(params)
-      .then((res) => {})
+      .then((res) => { })
       .catch((e) => {
         console.log(e);
       });
@@ -1146,7 +1161,7 @@ export default function GatewayDetail(props) {
   useEffect(() => {
     if (dtlkeys) return;
     console.log(dtlkeys);
-    if ([4, 18].includes(deviceStyle)) {
+    if (displaypoint) { //[4, 18].includes(deviceStyle)
       historycurve(pointval);
     } else {
       getHistoryTrend();
@@ -1168,7 +1183,7 @@ export default function GatewayDetail(props) {
     if (
       Number.isInteger(projectId) &&
       category &&
-      [4, 18].includes(deviceStyle)
+      [1, 4, 18].includes(deviceStyle)
     ) {
       getPoints({ projectId, category });
     }
@@ -1204,8 +1219,8 @@ export default function GatewayDetail(props) {
               {detail.state == 2
                 ? "设备在线"
                 : detail.state == 3
-                ? "设备告警"
-                : "设备离线"}
+                  ? "设备告警"
+                  : "设备离线"}
             </Ctitlec>
           </div>
           <div className={style.leftBottom}>
@@ -1237,8 +1252,8 @@ export default function GatewayDetail(props) {
                 {detail.customerType == 1
                   ? "客户能耗"
                   : detail.customerType == 2
-                  ? "公共能耗"
-                  : "/"}
+                    ? "公共能耗"
+                    : "/"}
               </Textbox>
             </p>
             <p>
@@ -1337,7 +1352,7 @@ export default function GatewayDetail(props) {
                 <img src={imgurl.time} className={style.time}></img>
                 <p>数据最新更新时间：{current.lastSampleTime}</p>
               </div>
-              
+
             </div>
           ) : state == 2 ? (
             <div className={style.newTime}>
@@ -1371,6 +1386,7 @@ export default function GatewayDetail(props) {
               >
                 查询
               </Button>
+              <Radio.Group style={{ marginLeft: 'auto', marginRight:16 }} onChange={onChangeType} block options={radioOptions} defaultValue="normal" optionType="button" buttonStyle="solid" />
             </div>
           ) : state == 3 ? (
             <div>
@@ -1424,27 +1440,27 @@ export default function GatewayDetail(props) {
                 <div className="dataBottom">
                   {dataList
                     ? dataList.map((item, index) => {
-                        return (
-                          <div key={index} className="itemBox">
-                            <div className="itemHead">{item.name}</div>
-                            {!OtherdeviceStyle ? (
-                              <div className="itemTail"> 
-                                {circuitState[item.value] || (item.value?.includes?.("e") ? "--" : item.value)} 
-                              </div>
-                            ) : (
-                              <div className="itemTail"> 
-                                {circuitStateOther[item.value] ||
-                                  (item.value?.includes?.("e") ? "--" : item.value)} 
-                              </div>
-                            )}
-                          </div>
-                        );
-                      })
+                      return (
+                        <div key={index} className="itemBox">
+                          <div className="itemHead">{item.name}</div>
+                          {!OtherdeviceStyle ? (
+                            <div className="itemTail">
+                              {circuitState[item.value] || (item.value?.includes?.("e") ? "--" : item.value)}
+                            </div>
+                          ) : (
+                            <div className="itemTail">
+                              {circuitStateOther[item.value] ||
+                                (item.value?.includes?.("e") ? "--" : item.value)}
+                            </div>
+                          )}
+                        </div>
+                      );
+                    })
                     : ""}
                 </div>
               </div>
             ) : state == 2 ? (
-              <> 
+              <>
                 {displaypoint ? (
                   <Chartbox>
                     <Ichart {...pointoption} />
@@ -1469,302 +1485,302 @@ export default function GatewayDetail(props) {
                                 <div className={style.title}><div className={style.blueLine}></div><p>电度 (kWh)</p></div>
                                 <div> <div ref={elref} style={{ width: '100%', height: 320, padding: 16 }}></div></div>
                             </div>  */ state == 3 ? (
-              <div>
-                <div className="energyHead">
-                  <div className="dateData">
-                    <p>
-                      <span>今日{todayT} </span>
-                      <span>
-                        日环比
-                        {actuary?.e_DayRatio?.slice(0, 1) != "-" ? (
-                          <CaretUpOutlined
-                            style={{
-                              color: "rgb(255,0,0)",
-                              marginLeft: 3,
-                              marginRight: 3,
-                            }}
-                          />
-                        ) : actuary?.e_DayRatio?.slice(0, 1) == "-" ? (
-                          <CaretDownOutlined
-                            style={{
-                              color: "rgb(0,153,0)",
-                              marginLeft: 3,
-                              marginRight: 3,
-                            }}
-                          />
-                        ) : (
-                          ""
-                        )}
-                        {actuary.e_DayRatio}
-                      </span>
-                    </p>
-                    <div>{actuary.e_DayUsage}</div>
-                    <p>
-                      日均{todayA} : {actuary.e_DayAvg}
-                    </p>
-                  </div>
-                  <div className="dateData">
-                    <p>
-                      <span>本月{todayT}</span>
-                      <span>
-                        月环比
-                        {actuary.e_MonthRatio?.slice(0, 1) != "-" ? (
-                          <CaretUpOutlined
-                            style={{
-                              color: "rgb(255,0,0)",
-                              marginLeft: 3,
-                              marginRight: 3,
-                            }}
-                          />
-                        ) : actuary?.e_MonthRatio?.slice(0, 1) == "-" ? (
-                          <CaretDownOutlined
-                            style={{
-                              color: "rgb(0,153,0)",
-                              marginLeft: 3,
-                              marginRight: 3,
-                            }}
-                          />
-                        ) : (
-                          ""
-                        )}
-                        {actuary.e_MonthRatio}
-                      </span>
-                    </p>
-                    <div>{actuary.e_MonthUsage}</div>
-                    <p>
-                      月均{todayA} : {actuary.e_MonthAvg}
-                    </p>
-                  </div>
-                  <div className="dateData">
-                    <p>
-                      <span>本年{todayT}</span>
-                      <span>
-                        年环比
-                        {actuary?.e_YearRatio?.slice(0, 1) != "-" ? (
-                          <CaretUpOutlined
-                            style={{
-                              color: "rgb(255,0,0)",
-                              marginLeft: 3,
-                              marginRight: 3,
-                            }}
-                          />
-                        ) : actuary?.e_YearRatio?.slice(0, 1) == "-" ? (
-                          <CaretDownOutlined
-                            style={{
-                              color: "rgb(0,153,0)",
-                              marginLeft: 3,
-                              marginRight: 3,
-                            }}
-                          />
-                        ) : (
-                          ""
-                        )}
-                        {actuary.e_YearRatio}
-                      </span>
-                    </p>
-                    <div>{actuary.e_YearUsage}</div>
-                    <p>
-                      年均{todayA} : {actuary.e_YearAvg}
-                    </p>
-                  </div>
-                  <div className="dateDataLast">
-                    <div>
-                      <div className="rightImg">
-                        <img width={68} height={68} src={deviceDetail3}></img>
-                      </div>
+                <div>
+                  <div className="energyHead">
+                    <div className="dateData">
                       <p>
-                        <span style={{ fontSize: 18, color: "#333" }}>
-                          {actuary.e_All}
+                        <span>今日{todayT} </span>
+                        <span>
+                          日环比
+                          {actuary?.e_DayRatio?.slice(0, 1) != "-" ? (
+                            <CaretUpOutlined
+                              style={{
+                                color: "rgb(255,0,0)",
+                                marginLeft: 3,
+                                marginRight: 3,
+                              }}
+                            />
+                          ) : actuary?.e_DayRatio?.slice(0, 1) == "-" ? (
+                            <CaretDownOutlined
+                              style={{
+                                color: "rgb(0,153,0)",
+                                marginLeft: 3,
+                                marginRight: 3,
+                              }}
+                            />
+                          ) : (
+                            ""
+                          )}
+                          {actuary.e_DayRatio}
                         </span>
-                        {unit}
                       </p>
-                      <p>累计{todayA}</p>
-                    </div>
-                    <div>
-                      <div className="rightImg">
-                        <img src={imgurl.deviceDetail2}></img>
-                      </div>
+                      <div>{actuary.e_DayUsage}</div>
                       <p>
-                        <span style={{ fontSize: 18, color: "#333" }}>
-                          {actuary.coal}
-                        </span>{" "}
-                        t
+                        日均{todayA} : {actuary.e_DayAvg}
                       </p>
-                      <p>累计转标煤</p>
                     </div>
-                    <div>
-                      <div className="rightImg">
-                        <img src={imgurl.deviceDetail1}></img>
-                      </div>
+                    <div className="dateData">
                       <p>
-                        <span style={{ fontSize: 18, color: "#333" }}>
-                          {actuary.co2}
-                        </span>{" "}
-                        t
+                        <span>本月{todayT}</span>
+                        <span>
+                          月环比
+                          {actuary.e_MonthRatio?.slice(0, 1) != "-" ? (
+                            <CaretUpOutlined
+                              style={{
+                                color: "rgb(255,0,0)",
+                                marginLeft: 3,
+                                marginRight: 3,
+                              }}
+                            />
+                          ) : actuary?.e_MonthRatio?.slice(0, 1) == "-" ? (
+                            <CaretDownOutlined
+                              style={{
+                                color: "rgb(0,153,0)",
+                                marginLeft: 3,
+                                marginRight: 3,
+                              }}
+                            />
+                          ) : (
+                            ""
+                          )}
+                          {actuary.e_MonthRatio}
+                        </span>
                       </p>
-                      <p>累计转二氧化碳</p>
+                      <div>{actuary.e_MonthUsage}</div>
+                      <p>
+                        月均{todayA} : {actuary.e_MonthAvg}
+                      </p>
+                    </div>
+                    <div className="dateData">
+                      <p>
+                        <span>本年{todayT}</span>
+                        <span>
+                          年环比
+                          {actuary?.e_YearRatio?.slice(0, 1) != "-" ? (
+                            <CaretUpOutlined
+                              style={{
+                                color: "rgb(255,0,0)",
+                                marginLeft: 3,
+                                marginRight: 3,
+                              }}
+                            />
+                          ) : actuary?.e_YearRatio?.slice(0, 1) == "-" ? (
+                            <CaretDownOutlined
+                              style={{
+                                color: "rgb(0,153,0)",
+                                marginLeft: 3,
+                                marginRight: 3,
+                              }}
+                            />
+                          ) : (
+                            ""
+                          )}
+                          {actuary.e_YearRatio}
+                        </span>
+                      </p>
+                      <div>{actuary.e_YearUsage}</div>
+                      <p>
+                        年均{todayA} : {actuary.e_YearAvg}
+                      </p>
+                    </div>
+                    <div className="dateDataLast">
+                      <div>
+                        <div className="rightImg">
+                          <img width={68} height={68} src={deviceDetail3}></img>
+                        </div>
+                        <p>
+                          <span style={{ fontSize: 18, color: "#333" }}>
+                            {actuary.e_All}
+                          </span>
+                          {unit}
+                        </p>
+                        <p>累计{todayA}</p>
+                      </div>
+                      <div>
+                        <div className="rightImg">
+                          <img src={imgurl.deviceDetail2}></img>
+                        </div>
+                        <p>
+                          <span style={{ fontSize: 18, color: "#333" }}>
+                            {actuary.coal}
+                          </span>{" "}
+                          t
+                        </p>
+                        <p>累计转标煤</p>
+                      </div>
+                      <div>
+                        <div className="rightImg">
+                          <img src={imgurl.deviceDetail1}></img>
+                        </div>
+                        <p>
+                          <span style={{ fontSize: 18, color: "#333" }}>
+                            {actuary.co2}
+                          </span>{" "}
+                          t
+                        </p>
+                        <p>累计转二氧化碳</p>
+                      </div>
                     </div>
                   </div>
-                </div>
-              
-                <div className={style.chartHead}>
-                  <div>
-                    <Radio.Group
-                      defaultValue={isclude ? "2" : "1"}
-                      buttonStyle="solid"
-                      onChange={changeTime}
-                    >
-                      {!isclude && (
+
+                  <div className={style.chartHead}>
+                    <div>
+                      <Radio.Group
+                        defaultValue={isclude ? "2" : "1"}
+                        buttonStyle="solid"
+                        onChange={changeTime}
+                      >
+                        {!isclude && (
+                          <Radio.Button
+                            style={{ width: 96, height: 32, textAlign: "center" }}
+                            value="1"
+                          >
+                            今日
+                          </Radio.Button>
+                        )}
                         <Radio.Button
                           style={{ width: 96, height: 32, textAlign: "center" }}
-                          value="1"
+                          value="2"
                         >
-                          今日
+                          本月
                         </Radio.Button>
-                      )}
-                      <Radio.Button
-                        style={{ width: 96, height: 32, textAlign: "center" }}
-                        value="2"
-                      >
-                        本月
-                      </Radio.Button>
-                      <Radio.Button
-                        style={{ width: 96, height: 32, textAlign: "center" }}
-                        value="3"
-                      >
-                        本年
-                      </Radio.Button>
-                    </Radio.Group>
-                    {reportTypeTime == 1 ? (
-                      <DatePicker
-                        onChange={onChangeDate}
-                        defaultValue={moment(today)}
-                        style={{ marginLeft: 32 }}
-                      />
-                    ) : reportTypeTime == 2 ? (
-                      <DatePicker
-                        onChange={onChangeDate}
-                        style={{ marginLeft: 32 }}
-                        defaultValue={moment(tmonth)}
-                        picker="month"
-                      />
-                    ) : (
-                      <DatePicker
-                        onChange={onChangeDate}
-                        style={{ marginLeft: 32 }}
-                        picker="year"
-                      />
-                    )}
-                  </div>
-                  <div className={style.chartHeadRight}>
-                    {trend === 2 ? (
-                      <div>
-                        <Button
-                          style={{
-                            width: 96,
-                            backgroundColor: "#FFF",
-                            color: "#515151",
-                            marginLeft: 16,
-                          }}
-                          size="middle"
-                          onClick={() => {
-                            exportExecel();
-                          }}
+                        <Radio.Button
+                          style={{ width: 96, height: 32, textAlign: "center" }}
+                          value="3"
                         >
-                          导出
-                        </Button>
-                        <img
-                          src={imgurl.columnLine}
-                          style={{
-                            width: 2,
-                            height: 33,
-                            marginRight: 32,
-                            marginLeft: 32,
-                          }}
-                        ></img>
-                      </div>
-                    ) : (
-                      ""
-                    )}
-                    <Radio.Group
-                      defaultValue="trend"
-                      buttonStyle="solid"
-                      onChange={changeTable}
-                    >
-                      <Radio.Button
-                        style={{ width: 96, height: 32, textAlign: "center" }}
-                        value="trend"
+                          本年
+                        </Radio.Button>
+                      </Radio.Group>
+                      {reportTypeTime == 1 ? (
+                        <DatePicker
+                          onChange={onChangeDate}
+                          defaultValue={moment(today)}
+                          style={{ marginLeft: 32 }}
+                        />
+                      ) : reportTypeTime == 2 ? (
+                        <DatePicker
+                          onChange={onChangeDate}
+                          style={{ marginLeft: 32 }}
+                          defaultValue={moment(tmonth)}
+                          picker="month"
+                        />
+                      ) : (
+                        <DatePicker
+                          onChange={onChangeDate}
+                          style={{ marginLeft: 32 }}
+                          picker="year"
+                        />
+                      )}
+                    </div>
+                    <div className={style.chartHeadRight}>
+                      {trend === 2 ? (
+                        <div>
+                          <Button
+                            style={{
+                              width: 96,
+                              backgroundColor: "#FFF",
+                              color: "#515151",
+                              marginLeft: 16,
+                            }}
+                            size="middle"
+                            onClick={() => {
+                              exportExecel();
+                            }}
+                          >
+                            导出
+                          </Button>
+                          <img
+                            src={imgurl.columnLine}
+                            style={{
+                              width: 2,
+                              height: 33,
+                              marginRight: 32,
+                              marginLeft: 32,
+                            }}
+                          ></img>
+                        </div>
+                      ) : (
+                        ""
+                      )}
+                      <Radio.Group
+                        defaultValue="trend"
+                        buttonStyle="solid"
+                        onChange={changeTable}
                       >
-                        趋势
-                      </Radio.Button>
-                      <Radio.Button
-                        style={{ width: 96, height: 32, textAlign: "center" }}
-                        value="list"
-                      >
-                        列表
-                      </Radio.Button>
-                    </Radio.Group>
-                  </div>
-                </div>
-                {trend === 1 ? (
-                  <div>
-                    <div style={{  display:"flex", height: 480, paddingTop: 16 }}>
-                      {" "}
-                      {/* ref={energyref}  */}
-                      <Ichart {...boptions} />
+                        <Radio.Button
+                          style={{ width: 96, height: 32, textAlign: "center" }}
+                          value="trend"
+                        >
+                          趋势
+                        </Radio.Button>
+                        <Radio.Button
+                          style={{ width: 96, height: 32, textAlign: "center" }}
+                          value="list"
+                        >
+                          列表
+                        </Radio.Button>
+                      </Radio.Group>
                     </div>
                   </div>
-                ) : trend === 2 ? (
+                  {trend === 1 ? (
+                    <div>
+                      <div style={{ display: "flex", height: 480, paddingTop: 16 }}>
+                        {" "}
+                        {/* ref={energyref}  */}
+                        <Ichart {...boptions} />
+                      </div>
+                    </div>
+                  ) : trend === 2 ? (
+                    <div>
+                      <Table
+                        ref={tableLoadRef}
+                        columns={columnsTrend}
+                        dataSource={energyReport.Data}
+                        scroll={{ y: 475 }}
+                        rowKey={(columnsTrend) => columnsTrend.id}
+                        style={{ marginTop: 16 }}
+                        hbc="#515151"
+                      ></Table>
+                    </div>
+                  ) : (
+                    ""
+                  )}
+                </div>
+              ) : state == 4 ? (
+                <div>
+
                   <div>
+                    {/* istheme="theme" */}
                     <Table
-                      ref={tableLoadRef}
-                      columns={columnsTrend}
-                      dataSource={energyReport.Data}
-                      scroll={{ y: 475 }}
-                      rowKey={(columnsTrend) => columnsTrend.id}
-                      style={{ marginTop: 16 }}
+                      columns={columnsLog}
+                      dataSource={dataSourceLog}
+                      rowKey={(columnsLog) => columnsLog.id}
                       hbc="#515151"
                     ></Table>
+                    <Pagination
+                      className={style.pageNumD}
+                      size="small"
+                      current={pageNum}
+                      total={totalalarm}
+                      pageSize={12}
+                      onChange={onChangePageLog}
+                      showSizeChanger={false}
+                    />
                   </div>
-                ) : (
-                  ""
-                )}
-              </div>
-            ) : state == 4 ? (
-              <div>
-                 
-                <div>
-                  {/* istheme="theme" */}
-                  <Table
-                    columns={columnsLog}
-                    dataSource={dataSourceLog}
-                    rowKey={(columnsLog) => columnsLog.id}
-                    hbc="#515151"
-                  ></Table>
-                  <Pagination
-                    className={style.pageNumD}
-                    size="small"
-                    current={pageNum}
-                    total={totalalarm}
-                    pageSize={12}
-                    onChange={onChangePageLog}
-                    showSizeChanger={false}
-                  />
                 </div>
-              </div>
-            ) : state == 6 ? (
-              <Devicelog logdata={logProps} />
-            ) : (
-              (state == 5 || state == 6) && (
-                <Control
-                  Custmodal={Custmodal}
-                  sn={sn}
-                  state={state}
-                  detail={detail}
-                  getDetailData={getDetailData}
-                />
-              )
-            )}
+              ) : state == 6 ? (
+                <Devicelog logdata={logProps} />
+              ) : (
+                (state == 5 || state == 6) && (
+                  <Control
+                    Custmodal={Custmodal}
+                    sn={sn}
+                    state={state}
+                    detail={detail}
+                    getDetailData={getDetailData}
+                  />
+                )
+              )}
           </div>
         </div>
       </div>
