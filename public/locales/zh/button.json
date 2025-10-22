@@ -80,5 +80,7 @@
   "control":"控制",
   "layout": "布局",
    "restore": "恢复默认设置",
+   "open": "开",
+   "close": "关",
   "z": ""
 }

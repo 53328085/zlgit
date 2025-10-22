@@ -7,6 +7,7 @@ import store from './redux/store'
 import './assets/css/theme.less' // 静态定制主题
 import 'antd/dist/antd.variable.min.css' //通过ConfigProvider 动态定制主体
 import './assets/css/index.less'
+
 //import './assets/css/print.css'
 import './i18n' //国际化
 import App from './App'
