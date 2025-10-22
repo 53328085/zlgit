@@ -133,7 +133,8 @@ const lingthChnage=(v)=> {
      if(Array.isArray(treeId) && treeId?.length==0) {
        return message.warning("请选择要开关的线路")
      }else if(Array.isArray(treeId) && treeId?.length == 1) {
-       stateRef.current = e ? 1 : 2
+      setOnoff(e)
+       stateRef.current = e
       mRef.current.onOpen()
      }
    }else {
@@ -159,11 +160,12 @@ const lingthChnage=(v)=> {
      let {success, errMsg} =single ? await  useLineControl(body) : await useOneByOneControl({}, body)
      if(success) {
        getData()
-       message.success("设置成功")
-       mRef.current.onCancel()
+       message.success("开关成功")
+      
      }else {
-       message.warning(errMsg || "数据出错")
+       message.warning("开关失败")
      }
+     mRef.current.onCancel()
    } catch (error) {
     
    }
@@ -173,7 +175,7 @@ const lingthChnage=(v)=> {
   const title = (
     <TitleBox>
       <span>路灯列表</span>
-     {single ? <Switch checkedChildren="开" checked={onOff==1} unCheckedChildren="关" onChange={onControl}></Switch> : <Space size={16}>
+     {single ? <Space><CustButtonT text="open" onClick={()=>onControl(1)}></CustButtonT><CustButtonT type="default" text="close" onClick={()=>onControl(2)}></CustButtonT></Space> : <Space size={16}>
         <Cslider onChange={lingthChnage}  />
         <CustButtonT text="control" onClick={onControl}></CustButtonT>
       </Space>}

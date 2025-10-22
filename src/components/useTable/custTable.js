@@ -14,7 +14,7 @@ flex-direction: column;
 .ant-table-title {
   border: none;
   font-size: ${props => props.tfs || '16px'};
-  color: #515151;
+  color:${props=> props.theme.isdark ? 'dark' : "#515151"} ;
   padding-bottom: 16px;
 }
 .ant-table-tbody {
@@ -30,8 +30,8 @@ flex-direction: column;
     .ant-table-thead{
       .ant-table-cell {
         padding: ${props => props.pd || '4px 4px'} ;
-        background-color: #ecf5ff;//${props => props.istheme ? props.theme.primaryColor : props.hbg};
-        color:  #515151; //${props => props.hbc || ((props.istheme || props.hbg) ? '#fff' : '#515151')};
+        background-color: ${props=>  props.theme.isdark ? 'dark' : "#ecf5ff"};//${props => props.istheme ? props.theme.primaryColor : props.hbg};
+        color: ${props=>props.theme.isdark ? "dark" : "#515151"} ; //${props => props.hbc || ((props.istheme || props.hbg) ? '#fff' : '#515151')};
       }
     }
     .ant-table-tbody {

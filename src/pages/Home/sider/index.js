@@ -64,9 +64,9 @@ const styopca = css`
   fill:  rgba(${props=> props.rgba[0]}, ${props=> props.rgba[1]}, ${props=> props.rgba[2]}, 0.7);
 `
 const Cmenu = styled(Menu)`
-   background: none;
+   background: ${props=> props.theme.isdark ? "dark" : "none"};
    && {
-    border-right: none;
+    border-right: ${props=> props.theme.isdark ? "dark" : "none"};
    }
    &&  {
     overflow-y: auto;
@@ -126,10 +126,10 @@ const Cmenu = styled(Menu)`
       }
    .ant-menu-item.ant-menu-item-selected,.ant-menu-item:active{    
       border-radius: 6px;
-      background-color:${props => props.theme.asiderbgcolorA || "#3333cc"} ;
+      background-color:${props =>  props.theme.isdark ? "dark" : (props.theme.asiderbgcolorA || "#3333cc")} ;
       ${props => props.laptop ? sty : ''}     
       .ant-menu-title-content {
-        color: ${props => props.theme.asiderfontcolorA || "#33FF00"};
+        color: ${props => props.theme.isdark ? "dark" : (props.theme.asiderfontcolorA || "#33FF00")};
       }
       .custicon path:nth-of-type(1) {
         ${styopca}
@@ -162,12 +162,12 @@ const Cmenu = styled(Menu)`
    }
     }
    .ant-menu-title-content  {
-     color: ${props => props.theme.asiderfontcolor || "#ffffff"};;
+     color: ${props => props.theme.isdark ? "dark" : (props.theme.asiderfontcolor || "#ffffff")};;
      display: inline-block;   
      padding-left: 10px;
      transition: padding 0.1s, width 0.3s cubic-bezier(.215,.61,.355,1);
 
-     ${props => props.laptop ? sty : ''}
+     ${props => props.theme.laptop ? sty : ''}
   
     
    }
