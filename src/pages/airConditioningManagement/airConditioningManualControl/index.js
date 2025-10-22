@@ -252,13 +252,13 @@ export default function Index() {
                               </AntCheckbox>
                             </div>
                           ) : (
-                            <div className={`${airItem?.fields[0]?.value === "制冷"
+                            <div className={`${airItem?.fields[1]?.value === "制冷"
                               ? "airCardCold"
-                              : airItem?.fields[0]?.value === "制热"
+                              : airItem?.fields[1]?.value === "制热"
                                 ? "airCardHot"
-                                : airItem?.fields[0]?.value === "送风"
+                                : airItem?.fields[1]?.value === "送风"
                                   ? "airCardWindy"
-                                  : airItem?.fields[0]?.value === "除湿"
+                                  : airItem?.fields[1]?.value === "除湿"
                                     ? "airCardDehumidification"
                                     : "closeAir"
                               } cardCommon`}>
