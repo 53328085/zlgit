@@ -23,7 +23,7 @@ import Titlelayout from '@com/titlelayout'
 import {useSelector, useDispatch} from "react-redux";
 import {useTranslation} from 'react-i18next'
 
-import {publishState, getCurrProjectInfo, currProject, iszhCN, selectProjectId, getThemeColor,themeColor,themes,themeId, getThemeId, getThemes, selectedtheme} from '@redux/systemconfig' // 布尔值 发布状态 
+import {publishState, getCurrProjectInfo, currProject,dark, iszhCN, selectProjectId, getThemeColor,themeColor,themes,themeId, getThemeId, getThemes, selectedtheme,getDark} from '@redux/systemconfig' // 布尔值 发布状态 
 import Pagecount from "@com/pagecontent";
 import {SaveButton, CustButton} from "@com/useButton" ;
 import {getprimarycolors} from "@com/usehandler";
@@ -106,16 +106,19 @@ export default function Index() {
   const defaluttheme =useSelector(themeColor)
   const SelectedTheme = useSelector(selectedtheme)
   const Themes = useSelector(themes)
+  const isdark = useSelector(dark)
   const curtheme = useRef();
   curtheme.current = SelectedTheme;
   
- 
+  console.log(isdark)
  
   
   const [form] = Form.useForm();
 
   const refid = useRef() // 保存时的ID
-
+const setdark =()=>{
+  dispatch(getDark(true))
+}
 const getTheme = async()=>{
   try {
     
@@ -243,10 +246,13 @@ const selectTheme =(id)=> {
     refid.current=id
   //  dispatch(getThemeId(id)) 编辑时不应影响用户选择的主题
     let formdata = Themes.find(t => t.id ==id)
-     
+    dispatch(getDark(false))
     dispatch(getThemeColor({id: formdata.id, name: formdata.name, ...formdata.context}))
-  form.setFieldsValue({id: formdata.id, name: formdata.name, ...formdata.context})
-   
+    form.setFieldsValue({id: formdata.id, name: formdata.name, ...formdata.context})
+     setTimeout(()=>{
+        window.location.reload()
+     },[100])
+  
   
   } catch (error) {
     console.log(error)
@@ -313,7 +319,7 @@ useEffect(()=>{
       labelAlign="left"
       size="middle"
       scrollToFirstError={true}
-      disabled={ispublish}     
+      disabled={ispublish || isdark}     
       validateMessages={
        { required: "缺少'${label}' 数据"}
       
@@ -325,6 +331,7 @@ useEffect(()=>{
         {
          Themes?.length > 0 ?  Themes?.map?.(t => <Ctag key={t.id} color={t?.context?.primaryColor} onClick={() => selectTheme(t.id)}>{t.name}</Ctag>): null
         }
+        <Ctag key="dark" onClick={setdark}>暗黑主题</Ctag>
       </div>
       <div className="items" >
         

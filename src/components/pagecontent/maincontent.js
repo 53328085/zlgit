@@ -20,25 +20,25 @@ const Tabsbox = styled(Tabs)`
      //   height: 41px;
         min-width: ${props => props.tabwidth || '145px'} ;
         justify-content: center;       
-        background-color: #fff;  
+        background-color:${props=> props.theme.isdark ? "dark" : "#fff"}  ;  
         transition: none;
         &:hover {
-            background-color: ${props => props.theme.primaryColor || "#237ae4" };
-            color: #fff;
+            background-color: ${props => props.theme.isdark ? "dark" : (props.theme.primaryColor || "#237ae4" )};
+            color:${props=> props.theme.isdark ? "dark" : "#fff"};
             transition: all 0.3s;
         }
         .ant-tabs-tab-btn{
             transition: none;
         }
         .ant-tabs-tab-btn:active {
-            color:#fff
+            color:${props=> props.theme.isdark ? "dark" : "#fff"}
         }
     }
     .ant-tabs-tab.ant-tabs-tab-active {
-        background-color: ${props => props.theme.primaryColor || "#237ae4" };
+        background-color: ${props => props.theme.isdark ? "dark" : (props.theme.primaryColor || "#237ae4") };
        
         .ant-tabs-tab-btn {
-            color:#fff;
+            color: ${props=> props.theme.isdark ? "dark" : "#fff"};
             transition: none;
         }
     }
@@ -58,7 +58,7 @@ const Pagecontentbox = styled.div`
 
 */
 const PageContentMain = styled.div`  
-    background-color: ${props => props.bgcolor};
+    background-color: ${props =>props.theme.isdark ? "dark" :  props.bgcolor};
     padding: ${props => props.pd};
     display: flex;
     flex-direction: column;

@@ -10,7 +10,7 @@ export const Container = styled.div`
   display: flex;
   flex: 1;
   .tree-box {
-    height: 864px;
+    height: 100%;
     flex-shrink: 0;
     max-width: 296px;
     display: flex;
@@ -30,14 +30,14 @@ export const Container = styled.div`
 export const Header = styled.div`
   display: flex;
   background-color: #fff;
-  height: 68px;
+  height: 58px;
   justify-content: space-between;
   align-items: center;
   /* border: 1px solid #dedede; */
   padding-right: 18px;
   overflow: hidden;
   border-radius: 8px;
-  padding-left: 16px;
+  padding-left: 20px;
 `;
 export const Detail = styled.div`
   display: grid;
@@ -102,8 +102,8 @@ export const FooterChart = styled.div`
   overflow: hidden;
   display: flex;
   flex-direction: column;
-  height: 583px;
-  max-height: 583px;
+  /* height: 583px;
+  max-height: 583px; */
 
   .ant-radio-button-wrapper {
     margin-left: auto;

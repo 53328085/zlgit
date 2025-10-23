@@ -23,10 +23,10 @@ import { name } from "file-loader";
 const { FindContainerList } = StorageContainerDesigner  //储能柜
 
 const Cform = styled(Form)`
-    background: #fff;
+    background: ${props=>props.theme.isdark ? "dark" : "#fff"} ;
     padding: 7px 16px;
-    border-top: 1px solid #dedede;
-    border-bottom: 1px solid #dedede;
+    border-top: 1px solid ${props=>props.theme.isdark ? "dark" : "#dedede"};
+    border-bottom: 1px solid ${props=>props.theme.isdark ? "dark" : "#dedede"};
     height: max-content;
     display: flex;
    &&{

@@ -49,7 +49,7 @@ const Laybox = styled.div`
     justify-content: space-between;
    
   }
-  ${props=>props.laptop ? sty : null}
+  ${props=>props.theme.laptop ? sty : null}
  
  
 `;

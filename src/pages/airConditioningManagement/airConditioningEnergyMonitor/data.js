@@ -41,6 +41,9 @@ export const TbCol = [
     key: "csn",
     width: 122,
     fixed: "left",
+    render(text){
+      return <span style={{whiteSpace: 'nowrap'}}>{text}</span>
+    }
   },
   {
     title: "总开机时长 （h）",

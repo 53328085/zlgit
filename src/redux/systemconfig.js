@@ -8,6 +8,7 @@ import antdconfig from './theme' ; //   antd配置
 import { Area, ProjectList,ProjectSetting, BigScreen, eneryShift, Monitoring,Carbon, HomeRuntime, Editapi,CustTheme} from "@api/api.js"; 
 import {isObject,isLightColor,hextodec} from '@com/usehandler'
 import {initithemeColor,themeOption} from '@com/defaultcolor';
+ 
 
 
 
@@ -72,6 +73,7 @@ const {DeviceTypeManager: {AllDeviceStyle} } = Monitoring
 
 
 const initialState = {
+    dark:false,
     deviceState:false,
     siteConfig: antdconfig,
     adaptation: { // 屏幕适配
@@ -126,7 +128,7 @@ const initialState = {
       disitemhover: "#6633ff",
       carnstrokecolor: "#ffff99",
       carntrailcolor: "#6633cc",  */
-    }, 
+    },    
     themes:[],   // 项目配色方案列表
     themeId:NaN,
     intl: {
@@ -178,6 +180,7 @@ const initialState = {
   collapsed:false,
   pgTitle: "",
   site: "", // 站点 配电模块 
+ 
 }
  
 export const getWebsiteState = createAsyncThunk(
@@ -331,7 +334,7 @@ const system = createSlice({
          },
         getThemeColor(state, {payload}) {  
            let {themeColor } = state  
-           console.log(payload)
+         //  console.log(payload)
            if(payload.primaryderived){
             let islight = isLightColor(payload.primaryderived)  
           
@@ -403,6 +406,9 @@ const system = createSlice({
       },
       getSite(state, {payload}){
         state.site = payload
+      },
+      getDark(state, {payload}){
+        state.dark = payload
       },
     },
      extraReducers: {
@@ -501,6 +507,7 @@ const system = createSlice({
  
 
 const {actions} = system
+export const dark = state =>state.system.dark
 export const deviceState = state=>state.system.deviceState
 export const recordNo = state => state.system.recordNo
 export const menus  = state => state.system.menus
@@ -556,6 +563,7 @@ export const custconfig = state => state.system.siteConfig
 export const themes = state => state.system.themes
 export const themeId= state => state.system.themeId
 export const site= state => state.system.site
+ 
 /*  export const themelist = state => {
   try {
     let {themes, themeId,themeColor} = state.system
@@ -595,6 +603,7 @@ export const site= state => state.system.site
     }
   ) 
  export const themeColor = state => state.system.themeColor;
+ 
 
 export const themelist = createSelector(
   themes,
@@ -632,6 +641,7 @@ export const adaptation = state => state.system.adaptation
 export const sidershow = state => state.system.sidershow
 export const collapsed = state => state.system.collapsed
 export const pgTitle = state=>state.system.pgTitle
+
 export const {
     configProject,
     getSetMenus,
@@ -669,5 +679,6 @@ export const {
     getCollapsed,
     getPgTitle,
     getSite,
+    getDark,
 } = actions
 export default system.reducer

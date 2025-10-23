@@ -20,11 +20,11 @@ const sty = css`
   padding: 0 16px 16px 16px;
 }
 `
-const theme = (props) => props.type == 'warn' ? props.theme.errorColor : props.theme.primaryColor
+const theme = (props) =>props.theme.isdark ? "dark" :  props.type == 'warn' ? props.theme.errorColor : props.theme.primaryColor
 const custCorle = (props) => {
   return {
-    normal: props.theme.primaryColor,
-    warn: props.theme.errorColor,
+    normal: props.theme.isdark ? "dark" : props.theme.primaryColor,
+    warn: props.theme.isdark ? "dark" : props.theme.errorColor,
     // dark: "#fff"
   }[props.type]
 }
@@ -56,7 +56,7 @@ const CModal = styled(Modal)`
           width:3px;
           height:16px; 
           left:0; 
-          background-color: ${props => props.nolf ? 'none' : `${theme(props)}`};
+          background-color: ${props =>props.theme.isdark ? "dark" :  props.nolf ? 'none' : `${theme(props)}`};
       }
     }
   }
@@ -75,7 +75,7 @@ const CModal = styled(Modal)`
       margin-left: 16px;
     }
     .ant-btn-default {
-      background-color: ${(props) => props.type == 'dark' ? '#1b1d23' : '#fff'};
+      background-color: ${(props) =>props.theme.isdark ? "dark" : props.type == 'dark' ? '#1b1d23' : '#fff'};
       // color: #666;
     }
  .ant-btn-primary {

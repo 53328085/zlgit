@@ -18,16 +18,16 @@ const Cheader =styled(Header)`
   display: flex;
     align-items: center;
     padding: 0px;
-    background-color: ${props => props.theme.menusbgcolor || '#003366'};
+    background-color: ${props =>props.theme.isdark ? "dark" : (props.theme.menusbgcolor || '#003366')};
     height: 70px;
     line-height: 70px;
-    border-bottom: 1px solid rgba(${props=> props.rgb[0]}, ${props=> props.rgb[1]}, ${props=> props.rgb[2]}, 0.6);
+    border-bottom: 1px solid  rgba(${props=> props.rgb[0]}, ${props=> props.rgb[1]}, ${props=> props.rgb[2]}, 0.6);
     
  }
 `
 
 const Csider = styled(Sider)`
-  background-image: ${props => props.isconfig=='true'? 
+  background-image: ${props => props.theme.isdark ? "dark" : props.isconfig=='true'? 
   `linear-gradient(180deg,  ${props.theme.desasiderstart || '#039'} 0%,  ${props.theme.desasiderend || '#033'} 100%)`
    : `linear-gradient(180deg, ${props.theme.runasiderstart || '#0b41c7'} 0%,  ${props.theme.runasiderend || '#7662ff'} 100%)`};
    width: ${props => props.laptop ? '160px' : "200px"} ;
@@ -35,7 +35,7 @@ const Csider = styled(Sider)`
 const Logheaer = styled(Header)`
 && {
   height: 138px;
-  background-color: transparent; 
+  background-color: ${props=> props.theme.isdark ? "dark" : "transparent"} ; 
   padding: 0px;
 }
 

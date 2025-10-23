@@ -15,6 +15,7 @@ import { selectProjectId } from "@redux/systemconfig";
 import { useSelector } from "react-redux";
 import { useReactive } from "ahooks";
 import moment from "moment";
+import exportImg from "./imgs/export.png";
 export default function Index() {
   const [treeId, setTreeId] = useState();
   const [tabId, setTabId] = useState("1"); //1：空调用能；2：空调节能
@@ -178,7 +179,7 @@ export default function Index() {
         conditionerId: openTbIdRef.current,
         // 添加排序参数
         controlType: sortField, // 排序字段，如 '1-系统 2-手动'
-        asc: sortOrder=='ascend'?true:false, // 排序方向：'ascend' 或 'descend'
+        asc: sortOrder == "ascend" ? true : false, // 排序方向：'ascend' 或 'descend'
       },
       {
         loadingKey: "modalLoading",
@@ -222,10 +223,10 @@ export default function Index() {
   const [enableVal, setEnableVal] = useState(0);
   // 添加后端排序状态管理
   const [sortInfo, setSortInfo] = useState({
-    filter: 0,      //默认不筛选
-    order: true     // 默认升序，对应data.js中的defaultSortOrder
+    filter: 0, //默认不筛选
+    order: true, // 默认升序，对应data.js中的defaultSortOrder
   });
-  
+
   const enableChange = (e) => {
     const newFilterValue = e.target.value;
     setEnableVal(newFilterValue);
@@ -257,47 +258,54 @@ export default function Index() {
 
   // 后端表格变化处理函数（支持排序）
   const handleTableChange = (pagination, filters, sorter) => {
-    console.log('表格变化:', { pagination, filters, sorter });
-    
+    console.log("表格变化:", { pagination, filters, sorter });
+
     let needReload = false;
     let newSortInfo = { ...sortInfo };
-    
-   
+
     //处理过滤变化
-    if(filters?.controlType&&filters?.controlType.length>0 &&filters?.controlType[0]!=sortInfo.filter){
+    if (
+      filters?.controlType &&
+      filters?.controlType.length > 0 &&
+      filters?.controlType[0] != sortInfo.filter
+    ) {
       newSortInfo = {
         ...newSortInfo,
-        filter: filters?.controlType[0] || 0
+        filter: filters?.controlType[0] || 0,
       };
       setSortInfo(newSortInfo);
-        // 排序变化时重置到第一页
-      modalPageInfo.pageNum = 1;
-      needReload = true;
-    }
-    if(!filters?.controlType){
-       newSortInfo = {
-        ...newSortInfo,
-        filter:  0
-      };
-      setSortInfo(newSortInfo);
-        // 排序变化时重置到第一页
-      modalPageInfo.pageNum = 1;
-      needReload = true;
-    }
-    // 处理排序变化
-    if (Object.keys(sorter).length>0 && (sorter.order !== sortInfo.order)) {
-      newSortInfo = {
-        ...newSortInfo,
-        order: sorter.order || null
-      };
-      setSortInfo(newSortInfo);
-      
       // 排序变化时重置到第一页
       modalPageInfo.pageNum = 1;
       needReload = true;
     }
-     // 处理分页变化
-    if (pagination && (pagination.current !== modalPageInfo.pageNum || pagination.pageSize !== modalPageInfo.pageSize)) {
+    if (!filters?.controlType) {
+      newSortInfo = {
+        ...newSortInfo,
+        filter: 0,
+      };
+      setSortInfo(newSortInfo);
+      // 排序变化时重置到第一页
+      modalPageInfo.pageNum = 1;
+      needReload = true;
+    }
+    // 处理排序变化
+    if (Object.keys(sorter).length > 0 && sorter.order !== sortInfo.order) {
+      newSortInfo = {
+        ...newSortInfo,
+        order: sorter.order || null,
+      };
+      setSortInfo(newSortInfo);
+
+      // 排序变化时重置到第一页
+      modalPageInfo.pageNum = 1;
+      needReload = true;
+    }
+    // 处理分页变化
+    if (
+      pagination &&
+      (pagination.current !== modalPageInfo.pageNum ||
+        pagination.pageSize !== modalPageInfo.pageSize)
+    ) {
       modalPageInfo.pageNum = pagination.current;
       modalPageInfo.pageSize = pagination.pageSize;
       modalPageInfo.total = pagination.total;
@@ -319,59 +327,6 @@ export default function Index() {
   return (
     <Pagecount bgcolor="#eeeff4" pd={0}>
       <Container>
-        <Header>
-          <Radio.Group
-            block
-            options={Radio_Options}
-            defaultValue="1"
-            optionType="button"
-            buttonStyle="solid"
-            size="large"
-            onChange={(e) => {
-              setTabId(e.target.value);
-            }}
-          />
-          <Form
-            form={form}
-            layout="inline"
-            onFinish={onFinish}
-            initialValues={Init_Value}
-          >
-            <Item name="dtype">
-              <Select
-                size="default"
-                options={Date_Value}
-                style={{ width: 80, marginRight: 16 }}
-                onChange={(e) => {
-                  if (e == "1") {
-                    setType("date");
-                  } else if (e == "2") {
-                    setType("month");
-                  } else {
-                    setType("year");
-                  }
-                }}
-              ></Select>
-            </Item>
-            <Item name="date">
-              <DatePicker
-                size="default"
-                style={{ width: 160 }}
-                picker={type}
-              ></DatePicker>
-            </Item>
-            <Item>
-              <Button
-                type="primary"
-                htmlType="submit"
-                loading={loading.queryLoading}
-                style={{ marginLeft: 16 }}
-              >
-                查询
-              </Button>
-            </Item>
-          </Form>
-        </Header>
         <Main>
           <div className="tree-box">
             <UseTree
@@ -384,87 +339,155 @@ export default function Index() {
               allselect={true}
               showSearch={true}
               title="空调设备列表"
+              sty={{ bordered: "", pv: "16px" }}
+              hv="40px"
             />
           </div>
           <div className="right-box">
-            <BlueColumn
-              name={tabId == 1 ? "空调能耗分析" : "空调节能分析"}
-              bg={{ borderRadius: "4px" }}
-              styled={{ marginBottom: 16, width: "100%" }}
-            >
-              <div
-                style={{
-                  marginLeft: "auto",
-                  display: "flex",
-                  alignItems: "center",
+            <Header>
+              <Radio.Group
+                block
+                options={Radio_Options}
+                defaultValue="1"
+                optionType="button"
+                buttonStyle="solid"
+                size="large"
+                onChange={(e) => {
+                  setTabId(e.target.value);
                 }}
+              />
+              <Form
+                form={form}
+                layout="inline"
+                onFinish={onFinish}
+                initialValues={Init_Value}
               >
-                <Button
-                  icon={<DownloadOutlined />}
+                <Item name="dtype">
+                  <Select
+                    size="default"
+                    options={Date_Value}
+                    style={{ width: 80, marginRight: 16, marginLeft: 16 }}
+                    onChange={(e) => {
+                      if (e == "1") {
+                        setType("date");
+                      } else if (e == "2") {
+                        setType("month");
+                      } else {
+                        setType("year");
+                      }
+                    }}
+                  ></Select>
+                </Item>
+                <Item name="date">
+                  <DatePicker
+                    size="default"
+                    style={{ width: 160 }}
+                    picker={type}
+                  ></DatePicker>
+                </Item>
+                <Item>
+                  <Button
+                    type="primary"
+                    htmlType="submit"
+                    loading={loading.queryLoading}
+                    style={{ marginLeft: 16, minWidth: 72 }}
+                  >
+                    查询
+                  </Button>
+                </Item>
+              </Form>
+            </Header>
+            <div className="content-box">
+              <BlueColumn
+                name={tabId == 1 ? "空调能耗分析" : "空调节能分析"}
+                bg={{ height: 13, marginRight: 8 }}
+                styled={{
+                  padding: "0px 16px",
+                  height: 40,
+                  borderRadius: "8px  8px  0px  0px",
+                }}
+                isbgShow={true}
+              >
+                <div
                   style={{
-                    borderRadius: "2px",
-                    width: "96px",
-                    display: tbmodel == 2 ? "none" : "block",
-                  }}
-                  onClick={() => {
-                    const { columns, tablechartRef } = tableRef.current;
-                    ExportData(
-                      tabId == 1 ? stateData.euList : stateData.esList,
-                      columns,
-                      tablechartRef
-                    );
+                    marginLeft: "auto",
+                    display: "flex",
+                    alignItems: "center",
                   }}
                 >
-                  {i18.t("export", { ns: "button" })}
-                </Button>
-                <Radio.Group
-                  block
-                  options={Table_Option}
-                  defaultValue="1"
-                  optionType="button"
-                  buttonStyle="solid"
-                  size="large"
-                  style={{ marginLeft: 16 }}
-                  onChange={(e) => {
-                    setTbmodel(e.target.value);
-                  }}
-                />
-              </div>
-            </BlueColumn>
-            <div
-              style={{
-                width: "100%",
-                flex: 1,
-                overflow: "hidden",
-                display: "flex",
-              }}
-            >
-              {/* <Spin spinning={loading.pageLoading} style={{ width: '100%', flex: 1 }}> */}
-              {tbmodel == 1 ? (
-                <CusContext.Provider>
-                  <AirTable
+                  <Radio.Group
+                    block
+                    options={Table_Option}
+                    defaultValue="1"
+                    optionType="button"
+                    buttonStyle="solid"
+                    size="large"
+                    style={{ marginLeft: 16 }}
+                    onChange={(e) => {
+                      setTbmodel(e.target.value);
+                    }}
+                  />
+                  <div
+                    style={{
+                      cursor: "pointer",
+                      display: tbmodel == 2 ? "none" : "block",
+                      display: "flex",
+                      alignItems: "center",
+                    }}
+                    onClick={() => {
+                      const { columns, tablechartRef } = tableRef.current;
+                      ExportData(
+                        tabId == 1 ? stateData.euList : stateData.esList,
+                        columns,
+                        tablechartRef
+                      );
+                    }}
+                  >
+                    <img
+                      src={exportImg}
+                      alt=""
+                      style={{ marginRight: 4, marginLeft: 14 }}
+                    />
+                    <span style={{ fontWeight: 14 }}>导出</span>
+                  </div>
+                </div>
+              </BlueColumn>
+              <div
+                style={{
+                  width: "100%",
+                  flex: 1,
+                  overflow: "hidden",
+                  display: "flex",
+                  padding: "24px",
+                  background: "#fff",
+                  borderRadius: "0px  0px  8px  8px",
+                }}
+              >
+                {tbmodel == 1 ? (
+                  <CusContext.Provider>
+                    <AirTable
+                      tabId={tabId}
+                      openEnergyModal={openEnergyModal}
+                      openFrModal={openFrModal}
+                      ref={tableRef}
+                      key={tabId}
+                      euList={stateData.euList}
+                      esList={stateData.esList}
+                      pageInfo={pageInfo}
+                      onPageChange={handlePageChange}
+                      loading={loading.pageLoading}
+                    ></AirTable>
+                  </CusContext.Provider>
+                ) : (
+                  <AirChart
                     tabId={tabId}
-                    openEnergyModal={openEnergyModal}
-                    openFrModal={openFrModal}
-                    ref={tableRef}
                     key={tabId}
-                    euList={stateData.euList}
-                    esList={stateData.esList}
-                    pageInfo={pageInfo}
-                    onPageChange={handlePageChange}
-                    loading={loading.pageLoading}
-                  ></AirTable>
-                </CusContext.Provider>
-              ) : (
-                <AirChart
-                  tabId={tabId}
-                  key={tabId}
-                  proportion={stateData.proportion}
-                  useTrend={stateData.useTrend}
-                  saveTrend={stateData.saveTrend}
-                ></AirChart>
-              )}
-              {/* </Spin> */}
+                    proportion={stateData.proportion}
+                    useTrend={stateData.useTrend}
+                    saveTrend={stateData.saveTrend}
+                  ></AirChart>
+                )}
+              </div>
             </div>
           </div>
         </Main>
@@ -478,7 +501,7 @@ export default function Index() {
           value={enableVal}
           modalData={modalData}
           modalPageInfo={modalPageInfo}
-          onPageChange={()=>{}}
+          onPageChange={() => {}}
           onTableChange={handleTableChange} // 传递后端表格处理函数
           onClose={handleModalClose}
           loading={loading.modalLoading}
