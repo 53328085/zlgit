@@ -67,13 +67,24 @@ export  const Mainwrap = styled.div`
         background-image: linear-gradient(90deg, rgba(19, 85, 253, 0.15) , rgba(3, 160, 255, 0.15) ), url(${imgurl.circle});         
         background-position: 0%  0%, left top;
         background-repeat: no-repeat, no-repeat;
+        background-size: 100% 100%, 100% 42px;
+        .titlehd {
+              font-family: headfont;
+              color: #fff;
+              font-size: 17px;
+              padding-left: 32px;
+            }
         .titleUp { 
-            height: 40px;
+            height: 42px;
            
             display: flex;
             align-items: center;
             font-size: 17px;
-            justify-content: flex-end;
+            justify-content: space-between;
+            .overew { 
+              padding-left: 32px;
+            }
+
             .manger {
                         display: flex;
                         align-items: center; 
@@ -130,15 +141,16 @@ export  const Mainwrap = styled.div`
                 }
             }
             .chartTitle {
-                background-image: linear-gradient( to right, rgba(0, 69, 88, 0.14) 0%,rgba(24, 114, 139, 0.19) 33%,rgba(81, 164, 244, 0.25) 66%, rgba(23, 134, 255, 0.20) 100%), url(${imgurl?.["arrow"]});
+                background-image: linear-gradient( to left, rgba(0, 69, 88, 0.14) 0%,rgba(24, 114, 139, 0.19) 33%,rgba(81, 164, 244, 0.25) 66%, rgba(23, 134, 255, 0.20) 100%), url(${imgurl?.["arrow"]});
                 background-position: 0% 0%, left;
                 background-repeat: no-repeat, no-repeat;
                 height: 28px;
                 padding-left: 16px;
-                font-size: 16px;
+                background-size: 50% 100%, auto;
+                /* font-size: 16px;
                 font-weight: bold;
                 font-style: italic;
-                color:#fff;
+                color:#fff; */
             }
             .chartWrap{
                 height: 100%;

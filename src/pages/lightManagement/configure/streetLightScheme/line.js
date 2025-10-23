@@ -106,12 +106,12 @@ export default function Index({formData}) {
     parseScenes.forEach((s,index, arr) => {
       let {tasks, sceneName} = s
        let tsk = tasks.map(t => {
-        let {timeType, excueTime, ...r} = t
+        let {timeType, excueTime,brightness, ...r} = t
         if(timeType==0) {
           let [type, timing] = excueTime.split("|") || []
-          return {excueTime: type, timing, ...r}
+          return {excueTime: type, timing,light:brightness, ...r}
          }else {
-          return {timeType, excueTime2:moment(excueTime,"HH:mm"), ...r }
+          return {timeType, excueTime2:moment(excueTime,"HH:mm"),light:brightness, ...r }
          }
        })
        arr[index] ={
@@ -143,6 +143,7 @@ export default function Index({formData}) {
          let task=  tasks.map(( {  timing,excueTime,excueTime2,light, ...rest },index) => ({
              taskName: `时间点${index+1}`,
              excueTime: rest.timeType==0 ? `${excueTime}|${timing}` : excueTime2?.format?.("HH:mm"),           
+             brightness:light,
              ...rest,
          }))
          delete element.sName

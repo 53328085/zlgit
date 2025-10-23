@@ -16,9 +16,9 @@ import {
   SyncOutlined,
 } from '@ant-design/icons';
 const { Link } = Typography
-import { publicdateType, Daterange } from "./data"
+import { publicdateType, Daterange, w200, w88 } from "./data"
 import Enery from "./enery";
-import { name } from "file-loader";
+ 
 
 const { FindContainerList } = StorageContainerDesigner  //储能柜
 
@@ -29,6 +29,8 @@ const Cform = styled(Form)`
     border-bottom: 1px solid ${props=>props.theme.isdark ? "dark" : "#dedede"};
     height: max-content;
     display: flex;
+    column-gap: 16px;
+    border-radius: 8px;
    &&{
     .ant-form-item {
         margin: 0px;
@@ -48,7 +50,7 @@ export const AreaSelect = ({ value, onChange, isall, ...otherProps }) => {
   }
 
   return (
-    <Select  {...otherProps} defaultValue={value} onChange={onChange} options={options} fieldNames={{ label: 'name', value: 'id', options: 'options' }}>
+    <Select   style={w200} {...otherProps} defaultValue={value} onChange={onChange} options={options}  fieldNames={{ label: 'name', value: 'id', options: 'options' }}>
 
     </Select>
   )
@@ -200,9 +202,9 @@ export default function UseSerach(props) {
     props.setexparams({ ...form.getFieldsValue(true) })
   }
   const dateselect = (
-    <Space size={16} style={{ marginLeft: '16px' }}>
+    <Space size={16}>
       <Item name="type" initialValue={1} key="electricity" preserve={false}>
-        <Select style={{ width: '80px' }} onChange={changetype} options={dateoption}></Select>
+        <Select style={w88} onChange={changetype} options={dateoption}></Select>
       </Item>
       <Item noStyle shouldUpdate={(pre, cur) => pre.type != cur.type}  >
         {
@@ -210,7 +212,7 @@ export default function UseSerach(props) {
             let type = (daterang == 'week' ? ['week', 'week', 'month', 'year'] : ['date', 'date', 'month', 'year'])[getFieldValue('type')]
             return (
               <Item name="date" initialValue={moment()} >
-                <DatePicker picker={type} style={{ width: '160px' }} />
+                <DatePicker picker={type} style={w200} />
               </Item>
             )
           }
@@ -559,12 +561,12 @@ export default function UseSerach(props) {
     }, [nested, primary]) */
   return (
 
-    <Cform layout="inline" form={form}   {...props.formprop}
+    <Cform layout="inline" form={form} colon={false}  {...props.formprop}
       onValuesChange={onValuesChange}
-      style={{ displey: 'flex', justifyContent: 'space-between', ...formsty }} >
+      style={{ displey: 'flex',  ...formsty }} >
       <Space size={16} >
         {isAreaId && <Item label={varlabel} name='areaId' initialValue={AreaID}>
-          <Select style={{ width: "200px" }} onChange={onChange} options={levelone} fieldNames={{ label: 'name', value: 'id', options: 'options' }}>
+          <Select style={w200} onChange={onChange} options={levelone} fieldNames={{ label: 'name', value: 'id', options: 'options' }}>
 
           </Select>
 
@@ -586,7 +588,7 @@ export default function UseSerach(props) {
           props.config?.inverter && inverter //光伏发电-逆变器
         }
       </Space>
-      <Space>
+      <Space size={16}>
         {
           props.config?.isdate && dateselect
         }

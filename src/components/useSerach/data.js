@@ -21,7 +21,12 @@ export const publicdateType=[
         label: "自定义"
     }
 ]
-
+export const w200 = {
+  width:200
+}
+export const w88 = {
+  width:88
+}
 export const Daterange = ({value, onChange,rangeDate}) => {
   const [dates, setDates] = useState(null);
   
