@@ -76,7 +76,7 @@ font-size: 12px;
         padding: 4px 2px;
         .custicon {
           g path:nth-of-type(1)  {
-                fill: ${props => props.theme.menusfontcolor || '#b2c1d1'}; 
+                fill: ${props => props.theme.isdark ? "#177ddc" : (props.theme.menusfontcolor || '#b2c1d1')}; 
               }
        /*   path {
                 fill: ${props => props.theme.menusfontcolor || '#b2c1d1'}; 
@@ -85,7 +85,7 @@ font-size: 12px;
         &:hover, &:active {
           .custicon {
               g path:nth-of-type(1) {
-                fill: ${props => props.theme.menusactivefontcolor || '#fff'}; 
+                fill: ${props => props.theme.isdark ? "#177ddc" : (props.theme.menusactivefontcolor || '#fff')}; 
               }
         }
     }
@@ -93,11 +93,11 @@ font-size: 12px;
     .ant-menu-item.ant-menu-item-selected {
         background-color:  rgba(${props => props.rgba[0]},${props => props.rgba[1]},${props => props.rgba[2]}, 0.2);
       //  border-bottom: 2px solid ${props => props.theme.menusborder || '#00ff66'};  //去掉下划线 陈舒映
-        color:${props => props.theme.menusactivefontcolor || '#ffffff'};
+        color:${props => props.theme.isdark ? "dark" : (props.theme.menusactivefontcolor || '#ffffff')};
         border-radius: 6px;
         .custicon {
               g path:nth-of-type(1) {
-                fill: ${props => props.theme.menusactivefontcolor || '#fff'}; 
+                fill: ${props => props.theme.isdark ? "#177ddc" : (props.theme.menusactivefontcolor || '#fff')}; 
               }
         }
     }
@@ -105,7 +105,7 @@ font-size: 12px;
 `
 const Cmenu = styled(Menu)`
 &&{
-   background-color: transparent;
+   background-color: ${props=> props.theme.isdark ? "dark" : "transparent"} ;
  //  background-color: ${props => props.theme.menusbgcolor || '#003366'};
     border-bottom: none;
     overflow: hidden;
@@ -119,16 +119,16 @@ const Cmenu = styled(Menu)`
     .ant-menu-item.ant-menu-item-selected {
         background-color: rgba(${props => props.rgba[0]},${props => props.rgba[1]},${props => props.rgba[2]}, 0.2) ;
       //  border-bottom: 2px solid ${props => props.theme.menusborder || '#00ff66'};
-        color:${props => props.theme.menusactivefontcolor || '#ffffff'};
+        color:${props =>props.theme.isdark ? "dark" : (props.theme.menusactivefontcolor || '#ffffff')};
         border-radius: 6px;
         .custicon {
               g path:nth-of-type(1) {
-                fill: ${props => props.theme.menusactivefontcolor || '#fff'}; 
+                fill: ${props => props.theme.isdark ? "#177ddc" : (props.theme.menusactivefontcolor || '#fff')}; 
               }
         }
          .custicon.dmaPartitionManagemen {
           path:nth-of-type(1)  {
-                fill: ${props => props.theme.menusactivefontcolor || '#fff'}; 
+                fill: ${props => props.theme.isdark ? "#177ddc" : (props.theme.menusactivefontcolor || '#fff')}; 
               }
          }
         
@@ -153,10 +153,10 @@ const Cmenu = styled(Menu)`
         overflow: hidden; // 英语状态下可能会撑开
       //  padding: 4px 0; 
         height: 66px;
-        color: ${props => props.theme.menusfontcolor || '#b2c1d1'}; 
+        color: ${props => props.theme.isdark ? "dark" : (props.theme.menusfontcolor || '#b2c1d1')}; 
         .custicon {
           g path:nth-of-type(1) {
-                fill: ${props => props.theme.menusfontcolor || '#b2c1d1'}; 
+                fill: ${props => props.theme.isdark ? "dark" :(props.theme.menusfontcolor || '#b2c1d1')}; 
               }
         }
      
@@ -168,14 +168,14 @@ const Cmenu = styled(Menu)`
    
         &:hover, &:active {
             background-color:  rgba(${props => props.rgba[0]},${props => props.rgba[1]},${props => props.rgba[2]}, 0.2) ; //${props => props.theme.menusactive || '#1c62b6'} ;
-            color:${props => props.theme.menusactivefontcolor || '#ffffff'};
+            color:${props =>props.theme.isdark ? "dark" : (props.theme.menusactivefontcolor || '#ffffff')};
           //  border-bottom: 2px solid  ${props => props.theme.menusborder || '#00ff66'};
             bottom: 0px;
             border-radius: 6px;
             border-bottom: none;
             .custicon {
               g path:nth-of-type(1) {
-                fill: ${props => props.theme.menusactivefontcolor || '#ffffff'}; 
+                fill: ${props => props.theme.isdark ? "#177ddc" : (props.theme.menusactivefontcolor || '#ffffff')}; 
               }
         }
           
@@ -188,7 +188,7 @@ const Cmenu = styled(Menu)`
         line-height: 1;
         text-align: center;
         a {
-            color: #ffffff;
+            color: ${props=>props.theme.isdark ? "dark" : "#ffffff" };
         }
     }
   }

@@ -10,12 +10,12 @@ const custsty = css`
 const Boxdiv = styled(Card)`
  // padding: ${props => props.pv};
   border-radius: ${props => props.rad || props.theme.cardRadius+'px'};
-  border:  ${(props) =>  props.bordered=='y' ? ' 1px solid #d7d7d7' : 'none'};  
+  border:  ${(props) => props.theme.isdark ? "dark" : props.bordered=='y' ? ' 1px solid #d7d7d7' : 'none'};  
   display: grid;
   grid-template-rows: ${(props) => props.title ? `auto 1fr` : '1fr'};
   flex:1;
-  background-color: ${(props) =>  props.bgcolor || '#fff'};
-  box-shadow: ${props => props.shadow=="y" ? `0px 2px 2px rgba(0, 0, 0, 0.349019607843137)` : 'none'} ;
+  background-color: ${(props) => props.theme.isdark ? "rgba(255,255,255,0.1)" : (props.bgcolor || '#fff')};
+  box-shadow: ${props =>props.theme.isdark ? "dark" : props.shadow=="y" ? `0px 2px 2px rgba(0, 0, 0, 0.349019607843137)` : 'none'} ;
   overflow: hidden;
   .ant-card-head {
     padding-left: ${({pl}) => pl || '20px'};
@@ -27,7 +27,7 @@ const Boxdiv = styled(Card)`
   //  height: ${(props) =>  props.hv || (props.theme.laptop ? '24px' : '40px')};;
     height: ${(props) =>  props.hv || props.theme.cardHeadHeight+'px'};
     padding-right: ${({pr}) => pr || '20px'};
-    background-color:${(props) => props.bg || props.theme.cardHeadBg};
+    background-color:${(props) =>props.theme.isdark ? "dark" : (props.bg || props.theme.cardHeadBg)};
     z-index:${({zd}) => zd || 100};
     position: relative;
           &::before {
@@ -44,7 +44,7 @@ const Boxdiv = styled(Card)`
       height: inherit;
       .ant-card-head-title {
          font-size: ${({fz}) => fz || '15px'};
-         color: ${({fc, theme}) => fc || theme.cardHeadlColor};
+         color: ${({fc, theme}) =>theme.isdark?"dark": (fc || theme.cardHeadlColor)};
          padding: 0 0 0 11px;
         
     }
@@ -53,7 +53,7 @@ const Boxdiv = styled(Card)`
     }
   }
   .ant-card-type-inner .ant-card-head {
-    background-color: transparent;
+    background-color: ${props=> props.theme.isdark ? "dark" : "transparent"} ;
   }
  .ant-card-body {
   padding: ${props => props.pv || "20px"};

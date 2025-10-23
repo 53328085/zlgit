@@ -27,7 +27,7 @@ const CommItem = styled.div`
     }
   }
   .ItemValue {
-    flex: auto;
+    flex: 1;
     text-align: left;
     .valueTitle {
       font-size: 16px;
@@ -40,7 +40,7 @@ const CommItem = styled.div`
     }
   }
   .boxCard {
-    flex: auto;
+    flex: 2;
     height: 102px; 
     background-color: rgba(${props => props.rgb[0]},${props => props.rgb[1]},${props => props.rgb[2]},0.15);
   //  border: 1px solid rgba(${props => props.rgb[0]},${props => props.rgb[1]},${props => props.rgb[2]},0.2);;

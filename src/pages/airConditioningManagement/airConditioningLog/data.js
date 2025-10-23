@@ -41,6 +41,7 @@ export const AirManualControlTableColumns = [
     title: "安装地址",
     dataIndex: "address",
     key: "address",
+    width: "260px"
   },
   {
     title: "操作类型",
@@ -104,6 +105,7 @@ export const AirAutomaticControlTableColumns =
       title: "安装地址",
       dataIndex: "address",
       key: "address",
+      width: "260px"
     },
     {
       title: "操作类型",

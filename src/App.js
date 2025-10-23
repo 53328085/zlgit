@@ -1,4 +1,4 @@
-import React, {Suspense, useEffect} from 'react'
+import React, {Suspense, useEffect, useMemo} from 'react'
 import {BrowserRouter} from 'react-router-dom'
 import {useSelector,useDispatch} from 'react-redux'
 import {ThemeProvider} from 'styled-components'
@@ -14,7 +14,7 @@ import EL from './router'
 import ErrorBoundary from './ErrorBoundary';
 //import useConfig from './antdconfig';\
 import {ConfigProvider} from 'antd'
-import {themeColor, intl,setadaptation,getThemeColor,adaptation, iszhCN} from "@redux/systemconfig";
+import {themeColor, intl,setadaptation,getThemeColor,adaptation, dark, iszhCN} from "@redux/systemconfig";
 import CustConfig from './custConfig';
 import { clearToken} from "@redux/user";
 import {getprimarycolors} from "@com/usehandler";
@@ -22,7 +22,17 @@ function App() {
   const dispatch = useDispatch()
   const theme = useSelector(themeColor)
   const laptop = useSelector(adaptation) || {}
+  const isdark = useSelector(dark)
+  console.log("app isdark",isdark)
   const iscn = useSelector(iszhCN)
+  const themeprops = useMemo(() => {
+
+    return { 
+      ...theme,
+      ...laptop,
+      isdark
+    }
+  }, [theme, laptop, isdark])
 /*   const theme = useSelector(themeColor)
  
    
@@ -86,7 +96,7 @@ ratiostr.addEventListener("change", updateratio)
  
   return   (
  <CustConfig> 
-    <ThemeProvider theme={{...theme, ...laptop}}>
+    <ThemeProvider theme={themeprops}>
     <ErrorBoundary>
   <BrowserRouter>
     <Suspense fallback={<Loading/>}>  

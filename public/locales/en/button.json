@@ -80,5 +80,7 @@
   "control":"Control",
   "layout": "layout",
   "restore": "Restore default values",
+  "open": "Open",
+  "close": "Close",
   "z": ""
 }
