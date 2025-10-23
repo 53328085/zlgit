@@ -410,7 +410,7 @@ export default function UseSerach(props) {
       getStation();
     }
   }, [props.config, AreaID, projectId])
-  const [powerstationData, setPowerstationData] = useState([]) //光伏电站
+  const [powerstationData, setPowerstationData] = useState([]) //光伏站点
   const [cabinetData, setCabinetData] = useState([])//并网柜
   const [InverterData, setInverterData] = useState([])//逆变器
   const getStation = async () => {
@@ -430,7 +430,7 @@ export default function UseSerach(props) {
         })
         props.setexparams({ ...form.getFieldsValue(true) })
         if (!success) return message.warning(errMsg)
-        if (data?.length < 1) return message.warning("光伏电站暂无数据")
+        if (data?.length < 1) return message.warning("光伏站点暂无数据")
       }
     } catch (error) {
       console.log(error)
@@ -485,7 +485,7 @@ export default function UseSerach(props) {
       console.log(error)
     }
   }
-  const changetInverter=(e)=> {
+  const changetInverter = (e) => {
     props.setexparams({ ...form.getFieldsValue(true) })
   }
   const photovoltaicPowerStation = (
@@ -505,7 +505,7 @@ export default function UseSerach(props) {
   const inverter = (
     <Item name="inverter" style={{ color: `${primaryColor}` }} label="逆变器">
       {/* inverterData */}
-      <Select options={InverterData}  fieldNames={{ label: 'name', value: 'sn' }}   style={{ width: "140px" }} onChange={changetInverter}></Select>
+      <Select options={InverterData} fieldNames={{ label: 'name', value: 'sn' }} style={{ width: "140px" }} onChange={changetInverter}></Select>
     </Item>
   )
   const onRefresh = () => {
@@ -577,7 +577,7 @@ export default function UseSerach(props) {
         {props.config?.isview && viewtype}
         {props.config?.energytype && energytype}
         {
-          props.config?.photovoltaicPowerStation && photovoltaicPowerStation //光伏发电-光伏电站
+          props.config?.photovoltaicPowerStation && photovoltaicPowerStation //光伏发电-光伏站点
         }
         {
           props.config?.cabinet && cabinet //光伏发电-并网柜

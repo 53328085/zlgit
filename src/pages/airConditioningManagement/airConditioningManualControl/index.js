@@ -243,7 +243,8 @@ export default function Index() {
                                       <div className={`${(fields.name === '开关' && fields.value === '开') ? 'open' :
                                         (fields.name === '开关' && fields.value === '关') ? 'close' : ''} value`}
                                       >
-                                        {fields.name === '开关' ? fields.value : '-'}
+                                        {/* {fields.name === '开关' ? fields.value : '-'} */}
+                                        {fields.value || "-"}
                                       </div>
 
                                     </div>
