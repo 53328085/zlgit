@@ -83,7 +83,7 @@ const CusCard = ({
           </div>
         </div>
 
-        <div>
+   
           {isextra ? (
             <div>
               <div style={{ color: "#606266" }}>{lastTitle}</div>
@@ -95,7 +95,7 @@ const CusCard = ({
               </div>
             </div>
           ) : null}
-        </div>
+ 
       </div>
     </div>
   );

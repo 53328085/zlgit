@@ -103,7 +103,7 @@ export default function Index() {
                 <Select
                   size="default"
                   options={Date_Value}
-                  style={{ width: 80, marginRight: 16 }}
+                  style={{ width: 88, marginRight: 16 }}
                   onChange={(e) => {
                     if (e == "1") {
                       setType("date");
@@ -126,7 +126,7 @@ export default function Index() {
                 <Button
                   type="primary"
                   htmlType="submit"
-                  style={{ marginLeft: 16,width:88 }}
+                  style={{ marginLeft: 16,minWidth:72 }}
                 >
                   查询
                 </Button>
