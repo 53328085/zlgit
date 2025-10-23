@@ -220,7 +220,7 @@ export default function Index() {
                   <div className="item">
                     <img src={imgurl?.["lineNum"]}></img>
                     <div className='data'>
-                      <span className='label'>光伏电站(个)</span>
+                      <span className='label'>光伏站点(个)</span>
                       <span className='value'>{datas?.loopNum}</span>
                     </div>
                   </div>

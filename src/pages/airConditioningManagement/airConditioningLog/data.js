@@ -41,7 +41,7 @@ export const AirManualControlTableColumns = [
     title: "安装地址",
     dataIndex: "address",
     key: "address",
-    width: "260px"
+    width: "280px"
   },
   {
     title: "操作类型",
@@ -84,6 +84,7 @@ export const AirManualControlTableColumns = [
     title: "操作时间",
     dataIndex: "createTime",
     key: "createTime",
+    width: "200px"
   },
 ];
 
@@ -105,7 +106,7 @@ export const AirAutomaticControlTableColumns =
       title: "安装地址",
       dataIndex: "address",
       key: "address",
-      width: "260px"
+      width: "280px"
     },
     {
       title: "操作类型",
@@ -153,6 +154,7 @@ export const AirAutomaticControlTableColumns =
       title: "操作时间",
       dataIndex: "createTime",
       key: "createTime",
+      width: "200px"
     },
   ];
 

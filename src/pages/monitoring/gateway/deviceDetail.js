@@ -527,6 +527,7 @@ export default function GatewayDetail(props) {
   const [ptrend, setPtrend] = useState({});
   const onchangeTab = (val) => {
     setstate(val);
+    setDisplaypoint(false);
     console.log(val, deviceStyle);
     setreportTypeTime(1);
     if (dtlkeys) return;
@@ -1179,11 +1180,10 @@ export default function GatewayDetail(props) {
     getEnergyReport();
   }, [dateValue, projectId, sn, reportTypeTime, trend, dtlkeys]);
 
-  useEffect(() => {
+  useEffect(() => { //&& [1, 4, 18].includes(deviceStyle)
     if (
       Number.isInteger(projectId) &&
-      category &&
-      [1, 4, 18].includes(deviceStyle)
+      category 
     ) {
       getPoints({ projectId, category });
     }

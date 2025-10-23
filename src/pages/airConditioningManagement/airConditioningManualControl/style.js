@@ -72,7 +72,7 @@ export const CardBox = styled.div`
         height: 215px;
         border-radius: 16px;
         display: flex;
-        flex-direction: column;
+        justify-content: center;
         border: 1px solid #ececec;
         .top{
         display: flex;

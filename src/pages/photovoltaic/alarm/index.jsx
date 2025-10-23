@@ -1,18 +1,17 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react'
 import styled from 'styled-components'
-import { Typography, Image, Form, Space, Input, Select, DatePicker, Divider } from 'antd'
+import { Typography, Image } from 'antd'
 import { useAntdTable } from 'ahooks'
 import { nanoid } from "@reduxjs/toolkit"
 import moment from 'moment'
 import Titlelayout from '@com/titlelayout'
 import Usetable from '@com/useTable'
-import { StorageAlarmRuntime } from '@api/api'
 import { useQueryWarningStatistics, useQueryAlarmDetails } from './api';
 import imgurl from './icon'
 import { ExportExcel } from '@com/useButton'
 import Pagecount from "@com/pagecontent";
 import { useOutletContext } from 'react-router-dom'
-const { Text, Link, Title, Paragraph } = Typography
+const { Link, Paragraph } = Typography
 const Mainbox = styled.div`
     && {
       display: grid;
@@ -94,7 +93,7 @@ const columns = [
     align: 'center'
   },
   {
-    title: ' 设备编号',
+    title: '设备编号',
     dataIndex: 'sn',
     key: 'sn',
     align: 'center',
@@ -149,7 +148,6 @@ export default function Index() {
   let { projectId, photovoltaicPowerStation, rangePicker } = exparams || { photovoltaicPowerStation: { key: '' } }
   const { value: stationId } = photovoltaicPowerStation || { value: NaN }
   const condition = Number.isInteger(projectId) && Number.isInteger(stationId) && rangePicker
-  const [form] = Form.useForm()
   const [statistics, setStatistics] = useState({})
   const [total, setTotal] = useState(0)
   const getData = async () => {
@@ -196,30 +194,28 @@ export default function Index() {
     })
 
   }
-  const { tableProps, search, params } = useAntdTable(QueryReports, {
-    defaultParams: [{ pageSize: 14, pageNum: 1 }, {
+  const { tableProps } = useAntdTable(QueryReports, {
+    defaultParams: [{ pageSize: 14, pageNum: 1 },
+    {
       start: moment().subtract(7, 'day').format('YYYY-MM-DD'),
       end: moment().format('YYYY-MM-DD'),
       projectId,
-    }],
+    }
+    ],
     refreshDeps: [projectId, stationId, rangePicker],
     manual: false,
   })
 
-  const { submit } = search
   const tbref = useRef()
 
   const onExport = useCallback(() => {
-    let formData = form.getFieldsValue()
     return QueryReports({ current: 1, pageSize: total })
   }, [total])
 
   useEffect(() => {
-
     if (condition) {
       getData()
     }
-
   }, [exparams])
 
 
