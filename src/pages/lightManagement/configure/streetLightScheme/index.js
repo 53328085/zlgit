@@ -1,25 +1,16 @@
-import React,{useMemo, useRef, useState, useCallback} from 'react'
-import {Space, Form, message, Typography} from 'antd'
-import moment from 'moment'
-import {useAntdTable} from "ahooks"
-import {useSelector} from "react-redux"
-import {useOutletContext} from "react-router-dom"
+import React,{  useState } from 'react'
+import {  Form,  } from 'antd'
+ 
 import Pagecount from '@com/pagecontent' 
-import UserTable from "@com/useTable";
-import Titlelayout from '@com/titlelayout';
-import {CustButtonT,CustButton, ExportExcel} from "@com/useButton"
-import CModal from '@com/useModal'
-import {selectUser} from "@redux/user"
-import {selectOneLevelDefaultId} from "@redux/systemconfig"
-import {usePage,useAdd,useUpdate,useDelete } from "./api"
-import {cols, items} from "./data"
-import {Mainbox, Title } from './style'
-import BindLight from './bind'
+ 
+ 
+import {Mainbox } from './style'
+ 
 import {Serach} from "@com/comstyled"
 import CustContext from '@com/content.js'
 import Light from './light'
 import Line from './line'
- const {Link} = Typography
+ 
 
 
 export default function Index() {

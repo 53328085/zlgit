@@ -3,9 +3,10 @@ export  const Mainwrap = styled.div`
 && {
    flex:1;
    display: grid;
-   grid-template-columns: 210px minmax(1462px, 1fr);
-   grid-template-rows: 1fr;
+   grid-template-columns: 288px minmax(1462px, 1fr);
+   grid-template-rows: minmax(817px, 1fr);
    column-gap: 16px;
+   
    .left {
      background-color: #fff;
      height: 817px;

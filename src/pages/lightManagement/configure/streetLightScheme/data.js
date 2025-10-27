@@ -491,6 +491,44 @@ export const itemsline = (
                               }
                             }}
                           </Form.Item> 
+                          
+                      <Form.Item noStyle   shouldUpdate={(cur, pre) => {                            
+                              return (
+                                cur["scenes"]?.[field.name]?.["tasks"]?.[
+                                  inerfiled.name
+                                ]?.taskType !=
+                                pre["scenes"]?.[field.name]?.["tasks"]?.[
+                                  inerfiled.name
+                                ]?.taskType
+                              );
+                            }}>{
+                          ({getFieldValue})=> {
+                            let type = getFieldValue([
+                              "scenes",
+                              field.name,
+                            ])?.["tasks"]?.[inerfiled.name]?.taskType;
+                          
+                          if(type == 0) return <div
+                              style={{ position: "relative", width: "548px" }}
+                            >
+                              <img
+                                src={imgsrc["light"]}
+                                style={{ position: "absolute",left:"98px" }}
+                              />
+                              <Form.Item
+                               label="亮度设置"
+                                name={[inerfiled.name, "light"]}
+                                labelCol={{flex: "98px"}}
+                                rules={[
+                                  {
+                                    required: type===0
+                                  }
+                                ]} 
+                              ><Custslider step={null} marks={marks} /></Form.Item>
+                            </div>
+                          }
+                            }
+                          </Form.Item>
                         </div>
                       ))}
                     </div>

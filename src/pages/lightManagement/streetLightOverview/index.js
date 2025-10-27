@@ -221,7 +221,7 @@ export default function Index() {
             </div>
             <div className='data'>
               <span className='title'>亮灯率</span>
-              <span className='num'>{Number.isInteger(parseFloat(datas?.lightRate))? `${parseFloat(datas?.lightRate)*100?.toFixed(2)}%`: "--" }</span>
+              <span className='num'>{(typeof parseFloat(datas?.lightRate) == "number")? `${parseFloat(datas?.lightRate)*100?.toFixed(2)}%`: "--" }</span>
             </div>
           </div>
           <div className="shownum">
@@ -286,6 +286,9 @@ export default function Index() {
         <div className="down">
         <div className="left">
         <div className="titleUp">
+                 <div className="titlehd overew">
+                  平台概览
+                 </div>
                  <div className='manger'>
                         <span className='label'>管理单位</span>
                         <span className='value'>{datas?.department || "=="}</span>
@@ -326,11 +329,11 @@ export default function Index() {
                 </div>
               </div>
               </div>
-               <div className='chartTitle'>近7日亮灯率(%)</div>
+               <div className='chartTitle titlehd'>近7日亮灯率(%)</div>
                <div className="chartWrap">
 <Ichart {...lineopt} />
                </div>
-               <div className='chartTitle mt-4'>近7日用电量(kWh)</div>
+               <div className='chartTitle titlehd mt-4'>近7日用电量(kWh)</div>
                <div className="chartWrap">
 <Ichart {...baropt} />
                </div>
@@ -358,11 +361,11 @@ export default function Index() {
           </div>
            <div className="right">
             <div className="content">
-           <div className='chartTitle'>发电量统计</div>
+           <div className='chartTitle titlehd'>发电量统计</div>
                <div className="chartWrap">
 <Ichart {...createopt} />
                </div>
-               <div className='chartTitle mt-4'>发电收益折算(元)</div>
+               <div className='chartTitle titlehd mt-4'>发电收益折算(元)</div>
                <div className="chartWrap">
 <Ichart {...incomeopt} />
                </div>

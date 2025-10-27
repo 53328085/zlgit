@@ -248,7 +248,7 @@ export const FooterChartComp = React.memo(({ tableData, chartData }) => {
             style={{
               display: "flex",
               alignItems: "center",
-              margin: "0 16px 0 24px",
+              margin: "0 0px 0 24px",
               cursor: "pointer",
             }}
             onClick={() => {

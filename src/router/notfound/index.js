@@ -1,5 +1,5 @@
-import React from 'react' 
-import notfound from './404.png'
+import React from 'react'  
+import  {ReactComponent as Notfout } from './404.svg'
 import {Typography, Empty} from 'antd' 
 import {useNavigate,useLocation} from 'react-router-dom'
 export default function Index() {
@@ -14,7 +14,7 @@ export default function Index() {
      flexDirection: 'column',
   }
   return (
-    <Empty image={notfound}
+    <Empty image={<Notfout />}
          imageStyle={{width: '200px', height: '180px'}}
          style={style}
          description={<Paragraph><Text strong type="warning">抱歉！页面没找到</Text>

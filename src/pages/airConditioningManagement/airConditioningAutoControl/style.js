@@ -42,6 +42,7 @@ export const Mainwrap = styled.div`
        margin-bottom: 16px;
          .title {
            display: flex;
+           justify-content: space-between;
            align-items: center;
            height: 34px;
            border-bottom: 1px solid #CCCCCC;

@@ -95,24 +95,23 @@ export default function Index() {
   return (
     <Pagecount pd="0" bgcolor="none">
       <Mainwrap>
-        <div className="left">
-          <span className="title">路灯设备列表</span>
+        <Titlelayout layout="flex" title="路灯设备列表" dr="column"  >
           <Input.Search placeholder="请输入关键字查询" allowClear onSearch={onSearch} />
-          <Radio.Group value={schemeId} onChange={onChange}>
+          <Radio.Group value={schemeId} onChange={onChange} style={{ marginTop: "16px" }}>
             <Space direction="vertical">
               {
                 options?.map?.(o => <Radio value={o.id}>{o.name}</Radio>)
               }
             </Space>
           </Radio.Group>
-        </div>
+        </Titlelayout>
         <div className="right">
           <Titlelayout layout="flex" title="园区道路灯控制方案" dr="column">
 
             <div className="desc">
               {
-                explains?.map?.((e, index) => <div className="item">
-                  <div className="title">{e.title}  {explains.length}/{index + 1}</div>
+                explains?.map?.(e => <div className="item">
+                  <div className="title">{e.title}</div>
                   <div className="content">
                     <ol>
                       {e.description?.split("\n").map(t => t ? <li>{t}</li> : null)}

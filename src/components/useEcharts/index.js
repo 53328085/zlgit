@@ -472,16 +472,19 @@ export const drawEcharts = (
       : type == 3
       ? pieOption({...pieData, grid, legend})
       : {};  */
+   try {
+    if(rest.custoption) {
+      chart.setOption({...rest.custoption}, true); //桑基图
+    }else {
+      chart.setOption({...setoption, ...rest}, true, chartoption);
+    }    
+     window.addEventListener('resize', _.throttle(chart?.resize), 300) ;
+     chart?.resize() 
+    return chart
     
-  if(rest.custoption) {
-    chart.setOption({...rest.custoption}, true); //桑基图
-  }else {
-    chart.setOption({...setoption, ...rest}, true, chartoption);
-  }    
-   window.addEventListener('resize', _.throttle(chart?.resize), 300) ;
-   chart?.resize()
-  
-   
-  return chart
+   } catch (error) {
+     message.error("图表数据出错："+error.message)
+   } 
+
 };
 
