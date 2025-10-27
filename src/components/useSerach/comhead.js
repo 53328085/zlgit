@@ -547,9 +547,12 @@ export default function UseSerach(props) {
     if (config.meterType) {
       form.setFieldValue('deviceStyle', config.meterType)
     }
+    if(oneLevelDefaultId==0) {
+      form.setFieldValue('areaId', 0)
+    }
     props.setexparams({ ...form.getFieldsValue(true) })
 
-  }, [props.config, projectId])
+  }, [props.config, projectId, oneLevelDefaultId])
 
   /*   useEffect(() => {
   

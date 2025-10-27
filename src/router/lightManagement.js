@@ -14,8 +14,8 @@ export let lightManagement = {
     '012003': StreetLightManualControl, // 手动控制
     '012004': StreetLightAutoControl, // 自动控制
     '012005': StreetLightLog, // 控制日志
-    '012006': LightControl, // 照明控制
-    '012007': SolarStreetLightOverview, // 太阳能路灯总览
-    '012008': StreetLightDataReport, // 数据报表
+    //'012006': LightControl, // 照明控制
+    '012006': SolarStreetLightOverview, // 太阳能路灯总览
+    '012007': StreetLightDataReport, // 数据报表
     
 }

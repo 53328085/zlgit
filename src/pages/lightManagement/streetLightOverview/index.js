@@ -221,7 +221,7 @@ export default function Index() {
             </div>
             <div className='data'>
               <span className='title'>亮灯率</span>
-              <span className='num'>{Number.isInteger(parseFloat(datas?.lightRate))? `${parseFloat(datas?.lightRate)*100?.toFixed(2)}%`: "--" }</span>
+              <span className='num'>{(typeof parseFloat(datas?.lightRate) == "number")? `${parseFloat(datas?.lightRate)*100?.toFixed(2)}%`: "--" }</span>
             </div>
           </div>
           <div className="shownum">

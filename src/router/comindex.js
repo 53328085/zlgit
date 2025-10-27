@@ -22,7 +22,7 @@ export default function Index() {
   let whole = ["runtimeMonitor", "runtimeSafe", "runtimeEnergy", "runtimeStorage", "runtimeMaintenance", "runtimeSolar", "designerSolar"]; // 需要显示搜索 ***（全部）的模块
   let include =useMemo(() => { // 需要显示搜索 ***（全部）的页面
    let nesteds = {
-      [primary]:["streetLightEnergyMonitor"]
+      [primary]:["streetLightEnergyMonitor","solarStreetLightOverview"]
     }[primary] || []
     return  nesteds.includes(nested) ? {} : false
   }, [primary, nested]);
@@ -361,6 +361,7 @@ export default function Index() {
   useEffect(() => {
     if (whole.includes(primary) || include) {
       let isin = onelevel.find((l) => l.id == 0);
+      console.log(isin,"isin")
       if (!isin) {
         dispatch(
           getOnelevel([

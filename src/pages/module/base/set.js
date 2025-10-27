@@ -678,7 +678,7 @@ export default function ProjectSet({ projectId }) {
                   />
                 </Item>
               </div>
-              <Info>{t("comm:sizeofpicture", { size: "208*64" })}</Info>
+              <Info>{t("comm:sizeofpicture", { size: "200*70" })}</Info>
             </Item>
             <Item label={t("comm:Projectpicture")} required>
               {" "}
