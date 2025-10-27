@@ -31,7 +31,6 @@ export default forwardRef(function Index({ projectId, updata, modalTitle, curPag
   // 监听areaId变化
   const areaId = Form.useWatch('areaId', formTop);
   const [previousAreaId, setPreviousAreaId] = useState(null) // 记录上一次的areaId
-  const stationId = Form.useWatch('stationId', formTop);
   // 存储已选中的逆变器设备ID
   const [selectedInverterIds, setSelectedInverterIds] = useState([])
   // 存储编辑模式下的原始数据

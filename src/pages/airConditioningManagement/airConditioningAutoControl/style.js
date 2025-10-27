@@ -27,62 +27,90 @@ export const Mainwrap = styled.div`
      display: grid;
      grid-template-columns:  1fr 600px;
      column-gap: 16px;
+     margin-bottom: 16px;
      .scheme_left{
    .desc {
       overflow-y: scroll;
-      height: 320px;
-      border-radius: 5px;
-      border-bottom-right-radius: 0px;
-       border-bottom-left-radius: 0px;
-       border:1px solid rgba(215,215,215,1);
+      height: 329px;
        display: flex;
        flex-direction: column;
-       flex:1;
-       margin-bottom: 16px;
+       scrollbar-width: thin; 
        .item {
+      background: rgba(229, 236, 245, 0.3);
+      padding: 16px;
+      border-radius: 4px;
+       margin-bottom: 16px;
          .title {
            display: flex;
            align-items: center;
            height: 34px;
-           background-color: rgba(236, 245, 255, 1);
-           color:#515151;
-           padding-left: 8px;
+           border-bottom: 1px solid #CCCCCC;
+           font-weight: 600;
+           font-size: 15px;
+           color: #303133;
+           .controlNum{
+           font-weight: 600;
+           font-size: 14px;
+           color: #909399;
+           margin-left: 16px;
+           }
+          
          }
+            .controlData{
+              display: grid;
+              grid-template-columns: 340px 1fr;
+              column-gap: 16px;
+          }
            .titleName{
-           color:var(--ant-primary-color);
-           margin:6px 0px;
-           padding-left: 8px;
+           font-weight: 600;
+           font-size: 14px;
+           color: #909399;
+           margin:8px 0px;
           
            }
            .time{
-           padding:15px 8px;
-           border-radius: 3px;
-           background-color: rgba(247, 251, 254, 0.752941176470588);
-           border: none;
+          padding-left: 16px;
            .day{
            display: flex;
+           margin-top: 5px;
            .daybox{
-           width: 46px;
-           height: 22px;
+           width: 48px;
+           height: 24px;
+           line-height: 24px;
            border-radius: 4px;
-           border:1px solid rgba(81, 81, 81, 1);
            text-align: center;
            margin-right: 10px;
+           background: rgba(144,147,153,0.1);
+           color: #909399;
            }
+            .nomal-text{
+           background: rgba(144,147,153,0.1);
+           color: #909399;
+           }
+           .green-text{
+           background: rgba(70,199,255,0.1);
+           color: #46C7FF;
+           }
+           .blue-text{
+          background: rgba(30,80,230,0.1);
+          color: #1E50E6;
+           }
+          .legal-holidays{
+           width: 148px;
+          }
            }
            }
            .schemeName{
            display: flex;
            lign-items: center;
+           padding-left: 16px;
+           margin-bottom: 5px;
            .schemeTitle{
            font-weight: 700;
-           padding-left: 8px;
-           width: 100px;
+           width: 80px;
            }
             .con{
            margin-left: 8px;
-           line-height: 28px;
-           white-space: pre-line;
            }
            }
        }
@@ -91,14 +119,12 @@ export const Mainwrap = styled.div`
      .scheme_right{
     .desc{
      overflow-y: scroll;
-      height: 320px;
-      border-radius: 5px;
-      border-bottom-right-radius: 0px;
-       border-bottom-left-radius: 0px;
-       border:1px solid rgba(215,215,215,1);
+      height: 329px;
+      border-radius: 4px;
+      background: rgba(229, 236, 245, 0.3);
        display: flex;
        flex-direction: column;
-       flex:1;
+       scrollbar-width: thin; 
        padding:16px;
        .schemeName{
        margin-bottom: 10px;

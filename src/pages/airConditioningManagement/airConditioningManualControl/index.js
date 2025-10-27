@@ -165,6 +165,7 @@ export default function Index() {
             allselect={true}
             showSearch={true}
             title="空调设备列表"
+            hv="40px"
           />
         </div>
         <div className="right-box">
@@ -219,7 +220,6 @@ export default function Index() {
                                 key={airItem.id}
                                 checked={selectedAirs.includes(airItem.id)}
                                 onChange={(e) => handleCardCheck(airItem.id, e.target.checked)}
-                                style={{ cursor: 'pointer', color: '#303133', height: ' 100%' }}
                               >
                                 <div className="airInfo">
                                   <div style={{ display: 'flex' }}>
@@ -267,7 +267,6 @@ export default function Index() {
                                 key={airItem.id}
                                 checked={selectedAirs.includes(airItem.id)}
                                 onChange={(e) => handleCardCheck(airItem.id, e.target.checked)}
-                                style={{ cursor: 'pointer', color: '#303133', height: ' 100%' }}
                               >
                                 <div className="airInfo" >
                                   <div style={{ display: "flex" }}>
@@ -315,7 +314,6 @@ export default function Index() {
                           key={airItem.id}
                           checked={selectedAirs.includes(airItem.id)}
                           onChange={(e) => handleCardCheck(airItem.id, e.target.checked)}
-                          style={{ cursor: 'pointer', color: '#5D5D5D', height: ' 100%' }}
                         > */}
                           <div style={{ color: '#303133' }}>
                             <div style={{ display: "flex", justifyContent: 'space-between' }}>
@@ -343,7 +341,6 @@ export default function Index() {
                             key={airItem.id}
                             checked={selectedAirs.includes(airItem.id)}
                             onChange={(e) => handleCardCheck(airItem.id, e.target.checked)}
-                            style={{ cursor: 'pointer', color: '#303133', height: ' 100%' }}
                           >
                             <div className="airInfo">
                               <div style={{ display: 'flex' }}>

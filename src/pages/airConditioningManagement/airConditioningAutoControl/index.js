@@ -105,6 +105,8 @@ export default function Index() {
     const selectedOption = options.find(opt => opt.id === v.target.value);
     if (selectedOption) {
       setSchemeName(selectedOption.name); // 更新选中的label
+    } else {
+      setSchemeName('');
     }
   }
   const onSearch = (v) => {
@@ -116,48 +118,66 @@ export default function Index() {
   return (
     <Pagecount pd="0" bgcolor="none">
       <Mainwrap>
-        <div className="left">
-          <span className="title">空调控制方案列表</span>
+        <Titlelayout layout="flex" title="空调控制方案列表" dr="column"  >
           <Input.Search placeholder="请输入关键字查询" allowClear onSearch={onSearch} />
-          <Radio.Group value={schemeId} onChange={onChange}>
+          <Radio.Group value={schemeId} onChange={onChange} style={{ marginTop: "16px" }}>
             <Space direction="vertical">
               {
                 options?.map?.(o => <Radio value={o.id}>{o.name}</Radio>)
               }
             </Space>
           </Radio.Group>
-        </div>
+        </Titlelayout>
         <div className="right">
           <Titlelayout layout="flex" title={schemeName} dr="column">
             <div className="scheme">
               <div className="scheme_left">
                 <BlueColumn bg={{ height: 13, width: 3 }}
                   className="lightData" name='控制方案'></BlueColumn>
-                {controlInfos.length != 0 ?
+                {controlInfos.length !== 0 ?
                   <div className="desc">
                     {
-                      controlInfos?.map?.(e => <div className="item">
-                        <div className="title">{e.name}</div>
-                        <div className="titleName">时间区间</div>
-                        <div className="time">
-                          <div>{e.desc}</div>
-                          <div className="day">
-                            {e?.weeks?.map?.(time => <div key={time} className="daybox">{getweek.get(time)}</div>)}
+                      controlInfos?.map?.((e, index) => <div className="item">
+                        <div className="title">{e.name}<div className="controlNum"> {controlInfos.length}/{index + 1}</div> </div>
+                        <div className="controlData">
+                          <div className="timeBox">
+                            <div className="titleName">时间区间</div>
+                            <div className="time">
+                              <div>{e.desc}</div>
+                              <div className="day">
+                                {/* {e?.weeks?.map?.(time => <div key={time} className="daybox">{getweek.get(time)}</div>)} */}
+                                {e.type === 1 ? <>{week?.map?.(time => {
+                                  const isInWeeks = e?.weeks?.includes(time.value);
+                                  let className = "";
+                                  console.log(isInWeeks, time.value)
+                                  if (isInWeeks) {
+                                    className = time.value === 0 || time.value === 6 ? "green-text" : "blue-text";
+                                  } else {
+                                    className = "nomal-text";
+                                  }
+
+                                  return <div key={time.value} className={`${className} daybox`}>{time.label}</div>;
+                                })}</>
+                                  : <div className={`legal-holidays daybox`}>法定节假日</div>}
+                              </div>
+                            </div>
                           </div>
-                        </div>
-                        <div className="titleName">方案内容</div>
-                        {e?.contentInfo?.map?.(info => <div className="schemeName">
-                          <div className="schemeTitle">{info.content}</div>
-                          <div className="con">{info.description}</div>
-                        </div>)}
-                      </div>)
+                          <div className="contentBox">
+                            <div className="titleName">方案内容</div>
+                            {e?.contentInfo?.map?.(info => <div className="schemeName">
+                              <div className="schemeTitle">{info.content}</div>
+                              <div className="con">{info.description}</div>
+                            </div>)}
+                          </div>
+                        </div></div>
+                      )
                     }
                   </div> : <div className="desc"> <Cempty tip='暂无数据' /></div>}
               </div>
               <div className="scheme_right">
                 <BlueColumn bg={{ height: 13, width: 3 }}
                   className="lightData" name='节能方案'></BlueColumn>
-                {savingInfo.length != 0 ?
+                {savingInfo.length !== 0 ?
                   <div className="desc">
                     {savingInfo.map?.(e => <div className="schemeName"><div className="title">{e.content}</div>{e.description}</div>)}
                   </div> : <div className="desc"> <Cempty tip='暂无数据' /></div>}

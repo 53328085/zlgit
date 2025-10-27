@@ -75,8 +75,8 @@ export default function Index() {
     return type == 1
       ? moment(date).format("YYYY-MM-DD")
       : type == 2
-      ? moment().format("YYYY-MM-01")
-      : moment().format("YYYY-01-01");
+        ? moment().format("YYYY-MM-01")
+        : moment().format("YYYY-01-01");
   };
   //查询能耗监控数据
   const QueryEnergyConsumptions = async () => {
@@ -332,7 +332,7 @@ export default function Index() {
             <UseTree
               areaId={0}
               setTreeId={setTreeId}
-              setLine={() => {}}
+              setLine={() => { }}
               showline={false}
               datatype={5}
               energytype={1}
@@ -501,7 +501,7 @@ export default function Index() {
           value={enableVal}
           modalData={modalData}
           modalPageInfo={modalPageInfo}
-          onPageChange={() => {}}
+          onPageChange={() => { }}
           onTableChange={handleTableChange} // 传递后端表格处理函数
           onClose={handleModalClose}
           loading={loading.modalLoading}
