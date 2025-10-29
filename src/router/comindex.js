@@ -172,7 +172,7 @@ export default function Index() {
         switch (nested) {
           case "area":
           case "assorting":
-            setConfig({ isview: true, isdate: true });
+            setConfig({ isview: false, isdate: true, shiftNo:true });
             break;
           case "range":
             setConfig({ energytype: false, isdate: false, custview: true, isAreaId: false, });
@@ -289,7 +289,7 @@ export default function Index() {
             setConfig({ isview: true, isdate: true, shiftNo: true });
             break;
           case "streetLightDataReport":
-            setConfig({ isview: true, isdate: true, shiftNo: true });
+            setConfig({ isview: false, isdate: true, shiftNo: true });
             break;
         }
 

@@ -243,7 +243,7 @@ const [dates, setDates] = useState([])
     {
       title: '操作', 
       key:'option',
-      render: (_, row)=> <Space><Link onClick={()=> archives(row)}>档案下发</Link><Link onClick={()=> onEdit(row, 1)}>编辑</Link><Link onClick={()=> onEdit(row, 2)}>克隆</Link><Link type="danger" onClick={()=> onDel(row)}>删除</Link></Space>
+      render: (_, row)=> <Space><Link onClick={()=> archives(row)}>方案下发</Link><Link onClick={()=> onEdit(row, 1)}>编辑</Link><Link onClick={()=> onEdit(row, 2)}>克隆</Link><Link type="danger" onClick={()=> onDel(row)}>删除</Link></Space>
     },
   ]
   const onExport =useCallback(() => {  
@@ -297,7 +297,7 @@ const [dates, setDates] = useState([])
          {items}
         </Form>
        </CModal>
-       <CModal title="档案下发"    onOk={arcOk}   width={512} mold="cust"   ref={arcRef}  >
+       <CModal title="方案下发"    onOk={arcOk}   width={512} mold="cust"   ref={arcRef}  >
         <Form form={arcform} labelAlign="right" labelCol={{flex: "7em"}} preserve={false}   colon={false}>
            <Form.Item name="time" label="下发时间区间" tooltip="请在当前时间之后一年内,例:2028-01-01-2028-12-31" rules={[{
             required: true,

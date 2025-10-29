@@ -38,7 +38,7 @@ const Cform = styled(Form)`
    } 
 `
 
-
+export {Cform};
 
 const { Item } = Form;
 export const AreaSelect = ({ value, onChange, isall, ...otherProps }) => {
