@@ -1,5 +1,5 @@
 import React, { useRef, useState, useEffect } from "react";
-import { Space, Form, Select, Input, Radio } from "antd";
+import { Space, Form, Select, Input, Radio, Empty } from "antd";
 import Pagecount from "@com/pagecontent";
 import { useSelector } from "react-redux"
 import { selectProjectId } from "@redux/systemconfig"
@@ -7,7 +7,10 @@ import UserTable from "@com/useTable";
 import Titlelayout from "@com/titlelayout";
 import BlueColumn from '@com/bluecolumn'
 import Cempty from '@com/useEmpty'
+import { i18t } from "@com/useButton"
 import { cols } from "./data";
+
+import emptyImg from './img/empty.svg'
 
 import { useList, useDetail } from "./api.js";
 
@@ -118,7 +121,7 @@ export default function Index() {
   return (
     <Pagecount pd="0" bgcolor="none">
       <Mainwrap>
-        <Titlelayout layout="flex" title="空调控制方案列表" dr="column"  >
+        <Titlelayout layout="flex" title="空调控制方案列表" dr="column" bordered >
           <Input.Search placeholder="请输入关键字查询" allowClear onSearch={onSearch} />
           <Radio.Group value={schemeId} onChange={onChange} style={{ marginTop: "16px" }}>
             <Space direction="vertical">
@@ -129,16 +132,19 @@ export default function Index() {
           </Radio.Group>
         </Titlelayout>
         <div className="right">
-          <Titlelayout layout="flex" title={schemeName} dr="column">
+          <Titlelayout layout="flex" title={schemeName} dr="column" bordered>
             <div className="scheme">
               <div className="scheme_left">
-                <BlueColumn bg={{ height: 13, width: 3 }}
-                  className="lightData" name='控制方案'></BlueColumn>
+                <BlueColumn bg={{ height: 6, width: 6, borderRadius: '50%' }}
+                  name='控制方案'>
+                </BlueColumn>
                 {controlInfos.length !== 0 ?
-                  <div className="desc">
+                  <div className="desc"
+                    style={{ height: controlInfos.length < 2 ? '160px' : '329px' }}>
+
                     {
                       controlInfos?.map?.((e, index) => <div className="item">
-                        <div className="title">{e.name}<div className="controlNum"> {controlInfos.length}/{index + 1}</div> </div>
+                        <div className="title">{e.name}<div className="controlNum">{index + 1}/{controlInfos.length}</div> </div>
                         <div className="controlData">
                           <div className="timeBox">
                             <div className="titleName">时间区间</div>
@@ -172,20 +178,43 @@ export default function Index() {
                         </div></div>
                       )
                     }
-                  </div> : <div className="desc"> <Cempty tip='暂无数据' /></div>}
+                  </div> :
+                  <div className="desc" style={{ height: controlInfos.length < 2 ? '160px' : '329px' }}>
+                    {/* <Cempty tip='暂无数据' /> */}
+                    <div style={{ flex: 1, display: 'flex', justifyContent: 'center', alignItems: 'center', color: '#606266' }}>
+                      <Empty
+                        image={emptyImg}
+                        description={'暂无数据' ?? i18t("comm", "NoDataAvailable")}
+                        imageStyle={{ width: '60px', height: '60px' }}
+                      />
+                    </div>
+                  </div>}
               </div>
               <div className="scheme_right">
-                <BlueColumn bg={{ height: 13, width: 3 }}
-                  className="lightData" name='节能方案'></BlueColumn>
+                <BlueColumn bg={{ height: 6, width: 6, borderRadius: '50%' }}
+                  name='节能方案'>
+                </BlueColumn>
                 {savingInfo.length !== 0 ?
-                  <div className="desc">
+                  <div className="desc"
+                    style={{ height: controlInfos.length < 2 ? '160px' : '329px' }}>
                     {savingInfo.map?.(e => <div className="schemeName"><div className="title">{e.content}</div>{e.description}</div>)}
-                  </div> : <div className="desc"> <Cempty tip='暂无数据' /></div>}
+                  </div> :
+                  <div className="empty" style={{ height: controlInfos.length < 2 ? '160px' : '329px' }}>
+                    {/* <Cempty tip='暂无数据' /> */}
+                    <div style={{ flex: 1, display: 'flex', justifyContent: 'center', alignItems: 'center', color: '#606266' }}>
+                      <Empty
+                        image={emptyImg}
+                        description={'暂无数据' ?? i18t("comm", "NoDataAvailable")}
+                        imageStyle={{ width: '60px', height: '60px' }}
+                      />
+                    </div>
+                  </div>}
               </div>
             </div>
-            <Titlelayout title="空调绑定明细" bg="transparent" pv="0px 24px 16px 16px">
-              <UserTable columns={cols} {...tableProps} scroll={{ y: 195 }}></UserTable>
-            </Titlelayout>
+            <BlueColumn bg={{ height: 6, width: 6, borderRadius: '50%' }}
+              name='空调绑定明细'>
+            </BlueColumn>
+            <UserTable style={{ marginTop: "5px" }} columns={cols} {...tableProps} scroll={{ y: 195 }}></UserTable>
           </Titlelayout>
         </div>
       </Mainwrap>
