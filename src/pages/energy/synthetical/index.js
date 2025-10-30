@@ -101,7 +101,7 @@ const Divbox = styled.div`
   }
   .list {
     display: grid;
-    grid-auto-rows: 30px;
+    grid-auto-rows: auto;
     align-items: flex-end;
     .item {
       display: flex;

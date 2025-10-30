@@ -14,53 +14,39 @@ import UseTree from '@com/useTree'
 import Powercom from "./component/power"
 import Datashow from "./component/Datashow"
 import {energyOpt} from  "./data"
+import {useQueryEnergy} from "./api"
 export default function Index() {
   const [energytype, setEnergytype] = useState(1)
   const [treeId, setTreeId] = useState([])
   let {exparams} = useOutletContext()
-  let {view, areaId, date, type:dateType, shiftNo, projectId} = exparams 
+  let { areaId, date, type:dateType,   projectId} = exparams 
  // const projectId = useSelector(selectProjectId)
   const oneLevel = useSelector(selectOneLevel)
   
   const [datas, setDatas] = useState({})
   //查询分类能耗
-  const getEnergyData = async ({view, areaId, date, dateType, shiftNo, projectId}) => {
+  const getEnergyData = async ({areaId, date, dateType,   projectId,treeId}) => {
     try {
+    
+  
       let params = {
         projectId,
-        type: dateType,
+        dayMonthYear: dateType,
         date: getTime(date, dateType),
-        shiftsNo: shiftNo
+        areaId,
+        type: energytype,
+        classifyId:   (treeId?.length>1||treeId?.length)?0:treeId[0],
       }
-      let areaIds
-      if(areaId!=0){
-        areaIds= [areaId]
-      }else{
-        areaIds= oneLevel?.map(it=>it.id)
-      }
+
       
     
-      let res;
-      if(view===1){
-        res= await energyClassified.QueryEnergy(params, areaIds)
-      }else{
-        res= await energyClassified.QueryEnergyCost(params, areaIds)
-      }
+     
+     
+      let   res= await useQueryEnergy({}, params)
+    
       if (res.success && isObject(res.data)) {
           setDatas(res.data)
-         /*  let xlist=null
-          if(dateType ===1 ){
-          const hours =   moment().hours()
-          xlist =  res.data.consumeDetail[0].x.filter(it=>parseInt(it)<=hours)
-      
-          }else if (dateType ===2){
-           const date =  moment().date()
-           xlist = res.data.consumeDetail[0].x.filter(it=>parseInt(it)<=date)
-          }         
-          setShowData({...res.data,x:xlist})
-        } else {
-          setShowData([])
-        } */
+        
       } else {
         setDatas({})
        if(!res.success) message.error(res.errMsg)
@@ -73,11 +59,11 @@ export default function Index() {
   }, [datas, dateType,energytype])
 
   useEffect(() => {
-    let f =  [view, areaId, dateType, shiftNo, projectId].every(v => Number.isInteger(v)) && date
+    let f =  [ areaId, dateType,  projectId,energytype].every(v => Number.isInteger(v)) && date && Array.isArray(treeId)
     if(f) {
-      getEnergyData({view, areaId, date, dateType, shiftNo, projectId})
+      getEnergyData({ areaId, date, dateType,  projectId,treeId,energytype})
     } 
-  }, [view, areaId, date, dateType, shiftNo, projectId,energytype])
+  }, [ areaId, date, dateType, treeId, projectId,energytype])
   const title =<CustTitle>
     <span>能源类型</span>
     <Select options={energyOpt} style={{width: "100px"}} size='small' value={energytype} onChange={setEnergytype}></Select>
@@ -85,14 +71,14 @@ export default function Index() {
   return (
     <Pagecount bgcolor="transparent" pd="0">
       <Mainbox>
-        <UseTree title={title} datatype={6}  energytype={energytype} areaId={0} showline={false} setTreeId={setTreeId}></UseTree>
+        <UseTree title={title} datatype={6} allselect={false} energytype={energytype} areaId={0} multiple={false} showline={false} setTreeId={setTreeId}></UseTree>
         <div className="right"> 
           <div className="topwrap">
            <div className="top">
                 {cards}
            </div>
            </div>
-           <Datashow datas={datas} view={view} />
+           <Datashow datas={datas}  />
         </div>
         
       </Mainbox>

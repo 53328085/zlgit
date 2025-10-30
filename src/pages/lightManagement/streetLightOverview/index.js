@@ -221,7 +221,7 @@ export default function Index() {
             </div>
             <div className='data'>
               <span className='title'>亮灯率</span>
-              <span className='num'>{(typeof parseFloat(datas?.lightRate) == "number")? `${parseFloat(datas?.lightRate)*100?.toFixed(2)}%`: "--" }</span>
+              <span className='num'>{ (datas?.lightRate && (typeof parseFloat(datas?.lightRate) == "number"))? `${parseFloat(datas?.lightRate)?.toFixed(2)}%`: "--" }</span>
             </div>
           </div>
           <div className="shownum">
@@ -269,7 +269,7 @@ export default function Index() {
             <img src={imgurl["todayCarbon"]}></img>
             </div>
             <div className='data'>
-              <span className='title'>今日碳排量（kg）</span>
+              <span className='title'>今日碳排量（g）</span>
               <span className='num'>{datas?.todayCarbon ? datas?.todayCarbon : "--"}</span>
             </div>
           </div>

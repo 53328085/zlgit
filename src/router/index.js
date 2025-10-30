@@ -20,6 +20,7 @@ import  {runtimeCarbonEmissionManager} from "./carbon" // 碳排管理
 import  {runtimeStorage} from './storage' // 储能管理
 import  {runtimeQuota} from './quota'
 import {lightManagement} from './lightManagement.js'
+import {efficiencyAnalysis} from './efficiencyAnalysis'
 import {ledger} from './ledger.js'
 import {cabinets} from './cabinets.js'
 import {runtimeWaterManagement} from './waterManagement.js'
@@ -43,6 +44,7 @@ import {smartIndustry} from "./smartIndustry"
   runtimeWaterManagement,
   airConditioningManagement,
   smartIndustry,
+  efficiencyAnalysis,
  }
 
 
@@ -124,6 +126,7 @@ const loginrouter =  [{
   "0119": Comindex,
    "0120":Comindex,
    "0121":Comindex,
+   "0122":Comindex,
 } 
 
  

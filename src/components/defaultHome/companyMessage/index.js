@@ -21,26 +21,31 @@ align-items: stretch;
 .company{
   min-width: 188px;
   height: 100%;
-   
+   display: flex;
+  flex-direction: column;
+  justify-content: space-between;
   .dataItem{
     display: flex;
     align-items: center;
-    height: 24px;
-    margin-top: 6px;
+   // height: 24px;
+  //  margin-top: 6px;
     font-size: 13px;
     color: #666;
-    &:nth-child(5){
-      align-items: flex-start;
-      margin-top: 11px;
-    }
+    column-gap: 16px; 
     .square{
-      width: 8px;
+      flex: 0 0 8px;
       height: 8px;
-      margin-right: 16px;
+   //  margin-right: 16px;
     }
     .items{
       //width: 150px;
       line-height: 16px;
+    }
+  }
+  .dataItem.container{ 
+    align-items: baseline;
+    .square {
+      margin-top: 8px;
     }
   }
   
@@ -92,7 +97,7 @@ export default function DefaultHome(props) {
           <div className='square' style={{ backgroundColor: '#008000' }}></div>
           <div className='items'>{state.projectManager} / {state.mobile}</div>
         </div>
-        <div className='dataItem'>
+        <div className='dataItem container'>
           <div className='square' style={{ backgroundColor: '#333' }}></div>
           <div className='items'>{state.address}</div>
         </div>

@@ -45,7 +45,7 @@ const Treebox = styled.div`
 
 export default memo(function Index({ areaId, setTreeId, setLine, setNode, showline = true, scroll = 0, datatype = NaN, energytype, showSearch,
   sty = { bordered: 'y', pv: '16px' },
-  allselect = true,
+  allselect = true,  // 全选
   selectobj,
   multiple = true,
   treeName = '',
@@ -56,9 +56,7 @@ export default memo(function Index({ areaId, setTreeId, setLine, setNode, showli
   ...restprop }) {
   // datatype =0 或 =2
   const levelone = useSelector(selectOneLevel)
-
   const [treeData, setTreeData] = useState([])
-
   const location = useLocation();
   const { state } = location
   const isshow = useMemo(() => {
@@ -241,6 +239,15 @@ export default memo(function Index({ areaId, setTreeId, setLine, setNode, showli
 
       if (success && Array.isArray(data)) {
         //  console.log(idx)
+        let energyDatas=[]
+        if(datatype ==6) {
+          energyDatas= [{
+            energyId: 0,
+            energyName: "全部",
+            parentId: 0,
+            childs: data
+          }]
+        }
         if (mode) {
           let mdata = data.filter(d => mode(d))
           getId(mdata, "id")
@@ -265,7 +272,7 @@ export default memo(function Index({ areaId, setTreeId, setLine, setNode, showli
               getId(data, 'key', 'nodes')
               break;
             case 6:
-                getId(data, 'energyId', 'childs')
+                getId(energyDatas, 'energyId', 'childs')
                 break;
             case 7:
                getId(data, 'sn', 'nodes')
@@ -275,14 +282,26 @@ export default memo(function Index({ areaId, setTreeId, setLine, setNode, showli
 
           }
         }
-
-        setNode && setNode?.(data[0]) //  获取节点
+       
+        
         treeIdRef.current = arr
         setIndeterminate(false)
         setChecked(true)
-        setTreeData(data)
+        if(datatype==6) {
+          setTreeData(energyDatas)
+          setNode && setNode?.(energyDatas?.[0]) //  获取节点
+        }else {
+          setTreeData(data)
+          setNode && setNode?.(data?.[0]) //  获取节点
+        }
+       
         setCheckedKeys(() => arr);
-        setExpandedKeys(expand)
+        if(datatype==6) {
+          setExpandedKeys(arr)
+        }else {
+          setExpandedKeys(expand)
+        }
+        
         if (datatype == 5) { // 空调树          
           let areId = Array.from(postid.current)?.map(d => {
             let id = parseInt(d.slice(2))
@@ -291,6 +310,8 @@ export default memo(function Index({ areaId, setTreeId, setLine, setNode, showli
           })
 
           setTreeId(areId)
+        }else if(datatype==6){ // 分类能耗--能源类型
+          setTreeId([0])
         } else if(datatype == 7){
           setTreeId(pvid.current)
         }else{

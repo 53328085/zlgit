@@ -38,7 +38,7 @@ const Cform = styled(Form)`
    } 
 `
 
-
+export {Cform};
 
 const { Item } = Form;
 export const AreaSelect = ({ value, onChange, isall, ...otherProps }) => {
@@ -84,8 +84,7 @@ export default function UseSerach(props) {
   //const DeviceStyle = useSelector(filterDeviceStyle)  
   const [DeviceStyle, setDeviceStyle] = useState([])
 
-  const areaName = levelone?.find(l => l.id == AreaID)?.name;
-  props.setAreaName(areaName)
+  const areaName = levelone?.find(l => l.id == AreaID)?.name; 
   let shifts = useSelector(selectshifts)
 
   const [allshifts] = useState([...shifts, { id: 0, name: i18t("comm", "Allflights"), startTime: "", endTime: "" }])
