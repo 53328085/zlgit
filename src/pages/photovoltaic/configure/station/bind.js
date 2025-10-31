@@ -6,7 +6,7 @@ import { selectOneLevel } from '@redux/systemconfig.js'
 import { Bindwrap } from "./style"
 import { GridConnectedTypeData } from './data'
 import {
-  useOverview, useAddPVStation, useUpdatePVStation
+  useGetAllDevice, useAddPVStation, useUpdatePVStation
 } from './api'
 
 export default forwardRef(function Index({ projectId, updata, modalTitle, curPage, editData }, ref) {
@@ -28,24 +28,16 @@ export default forwardRef(function Index({ projectId, updata, modalTitle, curPag
     try {
       const params = {
         projectId,
-        areaId,
-        deviceStyle: 1,
-        alike: "",
-        state: 0,
-        category: "",
-        pageNum: 1,
-        pageSize: 100 // 增加分页大小，确保获取足够数据
+        areaId
       }
 
       console.log('请求设备数据参数:', params)
-      let { success, data, total, errMsg } = await useOverview({}, params)
+      let { success, data, total, errMsg } = await useGetAllDevice(params)
 
       if (success) {
         // 检查数据结构是否正确
-        if (data && Array.isArray(data.details)) {
-          console.log('获取设备数据成功，共', data.details.length, '条')
-          setDeviceData(data.details)
-          // setSelectedMeter(data.details[0])
+        if (data && Array.isArray(data)) {
+          setDeviceData(data)
         } else {
           setDeviceData([])
           setSelectedMeter(null)
@@ -72,6 +64,8 @@ export default forwardRef(function Index({ projectId, updata, modalTitle, curPag
     }
     // 根据选中的sn从deviceData中匹配对应的设备信息
     const matchedMeter = deviceData.find(item => item.sn === selectedSn)
+    matchedMeter.meterName = matchedMeter.name
+    matchedMeter.meterSn = matchedMeter.sn
     if (matchedMeter) {
       setSelectedMeter(matchedMeter)
     } else {
@@ -83,10 +77,10 @@ export default forwardRef(function Index({ projectId, updata, modalTitle, curPag
   const onOk = async () => {
     try {
       return formTop.validateFields().then(async () => {
-        if (selectedMeter == null) {
-          message.warning("总表未绑定");
-          throw new Error("总表未绑定"); // 抛出错误阻止关闭
-        }
+        // if (selectedMeter == null) {
+        //   message.warning("总表未绑定");
+        //   throw new Error("总表未绑定"); // 抛出错误阻止关闭
+        // }
         const interfaceName = modalTitle == '新增站点' ? useAddPVStation : useUpdatePVStation;
         let { areaId, name, no, capacity, address, type } = await formTop.validateFields()
         const params = {
@@ -96,15 +90,15 @@ export default forwardRef(function Index({ projectId, updata, modalTitle, curPag
           capacity,
           address: address ? address : '',
           type,
-          sn: selectedMeter.sn || selectedMeter.meterSn,
+          sn: selectedMeter?.sn || selectedMeter?.meterSn || '',
           id: editData.id || editData.id,
         }
         let { success, errMsg } = await interfaceName({ projectId }, params)
         if (success) {
-          if (modalTitle != '新增站点') return mRef.current.onCancel()
           message.success(modalTitle + '成功')
           updata({ current: curPage, pageSize: 14 })
           formTop.setFieldsValue({ no: 'ZD' + Date.now() });
+          if (modalTitle != '新增站点') return mRef.current.onCancel()
         } else {
           message.warning(errMsg || "数据出错")
           return Promise.reject("")
@@ -275,16 +269,16 @@ export default forwardRef(function Index({ projectId, updata, modalTitle, curPag
             {/* 4. 动态渲染设备信息：选中时显示name/sn/gateway，未选中时显示提示 */}
             <div className='info'>
               <div>
-                电表名称：{selectedMeter ? (selectedMeter.name || selectedMeter.meterName) : "请选择总表设备"}
+                电表名称：{selectedMeter ? selectedMeter.meterName : "-"}
               </div>
               <div>
-                电表编号：{selectedMeter ? (selectedMeter.sn || selectedMeter.meterSn) : ""}
+                电表编号：{selectedMeter ? selectedMeter.meterSn : "-"}
               </div>
               {/* <div>
                 电表型号：{selectedMeter ? (selectedMeter.category || "未设置") : ""}
               </div> */}
               <div>
-                所属网关：{selectedMeter ? (selectedMeter.gateway || selectedMeter.gatewayName || "未设置") : ""}
+                所属网关：{selectedMeter ? selectedMeter?.gatewayName : "-"}
               </div>
             </div>
           </div>

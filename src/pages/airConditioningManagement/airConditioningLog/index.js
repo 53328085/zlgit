@@ -2,7 +2,7 @@ import React, { useState, useRef, useEffect, useCallback } from 'react'
 import Pagecount from '@com/pagecontent'
 import { useAntdTable } from 'ahooks'
 import CModal from '@com/useModal'
-import { CustButtonT, ExportExcel, ChartList } from "@com/useButton";
+import { CustButtonT, ExportExcel } from "@com/useButton";
 import {
   Form,
   Select,
@@ -10,14 +10,11 @@ import {
   Radio,
   Input,
   message,
-  Divider,
-  Button,
-  ConfigProvider,
   Space,
 } from "antd";
-import { Cspin, Cdivider } from "@com/comstyled"
+import { Cdivider } from "@com/comstyled"
 import styled from 'styled-components'
-import BlueColumn from '@com/bluecolumn'
+import Titlelayout from "@com/titlelayout";
 import Cempty from '@com/useEmpty'
 import { useSelector } from "react-redux"
 import { selectProjectId } from "@redux/systemconfig"
@@ -30,7 +27,7 @@ import {
 
 import { usePage, useDetail, useList, useSetReControl } from "./api.js";
 import moment from 'moment'
-import { Container, Header } from "./style";
+import { Container, Header, TitleBox } from "./style";
 import UserTable from '@com/useTable'
 
 const { RangePicker } = DatePicker;
@@ -355,7 +352,12 @@ export default function Index(props) {
       }
     });
   }, [pageTotal.current])
-
+  const controlTitle = (
+    <TitleBox>
+      <span>{tabId == 0 ? '空调自动控制记录' : '空调手动控制记录'}</span>
+      <CustButtonT text="重新控制" onClick={RecontrolAir}></CustButtonT>
+    </TitleBox>
+  );
   useEffect(() => {
     getSchemeList();
   }, [])
@@ -379,8 +381,6 @@ export default function Index(props) {
             size="large"
             onChange={handleRadioChange} // 使用修改后的处理函数
           />
-        </Header>
-        <div className='content'>
           <Form form={searchForm} layout='inline' colon={false}
             initialValues={{
               alike: '',
@@ -390,9 +390,9 @@ export default function Index(props) {
               operatorTime: rangerTime
             }}
           >
-            <Space size={16}>
+            <Space size={16} style={{ marginLeft: '16px' }}>
               <Item label="关键字" name="alike" >
-                <Input style={{ width: "260px" }} placeholder='请输入设备名称/通信地址' allowClear />
+                <Input style={{ width: "200px" }} placeholder='请输入设备名称/通信地址' allowClear />
               </Item>
               <Item name="operator" hidden>
                 <Input type="hidden" />
@@ -400,13 +400,13 @@ export default function Index(props) {
               {tabId == 0 ?
                 <Item label="空调方案" name="scheme" >
                   <Select
-                    style={{ width: "148px" }}
+                    style={{ width: "160px" }}
                     onChange={airNameChange}
                     options={airSchemeList}
                   />
                 </Item> :
                 <Item label="操作人" name="operator">
-                  <Input style={{ width: "128px" }} placeholder='请输入姓名' allowClear />
+                  <Input style={{ width: "160px" }} placeholder='请输入姓名' allowClear />
                 </Item>}
               <Item label="控制状态" name="status" >
                 <Select
@@ -429,18 +429,19 @@ export default function Index(props) {
               </Item>
             </Space>
           </Form>
-          <div className='control'>
-            <BlueColumn bg={{ height: 13, width: 3 }}
-              name={tabId == 0 ? '空调自动控制记录' : '空调手动控制记录'}></BlueColumn>
-            <CustButtonT text="重新控制" onClick={RecontrolAir}></CustButtonT>
-          </div>
+        </Header>
+        <Titlelayout
+          layout="flex"
+          title={controlTitle}
+          dr="column" bordered
+        >
           <UserTable ref={tableRef} sheetName={tabId == 0 ? '空调自动控制记录' : '空调手动控制记录'} onExport={onExport} rowKey={(columns) => columns.id} columns={tabId == 0 ? AirAutomaticControlTableColumns({ OpenAirScheme: handleOpenAirScheme }) : AirManualControlTableColumns} {...tableProps}
             rowSelection={{
               type: 'checkbox',
               ...rowSelectionCheckbox,
             }} bordered
             scroll={{ y: 520 }}></UserTable>
-        </div>
+        </Titlelayout>
         <CModal
           title={(
             <div>{schemeModalItem.sourceName}</div>
@@ -492,6 +493,6 @@ export default function Index(props) {
           是否确认{tabId == 0 ? '自动' : '手动'}控制所选空调？
         </CModal>
       </Container>
-    </Pagecount>
+    </Pagecount >
   )
 }

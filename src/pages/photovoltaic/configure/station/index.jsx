@@ -1,34 +1,21 @@
 import React, {
   useRef, useState, useMemo,
 } from "react";
-import styled from "styled-components";
 import { useSelector } from "react-redux";
 import { useAntdTable } from 'ahooks'
 import Usetable from '@com/useTable'
-import moment from "moment";
 import BindAir from './bind'
-import { PlusOutlined } from "@ant-design/icons";
 import {
-  InputNumber,
   Space,
-  Form,
-  Input,
   message,
-  Select,
-  DatePicker,
-  Upload,
-  Typography
 } from "antd";
 import {
-  selectProjectId,
   publishState,
-  selectOneLevel,
   levelDefaultLabel
 } from "@redux/systemconfig.js";
 import { useOutletContext } from 'react-router-dom'
-import { GetPVStationList, AddPVStation, UpdatePVStation, DeletePVStation, useQueryACsUnConfigByPage } from "./api.js";
-import Pagecont from "@com/pagecontent"
 import Titlelayout from '@com/titlelayout'
+import Pagecont from "@com/pagecontent"
 import CModal from '@com/useModal'
 import { CustButtonT, CustLink } from '@com/useButton'
 import {

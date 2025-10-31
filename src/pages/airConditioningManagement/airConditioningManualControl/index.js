@@ -1,11 +1,11 @@
 import React, { useState, useRef, useEffect } from "react";
 import Pagecount from "@com/pagecontent";
 import UseTree from "@com/useTree";
-import { Container, CardBox } from "./style";
+import { Container, TitleBox } from "./style";
 import { Tabs, Tabs2 } from "./searchHead";
 import { Form, message, Checkbox as AntCheckbox } from "antd";
-import { ExportExcel, CustButton, CustButtonT } from '@com/useButton'
-import BlueColumn from "@com/bluecolumn";
+import { CustButton } from '@com/useButton'
+import Titlelayout from "@com/titlelayout";
 import Cempty from "@com/useEmpty";
 import CModal from "@com/useModal";
 import { useSelector } from "react-redux";
@@ -13,7 +13,6 @@ import { selectProjectId } from "@redux/systemconfig";
 import multAir from "./icon/vrvIcon.svg";
 import splitAir from "./icon/spacIcon.svg";
 import centralAir from "./icon/caIcon.svg";
-import coolBackground from "./icon/coolBackground.svg";
 import { useList, useSetControl } from "./api.js";
 import { Cspin } from "@com/comstyled"
 
@@ -51,7 +50,7 @@ export default function Index() {
   const handleSearchClick = async () => {
     try {
       setSpinning(true)
-      let { alike, cSn, type, ioState } = await formSearch.validateFields();
+      let { alike, type, ioState } = await formSearch.validateFields();
       let params = {
         projectId,
         alike,
@@ -144,7 +143,15 @@ export default function Index() {
   const onConfirmTip = async () => {
     tipRef.current.onCancel();
   }
-
+  const title = (
+    <TitleBox>
+      <span>空调列表</span>
+      <Tabs2
+        onControlClick={handleControlClick}
+        form={formControl}
+      />
+    </TitleBox>
+  );
   useEffect(() => {
     if (Number.isInteger(projectId) && Array.isArray(treeId) && treeId.length > 0) {
       handleSearchClick();
@@ -166,211 +173,214 @@ export default function Index() {
             showSearch={true}
             title="空调设备列表"
             hv="40px"
+            sty={{ bordered: "" }}
           />
         </div>
         <div className="right-box">
           <Tabs form={formSearch} onSearchClick={handleSearchClick}></Tabs>
-          <CardBox>
-            <div
-              style={{
-                display: "flex",
-                justifyContent: "space-between",
-                alignItems: "center",
-              }}
-            >
-              <BlueColumn
-                bg={{ height: 13, width: 3 }}
-                className="lightData"
-                name="空调列表"
-              ></BlueColumn>
-              <Tabs2
-                onControlClick={handleControlClick}
-                form={formControl}
-              />
-            </div>
-            <div className="watchNum">
-              <div>
-                <AntCheckbox
-                  indeterminate={indeterminate}
-                  onChange={handleSelectAll}
-                  checked={checkAll}
-                >
-                  全选
-                </AntCheckbox>
-                <span style={{ marginLeft: 10 }}>
-                  已选择 {selectedAirs.length} 台设备
-                </span>
+          <Titlelayout
+            layout="flex" title={title} bordered
+          >
+            <div className="aircontent">
+              <div className="watchNum">
+                <div>
+                  <AntCheckbox
+                    indeterminate={indeterminate}
+                    onChange={handleSelectAll}
+                    checked={checkAll}
+                  >
+                    全选
+                  </AntCheckbox>
+                  <span style={{ marginLeft: 10 }}>
+                    已选择 {selectedAirs.length} 台设备
+                  </span>
+                </div>
+                <div>
+                  开启/关闭：{openNum}/{closeNum}
+                </div>
               </div>
-              <div>
-                开启/关闭：{openNum}/{closeNum}
-              </div>
-            </div>
-            {/* state =2 空调在线，state =1/=0空调离线，state =3空调告警 */}
-            {/* ioState =2 空调关闭，ioState=1空调打开 */}
-            <Cspin spinning={spinning} >
-              <div className="airContainer">
-                {airData?.length !== 0 ? (
-                  <div className="airBox">
-                    {airData?.map?.((airItem) => (
-                      airItem.state === 2 ? (
-                        <>
-                          {airItem.ioState === 2 ? (
-                            <div className="cardCommon closeAir">
-                              <AntCheckbox
-                                key={airItem.id}
-                                checked={selectedAirs.includes(airItem.id)}
-                                onChange={(e) => handleCardCheck(airItem.id, e.target.checked)}
-                              >
-                                <div className="airInfo">
-                                  <div style={{ display: 'flex' }}>
-                                    <div className="top">
-                                      <div className="topInfo">
-                                        <div className="name" title={airItem.name}>{airItem.name}</div>
-                                        <div className="value"> ({airItem.cSn})</div>
+              {/* state =2 空调在线，state =1/=0空调离线，state =3空调告警 */}
+              {/* ioState =2 空调关闭，ioState=1空调打开 */}
+              <Cspin spinning={spinning} >
+                <div className="airContainer">
+                  {airData?.length !== 0 ? (
+                    <div className="airBox">
+                      {airData?.map?.((airItem) => (
+                        airItem.state === 2 ? (
+                          <>
+                            {airItem.ioState === 2 ? (
+                              <div className="cardCommon closeAir">
+                                <AntCheckbox
+                                  key={airItem.id}
+                                  checked={selectedAirs.includes(airItem.id)}
+                                  onChange={(e) => handleCardCheck(airItem.id, e.target.checked)}
+                                >
+                                  <div className="airInfo">
+                                    <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                                      <div className="top">
+                                        <div className="topInfo">
+                                          <div className="name" title={airItem.name}>{airItem.name}</div>
+                                          <div className="value"> ({airItem.cSn})</div>
+                                        </div>
                                       </div>
+                                      <img
+                                        className="airIcon"
+                                        src={airItem.type === 1 ? splitAir : (airItem.type === 2 || airItem.type === 3) ? multAir : airItem.type === 4 ? centralAir : null}
+                                      ></img>
                                     </div>
-                                    <img
-                                      className="airIcon"
-                                      src={airItem.type === 1 ? splitAir : (airItem.type === 2 || airItem.type === 3) ? multAir : airItem.type === 4 ? centralAir : null}
-                                    ></img>
-                                  </div>
-                                  <div className="content">
-                                    <span className="temperature">-</span>℃
-                                  </div>
-                                  {airItem?.fields?.map((fields) => (
-                                    <div key={fields.name} className="fields">
-                                      <div className="name">{fields.name}</div>
-                                      <div className={`${(fields.name === '开关' && fields.value === '开') ? 'open' :
-                                        (fields.name === '开关' && fields.value === '关') ? 'close' : ''} value`}
-                                      >
-                                        {/* {fields.name === '开关' ? fields.value : '-'} */}
-                                        {fields.value || "-"}
-                                      </div>
+                                    <div className="content">
+                                      <span className="temperature">-</span>℃
+                                    </div>
+                                    {airItem?.fields?.map((fields) => (
+                                      <div key={fields.name} className="fields">
+                                        <div className="name">{fields.name}</div>
+                                        <div className={`${(fields.name === '开关' && fields.value === '开') ? 'open' :
+                                          (fields.name === '开关' && fields.value === '关') ? 'close' : ''} value`}
+                                        >
+                                          {/* {fields.name === '开关' ? fields.value : '-'} */}
+                                          {fields.value || "-"}
+                                        </div>
 
-                                    </div>
-                                  ))}
-                                </div>
-                              </AntCheckbox>
-                            </div>
-                          ) : (
-                            <div className={`${airItem?.fields[1]?.value === "制冷"
-                              ? "airCardCold"
-                              : airItem?.fields[1]?.value === "制热"
-                                ? "airCardHot"
-                                : airItem?.fields[1]?.value === "送风"
-                                  ? "airCardWindy"
-                                  : airItem?.fields[1]?.value === "除湿"
-                                    ? "airCardDehumidification"
-                                    : "closeAir"
-                              } cardCommon`}>
-                              <AntCheckbox
-                                key={airItem.id}
-                                checked={selectedAirs.includes(airItem.id)}
-                                onChange={(e) => handleCardCheck(airItem.id, e.target.checked)}
-                              >
-                                <div className="airInfo" >
-                                  <div style={{ display: "flex" }}>
-                                    <div className="top">
-                                      <div className="topInfo">
-                                        <div className="name" title={airItem.name}>{airItem.name}</div>
-                                        <div className="value"> ({airItem.cSn})</div>
                                       </div>
+                                    ))}
+                                  </div>
+                                </AntCheckbox>
+                              </div>
+                            ) : (
+                              <div className={`${airItem?.fields[1]?.value === "制冷"
+                                ? "airCardCold"
+                                : airItem?.fields[1]?.value === "制热"
+                                  ? "airCardHot"
+                                  : airItem?.fields[1]?.value === "送风"
+                                    ? "airCardWindy"
+                                    : airItem?.fields[1]?.value === "除湿"
+                                      ? "airCardDehumidification"
+                                      : "closeAir"
+                                } cardCommon`}>
+                                <AntCheckbox
+                                  key={airItem.id}
+                                  checked={selectedAirs.includes(airItem.id)}
+                                  onChange={(e) => handleCardCheck(airItem.id, e.target.checked)}
+                                >
+                                  <div className="airInfo" >
+                                    <div style={{ display: "flex", justifyContent: 'space-between' }}>
+                                      <div className="top">
+                                        <div className="topInfo">
+                                          <div className="name" title={airItem.name}>{airItem.name}</div>
+                                          <div className="value"> ({airItem.cSn})</div>
+                                        </div>
+                                      </div>
+                                      <img
+                                        className="airIcon"
+                                        src={
+                                          airItem.type === 1
+                                            ? splitAir
+                                            : airItem.type === 2 || airItem.type === 3
+                                              ? multAir
+                                              : airItem.type === 4
+                                                ? centralAir
+                                                : null
+                                        }
+                                      ></img>
                                     </div>
-                                    <img
-                                      className="airIcon"
-                                      src={
-                                        airItem.type === 1
-                                          ? splitAir
-                                          : airItem.type === 2 || airItem.type === 3
-                                            ? multAir
-                                            : airItem.type === 4
-                                              ? centralAir
-                                              : null
-                                      }
-                                    ></img>
+                                    <div className="content">
+                                      <span className="temperature">
+                                        {airItem.temperature ? `${airItem.temperature}` : ""}
+                                      </span>
+                                      ℃
+                                    </div>
+                                    {airItem?.fields?.map((fields) => (
+                                      <div key={fields.name} className="fields">
+                                        <div className="name">{fields.name}</div>
+                                        <div className={`${(fields.name === '开关' && fields.value === '开') ? 'open' :
+                                          (fields.name === '开关' && fields.value === '关') ? 'close' : ''} value`}
+                                        >{fields.value || "-"}</div>
+                                      </div>
+                                    ))}
                                   </div>
-                                  <div className="content">
-                                    <span className="temperature">
-                                      {airItem.temperature ? `${airItem.temperature}` : ""}
-                                    </span>
-                                    ℃
+                                </AntCheckbox>
+                              </div>
+                            )}
+                          </>
+                        ) : (airItem.state === 1 || airItem.state === 0) ? (
+                          <div className="cardCommon airOffline">
+                            <AntCheckbox
+                              key={airItem.id}
+                              checked={selectedAirs.includes(airItem.id)}
+                              onChange={(e) => handleCardCheck(airItem.id, e.target.checked)}
+                              disabled={true}
+                            >
+                              <div style={{ color: '#303133' }} className="airInfo">
+                                <div style={{ display: "flex", justifyContent: 'space-between' }}>
+                                  <div className="top">
+                                    <div className="topInfo">
+                                      <div className="name" title={airItem.name}>{airItem.name}</div>
+                                      <div className="value">  ({airItem.cSn})</div>
+                                    </div>
                                   </div>
-                                  {airItem?.fields?.map((fields) => (
-                                    <div key={fields.name} className="fields">
-                                      <div className="name">{fields.name}</div>
-                                      <div className={`${(fields.name === '开关' && fields.value === '开') ? 'open' :
-                                        (fields.name === '开关' && fields.value === '关') ? 'close' : ''} value`}
-                                      >{fields.value || "-"}</div>
+                                  <img
+                                    className="airIcon"
+                                    src={airItem.type === 1 ? splitAir : (airItem.type === 2 || airItem.type === 3) ? multAir : airItem.type === 4 ? centralAir : null}
+                                  ></img>
+                                </div>
+                                <div className="content">
+                                  <span className="Offline">离线</span>
+                                </div>
+                                <div className="OfflineBox">
+                                  {Array.from({ length: 3 }, (_, index) => (
+                                    <div key={index} className="offlineBoxItem">
+                                      <div className="name">--</div>
+                                      <div>--</div>
                                     </div>
                                   ))}
                                 </div>
-                              </AntCheckbox>
-                            </div>
-                          )}
-                        </>
-                      ) : (airItem.state === 1 || airItem.state === 0) ? (
-                        <div className="cardCommon airOffline">
-                          {/* <AntCheckbox
-                          key={airItem.id}
-                          checked={selectedAirs.includes(airItem.id)}
-                          onChange={(e) => handleCardCheck(airItem.id, e.target.checked)}
-                        > */}
-                          <div style={{ color: '#303133' }}>
-                            <div style={{ display: "flex", justifyContent: 'space-between' }}>
-                              <div className="top">
-                                <div className="topInfo">
-                                  <div className="name" title={airItem.name}>{airItem.name}</div>
-                                  <div className="value">  ({airItem.cSn})</div>
-                                </div>
                               </div>
-                              <img
-                                className="airIcon"
-                                src={airItem.type === 1 ? splitAir : (airItem.type === 2 || airItem.type === 3) ? multAir : airItem.type === 4 ? centralAir : null}
-                              ></img>
-                            </div>
-                            <div className="content">
-                              <span className="temperature">-</span>℃
-                            </div>
-                            <div className="air-Offline">离线</div>
+                            </AntCheckbox>
                           </div>
-                          {/* </AntCheckbox> */}
-                        </div>
-                      ) : (
-                        <div className="cardCommon airAlarm">
-                          <AntCheckbox
-                            key={airItem.id}
-                            checked={selectedAirs.includes(airItem.id)}
-                            onChange={(e) => handleCardCheck(airItem.id, e.target.checked)}
-                          >
-                            <div className="airInfo">
-                              <div style={{ display: 'flex' }}>
-                                <div className="top">
-                                  <div className="topInfo">
-                                    <div className="name" title={airItem.name}>{airItem.name}</div>
-                                    <div className="value"> ({airItem.cSn})</div>
+                        ) : (
+                          <div className="cardCommon airAlarm">
+                            <AntCheckbox
+                              key={airItem.id}
+                              checked={selectedAirs.includes(airItem.id)}
+                              onChange={(e) => handleCardCheck(airItem.id, e.target.checked)}
+                            >
+                              <div className="airInfo">
+                                <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                                  <div className="top">
+                                    <div className="topInfo">
+                                      <div className="name" title={airItem.name}>{airItem.name}</div>
+                                      <div className="value"> ({airItem.cSn})</div>
+                                    </div>
                                   </div>
+                                  <img
+                                    className="airIcon"
+                                    src={airItem.type === 1 ? splitAir : (airItem.type === 2 || airItem.type === 3) ? multAir : airItem.type === 4 ? centralAir : null}
+                                  ></img>
                                 </div>
-                                <img
-                                  className="airIcon"
-                                  src={airItem.type === 1 ? splitAir : (airItem.type === 2 || airItem.type === 3) ? multAir : airItem.type === 4 ? centralAir : null}
-                                ></img>
+                                <div className="content">
+                                  <span className="Offline">告警</span>
+                                </div>
+                                <div className="OfflineBox">
+                                  {Array.from({ length: 3 }, (_, index) => (
+                                    <div key={index} className="offlineBoxItem">
+                                      <div className="name">--</div>
+                                      <div>--</div>
+                                    </div>
+                                  ))}
+                                </div>
                               </div>
-                              <div className="content">
-                                <span className="temperature">-</span>℃
-                              </div>
-                              <div className="air-Alarm">告警</div>
-                            </div>
-                          </AntCheckbox>
-                        </div>
-                      )
-                    ))}
-                  </div>
-                ) : (
-                  <div>{spinning ? null : (<div style={{ height: '670px', display: 'flex' }}><Cempty tip='暂无数据' /></div>)}</div>
-                )}
-              </div>
-            </Cspin>
-          </CardBox>
+                            </AntCheckbox>
+                          </div>
+                        )
+                      ))}
+                    </div>
+                  ) : (
+                    <div>{spinning ? null : (<div style={{ height: '670px', display: 'flex' }}><Cempty tip='暂无数据' /></div>)}</div>
+                  )}
+                </div>
+              </Cspin>
+            </div>
+          </Titlelayout>
         </div>
         <CModal
           title="远程控制"

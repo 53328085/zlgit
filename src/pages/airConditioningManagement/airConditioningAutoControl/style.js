@@ -3,8 +3,8 @@ export const Mainwrap = styled.div`
 && {
    flex:1;
    display: grid;
-   grid-template-columns: 210px minmax(1462px, 1fr);
-   grid-template-rows: 1fr;
+   grid-template-columns: 288px minmax(1384px, 1fr);
+   grid-template-rows: minmax(817px, 1fr);
    column-gap: 16px;
    .left {
      background-color: #fff;
@@ -25,21 +25,24 @@ export const Mainwrap = styled.div`
      display: flex; 
      .scheme{
      display: grid;
-     grid-template-columns:  1fr 600px;
+     grid-template-columns:  1fr 421px;
      column-gap: 16px;
      margin-bottom: 16px;
+     padding: 10px 16px 16px 16px;
+     border: 1px solid #d7d7d7;
+     border-radius: 8px;
      .scheme_left{
    .desc {
       overflow-y: scroll;
-      height: 329px;
        display: flex;
        flex-direction: column;
+       gap: 16px;
        scrollbar-width: thin; 
+       margin-top: 5px;
        .item {
       background: rgba(229, 236, 245, 0.3);
       padding: 16px;
       border-radius: 4px;
-       margin-bottom: 16px;
          .title {
            display: flex;
            justify-content: space-between;
@@ -103,7 +106,6 @@ export const Mainwrap = styled.div`
            }
            .schemeName{
            display: flex;
-           lign-items: center;
            padding-left: 16px;
            margin-bottom: 5px;
            .schemeTitle{
@@ -112,21 +114,30 @@ export const Mainwrap = styled.div`
            }
             .con{
            margin-left: 8px;
+           white-space: pre-wrap;
            }
            }
        }
      } 
     } 
      .scheme_right{
+     .empty{
+     overflow-y: scroll;
+      border-radius: 4px;
+      background: rgba(229, 236, 245, 0.3);
+       display: flex;
+       flex-direction: column;
+       scrollbar-width: thin; 
+     }
     .desc{
      overflow-y: scroll;
-      height: 329px;
       border-radius: 4px;
       background: rgba(229, 236, 245, 0.3);
        display: flex;
        flex-direction: column;
        scrollbar-width: thin; 
        padding:16px;
+       margin-top: 5px;
        .schemeName{
        margin-bottom: 10px;
        .title{

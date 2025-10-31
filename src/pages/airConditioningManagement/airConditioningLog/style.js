@@ -1,24 +1,15 @@
-import styled from "styled-components";
-import { Radio } from "antd";
+import styled, { css } from "styled-components";
+export const TitleBox = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  
+`;
 export const Container = styled.div`
  flex:1;
    display: flex;
    flex-direction: column;
    row-gap: 16px;
-    .content{
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    row-gap: 16px;
-    background-color: #fff;
-    border-radius: 4px;
-    border: 1px solid #dedede;
-    padding:16px;
-    .control{
-    display: flex;
-    justify-content: space-between;
-    }
-    }
     
     .ant-space-item {
     &:nth-of-type(1){
@@ -27,34 +18,54 @@ export const Container = styled.div`
         
     }
 `;
-
-export const Header = styled.div`
-  background-color: #fff;
-  height: 48px;
+const flexBox = ({ jc = "center", fd = "row" }) => css`
+  display: flex;
+  flex-direction: ${fd};
+  // justify-content: ${jc};
   justify-content: space-between;
   align-items: center;
-  border: 1px solid #dedede;
-  padding-right: 18px;
-  overflow: hidden;
-  border-radius: 4px;
-  row-gap: 16px;
+`;
+const borderBox = ({
+  borderRadius = "4px",
+  bgcolor = "#fff",
+  borderSize = "1px",
+}) => css`
+  border: ${borderSize} solid #d7d7d7;
+  border-radius: ${borderRadius};
+  background: ${bgcolor};
+`;
+export const Header = styled.div`
+  height: 58px;
+  width: 100%;
+  padding: 0 20px;
+  ${flexBox({ jc: "flex-start" })}
   .ant-radio-button-wrapper {
     border: none;
     height: 100%;
     box-shadow: none;
-    border-radius: 0;
     background: #f0f0f0;
-    height: 48px;
-    line-height: 48px;
-    width: 144px;
-    text-align:center;
-    font-size:14px;
-    &:nth-of-type(1) {
+    height: 32px;
+    line-height: 32px;
+    min-width: 72px;
+    text-align: center;
+    font-size: 14px;
+    &:first-child {
+      border-radius: 4px 0 0 4px !important;
     }
-    .ant-radio-button-checked::before{
-       background:#fff;
+
+    &:last-child {
+      border-radius: 0 4px 4px 0 !important;
     }
-  }
+    .ant-radio-button-checked::before {
+      background: #fff;
+    }
+     
+  } 
+    .ant-radio-button-wrapper:not(:first-child):before {
+     width:0;
+     height:0;
+    }
+  ${borderBox({ borderSize: 0 })}
 `;
 export const Card = styled.div`
   border: 1px solid #d7d7d7;
@@ -118,26 +129,4 @@ export const Card = styled.div`
     }
   }
 `;
-export const StyledRadioGroup = styled(Radio.Group)`
-  .ant-radio-button-wrapper {
-    margin-left: auto;
-    height: 32px;
-    line-height: 32px;
-    font-size:14px;
-    border-radius: 2px;
-
-    &:first-child {
-      border-radius: 0;
-    }
-
-    &:last-child {
-      border-radius: 0;
-    }
-
-    &::before {
-      display: none;
-    }
-  }
-`;
-
 
