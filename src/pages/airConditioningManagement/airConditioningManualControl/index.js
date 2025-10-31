@@ -358,9 +358,16 @@ export default function Index() {
                                   ></img>
                                 </div>
                                 <div className="content">
-                                  <span className="temperature">-</span>℃
+                                  <span className="Offline">告警</span>
                                 </div>
-                                <div className="air-Alarm">告警</div>
+                                <div className="OfflineBox">
+                                  {Array.from({ length: 3 }, (_, index) => (
+                                    <div key={index} className="offlineBoxItem">
+                                      <div className="name">--</div>
+                                      <div>--</div>
+                                    </div>
+                                  ))}
+                                </div>
                               </div>
                             </AntCheckbox>
                           </div>

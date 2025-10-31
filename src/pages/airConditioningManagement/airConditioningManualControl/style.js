@@ -114,8 +114,9 @@ export const Container = styled.div`
         }
         }
          .airInfo{
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(160px, 290px));
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(160px, 290px));
+        padding-right: 16px;
          }
     .airInfo .fields:nth-child(3){
       margin-top: 20px;

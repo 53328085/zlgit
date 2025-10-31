@@ -185,7 +185,7 @@ export default function Index() {
                       <Empty
                         image={emptyImg}
                         description={'暂无数据' ?? i18t("comm", "NoDataAvailable")}
-                        imageStyle={{ width: '60px', height: '60px' }}
+                        imageStyle={{ width: '48px', height: '48px' }}
                       />
                     </div>
                   </div>}
@@ -205,7 +205,7 @@ export default function Index() {
                       <Empty
                         image={emptyImg}
                         description={'暂无数据' ?? i18t("comm", "NoDataAvailable")}
-                        imageStyle={{ width: '60px', height: '60px' }}
+                        imageStyle={{ width: '48px', height: '48px' }}
                       />
                     </div>
                   </div>}

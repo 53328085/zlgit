@@ -1,7 +1,7 @@
 import { Apimethod } from "@api/api.js"
-export const { useOverview } = new Apimethod( // 获取电表设备
-  "post",
-  "Monitor/RuntimeDevice/Overview"
+export const { useGetAllDevice } = new Apimethod( // 获取电表设备
+  "get",
+  "Solar/PVStationManager/GetAllDevice"
 );
 export const { useQueryStationList } = new Apimethod( // 查询站点列表
   "get",

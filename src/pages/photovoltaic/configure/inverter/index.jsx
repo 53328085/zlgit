@@ -10,20 +10,12 @@ import { Mainbox } from './style'
 import { Serach } from "@com/comstyled"
 import { PlusOutlined } from "@ant-design/icons";
 import {
-  InputNumber,
   Space,
   Form,
-  Input,
   message,
   Select,
-  DatePicker,
-  Upload,
-  Typography
 } from "antd";
 import {
-  selectProjectId,
-  publishState,
-  selectOneLevel,
   levelDefaultLabel
 } from "@redux/systemconfig.js";
 import {

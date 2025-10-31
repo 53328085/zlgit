@@ -5,13 +5,13 @@ import { useSelector, useDispatch } from 'react-redux'
 import CModal from '@com/useModal'
 import { useAntdTable, useRequest } from "ahooks"
 import UserTable from "@com/useTable";
-import { selectProjectId, selectOneLevel, adaptation } from '@redux/systemconfig.js'
+import { selectOneLevel, adaptation } from '@redux/systemconfig.js'
 import UseTree from "@com/useTree"
 import { Bindwrap } from "./style"
 import { Serach } from "@com/comstyled"
 import { unbindcol, bindcol } from './data'
 import {
-  useOverview, useQueryStationList, useGetInverterList,
+  useGetAllDevice, useQueryStationList, useGetInverterList,
   useGetAreaInverterList, useAddGridTiedCabinet,
   useUpdateGridTiedCabinet,
 } from './api'
@@ -49,18 +49,13 @@ export default forwardRef(function Index({ projectId, updata, modalTitle, curPag
       const params = {
         projectId,
         areaId,
-        deviceStyle: 1,
-        alike: "",
-        state: 0,
-        pageNum: 1,
-        pageSize: 100
       }
 
-      let { success, data, total, errMsg } = await useOverview({}, params)
+      let { success, data, total, errMsg } = await useGetAllDevice(params)
 
       if (success) {
-        if (data && Array.isArray(data.details)) {
-          setDeviceData(data.details)
+        if (data && Array.isArray(data)) {
+          setDeviceData(data)
           // if (editModeData && editModeData.sn) {
           //   const matchedMeter = data.details.find(item => item.sn === editModeData.sn)
           //   setSelectedMeter(matchedMeter || data.details[0])
@@ -118,6 +113,8 @@ export default forwardRef(function Index({ projectId, updata, modalTitle, curPag
       return
     }
     const matchedMeter = deviceData.find(item => item.sn === selectedSn)
+    matchedMeter.meterName = matchedMeter.name
+    matchedMeter.meterSn = matchedMeter.sn
     if (matchedMeter) {
       setSelectedMeter(matchedMeter)
     } else {
@@ -270,11 +267,10 @@ export default forwardRef(function Index({ projectId, updata, modalTitle, curPag
       console.log(error)
     }
   }
-  // 新增表格数据加载方法
   // 新增表格数据加载方法（优化：编辑模式仅初始化加载一次接口）
   const loadTableData = useCallback(() => {
     // 加载未绑定表格（左边表格，不影响撤回逻辑）
-    refreshUnbind();
+    // refreshUnbind();
 
     if (modalTitle === '新增光伏并网柜') {
       // 新增模式：加载本地空数据
@@ -311,7 +307,7 @@ export default forwardRef(function Index({ projectId, updata, modalTitle, curPag
         searched.submit();
       }
     }
-  }, [refreshUnbind, searched, modalTitle, editModeData, projectId]);
+  }, [searched, editModeData]);
 
   const rowSelection = {
     selectedRowKeys: unbindSelectedKeys,
@@ -466,16 +462,14 @@ export default forwardRef(function Index({ projectId, updata, modalTitle, curPag
         if (modalTitle !== '新增光伏并网柜' && editModeData?.id) {
           params.id = editModeData.id
         }
-
-        // 这里调用实际的保存接口
         const apiFunction = modalTitle === '新增光伏并网柜' ? useAddGridTiedCabinet : useUpdateGridTiedCabinet
         let { success, errMsg } = await apiFunction(
           { projectId }, params)
         if (success) {
-          if (modalTitle != '新增光伏并网柜') return mRef.current.onCancel()
           message.success(modalTitle === '新增光伏并网柜' ? '新增成功' : '编辑成功')
           updata({ current: curPage, pageSize: 14 })
           formTop.setFieldsValue({ no: 'BWG' + Date.now() });
+          if (modalTitle != '新增光伏并网柜') return mRef.current.onCancel()
         } else {
           message.warning(errMsg || "保存失败")
           return Promise.reject("")
@@ -534,9 +528,9 @@ export default forwardRef(function Index({ projectId, updata, modalTitle, curPag
             <Form
               colon={false}
               form={formTop}
-              labelCol={{ flex: "90px" }}
               labelAlign="left"
-
+              labelWrap
+              labelCol={{ flex: "120px" }}
             >
               <div
                 style={{ display: 'flex', justifyContent: 'start', gap: '16px ' }}>
@@ -552,7 +546,6 @@ export default forwardRef(function Index({ projectId, updata, modalTitle, curPag
                 </Form.Item>
                 <Form.Item
                   name="areaId"
-                  labelCol={{ flex: "150px" }}
                   label={oneLevel[0]?.levelName ? `所属${oneLevel[0].levelName}` : "所属园区"}
                   rules={[{ required: true, message: `请选择${oneLevel[0]?.levelName || '园区'}` }]}
                 >
@@ -635,13 +628,16 @@ export default forwardRef(function Index({ projectId, updata, modalTitle, curPag
             </div>
             <div className='searchDevice'>
               <div>
-                电表名称：{selectedMeter ? (selectedMeter.name || selectedMeter.meterName) : "请选择总表设备"}
+                电表名称：{selectedMeter ? selectedMeter.meterName : "-"}
               </div>
               <div>
-                电表编号：{selectedMeter ? (selectedMeter.sn || selectedMeter.meterSn) : ""}
+                电表编号：{selectedMeter ? selectedMeter.meterSn : "-"}
               </div>
+              {/* <div>
+                电表型号：{selectedMeter ? (selectedMeter.category || "未设置") : ""}
+              </div> */}
               <div>
-                所属网关：{selectedMeter ? (selectedMeter.gateway || selectedMeter.gatewayName || "未设置") : ""}
+                所属网关：{selectedMeter ? selectedMeter?.gatewayName : "-"}
               </div>
             </div>
           </div>
