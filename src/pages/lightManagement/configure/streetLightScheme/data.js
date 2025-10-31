@@ -11,23 +11,14 @@ import {
   Space,
 } from "antd";
 import { DeleteOutlined } from "@ant-design/icons";
-import { CSlider, Scene, CTag,  } from "./style";
+import {  Scene, CTag,  } from "./style";
 import imgsrc from "@svgs/index";
 import { CustButton } from "@com/useButton";
+import {Cslider} from "@com/Custantd"
 const { Link } = Typography;
 
 
-const Custslider = ({value, onChange, ...rest}) => {
-  console.log(value)
-  const vchange = (e) => { 
-    onChange(e)
-  }
-  return (
-    <CSlider value={value} onChange={vchange} {...rest}></CSlider>
-  )
-
-
-}
+ 
 export const cols = [
   //
   {
@@ -277,14 +268,7 @@ export const items = (
                               field.name,
                             ])?.["tasks"]?.[inerfiled.name]?.taskType;
                           
-                          if(type == 0) return <div
-                              style={{ position: "relative", width: "548px" }}
-                            >
-                              <img
-                                src={imgsrc["light"]}
-                                style={{ position: "absolute",left:"98px" }}
-                              />
-                              <Form.Item
+                          if(type == 0) return <Form.Item
                                label="亮度设置"
                                 name={[inerfiled.name, "light"]}
                                 labelCol={{flex: "98px"}}
@@ -293,8 +277,8 @@ export const items = (
                                     required: type===0
                                   }
                                 ]} 
-                              ><Custslider step={null} marks={marks} /></Form.Item>
-                            </div>
+                              ><Cslider step={null} marks={marks} /></Form.Item>
+                           
                           }
                             }
                           </Form.Item>
@@ -508,14 +492,7 @@ export const itemsline = (
                               field.name,
                             ])?.["tasks"]?.[inerfiled.name]?.taskType;
                           
-                          if(type == 0) return <div
-                              style={{ position: "relative", width: "548px" }}
-                            >
-                              <img
-                                src={imgsrc["light"]}
-                                style={{ position: "absolute",left:"98px" }}
-                              />
-                              <Form.Item
+                          if(type == 0) return <Form.Item
                                label="亮度设置"
                                 name={[inerfiled.name, "light"]}
                                 labelCol={{flex: "98px"}}
@@ -524,8 +501,8 @@ export const itemsline = (
                                     required: type===0
                                   }
                                 ]} 
-                              ><Custslider step={null} marks={marks} /></Form.Item>
-                            </div>
+                              ><Cslider step={null} marks={marks} /></Form.Item>
+                            
                           }
                             }
                           </Form.Item>

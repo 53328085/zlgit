@@ -7,13 +7,16 @@ export const CSlider = styled(Slider)`
      font-size: 12px;
 }
   }
- 
-    .ant-slider-rail,.ant-slider-handle:focus,.ant-slider-track{
-        background-color: transparent;
+  
+    .ant-slider-handle:focus,.ant-slider-track{
+        background-color: #1E50E6;
     }
+     .ant-slider-rail{
+      background-color: rgba(0,0,0,0.04);
+     }
     .ant-slider-handle {
-      height: 20px;
-      width: 20px;
+      height: 14px;
+      width: 14px;
     }
 }
 `

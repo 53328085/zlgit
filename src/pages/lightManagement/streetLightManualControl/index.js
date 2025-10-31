@@ -12,11 +12,13 @@ import { options,states } from "./data";
 import CModal from "@com/useModal";
 import {isObject} from "@com/usehandler"
  import { useList,useSetControl, useOneByOneControl, useLineControl} from "./api.js";
- import opensvg from './svgs/open.svg'
- import closesvg from './svgs/close.svg'
+
 import { Mainwrap, TitleBox } from "./style";
- 
+import * as svgicons from "./svgs"
 const {Text} = Typography
+// stat<=1, 离线  state=2 在线 ， state=2 && 亮度==0 关灯
+// 路灯类型 1：道路灯 2：高杆路灯 3：太阳能路灯 4：景观灯 5:其它 0: 无
+console.log(svgicons)
 export default function Index() {
    const [treeId, setTreeId] = useState(null)
    const [lingts, setLights] = useState({})
@@ -212,20 +214,29 @@ const lingthChnage=(v)=> {
             <div className="lights">
             {
              lingts?.details?.map?.(l => {
-               const {name, value}= l.fields?.find(f=> f.name=="亮度") || {}
+               const {fields, type, state} = l
+               const onLine = state==2
+              
+               const {name, value}= fields?.find(f=> f.name=="亮度") || {}
                let islight = (typeof parseFloat(value)=="number") && parseFloat(value) >0
-              return (<div className={!islight ? "light close" : "light" }>
+               let iconname = islight ? `ReactComponent${type}` : `ReactComponent${type}0`
+               const Icon = svgicons[iconname] || <></>
+              return (<div className={!islight ? "light line close" : "light line" }>
                
                <div>
                  {l.name}
                <div > {`(${l.cSn})`} </div>
                </div>
-               <div className="imgbox">
-               <img src={islight ? opensvg : closesvg} className="img"></img>
-              
-                  <span>{name}:{value}</span>
-               
-               </div>
+               {
+                         onLine ? 
+                      <div className="imgbox">
+                    
+                    <Icon></Icon> 
+                
+                      </div>
+                      : <div className="offline">离线</div>
+                    }
+               { islight && <div className="value"><label>{name}:</label><label>{value}</label></div>}
              
              </div>)})
             }
@@ -241,18 +252,29 @@ const lingthChnage=(v)=> {
               <div className="lights">
                    {
                     lingts?.details?.map?.(l => {
-                      const {name, value}= l.fields?.find(f=> f.name=="亮度") || {}
+                      const {fields, type, state} = l
+                      const onLine = state==2
+                      
+                      const {name, value}= fields?.find(f=> f.name=="亮度") || {}
                       let islight = (typeof parseFloat(value)=="number") && parseFloat(value) >0
+                      let iconname = islight ? `ReactComponent${type}` : `ReactComponent${type}0`
+                      const Icon = svgicons[iconname] || <></>
                     return  (<div className={!islight ? "light close" : "light" }>
                        <Checkbox value={l.id}>
                       <div>
                         {l.name}
                       <div > {`(${l.cSn})`} </div>
                       </div>
+                      {
+                         onLine ? 
                       <div className="imgbox">
-                      <img src={islight ? opensvg : closesvg} className="img"></img>
-                        { islight && <span>{name}:{value}</span>}
+                    
+                    <Icon></Icon> 
+                
                       </div>
+                      : <div className="offline">离线</div>
+                    }
+                      { islight && <div className="value"><label>{name}:</label><label>{value}</label></div>}
                       </Checkbox>
                     </div>)})
                    }

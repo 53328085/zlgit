@@ -1,5 +1,5 @@
 import React, { useRef, useState, useEffect } from "react";
-import { Space, Form, Select, Input, Radio } from "antd";
+import { Space, Form, Select, Input, Radio,List,Typography } from "antd";
 import Pagecount from "@com/pagecontent";
 import { useSelector } from "react-redux"
 import { selectProjectId } from "@redux/systemconfig"
@@ -15,6 +15,7 @@ import { useList, useDetail } from "./api.js";
 import { Mainwrap, TitleBox } from "./style";
  
 import { useAntdTable, useRequest } from "ahooks";
+import {mock} from "./data"
 import Cform from '../common'
 export default function Index() {
  
@@ -110,10 +111,22 @@ export default function Index() {
     <Pagecount pd="0" bgcolor="none">
       <Mainwrap>
         <Cform {...props} />
+        <div className="contentwrap">
         <Titlelayout layout="flex" title={<TitleBox>Air-Conditioner KPI</TitleBox>} dr="column"  >
-          
+        
+        <List
+    //  header={<div>Header</div>}
+     // footer={<div>Footer</div>}
+    //  bordered
+      dataSource={mock}
+      renderItem={(item) => (
+        <List.Item>
+          <Typography.Text mark>[ITEM]</Typography.Text> {item}
+        </List.Item>
+      )}
+    />
         </Titlelayout>
-         
+        </div>
          
          
       </Mainwrap>

@@ -41,6 +41,7 @@ import { cabinets } from './cabinets'
 import { designerWaterManagement } from './designerWaterManagement'
 import { airConditioningManagement } from './airConditioningManagement'
 import { streetLightManagement } from './streetLightManagement'
+import {efficiencyAnalysisConfig} from "./efficiencyAnalysisConfig"
 export const designerComponents = {
   '0201': Common,
   '0202': Project,
@@ -60,6 +61,7 @@ export const designerComponents = {
   "0215": Comindex,
   "0216": Comindex,
   "0217": Comindex,
+  "0218": Comindex,
 }
 export const designerRoutes = {
   designerCommon,
@@ -78,6 +80,7 @@ export const designerRoutes = {
   designerWaterManagement,
   airConditioningManagement,
   streetLightManagement,
+  efficiencyAnalysisConfig,
 }
 
 

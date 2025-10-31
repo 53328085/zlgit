@@ -450,8 +450,7 @@ export default memo(function Index({ areaId, setTreeId, setLine, setNode, showli
   const radiosty = {
     display: 'grid',
     gridTemplateColumns: '1fr 1fr',
-    alignContent: 'center',
-    borderBottom: '1px dotted #d7d7d7',
+    alignContent: 'center', 
   }
   const radiosty2 = {
     display: 'grid',

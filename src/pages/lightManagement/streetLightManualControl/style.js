@@ -3,7 +3,7 @@ export  const Mainwrap = styled.div`
 && {
    flex:1;
    display: grid;
-   grid-template-columns: 210px 1fr;
+   grid-template-columns: 288px 1fr;
    grid-template-rows: 1fr;
    column-gap: 16px;
    .left {
@@ -42,15 +42,18 @@ export  const Mainwrap = styled.div`
        .lights {
          flex:1;
          display: grid;
-         grid-template-columns: repeat(auto-fill,170px);
-         grid-auto-rows: 201px;
+         grid-template-columns: repeat(auto-fill,minmax(210px,1fr));
+         grid-auto-rows: 200px;
          justify-content: space-between;
-         gap:16px 32px;
+         gap:14px;
          overflow: auto;
+        
          .light { 
-        width: 170px;
-        height: 201px;
-        background: linear-gradient(180deg, rgba(0, 51, 204, 1) 0%, rgba(0, 51, 204, 1) 0%, rgba(51, 204, 255, 1) 100%, rgba(51, 204, 255, 1) 100%);
+     //   width: 170px;
+      //  height: 201px;
+        position: relative;
+        border-radius: 16px;
+        background: linear-gradient( 180deg, #88A2B5 0%, #3E6399 100%);
         color:#fff;
         padding: 8px;
         overflow: hidden;
@@ -62,34 +65,65 @@ export  const Mainwrap = styled.div`
         .ant-checkbox-wrapper {
           flex:1;
           display: flex;
-          span {
-            color: #fff;
-          }
+          span:nth-of-type(2) {
+            flex:1;
+            display: flex;
+             flex-direction: column;
+             color: #fff;
+             align-self: stretch;
+             justify-content: space-between;
+           
+          } 
         }
-        .imgbox {
-          padding-right: 16px;
+        .imgbox { 
           display: flex;
           flex-direction: column;
           align-items: center;
           justify-content: center;
-          row-gap: 16px;
+          position: absolute;
+          top:50%;
+          left:0;
+          transform: translateY(-50%);
+          height: 86px;
+          overflow: hidden; 
           .img {
-          width: 80%;
+           max-height: 100%;
         }
         }
-     
+        .offline {
+           display: flex;
+           flex:1;
+           justify-content: center;
+           align-items: center;
+            font-size: 28px;
+            text-align: center;
+            color: #909399;
+            font-weight: 500;
+            padding-right: 12px;
+          }
+        .value {
+              display: flex;
+              justify-content: space-between;
+              color:#F1F3F5;
+              font-size: 13px;
+             }
        }
        .light.close { 
          color:rgb(13, 12, 12);
-         background: linear-gradient(180deg, rgba(218, 218, 218, 1) 0%, rgba(247, 247, 247, 1) 100%); 
+         background: #ECF3FD;
          .ant-checkbox-wrapper {
           span {
-            color: rgb(13, 12, 12);
+            color:#303133;
           }
         }
        }
        }
-   
+       .light.line{
+        .imgbox {
+          padding-right: 0;
+        }
+        justify-content: space-between;
+       }
      
      }
    }

@@ -6,7 +6,21 @@ export  const Mainwrap = styled.div`
    grid-template-columns: 1fr;
    grid-template-rows: 48px minmax(817px, 1fr);
    row-gap: 16px;
- 
+  .contentwrap {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: repeat(2, minmax(377px, 1fr));
+    .innerlayout{
+       flex:1;
+       display: grid;
+       grid-template-rows: 1fr 20px;
+       .sublayout {
+         grid-template-columns: repeat(2, 1fr);
+         grid-template-rows: repeat(2, 1fr);
+       }
+       gap: 16px;
+    }
+  }
  
 }
 `
