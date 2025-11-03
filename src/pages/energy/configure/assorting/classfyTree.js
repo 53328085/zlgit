@@ -39,10 +39,10 @@ export default function Water (props) {
             <div style={nodeTitle}>
                 <span style={ item.parentId == 0 ? { fontSize: 16 }:{} }>{item.energyName}</span>
                 { isPublish ? null : <Space style={{position:"absolute", right: 0}}>
-                    {item.parentId == 0 ? <TreeBtn   onClick={()=>addSon(item)} wh="auto" style={{padding: "0 8px"}} text="addSubitem" />  : null}
+                 { item.level<5 ?  <TreeBtn   onClick={()=>addSon(item)} wh="auto" style={{padding: "0 8px"}} text="addSubitem" /> : null }
                     <TreeBtn onClick={()=>edit(name, item.energyId)} wh="60px" text="edit" /> 
                   {/*   {item.parentId != 0 ? <span style={{ color:'#237ae4', cursor:'pointer', textDecoration:'underline', marginRight: 32}} onClick={()=>settings(name, item.energyId)}>配置</span> : <div style={{width:28,marginRight: 32}}></div>} 比工的需求 一级也需要配置项*/}
-                  {item.parentId != 0 ? <TreeBtn onClick={()=>settings(name, item.energyId)} wh="auto" style={{padding: "0 8px"}} text="configure" /> : null}
+                   <TreeBtn onClick={()=>settings(name, item.energyId)} wh="auto" style={{padding: "0 8px"}} text="configure" />  
                    
                     <TreeBtn type="3" onClick={()=>deleteRecord(item)} wh="60px" text="delete" /> 
                 </Space> }

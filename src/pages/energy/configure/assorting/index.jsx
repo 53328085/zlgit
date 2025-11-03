@@ -9,7 +9,7 @@ import Water from './water'
 import HotWater from './hotWater'
 import Gas from './gas'
 import Steam from './steam'
-import style from './style.module.less'
+ 
 
 export default function Index() {
   const [value, setvalue] = useState(1)
