@@ -55,7 +55,9 @@ export {ReactComponent as airConditioningManagement} from './airConditioningMana
 export {ReactComponent as lightManagement} from './streetLightManagement.svg'
  export {ReactComponent as moremenu} from './more.svg'
  export {ReactComponent as smartIndustry} from "./smartIndustry.svg"
-
+ 
+ export {ReactComponent as efficiencyAnalysis} from "./efficiencyAnalysis.svg"
+  export {ReactComponent as efficiencyAnalysisConfig} from "./efficiencyAnalysis.svg"
 // 右边图标
 
 export {ReactComponent as screen} from './screen.svg'

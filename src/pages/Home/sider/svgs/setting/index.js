@@ -120,3 +120,7 @@ export { ReactComponent as streetLightManagementstreetLightScheme } from './stre
 export { ReactComponent as streetLightManagementstreetLightLineConfig } from './streetLightLineConfig.svg'
 export { ReactComponent as streetLightManagementstreetLightAreaConfig } from './streetLightAreaConfig.svg'
 export { ReactComponent as streetLightManagementstreetLightOverviewConfig } from './image.svg'
+
+// 能效分析
+export { ReactComponent as efficiencyAnalysisConfigcustomReportConfig } from './customReportConfig.svg'
+export { ReactComponent as efficiencyAnalysisConfigefficiencyDeviceConfig } from './efficiencyDeviceConfig.svg'

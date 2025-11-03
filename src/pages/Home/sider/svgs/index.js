@@ -158,3 +158,10 @@ export { ReactComponent as smartIndustrywasteHeatRecoverySystem } from './smartI
 export { ReactComponent as smartIndustrywestHotWaterSystem } from './smartIndustry/westHotWaterSystem.svg'
 
 // 智慧工业
+
+export { ReactComponent as efficiencyAnalysiskpiReport } from './efficiencyAnalysis/kpiReport.svg'
+export { ReactComponent as efficiencyAnalysisairCompressorKPI } from './efficiencyAnalysis/airCompressorKPI.svg'
+export { ReactComponent as efficiencyAnalysisrefrigeratorCOP } from './efficiencyAnalysis/refrigeratorCOP.svg'
+export { ReactComponent as efficiencyAnalysisairConditionerKPI} from './efficiencyAnalysis/airConditionerKPI.svg'
+
+// 
