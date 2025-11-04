@@ -625,3 +625,13 @@ export  const RadiogroupB = styled(Radio.Group)`
     }
  }
 `
+export const WrapTable = styled.div`  // 表格容器
+   &&{
+    flex:1;
+    position: relative;
+    .inwrap {
+      position: absolute;
+      width: 100%;
+    }
+   }
+`

@@ -36,6 +36,7 @@ export const Power= styled.div`
     border: 1px solid #DDDFE6;
     display: flex;
     flex-direction: column;
+    cursor: pointer;
     .powerUp {
         flex:1;
         display: flex;
@@ -77,6 +78,7 @@ export const Power= styled.div`
     .powerDown {
         height: 98px;
         background: linear-gradient(0deg, rgba(30, 80, 230, 0.15) 0%, rgba(3,160,255,0.03) 100%);
+        transition: all 0.3s;
         border-radius: 0px 0px 8px 8px;
         padding:14px;
         display: grid;
@@ -96,6 +98,9 @@ export const Power= styled.div`
             font-weight: bold;
             column-gap: 8px;
         }
+    }
+    .active.powerDown  {
+        background: linear-gradient(0deg , #1E50E6 0%, rgba(3,160,255,0.2) 100%);
     }
 }
   

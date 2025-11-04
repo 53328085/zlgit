@@ -172,7 +172,7 @@ export default function Index() {
         switch (nested) {
           case "area":
           case "assorting":
-            setConfig({ isview: false, isdate: true, shiftNo:true });
+            setConfig({ isview: true, isdate: true, shiftNo:true });
             break;
           case "range":
             setConfig({ energytype: false, isdate: false, custview: true, isAreaId: false, });
