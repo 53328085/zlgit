@@ -21,7 +21,7 @@ export const Container = styled.div`
   }
   .right-box {
     flex: 1;
-    margin-left: 18px;
+    margin-left: 16px;
     display: grid;
     grid-template-rows: 48px 1fr;
     row-gap: 16px;

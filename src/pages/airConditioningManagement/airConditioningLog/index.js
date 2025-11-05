@@ -317,11 +317,6 @@ export default function Index(props) {
 
   const { submit } = search
 
-  // 直接使用submit，不在查询时清空选中状态
-  const handleSubmit = useCallback(() => {
-    submit(); // 只执行查询，不清空选中状态
-  }, [submit]);
-
   const onExport = useCallback(() => {
     const formDate = searchForm.getFieldValue()
     let params = {
@@ -421,7 +416,6 @@ export default function Index(props) {
                 }} />
               </Item>
               <Item>
-                {/* 直接使用submit，不在查询时清空选中状态 */}
                 <CustButtonT text="search" onClick={submit}></CustButtonT>
               </Item>
               <Item>

@@ -329,7 +329,7 @@ export default function Index() {
                                 <div className="OfflineBox">
                                   {Array.from({ length: 3 }, (_, index) => (
                                     <div key={index} className="offlineBoxItem">
-                                      <div className="name">--</div>
+                                      <div>--</div>
                                       <div>--</div>
                                     </div>
                                   ))}

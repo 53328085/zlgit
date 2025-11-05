@@ -4,5 +4,6 @@
         "public/locales"
     ],
     "i18n-ally.keystyle": "nested",
-    "commentTranslate.hover.enabled": false
+    "commentTranslate.hover.enabled": false,
+    "commentTranslate.targetLanguage": "eu"
 }
