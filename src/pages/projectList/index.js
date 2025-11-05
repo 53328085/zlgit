@@ -529,7 +529,7 @@ export default function Index() {
       dataIndex: "custop",
       align: "center",
       render: (text, record) => (
-        <Space size={32}>
+        <Space size={iszh ?16 : 8}>
         <CustBtn  width={iszh ? null : "auto"} laptop={laptop}  icon={laptop? null : <SettingOutlined style={{ fontSize: "20px" }}  />} onClick={() => enterProject({id: record.id, type: 1, publishState: record.publishState
 })}>
             {t("platformcig:ProjectConfiguration")}

@@ -2,24 +2,20 @@ import styled from "styled-components";
 export  const Mainwrap = styled.div`
 && {
    flex:1;
-   display: grid;
-   grid-template-columns: 1fr;
-   grid-template-rows: 48px minmax(817px, auto);
+   display: flex;
+  flex-direction: column;
    row-gap: 16px;
    color: #303133;
   .contentwrap {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    grid-template-rows: repeat(2, 377px);
-    gap:16px;
+      flex:1;
     .innerlayout{
        flex:1;
        display: grid;
-       grid-template-rows: 1fr 34px;
+       grid-template-rows: repeat(2,200px 34px) ;
         gap: 8px;
        .sublayout {
-         grid-template-columns: repeat(2, 1fr);
-         grid-template-rows: repeat(2, 122px);
+         grid-template-columns: repeat(4, minmax(406px, 1fr));
+         grid-template-rows: 1fr;
          display: grid;
          gap:8px;
          .sub{
@@ -28,11 +24,14 @@ export  const Mainwrap = styled.div`
           overflow: hidden;
          }
         .sub.list{
-          padding: 10px 14px;
+          padding: 10px 0px;
           .ant-list-item-no-flex{
             display: flex;
             font-size: 13px;
-            padding: 0;
+            padding: 10px 14px;
+            &:nth-of-type(2n) {
+              background: rgba(80,200,255,0.08);
+            }
           }
         }
         .sub.text {

@@ -1,4 +1,4 @@
-import React, {useEffect} from 'react'
+import React, {useEffect, useMemo} from 'react'
 import moment from 'moment'
 import {useTranslation} from "react-i18next"
 import {Form, Select, Space, DatePicker, ConfigProvider} from 'antd'
@@ -68,4 +68,82 @@ export default function Index() {
    </Cform>
    </ConfigProvider>
   )
+}
+export function useGauge({data,radius="100px", center=['50%', 110]}){
+  const  goption =useMemo(()=>{
+     const  series={
+       type:5,
+       series: [
+       {
+         type: 'gauge',
+         radius,
+         center ,
+         startAngle:180,
+         endAngle:0,
+         axisLine: {
+           lineStyle: {
+             width: 18,
+             color: [
+               [0.6, 'rgba(5, 192, 110, 1)'],
+               [0.7, 'rgba(255, 177, 43, 1)'],
+               [1, 'rgba(255, 96, 33, 1)']
+             ],
+             opacity: 0.8
+           }
+         },
+         pointer: {
+           offsetCenter: [0, '-10%'],
+           width: 5,
+           itemStyle: {
+             color: 'auto'
+           }
+         },
+         axisTick: {
+           distance: -18,
+           length: 8,
+           lineStyle: {
+             color: '#fff',
+             width: 1
+           }
+         },
+         anchor: {
+           show: false
+         },
+         splitLine: {
+           show: false
+         },
+         axisLabel: {
+           show: true,
+           color: 'auto',
+           distance: 5,
+           fontStyle: "bold",
+           fontSize: 13,
+           formatter: function (value) { 
+             console.log(value)
+             if(value==60) {
+               return 0.60;
+             }else if(value==70) {
+               return 0.70;
+             }else {
+               return  ''
+             }
+           }
+         },
+         detail: {
+           valueAnimation: true, 
+           color: 'rgba(96, 98, 102, 1)',
+           fontSize: 20,
+           offsetCenter: [0, "-30%"]
+         },
+         data: [
+           {
+             value: data || 0
+           }
+         ]
+       }
+     ]}
+     return series
+  }, [data,radius]) 
+  
+ return goption
 }

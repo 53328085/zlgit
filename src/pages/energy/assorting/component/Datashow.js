@@ -4,15 +4,97 @@ import {Radio} from 'antd'
 import {CustTitle,ChartWrap} from  "../style"
 import {viewOpt} from '../data'
 import Ichart from '@com/useEcharts/Ichart'
-export default function Index({datas={}, view}) {
-  console.log(datas)
-  const {proportion=[],consumeDetail=[]} = datas
+import UseTable from '@com/useTable'
+import {WrapTable} from '@com/comstyled'
+import {isObject} from "@com/usehandler"
+export default function Index({datas={}, view,energytype}) {  
+  const {proportion=[],consumeDetail=[], tableDatas } = datas || {}
+  console.log("tableDatas", tableDatas)
+  let [columns, dataSource] =useMemo(()=>{ 
+    try {
+      if(isObject(tableDatas)){
+        let {datas, heads} = tableDatas
+        let columns = heads.map(t=>({...t, spans: {}}))
+        if(Array.isArray(datas) && Array.isArray(heads)) {
+          let tbdata = datas.map((d,i) =>  {
+            let {data,mergeInfo, ...rest} =d
+            for(let [key, value] of Object.entries(mergeInfo)){
+              let idx = columns.findIndex(h => h.dataIndex === key)  
+              if(isObject(columns[idx])) { 
+                columns[idx].spans[i]=value 
+              }
+            
+            }
+            if(isObject(data)){
+              return {...rest, ...data}
+            }else  {
+              return {...rest }
+            }
+          })
+          columns?.forEach(c => {
+             let handlers={}
+             if(Object.keys(c.spans)?.length>0 ) { 
+                   for(let [key, value] of Object.entries(c.spans)){
+                    console.log(key, value)
+                      handlers[key]=()=>value
+                      
+                   } 
+             }
+             c["handlers"]=handlers
+          })
+          columns?.forEach(c => {
+            const {spans, handlers} =c
+            c["onCell"]= (row, idx) => { 
+               if(Object.keys(spans)?.length>0){
+                 
+                 return  handlers?.[idx]?.()
+               }else {
+                return {}
+               }
+
+            }
+         })
+          return [columns, tbdata]
+        }else{
+          return [[],[]]
+  
+        }
+       
+      }else {
+        return [[],[]]
+      }
+    } catch (error) {
+      return [[],[]]
+    }
+   
+     
+  },[tableDatas])
+  console.log(columns)
+  const [unit, etitle, display] =useMemo(()=> {
+   const unit= view==1 ? {
+      1: 'kWh',
+      2: "m³",
+      3: "m³",
+     }[energytype] : "元"
+     const title =view==1 ? {
+      1: '电量(kWh)',
+      2: "用水(m³)",
+      3: "用气(m³)",
+     }[energytype] : "元"
+     const display =view==1 ? {
+      1: '电量',
+      2: "用水",
+      3: "用气",
+     }[energytype] : "元" 
+   return [unit, title, display]
+
+  }, [view, energytype])
   const pieopt = useMemo(()=>{
     let total = proportion?.reduce((a,b)=> a+ parseFloat(b.value),0)
     return{
         type: 3,
         pieData: { data: proportion, total,radius:"50%", label: {
-            formatter: "{c}",
+            formatter: "{c}"+unit,
           }, },
         legend: {
           top: 'auto',
@@ -27,18 +109,25 @@ export default function Index({datas={}, view}) {
         },
        
     }
-},[proportion])
+},[proportion,unit])
 const lineopt=useMemo(()=>{
     return{
         title: {
-            text: '发电量(kWh)',
+            text: etitle,
             textStyle: {
                 fontSize: 14,
                 fontWeight: 'normal',
                 color: 'rgba(144, 147, 153, 1)',
             },
         },
-        series: [{ type: "bar", seriesLayoutBy: 'row' }],
+      
+        series: [{ 
+          type: "bar", 
+          seriesLayoutBy: 'row', 
+          tooltip:{
+          valueFormatter: value=> value+unit
+          }, 
+         }],
         grid: {
           left: "0px",
           right: "0",
@@ -47,7 +136,7 @@ const lineopt=useMemo(()=>{
           containLabel: true,
         },
         legend: {
-          show:false
+          show:true
           // itemHeight: 4,
           // itemWidth: 16,
         },
@@ -61,14 +150,14 @@ const lineopt=useMemo(()=>{
         dataset: {
             dimensions: [
                 { name: '时间', type: 'time' },
-                { name: view === 1 ? 'kWh' : '元' },
+                { name: display },
     
               ],
               source: [consumeDetail?.[0]?.x, consumeDetail?.[0]?.y],
               sourceHeader: false,
         },
     }
-}, [consumeDetail])
+}, [consumeDetail,etitle, display,unit])
   const [value,setValue]=useState(1)
   const title=<CustTitle>
     <span>实时数据</span>
@@ -76,14 +165,19 @@ const lineopt=useMemo(()=>{
   </CustTitle>
   return (
     <Titlelayout title={title} layout="flex">
-     <ChartWrap> 
+    {value==1 ? <ChartWrap> 
         <div className="pip">
          <Ichart {...pieopt} />
         </div>
         <div className='bar'>
           <Ichart {...lineopt} />
         </div>
-      </ChartWrap>
+      </ChartWrap> :
+ <WrapTable>
+  <div className="inwrap">
+     <UseTable columns={columns} dataSource={dataSource} />
+  </div>
+  </WrapTable>}
     </Titlelayout>
   )
 }
