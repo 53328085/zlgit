@@ -21,7 +21,7 @@ export default function Index() {
   const [schemeId, setSchemeId] = useState(null);
   const [alike, setAlike] = useState("");
   const [explains, setExplains] = useState([]);
-  const goption = useGauge({data:54});
+  const goption = useGauge({data:54,radius:"143px", center:['50%', 172] });
   console.log(goption)
   const setexparams = (params) => {
     console.log("params");
@@ -198,124 +198,7 @@ export default function Index() {
               </div>
             </div>
           </Titlelayout>
-          <Titlelayout
-            layout="flex"
-            title={<TitleBox>Air-Conditioner KPI</TitleBox>}
-            dr="column"
-          >
-            <div className="innerlayout">
-              <div className="sublayout">
-                <div className="sub list">
-                  <List
-                    dataSource={mock}
-                    split={false}
-                    renderItem={(item) => (
-                      <List.Item>
-                        {item} <Typography.Link type="success">{parseInt(Math.random()*1000)}</Typography.Link>
-                      </List.Item>
-                    )}
-                  />
-                </div>
-                <div className="sub text">
-                    <div className="title">
-                       <Typography.Text strong>KPI</Typography.Text>
-                       <span>Wh/Nm³</span>
-                    </div>
-                    <div className="num">
-                      35.5
-                    </div>
-                </div>
-                <div className="sub">
-                  <Ichart {...lineopt} /> 
-                </div>
-                <div className="sub chart">
-                   <Ichart custoption={goption} />
-                </div>
-              </div>
-              <div className="line">
-                <Typography.Link>Formulate：｜</Typography.Link>
-                <Typography.Text>compressor-D_TotalPositiveActivePower_Increment   compressor-D TotalPositiveA…</Typography.Text>
-              </div>
-            </div>
-          </Titlelayout>   <Titlelayout
-            layout="flex"
-            title={<TitleBox>Air-Conditioner KPI</TitleBox>}
-            dr="column"
-          >
-            <div className="innerlayout">
-              <div className="sublayout">
-                <div className="sub list">
-                  <List
-                    dataSource={mock}
-                    split={false}
-                    renderItem={(item) => (
-                      <List.Item>
-                        {item} <Typography.Link type="success">{parseInt(Math.random()*1000)}</Typography.Link>
-                      </List.Item>
-                    )}
-                  />
-                </div>
-                <div className="sub text">
-                    <div className="title">
-                       <Typography.Text strong>KPI</Typography.Text>
-                       <span>Wh/Nm³</span>
-                    </div>
-                    <div className="num">
-                      35.5
-                    </div>
-                </div>
-                <div className="sub">
-                  <Ichart {...lineopt} /> 
-                </div>
-                <div className="sub chart">
-                   <Ichart custoption={goption} />
-                </div>
-              </div>
-              <div className="line">
-                <Typography.Link>Formulate：｜</Typography.Link>
-                <Typography.Text>compressor-D_TotalPositiveActivePower_Increment   compressor-D TotalPositiveA…</Typography.Text>
-              </div>
-            </div>
-          </Titlelayout>   <Titlelayout
-            layout="flex"
-            title={<TitleBox>Air-Conditioner KPI</TitleBox>}
-            dr="column"
-          >
-            <div className="innerlayout">
-              <div className="sublayout">
-                <div className="sub list">
-                  <List
-                    dataSource={mock}
-                    split={false}
-                    renderItem={(item) => (
-                      <List.Item>
-                        {item} <Typography.Link type="success">{parseInt(Math.random()*1000)}</Typography.Link>
-                      </List.Item>
-                    )}
-                  />
-                </div>
-                <div className="sub text">
-                    <div className="title">
-                       <Typography.Text strong>KPI</Typography.Text>
-                       <span>Wh/Nm³</span>
-                    </div>
-                    <div className="num">
-                      35.5
-                    </div>
-                </div>
-                <div className="sub">
-                  <Ichart {...lineopt} /> 
-                </div>
-                <div className="sub chart">
-                   <Ichart custoption={goption} />
-                </div>
-              </div>
-              <div className="line">
-                <Typography.Link>Formulate：｜</Typography.Link>
-                <Typography.Text>compressor-D_TotalPositiveActivePower_Increment   compressor-D TotalPositiveA…</Typography.Text>
-              </div>
-            </div>
-          </Titlelayout>
+         
         </div>
       </Mainwrap>
     </Pagecount>
