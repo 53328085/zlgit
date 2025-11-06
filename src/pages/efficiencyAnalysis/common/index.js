@@ -77,7 +77,7 @@ export function useGauge({data,radius="100px", center=['50%', 110]}){
        {
          type: 'gauge',
          radius,
-         center ,
+         center,
          startAngle:180,
          endAngle:0,
          axisLine: {

@@ -22,7 +22,7 @@ export default function Index() {
   let whole = ["runtimeMonitor", "runtimeSafe", "runtimeEnergy", "runtimeStorage", "runtimeMaintenance", "runtimeSolar", "designerSolar"]; // 需要显示搜索 ***（全部）的模块
   let include =useMemo(() => { // 需要显示搜索 ***（全部）的页面
    let nesteds = {
-      [primary]:["streetLightEnergyMonitor","solarStreetLightOverview"]
+      [primary]:[""]
     }[primary] || []
     return  nesteds.includes(nested) ? {} : false
   }, [primary, nested]);
@@ -108,10 +108,10 @@ export default function Index() {
       "spareParts", "ledgerManagement", "spareParts"
     ],
     lightManagement: [  // 照明控制
-      "streetLightEnergyMonitor",
+    //  "streetLightEnergyMonitor",
       "lightControl",
       "streetLightDataReport",
-      "solarStreetLightOverview",
+      
     ],
     streetLightManagement: [ // 照明控制 设置态
       "streetLightLineConfig",
@@ -281,10 +281,7 @@ export default function Index() {
       } else if (primary == "cabinets") {
         setConfig({})
       } else if (primary == "lightManagement") {
-        switch (nested) {
-          case "streetLightEnergyMonitor":
-            setConfig({ isdate: true, shiftNo: true })
-            break
+        switch (nested) {        
           case "lightControl":
             setConfig({ isview: true, isdate: true, shiftNo: true });
             break;
@@ -360,8 +357,7 @@ export default function Index() {
 
   useEffect(() => {
     if (whole.includes(primary) || include) {
-      let isin = onelevel.find((l) => l.id == 0);
-      console.log(isin,"isin")
+      let isin = onelevel.find((l) => l.id == 0);     
       if (!isin) {
         dispatch(
           getOnelevel([

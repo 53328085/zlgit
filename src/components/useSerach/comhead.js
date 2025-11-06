@@ -1,11 +1,11 @@
 import React, { useState, useEffect, useRef, useMemo, Fragment } from "react";
-
+import {useLocation} from 'react-router-dom'
 import { Form, Select, Space, DatePicker, message, Input, Button, Typography } from "antd";
 import { useRequest } from 'ahooks'
 import styled from "styled-components";
 import { ExportExcel, i18t, CustTransO } from '@com/useButton'
 import { useSelector, useDispatch } from 'react-redux'
-import { levelDefaultLabel, selectProjectId, selectshifts, filterDeviceStyle, selectOneLevelDefaultId, selectOneLevel, setCurrentlevel, deviceStyle, getThemeColor, themeColor, setIntl, adaptation } from '@redux/systemconfig.js'
+import { levelDefaultLabel, selectProjectId, selectshifts, filterDeviceStyle, selectOneLevelDefaultId, selectOneLevel, setCurrentlevel, deviceStyle, getThemeColor, themeColor, setIntl, adaptation,lightlevel } from '@redux/systemconfig.js'
 import moment from "moment";
 import 'moment/locale/zh-cn';
 const { RangePicker } = DatePicker;
@@ -43,12 +43,18 @@ export {Cform};
 const { Item } = Form;
 export const AreaSelect = ({ value, onChange, isall, ...otherProps }) => {
   const levelone = useSelector(selectOneLevel)
-  const filter = levelone?.filter?.(f => f.id != 0);
-  let options = [];
-  if (filter?.length > 0) {
-    options = isall ? [isall, ...filter] : filter
-  }
-
+   const lightone = useSelector(lightlevel)
+  const location = useLocation();
+   const { state } = location
+  const options = useMemo(() => {
+     let levels = state?.primary==="lightManagement" ? lightone : levelone
+     const filter = levels?.filter?.(f => f.id != 0);
+ 
+    
+     return isall ? [isall, ...filter] : filter
+   
+    
+  }, [levelone,lightone, state?.primary, isall])
   return (
     <Select   style={w200} {...otherProps} defaultValue={value} onChange={onChange} options={options}  fieldNames={{ label: 'name', value: 'id', options: 'options' }}>
 
@@ -84,7 +90,7 @@ export default function UseSerach(props) {
   //const DeviceStyle = useSelector(filterDeviceStyle)  
   const [DeviceStyle, setDeviceStyle] = useState([])
 
-  const areaName = levelone?.find(l => l.id == AreaID)?.name; 
+  
   let shifts = useSelector(selectshifts)
 
   const [allshifts] = useState([...shifts, { id: 0, name: i18t("comm", "Allflights"), startTime: "", endTime: "" }])
@@ -254,30 +260,7 @@ export default function UseSerach(props) {
     />
   </Item>
   )
-  // 能源类型
 
-  //   const energyoptions = gas ? [{
-  //     label: '用电',
-  //     value: 1
-  //   }, {
-  //     label: '冷水',
-  //     value: 2
-  //   }, {
-  //     label: '热水',
-  //     value: 7
-  //   }, /* {
-  //   label: '燃气',
-  //   value: 3
-  // } */] : [{
-  //     label: '用电',
-  //     value: 1
-  //   }, {
-  //     label: '冷水',
-  //     value: 2
-  //   }, {
-  //     label: '热水',
-  //     value: 7
-  //   }]
   const energyChange = (v) => {
     let e = v > 1 ? 2 : 1 //电表默认日，其他设备默认月
     form.setFieldValue("type", e)
@@ -441,7 +424,7 @@ export default function UseSerach(props) {
     try {
       if (!props.config.cabinet) return
       let { areaId, photovoltaicPowerStation } = form.getFieldsValue(true)
-      console.log(areaId, photovoltaicPowerStation)
+    //  console.log(areaId, photovoltaicPowerStation)
       let { success, data, errMsg } = await PhotovoltaicPowerGeneration.QueryGirdCabientList(projectId, areaId, photovoltaicPowerStation?.value)
       if (success && Array.isArray(data) && data.length > 0) {
         setCabinetData(data)
@@ -524,9 +507,7 @@ export default function UseSerach(props) {
     if (levelone.length < 1) message.error('当前项目尚未创建园区!')
   }, [levelone])
 
-  const onValuesChange = (_, allValues) => {
-    console.log("allValues")
-    console.log(allValues)
+  const onValuesChange = (_, allValues) => { 
     props.setexparams({ ...allValues })
   }
 

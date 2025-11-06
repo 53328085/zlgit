@@ -9,7 +9,11 @@ import { Area, ProjectList,ProjectSetting, BigScreen, eneryShift, Monitoring,Car
 import {isObject,isLightColor,hextodec} from '@com/usehandler'
 import {initithemeColor,themeOption} from '@com/defaultcolor';
  
-
+import {Apimethod} from "@api/api.js"
+ const { useFindStreetLightAreas } = new Apimethod( // 获取总览图及点位
+  "get",
+  "Light/StreetLightCommon/FindStreetLightAreas"
+);
 
 
 
@@ -162,6 +166,7 @@ const initialState = {
    disonlevel: [], // 配电管理运行态下 一级
    
    discurlevel: '', // 配电管理运行状态 选中的值
+   lightlevel:[], // 路灯管理模块的一级
    isDistribution: false, // 是否在配电管理运行状态下
    currlevel: {}, // 当前选择的一级区域
    shifts: [], // 班次
@@ -200,7 +205,8 @@ export const getWebsiteState = createAsyncThunk(
           HomeRuntime.GetProjectInfo(id),
           Editapi.FilterDeviceStyle(id), // 运行监控运行态，获取设备总类
         CustTheme.QueryTheme({projectId:id}), // 获取项目下私有主题
-        CustTheme.GetProjectTheme({projectId:id}) // 获取项目选择的主题
+        CustTheme.GetProjectTheme({projectId:id}), // 获取项目选择的主题
+        useFindStreetLightAreas({projectId:id}) // 获取路灯管理下有路灯的区域
          ] 
         let results = await Promise.allSettled(promises)
         return results
@@ -410,6 +416,9 @@ const system = createSlice({
       getDark(state, {payload}){
         state.dark = payload
       },
+      getLightlevel(state, {payload}){
+        state.lightlevel =Array.isArray(payload) ? payload : []
+      }
     },
      extraReducers: {
       [getWebsiteState.fulfilled]: (state, action) => {
@@ -430,17 +439,15 @@ const system = createSlice({
                if(index == 6) {
                 state.currProject = data
                // state.themeColor.primaryColor = data?.themeColor || "#237ae4"
-               }
-             
-               index == 7 && (state.filterDeviceStyle = data || [])
-               if(index == 8) {
+               }else if( index == 7){
+                 state.filterDeviceStyle = data || []
+               }else  if(index == 8) {
                   let themes = []
                    if (Array.isArray(data) && data.length> 0) {
                        themes = data.map(d=> ({...d, context: JSON.parse(d.context)}))
                    }
                   state.themes=themes;
-               }
-               if(index == 9) {
+               }else  if(index == 9) {
                  try {
                  
                   let {themeId  } = data || {}
@@ -460,7 +467,11 @@ const system = createSlice({
                    console.log(error)
                  }
                 
+               }else if(index==10){
+                 console.log(data)
+                state.lightlevel=Array.isArray(data) ? data : []
                }
+
              }else{
                index== 0 && (state.onelevel=[])
                index == 2 && (state.publishState=NaN)
@@ -473,6 +484,7 @@ const system = createSlice({
                index == 7 && (state.filterDeviceStyle =[])
                index == 8 && (state.themes =[])
                index == 9 && (state.themeId=NaN)
+               index == 10 && (state.lightlevel = [])
              }
           }
         })
@@ -532,7 +544,7 @@ export const selectProjectId = state => state.system.menus?.projectId
 export const selectOneLevel = state =>  state.system.onelevel
 export const selectOneLevelDefaultId = state => Number.isFinite(state.system.currlevel?.id) ? state.system.currlevel?.id : Number.isFinite(state.system.onelevel[0]?.id) ? state.system.onelevel[0]?.id : null
 
-
+export const lightlevel= state=>state.system.lightlevel
 
 
 export const selectdisOneLevel = state =>  state.system.disonlevel
@@ -680,5 +692,6 @@ export const {
     getPgTitle,
     getSite,
     getDark,
+    getLightlevel,
 } = actions
 export default system.reducer

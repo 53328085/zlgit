@@ -15,7 +15,7 @@ export  const Mainwrap = styled.div`
   flex:1;
   .up {
     display: grid;
-    grid-template-columns: repeat(7,minmax(203px, 1fr));
+    grid-template-columns: ${props => props.theme.laptop ? 'repeat(7,1fr)' : ' repeat(7,minmax(203px, 1fr))'};
     grid-template-rows: 1fr;
     column-gap: 16px;
     .shownum {

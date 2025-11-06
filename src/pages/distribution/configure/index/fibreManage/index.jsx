@@ -198,7 +198,7 @@ const rules = [{
     delref.current.onOpen()
  }
  const delOk = async () => {
-      let {success, errMsg} = await  DeleteGXCWInfo(delId.current.id);
+      let {success, errMsg} = await  DeleteGXCWInfo(delId.current.id, projectId);
       if(success) {
         message.success("删除成功");
         delref.current.onCancel()

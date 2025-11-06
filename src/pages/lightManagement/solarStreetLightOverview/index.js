@@ -1,31 +1,30 @@
 import React, { useMemo, useRef, useState, useCallback, useContext} from "react";
 import { Space, Form, message } from "antd";
-import moment from "moment";
+ 
 import Pagecount from "@com/pagecontent";
 import { useNavigate, useLocation } from "react-router-dom";
-import { useAntdTable, useRequest } from "ahooks";
+import {   useRequest } from "ahooks";
+import {useSelector} from "react-redux"
+import { selectProjectId ,levelDefaultLabel} from '@redux/systemconfig.js'
  
-import UserTable from "@com/useTable";
-import Titlelayout from "@com/titlelayout";
 import { useOutletContext } from "react-router-dom";
  
 import {useOverview, useMonitor, usePage } from "./api.js";
 import { getTime, isObject } from "@com/usehandler";
  
-import { Tablewrap, Chartwrap,TitleBox, Mainbox } from "./style";
+import {   Mainbox } from "./style";
 import {Cspin} from "@com/comstyled"
 import {Streetligth,MapCard,Details} from "./components"
 import {OverdataContext} from './context'
+import {Cform, AreaSelect } from "@com/useSerach/comhead"
 export default function Index() {
-  const [datatype, setDataType] = useState("chart");
-  const navigate = useNavigate();
-  const { pathname, state } = useLocation();
-  const [overview, setOverView] = useState(null)
-  const tbref = useRef()
-  const { exparams } = useOutletContext();
+  const [form] = Form.useForm();
+  const varlabel = useSelector(levelDefaultLabel)
+  const projectId = useSelector(selectProjectId);
+  const [areaId, setAreaId] =useState(0);
   
-  const { areaId, projectId, type, date } = exparams || {};
-  const pageTotal = useRef()
+  const [overview, setOverView] = useState(null)
+ 
   const getOverview = async()=>{
     try {
       if(!Number.isInteger(parseInt(projectId))) return
@@ -44,17 +43,24 @@ export default function Index() {
     refreshDeps:[projectId, areaId]
   })
  
-
+  const isall= { name: `${varlabel}(全部)`, id: 0, levelName: varlabel }
   return (
   
     <Pagecount pd="0" bgcolor="none">
       <OverdataContext.Provider value={{lightdata: overview, projectId}}>
       <Mainbox>
+        <Cform form={form} layout="inline">
+          <Form.Item label={varlabel} name="areaId" initialValue={areaId}>
+             <AreaSelect   isall={isall} onChange={setAreaId} />
+          </Form.Item>
+        </Cform>
+      <div className="maincontent">
       <div className="leftlayout">
         <Streetligth lightdata={overview}  />
         <MapCard lightdata={overview} projectId={projectId} />
       </div>
       <Details/>
+      </div>
       </Mainbox>
       </OverdataContext.Provider>
     </Pagecount> 

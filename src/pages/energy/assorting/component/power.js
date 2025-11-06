@@ -31,13 +31,13 @@ export default function Index({data, date,energytype,active,idx}) {
              环比
             </div>
             <div className="value">
-           {parseFloat(mom) > 0 ? <CaretUpOutlined style={{color:"rgba(255, 96, 33, 1)"}} /> : <CaretDownOutlined style={{color:"rgba(67, 198, 111, 1)"}} />} {mom}
+           {parseFloat(mom) > 0 ? <CaretUpOutlined style={{color:"rgba(255, 96, 33, 1)"}} /> : <CaretDownOutlined style={{color:"rgba(67, 198, 111, 1)"}} />}<span className='float'>{mom}</span>
             </div>
             <div className="label">
              同比
             </div>
             <div className="value">
-            {parseFloat(yoy) > 0 ? <CaretUpOutlined style={{color:"rgba(255, 96, 33, 1)"}} /> : <CaretDownOutlined style={{color:"rgba(67, 198, 111, 1)"}} />} {yoy}
+            {parseFloat(yoy) > 0 ? <CaretUpOutlined style={{color:"rgba(255, 96, 33, 1)"}} /> : <CaretDownOutlined style={{color:"rgba(67, 198, 111, 1)"}} />} <span className='float'>{yoy}</span>
             </div>
         </div>
 

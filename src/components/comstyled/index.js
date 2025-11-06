@@ -132,7 +132,7 @@ export  const disabledDate = (current) => {
 
 export const ComDatePicker = (props) => {
   const disabledDate = (current) => {
-    return current && current < moment().endOf('day');
+    return current && current > moment().endOf('day');
   };
   return (<DatePicker 
     disabledDate={disabledDate} {...props} />)
@@ -635,3 +635,8 @@ export const WrapTable = styled.div`  // 表格容器
     }
    }
 `
+export const TitleBox = styled.div`  // 自定义标题的样式
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+`;

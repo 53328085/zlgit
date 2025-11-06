@@ -31,6 +31,7 @@ export default   function Index(props) {
   const lineName = new URLSearchParams(search)?.get('lineName')
   let isline = primary == "runtimeDistribution" && nested == "line"
   const roomIds = useSelector(roomId)
+  console.log("roomIds", roomIds)
   const curid = useSelector(selectcurlRommid)
   const curidl = useSelector(selectcurlRommidl)
   const {laptop} = useSelector(adaptation)
@@ -45,8 +46,19 @@ export default   function Index(props) {
 
   const levelName = useSelector(levelDefaultLabel) || '园区'
   const [sites, setSites] = useState([])
-  const [roomlist, setRoomList] = useState([])
- 
+ // const [roomlist, setRoomList] = useState([])
+ const [deviceopt,defaultdeviceStyle] = useMemo(()=> {
+  if(!Array.isArray(oneLevel) || (Array.isArray(oneLevel) && oneLevel.length === 0)) {
+    return [[], null]
+  }else if(Array.isArray(oneLevel) && oneLevel.length > 0) {
+   return  [[
+      {label: '变压器',value: 5},
+      {label: '直流屏',value: 15},
+      {label: '出线柜',value: 16}
+    ],deviceStyle]
+  }
+
+ },[roomIds,deviceStyle])
   const [form] = Form.useForm()
   const changeArea = (v, option) => {
    
@@ -106,8 +118,9 @@ export default   function Index(props) {
             roomId: null
           })
           setOnelevel([])
-          setRoomList([])
+        //  setRoomList([])
           dispacth(setCurrentlevel({}))
+          dispacth(getRoomId([]))
           message.warning("没有设置园区")
         }
       } else {
@@ -117,8 +130,9 @@ export default   function Index(props) {
           areaId: null,
           roomId: null
         })
+        dispacth(getRoomId([]))
         setOnelevel([])
-        setRoomList([])
+     //   setRoomList([])
       }
     } catch (error) {
 
@@ -234,14 +248,10 @@ return (
                     </Form.Item>
                   }
                   {
-                    showDeviceStyle && <Form.Item name="deviceStyle" initialValue={deviceStyle}>
+                    showDeviceStyle && <Form.Item name="deviceStyle" initialValue={defaultdeviceStyle}>
                       <Select  style={{width: laptop ? 150 : 200}} 
                       labelInValue={true}
-                      options={[
-                        {label: '变压器',value: 5},
-                        {label: '直流屏',value: 15},
-                        {label: '出线柜',value: 16}
-                      ]} onChange={(v) => setDeviceStyle(v)} ></Select>
+                      options={deviceopt} onChange={(v) => setDeviceStyle(v)} ></Select>
                     </Form.Item>
                   }
                   </Space>

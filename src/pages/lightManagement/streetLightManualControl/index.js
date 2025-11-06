@@ -18,7 +18,7 @@ import * as svgicons from "./svgs"
 const {Text} = Typography
 // stat<=1, 离线  state=2 在线 ， state=2 && 亮度==0 关灯
 // 路灯类型 1：道路灯 2：高杆路灯 3：太阳能路灯 4：景观灯 5:其它 0: 无
-console.log(svgicons)
+ 
 export default function Index() {
    const [treeId, setTreeId] = useState(null)
    const [lingts, setLights] = useState({})

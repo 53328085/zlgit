@@ -1,10 +1,10 @@
 import React, { useEffect, useState, useRef, memo, useMemo } from 'react'
 import { useSelector } from 'react-redux'
-
+ 
 import styled from 'styled-components'
 
 import { energyShare, Monitoring, EnergyPublicRuntime, DMAPartition, Apimethod } from '@api/api'
-import { selectProjectId, selectOneLevel } from '@redux/systemconfig.js'
+import { selectProjectId, selectOneLevel ,lightlevel} from '@redux/systemconfig.js'
 import { message, Input, Tree, Radio, Checkbox, Switch } from 'antd'
 
 import Titlelayout from "@com/titlelayout";
@@ -56,9 +56,13 @@ export default memo(function Index({ areaId, setTreeId, setLine, setNode, showli
   ...restprop }) {
   // datatype =0 或 =2
   const levelone = useSelector(selectOneLevel)
+  const lightone = useSelector(lightlevel)
+
+ 
   const [treeData, setTreeData] = useState([])
   const location = useLocation();
   const { state } = location
+ 
   const isshow = useMemo(() => {
     const { nested, primary } = state
     return ["report", "public"].includes(nested) && primary == "runtimeEnergy" || ["airConditioningOverview", "public"].includes(nested) && primary == "airConditioningManagement"
@@ -424,10 +428,11 @@ export default memo(function Index({ areaId, setTreeId, setLine, setNode, showli
 
 
   const leveloneTree = () => {
-    if (Number.isNaN(areaId) && Array.isArray(levelone)) {
-      setTreeData(levelone)
+     const levels= state?.primary==="lightManagement" ? lightone : levelone
+    if (Number.isNaN(areaId) && Array.isArray(levels)) {
+      setTreeData(levels)
 
-      let arr = levelone.map(l => l.id)
+      let arr = levels.map(l => l.id)
 
       treeIdRef.current = arr
       setIndeterminate(false)
@@ -445,7 +450,7 @@ export default memo(function Index({ areaId, setTreeId, setLine, setNode, showli
 
 
 
-  }, [areaId, levelone])
+  }, [areaId, levelone,lightone, state?.primary  ])
 
   const radiosty = {
     display: 'grid',

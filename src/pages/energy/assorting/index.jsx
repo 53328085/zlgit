@@ -2,11 +2,9 @@ import React, { useEffect, useMemo, useState } from 'react'
  
  
 import { message,Select } from 'antd'
-import { useSelector } from 'react-redux'
-import {useOutletContext} from 'react-router-dom' 
-import moment from 'moment'
  
-import {selectOneLevel} from '@redux/systemconfig.js'
+import {useOutletContext} from 'react-router-dom' 
+ 
 import Pagecount from "@com/pagecontent";
 import {getTime, isObject} from '@com/usehandler'
 import {Mainbox,CustTitle} from  "./style"

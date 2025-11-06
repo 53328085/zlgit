@@ -20,3 +20,9 @@ export const TitleBox = styled.div`
   justify-content: space-between;
   align-items: center;
 `;
+export const Mainwrap = styled.div` 
+ flex:1;
+ display: grid;
+ grid-template-rows: 48px 1fr;
+ row-gap: 16px;
+`

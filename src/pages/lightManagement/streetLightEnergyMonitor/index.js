@@ -1,5 +1,5 @@
 import React, { useMemo, useRef, useState, useCallback } from "react";
-import { Space, Form } from "antd";
+import { Space  } from "antd";
 import moment from "moment";
 import Pagecount from "@com/pagecontent";
 import { useNavigate, useLocation } from "react-router-dom";
@@ -7,24 +7,31 @@ import { useAntdTable, useRequest } from "ahooks";
  
 import UserTable from "@com/useTable";
 import Titlelayout from "@com/titlelayout";
-import { useOutletContext } from "react-router-dom";
+ 
 import {  ExportExcel, ChartList } from "@com/useButton";
 import { cols } from "./data";
  
 import { useMonitor, usePage } from "./api.js";
 import { getTime, isObject } from "@com/usehandler";
 import Ichart from "@com/useEcharts/Ichart";
-import { Tablewrap, Chartwrap,TitleBox } from "./style";
-import {Cspin} from "@com/comstyled"
-
+import { Tablewrap, Chartwrap,TitleBox ,Mainwrap} from "./style";
+import {Cspin } from "@com/comstyled"
+ 
+import LinghtSearch from "../comm"
 export default function Index() {
+  
   const [datatype, setDataType] = useState("chart");
+ 
+  
   const navigate = useNavigate();
   const { pathname, state } = useLocation();
   const tbref = useRef()
-  const { exparams } = useOutletContext();
+  
+  const [params, setParams]= useState({})
+  const {areaId, type, date, projectId} = params
+ // const { exparams } = useOutletContext();
  
-  const { areaId, projectId, type, date } = exparams || {};
+ // const { areaId,  type, date } = exparams || {};
   const pageTotal = useRef()
 
  const columns = useMemo(()=> {
@@ -48,7 +55,8 @@ export default function Index() {
   const getChart = async()=> {
     try {
     
-      
+      let fag = [areaId, projectId, type].some((v) => Number.isInteger(v)) && date;
+      if (!fag) return;
       let {success, data, errMsg} =  await useMonitor({areaId, projectId, type, date: getTime(date, type)})
       if(success &&  isObject(data.detail)) { 
          return data.detail
@@ -60,15 +68,9 @@ export default function Index() {
     }
 
   }
-  const {data, loading,run, error} = useRequest(getChart, {
+  const {data, loading} = useRequest(getChart, {
     refreshDeps: [areaId, projectId, type, date],
-   // manual: true,
-    refreshDepsAction: () => {
-      let fag = [areaId, projectId, type].some((v) => Number.isInteger(v)) && date;
-       if (!fag) return;
-       run(areaId, projectId, type, date)
-    },
-    throttleWait:1000,
+   // throttleWait:1000,
   })
  
  const chartoption = useMemo(()=> {
@@ -201,8 +203,11 @@ export default function Index() {
       </Space>
     </TitleBox>
   );
+ 
   return (
     <Pagecount pd="0">
+      <Mainwrap>
+        <LinghtSearch setParams={setParams} />      
       <Titlelayout layout="flex" title={title}>
         {datatype == "list" ? (
           <Tablewrap>
@@ -218,6 +223,7 @@ export default function Index() {
           </Chartwrap>
         )}
       </Titlelayout>
+      </Mainwrap>
     </Pagecount>
   );
 }

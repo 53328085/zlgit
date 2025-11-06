@@ -3079,8 +3079,8 @@ export class DistributionMeter {
   static QueryGXCWBaseInfo = () =>
     server.get(`/Distribution/DistributionMeter/QueryGXCWBaseInfo`);
 
-  static DeleteGXCWInfo = (id) =>
-    server.delete(`/Distribution/DistributionMeter/DeleteGXCWInfo?id=${id}`);
+  static DeleteGXCWInfo = (id,projectId) => //配置态光纤测温
+    server.delete(`/Distribution/DistributionMeter/DeleteGXCWInfo?id=${id}&projectId=${projectId}`);
 }
 
 export class DistributionRoomRuntime {

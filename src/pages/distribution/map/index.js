@@ -217,7 +217,26 @@ export default function Index() {
         console.log(mqttData)
       }
       for (let key in mqttData.Points) {
-        if ((key.indexOf('DI') != -1) && key != 'DlqOpen') {
+        if ((key.indexOf('fgStatus') != -1) && key != 'DlqOpen') {
+          if (window.topology.find(mqttData.SN + "_" + key)) {
+            if (Array.isArray(window.topology.find(mqttData.SN + "_" + key))) {
+              let arrlist = window.topology.find(mqttData.SN + "_" + key)
+              arrlist.map(item => {
+                if (item.icon == '' || item.icon == '') {
+                  item.icon = mqttData.Points[key].Value == 1 ? '' : '';
+                  item.fontColor = mqttData.Points[key].Value == 1 ? '#ff0000' : '#00ff00';
+                }
+              })
+
+            } else {
+              let topoData = window.topology.find(mqttData.SN + "_" + key)
+              if (topoData.icon == '' || topoData.icon == '') {
+                topoData.icon = mqttData.Points[key].Value == 1 ? '' : '';
+                topoData.fontColor = mqttData.Points[key].Value == 1 ? '#ff0000' : '#00ff00';
+              }
+            }
+          }
+        }else if ((key.indexOf('DI') != -1) && key != 'DlqOpen') {
           if (window.topology.find(mqttData.SN + "_" + key)) {
             if (Array.isArray(window.topology.find(mqttData.SN + "_" + key))) {
               let arrlist = window.topology.find(mqttData.SN + "_" + key)
@@ -566,7 +585,7 @@ export default function Index() {
          {state.chartList?.length && <ChartItem laptop={laptop}>
 
 {state.chartList.map((item, index) => {
-  return <CButton chck={state.activeChart == item.id } wh="112px"   key={index} onClick={() => changeChart(item.id)}>{item.name}</CButton>
+  return <CButton chck={state.activeChart == item.id } style={{minWidth: "120px"}}   key={index} onClick={() => changeChart(item.id)}>{item.name}</CButton>
 })}
 
 {(state.chartList?.length > 0) && <CButton chck="y" style={{ marginLeft: "auto" }} onClick={fullscreen}>{isf ? '退出全屏' : '全屏显示'}</CButton>}

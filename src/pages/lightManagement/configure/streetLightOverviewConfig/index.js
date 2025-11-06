@@ -39,11 +39,11 @@ export default function Index() {
    if(page) {
       return {
         "012001": {
-           wpx: 740,
-           hpx: 737
+           wpx: 716,
+           hpx: 738
         },
         "012007": {
-         wpx:1137,
+         wpx:1138,
          hpx:624
         }
       }[page]

@@ -11,10 +11,14 @@ export const Ctag = styled(Tag)`
 `
 
 export const Mainbox = styled.div`
- flex:1;
+
+  flex:1;
   display: grid;
+  grid-template-rows: 48px 1fr;
+  row-gap: 16px;
+ .maincontent { 
  grid-template-columns: minmax(1150px,auto)  minmax(514px, auto) ;
- 
+  display: grid;
   gap:16px;
   .leftlayout {
    
@@ -134,7 +138,7 @@ export const Mainbox = styled.div`
       }
     }
   }
-  
+}
 
 `
 export const TitP = styled.div`

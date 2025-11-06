@@ -97,6 +97,10 @@ export const Power= styled.div`
             color:rgba(48, 49, 51, 1); 
             font-weight: bold;
             column-gap: 8px;
+            .float{
+                display: inline-flex;
+                min-width: 60px;
+            }
         }
     }
     .active.powerDown  {
