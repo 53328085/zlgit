@@ -29,7 +29,7 @@ export const Mainwrap = styled.div`
      column-gap: 16px;
      margin-bottom: 16px;
      padding: 10px 16px 16px 16px;
-     border: 1px solid #d7d7d7;
+     border: 1px solid #DCDFE6;
      border-radius: 8px;
      .scheme_left{
    .desc {
@@ -48,7 +48,7 @@ export const Mainwrap = styled.div`
            justify-content: space-between;
            align-items: center;
            height: 34px;
-           border-bottom: 1px solid #CCCCCC;
+           border-bottom: 1px solid #DCDFE6;
            font-weight: 600;
            font-size: 15px;
            color: #303133;

@@ -17,13 +17,6 @@ export const incontrol = [
   { label: "成功", value: 1 },
   { label: "失败", value: 2 },
 ];
-
-export const Init_Value = {
-  dtype: 1,
-  date: moment(),
-};
-
-
 //空调手动控制记录表格头部
 export const AirManualControlTableColumns = [
   {
@@ -66,6 +59,7 @@ export const AirManualControlTableColumns = [
     title: "当前室内温度（℃）",
     dataIndex: "ambientTemp",
     key: "ambientTemp",
+    width: "180px"
   },
   {
     title: "操作人",
@@ -84,7 +78,7 @@ export const AirManualControlTableColumns = [
     title: "操作时间",
     dataIndex: "createTime",
     key: "createTime",
-    width: "200px"
+    width: "180px"
   },
 ];
 
@@ -131,6 +125,7 @@ export const AirAutomaticControlTableColumns =
       title: "当前室内温度（℃）",
       dataIndex: "ambientTemp",
       key: "ambientTemp",
+      width: "180px"
     },
     {
       title: "空调方案",
@@ -154,7 +149,7 @@ export const AirAutomaticControlTableColumns =
       title: "操作时间",
       dataIndex: "createTime",
       key: "createTime",
-      width: "200px"
+      width: "180px"
     },
   ];
 
