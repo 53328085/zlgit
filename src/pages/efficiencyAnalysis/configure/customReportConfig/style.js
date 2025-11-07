@@ -6,7 +6,12 @@ export  const Mainwrap = styled.div`
    grid-template-columns: 288px minmax(1382px, 1fr);
    grid-template-rows: minmax(817px, 1fr);
    column-gap: 16px;
-   
+   .listItem {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex:1;
+   }
    .left {
      background-color: #fff;
      height: 817px;
@@ -21,8 +26,8 @@ export  const Mainwrap = styled.div`
      overflow: auto;
    }
    .right {
-     display: flex; 
-     flex-direction: column;
+     display: grid; 
+     grid-template-rows: 286px 1fr 38px;
      flex:1;
      row-gap: 16px;
      .outtbwrap{

@@ -15,17 +15,15 @@ import { ExportExcel, CustButton } from "@com/useButton";
 import { Contentbox } from "./style";
 import { useQueryConsumeTime } from "./api";
 import { cols } from "./data";
- 
+import LinghtSearch from "../comm"
 export default function Index() {
-  const [value, setvalue] = useState("0");
+  
   const [line, setLine] = useState(0);
   const [treeId, setTreeId] = useState();
   const [total, setTotal] = useState(0);
   const [columns, setColumns] = useState(cols);
-
-  console.log("columns", columns)
-  let { exparams, setCustview } = useOutletContext();
-  let { areaId, projectId, type, date } = exparams;
+  const [params, setParams]= useState({})
+  const {areaId, type, date, projectId} = params
   const tbref = useRef();
   const sheetName = useMemo(() => {
     let filename = "数据报表";
@@ -53,7 +51,7 @@ export default function Index() {
         3: "year",
       }[type];
       const format = "YYYY-MM-DD";
-      console.log(date);
+      
 
       let body = {
         projectId,
@@ -102,13 +100,7 @@ export default function Index() {
   const { tableProps } = useAntdTable(getTableData, {
     refreshDeps: [projectId, areaId, type, date, treeId],
   });
-  const CustView = useMemo(() => {
-    return (
-      <Space size={16}>
-        <ExportExcel tb={tbref} />
-      </Space>
-    );
-  }, [value]);
+ 
   const onExport = useCallback(() => {
     return getTableData({
       current: 1,
@@ -116,21 +108,17 @@ export default function Index() {
       areaId,
       projectId,
       type,
-      date,
-      energytype,
+      date, 
       treeId,
       line,
     });
   }, [total, type, date, areaId, treeId, , line, sheetName]);
-  useEffect(() => {
-    setCustview(CustView);
-    return () => {
-      setCustview(undefined);
-    };
-  }, [value]);
+ 
   return (
-    <Pagecount showSearch={false} custserach={true}>
+    <Pagecount  pd="0" bgcolor="none">
       <Contentbox>
+      <LinghtSearch setParams={setParams} tbref={tbref} allselect={false}  /> 
+        <div className="mainwrap">
         <UserTree
           areaId={areaId}
           setTreeId={setTreeId}
@@ -153,6 +141,7 @@ export default function Index() {
               }}
             ></UserTable>
           </div>
+        </div>
         </div>
       </Contentbox>
     </Pagecount>

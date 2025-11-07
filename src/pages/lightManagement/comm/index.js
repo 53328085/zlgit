@@ -1,28 +1,42 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useMemo } from "react";
 import { Space, Form, Select, Input } from "antd";
 import { ComDatePicker } from "@com/comstyled";
 import {useSelector} from "react-redux"
 import moment from "moment";
 import { Cform, AreaSelect } from "@com/useSerach/comhead";
-import { selectProjectId, levelDefaultLabel } from "@redux/systemconfig.js";
+import { selectProjectId, levelDefaultLabel,lightlevel } from "@redux/systemconfig.js";
 import { publicdateType } from "@com/useSerach/data.js";
-export default function Index({ setParams }) {
+import {  ExportExcel } from "@com/useButton";
+export default function Index({ setParams,allselect=true, tbref }) {
   const varlabel = useSelector(levelDefaultLabel);
   const projectId = useSelector(selectProjectId);
+    const lightone = useSelector(lightlevel)
+    console.log(lightone)
   const [form] = Form.useForm();
-  const initialValues = {
-    projectId,
-    areaId: 0,
-    type: 1,
-    date: moment(),
-  };
+  const initialValues =useMemo(() => {
+    const params =  {
+        projectId,
+        areaId: allselect ? 0 : lightone?.[0]?.id ,
+        type: 1,
+        date: moment(),
+      };
+    if(typeof setParams === 'function'){
+        setParams(params)
+    }
+    return params
+},[allselect,projectId,lightone,setParams]) 
   const changedate = () => {
     form.setFieldValue("date", moment());
   };
-  useEffect(() => {
-    setParams?.(initialValues);
-  }, []);
-  const isall = { name: `${varlabel}(全部)`, id: 0, levelName: varlabel };
+ 
+  const isall =useMemo(()=> {
+    if(varlabel && allselect) {
+       return { name: `${varlabel}(全部)`, id: 0, levelName: varlabel };
+    }else{
+      return null;
+    }
+
+  }, [allselect, varlabel]) 
   return (
     <Cform
       form={form}
@@ -51,6 +65,7 @@ export default function Index({ setParams }) {
             );
           }}
         </Form.Item>
+        <ExportExcel tb={tbref}></ExportExcel>
       </Space>
       <Form.Item noStyle name="projectId">
         <Input hidden></Input>

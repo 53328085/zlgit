@@ -44,9 +44,9 @@ export const cols = [
   
 ];
 export const mockopt=[
-  "空压机",
-  "制冷机",
-  "空调"
+  "空压机报表",
+  "制冷机报表",
+  "空调报表"
 ]
 export const plainOptions=[
     {

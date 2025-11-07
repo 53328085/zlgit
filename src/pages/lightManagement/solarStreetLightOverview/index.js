@@ -51,7 +51,7 @@ export default function Index() {
       <Mainbox>
         <Cform form={form} layout="inline">
           <Form.Item label={varlabel} name="areaId" initialValue={areaId}>
-             <AreaSelect   isall={isall} onChange={setAreaId} />
+             <AreaSelect  isall={isall}  onChange={setAreaId} />
           </Form.Item>
         </Cform>
       <div className="maincontent">

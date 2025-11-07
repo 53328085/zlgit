@@ -11,7 +11,7 @@ import {hextodec} from '@com/usehandler'
 import { themeColor } from "@redux/systemconfig";
 import GouIcon from '@imgs/gou.png'
 import CModal from "@com/useModal";
-import { range } from "lodash";
+ 
 const {Link} = Typography
 // 按钮圆角一般6px,  高度28px及一下4px 陈舒映
 
