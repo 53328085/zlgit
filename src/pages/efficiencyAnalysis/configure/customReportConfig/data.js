@@ -24,23 +24,6 @@ export const cols = [
     key: "areaName",
     fixed: "left"
   },
- 
-  {
-    title: "KPI（m³/kWh）",
-    dataIndex: "no",
-    key: "no",
-  },
-  {
-    title: "用电量（kWh）",
-    dataIndex: "mSn",
-    key: "mSn",
-  },
-
-  {
-    title: "低温端-出水温度（℃）",
-    dataIndex: "address",
-    key: "address",
-  },
   
 ];
 export const mockopt=[
@@ -85,3 +68,26 @@ export const rules = [
   },
 ];
 export const w255 = { width: "255px" };
+export const ckoptions =[
+  {
+    label: "KPI（m³/kWh）",
+    value: "1",
+  },
+  {
+    label: "用电量（kWh）",
+    value: "2",
+  },
+  {
+    label: "低温端-出水温度（℃）",
+    value: "3",
+  },
+  {
+    label: "kpi2（-）",
+    value: "4",
+  },
+  {
+    label: "低温端-出水温度（℃",
+    value: "5",
+  },
+ 
+]

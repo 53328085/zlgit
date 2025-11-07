@@ -30,6 +30,24 @@ export  const Mainwrap = styled.div`
      grid-template-rows: 286px 1fr 38px;
      flex:1;
      row-gap: 16px;
+     .ant-form-item {
+       margin-bottom: 16px;
+     }
+     .formbox {
+      background-color: #fff;
+      padding: 16px;
+      .innerwrap {
+        padding: 16px;
+        
+        background: rgba(229,236,245,0.5);
+        .list {
+          padding:  14px;
+          height: 82px;
+          overflow: auto;
+          border: 1px solid #DCDFE6;
+        }
+      }
+     }
      .outtbwrap{
        flex:1;
        position: relative;
@@ -39,7 +57,11 @@ export  const Mainwrap = styled.div`
        }
 
      }
-     
+    .bottom {
+      display: flex;
+      justify-content: flex-end;
+      align-items: center;
+    }
    }
 }
 `

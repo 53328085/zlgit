@@ -9,7 +9,7 @@ import Titlelayout from "@com/titlelayout";
 import {AreaSelect, Cform} from "@com/useSerach/comhead.js"
 import {CustButtonT,CustButton, ExportExcel} from "@com/useButton" 
 import CModal from '@com/useModal'
-import { cols, mockopt,plainOptions } from "./data";
+import { cols, mockopt,plainOptions ,ckoptions} from "./data";
 
 import { useList, useDetail } from "./api.js";
 
@@ -37,6 +37,8 @@ export default function Index() {
   const [indeterminate, setIndeterminate] = useState(false);
   const [checkAll, setCheckAll] = useState(false);
   const [reportName, setReportName]=useState("")
+   const indete= Form.useWatch('indeterminate', form)
+   console.log(indete,"indete")
   const onCheckAllChange = (e) => {
     setCheckedList(e.target.checked ? plainOptions.map(p=>p.value) : []);
     setIndeterminate(false);
@@ -169,6 +171,32 @@ const ondel=(item)=> {
 const onOkDel=()=>{ 
   delRef.current.onCancel()
 }
+const onCkChange =(checkedList) => {
+  console.log(checkedList)
+  const indeterminate = !!checkedList.length && checkedList.length < ckoptions.length;
+  const checkAll = checkedList.length === ckoptions.length;
+  
+  // 更新全选复选框的状态
+  form.setFieldsValue({
+    all: checkAll,
+    indeterminate: indeterminate,
+    list: checkedList
+  });
+};
+const allchange= (e) => {
+  try {
+    const checked = e.target.checked;
+    console.log("checked",checked)
+    form.setFieldsValue({
+      list: checked ? ckoptions.map(c=>c.value) : [],
+      all: checked,
+      indeterminate: false
+    });
+  } catch (error) {
+    console.log(error);
+  }
+
+};
  const Ctitle = (<TitleBox>
   <span>报表列表</span>
   <Typography.Link onClick={onAdd}><PlusCircleOutlined style={{marginRight: "8px"}} />添加</Typography.Link>
@@ -208,7 +236,10 @@ const onOkDel=()=>{
         </Titlelayout>
          
         <div className="right">
-          <Form form={form}  >
+          <div className="formbox">
+          <Form form={form}  initialValues={{
+            indeterminate:false
+          }}>
             <Space size={16}>
                <Form.Item label="报表名称"  name="reportName" rules={[
                 {
@@ -248,10 +279,27 @@ const onOkDel=()=>{
                  <Input style={{width: "200px"}}></Input> 
                </Form.Item>
             </Space>
-            <Form.Item label="设备选择">
-
-            </Form.Item>
+          <div className="innerwrap">
+            <Form.Item label="设备选择" name="devices" rules={[{
+              required: true,
+              message: '请选择设备'
+            }]}>
+                 <Input style={{width: "200px"}}></Input> 
+            </Form.Item> 
+                <Form.Item name="all" valuePropName="checked">
+                  <Checkbox onChange={allchange} indeterminate={Form.useWatch('indeterminate', form)}>全部</Checkbox>
+                </Form.Item>
+                <div className="list">
+                <Form.Item name="list">
+                  <Checkbox.Group options={ckoptions} onChange={onCkChange}></Checkbox.Group>
+                </Form.Item>
+                <Form.Item name="indeterminate" noStyle>
+        <Input hidden></Input>
+      </Form.Item>
+                </div>
+            </div>
           </Form>
+          </div>
           <Titlelayout layout="flex" title={Dtitle} dr="column"> 
               <div className="outtbwrap">
                 <div className="inerwrap">
@@ -259,6 +307,9 @@ const onOkDel=()=>{
                 </div>
               </div>
           </Titlelayout>
+          <div className="bottom">
+             <Space size={16}><CustButtonT text="rest" type="default" /><CustButtonT text="save" /></Space>
+          </div>
         </div>
            <CModal title="设备类型选择"   onOk={onOk}   width={394} mold="cust"    ref={addRef} onCancel={onCancel} >
                <Groupwrap>
