@@ -185,7 +185,7 @@ export default function Index() {
     let HMIDevices = [];
     for (let i = 0; i < devices.length; i++) {
       HMIDevices.push({
-        sn: devices[i],
+        sn: devices[i].toString(),
         points: [],
       });
       for (let j = 0; j < penArr.length; j++) {

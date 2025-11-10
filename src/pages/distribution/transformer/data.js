@@ -1,3 +1,5 @@
+import { useMemo } from "react"
+import moment from "moment"
 export const tabs=[
     {key:"1",label:'负载率分析'},
     {key:"2",label:'数据监测'},
@@ -129,3 +131,76 @@ export const opts = [
      },
   
 ]
+export function useChartopt(data){
+ const datas = Array.isArray(data?.[0]?.data) ? data?.[0]?.data : []
+
+ 
+ const havedata=  Array.isArray(datas) && datas?.length>0
+ const len =  Array.isArray(datas) ? datas?.length : 0
+ const dimensions=datas?.map((item)=>item.point) || []
+ 
+ const  source = []
+ datas.forEach((item,idex)=> {
+  if(idex===0){
+    let time = item?.data?.map(t=>t.time) 
+     source.push(time)
+     
+  } 
+  let data = item?.data?.map(t=>t.value) 
+    source.push(data)
+ }) 
+ 
+ const chartOpt=  useMemo(()=>{  
+      return {
+        series: Array(len).fill({ type: "line", seriesLayoutBy: 'row'}),
+        title: {
+          text: '数据趋势'
+        },
+        tooltip: {
+          trigger: 'axis'
+        },
+        legend: {
+         // top:'40px', 
+        },
+        grid: {
+          left: '1%',
+          right: '1%',
+          bottom: '3%',
+          top:'40px',
+          containLabel: true
+        },
+        //保存图片
+        toolbox: {
+          // feature: {
+          //   saveAsImage: {}
+          // }
+        },
+        xAxis: {
+          axisLine:{
+            lineStyle:{
+              color:"#909399",
+            }
+          },
+          axisLabel:{
+            color:"#303133",
+              formatter: (value) => {
+                                return moment(value).format('HH:mm')
+              }
+          },
+        },
+        dataZoom:{
+          type: 'inside', 
+        }, 
+        dataset: {
+          dimensions: havedata?  [{
+            name: 'time', displayName: "时间",
+          },...dimensions] : [],
+          source,
+          sourceHeader: false,
+        },
+      }
+
+     }, [source,dimensions,havedata,len])
+   
+return chartOpt
+}

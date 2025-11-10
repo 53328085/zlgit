@@ -14,77 +14,31 @@ import  imgurl from '@imgs'
 import moment from 'moment'
 import {isObject} from "@com/usehandler" 
 import Titlelayout from '@com/titlelayout' 
-import Ichart from '@com/useEcharts/Ichart';
+import {ComDatePicker} from "@com/comstyled"
 import { cloneDeep } from 'lodash';
-import {tabs,opts,columns } from './data' 
+import {tabs,opts,columns,useChartopt } from './data' 
 import {MainDiv} from './style'
 import Load from './load'
-const chartOpt= {
-  title: {
-    // text: 'Stacked Line'
-  },
-  tooltip: {
-    trigger: 'axis'
-  },
-  legend: {
-    top:'2%',
-    icon:'roundRect',
-    itemHeight:2,
-    itemWidth:16,
-    data: ['Email', 'Union Ads', 'Video Ads', 'Direct', 'Search Engine']
-  },
-  grid: {
-    left: '1%',
-    right: '1%',
-    bottom: '3%',
-    top:'8%',
-    containLabel: true
-  },
-  //保存图片
-  toolbox: {
-    // feature: {
-    //   saveAsImage: {}
-    // }
-  },
-  xAxis: {
-    axisLine:{
-      lineStyle:{
-        color:"#D8D8D8",
-      }
-    },
-    axisLabel:{
-      color:"#333"
-    },
-  },
+import Ichart from '@com/useEcharts/Ichart';
  
-  dataZoom:{
-    type: 'inside',
-    start:'50',
-    end:'100',
-  },
-  yAxis: {
-    type: 'value'
-  },
-  series: [
-   
-  ]
-};
 export default function Index() {
   const projectId = useSelector(state => state.system.menus.projectId)  
-  const chartRef =useRef()
+ 
   const roomId = useSelector(selectcurlRommid)
   const siteData = useSelector(site)
-  console.log("siteData",siteData)
+  
   const [pattern,setPattern]=useState(1)
   
  
   const [value, setvalue] =useState("1")
   const [tabledata,setTableData]=useState([])
   const [type,setType] =useState(1)
-  const [timeRanger,setTimeRanger] = useState([moment().subtract(6,'day'), moment()])
+//  const [timeRanger,setTimeRanger] = useState([moment().subtract(6,'day'), moment()])
+const [timeRanger,setTimeRanger] = useState(moment())
   const [header,setHeader] = useState([])
   const [tabletrend,setTabletrend] = useState([])
   const [disableDate,setDisableDate] = useState([])
+  const [loading, setLoading] = useState(false)
   const chartsRef =useRef()
   const tableRef=useRef()
   const initchartRef =useRef()
@@ -93,8 +47,14 @@ export default function Index() {
   })
  const [lastSampleTime, setLastSampleTime] =useState(null)
 
- 
-  const changeRadio=(e)=>{
+ const [chartdata, setChartData] = useState([])
+
+ const chartOpt = useChartopt(chartdata)
+
+
+
+
+ const changeRadio=(e)=>{
     setPattern(e.target.value)
   }
   const changeTime=(time)=>{
@@ -179,16 +139,13 @@ useRequest(RuntimePoints, {
     if(!siteData?.sn) return
     try{
       let startTime ,endTime;
-      if(Array.isArray(timeRanger)&&timeRanger.length>0){
-        startTime =  moment(timeRanger[0]).format('YYYY-MM-DD 00:00:00')
-        endTime=moment(timeRanger[1]).format('YYYY-MM-DD 23:59:59')
+      if(timeRanger){
+        startTime =  moment(timeRanger).startOf().format('YYYY-MM-DD 00:00:00')
+        endTime=moment(timeRanger).format('YYYY-MM-DD HH:mm:ss')
       }else{
         message.error('请选择日期！')
       }
-     
-     
-   
-   
+    
     let params = {
       projectId,
       sn:siteData?.sn,
@@ -196,55 +153,26 @@ useRequest(RuntimePoints, {
       start:startTime,
       end:endTime
     }
-    const res = await DistributionRoomRuntime.HistoryTrends(params)
-    if(res.success){
-      if(res.data&&res.data.length>0){
-        chartsRef.current = res.data[0]
-        if(res.data[0]['data']){
-          const xAxis = res.data[0]['data'][0]['data'].map(it=>it.time)
-          const sdata = res.data[0]['data'].map(it=>{
-            const data = it.data.map(item=>item.value)
-            return {
-                name: it.point,
-                type: 'line',
-              //  stack: 'Total',
-                stack: null,
-                lineStyle:{
-                  width:1
-                },
-                symbol:'circle',
-                symbolSize: 6,
-                data,
-                areaStyle: null,
-            }
-          })
-          chartOpt.xAxis.data =xAxis
-          chartOpt.series=sdata
-          initchartRef.current = drawEcharts(chartRef.current,{...chartOpt,type:2})
-        }else{
-          chartOpt.xAxis.data =[]
-          chartOpt.series=[]
-          initchartRef.current = drawEcharts(chartRef.current,{...chartOpt,type:2})
-        }
-       
-      }else{
-          chartOpt.xAxis.data =[]
-          chartOpt.series=[]
-          initchartRef.current= drawEcharts(chartRef.current,{...chartOpt,type:2})
-      }
+     
+    const {success,errMsg,data} = await DistributionRoomRuntime.HistoryTrends(params)
+    if(success && Array.isArray(data) && data.length) {
+      setChartData(data)
     }else{
-      message.error(res.errMsg)
+       setChartData([])
     }
-    }catch(e){console.log(e)}
-    
   }
+    catch(e){
+      console.log(e)
+    }  
+}
   //数据趋势（table）
   const HistoryTable = async () => {
     if(!siteData?.sn) return
     try {
+      setLoading(true)
       let startTime, endTime;
-      startTime = moment(timeRanger[0]).format('YYYY-MM-DD 00:00:00')
-      endTime = moment(timeRanger[1]).format('YYYY-MM-DD 23:59:59')
+      startTime = moment(timeRanger).startOf().format('YYYY-MM-DD 00:00:00')
+      endTime = moment(timeRanger).format('YYYY-MM-DD HH:mm:ss')
       console.log(startTime)
       let params = {
         projectId,
@@ -264,10 +192,13 @@ useRequest(RuntimePoints, {
         })
         setHeader(header)
         setTabletrend(res.data.data)
+        setLoading(false)
       }else{
         message.error(res.errMsg)
+        setLoading(false)
       }
     } catch (error) {
+      setLoading(false)
       console.log(error)
     }
   }
@@ -290,16 +221,16 @@ useRequest(RuntimePoints, {
       TransformerOne()
     }
   },[roomId])
-  useEffect(()=>{
-    chartRef.current&& drawEcharts(chartRef.current,{...chartOpt,type:2})
-  },[tabs,pattern])
+ 
+
+
 
   useEffect(()=>{
-    if(isObject(siteData) && siteData.sn){
+    if(isObject(siteData) && siteData.sn && value=="2" && timeRanger){
       pattern===1&& HistoryTrends()
       pattern===2&& HistoryTable()
     }
-  },[type,pattern, siteData])
+  },[type,pattern, siteData, value,timeRanger])
 
   let dataProps = {
     value,
@@ -317,7 +248,7 @@ useRequest(RuntimePoints, {
              <div className='trancss'>
              <TranCard  site={siteData} lastSampleTime={lastSampleTime} />
              <Titlelayout title='实时数据'>
-             <UseTable columns={columns} bordered   dataSource={tabledata}></UseTable>
+             <UseTable columns={columns} bordered   dataSource={tabledata} size="middle"></UseTable>
              </Titlelayout>
              </div>
              <CustContext.Provider value={dataProps} >
@@ -334,16 +265,24 @@ useRequest(RuntimePoints, {
                 onChange={setType}></Select>:null
             }
           
-              <DatePicker.RangePicker
+            {/*   <DatePicker.RangePicker
               value={timeRanger} 
               format="YYYY-MM-DD" 
               onChange={changeTime}
               onCalendarChange={(time)=>{setDisableDate(time)}}
               onOpenChange={onOpenChange}
               disabledDate={disabledDate}
-              ></DatePicker.RangePicker>
-              <Button onClick={search}>查询</Button> 
-              <Button onClick={exportData}>导出</Button>
+              ></DatePicker.RangePicker> */}
+              <ComDatePicker
+              value={timeRanger} 
+              format="YYYY-MM-DD" 
+              onChange={changeTime}
+            //  onCalendarChange={(time)=>{setDisableDate(time)}}
+             // onOpenChange={onOpenChange}
+            //  disabledDate={disabledDate}
+              ></ComDatePicker>
+             {/*  <Button onClick={search}>查询</Button>  */}
+              <Button onClick={exportData} disabled={pattern!=2 } >导出</Button>
                   <Radio.Group defaultValue={pattern}   buttonStyle="solid" onChange={changeRadio}>
                     <Radio.Button value={1}>趋势模式</Radio.Button>
                     <Radio.Button value={2}>列表模式</Radio.Button>
@@ -352,7 +291,8 @@ useRequest(RuntimePoints, {
              </div>} layout="flex" pv="0" bordered="n">
               <div style={{flex: 1, paddingTop: "16px", display: 'flex'}}>
                {
-                 pattern===1?(<div ref={chartRef} style={{flex: 1}}>
+                 pattern===1?(<div   style={{flex: 1, display: 'flex'}}>
+                 <Ichart {...chartOpt} /> 
                  </div>):
                  ( <UseTable 
                   columns={header} 
@@ -362,11 +302,12 @@ useRequest(RuntimePoints, {
                     y: 500,
                   }}
                   ref={tableRef}
+                  loading={loading}
                   ></UseTable>)
                }
                </div>
              </Titlelayout>
-             : <Load sn={siteData?.sn} projectId={projectId}></Load>
+             : <Load sn={siteData?.sn} projectId={projectId}  ></Load>
              }
              </Pagecount>
              </CustContext.Provider>

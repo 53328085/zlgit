@@ -308,7 +308,7 @@ const allchange= (e) => {
               </div>
           </Titlelayout>
           <div className="bottom">
-             <Space size={16}><CustButtonT text="rest" type="default" /><CustButtonT text="save" /></Space>
+             <Space size={16}><CustButtonT text="reset" type="default" /><CustButtonT text="save" /></Space>
           </div>
         </div>
            <CModal title="设备类型选择"   onOk={onOk}   width={394} mold="cust"    ref={addRef} onCancel={onCancel} >

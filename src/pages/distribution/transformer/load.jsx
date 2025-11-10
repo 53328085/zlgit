@@ -1,31 +1,41 @@
-import React, {useEffect, useMemo,useState} from 'react'
+import React, {useEffect, useMemo,useState, useContext} from 'react'
 import {Badge} from 'antd'
 import {Loadwrapper, Item} from './style'
 import{useTransformerLoadRate} from './api'
 import Ichart from '@com/useEcharts/Ichart';
 import {isObject} from "@com/usehandler"
 import moment from "moment";
-export default function Index({sn, projectId}) {
+import CustContext from '@com/content'
+import {Cspin} from "@com/comstyled"
+export default function Index({sn, projectId }) {
+
+  const {value} = useContext(CustContext)
+  console.log('value',value)
   const [datas, setDatas,] = useState({})
+  const [spinning, setSpinning]=useState(false)
   const getData =async ()=> {
     try{
+      setSpinning(true)
       const {success, data} = await  useTransformerLoadRate({sn, projectId})
       if(success && isObject(data)) {
         setDatas(data)
+        setSpinning(false)
       }else {
         setDatas({})
+        setSpinning(false)
       }
     } catch (error) {
+      setSpinning(false)
       console.log(error)
     }
    
   } 
   useEffect(()=>{
-    if(sn && Number.isInteger(projectId)) {
+    if(sn && Number.isInteger(projectId) ) {
         getData()
     }
    
-  },[sn, projectId])
+  },[sn, projectId ])
   const goption = useMemo(()=>{
     return {
         type:5,
@@ -146,7 +156,9 @@ export default function Index({sn, projectId}) {
       };
   },[datas])
   return (
+    <Cspin spinning={spinning} tip="数据加载中">
     <Loadwrapper>
+     
         <div className='leftwrap'>
          <Badge status='processing' text="变压器负载率"></Badge>
          <div className="chart">
@@ -179,6 +191,8 @@ export default function Index({sn, projectId}) {
            <Ichart   {...lineopt} /> 
            </div>
         </div>
+       
     </Loadwrapper>
+    </Cspin>
   )
 }

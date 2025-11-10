@@ -35,8 +35,7 @@ export default   function Index(props) {
   const curid = useSelector(selectcurlRommid)
   const curidl = useSelector(selectcurlRommidl)
   const {laptop} = useSelector(adaptation)
-  //const roomid =  isline ? curidl : curid
-  const [RommId, setRoomId] = useState(curid)
+ 
   let { showRoom = true, showArea=true, setDateVal, custview, deviceStyle,
     setDeviceStyle, showSite=false} = props
   const dispacth = useDispatch();
@@ -46,7 +45,7 @@ export default   function Index(props) {
 
   const levelName = useSelector(levelDefaultLabel) || '园区'
   const [sites, setSites] = useState([])
- // const [roomlist, setRoomList] = useState([])
+  
  const [deviceopt,defaultdeviceStyle] = useMemo(()=> {
   if(!Array.isArray(oneLevel) || (Array.isArray(oneLevel) && oneLevel.length === 0)) {
     return [[], null]
@@ -102,7 +101,7 @@ export default   function Index(props) {
      
   }
 
-  const getOnelevel = async () => {
+  const getOnelevel = async () => {// 园区
   
     try {
       let { success, data, errMsg } = await Area.AreaList(projectId)
@@ -115,12 +114,17 @@ export default   function Index(props) {
         } else {
           form.setFieldsValue({
             areaId: null,
-            roomId: null
+            roomId: null,
+            site: null,
+
           })
           setOnelevel([])
         //  setRoomList([])
           dispacth(setCurrentlevel({}))
           dispacth(getRoomId([]))
+          setSites([])
+   
+          dispacth(getSite(null))
           message.warning("没有设置园区")
         }
       } else {
@@ -128,10 +132,14 @@ export default   function Index(props) {
         dispacth(setCurrentlevel({}))
         form.setFieldsValue({
           areaId: null,
-          roomId: null
+          roomId: null,
+          site: null,
         })
         dispacth(getRoomId([]))
         setOnelevel([])
+        setSites([])
+   
+        dispacth(getSite(null))
      //   setRoomList([])
       }
     } catch (error) {
@@ -139,7 +147,7 @@ export default   function Index(props) {
     }
 
   }
-  const getRoomList = async (id) => {
+  const getRoomList = async (id) => { // 房间
     const {success, data, errMsg} = await distributionRoom.RoomList(projectId, id)
     if (success && Array.isArray(data) && data.length > 0) {        
         dispacth(getRoomId(data))
@@ -149,8 +157,14 @@ export default   function Index(props) {
         getSites(data[0].id)
     }else {
       dispacth(getRoomId([]))
-      form.setFieldValue('roomId', null)
+      form.setFieldsValue({
+        roomId: null,
+        site: null,
+      })
       dispacth(getcurlRommid(null))
+      setSites([])
+   
+      dispacth(getSite(null))
       if (!success) {
         message.warning(errMsg || "数据出错")
       } else {
