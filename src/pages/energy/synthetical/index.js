@@ -650,7 +650,7 @@ export default function Index() {
     } else {
       handler = ['', energy, cost][view][1]
     }
-    console.log(handler, tabvalue)
+  //  console.log(handler, tabvalue)
     try {
       let { success, data } = await EnergyComprehensive[handler](querys, id)
 
@@ -668,6 +668,7 @@ export default function Index() {
     setOverview([])
   }
   useEffect(() => {
+    console.log("shiftNo",shiftNo)
     let f = [tabvalue, areaId, dateType, shiftNo, view, projectId].every(v => Number.isInteger(v)) && date
     if (f) {
       getData({ areaId, date, dateType, shiftNo, view, projectId })
