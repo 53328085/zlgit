@@ -47,6 +47,27 @@ export const Point = styled.div`
     
   }
 `
+export const AirPoint = styled.div`
+  &&{
+    min-width: 40px;
+    min-height: 30px;
+    background: rgba(5,192,110,0.8);
+    border-radius: 4px;
+    position: absolute;
+    left: ${props => props.left+'px'};
+    top: ${props=> props.top+'px'};
+  //  transform: translate(-50%, -50%); 
+    font-weight: 600;
+    font-size: 20px;
+    color: #FFFFFF;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+ 
+    
+  }
+`
 export const Ipticon = styled.span`
   display: inline-block;
   width: 32px;

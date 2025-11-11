@@ -5,94 +5,131 @@ import {useSelector} from "react-redux";
 import {CustButtonT, CustButton} from '@com/useButton'
 import Cupload from "@com/useUpload.js" 
 import {selectProjectId} from '@redux/systemconfig.js'
-import { message, Form, Input, InputNumber, Space, Select, Divider, Button, Checkbox,   Alert} from 'antd';
-import {UpdateEnergyImage } from '@api/api.js'
-import {Cspin,Point} from "@com/comstyled"
+import { message, Form, Input, InputNumber, Space, Select, Divider, Button, Checkbox,TreeSelect, Tag,  Alert} from 'antd';
+import {UpdateEnergyImage, } from '@api/api.js'
+import CustContext from '@com/content.js'
+import {Cspin,AirPoint} from "@com/comstyled"
 import {isObject} from '@com/usehandler'
-
+import Pagecount from '@com/pagecontent' 
 import { Main} from "./style"
-import {useList,useSetStreetLightImageLocation} from './api'
-const options = [
-   {
-      label: "路灯总览", value: "012001"
-   },
-   {
-      label: "太阳能路灯总览", value: "012007"
-   }
-]
+import {useAreas,useList, useSetAirConditionerImageLocation,useQuerySpaceTrees} from './api'
+ 
 
-
+ 
 export default function Index() {
    const [form] = Form.useForm();
-   const [lform] = Form.useForm()
+ 
    const projectId = useSelector(selectProjectId)  
-   const [ lightImage, setLlightImage]= useState({})
+   const [ airConditioner, setAirConditioner]= useState({})
    const [loading, setLoading] = useState(false)
    const [spinning, setSpinning] = useState(false)
-   const [area, setArea] = useState([])
+   const [areas, setAreas] = useState([])
    const [curarea, setCurarea] = useState(null)
    const [list, setList] = useState([])
-
-  const page = Form.useWatch("desc", lform)  // 740*737， 1127*624
-  
-  const imginfo = useMemo(()=> {
-   if(page) {
-      return {
-        "012001": {
-           wpx: 716,
-           hpx: 738
-        },
-        "012007": {
-         wpx:1138,
-         hpx:624
-        }
-      }[page]
-   }else {
-      return {
-
-      }
-   }
+   const [treeId, setTreeID]=useState(null)
    
+   const [tabs, setTabs] = useState([])
+   
+ 
+ const onClose=(key)=> {
 
-  }, [page])
+ }
+ 
+ const clickTag=(key)=> {
+   setTreeID(key)
+    
+ }
+  const tags = useMemo(()=> {
+    return  tabs?.map(t => <Tag color={t.key==treeId ? "processing" : "default"}  key={t.key} onClick={()=> clickTag(t.key)}   closable onClose={()=>onClose(t.key)}>{t.label}</Tag>)
+
+  },[tabs, treeId])
+
+
+
+
+  const getArea =async () => { 
+   try { 
+      const {success, data} =  await useQuerySpaceTrees({projectId, areaId:0, areaName:""})
+      if(success && Array.isArray(data) && data.length>0) {
+         setAreas(data)
+      }else{
+         setAreas([])
+      }
+   } catch (error) {
+      setAreas([])
+   }
+  }
+ const getTabs = async()=> {
+   try {
+    let {success, data} =  await useAreas({projectId})
+    if(success&&isObject(data) && Object.keys(data)?.length){
+       const value=Object.keys(data)[0]
+       let Tabs =[]
+       for (const [key, value ] of Object.entries(data)) {
+           Tabs.push({label: value, key:key?.toString()})
+       }
+      
+       setTabs(Tabs)
+       if(!treeId) {
+         setTreeID(value)
+       }
+       
+    }
+
+   } catch (error) {
+      
+   }
+ }
+  
+  const imginfo ={
+   wpx:1720,
+   hpx:892
+  }  
 
   const onChnage = (e) => {
-     setLlightImage({
-      ...lightImage,
+   if(!e){
+      setList([])
+   }
+   setAirConditioner({
+      ...airConditioner,
       image:e
      })
   }
-
+ const treeOnchage =(e)=> {
+   setTreeID(e)
+ }
+//conditionerId: 5, airConditionerName
   const onSave =async () => {
     try {
-        if(! lightImage?.image) return message.warning("请选择图片")
-
+        if(!airConditioner?.image) return message.warning("请选择图片")
+        if(!treeId) return message.warning("请选择区域")
      setLoading(true)
      let locations = []
      let values =await form.validateFields();
      
      for(let [key, value] of Object.entries(values)) {
         console.log(value)
-        if(value.c && value.checked) {
+        if(value.c && value.checked && value.desc) {
            let  [x, y] = value.c.split(',');
            if(parseFloat(x) && parseFloat(y)) {
-            locations.push({lightId: value.lightId,lightName:value.lightName, x, y, r: value.r})
+            locations.push({conditionerId: value.conditionerId,airConditionerName:value.airConditionerName, x, y, r: value.r, desc:value.desc})
            }
         }
      }
      let body = {
       projectId,
-      desc:page,
-       image: lightImage?.image,
+      desc:treeId?.toString(),
+       image: airConditioner?.image,
        locations,
      }
 
      
-     let {success,errMsg} = await useSetStreetLightImageLocation({},body)
+     let {success,errMsg} = await useSetAirConditionerImageLocation({},body)
      if(success) {
         message.success('保存成功')
         setLoading(false)
         query()
+        getTabs()
      }else {
         message.warning(errMsg || '数据出错')
         setLoading(false)
@@ -103,38 +140,22 @@ export default function Index() {
     }
     
   }
-/*   const getArea =async () => {
-   try {
-      let {success, data} =  await UpdateEnergyImage.AeraQueryAll(projectId)
-      if(success && Array.isArray(data)) {
-       setArea(data)
-      }else{
-       setArea([])
-      }
-   } catch (error) {
-      console.log(error)
-   }
-
-  } */
+ 
   const query =async () => {
-       try {
-         setSpinning(true)
-        let desc = lform.getFieldValue("desc")
-        if(!desc) return message.warning("没有选择设置页面")
-        console.dir(desc)
-        let {success, data} = await  useList({projectId, desc})
-
+       try { 
+         setSpinning(true)  
+        let {success, data} = await  useList({projectId, desc:treeId}) 
         if(success && isObject(data) ) {
-           let {locations} = data;
-
-            setLlightImage(data)
+           let {locations} = data; 
+           setAirConditioner(data)
             if(Array.isArray(locations)) {
                locations.forEach(i => {
-                   form.setFieldValue([i.lightId, 'c'], [i.x, i.y].join(','));
-                   form.setFieldValue([i.lightId, 'r'], i.r);
-                   form.setFieldValue([i.lightId, 'checked'], (i.x!==0 || i.y!==0));
-                   form.setFieldValue([i.lightId, 'lightId'], i.lightId);
-                   form.setFieldValue([i.lightId, 'lightName'], i.lightName);
+                   form.setFieldValue([i.conditionerId, 'c'], [i.x, i.y].join(','));
+                   form.setFieldValue([i.conditionerId, 'r'], i.r);
+                   form.setFieldValue([i.conditionerId, 'checked'], (i.x!==0 || i.y!==0));
+                   form.setFieldValue([i.conditionerId, 'conditionerId'], i.conditionerId);
+                   form.setFieldValue([i.conditionerId, 'airConditionerName'], i.airConditionerName);
+                   form.setFieldValue([i.conditionerId, 'desc'], i.desc);
                })
                let checked = locations.filter(i =>  i.x!==0 || i.y!==0)
                setList(checked)
@@ -142,28 +163,38 @@ export default function Index() {
           
             setSpinning(false)
         }else {
-            setLlightImage({})
+         setAirConditioner({})
             setSpinning(false)
         }
        } catch (error) {
           console.log(error)
-          setLlightImage({})
+          setAirConditioner({})
           setSpinning(false)
        }
             
   }
+  useEffect(()=> {
+   if(Number.isInteger(parseInt(treeId))) {
+      query()
+   }
+
+  },[treeId])
   const getPoint= (e) =>{
-    if(!Number.isInteger(curarea?.lightId)) return message.warning('请先勾选需要设置的区域')
-    let {offsetX, offsetY} = e.nativeEvent
-   let {lightId, lightName} = curarea
+   let {conditionerId} = curarea || {}
+    if(!Number.isInteger(parseInt(conditionerId))) return message.warning('请先勾选需要设置的区域')
+    let desc = form.getFieldValue(conditionerId)?.desc
+    if(!Number.isInteger(parseInt(desc))) {
+      return message.warning('请输入数字编号')
+    } 
+    let {offsetX, offsetY} = e.nativeEvent  
      let tip = {
-        lightId,
-        lightName,
+      conditionerId,
+      desc,
         x: offsetX,
         y: offsetY
      }
      let arr = [...list]
-     let index =  arr.findIndex(l => l.lightId == curarea.lightId)
+     let index =  arr.findIndex(l => l.conditionerId == curarea.conditionerId)
      
     
      if(index >=0) {
@@ -173,74 +204,109 @@ export default function Index() {
      }else {
       arr = [...arr, tip]
      }
-     console.log(arr)
+    
      setList(arr)
-     form.setFieldValue([curarea.lightId, 'c'], [offsetX, offsetY].join(','))
+     form.setFieldValue([curarea.conditionerId, 'c'], [offsetX, offsetY].join(','))
      
   }
   const onset =(f, ar) => {
-     
+   
     if(f.target.checked) {
-      setCurarea(ar)
+     let desc = form.getFieldValue(ar.conditionerId)?.desc
+      
+      setCurarea({...ar,desc})
     }else {
-      let  newlist = list.filter(l => l.lightId!=ar.lightId)      
+      let  newlist = list.filter(l => l.conditionerId!=ar.conditionerId)      
       setList(newlist)
       setCurarea(null)
-      form.setFieldValue([ar.lightId, 'c'], null)
+      form.setFieldValue([ar.conditionerId, 'c'], null)
+      form.setFieldValue([ar.conditionerId, 'desc'], null)
     }
   }
-
+ 
   useEffect(() => {
     if(!projectId) return
-     query()
-   //  getArea()
-  }, [projectId,page])
+    // query()
+     getTabs()
+     getArea()
+  }, [projectId])
   const msg =(<div style={{color: "#515151"}}>
      <p>请先勾选，再鼠标点击获取热点中心</p>
      <p>默认热点半径40px,最小值16px,可以手动修改</p>
   </div>)
   return (
      <Cspin spinning={spinning} tip="图片下载中……">
+    <Pagecount pd="0" bgcolor="none">
      <Main>
         <div className='title'>
-            <span className='text'>路灯图片</span>
-            <CustButton onClick={onSave} loading={loading} wh="auto">保存图片及热点</CustButton>
+           <Space size={16}>
+            <span className='text'>区域选择</span>
+            <TreeSelect
+               showSearch
+               style={{ width: 200 }}
+               value={treeId}
+               dropdownStyle={{ maxHeight: 400, overflow: 'auto' }}
+               placeholder="请输入区域名称"
+               allowClear
+               treeDefaultExpandAll
+               fieldNames={{label: 'name', value: 'areaId', children: 'nodes'}}
+               onChange={treeOnchage}
+               treeData={areas}
+            />
+             <CustButtonT  text="save"  onClick={onSave} loading={loading} /> 
+            </Space>
+           
+        </div>
+        
+        <div className="tags">
+         {tags}
         </div>
         <div className='set'>
-           <Form layout="inline" form={lform}>
+          {/*  <Form layout="inline" form={lform}>
                <Form.Item label="选择要设置图片的页面" name="desc" initialValue="012001">
                   <Select options={options} style={{width: "200px"}}></Select>
                </Form.Item>
-           </Form>
+           </Form> */}
            <div className='imgbox'>
-                <Cupload wpx={imginfo?.wpx} hpx={imginfo?.hpx} swpx={400} shpx={235} onChange={onChnage} maximum={1024} value={ lightImage?.image}  /> 
+                <Cupload wpx={imginfo?.wpx} hpx={imginfo?.hpx} swpx={400} shpx={235} onChange={onChnage} maximum={800} value={airConditioner?.image}  /> 
            </div>
-           <div className='tip'>（图片大小为: {imginfo.wpx}*{imginfo.hpx} png或jpg 格式,不超过3M）</div>
+           <div className='tip'>（图片大小为: {imginfo.wpx}*{imginfo.hpx} png或jpg 格式,不超过800kb）</div>
         </div>
         <Divider>设置图片热点区域</Divider>
         <div className='setwrap'>
          
            <div className="set">
-              <img src={ lightImage?.image} onClick={getPoint} className='img' />
-              {list.map(l => <Point left={l.x} top={l.y} key={l.lightName} data-descr={l.lightName}></Point>)}
+              <img src={ airConditioner?.image} onClick={getPoint} className='img' />
+              {list.map(l => <AirPoint left={l.x} top={l.y} key={l.conditionerId}>{l.desc}</AirPoint>)}
            </div>
            <div className='point'>
-           <Form form={form}>
+            <div className="desc">
+               <span>编号</span>
+               <span>坐标</span>
+               <span>热区半径</span>
+            </div>
+           <Form form={form} labelWrap>
              {
-               lightImage?.locations?.map?.(a => <Form.Item label={a.lightName} key={a.lightId}>
-                 <Space><Form.Item name={[a.lightId, 'c']}  noStyle>
+               airConditioner?.locations?.map?.(a => <Form.Item labelCol={{flex:"88px"}}     label={a.airConditionerName} key={a.conditionerId}>
+                 <Space size={10}>
+                 <Form.Item name={[a.conditionerId, 'desc']} rules={[{
+                  whitespace: true
+                 }]}  noStyle>
+                     <Input style={{width: '80px'}}   />
+                  </Form.Item>
+                  <Form.Item name={[a.conditionerId, 'c']}  noStyle>
                      <Input style={{width: '80px'}} readOnly />
                   </Form.Item>
-                  <Form.Item name={[a.lightId, 'r']} initialValue={40}  noStyle>
-                     <InputNumber min={16} />
+                  <Form.Item name={[a.conditionerId, 'r']} initialValue={40}  noStyle>
+                     <InputNumber min={16} style={{width: "64px"}} />
                   </Form.Item>
-                  <Form.Item name={[a.lightId, 'checked']} valuePropName="checked" noStyle>
+                  <Form.Item name={[a.conditionerId, 'checked']} valuePropName="checked" noStyle>
                   <Checkbox onChange={(f) =>onset(f,a) } />
                   </Form.Item>
-                  <Form.Item name={[a.lightId, 'lightId']}  noStyle>
+                  <Form.Item name={[a.conditionerId, 'conditionerId']}  noStyle>
                    <Input hidden></Input>
                   </Form.Item> 
-                  <Form.Item name={[a.lightId, 'lightName']}  noStyle>
+                  <Form.Item name={[a.conditionerId, 'airConditionerName']}  noStyle>
                    <Input hidden></Input>
                   </Form.Item>     
                   </Space>
@@ -252,7 +318,9 @@ export default function Index() {
            </Form>
            </div>
         </div>
+        
      </Main>
+     </Pagecount>
      </Cspin>
   )
 }
