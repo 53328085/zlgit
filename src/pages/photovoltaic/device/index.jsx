@@ -331,6 +331,12 @@ export default function Index() {
     setModalType(type)
     HistoricalRef.current.onOpen();
   }
+    const typeChange = (e)=>{
+       if(e!=3) {
+        form.setFieldValue('date', moment())
+       }
+       getTrend()
+    }
   return (
   
     <Pagecount bgcolor="#eeeff4" pd={0} >
@@ -501,33 +507,19 @@ export default function Index() {
             <Header>
                 <Form form={form} layout='inline'>
                   <Space size={16}> 
-                  <Form.Item name="type">
-                <Select defaultValue="1" style={{ width: 96}} 
-                  onChange={getTrend}
+                  <Form.Item name="type" initialValue="1">
+                <Select   style={{ width: 96}} 
+                  onChange={typeChange}
                   options={[
                     { value: '1', label: '日', },
                     { value: '2', label: '月', },
                     { value: '3', label: '年' },
                   ]}
                 />
-                </Form.Item>
-                <Form.Item shouldUpdate={(cur, pre)=>cur.type!=pre.type} noStyle>
-                 {
-                  ({getFieldValue})=> {
-                     const type= getFieldValue('type') 
-                     const picker = {
-                      1:"date",
-                      2: "month",
-                      3: "year",
-                     }[type]
-                      return ( 
+                </Form.Item> 
                         <Form.Item name="date" initialValue={moment()} >
-                          <DatePicker picker={picker} style={{ width: 240 }} onChange={getTrend}   disabledDate={disabledDate} />
-                        </Form.Item> 
-                      )
-                  }
-                 }
-                </Form.Item>
+                          <DatePicker picker={["date","date", "month","year"][Form.useWatch("type",form)]}  style={{ width: 240 }} onChange={getTrend}   disabledDate={disabledDate} />
+                        </Form.Item>  
                 <Form.Item name="mode" initialValue="1">
                 <Radio.Group
                 block
