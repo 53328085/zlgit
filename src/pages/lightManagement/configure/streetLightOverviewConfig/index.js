@@ -39,8 +39,8 @@ export default function Index() {
    if(page) {
       return {
         "012001": {
-           wpx: 716,
-           hpx: 738
+           wpx: 1184,
+           hpx: 756
         },
         "012007": {
          wpx:1138,
@@ -215,7 +215,7 @@ export default function Index() {
            <div className='imgbox'>
                 <Cupload wpx={imginfo?.wpx} hpx={imginfo?.hpx} swpx={400} shpx={235} onChange={onChnage} maximum={1024} value={ lightImage?.image}  /> 
            </div>
-           <div className='tip'>（图片大小为: {imginfo.wpx}*{imginfo.hpx} png或jpg 格式,不超过3M）</div>
+           <div className='tip'>（图片大小为: {imginfo.wpx}*{imginfo.hpx} png或jpg 格式,不超过1M）</div>
         </div>
         <Divider>设置图片热点区域</Divider>
         <div className='setwrap'>
