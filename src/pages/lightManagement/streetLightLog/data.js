@@ -14,19 +14,19 @@ export   function useCols(callback) {
         title: "绑定路灯数",
         dataIndex: "bindNum",
         key: "bindNum",
-        render:(t,r)=> <Link onClick={()=>callback({schemeId: r.schemeId, result:0})}>{t}</Link>
+        render:(t,r)=> <Link onClick={()=>callback({id: r.id, result:0})}>{t}</Link>
       },
       {
         title: "控制成功路灯数",
         dataIndex: "success",
         key: "success",
-        render:(t,r)=> <Link onClick={()=>callback({schemeId: r.schemeId, result:1})}>{t}</Link>
+        render:(t,r)=> <Link onClick={()=>callback({id: r.id, result:1})}>{t}</Link>
       },
       {
         title: "控制失败路灯数",
         dataIndex: "fail",
         key: "fail",
-        render:(t,r)=> <Link type="danger" onClick={()=>callback({schemeId: r.schemeId, result:2})}>{t}</Link>
+        render:(t,r)=> <Link type="danger" onClick={()=>callback({id: r.id, result:2})}>{t}</Link>
       },
       {
         title: "控制成功率(%)",
