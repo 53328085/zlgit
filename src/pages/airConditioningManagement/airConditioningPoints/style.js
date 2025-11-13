@@ -4,25 +4,25 @@ import imgurl from "@imgs/index"
  
 
 export const Main = styled.div`
-   display: grid;
-   grid-template-rows: 58px 48px 364px auto  1fr;
-   row-gap: 16px;
- 
-   .title {
-      padding: 16px;
-      border: 1px solid #d7d7d7;
-      border-radius: 4px;
-       background-color: #fff;
+    flex:1;
+    position: relative;
+    
+   .title { 
        display: flex;
-       align-items: center;
-       justify-content: space-between;
-      .text {
-        padding-left: 16px;
-        border-left: 4px solid ${props=> props.theme.primaryColor};
-        display: flex;
-        align-items: center;
-        height: 32px;
-      }
+       align-items: center; 
+       padding: 24px;
+       position: static;
+      
+       .text,.ant-badge-status-text {
+        color:#fff;
+       }
+       .text {
+         position: relative;
+       //  z-index: 1;
+       }
+   }
+   .img {
+     position: absolute;
    }
    .tags {
      display: flex;
@@ -102,4 +102,48 @@ export const Main = styled.div`
       }
     }
   }
+`
+export const Content =styled.div` 
+&&{
+    .ant-radio-group-large {
+        .ant-radio-button-wrapper{
+            width: 80px;
+            height: 64px;
+        }
+    }
+    .ant-radio-group-small {
+        .ant-radio-button-wrapper-in-form-item{
+            width:50px;
+            text-align: center;
+        }
+    }
+    .ant-radio-button-wrapper.ant-radio-button-wrapper-checked {
+      background-color: ${props=>props.theme.primaryColor};
+      g>path:first-child{
+        fill:#fff;
+      }
+      .iconwrap {
+        .txt{
+        color: #fff;
+      }
+      }
+     
+    }
+    .ant-radio-button-wrapper {
+        background-color: #EEF3FA;
+        .iconwrap {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: space-around;
+            .txt{
+                line-height:1;
+                font-size: 13px;
+                color: #606266;
+            }
+        }
+    }
+}
 `

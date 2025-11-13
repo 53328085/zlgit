@@ -5,10 +5,12 @@ const airConditioningEnergyMonitor= lazy(() => import("../pages/airConditioningM
 const airConditioningOverview = lazy(() => import("../pages/airConditioningManagement/airConditioningOverview"))
 const airConditioningLog = lazy(() => import("../pages/airConditioningManagement/airConditioningLog"))
 const airConditioningManualControl = lazy(() => import("../pages/airConditioningManagement/airConditioningManualControl"))
+const AirConditioningPoints = lazy(() => import("../pages/airConditioningManagement/airConditioningPoints"))
 export const airConditioningManagement = {
     '011901': airConditioningOverview,  //空调总览
     '011902': airConditioningEnergyMonitor, // 能耗监测
     '011903': airConditioningManualControl, // 手动控制
     '011904': airConditioningAutoControl, // 自动控制
     '011905': airConditioningLog, // 控制日志
+    '011906': AirConditioningPoints, // 空调点位图
 }
