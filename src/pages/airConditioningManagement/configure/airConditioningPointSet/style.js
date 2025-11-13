@@ -5,9 +5,8 @@ import imgurl from "@imgs/index"
 
 export const Main = styled.div`
    display: grid;
-   grid-template-rows: 58px 48px 364px auto  1fr;
-   row-gap: 16px;
- 
+   grid-template-rows: 58px 58px 1fr; // 58px 48px 364px auto  1fr; 
+   
    .title {
       padding: 16px;
       border: 1px solid #d7d7d7;
@@ -27,6 +26,7 @@ export const Main = styled.div`
    .tags {
      display: flex;
      align-items: center;
+     margin-top: 16px;
      gap: 10px;
       .ant-tag{
       min-width: 114px;
@@ -46,11 +46,26 @@ export const Main = styled.div`
        }
      }
    }
+   .content{
+    flex:1;
+    display: flex;
+    flex-direction: column;
+    background-color: #fff;
+    padding: 16px;
+    row-gap: 16px;
    .set {
     display: flex;
     flex-direction: column;
     row-gap: 16px;
     justify-content: flex-start;
+    .tip {
+     color: #909399; 
+     font-size: 13px; 
+     .strong {
+      font-weight: 500;
+      color: #303133;
+     }  
+   }
    .imgbox {
     display: flex;
      background-color: #fff;
@@ -63,13 +78,31 @@ export const Main = styled.div`
     border-radius: 4px;
     padding: 16px;
    }
-   .tip {
-     color: #999;
-     text-align: center;
-     width: 432px;
-     margin-top: 16px;
-   }
+
   }
+   .setoutwrap{
+    display: flex;
+    flex-direction: column;
+    row-gap: 10px;
+    .settip{
+      height: 28px;
+      display: flex;
+      font-size: 13px;
+      color:#303133;
+      align-items: center;
+      column-gap: 10px;
+      .info{
+        background: rgba(70,199,255,0.1);
+        border-radius: 2px;
+        border: 1px solid #46C7FF;
+        color:#46C7FF;
+        font-size: 12px;
+        display: flex;
+        align-items:center;
+        padding: 0 8px;
+        height: 28px;
+      }
+    }
    .setwrap {
      display: flex;
      column-gap: 16px;
@@ -101,5 +134,7 @@ export const Main = styled.div`
         word-break: break-all;
       }
     }
+  }
+  }
   }
 `

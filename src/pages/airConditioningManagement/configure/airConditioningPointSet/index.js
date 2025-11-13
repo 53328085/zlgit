@@ -239,9 +239,9 @@ export default function Index() {
       let  newlist = list.filter(l => l.conditionerId!=ar.conditionerId)      
       setList(newlist)
       setCurarea(null)
-    //  form.setFieldValue([ar.conditionerId, 'x'], null)
-    //  form.setFieldValue([ar.conditionerId, 'y'], null)
-     // form.setFieldValue([ar.conditionerId, 'desc'], null)
+     form.setFieldValue([ar.conditionerId, 'x'], null)
+     form.setFieldValue([ar.conditionerId, 'y'], null)
+     //form.setFieldValue([ar.conditionerId, 'desc'], null)
     }
   }
   const positionChange =(v, a,type)=>{
@@ -266,10 +266,7 @@ export default function Index() {
      getTabs()
      getArea()
   }, [projectId])
-  const msg =(<div style={{color: "#515151"}}>
-     <p>请先勾选，再鼠标点击获取热点中心</p>
-     <p>默认热点半径40px,最小值16px,可以手动修改</p>
-  </div>)
+  const msg =<> 1:先输入编号,在勾选复选框。后再鼠标点击获取热点中心。  2: 依次输入编号、x坐标、y坐标、热区半径、勾选复选框。3.修改坐标值可以移动位置</>
   return (
      <Cspin spinning={spinning} tip="图片下载中……">
     <Pagecount pd="0" bgcolor="none">
@@ -293,24 +290,26 @@ export default function Index() {
             </Space>
            
         </div>
-        
+       
         <div className="tags">
          {tags}
         </div>
+        <div className='content'>
         <div className='set'>
-          {/*  <Form layout="inline" form={lform}>
-               <Form.Item label="选择要设置图片的页面" name="desc" initialValue="012001">
-                  <Select options={options} style={{width: "200px"}}></Select>
-               </Form.Item>
-           </Form> */}
+        <div className='tip'><span className='strong'>点击上传平面图</span>（图片大小为: {imginfo.wpx}*{imginfo.hpx} png或jpg 格式,不超过800kb）</div>
            <div className='imgbox'>
                 <Cupload wpx={imginfo?.wpx} hpx={imginfo?.hpx} swpx={400} shpx={235} onChange={onChnage} maximum={800} value={airConditioner?.image}  /> 
            </div>
-           <div className='tip'>（图片大小为: {imginfo.wpx}*{imginfo.hpx} png或jpg 格式,不超过800kb）</div>
+        
         </div>
-        <Divider>设置图片热点区域</Divider>
+       <div className='setoutwrap'>
+     <div className="settip">
+     <span>设置图片热点区域</span>
+     <div  className='info'>  
+      {msg}
+     </div>
+     </div>
         <div className='setwrap'>
-         
            <div className="set">
               <img src={ airConditioner?.image} onClick={getPoint} className='img' />
               {list.map(l => <AirPoint left={l.x} top={l.y} key={l.conditionerId}>{l.desc}</AirPoint>)}
@@ -352,13 +351,11 @@ export default function Index() {
                   </Space>
                </Form.Item>)
              }
-             <Form.Item >
-                <Alert type="info" message={msg}></Alert>
-             </Form.Item>
            </Form>
            </div>
         </div>
-        
+        </div> 
+        </div>
      </Main>
      </Pagecount>
      </Cspin>
