@@ -68,10 +68,11 @@ export default   function Index(props) {
  
   const changeRomme = (v) => {      
       dispacth(getcurlRommid(v))
-      
+     if(showSite)  getSites(v);
   }
   const lchangeRomme = (v) => {
     dispacth(getcurlRommidl(v))
+    if(showSite)  getSites(v);
   }
   
   

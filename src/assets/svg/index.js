@@ -10,4 +10,5 @@ files.keys().forEach(filep => {
 
 export default svgurl
 export {ReactComponent as LightSize} from './light.svg'
+export {ReactComponent as Empty} from './empty.svg'
 

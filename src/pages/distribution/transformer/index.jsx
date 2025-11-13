@@ -1,5 +1,5 @@
 import React, { useState, useRef ,useMemo, useEffect } from 'react'
-import { Select ,Space,Divider,DatePicker,Radio, Button, message } from 'antd'
+import { Select ,Space, Radio, Button, message } from 'antd'
  
 import {useSelector,  } from 'react-redux'
 import { selectcurlRommid,adaptation, site } from "@redux/systemconfig"; 
@@ -8,9 +8,9 @@ import UseTable from '@com/useTable'
 import Pagecount from '@com/pagecontent'
 import CustContext from '@com/content.js'
 import {useRequest} from "ahooks"
-import { drawEcharts } from "@com/useEcharts"
+ 
 import {DistributionRoomRuntime} from '@api/api.js'
-import  imgurl from '@imgs'
+ 
 import moment from 'moment'
 import {isObject} from "@com/usehandler" 
 import Titlelayout from '@com/titlelayout' 
@@ -20,7 +20,7 @@ import {tabs,opts,columns,useChartopt } from './data'
 import {MainDiv} from './style'
 import Load from './load'
 import Ichart from '@com/useEcharts/Ichart';
- 
+import {Empty} from "@svgs"
 export default function Index() {
   const projectId = useSelector(state => state.system.menus.projectId)  
  
@@ -315,7 +315,8 @@ useRequest(RuntimePoints, {
          </Pagecount> 
           ):(
             <div style={{flex:1,display: 'flex',justifyContent:'center',alignItems:'center',flexDirection:'column'}}>
-              <img src={imgurl.empty} alt="" style={{width:200}}/>
+             {/*  <img src={imgurl.empty} alt="" style={{width:200}}/> */}
+             <Empty/>
               <p style={{color:'#999',marginTop:16,fontSize:16}}>暂无数据</p>
             </div>
           )
