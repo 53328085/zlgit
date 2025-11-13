@@ -71,7 +71,7 @@ export default function Index() {
       dataset: {
         dimensions:[{
           name: '时间', type: "date",
-        }, {name: "温度"}],
+        }, {name: "发电量"}],
         source:[Array.isArray(weather?.x) ? weather?.x : [], Array.isArray(weather?.y) ? weather?.y : []],
         sourceHeader: false,
       },

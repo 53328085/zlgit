@@ -51,7 +51,7 @@ export const AirPoint = styled.div`
   &&{
     min-width: 40px;
     min-height: 30px;
-    background: rgba(5,192,110,0.8);
+    background:${props=> props.ioState==1 ? "#05C06E" : props.ioState==2 ? "#909399" : "#909399" } ;
     border-radius: 4px;
     position: absolute;
     left: ${props => props.left+'px'};
@@ -64,7 +64,9 @@ export const AirPoint = styled.div`
     align-items: center;
     justify-content: center;
     cursor: pointer;
- 
+    &.action {
+      background: #00CFFF;
+    }
     
   }
 `

@@ -72,7 +72,7 @@ export default function Index() {
            setCheckedList(checked)
            setChecked(ids?.length==checked?.length)
            if (single) {
-              setOnoff(data.details[0].state==2 ? 1 :2) // 状态是1 开， 显示 关
+             // setOnoff(data.details[0].state==2 ? 1 :2) // 状态是1 开， 显示 关
 
            }
 
@@ -129,14 +129,14 @@ const copy= useMemo(()=> {
 const lingthChnage=(v)=> {
   setBrightness(v)
 }
- const stateRef = useRef()
+ //const stateRef = useRef()
  const onControl=(e)=> {
    if(single) {
      if(Array.isArray(treeId) && treeId?.length==0) {
        return message.warning("请选择要开关的线路")
      }else if(Array.isArray(treeId) && treeId?.length == 1) {
-      setOnoff(e)
-       stateRef.current = e
+      // setOnoff(e)
+     //  stateRef.current = e
       mRef.current.onOpen()
      }
    }else {
@@ -146,12 +146,13 @@ const lingthChnage=(v)=> {
 
  }
  const onOk= async()=> {   // 单灯控制
-   let points =  lingts?.details?.filter(l => checkedList.includes(l.id))?.map(m => ({gateway:m.gateway, dev:m.dev}))
+   let points =  lingts?.details?.filter(l => checkedList.includes(l.id))?.map(m => ({gateway:m.gateway, dev:m.dev, lightId:m.id}))
    try {
     let body =single? {
       projectId,
-      state:onOff,
-      sn:node.sn
+     // state:onOff,
+      sn:node.sn,
+      brightness,
     } :
     {
        projectId,
@@ -177,10 +178,14 @@ const lingthChnage=(v)=> {
   const title = (
     <TitleBox>
       <span>路灯列表</span>
-     {single ? <Space><CustButtonT text="open" onClick={()=>onControl(1)}></CustButtonT><CustButtonT type="default" text="close" onClick={()=>onControl(2)}></CustButtonT></Space> : <Space size={16}>
+      <Space size={16}>
         <Cslider onChange={lingthChnage}  />
         <CustButtonT text="control" onClick={onControl}></CustButtonT>
-      </Space>}
+      </Space>
+    {/*  {single ? <Space><CustButtonT text="open" onClick={()=>onControl(1)}></CustButtonT><CustButtonT type="default" text="close" onClick={()=>onControl(2)}></CustButtonT></Space> : <Space size={16}>
+        <Cslider onChange={lingthChnage}  />
+        <CustButtonT text="control" onClick={onControl}></CustButtonT>
+      </Space>} */}
     </TitleBox>
   );
   return (

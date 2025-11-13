@@ -15,4 +15,9 @@ export const { useSetAirConditionerImageLocation } = new Apimethod( // 设置总
     "post",
     "Conditioner/AirConditionerPicture/SetAirConditionerImageLocation"
   );
+
+  export const { useDelete } = new Apimethod( // 设置总览图及点位
+    "get",
+    "Conditioner/AirConditionerPicture/Delete"
+  );
   //Conditioner/AirConditionerPicture/List?projectId=1

@@ -1,20 +1,19 @@
 import React, {useEffect, useMemo, useRef, useState} from 'react'
  
- 
+import _ from 'lodash' 
 import {useSelector} from "react-redux";
 import {CustButtonT, CustButton} from '@com/useButton'
 import Cupload from "@com/useUpload.js" 
 import {selectProjectId} from '@redux/systemconfig.js'
 import { message, Form, Input, InputNumber, Space, Select, Divider, Button, Checkbox,TreeSelect, Tag,  Alert} from 'antd';
-import {UpdateEnergyImage, } from '@api/api.js'
-import CustContext from '@com/content.js'
+ 
 import {Cspin,AirPoint} from "@com/comstyled"
 import {isObject} from '@com/usehandler'
 import Pagecount from '@com/pagecontent' 
 import { Main} from "./style"
-import {useAreas,useList, useSetAirConditionerImageLocation,useQuerySpaceTrees} from './api'
+import {useAreas,useList, useSetAirConditionerImageLocation,useQuerySpaceTrees,useDelete} from './api'
  
-
+// 1 开，2 关
  
 export default function Index() {
    const [form] = Form.useForm();
@@ -31,8 +30,18 @@ export default function Index() {
    const [tabs, setTabs] = useState([])
    
  
- const onClose=(key)=> {
-
+ const onClose=async(key)=> {
+     try {
+       console.log(key)
+       let {success,errMsg} =   await  useDelete({projectId, desc:key})
+       if(success) {
+         message.success("删除成功")
+         getTabs()
+       }
+     } catch (error) {
+      console.log(error)
+      message.warning(errMsg || "删除失败")
+     }
  }
  
  const clickTag=(key)=> {
@@ -97,6 +106,7 @@ export default function Index() {
   }
  const treeOnchage =(e)=> {
    setTreeID(e)
+   setCurarea(null)
  }
 //conditionerId: 5, airConditionerName
   const onSave =async () => {
@@ -108,10 +118,10 @@ export default function Index() {
      let values =await form.validateFields();
      
      for(let [key, value] of Object.entries(values)) {
-        console.log(value)
-        if(value.c && value.checked && value.desc) {
-           let  [x, y] = value.c.split(',');
-           if(parseFloat(x) && parseFloat(y)) {
+         const {x, y} =value
+        if(x && y && value.checked && value.desc) {
+           
+           if(parseFloat(value.x) && parseFloat(value.y)) {
             locations.push({conditionerId: value.conditionerId,airConditionerName:value.airConditionerName, x, y, r: value.r, desc:value.desc})
            }
         }
@@ -150,7 +160,8 @@ export default function Index() {
            setAirConditioner(data)
             if(Array.isArray(locations)) {
                locations.forEach(i => {
-                   form.setFieldValue([i.conditionerId, 'c'], [i.x, i.y].join(','));
+                   form.setFieldValue([i.conditionerId, 'x'], i.x);
+                   form.setFieldValue([i.conditionerId, 'y'], i.y);
                    form.setFieldValue([i.conditionerId, 'r'], i.r);
                    form.setFieldValue([i.conditionerId, 'checked'], (i.x!==0 || i.y!==0));
                    form.setFieldValue([i.conditionerId, 'conditionerId'], i.conditionerId);
@@ -180,18 +191,23 @@ export default function Index() {
 
   },[treeId])
   const getPoint= (e) =>{
+   console.log(curarea)
    let {conditionerId} = curarea || {}
     if(!Number.isInteger(parseInt(conditionerId))) return message.warning('请先勾选需要设置的区域')
-    let desc = form.getFieldValue(conditionerId)?.desc
+    let {desc, x, y} = form.getFieldValue(conditionerId) 
+    let contion=x>0 || y>0
     if(!Number.isInteger(parseInt(desc))) {
       return message.warning('请输入数字编号')
     } 
+    
     let {offsetX, offsetY} = e.nativeEvent  
+    const xv = contion ? x : offsetX
+    const yv = contion ? y :  offsetY
      let tip = {
       conditionerId,
       desc,
-        x: offsetX,
-        y: offsetY
+        x: xv,
+        y: yv
      }
      let arr = [...list]
      let index =  arr.findIndex(l => l.conditionerId == curarea.conditionerId)
@@ -206,22 +222,42 @@ export default function Index() {
      }
     
      setList(arr)
-     form.setFieldValue([curarea.conditionerId, 'c'], [offsetX, offsetY].join(','))
+     form.setFieldValue([curarea.conditionerId, 'x'], xv)
+     form.setFieldValue([curarea.conditionerId, 'y'], yv)
      
   }
   const onset =(f, ar) => {
    
     if(f.target.checked) {
-     let desc = form.getFieldValue(ar.conditionerId)?.desc
-      
+     let {x,y, desc} = form.getFieldValue(ar.conditionerId)
+      if((x>0 || y>0) && desc) {
+         setList([...list, {conditionerId:ar.conditionerId, x, y, desc}])
+      }
+      if(!desc) return message.info("请先输入编号")
       setCurarea({...ar,desc})
     }else {
       let  newlist = list.filter(l => l.conditionerId!=ar.conditionerId)      
       setList(newlist)
       setCurarea(null)
-      form.setFieldValue([ar.conditionerId, 'c'], null)
-      form.setFieldValue([ar.conditionerId, 'desc'], null)
+     form.setFieldValue([ar.conditionerId, 'x'], null)
+     form.setFieldValue([ar.conditionerId, 'y'], null)
+     //form.setFieldValue([ar.conditionerId, 'desc'], null)
     }
+  }
+  const positionChange =(v, a,type)=>{
+   try {
+     // let checked = form.getFieldValue(a.conditionerId)?.checked
+    //  if(!checked) message.info("请先勾选")
+      const {conditionerId} = a
+      let list2 =_.cloneDeep(list)
+      let idx = list2.findIndex(c => c.conditionerId == conditionerId)
+      if(idx<0) return
+      list2[idx][type]=v
+      setList(list2)
+   } catch (error) {
+      console.log(error)
+   }
+ 
   }
  
   useEffect(() => {
@@ -230,10 +266,7 @@ export default function Index() {
      getTabs()
      getArea()
   }, [projectId])
-  const msg =(<div style={{color: "#515151"}}>
-     <p>请先勾选，再鼠标点击获取热点中心</p>
-     <p>默认热点半径40px,最小值16px,可以手动修改</p>
-  </div>)
+  const msg =<> 1:先输入编号,在勾选复选框。后再鼠标点击获取热点中心。  2: 依次输入编号、x坐标、y坐标、热区半径、勾选复选框。3.修改坐标值可以移动位置</>
   return (
      <Cspin spinning={spinning} tip="图片下载中……">
     <Pagecount pd="0" bgcolor="none">
@@ -257,24 +290,26 @@ export default function Index() {
             </Space>
            
         </div>
-        
+       
         <div className="tags">
          {tags}
         </div>
+        <div className='content'>
         <div className='set'>
-          {/*  <Form layout="inline" form={lform}>
-               <Form.Item label="选择要设置图片的页面" name="desc" initialValue="012001">
-                  <Select options={options} style={{width: "200px"}}></Select>
-               </Form.Item>
-           </Form> */}
+        <div className='tip'><span className='strong'>点击上传平面图</span>（图片大小为: {imginfo.wpx}*{imginfo.hpx} png或jpg 格式,不超过800kb）</div>
            <div className='imgbox'>
                 <Cupload wpx={imginfo?.wpx} hpx={imginfo?.hpx} swpx={400} shpx={235} onChange={onChnage} maximum={800} value={airConditioner?.image}  /> 
            </div>
-           <div className='tip'>（图片大小为: {imginfo.wpx}*{imginfo.hpx} png或jpg 格式,不超过800kb）</div>
+        
         </div>
-        <Divider>设置图片热点区域</Divider>
+       <div className='setoutwrap'>
+     <div className="settip">
+     <span>设置图片热点区域</span>
+     <div  className='info'>  
+      {msg}
+     </div>
+     </div>
         <div className='setwrap'>
-         
            <div className="set">
               <img src={ airConditioner?.image} onClick={getPoint} className='img' />
               {list.map(l => <AirPoint left={l.x} top={l.y} key={l.conditionerId}>{l.desc}</AirPoint>)}
@@ -282,20 +317,24 @@ export default function Index() {
            <div className='point'>
             <div className="desc">
                <span>编号</span>
-               <span>坐标</span>
+               <span>X坐标</span>
+               <span>Y坐标</span>
                <span>热区半径</span>
             </div>
            <Form form={form} labelWrap>
              {
                airConditioner?.locations?.map?.(a => <Form.Item labelCol={{flex:"88px"}}     label={a.airConditionerName} key={a.conditionerId}>
-                 <Space size={10}>
+                 <Space size={8}>
                  <Form.Item name={[a.conditionerId, 'desc']} rules={[{
                   whitespace: true
                  }]}  noStyle>
                      <Input style={{width: '80px'}}   />
                   </Form.Item>
-                  <Form.Item name={[a.conditionerId, 'c']}  noStyle>
-                     <Input style={{width: '80px'}} readOnly />
+                  <Form.Item name={[a.conditionerId, 'x']}  noStyle>
+                     <InputNumber style={{width: '60px'}} onChange={(x)=> positionChange(x,a,'x')}  />
+                  </Form.Item>
+                  <Form.Item name={[a.conditionerId, 'y']}  noStyle>
+                     <InputNumber style={{width: '60px'}} onChange={(y)=> positionChange(y,a,'y')}  />
                   </Form.Item>
                   <Form.Item name={[a.conditionerId, 'r']} initialValue={40}  noStyle>
                      <InputNumber min={16} style={{width: "64px"}} />
@@ -312,13 +351,11 @@ export default function Index() {
                   </Space>
                </Form.Item>)
              }
-             <Form.Item >
-                <Alert type="info" message={msg}></Alert>
-             </Form.Item>
            </Form>
            </div>
         </div>
-        
+        </div> 
+        </div>
      </Main>
      </Pagecount>
      </Cspin>

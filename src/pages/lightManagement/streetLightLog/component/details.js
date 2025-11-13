@@ -28,11 +28,11 @@ export default forwardRef(function Index({projectId}, ref){
   const getDetails = async ({current, pageSize} )=> {
     let fag = Number.isInteger(parseInt(projectId))&&isObject(param)
     if(!fag) return Promise.reject()
-    const {result, schemeId} = param
+    const {result, id} = param
     try {
       let body = {
         projectId,
-        schemeId,
+        id,
         result,
         pageSize,
         pageNum:current,
@@ -97,9 +97,9 @@ const  {tableProps} = useAntdTable(getDetails, {
   return (
           <CModal title={title}    width={1380} mold="cust" onCancel={onCancel}   ref={mRef} closable footer={null} >
             <Detail>
-            <div className='contrl'>
+         {/*    <div className='contrl'>
                 <CustButton >重新绑定</CustButton>
-            </div>
+            </div> */}
             <UserTable columns={lightcol}  {...tableProps}    ></UserTable>    
             </Detail>         
            </CModal>   

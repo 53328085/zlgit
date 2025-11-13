@@ -4,29 +4,29 @@ import imgurl from "@imgs/index"
  
 
 export const Main = styled.div`
-   display: grid;
-   grid-template-rows: 58px 58px 1fr; // 58px 48px 364px auto  1fr; 
-   
-   .title {
-      padding: 16px;
-      border: 1px solid #d7d7d7;
-      border-radius: 4px;
-       background-color: #fff;
+    flex:1;
+    position: relative;
+    
+   .title { 
        display: flex;
-       align-items: center;
-       justify-content: space-between;
-      .text {
-        padding-left: 16px;
-        border-left: 4px solid ${props=> props.theme.primaryColor};
-        display: flex;
-        align-items: center;
-        height: 32px;
-      }
+       align-items: center; 
+       padding: 24px;
+       position: static;
+      
+       .text,.ant-badge-status-text {
+        color:#fff;
+       }
+       .text {
+         position: relative;
+       //  z-index: 1;
+       }
+   }
+   .img {
+     position: absolute;
    }
    .tags {
      display: flex;
      align-items: center;
-     margin-top: 16px;
      gap: 10px;
       .ant-tag{
       min-width: 114px;
@@ -46,26 +46,11 @@ export const Main = styled.div`
        }
      }
    }
-   .content{
-    flex:1;
-    display: flex;
-    flex-direction: column;
-    background-color: #fff;
-    padding: 16px;
-    row-gap: 16px;
    .set {
     display: flex;
     flex-direction: column;
     row-gap: 16px;
     justify-content: flex-start;
-    .tip {
-     color: #909399; 
-     font-size: 13px; 
-     .strong {
-      font-weight: 500;
-      color: #303133;
-     }  
-   }
    .imgbox {
     display: flex;
      background-color: #fff;
@@ -78,31 +63,13 @@ export const Main = styled.div`
     border-radius: 4px;
     padding: 16px;
    }
-
+   .tip {
+     color: #999;
+     text-align: center;
+     width: 432px;
+     margin-top: 16px;
+   }
   }
-   .setoutwrap{
-    display: flex;
-    flex-direction: column;
-    row-gap: 10px;
-    .settip{
-      height: 28px;
-      display: flex;
-      font-size: 13px;
-      color:#303133;
-      align-items: center;
-      column-gap: 10px;
-      .info{
-        background: rgba(70,199,255,0.1);
-        border-radius: 2px;
-        border: 1px solid #46C7FF;
-        color:#46C7FF;
-        font-size: 12px;
-        display: flex;
-        align-items:center;
-        padding: 0 8px;
-        height: 28px;
-      }
-    }
    .setwrap {
      display: flex;
      column-gap: 16px;
@@ -135,6 +102,48 @@ export const Main = styled.div`
       }
     }
   }
-  }
-  }
+`
+export const Content =styled.div` 
+&&{
+    .ant-radio-group-large {
+        .ant-radio-button-wrapper{
+            width: 80px;
+            height: 64px;
+        }
+    }
+    .ant-radio-group-small {
+        .ant-radio-button-wrapper-in-form-item{
+            width:50px;
+            text-align: center;
+        }
+    }
+    .ant-radio-button-wrapper.ant-radio-button-wrapper-checked {
+      background-color: ${props=>props.theme.primaryColor};
+      g>path:first-child{
+        fill:#fff;
+      }
+      .iconwrap {
+        .txt{
+        color: #fff;
+      }
+      }
+     
+    }
+    .ant-radio-button-wrapper {
+        background-color: #EEF3FA;
+        .iconwrap {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: space-around;
+            .txt{
+                line-height:1;
+                font-size: 13px;
+                color: #606266;
+            }
+        }
+    }
+}
 `
