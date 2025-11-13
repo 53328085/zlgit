@@ -372,7 +372,7 @@ export default function Index() {
 
                     <Titlelayout title={Rtitle} key="rank">
                         <div className='chart'>
-                            <Table columns={columnstable} className="tablestyle" rowKey={(columns) => columns.key} dataSource={CarbonRanking} scroll={{
+                            <Table columns={columnstable} rowKey={(columns) => columns.key} dataSource={CarbonRanking} scroll={{
                                 y: 300,
                             }} />
                         </div>

@@ -47,12 +47,13 @@ const Mainbox = styled.div`
   display: flex;
   flex: 1;
   justify-content: space-between;
-//  align-items: stretch;
-  padding: 0 8px;
   color: ${props => props.theme.bgcolorfont};
-  height: 80px;
   overflow: hidden;
   font-size: 14px;
+  border-radius: 8px;
+    display: flex;
+    justify-content: space-between;
+    background-color: #ffffff;
   .content {
     flex: 1;
     display: flex;
@@ -166,7 +167,7 @@ export default function card({ name = '', laptop, title = '', value = 0, yoy = 0
   }
 
   return (
-    <Titlelayout title={title} bgcolor={primaryderived} layout="flex" hv="24px" bg="transparent" bl={`4px solid  ${bgcolorfont}`} fc={bgcolorfont} style={{ height: '112px' }}>
+    <Titlelayout title={title} bgcolor={primaryderived} layout="flex" pv='15px' hv="24px" bg="transparent" bl={`4px solid  ${bgcolorfont}`} fc={bgcolorfont} style={{ height: '112px' }}>
       <Mainbox laptop={laptop}>
         {content}
       </Mainbox>
