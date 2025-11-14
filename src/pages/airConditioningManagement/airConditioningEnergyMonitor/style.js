@@ -79,6 +79,7 @@ export const Main = styled.div`
       ${flex1}
       .airChart {
         ${flex1}
+        align-items: center;
         .airPie {
           height: 422px;
           flex: 1;

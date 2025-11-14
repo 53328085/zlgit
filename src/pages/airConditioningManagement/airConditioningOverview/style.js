@@ -128,5 +128,6 @@ export const FooterChart = styled.div`
     overflow: hidden;
     position: relative;
     padding:0 16px 16px;
+    display: flex;
   }
 `;
