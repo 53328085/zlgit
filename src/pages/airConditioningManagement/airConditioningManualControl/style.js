@@ -58,7 +58,6 @@ export const Container = styled.div`
         padding: 8px;
         overflow: hidden;
         cursor: pointer;
-        height: 215px;
         border-radius: 16px;
         // display: flex;
         // justify-content: center;
@@ -82,11 +81,11 @@ export const Container = styled.div`
         }
         }
         .content{
-        font-size: 36px;
         margin: 10px 0px;
         text-align: center;
         .temperature{
         margin-right: 5px;
+        font-size: 36px;
         }
         .Offline{
       font-size: 28px;
@@ -94,16 +93,19 @@ export const Container = styled.div`
       color: #909399;
       font-weight: 500;
         }
+      .lastSampleTime{
+      font-size: 14px;
+      }
         }
         .OfflineBox{
         color: #909399;
         font-size: 16px;
         font-weight: 600;
+       margin-top: 20px;
         .offlineBoxItem{
         display: flex;
         align-items: center;
         justify-content: space-between;
-       
 }
         }
         .air-Offline,.air-Alarm{
@@ -145,25 +147,25 @@ export const Container = styled.div`
             background: linear-gradient(180deg, #ecf3fd 30%, rgb(236 243 253) 25%, rgb(244 198 198) 80%, rgb(255 146 146) 100%);
             }
       .airCardCold{
-        background: linear-gradient(180deg, rgb(113 146 241) 0%, rgb(77 158 236) 0%, rgb(219 227 241) 100%);
+        // background: linear-gradient(180deg, rgb(113 146 241) 0%, rgb(77 158 236) 0%, rgb(219 227 241) 100%);
         background: url(${coolBackground})  no-repeat;
         background-position: bottom;
         background-size: cover;
        }
    .airCardHot{
-          background: linear-gradient(180deg, rgb(228 231 239) 0%, rgb(235 146 66) 0%, rgb(230 206 79) 81%, rgb(249 238 166) 100%);
+          // background: linear-gradient(180deg, rgb(228 231 239) 0%, rgb(235 146 66) 0%, rgb(230 206 79) 81%, rgb(249 238 166) 100%);
            background: url(${heatBackground})  no-repeat;
            background-position: bottom;
            background-size: cover;
    }
    .airCardWindy{ 
-          background: linear-gradient(180deg, #72e4a2 0%, rgb(152 240 169) 81%, rgb(190 255 220) 95%);
+          // background: linear-gradient(180deg, #72e4a2 0%, rgb(152 240 169) 81%, rgb(190 255 220) 95%);
           background: url(${fanBackground})  no-repeat;
           background-position: bottom;
           background-size: cover;
    }
    .airCardDehumidification{
-       background: linear-gradient(180deg, rgb(115 137 148) 0%, rgb(222 221 221) 100%);
+      //  background: linear-gradient(180deg, rgb(115 137 148) 0%, rgb(222 221 221) 100%);
         background: url(${dryBackground})  no-repeat;
         background-position: bottom;
         background-size: cover;
