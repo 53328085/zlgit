@@ -326,7 +326,7 @@ export default function Index() {
                 </div>
 
                 <div className="data">
-                  <span className="title">今日路灯发电（kWh）</span>
+                  <span className="title">今日路灯发电（Wh）</span>
                   <span className="num">
                     {datas?.todayECreate ? datas?.todayECreate : "--"}
                   </span>

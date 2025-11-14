@@ -247,10 +247,11 @@ export default function Index({ projectId, level,  name,id, allLevel }) {
 
   const getUNselect = async ({ type = devietype, areaId, alike = "" } = {}) => {
     curareaId.current = areaId;
+     console.log(Record)
     try {
       let { success, data } = await useListUnBindLight({},{
         projectId,
-        rId:id,
+        rId:Record?.areaId,
       }); // 未选中
       if (success && Array.isArray(data)) {
         setUnSelected([...data]);
@@ -269,7 +270,7 @@ export default function Index({ projectId, level,  name,id, allLevel }) {
     let {
       data: { deviceSummary, deviceSub },
       success,
-    } = await useListBindLight({},{ projectId, rId:id }); // 已选中 type: 0
+    } = await useListBindLight({},{ projectId, rId:Record?.areaId }); // 已选中 type: 0
     if (success && Array.isArray(deviceSummary)) {
       setDeviceSummary([...deviceSummary]);
     //  devices.current.deviceSub = deviceSub;
