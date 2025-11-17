@@ -1,5 +1,5 @@
 import { DatePicker } from 'antd';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import moment from 'moment';
 const { RangePicker } = DatePicker;
 
@@ -61,4 +61,5 @@ export const Daterange = ({value, onChange,rangeDate}) => {
     />
   );
 };
+
  

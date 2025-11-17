@@ -139,6 +139,7 @@ export { ReactComponent as airConditioningManagementairConditioningEnergyMonitor
 export { ReactComponent as airConditioningManagementairConditioningManualControl } from './airConditioningManagement/airConditioningManagementairConditioningManualControl.svg'
 export { ReactComponent as airConditioningManagementairConditioningAutoControl } from './airConditioningManagement/airConditioningManagementairConditioningAutoControl.svg'
 export { ReactComponent as airConditioningManagementairConditioningLog } from './airConditioningManagement/airConditioningManagementairConditioningLog.svg'
+export { ReactComponent as airConditioningManagementairConditioningPoints } from './airConditioningManagement/airConditioningManagementairConditioningPoints.svg'
 //空调控制
 
 export { ReactComponent as lightManagementstreetLightOverview } from './lightManagement/lightManagementstreetLightOverview.svg'

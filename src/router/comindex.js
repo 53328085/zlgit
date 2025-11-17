@@ -217,7 +217,7 @@ export default function Index() {
             setConfig({ isview: true, isdate: true, shiftNo: true });
             break;
           case "region":
-            setConfig({ energytype: true, isdate: true, shiftNo: true, gas: false, });
+            setConfig({ energytype: true, isdate: true, shiftNo: true, gas: false, isAreaId:false,isLevles:true });
             break;
           default:
             setConfig({});
