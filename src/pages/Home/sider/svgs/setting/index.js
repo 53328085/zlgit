@@ -111,6 +111,7 @@ export { ReactComponent as airConditioningManagementairConditioningType } from '
 export { ReactComponent as airConditioningManagementairConditioningInfo } from './airConditioningInfo.svg'
 export { ReactComponent as airConditioningManagementairConditioningScheme } from './airConditioningScheme.svg'
 export { ReactComponent as airConditioningManagementairConditioningConfig } from './statistics.svg'
+export { ReactComponent as airConditioningManagementairConditioningPointSet } from './airConditioningManagementairConditioningPointSet.svg'
 
 //路灯管理
 

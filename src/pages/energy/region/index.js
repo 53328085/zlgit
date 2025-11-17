@@ -16,6 +16,7 @@ import Pagecount from "@com/pagecontent";
 
 import { getTime } from '@com/usehandler'
 import Ichart from '@com/useEcharts/Ichart';
+import {useQueryEnergyArea} from "./api.js"
 const { QueryEnergyAreaDay, QueryEnergyAreaMonth, QueryEnergyAreaYear } = EnergyArea
 const { Text, Paragraph } = Typography
 const Laybox = styled.div`
@@ -106,7 +107,8 @@ const Sdiv = styled.div`
 const nf = new Intl.NumberFormat("en-US", { maximumFractionDigits: 2 });
 export default function Index() {
   let { exparams } = useOutletContext()
-  let { energytype, areaId, date, type: dateType, projectId } = exparams
+  console.log(exparams)
+  let { energytype, selectlevel, areaId, date, type: dateType, projectId } = exparams
   const chartTitle = ["用电量 (kWh)", "用电量 (kWh)", '用冷水量 (m³)', '用气量 (m³)', '', '', '', '用热水量 (m³)', '', '', '', '', '', '', '', '', '', '', '用蒸汽量(m³)'][energytype] || "用电量 (kWh)"
   const unit = ["kWh", "kWh", "m³", '', '', '', '', 'm³', '', '', '', '', '', '', '', '', '', '', 'm³'][energytype] || "kWh"
   const [tableData, setTableData] = useState([])
@@ -179,21 +181,21 @@ export default function Index() {
 
   ]
 
-  const getData = ({ energytype, areaId, date, dateType, projectId }) => {
+  const getData = ({ energytype, selectlevel, date, dateType, projectId }) => {
 
     // const {area, date, type, meterType} = form.getFieldsValue() || {}
     // if(isNaN(type)) return;
-    let hander = ['', QueryEnergyAreaDay, QueryEnergyAreaMonth, QueryEnergyAreaYear][dateType]
+  //  let hander = ['', QueryEnergyAreaDay, QueryEnergyAreaMonth, QueryEnergyAreaYear][dateType]
     let time = getTime(date, dateType)
-    const querys = {
-      areaId,
+    const body = {
+      areaIds: Array.isArray(selectlevel) ? selectlevel : [selectlevel],
       projectId,
       meterType: energytype,
-      type: dateType,
+      dayMonthYear: dateType,
       date: time
     }
-    const params = [areaId]
-    hander(querys, params).then(res => {
+   // const params = selectlevel
+    useQueryEnergyArea({}, body).then(res => {
       let { success, data, errMsg } = res;
 
       if (success && Array.isArray(data) && data.length > 0) {
@@ -248,12 +250,13 @@ export default function Index() {
 
 
   useEffect(() => {
-    let f = [energytype, areaId, dateType, projectId].every(v => Number.isInteger(v)) && date
+    let f = [energytype,   dateType, projectId].every(v => Number.isInteger(v)) && date && (typeof selectlevel == "number" || Array.isArray(selectlevel))
+     
     if (f) {
-      getData({ energytype, areaId, date, dateType, projectId })
+      getData({ energytype,  selectlevel, date, dateType, projectId })
     }
 
-  }, [energytype, areaId, date, dateType, projectId])
+  }, [energytype,  selectlevel, date, dateType, projectId])
   const Title = (
     <CustTitle className="t">
       区域能耗趋势

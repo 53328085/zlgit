@@ -160,7 +160,7 @@ const lineopt=useMemo(()=>{
 }, [consumeDetail,etitle, display,unit])
   const [value,setValue]=useState(1)
   const title=<CustTitle>
-    <span>实时数据</span>
+    <span>分类能耗明细</span>
     <Radio.Group options={viewOpt} buttonStyle="solid" optionType='button' value={value} onChange={(e)=>setValue(e.target.value)} ></Radio.Group>
   </CustTitle>
   return (

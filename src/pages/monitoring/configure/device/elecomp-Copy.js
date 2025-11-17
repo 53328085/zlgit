@@ -158,7 +158,7 @@ export const FormComp = (props) => {
         required: true
     }]
     const changeGateway = (v, option) => {
-        console.log(v, option, form.getFieldsValue())
+       console.log(v, option, form.getFieldsValue())
         if (v) {
             const arr = addopts?.filter(it => (it.id === option.areaId))
             setArea([...arr])
@@ -166,7 +166,7 @@ export const FormComp = (props) => {
             form.setFieldsValue({ areaId: arr[0].id, commPort: '' })
         } else {
             setArea([])
-        }
+        }  
     }
 
     const validator = () => ({
@@ -204,7 +204,22 @@ export const FormComp = (props) => {
             <Row className={style.customItem}>
                 <Col span={10}>
                     <Form.Item label={levelname?.current} name="areaId" rules={rules}>
-                        {
+                    <Select
+                                showSearch
+                                filterOption={(val, opts) => {
+                                    if (opts.name.includes(val)) {
+                                        return true
+                                    } else {
+                                        return false
+                                    }
+                                }}
+                                fieldNames={{
+                                    label: 'name',
+                                    value: 'id',
+                                }}
+                                options={addopts}
+                            ></Select>
+                       {/*  {
                             area.length > 0 ? <Select
                                 fieldNames={{
                                     label: 'name',
@@ -219,7 +234,7 @@ export const FormComp = (props) => {
                                         return false
                                     }
                                 }}
-                                disabled
+                              
                             ></Select> : <Select
                                 showSearch
                                 filterOption={(val, opts) => {
@@ -235,7 +250,7 @@ export const FormComp = (props) => {
                                 }}
                                 options={addopts}
                             ></Select>
-                        }
+                        } */}
                     </Form.Item>
                     <Form.Item label="安装地址" name="address" rules={rules}>
                         <Input />
@@ -271,7 +286,7 @@ export const FormComp = (props) => {
                                 label: 'sn',
                                 value: 'id',
                             }}
-                            onChange={changeGateway}
+                           onChange={changeGateway}
                             options={gatewaylist}
                         ></Select>
                     </Form.Item>
@@ -716,7 +731,14 @@ export const EditFormComp = (props) => {
             <Row className={style.customItem}>
                 <Col span={10}>
                     <Form.Item label={levelname?.current} name="areaId" rules={rules}>
-                        {
+                    <Select
+                                fieldNames={{
+                                    label: 'name',
+                                    value: 'id',
+                                }}
+                                options={addopts}
+                            ></Select>
+                      {/*   {
                             (area.length || isdisable) > 0 ? <Select
                                 fieldNames={{
                                     label: 'name',
@@ -731,7 +753,7 @@ export const EditFormComp = (props) => {
                                 }}
                                 options={addopts}
                             ></Select>
-                        }
+                        } */}
                     </Form.Item>
                     <Form.Item label="安装地址" name="address" rules={rules}>
                         <Input />
@@ -767,7 +789,7 @@ export const EditFormComp = (props) => {
                                 label: 'sn',
                                 value: 'id',
                             }}
-                            onChange={changeGateway}
+                           onChange={changeGateway}
                             options={gatewaylist}
                         ></Select>
                     </Form.Item>

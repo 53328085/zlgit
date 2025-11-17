@@ -18,7 +18,7 @@ import {
 const { Link } = Typography
 import { publicdateType, Daterange, w200, w88 } from "./data"
 import Enery from "./enery";
- 
+import AreaLevel from './areas'
 
 const { FindContainerList } = StorageContainerDesigner  //储能柜
 
@@ -70,7 +70,7 @@ export default function UseSerach(props) {
 
   const { config = {}, custview = null, record = null } = props
 
-  const { isAreaId = true, gas = true, daterang = 'day', formsty = {} } = config
+  const { isAreaId = true, gas = true, isLevles=false, daterang = 'day', formsty = {} } = config
   const dispatch = useDispatch()
 
 
@@ -89,8 +89,7 @@ export default function UseSerach(props) {
   const { laptop } = useSelector(adaptation)
   //const DeviceStyle = useSelector(filterDeviceStyle)  
   const [DeviceStyle, setDeviceStyle] = useState([])
-
-  
+ 
   let shifts = useSelector(selectshifts)
 
   const [allshifts] = useState([...shifts, { id: 0, name: i18t("comm", "Allflights"), startTime: "", endTime: "" }])
@@ -508,6 +507,7 @@ export default function UseSerach(props) {
   }, [levelone])
 
   const onValuesChange = (_, allValues) => { 
+    console.log(allValues)
     props.setexparams({ ...allValues })
   }
 
@@ -555,6 +555,7 @@ export default function UseSerach(props) {
 
         </Item>
         }
+         {props.config?.isLevles && <AreaLevel setexparams={props.setexparams} />} 
         {props.config?.isSite && site}
         {props.config?.isTank && tank}
         {props.config?.isPcs && pcs}

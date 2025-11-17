@@ -262,7 +262,22 @@ export const FormComp = (props) => {
             <Row className={style.customItem}>
                 <Col span={10}>
                     <Form.Item label={levelname?.current} name="areaId" rules={rules}>
-                        {area.length > 0 ? (
+                    <Select
+                                showSearch
+                                filterOption={(val, opts) => {
+                                    if (opts.name.includes(val)) {
+                                        return true;
+                                    } else {
+                                        return false;
+                                    }
+                                }}
+                                fieldNames={{
+                                    label: "name",
+                                    value: "id",
+                                }}
+                                options={addopts}
+                            ></Select>
+                        {/* {area.length > 0 ? (
                             <Select
                                 fieldNames={{
                                     label: "name",
@@ -295,7 +310,7 @@ export const FormComp = (props) => {
                                 }}
                                 options={addopts}
                             ></Select>
-                        )}
+                        )} */}
                     </Form.Item>
                     <Form.Item label="安装地址" name="address" rules={rules}>
                         <Input />
@@ -778,7 +793,14 @@ export const EditFormComp = (props) => {
             <Row className={style.customItem}>
                 <Col span={10}>
                     <Form.Item label={levelname?.current} name="areaId" rules={rules}>
-                        {(area.length || isdisable) > 0 ? (
+                    <Select
+                                fieldNames={{
+                                    label: "name",
+                                    value: "id",
+                                }}
+                                options={addopts}
+                            ></Select>
+                       {/*  {(area.length || isdisable) > 0 ? (
                             <Select
                                 fieldNames={{
                                     label: "name",
@@ -795,7 +817,7 @@ export const EditFormComp = (props) => {
                                 }}
                                 options={addopts}
                             ></Select>
-                        )}
+                        )} */}
                     </Form.Item>
                     <Form.Item label="安装地址" name="address" rules={rules}>
                         <Input />

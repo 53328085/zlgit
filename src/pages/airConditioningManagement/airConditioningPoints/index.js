@@ -28,7 +28,7 @@ import { isObject } from "@com/usehandler";
 import Pagecount from "@com/pagecontent";
 import { Main,Content } from "./style";
 import { useAreas, usePoints,useList,useSetControl } from "./api";
-import {initialValues,marks,rules} from "./data"
+import {initialValues,marks,optobj} from "./data"
 import  {Wet, Hot, Cold, Wind} from "./icon"
 export default function Index() {
   const [form] = Form.useForm();
@@ -41,7 +41,7 @@ export default function Index() {
   const [ariId, setAriId] = useState(null)
   const [treeId, setTreeID] = useState(null);
   const [title, setTittle] = useState("");
-
+// 0,1 离线，2：在线
 const getList =async(id)=>{
 try {
     const body ={
@@ -53,9 +53,26 @@ try {
              id
         ]
     }
-  let {success} =  await useList({},body)
-  if(success) {
+  let {success, data} =  await useList({},body)
+  const {details } =data || {};
+  if(success && Array.isArray(details) && isObject(details?.[0]) && Array.isArray(details?.[0]?.fields) && details?.[0]?.fields?.length) {
+     
+     let values ={}
+     details?.[0]?.fields?.forEach((f,i)=>{
+        const{index, name,value} = f
+        if(index==1 &&  value) {
+          values.ioState = optobj[1][value]
+        }else if(index==2 &&  value){
+            values.workMode = optobj[2][value]
+        }else if(index==3 &&  value) {
+            values.windSpeed = optobj[3][value]
+        }
+     })
+     values.temperature = details?.[0]?.temperature
+     form.setFieldsValue(values) 
      ref.current.onOpen()
+  }else{
+    message.error("设备离线，获取数据失败")
   }
 
 } catch (error) {
@@ -179,18 +196,18 @@ try {
                  </Form.Item>
                  <Form.Item label="模式" name="workMode">
                     <Radio.Group optionType="button" buttonStyle="solid" size="large">
-                        <Radio value={1}><div className="iconwrap"><Hot /><span className="txt">制热</span></div></Radio>
-                        <Radio value={2}><div className="iconwrap"><Cold /><span className="txt">制冷</span></div></Radio>
+                        <Radio value={2}><div className="iconwrap"><Hot /><span className="txt">制热</span></div></Radio>
+                        <Radio value={1}><div className="iconwrap"><Cold /><span className="txt">制冷</span></div></Radio>
                         <Radio value={3}><div className="iconwrap"><Wind /><span className="txt">送风</span></div></Radio>
                         <Radio value={4}><div className="iconwrap"><Wet /><span className="txt">除湿</span></div></Radio>
                     </Radio.Group>
                  </Form.Item>
                  <Form.Item label="风速" name="windSpeed">
                     <Radio.Group optionType="button" buttonStyle="solid" size="medium">
-                        <Radio value={1}>自动</Radio>
-                        <Radio value={2}>低</Radio>
-                        <Radio value={3}>中</Radio>
-                        <Radio value={4}>高</Radio>
+                        <Radio value={0}>自动</Radio>
+                        <Radio value={1}>低</Radio>
+                        <Radio value={2}>中</Radio>
+                        <Radio value={3}>高</Radio>
                     </Radio.Group>
                  </Form.Item>
                 </Form>

@@ -15,7 +15,10 @@ import {Apimethod} from "@api/api.js"
   "Light/StreetLightCommon/FindStreetLightAreas"
 );
 
-
+ const { useAllLevel } = new Apimethod( // 查询区域等级
+  "get",
+  "General/Area/AllLevel"
+);
 
 const {DeviceTypeManager: {AllDeviceStyle} } = Monitoring
 
@@ -185,7 +188,7 @@ const initialState = {
   collapsed:false,
   pgTitle: "",
   site: "", // 站点 配电模块 
- 
+  areaLevel:[], // 层级
 }
  
 export const getWebsiteState = createAsyncThunk(
@@ -206,7 +209,8 @@ export const getWebsiteState = createAsyncThunk(
           Editapi.FilterDeviceStyle(id), // 运行监控运行态，获取设备总类
         CustTheme.QueryTheme({projectId:id}), // 获取项目下私有主题
         CustTheme.GetProjectTheme({projectId:id}), // 获取项目选择的主题
-        useFindStreetLightAreas({projectId:id}) // 获取路灯管理下有路灯的区域
+        useFindStreetLightAreas({projectId:id}), // 获取路灯管理下有路灯的区域
+        useAllLevel({projectId:id}), // 获取区域层级
          ] 
         let results = await Promise.allSettled(promises)
         return results
@@ -468,8 +472,15 @@ const system = createSlice({
                  }
                 
                }else if(index==10){
-                 console.log(data)
+                  
                 state.lightlevel=Array.isArray(data) ? data : []
+               }else if(index ==11) {
+                 if(Array.isArray(data) && data.length) {
+                  state.areaLevel= data
+                 }else {
+                   state.areaLevel=[]
+                 }
+                 
                }
 
              }else{
@@ -653,7 +664,7 @@ export const adaptation = state => state.system.adaptation
 export const sidershow = state => state.system.sidershow
 export const collapsed = state => state.system.collapsed
 export const pgTitle = state=>state.system.pgTitle
-
+export const areaLevel = state=>state.system.areaLevel
 export const {
     configProject,
     getSetMenus,

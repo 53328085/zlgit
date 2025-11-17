@@ -674,7 +674,22 @@ export const FormComp = (props) => {
       <Row className={style.customItem}>
         <Col flex={1}>
           <Form.Item label={levelname.current} name="areaId" rules={rules}>
-            {
+          <Select
+                showSearch
+                filterOption={(val, opts) => {
+                  if (opts.name.includes(val)) {
+                    return true
+                  } else {
+                    return false
+                  }
+                }}
+                fieldNames={{
+                  label: 'name',
+                  value: 'id',
+                }}
+                options={addopts}
+              ></Select>
+            {/* {
               area.length > 0 ? <Select
                 showSearch
                 filterOption={(val, opts) => {
@@ -705,7 +720,7 @@ export const FormComp = (props) => {
                 }}
                 options={addopts}
               ></Select>
-            }
+            } */}
           </Form.Item>
           <Form.Item label="安装地址" name="address" rules={rules}>
             <Input autoComplete='off' />
@@ -753,7 +768,7 @@ export const FormComp = (props) => {
                 label: 'sn',
                 value: 'id',
               }}
-              onChange={changeGateway}
+               onChange={changeGateway}
               options={gatewaylist}
             ></Select>
           </Form.Item>
@@ -897,7 +912,22 @@ export const EditFormComp = (props) => {
       <Row className={style.customItem}>
         <Col flex={1}>
           <Form.Item label={levelname.current} name="areaId" rules={rules}>
-            {
+          <Select
+                showSearch
+                filterOption={(val, opts) => {
+                  if (opts.name.includes(val)) {
+                    return true
+                  } else {
+                    return false
+                  }
+                }}
+                fieldNames={{
+                  label: 'name',
+                  value: 'id',
+                }}
+                options={addopts} 
+              ></Select>
+            {/* {
               (area.length || isdisable) > 0 ? <Select
                 showSearch
                 filterOption={(val, opts) => {
@@ -929,7 +959,7 @@ export const EditFormComp = (props) => {
                 options={addopts}
                 disabled
               ></Select>
-            }
+            } */}
           </Form.Item>
           <Form.Item label="安装地址" name="address" rules={rules}>
             <Input />
@@ -959,7 +989,7 @@ export const EditFormComp = (props) => {
             ></Select>
           </Form.Item>
           <Form.Item label="变压器编号" name="sn" rules={rules}>
-            <Input disabled />
+            <Input disabled  />
           </Form.Item>
           <Form.Item label="变压器名称" name="name" rules={rules}>
             <Input />
@@ -978,7 +1008,7 @@ export const EditFormComp = (props) => {
                 label: 'sn',
                 value: 'id',
               }}
-              onChange={changeGateway}
+             onChange={changeGateway}
               options={gatewaylist}
             ></Select>
           </Form.Item>

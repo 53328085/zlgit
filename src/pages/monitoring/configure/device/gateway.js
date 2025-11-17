@@ -374,11 +374,13 @@ export default function Gateway() {
   //确认编辑
   const editOk = async () => {
     editform.validateFields().then(async () => {
-      const { areaId, category, address, sn, pwd, name, heartInterval, remark, id } = editform.getFieldValue()
+      console.log(editform.getFieldValue())
+     // return
+      const { areaId,area, category, address, sn, pwd, name, heartInterval, remark, id } = editform.getFieldValue()
       let params = {
         id: id,
         projectId,
-        areaId,
+        areaId:area,
         address,
         category,
         sn,
@@ -706,7 +708,8 @@ export default function Gateway() {
     onOk: editOk,
     onSure: editSure,
     onCancel: editCancel,
-    levelname
+    levelname,
+    addopts
   }
 
   const ErrModalProps = {
@@ -717,7 +720,7 @@ export default function Gateway() {
   const AddFormComp = useMemo(() => {
     return (<AddModalForm {...ModalFormProps}></AddModalForm>)
   }, [addoptsRef.current, selectoptsRef.current, usecategoryRef.current])
-  const EditFormComp = useMemo(() => <EditModalForm {...EditProps}></EditModalForm>, [levelname.current])
+  const EditFormComp = useMemo(() => <EditModalForm {...EditProps}></EditModalForm>, [levelname.current, addopts])
   useEffect(() => {
     if (oneLevel?.length > 0) {
       getOneLevel()
@@ -824,6 +827,7 @@ let AddModalForm = ({ modalFormRef, addopts, addForm, usecategory, levelname, on
         }}
         labelAlign='left'
         preserve={false}
+        labelWrap
       >
         <Row gutter={16} className={style.customItem}>
           <Col span={10}>
@@ -970,7 +974,7 @@ const KeyParam = ({ keyParamRef, gatewaySn, downloadOk }) => {
   )
 }
 //编辑网关
-const EditModalForm = ({ modalEditRef, editform, levelname, ...other }) => {
+const EditModalForm = ({ modalEditRef,  addopts, editform, levelname, ...other }) => {
   const rules = { required: true, }
   return (
     <Modal mold='cust' ref={modalEditRef} {...other} title="编辑网关" onOk={other.onOk}>
@@ -981,16 +985,26 @@ const EditModalForm = ({ modalEditRef, editform, levelname, ...other }) => {
           span: 6
         }}
         labelAlign='left'
+        labelWrap={true}
       >
         <Row className={style.customItem}>
           <Col flex={1}>
             <Form.Item label={levelname.current} name="area" rules={[rules]}>
-              <Select
+            <Select
+                showSearch
+                filterOption={(val, opts) => {
+                  if (opts.name.includes(val)) {
+                    return true
+                  } else {
+                    return false
+                  }
+                }}
                 fieldNames={{
                   label: 'name',
                   value: 'id'
                 }}
-                disabled
+                options={addopts}
+
               ></Select>
             </Form.Item>
             <Form.Item label="安装地址" name="address" rules={[rules]} >
@@ -1020,6 +1034,9 @@ const EditModalForm = ({ modalEditRef, editform, levelname, ...other }) => {
             </Form.Item>
             <Form.Item label="心跳周期" name="heartInterval" rules={[{ pattern: /^[1-9]+[0-9]*$/, message: '心跳周期需为正整数' }]}>
               <Count></Count>
+            </Form.Item>
+            <Form.Item noStyle name="id">
+              <Input hidden></Input>
             </Form.Item>
           </Col>
         </Row>

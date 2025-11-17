@@ -121,6 +121,7 @@ const TitP = styled.div`
     transition: all 0.3s;
     display: flex;
     flex-direction: column;
+    z-index: 1;
     .title {
       background-color: #0c3;
       color: #fff;
