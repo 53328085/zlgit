@@ -65,9 +65,10 @@ export const Container = styled.div`
         display: flex;
         align-items: baseline;
         .topInfo{
+            color: #303133;
+            font-size: 16px;
         .name{
         margin-right: 5px;
-        font-size: 16px;
         font-weight: 500;
         text-overflow: ellipsis;
         white-space: nowrap;
@@ -75,16 +76,12 @@ export const Container = styled.div`
         overflow: hidden;
         cursor:pointer;
         }
-        .value{
-        font-size: 12px;
-        }
         }
         }
         .content{
         margin: 10px 0px;
         text-align: center;
         .temperature{
-        margin-right: 5px;
         font-size: 36px;
         }
         .Offline{
@@ -93,36 +90,34 @@ export const Container = styled.div`
       color: #909399;
       font-weight: 500;
         }
-      .lastSampleTime{
-      font-size: 14px;
-      }
         }
         .OfflineBox{
         color: #909399;
         font-size: 16px;
         font-weight: 600;
-       margin-top: 20px;
         .offlineBoxItem{
         display: flex;
         align-items: center;
         justify-content: space-between;
 }
         }
-        .air-Offline,.air-Alarm{
-      font-size: 28px;
+        
+      .lastSampleTime{
+      font-size: 12px;
+      color: #606266;
       text-align: center;
-      color: #909399;
+      margin-top:5px;
       font-weight: 500;
-        }
+      }
         }
          .airInfo{
         display: grid;
         grid-template-columns: repeat(auto-fill, minmax(160px, 290px));
         padding-right: 16px;
          }
-    .airInfo .fields:nth-child(3){
-      margin-top: 20px;
-      }
+    // .airInfo .fields:nth-child(3){
+    //   margin-top: 20px;
+    //   }
      
         .fields{
        display: flex;

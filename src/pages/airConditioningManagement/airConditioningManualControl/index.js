@@ -152,6 +152,30 @@ export default function Index() {
       />
     </TitleBox>
   );
+  const getTimeDiffColor = (lastSampleTime, thresholds = { recent: 1, warning: 3 }) => {
+    if (!lastSampleTime || lastSampleTime === '0001-01-01 00:00:00') {
+      return 'gray';
+    }
+
+    const now = new Date();
+    const sampleTime = new Date(lastSampleTime);
+
+    // 处理无效日期
+    if (isNaN(sampleTime.getTime())) {
+      return 'gray';
+    }
+
+    const diffHours = (now - sampleTime) / (1000 * 60 * 60);
+
+    if (diffHours <= thresholds.recent) {
+      return 'green';
+    } else if (diffHours <= thresholds.warning) {
+      return 'orange';
+    } else {
+      return 'red';
+    }
+  };
+
   useEffect(() => {
     if (Number.isInteger(projectId) && Array.isArray(treeId) && treeId.length > 0) {
       handleSearchClick();
@@ -230,7 +254,6 @@ export default function Index() {
                                     </div>
                                     <div className="content">
                                       <span className="temperature">-℃</span>
-                                      <div className="lastSampleTime">{airItem.lastSampleTime}</div>
                                     </div>
                                     {airItem?.fields?.map((fields) => (
                                       <div key={fields.name} className="fields">
@@ -244,6 +267,11 @@ export default function Index() {
 
                                       </div>
                                     ))}
+                                    <div className="lastSampleTime"
+                                    // style={{
+                                    //   color: getTimeDiffColor(airItem.lastSampleTime, { recent: 1, warning: 3 }),
+                                    // }}
+                                    >{airItem.lastSampleTime}</div>
                                   </div>
                                 </AntCheckbox>
                               </div>
@@ -288,7 +316,6 @@ export default function Index() {
                                       <span className="temperature">
                                         {airItem.temperature ? `${airItem.temperature}` : ""}℃
                                       </span>
-                                      <div className="lastSampleTime">{airItem.lastSampleTime}</div>
                                     </div>
                                     {airItem?.fields?.map((fields) => (
                                       <div key={fields.name} className="fields">
@@ -298,6 +325,11 @@ export default function Index() {
                                         >{fields.value || "-"}</div>
                                       </div>
                                     ))}
+                                    <div className="lastSampleTime"
+                                    // style={{
+                                    //   color: getTimeDiffColor(airItem.lastSampleTime, { recent: 1, warning: 3 }),
+                                    // }}
+                                    >{airItem.lastSampleTime}</div>
                                   </div>
                                 </AntCheckbox>
                               </div>
@@ -326,7 +358,6 @@ export default function Index() {
                                 </div>
                                 <div className="content">
                                   <span className="Offline">离线</span>
-                                  <div className="lastSampleTime">{airItem.lastSampleTime}</div>
                                 </div>
                                 <div className="OfflineBox">
                                   {Array.from({ length: 3 }, (_, index) => (
@@ -336,6 +367,12 @@ export default function Index() {
                                     </div>
                                   ))}
                                 </div>
+
+                                <div className="lastSampleTime"
+                                // style={{
+                                //   color: getTimeDiffColor(airItem.lastSampleTime, { recent: 1, warning: 3 }),
+                                // }}
+                                >{airItem.lastSampleTime}</div>
                               </div>
                             </AntCheckbox>
                           </div>
@@ -361,16 +398,20 @@ export default function Index() {
                                 </div>
                                 <div className="content">
                                   <span className="Offline">告警</span>
-                                  <div className="lastSampleTime">{airItem.lastSampleTime}</div>
                                 </div>
                                 <div className="OfflineBox">
                                   {Array.from({ length: 3 }, (_, index) => (
                                     <div key={index} className="offlineBoxItem">
-                                      <div className="name">--</div>
+                                      <div>--</div>
                                       <div>--</div>
                                     </div>
                                   ))}
                                 </div>
+                                <div className="lastSampleTime"
+                                // style={{
+                                //   color: getTimeDiffColor(airItem.lastSampleTime, { recent: 1, warning: 3 }),
+                                // }}
+                                >{airItem.lastSampleTime}</div>
                               </div>
                             </AntCheckbox>
                           </div>
