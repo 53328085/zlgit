@@ -10,9 +10,9 @@ export const TitleBox = styled.div`
   
 `;
 export const Container = styled.div`
-  display: flex;
+    display: flex;
+    height: 100%;
   .tree-box {
-    height: 864px;
     width: 288px;
     flex-shrink: 0;
     max-width: 288px;
@@ -41,8 +41,8 @@ export const Container = styled.div`
       margin: 0px 0px 16px 0px;
   }
    .airContainer{
-    height: 670px; /* 占满父容器Cspin的高度 */
-    overflow-y: scroll; /* 垂直溢出时显示滚动条 */
+    height: 630px; 
+    overflow-y: scroll; 
     scrollbar-width: thin; 
    }
    .airBox{    

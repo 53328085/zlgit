@@ -123,8 +123,8 @@ export default function Index() {
       <Mainwrap>
         <Titlelayout layout="flex" title="空调控制方案列表" dr="column" bordered >
           <Input.Search placeholder="请输入关键字查询" allowClear onSearch={onSearch} />
-          <Radio.Group value={schemeId} onChange={onChange} style={{ marginTop: "16px" }}>
-            <Space direction="vertical">
+          <Radio.Group value={schemeId} onChange={onChange} style={{ marginTop: "16px", maxHeight: "748px" }}>
+            <Space direction="vertical" style={{ height: '690px', overflowY: "auto", width: "100%", scrollbarWidth: "thin" }}>
               {
                 options?.map?.(o => <Radio value={o.id}>{o.name}</Radio>)
               }
@@ -155,16 +155,16 @@ export default function Index() {
                                 {e.type === 1 ? <>{week?.map?.(time => {
                                   const isInWeeks = e?.weeks?.includes(time.value);
                                   let className = "";
-                                  console.log(isInWeeks, time.value)
                                   if (isInWeeks) {
                                     className = time.value === 0 || time.value === 6 ? "green-text" : "blue-text";
-                                  } else {
+                                  }
+                                  else {
                                     className = "nomal-text";
                                   }
 
                                   return <div key={time.value} className={`${className} daybox`}>{time.label}</div>;
                                 })}</>
-                                  : <div className={`legal-holidays daybox`}>法定节假日</div>}
+                                  : <div className={week[0] === 7 ? 'daybox green-text legal-holidays' : 'daybox legal-holidays'}>法定节假日</div>}
                               </div>
                             </div>
                           </div>
@@ -214,7 +214,7 @@ export default function Index() {
             <BlueColumn bg={{ height: 6, width: 6, borderRadius: '50%' }}
               name='空调绑定明细'>
             </BlueColumn>
-            <UserTable style={{ marginTop: "5px" }} columns={cols} {...tableProps} scroll={{ y: 195 }}></UserTable>
+            <UserTable style={{ marginTop: "5px" }} columns={cols} {...tableProps} scroll={{ y: controlInfos.length < 2 ? 370 : 195 }}></UserTable>
           </Titlelayout>
         </div>
       </Mainwrap>
