@@ -185,15 +185,20 @@ export default function Index() {
       const { schemeName,projectId,creater, section,  esaving,id, } = values;
       const {cold, hight, ...erest} = esaving
       const controls = section.map(se => {
-        let {checked, date,eForbid, eTiming,  forbidControls,timings, ...rest} = se
+        let {checked, date,eForbid, eTiming,  forbidControls,timings,weeks, type, ...rest} = se
         let forbid=forbidControls.filter(f => Array.isArray(f?.time)&&f?.time?.length==2)  
         let timeing = timings.filter(t=> t.time)
+        if (type==2) {
+           weeks = weeks ? [7] : []
+        }
         return {
            eForbid,
            eTiming,
            section: {
             dtStart:date?.[0]?.format?.("YYYY-MM-DD"),
             dtEnd:date?.[1]?.format?.("YYYY-MM-DD"),
+            type,
+            weeks,
             ...rest
            },
            timings: timeing.map(t=> {
