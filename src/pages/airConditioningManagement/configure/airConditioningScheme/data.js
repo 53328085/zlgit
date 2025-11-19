@@ -268,7 +268,7 @@ export const section = ({
                     );
                   } else {
                     return (
-                      <Form.Item>
+                      <Form.Item name={[filed.name, "weeks"]} valuePropName="checked"  >
                         <Checkbox>
                           法定节假日
                           <Tooltip title="获取国家法定节假日信息,可设置法定节假日的控制策略">

@@ -12,7 +12,7 @@ import UseTree from '@com/useTree'
 import Powercom from "./component/power"
 import Datashow from "./component/Datashow"
 import {energyOpt} from  "./data"
-import {useQueryEnergy,useQueryEnergyDetail,useQueryEnergyCost} from "./api"
+import {useQueryEnergy,useQueryEnergyDetail,useQueryEnergyCost,useGetPublicConsumeCategoryQuotas} from "./api"
 export default function Index() {
   const [energytype, setEnergytype] = useState(1)
   const [treeId, setTreeId] = useState([]) 
@@ -22,10 +22,13 @@ export default function Index() {
   let { areaId, date, type:dateType, view,  projectId} = exparams 
  
  
-  
+  const [quota, setQuota] =useState([])
   const [datas, setDatas] = useState({})
   const [chartdatas, setChartDatas] = useState({})
   const energyName = datas?.consumeTotal?.[0]  ||  {}
+  const showquota =  useMemo(()=>{ 
+    return  areaId==0 && dateType==3 && view==1
+  },[areaId,  dateType, view])
   // 查询分类能耗明细
   const queryEnergyDetail = async(name, idx=0)=> {
     try {
@@ -78,9 +81,40 @@ export default function Index() {
       }
     } catch (e) { console.log(e) }
   }
- 
+ // 能耗分类定额获取 
+   const getQuota =async (id)=> {
+        try {
+             if(typeof id !="number") return
+            if(!(areaId == 0 && dateType == 3)) return
+           
+            let query = {
+                projectId,
+                year:date.format('YYYY'),
+                publicConsumeCategoryId:id,
+            }
+          let {success, data} =  await useGetPublicConsumeCategoryQuotas(query)
+          if(success &&Array.isArray(data?.datas)&& data?.datas.length ){  
+               let   datas = data.datas.map(d => d.quotaValue)
+               setQuota(datas)  
+          }else {
+            setQuota([])
+          }
+
+        } catch (error) {
+            console.log(error)
+        }
+
+       
+    }
+  useEffect(() => {  
+
+},[])  
+
   const cards = useMemo(() => { 
-    return datas?.consumeTotal?.map((data, idx) => <div onClick={()=> queryEnergyDetail(data.name,idx)} key={data.name}><Powercom  active={active} idx={idx}  data={data} date={dateType} energytype={energytype}  /></div>)
+    return datas?.consumeTotal?.map((data, idx) => <div onClick={()=> {
+      queryEnergyDetail(data.name,idx)
+      getQuota(id)
+    }} key={data.name}><Powercom  active={active} idx={idx}  data={data} date={dateType} energytype={energytype}  /></div>)
   }, [datas, dateType,energytype,active])
 
   useEffect(() => {
@@ -94,6 +128,9 @@ export default function Index() {
     let f =  [ areaId, dateType,  projectId].every(v => Number.isInteger(v)) &&   typeof energyName?.name == "string"
     if(f) {
       queryEnergyDetail(energyName?.name)
+    } 
+    if(f && areaId == 0 && dateType == 3) {
+      getQuota(energyName?.id)
     } 
   }, [ areaId, date, dateType,  projectId, energyName])
 
@@ -111,7 +148,7 @@ export default function Index() {
                 {cards}
            </div>
            </div>
-           <Datashow datas={chartdatas} view={view} energytype={energytype}  />
+           <Datashow datas={chartdatas} showquota={showquota} quota={quota} view={view} energytype={energytype}  />
         </div>
         
       </Mainbox>

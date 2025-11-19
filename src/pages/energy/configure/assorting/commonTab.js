@@ -3,16 +3,32 @@ import ClassfyTree from './classfyTree'
 import { energyDesigner } from '@api/api.js'
 import { useRequest } from "ahooks";
 import Custmodl from '@com/useModal'
-import { Input, Form, message, Spin, Upload, Modal, Table } from "antd";
-
+import  CustTable from "@com/useTable"
+import { Input, Form, message, Spin, Upload, Modal, Table,DatePicker } from "antd";
+import moment from "moment";
 import style from './style.module.less'
 import UseTransfer from '@com/useTransfer'
 import { useSelector } from 'react-redux'
 import { selectProjectId } from '@redux/systemconfig.js'
 import upload from '@imgs/upload.png'
-import { Cspin } from '@com/comstyled'
+import { Cspin} from '@com/comstyled'
+import { useGetPublicConsumeCategoryQuotas, useSetPublicConsumeCategoryQuotas} from './api'
+import {Content} from "./style"
+import {useColumns,EditableCell} from "./data"
+import { CustButtonT } from "@com/useButton";
+import { set } from "lodash";
+ 
+ 
+
 export default function Index(props) {
+    const firsthalfyear = useColumns(0)
+    const secondhalfyear = useColumns(6)
+   // console.log(secondhalfyear)
+    const [qform] = Form.useForm()
     const [isAdd, setIsAdd] = useState(false)
+    const [tableData, setTableData] = useState([])
+    const  time =useRef(moment())
+   // const curryear = time.format('YYYY')
     const { Dragger } = Upload
     const projectId = useSelector(selectProjectId);
     const [loading, setLoading] = useState(true);
@@ -21,6 +37,7 @@ export default function Index(props) {
     const dref = useRef()
     const iref = useRef()
     const errRef = useRef()
+    const qref =useRef()
     const [messageApi, contextHolder] = message.useMessage();
     const [value, setValue] = useState()
     const [changeTag, setChangeTag] = useState('')
@@ -69,7 +86,47 @@ export default function Index(props) {
     let tag = '';
     let inputName = '';
     const [energyId, setEnergyId] = useState();
+    const getQuota =async (id, t)=> {
+        try {
+             time.current = t
+             let publicConsumeCategoryId = id  || energyId;
+            if(!publicConsumeCategoryId) return message.error('请选择设备分类！')
+            let query = {
+                projectId,
+                year:time.current.format('YYYY'),
+                publicConsumeCategoryId,
+            }
+          let {success, data} =  await useGetPublicConsumeCategoryQuotas(query)
+          if(success ){ 
+            if(Array.isArray(data?.datas)&& data?.datas.length) {
+                let obj={
+                    name: "去年同比能耗（kWh）"  
+                }
+                let obj2={
+                    name:"能耗定额设置（kWh）"
+                }
+                data.datas?.forEach((item) => { 
+                    const {month,quotaValue,referenceValue} = item 
+                    obj[month] = quotaValue
+                    obj2[month]=referenceValue
+                }) 
+                
+                setTableData([obj,obj2])
+                for (let [key, value] of Object.entries(obj2)) {
+                    qform.setFieldValue([key, "quotaValue"],  value)
+               }
+            }
+          //  qform.setFieldValue("year", typeof data.year=="number" ? moment(data.year, "YYYY")  : moment())
+            qref.current.onOpen()
+            
+          }
 
+        } catch (error) {
+            console.log(error)
+        }
+
+       
+    }
     const getFromChild = values => {
         setEnergyId(values.data.energyId);
         changeItem = values.data;
@@ -103,6 +160,8 @@ export default function Index(props) {
             // iref.current.onOpen()
             setFileList([])
             setAddModal(true)
+        }else if(values.tag == 'config') {
+            getQuota(values.data.energyId, moment())
         }
 
     }
@@ -349,6 +408,44 @@ export default function Index(props) {
             }
         })
     }
+    const onQuotas=async()=>{
+        try {
+          let  values =   await qform.validateFields()
+          
+          let body ={
+            year:time.current?.format('YYYY'),
+            projectId,
+            publicConsumeCategoryId:energyId,
+            datas:Object.values(values)
+          }
+           let {success, errMsg} = await  useSetPublicConsumeCategoryQuotas({}, body)
+           if(success) {
+              message.success("设置成功")
+              qref.current.onCancel()
+
+           }else {
+            message.error(errMsg || "设置失败")
+           }
+        } catch (error) {
+            console.log(error)
+        }
+    }
+    const onSwitch=()=> {
+        try {
+            const [obj1] = tableData
+            for (let [key, value] of Object.entries(obj1)) {
+                 qform.setFieldValue([key, "quotaValue"],  value)
+            }
+            
+        } catch (error) {
+            
+        }
+        
+    }
+    const changeTime=(e)=> {
+        setTime(e)
+        getQuota(undefined,e)
+    }
     return (
         <Cspin tip='Loading...' spinning={loading} >
             {contextHolder}
@@ -370,6 +467,42 @@ export default function Index(props) {
                         </Item>
                     </Form>
                 </div>
+            </Custmodl>
+            <Custmodl title={`定额配置`} ref={qref} mold="cust" width={890} onOk={onQuotas}>
+                <Content>
+                
+                 <div className="tool">
+                    
+                        <DatePicker picker="year" style={{ width: 200 }}   onChange={(e)=> getQuota(undefined,e)}  defaultValue={moment()} />
+                    
+                     <CustButtonT  wh="auto" text="matchenergy" onClick={onSwitch}  /></div> 
+                     <Form form={qform} component={false} preserve={false}>
+                    <div key="first">
+                    <CustTable 
+                    components={{
+                        body: {
+                            cell: EditableCell,
+                          },
+
+                    }}
+                    columns={firsthalfyear} 
+                    dataSource={tableData} ></CustTable>
+                    </div>
+                     <div key="second">
+                        <CustTable 
+                        components={{
+                            body: {
+                                cell: EditableCell,
+                            },
+
+                        }}
+                        columns={secondhalfyear} 
+                        dataSource={tableData}></CustTable>
+                     </div>
+                   
+                  </Form>
+                   
+                </Content>
             </Custmodl>
             <Custmodl title='删除能耗分类' ref={dref} mold="cust" width={512} type="warn" onOk={() => onDelete()}>
                 是否确认删除选中的能耗分类名称？

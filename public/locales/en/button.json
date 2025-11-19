@@ -82,5 +82,7 @@
   "restore": "Restore default values",
   "open": "Open",
   "close": "Close",
+  "quotaallocation":"Quota Allocation",
+  "matchenergy": "Match last year's energy consumption",
   "z": ""
 }

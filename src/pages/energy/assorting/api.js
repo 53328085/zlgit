@@ -13,3 +13,7 @@ export const { useQueryEnergy } = new Apimethod( //查询 分类能耗总览
     "post",
     "Energy/EnergyClassifyRuntime/QueryEnergyCost"
   );
+  export const { useGetPublicConsumeCategoryQuotas } = new Apimethod( // 能耗定额分类获取
+    "get",
+    "Energy/EnergyClassifyDesigner/GetPublicConsumeCategoryQuotas"
+  );
