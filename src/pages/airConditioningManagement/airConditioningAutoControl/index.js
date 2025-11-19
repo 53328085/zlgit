@@ -164,7 +164,7 @@ export default function Index() {
 
                                   return <div key={time.value} className={`${className} daybox`}>{time.label}</div>;
                                 })}</>
-                                  : <div className={week[0] === 7 ? 'daybox green-text legal-holidays' : 'daybox legal-holidays'}>法定节假日</div>}
+                                  : <div className={e?.weeks[0] === 7 ? 'daybox green-text legal-holidays' : 'daybox legal-holidays'}>法定节假日</div>}
                               </div>
                             </div>
                           </div>
