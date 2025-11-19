@@ -9,14 +9,13 @@ import { levelDefaultLabel, selectProjectId, selectshifts, filterDeviceStyle, se
 import moment from "moment";
 import 'moment/locale/zh-cn';
 const { RangePicker } = DatePicker;
-import { SiteManagerDesigner, PCSMonitorRuntime, StorageContainerDesigner, Editapi, PhotovoltaicPowerGeneration } from '@api/api'
-import { Cdivider, Radiogroup } from '@com/comstyled'
+import { SiteManagerDesigner, PCSMonitorRuntime, StorageContainerDesigner, Editapi, PhotovoltaicPowerGeneration } from '@api/api' 
 import { filterProps } from '@com/usehandler'
 import {
   SyncOutlined,
 } from '@ant-design/icons';
 const { Link } = Typography
-import { publicdateType, Daterange, w200, w88 } from "./data"
+import { publicdateType, Daterange, w200, w88,viewopt } from "./data"
 import Enery from "./enery";
 import AreaLevel from './areas'
 
@@ -243,19 +242,11 @@ export default function UseSerach(props) {
     </Item>
   )
 
-  const viewtype = (<Item name="view" initialValue={1} >
-    <Radiogroup
-      options={[
-        {
-          label: '能耗',
-          value: 1,
-        },
-        {
-          label: '费用',
-          value: 2,
-        }]}
-      optionType="button"
-      buttonStyle="solid"
+  const viewtype = (<Item label="能源类型" name="view" initialValue={1} >
+    <Select
+      options={viewopt}
+       style={w200}
+       onChange={() => props.setexparams({ ...form.getFieldsValue(true) })}
     />
   </Item>
   )

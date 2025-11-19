@@ -1,15 +1,15 @@
 import React, {useMemo, useState} from 'react'
 import  Titlelayout from '@com/titlelayout'
-import {Radio} from 'antd'
+import {Radio, Checkbox, Space} from 'antd'
 import {CustTitle,ChartWrap} from  "../style"
 import {viewOpt} from '../data'
 import Ichart from '@com/useEcharts/Ichart'
 import UseTable from '@com/useTable'
 import {WrapTable} from '@com/comstyled'
 import {isObject} from "@com/usehandler"
-export default function Index({datas={}, view,energytype}) {  
+export default function Index({datas={},quota=[],showquota, view,energytype}) {  
   const {proportion=[],consumeDetail=[], tableDatas } = datas || {}
-  console.log("tableDatas", tableDatas)
+  const [checked, setChecked]=useState(false)
   let [columns, dataSource] =useMemo(()=>{ 
     try {
       if(isObject(tableDatas)){
@@ -35,7 +35,7 @@ export default function Index({datas={}, view,energytype}) {
              let handlers={}
              if(Object.keys(c.spans)?.length>0 ) { 
                    for(let [key, value] of Object.entries(c.spans)){
-                    console.log(key, value)
+                   
                       handlers[key]=()=>value
                       
                    } 
@@ -69,7 +69,7 @@ export default function Index({datas={}, view,energytype}) {
    
      
   },[tableDatas])
-  console.log(columns)
+  const isdiplay= showquota && checked
   const [unit, etitle, display] =useMemo(()=> {
    const unit= view==1 ? {
       1: 'kWh',
@@ -121,7 +121,23 @@ const lineopt=useMemo(()=>{
             },
         },
       
-        series: [{ 
+        series: isdiplay? [{ 
+          type: "bar", 
+          seriesLayoutBy: 'row', 
+          tooltip:{
+          valueFormatter: value=> value+unit
+          }, 
+         },
+         { 
+          type: "line", 
+          seriesLayoutBy: 'row',  
+          smooth:0.3, 
+          tooltip:{
+            valueFormatter: value=> value+unit
+            }, 
+         }
+        
+        ]:[{ 
           type: "bar", 
           seriesLayoutBy: 'row', 
           tooltip:{
@@ -148,20 +164,27 @@ const lineopt=useMemo(()=>{
           }
         },
         dataset: {
-            dimensions: [
+            dimensions: isdiplay ? [
+                { name: '时间', type: 'time' },
+                { name: display },
+                { name: "定额线" },
+              ]:[
                 { name: '时间', type: 'time' },
                 { name: display },
     
               ],
-              source: [consumeDetail?.[0]?.x, consumeDetail?.[0]?.y],
+              source: isdiplay ? [consumeDetail?.[0]?.x, consumeDetail?.[0]?.y, quota]:[consumeDetail?.[0]?.x, consumeDetail?.[0]?.y],
               sourceHeader: false,
         },
     }
-}, [consumeDetail,etitle, display,unit])
+}, [consumeDetail,etitle, display,unit, isdiplay])
   const [value,setValue]=useState(1)
+  const ckChange =(e) => {
+    setChecked(e.target.checked)
+  }
   const title=<CustTitle>
     <span>分类能耗明细</span>
-    <Radio.Group options={viewOpt} buttonStyle="solid" optionType='button' value={value} onChange={(e)=>setValue(e.target.value)} ></Radio.Group>
+    <Space size={16}>{showquota && <Checkbox onChange={ckChange}>定额线</Checkbox>}<Radio.Group options={viewOpt} buttonStyle="solid" optionType='button' value={value} onChange={(e)=>setValue(e.target.value)} ></Radio.Group></Space>
   </CustTitle>
   return (
     <Titlelayout title={title} layout="flex">

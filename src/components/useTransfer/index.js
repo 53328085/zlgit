@@ -229,7 +229,7 @@ const Mainbox = styled.div`
 `;
 
 export default function index(props) {
-  console.log(props)
+ // console.log(props)
   const { t } = useTranslation(["button"]);
   const [messageApi, contextHolder] = message.useMessage();
   const task = props.mask == "open";

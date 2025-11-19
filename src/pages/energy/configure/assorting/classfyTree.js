@@ -31,6 +31,11 @@ export default function Water (props) {
     justifyContent:'flex-end',
     fontSize:'14px',
   }
+
+
+
+
+
   const renderTreeNodes = (data) => {
     data = cloneDeep(data);
     let nodeArr = data.map((item) => {
@@ -43,7 +48,7 @@ export default function Water (props) {
                     <TreeBtn onClick={()=>edit(name, item.energyId)} wh="60px" text="edit" /> 
                   {/*   {item.parentId != 0 ? <span style={{ color:'#237ae4', cursor:'pointer', textDecoration:'underline', marginRight: 32}} onClick={()=>settings(name, item.energyId)}>配置</span> : <div style={{width:28,marginRight: 32}}></div>} 比工的需求 一级也需要配置项*/}
                    <TreeBtn onClick={()=>settings(name, item.energyId)} wh="auto" style={{padding: "0 8px"}} text="configure" />  
-                   
+                   <TreeBtn onClick={()=>quotoa(name, item.energyId)} wh="auto" style={{padding: "0 8px"}} text="quotaallocation" />  
                     <TreeBtn type="3" onClick={()=>deleteRecord(item)} wh="60px" text="delete" /> 
                 </Space> }
             </div>
@@ -108,6 +113,17 @@ export default function Water (props) {
         tag: 'importData'
     }
     getValues(values)
+  }
+  const  quotoa=(name,id)=> {
+    let values = {
+      data: {
+          energyName:name,
+          energyId:id
+      },
+      tag: 'config'
+  }
+  getValues(values)
+  
   }
   const Title = (
     <div style={{display: 'flex',justifyContent: "space-between", alignContent: "center"}}>

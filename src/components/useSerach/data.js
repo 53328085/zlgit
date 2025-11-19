@@ -62,4 +62,14 @@ export const Daterange = ({value, onChange,rangeDate}) => {
   );
 };
 
+ export const viewopt=[
+  {
+    label: '能耗',
+    value: 1,
+  },
+  {
+    label: '费用',
+    value: 2,
+  }]
+
  
