@@ -1,10 +1,10 @@
 import React, { useEffect, useState, useRef, memo, useMemo } from 'react'
 import { useSelector } from 'react-redux'
- 
+
 import styled from 'styled-components'
 
 import { energyShare, Monitoring, EnergyPublicRuntime, DMAPartition, Apimethod } from '@api/api'
-import { selectProjectId, selectOneLevel ,lightlevel} from '@redux/systemconfig.js'
+import { selectProjectId, selectOneLevel, lightlevel } from '@redux/systemconfig.js'
 import { message, Input, Tree, Radio, Checkbox, Switch } from 'antd'
 
 import Titlelayout from "@com/titlelayout";
@@ -51,18 +51,18 @@ export default memo(function Index({ areaId, setTreeId, setLine, setNode, showli
   treeName = '',
   title = "",
   mode = null,
-  correlation=Number.POSITIVE_INFINITY, // 是否关联 属性
-  hv="32px", // 标题高度
+  correlation = Number.POSITIVE_INFINITY, // 是否关联 属性
+  hv = "32px", // 标题高度
   ...restprop }) {
   // datatype =0 或 =2
   const levelone = useSelector(selectOneLevel)
   const lightone = useSelector(lightlevel)
 
- 
+
   const [treeData, setTreeData] = useState([])
   const location = useLocation();
   const { state } = location
- 
+
   const isshow = useMemo(() => {
     const { nested, primary } = state
     return ["report", "public"].includes(nested) && primary == "runtimeEnergy" || ["airConditioningOverview", "public"].includes(nested) && primary == "airConditioningManagement"
@@ -112,7 +112,7 @@ export default memo(function Index({ areaId, setTreeId, setLine, setNode, showli
   const getId = (nodes, type, child = 'nodes') => {
     if (Array.isArray(nodes)) {
       for (let node of nodes) {
-        let { level, areaId, id,sn } = node
+        let { level, areaId, id, sn } = node
 
         if (level <= 2 && treekey == 'areaId') {
           expand.push(areaId)
@@ -128,10 +128,10 @@ export default memo(function Index({ areaId, setTreeId, setLine, setNode, showli
               }
             }
 
-          } else if (datatype == 7){ // 光伏发电
-             pvid.current.push({sn, level})
-             arr.push(node[type])
-          }else {
+          } else if (datatype == 7) { // 光伏发电
+            pvid.current.push({ sn, level })
+            arr.push(node[type])
+          } else {
             arr.push(node[type])
           }
 
@@ -140,7 +140,7 @@ export default memo(function Index({ areaId, setTreeId, setLine, setNode, showli
           arr.push(nodes[0][type])
         }
         if (mode && node?.[child]?.length > 0) {
-         // console.log(node)
+          // console.log(node)
           arr.push(node[type])
         }
         if (node[child] && Array.isArray(node[child]) && node[child]?.length > 0) {
@@ -207,13 +207,13 @@ export default memo(function Index({ areaId, setTreeId, setLine, setNode, showli
         keyword: name,
       },
       {
-        projectId, 
-        type: energytype, 
+        projectId,
+        type: energytype,
       },
       {
         projectId,
         areaId,
-      //  name: name,
+        //  name: name,
       }
       ][idx]
       if (idx == 3 && name) {
@@ -227,7 +227,7 @@ export default memo(function Index({ areaId, setTreeId, setLine, setNode, showli
         setTreeId(arr);
         return
       }
-      let hander = [QuerySpaceTrees, LineManagerQuery, queryEnergyCategoryTree, DMAGetTree, lightTree, AirTree,useQueryElectricClassifys,useQuerySpaceTree][idx]
+      let hander = [QuerySpaceTrees, LineManagerQuery, queryEnergyCategoryTree, DMAGetTree, lightTree, AirTree, useQueryElectricClassifys, useQuerySpaceTree][idx]
 
       /*  if(lineType == "3") {
          hander = QuerySpaceTrees
@@ -243,9 +243,9 @@ export default memo(function Index({ areaId, setTreeId, setLine, setNode, showli
 
       if (success && Array.isArray(data)) {
         //  console.log(idx)
-        let energyDatas=[]
-        if(datatype ==6) {
-          energyDatas= [{
+        let energyDatas = []
+        if (datatype == 6) {
+          energyDatas = [{
             energyId: 0,
             energyName: "全部",
             parentId: 0,
@@ -276,49 +276,49 @@ export default memo(function Index({ areaId, setTreeId, setLine, setNode, showli
               getId(data, 'key', 'nodes')
               break;
             case 6:
-                getId(energyDatas, 'energyId', 'childs')
-                break;
+              getId(energyDatas, 'energyId', 'childs')
+              break;
             case 7:
-               getId(data, 'sn', 'nodes')
-               break;
+              getId(data, 'sn', 'nodes')
+              break;
             default:
               break
 
           }
         }
-       
-        
+
+
         treeIdRef.current = arr
         setIndeterminate(false)
         setChecked(true)
-        if(datatype==6) {
+        if (datatype == 6) {
           setTreeData(energyDatas)
           setNode && setNode?.(energyDatas?.[0]) //  获取节点
-        }else {
+        } else {
           setTreeData(data)
           setNode && setNode?.(data?.[0]) //  获取节点
         }
-       
+
         setCheckedKeys(() => arr);
-        if(datatype==6) {
+        if (datatype == 6) {
           setExpandedKeys(arr)
-        }else {
+        } else {
           setExpandedKeys(expand)
         }
-        
+
         if (datatype == 5) { // 空调树          
           let areId = Array.from(postid.current)?.map(d => {
             let id = parseInt(d.slice(2))
-             
+
             return id
           })
 
           setTreeId(areId)
-        }else if(datatype==6){ // 分类能耗--能源类型
+        } else if (datatype == 6) { // 分类能耗--能源类型
           setTreeId([0])
-        } else if(datatype == 7){
+        } else if (datatype == 7) {
           setTreeId(pvid.current)
-        }else{
+        } else {
           setTreeId(arr);
         }
 
@@ -369,11 +369,11 @@ export default memo(function Index({ areaId, setTreeId, setLine, setNode, showli
         let areId = checked.filter(d => Array.from(postid.current)?.includes(d))?.map(i => parseInt(i.slice(2)))
 
         setTreeId(areId)
-      } else if(datatype == 7){
-        pvid.current=[];
-        getId(e.checkedNodes, "sn","nodes")
+      } else if (datatype == 7) {
+        pvid.current = [];
+        getId(e.checkedNodes, "sn", "nodes")
         setTreeId(pvid.current)
-      }else {
+      } else {
         setTreeId(checked)
       }
 
@@ -428,7 +428,7 @@ export default memo(function Index({ areaId, setTreeId, setLine, setNode, showli
 
 
   const leveloneTree = () => {
-     const levels= state?.primary==="lightManagement" ? lightone : levelone
+    const levels = state?.primary === "lightManagement" ? lightone : levelone
     if (Number.isNaN(areaId) && Array.isArray(levels)) {
       setTreeData(levels)
 
@@ -450,12 +450,12 @@ export default memo(function Index({ areaId, setTreeId, setLine, setNode, showli
 
 
 
-  }, [areaId, levelone,lightone, state?.primary  ])
+  }, [areaId, levelone, lightone, state?.primary])
 
   const radiosty = {
     display: 'grid',
     gridTemplateColumns: '1fr 1fr',
-    alignContent: 'center', 
+    alignContent: 'center',
   }
   const radiosty2 = {
     display: 'grid',
@@ -481,8 +481,8 @@ export default memo(function Index({ areaId, setTreeId, setLine, setNode, showli
 
   return (
 
-    <Titlelayout key="line" layout="flex" bordered={sty.bordered} pv={sty.pv} hv={hv}  title={title}>
-      <div style={{ height: scroll ? scroll : '750px', overflow: 'auto', flex: 1 }}>
+    <Titlelayout key="line" layout="flex" bordered={sty.bordered} pv={sty.pv} hv={hv} title={title}>
+      <div style={{ height: scroll ? scroll : '750px', overflow: 'auto', flex: 1, scrollbarWidth: "thin" }}>
         {treeName ? <div style={{ color: '#515151', fontWeight: 'bold', marginBottom: '8px' }}>{treeName}</div> : null}
         <Treebox showline={showline.toString()}>
           {showline && <Radio.Group onChange={switchLine} style={radiosty} value={typeTree}>

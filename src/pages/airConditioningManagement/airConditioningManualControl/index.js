@@ -197,6 +197,7 @@ export default function Index() {
             showSearch={true}
             title="空调设备列表"
             hv="40px"
+            scroll="735px"
             sty={{ bordered: "" }}
           />
         </div>
