@@ -17,7 +17,7 @@ export default function({qverview={}, op,my, type, datetype, tabvalue, laptop })
         let total = proportion?.reduce((a,b)=> a+ parseFloat(b.value),0)
         return{
             type: 3,
-            pieData: { data: proportion, total,radius:"50%",   },
+            pieData: { data: proportion, total,radius: ['40%', '70%'],   }, 
             toolbox: {
                 feature: {
                   saveAsImage: {},
@@ -25,7 +25,9 @@ export default function({qverview={}, op,my, type, datetype, tabvalue, laptop })
               },
             legend: {
               top: 'auto',
-              bottom: 0,
+              bottom: 0, 
+              width:376,
+              orient: 'horizontal',
               //  orient: 'vertical',
               // left: 'left'
             },
@@ -60,28 +62,7 @@ export default function({qverview={}, op,my, type, datetype, tabvalue, laptop })
             <Descriptions.Item label="环比" contentStyle={{justifyContent: "right"}} >{ numberformat(total.mom)}</Descriptions.Item>
         </Descriptions>
 }
-         {/*  <div className="list">
-            <div className="item">
-              <span>本{type}能耗：</span>
-              <span>{total.periodValue}</span>
-            </div>
-            <div className="item">
-              <span>{my}{type}能耗：</span>
-              <span>{timetype}</span>
-            </div>
-            <div className="item">
-              <span>同比</span>
-              {numberformat(total.yoy)}
-
-            </div>
-            <div className="item">
-              <span>环比</span>
-
-              {numberformat(total.mom)}
-
-
-            </div>
-          </div> */}
+        
         </div>
        
       </Titlelayout>

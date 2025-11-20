@@ -17,7 +17,7 @@ export default function({qverview={}, op,my, type, datetype, tabvalue, laptop })
         let total = proportion?.reduce((a,b)=> a+ parseFloat(b.value),0)
         return{
             type: 3,
-            pieData: { data: proportion, total,radius:"50%",   },
+            pieData: { data: proportion, total,radius: ['40%', '70%'],   }, 
             toolbox: {
                 feature: {
                   saveAsImage: {},
@@ -25,7 +25,9 @@ export default function({qverview={}, op,my, type, datetype, tabvalue, laptop })
               },
             legend: {
               top: 'auto',
-              bottom: 0,
+              bottom: 0, 
+              width:376,
+              orient: 'horizontal',
               //  orient: 'vertical',
               // left: 'left'
             },
