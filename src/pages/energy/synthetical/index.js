@@ -4,17 +4,18 @@ import { Image, Space, Tabs, Typography, Radio } from "antd";
 import styled, { css } from "styled-components";
 import { useOutletContext } from 'react-router-dom'
 import { drawEcharts } from "@com/useEcharts";
-import { EnergyComprehensive, Editapi } from "@api/api.js"
+ 
 import Titlelayout from "@com/titlelayout";
 import { useSelector } from 'react-redux'
 import { selectOneLevel, adaptation } from '@redux/systemconfig.js'
 import { numberformat, getTime } from '@com/usehandler'
 import Pagecount from "@com/pagecontent";
 import imgurl from "./icon";
-import Charttable from './component/chartTable'
+ 
 import {Mainbox,Tabsbox} from "./style"
 import {useQueryOverview,useQueryEnergyType} from "./api"
-import Chart from './component/chart'
+import Chart from './component/chart/index'
+import Detail from './component/detail'
 const { Text } = Typography
  
  
@@ -34,118 +35,11 @@ const Custspan = styled(Text)`
 }
 
 `;
-const divboxsty = css`
-.imgbox {
-  width: 48px;
-  height: 48px;
-}
-`
-const Divbox = styled.div`
-  display: grid;
-  grid-template-columns: 40% 1fr;
-  column-gap: 16px;
-  margin: 8px 0 8px 0;
-  align-items: center;
-  .imgbox {
-     width: 64px;
-     height: 64px;
-     img {
-      max-width: 100%;
-     }
-  }
-  .list {
-    display: grid;
-    grid-auto-rows: auto;
-    align-items: flex-end;
-    .item {
-      display: flex;
-      justify-content: space-around;
-      span:first-child {
-        color: #999;
-        font-size: 14px;
-      }
-      span:last-child {
-        color: #515151;
-        font-size: 16px;
-      }
-    }
-  }
-  ${props => props.theme.laptop ? divboxsty : null}
-`;
-const engboxsty = css`
-column-gap: 8px;
-grid-template-columns: 32px 1fr;
-.imgbox{
-  width: 32px;
-  height: 32px;
-
-}
-`
-const Engbox = styled.div`
-  display: grid;
-  grid-template-columns: 64px 1fr;
-  column-gap: 32px;
-//  height: 100%;
-  align-items:   ${props => props.type == 1 ? 'center' : 'start'};
-  padding-top:${props => props.type == 1 ? '0px' : '35px'}; 
-  .imgbox {
-    width: 64px;
-    height: 64px;
-    img {
-      max-width: 100%;
-    }
-  }
-  .list {
-    display: grid;
-    grid-auto-rows: 30px;
-    align-items: flex-end;
-    .top,.bottom{
-    display:flex;
-    justify-content: space-between;
-    }
-    .item {
-        margin-left: 10px;
-            display: flex;
-    align-items: center;
-      span:first-child {
-        color: #999;
-        font-size: 14px;
-      }
-      span:last-child {
-        color: #515151;
-        font-size: 16px;
-        width:60px;
-
-      }
-    }
-  }
-  ${props => props.theme.laptop ? engboxsty : null}
-`;
  
  
-
-const Echartbox = styled.div`
-   height: 100%;
-   width: 100%;
-   background-color: #fff;
-   padding: 16px;
-   border: 1px solid #d7d7d7;
-  display: flex;
-  flex-direction: column;
-  .model {
-    display: flex;
-    justify-content: flex-end;
-  }
-  .chart {
-    flex: 1;
-  }
-`
-const ElectricRight = styled.div`
-   display: grid;
-   grid-template-rows: ${props => props.type == 1 ? '200px minmax(440px, 1fr) 128px' : 'minmax(656px, 1fr)  128px'} ;
-   row-gap: 16px;
-   
-`
+ 
+ 
+ 
 
 export default function Index() {
  
@@ -155,10 +49,7 @@ export default function Index() {
   const { areaId, date, type: dateType, shiftNo, view, projectId } = exparams
   const [qverview, setOverview] = useState({})
   const [tabvalue, setTabvalue] = useState(0)
-  const { 
-    detail, 
-    legend,
-     total = '', proportion, coalStandard, consume = {}, analysisDes = '', consumes = [], ...energyitem } = qverview;
+ 
  
 
      let type = ['', '日', '月', '年'][exparams.type]
@@ -166,169 +57,7 @@ export default function Index() {
 
  
  
-  const Electric = ({ data, des, datetype, laptop }) => {
-
-    let { lastDayPeriodValue, lastMonthPeriodValue, lastYearPeriodValue } = data
-    let timetype = ['', lastDayPeriodValue, lastMonthPeriodValue, lastYearPeriodValue][datetype]
-    let icon = tabvalue == 1 ? 'electric' : 'water';
-    const pieref = useRef()
-    useEffect(() => {
-      drawEcharts(pieref.current, {
-        pieData: { data: proportion, total: '100%', radius: ["50%", "70%"] },
-        type: 3,
-        legend: {
-          bottom: 0,
-          top: 'auto',
-          itemGap: 5
-        },
-        grid: {
-          bottom: 20
-        },
-
-
-      });
-    }, [])
-    return (
-      <ElectricRight type={tabvalue}>
-        <Titlelayout title={<Title title={data?.name} />} key="electr" >
-          <div style={{ height: "100%", display: 'flex', justifyContent: "center" }}>
-
-            <Engbox type={tabvalue}>
-
-              <div className="imgbox"> {/* style={{ marginTop: tabvalue == 3 ? "16px" : 0 }} */}
-                <img
-                  src={imgurl[icon]}
-                />
-              </div>
-              <div className="list">
-                <div className="top">
-                  <div className="item">
-                    <span>本{type}：</span>
-                    <Text ellipsis={{ tooltip: data.periodValue }}>{data.periodValue}</Text>
-                  </div>
-                  <div className="item">
-                    <span>同比：</span>
-                    {numberformat(data.yoy)}
-                  </div>
-                </div>
-                <div className="bottom">
-                  <div className="item">
-                    <span>{my}{type}：</span>
-                    <Text ellipsis={{ tooltip: timetype }}>{timetype}</Text>
-                  </div>
-                  <div className="item">
-                    <span>环比：</span>
-                    {numberformat(data.mom)}
-                  </div>
-                </div>
-              </div>
-            </Engbox>
-
-          </div>
-
-        </Titlelayout>
-        {tabvalue == 1 ? <Titlelayout
-          type="inner"
-          title={<Title title={`本${type}能耗占比`} />}
-          key="pie"
-        >
-          <div
-            style={{ width: laptop ? "300px" : "348px", height: "356px" }}
-            ref={pieref}
-          ></div>
-        </Titlelayout> : null
-        }
-        <Titlelayout title="能耗分析" key="analysis" layout="flex">
-          <div style={{ flex: 1, display: 'flex' }}>
-            <div> <span style={{ color: "#0c6", fontSize: '18px' }}>&#9673;</span><span style={{ color: '#515151' }}>{des}</span></div>
-          </div>
-        </Titlelayout>
-      </ElectricRight>
-    )
-
-
-  }
-  const CoalStandard = ({ data = {}, op, datetype, laptop }) => {
-
-    let { lastDayPeriodValue, lastMonthPeriodValue, lastYearPeriodValue } = data
-    let timetype = ['', lastDayPeriodValue, lastMonthPeriodValue, lastYearPeriodValue][datetype]
-    const pieref = useRef()
-    useEffect(() => {
-      drawEcharts(pieref.current, {
-        pieData: { data: proportion, total: '100%' },
-        type: 3,
-        legend: {
-          bottom: 0,
-          top: 'auto',
-          itemGap: 5
-        },
-        grid: {
-          bottom: 20
-        },
-        radius: ["50%", "70%"]
-      });
-    }, [])
-    return (
-      <Titlelayout title={<Title title={data?.name} />} pv="0px">
-        <Divbox>
-          <div
-            style={{
-              display: "flex",
-              flexDirection: "column",
-              justifyContent: "flex-end",
-              alignItems: "center",
-              flex: 1,
-            }}
-          >
-            <div className="imgbox">
-              <img
-                src={imgurl['coalStandard']}
-                alt=""
-              />
-            </div>
-
-            <span style={{ color: "#999", marginTop: "10px" }}>
-              {op == 1 ? <> （吨标煤）</> : <>（元）</>}
-            </span>
-          </div>
-
-          <div className="list">
-            <div className="item">
-              <span>本{type}能耗：</span>
-              <span>{data.periodValue}</span>
-            </div>
-            <div className="item">
-              <span>{my}{type}能耗：</span>
-              <span>{timetype}</span>
-            </div>
-            <div className="item">
-              <span>同比</span>
-              {numberformat(data.yoy)}
-
-            </div>
-            <div className="item">
-              <span>环比</span>
-
-              {numberformat(data.mom)}
-
-
-            </div>
-          </div>
-        </Divbox>
-        <Titlelayout
-          type="inner"
-          title={<Title title={op == 1 ? "能耗占比" : "能耗费用占比"} />}
-          style={{ padding: "0px", border: "none" }}
-          layout="flex"
-        >
-          <div
-            style={{ flex: 1, height: "284px" }}
-            ref={pieref}
-          ></div>
-        </Titlelayout>
-      </Titlelayout>
-    )
-  }
+ 
   const [tabs, setTabs] = useState([{ label: "综合能耗", key: 0, }])
 
 
@@ -388,14 +117,7 @@ export default function Index() {
     }
   }, [tabvalue, areaId, date, dateType, shiftNo, view, projectId])
 
-  const Title = ({ title, subtitle, jc }) => {
-    return (
-      <Custspan className="t" jc={jc} ellipsis={{ tooltip: title }}>
-        {title}
-        <span>{subtitle}</span>
-      </Custspan>
-    );
-  };
+ 
 
   return (
     <Pagecount bgcolor="transparent" pd="0"> 
@@ -403,11 +125,11 @@ export default function Index() {
             <div className="left">
               <Tabsbox defaultActiveKey={0} items={tabs} onChange={ontabChange}>
               </Tabsbox>
-              <Chart  data={detail} legend={legend}  type={type} tabvalue={tabvalue}  />
+              <Chart   qverview={qverview}      type={exparams.type} tabvalue={tabvalue}  />
             </div>
-            {tabvalue == 0 ? <CoalStandard op={exparams.view} data={coalStandard} datetype={exparams.type} key="CoalStandard" laptop={laptop} /> : <Electric data={consume} des={analysisDes} datetype={exparams.type} laptop={laptop} key="Electric" />}
+            {/* {tabvalue == 0 ? <CoalStandard op={exparams.view} data={coalStandard} datetype={exparams.type} key="CoalStandard" laptop={laptop} /> : <Electric data={consume} des={analysisDes} datetype={exparams.type} laptop={laptop} key="Electric" />} */}
         
-
+            <Detail qverview={qverview} tabvalue={tabvalue}   my={my} type={type}   op={exparams.view}   datetype={exparams.type} key="Detail" laptop={laptop} />
        
 
         </Mainbox>

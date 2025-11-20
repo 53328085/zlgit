@@ -1,5 +1,6 @@
 import styled, {css} from "styled-components";
-import { Tabs } from 'antd';
+import { Tabs, Typography } from 'antd';
+const { Text } = Typography;
 const sty = css`
   grid-template-columns: 1fr max-content;
  `
@@ -77,3 +78,63 @@ flex-direction: column;
  display: flex;
 }
 `
+const divboxsty = css`
+.imgbox {
+  width: 48px;
+  height: 48px;
+}
+`
+export const  Detailbox = styled.div`
+ display: grid;
+ grid-template-rows:  ${props => props.tabvalue==0 ? `250px minmax(240px, 1fr)` : `200px minmax(240px, 1fr)`} ;
+ row-gap: 16px;
+.divbox{
+    flex:1;
+display: grid;
+grid-template-columns: 64PX 1fr;
+column-gap: 32px;
+padding-right:${props=> props.tabvalue==0 ? "32px" : "0px"} ;
+align-items: center;
+.imgwrap{
+    display: flex; 
+    align-items: center;
+    justify-content: center;
+.imgbox {
+   width: 64px;
+   height: 64px;
+   img {
+    max-width: 100%;
+   }
+}
+}
+
+${props => props.theme.laptop ? divboxsty : null}
+}
+`;
+ 
+ 
+ 
+ 
+const Custspan = styled(Text)`
+&& {
+  font-size: 14px;
+   min-width: 142px;
+  color: #515151;
+  display: flex;
+  justify-content: ${(props) => (props.jc == 1 ? "flex-start" : "space-between")};
+ 
+  span {
+    color: #999;
+    padding-left: 1em;
+  }
+}
+
+`;
+export  const Title = ({ title, subtitle, jc }) => {
+    return (
+      <Custspan className="t" jc={jc} ellipsis={{ tooltip: title }}>
+        {title}
+        <span>{subtitle}</span>
+      </Custspan>
+    );
+  };

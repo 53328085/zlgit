@@ -143,9 +143,9 @@ export default function Index() {
     const {controls, esaving} = JSON.parse(strategies)
     const section = controls.map(co => {
       const {  section, forbidControls,timings,eForbid,eTiming } = co
-      const {dtEnd,dtStart,Weeks,...rest} =section
+      const {dtEnd,dtStart,weeks,...rest} =section
       return {
-         weeks: Array.isArray(Weeks) ? Weeks : null,
+         weeks: (Array.isArray(weeks) && weeks.length > 0) ? weeks : null,
          date: [moment(dtStart, "YYYY-MM-DD"),moment(dtEnd, "YYYY-MM-DD")],
          forbidControls:forbidControls.map(f => {
           let {type, dtStart, dtEnd} = f
