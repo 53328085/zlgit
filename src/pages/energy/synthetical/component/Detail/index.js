@@ -28,7 +28,7 @@ export default function({qverview={}, op,my, type, datetype, tabvalue, laptop })
               bottom: 0, 
               width:376,
               orient: 'horizontal',
-              //  orient: 'vertical',
+            
               // left: 'left'
             },
             grid: {
