@@ -2,12 +2,13 @@ import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
 import styled, { css } from "styled-components";
-import { Table, Input, message, Descriptions, Divider } from "antd";
+import { Table, Input, message, Descriptions, Divider, Form } from "antd";
 import UsetTable from "@com/useTable";
 import { LeftOutlined, RightOutlined } from "@ant-design/icons";
 import { cloneDeep } from "lodash";
 import { CustButton } from "@com/useButton";
 import { adaptation } from "@redux/systemconfig";
+import Subareas from "@com/useSerach/subareas"
 import Mask from "../mask";
 const csssty = css`
   .transferContent {
@@ -231,6 +232,7 @@ const Mainbox = styled.div`
 export default function index(props) {
  // console.log(props)
   const { t } = useTranslation(["button"]);
+  const [form] = Form.useForm()
   const [messageApi, contextHolder] = message.useMessage();
   const task = props.mask == "open";
   const { Search } = Input;
@@ -414,10 +416,14 @@ export default function index(props) {
       // setClickSearch(false)
       setSearchValue("");
     } else {
+      let areaId =props.showarea ? form.getFieldValue("sublevel") : null;
+      
+      
       props.saveValue({
         mainData,
         subData,
         unknownData,
+        areaId,
       });
       setSelectedRowKeys([]);
       setSelectedSubKeys([]);
@@ -514,6 +520,11 @@ export default function index(props) {
       height: "46px",
       width: "146px",
     };
+  const areaprops ={
+    id:0,
+    treeCheckable:false,
+    isall:false,
+  }
   return (
     <Mask task={task} maskBack={props.maskBack}>
       <Mainbox>
@@ -593,6 +604,9 @@ export default function index(props) {
                       enterButton
                       onSearch={onSearchSub}
                     ></Search>
+                   {props?.showarea && <Form layout="inline" form={form}>
+                      <Subareas {...areaprops} />
+                    </Form>}
                   </div>
                   <div className="mainContent">
                     <div className="tbwrap">

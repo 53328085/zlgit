@@ -17,3 +17,8 @@ export const { useQueryEnergy } = new Apimethod( //查询 分类能耗总览
     "get",
     "Energy/EnergyClassifyDesigner/GetPublicConsumeCategoryQuotas"
   );
+  export const { useQueryEnergyType } = new Apimethod( // 能源类型
+    "get",
+    "/General/ProjectSetting/QueryEnergyType"
+  );
+  

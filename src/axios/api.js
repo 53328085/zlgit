@@ -2698,9 +2698,9 @@ export class energyDesigner {
     server.get(
       `Energy/EnergyClassifyDesigner/QueryEnergyNoConfigedDevices?projectId=${projectId}&type=${type}`
     );
-  static saveEnergyDevices = (projectId, type, classifyId, data) =>
+  static saveEnergyDevices = (projectId, type, classifyId,areaId, data) =>
     server.post(
-      `Energy/EnergyClassifyDesigner/SaveEnergyDevices?projectId=${projectId}&type=${type}&classifyId=${classifyId}`,
+      `Energy/EnergyClassifyDesigner/SaveEnergyDevices?projectId=${projectId}&type=${type}&classifyId=${classifyId}&areaId=${areaId}`,
       data
     );
   static querOverview = (projectId, type, areaId, date) =>

@@ -20,6 +20,8 @@ import {Apimethod} from "@api/api.js"
   "General/Area/AllLevel"
 );
 
+
+
 const {DeviceTypeManager: {AllDeviceStyle} } = Monitoring
 
  
@@ -189,6 +191,7 @@ const initialState = {
   pgTitle: "",
   site: "", // 站点 配电模块 
   areaLevel:[], // 层级
+  energyType:[], // 能源类型
 }
  
 export const getWebsiteState = createAsyncThunk(
@@ -211,6 +214,7 @@ export const getWebsiteState = createAsyncThunk(
         CustTheme.GetProjectTheme({projectId:id}), // 获取项目选择的主题
         useFindStreetLightAreas({projectId:id}), // 获取路灯管理下有路灯的区域
         useAllLevel({projectId:id}), // 获取区域层级
+        
          ] 
         let results = await Promise.allSettled(promises)
         return results

@@ -16,7 +16,7 @@ import { useGetPublicConsumeCategoryQuotas, useSetPublicConsumeCategoryQuotas} f
 import {Content} from "./style"
 import {useColumns,EditableCell} from "./data"
 import { CustButtonT } from "@com/useButton";
-import { set } from "lodash";
+ 
  
  
 
@@ -383,14 +383,16 @@ export default function Index(props) {
         props.getValues(params)
     }
 
-    const getSaveValue = params => {
+    const getSaveValue = params => {        
         let arr = [];
         if (params.subData.length > 0) {
             params.subData.map(item => {
                 arr.push(item.sn)
             })
         }
-        saveEnergyDevices(projectId, type, energyId, arr).then(res => {
+        let areaId =params?.areaId?.[0]
+        console.log(areaId)
+        saveEnergyDevices(projectId, type, energyId, areaId, arr).then(res => {
             if (res.success) {
                 messageApi.open({
                     type: 'success',
@@ -523,7 +525,7 @@ export default function Index(props) {
                 </div>
             </Modal>
 
-            <UseTransfer mask={transTag} transferTitle={transferTitle} columns={columns} mainTable={mainTable} subTable={subTable} unknownTable={unknownTable} saveValue={getSaveValue} closeValue={getCloseValue}></UseTransfer>
+            <UseTransfer mask={transTag} transferTitle={transferTitle} columns={columns} mainTable={mainTable} subTable={subTable} unknownTable={unknownTable} saveValue={getSaveValue} closeValue={getCloseValue} showarea={true}></UseTransfer>
 
             <Custmodl title='错误原因' ref={errRef} mold="cust" width={600} onOk={() => onCloseError()}>
                 <div style={{ display: "flex", alignItems: "center" }}>

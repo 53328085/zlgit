@@ -18,7 +18,7 @@ const { Link } = Typography
 import { publicdateType, Daterange, w200, w88,viewopt } from "./data"
 import Enery from "./enery";
 import AreaLevel from './areas'
-
+import SubAreas from './subareas'
 const { FindContainerList } = StorageContainerDesigner  //储能柜
 
 const Cform = styled(Form)`
@@ -546,6 +546,7 @@ export default function UseSerach(props) {
 
         </Item>
         }
+        {props.config?.issubarea && <SubAreas  setexparams={props.setexparams}  />}
          {props.config?.isLevles && <AreaLevel setexparams={props.setexparams} />} 
         {props.config?.isSite && site}
         {props.config?.isTank && tank}

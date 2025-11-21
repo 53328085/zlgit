@@ -135,7 +135,7 @@ export default function Index() {
     ? {
       flex: 1,
       display: "grid",
-      gridTemplateRows: "48px 1fr",
+      gridTemplateRows: "auto 1fr",
       rowGap: "16px",
     }
     : {
@@ -168,11 +168,13 @@ export default function Index() {
       } else {
         setConfig({ isdevsty: false });
       }
-      if (primary == "runtimeEnergy") {
+      if (primary == "runtimeEnergy") {   //issubarea
         switch (nested) {
           case "area":
-          case "assorting":
             setConfig({ isview: true, isdate: true, shiftNo:false });
+            break;
+          case "assorting":
+            setConfig({ isview: true, isdate: true, shiftNo:false , issubarea:true});
             break;
           case "range":
             setConfig({ energytype: false, isdate: false, custview: true, isAreaId: false, });

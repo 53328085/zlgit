@@ -12,33 +12,52 @@ import UseTree from '@com/useTree'
 import Powercom from "./component/power"
 import Datashow from "./component/Datashow"
 import {energyOpt} from  "./data"
-import {useQueryEnergy,useQueryEnergyDetail,useQueryEnergyCost,useGetPublicConsumeCategoryQuotas} from "./api"
+import {useQueryEnergy,useQueryEnergyDetail,useQueryEnergyCost,useGetPublicConsumeCategoryQuotas,useQueryEnergyType} from "./api"
 export default function Index() {
   const [energytype, setEnergytype] = useState(1)
   const [treeId, setTreeId] = useState([]) 
   const [active, setActive] = useState(0)
   
   let {exparams} = useOutletContext()
-  let { areaId, date, type:dateType, view,  projectId} = exparams 
+  let { sublevel,areaId, date, type:dateType, view,  projectId} = exparams 
  
- 
+  console.log(sublevel)
   const [quota, setQuota] =useState([])
   const [datas, setDatas] = useState({})
   const [chartdatas, setChartDatas] = useState({})
+  const [energyTypes, setEnergyTypes] = useState([])
   const energyName = datas?.consumeTotal?.[0]  ||  {}
   const showquota =  useMemo(()=>{ 
-    return  areaId==0 && dateType==3 && view==1
-  },[areaId,  dateType, view])
+    return  Array.isArray(sublevel) && dateType==3 && view==1
+  },[sublevel,  dateType, view])
+// 获取能源类型
+const getEnergyType = async()=> {
+   try {
+     let {success, data} = await useQueryEnergyType({projectId})
+     if(success && Array.isArray(data)) {
+      setEnergyTypes(data)
+     }else{
+      setEnergyTypes([])
+     }
+   } catch (error) {
+      console.log(error)
+   }
+  }
+
+
   // 查询分类能耗明细
   const queryEnergyDetail = async(name, idx=0)=> {
     try {
+      
       let body = {
         projectId,
         dayMonthYear: dateType,
         date: getTime(date, dateType),
-        areaId,
+        areaIds:sublevel?.filter(id => id!=0),
         type: energytype,
         name, 
+        areaId,
+        group:view
       }
       const {success, data} = await useQueryEnergyDetail({}, body)
       if(success, isObject(data)) {
@@ -53,22 +72,28 @@ export default function Index() {
     }
   }
   //查询分类能耗
-  const getEnergyData = async ({areaId, date, dateType,   projectId,treeId, view}) => {
+  const getEnergyData = async ({sublevel,areaId, date, dateType,   projectId,treeId, view}) => {
     try {  
+      let areaIds = (Array.isArray(sublevel) ? sublevel : [sublevel]).filter(item => item!=0) 
       let params =view==1? {
         projectId,
         dayMonthYear: dateType,
         date: getTime(date, dateType),
         areaId,
-        type: energytype,
+        areaIds,
+        type: energytype,  
         classifyId:   treeId?.[0] || 0,
+        group:view,  // 1.能耗2.费用
       }:{
         projectId,
         dayMonthYear: dateType,
         date: getTime(date, dateType),
         areaId,
+        areaIds,
         type: energytype,
+        group:view,  // 1.能耗2.费用
       }
+    
 
       let   res= view==1 ?  await useQueryEnergy({}, params) : await useQueryEnergyCost(params, treeId)
     
@@ -106,37 +131,41 @@ export default function Index() {
 
        
     }
-  useEffect(() => {  
+  useEffect(() => { 
+    if(Number.isInteger(projectId)) {
+      getEnergyType()
+    }
 
-},[])  
+},[projectId])  
 
   const cards = useMemo(() => { 
     return datas?.consumeTotal?.map((data, idx) => <div onClick={()=> {
       queryEnergyDetail(data.name,idx)
-      getQuota(id)
+   //   getQuota(id)
     }} key={data.name}><Powercom  active={active} idx={idx}  data={data} date={dateType} energytype={energytype}  /></div>)
-  }, [datas, dateType,energytype,active])
+  }, [datas, dateType,energytype,active, sublevel])
 
   useEffect(() => {
-    let f =  [ areaId, dateType,  projectId,energytype, view].every(v => Number.isInteger(v)) && date && Array.isArray(treeId)
+    let f =  [dateType, areaId, projectId,energytype, view].every(v => Number.isInteger(v)) && date && Array.isArray(treeId) && (Array.isArray(sublevel) || typeof sublevel == 'number' )
     if(f) {
-      getEnergyData({ areaId, date, dateType,  projectId,treeId,energytype,view})
+      getEnergyData({ sublevel, date, dateType, areaId, projectId,treeId,energytype,view})
     } 
-  }, [ areaId, date, dateType, treeId, projectId,energytype, view])
+  }, [ sublevel, date, dateType, treeId, projectId,energytype, view, areaId])
 
   useEffect(() => {
-    let f =  [ areaId, dateType,  projectId].every(v => Number.isInteger(v)) &&   typeof energyName?.name == "string"
+    let f =  [  dateType,  projectId].every(v => Number.isInteger(v)) &&   typeof energyName?.name == "string" && (Array.isArray(sublevel) || typeof sublevel == 'number' )
     if(f) {
       queryEnergyDetail(energyName?.name)
     } 
     if(f && areaId == 0 && dateType == 3) {
       getQuota(energyName?.id)
     } 
-  }, [ areaId, date, dateType,  projectId, energyName])
+  }, [ areaId, date, dateType, sublevel, projectId, energyName])
+ 
 
   const title =<CustTitle>
     <span>能源类型</span>
-    <Select options={energyOpt} style={{width: "100px"}} size='small' value={energytype} onChange={setEnergytype}></Select>
+    <Select options={energyTypes}  fieldNames={{label: "name", value: "type"}} style={{width: "100px"}} size='small' value={energytype} onChange={setEnergytype}></Select>
   </CustTitle>
   return (
     <Pagecount bgcolor="transparent" pd="0">
