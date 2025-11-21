@@ -259,8 +259,8 @@ export default function Index({ projectId, level, CModal, name, allLevel }) {
   const CascaderSct = () => {
     // let levels =oneLevel.map(i => ({...i, children: [], isLeaf:  level - 1 == 1}))
     // console.log(levels)
-    console.log(oneLevel)
-    const [leveloptions, setLevelOption] = useState(() => oneLevel.map(i => ({ ...i, children: [], isLeaf: level - 1 == 1 })))
+  
+    const [leveloptions, setLevelOption] = useState(() =>oneLevel.filter(f => f.id!=0).map(i => ({ ...i, children: [], isLeaf:  level -1 == 1 })))
     // level = 2 显示前一级， = 3 显示前两两级, 依次类推
 
     const fieldNames = {
@@ -845,7 +845,7 @@ export default function Index({ projectId, level, CModal, name, allLevel }) {
             required: "'${label}' 是必选字段",
           }}
         >
-          {isAdd
+        {/*   {isAdd
             ?
 
             level > 1 && <CascaderSct />
@@ -855,8 +855,17 @@ export default function Index({ projectId, level, CModal, name, allLevel }) {
                   <Input disabled={!isAdd} />
                 </Item>
               );
-            })}
-
+            })} */}
+            { level > 1  ?  <CascaderSct eidt={true} />
+            : limitlevle?.map((lv, index, array) => {
+              return (
+                <Item label={`${lv?.name}名称`} name={lv?.name}>
+                  <Input disabled={!isAdd} />
+                </Item>
+              );
+            })
+            }
+           
           <Item
             label={`${name}${t("common:name")}`}
             name="name"
