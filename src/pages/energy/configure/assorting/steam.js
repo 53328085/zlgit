@@ -3,7 +3,7 @@ import CommonTab from './commonTab'
 
 export default function Steam(props) {
     const dataprops = {
-        type: 18,
+        type: 8,
         title: '能耗分类(蒸汽)'
     }
     const getFromChild = val => {

@@ -25,7 +25,8 @@ const {
     UpdateFactor,
     DeleteHotWater,
     ImportElectric,
-    OneLevel
+    OneLevel,
+    QueryByPage,
   }
 } = Monitoring
 
@@ -470,8 +471,9 @@ export default function gateway({ deviceStyle, name }) {
   }
   //获取电表列表
   const getQueryByPageElectric = async (curpage=0,pageSize=0,id, like,customerType) => {
-    if (deviceStyle!=7) return; // 断路器用电表的接口
-    setLoading(true)
+ //   if (deviceStyle!=7) return; // 断路器用电表的接口
+ try {
+  setLoading(true)
     let params = {
       projectId,
       // pageNum: page.current,
@@ -480,9 +482,11 @@ export default function gateway({ deviceStyle, name }) {
       pageSize: pageSize?pageSize:pageRef.current.pageSize,
       areaId: id ? id : 0,
       alike: like ? like : '',
-      customerType:customerType?customerType:0
+      customerType:customerType?customerType:0,
+      deviceStyle,
+ 
     }
-    const resp = await QueryByPageHotWater(params)
+    const resp = await QueryByPage(params)
     setLoading(false)
     setPage({
       ...page,
@@ -496,6 +500,11 @@ export default function gateway({ deviceStyle, name }) {
     } else {
       setDataSource([])
     }
+  
+ } catch (error) {
+  console.log(error)
+ }
+    
     
   }
   //导出

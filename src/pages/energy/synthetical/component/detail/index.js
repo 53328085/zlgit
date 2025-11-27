@@ -14,7 +14,7 @@ export default function({qverview={}, op,my, type, datetype, tabvalue, laptop })
    
 
       const pieopt = useMemo(()=>{
-        let total = proportion?.reduce((a,b)=> a+ parseFloat(b.value),0)
+        let total = proportion?.reduce((a,b)=> a+ parseFloat(b.value),0)?.toFixed(2)
         return{
             type: 3,
             pieData: { data: proportion, total,radius: ['40%', '70%'],   }, 
@@ -50,15 +50,15 @@ export default function({qverview={}, op,my, type, datetype, tabvalue, laptop })
               />
             </div> 
            {tabvalue==0 ? <Descriptions size='small' column={1} colon>
-                <Descriptions.Item label={`今${type}能耗`} contentStyle={{justifyContent: "right"}} >{total.periodValue}</Descriptions.Item>
-                <Descriptions.Item label={`${my}${type}能耗`} contentStyle={{justifyContent: "right"}} >{timetype}</Descriptions.Item>
+                <Descriptions.Item label={`${type}`} contentStyle={{justifyContent: "right"}} >{total.periodValue}</Descriptions.Item>
+                <Descriptions.Item label={`${my}`} contentStyle={{justifyContent: "right"}} >{timetype}</Descriptions.Item>
                 <Descriptions.Item label="同比" contentStyle={{justifyContent: "right"}} >{ numberformat(total.yoy)}</Descriptions.Item>
                 <Descriptions.Item label="环比" contentStyle={{justifyContent: "right"}} >{ numberformat(total.mom)}</Descriptions.Item>
             </Descriptions>
             : <Descriptions size='small' column={2} colon>
-            <Descriptions.Item label={`今${type}`} contentStyle={{justifyContent: "left" }} >{total.periodValue}</Descriptions.Item>          
+            <Descriptions.Item label={`${type}`} contentStyle={{justifyContent: "left" }} >{total.periodValue}</Descriptions.Item>          
             <Descriptions.Item label="同比" contentStyle={{justifyContent: "right"}} >{ numberformat(total.yoy)}</Descriptions.Item>
-            <Descriptions.Item label={`${my}${type}`} contentStyle={{justifyContent: "left" }} >{timetype}</Descriptions.Item>
+            <Descriptions.Item label={`${my}`} contentStyle={{justifyContent: "left" }} >{timetype}</Descriptions.Item>
             <Descriptions.Item label="环比" contentStyle={{justifyContent: "right"}} >{ numberformat(total.mom)}</Descriptions.Item>
         </Descriptions>
 }

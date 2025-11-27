@@ -15,7 +15,7 @@ export default function Index(props) {
   let location = useLocation()
   const enchtitle = useSelector(mixtitle)
   const desin = useSelector(jump)
-
+  console.log("desin",desin)
   useEffect(() => {
     document.title = enchtitle+ ' ' + location.state?.title
     return () => document.title = enchtitle

@@ -21,7 +21,7 @@ export default function Index() {
   let {exparams} = useOutletContext()
   let { sublevel,areaId, date, type:dateType, view,  projectId} = exparams 
  
-  console.log(sublevel)
+  
   const [quota, setQuota] =useState([])
   const [datas, setDatas] = useState({})
   const [chartdatas, setChartDatas] = useState({})
@@ -75,7 +75,7 @@ const getEnergyType = async()=> {
   const getEnergyData = async ({sublevel,areaId, date, dateType,   projectId,treeId, view}) => {
     try {  
       let areaIds = (Array.isArray(sublevel) ? sublevel : [sublevel]).filter(item => item!=0) 
-      let params =view==1? {
+      let params ={
         projectId,
         dayMonthYear: dateType,
         date: getTime(date, dateType),
@@ -84,18 +84,9 @@ const getEnergyType = async()=> {
         type: energytype,  
         classifyId:   treeId?.[0] || 0,
         group:view,  // 1.能耗2.费用
-      }:{
-        projectId,
-        dayMonthYear: dateType,
-        date: getTime(date, dateType),
-        areaId,
-        areaIds,
-        type: energytype,
-        group:view,  // 1.能耗2.费用
       }
-    
 
-      let   res= view==1 ?  await useQueryEnergy({}, params) : await useQueryEnergyCost(params, treeId)
+      let   res=  await useQueryEnergy({}, params) 
     
       if (res.success && isObject(res.data)) {
           setDatas(res.data)
@@ -142,7 +133,7 @@ const getEnergyType = async()=> {
     return datas?.consumeTotal?.map((data, idx) => <div onClick={()=> {
       queryEnergyDetail(data.name,idx)
    //   getQuota(id)
-    }} key={data.name}><Powercom  active={active} idx={idx}  data={data} date={dateType} energytype={energytype}  /></div>)
+    }} key={data.name}><Powercom  active={active} idx={idx} view={view} data={data} date={dateType} energytype={energytype}  /></div>)
   }, [datas, dateType,energytype,active, sublevel])
 
   useEffect(() => {

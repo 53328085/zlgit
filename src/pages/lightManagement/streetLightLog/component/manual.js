@@ -33,7 +33,7 @@ export default function Index() {
       if(!(time[0] && time[1])) return;
       let { data, success, total } = await usePageManual(
         {},
-        { projectId,name, operater,  pageNum: current, pageSize, dtStart:time[0].format("YYYY-MM-DD HH:mm:ss"),dtEnd:time[1].format("YYYY-MM-DD HH:mm:ss"), ...rest }
+        { projectId,name, operater,  pageNum: current, pageSize, dtStart:time[0]?.startOf('day')?.format("YYYY-MM-DD HH:mm:ss"),dtEnd:time[1].format("YYYY-MM-DD HH:mm:ss"), ...rest }
       );
       if (success && Array.isArray(data) && data.length) {
         return {
@@ -119,7 +119,7 @@ const onControl =async()=> {
             <Form.Item
               name="time"
               label="操作时间"
-              initialValue={[moment().startOf("day"), moment()]}
+              initialValue={[moment().subtract(1,"months"), moment()]}
               rules={[{
                 required: true,
                 message: "请选择执行执行时间"

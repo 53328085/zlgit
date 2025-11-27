@@ -279,7 +279,7 @@ export default function Hmenu() {
   }
  useEffect(() => {    
     const {state, pathname} = location
-
+    console.log("location",location)
     const paths = pathname.slice(1).split('/')
    
     let isdes = paths?.[0]=='config'; // 是否设计态

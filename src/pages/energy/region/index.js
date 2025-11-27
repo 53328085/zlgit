@@ -109,8 +109,10 @@ export default function Index() {
   let { exparams } = useOutletContext()
   console.log(exparams)
   let { energytype, selectlevel, areaId, date, type: dateType, projectId } = exparams
-  const chartTitle = ["用电量 (kWh)", "用电量 (kWh)", '用冷水量 (m³)', '用气量 (m³)', '', '', '', '用热水量 (m³)', '', '', '', '', '', '', '', '', '', '', '用蒸汽量(m³)'][energytype] || "用电量 (kWh)"
-  const unit = ["kWh", "kWh", "m³", '', '', '', '', 'm³', '', '', '', '', '', '', '', '', '', '', 'm³'][energytype] || "kWh"
+  // const chartTitle = ["用电量 (kWh)", "用电量 (kWh)", '用冷水量 (m³)', '用气量 (m³)', '', '', '', '用热水量 (m³)', '', '', '', '', '', '', '', '', '', '', '用蒸汽量(m³)'][energytype] || "用电量 (kWh)"
+  //const unit = ["kWh", "kWh", "m³", '', '', '', '', 'm³', '', '', '', '', '', '', '', '', '', '', 'm³'][energytype] || "kWh"
+  const [unit, setUnit] = useState('')
+  const [chartTitle, setChartTitle] = useState('')
   const [tableData, setTableData] = useState([])
   const [boptions, setOptions] = useState({
     series: [],
@@ -196,12 +198,13 @@ export default function Index() {
     }
    // const params = selectlevel
     useQueryEnergyArea({}, body).then(res => {
-      let { success, data, errMsg } = res;
-
+      let { success, data:listdata, errMsg } = res;
+       const {desc, list:data} =listdata
+      
       if (success && Array.isArray(data) && data.length > 0) {
         setTableData(data.map(d => d.total))
-
-
+        setUnit(data[0].detail?.[0].unit)
+        setChartTitle(desc)
         let source = []
         let dimensions = [
           { name: '时间', type: 'time' }
@@ -226,6 +229,8 @@ export default function Index() {
           }
         })
       } else {
+        setUnit('')
+        setChartTitle('')
         setTableData([])
         setOptions({
           ...boptions,

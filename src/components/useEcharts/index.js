@@ -217,7 +217,7 @@ const liuqiuOption =(option) =>  {  // 水球图
 
 }
 
-const pieOption = ({ data = [], total = 0, radius= ["60%", "80%"],labelLine={},label={}, legend={},series={},  grid={left: 0, right: 0, containLabel: true,}} = {}) =>{
+const pieOption = ({ data = [], total = 0, radius= ["60%", "80%"],center=["50%", "50%"],labelLine={},label={}, legend={},series={},  grid={left: 0, right: 0, containLabel: true,}} = {}) =>{
   const primaryColor =store.getState()?.system?.themeColor?.primaryColor || "#237ae4"
   
 /*   const  color = [
@@ -289,6 +289,7 @@ const pieOption = ({ data = [], total = 0, radius= ["60%", "80%"],labelLine={},l
         length2:8,
         ...labelLine,
       },
+      center,
       ...series,
     },
 

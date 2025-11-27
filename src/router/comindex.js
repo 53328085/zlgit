@@ -26,7 +26,12 @@ export default function Index() {
     }[primary] || []
     return  nesteds.includes(nested) ? {} : false
   }, [primary, nested]);
-
+  let includemodule=useMemo(() => {  // 需要显示搜索 ***（全部）的模块中排除的页面
+    let primaries = {
+      runtimeEnergy:["summary"]
+    }[primary]
+    return Array.isArray(primaries)&&primaries?.length  
+  }, [primary, nested]);
    
   const onelevel = useSelector(selectOneLevel);
   const varlabel = useSelector(levelDefaultLabel);
@@ -45,6 +50,7 @@ export default function Index() {
     ], // 运行监控
     runtimeSafe: ["summary", "alarmDetail"], // 电气安全
     runtimeEnergy: [ // 能源管理
+      "summary",
       "area",
       "assorting",
       "range",
@@ -171,7 +177,7 @@ export default function Index() {
       if (primary == "runtimeEnergy") {   //issubarea
         switch (nested) {
           case "area":
-            setConfig({ isview: true, isdate: true, shiftNo:false });
+            setConfig({ isview: true, publicDate: true, shiftNo:false, rangeDate:45 });
             break;
           case "assorting":
             setConfig({ isview: true, isdate: true, shiftNo:false , issubarea:true});
@@ -358,7 +364,7 @@ export default function Index() {
   };
 
   useEffect(() => {
-    if (whole.includes(primary) || include) {
+    if (!includemodule && (whole.includes(primary) || include)) {
       let isin = onelevel.find((l) => l.id == 0);     
       if (!isin) {
         dispatch(

@@ -535,7 +535,7 @@ export default function gateway({ deviceStyle }) {
                 const arr = resp.data.map(it => ({ ...it }))
                 setGatewaylist(() => ([{ sn: '(无)直连设备', id: 0 }, ...arr]));
             } else {
-                setDevicelist([])
+                setGatewaylist([{ sn: '(无)直连设备', id: 0 }])
             }
         } catch (e) { console.log(e) }
 

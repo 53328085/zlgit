@@ -4,6 +4,7 @@ const padRul = /^(?=.*\d)(?=.*[a-zA-Z])(?=.*[_~!@#$%^&*])[\da-zA-Z_~!@#$%^&*]{6,
 const mobilePhone = /^(13[0-9]|14[01456879]|15[0-35-9]|16[2567]|17[0-8]|18[0-9]|19[0-35-9])\d{8}$/  // 移动手机号码
 const deviceSn =/^[A-Za-z\d]{12,14}$/
 const deviceSnE =/^[A-Za-z\d]{8,}$/
+const deviceSnL =/^[\d]{1,}$/ // 路灯控制器设备编号
 export const pwdValidator = (_, value)  => {
    if(!value?.trim()) return Promise.reject(new Error(''))
    
@@ -36,4 +37,8 @@ export const snValidator = (_, value) => {
 export const snValidatorE = (_, value) => {
    if(!value?.trim()) return Promise.reject(new Error(''))
    return  deviceSnE.test(value) ? Promise.resolve() : Promise.reject(new Error(i18.t('rule.deviceSnE', {ns: "comm"})))
+}
+export const snValidatorL = (_, value) => {
+   if(!value?.trim()) return Promise.reject(new Error(''))
+   return  deviceSnL.test(value) ? Promise.resolve() : Promise.reject(new Error(i18.t('rule.deviceSnH', {ns: "comm"})))
 }

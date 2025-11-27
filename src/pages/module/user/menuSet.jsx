@@ -91,6 +91,7 @@ const Tabsbox = styled(Tabs)`
     const mref= useRef() 
     const   MenuNos  =  useRef({}) // 运行
     const  Dmenunos = useRef({}) // 设计
+    const Viewno = useRef()
     const onClose = () => {
         mref.current.onCancal() 
     }
@@ -104,7 +105,7 @@ const Tabsbox = styled(Tabs)`
     const saveMenu = async () => { 
         
         const getno = (data) => {
-          let include = ['0101', '0102', '0103', '0104'];  // 数据大屏，项目设置，平台设置， 项目概述  
+          let include = ['0101', '0102', '0103' ];  // 数据大屏，项目设置，平台设置， 项目概述  
           let Nos = []
             for(let [key, value] of Object.entries(data)) {
                if(Array.isArray(value) && value.length > 0) {
@@ -119,11 +120,13 @@ const Tabsbox = styled(Tabs)`
           return [...new Set(Nos)]
         }
         
-        try {        
-            let runnos = getno(MenuNos.current);
+        try {    
+            console.log(Viewno.current)
+          
+            let runnos = getno(MenuNos.current) ;
             let desnos = getno(Dmenunos.current)
-            let paramsNos = role == 3  ? [...new Set([...runnos, ...desnos, '0102', '0104','0201', '020101', '020102','020103', '020104'])] 
-            : role == 4 ? [...new Set([...runnos,  '0104'])] :
+            let paramsNos = role == 3  ? [...new Set([...runnos, ...desnos, '0102', '0201', '020101', '020102','020103', '020104',Viewno.current])] 
+            : role == 4 ? [...new Set([...runnos])] :
              [...new Set([...runnos, ...desnos])];
             let {success, errMsg} = await  User.SetMenus({projectId, userId}, paramsNos)
             success &&  custMsg({content: '保存成功', onClose: ()=> {
@@ -141,12 +144,16 @@ const Tabsbox = styled(Tabs)`
       const [value, setvalue] = useState('run')
       const [AllRunMenus, setAllRunMenus] = useState([])    
       const [allSinderRunMenus, setAllSinderRunMenus] = useState({}) 
+
+
+      console.log(allSinderRunMenus)
       const [AllDesignMenus, setAllDesignMenus] = useState([])
 
       const [allSinderDesignMenus, setallSinderDesignMenus] = useState({}) 
       
       const [loading, setLoading] = useState(true)
-     let exclude = [ '0101', '0103',"0117"];
+    
+     let exclude = [ '0101', '0103',"0104","0117"];
        const queryUserMenus =  () => { 
         let f = !!projectId && !!userId
         if (!f)  return;
@@ -164,7 +171,9 @@ const Tabsbox = styled(Tabs)`
           }
              if (success && Array.isArray(data)) {
              //let runmenu = data.filter(m => m.parentNo == '01').filter(m => !exclude.includes(m.no))
-             let runmenu = data.filter(m => m.parentNo == '01').filter(m => !['0102', '0104'].includes(m.no))
+          //  Viewno.current = data.find(m => m.parentNo == '01' && m.no == '0104')?.select==1 ? '0104' : ''
+             let runmenu = data.filter(m => m.parentNo == '01').filter(m => !['0102','0214'].includes(m.no))
+             console.log(runmenu)
              setAllRunMenus([...runmenu]);
              let designmenu = data.filter(m => m.parentNo == '02').filter(m => m.no !='0201');   
            
@@ -232,6 +241,7 @@ const Tabsbox = styled(Tabs)`
           const [isall, setIsall] = useState({})
 
           const [runall, setRunall] = useState(() => !runValue.find(i => i.select == 0))
+          const [cheked, SetCheked] =useState(false)
           const onRunall = (e) => {
             let checked = e.target.checked
             setRunall(checked)
@@ -262,6 +272,15 @@ const Tabsbox = styled(Tabs)`
             } 
            
           }, [isall])
+          const handleChange =(e)=> {
+           console.log(e.target.checked)
+           SetCheked(e.target.checked)
+           if(e.target.checked){
+            Viewno.current="0104"
+           }else {
+            Viewno.current=null
+           }
+          }
         
           return (
             <>
@@ -283,16 +302,21 @@ const Tabsbox = styled(Tabs)`
                   </CheckboxGroup>
                   </Checkdiv>
                }
-                  <Checkdiv>
+                 {/*  <Checkdiv>
 
-                  <Checkbox  checked disabled className="checktitle">
+                  <Checkbox  checked={cheked}
+                       onChange={handleChange}   className="checktitle">
                   项目概述
                   </Checkbox>
 
-                  <CheckboxGroup value={["0104"]}>
-                  <Checkbox value="0104" checked disabled>项目概述</Checkbox>
-                  </CheckboxGroup>
-                  </Checkdiv>
+                  
+                 <Checkbox 
+                       checked={cheked}
+                       onChange={handleChange}
+                     >
+                       项目概述
+                     </Checkbox>
+                  </Checkdiv> */}
            
 
              { loading ?  <Spin tip="Loading..."> </Spin> : AllRunMenus.map(m => <CheckboxList setIsall={setIsall} data={allSinderRunMenus[m.key]}   title={m.label} mod={m.key} key={m.key} type="run" />)}

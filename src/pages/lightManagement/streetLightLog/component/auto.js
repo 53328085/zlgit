@@ -36,7 +36,7 @@ export default function Index() {
       if(!(time[0] && time[1])) return;
       let { data, success, total } = await usePageAuto(
         {},
-        { projectId, name, pageNum: current, pageSize, dtStart:time[0].format("YYYY-MM-DD"),dtEnd:time[1].format("YYYY-MM-DD") }
+        { projectId, name, pageNum: current, pageSize, dtStart:time[0]?.startOf('day')?.format("YYYY-MM-DD"),dtEnd:time[1].format("YYYY-MM-DD") }
       );
       if (success && Array.isArray(data) && data.length) {
         return {
@@ -75,7 +75,7 @@ export default function Index() {
             <Form.Item
               name="time"
               label="执行时间"
-              initialValue={[moment().startOf("day"), moment()]}
+              initialValue={[moment().subtract(1, "months"), moment()]}
               rules={[{
                 required: true,
                 message: "请选择执行执行时间"

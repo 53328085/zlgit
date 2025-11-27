@@ -8,7 +8,7 @@ import {
   getPassword,
   getLang,
 } from "@redux/user";
-import {   getJump,  getIsGranary, configProject,   systemConfigInfo, getWebsiteState, getWebsiteMenu} from "@redux/systemconfig";
+import {   getJump,  getIsGranary, configProject,   systemConfigInfo, getWebsiteState, getWebsiteMenu,getDefaultRout} from "@redux/systemconfig";
  
 import { Login as LoginApi, I18N,  } from "@api/api.js";
 import { message, Tabs, Form, Input } from "antd";
@@ -202,6 +202,7 @@ const CheckAuthorization = async (value, type=0, codekey, setLoading,getCode) =>
        //  dispatch(configProject(false)) // 项目是否处于设计状态
          let {runMenus,siderRunMenus, homeMenuNO} = await dispatch(getWebsiteMenu(projectId)).unwrap()
        
+       
          let ismenu = runMenus?.find(item => item.no == homeMenuNO) || runMenus[0]  
          if(!ismenu) return message.error({content:  t("comm:NoSetMenu"), duration: 0.5})
         //  navigate("/websitmap", {})
@@ -217,8 +218,15 @@ const CheckAuthorization = async (value, type=0, codekey, setLoading,getCode) =>
              title: label,
              primary: ismenu.key
            }
-   
-         } 
+             
+         } else {
+           jumpath=`/index/${ismenu.key}`
+         }
+         dispatch(getDefaultRout({
+          jumpath,
+           substate,
+           menu:ismenu,
+       }))
         projectRun(ismenu, jumpath, substate) 
        }
  

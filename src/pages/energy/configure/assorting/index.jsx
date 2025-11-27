@@ -49,7 +49,7 @@ export default function Index() {
     2: Water,
     7: HotWater,
     3: Gas,
-    18: Steam
+    8: Steam
   }
   const [tag, setTag] = useState('')
   const getFromChild = val => {

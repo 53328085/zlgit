@@ -30,7 +30,7 @@ import Mapcom from "@com/useMap/indexset";
 import { selectOneLevel, selectOneLevelDefaultId, getOnelevel, publishState, currProject, adaptation } from '@redux/systemconfig.js'
 import { useSelector, useDispatch } from 'react-redux'
 import { useTranslation } from "react-i18next"
-
+import {useQuerySpaceTrees} from "./api.js"
 const { Dragger } = Upload;
 const Mainbox = styled.div`
   position: relative;
@@ -73,83 +73,7 @@ const Formbox = styled(Form)`
   }
 }
 `;
-const Drawerbox = styled(Drawer)`
-  && {
-    .ant-drawer-content-wrapper {
-      width: 100% !important;
-    }
-    .ant-drawer-wrapper-body {
-      background-color: #003366;
-      .ant-drawer-body {
-        display: grid;
-        grid-template-columns: 692px 1fr 714px;
-        column-gap: 32px;
-        .title {
-          padding-left: 16px;
-          border-left: 4px #237ae4 solid;
-          color: #333;
-          display: flex;
-          align-items: center;
-        }
-        .selected {
-          display: grid;
-          grid-template-rows: 1fr 1fr;
-          row-gap: 32px;
-
-          .ant-table {
-            height: 100%;
-          }
-          .total {
-            display: grid;
-            grid-template-rows: 32px 1fr;
-            row-gap: 16px;
-            padding: 16px;
-            background-color: #fff;
-          }
-          .sub {
-            display: grid;
-            grid-template-rows: 32px 32px 1fr;
-            padding: 16px;
-            row-gap: 16px;
-            background-color: #fff;
-          }
-        }
-        .unselected {
-          display: grid;
-          grid-template-rows: 32px 32px 1fr;
-          padding: 16px;
-          row-gap: 16px;
-          background-color: #fff;
-        }
-        .optab {
-          display: flex;
-          flex-direction: column;
-          justify-content: space-between;
-          padding: 32px 0;
-          > div {
-            .ant-typography {
-              color: #fff;
-            }
-            .ant-btn-icon-only {
-              width: 64px;
-              height: 46px;
-            }
-          }
-        }
-      }
-    }
-  }
-`;
-const Inptserach = styled(Input.Search)`
-  && {
-    width: 256px;
-    .ant-input-search
-      .ant-input-group
-      .ant-input-affix-wrapper:not(:last-child) {
-      border-radius: 16px 0 0 16px !important;
-    }
-  }
-`;
+ 
 const { Link, Text, Paragraph } = Typography;
 const { Item } = Form;
 export default function Index({ projectId, level, CModal, name, allLevel }) {
@@ -161,13 +85,21 @@ export default function Index({ projectId, level, CModal, name, allLevel }) {
   const oneLevelDefaultId = useSelector(selectOneLevelDefaultId) // 一级默认id
   const ispublish = useSelector(publishState)
   const [levelone] = useState(allLevel[0]);
-
+  const [Record, setRecord] = useState({});
   const limitlevle = allLevel.slice(0, level - 1);
   const fields = allLevel?.find(item => item.level == level)?.fields || [];
   const currenName = allLevel?.find(item => item.level == level)?.name
   const preName = level > 1 ? allLevel?.find(item => item.level == level - 1)?.name : null
   const sheetName = projectName + '_' + currenName
   const { t } = useTranslation("common", "comm")
+  
+  const CascaderSctProps = useMemo(()=> {
+    return {
+      projectId,
+      level,
+      ...Record
+    }
+  },[projectId, level, Record])
   /* 
 {title: '名称', dataIndex: '名称', key: '名称'} 
 // 第一列 本级， 第二列 备注， 第三列 [父级] ...其他
@@ -202,7 +134,7 @@ export default function Index({ projectId, level, CModal, name, allLevel }) {
 
   const mapref = useRef();
   const boxref = useRef();
-  const [Record, setRecord] = useState({});
+
   const [isAdd, setIsAdd] = useState(true);
 
 
@@ -255,21 +187,73 @@ export default function Index({ projectId, level, CModal, name, allLevel }) {
       console.log(error)
     }
   }
+  const filterlevel=(arr) => {
+     arr.forEach((item,index) => {
+        let {level:lv, nodes} = item
+        let fag = level-1 > lv
+        if(fag){
+           if(Array.isArray(nodes)&& nodes.length>0){
+            filterlevel(nodes)
+           }else{
+             item.nodes = []
+           }
+        }else {
+          item.nodes = []
+        }
+     })
+       
+        
+    
 
-  const CascaderSct = () => {
+   
+ 
+
+  }
+  const CascaderSct = ({projectId,level }) => {
     // let levels =oneLevel.map(i => ({...i, children: [], isLeaf:  level - 1 == 1}))
     // console.log(levels)
-  
+    console.log(projectId,level)
+    const [datas, setDatas] = useState([])
+    
+    const getData = async()=>{
+      try {
+           let v =level==1 ? level : level - 1;
+           let {success, data} = await useQuerySpaceTrees({projectId,areaId:0})
+           if (success && Array.isArray(data) && data.length){
+             filterlevel(data)
+             setDatas(data)
+           }else {
+             setDatas([])
+           }
+      } catch (error) {
+        console.log(error)
+      }
+    }
+    
+
+
+
+
+    useEffect(()=>{
+      console.log('projectId',projectId,level, parentId)
+      if([projectId,level ].every(i=> Number.isInteger(parseInt(i)))) {
+        getData()
+      }
+     
+    },[projectId,level ])
+
+
+
     const [leveloptions, setLevelOption] = useState(() =>oneLevel.filter(f => f.id!=0).map(i => ({ ...i, children: [], isLeaf:  level -1 == 1 })))
     // level = 2 显示前一级， = 3 显示前两两级, 依次类推
-
+    // console.log(leveloptions)
     const fieldNames = {
       label: 'name',
-      value: 'id',
-      children: 'children'
+      value: 'areaId',
+      children: 'nodes'
     }
     const loadData = async (selectedOptions) => {
-
+     // console.log(selectedOptions)
       try {
         const targetOption = selectedOptions[selectedOptions.length - 1];
         //   console.log(targetOption)
@@ -323,6 +307,10 @@ export default function Index({ projectId, level, CModal, name, allLevel }) {
     }
 
     const labelName = (Array.isArray(leveloptions) && leveloptions.length > 0) ? leveloptions[0].levelName : '';
+
+    useEffect(()=> {
+
+    }, [])
     return (
       <Item label={labelName} name="parentId" rules={[
         {
@@ -330,7 +318,10 @@ export default function Index({ projectId, level, CModal, name, allLevel }) {
           message: `请选择${labelName}`
         }
       ]}>
-        <Cascader options={leveloptions} fieldNames={fieldNames} loadData={loadData} onChange={onChagne} />
+        <Cascader options={datas} fieldNames={fieldNames}
+        // loadData={loadData}
+         // onChange={onChagne}
+           />
       </Item>
     )
 
@@ -360,7 +351,7 @@ export default function Index({ projectId, level, CModal, name, allLevel }) {
   const getTableData = (levelName) => {
     // 列表查询
     if (isNaN(level)) return;
-    console.log(params)
+  //  console.log(params)
     let { topAreaId = 0, name } = form.getFieldsValue()
     params = { ...params, name: window.encodeURIComponent(name), topAreaId }
     Area.QueryByPage(params)
@@ -372,6 +363,7 @@ export default function Index({ projectId, level, CModal, name, allLevel }) {
           idGroup = [],
           type = [],
           parentIdGroup = [],
+          parentIds=[],
         } = data || {};
         let cols = [];
         // let index = header.findIndex(h => h == '备注')
@@ -379,6 +371,7 @@ export default function Index({ projectId, level, CModal, name, allLevel }) {
         /*  if(index > -1){
            header.splice(index,'备注')
          } */
+        console.log(parentIds)
 
         for (let k of header) {
           let col = {
@@ -389,12 +382,12 @@ export default function Index({ projectId, level, CModal, name, allLevel }) {
           cols.push(col);
         }
         // let ccols = [...cols]
-        console.log(cols)
+     //   console.log(cols)
         let ccols = JSON.parse(JSON.stringify(cols))
-        console.log(cols, ccols)
+     //   console.log(cols, ccols)
         let temp = {}
         ccols?.forEach((c, index) => {
-          console.log(c, index)
+       //   console.log(c, index)
           if (c.title != '名称') {
             if (index < level) {
               temp[c.title] = c.title + "名称"
@@ -446,11 +439,11 @@ export default function Index({ projectId, level, CModal, name, allLevel }) {
           // }
 
         })
-        console.log(temp)
+      //  console.log(temp)
         // return
         setTempcolums(ccols)
         setTempdata([temp])
-        console.log(temp, tempdata, ccols)
+      //  console.log(temp, tempdata, ccols)
         let colums = ispublish ? [...cols] : [
           ...cols,
           // index > -1 ?   {title: '备注', dataIndex: '备注', key: '备注'}: {},
@@ -478,6 +471,7 @@ export default function Index({ projectId, level, CModal, name, allLevel }) {
             areaId: idGroup[i],
             parentId: parentIdGroup[i],
             type: type,
+            parentIds:  parentIds?.[i] || []
           };
           header.forEach((e, i) => {
             row[e] = r[i];
@@ -568,15 +562,15 @@ export default function Index({ projectId, level, CModal, name, allLevel }) {
 
   const onOk = async () => {
     // 新增、编辑
-    console.log(Record)
+ //   console.log(Record)
     try {
       let values = await nform.validateFields();
-      console.log(values)
+  //    console.log(values)
       let { remark, name, parentId, lngLat = {} } = values; // 编辑时 parentId=Record.parentId
-
+      console.log(parentId)
       let id = Array.isArray(parentId) ? parentId.pop() : parentId;
 
-      let parent_id = isAdd && level > 1 ? id : Record.parentId;
+      let parent_id = id // isAdd && level > 1 ? id : Record.parentId;
       let other = [];
       for (let key of fields) {
         let obj = {}
@@ -623,7 +617,10 @@ export default function Index({ projectId, level, CModal, name, allLevel }) {
   };
 
   const edit = (record) => {
-    console.log(record)
+   
+    
+  
+    
     let lngLat = fields.filter(f => f.type == 1)?.map(i => i.name);
     if (Array.isArray(lngLat) && lngLat.length > 0) {
       for (let name of lngLat) {
@@ -637,11 +634,13 @@ export default function Index({ projectId, level, CModal, name, allLevel }) {
     }
     setIsAdd(false);
     setRecord({ ...record });
-    let { 名称, 备注, areaId, parentId, ...keys } = record;
-
+    let { 名称, 备注, areaId, parentId,parentIds, ...keys } = record;
+    let topId = oneLevel.find(i => i.name == record.name)?.id
+    console.log(topId)
     nform.setFieldsValue({
       name: record["名称"],
       remark: record["备注"],
+      parentId:parentIds ,
       ...keys,
     });
     for (let key of fields) {
@@ -743,7 +742,7 @@ export default function Index({ projectId, level, CModal, name, allLevel }) {
       form.setFieldsValue({
         topAreaId: null,
       });
-      console.log(name, '---name')
+  //    console.log(name, '---name')
       getTableData(name)
     } else if (level > 1) {
       form.setFieldsValue({
@@ -772,8 +771,10 @@ export default function Index({ projectId, level, CModal, name, allLevel }) {
               />
             </Form.Item>
           )}
+       
           {level > 1 && (
             <>
+            
               <Item label={`${levelone.name}${t("common:name")}`} name="topAreaId">
                 <Select
                   options={[...oneLevel, { name: '全部', id: 0 }]}
@@ -856,7 +857,8 @@ export default function Index({ projectId, level, CModal, name, allLevel }) {
                 </Item>
               );
             })} */}
-            { level > 1  ?  <CascaderSct eidt={true} />
+                
+            { level > 1  ?  <CascaderSct  {...CascaderSctProps} />
             : limitlevle?.map((lv, index, array) => {
               return (
                 <Item label={`${lv?.name}名称`} name={lv?.name}>

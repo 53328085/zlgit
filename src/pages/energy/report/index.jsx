@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useRef, useEffect, useMemo } from 'react'
+import React, { useState, useCallback, useRef, useEffect, useMemo, Children } from 'react'
 import { Checkbox, DatePicker, message, Tooltip, Descriptions, Radio, Select } from 'antd'
 import moment from 'moment'
 
@@ -81,6 +81,16 @@ export default function Index() {
   const onSearch = (e) => {
     setAlike(e)
   }
+  const toformat = {
+    1:"HH:mm",
+    2:"DD",
+    3:"MM", 
+  }[type]
+  const timeformt ={
+    1: "YYYY-MM-DD HH:mm",
+    2: "YYYY-MM-DD",
+    3: "YYYY-MM",
+  }[type]
   // 对比分析 start
   const Ctitle = useMemo(() => {
     
@@ -88,7 +98,8 @@ export default function Index() {
     let format = {
       1: "YYYY-MM-DD",
       2: "YYYY-MM",
-      3: "YYYY"
+      3: "YYYY",
+      
     }[type]
     return `对比分析()` //${date.format(format)}
   }, [date, type])
@@ -119,7 +130,7 @@ export default function Index() {
   const tbref = useRef()
  
 // const [tabs, setTabs] = useState(etabs)
-  const index =projectId==30 ? 4 : Number(value)
+  const index =  Number(value)  // 30 电能报表
 
  
 
@@ -127,7 +138,7 @@ const tabs = useMemo(()=> {
  
   if( projectId==30) {
      
-    return []
+    return aqtabs
   }else if(energytype==1) {
      return etabs
   }else   {
@@ -270,14 +281,31 @@ const tabs = useMemo(()=> {
           let { detailHeaders          } = data?.[0]
           if(!Array.isArray(detailHeaders)) return
           let last = detailHeaders.length - 1
-          let column = detailHeaders.map(col => ({ title: col, dataIndex: col, key: col, width: "96px" }))
+          let column = detailHeaders.map((col,index) => ({ title: moment(col, timeformt).format(toformat),  children:[
+            {
+            title: "读数",
+            dataIndex: col+'r',
+            key: col+'r',
+            width: 70,
+            fixed: index==last? "right":false
+           },
+           {
+            title: "用量",
+            dataIndex: col+'v',
+            key: col+'v',
+            width: 70,
+            fixed: index==last? "right":false
+           }
+
+          ] }))
           // let column = detailHeaders.map(col => ({title: col, dataIndex: col, key: col,width: "96px", render: (text)=> Math.round(parseFloat(text))}))  
-          column[last].fixed = "right"
+        
           setConcolumns([...conscols, ...column])
           data.forEach(item => {
-            let { detailHeaders, detailValues } = item;
+            let { detailHeaders, detailValues,detailReadings } = item;
             for (const [index, val] of detailHeaders?.entries()) {
-              item[val] = detailValues[index]
+              item[val+'v'] = detailValues[index]
+              item[val+'r'] = detailReadings[index]
             }
           })
         } else if (index == 5) {
@@ -368,7 +396,9 @@ const tabs = useMemo(()=> {
     },
     xAxis: {
       type: 'category',
-
+      axisLabel: {
+        formatter: (value) => moment(value,timeformt).format(toformat)
+      }
     },
     yAxis: {
       type: 'value',

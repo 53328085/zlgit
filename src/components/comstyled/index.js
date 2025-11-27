@@ -4,7 +4,7 @@
  * @date 2022-10-18 09:45
  */
 import styled, {css} from "styled-components";
-import {Input, Select, DatePicker, Radio, Form, Button, Checkbox, Spin, Divider, Pagination} from 'antd'
+import {Input, Select, DatePicker, Radio, Form, Button, Checkbox, Spin, Divider, Pagination,Tabs} from 'antd'
 import {useTranslation} from "react-i18next"
 import {useSelector} from 'react-redux'
 import {adaptation} from "@redux/systemconfig"
@@ -13,7 +13,44 @@ import moment from "moment";
 const {Search, Password, TextArea} = Input
 const { Item } = Form;
 const $color= '#237AE4'
-
+export const Tabsbox = styled(Tabs)`
+  transform: translateY(1px);
+  .ant-tabs-nav {
+    margin-bottom: 0px;
+    max-width: inherit;
+  //  width:  calc(100vw - 220px);
+   .ant-tabs-nav-list {
+    .ant-tabs-tab {
+        border-radius:${props=> props.radius || '8px 8px 0 0'};
+     //   height: 41px;
+        min-width: ${props => props.tabwidth || '145px'} ;
+        justify-content: center;       
+        background-color:${props=> props.theme.isdark ? "dark" : "#fff"}  ;  
+        transition: none;
+        &:hover {
+            background-color: ${props => props.theme.isdark ? "dark" : (props.theme.primaryColor || "#237ae4" )};
+            color:${props=> props.theme.isdark ? "dark" : "#fff"};
+            transition: all 0.3s;
+        }
+        .ant-tabs-tab-btn{
+            transition: none;
+        }
+        .ant-tabs-tab-btn:active {
+            color:${props=> props.theme.isdark ? "dark" : "#fff"}
+        }
+    }
+    .ant-tabs-tab.ant-tabs-tab-active {
+        background-color: ${props => props.theme.isdark ? "dark" : (props.theme.primaryColor || "#237ae4") };
+       
+        .ant-tabs-tab-btn {
+            color: ${props=> props.theme.isdark ? "dark" : "#fff"};
+            transition: none;
+        }
+    }
+   }  
+ 
+}
+`
 export const Point = styled.div`
   &&{
     position: absolute;

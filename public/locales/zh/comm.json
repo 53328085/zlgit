@@ -78,7 +78,8 @@
     "distributionroom": "配电房", 
     "rule": {
         "deviceSn": "必须是12-14位，包括英文或数字中的至少一项",
-        "deviceSnE":"必须是8-14位，包括英文或数字中的至少一项"
+        "deviceSnE":"必须是8-14位，包括英文或数字中的至少一项",
+        "deviceSnH" :"必须是一位以上的数字"
     },
     "totalpages_one": "共{{count}}条记录",
     "totalpages_other": "共{{count}}条记录",

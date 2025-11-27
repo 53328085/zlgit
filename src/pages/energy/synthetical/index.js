@@ -46,14 +46,15 @@ export default function Index() {
   const areaIds = useSelector(selectOneLevel);
   let { laptop } = useSelector(adaptation)
   let { exparams } = useOutletContext()
-  const { areaId, date, type: dateType, shiftNo, view, projectId } = exparams
+  console.log(exparams)
+  const { areaId, publicdate:date,publicrangedate, publictype: dateType, shiftNo, view, projectId } = exparams
   const [qverview, setOverview] = useState({})
   const [tabvalue, setTabvalue] = useState(0)
  
  
 
-     let type = ['', '日', '月', '年'][exparams.type]
-     let my = ['', '昨', '上', '去'][exparams.type]
+     let type = ['', '本日', '本月', '本年','本周期'][dateType]
+     let my = ['', '昨日', '上月', '去年','上周期'][dateType]
 
  
  
@@ -78,18 +79,20 @@ export default function Index() {
   useEffect(() => {
     getTabs()
   }, [projectId])
-  const getData = async ({ areaId, date, dateType, shiftNo, view, projectId }) => { // 费用接口暂时没有
+  const getData = async ({ areaId, date, dateType, shiftNo,publicrangedate, view, projectId }) => { // 费用接口暂时没有
 
     let id = areaId == 0 ? areaIds?.filter(a => a.id != 0)?.map(a => a.id) : [areaId];
-    let time = getTime(date, dateType);
+    let [startDate, endDate] =dateType < 4  ?  [getTime(date, dateType), getTime(date, dateType)] : [getTime(publicrangedate[0], 1), getTime(publicrangedate[1], 1)];
  
     const body = {
-      dayMonthYear: dateType,
+      dayMonthYear: dateType==4 ? 0 : dateType,
       shiftNo,
       projectId,
-      date: time,
+      startDate,
+      endDate,
       meterType: tabvalue,
-      areaIds:id
+      areaIds:id,
+      group:view
     }
  
   
@@ -111,11 +114,14 @@ export default function Index() {
   }
   useEffect(() => {
    
-    let f = [tabvalue, areaId, dateType, shiftNo, view, projectId].every(v => Number.isInteger(v)) && date
-    if (f) {
-      getData({ areaId, date, dateType, shiftNo, view, projectId })
+    let f = [tabvalue, areaId, dateType, shiftNo, view, projectId].every(v => Number.isInteger(v)) 
+    let fag = dateType>3 ? (Array.isArray(publicrangedate) && publicrangedate?.length==2) : date
+    console.log("f",f,fag)
+    if (f && fag) {
+      console.log("调接口")
+      getData({ areaId, date, dateType, shiftNo,publicrangedate, view, projectId })
     }
-  }, [tabvalue, areaId, date, dateType, shiftNo, view, projectId])
+  }, [tabvalue, areaId, date, dateType, shiftNo, view, projectId,publicrangedate])
 
  
 

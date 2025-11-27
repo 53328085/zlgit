@@ -363,7 +363,7 @@ export default function UseSerach(props) {
 
           if (type == 4) {
             return <Form.Item name="publicrangedate" initialValue={[moment().startOf("day"), moment().endOf("day")]}  >
-              <Daterange rangeDate={31} />
+              <Daterange rangeDate={props.config?.rangeDate || 31} />
             </Form.Item>
           } else {
             return <Form.Item name="publicdate" initialValue={moment()}>
@@ -373,7 +373,12 @@ export default function UseSerach(props) {
         }
       }
     </Form.Item>
+    {!props.config?.shiftNo && <Item name="shiftNo" initialValue={0}>
+        <Select style={{ width: '100px' }} options={allshifts} fieldNames={{ label: 'name', value: 'id' }}
 
+        ></Select>
+      </Item>
+      }
 
   </Space>
 
@@ -581,7 +586,7 @@ export default function UseSerach(props) {
           props.config?.dateR && carbonDateR // 碳排管理-- 碳排分析  光伏发电--告警消息
         }
         {
-          props.config.publicDate && publicDate // 能源管理--公共能耗
+          props.config.publicDate && publicDate // 能源管理--公共能耗/分类能耗
         }
         {
           props.config?.refresh && refresh //光伏发电

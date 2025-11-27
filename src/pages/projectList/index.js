@@ -39,7 +39,7 @@ import Custmodal from "@com/useModal";
 import {Circle} from '@com/useIcon'
  
 import Projectform from './projectform'
-import { systemConfigInfo, getJump, iszhCN, getWebsiteState, getWebsiteMenu, adaptation} from "@redux/systemconfig";
+import { systemConfigInfo, getJump, iszhCN, getWebsiteState, getWebsiteMenu, adaptation,getDefaultRout} from "@redux/systemconfig";
 
 import UseTabel from '@com/useTable'
 import {isObject} from "@com/usehandler"
@@ -422,12 +422,13 @@ export default function Index() {
      dispatch(getWebsiteState({id, userId}))
     // dispatch(configProject(type === 1))
      let {runMenus, designerMenus,siderRunMenus, siderDesignerMenus, homeMenuNO} = await dispatch(getWebsiteMenu(id)).unwrap()
-     console.log(runMenus)
-     console.log(homeMenuNO)
+     
      let menu;
      let  jumpath, substate;
      if (type == 2) {
       menu = runMenus?.find(item => item.no == homeMenuNO) || runMenus[0] 
+      console.log(menu)
+      console.log(siderRunMenus)
       if(!menu) return message.error({content:  t("comm:NoSetMenu"), duration: 0.5})
       let sider = siderRunMenus?.[menu.key]?.[0] 
       if(sider) { 
@@ -438,8 +439,15 @@ export default function Index() {
           title: label,
           primary: menu.key
         }
-
+   
+      } else {
+        jumpath=`/index/${menu.key}`
       }
+      dispatch(getDefaultRout({
+        jumpath,
+         substate,
+         menu,
+     }))
     }else if(type == 1) {  
       let {key} = designerMenus?.find(item => item.no == '0201')|| designerMenus[0]      
       if(key) {

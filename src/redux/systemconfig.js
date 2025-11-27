@@ -20,7 +20,10 @@ import {Apimethod} from "@api/api.js"
   "General/Area/AllLevel"
 );
 
-
+const { useQueryEnergyType } = new Apimethod( // 查询能耗类型
+  "get",
+  "/General/ProjectSetting/QueryEnergyType"
+);
 
 const {DeviceTypeManager: {AllDeviceStyle} } = Monitoring
 
@@ -192,6 +195,7 @@ const initialState = {
   site: "", // 站点 配电模块 
   areaLevel:[], // 层级
   energyType:[], // 能源类型
+  defaultroute:{}, // 默认路由对象
 }
  
 export const getWebsiteState = createAsyncThunk(
@@ -214,7 +218,7 @@ export const getWebsiteState = createAsyncThunk(
         CustTheme.GetProjectTheme({projectId:id}), // 获取项目选择的主题
         useFindStreetLightAreas({projectId:id}), // 获取路灯管理下有路灯的区域
         useAllLevel({projectId:id}), // 获取区域层级
-        
+        useQueryEnergyType({projectId:id}) // 获取能耗类型
          ] 
         let results = await Promise.allSettled(promises)
         return results
@@ -426,12 +430,16 @@ const system = createSlice({
       },
       getLightlevel(state, {payload}){
         state.lightlevel =Array.isArray(payload) ? payload : []
+      },
+      getDefaultRout(state, {payload}){
+        state.defaultroute = payload
       }
+
     },
      extraReducers: {
       [getWebsiteState.fulfilled]: (state, action) => {
          let {payload} = action
-         payload.forEach((res, index) => {
+         payload?.forEach((res, index) => {
           let {status, value: {success, data}} = res
           if (status ==='fulfilled') {
              if(success) {
@@ -462,7 +470,7 @@ const system = createSlice({
                   state.themeId = themeId;
                   if(state.themes?.length > 0 && Number.isInteger(themeId)) {
                      let  {context,id,name} = state.themes.find(t => t.id==themeId) || {};
-                     let islight = isLightColor(context.primaryderived)   
+                     let islight = isLightColor(context?.primaryderived)   
                      if(isObject(context)){
                        state.themeColor ={...context,islight,  id, name}
                      }else{
@@ -485,6 +493,12 @@ const system = createSlice({
                    state.areaLevel=[]
                  }
                  
+               }else if(index ==12) {
+                 if(Array.isArray(data) && data.length) {
+                  state.energyType= data
+                 }else {
+                   state.energyType=[]
+                 }
                }
 
              }else{
@@ -500,6 +514,8 @@ const system = createSlice({
                index == 8 && (state.themes =[])
                index == 9 && (state.themeId=NaN)
                index == 10 && (state.lightlevel = [])
+               index == 11 && (state.areaLevel=[])
+               index == 12 && (state.energyType=[])
              }
           }
         })
@@ -669,6 +685,8 @@ export const sidershow = state => state.system.sidershow
 export const collapsed = state => state.system.collapsed
 export const pgTitle = state=>state.system.pgTitle
 export const areaLevel = state=>state.system.areaLevel
+export const defaultroute = state=>state.system.defaultroute
+export const energyType = state=>state.system.energyType
 export const {
     configProject,
     getSetMenus,
@@ -708,5 +726,6 @@ export const {
     getSite,
     getDark,
     getLightlevel,
+    getDefaultRout,
 } = actions
 export default system.reducer

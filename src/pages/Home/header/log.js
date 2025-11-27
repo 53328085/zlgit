@@ -10,7 +10,8 @@ import { configProject, comSetFirst, getJump, currentscreen, isGranary,datascree
   themelist,
   themes,
  getThemeId,
- themeColor
+ themeColor,
+ defaultroute,
  } from "@redux/systemconfig";
 
 import moment from "moment";
@@ -256,6 +257,7 @@ export default function Log() {
   const adap =useSelector(adaptation) || {}
  const themelists = useSelector(themelist)
  let Themes = useSelector(themes);
+ const router = useSelector(defaultroute)
   
    let item = themelists?.length> 0 ? {label: '主题', key:"theme", children: themelists, icon: <Micon iconname="theme" />} : null
 
@@ -272,8 +274,8 @@ export default function Log() {
  // const [items, setItems] = useState(inita)
   
   let dataScreen =setmenus?.find(i => i.key=='dataScreen')?.label //数据大屏
-  let projectSet = setmenus?.find(i => i.key=='projectSet')?.label //项目设置
-  let systemSet = setmenus?.find(i => i.key=='systemSet')?.label // 平台设置
+  let projectSet = setmenus?.find(i => i.key=='projectSet')?.label   //项目设置
+  let systemSet = setmenus?.find(i => i.key=='systemSet')?.label || "平台设置" // 平台设置
   //const showscreen =  screenadr?.type==1 || screenadr?.type==2
   const dispatch = useDispatch()
   const {name, roleType, mobile, userId} = useSelector(selectUser) || {};
@@ -480,13 +482,21 @@ const settheme = async (themeId) => {
       message.warning(e.message || '保存失败', 1)
     })
   }
+  console.log(router)
   const back = () => {
+    try {
+      const {jumpath, substate, menu={}} = router
+      const {key,label} = menu
+      dispatch(getJump(true))
+      navgite(jumpath, {
+       // state: { type: 'index',  primary: key,  index: true, title: label }
+       state: substate ? { type: 'index', primary: key, index: true, title: label,jumpath, substate }:{ type: 'index',  primary: key,  index: true, title: label } ,
+     })
+    } catch (error) {
+      console.log(error)
+    }
    //  dispatch(configProject(false));
-     dispatch(getJump(true))
-     navgite("/index/runtimeProject", {
-      // state: { type: 'index',  primary: key,  index: true, title: label }
-      state: { type: 'index', primary: "runtimeProject", index: true, title: "项目概述" },
-    })
+
   }
 
   const onConfigure = () => {   // 

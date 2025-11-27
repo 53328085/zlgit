@@ -26,7 +26,7 @@ import {
     message,
     Alert,
 } from "antd";
-import { snValidator, snValidatorE } from "@pages/rule";
+import { snValidator, snValidatorE,snValidatorL } from "@pages/rule";
 export const MyContext = createContext({
     addopts: [],
     gatewaylist: [],
@@ -366,7 +366,10 @@ export const FormComp = (props) => {
                                 required: true,
                             },
                             {
-                                validator: deviceStyle != 7 ? snValidator : snValidatorE,
+                                validator:{
+                                    22: snValidatorL,
+                                    7:snValidatorE
+                                }[deviceStyle] || snValidator ,
                             },
                         ]}
                     >
