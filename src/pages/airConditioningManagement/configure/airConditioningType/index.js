@@ -15,7 +15,8 @@ import  {imgToBase64} from "@com/useUpload.js"
 const {Link} = Typography
 export default function Index() {
   const {projectId} = useOutletContext()
- 
+  const tbref=useRef()
+  const downParams = useRef({pageSize:1,pageNum:1})
   const delref= useRef()
   const aref=useRef()
   const [form]=Form.useForm()
@@ -84,7 +85,7 @@ export default function Index() {
      form.setFieldsValue(row)
      aref.current.onOpen()     
   }
-  console.log(cols)
+ 
   const columns = [
     ...cols,
     {
@@ -107,6 +108,8 @@ export default function Index() {
       
      }
   }
+ 
+   
 
   useEffect(()=> {
    if(Number.isInteger(projectId)) {
@@ -115,12 +118,12 @@ export default function Index() {
   },[projectId])
   const ctitle=(<TitleBox>
 <span>配置空调类型</span>
-<Space><CustButtonT text="new" onClick={onAdd}></CustButtonT><ExportExcel></ExportExcel></Space>
+<Space><CustButtonT text="new" onClick={onAdd}></CustButtonT><ExportExcel single={true} tb={tbref}></ExportExcel></Space>
   </TitleBox>)
   return (
     <Pagecount pd="0">
       <Titlelayout layout="flex" title={ctitle}>
-        <UserTable columns={columns} dataSource={lists}></UserTable>
+        <UserTable columns={columns}    dataSource={lists} ref={tbref}></UserTable>
       </Titlelayout>
       <CModal title={title}  ref={aref} width={560} mold="cust"   onOk={onOK} custft={isAdd} >
         <Form form={form} layout="vertical" preserve={false}>

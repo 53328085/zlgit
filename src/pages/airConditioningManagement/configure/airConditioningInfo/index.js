@@ -34,6 +34,7 @@ export default function Index() {
   const inRef =useRef() //空调内机
   const [curRow, setCurRow] = useState({})
   const areaId = Form.useWatch("areaId", newform)
+  const aritype = Form.useWatch("type", newform)
   const [cusac, setcusac] = useState(0)
   
   const [Ctitle,msg,operate] = useMemo(()=> {
@@ -69,7 +70,13 @@ export default function Index() {
       let {success, data, errMsg} = await useQueryCSnsList(params)
       let {success:suc, data:msns} = await useQueryMSnsList(params)
       if(suc && Array.isArray(msns) && msns.length) {
-          setMlist(msns)
+         let datas = msns.map(item=> {
+          return {
+            ...item,
+            name:  item.name+  `(${item.sn})` ,
+          }
+        })
+          setMlist(datas)
         //  newform.setFieldValue("msn", msns[0].sn)
       }else {
         setMlist([])
@@ -96,8 +103,8 @@ export default function Index() {
 
 
  const fromitem = useMemo(()=> {
-  return items({csn:lists, msn:mlist, model})
- },[lists, mlist, model])
+  return items({csn:lists, msn:mlist, model,type:aritype})
+ },[lists, mlist, model,aritype])
 
  const infromitem = useMemo(()=> {  
   const {id, areaId, gateWay, useType,csn} = curRow
@@ -400,7 +407,7 @@ export default function Index() {
   ]
   
   const onExport =useCallback(() => {  
-    downParams.current.pageSize=1;
+    downParams.current.pageNum=1;
     downParams.current.pageSize=total
     return   useQueryExteriorACsByPage({}, downParams.current).then(res => {
       let {success, data, total} =res

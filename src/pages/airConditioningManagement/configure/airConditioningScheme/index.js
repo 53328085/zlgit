@@ -295,7 +295,7 @@ export default function Index() {
     },
   ];
   const onExport = useCallback(() => {
-    downParams.current.pageSize = 1;
+    downParams.current.pageNum = 1;
     downParams.current.pageSize = total;
     return usePage({}, downParams.current).then((res) => {
       let { success, data, total } = res;

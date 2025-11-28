@@ -57,7 +57,7 @@ export const cols = [
     key: "type",
     render: (type) => airconditioner.find((a) => a.value == type)?.label,
   },
-  {
+ /*  {
     title: "所属网关",
     dataIndex: "gateWay",
     key: "gateWay",
@@ -66,7 +66,7 @@ export const cols = [
     title: "控制器",
     dataIndex: "cSn",
     key: "cSn",
-  },
+  }, */
   {
     title: "计量设备",
     dataIndex: "mSn",
@@ -93,7 +93,7 @@ const w224 = { width: "224px" }; //0：道路灯 1：高杆路灯 2：太阳能�
 
 // 空调控制器跟所属网关 关联， 计量设备跟用能类型 关联
 
-export const items = ({ csn = [], msn = [], model = [] }) => (
+export const items = ({ csn = [], msn = [], model = [],type }) => (
   <Formbox>
     <div className="formbox">
     <div>
@@ -123,6 +123,9 @@ export const items = ({ csn = [], msn = [], model = [] }) => (
       <Form.Item label="空调类型" rules={rules} name="type">
         <Select options={airconditioner.slice(1)} placeholder="请选择"></Select>
       </Form.Item>
+      {
+         [1,2].includes(type) ?null:
+        <>
       <Form.Item noStyle shouldUpdate={(cur, pre)=>cur.type!=pre.type }>
         {
           ({getFieldValue})=>{
@@ -152,12 +155,17 @@ export const items = ({ csn = [], msn = [], model = [] }) => (
           }
         }
       </Form.Item>
+      </>
+      }
+     { 
+      type== 1 ? null :
       <Form.Item label="计量设备" name="msn">
         <Select
           options={msn}
           fieldNames={{ label: "name", value: "sn" }}
+          allowClear
         ></Select>
-      </Form.Item>
+      </Form.Item>}
       <Form.Item noStyle shouldUpdate={(cur, pre) => cur.msn != pre.msn}>
         {({ getFieldValue, setFieldValue, resetFields }) => {
           let sn = getFieldValue("msn");

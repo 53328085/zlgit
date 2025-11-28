@@ -8,7 +8,7 @@ export const Mainbox = styled.div`
 && {
     flex:1;
     display: grid;
-    grid-template-columns: 1256px 1fr;
+    grid-template-columns: 1256px  minmax(416px, 1fr);
     column-gap: 16px; 
     overflow: hidden;
     ${props => props.laptop ? sty : null}

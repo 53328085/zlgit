@@ -22,14 +22,14 @@ export default function Index() {
   const [form]=Form.useForm()
   const [lists, setLists] = useState([])
   const [isAdd, setIsAdd] = useState(true)
-  const [total, setTotal] = useState(0)
+ // const [total, setTotal] = useState(0)
   const [title, msg] = useMemo(()=> {
     let t = isAdd ? "新增路灯类型" : "编辑路灯类型"
     let msg = isAdd ? "新增成功": "编辑成功"
     return [t, msg]
   },[isAdd])
 
-    const onExport =useCallback(() => {  
+/*     const onExport =useCallback(() => {  
        
       return  useList({projectId}).then(res => {
         let {success, data,errMsg } =res
@@ -47,7 +47,7 @@ export default function Index() {
         }
   
       })
-   }, [])
+   }, []) */
   const getList = async()=> {
      try {
        let {success, data, errMsg} = await useList({projectId})
@@ -126,12 +126,12 @@ export default function Index() {
   },[projectId])
   const ctitle=(<TitleBox>
 <span>配置路灯类型</span>
-<Space><CustButtonT text="new" onClick={onAdd}></CustButtonT><ExportExcel tb={tbref}></ExportExcel></Space>
+<Space><CustButtonT text="new" onClick={onAdd}></CustButtonT><ExportExcel single={true} tb={tbref}></ExportExcel></Space>
   </TitleBox>)
   return (
     <Pagecount pd="0px">
       <Titlelayout layout="flex" title={ctitle}>
-        <UserTable columns={columns} dataSource={lists} onExport={onExport} ref={tbref} sheetName="路灯型号" ></UserTable>
+        <UserTable columns={columns} dataSource={lists}   ref={tbref} sheetName="路灯型号" ></UserTable>
       </Titlelayout>
       <CModal title={title}  ref={aref} width={560} mold="cust"   onOk={onOK} custft={isAdd} >
         <Form form={form} layout="vertical" preserve={false}>

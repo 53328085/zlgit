@@ -166,7 +166,12 @@ export default function Index() {
 
   let areaVos = energyValue.areaVos || {};
   const options = useMemo(() =>{
-    const proportion = Array.isArray(energyValue?.proportion) ? energyValue?.proportion : []
+    const proportion = Array.isArray(energyValue?.proportion) ? energyValue?.proportion?.map(item=>({...item,  
+      labelLine: {
+        length:2,
+        length2:2
+      }
+    })) : []
     const total = proportion.reduce((a,b)=> a+ parseFloat(b.value),0)?.toFixed(2)
     return{
     type: 3,
@@ -175,17 +180,12 @@ export default function Index() {
       total,
       radius: ["40%", "60%"],
       center: ["50%", "50%"],
-      labelLine: {
-        length: 5,
-        length2: 1,
-      },
+      
     },    
     legend: {
-      right: 10,
-      top: "center",
-      bottom: 0,
+      top: "bottom",
       type: 'scroll',
-      orient: 'vertical',
+      
     },
     /*   grid: {
     containLabel: true,
@@ -194,7 +194,7 @@ export default function Index() {
   } */
   }
 }, [energyValue]);
-const rank = energyValue?.rank?.sort((a, b) => parseInt(a.value) - parseInt(b.value))
+const rank = energyValue?.rank?.sort((a, b) => parseInt(b.value) - parseInt(a.value))
 const columns = [
   {
     title: "序号",
@@ -221,25 +221,7 @@ const columns = [
   
 ]
 
-  const getDataEnergy = async () => {
-    try {
-      let date = moment().format("yyyy-MM-DD");
-      let { success, data } = await HomeRuntime.EnergyProportion(
-        projectId,
-        date
-      );
-      console.log(data);
-      if (success) {
-        setOptions({
-          ...options,
-          pieData: {
-            ...options.pieData,
-            data: data || [],
-          },
-        });
-      }
-    } catch (error) {}
-  };
+ 
 
   const getData = async () => {
     try {
@@ -259,7 +241,7 @@ const columns = [
       getData();
     }
   
-   // getDataEnergy();
+  
   }, [projectId,areaId,meterType]);
   const onChange = (e) => {
     console.log('radio checked', e);
@@ -284,7 +266,7 @@ const columns = [
                     <Text className="num" ellipsis>
                       {energyValue.todayElectricConsume}
                     </Text>
-                    <span className="num2">日同比：{energyValue.yoy*100?.toFixed(2)}%</span>
+                    <span className="num2">日同比：{(energyValue.yoy*100)?.toFixed(2)}%</span>
                   </div>
               </div>
               <Cdivider type="h" margin="4px 0px" />  

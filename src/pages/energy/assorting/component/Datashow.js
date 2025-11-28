@@ -75,16 +75,19 @@ export default function Index({datas={},quota=[],showquota, view,energytype}) {
       1: 'kWh',
       2: "m³",
       3: "m³",
+      8: "m³"
      }[energytype] : "元"
      const title =view==1 ? {
       1: '电量(kWh)',
       2: "用水(m³)",
       3: "用气(m³)",
+      8: "用气(m³)"
      }[energytype] : "元"
      const display =view==1 ? {
       1: '电量',
       2: "用水",
       3: "用气",
+      8: "用气"
      }[energytype] : "元" 
    return [unit, title, display]
 
