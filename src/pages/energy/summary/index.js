@@ -21,6 +21,7 @@ import {
 import { useRequest } from "ahooks";
 import { Mainbox, Ctag, TitP } from "./style";
 import {useQueryEnergyInfoOverview} from "./api"
+import point from './icon/point.png'
 const { Paragraph, Text, Link } = Typography;
 
 const Imgbg = memo(({ projectId, areaVos }) => {
@@ -28,11 +29,14 @@ const Imgbg = memo(({ projectId, areaVos }) => {
   const [spinning, setSpinning] = useState(false);
   const [build, setBuild] = useState();
   const [info, setInfo] = useState();
-
+  let tagref = useRef()
   console.log(info)
   const { primaryderived, imgbgcolor } = useSelector(themeColor);
-  const getbuild = async ({ buildingId, x, y }) => {
+  const getbuild = async ({ buildingId, x, y }, curRef) => {
     try {
+      const {width=0, height=0} =   curRef.current?.getBoundingClientRect() || {}
+      x = x + parseInt(width / 2) + 18
+      y = y - parseInt(height)
       let { data, success } = await EnergyOverView.QueryImageBuilding(
         projectId,
         buildingId
@@ -42,7 +46,9 @@ const Imgbg = memo(({ projectId, areaVos }) => {
       } else {
         setInfo({datas: [], x, y,buildingName:data.buildingName });
       }
-    } catch (error) {}
+    } catch (error) {
+      console.log(error);
+    }
   };
   const map =
     build?.length > 0
@@ -51,9 +57,11 @@ const Imgbg = memo(({ projectId, areaVos }) => {
             left={l.x}
             top={l.y}
             key={l.buildName}
-            onClick={() => getbuild(l)}
-          >
-            <Link>{l.buildName}</Link>
+            ref={ref=>tagref.current=ref}
+            onClick={() => getbuild(l, tagref)}
+          >  
+           <div className="text">{l.buildName}</div>
+          <img src={point} className="img"></img>
           </Ctag>
         ))
       : null;
@@ -206,6 +214,7 @@ const columns = [
 
        }
     },
+    width: 62,
   },
   {
     title: "名称",
@@ -276,7 +285,7 @@ const columns = [
               </div>
 
             </div>
-            <Titlelayout title="分类能耗占比" layout="flex" key="chart">
+            <Titlelayout title="分区能耗占比" layout="flex" key="chart">
               <Ichart {...options} />
             </Titlelayout>
             <Titlelayout title="分类能耗排名" layout="flex" key="table">

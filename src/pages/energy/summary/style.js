@@ -1,5 +1,6 @@
 import styled from "styled-components";
 import {Tag} from 'antd'
+import point from './icon/point.png'
 export const Mainbox = styled.div`
   && {
     flex: 1;
@@ -63,13 +64,32 @@ export const Mainbox = styled.div`
     }
   }
 `;
-export const Ctag = styled(Tag)`
+export const Ctag = styled.div`
 &&{
-  position: absolute;
-  left: ${props => props.left+'px'};
-  top: ${props=> props.top+12+'px'};
-  transform: translate(-50%, -50%);
+   position: absolute;
+   display: flex;
+   flex-direction: column;
+   align-items: center;
+   left: ${props => props.left+'px'};
+   top: ${props=> props.top+'px'};
+   transform: translate(-50%, -50%);
+   row-gap: 10px;
   cursor: pointer;
+  .text{ 
+    height: 28px;
+    background: rgba(29,51,116);
+    border-radius: 15px;
+    padding: 0 1em;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    opacity: 0.8;
+  }
+  .img{
+    width: 28px;
+    height: 34px;
+  }
 }
 `
 export const TitP = styled.div`
@@ -102,7 +122,8 @@ export const TitP = styled.div`
      
       display: flex;
       flex-direction: column;
-      justify-content: space-between;
+      row-gap: 8px;
+     // justify-content: space-between;
       flex:1;
       .tipcontent {
          display: flex;

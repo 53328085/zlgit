@@ -41,7 +41,7 @@ export default function Index() {
         total:0
        }
       }
-       let {name="", partitionType} = formData
+       let {name="", partitionType } = formData       
        let body = {
         pageNum:current,
         pageSize,

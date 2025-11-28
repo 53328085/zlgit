@@ -221,9 +221,9 @@ export default function Index() {
         </div>
         <div>
            <div className='imgbox'>
-                <Cupload wpx={1368} hpx={800} swpx={400} shpx={235} onChange={onChnage} maximum={800} value={energyImage}  /> 
+                <Cupload wpx={1250} hpx={784} swpx={400} shpx={235} onChange={onChnage} maximum={800} value={energyImage}  /> 
            </div>
-           <div className='tip'>（图片大小为: 1368*800 png或jpg 格式,不超过800KB）</div>
+           <div className='tip'>（图片大小为: 1250*784 png或jpg 格式,不超过800KB）</div>
         </div>
         <Divider>设置图片热点区域</Divider>
         <div className='setwrap'>

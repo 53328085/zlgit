@@ -21,7 +21,7 @@ export default function Index({projectId,id}) {
 
  const [sorting, setSorting] = useState("")
 const [filterInfo, setFilterInfo] = useState("")
-const [partitionType, setPartitionType] = useState("")
+const [partitionType, setPartitionType] = useState(null)
  
  const getData = async()=> {
     try {
@@ -217,7 +217,7 @@ const onOK=async()=> {
   return (
     <div className='device'>
         <div className="deviceUp" >
-        <div className={`item ${partitionType=="" ? 'active' : ""}`} onClick={()=> setPartitionType("")} >
+        <div className={`item ${partitionType=="" ? 'active' : ""}`} onClick={()=> setPartitionType(null)} >
           <div className='imgbg'>
           <img src={icon1} alt='' className='img'></img>
           </div>
