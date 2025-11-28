@@ -48,13 +48,13 @@ export default function Index() {
           total: 0
         }
       }
-      let { data, success } = await useDetail({}, { projectId, schemeId, pageNum: current, pageSize })
+      let { data, success, total } = await useDetail({}, { projectId, schemeId, pageNum: current, pageSize })
       if (success && Array.isArray(data) && data.length) {
         setControlInfos(Array.isArray(data[0].controlInfos) ? data[0].controlInfos : [])
         setSavingInfo(Array.isArray(data[0].savingInfo) ? data[0].savingInfo : [])
         return {
           list: Array.isArray(data[0].airConditionerInfo) ? data[0].airConditionerInfo : [],
-          total: data[0].airConditionerInfo.length
+          total: total
         }
       } else {
         setControlInfos([])
