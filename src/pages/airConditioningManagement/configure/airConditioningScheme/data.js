@@ -507,7 +507,7 @@ export const section = ({
                         <div
                           className="formbox"
                           style={{ columnGap: "64px", display: name== cusac2[filed.name] ? "" : "none", }}
-                          key={key}
+                          key={name}
                         >
                           <Form.Item
                             label="禁止状态"

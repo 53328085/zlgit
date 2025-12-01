@@ -37,7 +37,8 @@ export default function Index() {
   const [cusac2, setcusac2] = useState({
     "0":0,
   });
-  
+  const [key, setKey] = useState(0);
+  console.log(cusac1)
   const [isadd, setIsadd] = useState(1); // 0 新增 1 编辑 2 克隆
   const [total, setTotal] = useState(0);
   const [strategyName, setStrategyName] = useState("");
@@ -55,8 +56,8 @@ export default function Index() {
   const sectionItems = useMemo(() => {
     let params = {};
 
-    return section({ cusac, setcusac,cusac1, setcusac1,cusac2, setcusac2, params });
-  }, [cusac, setcusac,cusac1, setcusac1,cusac2, setcusac2 ]);
+    return section({ cusac, setcusac,cusac1, setcusac1,cusac2, setcusac2, params, key, setKey });
+  }, [cusac, setcusac,cusac1, setcusac1,cusac2, setcusac2, key, setKey ]);
   /* const timingsItems = useMemo(() => {
     let params = {
       type:1
@@ -161,7 +162,9 @@ export default function Index() {
 
 
     })
- 
+  //  console.log("esaving",esaving)
+    esaving["cold"]= [esaving.coldLower,esaving.coldUpper]
+    esaving["hight"]= [esaving.hotLower,esaving.hotUpper]
     let params = {
       projectId,
       schemeName: type == 1 ? strategyName : strategyName + "_副本",
