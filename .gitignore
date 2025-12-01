@@ -36,3 +36,6 @@ src/pages/test/dd.xlsx
 /build_bk.rar
 package.json
 .gitignore
+/.idea/material_theme_project_new.xml
+/.idea/inspectionProfiles/Project_Default.xml
+/.idea/vcs.xml

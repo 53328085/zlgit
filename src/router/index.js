@@ -53,7 +53,7 @@ const Login = lazy(() => import("@pages/Login"))
 const Granary = lazy(() => import("@pages/Login/granary.js"))
 const Projectlist = lazy(() => import("@pages/projectList"))
 
-const Index = lazy(() => import("@pages/Home/Index.js"))
+const Index = lazy(() => import("@pages/Home/index.js"))
 
 const Defauthome = lazy(() => import("../pages/defauthome"))
 const Project = lazy(() => import("@pages/defauthome/configure"))
