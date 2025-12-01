@@ -26,12 +26,17 @@ export default function Index() {
     }[primary] || []
     return  nesteds.includes(nested) ? {} : false
   }, [primary, nested]);
+ 
+  console.log("include",include)
+
   let includemodule=useMemo(() => {  // 需要显示搜索 ***（全部）的模块中排除的页面
     let primaries = {
-      runtimeEnergy:["summary"]
+      runtimeEnergy:[nested]
     }[primary]
-    return Array.isArray(primaries)&&primaries?.length  
+    
+    return  Array.isArray(primaries) ? primaries.includes("summary") : false 
   }, [primary, nested]);
+  console.log("includemodule",includemodule)
    
   const onelevel = useSelector(selectOneLevel);
   const varlabel = useSelector(levelDefaultLabel);
@@ -364,7 +369,7 @@ export default function Index() {
   };
 
   useEffect(() => {
-    if (!includemodule && (whole.includes(primary) || include)) {
+    if ((whole.includes(primary) && !includemodule) || include) {
       let isin = onelevel.find((l) => l.id == 0);     
       if (!isin) {
         dispatch(
@@ -380,7 +385,7 @@ export default function Index() {
       dispatch(setCurrentlevel(level?.[0]))
       dispatch(getOnelevel([...level]));
     }
-  }, [primary,include]);
+  }, [primary,include,includemodule]);
 
   useEffect(() => {
     sethandler();

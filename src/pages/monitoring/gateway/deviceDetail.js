@@ -479,7 +479,7 @@ export default function GatewayDetail(props) {
 
   // 水，电 ， 气；
   const isclude = [2, 7].includes(deviceStyle); // 是否是水表
-  let showtab = ![4].includes(deviceStyle); // 王建需求： 传感器 不显示 监控趋势， 能耗趋势。
+  let showtab =  true // ![4].includes(deviceStyle); // 王建需求： 传感器 不显示 监控趋势， 能耗趋势。
 
   //let dtlkeys = Number.isFinite(detail.state) ? ![2, 3].includes(detail.state) : true; // 0 离线
   let dtlkeys = false; // 禅道任务 设备离线时能够查询历史数据

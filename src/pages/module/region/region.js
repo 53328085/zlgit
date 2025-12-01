@@ -733,7 +733,7 @@ export default function Index({ projectId, level, CModal, name, allLevel }) {
   useEffect(() => {
     getTableData(name)
 
-  }, [pagination.total, pagination.pageSize])
+  }, [pagination.total, pagination.pageSize, pagination.current])
   useEffect(() => {
     // getLevelOption();
     params.pageNum = 1;

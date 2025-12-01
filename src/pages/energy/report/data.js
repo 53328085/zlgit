@@ -60,19 +60,22 @@ export const cols = (startDate, endDate) => {
       title: '设备名称',
       dataIndex: 'name',
       key: "name",
-      sorter: (a, b) => a?.name?.localeCompare?.(b?.name)
+      sorter: (a, b) => a?.name?.localeCompare?.(b?.name),
+      ellipsis:true
     },
     {
       title: '区域名称',
       dataIndex: 'nodeName',
       key: 'nodeName',
-      sorter: (a, b) => a?.nodeName?.localeCompare?.(b?.nodeName)
+      sorter: (a, b) => a?.nodeName?.localeCompare?.(b?.nodeName),
+      ellipsis:true
     },
     {
       title: '安装位置',
       dataIndex: 'address',
       key: "address",
-      sorter: (a, b) => a?.address?.localeCompare?.(b?.address)
+      sorter: (a, b) => a?.address?.localeCompare?.(b?.address),
+      ellipsis:true
     },
     {
       title: '开始日期',
@@ -121,6 +124,7 @@ export let conscols = [   //  conscols 能耗报表
     width: 84,
     key: "name",
     fixed: 'left',
+    ellipsis:true
   },
   {
     title: '设备编号',
@@ -134,6 +138,7 @@ export let conscols = [   //  conscols 能耗报表
     dataIndex: 'address',
     key: 'address',
     width: 84,
+    ellipsis:true
   },
   {
     title: '能耗(kWh)',
@@ -151,12 +156,14 @@ export const timecols = [  // 分时能耗
   {
     title: '区域名称',
     dataIndex: 'nodeName',
-    key: "nodeName"
+    key: "nodeName",
+    ellipsis:true
   },
   {
     title: '设备名称',
     dataIndex: 'name',
-    key: "name"
+    key: "name",
+    ellipsis:true    
   },
   {
     title: '总计(kWh)',
@@ -251,12 +258,14 @@ export const fromlot = [ // 电能报表
   {
     title: '区域名称',
     dataIndex: 'nodeName',
-    key: "nodeName"
+    key: "nodeName",
+    ellipsis:true
   },
   {
     title: '设备名称',
     dataIndex: 'name',
-    key: "name"
+    key: "name",
+    ellipsis:true,
   }, {
     title: '起始电量',
     dataIndex: 'eStart',
@@ -291,7 +300,8 @@ export const fromlot = [ // 电能报表
   {
     title: '安装位置',
     dataIndex: 'address',
-    key: "address"
+    key: "address",
+    ellipsis:true
   },
 ]
 /* export const fromlot = [ // 电能报表 
@@ -338,7 +348,8 @@ export const shitcols = [  // 班次能耗
   {
     title: '设备名称',
     dataIndex: 'name',
-    key: "name"
+    key: "name",
+    ellipsis:true,
   },
   {
     title: '编号',
@@ -348,7 +359,8 @@ export const shitcols = [  // 班次能耗
   {
     title: '地址',
     dataIndex: 'address',
-    key: "address"
+    key: "address",
+    ellipsis:true
   },
 ]
 export const etabs = [

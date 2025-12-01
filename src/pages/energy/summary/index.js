@@ -174,27 +174,30 @@ export default function Index() {
 
   let areaVos = energyValue.areaVos || {};
   const options = useMemo(() =>{
-    const proportion = Array.isArray(energyValue?.proportion) ? energyValue?.proportion?.map(item=>({...item,  
-      labelLine: {
-        length:2,
-        length2:2
-      }
-    })) : []
+    const proportion = Array.isArray(energyValue?.proportion) ? energyValue?.proportion?.map(item=>({...item})) : []
     const total = proportion.reduce((a,b)=> a+ parseFloat(b.value),0)?.toFixed(2)
     return{
     type: 3,
     pieData: {
       data: proportion,
       total,
-      radius: ["40%", "60%"],
-      center: ["50%", "50%"],
-      
+      radius: ["40%", "70%"],
+      center: ["50%", "45%"],
+      label: {
+        show:false,
+        
+      },
+      labelLine: {
+        show: false
+      },
     },    
     legend: {
       top: "bottom",
       type: 'scroll',
       
-    },
+    }, 
+   
+   
     /*   grid: {
     containLabel: true,
     left: 10,
@@ -285,7 +288,7 @@ const columns = [
               </div>
 
             </div>
-            <Titlelayout title="分区能耗占比" layout="flex" key="chart">
+            <Titlelayout title="分区能耗占比" layout="flex" key="chart" pv="8px 20px">
               <Ichart {...options} />
             </Titlelayout>
             <Titlelayout title="分类能耗排名" layout="flex" key="table">

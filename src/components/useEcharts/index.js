@@ -5,6 +5,7 @@ import * as echarts from "echarts";
 import 'echarts-liquidfill'
 import store from '@redux/store'
 import {i18t} from "@com/useButton"
+ 
 /**
  * @author zhenglin zhu
  * @description: type： 1 数据设置在 系列（series）中 type: 2 数据系列 3.饼图
@@ -219,7 +220,7 @@ const liuqiuOption =(option) =>  {  // 水球图
 
 const pieOption = ({ data = [], total = 0, radius= ["60%", "80%"],center=["50%", "50%"],labelLine={},label={}, legend={},series={},  grid={left: 0, right: 0, containLabel: true,}} = {}) =>{
   const primaryColor =store.getState()?.system?.themeColor?.primaryColor || "#237ae4"
-  
+  console.log("labelLine",labelLine)
 /*   const  color = [
    primaryColor,
    "#62D9AD",
@@ -269,6 +270,7 @@ const pieOption = ({ data = [], total = 0, radius= ["60%", "80%"],center=["50%",
     top: "center",
     style: {
       text:  total ? [i18t("comm","total"), "", total].join("\n") : "",
+      textAlign: "center"
     },
   },
   series: [

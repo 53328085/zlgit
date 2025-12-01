@@ -137,7 +137,7 @@ export default function Index() {
 const tabs = useMemo(()=> {
  
   if( projectId==30) {
-     
+     setvalue("1")
     return aqtabs
   }else if(energytype==1) {
      return etabs
@@ -495,7 +495,7 @@ const tabs = useMemo(()=> {
           <div style={{ position: "relative", flex: 1 }}> 
             <div style={{ position: "absolute", width: "100%",   }}>
               <div  className='opt'>
-              {(["0","1"].includes(value)&&projectId!=30)   && <div style={{ marginBottom: "16px", display: "flex" }}>
+              {(["0","1","4"].includes(value) || projectId==30)   && <div style={{ marginBottom: "16px", display: "flex" }}>
  
                 <div style={{ marginLeft: "auto" }}>
                   <Checkbox onChange={boxchange} checked={isrange.range}>使用日期范围（优先）</Checkbox>  <RangePicker
