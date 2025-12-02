@@ -51,9 +51,6 @@ const Mainbox = styled.div`
   overflow: hidden;
   font-size: 14px;
   border-radius: 8px;
-    display: flex;
-    justify-content: space-between;
-    background-color: #ffffff;
   .content {
     flex: 1;
     display: flex;
