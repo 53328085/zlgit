@@ -77,7 +77,7 @@ export const Scene = styled.div`
           border-bottom: 1px solid #d7d7d7;
           column-gap: 2px;
           padding: 2px 4px;
-          margin-bottom: 12px;
+          margin-bottom: 16px;
           .list {
             display: flex;
             align-items: center;
@@ -110,7 +110,7 @@ export const Scene = styled.div`
         }
         .formbox {
           .ant-form-item{
-            margin-bottom: 12px;
+            margin-bottom: 24px;
           }
         }
         

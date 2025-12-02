@@ -8,7 +8,6 @@ import Pagecount from '@com/pagecontent'
 import {useSelector} from 'react-redux'
 import {selectProjectId} from '@redux/systemconfig.js'
 import {Area} from '@api/api.js'
-
 export default function Index() {
   const projectId = useSelector(selectProjectId);
   const [value, setvalue] = useState()

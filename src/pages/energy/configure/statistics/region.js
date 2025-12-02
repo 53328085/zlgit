@@ -2,6 +2,7 @@ import React, {
   useState,
   useRef,
   useEffect,
+  useCallback
 } from "react";
 import {
   Input,
@@ -14,17 +15,21 @@ import {
   Drawer,
 } from "antd";
 import {useAntdTable} from "ahooks"
+import update from 'immutability-helper';
 import styled, {css} from "styled-components";
 import UserTable from "@com/useTable";
 import { Area } from "@api/api.js";
 import { WarningFilled, LeftOutlined, RightOutlined } from "@ant-design/icons";
-
+import { DndProvider } from 'react-dnd';
+import { HTML5Backend } from 'react-dnd-html5-backend';
 import { Serach } from '@com/comstyled'
 
 import { selectOneLevel, selectOneLevelDefaultId, getOnelevel, publishState, filterDeviceStyle,adaptation } from '@redux/systemconfig.js'
 import { useSelector, useDispatch } from 'react-redux'
-import Mask from '@com/mask.jsx'
-import { CustLink, CancelButton , CustButton} from "@com/useButton"
+ 
+import { CustLink, CancelButton , CustButton,CustButtonT} from "@com/useButton"
+import  {components } from './draggable'
+import {useAddSummaryDeviceOrder,useAddSubDeviceOrder} from "./api"
 const Mainbox = styled.div`
   position: relative;
   display: grid;
@@ -507,6 +512,82 @@ const savesty = laptop
           height: "46px",
           width: "146px",
         };
+
+        const moveRow = useCallback(
+          (dragIndex, hoverIndex) => {
+            const dragRow = deviceSummary[dragIndex];
+            setDeviceSummary(
+              update(deviceSummary, {
+                $splice: [
+                  [dragIndex, 1],
+                  [hoverIndex, 0, dragRow],
+                ],
+              }),
+            );
+          },
+          [deviceSummary],
+        );
+
+        const moveRow2 = useCallback(
+          (dragIndex, hoverIndex) => {
+            const dragRow = deviceSub[dragIndex];
+            setDeviceSub(
+              update(deviceSub, {
+                $splice: [
+                  [dragIndex, 1],
+                  [hoverIndex, 0, dragRow],
+                ],
+              }),
+            );
+          },
+          [deviceSub],
+        );
+
+
+  const onOk =async()=>{
+    try {
+      const {areaId} = Record
+      console.log(Record)
+      console.log(deviceSummary)
+      console.log(deviceSub)
+      const msn = deviceSummary?.map?.((item,idx) => ({sn:item.sn, order: idx+1})) || []
+      const dsn = deviceSub?.map?.((item,idx) => ({sn:item.sn, order: idx+1})) || []
+      let params ={
+        projectId,
+        areaId,
+      }
+      let body1 ={
+        ...params,
+        orderDevices:msn
+      }
+      let body2 ={
+        ...params,
+        orderDevices:dsn
+      }
+      let  promises = [useAddSummaryDeviceOrder({}, body1), useAddSubDeviceOrder({}, body2)]
+      let [{value: {success :suc, errMsg:err}}, {value: {success :suc2, errMsg:err2}}] = await Promise.allSettled(promises)
+      if (suc) {
+        message.success('总表保存成功')
+      }else {
+        message.error(err || '数据错误')
+      }
+      if(suc2) {
+        message.success('分表保存成功')
+      }else{
+        message.error(err2 || '数据错误')
+
+      }
+      if(suc && suc2){
+        drawClose()
+      }
+     
+    } catch (error) {
+      console.log(error)
+    }
+
+
+    // drawClose()
+  }
   return (
     <Mainbox ref={boxref}>
 
@@ -572,12 +653,22 @@ const savesty = laptop
               <p className="title">{name}总表</p>
               <div className="outwrap">
                 <div className="inwrap">
+                  <DndProvider backend={HTML5Backend}>
                 <UserTable
                 columns={deviceColumns}
                 rowSelection={rowSelection}
                 dataSource={deviceSummary}
+                components={components}
+                onRow={(_, index)=> {
+                   const attr ={
+                    index,
+                    moveRow
+                   }
+                   return attr
+                }}
                 rowKey="id"
               />
+              </DndProvider>
                 </div>
               </div>
             
@@ -595,13 +686,23 @@ const savesty = laptop
               </Space>
               <div className="outwrap">
                 <div className="inwrap">
+                <DndProvider backend={HTML5Backend}>
                 <UserTable
                 columns={deviceColumns}
                 rowSelection={subrowSelection}
                 dataSource={deviceSub}
+                components={components}
+                onRow={(_, index)=> {
+                   const attr ={
+                    index,
+                    moveRow:moveRow2
+                   }
+                   return attr
+                }}
                 rowKey="id"
 
               />
+              </DndProvider>
                 </div>
               </div>
              
@@ -643,7 +744,7 @@ const savesty = laptop
             </div>
             <div>
              
-              <CancelButton onClick={drawClose} style={savesty} />
+              <CustButtonT text="ok" onClick={onOk} style={savesty} />
 
             </div>
           </div>
