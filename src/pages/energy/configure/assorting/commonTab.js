@@ -107,8 +107,8 @@ export default function Index(props) {
                 }
                 data.datas?.forEach((item) => { 
                     const {month,quotaValue,referenceValue} = item 
-                    obj[month] = quotaValue
-                    obj2[month]=referenceValue
+                    obj[month] = referenceValue
+                    obj2[month]=quotaValue
                 }) 
                 
                 setTableData([obj,obj2])

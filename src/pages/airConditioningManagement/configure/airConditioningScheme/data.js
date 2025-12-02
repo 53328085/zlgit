@@ -300,8 +300,10 @@ export const section = ({
                                   key={i.key}
                                   closable={arr.length !== 1 || arr.length > 64}
                                   onClose={() => {
+                                    console.log(tfileds)
+                                    console.log(tfileds.filter(f=>f.name!=i.name))
                                     let active = tfileds.filter(f=>f.name!=i.name)?.[0]?.name 
-
+                                    
                                     setcusac1({[filed.name]:active});
                                     tmethod.remove(i.name);
                                   }}
@@ -347,7 +349,9 @@ export const section = ({
                         </div>
                         <Link 
                           onClick={() => {
-                            let name = parseInt(tfileds[tfileds?.length-1]?.name) + 1
+                            console.log(tfileds)
+                            let name = parseInt(tfileds[tfileds?.length-1]?.name) + 1   
+                            console.log(name)                         
                             setcusac1({[filed.name]: name});
                             tmethod.add({type:1}, tfileds?.length)
                           }}
@@ -380,8 +384,7 @@ export const section = ({
                             }}>
                           {
                             ({getFieldValue})=> {
-                                  let type = getFieldValue(["section",filed.name,])?.["timings"]?.[name]?.type
-                                  console.log(type)
+                                  let type = getFieldValue(["section",filed.name,])?.["timings"]?.[name]?.type                                
                                   if (type==1) {
                                     return <>
                           <Form.Item

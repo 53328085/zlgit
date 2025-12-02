@@ -35,8 +35,9 @@ export default function Index() {
        console.log(key)
        let {success,errMsg} =   await  useDelete({projectId, desc:key})
        if(success) {
-         message.success("删除成功")
-         getTabs()
+         message.success("删除成功")       
+         getTabs(key)
+         //query()
        }
      } catch (error) {
       console.log(error)
@@ -68,7 +69,7 @@ export default function Index() {
       setAreas([])
    }
   }
- const getTabs = async()=> {
+ const getTabs = async(key)=> {
    try {
     let {success, data} =  await useAreas({projectId})
     if(success&&isObject(data) && Object.keys(data)?.length){
@@ -79,14 +80,14 @@ export default function Index() {
        }
       
        setTabs(Tabs)
-       if(!treeId) {
+    if(!treeId || key) {
          setTreeID(value)
-       }
-       
+      }
+      
     }
 
    } catch (error) {
-      
+      console.log(error)
    }
  }
   

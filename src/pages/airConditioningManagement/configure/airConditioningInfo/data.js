@@ -256,7 +256,7 @@ export const initems = ({ model = [],cusac, setcusac, params,csn,onCsnChange }) 
             </Link>
           </div>
           {fileds.map(({key, name, ...rest}) => (
-            <div className="formbox" style={{ columnGap: "64px", display: name==cusac? "" : "none"}} key={key}>
+            <div className="formbox" style={{ columnGap: "64px", display: name==cusac? "" : "none"}} key={name}>
               <div key="left">
                 <Form.Item
                   label="所属园区"
