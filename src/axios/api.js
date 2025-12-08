@@ -2035,11 +2035,11 @@ export const Monitoring = {
     // 光伏设备
 
     AddPV: (data) =>
-      server.post(`/Monitor/Device/AddPV`, data), //新增 
+      server.post(`/Monitor/Device/AddPV`, data), //新增
     UpdatePV: (data) =>
       server.post(`/Monitor/Device/UpdatePV`, data), //更新
     DeletePV: (data) =>
-      server.delete(`/Monitor/Device/DeletePV`, { params: data }), //删除 
+      server.delete(`/Monitor/Device/DeletePV`, { params: data }), //删除
     ImportPV: (data) =>
       server.post(`/Monitor/Device/ImportPV`, data), //批量导入
 
@@ -4297,12 +4297,12 @@ export class AirConditioningManagement {
       data
     );
   /**
-   * 
+   *
    * @param {
-   *   "projectId": number, 
-   *   "dayMonthYear": number, 
-   *   "date":string, 
-   *   "ids": Array<number> 
+   *   "projectId": number,
+   *   "dayMonthYear": number,
+   *   "date":string,
+   *   "ids": Array<number>
    * }  data
    * @returns any
    */
@@ -4316,7 +4316,7 @@ export class AirConditioningManagement {
    * "Ids":number[],
    * "pageNum":number,
    * "pageSize":number
-   * } data 
+   * } data
    * @returns Object<any>
    */
   static QueryEnergyConsumptions = (data) => server.post(`Conditioner/AirConditionerEnergy/QueryEnergyConsumptions`, data)
@@ -4329,7 +4329,7 @@ export class AirConditioningManagement {
    */
   static QueryEnergyDetail = (params) => server.get(`Conditioner/AirConditionerEnergy/QueryEnergyDetail`, { params })
   /**
-   * 
+   *
    * @param {
    * "projectId":number,
    * "dayMonthYear":number,
@@ -4337,10 +4337,17 @@ export class AirConditioningManagement {
    * "IoState":number,
    * "pageNum":number,
    * "pageSize":number
-   * } data 
-   * @returns 
+   * } data
+   * @returns
    */
   static PageIO = (data) => server.post(`Conditioner/AirConditionerEnergy/PageIO`, data)
 
   static QueryIoDetail = (params) => server.get(`Conditioner/AirConditionerEnergy/QueryIoDetail`, { params })
+}
+
+
+//能源管理
+export class EnergyManagement {
+  static getTimePeriodSettingInfoApi = (params) =>
+    server.get('/Storage/SiteManagerDesigner/FindSiteList',params);
 }

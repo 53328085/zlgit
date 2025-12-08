@@ -9,6 +9,7 @@ const Statistics = lazy(() => import("@pages/energy/configure/statistics"))
 const Device =  lazy(() => import("@pages/energy/configure/device"))
 const Map =  lazy(() => import("@pages/energy/configure/map"))
 const Rank =  lazy(() => import("@pages/energy/configure/rank"))
+const TimePeriodSetting =  lazy(() => import("@pages/energy/configure/timePeriodSetting"))
 export let designerEnergy =  {
     '020701': Assorting, // 能耗分类
     '020702': Price,
@@ -18,7 +19,8 @@ export let designerEnergy =  {
     '020706': Shift,
     '020707': Device,
     '020708': Map,
-    '020709': Rank
+    '020709': Rank,
+    '020710': TimePeriodSetting
 }
 
 
