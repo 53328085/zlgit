@@ -1,4 +1,4 @@
-import React, {useCallback, useEffect, useMemo, useState } from 'react'
+import React, {useEffect, useMemo, useState } from 'react'
 import style from './configure/style.module.less';
 import _ from 'lodash'
 import { useRequest } from 'ahooks'; 
@@ -40,7 +40,7 @@ import EnergyProportion from '@com/defaultHome/energyProportion'
 import Sensor from '@com/defaultHome/sensorMessage' //传感器信息
 
 import Transformer from '@com/defaultHome/transformerMessage' //变压器信息
-import Transformerxls from '@com/defaultHome/transformerMessagexls' //变压器监控 香炉山项目
+
 import Gxcwmg from '@com/defaultHome/gxcwMessage' //光纤测温信息
 import Cdcwmg from '@com/defaultHome/cdcwMessage' //光纤测温信息
 
@@ -55,8 +55,7 @@ import Inspection from "@com/defaultHome/inspection" // Inspection 本月巡检
 import Roomnum from '@com/defaultHome/roomNum' // 变电站数量
 import RoomCapacity from '@com/defaultHome/roomCapacity' // 总额度容量
 import Roomload from '@com/defaultHome/roomload' // 实时负荷
-// import Loadlate from "@com/defaultHome/loadlate" // 负荷率
-import Loadlate from '@com/defaultHome/loadxls' // 负荷率 香炉山项目
+import Loadlate from "@com/defaultHome/loadlate" // 负荷率
 // Roomnum, RoomCapacity, Roomload, Loadlate
 
 import {isObject} from '@com/usehandler'
@@ -66,7 +65,7 @@ const ReactGridLayout = WidthProvider(RGL);
 //import './configure/style.css';
 //import './index.css';
 import { message } from 'antd';
-import {useQueryParam,useGetTransformersInfo} from "./api.js"
+import {useQueryParam} from "./api.js"
 const {GetDistributionInfo} = HomeRuntime
  
 export default function Index() {
@@ -82,8 +81,7 @@ export default function Index() {
   const state = useReactive({
     statusData:{},
   })
-  const [transformers, setTransformers] = useState([])
-  console.log('transformers',transformers)
+
   const projectId = useSelector(selectProjectId)
     //RGL布局
     const [defaultProps, setDefaultProps]  = useState({
@@ -150,19 +148,7 @@ const {refresh} = useRequest(getLayoutparams, {
    }, [projectId])
 
 
-   const getTransformersInfo =async()=> {
-    try {
-       let {success, data} = await useGetTransformersInfo({projectId})
-       if(success && Array.isArray(data)){
-        setTransformers(data)
-       }else {
-        setTransformers([])
 
-       }
-    } catch (error) {
-      console.log(error)
-    }
- }
   const getLayoutData = () => {
     return QueryUISummary(projectId).then(res => {
       let {success, data } = res
@@ -186,32 +172,14 @@ const {refresh} = useRequest(getLayoutparams, {
         }
       }
       setlayoutItem(result.list)
-     
     }
   });
- 
- useEffect(()=> {
-  if(Number.isFinite(projectId)) {
-    getTransformersInfo()
-  }
 
- },[projectId])
   
 // TodayElectricity 今日用电量  TransformerTotal 变压器总负荷 TransformerNum 变压器数量 Inspection 本月巡检
-  const createElement =el => {
- 
+  const createElement = el => {
     const i = el.i;
     const end = i.indexOf('_');
-    let strings = i.split('_');
-     let mark = strings?.[2]
-     let sn = strings?.[1]
-     if (mark=="transformer") { 
-          let items = transformers?.find?.(f => f.sn == sn)?.items || []         
-          return (
-          <div key={i} data-grid={el}>           
-               <Transformerxls datas={{data:items, title: strings?.[1]}}></Transformerxls>
-           </div>)
-        }else{
     return (
       <div key = {i} data-grid={el}>
        {i.substring(0, end)=='公司信息'? <CompanyMessage type={'runtTime'} currproject={currproject} ></CompanyMessage> : null}
@@ -259,7 +227,6 @@ const {refresh} = useRequest(getLayoutparams, {
         {i.substring(0, end)==('负荷率') ? <Loadlate type={'runtTime'} {...distribution} /> : null}
       </div>
     )
-  }
   }
 
 

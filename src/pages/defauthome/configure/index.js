@@ -1,8 +1,10 @@
-import React, { useEffect, useState, useRef } from 'react'
+// 香炉山项目
+
+import React, { useEffect, useState, useRef, useMemo } from 'react'
 import style from './style.module.less';
 import styled from 'styled-components';
 import configIcon from './configIcon.png'
-import { Drawer, Input, message,   Empty, Form, InputNumber, Alert,Space } from 'antd';
+import { Drawer, Input, message,   Empty, Form, InputNumber, Alert,Space,Divider, Checkbox } from 'antd';
 
 import _, { max, result } from 'lodash'
 import { useSelector } from 'react-redux'
@@ -20,7 +22,8 @@ import CarbonValue from '../../../components/defaultHome/carbon'
 import EnergyTrend from '../../../components/defaultHome/energyTrend'
 // import EnergyCost from '@com/defaultHome/energyCost'  
 import EnergyProportion from '@com/defaultHome/energyProportion'
-import RealLoad from '../../../components/defaultHome/load'
+ import RealLoad from '../../../components/defaultHome/load'
+
 import WarningSpread from '../../../components/defaultHome/spread'
 import ElectricAnalysis from '../../../components/defaultHome/electricAnalysis'
 import TotalCharge from '@com/defaultHome/totalCharge'
@@ -40,7 +43,8 @@ import EnergyRanking from '@com/defaultHome/energyRank'
 
 import Sensor from '@com/defaultHome/sensorMessage' //传感器信息
 
-import Transformer from '@com/defaultHome/transformerMessage' //变压器信息
+ import Transformer from '@com/defaultHome/transformerMessage' //变压器信息
+import Transformerxls from '@com/defaultHome/transformerMessagexls' //变压器监控 香炉山项目
 
 import Gxcwmg from '@com/defaultHome/gxcwMessage' //光纤测温信息
 import Cdcwmg from '@com/defaultHome/cdcwMessage' //光纤测温信息
@@ -56,7 +60,8 @@ import Inspection from "@com/defaultHome/inspection" // Inspection 本月巡检
 import RoomNum from '@com/defaultHome/roomNum' // 变配电站数量（个）
 import RoomCapacity from '@com/defaultHome/roomCapacity' // 总额度容量
 import Roomload from '@com/defaultHome/roomload' // 实时负荷
-import Loadlate from "@com/defaultHome/loadlate" // 负荷率
+// import Loadlate from "@com/defaultHome/loadlate" // 负荷率
+import Loadlate from '@com/defaultHome/loadxls' // 负荷率 香炉山项目
 import {useTranslation} from "react-i18next"
 import Context from "@com/content"
 // TodayElectricity 今日用电量  TransformerTotal 变压器总负荷 TransformerNum 变压器数量  Inspection 本月巡检
@@ -85,7 +90,7 @@ import warningMessage from './itemImgs/warningMessage.png'
 import todayOrder from './itemImgs/todayOrder.png'
 import spread from './itemImgs/spread.png'
 import distribution from './itemImgs/distribution.png'
-import transformer from './itemImgs/transformer.png';
+import transformerimg from './itemImgs/transformer.png';
 import humiture from './itemImgs/humiture.png'
 import energyCost from './itemImgs/energyCost.png'
 import energyTrend from './itemImgs/energyTrend.png'
@@ -118,9 +123,9 @@ import {Serach} from "@com/comstyled"
 import {CDrawer} from "./style"
 import {isObject} from "@com/usehandler"
 import {layout} from "./data"
-import {useSetDefaultParam, useQueryParam} from './api'
+import {useSetDefaultParam, useQueryParam,useGetTransformersInfo,useTransformerList} from '../api'
 import "./drag.css"
-import { number } from 'echarts';
+ 
  
 const availableHandles = ["s", "w", "e", "n", "sw", "nw", "se", "ne"];
 export default function Index() {
@@ -128,17 +133,11 @@ export default function Index() {
 //  console.log(layout)
   const {t} = useTranslation(["button","overview", "comm"])
   const [form] = Form.useForm()
-  const Ref = useRef()
-  const { Search } = Input
+  const Ref = useRef()  
   const {laptop} = useSelector(adaptation)
   const [change, setChange] = useState(false)
   const [messageApi, contextHolder] = message.useMessage();
-  const messageContent = (type, content) => {
-    messageApi.open({
-      type,
-      content,
-    })
-  }
+ 
   const [resetModal, setResetModal] = useState(false)
   const [confirmModal, setConfirmModal] = useState(false);
   const projectId = useSelector(selectProjectId)
@@ -147,6 +146,8 @@ export default function Index() {
   const { InsertUISummary, QueryUISummary } = UISummary
 
   const [activeName, setactiveName] = useState(null);
+  const [transformer, setTransformer] = useState([])
+  const plainOptions = transformer?.map?.(v =>v.value)
   const SelectTab = (props) => {
     return <div className={style.selectTab} style={{ backgroundColor: props.tabName == activeName ? '#237ae4' : '#003366' }} onClick={() => changeTab(props.tabName)}>
       <img className={style.configIcon} src={configIcon} ></img>
@@ -155,6 +156,9 @@ export default function Index() {
   }
   const [dragList, setDragList] = useState([])
   const [dragListCopy, setDragListCopy] = useState([])
+
+  
+
   const basicItems = [
     { img: company, itemName: "公司信息", draggable: true },
     { img: device, itemName: '设备信息', draggable: false },
@@ -192,8 +196,8 @@ export default function Index() {
 
   const disItems = [
     { img: distribution, itemName: '配电房监测', draggable: false },  // 变压器数量
-  /*   { img: transformer, itemName: '变压器监控', draggable: false },
-    { img: humiture, itemName: '温湿度监控', draggable: false },   */
+    { img: transformerimg, itemName: '变压器监控', draggable: true, type: "transformer" }, 
+    /*  { img: humiture, itemName: '温湿度监控', draggable: false },   */
     { img: transformerTota, itemName: '变压器总负荷', draggable: false },// transformerTota
     { img: gatewayConfig, itemName: '触点测温', draggable: true },    
     { img: chooperConfig, itemName: '光纤测温', draggable: true }, 
@@ -263,7 +267,7 @@ export default function Index() {
   const [layoutItem, setlayoutItem] = useState([])
   const [newCounter, setNewCounter] = useState(0)
   const [classOfName, setclassOfName] = useState('')
-  const [layoutValue, setlayoutValue] = useState([])
+  const transformRef = useRef()
   console.log("layoutItem",layoutItem)
   const onClose = () => {
     setbasicOpen(false);
@@ -287,6 +291,7 @@ export default function Index() {
     rows:4,
     margin: [16, 16]   
   })
+ 
  
   const getLayoutparams = async () => { 
      try {
@@ -314,42 +319,48 @@ const {refresh} = useRequest(getLayoutparams, {
   refreshDeps: [projectId]
 })
  
-
-
-
-  const layoutprops ={
-    isResizable: true,
-    compactType:null, // 禁用自动紧凑布局
-    preventCollision:true, // 防止元素碰撞
+  const getTransformerList = async()=> {
+    try {
+       let {success, data} =  await useTransformerList({projectId})
+       if(success && Array.isArray(data)){
+         setTransformer(data.map((item)=>({label:item.name, value:item.text}) ))
+       }else {
+        setTransformer([])
+       }
+    } catch (error) {
+      console.log(error)
+    }
   }
+  useEffect(()=> {
+    if(Number.isInteger(parseInt(projectId))){
+      getTransformerList()
+    }
 
-  // useEffect(()=>{
-  //   JSON.parse(sessionStorage.getItem('layoutItem')) ? setlayoutItem(JSON.parse(sessionStorage.getItem('layoutItem'))) : null
-  // },[])
-
-  const getLayoutData = () => {
-    if(!Number.isInteger(projectId)) return
-    return QueryUISummary(projectId).then(res => {
-      let { success, data } = res
-      if (success && data) {
-        return {
-          list: data
-        }
-      } else {
-        return {
-          list: []
-        }
+  },[projectId])
+  const getLayoutData =async () => {  // 
+    try {
+      let {success, data} = await  QueryUISummary(projectId)
+   //   let {success:suc, data: transformer} =  await useGetTransformersInfo({projectId})
+      
+   
+      if(success && Array.isArray(data)){
+         setlayoutItem(data)
+    
+      }else {
+        setlayoutItem(data)
       }
-    })
+      
+     
+    
+    } catch (error) {
+      
+    }
+     
+ 
   }
 
   const { run:queryData } = useRequest(getLayoutData, {
      refreshDeps:[projectId],
-    onSuccess: (result, params) => {
-      sessionStorage.setItem('layoutItem', JSON.stringify(result.list))
-    //  let layouts = result.list?.map(r => ({...r, minw:r.w,}))
-      setlayoutItem(result.list)
-    }
   });
 
   const InsertLayoutData =async (layoutItem) => {
@@ -373,8 +384,7 @@ const {refresh} = useRequest(getLayoutparams, {
     }
   }) */
 
-  const createElement = el => {
-   // console.log("el",el)
+  const createElement = el => { 
     const removeStyle = {
       position: "absolute",
       right: "5px",
@@ -384,9 +394,19 @@ const {refresh} = useRequest(getLayoutparams, {
       outline: "10px solid transparent"
     }
     const i = el?.i;
-    if(!i) return;
+     
 
     const end = i.indexOf('_');
+    let strings = i.split("_")
+    
+    
+    if (strings?.[2]) {       
+      return (
+      <div key={i} data-grid={el} style={{display:"flex", felx:1}}>
+        {/* <span className="remove" style={removeStyle} onClick={() => onRemoveItem(i)}> X </span> */}
+           <Transformerxls datas={{data:el.data, title: strings?.[1]}}></Transformerxls>
+       </div>)
+    }else{
     
     return (
       <div key={i} data-grid={el} style={{display:"flex", felx:1}}>
@@ -404,7 +424,7 @@ const {refresh} = useRequest(getLayoutparams, {
         {i.indexOf('断路器信息') != -1 ? <ChooperMessage></ChooperMessage> : null}
 
         {i.indexOf('传感器信息') != -1 ? <Sensor></Sensor> : null} 
-        {i.indexOf('变压器信息') != -1 ? <Transformer></Transformer> : null} 
+        {i.indexOf('变压器信息') != -1 ? <Transformer></Transformer> : null}        
         {i.indexOf('触点测温') != -1 ? <Cdcwmg></Cdcwmg> : null} 
         {i.indexOf('光纤测温') != -1 ? <Gxcwmg></Gxcwmg> : null} 
 
@@ -438,6 +458,7 @@ const {refresh} = useRequest(getLayoutparams, {
         {i.substring(0, end)==('负荷率') ? <Loadlate type={'runtTime'}   /> : null} 
       </div>
     )
+   }
   }
   const onRemoveItem = (i) => {
     setlayoutItem(_.reject(layoutItem, { i: i }));
@@ -450,7 +471,7 @@ let layouts =[
   '告警分布','本月巡检','配电房监测','变压器总负荷',
   '今日用电量','月度能耗','公司信息','今日告警','本月工单', '告警信息','能耗排名','分类能耗',
   '用电量','用水量','用燃气量','碳排放量','网关信息',
-  '电表信息','变配电站数量','总额度容量','实时负荷','负荷率','断路器信息','传感器信息','变压器信息','触点测温','光纤测温',
+  '电表信息','变配电站数量','总额度容量','实时负荷','负荷率','断路器信息','传感器信息','变压器信息','触点测温','光纤测温',"变压器监控",
   '实时负荷率','分时电量分析', '充放电量趋势','站点soc',
   '总充电量','总放电量','总充电金额','总放电金额','储能总收益','储能日收益','储能月收益',
   '储能收益统计',
@@ -463,7 +484,7 @@ let layouts =[
 
 const onAddlayout = (xValue, yValue)=>{
   let newlayout;
- 
+  console.log("onAddlayout")
   if(layoutItem?.filter(l=> l.i)?.some(l=> l.i?.split('_')?.[0]?.includes(classOfName))) {
     message.warning('当前模块已存在！')
     return;
@@ -489,88 +510,23 @@ const onAddlayout = (xValue, yValue)=>{
   setlayoutItem(newlayout)
   setNewCounter(newCounter + 1);
 }
-/*   const onAddlayout = (xValue, yValue) => {
-    let newlayout;
-    let time = new Date()
-    if (layouts_2_2.includes(classOfName)) {
-      newlayout = layoutItem.concat({
-        i: classOfName + '_' + Date.now(),
-        x: xValue,
-        y: yValue,
-        w: 2,
-        h: 2,
-        minW:2,
-        minH:2,
-        ...zoom,
-        'description': classOfName
-      })
-      setlayoutItem(newlayout?.map(l => ({...l, resizeHandles: availableHandles,})))
-      setNewCounter(newCounter + 1);
-    } else if(layouts_2_1.includes(classOfName)) {
-      newlayout = layoutItem.concat({
-        i: classOfName + '_' + Date.now(),
-        x: xValue,
-        y: yValue,
-        w: 2,
-        h: 1,
-        minW:2,
-        minH:1,
-        ...zoom,
-        'description': classOfName,
-         
-         
-      })
-      setlayoutItem(newlayout?.map(l => ({...l, resizeHandles: availableHandles,})))
-      setNewCounter(newCounter + 1);
-    } else if (layouts_1_1.includes(classOfName)) {
-      newlayout = layoutItem.concat({
-        i: classOfName + '_' + Date.now(),
-        x: xValue,
-        y: yValue,
-        w: 1,
-        h: 1,
-        minW:1,
-        minH:1,
-        ...zoom,
-        'description': classOfName
-      })
-      setlayoutItem(newlayout?.map(l => ({...l, resizeHandles: availableHandles,})))
-      setNewCounter(newCounter + 1);
-    } else if (classOfName == '储能收益统计') {
-      newlayout = layoutItem.concat({
-        i: classOfName + '_' + Date.now(),
-        x: xValue,
-        y: yValue,
-        w: 4,
-        h: 2,
-        minW:4,
-        minH:2,
-        ...zoom,
-        'description': classOfName
-      })
-        
-        
-      setlayoutItem(newlayout?.map(l => ({...l, resizeHandles: availableHandles,})))
-     setNewCounter(newCounter + 1);
-    } else {
-      message.warning('当前模块尚未配置，请等待后续版本更新!')
-      return;
-    }
-
-
-  } */
-/*  type ItemCallback = (layout: Layout, oldItem: LayoutItem, newItem: LayoutItem,
-placeholder: LayoutItem, e: MouseEvent, element: HTMLElement) => void
-onDrop: (layout: Layout, item: ?LayoutItem, e: Event) => void,
-
-*/
+ 
   const onDrop = (layouts, layoutValue, _event) => { // 从外面拖入    
     console.log("onDrop")
-    onAddlayout(layoutValue.x, layoutValue.y)
+    console.log(layoutValue)
+    console.log(layouts)
+    console.log("_event", _event)
+    if(classOfName=== '变压器监控') {  
+      transformRef.current.onOpen()
+    }else {
+      onAddlayout(layoutValue.x, layoutValue.y)
+    }
+   
   }
  
   const onLayoutChange = (layout) => {   
-    console.log("layoutChange", layout)
+   console.log("layoutChange", layout)
+
     if (layout.length == 0) return;
     if (layout[layout.length - 1].i == '__dropping-elem__') return;
     setlayoutItem(layout)
@@ -671,6 +627,43 @@ const onRest =()=> {
   required: true,
  }]
  const w220= {width: "220px"}
+
+ const [checkedList, setCheckedList] = useState([]);
+  const [indeterminate, setIndeterminate] = useState(false);
+  const [checkAll, setCheckAll] = useState(false);
+  const trfonChange = (list) => {
+    setCheckedList(list);
+    setIndeterminate(!!list.length && list.length < plainOptions.length);
+    setCheckAll(list.length === plainOptions.length);
+  };
+  const onCheckAllChange = (e) => {
+    console.log(plainOptions)
+    setCheckedList(e.target.checked ? plainOptions : []);
+    setIndeterminate(false);
+    setCheckAll(e.target.checked);
+  };
+  const trOk=()=>{
+     let transformered = transformer?.filter?.(item => checkedList.includes(item.value))?.map?.((item,i) => { 
+      return {
+        i: item.label+'_'+item.value+'_transformer',
+        w:2,
+        h:1,
+        x:0,
+        y:defaultProps.rows ,
+    //    data:item.items,
+       // code: item.value
+      }
+     })   
+
+     let newlayoutItem = layoutItem.filter(item =>  !item.i?.split?.('_')?.[2])
+     setlayoutItem([...newlayoutItem,...transformered])
+     transformRef.current.onCancel()
+ 
+  }
+ 
+  useEffect(()=>{
+    sessionStorage.setItem('layoutItem', JSON.stringify(layoutItem))
+  },[layoutItem])
   return (
     <div className={style.mainContent} style={{backgroundColor: previewrbgcolor || '#135abd'}}>
       <Context.Provider value={{laptop,change }}>
@@ -706,6 +699,18 @@ const onRest =()=> {
         <div className={style.confirmBody}>
           <img className={style.warnIcon} src={finished}></img>
           <span >{t("overview:layoutsuccessfully")}</span>
+        </div>
+      </Cmodal>
+      <Cmodal title="选择变压器"  mold="cust" ref={transformRef}   onOk={trOk}   width={512}  >
+        
+        <div className={style.confirmBody}>
+       
+      <Checkbox indeterminate={indeterminate} onChange={onCheckAllChange} checked={checkAll}>
+         选择全部
+      </Checkbox>
+      <Divider />
+      <Checkbox.Group options={transformer} value={checkedList} onChange={trfonChange} />
+   
         </div>
       </Cmodal>
 

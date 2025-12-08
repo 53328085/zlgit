@@ -363,7 +363,7 @@ export const section = ({
                         <div
                           className="formbox"
                           style={{ columnGap: "64px", display: name== cusac1[filed.name] ? "" : "none", }}
-                          key={key}
+                          key={name}
                         >
                           <Form.Item
                             label="定时任务"

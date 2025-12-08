@@ -742,11 +742,11 @@ const savesty = laptop
                 /> 
               </Space>
             </div>
-            <div>
+            <Space size={16}>
              
-              <CustButtonT text="ok" onClick={onOk} style={savesty} />
-
-            </div>
+              <CustButtonT text="save" onClick={onOk}   style={btnsty} />
+              <CustButtonT text="cancel" onClick={drawClose}   style={btnsty} />
+            </Space>
           </div>
           <div className="unselected">
             <p className="title">未选中的设备</p>
