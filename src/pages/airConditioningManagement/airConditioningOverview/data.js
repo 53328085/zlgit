@@ -58,15 +58,20 @@ export const AirChartData = {
     top: "7%",
     containLabel: true,
   },
-  xAxis: [
-    {
+  xAxis: {
       type: "category",
+      boundaryGap: true,
       data: [],
       axisTick: {
         alignWithLabel: true,
       },
+      axisLabel: {
+       
+        interval:'auto', // 显示所有x轴的label, auto: 标签不重叠  
+        
+      },
     },
-  ],
+
   yAxis: [
     {
       type: "value",

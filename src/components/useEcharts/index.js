@@ -5,7 +5,7 @@ import * as echarts from "echarts";
 import 'echarts-liquidfill'
 import store from '@redux/store'
 import {i18t} from "@com/useButton"
- 
+
 /**
  * @author zhenglin zhu
  * @description: type： 1 数据设置在 系列（series）中 type: 2 数据系列 3.饼图
