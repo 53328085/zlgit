@@ -4349,5 +4349,11 @@ export class AirConditioningManagement {
 //能源管理
 export class EnergyManagement {
   static getTimePeriodSettingInfoApi = (params) =>
-    server.get('/Storage/SiteManagerDesigner/FindSiteList',params);
+    server.get('/Energy/EnergyTariffTimeDesigner/QueryTimeSharePlanList', { params });
+  static setTimePeriodSettingInfoApi = (params) =>
+    server.post('/Energy/EnergyTariffTimeDesigner/AddTimeSharePlan',  params );
+  static updateTimePeriodSettingStatusApi = (params) =>
+    server.post('/Energy/EnergyTariffTimeDesigner/EnableTariffTimePlan',  params );
 }
+
+

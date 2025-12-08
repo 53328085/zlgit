@@ -1,9 +1,18 @@
-import { forwardRef, useImperativeHandle, useRef, useState } from 'react'
+import { forwardRef, useEffect, useImperativeHandle, useRef, useState } from 'react'
 import CModal from '@com/useModal'
 import { useMemoizedFn } from 'ahooks'
 import styled from 'styled-components'
-import { DatePicker, Divider, Form, Input, Select, Space, TimePicker } from 'antd'
+import { DatePicker, Divider, Form, Input, message, Select, Space, TimePicker } from 'antd'
 import moment from 'moment'
+import {
+  DefaultFormInfo, getStepOptions,
+  getTimePeriodOptions,
+  getTimePeriodTypeOptions
+} from '@pages/energy/configure/timePeriodSetting/Constant'
+import { useSelector } from 'react-redux'
+import { selectProjectId } from '@redux/systemconfig'
+import { EnergyManagement } from '@api/api'
+import { cloneDeep, merge } from 'lodash'
 
 const MainBox = styled.div`
     height: 600px;
@@ -13,19 +22,6 @@ const MainBox = styled.div`
         display: flex;
         flex-direction: column;
         row-gap: 16px;
-        line-height: 1;
-
-        .ant-form-item {
-            margin-bottom: 0px;
-        }
-
-        .line {
-            font-size: 32px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            color: #d7d7d7;
-        }
 
         .save {
             width: 450px;
@@ -34,31 +30,27 @@ const MainBox = styled.div`
         }
 
         .times {
-            width: 450px;
             display: flex;
             flex-direction: column;
-            row-gap: 16px;
+            gap: 16px;
             padding: 16px 0;
-
-            .time {
-                display: flex;
-                align-items: center;
-                justify-content: space-between;
-
-            }
         }
     }
 `
 
-const Index = ({ params }, ref) => {
+const Index = ({ onRefreshClick }, ref) => {
   //是否新增
   const [isAdd, setIsAdd] = useState(true)
+  //项目id
+  const projectId = useSelector(selectProjectId)
   //表单
   const [form] = Form.useForm()
   //弹窗ref
   const modalRef = useRef(null)
   //弹窗标题
   const dialogTitle = isAdd ? '新增分时能耗时段设置' : '编辑分时能耗时段设置'
+
+  const timePeriodStep = Form.useWatch('step', form)
 
   /**
    * 显示弹窗
@@ -69,6 +61,9 @@ const Index = ({ params }, ref) => {
     } else {
       setIsAdd(true)
     }
+    form.setFieldsValue({
+      ...DefaultFormInfo
+    })
     modalRef.current?.onOpen()
   }
 
@@ -79,9 +74,29 @@ const Index = ({ params }, ref) => {
     try {
       let values = await form.validateFields()
       if (!values) return
-      modalRef.current?.onCancel()
+      checkTimeInfo(values)
+      const params = merge({
+        projectId,
+        enableDate: '',
+        newTariffTimes: []
+      }, values)
+      params.enableDate = moment(params.enableDate).format('YYYY-MM-DD')
+      params.newTariffTimes.forEach(item => {
+        if (item.endTime === '24:00') {
+          item.endTime = '00:00'
+        }
+      })
+      console.log('params', params)
+      const result = await EnergyManagement.setTimePeriodSettingInfoApi(params)
+      if (result.success) {
+        message.success('保存成功')
+        modalRef.current?.onCancel()
+        onRefreshClick()
+      } else {
+        throw new Error(result?.errMsg || '未知错误')
+      }
     } catch (error) {
-      console.log(error)
+      error.message && message.error(error.message)
       throw error
     }
   })
@@ -90,17 +105,121 @@ const Index = ({ params }, ref) => {
     showDialog,
   }))
 
-  const format = 'HH:mm'
-  const timePeriodOptions = [
-    { label: '尖', value: 1 },
-    { label: '峰', value: 2 },
-    { label: '平', value: 3 },
-    { label: '谷', value: 4 }
-  ]
-  const stepOptions = Array.from({ length: 14 }, (_, index) => ({ label: index + 1, value: index + 1 }))
   const disabledDate = (current) => {
     return current && current <= moment().endOf('day')
   }
+
+  // 在组件内添加时间处理函数
+  const handleTimeChange = (changedValues, allValues) => {
+    const { newTariffTimes = [] } = allValues
+    // 更可靠的变化字段检测方式
+    let changedField = null
+    let changedIndex = null
+
+    // 检测newTariffTimes数组的变化
+    if (changedValues.newTariffTimes) {
+      changedIndex = Object.keys(changedValues.newTariffTimes)[0]
+      if (changedIndex !== undefined) {
+        const changedTime = changedValues.newTariffTimes[changedIndex]
+        changedField = Object.keys(changedTime)[0]
+      }
+    }
+
+    if (changedIndex !== null) {
+      const currentIndex = parseInt(changedIndex)
+      const currentTime = newTariffTimes[currentIndex]
+
+      // 处理同一时段endTime > startTime
+      if (currentTime.startTime && currentTime.endTime) {
+        const start = moment(currentTime.startTime, 'HH:mm')
+        const end = moment(currentTime.endTime, 'HH:mm')
+        if (end.isSameOrBefore(start)) {
+          // 清空当前endTime和后一时段startTime
+          form.setFieldsValue({
+            newTariffTimes: newTariffTimes.map((t, i) => {
+              if (i === currentIndex) {
+                return { ...t, endTime: '' }
+              } else if (i === currentIndex + 1) {
+                return { ...t, startTime: '' }
+              } else if (i === currentIndex - 1) {
+                // 前一时段endTime同步为当前startTime
+                return { ...t, endTime: currentTime.startTime }
+              }
+              return t
+            })
+          })
+          return
+        }
+      }
+
+      // 双向联动处理
+      if (changedField === 'startTime' && currentIndex > 0) {
+        // 修改后一时段startTime时，同步更新前一时段endTime
+        form.setFieldsValue({
+          newTariffTimes: newTariffTimes.map((t, i) =>
+            i === currentIndex - 1 ? { ...t, endTime: currentTime.startTime } : t
+          )
+        })
+      } else if (changedField === 'endTime' && currentIndex < newTariffTimes.length - 1) {
+        // 修改前一时段endTime时，同步更新后一时段startTime
+        form.setFieldsValue({
+          newTariffTimes: newTariffTimes.map((t, i) =>
+            i === currentIndex + 1 ? { ...t, startTime: currentTime.endTime } : t
+          )
+        })
+      }
+    }
+  }
+
+  const checkTimeInfo = useMemoizedFn((values) => {
+    const { newTariffTimes = [] } = values
+    // 1. 检查必填字段
+    for (let i = 0; i < newTariffTimes.length; i++) {
+      const item = newTariffTimes[i]
+      if (!item.tariffTimeType || !item.startTime || !item.endTime) {
+        throw new Error(`时段${i + 1}的所有字段必须填写完整`)
+      }
+    }
+    // 2. 检查单个时段的时间有效性
+    for (let i = 0; i < newTariffTimes.length; i++) {
+      const { startTime, endTime } = newTariffTimes[i]
+      const start = moment(startTime, 'HH:mm')
+      const end = moment(endTime, 'HH:mm')
+      if (end.isSameOrBefore(start)) {
+        throw new Error(`时段${i + 1}的结束时间必须大于开始时间`)
+      }
+    }
+    // 3. 检查时段连续性
+    for (let i = 1; i < newTariffTimes.length; i++) {
+      const prevEnd = moment(newTariffTimes[i - 1].endTime, 'HH:mm')
+      const currentStart = moment(newTariffTimes[i].startTime, 'HH:mm')
+      if (!currentStart.isSame(prevEnd)) {
+        throw new Error(`时段${i}的结束时间必须等于时段${i + 1}的开始时间`)
+      }
+    }
+    // 4. 检查首尾时段
+    const firstStart = moment(newTariffTimes[0].startTime, 'HH:mm')
+    if (!firstStart.isSame(moment('00:00', 'HH:mm'))) {
+      throw new Error('第一个时段的开始时间必须为00:00')
+    }
+    const lastEnd = moment(newTariffTimes[newTariffTimes.length - 1].endTime, 'HH:mm')
+    if (!lastEnd.isSame(moment('24:00', 'HH:mm'))) {
+      throw new Error('最后一个时段的结束时间必须为24:00')
+    }
+    return true // 所有校验通过
+  })
+
+  useEffect(() => {
+    if (timePeriodStep) {
+      form.setFieldsValue({
+        newTariffTimes: Array.from({ length: timePeriodStep }, (_, index) => ({
+          tariffTimeType: null,
+          startTime: index === 0 ? '00:00' : '',
+          endTime: index === (timePeriodStep - 1) ? '24:00' : '',
+        }))
+      })
+    }
+  }, [timePeriodStep])
 
   return (
     <CModal
@@ -118,10 +237,11 @@ const Index = ({ params }, ref) => {
           labelAlign="right"
           colon={false}
           preserve={false}
+          onValuesChange={handleTimeChange}  // 添加这行
         >
           <Form.Item
             label="方案名称"
-            name="name"
+            name="planName"
             labelCol={{ flex: '6em' }}
             rules={[{
               required: true,
@@ -135,70 +255,67 @@ const Index = ({ params }, ref) => {
               label="日时段数"
               name="step"
               labelCol={{ flex: '6em' }}
-              initialValue={4}
               rules={[{
                 required: true,
                 message: '请选择日时段数'
               }]}
             >
-              <Select placeholder="请选择" options={stepOptions} style={{ width: '196px' }} allowClear={false}/>
+              <Select placeholder="请选择" options={getStepOptions()} style={{ width: '196px' }} allowClear={false}/>
             </Form.Item>
             <Form.Item
               label="启用日期"
               name="enableDate"
               labelCol={{ flex: '6em' }}
-              initialValue={moment().add(1, 'day')}
               rules={[{
                 required: true,
                 message: '请选择启用日期'
               }]}
             >
-              <DatePicker disabledDate={disabledDate} allowClear={false}/>
+              <DatePicker disabledDate={disabledDate} allowClear={false} format="YYYY-MM-DD"/>
             </Form.Item>
           </Space>
-          <Divider style={{margin:0}}/>
-          <Form.Item shouldUpdate={(pre, cur) => pre.step !== cur.step} noStyle>
-            {
-              ({ getFieldValue }) => {
-                const num = getFieldValue('step')
-                if (Number.isInteger(num) && num > 0) {
-                  return (
-                    <div className="times">
-                      {
-                        Array.from({ length: num }, (_, index) => {
-                          return (
-                            <div className="time">
-                              <Form.Item
-                                name={['startTime', `${index}`]}
-                                label={`时段${index + 1}`}
-                                labelCol={{ flex: '6em' }}
-                                labelAlign="right"
-                                rules={[{
-                                  required: true
-                                }]}
-                              >
-                                <TimePicker format={format} style={{ width: '196px' }}></TimePicker>
-                              </Form.Item>
-                              <div className="line">&#x02500;</div>
-                              <Form.Item
-                                name={['timeShareType', `${index}`]}
-                                rules={[{
-                                  required: true,
-                                  message: '请选择用电时段类型'
-                                }]}
-                              >
-                                <Select options={timePeriodOptions} style={{ width: '114px' }}/>
-                              </Form.Item>
-                            </div>
-                          )
-                        })
-                      }
-                    </div>
-                  )
-                }
-              }
-            }
-          </Form.Item>
+          <Divider style={{ margin: 0 }}/>
+          <Form.List name="newTariffTimes">
+            {(fields) => (
+              <div className="times">
+                {fields.map(({ key, name }) => (
+                  <Space>
+                    <Form.Item
+                      name={[name, 'tariffTimeType']}
+                      label={`时段${key + 1}`}
+                      labelCol={{ flex: '6em' }}
+                      labelAlign="right"
+                    >
+                      <Select
+                        options={getTimePeriodTypeOptions()}
+                        style={{ width: '114px' }}
+                      />
+                    </Form.Item>
+                    <Form.Item
+                      style={{ marginLeft: 32 }}
+                      name={[name, 'startTime']}
+                    >
+                      <Select
+                        disabled
+                        options={getTimePeriodOptions()}
+                        style={{ width: '114px' }}
+                      />
+                    </Form.Item>
+                    <div style={{ margin: '0 12px' }}>至</div>
+                    <Form.Item
+                      name={[name, 'endTime']}
+                    >
+                      <Select
+                        disabled={key === fields.length - 1}
+                        options={getTimePeriodOptions()}
+                        style={{ width: '114px' }}
+                      />
+                    </Form.Item>
+                  </Space>
+                ))}
+              </div>
+            )}
+          </Form.List>
         </Form>
       </MainBox>
     </CModal>
