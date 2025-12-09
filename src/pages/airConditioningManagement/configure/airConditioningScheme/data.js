@@ -284,7 +284,7 @@ export const section = ({
                   }
                 }}
               </Form.Item>
-              <Form.Item name={[filed.name, "eTiming"]} valuePropName="checked">
+              <Form.Item name={[filed.name, "eTiming"]} valuePropName="checked" className="inbox">
                         <Checkbox>定时开关</Checkbox>
                       </Form.Item>
               <Form.List
@@ -443,7 +443,7 @@ export const section = ({
                   );
                 }}
               </Form.List>
-              <Form.Item name={[filed.name, "eForbid"]} valuePropName="checked">
+              <Form.Item name={[filed.name, "eForbid"]} valuePropName="checked" className="inbox">
                         <Checkbox>禁止开关</Checkbox>
                       </Form.Item>
               <Form.List

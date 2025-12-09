@@ -208,6 +208,7 @@ const Mainbox = styled.div`
     .searchInput {
       display: flex;
       align-items: center;
+       column-gap: 16px;
       height: 32px;
     }
     .mainTable {

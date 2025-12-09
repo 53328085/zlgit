@@ -21,6 +21,7 @@ export const Frombox = styled.div`
   display: grid;
   grid-template-columns: 1fr 1fr;
   column-gap: 128px;
+
 `;
 export const Title = styled.div`
   display: flex;
@@ -108,9 +109,12 @@ export const Scene = styled.div`
            
           }
         }
+        .ant-form-item.inbox {
+          border-top: 1px solid ${props=>props.theme.primaryColor};
+        }
         .formbox {
           .ant-form-item{
-            margin-bottom: 24px;
+            margin-bottom: 12px;
           }
         }
         
@@ -122,8 +126,8 @@ export const Scene = styled.div`
       }
       .formboxwrap.inbox {
         border: none;
-        border-bottom: 1px solid ${props=>props.theme.primaryColor};
-        border-top: 1px solid ${props=>props.theme.primaryColor};
+       // border-bottom: 1px solid ${props=>props.theme.primaryColor};
+       // border-top: 1px solid ${props=>props.theme.primaryColor};
       }
       .formboxwrap.noboder {
         border: none;

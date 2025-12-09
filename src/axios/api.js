@@ -2690,9 +2690,9 @@ export class energyDesigner {
     server.delete(
       `Energy/EnergyClassifyDesigner/DeleteEnergyClassify?projectId=${projectId}&classifyId=${classifyId}`
     );
-  static queryEnergyConfigedDevicesInfo = (projectId, type, classifyId) =>
+  static queryEnergyConfigedDevicesInfo = (params) =>
     server.get(
-      `Energy/EnergyClassifyDesigner/QueryEnergyConfigedDevicesInfo?projectId=${projectId}&type=${type}&classifyId=${classifyId}`
+      `Energy/EnergyClassifyDesigner/QueryEnergyConfigedDevicesInfo`,{params}
     );
   static queryEnergyNoConfigedDevices = (projectId, type) =>
     server.get(
