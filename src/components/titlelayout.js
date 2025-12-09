@@ -56,7 +56,7 @@ const Boxdiv = styled(Card)`
     background-color: ${props=> props.theme.isdark ? "dark" : "transparent"} ;
   }
  .ant-card-body {
-  padding: ${props => props.pv || "20px"};
+  padding: ${props => props.pv || (props.theme.laptop ? "8px" : "20px")};
  //  padding: ${props => props.bodypad || "20px"};
   display: ${props => props.layout || 'block'};
   flex-direction: ${props => props.dr || 'row'}; 

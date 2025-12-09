@@ -20,6 +20,7 @@ const Cform = styled(Form)`
     border-bottom: 1px solid #dedede;
     height: max-content;
     display: flex;
+    gap: 16px;
    &&{
     .ant-form-item {
         margin: 0px;

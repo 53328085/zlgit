@@ -15,7 +15,7 @@ import {
   SyncOutlined,
 } from '@ant-design/icons';
 const { Link } = Typography
-import { publicdateType, Daterange, w200, w88,viewopt } from "./data"
+import { publicdateType, Daterange,   w88,viewopt } from "./data"
 import Enery from "./enery";
 import AreaLevel from './areas'
 import SubAreas from './subareas'
@@ -28,7 +28,7 @@ const Cform = styled(Form)`
     border-bottom: 1px solid ${props=>props.theme.isdark ? "dark" : "#dedede"};
     height: max-content;
     display: flex;
-    column-gap: 16px;
+    gap: 16px;
     border-radius: 8px;
    &&{
     .ant-form-item {
@@ -40,11 +40,13 @@ const Cform = styled(Form)`
 export {Cform};
 
 const { Item } = Form;
-export const AreaSelect = ({ value, onChange, isall, ...otherProps }) => {
+export const AreaSelect = ({ value, onChange, isall,    ...otherProps }) => {
   const levelone = useSelector(selectOneLevel)
+  const laptop = useSelector(adaptation)?.laptop
    const lightone = useSelector(lightlevel)
   const location = useLocation();
    const { state } = location
+   const w200 = laptop ? { width: 160 } : { width: 200 }
   const options = useMemo(() => {
      let levels = state?.primary==="lightManagement" ? lightone : levelone
      const filter = levels?.filter?.(f => f.id != 0);
@@ -88,6 +90,9 @@ export default function UseSerach(props) {
   const { laptop } = useSelector(adaptation)
   //const DeviceStyle = useSelector(filterDeviceStyle)  
   const [DeviceStyle, setDeviceStyle] = useState([])
+  const w200 = useMemo(()=> {
+   return laptop ? { width: 160 } : { width: 200 }
+  }, [laptop])
  
   let shifts = useSelector(selectshifts)
 
@@ -324,19 +329,19 @@ export default function UseSerach(props) {
 
   const deviceStyleNode = (<Item name="deviceStyle" label={i18t("comm", "type", { text: "设备" })}  >
 
-    <Select options={DeviceStyle} fieldNames={{ label: "name", value: "deviceStyle" }} style={{ width: laptop ? "160px" : '200px' }} onChange={deviceStyleChange} {...filterProps}></Select>
+    <Select options={DeviceStyle} fieldNames={{ label: "name", value: "deviceStyle" }} style={w200} onChange={deviceStyleChange} {...filterProps}></Select>
   </Item>)
   // 站点选择
   const site = (<Item name="stationName" label="站点"   >
-    <Select options={options} onChange={getTank} fieldNames={{ label: 'name', value: 'id' }} style={{ width: laptop ? "160px" : '264px' }} labelInValue></Select>
+    <Select options={options} onChange={getTank} fieldNames={{ label: 'name', value: 'id' }} style={w200} labelInValue></Select>
   </Item>)
   // 储能柜
   const tank = (<Item name="containerId" label="储能柜" >
-    <Select options={tankoptions} onChange={getPcs} fieldNames={{ label: 'name', value: 'id' }} style={{ width: laptop ? "160px" : '264px' }} labelInValue></Select>
+    <Select options={tankoptions} onChange={getPcs} fieldNames={{ label: 'name', value: 'id' }} style={w200} labelInValue></Select>
   </Item>)
   // pcs选择
   const pcs = (<Item name="pcsId" label="PCS" >
-    <Select options={pcsoptions} fieldNames={{ label: 'sn', value: 'id' }} style={{ width: laptop ? "160px" : '264px' }} {...filterProps}></Select>
+    <Select options={pcsoptions} fieldNames={{ label: 'sn', value: 'id' }} style={w200} {...filterProps}></Select>
   </Item>)
 
   const { primaryColor } = useSelector(themeColor)

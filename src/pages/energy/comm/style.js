@@ -22,7 +22,7 @@ export const  Pagelayout = styled.div`
         }
         .content {
             display: grid;
-            grid-template-rows: 248px 1fr ;
+            grid-template-rows: 300px 1fr ;
             gap:16px;
             .uparea{
                 display: grid;

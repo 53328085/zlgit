@@ -84,6 +84,12 @@ export default function Index() {
          setTreeID(value)
       }
       
+    }else {
+      setTabs([])
+      setCurarea(null)
+      setAirConditioner({})
+      setTreeID(null)
+      setList([])
     }
 
    } catch (error) {
@@ -157,9 +163,10 @@ export default function Index() {
          setSpinning(true)  
         let {success, data} = await  useList({projectId, desc:treeId}) 
         if(success && isObject(data) ) {
-           let {locations} = data; 
+           //let {locations} = data; 
            setAirConditioner(data)
-            if(Array.isArray(locations)) {
+          
+           /*  if(Array.isArray(locations)) {
                locations.forEach(i => {
                    form.setFieldValue([i.conditionerId, 'x'], i.x);
                    form.setFieldValue([i.conditionerId, 'y'], i.y);
@@ -171,7 +178,7 @@ export default function Index() {
                })
                let checked = locations.filter(i =>  i.x!==0 || i.y!==0)
                setList(checked)
-            }
+            } */
           
             setSpinning(false)
         }else {
@@ -188,9 +195,44 @@ export default function Index() {
   useEffect(()=> {
    if(Number.isInteger(parseInt(treeId))) {
       query()
+      
    }
 
   },[treeId])
+  useEffect(() => {
+   if (airConditioner?.locations && airConditioner.locations.length > 0) {
+     
+
+    
+     setTimeout(() => {
+      try{ 
+     
+      let locations = airConditioner.locations
+     
+      const initialValues = {};
+      airConditioner.locations.forEach(a => {
+        initialValues[a.conditionerId] = {
+          desc: a.desc, // 或者从 a 中取默认值
+          x: a.x,
+          y: a.y,
+          r: a.r,
+          checked: (a.x!==0 || a.y!==0),
+          conditionerId: a.conditionerId,
+          airConditionerName: a.airConditionerName,
+        };
+      }); 
+      console.log(initialValues)
+      setTimeout(() => {
+        form.setFieldsValue(initialValues);
+      }, 0);
+     let checked = locations.filter(a =>  a.x!==0 || a.y!==0)
+     setList(checked)
+   } catch (error) {
+      console.log(error)
+     }
+     }, 0);
+   }
+ }, [airConditioner?.locations, form]); 
   const getPoint= (e) =>{
    console.log(curarea)
    let {conditionerId} = curarea || {}

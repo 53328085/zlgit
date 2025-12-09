@@ -72,6 +72,7 @@ const Drawerbox = styled(Drawer)`
           color: #333;
           display: flex;
           align-items: center;
+          justify-content: space-between;
         }
         .selected {
           display: flex;  
@@ -544,12 +545,10 @@ const savesty = laptop
         );
 
 
-  const onOk =async()=>{
+  const onOk =async(type=0)=>{
     try {
       const {areaId} = Record
-      console.log(Record)
-      console.log(deviceSummary)
-      console.log(deviceSub)
+       
       const msn = deviceSummary?.map?.((item,idx) => ({sn:item.sn, order: idx+1})) || []
       const dsn = deviceSub?.map?.((item,idx) => ({sn:item.sn, order: idx+1})) || []
       let params ={
@@ -564,22 +563,16 @@ const savesty = laptop
         ...params,
         orderDevices:dsn
       }
-      let  promises = [useAddSummaryDeviceOrder({}, body1), useAddSubDeviceOrder({}, body2)]
-      let [{value: {success :suc, errMsg:err}}, {value: {success :suc2, errMsg:err2}}] = await Promise.allSettled(promises)
-      if (suc) {
-        message.success('总表保存成功')
+      let  promises = type==0 ? useAddSummaryDeviceOrder({}, body1) : useAddSubDeviceOrder({}, body2)
+      let  {success, errMsg} =await promises
+      if (success) {
+        message.success(type==0 ? '总表保存成功' : '分表保存成功')
+        getSelected({ areaId })
       }else {
-        message.error(err || '数据错误')
+        message.error(errMsg || '数据错误')
       }
-      if(suc2) {
-        message.success('分表保存成功')
-      }else{
-        message.error(err2 || '数据错误')
-
-      }
-      if(suc && suc2){
-        drawClose()
-      }
+      
+      
      
     } catch (error) {
       console.log(error)
@@ -650,7 +643,7 @@ const savesty = laptop
         >
           <div className="selected">
             <div className="total">
-              <p className="title">{name}总表</p>
+              <p className="title"><span>{name}总表</span>  <CustButtonT text="save" onClick={()=>onOk(0)}     /></p>
               <div className="outwrap">
                 <div className="inwrap">
                   <DndProvider backend={HTML5Backend}>
@@ -674,7 +667,7 @@ const savesty = laptop
             
             </div>
             <div className="sub">
-              <p className="title">{name}分表</p>
+              <p className="title"><span>{name}分表</span> <CustButtonT text="save" onClick={()=>onOk(1)}     /></p>
               <Space size={16}>
                 <Text style={{ color: "#333" }}>设备搜索</Text>
                 <Inptserach
@@ -742,10 +735,9 @@ const savesty = laptop
                 /> 
               </Space>
             </div>
-            <Space size={16}>
+            <Space size={16}>           
              
-              <CustButtonT text="save" onClick={onOk}   style={btnsty} />
-              <CustButtonT text="cancel" onClick={drawClose}   style={btnsty} />
+              <CustButtonT text="cancel" onClick={drawClose}   style={savesty} />
             </Space>
           </div>
           <div className="unselected">

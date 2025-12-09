@@ -1,6 +1,7 @@
-import styled from "styled-components";
+import styled, {css } from "styled-components";
 import {Tag} from 'antd'
 import point from './icon/point.png'
+ 
 export const Mainbox = styled.div`
   && {
     flex: 1;
@@ -12,6 +13,7 @@ export const Mainbox = styled.div`
       flex: 1;
       display: grid;
       grid-template-columns: 1250px 422px;
+      
       column-gap: 16px;
       .right {
         display: grid;

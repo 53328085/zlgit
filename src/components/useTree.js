@@ -498,7 +498,7 @@ export default memo(function Index({ areaId, setTreeId, setLine, setNode, showli
             onSearch={getTreeData}
           />}
 
-          {allselect && <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>  <Checkbox onChange={allSelected} indeterminate={indeterminate} checked={checked}>全部选中</Checkbox>
+          {allselect && <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>  <Checkbox onChange={allSelected} indeterminate={indeterminate} checked={checked}>全选</Checkbox>
             {isshow && <Radio.Group style={radiosty2} onChange={Relevancy} value={schecked}>
               <Radio value={1}>不关联</Radio>
               <Radio value={2}>关联</Radio>
