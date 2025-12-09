@@ -22,6 +22,7 @@ import { useRequest } from "ahooks";
 import { Mainbox, Ctag, TitP } from "./style";
 import {useQueryEnergyInfoOverview} from "./api"
 import point from './icon/point.png'
+ 
 const { Paragraph, Text, Link } = Typography;
 
 const Imgbg = memo(({ projectId, areaVos }) => {
@@ -30,6 +31,9 @@ const Imgbg = memo(({ projectId, areaVos }) => {
   const [build, setBuild] = useState();
   const [info, setInfo] = useState();
   let tagref = useRef()
+  let tipRef = useRef()
+  let boxRef = useRef()
+  let xyRef=useRef({})
   console.log(info)
   const { primaryderived, imgbgcolor } = useSelector(themeColor);
   const getbuild = async ({ buildingId, x, y }, curRef) => {
@@ -96,6 +100,47 @@ const Imgbg = memo(({ projectId, areaVos }) => {
     if (!projectId) return;
     queryimg();
   }, [projectId]);
+
+  let isDragging = useRef(false);
+  const onMouseMove=(e)=>{
+    if(!isDragging.current) return
+    console.log("monve")
+    const topRect = boxRef.current.getBoundingClientRect()
+    xyRef.current.x = e.clientX - xyRef.current.x -topRect.left
+    xyRef.current.y = e.clientY - xyRef.current.y -topRect.top
+   // let tipW = tipRef.current.offsetWidth
+  //  let tipH = tipRef.current.offsetHeight
+   // xyRef.current.x = Math.max(0, Math.max(xyRef.current.x, topRect.width - tipW))  
+    
+  //  xyRef.current.y = Math.max(0, Math.max(xyRef.current.y, topRect.height - tipH))
+   // setInfo({...info,x,y})
+
+  }
+  const onmousedown=(e)=> {
+    isDragging.current = true
+    const tipRect = tipRef.current.getBoundingClientRect()
+  
+    xyRef.current.x = e.clientx - tipRect.left
+    xyRef.current.y = e.clientY - tipRect.top
+    e.preventDefault();
+    console.log(xyRef)
+  //  const {pageX, pageY} = e
+  //  setInfo({...info,x:pageX,y:pageY})
+
+  }
+  useEffect(()=>{
+    document.addEventListener('mousemove', onMouseMove)
+    document.addEventListener('mouseup', onMouseUp)
+    return ()=>{
+      document.removeEventListener('mousemove', onMouseMove)
+      document.removeEventListener('mouseup', onMouseUp)
+    }
+
+  },[])
+  const onMouseUp=()=>{
+     setInfo({...info,x:xyRef.current.x,y:xyRef.current.y})
+     isDragging.current=false
+  }
   return (
     <Cspin spinning={spinning} tip="图片下载中……">
       <div
@@ -106,15 +151,16 @@ const Imgbg = memo(({ projectId, areaVos }) => {
           border: "1px solid transparent",
         }}
         className="border_radius_8"
+        ref={boxRef}
       >
         <img
           src={energyImage || imgurl.engeryBg}
-          usemap="#building"
+        //  usemap="#building"
           style={{ clipPath: "inset(1px 1px 1px 1px)" }}
         />
         {map}
         {info && (
-          <TitP left={info.x} top={info.y}>
+          <TitP left={info.x} top={info.y}    ref={tipRef}>
             <h5 className="title">
               {info.buildingName}
               <CloseOutlined onClick={() => setInfo(null)}      /> 
@@ -141,6 +187,7 @@ export default function Index() {
    const { areaId, projectId } = exparams || {};
 
   const [energyValue, setEnergyValue] = useState({});
+  console.log("energyValue",energyValue)
   
   const EnergyType = useSelector(energyType);
   const defaultvalue = EnergyType?.[0]?.type
@@ -225,7 +272,7 @@ const columns = [
     key: "name",
   },  
   {
-    title: tableTitle + unit,
+    title:  energyValue?.title?.substring(2),  //tableTitle + unit,
     dataIndex: "value",
     key: "value",
   },
@@ -274,7 +321,7 @@ const columns = [
               <div className="up">
                   <Image src={imgurl[meterType]} preview={false} width={54} />
                   <div className="desc">
-                    <span>今日用电量(kWh)</span>
+                    <span>{energyValue?.title}</span>
                     <Text className="num" ellipsis>
                       {energyValue.todayElectricConsume}
                     </Text>

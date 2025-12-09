@@ -2,7 +2,7 @@ import styled, {css} from "styled-components";
 import { Tabs, Typography } from 'antd';
 const { Text } = Typography;
 const sty = css`
-  grid-template-columns: 1fr max-content;
+  grid-template-columns: 3fr  minmax(416px, 1fr);
  `
 export const Mainbox = styled.div` 
 && {
@@ -11,7 +11,7 @@ export const Mainbox = styled.div`
     grid-template-columns: 1256px  minmax(416px, 1fr);
     column-gap: 16px; 
     overflow: hidden;
-    ${props => props.laptop ? sty : null}
+     ${props => props.laptop ? sty : null}
     .left {
       display: grid;
       grid-template-rows: 40px minmax(472px, 1fr);

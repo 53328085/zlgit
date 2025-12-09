@@ -61,7 +61,7 @@ const CusCard = ({
             fontWeight: 500,
           }}
         >
-          {value1}
+          {(parseFloat(value1))?.toFixed(3)}
         </div>
         <div className={`small`}>
           环比昨日：
@@ -140,14 +140,46 @@ export const DetailComp = React.memo(({ overData }) => {
           value3: lastPeriodCarbon,
         },
       ];
-      setEnergyData(arr);
+    //  console.log("ranking",ranking)
+    //  setEnergyData(arr);
       const xAxis = ranking?.map((it) => it?.name);
       const sdata = ranking?.map((it) => it?.value);
-      AirChartData["xAxis"][0]["data"] = xAxis;
-      AirChartData["series"][0]["data"] = sdata;
+
+    //  AirChartData["xAxis"]["data"] = xAxis;
+    //  AirChartData["series"][0]["data"] = sdata;
     }
   }, [overData]);
+  const baropt =useMemo(()=> {
+    const {ranking=[]} = overData || {}
+    console.log("ranking",ranking)
+    return {
+        
+      series: [{ type: "bar"} ],
+      grid: {
+        left: "0px",
+        right: "0",
+        top: "0px",
+        bottom: "0px",
+        containLabel: true,
+      },
+      legend: {
+        show:false
+      },
+      dataset: {
+        dimensions: ["name", {name:"value", displayName:"用能量"}],
+        source: ranking
+      },
+      xAxis: {
+        axisLabel: {
+          interval:0
+        }
+      }
+     
+   
+}
 
+  },   
+  [overData])
   return (
     <Detail>
       {energyData.map((item, index) => (
@@ -166,7 +198,7 @@ export const DetailComp = React.memo(({ overData }) => {
           </span>
         </div>
         {/* <div className="chart-box"> */}
-        <Icharts custoption={AirChartData} type={5}></Icharts>
+        <Icharts  {...baropt}></Icharts>
         {/* </div> */}
       </div>
     </Detail>
@@ -192,7 +224,7 @@ export const FooterChartComp = React.memo(({ tableData, chartData }) => {
         { ...Chart_Options.series[1], data: chartData?.y1 || [] },
         {
           ...Chart_Options.series[2],
-          data: chartData?.y2.map((it) => parseFloat(it)) || [],
+          data: chartData?.y3?.map?.((it) => parseFloat(it)) || [],
         },
       ],
     }),

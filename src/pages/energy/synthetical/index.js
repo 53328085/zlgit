@@ -15,7 +15,7 @@ import imgurl from "./icon";
 import {Mainbox,Tabsbox} from "./style"
 import {useQueryOverview,useQueryEnergyType} from "./api"
 import Chart from './component/chart/index'
-import Detail from './component/detail'
+import Detail from './component/Detail'
 const { Text } = Typography
  
  

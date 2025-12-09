@@ -7,7 +7,8 @@ import Ichart from "@com/useEcharts/Ichart";
  
 import { numberformat, getTime } from '@com/usehandler'
 export default function({qverview={}, op,my, type, datetype, tabvalue, laptop })  {
-     const {proportion, total={},proportionTitle } = qverview
+     const {proportion, total={},proportionTitle, title } = qverview
+    // console.log("title",title)
     let {lastDayPeriodValue, lastMonthPeriodValue, lastYearPeriodValue}=total
     let timetype = ['', lastDayPeriodValue, lastMonthPeriodValue, lastYearPeriodValue][datetype]
     
