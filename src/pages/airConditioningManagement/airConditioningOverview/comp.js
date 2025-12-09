@@ -150,7 +150,7 @@ export const DetailComp = React.memo(({ overData }) => {
     }
   }, [overData]);
   const baropt =useMemo(()=> {
-    const {ranking} = overData
+    const {ranking=[]} = overData || {}
     console.log("ranking",ranking)
     return {
         
@@ -168,7 +168,13 @@ export const DetailComp = React.memo(({ overData }) => {
       dataset: {
         dimensions: ["name", {name:"value", displayName:"用能量"}],
         source: ranking
+      },
+      xAxis: {
+        axisLabel: {
+          interval:0
+        }
       }
+     
    
 }
 

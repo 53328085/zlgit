@@ -75,8 +75,8 @@ export default function Index() {
     if(success&&isObject(data) && Object.keys(data)?.length){
        const value=Object.keys(data)[0]
        let Tabs =[]
-       for (const [key, value ] of Object.entries(data)) {
-           Tabs.push({label: value, key:key?.toString()})
+       for (const [k, value ] of Object.entries(data)) {
+           Tabs.push({label: value, key:k?.toString()})
        }
       
        setTabs(Tabs)
