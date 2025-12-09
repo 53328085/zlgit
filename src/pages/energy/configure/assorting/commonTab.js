@@ -9,7 +9,7 @@ import moment from "moment";
 import style from './style.module.less'
 import UseTransfer from '@com/useTransfer'
 import { useSelector } from 'react-redux'
-import { selectProjectId } from '@redux/systemconfig.js'
+import { selectProjectId,selectOneLevelDefaultId } from '@redux/systemconfig.js'
 import upload from '@imgs/upload.png'
 import { Cspin} from '@com/comstyled'
 import { useGetPublicConsumeCategoryQuotas, useSetPublicConsumeCategoryQuotas} from './api'
@@ -27,6 +27,7 @@ export default function Index(props) {
     const [qform] = Form.useForm()
     const [isAdd, setIsAdd] = useState(false)
     const [tableData, setTableData] = useState([])
+    const areaId = useSelector(selectOneLevelDefaultId)
     const  time =useRef(moment())
    // const curryear = time.format('YYYY')
     const { Dragger } = Upload
@@ -340,7 +341,7 @@ export default function Index(props) {
     const [unknownTable, setUnknownTable] = useState([])
     //已选设备
     const getConfigedDevice = () => {
-        return queryEnergyConfigedDevicesInfo(projectId, type, energyId).then(res => {
+        return queryEnergyConfigedDevicesInfo({projectId, type, classifyId:energyId,areaId}).then(res => {
             if (res.success && res.data) {
                 setSubTable(res.data.relations)
                 setUnknownTable(res.data.noRelations)

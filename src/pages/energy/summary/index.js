@@ -40,8 +40,17 @@ const Imgbg = memo(({ projectId, areaVos }) => {
   const getbuild = async ({ buildingId, x, y }, curRef) => {
     try {
       const {width=0, height=0} =   curRef.current?.getBoundingClientRect() || {}
+      const topRect = boxRef.current.getBoundingClientRect()
+      console.log(topRect)
       x = x + parseInt(width / 2) + 18
       y = y - parseInt(height)
+    
+      if((topRect.width - x)<291) {
+        x = x - 291 - width-36
+      }
+    /*   if((topRect.height - y)<172) {
+
+      } */
       let { data, success } = await EnergyOverView.QueryImageBuilding(
         projectId,
         buildingId
@@ -125,11 +134,10 @@ const Imgbg = memo(({ projectId, areaVos }) => {
     xyRef.current.y = e.clientY - tipRect.top
     e.preventDefault();
     console.log(xyRef)
-  //  const {pageX, pageY} = e
-  //  setInfo({...info,x:pageX,y:pageY})
+  
 
   }
-  useEffect(()=>{
+/*   useEffect(()=>{
     document.addEventListener('mousemove', onMouseMove)
     document.addEventListener('mouseup', onMouseUp)
     return ()=>{
@@ -137,7 +145,7 @@ const Imgbg = memo(({ projectId, areaVos }) => {
       document.removeEventListener('mouseup', onMouseUp)
     }
 
-  },[])
+  },[]) */
   const onMouseUp=()=>{
      setInfo({...info,x:xyRef.current.x,y:xyRef.current.y})
      isDragging.current=false
