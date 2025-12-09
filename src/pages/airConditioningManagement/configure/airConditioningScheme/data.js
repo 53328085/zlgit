@@ -93,16 +93,20 @@ const forbidopt = [
   { label: "禁止关闭", value: 2 },
 ];
 const wokeType = [
+  { label: "自动", value: 5 },
   { label: "制冷", value: 1 },
-  { label: "制热", value: 2 },
+  { label: "制热", value: 4 },
   { label: "送风", value: 3 },
-  { label: "除湿", value: 4 },
+  { label: "除湿", value: 2 },
+
 ];
 const windSpeed = [
-  { label: "自动", value: 0 },
-  { label: "低", value: 1 },
+  { label: "自动", value: 5 },
+  { label: "微风", value: 4 },
+  { label: "低", value: 3 },
   { label: "中", value: 2 },
-  { label: "高", value: 3 },
+  { label: "高", value: 1 },
+ 
 ];
 
 /* 

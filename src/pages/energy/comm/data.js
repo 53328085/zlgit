@@ -6,7 +6,11 @@ export  const totalcolumns = [
       title: '序号',
       dataIndex: 'index',
       key: 'index',
-      render: (_, row,index)=> index+1
+      render: (_, row,index)=> index+1,
+      width: 60,
+      fixed: "left",
+      ellipsis:true,
+      align:'center'
     },
     {
       title: "公共能耗名称",
@@ -18,11 +22,13 @@ export  const totalcolumns = [
         title: "用电量（kWh）",
         dataIndex: 'periodValue',
         key: 'periodValue',
+        width:140,
       },
       {
         title: "同比用电量（kWh）",
         dataIndex: 'lastperiodValue',
         key: 'lastperiodValue',
+        width:140,
       },
       {
         title: "同比",

@@ -13,14 +13,21 @@ export const Mainbox =styled.div`
     }
     .right {
        display: grid;
-       grid-template-rows: 232px 1fr;
+       grid-template-rows: 242px 1fr;
        gap:16px;
        .topwrap {
         overflow: auto;
        .top { 
-        display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(229px, 1fr));
+       // display: grid;
+       // grid-template-columns: repeat(auto-fill, minmax(229px, 1fr));
+        display: flex;
+        
+        flex-wrap: nowrap;
         gap: 9px;
+        .card {
+            flex:1 0 264px;
+            display: flex;
+        }
        }
     }
     }
@@ -29,7 +36,7 @@ export const Mainbox =styled.div`
 `
 export const Power= styled.div`
 && {
-    min-width: 229px;
+    flex: 1;
     height: 232px;
     background: #FFFFFF;
     border-radius: 8px;

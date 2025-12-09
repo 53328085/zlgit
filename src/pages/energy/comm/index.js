@@ -60,7 +60,7 @@ export default function Index(props) {
     grid: {
       left: "0px",
       right: "0",
-      top: "40px",
+      top: "0px",
       bottom: "0px",
       containLabel: true,
     },
@@ -73,22 +73,27 @@ export default function Index(props) {
 
   const [poptions, setPoptions] = useState({
     type: 3,
-    pieData: { data: [], total: '100%', radius: ["55%", "80%"], label: {
+    pieData: { data: [], total: '100%', radius: ["55%", "75%"], label: {
       formatter: (params)=> {
         return params?.data?.value
       },
       width:100,
       fontSize:9
     }, },
+
     legend: {
-      top: 'center',
-      right: 20,
-      orient: 'vertical',
+      type: "scroll",
+      icon: "rect",
+      bottom: 0,
+      //top:0,
+       top: 'auto',
+      itemGap: 5
     },
     grid: {
       containLabel: true,
       left: 0,
       right: 0,
+      bottom: 32,
     },
    
   })
@@ -240,13 +245,13 @@ const {tableProps, search, refresh} =  useAntdTable(getData, {
         </Titlelayout>
         <div className="content">
           <div className="uparea">
-          <Titlelayout title="公共能耗占比" layout="flex"> 
+          <Titlelayout title="公共能耗占比" layout="flex" pv="8px 16px"> 
                 <Ichart {...poptions} /> 
             </Titlelayout>
             <Titlelayout title="公共能耗同比" layout="flex">
               <UseTable columns={totalcolumns} dataSource={energyTotal} scroll={{
                 x:"max-content",
-                y: 135
+                y: 200
               }}></UseTable>
               
             </Titlelayout>
@@ -281,7 +286,7 @@ const {tableProps, search, refresh} =  useAntdTable(getData, {
             columns={columns}
              key="table" 
              sheetName={sheetName}
-             scroll={{x: 1332, y: 400 }}
+             scroll={{x: 1332, y:350 }}
              onExport={onExport}
               /></div>}
           </div>

@@ -130,7 +130,7 @@ const getEnergyType = async()=> {
 },[projectId])  
 
   const cards = useMemo(() => { 
-    return datas?.consumeTotal?.map((data, idx) => <div onClick={()=> {
+    return datas?.consumeTotal?.map((data, idx) => <div className='card' onClick={()=> {
       queryEnergyDetail(data.name,idx)
    //   getQuota(id)
     }} key={data.name}><Powercom  active={active} idx={idx} view={view} data={data} date={dateType} energytype={energytype}  /></div>)

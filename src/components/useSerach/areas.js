@@ -4,15 +4,16 @@ import React, {useState, useEffect} from 'react'
 import {Form, Select, Space} from 'antd'
 import { useSelector } from 'react-redux'
 import { useGetQueryAll,useGetAllLevel } from './usecusthook'
-import {selectProjectId} from '@redux/systemconfig.js'
-import {w200 } from './data'
+import {selectProjectId, adaptation} from '@redux/systemconfig.js'
+//import {w200 } from './data'
 import {CSelect} from "./style"
 export default function Index({setexparams}) {
   const projectId= useSelector(selectProjectId)  
+  const laptop = useSelector(adaptation)?.laptop
   const areaLevels =useGetAllLevel(projectId)
  
   const instance = Form.useFormInstance()
- 
+   const w200= laptop?{width:160}:{width:200}
   const level = Form.useWatch("levelnum", instance)
   const subopt = useGetQueryAll(projectId, level)
   console.log(subopt)

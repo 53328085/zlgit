@@ -17,6 +17,7 @@ import { isObject } from "@com/usehandler";
 import { 
   themeColor, 
   energyType,
+  adaptation
 } from "@redux/systemconfig.js";
 import { useRequest } from "ahooks";
 import { Mainbox, Ctag, TitP } from "./style";
@@ -183,7 +184,7 @@ const Imgbg = memo(({ projectId, areaVos }) => {
 export default function Index() {
   //const [form] = Form.useForm();
    let { exparams } = useOutletContext()
-   
+    let { laptop } = useSelector(adaptation)
    const { areaId, projectId } = exparams || {};
 
   const [energyValue, setEnergyValue] = useState({});
@@ -309,7 +310,7 @@ const columns = [
   return (
    
     <Pagecount bgcolor="transparent" pd="0">
-      <Mainbox>
+      <Mainbox laptop={laptop}>
         <div className="content">
           <Imgbg projectId={projectId} areaVos={areaVos} />
           <div className="right">
