@@ -7,15 +7,18 @@ import { useGetSpaceTrees } from './usecusthook'
 import {selectProjectId, selectOneLevelDefaultId} from '@redux/systemconfig.js'
 import {CtreeSelect} from "./style.js"
 const { SHOW_PARENT } = TreeSelect
-export default function Index({setexparams,id,isall=true, ...rest }) {
+export default function Index({setexparams,id,isall=true,defaultId, ...rest }) {
   const projectId= useSelector(selectProjectId)  
   const areaId =typeof id =="number" ? id : useSelector(selectOneLevelDefaultId)
   const [areaLevels, allAreaId] =useGetSpaceTrees(projectId, areaId, isall)
   const instance = Form.useFormInstance()
   useEffect(() => {  
-      instance?.setFieldValue("sublevel", allAreaId )
-    setexparams?.({ ...instance.getFieldsValue(true) })
-  }, [areaLevels])
+      
+        instance?.setFieldValue("sublevel", defaultId || allAreaId )
+        setexparams?.({ ...instance.getFieldsValue(true) })
+      
+    
+  }, [areaLevels,allAreaId,defaultId])
   const onChange = (v) => { 
     setexparams?.({ ...instance.getFieldsValue(true) })
   }

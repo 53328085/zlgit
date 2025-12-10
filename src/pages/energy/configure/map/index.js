@@ -9,6 +9,8 @@ import { message, Form, Input, InputNumber, Space, Divider, Button, Checkbox, Ta
 import {UpdateEnergyImage } from '@api/api.js'
 import {Cspin} from "@com/comstyled"
 import {isObject} from '@com/usehandler'
+import AreaLevel from "@com/useSerach/areas.js"
+ 
 const Ctag = styled(Tag)`
   &&{
     position: absolute;
@@ -36,6 +38,24 @@ const Main = styled.div`
         align-items: center;
         height: 32px;
       }
+   }
+   .setTitle {
+      display: flex;
+      .hot {
+         flex: 0 0 1368px;
+         display: flex;
+         align-items: center;
+         justify-content: center;
+         font-size: 16px;
+         color: rgba(0, 0, 0, 0.85);
+         font-weight: 500;
+      }
+      .level {
+         .ant-form-item {
+            margin-bottom: 0;
+         }
+      }
+      
    }
    .imgbox {
     display: flex;
@@ -78,6 +98,7 @@ const Main = styled.div`
  
 export default function Index() {
    const [form] = Form.useForm();
+   const [lform] = Form.useForm();
    const projectId = useSelector(selectProjectId)  
    const [energyImage, setEnergyImage]= useState('')
    const [loading, setLoading] = useState(false)
@@ -85,6 +106,7 @@ export default function Index() {
    const [area, setArea] = useState([])
    const [curarea, setCurarea] = useState(null)
    const [list, setList] = useState([])
+   const [level, setLevel] =useState(null)
   const onChnage = (e) => {
      setEnergyImage(e)
   }
@@ -95,7 +117,8 @@ export default function Index() {
      setLoading(true)
      let imageBuildingCoordinate = []
      let values =await form.validateFields();
-      
+     let level = lform.getFieldValue('levelnum')
+     console.log(level)
      for(let [key, value] of Object.entries(values)) {
         if(value.c && value.checked) {
            let  [x, y] = value.c.split(',');
@@ -108,6 +131,7 @@ export default function Index() {
       projectId,
       energyImage,
       imageBuildingCoordinate,
+      level,
      }
      let {success,errMsg} = await UpdateEnergyImage.update(params)
      if(success) {
@@ -124,27 +148,22 @@ export default function Index() {
     }
     
   }
-  const getArea =async () => {
-   try {
-      let {success, data} =  await UpdateEnergyImage.AeraQueryAll(projectId)
-      if(success && Array.isArray(data)) {
-       setArea(data)
-      }else{
-       setArea([])
-      }
-   } catch (error) {
-      console.log(error)
-   }
-
+  const setexparams =(datas)=> {
+     if(Array.isArray(datas)) {
+      setArea(datas)
+    }else {
+      setArea([])
+    }
   }
+ 
   const query =async () => {
        try {
          setSpinning(true)
         let {success, data} = await  UpdateEnergyImage.query(projectId)
 
-        if(success && isObject ) {
-            let {fileImage,imageBuildingCoordinateVos} = data;
-
+        if(success && isObject(data) ) {
+            let {fileImage,imageBuildingCoordinateVos, level} = data;
+             setLevel(level)
             setEnergyImage(fileImage)
             if(Array.isArray(imageBuildingCoordinateVos)) {
                imageBuildingCoordinateVos.forEach(i => {
@@ -202,12 +221,22 @@ export default function Index() {
       form.setFieldValue([ar.id, 'c'], null)
     }
   }
-
+  const onValuesChange=(v)=>{
+   form.resetFields()
+  }
   useEffect(() => {
     if(!projectId) return
      query()
-     getArea()
+   //  getArea()
   }, [projectId])
+
+/*   useEffect(()=> {
+    if(Number.isInteger(parseInt(projectId)) && Number.isInteger(parseInt(level))) {
+      getArea()
+      
+    }
+
+  },[level,projectId]) */
   const msg =(<div style={{color: "#515151"}}>
      <p>鼠标点击获取热点中心</p>
      <p>默认热点半径40px,最小值16px,可以手动修改</p>
@@ -225,7 +254,14 @@ export default function Index() {
            </div>
            <div className='tip'>（图片大小为: 1250*784 png或jpg 格式,不超过800KB）</div>
         </div>
-        <Divider>设置图片热点区域</Divider>
+        <div className='setTitle'>
+            <div className='hot'>设置图片热点区域</div>
+            <div className='level'>
+               <Form form={lform} onValuesChange={onValuesChange}>
+                {typeof level == "number" &&  <AreaLevel isarea={false} defaultLevel={level} getsublevel={setexparams} />} 
+               </Form>
+            </div>
+         </div>
         <div className='setwrap'>
          
            <div className="set">
