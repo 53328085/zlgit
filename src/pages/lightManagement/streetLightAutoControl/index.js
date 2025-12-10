@@ -95,7 +95,7 @@ export default function Index() {
   return (
     <Pagecount pd="0" bgcolor="none">
       <Mainwrap>
-        <Titlelayout layout="flex" title="路灯设备列表" dr="column"  >
+        <Titlelayout layout="flex" title="策略列表" dr="column"  >
           <Input.Search placeholder="请输入关键字查询" allowClear onSearch={onSearch} />
           <Radio.Group value={schemeId} onChange={onChange} style={{ marginTop: "16px" }}>
             <Space direction="vertical">

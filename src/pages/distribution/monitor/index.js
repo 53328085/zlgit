@@ -314,6 +314,9 @@ export default function Index() {
     </Collapse>
   </div>
 </HoverDiv>
+{
+  projectId!=20 &&
+<>
 <HoverDiv>
   直流屏监控
   <div className="list" >
@@ -462,6 +465,8 @@ export default function Index() {
     }
   </div>
 </HoverDiv>
+</>
+}
             </div>
             </div>
           </div>

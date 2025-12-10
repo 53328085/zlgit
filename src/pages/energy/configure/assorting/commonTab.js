@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useRef, useEffect, useMemo } from "react";
 import ClassfyTree from './classfyTree'
 import { energyDesigner } from '@api/api.js'
 import { useRequest } from "ahooks";
@@ -7,9 +7,9 @@ import  CustTable from "@com/useTable"
 import { Input, Form, message, Spin, Upload, Modal, Table,DatePicker } from "antd";
 import moment from "moment";
 import style from './style.module.less'
-import UseTransfer from '@com/useTransfer'
+import UseTransfer from '@com/useTransfer/assorting'
 import { useSelector } from 'react-redux'
-import { selectProjectId,selectOneLevelDefaultId } from '@redux/systemconfig.js'
+import { selectProjectId } from '@redux/systemconfig.js'
 import upload from '@imgs/upload.png'
 import { Cspin} from '@com/comstyled'
 import { useGetPublicConsumeCategoryQuotas, useSetPublicConsumeCategoryQuotas} from './api'
@@ -27,7 +27,7 @@ export default function Index(props) {
     const [qform] = Form.useForm()
     const [isAdd, setIsAdd] = useState(false)
     const [tableData, setTableData] = useState([])
-    const areaId = useSelector(selectOneLevelDefaultId)
+   
     const  time =useRef(moment())
    // const curryear = time.format('YYYY')
     const { Dragger } = Upload
@@ -147,10 +147,9 @@ export default function Index(props) {
                 subTitle: values.data.energyName,
                 unknownTitle: '未选中的设备',
             })
-            setTimeout(() => {
-                setRun()
-                // setAllRun()
-            }, 200)
+            /* setTimeout(() => {
+                setRun() 
+            }, 200) */
             setTransTag('open');
             props.getValues('open')
         }
@@ -339,7 +338,13 @@ export default function Index(props) {
     const [subTable, setSubTable] = useState([])
 
     const [unknownTable, setUnknownTable] = useState([])
-    //已选设备
+    const params =useMemo(()=>({
+        projectId,
+        type,
+        classifyId:energyId,
+       // areaId,
+      }), [projectId, type, energyId])
+       //已选设备
     const getConfigedDevice = () => {
         return queryEnergyConfigedDevicesInfo({projectId, type, classifyId:energyId,areaId}).then(res => {
             if (res.success && res.data) {
@@ -391,7 +396,7 @@ export default function Index(props) {
                 arr.push(item.sn)
             })
         }
-        let areaId =params?.areaId?.[0]
+        let areaId =Array.isArray(params?.areaId)  ?  params?.areaId?.[0] : params?.areaId
         console.log(areaId)
         saveEnergyDevices(projectId, type, energyId, areaId, arr).then(res => {
             if (res.success) {
@@ -399,15 +404,15 @@ export default function Index(props) {
                     type: 'success',
                     content: '能耗设备配置成功!'
                 })
-                setTransTag('close');
+              //  setTransTag('close');
                 props.getValues('close')
             } else {
                 messageApi.open({
                     type: 'success',
                     content: res.errMsg || '能耗设备配置保存失败，请重试！'
                 })
-                setTransTag('close');
-                props.getValues('close')
+            //    setTransTag('close');
+               props.getValues('close')
             }
         })
     }
@@ -526,7 +531,7 @@ export default function Index(props) {
                 </div>
             </Modal>
 
-            <UseTransfer mask={transTag} transferTitle={transferTitle} columns={columns} mainTable={mainTable} subTable={subTable} unknownTable={unknownTable} saveValue={getSaveValue} closeValue={getCloseValue} showarea={true}></UseTransfer>
+            <UseTransfer mask={transTag} transferTitle={transferTitle} columns={columns} params={params}  saveValue={getSaveValue} closeValue={getCloseValue} showarea={true}></UseTransfer>
 
             <Custmodl title='错误原因' ref={errRef} mold="cust" width={600} onOk={() => onCloseError()}>
                 <div style={{ display: "flex", alignItems: "center" }}>

@@ -7,7 +7,7 @@ import { useGetQueryAll,useGetAllLevel } from './usecusthook'
 import {selectProjectId, adaptation} from '@redux/systemconfig.js'
 //import {w200 } from './data'
 import {CSelect} from "./style"
-export default function Index({setexparams}) {
+export default function Index({setexparams, islevel=true, isarea=true,defaultLevel,getsublevel }) {  // islevel=true, isarea=true 能源管理 设置态 园区图片 页面  默认需要区域级别
   const projectId= useSelector(selectProjectId)  
   const laptop = useSelector(adaptation)?.laptop
   const areaLevels =useGetAllLevel(projectId)
@@ -15,16 +15,20 @@ export default function Index({setexparams}) {
   const instance = Form.useFormInstance()
    const w200= laptop?{width:160}:{width:200}
   const level = Form.useWatch("levelnum", instance)
-  const subopt = useGetQueryAll(projectId, level)
-  console.log(subopt)
+  const subopt = useGetQueryAll(projectId, level)   
   useEffect(() => {  
-    instance?.setFieldValue("levelnum", areaLevels?.[0]?.level)
+    instance?.setFieldValue("levelnum", defaultLevel || areaLevels?.[0]?.level)
  
   }, [areaLevels])
   useEffect(() => {
     instance.setFieldValue("selectlevel", subopt?.map(s =>s.id) )
     setexparams?.({ ...instance.getFieldsValue(true) })
-  }, [subopt])
+    if (Array.isArray(subopt) && typeof getsublevel == "function") {
+      getsublevel?.(subopt)
+    }else{
+      getsublevel?.([])
+    }
+  }, [subopt, getsublevel])
  
 
  const onChange = (value) => { 
@@ -32,12 +36,12 @@ export default function Index({setexparams}) {
   }
   return (
     <Space size={16}>
-     <Form.Item label="区域级别" name="levelnum">
+    {islevel && <Form.Item label="区域级别" name="levelnum">
         <Select options={areaLevels} style={w200} fieldNames={{label: 'name', value: 'level'  }}  ></Select>
-     </Form.Item>
-     <Form.Item label="区域选择" name="selectlevel">
+     </Form.Item>}
+   {isarea &&  <Form.Item label="区域选择" name="selectlevel">
         <CSelect mode="multiple" options={subopt} style={{minWidth: 200}} fieldNames={{label: 'name', value: 'id'}} onChange={onChange} ></CSelect>
-     </Form.Item>
+     </Form.Item>}
     </Space>
   )
 }
