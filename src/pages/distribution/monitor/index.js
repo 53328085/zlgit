@@ -292,7 +292,7 @@ export default function Index() {
                 <span>{item.totVar || '-'}</span>
               </div>
               <div className="line">
-                <span>实在功率</span>
+                <span>视在功率</span>
                 <span>{item.totVA || '-'}</span>
               </div>
               <div className="line">

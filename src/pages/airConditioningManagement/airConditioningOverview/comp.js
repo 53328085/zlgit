@@ -66,7 +66,7 @@ const CusCard = ({
         <div className={`small`}>
           环比昨日：
           <span>
-            {parseFloat(value2) > 0 ? "+" : "-"}
+            {parseFloat(value2) >= 0 ? "+" : "-"}
             {value2}
           </span>
           <img src={parseFloat(value2) > 0 ? rise : down} alt="" />
@@ -141,7 +141,7 @@ export const DetailComp = React.memo(({ overData }) => {
         },
       ];
     //  console.log("ranking",ranking)
-    //  setEnergyData(arr);
+     setEnergyData(arr);
       const xAxis = ranking?.map((it) => it?.name);
       const sdata = ranking?.map((it) => it?.value);
 
@@ -182,10 +182,10 @@ export const DetailComp = React.memo(({ overData }) => {
   [overData])
   return (
     <Detail>
-      {energyData.map((item, index) => (
+     {energyData.map((item, index) => (
         <CusCard {...item} key={index} index={index} />
-      ))}
-
+      ))}  
+      
       <div className="chart">
         <div className="head">
           <img

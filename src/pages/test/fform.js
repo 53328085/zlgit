@@ -1,6 +1,6 @@
 import { Table } from 'antd';
 import update from 'immutability-helper';
-import React, { useCallback, useRef, useState } from 'react';
+import React, { useCallback, useRef, useState,useEffect } from 'react';
 import { DndProvider, useDrag, useDrop } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
 const type = 'DraggableBodyRow';
@@ -61,61 +61,41 @@ const columns = [
     key: 'address',
   },
 ];
-const App = () => {
-  const [data, setData] = useState([
-    {
-      key: '1',
-      name: 'John Brown',
-      age: 32,
-      address: 'New York No. 1 Lake Park',
-    },
-    {
-      key: '2',
-      name: 'Jim Green',
-      age: 42,
-      address: 'London No. 1 Lake Park',
-    },
-    {
-      key: '3',
-      name: 'Joe Black',
-      age: 32,
-      address: 'Sidney No. 1 Lake Park',
-    },
-  ]);
-  const components = {
-    body: {
-      row: DraggableBodyRow,
-    },
-  };
-  const moveRow = useCallback(
-    (dragIndex, hoverIndex) => {
-      const dragRow = data[dragIndex];
-      setData(
-        update(data, {
-          $splice: [
-            [dragIndex, 1],
-            [hoverIndex, 0, dragRow],
-          ],
-        }),
-      );
-    },
-    [data],
-  );
+const Parent =({children})=> {
+ return (<div style={{width: 300,height: 300, margin: '0 auto', backgroundColor: '#ddd'}}> 
+ <h2>下面嵌套的子组件</h2>
+     {children }
+  </div>)
+}
+const Child = () => {
+  return <div>child</div>;
+};
+
+const Medi=({onPay, onStop})=> {
   return (
-    <DndProvider backend={HTML5Backend}>
-      <Table
-        columns={columns}
-        dataSource={data}
-        components={components}
-        onRow={(_, index) => {
-          const attr = {
-            index,
-            moveRow,
-          };
-          return attr;
-        }}
-      />
-    </DndProvider>
+    <div>
+      <button onClick={onPay}>支付</button>
+      <button onClick={onStop}>停止</button>
+    </div>
+  );
+
+}
+const App = () => {
+  const [data, setData] = useState();
+  const resolve = Promise.resolve(1)
+  useEffect(() => {
+    resolve.then(res => {
+      console.log(res)
+    })
+    setData(100)
+    console.log(data)
+  }, [])
+  
+  return (
+    <div>
+     <h1>父组件嵌套</h1>
+       <Medi onPay={() => {console.log('支付')}} onStop={() => {console.log('停止')}}></Medi>
+    </div>
   );
 };
 export default App;
