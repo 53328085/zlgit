@@ -26,18 +26,18 @@ export default function Index() {
     }[primary] || []
     return  nesteds.includes(nested) ? {} : false
   }, [primary, nested]);
- 
+
   console.log("include",include)
 
   let includemodule=useMemo(() => {  // 需要显示搜索 ***（全部）的模块中排除的页面
     let primaries = {
       runtimeEnergy:[nested]
     }[primary]
-    
-    return  Array.isArray(primaries) ? primaries.includes("summary") : false 
+
+    return  Array.isArray(primaries) ? primaries.includes("summary") : false
   }, [primary, nested]);
   console.log("includemodule",includemodule)
-   
+
   const onelevel = useSelector(selectOneLevel);
   const varlabel = useSelector(levelDefaultLabel);
   const projectId = useSelector(selectProjectId)
@@ -69,11 +69,12 @@ export default function Index() {
       "grading",
       "light",
       "region",
-      "comm"
+      "comm",
+      'timePeriodEnergy'
     ],
     runtimeStorage: [ // 储能管理
       "station",
-      "PCSMonitor", // pcs监控     
+      "PCSMonitor", // pcs监控
       // "BMSMonitor",
       "storageControl",
       "consumeStatistics",
@@ -122,7 +123,7 @@ export default function Index() {
     //  "streetLightEnergyMonitor",
       "lightControl",
    //   "streetLightDataReport",
-      
+
     ],
     streetLightManagement: [ // 照明控制 设置态
       "streetLightLineConfig",
@@ -232,6 +233,9 @@ export default function Index() {
           case "region":
             setConfig({ energytype: true, isdate: true, shiftNo: true, gas: false, isAreaId:false,isLevles:true });
             break;
+          case "timePeriodEnergy":
+            setConfig({ isdate: true , shiftNo: true });
+            break;
           default:
             setConfig({});
             break;
@@ -294,7 +298,7 @@ export default function Index() {
       } else if (primary == "cabinets") {
         setConfig({})
       } else if (primary == "lightManagement") {
-        switch (nested) {        
+        switch (nested) {
           case "lightControl":
             setConfig({ isview: true, isdate: true, shiftNo: true });
             break;
@@ -329,7 +333,7 @@ export default function Index() {
              setConfig({ custview: true });
              break;
          }
- 
+
        } */
       // 设计态
       if (primary == "designerEnergy") {
@@ -370,7 +374,7 @@ export default function Index() {
 
   useEffect(() => {
     if ((whole.includes(primary) && !includemodule) || include) {
-      let isin = onelevel.find((l) => l.id == 0);     
+      let isin = onelevel.find((l) => l.id == 0);
       if (!isin) {
         dispatch(
           getOnelevel([

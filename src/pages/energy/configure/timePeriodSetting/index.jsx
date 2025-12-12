@@ -61,18 +61,33 @@ export default function Index () {
   /**
    * 表格内删除
    */
-  const onTableDeleteClick = useMemoizedFn((record) => {
-    console.log('onTableDeleteClick', record)
+  const onTableDeleteClick = useMemoizedFn(async ({ enableDate }) => {
+    EnergyManagement.deleteTimePeriodSettingInfoApi({ projectId, enableDate })
+      .then(({ success, errMsg }) => {
+        if (success) {
+          message.success('删除成功')
+          getTableData({ projectId })
+        } else {
+          message.error(errMsg)
+        }
+      })
+      .catch(err => {
+        message.error(err.message)
+      })
   })
 
   /**
    * 切换启用状态
    */
   const onStatusChange = useMemoizedFn((checked) => {
-    EnergyManagement.updateTimePeriodSettingStatusApi({ projectId, enable: checked ? 1 : 0 })
-      .then(({ data }) => {
-        message.success(checked ? '启用成功' : '关闭成功')
-        setStatus(checked)
+    EnergyManagement.updateProjectTimePeriodSettingStatusApi({ projectId, enable: checked ? 1 : 0 })
+      .then(({ success, errMsg }) => {
+        if (success) {
+          message.success(checked ? '启用成功' : '关闭成功')
+          setStatus(checked)
+        } else {
+          message.error(errMsg)
+        }
       })
       .catch(err => {
         message.error(err.message)
@@ -82,13 +97,30 @@ export default function Index () {
   /**
    * 获取分时能耗时段设置
    */
-  const { run: getTableData } = useRequest(EnergyManagement.getTimePeriodSettingInfoApi, {
+  const { run: getTableData } = useRequest(EnergyManagement.getTimePeriodSettingInfoListApi, {
     defaultParams: [{ projectId }], // 参数需用数组包裹
-    onSuccess: ({ data }) => {
-      if (isArray(data?.timeShares)) {
+    onSuccess: ({ success, data, errMsg }) => {
+      if (success && isArray(data?.timeShares)) {
         setTableData(data?.timeShares)
       } else {
+        message.error(errMsg)
         setTableData([])
+      }
+    },
+    manual: false,
+    refreshDeps: [projectId]
+  })
+
+  /**
+   * 获取分时能耗时段设置
+   */
+  const { run: getStatus } = useRequest(EnergyManagement.getProjectTimePeriodSettingStatusApi, {
+    defaultParams: [{ projectId }], // 参数需用数组包裹
+    onSuccess: ({ success, errMsg, data }) => {
+      if (success) {
+        setStatus(data === 1)
+      } else {
+        message.error(errMsg)
       }
     },
     manual: false,
@@ -97,7 +129,7 @@ export default function Index () {
 
   return (
     <PageContent pd="0" bgcolor="">
-      <TitleLayout title="分时设置" layout="flex">
+      <TitleLayout title="分时方案设置" layout="flex">
         <ContentView>
           <div className="add">
             <div className="enable">
@@ -114,10 +146,11 @@ export default function Index () {
           <UserTable
             columns={getColumns(onTableEditClick, onTableDeleteClick)}
             dataSource={tableData}
+            rowKey="enableDate"
           />
         </ContentView>
       </TitleLayout>
-      <TimePeriodInfoDialog ref={timePeriodInfoDialogRef} onRefreshClick={getTableData}/>
+      <TimePeriodInfoDialog ref={timePeriodInfoDialogRef} onRefreshClick={() => getTableData({ projectId })}/>
     </PageContent>
   )
 }

@@ -1,24 +1,31 @@
 import moment from 'moment'
-import { Popconfirm, Space, Typography } from 'antd'
+import { Popconfirm, Space, Tag, Typography } from 'antd'
 
 const { Link } = Typography
 
 export const getColumns = (onTableEditClick, onTableDeleteClick) => {
   return [
     {
-      title: '启用日期',
-      dataIndex: 'enableDate',
-    },
-    {
       title: '方案名称',
       dataIndex: 'planName',
+    },
+    {
+      title: '应用状态',
+      dataIndex: 'enable',
+      render: (_, record) => <Tag
+        color={record.enable === 1 ? 'green' : record.enable === 2 ? '' : 'blue'}>{record.enable === 1 ? '应用中' : record.enable === 2 ? '已失效' : '未生效'}</Tag>,
+    },
+    {
+      title: '启用日期',
+      dataIndex: 'enableDate',
+      render: (_, record) => moment(record.enableDate).format('YYYY-MM-DD')
     },
     {
       title: '时段数',
       dataIndex: 'count',
     },
     {
-      title: '时段',
+      title: '方案内容',
       dataIndex: 'periods',
     },
     {
@@ -26,13 +33,12 @@ export const getColumns = (onTableEditClick, onTableDeleteClick) => {
       key: 'op',
       render: (_, record) => {
         return (
-          moment(record.enableDate, 'YYYY-MM-DD HH:mm:ss').diff(moment(), 'days', true) > 0 ?
             <Space size={32}>
-              <Link onClick={() => onTableEditClick(record)} underline> 修改 </Link>
+              <Link disabled={record.enable !== 0} onClick={() => onTableEditClick(record)} underline> 修改 </Link>
               <Popconfirm title="是否删除" onConfirm={() => onTableDeleteClick(record)}>
-                <Link type="danger" underline>删除</Link>
+                <Link disabled={record.enable === 1} type="danger" underline>删除</Link>
               </Popconfirm>
-            </Space> : null
+            </Space>
         )
       }
     },

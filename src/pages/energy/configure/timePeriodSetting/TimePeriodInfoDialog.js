@@ -1,6 +1,6 @@
 import { forwardRef, useEffect, useImperativeHandle, useRef, useState } from 'react'
 import CModal from '@com/useModal'
-import { useMemoizedFn } from 'ahooks'
+import { useMemoizedFn, useRequest } from 'ahooks'
 import styled from 'styled-components'
 import { DatePicker, Divider, Form, Input, message, Select, Space, TimePicker } from 'antd'
 import moment from 'moment'
@@ -12,7 +12,7 @@ import {
 import { useSelector } from 'react-redux'
 import { selectProjectId } from '@redux/systemconfig'
 import { EnergyManagement } from '@api/api'
-import { cloneDeep, merge } from 'lodash'
+import { merge } from 'lodash'
 
 const MainBox = styled.div`
     height: 600px;
@@ -43,6 +43,8 @@ const Index = ({ onRefreshClick }, ref) => {
   const [isAdd, setIsAdd] = useState(true)
   //项目id
   const projectId = useSelector(selectProjectId)
+  //编辑的分时设置唯一标识
+  const [editKey, setEditKey] = useState('')
   //表单
   const [form] = Form.useForm()
   //弹窗ref
@@ -57,13 +59,21 @@ const Index = ({ onRefreshClick }, ref) => {
    */
   const showDialog = (info) => {
     if (info) {
+      setEditKey(info.enableDate)
       setIsAdd(false)
+      form.setFieldsValue({
+        ...info,
+        step: info.count,
+        enableDate: moment(info.enableDate)
+      })
+      //获取详情
+      getInfoDetail({ projectId, enableDate: info.enableDate })
     } else {
       setIsAdd(true)
+      form.setFieldsValue({
+        ...DefaultFormInfo
+      })
     }
-    form.setFieldsValue({
-      ...DefaultFormInfo
-    })
     modalRef.current?.onOpen()
   }
 
@@ -80,14 +90,24 @@ const Index = ({ onRefreshClick }, ref) => {
         enableDate: '',
         newTariffTimes: []
       }, values)
-      params.enableDate = moment(params.enableDate).format('YYYY-MM-DD')
+      if (isAdd) {
+        params.enableDate = moment(params.enableDate).format('YYYY-MM-DD')
+      } else {
+        params.newEnableDate = moment(params.enableDate).format('YYYY-MM-DD')
+        params.oldEnableDate = moment(editKey).format('YYYY-MM-DD')
+        delete params.enableDate
+      }
       params.newTariffTimes.forEach(item => {
         if (item.endTime === '24:00') {
           item.endTime = '00:00'
         }
       })
-      console.log('params', params)
-      const result = await EnergyManagement.setTimePeriodSettingInfoApi(params)
+      let result
+      if (isAdd) {
+        result = await EnergyManagement.setTimePeriodSettingInfoApi(params)
+      } else {
+        result = await EnergyManagement.editTimePeriodSettingInfoApi(params)
+      }
       if (result.success) {
         message.success('保存成功')
         modalRef.current?.onCancel()
@@ -209,6 +229,23 @@ const Index = ({ onRefreshClick }, ref) => {
     return true // 所有校验通过
   })
 
+  /**
+   * 获取分时能耗时段设置
+   */
+  const { run: getInfoDetail } = useRequest(EnergyManagement.getTimePeriodSettingInfoApi, {
+    onSuccess: ({ success, errMsg, data }) => {
+      if (success && data) {
+        form.setFieldsValue({
+          newTariffTimes: data?.tariffTimes
+        })
+      } else {
+        message.error(errMsg)
+      }
+    },
+    manual: true,
+    refreshDeps: [projectId]
+  })
+
   useEffect(() => {
     if (timePeriodStep) {
       form.setFieldsValue({
@@ -279,7 +316,7 @@ const Index = ({ onRefreshClick }, ref) => {
             {(fields) => (
               <div className="times">
                 {fields.map(({ key, name }) => (
-                  <Space>
+                  <Space key={key}>
                     <Form.Item
                       name={[name, 'tariffTimeType']}
                       label={`时段${key + 1}`}
