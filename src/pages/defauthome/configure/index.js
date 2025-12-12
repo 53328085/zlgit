@@ -60,8 +60,8 @@ import Inspection from "@com/defaultHome/inspection" // Inspection 本月巡检
 import RoomNum from '@com/defaultHome/roomNum' // 变配电站数量（个）
 import RoomCapacity from '@com/defaultHome/roomCapacity' // 总额度容量
 import Roomload from '@com/defaultHome/roomload' // 实时负荷
-// import Loadlate from "@com/defaultHome/loadlate" // 负荷率
-import Loadlate from '@com/defaultHome/loadxls' // 负荷率 香炉山项目
+ import Loadlate from "@com/defaultHome/loadlate" // 负荷率
+//import Loadlate from '@com/defaultHome/loadxls' // 负荷率 香炉山项目
 import {useTranslation} from "react-i18next"
 import Context from "@com/content"
 // TodayElectricity 今日用电量  TransformerTotal 变压器总负荷 TransformerNum 变压器数量  Inspection 本月巡检

@@ -14,7 +14,7 @@ import UserTree from "@com/useTree"
 import UseTable from "@com/useTable"
  
 import {Pagelayout,Radiogroup} from "./style"
-import {totalcolumns,dtlcolumns} from "./data"
+import {dtlcolumns,useColumns} from "./data"
 import {useQueryPublicEnergyData} from "./api"
 import { isObject } from "lodash";
  
@@ -23,14 +23,12 @@ export default function Index(props) {
 
   let { exparams = {} } = useOutletContext() || {}
   let {areaId, publictype, publicdate, projectId, energytype,publicrangedate } = exparams
+ 
   const [pagetotal, setPageTotal] = useState(0) 
-
- const chartTitle={
-   1: "用电量 (kWh)",
-   2: '用冷水量 (m³)',
-   7: '用热水量 (m³)',
-   18: '用气量 (m³)'
- }[energytype] || ""
+  const [title, setTitle] = useState('')
+  const totalcolumns  = useColumns(title)
+  
+ 
   
   const sheetName = useMemo(()=> {
      let formmat = {
@@ -39,14 +37,9 @@ export default function Index(props) {
       3: "YYYY"
      }[publictype]
      let time = publictype==4 ?  (publicrangedate?.[0]?.format?.("YYYY-MM-DD") + "--"+  publicrangedate?.[1]?.format?.("YYYY-MM-DD") ):   publicdate?.format(formmat)
-     let type ={
-      1: "用电",
-      2: '用冷水',
-      7: '用热水',
-      18: '用气'
-    }[energytype] + "公共能耗"
+     let type = title + "公共能耗"
     return type +"_" +time
-  }, [publictype, publicdate,  energytype,publicrangedate])
+  }, [publictype, publicdate,  title,publicrangedate])
 
   const [treeIdList, setTreeIdList] = useState(null);
  
@@ -60,7 +53,7 @@ export default function Index(props) {
     grid: {
       left: "0px",
       right: "0",
-      top: "0px",
+      top: "32px",
       bottom: "0px",
       containLabel: true,
     },
@@ -126,15 +119,16 @@ export default function Index(props) {
     } else {
       setPageTotal(0)
     }
-    let { detail = {}, energySub = [], energyTotal = [], proportion = [] , deviceDetailTable} =data
+    let { detail = {}, energySub = [], energyTotal = [], proportion = [] , deviceDetailTable, title} =data
     const pietotal = proportion.reduce((a, b)=>  a+parseFloat(b.value), 0)
     let { x = [], y = [] } = detail
+    setTitle(title)
     setOptions({
       ...options,
       dataset: {
         dimensions: [
           { name: 'x', type: 'time' },
-          { name: 'y', displayName: chartTitle },
+          { name: 'y', displayName: title },
 
         ],
         source: [x, y],
@@ -208,6 +202,7 @@ export default function Index(props) {
    }else {
     setEnergyTotal([]);
     setPageTotal(0)
+    setTitle('')
     message.error(errMsg || '数据出错');
     return {
       list:[],

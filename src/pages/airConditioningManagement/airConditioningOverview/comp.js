@@ -25,6 +25,7 @@ import air from "./imgs/air.png";
 import rise from "./imgs/rise.png";
 import down from "./imgs/down.png";
 import exportImg from "./imgs/export.png";
+import {ExportExcel} from "@com/useButton"
 const CusCard = ({
   title = "能耗情况(kWh)",
   secTitle = "当日累计用电量",
@@ -158,7 +159,7 @@ export const DetailComp = React.memo(({ overData }) => {
       grid: {
         left: "0px",
         right: "0",
-        top: "0px",
+        top: "16px",
         bottom: "0px",
         containLabel: true,
       },
@@ -262,7 +263,7 @@ export const FooterChartComp = React.memo(({ tableData, chartData }) => {
         isbgShow={true}
       >
         <div
-          style={{ marginLeft: "auto", display: "flex", alignItems: "center" }}
+          style={{ marginLeft: "auto", display: "flex", alignItems: "center", columnGap: 16 }}
         >
           <Radio.Group
             block
@@ -270,13 +271,14 @@ export const FooterChartComp = React.memo(({ tableData, chartData }) => {
             defaultValue="1"
             optionType="button"
             buttonStyle="solid"
-            size="small"
+         //   size="small"
             style={{ marginLeft: 16 }}
             onChange={(e) => {
               setTabId(e.target.value);
             }}
           />
-          <div
+          <ExportExcel tb={tableRef} single={true} disabled={tabId == "1"}    />
+         {/*  <div
             style={{
               display: "flex",
               alignItems: "center",
@@ -289,8 +291,8 @@ export const FooterChartComp = React.memo(({ tableData, chartData }) => {
           >
             <img src={exportImg} alt="" style={{ marginRight: 4 }} />
             <span style={{ fontWeight: 14 }}>导出</span>
-          </div>
-        </div>
+          </div>*/}
+        </div> 
       </BlueColumn>
       {tabId == "1" ? (
         <div className="chartdom">

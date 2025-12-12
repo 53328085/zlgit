@@ -193,7 +193,9 @@ const  {tableProps,  search, refresh} = useAntdTable(getUnBind, {
                         <Serach   onSearch={searched.submit}  placeholder="请输入空调名称或控制器编号"></Serach>
                         </Form.Item>
                    </Form>
-                 <UserTable columns={bindcol} {...tablePropsed} rowSelection={rowSelectioned} rowKey={row=>row.id} ></UserTable>
+                 <UserTable columns={bindcol} {...tablePropsed} rowSelection={rowSelectioned} rowKey={row=>row.id} scroll={{
+                  y:434-70
+                 }} ></UserTable>
                </div>
                </div>
             </Bindwrap>

@@ -95,9 +95,9 @@ export const Radio_Options = [
   {
     label: "图表模式",
     value: "1",
-    style:labelstyle
+    //style:labelstyle
   },
-  { label: "列表模式", value: "2", style:labelstyle },
+  { label: "列表模式", value: "2",   },
 ];
 export const Chart_Options = {
   // 提示框配置
@@ -240,11 +240,7 @@ export const TbHeader = [
     title: "时间",
     dataIndex: "date",
     key: "date",
-    width: 110,
-    sorter: {
-      compare: (a, b) => a.date - b.date,
-      multiple: 1,
-    },
+    width: 110, 
   },
   {
     title: "用电量（kWh）",

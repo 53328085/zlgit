@@ -54,7 +54,7 @@ export const Bindwrap = styled.div`
     flex-direction: column;
     row-gap: 16px;
     border: 1px solid #dedede;
-    padding: 8px;
+    padding: 8px; 
    }
    .handler {
      display: flex;

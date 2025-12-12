@@ -55,8 +55,8 @@ import Inspection from "@com/defaultHome/inspection" // Inspection 本月巡检
 import Roomnum from '@com/defaultHome/roomNum' // 变电站数量
 import RoomCapacity from '@com/defaultHome/roomCapacity' // 总额度容量
 import Roomload from '@com/defaultHome/roomload' // 实时负荷
-// import Loadlate from "@com/defaultHome/loadlate" // 负荷率
-import Loadlate from '@com/defaultHome/loadxls' // 负荷率 香炉山项目
+import Loadlate from "@com/defaultHome/loadlate" // 负荷率
+// import Loadlate from '@com/defaultHome/loadxls' // 负荷率 香炉山项目
 // Roomnum, RoomCapacity, Roomload, Loadlate
 
 import {isObject} from '@com/usehandler'
