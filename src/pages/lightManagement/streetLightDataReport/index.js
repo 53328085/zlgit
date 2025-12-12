@@ -11,6 +11,7 @@ import { useOutletContext } from "react-router-dom";
 import Pagecount from "@com/pagecontent";
 import UserTable from "@com/useTable";
 import UserTree from "@com/useTree";
+import {isObject} from "@com/usehandler"
 import { ExportExcel, CustButton } from "@com/useButton";
 import { Contentbox } from "./style";
 import { useQueryConsumeTime } from "./api";
@@ -23,6 +24,7 @@ export default function Index() {
   const [total, setTotal] = useState(0);
   const [columns, setColumns] = useState(cols);
   const [params, setParams]= useState({})
+  const [node, setNode] = useState()
   const {areaId, type, date, projectId} = params
   const tbref = useRef();
   const sheetName = useMemo(() => {
@@ -43,7 +45,7 @@ export default function Index() {
         date &&
         !Array.isArray(date) &&
         Array.isArray(treeId);
-      console.log(flag);
+     
       if (!flag) return;
       const dateType = {
         1: "day",
@@ -64,9 +66,9 @@ export default function Index() {
         pageSize: pageSize,
       };
       let { success, data, total } = await useQueryConsumeTime({}, body);
-      if (success && Array.isArray(data) && data.length) {
+      if (success && isObject(data)) {
         setTotal(total);
-        let { detailHeaders } = data[0];
+        let { detailHeaders,detailDatas } = data;
         let last = detailHeaders.length - 1;
         let column = detailHeaders.map((col) => ({
           title: col,
@@ -76,15 +78,15 @@ export default function Index() {
         }));
         column[last].fixed = "right";
         setColumns([...cols, ...column]);
-        data.forEach((item) => {
-          let { detailHeaders, detailValues } = item;
+        detailDatas.forEach((item) => {
+         let { detailValues } = item;
           for (const [index, val] of detailHeaders?.entries()) {
             item[val] = detailValues[index];
           }
         });
        
         return {
-          list: data,
+          list: detailDatas,
           total,
         };
       } else {
@@ -99,6 +101,7 @@ export default function Index() {
   };
   const { tableProps } = useAntdTable(getTableData, {
     refreshDeps: [projectId, areaId, type, date, treeId],
+    defaultPageSize:20
   });
  
   const onExport = useCallback(() => {
@@ -120,10 +123,16 @@ export default function Index() {
       <LinghtSearch setParams={setParams} tbref={tbref} allselect={false}  /> 
         <div className="mainwrap">
         <UserTree
-          areaId={areaId}
+          areaId={0}
           setTreeId={setTreeId}
           setLine={setLine}
-          energytype={1}
+          title="路灯设备列表"
+          setNode={setNode}
+          showline={true}
+          allselect={line==0} 
+          multiple={line==0}  
+          datatype={line==0 ? 0 : 4}
+          energytype={1} 
         />
         <div className="outwrap">
           <div className="inwrap">

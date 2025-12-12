@@ -192,7 +192,7 @@ const lingthChnage=(v)=> {
     <Pagecount pd="0" bgcolor="none">
       <Mainwrap>
         <div className="left">
-           <UseTree areaId={NaN} title="路灯设备列表" setTreeId={setTreeId} setNode={setNode} setLine={setLine} showline={true} allselect={line==0}  multiple={line==0}   datatype={line==0 ? 0 : 4} energytype={1} ></UseTree>
+           <UseTree areaId={0} title="路灯设备列表" setTreeId={setTreeId} setNode={setNode} setLine={setLine} showline={true} allselect={line==0}  multiple={line==0}   datatype={line==0 ? 0 : 4} energytype={1} ></UseTree>
         </div>
         <div className="right">
           <div className="up">

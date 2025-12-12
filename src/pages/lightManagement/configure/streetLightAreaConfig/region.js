@@ -247,11 +247,11 @@ export default function Index({ projectId, level,  name,id, allLevel }) {
 
   const getUNselect = async ({ type = devietype, areaId, alike = "" } = {}) => {
     curareaId.current = areaId;
-     console.log(Record)
+     
     try {
       let { success, data } = await useListUnBindLight({},{
         projectId,
-        rId:Record?.areaId,
+        rId:areaId,
       }); // 未选中
       if (success && Array.isArray(data)) {
         setUnSelected([...data]);
@@ -264,13 +264,13 @@ export default function Index({ projectId, level,  name,id, allLevel }) {
      }
   };
 
-  const getSelected = async () => {
+  const getSelected = async (record) => {
      try {
   
     let {
       data: { deviceSummary, deviceSub },
       success,
-    } = await useListBindLight({},{ projectId, rId:Record?.areaId }); // 已选中 type: 0
+    } = await useListBindLight({},{ projectId, rId:record?.areaId }); // 已选中 type: 0
     if (success && Array.isArray(deviceSummary)) {
       setDeviceSummary([...deviceSummary]);
     //  devices.current.deviceSub = deviceSub;
@@ -292,8 +292,8 @@ export default function Index({ projectId, level,  name,id, allLevel }) {
 
   const deviceData = async (record) => {
     try {
-      await getUNselect();
-      await getSelected()
+      await getUNselect(record);
+      await getSelected(record)
 
     } catch (error) {
       console.log(error);
@@ -353,12 +353,12 @@ export default function Index({ projectId, level,  name,id, allLevel }) {
      setSubRowSelection([])
     let body = selected.map(s => s.id);
     let handler = ['', useAddConfig , useRemoveConfig][h]  
-    let { success, errMsg } = await handler({projectId, type:m, rid:id}, body )
+    let { success, errMsg } = await handler({projectId, type:m, rid:Record.areaId}, body )
     if (success) {
      console.log(subrowSelectionData)
     //  devices.current.selected = [];
-      getSelected()
-      getUNselect()
+      getSelected(Record)
+      getUNselect(Record)
       message.success(h==1 ? "绑定成功" : "解绑成功")
     } else {
       message.error(errMsg || '数据出错', 2)
@@ -681,33 +681,7 @@ const savesty = laptop
               }}
             >
               <Space size={16}>
-                <Item label="设备类型" name="type">
-                  {/* <Select
-                  style={{ width: "112px" }}
-                 onChange={changeUnselected}
-                options={[
-                  {
-                    value: "0",
-                    label: "全部类型",
-                  },
-                    {
-                      value: "1",
-                      label: "电表",
-                    },
-                    {
-                      value: "2",
-                      label: "水表",
-                    },
-                    {
-                      value: "3",
-                      label: "燃气表",
-                    },
-                    {
-                      value: "12",
-                      label: "断路器",
-                    },
-                  ]}
-                /> */}
+               {/*  <Item label="设备类型" name="type">                  
                   <Select
                     style={{ width: "128px" }}
                     onChange={changeUnselected}
@@ -715,7 +689,7 @@ const savesty = laptop
                     fieldNames={{ label: "name", value: "deviceStyle" }}
                     options={deviceStyles?.length > 0 ? [{ deviceStyle: 0, name: "全部类型" }, ...deviceStyles] : []}
                   />
-                </Item>
+                </Item> */}
                 <Item name="alike" label="设备搜索">
                   <Inptserach
                     allowClear

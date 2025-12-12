@@ -69,10 +69,10 @@ export default function Index() {
     getAPiFunc();
   };
   useEffect(() => {
-    if (Array.isArray(treeId)) {
+    if (Array.isArray(treeId) && Number.isInteger(projectId)) {
       getAPiFunc();
     }
-  }, [treeId]);
+  }, [treeId, projectId]);
   return (
     <Pagecount bgcolor="#eeeff4" pd={0}>
       <Container>

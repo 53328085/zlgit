@@ -8,8 +8,8 @@ export const cols = [ //
     },
     {
       title: '设备编号',
-      dataIndex: 'sn',
-      key: "sn",
+      dataIndex: 'no',
+      key: "no",
       fixed: 'left',
       width: 100
     }, {
