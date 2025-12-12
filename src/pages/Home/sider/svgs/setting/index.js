@@ -57,6 +57,7 @@ export { ReactComponent as designerEnergystatistics } from './statistics.svg'
 export { ReactComponent as designerEnergyshift } from './shift.svg'
 export { ReactComponent as designerEnergyimage } from './image.svg'
 export { ReactComponent as designerEnergyenergyRank } from './energyRank.svg'
+export { ReactComponent as designerEnergytimePeriodSetting } from './timePeriodSetting.svg'
 
 //光伏发电
 export { ReactComponent as designerSolarstation } from './station.svg'

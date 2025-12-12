@@ -11,7 +11,7 @@ export { ReactComponent as camera } from './camera.svg'
 
 export { ReactComponent as environment } from './environment.svg'
 export { ReactComponent as runtimeSolarstation } from './environment.svg'
-// **监控 
+// **监控
 
 export { ReactComponent as runtimeStoragestation } from './station.svg'
 export { ReactComponent as runtimeStoragePCSMonitor } from './PCSMonitor.svg'
@@ -96,6 +96,7 @@ export { ReactComponent as runtimeEnergyregion } from './runtimeEnergy/region.sv
 export { ReactComponent as runtimeEnergyReport } from './runtimeEnergy/runReport.svg'
 export { ReactComponent as runtimeEnergytime } from './runtimeEnergy/time.svg'
 export { ReactComponent as runtimeEnergysummary } from './monitor.svg'
+export { ReactComponent as runtimeEnergytimePeriodEnergy } from './timePeriodEnergy.svg'
 
 // 能源管理
 
@@ -165,4 +166,4 @@ export { ReactComponent as efficiencyAnalysisairCompressorKPI } from './efficien
 export { ReactComponent as efficiencyAnalysisrefrigeratorCOP } from './efficiencyAnalysis/refrigeratorCOP.svg'
 export { ReactComponent as efficiencyAnalysisairConditionerKPI} from './efficiencyAnalysis/airConditionerKPI.svg'
 
-// 
+//

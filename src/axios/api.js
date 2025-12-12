@@ -2540,22 +2540,14 @@ export class energyRanking {
 }
 //分时能耗
 export class energyShare {
-  static AeraQueryAll = (projectId) =>
-    server.get(`/General/Area/QueryAll?projectId=${projectId}&level=1`); //获取区域
-  static QueryShifts = (projectId) =>
-    server.get(
-      `/Energy/EnergyShiftDesigner/QueryShifts?projectId=${projectId}`
-    ); //获取班次
-  static QuerySpaceTrees = (data) =>
-    server.get(`/Energy/EnergyQuotaDesigner/QuerySpaceTrees`, { params: data }); //查询树
-  static QueryElectric = (data) =>
-    server.post(`/Energy/EnergyTimeShareRuntime/QueryElectric`, data); //分时能耗
-
-  static queryArea = (data) =>
-    server.post(`Energy/EnergyTimeShareRuntime/QueryElectricByArea`, data); //区域查询
-
-  static queryLine = (data) =>
-    server.post(`Energy/EnergyTimeShareRuntime/QueryElectricByLine`, data); //线路查询
+  static QuerySpaceTrees = (params) =>
+    server.get(`/Energy/EnergyQuotaDesigner/QuerySpaceTrees`, { params }); //查询树
+  //获取分时能耗数据
+  static getTimePeriodEnergyApi = (params) =>
+    server.post(`/Energy/EnergyTariffTimeRuntime/QueryTariffTimeEnergy`, params);
+  //获取日对应的最新分时方案
+  static getLastTimePeriodInfoApi = (params) =>
+    server.get(`/Energy/EnergyTariffTimeDesigner/QueryLatestTariffTimePlan`, { params });
 }
 //数据报表
 export class energyReport {
@@ -4348,6 +4340,80 @@ export class AirConditioningManagement {
 
 //能源管理
 export class EnergyManagement {
+  /**
+   * 获取分时设置信息列表
+   * @param {Object} params
+   * @param {String} params.projectId 项目ID
+   */
+  static getTimePeriodSettingInfoListApi = (params) =>
+    server.get('/Energy/EnergyTariffTimeDesigner/QueryTimeSharePlanList', { params });
+  /**
+   * 配置分时设置信息
+   * @param {Object} params - 请求参数对象
+   * @param {string} params.projectId - 项目ID（必填）
+   * @param {string} params.planName - 电价方案名称（必填）
+   * @param {string} params.enableDate - 方案启用时间（格式：YYYY-MM-DD）
+   * @param {Array<NewTariffTimes>} params.newTariffTimes - 分时时段配置数组
+   * @returns {Promise} Axios 请求Promise对象
+   *
+   * @typedef {Object} NewTariffTimes - 分时时段配置
+   * @property {number} tariffTimeType - 时段类型（如：1=峰时，2=平时，3=谷时）
+   * @property {string} startTime - 时段开始时间（格式：HH:mm）
+   * @property {string} endTime - 时段结束时间（格式：HH:mm）
+   *
+   */
+  static setTimePeriodSettingInfoApi = (params) =>
+    server.post('/Energy/EnergyTariffTimeDesigner/AddTimeSharePlan',  params );
+  /**
+   * 启用/禁用项目分时配置
+   * @param {{projectId: *, enable: number}} params
+   * @param {String} params.projectId 项目ID
+   * @param {Number} params.enable 1-启用，0-禁用
+   */
+  static updateProjectTimePeriodSettingStatusApi = (params) =>
+    server.post('/Energy/EnergyTariffTimeDesigner/EnableTariffTimePlan',  params );
+  /**
+   * 获取项目分时配置状态
+   * @param {Object} params
+   * @param {String} params.projectId 项目ID
+   */
+  static getProjectTimePeriodSettingStatusApi = (params) =>
+    server.get('/Energy/EnergyTariffTimeDesigner/GetTariffTimeEnable', { params });
+  /**
+   * 获取分时配置详情
+   * @param {Object} params
+   * @param {String} params.projectId 项目ID
+   * @param {String} params.enableDate 启用时间
+   */
   static getTimePeriodSettingInfoApi = (params) =>
-    server.get('/Storage/SiteManagerDesigner/FindSiteList',params);
+    server.get('/Energy/EnergyTariffTimeDesigner/QueryTimeSharePlanDetail', { params });
+  /**
+   * 修改分时设置信息
+   * @param {Object} params - 请求参数对象
+   * @param {string} params.projectId - 项目ID（必填）
+   * @param {string} params.planName - 电价方案名称（必填）
+   * @param {string} params.NewEnableDate - 新-方案启用时间（格式：YYYY-MM-DD）
+   * @param {string} params.OldEnableDate - 旧-方案启用时间（格式：YYYY-MM-DD）
+   * @param {Array<NewTariffTimes>} params.newTariffTimes - 分时时段配置数组
+   * @returns {Promise} Axios 请求Promise对象
+   *
+   * @typedef {Object} NewTariffTimes - 分时时段配置
+   * @property {number} tariffTimeType - 时段类型（如：1=峰时，2=平时，3=谷时）
+   * @property {string} startTime - 时段开始时间（格式：HH:mm）
+   * @property {string} endTime - 时段结束时间（格式：HH:mm）
+   *
+   */
+  static editTimePeriodSettingInfoApi = (params) =>
+    server.post('/Energy/EnergyTariffTimeDesigner/UpdateTariffTimePlan',  params );
+  /**
+   * 删除分时设置信息
+   * @param {Object} params
+   * @param {String} params.projectId 项目ID
+   * @param {String} params.enableDate 启用时间
+   */
+  static deleteTimePeriodSettingInfoApi = (params) =>
+    server.delete('/Energy/EnergyTariffTimeDesigner/DeleteTimeSharePlan',  { params } );
 }
+
+
+``

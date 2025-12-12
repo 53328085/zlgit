@@ -187,13 +187,13 @@ const chartoption = {
 };
 
 const liuqiuOption =(option) =>  {  // 水球图
-    
+
     let {series, ...set} = option
   return  {
         series: [{
             type: "liquidFill",
             color: ['#5983FE'],
-       
+
             radius: "95%",
             backgroundStyle: {
               color: '#fff'
@@ -203,7 +203,7 @@ const liuqiuOption =(option) =>  {  // 水球图
               shadowBlur: 5,
               shadowColor: 'rgba(0, 0, 0, 0.1)'
            },
-          
+
             outline: {
               borderDistance: 2,
               itemStyle: {
@@ -214,13 +214,13 @@ const liuqiuOption =(option) =>  {  // 水球图
             ...series,
          }],
          ...set
-    } 
+    }
 
 }
 
 const pieOption = ({ data = [], total = 0, radius= ["60%", "80%"],center=["50%", "50%"],labelLine={},label={}, legend={},series={},  grid={left: 0, right: 0, containLabel: true,}} = {}) =>{
   const primaryColor =store.getState()?.system?.themeColor?.primaryColor || "#237ae4"
-  console.log("labelLine",labelLine)
+  // console.log("labelLine",labelLine)
 /*   const  color = [
    primaryColor,
    "#62D9AD",
@@ -246,10 +246,10 @@ const pieOption = ({ data = [], total = 0, radius= ["60%", "80%"],center=["50%",
    "#9D27B0",
    "#3F51B6",
    "#E74F82",
-   ] 
-    
+   ]
+
  return {
-  // 饼图的设置 
+  // 饼图的设置
   color,
   tooltip: {
     trigger: "item",
@@ -315,12 +315,12 @@ export const drawEcharts = (
     legend={},
     ...rest
   } = {}
-) => {  
- 
+) => {
+
   if (!dom) return
   if(type == 0) return message.warning("图表类型错误")
   const {locale} =store.getState()?.system?.intl  // 国际化语言
- 
+
   let lang = locale == 'zh-cn' ? 'ZH' : locale?.locale?.toUpperCase()
   let chart
   if(chart) {
@@ -333,10 +333,10 @@ export const drawEcharts = (
   if(series.constructor == Object) {
     if (series.type == 'line') {
         custSeries = {
-            smooth:true, 
+            smooth:true,
             showSymbol: false,
             areaStyle: {},
-          
+
             ...series,
         }
     }else if(series.type == 'bar'){
@@ -347,7 +347,7 @@ export const drawEcharts = (
     }else  {
         custSeries = {...series}
     }
-    
+
   }else if(series.constructor == Array) {
     custSeries = series.map(s => {
         if(s.type == "line") {
@@ -387,40 +387,40 @@ export const drawEcharts = (
       bottom: "40px",
       ...grid
     },
-    xAxis: {    
+    xAxis: {
       type: "category",
       boundaryGap: true,
       axisTick: {
         alignWithLabel: true,
         lineStyle: {
-         
+
         },
         ...axisTick
-      },   
+      },
       axisLine: {
         lineStyle: {
-         
+
         },
         ...axisLine,
       },
       axisLabel: {
-       
-        interval:'auto', // 显示所有x轴的label, auto: 标签不重叠  
+
+        interval:'auto', // 显示所有x轴的label, auto: 标签不重叠
         ...axisLabel,
       },
-      
+
       ...restxAxis,
     },
     legend: legend.data ? {...legend} : {
     //  top: 0,
-      
+
       icon: 'rect',
       itemHeight: 8,
       itemWidth: 8,
-      itemGap: 20,  
-     
+      itemGap: 20,
+
       ...legend
-    },  
+    },
     dataZoom: {
         type: "inside",
     },
@@ -434,7 +434,7 @@ export const drawEcharts = (
   const baseoption = { //系列方式
     ...comm,
     yAxis: {
-      type: "value",   
+      type: "value",
     },
     series: custSeries,
   };
@@ -443,10 +443,10 @@ export const drawEcharts = (
 
     yAxis: [
       {
-        type: "value",     
+        type: "value",
         axisLabel: {
           showMinLabel: true,
-          showMaxLabel: true, 
+          showMaxLabel: true,
         },
       },
     ],
@@ -466,7 +466,7 @@ export const drawEcharts = (
         },
     }
   }
- 
+
   const setoption = [{}, option, baseoption, pieOption({...pieData, grid, legend}), liuqiuOption(liuqiu)][type];
   /*   type == 1
       ? option
@@ -480,14 +480,14 @@ export const drawEcharts = (
       chart.setOption({...rest.custoption}, true); //桑基图
     }else {
       chart.setOption({...setoption, ...rest}, true, chartoption);
-    }    
+    }
      window.addEventListener('resize', _.throttle(chart?.resize), 300) ;
-     chart?.resize() 
+     chart?.resize()
     return chart
-    
+
    } catch (error) {
      message.error("图表数据出错："+error.message)
-   } 
+   }
 
 };
 

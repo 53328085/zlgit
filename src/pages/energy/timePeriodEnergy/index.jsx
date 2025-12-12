@@ -1,237 +1,238 @@
-import React,{useEffect, useState,useRef,useMemo} from 'react'
-import {useSelector } from 'react-redux'
-import {useOutletContext} from 'react-router-dom'
-import styled, {css} from 'styled-components'
-
-import Ichart  from '@com/useEcharts/Ichart';
-import { energyShare, Monitoring } from '@api/api.js'
-import {selectProjectId,adaptation} from '@redux/systemconfig.js'
-import {Tree ,Radio, Empty, Input } from 'antd'
-
-import Titlelayout from "@com/titlelayout";
-import Pagecount from "@com/pagecontent";
+import PageContent from '@com/pagecontent'
+import styled from 'styled-components'
+import { message, Radio, Space } from 'antd'
+import UseTree from '@com/useTree'
 import UseTable from '@com/useTable'
-import {getTime, numberformat} from "@com/usehandler"
+import TitleLayout from '@com/titlelayout'
+import React, { useEffect, useMemo, useRef, useState } from 'react'
+import { useSelector } from 'react-redux'
+import { selectProjectId } from '@redux/systemconfig'
+import { useOutletContext } from 'react-router-dom'
+import { useMemoizedFn } from 'ahooks'
+import { energyShare } from '@api/api'
+import CustomChartView from '@com/useEcharts/Ichart'
+import { getTime } from '@com/usehandler'
+import {
+  convertToMarkAreaData,
+  DefaultOptions, DefaultSingleOptions,
+  getRightTableColumns,
+  getTableColumns
+} from '@pages/energy/timePeriodEnergy/Constant'
+import { ExportExcel } from '@com/useButton'
 
-const {Search} = Input
-const {QuerySpaceTrees, queryArea, queryLine} = energyShare
-const {LineManagerQuery} = Monitoring.LineManager // 线路查询
-const sty = css`
- grid-template-columns: 1fr 3fr min-content;
- `
-const Mainbox = styled.div`
-  && {
-    flex:1;
+const { getTimePeriodEnergyApi, getLastTimePeriodInfoApi } = energyShare
+const CustomPageContent = styled(PageContent)`
+    margin-bottom: 16px;
+`
+const MainView = styled.div`
+    flex: 1;
     display: grid;
-    grid-template-columns: 296px 952px 1fr;
+    grid-template-columns: 300px 2fr 1fr;
     column-gap: 16px;
-    ${props => props.laptop ? sty : null}
-    .treebox {
-       display: grid;
-       grid-template-rows: 32px 32px 604px;
-       row-gap: 32px;
-       span.ant-radio+*{
-        padding: ${props=> props.laptop ?  "padding: 0px" : "padding: 0 8px"};
-       }
-       .ant-tree {
-        overflow-y: auto;
-      }
-    }
-    .rightlayout {
-      display: grid;
-      grid-template-rows: 504px 1fr;
-      row-gap: 16px;
-    }
-    .chart {
-      flex: 1;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-  }
 
+    .tree-view {
+        display: grid;
+        grid-template-rows: 32px 32px 604px;
+        row-gap: 32px;
+
+        span.ant-radio + * {
+            padding: ${props => props.laptop ? 'padding: 0px' : 'padding: 0 8px'};
+        }
+
+        .ant-tree {
+            overflow-y: auto;
+        }
+    }
+
+    .right-layout {
+        display: grid;
+        grid-template-rows: 504px 1fr;
+        row-gap: 16px;
+    }
+
+    .chart {
+        flex: 1;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+`
+const CustomTitle = styled.div`
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
 `
 
-
-export default function Index() {
-  const [treeData,setTreeData] =useState([])
-
-  let {exparams} = useOutletContext()
-  let {laptop} = useSelector(adaptation)
-  const {areaId, date, type} =  exparams
-
-  const [selectkeys, setSelectkeys] = useState([])
-  const selectRef=useRef()
-  selectRef.current=selectkeys
-
+export default function Index () {
+  // 树类型 1-线路 0-网格
+  const [treeType, setTreeType] = useState(0)
+  // 显示图表或表格 1-图表 2-表格
+  const [showChartOrTable, setShowChartOrTable] = useState(1)
   const projectId = useSelector(selectProjectId)
-  const [typeTree, setTypeTree] = useState(1)
+  let { exparams } = useOutletContext()
+  // areaId-区域ID date-日期 type-日期类型
+  const { areaId, date, type } = exparams
+  // 选中树节点id
+  const [selectedKeys, setSelectedKeys] = useState([])
+  const [markAreaData, setMarkAreaData] = useState([])
+  // 能耗数据
+  const [energyDataList, setEnergyDataList] = useState([])
+  // 表格对象
+  const tableRef = useRef()
 
-  const treekey =  typeTree == 1 ? "id" : "areaId"
-  //const selectedId = useRef([])
-  const [selectedId, setSelectedId] = useState()
-  const [datas, setDatas] = useState({})
-
-  const columns = [
-    {
-      title: '分时能耗',
-      dataIndex: 'name',
-      key: 'name',
-      onCell: ()=> ({style: {textAlign: "center" }}),
-      onHeaderCell: ()=> ({style: {textAlign: "center" }}),
-    },
-    {
-      title: '用电量',
-      dataIndex: 'value',
-      key: 'value',
-      onCell: ()=> ({style: {textAlign: "center" }}),
-      onHeaderCell: ()=> ({style: {textAlign: "center" }}),
-    },
-    {
-      title: '环比',
-      dataIndex: 'mom',
-      key: 'mom',
-      render: numberformat,
-      onCell: ()=> ({style: {textAlign: "center" }}),
-      onHeaderCell: ()=> ({style: {textAlign: "center" }}),
-    },
-    {
-      title: '同比',
-      dataIndex: 'yoy',
-      key: 'yoy',
-      render: numberformat,
-      onCell: ()=> ({style: {textAlign: "center" }}),
-      onHeaderCell: ()=> ({style: {textAlign: "center" }}),
-    },
-
-  ]
-  //获取树的数据， 1 线路 2 网格
-  const getTreeData= async (name)=>{
-    try {
-      let params =typeTree == 1 ? {
-        projectId,
-        areaId,
-        type:1,
-        lineName: name
-      } : typeTree == 2 ? {
-        projectId,
-        areaId,
-        areaName: name,
-      } : {}
-      let hander = ['', LineManagerQuery, QuerySpaceTrees][typeTree]
-      const {success, data} = await hander(params)
-      if(success && Array.isArray(data) && data.length > 0){
-        setTreeData(data)
-        if(typeTree == 1) {
-          setSelectedId([data[0].id])
-        }else if(typeTree == 2) {
-          setSelectedId([data[0].areaId])
-        }
-      }else{
-        setTreeData([])
-        setSelectedId([])
-        // message.error(errMsg)
-      }
-
-      //getDataByLine()
-    } catch (error) {
-      console.log(error)
-    }
-
-
-  }
-  // 根据区域查询
-  const getDataByLine = async () => {
-    // let ids = selectedId.current
-    //  let node = e.map(n => n.toString())
-
-    //  setSelectedId(node)
-    //   let ids = e;
+  /**
+   * 获取分时能耗数据
+   */
+  const getData = useMemoizedFn(async () => {
     try {
       let time = getTime(date, type)
-
-      let params = typeTree == 1 ? {
+      let params = {
         projectId,
-        shift: 0,
         type,
         date: time,
-        ids: selectedId,
-
-      } : {
-        projectId,
-        shift: 0,
-        type,
-        date: time,
-        ids: selectedId,
+        ids: selectedKeys,
+        queryType: treeType
       }
-      let hander = ['', queryLine, queryArea][typeTree]
-      let {success, data} = await hander(params)
-      if(success && data.constructor === Object) {
-        setDatas({...data})
-      }else {
-        setDatas({})
+      let result = await getTimePeriodEnergyApi(params)
+      let { success, data, errMsg } = result
+      if (success && data) {
+        setEnergyDataList({ ...data })
+      } else {
+        message.error(errMsg)
+        setEnergyDataList({})
       }
     } catch (error) {
       console.log(error)
     }
+  })
 
+  /**
+   * 获取日分时方案
+   */
+  const getTimePeriodInfo = useMemoizedFn(async () => {
+    try {
+      if (type !== 1) return
+      let time = getTime(date, type)
+      let params = {
+        projectId,
+        enableDate: time
+      }
+      const result = await getLastTimePeriodInfoApi(params)
+      let { success, data, errMsg } = result
+      if (success && data) {
+        const markAreaData = convertToMarkAreaData(data)
+        setMarkAreaData(markAreaData)
+      } else {
+        message.error(errMsg)
+        setMarkAreaData([])
+      }
+    } catch (error) {
+      console.log(error)
+    }
+  })
 
-  }
+  /**
+   * 根据获取的接口数据，初始化图表数据、分时占比数据
+   */
+  const [chartOptions, tableData, pieOptions, momYoy] = useMemo(() => {
+    //结构接口数据
+    let {
+      detail = {},
+      proportion = [],
+      momYoy
+    } = energyDataList
+    //获取明细
+    const {
+      x = [],
+      y = [],
+      y1 = [],
+      y2 = [],
+      y3 = []
+    } = detail
 
-  const options = {
-    series: [ {
-      type: 'bar',seriesLayoutBy: 'row', stack: 'Ad',
-    },
-      {
-        type: 'bar',seriesLayoutBy: 'row', stack: 'Ad',
-      },
-      {
-        type: 'bar',seriesLayoutBy: 'row', stack: 'Ad',
-      },
-      {
-        type: 'bar',seriesLayoutBy: 'row', stack: 'Ad',
-      }],
-    grid:{
-      left: "0px",
-      right: "0",
-      top: "35px",
-      bottom: "0px",
-      containLabel: true,
-    },
-    legend: {
-      top: "5px",
-    },
+    let tableData = []
+    //组织表格数据
+    if (x.length > 0) {
+      tableData = x.map((dateTime, index) => {
+        const tariffTimeType1 = parseFloat(y[index] || 0).toFixed(2)
+        const tariffTimeType2 = parseFloat(y1[index] || 0).toFixed(2)
+        const tariffTimeType3 = parseFloat(y2[index] || 0).toFixed(2)
+        const tariffTimeType4 = parseFloat(y3[index] || 0).toFixed(2)
+        const totalEnergy = (
+          parseFloat(tariffTimeType1) +
+          parseFloat(tariffTimeType2) +
+          parseFloat(tariffTimeType3) +
+          parseFloat(tariffTimeType4)
+        ).toFixed(2)
 
-
-  }
-
-  const [baropt, pieopt, momYoy] = useMemo(() => {
-    let {detail={}, proportion = [], momYoy=[]} =  Object.prototype.toString.call(datas).slice(8,-1) === 'Object' ? datas : {}
-    const {x=[], y=[], y1=[], y2=[], y3=[]} = detail;
-    const total = proportion.map(p => parseFloat(p.value,2)).reduce((a, b) => a+b, 0)?.toFixed(2)
-    return [
-      {
-        ...options,
-        dataset: {
-          dimensions: [
-            {name: 'x', type: 'time'},
-            {name: 'y', displayName: '尖能耗(kWh)'},
-            {name: 'y1', displayName: '峰能耗(kWh)'},
-            {name: 'y2', displayName: '平能耗(kWh)'},
-            {name: 'y3', displayName: '谷能耗(kWh)'},
-          ],
-
-          source: [x, y,y1, y2, y3]
+        return {
+          dateTime,
+          tariffTimeType1,
+          tariffTimeType2,
+          tariffTimeType3,
+          tariffTimeType4,
+          totalEnergy
         }
-      },
+      })
+    }
+
+    //总计
+    const total = `${proportion.map(p => parseFloat(p.value, 2)).reduce((a, b) => a + b, 0)?.toFixed(2)} kWh`
+    return [
+      type === 1 ? {
+          ...DefaultSingleOptions,
+          series: [
+            {
+              type: 'bar',
+              seriesLayoutBy: 'row',
+              tooltip: {
+                valueFormatter: value => value + 'kWh'
+              },
+              markArea: markAreaData
+            }
+          ],
+          dataset: {
+            dimensions: [
+              { name: 'x', type: 'time' },
+              { name: 'y', displayName: '分时能耗' }
+            ],
+            source: [
+              x.map(time => time.replace(/^(\d):/, '0$1:')), // 格式
+              y
+            ],
+            sourceHeader: false //false（默认值）：所有行/列都被视为纯数据
+          }
+        } :
+        {
+          ...DefaultOptions,
+          dataset: {
+            dimensions: [
+              { name: 'x', type: 'time' },
+              { name: 'y', displayName: '尖能耗' },
+              { name: 'y1', displayName: '峰能耗' },
+              { name: 'y2', displayName: '平能耗' },
+              { name: 'y3', displayName: '谷能耗' },
+            ],
+            source: [
+              x.map(time => time.replace(/^(\d):/, '0$1:')), // 格式化时间
+              y, y1, y2, y3
+            ],
+            sourceHeader: false //false（默认值）：所有行/列都被视为纯数据
+          }
+        },
+      tableData,
       {
-        pieData: { data: proportion, total, radius:["45%", "65%"]},
+        pieData: {
+          data: proportion,
+          total,
+          radius: ['45%', '65%']
+        },
         type: 3,
         legend: {
           bottom: 0,
           top: 'auto',
-          itemGap: 5,
-          type: "scroll"
+          itemGap: 16,
+          type: 'scroll'
         },
         grid: {
           bottom: 20
@@ -239,102 +240,99 @@ export default function Index() {
       },
       momYoy
     ]
+  }, [energyDataList])
 
-  }, [datas])
-  useEffect(()=>{
-    if(!Number.isFinite(areaId) || !Number.isFinite(typeTree)) return;
-    //  selectedId.current = []
-
-
-    getTreeData()
-
-  },[areaId, typeTree])
-
+  /**
+   * 根据日期、日期类型、下拉树节点id获取数据
+   */
   useEffect(() => {
-
-    if(date && Array.isArray(selectedId))  {
-      getDataByLine()
-
+    if (date && Array.isArray(selectedKeys)) {
+      if (type === 1) {
+        getTimePeriodInfo()
+        getData()
+      } else {
+        getData()
+      }
     }
-
-  }, [date, selectedId, type])
-
-
-  const onSelect = (e) => {
-    setSelectedId(e)
-    // selectedId.current = e;
-    // getDataByLine(e)
-  }
-
-  const radiosty = {
-    display: 'grid',
-    gridTemplateColumns: '1fr 1fr',
-    alignContent: 'center',
-    borderBottom: '1px dotted #d7d7d7',
-  }
-  const switchLine = (e) => {
-
-    setTypeTree(e.target.value)
-  }
+  }, [date, selectedKeys, type])
 
   return (
-    <Pagecount bgcolor="transparent" pd="0">
-      <Mainbox laptop={laptop}>
-        <Titlelayout key="line">
-          <div className="treebox">
-            <Radio.Group onChange={switchLine} style={radiosty} value={typeTree}>
-              <Radio value={1}>按线路</Radio>
-              <Radio value={2}>按网格</Radio>
-
-            </Radio.Group>
-            <Search
-              placeholder='请输入关键字查询'
-              allowClear
-              onSearch={getTreeData}
-            />
-            { treeData.length > 0 ? <Tree
-                treeData={treeData}
-                // checkable
-                defaultExpandParent
-                //  expandedKeys={expandedKeys}
-                // autoExpandParent={autoExpandParent}
-                selectedKeys={selectedId}
-                onSelect={onSelect}
-
-                fieldNames={{title:'name',key: treekey,children:'nodes'}}
-              />
-              : <Empty />
-            }
-          </div>
-        </Titlelayout>
-        <Titlelayout title="分时能耗" key="stack" layout="flex">
-          <div className='chart'>
-            <Ichart {...baropt} />
-          </div>
-
-
-        </Titlelayout>
-        <div className='rightlayout'>
-          <Titlelayout title="分时占比" key="pie" layout="flex">
-            <div className='chart'>
-              <Ichart {...pieopt} />
+    <CustomPageContent bgcolor="transparent" pd="0">
+      <MainView>
+        <UseTree
+          areaId={areaId}
+          setTreeId={setSelectedKeys}
+          setLine={setTreeType}
+          showline={true}
+          allselect
+          multiple
+          datatype={treeType === 0 ? 0 : 4}
+          energytype={1}
+          scroll='100%'
+        />
+        <TitleLayout
+          title={
+            <CustomTitle>
+              <span>分时能耗</span>
+              <Space size={16}>
+                <Radio.Group
+                  options={[
+                    {
+                      label: '图表模式',
+                      value: 1
+                    },
+                    {
+                      label: '列表模式',
+                      value: 2
+                    }
+                  ]}
+                  buttonStyle="solid"
+                  optionType="button"
+                  value={showChartOrTable}
+                  onChange={(e) => setShowChartOrTable(e.target.value)}
+                />
+                <ExportExcel tb={tableRef} single={true} disabled={showChartOrTable === 1}/>
+              </Space>
+            </CustomTitle>
+          }
+          key="stack"
+          layout="flex"
+        >
+          {
+            showChartOrTable === 1 &&
+            <div className="chart">
+              <CustomChartView {...chartOptions} />
             </div>
-          </Titlelayout>
-          <Titlelayout title="分时能耗同环比" key="momyoy">
-            <div className='chart' >
+          }
+          {
+            showChartOrTable === 2 &&
+            <div className="chart">
               <UseTable
-                columns={columns}
-                dataSource={momYoy}
-              ></UseTable>
+                ref={tableRef}
+                key="dateTime"
+                columns={getTableColumns()}
+                dataSource={tableData}
+                scroll={{ y: 'calc(100vh - 284px)' }}
+              />
             </div>
-          </Titlelayout>
+          }
+        </TitleLayout>
+        <div className="right-layout">
+          <TitleLayout title="分时占比" key="pie" layout="flex">
+            <div className="chart">
+              <CustomChartView {...pieOptions} />
+            </div>
+          </TitleLayout>
+          <TitleLayout title="分时能耗同环比" key="momyoy">
+            <div className="chart">
+              <UseTable
+                columns={getRightTableColumns()}
+                dataSource={momYoy}
+              />
+            </div>
+          </TitleLayout>
         </div>
-      </Mainbox>
-
-    </Pagecount>
+      </MainView>
+    </CustomPageContent>
   )
-
 }
-
-
-

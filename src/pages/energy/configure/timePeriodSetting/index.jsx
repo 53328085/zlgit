@@ -1,6 +1,6 @@
 import PageContent from '@com/pagecontent'
 import TitleLayout from '@com/titlelayout'
-import { Switch } from 'antd'
+import { message, Switch } from 'antd'
 import styled from 'styled-components'
 import { CustButton } from '@com/useButton'
 import UserTable from '@com/useTable'
@@ -11,6 +11,7 @@ import { selectProjectId } from '@redux/systemconfig'
 import { useSelector } from 'react-redux'
 import { EnergyManagement } from '@api/api'
 import TimePeriodInfoDialog from '@pages/energy/configure/timePeriodSetting/TimePeriodInfoDialog'
+import { isArray } from 'lodash'
 
 const ContentView = styled.div`
     padding-top: 16px;
@@ -39,9 +40,7 @@ export default function Index () {
   //项目id
   const projectId = useSelector(selectProjectId)
   //是否启用
-  const [searchStatus, setSearchStatus] = useState(false)
-  //是否新增
-  const [isAdd, setIsAdd] = useState(true)
+  const [status, setStatus] = useState(false)
   //表格数据
   const [tableData, setTableData] = useState([])
 
@@ -62,31 +61,75 @@ export default function Index () {
   /**
    * 表格内删除
    */
-  const onTableDeleteClick = useMemoizedFn((record) => {
-    console.log('onTableDeleteClick', record)
+  const onTableDeleteClick = useMemoizedFn(async ({ enableDate }) => {
+    EnergyManagement.deleteTimePeriodSettingInfoApi({ projectId, enableDate })
+      .then(({ success, errMsg }) => {
+        if (success) {
+          message.success('删除成功')
+          getTableData({ projectId })
+        } else {
+          message.error(errMsg)
+        }
+      })
+      .catch(err => {
+        message.error(err.message)
+      })
   })
 
   /**
    * 切换启用状态
    */
-  const onSearchStatusChange = useMemoizedFn((checked) => {
-    setSearchStatus(checked)
+  const onStatusChange = useMemoizedFn((checked) => {
+    EnergyManagement.updateProjectTimePeriodSettingStatusApi({ projectId, enable: checked ? 1 : 0 })
+      .then(({ success, errMsg }) => {
+        if (success) {
+          message.success(checked ? '启用成功' : '关闭成功')
+          setStatus(checked)
+        } else {
+          message.error(errMsg)
+        }
+      })
+      .catch(err => {
+        message.error(err.message)
+      })
   })
 
   /**
    * 获取分时能耗时段设置
    */
-  const { run: getTableData } = useRequest(EnergyManagement.getTimePeriodSettingInfoApi, {
-    onSuccess: (res) => {
-      console.log('res', res)
+  const { run: getTableData } = useRequest(EnergyManagement.getTimePeriodSettingInfoListApi, {
+    defaultParams: [{ projectId }], // 参数需用数组包裹
+    onSuccess: ({ success, data, errMsg }) => {
+      if (success && isArray(data?.timeShares)) {
+        setTableData(data?.timeShares)
+      } else {
+        message.error(errMsg)
+        setTableData([])
+      }
+    },
+    manual: false,
+    refreshDeps: [projectId]
+  })
+
+  /**
+   * 获取分时能耗时段设置
+   */
+  const { run: getStatus } = useRequest(EnergyManagement.getProjectTimePeriodSettingStatusApi, {
+    defaultParams: [{ projectId }], // 参数需用数组包裹
+    onSuccess: ({ success, errMsg, data }) => {
+      if (success) {
+        setStatus(data === 1)
+      } else {
+        message.error(errMsg)
+      }
     },
     manual: false,
     refreshDeps: [projectId]
   })
 
   return (
-    <PageContent pd="0" bgcolor=''>
-      <TitleLayout title="分时设置" layout="flex">
+    <PageContent pd="0" bgcolor="">
+      <TitleLayout title="分时方案设置" layout="flex">
         <ContentView>
           <div className="add">
             <div className="enable">
@@ -94,8 +137,8 @@ export default function Index () {
               <Switch
                 checkedChildren="启用"
                 unCheckedChildren="关闭"
-                checked={searchStatus}
-                onChange={onSearchStatusChange}
+                checked={status}
+                onChange={onStatusChange}
               />
             </div>
             <CustButton onClick={onAddClick}>新增</CustButton>
@@ -103,10 +146,11 @@ export default function Index () {
           <UserTable
             columns={getColumns(onTableEditClick, onTableDeleteClick)}
             dataSource={tableData}
+            rowKey="enableDate"
           />
         </ContentView>
       </TitleLayout>
-      <TimePeriodInfoDialog ref={timePeriodInfoDialogRef}/>
+      <TimePeriodInfoDialog ref={timePeriodInfoDialogRef} onRefreshClick={() => getTableData({ projectId })}/>
     </PageContent>
   )
 }

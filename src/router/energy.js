@@ -5,7 +5,7 @@ const Summary = lazy(() => import("../pages/energy/summary"))
 const Synthetical = lazy(() => import("../pages/energy/synthetical"))
 const Assorting = lazy(() => import("../pages/energy/assorting"))
 const Ranking= lazy(() => import("../pages/energy/ranking"))
-const Timesharing = lazy(() => import("../pages/energy/timesharing"))
+const TimePeriodEnergy = lazy(() => import("../pages/energy/timePeriodEnergy"))
 const Report = lazy(() => import("../pages/energy/report"))
 
 
@@ -25,9 +25,9 @@ export let runtimeEnergy = {
     '010901': Summary, // 概述
     '010902': Synthetical, // 园区能耗
     '010903': Assorting, // 分类能耗
-    '010904': Ranking , // 能耗排名 
-    '010905': Timesharing,  // 分时能耗
-    
+    '010904': Ranking , // 能耗排名
+    '010905': TimePeriodEnergy,  // 分时能耗
+
     '010906': Report,  // 数据报表
     '010907': Direction,  // 能源流向
     '010908': Analysis, // 损耗分析
