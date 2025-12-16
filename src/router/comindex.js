@@ -182,6 +182,9 @@ export default function Index() {
       }
       if (primary == "runtimeEnergy") {   //issubarea
         switch (nested) {
+          case "summary":
+            setConfig({ isdate: true,shiftNo: true });
+            break;
           case "area":
             setConfig({ isview: true, publicDate: true, shiftNo:false, rangeDate:45 });
             break;

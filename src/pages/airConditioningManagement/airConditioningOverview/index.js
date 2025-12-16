@@ -17,7 +17,7 @@ export default function Index() {
   const { Item } = Form;
   const [form] = Form.useForm();
   const [type, setType] = useState("date");
-
+  console.log("type", type)
   const [tableData, setTableData] = useState([]);
   const [chartData, setChartData] = useState(null);
   const [overData, setOverData] = useState(null);
@@ -133,10 +133,11 @@ export default function Index() {
               </Item>
             </Form>
           </Header>
-          <DetailComp overData={overData}></DetailComp>
+          <DetailComp overData={overData} type={type}></DetailComp>
           <FooterChartComp
               chartData={chartData}
               tableData={tableData}
+              type={type}
             ></FooterChartComp>
           {/* {chartData ? (
             

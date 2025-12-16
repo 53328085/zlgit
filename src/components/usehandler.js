@@ -131,6 +131,9 @@ export  const Statebox = styled.div`
     export const isObject = (obj) => {
        return Object.prototype.toString.call(obj).slice(8,-1) === 'Object'
     }
+    export const isDate =(value) => {
+      return value instanceof Date && !isNaN(value)
+    }
     export const encode=(text) => {
        if(text && text?.trim()) {
           return window.encodeURIComponent(text?.trim())

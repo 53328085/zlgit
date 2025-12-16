@@ -261,7 +261,7 @@ export default function Index() {
             <AreaSelect style={{width: "264px"}} isall={{name: "全部", id:0}} onChange={submit} />
             </Form.Item>
             <Form.Item label="设备查询" name="alike" style={{marginLeft: "16px"}} >
-         <Serach placeholder="请输入路灯名称/安装地址" onSearch={submit} />
+         <Serach placeholder="请输入控制器编号/安装地址" onSearch={submit} style={{width: '300px'}} />
             </Form.Item>
           </Form>
           <Space size={16}>

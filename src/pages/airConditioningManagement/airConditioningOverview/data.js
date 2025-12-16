@@ -1,5 +1,8 @@
 import moment from "moment";
+import {useMemo} from "react"
 import imgUrl from "./imgs/index";
+import rise from "./imgs/rise.png";
+import down from "./imgs/down.png";
 export const Init_Value = {
   dtype: "1",
   date: moment(),
@@ -16,10 +19,10 @@ export const Date_Value = [
 export const EnergyData = [
   {
     title: "能耗情况",
-    secTitle: "当日累计用电量",
+   // secTitle: "当日累计用电量",
     value1: "0.1",
     value2: "0.2",
-    thrTitle: "上一日累计用电量",
+  //  thrTitle: "上一日累计用电量",
     value3: "0.3",
     imgurl: imgUrl.energy,
   },
@@ -27,7 +30,7 @@ export const EnergyData = [
     title: "节能情况",
     value1: "0.0",
     value2: "0.0",
-    secTitle: "当日累计节能电量",
+   // secTitle: "当日累计节能电量",
     thrTitle: "节能率",
     value3: "0.0",
     imgurl: imgUrl.save,
@@ -37,8 +40,8 @@ export const EnergyData = [
     title: "碳排情况",
     value1: "0.0",
     value2: "0.0",
-    secTitle: "当日累计碳排",
-    thrTitle: "昨日碳排",
+   // secTitle: "当日累计碳排",
+   // thrTitle: "昨日碳排",
     value3: "0.0",
     imgurl: imgUrl.co2,
   },
@@ -127,10 +130,10 @@ export const Chart_Options = {
   },
 
   // 图例配置
-  legend: {
-    data: ["今日能耗", "昨日能耗", "环比率"],
+/*   legend: {
+     data: ["今日能耗", "昨日能耗", "环比率"],
     top: 10,
-  },
+  }, */
 
   // 网格配置
   grid: {
@@ -196,7 +199,7 @@ export const Chart_Options = {
   series: [
     // 第一个柱状图（左Y轴）
     {
-      name: "今日能耗",
+   //   name: "今日能耗",
       type: "bar",
       barWidth: "30%",
       itemStyle: {
@@ -207,7 +210,7 @@ export const Chart_Options = {
 
     // 第二个柱状图（右Y轴）
     {
-      name: "昨日能耗",
+    //  name: "昨日能耗",
       type: "bar",
       barWidth: "30%",
       yAxisIndex: 1, // 使用第二个Y轴
@@ -235,63 +238,100 @@ export const Chart_Options = {
   ],
 };
 
-export const TbHeader = [
-  {
-    title: "时间",
-    dataIndex: "date",
-    key: "date",
-    width: 110, 
-  },
-  {
-    title: "用电量（kWh）",
-    dataIndex: "periodUseE",
-    key: "periodUseE",
-    defaultSortOrder: "ascend",
-    width: 150,
-    sorter: {
-      compare: (a, b) => a.periodUseE - b.periodUseE,
-      multiple: 2,
+export let useCol =function(type){ 
+const cols =  useMemo(()=> {
+    const text3 ={
+      "date": "昨日",
+      "month": "上月",
+      "year": "去年", 
+    }[type]
+   return [
+    {
+      title: "时间",
+      dataIndex: "date",
+      key: "date",
+      width: 110, 
     },
-  },
-  {
-    title: "环比昨日用电量 (kWh)",
-    dataIndex: "lastPeriodUseE",
-    key: "lastPeriodUseE",
-    width: 180,
-    sorter: {
-      compare: (a, b) => a.lastPeriodUseE - b.lastPeriodUseE,
-      multiple: 3,
+    {
+      title: "用电量（kWh）",
+      dataIndex: "periodUseE",
+      key: "periodUseE",
+      defaultSortOrder: "ascend",
+      width: 150,
+      sorter: {
+        compare: (a, b) => a.periodUseE - b.periodUseE,
+        multiple: 1,
+      },
     },
-  },
-  {
-    title: "环比",
-    dataIndex: "mom",
-    key: "mom",
-    width: 100,
-    sorter: {
-      compare: (a, b) =>
-        parseFloat(a.lastPeriodUseE) - parseFloat(b.lastPeriodUseE),
-      multiple: 3,
+    {
+      title: `环比${text3}用电量 (kWh)`,
+      dataIndex: "lastPeriodUseE",
+      key: "lastPeriodUseE",
+      width: 180,
+      sorter: {
+        compare: (a, b) => a.lastPeriodUseE - b.lastPeriodUseE,
+        multiple: 2,
+      },    
     },
-  },
-  {
-    title: "同比去年用电量 (kWh)",
-    dataIndex: "lastSamePeriodUseE",
-    key: "lastSamePeriodUseE",
-    width: 180,
-    sorter: {
-      compare: (a, b) => a.lastSamePeriodUseE - b.lastSamePeriodUseE,
-      multiple: 3,
+    {
+      title: "环比",
+      dataIndex: "mom",
+      key: "mom",
+      width: 100,
+      sorter: {
+        compare: (a, b) =>{
+        //  console.log("mom",parseFloat(a.mom))
+          return  parseFloat(a.mom) - parseFloat(b.mom)
+        } ,
+        multiple: 3,
+      },
+      render:(value)=> {
+         return (
+                <div>
+                  {value}
+                  <img
+                    src={parseFloat(value) > 0 ? rise : down}
+                    alt=""
+                    style={{ width: 16, height: 16, marginLeft: 4 }}
+                  ></img>
+                </div>
+              );
+      }
     },
-  },
-  {
-    title: "同比",
-    dataIndex: "yoy",
-    key: "yoy",
-    width: 100,
-    sorter: {
-      compare: (a, b) => parseFloat(a.yoy) - parseFloat(b.yoy),
-      multiple: 4,
+    {
+      title: "同比去年用电量 (kWh)",
+      dataIndex: "lastSamePeriodUseE",
+      key: "lastSamePeriodUseE",
+      width: 180,
+      sorter: {
+        compare: (a, b) => a.lastSamePeriodUseE - b.lastSamePeriodUseE,
+        multiple: 4,
+      },
     },
-  },
-];
+    {
+      title: "同比",
+      dataIndex: "yoy",
+      key: "yoy",
+      width: 100,
+      sorter: {
+        compare: (a, b) => parseFloat(a.yoy) - parseFloat(b.yoy),
+        multiple: 5,
+      },
+      render:(value)=> {
+        return (
+               <div>
+                 {value}
+                 <img
+                   src={parseFloat(value) > 0 ? rise : down}
+                   alt=""
+                   style={{ width: 16, height: 16, marginLeft: 4 }}
+                 ></img>
+               </div>
+             );
+     }
+    },
+  ];
+  },[type])
+ return cols
+
+}

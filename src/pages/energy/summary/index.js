@@ -13,7 +13,7 @@ import Ichart from "@com/useEcharts/Ichart";
 import Ctip from "./Ctip";
 import Pagecount from "@com/pagecontent";
 import { Cspin, Cdivider,Tabsbox } from "@com/comstyled";
-import { isObject } from "@com/usehandler";
+import { isObject, getTime } from "@com/usehandler";
 import { 
   themeColor, 
   energyType,
@@ -41,7 +41,7 @@ const Imgbg = memo(({ projectId, areaVos }) => {
     try {
       const {width=0, height=0} =   curRef.current?.getBoundingClientRect() || {}
       const topRect = boxRef.current.getBoundingClientRect()
-      console.log(topRect)
+    //  console.log(topRect)
       x = x + parseInt(width / 2) + 18
       y = y - parseInt(height)
     
@@ -193,29 +193,18 @@ export default function Index() {
   //const [form] = Form.useForm();
    let { exparams } = useOutletContext()
     let { laptop } = useSelector(adaptation)
-   const { areaId, projectId } = exparams || {};
+    console.log("exparams", exparams)
+   const { areaId, projectId, date, type } = exparams || {};
 
   const [energyValue, setEnergyValue] = useState({});
-  console.log("energyValue",energyValue)
+ 
   
   const EnergyType = useSelector(energyType);
   const defaultvalue = EnergyType?.[0]?.type
   // const oneLevelDefaultId = useSelector(selectOneLevelDefaultId);
   const [meterType, setMeterType] = useState(defaultvalue);
-  const unit ={
-    1:'kWh',
-    2:"m³",
-    3:"m³",
-    7:"m³",
-    8:"m³",
-  }[meterType]
-  const tableTitle = {
-    1:'用电量',
-    2:"用水量",
-    3:"用气量",
-    7:"用水量",
-    8:"用气量",
-  }[meterType]
+  const unit = energyValue?.title?.slice?.(-4) ?? "";
+ 
 
   const items = useMemo(()=>{
     return EnergyType?.map(item=>{
@@ -293,7 +282,14 @@ const columns = [
 
   const getData = async () => {
     try {
-      let { success, data } = await useQueryEnergyInfoOverview({projectId, areaId,meterType},{});
+      let params ={
+        projectId,
+         areaId,
+         meterType,
+         dayMonthYear:type,
+         date: getTime(date, type)
+      }
+      let { success, data } = await useQueryEnergyInfoOverview(params);
       if (success) {
         setEnergyValue({ ...energyValue, ...data });
       } else {
@@ -305,12 +301,12 @@ const columns = [
   };
 
   useEffect(() => {
-    if([projectId,areaId,meterType].every(item=>Number.isInteger(parseInt(item)))) {
+    if([projectId,areaId,meterType,type].every(item=>Number.isInteger(parseInt(item))) && date) {
       getData();
     }
   
   
-  }, [projectId,areaId,meterType]);
+  }, [projectId,areaId,meterType, date, type]);
   const onChange = (e) => {
     console.log('radio checked', e);
     setMeterType(e)
@@ -332,16 +328,16 @@ const columns = [
                   <div className="desc">
                     <span>{energyValue?.title}</span>
                     <Text className="num" ellipsis>
-                      {energyValue.todayElectricConsume}
+                      {energyValue.consume}
                     </Text>
-                    <span className="num2">日同比：{(energyValue.yoy*100)?.toFixed(2)}%</span>
+                    <span className="num2">环比：{(energyValue.mom*100)?.toFixed(2)}%</span>
                   </div>
               </div>
-              <Cdivider type="h" margin="4px 0px" />  
+              {/* <Cdivider type="h" margin="4px 0px" />  
               <div className="down">
-                <span>本月({unit})：{energyValue.curMonthElectricConsume}</span>
-                <span>本年({unit})：{energyValue.curYearElectricConsume}</span>
-              </div>
+                <span>本月{unit}：{energyValue.curMonthElectricConsume}</span>
+                <span>本年{unit}：{energyValue.curYearElectricConsume}</span>
+              </div> */}
 
             </div>
             <Titlelayout title="分区能耗占比" layout="flex" key="chart" pv="8px 20px">

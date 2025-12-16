@@ -12,7 +12,7 @@ import {
   AirChartData,
   Radio_Options,
   Chart_Options,
-  TbHeader,
+  useCol
 } from "./data.js";
 import { drawEcharts } from "@com/useEcharts/index";
 import Icharts from "@com/useEcharts/Ichart.js";
@@ -26,10 +26,11 @@ import rise from "./imgs/rise.png";
 import down from "./imgs/down.png";
 import exportImg from "./imgs/export.png";
 import {ExportExcel} from "@com/useButton"
+ 
 const CusCard = ({
   title = "能耗情况(kWh)",
   secTitle = "当日累计用电量",
-  thrTitle = "上一日累计用电量",
+  thrTitle = "昨日累计用电量",
   value1 = "",
   value2 = "",
   value3 = "",
@@ -37,7 +38,8 @@ const CusCard = ({
   imgurl = "",
   index,
   isextra=false,
-  lastTitle=""
+  lastTitle="",
+  text=""
 }) => {
   return (
     <div className="card">
@@ -65,7 +67,7 @@ const CusCard = ({
           {(parseFloat(value1))?.toFixed(3)}
         </div>
         <div className={`small`}>
-          环比昨日：
+          环比{text}：
           <span>
             {parseFloat(value2) >= 0 ? "+" : "-"}
             {value2}
@@ -101,10 +103,21 @@ const CusCard = ({
     </div>
   );
 };
-export const DetailComp = React.memo(({ overData }) => {
+export const DetailComp = React.memo(({ overData,type }) => {
   const [energyData, setEnergyData] = useState(EnergyData);
+  const text ={
+    "date": "当日",
+    "month": "当月",
+    "year": "当年", 
+  }[type]
+  const text2 ={
+    "date": "昨日",
+    "month": "上月",
+    "year": "去年", 
+  }[type]
   useEffect(() => {
-    if (overData && typeof overData === "object") {
+    if (overData && typeof overData === "object" && typeof type=="string") {
+      
       const {
         periodUseE = "",
         useMom = "",
@@ -124,7 +137,8 @@ export const DetailComp = React.memo(({ overData }) => {
           value1: periodUseE,
           value2: useMom,
           value3: lastPeriodUseE,
-
+          secTitle: ` ${text}累计用电量`,
+          thrTitle:  `${text2}累计用电量`,
         },
         {
           ...energyData[1],
@@ -132,13 +146,16 @@ export const DetailComp = React.memo(({ overData }) => {
           value2: saveMom,
           value3: saveRate,
           isextra:true,
-          value4:saveMoney 
+          value4:saveMoney,
+          secTitle: `${text}累计节能电量`, 
         },
         {
           ...energyData[2],
           value1: periodCarbon,
           value2: carbonMom,
           value3: lastPeriodCarbon,
+          secTitle: `${text}累计碳排`,
+          thrTitle: `${text2}碳排`,
         },
       ];
     //  console.log("ranking",ranking)
@@ -149,10 +166,10 @@ export const DetailComp = React.memo(({ overData }) => {
     //  AirChartData["xAxis"]["data"] = xAxis;
     //  AirChartData["series"][0]["data"] = sdata;
     }
-  }, [overData]);
+  }, [overData, text, text2]);
   const baropt =useMemo(()=> {
     const {ranking=[]} = overData || {}
-    console.log("ranking",ranking)
+  //  console.log("ranking",ranking)
     return {
         
       series: [{ type: "bar"} ],
@@ -184,7 +201,7 @@ export const DetailComp = React.memo(({ overData }) => {
   return (
     <Detail>
      {energyData.map((item, index) => (
-        <CusCard {...item} key={index} index={index} />
+        <CusCard {...item} key={index} index={index} text={text2} />
       ))}  
       
       <div className="chart">
@@ -206,13 +223,28 @@ export const DetailComp = React.memo(({ overData }) => {
   );
 });
 
-export const FooterChartComp = React.memo(({ tableData, chartData }) => {
+export const FooterChartComp = React.memo(({ tableData, chartData, type }) => {
   const tableRef = useRef();
   const [tabId, setTabId] = useState("1");
-  console.log(chartData);
+  const text ={
+    "date": "当日能耗",
+    "month": "当月能耗",
+    "year": "当年能耗", 
+  }[type]
+  const text2 ={
+    "date": "昨日能耗",
+    "month": "上月能耗",
+    "year": "去年能耗", 
+  }[type]
+
+ const TbHeader = useCol(type)
   const chartOptions = useMemo(
     () => ({
       ...Chart_Options,
+      legend: {
+      //  data: [`${text}能耗`,`${text2}能耗`, "环比率"],
+        top: 10,
+      },
       xAxis: {
         type: "category",
         data: chartData?.x || [],
@@ -221,20 +253,21 @@ export const FooterChartComp = React.memo(({ tableData, chartData }) => {
         },
       },
       series: [
-        { ...Chart_Options.series[0], data: chartData?.y || [] },
-        { ...Chart_Options.series[1], data: chartData?.y1 || [] },
+        { ...Chart_Options.series[0],name: text, data: chartData?.y || [] },
+        { ...Chart_Options.series[1],name:text2, data: chartData?.y1 || [] },
         {
           ...Chart_Options.series[2],
           data: chartData?.y3?.map?.((it) => parseFloat(it)) || [],
         },
       ],
     }),
-    [chartData]
+    [chartData, text, text2]
   );
   const MemoChart = useCallback(() => {
     return <Icharts custoption={chartOptions} type={5}></Icharts>;
   }, [chartOptions]);
-  const ColMap = (arr = TbHeader, index = 0, key = "render") => {
+
+ /*  const ColMap = (arr = TbHeader, index = 0, key = "render") => {
     arr[index][key] = (value) => {
       return (
         <div>
@@ -249,11 +282,13 @@ export const FooterChartComp = React.memo(({ tableData, chartData }) => {
     };
   };
   useEffect(() => {
-    if (tabId == "2") {
+    if (tabId == "2" && text3) {
+      console.log(text3)
+     TbHeader[2]?.title = `环比${text3}用电量 (kWh)`
       ColMap(TbHeader, 3);
       ColMap(TbHeader, 5);
     }
-  }, [tabId]);
+  }, [tabId, text3]); */
   return (
     <FooterChart>
       <BlueColumn
@@ -315,7 +350,7 @@ export const FooterChartComp = React.memo(({ tableData, chartData }) => {
                 summaryData[4] += parseFloat(lastSamePeriodUseE || 0);
               }
             );
-            console.log("summaryData", summaryData[1], summaryData[2]);
+         //   console.log("summaryData", summaryData[1], summaryData[2]);
             summaryData[3] =
               summaryData[2] == 0
                 ? 0
@@ -334,7 +369,7 @@ export const FooterChartComp = React.memo(({ tableData, chartData }) => {
               <Table.Summary.Row>
                 {summaryData.map((item, index) => (
                   <Table.Summary.Cell align="center">
-                    {[3, 5].includes(index) ? (
+                    {[3, 5].includes(index) ? null /* (
                       <>
                         {item}%
                         <img
@@ -343,7 +378,7 @@ export const FooterChartComp = React.memo(({ tableData, chartData }) => {
                           style={{ width: 16, height: 16, marginLeft: 4 }}
                         ></img>
                       </>
-                    ) : (
+                    )  */: (
                       item
                     )}
                   </Table.Summary.Cell>
