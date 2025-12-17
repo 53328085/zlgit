@@ -139,7 +139,7 @@ export const Chart_Options = {
   grid: {
     top: "10%",
     left: "4%",
-    right: "2%",
+    right: "4%",
     bottom: "1%",
     containLabel: true,
   },

@@ -69,7 +69,7 @@ const CusCard = ({
         <div className={`small`}>
           环比{text}：
           <span>
-            {parseFloat(value2) >= 0 ? "+" : "-"}
+            {parseFloat(value2) >= 0 ? "+" : ""}
             {value2}
           </span>
           <img src={parseFloat(value2) > 0 ? rise : down} alt="" />
