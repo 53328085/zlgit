@@ -74,7 +74,7 @@ export default function Index () {
   const { areaId, date, type } = exparams
   // 选中树节点id
   const [selectedKeys, setSelectedKeys] = useState([])
-  const [markAreaData, setMarkAreaData] = useState([])
+  const [markAreaData, setMarkAreaData] = useState({ data: [] })
   // 能耗数据
   const [energyDataList, setEnergyDataList] = useState([])
   // 表格对象
@@ -124,7 +124,7 @@ export default function Index () {
         setMarkAreaData(markAreaData)
       } else {
         message.error(errMsg)
-        setMarkAreaData([])
+        setMarkAreaData({ data: [] })
       }
     } catch (error) {
       console.log(error)
@@ -268,7 +268,7 @@ export default function Index () {
           multiple
           datatype={treeType === 0 ? 0 : 4}
           energytype={1}
-          scroll='100%'
+          scroll="100%"
         />
         <TitleLayout
           title={

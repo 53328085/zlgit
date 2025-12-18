@@ -1,7 +1,7 @@
 import { numberformat } from '@com/usehandler'
 
 /**
- * 获取 中间表格列配置
+ * getTableColumns 获取中间表格列配置
  */
 export const getTableColumns = () => {
   return [
@@ -34,7 +34,7 @@ export const getTableColumns = () => {
 }
 
 /**
- * 获取 右侧同比环比表格列配置
+ * getRightTableColumns 获取右侧同比环比表格列配置
  */
 export const getRightTableColumns = () => {
   return [
@@ -60,12 +60,11 @@ export const getRightTableColumns = () => {
       key: 'yoy',
       render: numberformat,
     },
-
   ]
 }
 
 /**
- * 获取月、年图表配置
+ * DefaultOptions 获取月、年图表配置
  */
 export const DefaultOptions = {
   yAxis: {
@@ -121,7 +120,7 @@ export const DefaultOptions = {
 }
 
 /**
- * 获取日图表配置
+ * DefaultSingleOptions 获取日图表配置
  */
 export const DefaultSingleOptions = {
   yAxis: {
@@ -183,7 +182,7 @@ export function convertToMarkAreaData (originalData) {
   }
 
   return {
-    data: originalData.tariffTimes.map(item => {
+    data: originalData?.tariffTimes?.map(item => {
       const endTime = item.endTime || '24:00' // 处理空结束时间
       return [
         {
@@ -198,6 +197,6 @@ export function convertToMarkAreaData (originalData) {
           xAxis: endTime === '00:00' ? Number.POSITIVE_INFINITY : endTime
         }
       ]
-    })
+    }) || []
   }
 }
