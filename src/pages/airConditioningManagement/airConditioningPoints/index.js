@@ -2,25 +2,17 @@ import React, { useEffect, useMemo, useRef, useState } from "react";
 
 import _ from "lodash";
 import { useSelector } from "react-redux";
-import { CustButtonT, CustButton } from "@com/useButton";
-import Cupload from "@com/useUpload.js";
+import {nanoid} from "@reduxjs/toolkit"
 import { selectProjectId } from "@redux/systemconfig.js";
 import CModal from '@com/useModal'
 import {
   message,
   Form,
   Badge,
-  Slider,
-  Input,
-  InputNumber,
+  Slider, 
   Space,
   Select,
- Radio,
-  Button,
-  Checkbox,
-  TreeSelect,
-  Tag,
-  Alert,
+ Radio,  
 } from "antd";
 
 import { Cspin, AirPoint } from "@com/comstyled";
@@ -89,7 +81,7 @@ try {
   }
  
   const aris = useMemo(()=> {
-    return airConditioner?.locations?.map(l => <AirPoint left={l.x} onClick={()=>onSet(l)}  className={ariId==l.conditionerId ? "action" : ""} top={l.y} key={l.conditionerId} ioState={l.ioState}>{l.desc}</AirPoint>)
+    return airConditioner?.locations?.map(l => <AirPoint left={l.x} onClick={()=>onSet(l)}  className={ariId==l.conditionerId ? "action" : ""} top={l.y} key={nanoid()} ioState={l.ioState}>{l.desc}</AirPoint>)
   }, [airConditioner,ariId])
   
   const getPoistion = async () => { // 获取点位
@@ -169,7 +161,7 @@ try {
         <Main>
         <img src={airConditioner.image} className="img" />
          {aris} 
-          <div className="title">
+          <div className="title" key="title">
             <Space size={16}>
               <span className="text">空调区域</span>
               <Select
@@ -179,8 +171,8 @@ try {
                 options={areas}
               />
               <span className="text">空调点位状态：</span>
-              <Badge status="success" text="运行中" />
-              <Badge status="default" text="离线" />
+              <Badge status="success" text="开启" key="success" />
+              <Badge status="default" text="关闭" key="default" />
             </Space>
           </div>
          

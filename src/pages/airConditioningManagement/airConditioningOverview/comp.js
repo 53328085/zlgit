@@ -263,6 +263,7 @@ export const FooterChartComp = React.memo(({ tableData, chartData, type }) => {
     }),
     [chartData, text, text2]
   );
+  console.log(chartOptions)
   const MemoChart = useCallback(() => {
     return <Icharts custoption={chartOptions} type={5}></Icharts>;
   }, [chartOptions]);
@@ -350,6 +351,9 @@ export const FooterChartComp = React.memo(({ tableData, chartData, type }) => {
                 summaryData[4] += parseFloat(lastSamePeriodUseE || 0);
               }
             );
+            summaryData[1]=summaryData[1]!==0 ? summaryData[1]?.toFixed(3) : 0
+            summaryData[2]=summaryData[2]!==0 ? summaryData[2]?.toFixed(3) : 0
+            summaryData[4]=summaryData[4]!==0 ?summaryData[4]?.toFixed(3) :0 
          //   console.log("summaryData", summaryData[1], summaryData[2]);
             summaryData[3] =
               summaryData[2] == 0
@@ -378,9 +382,9 @@ export const FooterChartComp = React.memo(({ tableData, chartData, type }) => {
                           style={{ width: 16, height: 16, marginLeft: 4 }}
                         ></img>
                       </>
-                    )  */: (
-                      item
-                    )}
+                    )  */:  
+                      item 
+                     }
                   </Table.Summary.Cell>
                 ))}
               </Table.Summary.Row>

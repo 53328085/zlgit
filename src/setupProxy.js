@@ -14,7 +14,7 @@ module.exports = function (app) {
             }
         })
     )
-   /*  app.use(
+/*    app.use(
         createProxyMiddleware("/auth", { 
             target: ' http://localhost:3006',            
             changeOrigin: true,
@@ -23,5 +23,5 @@ module.exports = function (app) {
                 "^/auth": ''
             }
         })
-    ) */
+    )  */
 }

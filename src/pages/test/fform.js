@@ -1,20 +1,23 @@
-import React from 'react'
-import {Button} from 'antd'
+import React, {useState, useEffect,useRef} from 'react'
+import {Button,Space} from 'antd'
 import moment from 'moment'
+import { user } from '@pages/Home/header/icon'
 export default function Index() {
+  const [data, setData]=useState(null)
+  const ref=useRef()
+  console.log(data)
   const getQuery = () => {
     let form = new FormData();
-    form.append("check_in", moment().subtract(1, "day").format("YYYY-MM-DD"));
-    form.append("check_out",  moment().subtract(1, "week").format("YYYY-MM-DD"));
+    form.append("check_in", moment().subtract(1, "day").format());
+    form.append("check_out",  moment().subtract(1, "week").format());
   // form.append("lang",  ["HTML12","CSS123","JAVA12","JAVASCRIPT","C++123","C#1234"] );// ["HTML","CSS","JAVA","JAVASCRIPT","C++","C#"]
-    let body = {
-      check_in: moment().subtract(1, "day").format("YYYY-MM-DD"),
-      check_out: moment().subtract(1, "week").format("YYYY-MM-DD")
+    let query =new URLSearchParams({
+      check_in: moment().subtract(1, "week").format("YYYY-MM-DD"),
+      check_out: moment().subtract(1, "day").format("YYYY-MM-DD")
       
-    }
-    fetch("auth/bookable", {
-      method: "get", 
-      query: body, 
+    })
+    fetch(`auth/bookable?${query}`, {
+      method: "get",  
     })
     .then(res => res.json())
     .catch(e=>{
@@ -29,10 +32,28 @@ export default function Index() {
      console.log(e)
    });
   }
+  const getAsync=()=>{
+    fetch("auth/upload", {
+      method:"get",
+   })
+   .then(res => res.text())
+   .then(res => {setData(res)
+})
+   .catch(e=>{
+     console.log(e)
+   });
+  }
+  useEffect(() => { 
+    if(data) {
+      ref.current.innerHTML =data
+    }
+  }, [data]);
   return (
     <div>
-      <Button onClick={getQuery}>请求</Button>
-      <Button onClick={getcookie}>cookie</Button>
+    <Space>    
+      <Button onClick={getAsync}>async</Button>
+    </Space>
+    <div ref={ref}> </div>
     </div>
   )
 }

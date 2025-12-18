@@ -111,8 +111,7 @@ export const Chart_Options = {
     },
     // 自定义提示框内容
     formatter: function (params) {
-      let result = params[0].name + "<br/>";
-      console.log("params",params)
+      let result = params[0].name + "<br/>";      
       params.forEach(function (item) {
         let marker = item.marker;
         let seriesName = item.seriesName;
@@ -186,7 +185,8 @@ export const Chart_Options = {
       name: "环比率",
       nameLocation: "middle",
       nameGap: 45,
-      min: 0,
+      position: 'right',
+      scale:true,
       axisLabel: {
         formatter: function (value) {
           return value % 1 === 0 ? value : value + "%"; // 整数显示数量，小数显示百分比
@@ -206,6 +206,7 @@ export const Chart_Options = {
         color: "#6395fa",
       },
       data: [],
+      yAxisIndex:0
     },
 
     // 第二个柱状图（右Y轴）
@@ -218,6 +219,7 @@ export const Chart_Options = {
         color: "#63daab",
       },
       data: [],
+      yAxisIndex:0
     },
 
     // 折线图（右Y轴）
@@ -233,7 +235,7 @@ export const Chart_Options = {
       lineStyle: {
         width: 3,
       },
-      data: [],
+      data: [], 
     },
   ],
 };

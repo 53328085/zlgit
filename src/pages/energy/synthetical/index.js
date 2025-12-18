@@ -135,7 +135,7 @@ export default function Index() {
             </div>
             {/* {tabvalue == 0 ? <CoalStandard op={exparams.view} data={coalStandard} datetype={exparams.type} key="CoalStandard" laptop={laptop} /> : <Electric data={consume} des={analysisDes} datetype={exparams.type} laptop={laptop} key="Electric" />} */}
         
-            <Detail qverview={qverview} tabvalue={tabvalue}   my={my} type={type}   op={exparams.view}   datetype={exparams.type} key="Detail" laptop={laptop} />
+            <Detail qverview={qverview} tabvalue={tabvalue}   my={my} type={type}   op={exparams.view}   datetype={dateType} key="Detail" laptop={laptop} />
        
 
         </Mainbox>
