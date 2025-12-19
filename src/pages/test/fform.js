@@ -4,8 +4,9 @@ import moment from 'moment'
 import { user } from '@pages/Home/header/icon'
 export default function Index() {
   const [data, setData]=useState(null)
+  const [olData, setOlData] = useState(null)
   const ref=useRef()
-  console.log(data)
+  const olref= useRef()
   const getQuery = () => {
     let form = new FormData();
     form.append("check_in", moment().subtract(1, "day").format());
@@ -43,17 +44,35 @@ export default function Index() {
      console.log(e)
    });
   }
+  const getList=()=>{
+    fetch("auth", {
+      method:"get",
+   })
+   .then(res => res.text())
+   .then(res => {setOlData(res)
+}).catch(e=>{
+     console.log(e)
+   });
+  }
   useEffect(() => { 
     if(data) {
       ref.current.innerHTML =data
     }
   }, [data]);
+
+  useEffect(() => { 
+    if(olData) {
+      olref.current.innerHTML =olData
+    }
+  }, [olData]);
   return (
     <div>
     <Space>    
       <Button onClick={getAsync}>async</Button>
+      <Button onClick={getList}>list</Button>
     </Space>
     <div ref={ref}> </div>
+    <div ref={olref}></div>
     </div>
   )
 }

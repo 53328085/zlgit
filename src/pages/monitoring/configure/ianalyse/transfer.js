@@ -8,6 +8,7 @@ import { LeftOutlined, RightOutlined } from '@ant-design/icons'
 import { cloneDeep } from "lodash";
 import { CustButton } from '@com/useButton'
 import { Monitoring } from '@api/api.js'
+import {GlobalStyle} from "@com/comstyled"
 import { 
     adaptation 
   } from "@redux/systemconfig.js";
@@ -464,6 +465,7 @@ export default function index(props) {
                 <div className="publicTitle">{props.transferTitle.unknownTitle}</div>
                 <div className="searchInput">
                     <span>设备类型</span>
+                    <GlobalStyle />
                     <Select
                         size="middle"
                         defaultValue={0}

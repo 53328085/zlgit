@@ -13,6 +13,7 @@ import {
   } from "@redux/systemconfig.js";
 const { ComparativeAnalysis: { AllDeviceStyle, QueryCompareDevice } } = Monitoring
 import {  i18t, i18warning, CustButtonT} from "@com/useButton"
+import {GlobalStyle} from "@com/comstyled"
 const sty = css`
  justify-content: flex-start;
  row-gap: 32px;
@@ -385,6 +386,7 @@ export default function index(props) {
                 <div className="publicTitle title-line-zl">{props.transferTitle.unknownTitle}</div>
                 <div className="searchInput">
                     <span>{i18t("comm","type",{text: "设备"})}</span>
+                    <GlobalStyle />
                     <Select
                         size="middle"
                         defaultValue={0}

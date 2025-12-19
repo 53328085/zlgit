@@ -104,6 +104,7 @@ const Drawerbox = styled(Drawer)`
           }
         }
         .unselected {
+          flex:1;
           display: flex;
           flex-direction: column;
           padding: ${props => props.theme.laptop  ? "16px 0 0 0" : "16px" } ;

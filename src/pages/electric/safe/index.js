@@ -53,12 +53,13 @@ const Mainbox = styled.div`
 
   .pie {
       grid-area: 2 / 1 / 3 / 3;
-      display: grid;
-      grid-template-rows:20px 270px;
+    //  display: grid;
+     // grid-template-rows:20px 270px;
       .chart {
+         height: 100%;
          display: grid;
          grid-template-columns: 400px 400px;
-         grid-template-rows: minmax(312px, auto);
+         grid-template-rows: 1fr;
          justify-content: space-between;
       }
     }
@@ -674,6 +675,7 @@ const Alarm = ({ pref, opref, areaId }) => {
     <Titlelayout
       className="pie"
       title="告警分布"
+      layout="flex"
       {...fs}
       extra={<DateComp ChangDate={changedate} changPicker={changPicker} dateform={dateform} />} >
       <div className='chart'>

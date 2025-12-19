@@ -110,7 +110,13 @@ export default function Index() {
       meterType: 18,
       imageUrl: imgurl.flowmeter,
       name:i18t("comm","flowmeter"),
-    },{
+    },
+    {
+      meterType: 19,
+      imageUrl: imgurl["19"],
+     // name:i18t("comm","flowmeter"),
+    },
+    {
       meterType: 20,
       imageUrl: imgurl.mic,
       name: '微机保护',

@@ -3,7 +3,7 @@
  * @description: // 公用的styled样式组件
  * @date 2022-10-18 09:45
  */
-import styled, {css} from "styled-components";
+import styled, {css, createGlobalStyle} from "styled-components";
 import {Input, Select, DatePicker, Radio, Form, Button, Checkbox, Spin, Divider, Pagination,Tabs} from 'antd'
 import {useTranslation} from "react-i18next"
 import {useSelector} from 'react-redux'
@@ -12,6 +12,8 @@ import imgurl from "@imgs/index";
 import moment from "moment";
 const {Search, Password, TextArea} = Input
 const { Item } = Form;
+
+
 const $color= '#237AE4'
 export const Tabsbox = styled(Tabs)`
   transform: translateY(1px);
@@ -699,4 +701,11 @@ export const TitleBox = styled.div`  // 自定义标题的样式
   display: flex;
   justify-content: space-between;
   align-items: center;
+`;
+export const GlobalStyle = createGlobalStyle`  // 解决Select组件在配置类弹出框z-index问题
+  body {
+    .ant-select-dropdown {
+        z-index: 19999 !important;
+    }
+  }
 `;

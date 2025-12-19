@@ -120,7 +120,7 @@ export default function Index() {
       type: 'category',
       axisTick: {
         show: false
-      },
+      },      
     },
     dataset: {
       dimensions: [{ name: "name" }, { name: "value", displayName: "能耗" }],
@@ -217,17 +217,23 @@ export default function Index() {
       type: 'value',
 
     },
+    tooltip: {
+      trigger: 'item',
+      formatter: function (params) { 
+        return params?.data?.name + ' : ' + params?.data?.value  
+      }
+    },
     yAxis: {
       type: 'category',
       axisTick: {
         show: false
       },
     },
-    dataset: {
-      dimensions: [{ name: "name" }, { name: "value", displayName: "能耗" }],
+    dataset: { 
       source: [],
     }
   })
+console.log(optionsDevice)
   const [deviceList, setDeviceList] = useState({})
   const getDeviceList = () => {
     let data = {
@@ -238,7 +244,7 @@ export default function Index() {
     energyRanking.QueryEnergyRankByDevice(data, areaListChoose).then(res => {
       if (res.success) {
         setDeviceList(res.data)
-        setOptionsDevice({ ...{ ...optionsDevice, dataset: { ...dataset, source: res.data?.consumeRank.slice(0, res.data.rankCount).reverse() } } })
+        setOptionsDevice({ ...{ ...optionsDevice, dataset: {  dimensions: [{name: "name"}, { name: "value", displayName: "能耗" }],source: res.data?.consumeRank.slice(0, res.data.rankCount).reverse()?.map(i=> ({...i, name:i.name+`(${i.sn})`})) } } })
       } else {
         message.error(res.errMsg)
       }

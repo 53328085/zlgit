@@ -9,6 +9,7 @@ import {SaveButton, CustButton, CancelButton} from '@com/useButton'
 import { adaptation } from "@redux/systemconfig";
 import { useSelector } from "react-redux";
 import UsetTable from "@com/useTable";
+import {GlobalStyle} from "@com/comstyled"
 const csssty = css`
   .transferContent {
     padding: 16px;
@@ -445,6 +446,7 @@ export default function index (props) {
                 <div className="publicTitle">{props.transferTitle.unknownTitle}</div>
                 <div className="searchInput">
                     <span>设备类型</span>
+                    <GlobalStyle></GlobalStyle>
                     <Select 
                         defaultValue={0}
                         style={{ marginLeft: laptop ? "8px" : "16px", width: '112px'}}

@@ -10,6 +10,9 @@ import { CustButton } from '@com/useButton'
 import { AlarmManagement, Monitoring } from "@api/api.js";
 import {adaptation} from '@redux/systemconfig'
 import UsetTable from "@com/useTable";
+import {GlobalStyle} from "@com/comstyled"
+ 
+
 const csssty = css`
     grid-template-columns: minmax(auto, 2fr) minmax(max-content, 1fr);
     padding: 16px;
@@ -173,6 +176,7 @@ export default function index(props) {
     }, [props])
 
     const [devices, setDevies] = useState([])
+console.log(devices)
     const getType = async () => { // 获取设备类型
 
         try {
@@ -180,7 +184,7 @@ export default function index(props) {
             if (success && Array.isArray(data)) {
                 setDevies([{
                     deviceStyle: 0, name: '全部类型',
-                }, ...data]);
+                },...data]);
             } else {
                 setDevies([]);
             }
@@ -400,6 +404,9 @@ export default function index(props) {
         });
     };
     const handleSave = async () => {
+        try {
+            
+     
         let ItemValveDtos = []
         alarmOpenData.map((item1) => {
             return ItemValveDtos.push({
@@ -438,14 +445,20 @@ export default function index(props) {
         // return
         const res = await SetAlarmValveDevice(params)
         if (res.success) {
-
             setSelectedLeft1([])
             setSelectedLeft2([])
             setSelectedLeft3([])
             setSelectedLeft4([])
             setSelectedRightKeys([])
             message.success("告警关联设备成功")
+            handleClose()
+        }else {
+            message.error(res.errMsg || "数据出错")
+
         }
+    } catch (error) {
+        console.log(error)   
+    }
     }
     let tag = columns[0].key;
     const [searchUnknown, setSearchUnknown] = useState('')
@@ -605,10 +618,11 @@ export default function index(props) {
                     <div className="publicTitle">{props.transferTitle.unknownTitle}</div>
                     <div className="searchInput">
                         <span>设备类型</span>
+                        <GlobalStyle />
                         <Select
                             size="middle"
                             defaultValue={0}
-                            style={{ marginLeft: 16, width: '112px' }}
+                            style={{ marginLeft: 16, width: '112px', zIndex: 19999 }}
                             onChange={changeType}
                             options={devices}
                             fieldNames={{ label: "name", value: "deviceStyle" }}
