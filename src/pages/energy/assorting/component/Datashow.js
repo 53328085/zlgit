@@ -1,4 +1,4 @@
-import React, {useMemo, useState} from 'react'
+import React, {useMemo, useState, useRef} from 'react'
 import  Titlelayout from '@com/titlelayout'
 import {Radio, Checkbox, Space} from 'antd'
 import {CustTitle,ChartWrap} from  "../style"
@@ -7,9 +7,11 @@ import Ichart from '@com/useEcharts/Ichart'
 import UseTable from '@com/useTable'
 import {WrapTable} from '@com/comstyled'
 import {isObject} from "@com/usehandler"
+import {ExportExcel} from "@com/useButton"
 export default function Index({datas={},quota=[],showquota, view,energytype}) {  
   const {proportion=[],consumeDetail=[], tableDatas } = datas || {}
   const [checked, setChecked]=useState(false)
+  const tbref=useRef()
   let [columns, dataSource] =useMemo(()=>{ 
     try {
       if(isObject(tableDatas)){
@@ -187,7 +189,10 @@ const lineopt=useMemo(()=>{
   }
   const title=<CustTitle>
     <span>分类能耗明细</span>
-    <Space size={16}>{showquota && <Checkbox onChange={ckChange}>定额线</Checkbox>}<Radio.Group options={viewOpt} buttonStyle="solid" optionType='button' value={value} onChange={(e)=>setValue(e.target.value)} ></Radio.Group></Space>
+    <Space size={16}>{showquota && <Checkbox onChange={ckChange}>定额线</Checkbox>}
+    <Radio.Group options={viewOpt} buttonStyle="solid" optionType='button' value={value} onChange={(e)=>setValue(e.target.value)} ></Radio.Group>
+    {value==2 && <ExportExcel tb={tbref} single={true} />}
+    </Space>
   </CustTitle>
   return (
     <Titlelayout title={title} layout="flex">
@@ -201,7 +206,7 @@ const lineopt=useMemo(()=>{
       </ChartWrap> :
  <WrapTable>
   <div className="inwrap">
-     <UseTable columns={columns} dataSource={dataSource} />
+     <UseTable columns={columns} dataSource={dataSource} ref={tbref} />
   </div>
   </WrapTable>}
     </Titlelayout>

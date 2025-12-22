@@ -139,12 +139,13 @@ export const PieOption = {
     trigger: "item",
   },
   legend: {
-    top: "middle", // 垂直居中
-    right: 10,
-    orient: "vertical",
+    bottom: "16px", // 垂直居中
+   // right: 10,
+  //  orient: "vertical",
     type: "scroll",
     // 当图例过长时的滚动配置
-    height: "60%", // 限制图例高度，避免覆盖饼图
+   // height: "60%", // 限制图例高度，避免覆盖饼图
+  // height: 32,
     itemGap: 8, // 减小图例项间距
     textStyle: {
       fontSize: 12, // 保持原始字体大小
@@ -167,7 +168,7 @@ export const PieOption = {
     {
       // name: 'Access From',
       type: "pie",
-      center: ["40%", "50%"], // 调整为更居中的位置，与垂直居中的图例配合
+      center: ["50%", "50%"], // 调整为更居中的位置，与垂直居中的图例配合
       radius: ["45%", "65%"], // 稍微缩小饼图半径
       avoidLabelOverlap: true,
       label: {
@@ -209,7 +210,7 @@ export const Chart_Options = {
 
   // 图例配置
   legend: {
-    data: ["今日能耗", "昨日能耗", "环比率"],
+   // data: ["今日能耗", "昨日能耗", "环比率"],
     top: 10,
   },
 

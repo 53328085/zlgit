@@ -68,7 +68,7 @@ export const AirTable = forwardRef(
         HandleCol(3, openEnergyModal);
         HandleCol(5, openFrModal);
         HandleCol(6, openFrModal);
-        console.log("euList", euList);
+//        console.log("euList", euList);
         TbCol[4]["render"] = (text, record, index) => {
           return (
             <CellDiv>
@@ -125,6 +125,7 @@ export const AirTable = forwardRef(
         style={{ overflow: "hidden" }}
         columns={columns}
         dataSource={dataSource}
+        ref={ref}
         loading={loading}
         scroll={{ x: tabId == 1 ? "1565px" : "100%" }}
         pagination={{
@@ -141,13 +142,23 @@ export const AirTable = forwardRef(
   }
 );
 
-export const AirChart = ({ tabId, proportion, useTrend, saveTrend }) => {
+export const AirChart = ({ tabId, proportion, useTrend, saveTrend,dtype }) => {
   const chartRef = useRef();
   const pirRef = useRef();
   const columnRef = useRef();
   let pieChart, columnChart, mainChart;
   useEffect(() => {
-    console.log(tabId);
+    console.log("dtype",dtype);
+    const text = {
+      1:"今日",
+      2: "本月",
+      3: "本年",
+    }[dtype]
+    const text2 = {
+      1:"昨日",
+      2: "上月",
+      3: "去年",
+    }[dtype]
     if (tabId == 1) {
       if (proportion.length > 0) {
         PieOption["series"][0]["data"] = proportion;
@@ -156,7 +167,9 @@ export const AirChart = ({ tabId, proportion, useTrend, saveTrend }) => {
       if (Object.keys(useTrend).length > 0) {
         Chart_Options["xAxis"]["data"] = useTrend["x"];
         Chart_Options["series"][0]["data"] = useTrend["y"];
+        Chart_Options["series"][0]["name"] = text+"能耗(kWh)";
         Chart_Options["series"][1]["data"] = useTrend["y1"];
+        Chart_Options["series"][1]["name"] = text2+"能耗(kWh)";
         Chart_Options["series"][2]["data"] = useTrend["y2"].map((it) =>
           parseInt(it)
         );
@@ -175,7 +188,7 @@ export const AirChart = ({ tabId, proportion, useTrend, saveTrend }) => {
       columnChart?.dispose();
       mainChart?.dispose();
     };
-  }, [tabId, proportion, useTrend, saveTrend]); // 添加数据作为依赖项
+  }, [tabId, proportion, useTrend, saveTrend,dtype]); // 添加数据作为依赖项
   return (
     <div className="chart">
       {tabId == 1 ? (

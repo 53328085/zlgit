@@ -1,7 +1,7 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useRef, useEffect, useCallback, useMemo } from "react";
 import Pagecount from "@com/pagecontent";
 import UseTree from "@com/useTree";
-import { Form, Select, DatePicker, Button, Radio, Spin } from "antd";
+import { Form, Select, DatePicker, Button, Radio, Spin, message } from "antd";
 import { Radio_Options, Init_Value, Date_Value, Table_Option } from "./data";
 import { AirTable, AirChart, AirEnergyDetail, Frequency } from "./comp";
 import { Container, Header, Main } from "./style";
@@ -15,6 +15,8 @@ import { selectProjectId } from "@redux/systemconfig";
 import { useSelector } from "react-redux";
 import { useReactive } from "ahooks";
 import moment from "moment";
+import {ExportExcel} from "@com/useButton"
+import {isObject, getTime} from "@com/usehandler"
 import exportImg from "./imgs/export.png";
 export default function Index() {
   const [treeId, setTreeId] = useState();
@@ -25,6 +27,7 @@ export default function Index() {
   const [type, setType] = useState("date");
   const { Item } = Form;
   const [form] = Form.useForm();
+  const dtype = Form.useWatch("dtype", form);
   const energyRef = useRef(); //空调用能明细弹框
   const enableRef = useRef(); //开启频次
   const openTbIdRef = useRef(); // 开关弹窗对应的表格行id
@@ -36,6 +39,9 @@ export default function Index() {
     euList: [],
     esList: [],
   });
+  const [tableData, setTableData]=useState(null)
+  const [query, setQuery] = useState({});
+
   //空调监控表格分页
   const pageInfo = useReactive({
     pageNum: 1,
@@ -71,13 +77,13 @@ export default function Index() {
     pageInfo.pageSize = pageSize;
     QueryEnergyConsumptions(); // 重新查询数据
   };
-  const getDateType = (type, date) => {
+/*   const getDateType = (type, date) => {
     return type == 1
       ? moment(date).format("YYYY-MM-DD")
       : type == 2
         ? moment().format("YYYY-MM-01")
         : moment().format("YYYY-01-01");
-  };
+  }; */
   //查询能耗监控数据
   const QueryEnergyConsumptions = async () => {
     return executeApiCall(
@@ -91,6 +97,8 @@ export default function Index() {
         loadingKey: "pageLoading",
         onSuccess: (res) => {
           const { proportion, saveTrend, useTrend, euList, esList } = res.data;
+          setTableData(res.data)
+          setQuery((o)=> ({...o,pageNum:1, pageSize:res.total}))
           stateData.proportion = proportion ?? [];
           stateData.saveTrend = saveTrend ?? {};
           stateData.useTrend = useTrend ?? {};
@@ -125,6 +133,7 @@ export default function Index() {
           date: timedate?.date,
         };
       }
+      setQuery((o)=>({...o,...requestParams}))
       // 调用API
       const res = await apiFunction(requestParams);
       // 处理成功响应
@@ -211,7 +220,8 @@ export default function Index() {
     setLoading((prev) => ({ ...prev, queryLoading: true }));
     try {
       const values = form.getFieldsValue();
-      const date = getDateType(values.dtype, values.date);
+
+      const date = getTime(values.date,values.dtype);
       timedate.date = date;
       timedate.datetype = values.dtype;
       await QueryEnergyConsumptions(); // 点击查询按钮时重新获取数据
@@ -324,6 +334,61 @@ export default function Index() {
       openTbIdRef.current = null;
     };
   }, [treeId, projectId, tabId]);
+  const switchData=useCallback( (item)=> {
+    const keys =tabId == 1 ? {  
+      name: '设备名称',
+      csn: "通讯地址",
+      eu: "电量(kWh)",
+      openNum: "开启频次",
+      closeNum: "关闭频次",
+      typeName: "空调类型",
+      address:"安装地址",
+    }: {  
+     name: '设备名称',
+     csn: "通讯地址",
+     ts: "节能时长",
+     es: "节能电量(kWh)",
+     ms: "节能费用(元)", 
+     typeName: "空调类型",
+     address:"安装地址",
+    }
+    let row ={}
+    for (let [key, label] of Object.entries(keys)) {   
+        console.log(key, label)   
+        row[label] =  item[key] 
+    }
+    return row
+  }, [tabId])
+  const getData =useCallback(async()=>{ 
+    try {
+      const {success, data, errMsg} = await AirConditioningManagement.QueryEnergyConsumptions(query)
+      if(success && isObject(data)) {
+        const {euList=[],esList=[]} = data
+        const datas = tabId==1 ? euList.map(i => switchData(i) ): esList.map(i => switchData(i))
+        const sheetName= tabId==1 ? "空调用能" : "空调节能"
+        return {data:datas, sheetName}
+      }else {
+          message.error(errMsg || "数据出错")
+          return []
+      }
+    } catch (error) {
+      
+    }
+    
+  },[query, tabId,switchData])
+ 
+  const tbData = useMemo(()=> {  //  tabId == 1 ? stateData.euList : stateData.esList 1：空调用能；2：空调节能
+     
+    
+     const {euList=[],esList=[]} = isObject(tableData) ? tableData : {}
+     const data = tabId==1 ? euList.map(i => switchData(i) ): esList.map(i => switchData(i))
+     const sheetName= tabId==1 ? "空调用能" : "空调节能"
+    return  {
+      data,
+      sheetName
+    }
+  },[tableData,switchData, tabId])
+   
   return (
     <Pagecount bgcolor="#eeeff4" pd={0}>
       <Container>
@@ -413,6 +478,7 @@ export default function Index() {
                     marginLeft: "auto",
                     display: "flex",
                     alignItems: "center",
+                    columnGap: 16,
                   }}
                 >
                   <Radio.Group
@@ -427,7 +493,8 @@ export default function Index() {
                       setTbmodel(e.target.value);
                     }}
                   />
-                  <div
+                   <ExportExcel tb={tableRef} byData={true}  tbData={tbData} getData={getData}></ExportExcel>
+                 {/*  <div
                     style={{
                       cursor: "pointer",
                       display: tbmodel == 2 ? "none" : "block",
@@ -449,7 +516,7 @@ export default function Index() {
                       style={{ marginRight: 4, marginLeft: 14 }}
                     />
                     <span style={{ fontWeight: 14 }}>导出</span>
-                  </div>
+                  </div> */}
                 </div>
               </BlueColumn>
               <div
@@ -482,6 +549,7 @@ export default function Index() {
                   <AirChart
                     tabId={tabId}
                     key={tabId}
+                    dtype={dtype}
                     proportion={stateData.proportion}
                     useTrend={stateData.useTrend}
                     saveTrend={stateData.saveTrend}

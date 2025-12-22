@@ -508,7 +508,7 @@ export function PrintButton(props) {
   );
 }
 
-export function ExportExcel({tb,  single=false,defined=false,setIsrange,getDates,value, ...other}) {
+export function ExportExcel({tb,  single=false,defined=false, byData=false, setIsrange,getDates,value,tbData={},getData=async()=>[], ...other}) {
  const mref= useRef()
  const [form] = Form.useForm()
  const [dates, setDates] = useState(null)
@@ -531,18 +531,32 @@ export function ExportExcel({tb,  single=false,defined=false,setIsrange,getDates
   const date = current && current > moment().endOf("day");
   return !!tooEarly || !!tooLate || !!date
 };
- const onClick =useCallback(({key}) => {
+ const onClick =useCallback(async({key}) => {
+    
       
-     if (key == '1') {
-      tb.current.download()
-     }else if(key == '2') {
-      tb.current.downloadAll()
+     if (key == '1') { 
+      if(byData)  {    
+        console.log("button~~",tbData)
+        tb.current.downloadByData(tbData)
+      } else {
+        tb.current.download()
+      }  
+     
+     }else if(key == '2') { 
+        if(byData)  {
+          let datas =await getData()
+          tb.current.downloadByData({data:datas})
+        } else {  
+          tb.current.downloadAll() 
+        }
+       
+     
      }else if(key=="3") {
       let obj={range:true}
       setIsrange(obj)
       mref.current.onOpen()
      }
-  }, [tb])
+  }, [tb, tbData,getData])
   const items = [
     {
       key: '1',
