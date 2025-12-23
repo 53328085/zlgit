@@ -50,7 +50,8 @@ export const getTimePeriodTypeOptions = () => {
     { label: '尖', value: 1 },
     { label: '峰', value: 2 },
     { label: '平', value: 3 },
-    { label: '谷', value: 4 }
+    { label: '谷', value: 4 },
+    { label: '深谷', value: 5 }
   ]
 }
 

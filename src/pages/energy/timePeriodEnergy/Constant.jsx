@@ -178,7 +178,8 @@ export function convertToMarkAreaData (originalData) {
     1: '#5983FE', // 尖
     2: '#46C7FF', // 峰
     3: '#FFAA54', // 平
-    4: '#5ED9A7' // 谷
+    4: '#5ED9A7', // 谷
+    5: '#6859EA', // 深谷
   }
 
   return {
@@ -186,7 +187,7 @@ export function convertToMarkAreaData (originalData) {
       const endTime = item.endTime || '24:00' // 处理空结束时间
       return [
         {
-          name: ['尖', '峰', '平', '谷'][item.tariffTimeType - 1],
+          name: ['尖', '峰', '平', '谷', '深谷'][item.tariffTimeType - 1],
           xAxis: item.startTime === '00:00' ? Number.NEGATIVE_INFINITY : item.startTime,
           itemStyle: {
             color: typeColorMap[item.tariffTimeType],
