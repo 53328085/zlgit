@@ -241,8 +241,8 @@ export const Chart_Options = {
       axisLabel: {
         formatter: "{value}",
       },
-      nameLocation: "middle",
-      nameGap: 60,
+      nameLocation: "end",
+     // nameGap: 32,
       splitLine: {
         show: false, // 不显示分割线
       },
@@ -250,8 +250,8 @@ export const Chart_Options = {
     {
       type: "value",
       name: "环比率",
-      nameLocation: "middle",
-      nameGap: 45,
+      nameLocation: "end",
+    //  nameGap: 45,
       min: 0,
       axisLabel: {
         formatter: function (value) {

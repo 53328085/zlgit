@@ -545,7 +545,7 @@ export function ExportExcel({tb,  single=false,defined=false, byData=false, setI
      }else if(key == '2') { 
         if(byData)  {
           let datas =await getData()
-          tb.current.downloadByData({data:datas})
+          tb.current.downloadByData(datas)
         } else {  
           tb.current.downloadAll() 
         }

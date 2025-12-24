@@ -28,7 +28,7 @@ import Pagecount from "@com/pagecontent";
 import {SaveButton, CustButton} from "@com/useButton" ;
 import {getprimarycolors} from "@com/usehandler";
 import Ccolor from './custColor';
-import { isObject } from "lodash";
+import { isObject } from "@com/usehandler";
  
 const {Text, Link} =Typography
 const { Item } = Form;

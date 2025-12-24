@@ -755,7 +755,7 @@ export default function Index({ projectId, level, CModal, name, allLevel }) {
 
   return (
     <Mainbox ref={boxref}>
-      <Cform form={form} layout="inline" initialValues={{ name: "" }}>
+      <Cform form={form} layout="inline" initialValues={{ name: "" }} >
         <Space size={16}>
           {level == 1 && (
             <Form.Item name="name" label={`${name}${t("common:Query")}`}>
@@ -841,6 +841,7 @@ export default function Index({ projectId, level, CModal, name, allLevel }) {
           size="middle"
           labelCol={{ flex: "7em" }}
           labelAlign="left"
+          labelWrap={true}
           preserve={false}
           validateMessages={{
             required: "'${label}' 是必选字段",

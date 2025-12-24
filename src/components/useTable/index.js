@@ -254,7 +254,7 @@ function Index(props, ref) {
     const workbook = utils.book_new(); // 新建工作簿
     // var ws = utils.aoa_to_sheet([header]); // 添加标题到工作表
     //utils.sheet_add_json(ws, data, { skipHeader: true, origin: "A2" }); // 添加数据到工作表
-    let ws = utils.json_to_sheet(data, {...option} )
+    let ws = utils.json_to_sheet(data, option )
 
     let { rowinfo, colinfo } = option
     rowinfo ? ws["!rows"] = rowinfo : ''

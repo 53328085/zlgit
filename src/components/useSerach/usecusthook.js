@@ -41,6 +41,7 @@ export function useGetQueryAll(projectId,level) {
        if(success && Array.isArray(data) && data.length) {
          setAllevel(data);
        }else {
+        setAllevel(null);
          if(!data || !data.length) {
              message.warning('获取层级失败,请设置区域层级')
          }

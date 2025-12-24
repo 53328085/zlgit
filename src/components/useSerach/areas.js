@@ -21,9 +21,14 @@ export default function Index({setexparams, islevel=true, isarea=true,defaultLev
  
   }, [areaLevels])
   useEffect(() => {
-    instance.setFieldValue("selectlevel", subopt?.map(s =>s.id) )
+    if (Array.isArray(subopt)&& subopt?.length > 0) {
+      instance.setFieldValue("selectlevel", subopt?.map(s =>s.id))
+    }else {
+      instance.setFieldValue("selectlevel", [])
+    }
+    
     setexparams?.({ ...instance.getFieldsValue(true) })
-    if (Array.isArray(subopt) && typeof getsublevel == "function") {
+    if (Array.isArray(subopt) && subopt.length && typeof getsublevel == "function") {
       getsublevel?.(subopt)
     }else{
       getsublevel?.([])
