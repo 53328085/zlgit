@@ -147,7 +147,8 @@ export default function Index () {
       y = [],
       y1 = [],
       y2 = [],
-      y3 = []
+      y3 = [],
+      y4 = []
     } = detail
 
     let tableData = []
@@ -158,11 +159,13 @@ export default function Index () {
         const tariffTimeType2 = parseFloat(y1[index] || 0).toFixed(2)
         const tariffTimeType3 = parseFloat(y2[index] || 0).toFixed(2)
         const tariffTimeType4 = parseFloat(y3[index] || 0).toFixed(2)
+        const tariffTimeType5 = parseFloat(y4[index] || 0).toFixed(2)
         const totalEnergy = (
           parseFloat(tariffTimeType1) +
           parseFloat(tariffTimeType2) +
           parseFloat(tariffTimeType3) +
-          parseFloat(tariffTimeType4)
+          parseFloat(tariffTimeType4)+
+          parseFloat(tariffTimeType5)
         ).toFixed(2)
 
         return {
@@ -171,6 +174,7 @@ export default function Index () {
           tariffTimeType2,
           tariffTimeType3,
           tariffTimeType4,
+          tariffTimeType5,
           totalEnergy
         }
       })
@@ -212,10 +216,11 @@ export default function Index () {
               { name: 'y1', displayName: '峰能耗' },
               { name: 'y2', displayName: '平能耗' },
               { name: 'y3', displayName: '谷能耗' },
+              { name: 'y4', displayName: '深谷能耗' },
             ],
             source: [
               x.map(time => time.replace(/^(\d):/, '0$1:')), // 格式化时间
-              y, y1, y2, y3
+              y, y1, y2, y3, y4
             ],
             sourceHeader: false //false（默认值）：所有行/列都被视为纯数据
           }
