@@ -3,8 +3,22 @@ import { numberformat } from '@com/usehandler'
 /**
  * getTableColumns 获取中间表格列配置
  */
-export const getTableColumns = () => {
-  return [
+export const getTableColumns = (type) => {
+  return type===1 ? [
+    {
+      title: '时间',
+      dataIndex: 'dateTime',
+    },
+    {
+      title: '时段',
+      dataIndex: 'timePeriod',
+    },
+    {
+      title: '用量(kWh)',
+      dataIndex: 'totalEnergy',
+    },
+  ]:
+  [
     {
       title: '时间',
       dataIndex: 'dateTime',
@@ -201,3 +215,56 @@ export function convertToMarkAreaData (originalData) {
     }) || []
   }
 }
+
+/**
+ * 比较两个时间点，返回较晚的时间
+ * @param {string} time1 - 时间字符串 "HH:mm" (如 "08:30")
+ * @param {string} time2 - 时间字符串 "HH:mm" (如 "18:45")
+ * @returns {boolean} true-time1较晚 false-time2较晚
+ */
+export function isLaterTime(time1, time2) {
+  // 处理24:00特殊情况
+  if (time1 === "24:00") return true;
+  if (time2 === "24:00") return false;
+
+  // 转换为分钟数进行比较
+  const toMinutes = (time) => {
+    const [hours, minutes] = time.split(':').map(Number);
+    return hours * 60 + minutes;
+  };
+
+  const minutes1 = toMinutes(time1);
+  const minutes2 = toMinutes(time2);
+
+  return minutes1 >= minutes2
+}
+
+/**
+ * 根据时间区间获取匹配到的第一个区间的颜色值
+ * @param {string} currentTime - 当前时间点 "HH:mm"
+ * @param {Array} colorRanges - 颜色区间数组 [{color:'', value:'HH:mm'}]
+ * @returns {string} 第一个匹配区间的颜色值，未匹配返回空字符串
+ */
+export function getTimeRangeColor(currentTime, colorRanges) {
+  if (!colorRanges?.length) return '';
+  // 特殊情况：当前时间早于第一个区间点
+  if (!isLaterTime(currentTime, colorRanges[0].value)) {
+    return colorRanges[0].color;
+  }
+  // 遍历区间判断位置
+  for (let i = 1; i < colorRanges.length; i++) {
+    if (!isLaterTime(currentTime, colorRanges[i].value)) {
+      return colorRanges[i].color;
+    }
+  }
+  // 当前时间晚于所有区间点，返回空字符串
+  return '';
+}
+
+// 1. 首先提取颜色计算逻辑为独立函数
+export const getDynamicColor = (params, colorArray) => {
+  const timeValue = params.value[0]; // 获取时间值
+  const color = getTimeRangeColor(timeValue, colorArray)
+  return color;
+};
+
