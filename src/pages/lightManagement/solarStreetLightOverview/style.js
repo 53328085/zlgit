@@ -90,7 +90,7 @@ export const Mainbox = styled.div`
          // flex:1;
           display: grid;
           grid-template-columns: minmax(536px, 1fr) minmax(536px, 1fr);
-          grid-auto-rows: 158px;
+          grid-auto-rows: 210px;
           gap:16px;
           height: 640px;
           overflow-y: auto;

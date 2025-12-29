@@ -249,9 +249,9 @@ const selectTheme =(id)=> {
     dispatch(getDark(false))
     dispatch(getThemeColor({id: formdata.id, name: formdata.name, ...formdata.context}))
     form.setFieldsValue({id: formdata.id, name: formdata.name, ...formdata.context})
-     setTimeout(()=>{
+    /*  setTimeout(()=>{
         window.location.reload()
-     },[100])
+     },[100]) */
   
   
   } catch (error) {
@@ -331,7 +331,7 @@ useEffect(()=>{
         {
          Themes?.length > 0 ?  Themes?.map?.(t => <Ctag key={t.id} color={t?.context?.primaryColor} onClick={() => selectTheme(t.id)}>{t.name}</Ctag>): null
         }
-        <Ctag key="dark" onClick={setdark}>暗黑主题</Ctag>
+       {/*  <Ctag key="dark" onClick={setdark}>暗黑主题</Ctag> */}
       </div>
       <div className="items" >
         

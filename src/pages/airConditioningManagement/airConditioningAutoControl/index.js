@@ -197,7 +197,7 @@ export default function Index() {
                 {savingInfo.length !== 0 ?
                   <div className="desc"
                     style={{ height: controlInfos.length < 2 ? '160px' : '329px' }}>
-                    {savingInfo.map?.(e => <div className="schemeName"><div className="title">{e.content}</div>{e.description}</div>)}
+                    {savingInfo.map?.(e => <div className="schemeName"><div className="title">{e.content}</div><pre className="pre">{e.description}</pre></div>)}
                   </div> :
                   <div className="empty" style={{ height: controlInfos.length < 2 ? '160px' : '329px' }}>
                     {/* <Cempty tip='暂无数据' /> */}

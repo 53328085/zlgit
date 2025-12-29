@@ -3,11 +3,11 @@ import styled, {css} from 'styled-components'
 import { useNavigate, useOutletContext } from "react-router-dom";
 import { message } from 'antd'
 import Icard from './card'
-import { useSelector } from 'react-redux'
+import { useSelector,useDispatch } from 'react-redux'
 import imgurl from './images/index.js'
 import { Monitoring } from '@api/api.js'
 import {CustTransO, i18t, i18warning} from "@com/useButton"
-import { selectProjectId, selectOneLevelDefaultId, adaptation,themeColor } from '@redux/systemconfig.js'
+import { selectProjectId, selectOneLevelDefaultId, adaptation,themeColor,getsaveDeviceID } from '@redux/systemconfig.js'
 import Pagecount from '@com/pagecontent'
 import CommItem from "@com/commItem"
 import {isLightColor, isObject} from "@com/usehandler"
@@ -31,7 +31,7 @@ export default function Index() {
   const projectId = useSelector(selectProjectId)
   let areaId = useSelector(selectOneLevelDefaultId)
   let {laptop} = useSelector(adaptation)
-
+  const dispatch = useDispatch()
   let {primaryderived} = useSelector(themeColor)  
   const statusAttribute = [
     {
@@ -186,6 +186,7 @@ export default function Index() {
     } else {
        let currdeviceStyle = `deviceStyle_${projectId}`
       window.localStorage.setItem(currdeviceStyle, meterType);
+      dispatch(getsaveDeviceID(meterType))
       navigate(`/index/runtimeMonitor/point`, {
         state: {
           type: 'index', primary: 'runtimeMonitor', title: '设备监测', nested: 'point', meterType

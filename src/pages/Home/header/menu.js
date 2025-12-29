@@ -33,16 +33,24 @@ const Poppuclss =createGlobalStyle`
 .ant-menu-submenu.ant-menu-submenu-popup {
      border-radius: 8px;
      overflow: hidden;
+     background: linear-gradient( 270deg, #FFFFFF 0%, rgba(235,237,244,0.9) 100%);
+box-shadow: 1px 16px 23px 0px rgba(0,0,0,0.16);
+
     .ant-menu.ant-menu-sub.ant-menu-vertical {
+      padding: 8px 0;
+      overflow-y: clip;
         .ant-menu-item.custsubmenu {
             display: flex;
             align-items: center;
-            justify-content: space-evenly;
+           // justify-content: space-evenly;
+            column-gap: 8px;
+            padding: 0 8px;
+            margin: 0 8px;
             .ant-menu-title-content {
               width: 74px;
             }
             .custicon { 
-              width: 16px;  
+              width: 18px;  
             g path:nth-of-type(1)  {
                   fill: ${props => props.theme.menusfontcolor || '#b2c1d1'}; 
                 } 
@@ -55,8 +63,10 @@ const Poppuclss =createGlobalStyle`
             }
         }  
         }
-        .ant-menu-item.ant-menu-item-selected { 
-        color:${props => props.theme.menusactivefontcolor || '#ffffff'};
+        .ant-menu-item.ant-menu-item-selected,.ant-menu-item:hover,.ant-menu-item:active { 
+      //  color:${props => props.theme.menusactivefontcolor || '#ffffff'};
+      background-color:  rgba(${props => props.rgba[0]},${props => props.rgba[1]},${props => props.rgba[2]}, 0.2) ; //${props => props.theme.menusactive || '#1c62b6'} ;
+      color:${props =>props.theme.isdark ? "dark" : (props.theme.menusactivefontcolor || '#ffffff')};
         border-radius: 6px;
         .custicon {
               g path:nth-of-type(1) {
@@ -313,7 +323,7 @@ export default function Hmenu() {
    },[location]) 
 
   return <>
-  <Poppuclss />
+  <Poppuclss  rgba={menusactiveoc}  />
   <Cmenu laptop={laptop} onClick={onSelect} selectedKeys={[current]} mode="horizontal" items={menus} rgba={menusactiveoc}    overflowedIndicator={<Morecom />}  />
   </>
 

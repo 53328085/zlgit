@@ -120,7 +120,7 @@ export const items = (
                           ></Select>
                         </Form.Item >
             <Form.List name={[field.name, "tasks"]} initialValue={[{}]}>
-              {(inerfileds, inmethods) => {                
+              {(inerfileds, inmethods) => {
                 return (
                   <div className="scene" key={field.key}>
                     <div className="hander">
@@ -174,7 +174,7 @@ export const items = (
                     </div>
                     <div className="contents">
                       {inerfileds?.map?.((inerfiled, index, arr) => (
-                        <div className="content" key={inerfiled.key}>
+                        <div className="content" key={inerfiled.name}>
                           <Form.Item
                             label="定时任务"
                             name={[inerfiled.name, "taskType"]}

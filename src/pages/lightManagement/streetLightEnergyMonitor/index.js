@@ -32,7 +32,7 @@ export default function Index() {
  // const { exparams } = useOutletContext();
  
  // const { areaId,  type, date } = exparams || {};
-  const pageTotal = useRef()
+ 
 
  const columns = useMemo(()=> {
     let time =  {
@@ -150,45 +150,33 @@ export default function Index() {
 
 
 
-  const getData = async ({ current, pageSize }) => {
+  const getData = async () => {
     let fag =
       [areaId, projectId, type].some((v) => Number.isInteger(v)) && date;
     if (!fag) return;
     try {
-      let {success, data, total } = await usePage({},{
+      let {success, data  } = await usePage({},{
         areaId,
         projectId,
         type,
         dateTime: getTime(date, type),
-        pageSize,
-        pageNum:current,
+        
       });
 
-      if(success && Array.isArray(data)) {
-         pageTotal.current = total
-         return {
-          list:data,
-          total,
-         }
+      if(success && Array.isArray(data)) { 
+          return data
       }else {
-        pageTotal.current = 0;
-        return {
-          list:[],
-          total:0
-        }
+         return []
       }
     } catch (error) {
-      pageTotal.current = 0;
+       
     }
   };
 
-  const { tableProps } = useAntdTable(getData, {
-    defaultPageSize: 14,
+  const { data:tbdata, loading:tbloading } = useRequest(getData, {    
     refreshDeps: [areaId, projectId, type, date],
   });
-   const onExport = useCallback(()=> {
-     return getData({current:1, pageSize: pageTotal.current})
-   }, [areaId, projectId, type, date])
+  
   const onChange = (v) => {
     const type = v.target.value;
     setDataType(type);
@@ -199,7 +187,7 @@ export default function Index() {
       <span>路灯能耗趋势</span>
       <Space>
         <ChartList onChange={onChange} />
-        <ExportExcel tb={tbref}></ExportExcel>
+        <ExportExcel tb={tbref} single={true} disabled={datatype == "chart"}></ExportExcel>
       </Space>
     </TitleBox>
   );
@@ -212,7 +200,7 @@ export default function Index() {
         {datatype == "list" ? (
           <Tablewrap>
             <div className="inwrap">
-              <UserTable columns={columns} {...tableProps} ref={tbref} sheetName="路灯能耗趋势表" onExport={onExport} ></UserTable>
+              <UserTable columns={columns}  dataSource={tbdata} loading={tbloading} ref={tbref} scroll={{y:632}} sheetName="路灯能耗趋势表"   ></UserTable>
             </div>
           </Tablewrap>
         ) : (

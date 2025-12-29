@@ -8,7 +8,7 @@ import { useAntdTable } from "ahooks";
 import {CustTransO, i18t, i18warning,ExportExcel, RadioT} from "@com/useButton"
 import {isLightColor} from "@com/usehandler"
 //import Icard from "./card";
-import Icard from "@com/commIcard"
+import Icard from "@com/commIcard.jsx"
 import imgurl from "./images/index.js";
 import { Monitoring } from "@api/api.js";
 import {

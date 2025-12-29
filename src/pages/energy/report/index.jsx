@@ -1,5 +1,5 @@
 import React, { useState, useCallback, useRef, useEffect, useMemo, Children } from 'react'
-import { Checkbox, DatePicker, message, Tooltip, Descriptions, Radio, Select } from 'antd'
+import { Checkbox, DatePicker, message, Tooltip, Descriptions, Radio, Select,Input } from 'antd'
 import moment from 'moment'
 
 import { useOutletContext } from 'react-router-dom'
@@ -14,10 +14,10 @@ import styled from 'styled-components'
 import { energyReport } from '@api/api'
 import CModal from '@com/useModal'
 import { ExportExcel, CustButton } from '@com/useButton'
-import { Serach } from "@com/comstyled"
+  import { Serach } from "@com/comstyled"
 import { cols, conscols, timecols, typecols, fromlot, shitcols,aqtabs, etabs, wtabs, labelStyle, contentStyle,reportTypeopt } from './data'
 import Ichart from '@com/useEcharts/Ichart';
-
+ 
 
 const { RangePicker } = DatePicker;
 const {
@@ -62,7 +62,7 @@ const Chartwrap = styled.div`
 
 export default function Index() {
 
-  let { exparams, setCustview } = useOutletContext()
+  let { exparams, setCustview ,setConfig} = useOutletContext()
   const [dates, setDates] = useState([moment().startOf("day"), moment().endOf("hour")]);
   
   const [startDateTime, setStartDateTime] = useState('')
@@ -77,10 +77,20 @@ export default function Index() {
 
   const [concolumns, setConcolumns] = useState([])
   const [alike, setAlike] = useState("")
+  const [alikev, setAlikev]=useState("")
   const [reportType, setReportType] = useState(1)
+  const alikeRef= useRef({})
   const onSearch = (e) => {
     setAlike(e)
+    alikeRef.current[value]=e
   }
+  const alikeChange=(e)=>{
+    setAlikev(e.target.value)
+     
+  }
+ 
+  
+
   const toformat = {
     1:"HH:mm",
     2:"DD",
@@ -146,6 +156,22 @@ const tabs = useMemo(()=> {
   } 
 
 }, [projectId, energytype])
+
+useEffect(()=> {
+    if(["0","1","4"].includes(value) && isrange.range) {
+       setConfig((o)=> ({...o,  disabledDate:true}))
+    }else{
+      setConfig((o)=> ({...o,  disabledDate:false}))
+    }
+    let str =typeof alikeRef.current?.[value]==="string" ? alikeRef.current?.[value] :  ""
+    setAlike(str)
+    setAlikev(str)
+}, [value,isrange])
+useEffect(()=> {
+   return () => {
+    setConfig((o)=> ({...o,  disabledDate:false}))
+  }
+}, [])
 
 /* 
  if (energytype == 1) {
@@ -228,7 +254,7 @@ const tabs = useMemo(()=> {
     ][index]
     let dateType = { 1: "day", 2: "month", 3: "year" }[type]
 
-    let params = {
+    let query = {
       projectId,
       meterType: energytype,
       startDate: range ? dates?.[0].format("YYYY-MM-DD HH:mm") : date?.startOf(dateType).format("YYYY-MM-DD HH:mm"),
@@ -239,12 +265,15 @@ const tabs = useMemo(()=> {
       ids: treeId,
       type,
       reportType,
-    }
+      filterInfo:alike
+    } 
+    //新需求 除分类能耗外 都添加搜索
+    let params = range ? {...query, customTime:true} : query
     setStartDateTime(range ? dates?.[0].format("YYYY-MM-DD HH:mm") : date?.startOf(dateType).format("YYYY-MM-DD HH:mm"))
     setEndDateTime(range ? dates?.[1].format("YYYY-MM-DD HH:mm") : date?.endOf(dateType).format("YYYY-MM-DD HH:mm"))
-    if (index == 0) {
+   /*  if (index == 0) {
       params.filterInfo = alike
-    }
+    } */
 
     // //  cols 实时抄表，  conscols 能耗报表 , typecols 分类能耗
  /*    if(parseInt(projectId)!==30) {
@@ -281,7 +310,7 @@ const tabs = useMemo(()=> {
           let { detailHeaders          } = data?.[0]
           if(!Array.isArray(detailHeaders)) return
           let last = detailHeaders.length - 1
-          let column = detailHeaders.map((col,index) => ({ title: moment(col, timeformt).format(toformat),  children:[
+          let column = detailHeaders.map((col,index) => ({ title: col,  children:[
             {
             title: "读数",
             dataIndex: col+'r',
@@ -357,7 +386,7 @@ const tabs = useMemo(()=> {
 
   }
   const { tableProps } = useAntdTable((params) => getTableData({ ...params, areaId, projectId, type, date, energytype, treeId, index, line, isrange, dates, alike,reportType }), {
-    defaultParams: [{ current: 1, pageSize: 14 }],
+    defaultParams: [{ current: 1, pageSize: 18}],
     refreshDeps: [areaId, projectId, type, date, energytype, treeId, index, line, isrange, dates, alike,reportType]
   })
   
@@ -437,10 +466,9 @@ const tabs = useMemo(()=> {
     )
   }, [value])
   const onExport = useCallback(() => {
-    return getTableData({ current: 1, pageSize: total, areaId, projectId, type, date, energytype, treeId, index, line, isrange, dates,reportType
+    return getTableData({ current: 1, pageSize: total, areaId, projectId, type, date, energytype, treeId, index,alike, line, isrange, dates,reportType
     })
-  }, [total, concolumns, type, date, energytype, areaId, treeId, index, line, isrange, dates, sheetName,reportType
-  ])
+  }, [total, concolumns, type, date, energytype, areaId, treeId, index, line, isrange, dates, sheetName,reportType,alike  ])
 
   const boxchange = (e) => {
     const f = e.target.checked
@@ -455,8 +483,8 @@ const tabs = useMemo(()=> {
     if (!dates) {
       return false;
     }
-    const tooLate = dates[0] && current.diff(dates[0], 'days') > 31;
-    const tooEarly = dates[1] && dates[1].diff(current, 'days') > 31;
+    const tooLate = dates[0] && current.diff(dates[0], 'days') > 45;
+    const tooEarly = dates[1] && dates[1].diff(current, 'days') > 45;
     const date = current && current > moment().endOf("day");
     return !!tooEarly || !!tooLate || !!date
   };
@@ -487,20 +515,26 @@ const tabs = useMemo(()=> {
   }, [value])
 
  /* 线上实时抄表， 能耗报表 显示时间范围。 电能报表不显示 */
+ 
   return (
     <CustContext.Provider value={dataProps} >
       <Pagecount showSearch={false} custserach={true} >
         <Contentbox>
           <UserTree areaId={areaId} energytype={energytype} setTreeId={setTreeId} setLine={setLine} showline={value != '3'} datatype={value == '3' ? 0 : NaN} />
-          <div style={{ position: "relative", flex: 1 }}> 
-            <div style={{ position: "absolute", width: "100%",   }}>
-              <div  className='opt'>
-              {(["0","1","4"].includes(value) || projectId==30)   && <div style={{ marginBottom: "16px", display: "flex" }}>
+          <div style={{ position: "relative", flex: 1 }} > 
+            <div style={{ position: "absolute", width: "100%",   }} >
+              <div  className='opt' >
+              {
+                value!="3" &&  <div className='search'    >
+                <Serach placeholder="请输入设备名称/设备编号"     value={alikev} onChange={alikeChange}     style={{ width: "362px" }} onSearch={onSearch} />
+              </div>
+              } 
+              {(["0","1","4"].includes(value) || projectId==30)   && <div style={{ marginBottom: "16px", display: "flex" }} key="custdate">
  
                 <div style={{ marginLeft: "auto" }}>
                   <Checkbox onChange={boxchange} checked={isrange.range}>使用日期范围（优先）</Checkbox>  <RangePicker
                     value={dates || valuet}
-                    // disabledDate={disabledDate}
+                    disabledDate={disabledDate}
                     onCalendarChange={(val) => setDates(val)}
                     onChange={onTimeOk}
                     disabled={!isrange.range}
@@ -517,16 +551,8 @@ const tabs = useMemo(()=> {
               {
                value=="4" && <Select value={reportType} options={reportTypeopt} onChange={(e)=> setReportType(e)} style={{width: "200px", marginBottom: "16px"}}></Select>
               }
-              {/* {
-                value == "0" && <div className='search'>
-                  <Serach placeholder="请输入设备名称/设备编号/安装地址查询" style={{ width: "362px" }} onSearch={onSearch} />
-                </div>
-              } */}
-              {
-                value == "1" && <div className='search'>
-                  <Tooltip title="最多选择三条信息进行对比"><CustButton onClick={oncompare}>勾选对比</CustButton></Tooltip>
-                </div>
-              }
+              
+             
               </div>
               {
                 ["1", "5"].includes(value) ? <div key={value}><UserTable ref={tbref} rowSelection={value == 1 ? rowSelection : null} columns={concolumns} {...tableProps} rowKey={row => row.sn} key={value} scroll={{

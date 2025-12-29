@@ -5,7 +5,7 @@ import rise from "./imgs/rise.png";
 import down from "./imgs/down.png";
 export const Init_Value = {
   dtype: "1",
-  date: moment(),
+  date: moment().subtract(1,"day"),
 };
 export const Date_Value = [
   {

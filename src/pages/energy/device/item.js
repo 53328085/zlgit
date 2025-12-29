@@ -5,12 +5,7 @@ import { nanoid } from "@reduxjs/toolkit";
 import {Image, Typography, Descriptions} from 'antd'
 import {numberformat, Statebox} from "@com/usehandler"
 const {Paragraph} = Typography
-const sty= css`
-  .below{
-    grid-template-columns: 115px repeat(3,1fr);
-  }
-
-`
+ 
 const Itembox = styled.div`
   position: relative;
   overflow: hidden;
@@ -139,7 +134,7 @@ const Itembox = styled.div`
        
      } 
   }
- // ${props=> props.laptop ? sty : null}
+  
 `
 /* total: {
   value: 312.35,

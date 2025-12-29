@@ -80,7 +80,7 @@ const Drawerbox = styled(Drawer)`
           flex-direction:column;
           .total {
             display: grid;
-            grid-template-rows: 32px 1fr;
+            grid-template-rows: 32px 32px 1fr;
             row-gap: 16px;
             padding: 16px;
             background-color: #fff;
@@ -259,14 +259,18 @@ export default function Index({ projectId, level,   name, allLevel }) {
     } = await Area.QueryUsedMeter({ projectId, type, areaId }); // 已选中 type: 0
     if (success && Array.isArray(deviceSummary)) {
       setDeviceSummary([...deviceSummary]);
-      devices.current.deviceSub = deviceSub;
+      
+      devices.current.deviceSummary = deviceSummary;
     } else {
       setDeviceSummary([]);
+      devices.current.deviceSummary = [];
     }
     if (success && Array.isArray(deviceSub)) {
       setDeviceSub([...deviceSub]);
+      devices.current.deviceSub = deviceSub;
     } else {
       setDeviceSub([]);
+      devices.current.deviceSub = [];
     }
 
 
@@ -379,13 +383,22 @@ export default function Index({ projectId, level,   name, allLevel }) {
         });
       !success && custMsg({ success, content: errMsg || "数据出错" });
     }; */
-  const handlersearch = (e) => {
+  const handlersearch = (e,type) => {
     let str = e.trim();
-    str &&
+    if(type===1) { //分表
+      str &&
       setDeviceSub((arr) =>
         arr.filter((a) => a.sn?.includes(str) || a.address?.includes(str))
       );
-    !str && setDeviceSub([...devices.current.deviceSub]);
+     !str && setDeviceSub([...devices.current.deviceSub]);
+    }else  { // 主表
+      str &&
+      setDeviceSummary((arr) =>
+        arr.filter((a) => a.sn?.includes(str) || a.address?.includes(str))
+      );
+     !str && setDeviceSummary([...devices.current.deviceSummary]);
+    }
+   
   };
   const changeUnselected = () => {
     let params = sfrom.getFieldsValue();
@@ -644,6 +657,15 @@ const savesty = laptop
           <div className="selected">
             <div className="total">
               <p className="title"><span>{name}总表</span>  <CustButtonT text="save" onClick={()=>onOk(0)}     /></p>
+              <Space size={16}>
+                <Text style={{ color: "#333" }}>设备搜索</Text>
+                <Inptserach
+                  allowClear
+                  onPressEnter={handlersearch}
+                  placeholder="请输入设备编号/安装地址"
+                  onSearch={handlersearch}
+                />
+              </Space>
               <div className="outwrap">
                 <div className="inwrap">
                   <DndProvider backend={HTML5Backend}>
@@ -672,9 +694,9 @@ const savesty = laptop
                 <Text style={{ color: "#333" }}>设备搜索</Text>
                 <Inptserach
                   allowClear
-                  onPressEnter={handlersearch}
+                  onPressEnter={(e)=>handlersearch(e,1)}
                   placeholder="请输入设备编号/安装地址"
-                  onSearch={handlersearch}
+                  onSearch={(e)=>handlersearch(e,1)}
                 />
               </Space>
               <div className="outwrap">

@@ -171,7 +171,7 @@ export const AirChart = ({ tabId, proportion, useTrend, saveTrend,dtype }) => {
         Chart_Options["series"][1]["data"] = useTrend["y1"];
         Chart_Options["series"][1]["name"] = text2+"能耗(kWh)";
         Chart_Options["series"][2]["data"] = useTrend["y2"].map((it) =>
-          parseInt(it)
+          parseFloat(it)
         );
         columnChart = drawEcharts(columnRef.current, Chart_Options);
       }
