@@ -1,7 +1,8 @@
 import React, {useState, useEffect,useRef} from 'react'
 import {Button,Space} from 'antd'
 import moment from 'moment'
-import { user } from '@pages/Home/header/icon'
+import Chart from './chart'
+import Grid from './grid'
 export default function Index() {
   const [data, setData]=useState(null)
   const [olData, setOlData] = useState(null)
@@ -12,7 +13,8 @@ export default function Index() {
   const ref=useRef()
   const olref= useRef()
   const timeId= useRef(null)
-  
+  const [show, setShow] = useState(true);
+  const inputRef = useRef(null);
    // timeId.current=moment()  渲染阶段ref不要读取和赋值错误
    // console.log(timeId.current)
  
@@ -68,6 +70,20 @@ export default function Index() {
      console.log(e)
    });
   }
+
+  const getPost=()=>{
+    fetch(`auth/jsonp?ids[a]=1234&ids[b]`, {
+      method:"post",
+   })
+   .then(res => res.text())
+   .then(res =>{
+     console.log(res)
+   } )
+ .catch(e=>{
+     console.log(e)
+   });
+  }
+
   useEffect(() => { 
     if(data) {
       ref.current.innerHTML =data
@@ -105,18 +121,14 @@ export default function Index() {
  
   return (
     <div>
+      <Grid />
     <Space>    
       <Button onClick={getAsync}>上传图片</Button>
       <Button onClick={getList}>jsonp</Button>
-      <Button onClick={getTime}>时间：{time}</Button>
-      <Button onClick={cancelTime}>取消</Button>
-      <Button onClick={()=>setCount(c=>c+1)}>add</Button>
+      <Button onClick={getPost}>post</Button>
+    
     </Space>
-    <div>时间过去了:{st}</div>
-    <div ref={ref}> </div>
-    <div ref={olref}></div>
-    <div>count:{count}</div>
-    <div>num:{num.current}</div>
+   
     </div>
   )
 }

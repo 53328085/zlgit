@@ -52,6 +52,7 @@ export const Mainwrap = styled.div`
            font-weight: 600;
            font-size: 15px;
            color: #303133;
+          
            .controlNum{
            font-weight: 600;
            font-size: 14px;
@@ -142,7 +143,13 @@ export const Mainwrap = styled.div`
        margin-bottom: 10px;
        .title{
        font-weight: 700;
+       
        }
+       .pre {
+            white-space: pre-wrap;        
+            overflow-wrap: break-word; 
+            margin-bottom: 0px;
+          }
        }
     }
     }

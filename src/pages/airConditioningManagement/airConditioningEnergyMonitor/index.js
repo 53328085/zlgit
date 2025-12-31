@@ -18,12 +18,14 @@ import moment from "moment";
 import {ExportExcel} from "@com/useButton"
 import {isObject, getTime} from "@com/usehandler"
 import exportImg from "./imgs/export.png";
+ 
 export default function Index() {
   const [treeId, setTreeId] = useState();
   const [tabId, setTabId] = useState("1"); //1：空调用能；2：空调节能
   const [tbmodel, setTbmodel] = useState(1); //1：列表模式；2：图表模式
   const [airDetail, setAirDetail] = useState();
-  const tableRef = useRef();
+ 
+  const  tableRef = useRef();
   const [type, setType] = useState("date");
   const { Item } = Form;
   const [form] = Form.useForm();
@@ -354,7 +356,7 @@ export default function Index() {
     }
     let row ={}
     for (let [key, label] of Object.entries(keys)) {   
-        console.log(key, label)   
+     //   console.log(key, label)   
         row[label] =  item[key] 
     }
     return row
@@ -388,7 +390,13 @@ export default function Index() {
       sheetName
     }
   },[tableData,switchData, tabId])
-   
+  const getRef= (e)=> {
+    console.log('e',e)
+    if(isObject(e) && e.hasOwnProperty("downloadByData")) {
+      tableRef.current=e
+    }
+    
+  }
   return (
     <Pagecount bgcolor="#eeeff4" pd={0}>
       <Container>
@@ -489,11 +497,11 @@ export default function Index() {
                     buttonStyle="solid"
                     size="large"
                     style={{ marginLeft: 16 }}
-                    onChange={(e) => {
+                    onChange={(e) => { 
                       setTbmodel(e.target.value);
                     }}
                   />
-                   <ExportExcel tb={tableRef} byData={true}  tbData={tbData} getData={getData}></ExportExcel>
+                   <ExportExcel tb={tableRef} byData={true}  tbData={tbData} getData={getData} disabled={tbmodel == 2}></ExportExcel>
                  {/*  <div
                     style={{
                       cursor: "pointer",
@@ -536,7 +544,7 @@ export default function Index() {
                       tabId={tabId}
                       openEnergyModal={openEnergyModal}
                       openFrModal={openFrModal}
-                      ref={tableRef}
+                      ref={getRef}
                       key={tabId}
                       euList={stateData.euList}
                       esList={stateData.esList}

@@ -5,7 +5,7 @@ import { useRequest } from 'ahooks'
 import styled from "styled-components";
 import { ExportExcel, i18t, CustTransO } from '@com/useButton'
 import { useSelector, useDispatch } from 'react-redux'
-import { levelDefaultLabel, selectProjectId, selectshifts, filterDeviceStyle, selectOneLevelDefaultId, selectOneLevel, setCurrentlevel, deviceStyle, getThemeColor, themeColor, setIntl, adaptation,lightlevel } from '@redux/systemconfig.js'
+import { levelDefaultLabel,getsaveDeviceID,prodeviceType, selectProjectId, deviceID,selectshifts, filterDeviceStyle, selectOneLevelDefaultId, selectOneLevel, setCurrentlevel, deviceStyle, getThemeColor, themeColor, setIntl, adaptation,lightlevel } from '@redux/systemconfig.js'
 import moment from "moment";
 import 'moment/locale/zh-cn';
 const { RangePicker } = DatePicker;
@@ -19,6 +19,7 @@ import { publicdateType, Daterange,   w88,viewopt } from "./data"
 import Enery from "./enery";
 import AreaLevel from './areas'
 import SubAreas from './subareas'
+ 
 const { FindContainerList } = StorageContainerDesigner  //储能柜
 
 const Cform = styled(Form)`
@@ -43,7 +44,7 @@ const { Item } = Form;
 export const AreaSelect = ({ value, onChange, isall,    ...otherProps }) => {
   const levelone = useSelector(selectOneLevel)
   const laptop = useSelector(adaptation)?.laptop
-   const lightone = useSelector(lightlevel)
+   const lightone = useSelector(lightlevel)  
   const location = useLocation();
    const { state } = location
    const w200 = laptop ? { width: 160 } : { width: 200 }
@@ -88,8 +89,11 @@ export default function UseSerach(props) {
   const energyTypeDefault = useRef(1)
   const levelone = useSelector(selectOneLevel)
   const { laptop } = useSelector(adaptation)
+  const defauledeviceID =useSelector(deviceID)
   //const DeviceStyle = useSelector(filterDeviceStyle)  
-  const [DeviceStyle, setDeviceStyle] = useState([])
+  const [DeviceStyle, setDeviceStyle] = useState(null)
+
+  const devices =useSelector(prodeviceType)
   const w200 = useMemo(()=> {
    return laptop ? { width: 160 } : { width: 200 }
   }, [laptop])
@@ -101,23 +105,25 @@ export default function UseSerach(props) {
 
   const [pcsoptions, setPcsoptions] = useState([])
   const [tankoptions, setTankoptions] = useState([])
-  const deviceStyles = useSelector(deviceStyle)
-  let currdeviceStyle = `deviceStyle_${projectId}`
-  const getDever = async () => {
+  //const deviceStyles = useSelector(deviceStyle)
+  console.log("defauledeviceID",defauledeviceID)
+ // let currdeviceStyle = `deviceStyle_${projectId}`
+ /*   const getDever = async () => {
     try {
       let stordevices = window.localStorage.getItem(currdeviceStyle);
       let initdeviceStyle = parseInt(stordevices)
 
       let { success, data } = await Editapi.FilterDeviceStyle(projectId)
       if (success && Array.isArray(data) && data.length > 0) {
-        let filte = data.filter(d => d.deviceStyle != 6)
+        let filte = data.filter(d => d.deviceStyle != 6)?.map(i=>({label: i.name, value: i.deviceStyle}))
         setDeviceStyle(filte)
-        if (initdeviceStyle && filte.find(d => d.deviceStyle == initdeviceStyle)) {
-          form.setFieldValue('deviceStyle', initdeviceStyle)
+      if (initdeviceStyle && filte.find(d => d.deviceStyle == initdeviceStyle)) {
+         form.setFieldValue('deviceStyle', initdeviceStyle)
         } else {
-          form.setFieldValue('deviceStyle', filte[0].deviceStyle)
-        }
+          form.setFieldValue('deviceStyle', filte[0].value)
+        }  
       } else {
+        setDeviceStyle([])
         form.setFieldValue('deviceStyle', null)
         if (!success) return
         if (filte?.length == 0) message.warning('没有设置设备')
@@ -128,7 +134,7 @@ export default function UseSerach(props) {
       console.log(error)
     }
 
-  }
+  }  */
 
   const getEnergyType = async () => {
     try {
@@ -181,20 +187,20 @@ export default function UseSerach(props) {
 
 
   }, [props.config?.isSite, AreaID, projectId])
-  useEffect(() => {
+/*   useEffect(() => {
     if (Number.isInteger(projectId) && props.config?.isdevsty) {
       getDever()
     }
 
-  }, [projectId, props.config?.isdevsty])
+  }, [projectId, props.config?.isdevsty]) */
 
   useEffect(() => {
     getEnergyType()
   }, [projectId])
 
   const onChange = (e, option) => {
-    dispatch(setCurrentlevel(option))
-    setAreaid(e)
+    dispatch(setCurrentlevel(option))    
+    setAreaid(e)  
   }
   let dateoption = daterang == 'week' ? [
     { value: 1, label: i18t("comm", "week") },
@@ -212,7 +218,7 @@ export default function UseSerach(props) {
   const dateselect = (
     <Space size={16}>
       <Item name="type" initialValue={1} key="electricity" preserve={false}>
-        <Select style={w88} onChange={changetype} options={dateoption}></Select>
+        <Select style={w88} onChange={changetype} options={dateoption} ></Select>
       </Item>
       <Item noStyle shouldUpdate={(pre, cur) => pre.type != cur.type}  >
         {
@@ -220,7 +226,7 @@ export default function UseSerach(props) {
             let type = (daterang == 'week' ? ['week', 'week', 'month', 'year'] : ['date', 'date', 'month', 'year'])[getFieldValue('type')]
             return (
               <Item name="date" initialValue={moment()} >
-                <DatePicker picker={type} style={w200} />
+                <DatePicker picker={type} style={w200} disabled={config?.disabledDate} />
               </Item>
             )
           }
@@ -324,13 +330,15 @@ export default function UseSerach(props) {
 
   const deviceStyleChange = (v) => {
 
-    window.localStorage.setItem(currdeviceStyle, v);
+     dispatch(getsaveDeviceID(v))
   }
 
-  const deviceStyleNode = (<Item name="deviceStyle" label={i18t("comm", "type", { text: "设备" })}  >
-
-    <Select options={DeviceStyle} fieldNames={{ label: "name", value: "deviceStyle" }} style={w200} onChange={deviceStyleChange} {...filterProps}></Select>
-  </Item>)
+  const deviceStyleNode =useMemo(()=>{
+      return(<Item name="deviceStyle" label={i18t("comm", "type", { text: "设备" })} initialValue={defauledeviceID} >
+      <Select options={devices} fieldNames={{label:"name",value:"deviceStyle"}}   style={w200} onChange={deviceStyleChange} {...filterProps}></Select>
+    </Item>)
+    
+  },[defauledeviceID,devices]) 
   // 站点选择
   const site = (<Item name="stationName" label="站点"   >
     <Select options={options} onChange={getTank} fieldNames={{ label: 'name', value: 'id' }} style={w200} labelInValue></Select>
@@ -508,7 +516,7 @@ export default function UseSerach(props) {
   }, [levelone])
 
   const onValuesChange = (_, allValues) => { 
-    console.log(allValues)
+    console.log("allValues",allValues)
     props.setexparams({ ...allValues })
   }
 
@@ -525,15 +533,16 @@ export default function UseSerach(props) {
       form.setFieldValue('type', 1)
     }
 
-    if (config.meterType) {
+  /*   if (config.meterType) {     
       form.setFieldValue('deviceStyle', config.meterType)
-    }
+    } */
     if(oneLevelDefaultId==0) {
       form.setFieldValue('areaId', 0)
     }
     props.setexparams({ ...form.getFieldsValue(true) })
 
   }, [props.config, projectId, oneLevelDefaultId])
+ 
 
   /*   useEffect(() => {
   

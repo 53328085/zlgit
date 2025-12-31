@@ -24,7 +24,7 @@ import styled, {css} from "styled-components";
  
 import imgurl from "./images/index.js";
 import { Monitoring } from "@api/api.js";
-import CommIcard from "@com/commIcard"
+import CommIcard from "@com/commIcard.jsx"
 import {CustTransO, i18t, i18warning,ExportExcel, RadioT} from "@com/useButton"
 import {
   selectProjectId,

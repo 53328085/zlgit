@@ -154,7 +154,8 @@ const Mainbox = styled.div`
       //  flex-wrap: wrap;
         display:grid;
         grid-template-columns: repeat(auto-fill, minmax(428px,1fr));
-        grid-auto-rows:152px;
+        grid-template-rows:repeat(3,210px);
+        grid-auto-rows:32px;
         gap:16px;
         height: 568px;
       //  width: 1680px;
@@ -170,6 +171,10 @@ const Mainbox = styled.div`
         height: 528px;
         width: 1465px; */
         overflow-y: auto;
+        .page {
+          grid-column: 1/-1;
+          justify-self:end;
+        }
         .address {
         display: flex;
         align-items: center;
@@ -356,7 +361,7 @@ export default function Commport({projectId,gateway:{gatewayId, name}, device={}
                            
                         />
                       </Link>)
-                      } <Pagination total={total} pageSize={9} hideOnSinglePage style={{position: "absolute", bottom: "16px", right: '16px'}} onChange={onChange}  /> </>: <Empty />}
+                      } <Pagination total={total} pageSize={9} hideOnSinglePage  className='page' onChange={onChange}  /> </>: <Empty />}
                       
          </div>
          </Cspin>

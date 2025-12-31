@@ -223,7 +223,8 @@ export const timecols = [  // 分时能耗
   {
     title: '安装位置',
     dataIndex: 'address',
-    key: "address"
+    key: "address",
+    ellipsis:true
   },
 ]
  
@@ -360,7 +361,7 @@ export const shitcols = [  // 班次能耗
     title: '地址',
     dataIndex: 'address',
     key: "address",
-    ellipsis:true
+    ellipsis:true,
   },
 ]
 export const etabs = [
@@ -368,7 +369,7 @@ export const etabs = [
   { key: '1', label: '能耗报表' },
   { key: '2', label: '分时能耗' },
   { key: '3', label: '分类能耗' },
-  { key: '4', label: '电能报表' },
+  { key: '4', label: '账单报表' },
   { key: '5', label: '班次能耗' },
 ]
 export const wtabs = [

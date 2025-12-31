@@ -77,9 +77,11 @@ export const Scene = styled.div`
     }
   }
   .contents {
-     display: flex;
-     flex-wrap: wrap;
-     column-gap: 16px;
+     display: grid;
+     grid-template-columns: 1fr 1fr;
+     grid-auto-rows: minmax(214px, auto);
+     gap:16px;
+      
   }
   .content {
     padding: 16px 8px;

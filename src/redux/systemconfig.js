@@ -10,6 +10,7 @@ import {isObject,isLightColor,hextodec} from '@com/usehandler'
 import {initithemeColor,themeOption} from '@com/defaultcolor';
  
 import {Apimethod} from "@api/api.js"
+ 
  const { useFindStreetLightAreas } = new Apimethod( // 获取总览图及点位
   "get",
   "Light/StreetLightCommon/FindStreetLightAreas"
@@ -23,6 +24,11 @@ import {Apimethod} from "@api/api.js"
 const { useQueryEnergyType } = new Apimethod( // 查询能耗类型
   "get",
   "/General/ProjectSetting/QueryEnergyType"
+);
+
+const { useAllDeviceStyle } = new Apimethod( // 查询项目设备类型
+  "get",
+  "/Monitor/RuntimeDevice/AllDeviceStyle"
 );
 
 const {DeviceTypeManager: {AllDeviceStyle} } = Monitoring
@@ -196,6 +202,8 @@ const initialState = {
   areaLevel:[], // 层级
   energyType:[], // 能源类型
   defaultroute:{}, // 默认路由对象
+  prodeviceType:[],// 项目设备类型
+  saveDeviceID: null,//从运行监控跳转到设备监测页面
 }
  
 export const getWebsiteState = createAsyncThunk(
@@ -218,7 +226,8 @@ export const getWebsiteState = createAsyncThunk(
         CustTheme.GetProjectTheme({projectId:id}), // 获取项目选择的主题
         useFindStreetLightAreas({projectId:id}), // 获取路灯管理下有路灯的区域
         useAllLevel({projectId:id}), // 获取区域层级
-        useQueryEnergyType({projectId:id}) // 获取能耗类型
+        useQueryEnergyType({projectId:id}), // 获取能耗类型
+        useAllDeviceStyle({projectId:id}), // 获取项目设备类型
          ] 
         let results = await Promise.allSettled(promises)
         return results
@@ -433,6 +442,12 @@ const system = createSlice({
       },
       getDefaultRout(state, {payload}){
         state.defaultroute = payload
+      },
+      getProdeviceType(state, {payload}){
+        state.prodeviceType = payload
+      },
+      getsaveDeviceID(state, {payload}){
+        state.saveDeviceID = payload
       }
 
     },
@@ -499,6 +514,12 @@ const system = createSlice({
                  }else {
                    state.energyType=[]
                  }
+               }else if(index ==13) {
+                if(Array.isArray(data) && data.length) {
+                  state.prodeviceType= data.filter(item => item.deviceStyle != 6)
+                 }else {
+                   state.prodeviceType=[]
+                 }
                }
 
              }else{
@@ -516,6 +537,7 @@ const system = createSlice({
                index == 10 && (state.lightlevel = [])
                index == 11 && (state.areaLevel=[])
                index == 12 && (state.energyType=[])
+               index == 13 && (state.prodeviceType=[])
              }
           }
         })
@@ -687,6 +709,21 @@ export const pgTitle = state=>state.system.pgTitle
 export const areaLevel = state=>state.system.areaLevel
 export const defaultroute = state=>state.system.defaultroute
 export const energyType = state=>state.system.energyType
+export const prodeviceType=state=>state.system.prodeviceType
+export const saveDeviceID = state=>state.system.saveDeviceID
+export const deviceID =createSelector(
+  prodeviceType,
+  saveDeviceID,
+    (types, id)=> {
+      if (Array.isArray(types) &&types.length > 0 &&Number.isInteger(parseInt(id))) {
+         return types.find(t => t.deviceStyle === id)?.deviceStyle ||types[0]?.deviceStyle
+      }else{
+        return types?.[0]?.deviceStyle??null
+      }
+    }
+)
+
+ 
 export const {
     configProject,
     getSetMenus,
@@ -727,5 +764,6 @@ export const {
     getDark,
     getLightlevel,
     getDefaultRout,
+    getsaveDeviceID,
 } = actions
 export default system.reducer
