@@ -273,3 +273,14 @@ export  const Statebox = styled.div`
      }
  
    }
+   export function chunkArray(array, size) { // 拆分数组
+    const result = [];
+    let index = 0;
+  
+    while (index < array.length) {
+      result.push(array.slice(index, index + size));
+      index += size;
+    }
+  
+    return result;
+  }

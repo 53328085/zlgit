@@ -1,0 +1,48 @@
+import React from "react";
+import { Progress } from "antd";
+import { Layoutcom, Titlesty } from "../style";
+
+const Titlecom = function ({ title, subtitle }) {
+  return (
+    <Titlesty>
+      <span className="chartTitle">{title}</span>
+      <span className="subtitle">{subtitle}</span>
+    </Titlesty>
+  );
+};
+export default function Index({ children, title, subtitle, flex, ...props }) {
+  return (
+    <Layoutcom flex={flex}>
+      <Titlecom title={title} subtitle={subtitle}></Titlecom>
+      <div className="chartwrap">{children}</div>
+    </Layoutcom>
+  );
+}
+  const Probar = function ({  data, index,order }) {
+  let i = index + 1
+  let fag = i<4 && order==0;
+  return (
+      <div className="proitem">
+        <div className="rank">
+           <span className={fag ? "top" : "top other"}><span className="mgr">TOP</span> {i+5*order}</span>
+           <div className="keyval">
+             <span>{data.name}</span>
+             <span>{data.value}kWh</span> 
+            </div>
+        </div>
+        <Progress percent={data.percent} strokeColor={{
+        from: '#0079ED',
+        to: '#00C5FF',
+      }} status={fag ? "active": "normal"} showInfo={false}  />
+      </div>
+  );
+};
+export  const Prowarp = function({datas,idx}) { 
+  return (
+      <div className="probox">
+           {
+                      datas?.map?.((d,index)=>  <Probar index={index} data={d} order={idx} key={d.name}></Probar>)
+                     }  
+      </div>
+  )
+}

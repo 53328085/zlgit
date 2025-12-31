@@ -82,6 +82,7 @@ const Loopname = lazy(() => import("../pages/distribution/statements/loopname.js
 const Diskchart = lazy(() => import("../pages/cabinet/exhibition/index.jsx"))
 const DigitalTwin = lazy(() => import("../pages/digitalTwin"))
 const Websitmap = lazy(() => import("@pages/websitmap"))
+const Largscreen = lazy(() => import("../pages/largscreen"))
 import {designerComponents,  designerRoutes} from "./designer";
 
 
@@ -224,6 +225,10 @@ const loginrouter =  [{
     {
       path: "/websitmap", // 网站
       element: <Websitmap />
+    },
+    {
+      path: "/largscreen", // 网站
+      element: <Largscreen />
     },
    {
     path: '*',

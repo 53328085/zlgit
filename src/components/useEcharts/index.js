@@ -218,7 +218,7 @@ const liuqiuOption =(option) =>  {  // 水球图
 
 }
 
-const pieOption = ({ data = [], total = 0, radius= ["60%", "80%"],center=["50%", "50%"],labelLine={},label={}, legend={},series={},  grid={left: 0, right: 0, containLabel: true,}} = {}) =>{
+const pieOption = ({ data = [], total = 0, radius= ["60%", "80%"],center=["50%", "50%"],labelLine={},label={}, legend={},series={},  grid={left: 0, right: 0, containLabel: true},...rest} = {}) =>{
   const primaryColor =store.getState()?.system?.themeColor?.primaryColor || "#237ae4"
   // console.log("labelLine",labelLine)
 /*   const  color = [
@@ -296,6 +296,7 @@ const pieOption = ({ data = [], total = 0, radius= ["60%", "80%"],center=["50%",
     },
 
   ],
+  ...rest
 };
 }
 /* fetch("./walden.json").then(r => r.json()).then(theme => {
