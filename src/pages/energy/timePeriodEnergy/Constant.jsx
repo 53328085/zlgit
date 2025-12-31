@@ -14,7 +14,7 @@ export const getTableColumns = (type) => {
       dataIndex: 'timePeriod',
     },
     {
-      title: '用量(kWh)',
+      title: '总能耗(kWh)',
       dataIndex: 'totalEnergy',
     },
   ]:
