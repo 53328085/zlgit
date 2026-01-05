@@ -98,14 +98,14 @@ const marks = {
 };
 export const items = (
   <>
-    <Form.Item label="方案名称" name="schemeName" rules={rules} labelAlign="left">
+    <Form.Item label="方案名称" name="schemeName" rules={rules} labelAlign="left" style={{marginBottom: "6px"}}>
       <Input placeholder="请输入" style={w255}></Input>
     </Form.Item>
     <Form.List name="scenes" initialValue={[{}]}>
       {(fileds, { add, remove }) => (
         <Scene>
           {fileds.map((field, _, arr) => (
-            <div>
+            <div key={field.key}>
               <Form.Item
               labelAlign="left"
               style={{marginBottom: "4px"}}
@@ -145,7 +145,7 @@ export const items = (
                                     "scenes",
                                     field.name,
                                   ])?.["tasks"]?.[i.name] ;
-                                  console.log(values)
+                                  
                                   const {timeType, excueTime, timing, excueTime2,taskType} = values
                                   const type = ["开","关"][taskType]
                                   if(timeType==0 && (excueTime || timing)) {
@@ -309,10 +309,10 @@ export const items = (
     <Form.Item name="id" initialValue={0} noStyle>
       <Input hidden />
     </Form.Item>
-    <Form.Item name="creater" initialValue="">
+    <Form.Item name="creater" initialValue="" noStyle>
       <Input hidden></Input>
     </Form.Item>
-    <Form.Item name="projectId">
+    <Form.Item name="projectId" noStyle>
       <Input hidden></Input>
     </Form.Item>
   </>

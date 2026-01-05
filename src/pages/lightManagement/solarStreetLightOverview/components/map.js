@@ -14,6 +14,7 @@ export default function Index() {
   const [info, setInfo] = useState()
   const contxt= useContext(OverdataContext)
   const {lightdata, projectId} = contxt
+  console.log(lightdata)
   const onPoint =async (rid, position)=> {
       let {success, data, errMsg} = await useDetail({rid, projectId})
       if(success) {

@@ -66,7 +66,7 @@ export default function Index() {
     }
   }, [areaId, projectId]);
   return (
-    <Layoutcom title="分享用能占比" subtitle="近7天" flex="582px">
+    <Layoutcom title="分项用能占比" subtitle="近7天" flex="582px">
         <Leftup>
         <Ichart {...pieopt}></Ichart>
         <div className="total">

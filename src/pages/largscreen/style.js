@@ -1,4 +1,5 @@
 import styled, { css } from "styled-components";
+import {colors} from "./data"
 import imgulr from "./icon";
 const bgsty = css`
   background-position: center;
@@ -98,13 +99,13 @@ export const Pagelayout = styled.div`
     gap: 16px;
     .left {
       display: flex;
-      flex: 528px;
+      flex-basis: 528px;
       flex-direction: column;
       row-gap: 16px;
     }
     .center {
       display: flex;
-      flex: 800px;
+      flex-basis: 800px;
       flex-direction: column;
       row-gap: 16px;
       .centerup {
@@ -113,13 +114,15 @@ export const Pagelayout = styled.div`
     }
     .right {
       display: flex;
-      flex: 528px;
+      flex-basis: 528px;
+      flex-direction: column;
+      row-gap: 16px;
     }
   }
 `;
 
 export const Layoutcom = styled.div`
-  flex:  ${(props) => props.flex};
+  flex-basis:  ${(props) => props.flex};
   display: flex;
   flex-direction: column;
   background: linear-gradient( 270deg, rgba(2,40,85,0.77) 0%, rgba(13,41,50,0.81) 100%);
@@ -143,7 +146,7 @@ export const Leftup = styled.div`
    display: grid;
    grid-template-rows: 336px 36px 1fr;
    row-gap: 20px;
-   height: 100%;
+   flex-basis: 582px;
    .total {
      color: #fff;
      ${normal}
@@ -194,7 +197,7 @@ export const Leftdown = styled.div`
       }
    }
    .slider-container{
-    width: 582px;
+    width: 478px;
    }
    .ant-carousel .slick-slide {
    .probox{
@@ -235,6 +238,123 @@ export const Leftdown = styled.div`
 
 }
 `;
+
+export const Centerdown = styled.div`
+   flex: 1;
+   display: grid;
+   grid-template-rows: 34px 1fr;
+   row-gap: 8px;
+   color: #FFFFFF;
+   .centertitle{
+      display: grid;
+      grid-template-rows: 14px 14px;
+      row-gap: 6px;
+      .percentage{
+        justify-self: flex-end;
+        font-size: 12px;
+        color: #FFFFFF;
+      }
+      .info{
+        justify-content: space-between;
+        .centertotal{
+          .month{
+            color: ${colors[0]};
+            padding-left: 4px;
+          }
+        }
+      }
+   }
+   .contentwrap{
+    display: flex;
+     flex-direction: column;
+    row-gap: 8px;
+    .cols{
+      opacity: 0.5;
+      color: #FFFFFF;
+      display: grid;
+      grid-template-columns: 80px 1fr 1fr 100px;
+      grid-template-rows: 32px;
+    }
+/*     .rows{
+      display: grid;
+      grid-template-columns: subgrid;
+      grid-area: 2/1/3/-1 ;
+      grid-auto-rows: 32px;
+      height: 188px;
+      .row {
+        display: grid;
+        grid-template-columns: subgrid;
+        grid-column: 1/-1;
+        color: #FFFFFF;
+        .ant-badge-status-text {
+          color:#fff;
+        }
+        &:even{
+          background-color:  rgba(13, 129, 180, 0.5)
+        }
+
+      }
+    } */
+   }
+   .slider-container{
+    width: 760px;
+   
+    .ant-carousel .slick-list .slick-slide>div>div.row{
+      display: grid !important;
+        grid-template-columns: 80px 1fr 1fr 100px;
+        grid-template-rows: 32px;
+        color: #FFFFFF;
+        .ant-badge-status-text {
+          color:#fff;
+        }
+        &:even{
+          background-color:  rgba(13, 129, 180, 0.5)
+        }
+
+    }
+}
+ 
+`;
+export const Rightupcenter = styled.div`
+   flex: 1;
+   display: flex;
+  
+   .slider-container{
+     width:488px;
+    // height: calc(100% - 32px - 42px);
+    flex:1;
+     .ant-carousel{
+      height: 100%;
+      .slick-slider{
+        height: 100%;
+        .slick-list{
+          height: 100%;
+           .slick-track{
+            height: 100%;
+            .slick-slide{ 
+              height: 100%;
+              div{
+                height: 100%;
+                div.chartbox{
+                  height: 100% ;
+                }
+              }
+            }
+          }
+        }
+      }
+     }
+      
+   }
+
+.ant-carousel .slick-dots-bottom {
+    bottom:-12px
+
+}
+`;
+
+
+
 export const Titlesty = styled.div`
   ${normal}
   height: 42px;

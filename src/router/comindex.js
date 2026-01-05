@@ -388,6 +388,7 @@ export default function Index() {
         dispatch(setCurrentlevel({ name: `${varlabel}(全部)`, id: 0, levelName: varlabel }))
       }
     } else {
+      console.log("不需要添加全部")
       let level = onelevel.filter((l) => l.id != 0);
       dispatch(setCurrentlevel(level?.[0]))
       dispatch(getOnelevel([...level]));

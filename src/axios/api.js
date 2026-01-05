@@ -2153,6 +2153,8 @@ export const Monitoring = {
       server.get(
         `/Monitor/Runtime/QueryMonthUsage?projectId=${data.projectId}&areaId=${data.areaId}&type=${data.type}`
       ), //月用量
+      GetInpuList: (projectId, alike) => server.get(`Monitor/RuntimeManualInput/GetInpuList?projectId=${projectId}&alike=${alike}`), //获取手动输入列表
+      ManualInput: (projectId, sn, value, date, time) => server.post(`Monitor/RuntimeManualInput/ManualInput?projectId=${projectId}&sn=${sn}&value=${value}&date=${date}&time=${time}`),//手动录入
   },
   //网关检测
   RuntimeGateway: {

@@ -35,7 +35,7 @@ export { ReactComponent as runtimeMonitorcamera } from './camera.svg'
 export { ReactComponent as runtimeMonitorremote } from './remote.svg'
 export { ReactComponent as runtimeMonitorcontrol } from './control.svg'
 export { ReactComponent as runtimeMonitorcall } from './call.svg'
-
+export { ReactComponent as runtimeMonitormanualentry } from './airConditioningManagement/airConditioningManagementairConditioningManualControl.svg'
 
 // 运行监控
 

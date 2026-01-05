@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react'
 import Usetable from '@com/useTable'
-export default function Index({ source, type }) {
-  console.log(type)
-
+export default function Index({ source, type,tabvalue }) {
+  console.log("tabvalue",tabvalue)
+  console.log("type",type)
   const [columns, setColumns] = useState([])
   const [dataSource, setDataSource] = useState([])
 
@@ -27,10 +27,10 @@ export default function Index({ source, type }) {
 
   }
   useEffect(() => {
-    if (Array.isArray(source) && source.length > 0 && Number.isInteger(type)) {
+    if (Array.isArray(source) && source.length > 0 && Number.isInteger(type) && Number.isInteger(parseInt(tabvalue))) {
       getData();
     }
-  }, [type, source])
+  }, [type, source,tabvalue])
   return (
     <div style={{ padding: "16px 0" }}>
       <Usetable columns={columns} dataSource={dataSource} scroll={{

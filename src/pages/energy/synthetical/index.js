@@ -131,7 +131,7 @@ export default function Index() {
             <div className="left">
               <Tabsbox defaultActiveKey={0} items={tabs} onChange={ontabChange}>
               </Tabsbox>
-              <Chart   qverview={qverview}      type={exparams.type} tabvalue={tabvalue}  />
+              <Chart   qverview={qverview}      type={exparams.publictype} tabvalue={tabvalue}  />
             </div>
             {/* {tabvalue == 0 ? <CoalStandard op={exparams.view} data={coalStandard} datetype={exparams.type} key="CoalStandard" laptop={laptop} /> : <Electric data={consume} des={analysisDes} datetype={exparams.type} laptop={laptop} key="Electric" />} */}
         

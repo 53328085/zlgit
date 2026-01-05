@@ -79,15 +79,15 @@ export const Scene = styled.div`
   .contents {
      display: grid;
      grid-template-columns: 1fr 1fr;
-     grid-auto-rows: minmax(214px, auto);
+     grid-auto-rows: auto;
      gap:16px;
       
   }
   .content {
-    padding: 16px 8px;
+    padding: 16px 8px 0 8px;
     flex: 1;
     .ant-form-item {
-      margin-bottom: 12px;
+      margin-bottom: 6px;
     }
   }
 }

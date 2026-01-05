@@ -252,7 +252,7 @@ export const Chart_Options = {
       name: "环比率",
       nameLocation: "end",
     //  nameGap: 45,
-      min: 0,
+    //  min: 0,
       axisLabel: {
         formatter: function (value) {
           return value % 1 === 0 ? value : value + "%"; // 整数显示数量，小数显示百分比

@@ -9,6 +9,9 @@ import {Pagelayout} from './style'
  import Centerupcom from './comm/centerup'
  import Centercom from './comm/center'
  import Centerdowncom from './comm/centerdown'
+ import Rightupcom from './comm/rightup'
+ import Rightcentercom from './comm/rightcenter1'
+ import Rightdowncom from './comm/rightdown'
 export default function Index() {
   const pgref= useRef()
 
@@ -25,7 +28,11 @@ export default function Index() {
             <Centercom/>
             <Centerdowncom />
          </div>
-         <div className="right"></div>
+         <div className="right">
+            <Rightupcom />
+            <Rightcentercom />
+            <Rightdowncom />
+         </div>
        </div>
     </Pagelayout>
   )

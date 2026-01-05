@@ -112,7 +112,7 @@ export const Bindwrap = styled.div`
     border-radius: 8px;
     display: flex;
     align-items: center;
-    padding: 0 16px;
+    padding: 2px 16px;
     .switchform {
       flex:1;
       display: flex;
@@ -121,6 +121,10 @@ export const Bindwrap = styled.div`
         display:grid;
         grid-template-columns: auto repeat(3, 1fr);
         column-gap: 16px;
+        .ant-form-item.ant-form-item-with-help.ant-form-item-has-error {
+          margin-bottom: 0px;
+
+        }
         .val {
           color:#868686
         }

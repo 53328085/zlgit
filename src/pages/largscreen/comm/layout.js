@@ -1,7 +1,8 @@
 import React from "react";
 import { Progress } from "antd";
 import { Layoutcom, Titlesty } from "../style";
-
+import {useLineopt} from "../data"
+import Ichart from '@com/useEcharts/Ichart'
 const Titlecom = function ({ title, subtitle }) {
   return (
     <Titlesty>
@@ -43,6 +44,15 @@ export  const Prowarp = function({datas,idx}) {
            {
                       datas?.map?.((d,index)=>  <Probar index={index} data={d} order={idx} key={d.name}></Probar>)
                      }  
+      </div>
+  )
+}
+
+export const Chartcom=function({index, datas}){
+  const lineopt= useLineopt({index, datas, name:"1#chiller"})
+  return (
+      <div className="chartbox">
+           <Ichart {...lineopt}></Ichart>
       </div>
   )
 }
