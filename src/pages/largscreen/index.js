@@ -10,7 +10,7 @@ import {Pagelayout} from './style'
  import Centercom from './comm/center'
  import Centerdowncom from './comm/centerdown'
  import Rightupcom from './comm/rightup'
- import Rightcentercom from './comm/rightcenter1'
+ import Rightcentercom from './comm/rightcenter'
  import Rightdowncom from './comm/rightdown'
 export default function Index() {
   const pgref= useRef()
