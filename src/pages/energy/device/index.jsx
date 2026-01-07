@@ -314,7 +314,7 @@ export default function Index() {
           onChange={onChange}
           value={mode}
         ></Radiogroup>
-        {mode == 2 && <ExportExcel tb={tbref} />}
+       <ExportExcel tb={tbref} disabled={mode == 1} />
       </Space>
     </CustTitle>
   );

@@ -72,6 +72,7 @@ flex-direction: column;
 .model {
  display: flex;
  justify-content: flex-end;
+ column-gap: 16px;
 }
 .chart {
  flex: 1;

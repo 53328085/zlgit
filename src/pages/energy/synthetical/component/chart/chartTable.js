@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect,forwardRef } from 'react'
 import Usetable from '@com/useTable'
-export default function Index({ source, type,tabvalue }) {
+export default forwardRef(function Index({ source, type,tabvalue },ref) {
   console.log("tabvalue",tabvalue)
   console.log("type",type)
   const [columns, setColumns] = useState([])
@@ -33,9 +33,9 @@ export default function Index({ source, type,tabvalue }) {
   }, [type, source,tabvalue])
   return (
     <div style={{ padding: "16px 0" }}>
-      <Usetable columns={columns} dataSource={dataSource} scroll={{
+      <Usetable columns={columns} dataSource={dataSource} ref={ref} scroll={{
         y:  632
       }} />
     </div>
   )
-}
+})

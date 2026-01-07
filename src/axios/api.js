@@ -608,9 +608,9 @@ export class EnergyOverView {
     server.post(
       `/Energy/EnergyOverViewRuntime/QueryEnergyInfoOverview?projectId=${projectId}`
     );
-  static QueryImageBuilding = (projectId, buildingId) =>
+  static QueryImageBuilding = (projectId, buildingId,date,type) =>
     server.get(
-      `Energy/EnergyOverViewRuntime/QueryImageBuilding?projectId=${projectId}&buildingId=${buildingId}`
+      `Energy/EnergyOverViewRuntime/QueryImageBuilding?projectId=${projectId}&buildingId=${buildingId}&date=${date}&dayMonthYear=${type}`
     );
 }
 // 能源管理--区域能耗

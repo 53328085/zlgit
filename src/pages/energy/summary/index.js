@@ -26,7 +26,7 @@ import point from './icon/point.png'
  
 const { Paragraph, Text, Link } = Typography;
 
-const Imgbg = memo(({ projectId, areaVos }) => {
+const Imgbg = memo(({ projectId, areaVos,date, type }) => {
   const [energyImage, setEnergyImage] = useState();
   const [spinning, setSpinning] = useState(false);
   const [build, setBuild] = useState();
@@ -51,9 +51,13 @@ const Imgbg = memo(({ projectId, areaVos }) => {
     /*   if((topRect.height - y)<172) {
 
       } */
+     
       let { data, success } = await EnergyOverView.QueryImageBuilding(
-        projectId,
-        buildingId
+       projectId,
+        buildingId,
+        date.format("YYYY-MM-DD"),
+        type
+     
       );
       if (success && Array.isArray(data?.datas)) {
         setInfo({datas: data.datas, x, y,buildingName:data.buildingName });
@@ -225,7 +229,7 @@ export default function Index() {
     type: 3,
     pieData: {
       data: proportion,
-      total,
+    //  total,
       radius: ["40%", "70%"],
       center: ["50%", "45%"],
       label: {
@@ -316,7 +320,7 @@ const columns = [
     <Pagecount bgcolor="transparent" pd="0">
       <Mainbox laptop={laptop}>
         <div className="content">
-          <Imgbg projectId={projectId} areaVos={areaVos} />
+          <Imgbg projectId={projectId} areaVos={areaVos} date={date} type={type} />
           <div className="right">
             
                <Tabsbox type="card" tabwidth="72px" radius="0" tabBarGutter={0} items={items} value={meterType} onChange={onChange}></Tabsbox>

@@ -2,7 +2,7 @@ import { useState, useEffect, useRef, useMemo } from "react";
 import { Radio } from "antd";
 import Ichart from "@com/useEcharts/Ichart";
 import Charttable from "./chartTable";
-
+import {ExportExcel} from "@com/useButton"
 import { Echartbox } from "../../style";
 
 export default function ({ qverview={}, type,  tabvalue }) {
@@ -13,7 +13,7 @@ export default function ({ qverview={}, type,  tabvalue }) {
   };
 
   let { x = [], y = [], y1 = [] } = detail || {};
-
+  const ref = useRef()
   const baropt = useMemo(() => {
     return {
       series: [
@@ -84,9 +84,10 @@ export default function ({ qverview={}, type,  tabvalue }) {
             style={{ width: "96px", textAlign: "center" }}
             value={2}
           >
-            表格模式
+            列表模式
           </Radio.Button>
         </Radio.Group>
+        <ExportExcel single={true} tb={ref} disabled={model==1} ></ExportExcel>
       </div>
 
       {model == 1 ? (
@@ -94,7 +95,7 @@ export default function ({ qverview={}, type,  tabvalue }) {
           <Ichart {...baropt} />
         </div>
       ) : (
-        <Charttable source={source} legend={legend} type={type} tabvalue={tabvalue} />
+        <Charttable source={source} legend={legend} type={type} tabvalue={tabvalue} ref={ref} />
       )}
     </Echartbox>
   );

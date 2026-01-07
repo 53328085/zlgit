@@ -134,7 +134,7 @@ const Drawerbox = styled(Drawer)`
 `;
 const Inptserach = styled(Input.Search)`
   && {
-    
+    width: 288px;
     .ant-input-search
       .ant-input-group
       .ant-input-affix-wrapper:not(:last-child) {
@@ -384,21 +384,26 @@ export default function Index({ projectId, level,   name, allLevel }) {
       !success && custMsg({ success, content: errMsg || "数据出错" });
     }; */
   const handlersearch = (e,type) => {
-    let str = e.trim();
-    if(type===1) { //分表
-      str &&
-      setDeviceSub((arr) =>
-        arr.filter((a) => a.sn?.includes(str) || a.address?.includes(str))
-      );
-     !str && setDeviceSub([...devices.current.deviceSub]);
-    }else  { // 主表
-      str &&
-      setDeviceSummary((arr) =>
-        arr.filter((a) => a.sn?.includes(str) || a.address?.includes(str))
-      );
-     !str && setDeviceSummary([...devices.current.deviceSummary]);
+    try {
+      let str = e.trim();
+      if(type===1) { //分表
+        str &&
+        setDeviceSub((arr) =>
+          arr.filter((a) => a.sn?.includes(str) || a.address?.includes(str) || a.name?.includes(str))
+        );
+       !str && setDeviceSub([...devices.current.deviceSub]);
+      }else  { // 主表
+        str &&
+        setDeviceSummary((arr) =>
+          arr.filter((a) => a.sn?.includes(str) || a.address?.includes(str) || a.name?.includes(str))
+        );
+       !str && setDeviceSummary([...devices.current.deviceSummary]);
+      }
+     
+    } catch (error) {
+      console.log(error);
     }
-   
+
   };
   const changeUnselected = () => {
     let params = sfrom.getFieldsValue();
@@ -661,9 +666,9 @@ const savesty = laptop
                 <Text style={{ color: "#333" }}>设备搜索</Text>
                 <Inptserach
                   allowClear
-                  onPressEnter={handlersearch}
-                  placeholder="请输入设备编号/安装地址"
-                  onSearch={handlersearch}
+                  onPressEnter={(e)=>handlersearch(e,0)}
+                  placeholder="请输入设备编号/安装地址/设备名称"
+                  onSearch={(e)=>handlersearch(e,0)}
                 />
               </Space>
               <div className="outwrap">
@@ -695,7 +700,7 @@ const savesty = laptop
                 <Inptserach
                   allowClear
                   onPressEnter={(e)=>handlersearch(e,1)}
-                  placeholder="请输入设备编号/安装地址"
+                  placeholder="请输入设备编号/安装地址/设备名称"
                   onSearch={(e)=>handlersearch(e,1)}
                 />
               </Space>
@@ -809,7 +814,7 @@ const savesty = laptop
                 <Item name="alike" label="设备搜索">
                   <Inptserach
                     allowClear
-                    placeholder="请输入设备编号/安装地址"
+                    placeholder="请输入设备编号/安装地址/设备名称"
                     onSearch={changeUnselected}
                   />
                 </Item>

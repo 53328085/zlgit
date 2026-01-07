@@ -158,18 +158,19 @@ const tabs = useMemo(()=> {
 }, [projectId, energytype])
 
 useEffect(()=> {
-    if(["0","1","4"].includes(value) && isrange.range) {
-       setConfig((o)=> ({...o,  disabledDate:true}))
+    if(["0","1","4"].includes(value) && isrange.range) {       
+       setConfig((o)=> ({...o,  disabledDate:value!="1"}))
     }else{
       setConfig((o)=> ({...o,  disabledDate:false}))
     }
+    setConfig((o)=> ({...o,  reportType:value=="1" && isrange.range}))
     let str =typeof alikeRef.current?.[value]==="string" ? alikeRef.current?.[value] :  ""
     setAlike(str)
     setAlikev(str)
 }, [value,isrange])
 useEffect(()=> {
    return () => {
-    setConfig((o)=> ({...o,  disabledDate:false}))
+    setConfig((o)=> ({...o,  disabledDate:false,reportType:false}))
   }
 }, [])
 
@@ -254,7 +255,7 @@ useEffect(()=> {
     ][index]
     let dateType = { 1: "day", 2: "month", 3: "year" }[type]
 
-    let query = {
+    let params = {
       projectId,
       meterType: energytype,
       startDate: range ? dates?.[0].format("YYYY-MM-DD HH:mm") : date?.startOf(dateType).format("YYYY-MM-DD HH:mm"),
@@ -265,10 +266,11 @@ useEffect(()=> {
       ids: treeId,
       type,
       reportType,
-      filterInfo:alike
+      filterInfo:alike,
+      customTime:range // 日期范围优化
     } 
     //新需求 除分类能耗外 都添加搜索
-    let params = range ? {...query, customTime:true} : query
+   // let params = range ? {...query, customTime:true} : query
     setStartDateTime(range ? dates?.[0].format("YYYY-MM-DD HH:mm") : date?.startOf(dateType).format("YYYY-MM-DD HH:mm"))
     setEndDateTime(range ? dates?.[1].format("YYYY-MM-DD HH:mm") : date?.endOf(dateType).format("YYYY-MM-DD HH:mm"))
    /*  if (index == 0) {
@@ -479,7 +481,7 @@ useEffect(()=> {
     }
   }
 
-  const disabledDate = (current) => { // 限制选择范围
+  const disabledDate1 = (current) => { // 限制选择范围
     if (!dates) {
       return false;
     }
@@ -488,6 +490,59 @@ useEffect(()=> {
     const date = current && current > moment().endOf("day");
     return !!tooEarly || !!tooLate || !!date
   };
+
+ const disabledDate2 = useCallback((current)=>{
+  if(!dates) return false
+  let difftime =  {1:7,2:45,3:3}[type]
+  const date = current && current > moment().endOf("day");
+  const dateuint={1:"days",2:"days",3:"years"}[type]
+  if(type== 2){
+    const tooLate = dates[0] && current.diff(dates[0], dateuint) >difftime;
+    const tooEarly = dates[1] && dates[1].diff(current, dateuint) > difftime;
+    
+    return !!tooEarly || !!tooLate || !!date
+  }
+ 
+
+ },[dates,type  ]) 
+
+const disabledDate=useMemo(()=>{
+ 
+  if(value=="1"){
+    return disabledDate2
+  }
+  return disabledDate1
+},[value,disabledDate2,disabledDate1])
+
+/* 
+format="YYYY-MM-DD HH:mm"
+                    showTime={{
+                      format: 'HH:mm',
+                      minuteStep: 15
+                    }}
+ */
+
+const dateprops = useMemo(()=>{ 
+  if(value=="1"){
+    return {
+      format: ["YYYY-MM-DD HH:mm","YYYY-MM-DD HH:mm","YYYY-MM-DD","YYYY-MM"][type],
+      showTime:type==1 ?{
+        format: 'HH:mm',
+        minuteStep: 15
+      }: false,
+      picker: type!==3 ? "date" : "month"
+    }
+  }
+  return  {
+     format:"YYYY-MM-DD HH:mm",
+     showTime:{
+      format: 'HH:mm',
+      minuteStep: 15
+    },
+    picker:"date"
+  }
+},[value,type])
+
   const [valuet, setValuet] = useState(null);
 
   const onTimeOk = (date = [], dataString) => {
@@ -539,11 +594,7 @@ useEffect(()=> {
                     onChange={onTimeOk}
                     disabled={!isrange.range}
                     defaultValue={[moment().startOf("day"), moment().endOf("hour")]}
-                    format="YYYY-MM-DD HH:mm"
-                    showTime={{
-                      format: 'HH:mm',
-                      minuteStep: 15
-                    }}
+                    {...dateprops}
                   />
                 </div>
               </div>
@@ -551,7 +602,11 @@ useEffect(()=> {
               {
                value=="4" && <Select value={reportType} options={reportTypeopt} onChange={(e)=> setReportType(e)} style={{width: "200px", marginBottom: "16px"}}></Select>
               }
-              
+              {
+                  value == "1" && <div className='search'>
+                    <Tooltip title="最多选择三条信息进行对比"><CustButton onClick={oncompare}>勾选对比</CustButton></Tooltip>
+                  </div>
+                }
              
               </div>
               {

@@ -63,7 +63,7 @@ export default function Index() {
     totalCount: 0,
   });
   const timedate = useReactive({
-    date: moment().format("YYYY-MM-DD"),
+    date: moment().subtract(1,"days").format("YYYY-MM-DD"),
     datetype: 1,
   });
   // 添加loading状态管理

@@ -218,7 +218,7 @@ export default function UseSerach(props) {
   const dateselect = (
     <Space size={16}>
       <Item name="type" initialValue={1} key="electricity" preserve={false}>
-        <Select style={w88} onChange={changetype} options={dateoption} ></Select>
+        <Select style={w88} onChange={changetype} options={dateoption} disabled={config?.disabledDate} ></Select>
       </Item>
       <Item noStyle shouldUpdate={(pre, cur) => pre.type != cur.type}  >
         {
@@ -226,7 +226,7 @@ export default function UseSerach(props) {
             let type = (daterang == 'week' ? ['week', 'week', 'month', 'year'] : ['date', 'date', 'month', 'year'])[getFieldValue('type')]
             return (
               <Item name="date" initialValue={moment()} >
-                <DatePicker picker={type} style={w200} disabled={config?.disabledDate} />
+                <DatePicker picker={type} style={w200} disabled={config?.disabledDate || config?.reportType} />
               </Item>
             )
           }

@@ -13,7 +13,7 @@ import UseTable from "@com/useTable"
 import { numberformat } from "@com/usehandler"
 import { useOutletContext } from 'react-router-dom'
 import Pagecount from "@com/pagecontent";
-
+import {ExportExcel} from "@com/useButton"
 import { getTime } from '@com/usehandler'
 import Ichart from '@com/useEcharts/Ichart';
 import {useQueryEnergyArea} from "./api.js"
@@ -51,6 +51,11 @@ const CustTitle = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
+  .subtitle{
+    display: flex;
+    column-gap: 16px;
+    align-items: center;
+  }
 `;
 
 
@@ -107,7 +112,7 @@ const Sdiv = styled.div`
 const nf = new Intl.NumberFormat("en-US", { maximumFractionDigits: 2 });
 export default function Index() {
   let { exparams } = useOutletContext()
-  console.log(exparams)
+  const ref=useRef()
   let { energytype, selectlevel, areaId, date, type: dateType, projectId } = exparams
   // const chartTitle = ["用电量 (kWh)", "用电量 (kWh)", '用冷水量 (m³)', '用气量 (m³)', '', '', '', '用热水量 (m³)', '', '', '', '', '', '', '', '', '', '', '用蒸汽量(m³)'][energytype] || "用电量 (kWh)"
   //const unit = ["kWh", "kWh", "m³", '', '', '', '', 'm³', '', '', '', '', '', '', '', '', '', '', 'm³'][energytype] || "kWh"
@@ -265,6 +270,7 @@ export default function Index() {
   const Title = (
     <CustTitle className="t">
       区域能耗趋势
+      <div className="subtitle">
       <Radiogroup options={[
         {
           label: "图表模式",
@@ -280,6 +286,8 @@ export default function Index() {
         onChange={onChange}
         value={mode}
       ></Radiogroup>
+       <ExportExcel single={true} tb={ref} disabled={mode==1} ></ExportExcel>
+       </div>
     </CustTitle>
   );
 
@@ -292,7 +300,7 @@ export default function Index() {
         <Titlelayout title={Title} key="up" layout="flex" className="left">
           <div style={{ paddingTop: "16px", flex: 1, display: "flex", justifyContent: "center" }}>
             {
-              mode == 1 ? <Ichart {...boptions} /> : <UseTable dataSource={tableData} columns={columns} key="table" scroll={{ y: 652 }} />
+              mode == 1 ? <Ichart {...boptions} /> : <UseTable dataSource={tableData} columns={columns} ref={ref} key="table" scroll={{ y: 652 }} />
             }
 
           </div>

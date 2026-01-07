@@ -191,7 +191,7 @@ const lineopt=useMemo(()=>{
     <span>分类能耗明细</span>
     <Space size={16}>{showquota && <Checkbox onChange={ckChange}>定额线</Checkbox>}
     <Radio.Group options={viewOpt} buttonStyle="solid" optionType='button' value={value} onChange={(e)=>setValue(e.target.value)} ></Radio.Group>
-    {value==2 && <ExportExcel tb={tbref} single={true} />}
+      <ExportExcel tb={tbref} single={true} disabled={value==1} /> 
     </Space>
   </CustTitle>
   return (
