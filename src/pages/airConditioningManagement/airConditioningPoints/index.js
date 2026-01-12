@@ -191,18 +191,18 @@ try {
                  </Form.Item>
                  <Form.Item label="模式" name="workMode">
                     <Radio.Group optionType="button" buttonStyle="solid" size="large">
-                        <Radio value={2}><div className="iconwrap"><Hot /><span className="txt">制热</span></div></Radio>
+                        <Radio value={4}><div className="iconwrap"><Hot /><span className="txt">制热</span></div></Radio>
                         <Radio value={1}><div className="iconwrap"><Cold /><span className="txt">制冷</span></div></Radio>
                         <Radio value={3}><div className="iconwrap"><Wind /><span className="txt">送风</span></div></Radio>
-                        <Radio value={4}><div className="iconwrap"><Wet /><span className="txt">除湿</span></div></Radio>
+                        <Radio value={2}><div className="iconwrap"><Wet /><span className="txt">除湿</span></div></Radio>
                     </Radio.Group>
                  </Form.Item>
                  <Form.Item label="风速" name="windSpeed">
                     <Radio.Group optionType="button" buttonStyle="solid" size="medium">
-                        <Radio value={0}>自动</Radio>
-                        <Radio value={1}>低</Radio>
+                        <Radio value={5}>自动</Radio>
+                        <Radio value={3}>低</Radio>
                         <Radio value={2}>中</Radio>
-                        <Radio value={3}>高</Radio>
+                        <Radio value={1}>高</Radio>
                     </Radio.Group>
                  </Form.Item>
                 </Form>

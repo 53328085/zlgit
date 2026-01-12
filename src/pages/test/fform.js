@@ -1,8 +1,9 @@
 import React, {useState, useEffect,useRef} from 'react'
-import {Button,Space,Form, Input} from 'antd'
+import {Button,Space,Form, Input,Upload} from 'antd'
 import moment from 'moment'
 import Chart from './chart'
 import Grid from './grid'
+import FileUpload from './fileupload'
 export default function Index() {
   const [data, setData]=useState(null)
   const [olData, setOlData] = useState(null)
@@ -194,8 +195,51 @@ export default function Index() {
    });
   }
   const redirecthandler=()=>{ 
-    fetch(`auth/redirect?name=zhu&password=zl&lang=c#`, {
+    fetch(`auth/redirect?name=zhu&password=zl&lang=c12312`, {
           method:"get",  
+       })
+       .then(res => res.text())
+       .then(res =>{
+         console.log(res)
+       } )
+     .catch(e=>{
+         console.log(e)
+       });
+  }
+
+  const getmiddleware=()=>{ 
+    fetch(`auth/test`, {
+          method:"get",  
+       })
+       .then(res => res.text())
+       .then(res =>{
+         console.log(res)
+       } )
+     .catch(e=>{
+         console.log(e)
+       });
+  }
+  const getmiddleware1=()=>{ 
+    fetch(`auth/api/v1/getb`, {
+          method:"get",  
+       })
+       .then(res => res.text())
+       .then(res =>{
+         console.log(res)
+       } )
+     .catch(e=>{
+         console.log(e)
+       });
+  }
+  function basicAuth(username, password) {
+    return 'Basic ' + btoa(username + ':' + password);
+  }
+  const Authorization=()=>{ 
+    fetch(`auth/account`, {
+          method:"get",
+          headers: {
+            Authorization: basicAuth('admin', '123'),
+          },  
        })
        .then(res => res.text())
        .then(res =>{
@@ -227,6 +271,10 @@ export default function Index() {
       <Button onClick={formdatahandler}>表单数据</Button>
       <Button onClick={bindhandler}>数据绑定</Button>
       <Button onClick={redirecthandler}>重定向</Button>
+      <Button onClick={getmiddleware}>中间件</Button>
+      <Button onClick={getmiddleware1}>路由组使用中间</Button>
+      <Button onClick={Authorization}>身份验证</Button>
+      <FileUpload />
     </Space>
       
     </div>

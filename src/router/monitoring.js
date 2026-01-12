@@ -46,5 +46,5 @@ export let runtimeMonitor = {
     '010508': Control,
     '010509': Analyse, // 对比分析
     '010510': Ianalyse,
-    "0105011":Manualentry, //手动录入
+    "010511":Manualentry, //手动录入
 }

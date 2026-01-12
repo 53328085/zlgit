@@ -305,11 +305,11 @@ useEffect(()=> {
     return hander(params).then(res => {
       let { success, data, total = 0 } = res
       setTotal(total)
-      let fag = index == 5 && isObject(data)
-      let arrData = []
+      let fag =  [1,5].includes(index) && isObject(data)
+      let arrData = [], counsume=[]
       if (success && ((Array.isArray(data) && data.length > 0) || fag)) {
         if (index == 1) {
-          let { detailHeaders          } = data?.[0]
+          let { detailHeaders,detailDatas} = data
           if(!Array.isArray(detailHeaders)) return
           let last = detailHeaders.length - 1
           let column = detailHeaders.map((col,index) => ({ title: col,  children:[
@@ -332,12 +332,13 @@ useEffect(()=> {
           // let column = detailHeaders.map(col => ({title: col, dataIndex: col, key: col,width: "96px", render: (text)=> Math.round(parseFloat(text))}))  
         
           setConcolumns([...conscols, ...column])
-          data.forEach(item => {
-            let { detailHeaders, detailValues,detailReadings } = item;
+          counsume= detailDatas.map(item => {
+            let {   detailValues,detailReadings } = item;
             for (const [index, val] of detailHeaders?.entries()) {
               item[val+'v'] = detailValues[index]
               item[val+'r'] = detailReadings[index]
             }
+            return item
           })
         } else if (index == 5) {
           let { heads, datas } = data
@@ -372,7 +373,7 @@ useEffect(()=> {
         
 
         return {
-          list: index == 5 ? arrData : data,
+          list: index == 5 ? arrData : index==1 ? counsume : data,
           total: total
         }
       } else {

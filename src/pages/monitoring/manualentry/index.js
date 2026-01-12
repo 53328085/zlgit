@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react'
 import { useReactive, useAntdTable } from 'ahooks'
 import { useSelector } from 'react-redux'
-import { selectProjectId } from "@redux/systemconfig";
+import { selectProjectId,prodeviceType } from "@redux/systemconfig";
 import UseTable from '@com/useTable'
 import { Button, Space, message, TimePicker, Divider, Table, Form, Input, DatePicker } from 'antd';
 import styled from 'styled-components'
@@ -14,6 +14,8 @@ import moment from 'moment'
 
 export default function Index() {
     const projectId = useSelector(selectProjectId)
+    const deviceTypes = useSelector(prodeviceType)
+    console.log(deviceTypes)
     const { Runtime: { GetInpuList, ManualInput } } = Monitoring;
     const tbref = useRef()
     const ref = useRef()
@@ -43,9 +45,11 @@ export default function Index() {
             dataIndex: 'deviceStyle',
             key: 'deviceStyle',
             width: 270,
-            render: (_, record) => (
-                <span>{record.deviceStyle == 1 ? '电表' : record.deviceStyle == 2 ? '水表' : record.deviceStyle == 4 ? '传感器' : record.deviceStyle == 5 ? '变压器' : ''}</span>
-            ),
+            render: (_, record) =>{
+               let name =  deviceTypes.find(d => d.deviceStyle ==record.deviceStyle)?.name
+              return  (
+                <span>{name}</span>
+            )},
         }, {
             align: 'center',
             title: '设备名称',
