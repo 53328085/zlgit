@@ -256,11 +256,18 @@ export const Centerdown = styled.div`
       }
       .info{
         justify-content: space-between;
+        display: flex;
         .centertotal{
           .month{
             color: ${colors[0]};
             padding-left: 4px;
           }
+        }
+        .percentline{
+          width: 236px;
+          height: 14px;
+          background: linear-gradient( 180deg, rgba(0, 197, 255, 0.3) 0%, rgba(0, 121, 237, 0.3) 100%);
+           display: flex;
         }
       }
    }

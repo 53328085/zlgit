@@ -548,6 +548,7 @@ const dateprops = useMemo(()=>{
   const [valuet, setValuet] = useState(null);
 
   const onTimeOk = (date = [], dataString) => {
+    console.log(data, dataString)
     let f = dataString.some((d) => d);
     if (!f) return;
     // console.log(dataString)

@@ -2,11 +2,15 @@ import React from 'react'
 import {useFullscreen} from 'ahooks'
 import imgurl from "../icon"
 import {useTime} from '../data'
-export default function index({pgref}) {
+export default function index({pgref,setMeterType,meterType}) {
       const [isFullscreen, { enterFullscreen, exitFullscreen }] = useFullscreen(pgref)
       const timeformat = useTime()
       const fullhandler=()=>{
         isFullscreen ? exitFullscreen() : enterFullscreen()
+      }
+      const onClick=(v)=>{
+        setMeterType(v)
+
       }
   return (
     <div className='hearder'>
@@ -15,20 +19,20 @@ export default function index({pgref}) {
             </div>
          <div className="opt">
             <div className="btns">
-                <div className="btn act">
+                <div className={`btn ${meterType == 1 ? 'act' : ''} `} onClick={()=>onClick(1)} >
                     <div className="img">
                     <img src={imgurl["el"]}></img>
                     </div>
                     用电
                 </div>
-                <div className="btn">
+                <div className={`btn ${meterType == 2 ? 'act' : ''} `} onClick={()=>onClick(2)}>
 
                 <div className="img">
                     <img src={imgurl["water"]}></img>
                     </div>
                     用水
                 </div>
-                <div className="btn">
+                <div className={`btn ${meterType == 3 ? 'act' : ''} `} onClick={()=>onClick(3)}>
                 <div className="img">
                     <img src={imgurl["gas"]}></img>
                     </div>

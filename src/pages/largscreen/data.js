@@ -51,7 +51,7 @@ return {
       type: 'value',
       show: false, // 隐藏 x 轴线和刻度
       min: 0,
-      max: datas.total
+      max: datas?.total
   },
   
   yAxis: {
@@ -117,7 +117,7 @@ return {
 }, 
   ],
   dataset:{
-    source:  datas.top5
+    source:  datas?.top5
   },
  
 }

@@ -22,6 +22,7 @@ export default function Index({ children, title, subtitle, flex, ...props }) {
   const Probar = function ({  data, index,order }) {
   let i = index + 1
   let fag = i<4 && order==0;
+  
   return (
       <div className="proitem">
         <div className="rank">
@@ -39,10 +40,11 @@ export default function Index({ children, title, subtitle, flex, ...props }) {
   );
 };
 export  const Prowarp = function({datas,idx}) { 
+ 
   return (
       <div className="probox">
            {
-                      datas?.map?.((d,index)=>  <Probar index={index} data={d} order={idx} key={d.name}></Probar>)
+                      datas?.map?.((d,index)=>  <Probar index={index} data={d}  order={idx} key={d.name}></Probar>)
                      }  
       </div>
   )

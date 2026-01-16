@@ -1,46 +1,15 @@
-import React, { useEffect, useMemo, useState } from "react";
-import {Badge} from 'antd'
-import { useSelector } from "react-redux";
-import { selectProjectId, selectOneLevelDefaultId } from "@redux/systemconfig";
+import React, {  useMemo } from "react";
+
 import { isObject } from "@com/usehandler";
 import Ichart from '@com/useEcharts/Ichart'
-import { Leftup } from "../style";
-import { colors } from "../data";
-import { useQueryOverview } from "../api";
+
 import dayjs from "dayjs";
 import Layoutcom from './layout'
-export default function Index() {
-  const areaId = useSelector(selectOneLevelDefaultId);
-  const projectId = useSelector(selectProjectId);
-  const [datas, setDatas] = useState({});
-  const len =colors.length
-  const getData = async () => {
-    try {
-      let body = {
-        projectId: projectId,
-        dayMonthYear: 2,
-        startDate: dayjs().startOf().format("YYYY-MM-DD"),
-        endDate: dayjs().endOf().format("YYYY-MM-DD"),
-        areaIds: [areaId],
-        meterType: 1,
-        name: "全部",
-        group: 1,
-      };
-      let { data, success } = await useQueryOverview({}, body);
-      if (success && isObject(data)) {
-        let { detail } = data;
-        if (isObject(detail)) {
-          setDatas(detail);
-        } else {
-          setDatas({});
-        }
-      }
-    } catch (e) {
-      console.log(e);
-    }
-  };
+export default function Index({datas}) {
+ 
+  
  const baropt=useMemo(()=>{
-    const {x=[], y=[],y1=[]}=datas
+    const {x=[], y=[],y1=[]}=isObject(datas) ? datas : {}
      return{
          series:   [{ 
            type: "bar", 
@@ -140,11 +109,7 @@ export default function Index() {
          ],
      }
  }, [datas])
-  useEffect(() => {
-    if ([areaId, projectId].some((id) => Number.isInteger(parseInt(id)))) {
-     // getData();
-    }
-  }, [areaId, projectId]);
+ 
   const title=`用能趋势${dayjs().format("MM")}月`
   return (
     <Layoutcom title={title}    flex="316px">

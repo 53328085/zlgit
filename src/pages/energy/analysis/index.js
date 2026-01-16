@@ -65,7 +65,7 @@ export default function Index() {
     try {
       
  
-    let flag = [areaId, projectId, type,  energytype, shiftNo].some(i => Number.isInteger(parseInt(i))) && date
+    let flag = [areaId, projectId, type,  energytype, shiftNo].every(i => Number.isInteger(parseInt(i))) && date
     if(!flag) return
     if (!Array.isArray(treeId) || !isFinite(line)) return
     let time = getTime(date, type)

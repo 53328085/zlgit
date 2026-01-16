@@ -96,7 +96,7 @@ export default function Index(props) {
       //publictype, publicdate, projectId, energytype
   
     if(!(Array.isArray(treeIdList) &&treeIdList?.length >0&& Number.isInteger(parseInt(projectId)))) return
-    if(![publictype,  projectId, energytype, areaId].some(d => Number.isInteger(d))) return
+    if(![publictype,  projectId, energytype, areaId].every(d => Number.isInteger(d))) return
     if(!publicdate && publictype!=4) return;
     if(!Array.isArray(publicrangedate)&& publictype==4) return
     const body = {
