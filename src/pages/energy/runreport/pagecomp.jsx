@@ -1,9 +1,10 @@
  import styled from 'styled-components'
 import React,{useRef} from 'react'
+import {useSelector} from 'react-redux'
  import {Descriptions} from 'antd'
 import Page from "@com/reportPrint/page"
 import Ichart from '@com/useEcharts/Ichart'
- 
+import {currProject} from "@redux/systemconfig"
 
 const DesItem = styled(Descriptions)`
 && {
@@ -52,6 +53,7 @@ const Main =styled.div`
  
  
 export default function pagecomp({data, params}) {
+  const {address, projectName } = useSelector(currProject)  
   let {eUse={}, timeEnergy={}, constEnergy={}, range=[]} = data.constructor===Object ? data : {} ;
   let time = timeEnergy?.constructor == Object ? timeEnergy : {}
   let {analysis={}, detail: td, proportion=[]} = time 
@@ -229,15 +231,15 @@ export default function pagecomp({data, params}) {
         <Main> 
       <p  className='title'>1.项目概况</p>    
         <DesItem title=""  bordered size='small' column={1}>
-          <DesItem.Item label="项目名称">{data.project}</DesItem.Item>
-          <DesItem.Item label="项目地址">{data.address}</DesItem.Item>
+          <DesItem.Item label="项目名称">{projectName}</DesItem.Item>
+          <DesItem.Item label="项目地址">{address}</DesItem.Item>
         </DesItem> 
         <div style={{flex: 1, display: 'flex', flexDirection: "column"}}>
         <p  className='title'>2.用电量分析</p> 
-          <p className='text'>{`${data.project}监测周期内总耗电量${data.eUse?.sum}kW·h,${text}平均耗电量${data.eUse?.avg}kW·h，单${text}最大耗电量${data.eUse?.max}kW·h，${text}耗电情况详见下图：`}</p>
+          <p className='text'>{`${projectName}监测周期内总耗电量${data.eUse?.sum}kW·h,${text}平均耗电量${data.eUse?.avg}kW·h，单${text}最大耗电量${data.eUse?.max}kW·h，${text}耗电情况详见下图：`}</p>
           <div style={sty}>
               
-              <Ichart {...option.current}  tip={`${data.project}${text}用电量`} />
+              <Ichart {...option.current}  tip={`${projectName}${text}用电量`} />
           </div>
          </div>
          </Main> 
@@ -247,8 +249,8 @@ export default function pagecomp({data, params}) {
           <p  className='title'>3.分时段能耗</p>    
           <p className='text'>{` 监测周期内尖电量为${analysis.e1}kW·h，占总电量${analysis.percentE1}%,峰电量为${analysis.e2}kW·h，占总电量${analysis.percentE2}%,平电量为${analysis.e3}kW·h，占总电量${analysis.percentE3}%,谷电量为${analysis.e4}kW·h，占总电量${analysis.percentE4}%。`}</p>
           <div style={{display: "grid", gridTemplateRows: "1fr 1fr", flex: 1}}> 
-              <Ichart {...eoption.current}  tip={`${data.project}${text}电费`} />
-              <Ichart {...epoption.current}  tip={`${data.project}${text}尖峰平谷`} />
+              <Ichart {...eoption.current}  tip={`${projectName}${text}电费`} />
+              <Ichart {...epoption.current}  tip={`${projectName}${text}尖峰平谷`} />
           </div>
         
           </Main>
@@ -259,11 +261,11 @@ export default function pagecomp({data, params}) {
           <p  className='title'>4.电费</p>    
           <p className='text'>{`当${text}总用电费用${ean.e}元，其中尖时段电费为${ean.e1}元，占总电费${ean.percentE1}%，峰时段电费为${ean.e2}元，占总电费${ean.percentE2}%，平时段电费为${ean.e3}元，占总电费${ean.percentE3}%,谷时段电费为${ean.e4}元，占总电费${ean.percentE4}%。`}</p>
           <div style={{display: "flex", height: '214px', marginBottom: '32px'}}> 
-              <Ichart {...coption.current}  tip={`${data.project}${text}电费`} />
+              <Ichart {...coption.current}  tip={`${projectName}${text}电费`} />
           </div>
           <p  className='title'>5.线路能耗排名</p>
           <div style={{display: 'flex', height: '300px'}}>
-             <Ichart {...boption.current}  tip={`${data.project}${text}线路能耗排名`} />
+             <Ichart {...boption.current}  tip={`${projectName}${text}线路能耗排名`} />
           </div>
           </Main>
         </Page>

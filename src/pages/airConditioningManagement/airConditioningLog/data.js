@@ -23,6 +23,8 @@ export const AirManualControlTableColumns = [
     title: "设备名称",
     dataIndex: "name",
     key: "name",
+    width: 260,
+    ellipsis:true,
   },
   {
     title: "通信地址",
@@ -34,7 +36,8 @@ export const AirManualControlTableColumns = [
     title: "安装地址",
     dataIndex: "address",
     key: "address",
-    width: "280px"
+    width: "280px",
+    ellipsis:true,
   },
   {
     title: "操作类型",
@@ -55,11 +58,6 @@ export const AirManualControlTableColumns = [
     title: "空调温度（℃）",
     dataIndex: "temperatureName",
     key: "temperatureName",
-  }, {
-    title: "当前室内温度（℃）",
-    dataIndex: "ambientTemp",
-    key: "ambientTemp",
-    width: "180px"
   },
   {
     title: "操作人",
@@ -89,6 +87,8 @@ export const AirAutomaticControlTableColumns =
       title: "设备名称",
       dataIndex: "name",
       key: "name",
+      width: 200,
+      ellipsis:true,
     },
     {
       title: "通信地址",
@@ -122,10 +122,10 @@ export const AirAutomaticControlTableColumns =
       dataIndex: "temperature",
       key: "temperature",
     }, {
-      title: "当前室内温度（℃）",
+      title: "室内温度（℃）",
       dataIndex: "ambientTemp",
       key: "ambientTemp",
-      width: "180px"
+      width: "140px"
     },
     {
       title: "空调方案",

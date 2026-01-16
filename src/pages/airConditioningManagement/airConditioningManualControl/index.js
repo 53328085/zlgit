@@ -195,6 +195,7 @@ export default function Index() {
             energytype={1}
             allselect={true}
             showSearch={true}
+            dispart={true}
             title="空调设备列表"
             hv="40px"
             scroll="735px"

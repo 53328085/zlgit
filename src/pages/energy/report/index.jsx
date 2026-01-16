@@ -340,6 +340,7 @@ useEffect(()=> {
             }
             return item
           })
+          console.log("counsume",counsume)
         } else if (index == 5) {
           let { heads, datas } = data
           let ishead = Array.isArray(heads) && heads?.length
@@ -611,7 +612,7 @@ const dateprops = useMemo(()=>{
              
               </div>
               {
-                ["1", "5"].includes(value) ? <div key={value}><UserTable ref={tbref} rowSelection={value == 1 ? rowSelection : null} columns={concolumns} {...tableProps} rowKey={row => row.sn} key={value} scroll={{
+                ["1", "5"].includes(value) ? <div key={value}><UserTable ref={tbref} rowSelection={value == 1 ? rowSelection : null} columns={concolumns} {...tableProps} rowKey={row => row.sn+row.nodeName} key={value} scroll={{
                   scrollToFirstRowOnChange: true,
                   x: 1400,
                   y: 685

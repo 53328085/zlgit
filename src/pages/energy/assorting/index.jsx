@@ -168,7 +168,7 @@ const getEnergyType = async()=> {
                 {cards}
            </div>
            </div>
-           <Datashow datas={chartdatas} showquota={showquota} quota={quota} view={view} energytype={energytype}  />
+           <Datashow datas={chartdatas}  showquota={showquota} quota={quota} view={view} energytype={energytype}  />
         </div>
         
       </Mainbox>

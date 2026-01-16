@@ -329,7 +329,7 @@ export const itemsline = (
       {(fileds, { add, remove }) => (
         <Scene>
           {fileds.map((field, _, arr) => (
-            <div>
+            <div key={field.key}>
               <Form.Item
               labelAlign="left"
               style={{marginBottom: "4px"}}
@@ -398,7 +398,7 @@ export const itemsline = (
                     </div>
                     <div className="contents">
                       {inerfileds?.map?.((inerfiled, index, arr) => (
-                        <div className="content" key={inerfiled.key}>
+                        <div className="content" key={inerfiled.name}>
                           <Form.Item
                             label="定时任务"
                             name={[inerfiled.name, "taskType"]}

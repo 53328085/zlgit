@@ -28,8 +28,8 @@ export default function Index() {
       values.dtype == 1
         ? moment(values.date).format("YYYY-MM-DD")
         : values.dtype == 2
-        ? moment().format("YYYY-MM-01")
-        : moment().format("YYYY-01-01");
+        ? moment(values.date).format("YYYY-MM-01")
+        : moment(values.date).format("YYYY-01-01");
     const params = {
       projectId,
       ids: treeId,

@@ -30,15 +30,23 @@ export   function useCols(callback) {
       },
       {
         title: "控制成功率(%)",
-        dataIndex: "percent",
-        key: "percent",
-        render: (text) => Number.isFinite(parseFloat(text)) ? text+"%" : "-"
+        dataIndex: "rate",
+        key: "rate",
+        render: (text) => Number.isFinite(parseFloat(text)) ? text : "-"
       },
       {
         title: "执行时间",
         dataIndex: "excuteTime",
         key: "excuteTime",
+        render: (text) => moment(text,"YYYY-MM-DD HH:mm:ss").format("YYYY-MM-DD")
       }, 
+      {
+        title: "创建时间",
+        dataIndex: "createTime",
+        key: "createTime",
+      }, 
+      
+      
     ];
    }, [callback])
 } 
@@ -86,12 +94,8 @@ export const lightcol =[
       title: "在线状态",
       dataIndex: "state",
       key: "state",
-      render: (t)=>{
-        return {
-          "1": "离线",
-          "2": "正常",
-        }[t] || "告警"
-      }
+      render: (t)=>{ t<1 ? "离线" : "正常" }
+       
     },
     {
       title: "安装地址",
@@ -153,12 +157,7 @@ export const state =[
       title: "在线状态",
       dataIndex: "state",
       key: "state",
-      render: (t)=>{
-        return {
-          "1": "离线",
-          "2": "正常",
-        }[t] || "告警"
-      }
+      render: (t)=>  t<1 ? "离线" :  "正常"
     }, 
     
     {

@@ -51,13 +51,13 @@ try {
      
      let values ={}
      details?.[0]?.fields?.forEach((f,i)=>{
-        const{index, name,value} = f
-        if(index==1 &&  value) {
-          values.ioState = optobj[1][value]
-        }else if(index==2 &&  value){
-            values.workMode = optobj[2][value]
-        }else if(index==3 &&  value) {
-            values.windSpeed = optobj[3][value]
+        const{index,name, dValue} = f
+        if(name=="开关" &&  dValue) {
+          values.ioState = dValue
+        }else if(name=="模式" &&  dValue){
+            values.workMode = dValue
+        }else if(name=="风速" &&  dValue) {
+            values.windSpeed = dValue
         }
      })
      values.temperature = details?.[0]?.temperature

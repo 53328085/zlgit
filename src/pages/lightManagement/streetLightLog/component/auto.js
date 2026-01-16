@@ -54,7 +54,7 @@ export default function Index() {
 
   const { tableProps, search } = useAntdTable(getList, {
     form,
-    pageSize: 14,
+    defaultPageSize: 15,
     refreshDeps: [projectId],
   });
   const {submit} = search
@@ -75,12 +75,12 @@ export default function Index() {
             <Form.Item
               name="time"
               label="执行时间"
-              initialValue={[moment().subtract(1, "months"), moment()]}
+              initialValue={[moment().subtract(1, "months"), moment().add(1, "years")]}
               rules={[{
                 required: true,
                 message: "请选择执行执行时间"
               }]}
-            ><RangePicker disabledDate={disabledDate}></RangePicker>
+            ><RangePicker ></RangePicker>
             </Form.Item>
             <CustButtonT text="search" onClick={submit}></CustButtonT>
             </Space>
@@ -119,6 +119,8 @@ export default function Index() {
                            {percenttotal} 
                         </Table.Summary.Cell>
                         <Table.Summary.Cell index={4}> 
+                        </Table.Summary.Cell>
+                        <Table.Summary.Cell index={5}> 
                         </Table.Summary.Cell>
                       </Table.Summary.Row>
                       

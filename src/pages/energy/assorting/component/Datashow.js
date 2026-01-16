@@ -8,7 +8,7 @@ import UseTable from '@com/useTable'
 import {WrapTable} from '@com/comstyled'
 import {isObject} from "@com/usehandler"
 import {ExportExcel} from "@com/useButton"
-export default function Index({datas={},quota=[],showquota, view,energytype}) {  
+export default function Index({datas={},quota=[],showquota,energyTypes, view,energytype}) {  
   const {proportion=[],consumeDetail=[], tableDatas } = datas || {}
   const [checked, setChecked]=useState(false)
   const tbref=useRef()
@@ -77,20 +77,20 @@ export default function Index({datas={},quota=[],showquota, view,energytype}) {
       1: 'kWh',
       2: "m³",
       3: "m³",
-      8: "m³"
+      7: "m³"
      }[energytype] : "元"
      const title =view==1 ? {
       1: '电量(kWh)',
       2: "用水(m³)",
       3: "用气(m³)",
-      8: "用气(m³)"
-     }[energytype] : "元"
+      7: "用水(m³)"
+     }[energytype]??"" : "元"
      const display =view==1 ? {
       1: '电量',
       2: "用水",
       3: "用气",
-      8: "用气"
-     }[energytype] : "元" 
+      7: "用水"
+     }[energytype]??"" : "元" 
    return [unit, title, display]
 
   }, [view, energytype])

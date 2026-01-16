@@ -9,6 +9,7 @@ import { message, Input, Tree, Radio, Checkbox, Switch } from 'antd'
 
 import Titlelayout from "@com/titlelayout";
 import { useLocation } from "react-router-dom"
+ 
 
 
 const { Search } = Input;
@@ -53,6 +54,7 @@ export default memo(function Index({ areaId, setTreeId, setLine, setNode, showli
   mode = null,
   correlation = Number.POSITIVE_INFINITY, // 是否关联 属性
   hv = "32px", // 标题高度
+  dispart=false, // 空调管理 --手动控制页面传部分数据，其他页面传全部数据
   ...restprop }) {
   // datatype =0 或 =2
   const levelone = useSelector(selectOneLevel)
@@ -65,7 +67,7 @@ export default memo(function Index({ areaId, setTreeId, setLine, setNode, showli
 
   const isshow = useMemo(() => {
     const { nested, primary } = state
-    return ["report", "public"].includes(nested) && primary == "runtimeEnergy" || ["airConditioningOverview", "public"].includes(nested) && primary == "airConditioningManagement"
+    return ["report", "public"].includes(nested) && primary == "runtimeEnergy" || ["public"].includes(nested) && primary == "airConditioningManagement"
   }, [state])
   const [checkedKeys, setCheckedKeys] = useState([])
 
@@ -88,8 +90,7 @@ export default memo(function Index({ areaId, setTreeId, setLine, setNode, showli
   const strictyly = schecked == 1
 
   const allSelected = ({ target: { checked } }) => {
-    console.log(treeIdRef.current)
-    console.log(checked)
+    
     if (checked) {
       if (datatype == 5) {
         let areId = Array.from(postid.current)?.map(d => parseInt(d.slice(2)))
@@ -107,10 +108,27 @@ export default memo(function Index({ areaId, setTreeId, setLine, setNode, showli
     setIndeterminate(false)
   }
 
-  let arr = [], expand = [];
-
+  let arr = [], 
+  expand = [],  
+  airexpand=[], //空调展开
+  part=[] ; // 获取部分数据;
+  const getpart=(nodes, type, child='nodes')=>{
+     console.log('nodes',nodes)
+     if (Array.isArray(nodes)) {
+       for (let node of nodes) { 
+        if (node.type == 2) {
+          part.push(node[type] )
+        }
+         if (node[child] && Array.isArray(node[child]) && node[child]?.length > 0) {
+          getpart(node[child], type, child)
+         }
+       }
+     }
+  }
+  
   const getId = (nodes, type, child = 'nodes') => {
-    if (Array.isArray(nodes)) {
+    
+    if (Array.isArray(nodes)) { 
       for (let node of nodes) {
         let { level, areaId, id, sn } = node
 
@@ -120,11 +138,15 @@ export default memo(function Index({ areaId, setTreeId, setLine, setNode, showli
           expand.push(id)
         }
         if (allselect) {
-          if (datatype == 5) { // 空调
+          if (datatype == 5) {   // 空调
             if (node.type == 2 || (node.type == 1 && node[child]?.length > 0)) {
               arr.push(node[type])
+               
               if (node.type == 2) {
                 postid.current.add(node[type])
+              }
+              if(node.expand){ //空调展开
+                airexpand.push(node[type])
               }
             }
 
@@ -241,7 +263,7 @@ export default memo(function Index({ areaId, setTreeId, setLine, setNode, showli
       let { success, data, errMsg } = await hander(params)
 
 
-      if (success && Array.isArray(data)) {
+      if (success && Array.isArray(data) && data.length > 0) {
         //  console.log(idx)
         let energyDatas = []
         if (datatype == 6) {
@@ -273,7 +295,8 @@ export default memo(function Index({ areaId, setTreeId, setLine, setNode, showli
               getId(data, 'id', 'nodes')
               break;
             case 5:
-              getId(data, 'key', 'nodes')
+              getId(data, 'key', 'nodes') 
+              getpart(data[0]?.nodes?.[0]?.nodes, 'key', 'nodes')//  空调树默认传部分数据
               break;
             case 6:
               getId(energyDatas, 'energyId', 'childs')
@@ -306,14 +329,29 @@ export default memo(function Index({ areaId, setTreeId, setLine, setNode, showli
           setExpandedKeys(expand)
         }
 
-        if (datatype == 5) { // 空调树          
-          let areId = Array.from(postid.current)?.map(d => {
+        if (datatype == 5) { // 空调树   
+          setExpandedKeys(airexpand)      
+          if (!dispart) {
+            let areId = Array.from(postid.current)?.map(d => {
+              let id = parseInt(d.slice(2))
+  
+              return id
+            })
+  
+            setTreeId(areId)
+          }else{
+          let areId = part?.map(d => {
             let id = parseInt(d.slice(2))
 
             return id
           })
-
+          setCheckedKeys(part)
+         // console.log(areId)
+         
           setTreeId(areId)
+          setIndeterminate(true)
+          setChecked(false)
+        }
         } else if (datatype == 6) { // 分类能耗--能源类型
           setTreeId([0])
         } else if (datatype == 7) {

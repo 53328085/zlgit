@@ -350,7 +350,7 @@ export default function Index(props) {
   const controlTitle = (
     <TitleBox>
       <span>{tabId == 0 ? '空调自动控制记录' : '空调手动控制记录'}</span>
-      <CustButtonT text="重新控制" onClick={RecontrolAir}></CustButtonT>
+     {tabId==1 && <CustButtonT text="重新控制" onClick={RecontrolAir}></CustButtonT>} 
     </TitleBox>
   );
   useEffect(() => {

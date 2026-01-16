@@ -20,6 +20,10 @@ export default function Index({setexparams,id,isall=true,defaultId, ...rest }) {
     
   }, [areaLevels,allAreaId,defaultId])
   const onChange = (v) => { 
+    if (Array.isArray(v)&& v.length ==1 && v[0]==0){
+      instance?.setFieldValue("sublevel", defaultId || allAreaId )
+      
+    }
     setexparams?.({ ...instance.getFieldsValue(true) })
   }
   const tProps = {
@@ -45,11 +49,11 @@ export default function Index({setexparams,id,isall=true,defaultId, ...rest }) {
     treeDefaultExpandAll:true,
     ...rest
   };
-
-
+ 
+  
   return ( 
      <Form.Item label="区域选择" name="sublevel">
-        <CtreeSelect     {...tProps}  /> 
+        <CtreeSelect     {...tProps} onChange={onChange} /> 
      </Form.Item> 
   )
 }

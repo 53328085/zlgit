@@ -51,7 +51,7 @@ export default function Index() {
 
   const { tableProps, search, refresh } = useAntdTable(getDetail, {
     form,
-    pageSize: 14,
+    defaultPageSize: 15,
     refreshDeps: [projectId],
   });
   const {submit} = search
@@ -70,10 +70,10 @@ export default function Index() {
 const onControl =async()=> {
  try {
    if(selectedRow?.length <1) return message.warning("请选择设备")
-   let conditons =selectedRow.map(s => ({brightness:s.brightness, csn:s.csn}))
+   let conditions =selectedRow.map(s => ({brightness:s.brightness, csn:s.csn, dev:s.dev, type:s.type,gateway:s.gateway}))
    let body = {
      projectId,
-     conditons
+     conditions
    }
    let {success, errMsg} = await useSetReControl({}, body)
    if(success) {
@@ -84,7 +84,7 @@ const onControl =async()=> {
    }
   
  } catch (error) {
-  
+   console.log(error)
  }
 
 }

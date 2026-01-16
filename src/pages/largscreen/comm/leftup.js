@@ -62,7 +62,7 @@ export default function Index() {
   }, [datas]);
   useEffect(() => {
     if ([areaId, projectId].some((id) => Number.isInteger(parseInt(id)))) {
-      getData();
+      // getData();
     }
   }, [areaId, projectId]);
   return (

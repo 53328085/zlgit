@@ -10,7 +10,7 @@ import {isObject} from "@com/usehandler.js"
 
 //import { cols } from "./data";
 
-import { useQueryEquipmentType, useDetail } from "./api.js";
+import { useQueryEquipmentType, useQueryCustomReport } from "./api.js";
 
 import { Mainwrap, Clist } from "./style";
  
@@ -20,56 +20,75 @@ import { useAntdTable, useRequest } from "ahooks";
 
 export default function Index() {
   const [form] = Form.useForm();
- // const [params, setexparams] = useState({})
+   const [query, setQuery] = useState({})
   // const [areaName, setAreaName] = useState()
-  const projectId = useSelector(selectProjectId)
+ // const projectId = useSelector(selectProjectId)
   const mrgb = useSelector(MRGB)
   const [list, setList] = useState([])
   
   const [explains, setExplains] = useState([])
   const [equipment, setEquipment]=useState({})
+  const {projectId, publicdate, publictype,publicrangedate} = query
   const  storeRef = useRef()
   const title = equipment?.equipmentTypeName
-  const cols = useMemo(() => { 
-    const {tableColumns} = isObject(equipment) ? equipment  : {}
+  const [cols, key] = useMemo(() => { 
+    const {tableColumns,key} = isObject(equipment) ? equipment  : {}
     if (Array.isArray(tableColumns) && tableColumns.length) {
-      return tableColumns.map((item, index) => ({
+      let len = tableColumns.length - 1
+      return [tableColumns.map((item, index) => ({
         title: item.columnName,
         dataIndex: item.columnKey,
         key: item.columnKey,
-      }))
+        fixed: index==0 ? "left" : index==len ? "right" :false
+      })), key]
 
     }
-    return []
+    return [[], NaN]
   }, [equipment])
- const setexparams = (params) => {
-     console.log("params")
-     console.log(params)
-  }
  
-  const props = {
-    config:{isdate: true,shiftNo:true},
-    setexparams,
+  const setexparams = (q) => {
+     setQuery(q)
+  }  
+ console.log(query)
+  const props = useMemo(() => ({
+    config:{publicDate: true,shiftNo:true},
+    setexparams,})
      
     //setAreaName,
-  };
+  ,[]);
   const getDetail = async ({ current, pageSize }) => {
     try {
-      if (!(Number.isInteger(projectId) )) {
+      
+       
+      let flag = [projectId, publictype,key  ].every((d)=>Number.isInteger(parseInt(d)) )  
+      let isdate = publictype == 4 ? Array.isArray(publicrangedate)&&publicrangedate?.[0]&&publicrangedate?.[1] : publicdate
+     
+      if (!(flag&&isdate)) {
         return {
           list: [],
           total: 0
         }
       }
-      let { data, success, total } = await useDetail({}, { projectId,   pageNum: current, pageSize })
-      if (success && Array.isArray(data) && data.length) {
-        setExplains(Array.isArray(data[0].senceDes) ? data[0].senceDes : [])
+    
+      let post ={
+         key,
+         projectId,
+         startDate:publictype!=4 ? publicdate?.startOf().format("YYYY-MM-DD") : publicrangedate?.[0]?.format?.("YYYY-MM-DD"),
+         pageSize,
+         pageNum:current,
+         endDate:publictype!=4 ? publicdate?.format("YYYY-MM-DD") : publicrangedate?.[1]?.format?.("YYYY-MM-DD"),
+         type:publictype
+     
+
+      }
+      let { data, success, total } = await useQueryCustomReport({}, post)
+      if (success && isObject(data)) {
+        const {tableRows} = data
         return {
-          list: Array.isArray(data[0].streetLightInfo) ? data[0].streetLightInfo : [],
+          list: Array.isArray(tableRows) ? tableRows : [],
           total
         }
-      } else {
-        setExplains([])
+      } else { 
         return {
           list: [],
           total
@@ -77,13 +96,13 @@ export default function Index() {
 
       }
     } catch (error) {
-
+      console.log(error)
     }
   }
 
   const { tableProps } = useAntdTable(getDetail, {
     pageSize: 14,
-    refreshDeps: [projectId]
+    refreshDeps: [projectId, publicdate, publictype,publicrangedate, key]
   })
 
   const getData = async () => {
@@ -147,7 +166,9 @@ export default function Index() {
           <Titlelayout layout="flex" title={title} dr="column"> 
               <div className="outtbwrap">
                 <div className="inerwrap">
-                <UserTable columns={cols} {...tableProps} ></UserTable>   
+                <UserTable columns={cols} {...tableProps} scroll={{
+                  x:"max-content"
+                }} ></UserTable>   
                 </div>
               </div>
           </Titlelayout>

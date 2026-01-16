@@ -50,10 +50,11 @@ export const TbCol = [
     dataIndex: "tu",
     key: "tu",
     width: 140,
-    sorter: {
+    sorter: (a, b) => a.tu - b.tu,
+    /* sorter: {
       compare: (a, b) => a.partitionTime - b.partitionTime,
       multiple: 1,
-    },
+    }, */
   },
   {
     title: "电量(kWh)",

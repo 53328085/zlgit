@@ -1,5 +1,8 @@
 import {Apimethod} from "@api/api.js"
- 
+export const { useQueryData} = new Apimethod( // 获取区域能耗数据
+  "post",
+  "/LargeScreen/LargeScreenSaNoFi/QueryData"
+);
 export const { useQueryOverview } = new Apimethod( // 获取区域能耗数据
   "post",
   "Energy/EnergyComprehensiveRuntime/QueryOverview"
