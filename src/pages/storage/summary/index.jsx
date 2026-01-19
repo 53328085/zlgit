@@ -1,4 +1,4 @@
-import React, { Fragment, useState, useEffect, useRef } from 'react'
+import React, { Fragment, useState, useEffect, useRef, useMemo } from 'react'
 import style from './style.module.less'
 import { useNavigate, useOutletContext} from 'react-router-dom'
 import {useSelector} from "react-redux"
@@ -9,184 +9,20 @@ import { range } from 'lodash'
 import imgurl from './imgs'
 import deep from './imgs/deep.svg'
 import light from './imgs/light.svg'
-import styled from 'styled-components'
+import styled, {css} from 'styled-components'
  
 import Pagecount from "@com/pagecontent";
  
 import Titlelayout from "@com/titlelayout";
 import Cempty from '@com/useEmpty'
 import { themeColor } from '@redux/systemconfig.js'
+import {Tabsbox} from "@com/comstyled"
+import {Mainbox,Station } from "./style"
+import {tabs} from './data'
+import {Power} from "./comm"
 const {Link, Paragraph, Text} = Typography
-const  Mainbox = styled.div`
-  display: grid;
-  flex: 1;
-  grid-template-columns: 360px 1fr ;
-  column-gap: 16px;
-  align-content: stretch;
-  .left {
-    display: grid;
-    grid-template-rows: 236px 548px;
-    row-gap: 16px;
-    .info {
-      display: grid;
-      grid-template-columns: 208px 1fr;
-      place-content:flex-end;;
-      color: #666;
-      column-gap: 16px;
-      img {
-        width: 208px;
-        height: 156px;
-      }
-      .dtl {
-        display: grid;
-        grid-template-rows: repeat(3, 1fr);
-        row-gap: 6px;
-        .title{
-          color:#606266;
-          .ant-badge{
-            padding-right: 0.5em;
-          }
-        }
-        .num {
-          color:#303133;
-          font-weight: bold;
-        }
-
-      }
-    }
-  }
-  .right {
-     display: grid;
-     grid-template-rows: 88px 696px;
-     row-gap: 16px;
-     .rightup {
-        display: grid;
-        grid-template-columns: repeat(5, 1fr);
-        column-gap: 16px;
-        height: 88px;
-        grid-template-rows: 1fr;
-        .tips {
-           display: flex;           
-           padding: 12px;
-           align-items: center;
-           color: #fff;
-           background-color: #fff;
-           border-radius: 8px;
-           height: inherit;
-           border: 1px solid #DDDFE6;
-           .ant-typography{
-            margin-bottom: 0;
-           }
-           .tipsdown {
-             font-size: 31px; 
-             color:#276FFF; 
-           }
-        }
-     }
-     .rightdown {
-       display: grid;
-       grid-template-columns: 752px minmax(536px, auto);
-       column-gap: 16px;
-       .topology {
-         position: relative;
-         background-color: ${props=> props.theme.imgbgcolor || "#ffffff"};
-         .zhanwei{
-                    width: 752px;
-                    height: 696px;
-                }
-                .storageMeter{
-                    display: flex;
-                    align-items: center;
-                    justify-content: space-between;
-                    flex-direction: column;
-                    position: absolute;
-                    left: 202px;
-                    top: 338px;
-                    padding: 6px 12px;
-                    width: 164px;
-                    height: 80px;
-                    border: 1px solid #41A4B9;
-                    background-color: #003;
-                   
-                }
-                .transformer{
-                    display: flex;
-                    align-items: center;
-                    justify-content: space-between;
-                    flex-direction: column;
-                    position: absolute;
-                    right: 130px;
-                    top: 163px;
-                    padding: 4px 12px;
-                    width: 164px;
-                    height: 80px;
-                    border: 1px solid #41A4B9;
-                    background-color: #003;
-                   
-                }
-                .batterys{
-                    display: flex;
-                    align-items: center;
-                    justify-content: space-between;
-                    flex-direction: column;
-                    position: absolute;
-                    right:214px;
-                    top: 338px;
-                    padding: 4px 12px;
-                    width: 164px;
-                    height: 80px;
-                    border: 1px solid #41A4B9;
-                    background-color: #003;
-                }
-                .meterData{
-                        display: flex;
-                        align-items: center;
-                        span{
-                            display: inline-block;
-                            text-align: right;
-                            height: 20px;
-                            line-height: 20px;
-                            font-size: 12px;
-                            color: #fff;
-                        }
-                        span:first-child{
-                            width: 38px;
-                            text-align: left;
-                        }
-                        span:nth-child(2){
-                            width: 67px;
-                            font-size: 14px;
-                        }
-                        span:last-child{
-                            width: 32px;
-                            color: #c9c9c9;
-                        }
-                    }
-                .transPlaceholder{
-                    position: absolute;
-                    width: 136px;
-                    height: 136px;
-                    left: 76px;
-                    top: 364px;
-                    cursor: pointer;
-                }
-                .batteryPlaceholder{
-                    position: absolute;
-                    width: 136px;
-                    height: 136px;
-                    left: 76px;
-                    top: 549px;
-                    cursor: pointer;
-                }
-       }
-       .rightdownright {
-         display: grid;
-         grid-template-rows: repeat(2, 340px);
-         row-gap: 16px;
-       }
-     }
-  }
-`
+console.log(Power)
+ 
 const CircleDiv = styled.div`
 margin-top: 4px;
 margin-right: 16px;
@@ -210,31 +46,14 @@ const { querySiteInfo,
   queryTopologyDiagramInfo,
   queryChargeETrends } = SiteSummaryRuntime
 export default function Index() {
-  const TransDiv = styled.div`
-  padding-top: 18px;
-  animation: movetop ${props => {return props.speed}}s infinite linear;
-  &:hover{
-    animation-play-state: paused;
-  }
-
-  @keyframes movetop{
-    from{
-        transform: translateY(0);
-    }
-    to{
-        transform: translateY(-${props =>{        
-          if(!props.dmheight || props.dmheight<445)return 0
-          if(props.dmheight){
-            return props.dmheight
-          }
-         } }px );
-          /* return (props.children[0].length-4)*116} }px ); */
-    }
-}
-`
+   const [tabvalue, setTabvalue] = useState(1)
   let {exparams} = useOutletContext()
- 
+  
   let {areaId, stationName,  projectId} = exparams
+  const title =useMemo(()=>{
+    return `${stationName?.label}(${stationName?.value})`
+  },[stationName])  
+  
   let {islight} = useSelector(themeColor)
   
   const navigate = useNavigate()
@@ -391,42 +210,11 @@ export default function Index() {
 
 
   }, [exparams])
-  const Tips = props => {
-    return <div className="tips" >
-      <img src={props.imgUrl}  ></img>
-      <div style={{paddingLeft: "16px"}}> 
-        <Paragraph style={{color: "#303133", fontSize: "16px"}}>{props.title}</Paragraph >
-        <Text className="tipsdown" ellipsis={{tooltip: props.value}}>{props.value}</Text>
-      </div>
-    </div>
-  }
-  
-  const CustomProgress = props => {
-    let { dischargeData, chargeData } = props
-    let total = parseFloat(dischargeData) + parseFloat(chargeData)
-    let dischargeCount = parseFloat(dischargeData) == 0 ? 0 : parseInt(((parseFloat(dischargeData) * 100) / total) / (100 / 65)) + 1
-    let chargeCount = parseFloat(chargeData) == 0 ? 0 : parseInt(((parseFloat(chargeData) * 100) / total) / (100 / 65)) + 1
-    let chargelist = range(chargeCount)
-    let dischargeList = range(dischargeCount)
-    const progressStyle = {
-      width: 328,
-      height: 36,
-      backgroundColor: '#fff',
-      display: 'flex',
-      alignItems: 'center',
-      overFlow: 'hidden',
-      paddingLeft: 1,
-      border: '1px solid #d7d7d7'
-    }
-    return <div style={progressStyle}>
-      {dischargeList.map(item => {
-        return <div style={{ width: 4, height: 32, backgroundColor: "#4370ff", marginRight: 1 }} key={item}></div>
-      })}
-      {chargelist.map(item => {
-        return <div style={{ width: 4, height: 32, backgroundColor: "#f93", marginRight: 1 }} key={item}></div>
-      })}
-    </div>
-  }
+ 
+  const Comm ={
+    1: Power
+  }[tabvalue]
+ 
  
   const WarningCard = props => {
     const mapobj = new Map([[1,{color:'#ff7070',text:'一级告警'}],[2,{color:'#ffb726',text:'二级告警'}],[3,{color:'#b07ef9',text:'三级告警'}]])
@@ -497,145 +285,95 @@ export default function Index() {
      },
     dataset: {}
   })
-
+  const ontabChange = (e) => {
+    setTabvalue(e)
+    
+  }
   return (
-    <Pagecount  pd={0} bgcolor='transparent'  >    
+    <Pagecount  pd={0} bgcolor='transparent'  >
       <Mainbox>
         <div className="left">
-          <Titlelayout title='站点信息' layout="flex">
-          {cardData ? (<div className="info">
-              <img src={cardData.image || imgurl.zhandian} className='siteImg' /> 
-            
-              <div className="dtl">
-                   <div key="1">
-                  <Text className='title'><Badge color='#1E50E6' text=""></Badge>站点容量</Text>
-                     <Text ellipsis={{tooltip: cardData?.storageCapacity}} className='num'>{cardData?.storageCapacity} &nbsp;kVA</Text>
-                  </div>
-                  <div key="2">
-                  <Text className='title'><Badge color='#1E50E6' text=""></Badge>实时充电功率</Text>
-                  <Text ellipsis={{tooltip: cardData?.runtimeChargeP}} className='num'> {cardData?.runtimeChargeP}&nbsp;kW</Text>
-                  </div>
-                  <div key="3">
-                  <Text className='title'><Badge color='#1E50E6' text=""></Badge>投运时间</Text>
-                  <Text ellipsis={{ tooltip: cardData?.useDate}} className='num'>{cardData?.useDate}</Text>
-                  </div>
-              </div> 
-            
-              </div>)
-              :  <Cempty tip="未查询到站点信息！" />
-           }
-           
-          </Titlelayout>
+        <Titlelayout title='站点接线图' pv="0" bgcolor="transparent" bg="transparent">
+        <div className="topology">
           
-          <Titlelayout title='最新告警' height='548px' extra={<Link underline onClick={() => toPage('alarmMessage', '告警信息')}>查看详情</Link>}>
-              <TransDiv   dmheight={domheight} speed={speed}>
-                  <div id='warn'>
-                    {warningData.map((item, index) => {
-                    return <Fragment key={index}>
-                      <WarningCard data={item} ></WarningCard>
-                      <div className={style.division} style={{ margin: '10px 0' }}></div>
-                      {/* {warningData.length > (index + 1) ? <div className={style.division} style={{ margin: '10px 0' }}></div> : null} */}
-                    </Fragment>
-                     })
-                  }
-                  </div>
-                 
-                  {
-                    warningData.length>4?warningData.slice(0, 4).map((item, index) => {
-                      return <Fragment key={index}>
-                        <WarningCard data={item} ></WarningCard>
-                        <div className={style.division} style={{ margin: '10px 0' }}></div>
-                        {/* {warningData.length > (index + 1) ? <div className={style.division} style={{ margin: '10px 0' }}></div> : null} */}
-                      </Fragment>
-                    }):null
-                  }
-                
-              </TransDiv>            
-          </Titlelayout>
+         {
+                       islight ? <img src={light} className="zhanwei"></img> :<img src={deep} className="zhanwei" ></img> 
+                      } 
+                       {/* 储能总表 */}
+                       <div className='storageMeter'>
+                         <div className='meterData'>
+                           <span>电压:</span>
+                           <span>{topologyData?.storageDevice.v}</span>
+                           <span>(V)</span>
+                         </div>
+                         <div className='meterData'>
+                           <span>电流:</span>
+                           <span>{topologyData?.storageDevice.i}</span>
+                           <span>(A)</span>
+                         </div>
+                         <div className='meterData'>
+                           <span>功率:</span>
+                           <span >{topologyData?.storageDevice.p}</span>
+                           <span>(kW)</span>
+                         </div>
+                       </div>
+                       {/*并网总表器*/}
+                       <div className='transformer'>
+                         <div className='meterData'>
+                           <span >电压:</span>
+                           <span>{topologyData?.onGridDevice.v}</span>
+                           <span>(V)</span>
+                         </div>
+                         <div className='meterData'>
+                           <span>电流:</span>
+                           <span>{topologyData?.onGridDevice.i}</span>
+                           <span>(A)</span>
+                         </div>
+                         <div className='meterData'>
+                           <span>功率:</span>
+                           <span>{topologyData?.onGridDevice.p}</span>
+                           <span>(kW)</span>
+                         </div>
+                       </div>
+                       {/*负载总表*/}
+                       <div className='batterys'>
+                         <div  className='meterData'>
+                           <span>电压:</span>
+                           <span>{topologyData?.loadDevice.v}</span>
+                           <span>(V)</span>
+                         </div>
+                         <div  className='meterData'>
+                           <span >电流:</span>
+                           <span  >{topologyData?.loadDevice.i}</span>
+                           <span >(A)</span>
+                         </div>
+                         <div  className='meterData'>
+                           <span>功率:</span>
+                           <span>{topologyData?.loadDevice.p}</span>
+                           <span>(kW)</span>
+                         </div>
+                       </div>
+                       <div className='batteryPlaceholder' onClick={() => toPage('BMSMonitor', 'BMS监控')}></div>
+          
+          
+         
+        </div>
+        </Titlelayout>
         </div>
         <div className="right">
           <div className="rightup">
-            <Tips imgUrl={imgurl.totalCharge} title={'总充电量 (kWh)'} value={cardData?.chargingCapacity}  ></Tips>
-            <Tips imgUrl={imgurl.totalDischarge} title={'总放电电量 (kWh)'} value={cardData?.disChargingCapacity}  ></Tips>
-            <Tips imgUrl={imgurl.totalChargeCost} title={'总充电金额 (元)'} value={cardData?.chargingAmount}  ></Tips>
-            <Tips imgUrl={imgurl.totalDischargeCost} title={'总放电金额 (元)'} value={cardData?.disChargingAmount}  ></Tips>
-            <Tips imgUrl={imgurl.totalIncome} title={'储能总收益 (元)'} value={cardData?.storageIncome}  ></Tips>
+                  <Titlelayout title={title} layout="flex">
+                    <Station>
+                      <div className='imgbox'></div>
+                    </Station>
+                  </Titlelayout> 
+                  <Titlelayout title='最新告警' extra={<Link underline onClick={() => toPage('alarmMessage', '告警信息')}>查看详情</Link>}></Titlelayout>     
           </div>
-          <div className="rightdown" >
-            <div className="topology">
-             {
-              islight ? <img src={light} className={style.zhanwei}></img> :<img src={deep} className={style.zhanwei}></img> 
-             } 
-              {/* 储能总表 */}
-              <div className='storageMeter'>
-                <div className='meterData'>
-                  <span>电压:</span>
-                  <span>{topologyData?.storageDevice.v}</span>
-                  <span>(V)</span>
-                </div>
-                <div className='meterData'>
-                  <span>电流:</span>
-                  <span>{topologyData?.storageDevice.i}</span>
-                  <span>(A)</span>
-                </div>
-                <div className='meterData'>
-                  <span>功率:</span>
-                  <span >{topologyData?.storageDevice.p}</span>
-                  <span>(kW)</span>
-                </div>
+          <div className="rightdown">
+            <Tabsbox defaultActiveKey={1} items={tabs} onChange={ontabChange} /> 
+            <div className="chartbox">
+                 <Comm /> 
               </div>
-              {/*并网总表器*/}
-              <div className='transformer'>
-                <div className='meterData'>
-                  <span >电压:</span>
-                  <span>{topologyData?.onGridDevice.v}</span>
-                  <span>(V)</span>
-                </div>
-                <div className='meterData'>
-                  <span>电流:</span>
-                  <span>{topologyData?.onGridDevice.i}</span>
-                  <span>(A)</span>
-                </div>
-                <div className='meterData'>
-                  <span>功率:</span>
-                  <span>{topologyData?.onGridDevice.p}</span>
-                  <span>(kW)</span>
-                </div>
-              </div>
-              {/*负载总表*/}
-              <div className='batterys'>
-                <div  className='meterData'>
-                  <span>电压:</span>
-                  <span>{topologyData?.loadDevice.v}</span>
-                  <span>(V)</span>
-                </div>
-                <div  className='meterData'>
-                  <span >电流:</span>
-                  <span  >{topologyData?.loadDevice.i}</span>
-                  <span >(A)</span>
-                </div>
-                <div  className='meterData'>
-                  <span>功率:</span>
-                  <span>{topologyData?.loadDevice.p}</span>
-                  <span>(kW)</span>
-                </div>
-              </div>
-              <div className='batteryPlaceholder' onClick={() => toPage('BMSMonitor', 'BMS监控')}></div>
-            </div>
-            <div className="rightdownright">
-              <Titlelayout title='能耗收益统计' layout="flex">               
-                 <div   style={{flex: 1, display: 'flex', paddingTop: '16px'}}>
-                    <Ichart {...options} />
-                 </div>
-             
-              </Titlelayout>
-              <Titlelayout title='储能充放电趋势' layout="flex">
-             
-                <div style={{flex: 1, display: 'flex', paddingTop: '16px'}}>
-                       <Ichart {...loptions}/>
-                </div>
-              </Titlelayout>
-            </div>
           </div>
         </div>
       </Mainbox>

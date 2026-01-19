@@ -8,3 +8,7 @@ export const { useList } = new Apimethod( //自动控制
     "post",
     "Light/StreetLightAutoControl/Detail"
   );
+  export const { useQuerySNFReportData } = new Apimethod( //自动控制
+    "post",
+    "Energy/EnergyEfficiencyRuntime/QuerySNFReportData"
+  );

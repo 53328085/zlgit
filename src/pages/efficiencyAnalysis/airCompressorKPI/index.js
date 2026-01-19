@@ -6,7 +6,7 @@ import { selectProjectId } from "@redux/systemconfig";
 
 import Titlelayout from "@com/titlelayout";
 import Ichart from '@com/useEcharts/Ichart'
-import { useList, useDetail } from "./api.js";
+import { useList, useDetail,useQuerySNFReportData } from "./api.js";
 
 import { Mainwrap, TitleBox } from "./style";
 
@@ -71,7 +71,7 @@ export default function Index() {
 
   const getData = async () => {
     try {
-      let { success, data, errMsg } = await useList({
+      let { success, data, errMsg } = await useQuerySNFReportData({
         projectId,
         alike,
       });
