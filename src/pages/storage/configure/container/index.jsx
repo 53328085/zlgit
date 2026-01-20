@@ -1,28 +1,146 @@
-import React, {useState} from 'react'
-import CustContext from '@com/content.js'
-import Pagecount from '@com/pagecontent'
-import CModal from '@com/useModal'
+import React, { useRef, useState } from 'react'
+import PageContent from '@com/pagecontent'
+import CustomModal from '@com/useModal'
+import { useSelector } from 'react-redux'
+import { selectProjectId, selectOneLevelDefaultId, levelDefaultLabel } from '@redux/systemconfig.js'
+import TitleLayout from '@com/titlelayout'
+import { CustButtonT } from '@com/useButton'
+import CustomTable from '@com/useTable'
+import { getTableColumns } from '@pages/storage/configure/container/Constant'
+import { useAntdTable, useMemoizedFn } from 'ahooks'
+import styled from 'styled-components'
+import { StorageContainerDesigner } from '@api/api'
+import { message } from 'antd'
+import ContainerInfoDialog from '@pages/storage/configure/container/components/ContainerInfoDialog'
 
-import {useSelector} from 'react-redux'
+const MainView = styled.div`
+    && {
+        flex: 1;
+        color: #515151;
+        display: flex;
+        height: 100%;
+    }
+`
 
-import {selectProjectId, selectOneLevelDefaultId} from '@redux/systemconfig.js'
-
-import Container from './container'
- 
- 
- 
-export default function Index() {
+export default function Index () {
   const projectId = useSelector(selectProjectId)
+  const deleteDialogRef = useRef(null)
+  const containerInfoDialogRef = useRef(null)
+  //
   const areaId = useSelector(selectOneLevelDefaultId)
-  let [AreaID, setAreaid] = useState(areaId)
-  
-  
-  
+  const levelLabel = useSelector(levelDefaultLabel)
+  //分页相关数据
+  const totalItem = useRef()
+  const curPage = useRef()
+  const PageSize = 14
+  //编辑站点的ID
+  const [selectId, setSelectId] = useState(0)
+
+  const onRefreshClick = useMemoizedFn(() => {
+    refresh()
+  })
+
+  /**
+   * 新增储能柜
+   */
+  const onAddContainerClick = useMemoizedFn(() => {
+    containerInfoDialogRef.current?.showDialog(null, areaId)
+  })
+
+  /**
+   * 表格编辑
+   */
+  const onTableEditClick = useMemoizedFn((record) => {
+    containerInfoDialogRef.current?.showDialog(record, record.areaId)
+  })
+
+  /**
+   * 表格删除
+   */
+  const onTableDeleteClick = useMemoizedFn((record) => {
+    setSelectId(record.id)
+    deleteDialogRef.current?.onOpen()
+  })
+
+  /**
+   * 删除弹窗确认按钮点击事件
+   */
+  const onDialogDeleteClick = useMemoizedFn(async () => {
+    if (!selectId) return
+    let { success, errMsg } = await StorageContainerDesigner.DeleteContainer(projectId, selectId)
+    if (success) {
+      message.success('删除成功!')
+      let current = Math.ceil((totalItem.current - 1) / PageSize) < curPage.current
+      if (current) {
+        run({ current: curPage.current - 1, pageSize: PageSize })
+      } else {
+        refresh()
+      }
+      deleteDialogRef.current?.onCancel()
+    } else {
+      message.error({ content: errMsg || '数据出错', duration: 0.3 })
+    }
+  })
+
+  const getTableData = ({ current, pageSize }) => { // areaId, sisteId 参数暂时设置为0 ，后续需求改变后再加
+    curPage.current = current
+    let params = { projectId, areaId: 0, siteId: 0, pageNum: current, pageSize }
+    return StorageContainerDesigner.GetContainers(params).then(res => {
+      let { success, data, total } = res
+      totalItem.current = Number.isInteger(total) ? total : 0
+      if (success && Array.isArray(data) && data.length > 0) {
+        return {
+          list: data,
+          total
+        }
+      } else {
+        return {
+          list: [],
+          total: 0
+        }
+      }
+    }).catch(e => {
+      console.log(e)
+    })
+  }
+
+  const { tableProps, refresh, run } = useAntdTable(getTableData, {
+    defaultPageSize: PageSize,
+    refreshDeps: [projectId],
+  })
+
   return (
-    <CustContext.Provider  value={{handler: setAreaid}} >      
-    <Pagecount showserach={false} pd="0px" bgcolor="transparent">   
-        <Container projectId={projectId}   CModal={CModal}    areaId={AreaID}    />   
-    </Pagecount>
-    </CustContext.Provider>
+    <PageContent pd="0px" bgcolor="">
+      <TitleLayout title={
+        <div
+          style={{
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center'
+          }}
+        >
+          <span>储能柜管理</span>
+          <CustButtonT text="new" src="new" onClick={onAddContainerClick}/>
+        </div>
+      }>
+        <MainView>
+          <CustomTable
+            columns={getTableColumns(levelLabel, onTableEditClick, onTableDeleteClick)}
+            {...tableProps}
+          />
+        </MainView>
+        <CustomModal
+          width={592}
+          title="操作提示"
+          ref={deleteDialogRef}
+          mold="cust"
+          type="warn"
+          onOk={onDialogDeleteClick}
+        >
+          是否确认删除站点?
+        </CustomModal>
+      </TitleLayout>
+      <ContainerInfoDialog ref={containerInfoDialogRef} onRefreshClick={onRefreshClick}/>
+    </PageContent>
   )
 }
