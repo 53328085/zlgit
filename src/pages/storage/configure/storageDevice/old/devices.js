@@ -5,7 +5,7 @@ import styled from 'styled-components'
 import { useSelector, useDispatch } from 'react-redux'
 import { selectProjectId, selectOneLevel, levelDefaultLabel, selectOneLevelDefaultId, setCurrentlevel } from '@redux/systemconfig.js'
 import Usetable from '@com/useTable'
-import UseTransfer from './transfer'
+import UseTransfer from '../transfer'
 import Custmodl from '@com/useModal'
 import {CustButtonT, CustLink} from "@com/useButton"
 import upload from '@imgs/upload.png'
@@ -46,10 +46,10 @@ export default function Index(props) {
     const areaList = useSelector(selectOneLevel)
     const areaName = useSelector(levelDefaultLabel) || '园区'
     const oneLevelDefaultId = useSelector(selectOneLevelDefaultId)
-   
+
   const [selectAreaName, setSelectAreaName] = useState(areaList[0]?.name) || ''
-  useEffect(() => {    
-    if (areaList.length == 0 || !areaList) {    
+  useEffect(() => {
+    if (areaList.length == 0 || !areaList) {
       message.error('当前项目尚未创建园区!')
     } else {
       form.setFieldValue('areaId', oneLevelDefaultId)
@@ -170,7 +170,7 @@ export default function Index(props) {
       render: (_, record) => (
         <Space size="middle">
           {/* <span style={{ textDecoration: 'underline', color: '#237ae4', cursor: 'pointer' }} onClick={() => setMulti(record)}>倍率</span> */}
-          <CustLink type="danger" onClick={() => clickDel(record)} text="delete" /> 
+          <CustLink type="danger" onClick={() => clickDel(record)} text="delete" />
         </Space>
       ),
     },
@@ -220,7 +220,7 @@ export default function Index(props) {
       }
     })
     tableData.map(item => {
-      
+
       if(item.type == 1){
         state.mainTable = [item]
       }
@@ -423,7 +423,7 @@ export default function Index(props) {
         <Space>
           <CustButtonT text="new" src="new" onClick={() => settingClick()} />
           <CustButtonT text="batchImport" src="export" wh="auto" onClick={() => setAddModal(true)} />
-          <CustButtonT  text="export"  src="export" onClick={() => exportData()} /> 
+          <CustButtonT  text="export"  src="export" onClick={() => exportData()} />
           </Space>
       </div>
      {/*  <Divider /> */}
@@ -439,13 +439,13 @@ export default function Index(props) {
           unknownTable={unknownTable}
           closeValue={getCloseValue}></UseTransfer>
           </Mask>
-     
+
      {/*  </div> */}
       <Custmodl title='删除提示' ref={dref} mold="cust" width={512} type="warn" onOk={() => onDelete()} maskClosable={false}>
-         是否确认删除电表？ 
+         是否确认删除电表？
       </Custmodl>
       <Custmodl title="批量导入" mold="cust" className={style.addModal} open={addModal} onOk={onUpload} onCancel={handleCancel} width={600} >
-       
+
         <div className={style.addBody}>
           <div style={{ display: "flex", alignItems: "center", position: 'relative' }}>
             <Dragger {...propData} maxCount={1}>

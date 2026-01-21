@@ -49,6 +49,12 @@ export const getBMSOptions = () => {
   ]
 }
 
+export const ContainerDeviceType = {
+  BatteryStack: 0,
+  BatteryCluster: 1,
+  BatteryPack: 2
+}
+
 /**
  * 处理BMS数据
  * @param value
@@ -59,25 +65,25 @@ export const valueToBinary = (value) => {
   let binaryNumber = 0
   // 遍历输入的value数组
   value.forEach((bit) => {
-      const position = parseInt(bit, 10);
-      if (!isNaN(position)) {
-        binaryNumber |= (1 << position); // 设置对应的位为1
-      }
-  });
+    const position = parseInt(bit, 10)
+    if (!isNaN(position)) {
+      binaryNumber |= (1 << position) // 设置对应的位为1
+    }
+  })
   // 返回最终的二进制数
   return binaryNumber
 }
 
 export const binaryToValue = (binaryNumber) => {
   // 初始化一个空数组
-  const value = [];
+  const value = []
   // 遍历 binaryNumber 的每一位
   for (let i = 0; i < 8; i++) {
     // 检查第 i 位是否为1
     if (binaryNumber && (1 << i)) {
-      value.push(i.toString()); // 将对应的位推入数组
+      value.push(i.toString()) // 将对应的位推入数组
     }
   }
   // 返回最终的 value 数组
-  return value;
+  return value
 }

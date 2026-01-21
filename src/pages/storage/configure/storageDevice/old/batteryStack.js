@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useRef } from 'react'
 import { Button, Form, Input, Select, Space, message, Divider, Upload, Modal, Table } from 'antd'
-import style from './style.module.less'
+import style from '../style.module.less'
 import { useSelector, useDispatch } from 'react-redux'
 import { selectProjectId, selectOneLevel, levelDefaultLabel, selectOneLevelDefaultId, setCurrentlevel } from '@redux/systemconfig.js'
 import Usetable from '@com/useTable'
@@ -47,7 +47,7 @@ export default function Index(props) {
     const areaList = useSelector(selectOneLevel)
     const areaName = useSelector(levelDefaultLabel) || '园区'
     const oneLevelDefaultId = useSelector(selectOneLevelDefaultId)
-  
+
   const [selectAreaName, setSelectAreaName] = useState(areaList[0].name)
   useEffect(()=>{
     if(areaList.length == 0|| !areaList){
@@ -120,7 +120,7 @@ export default function Index(props) {
     })
   }
 
-  const onSearch = val => { 
+  const onSearch = val => {
     if(pagination.current == 1){
       getFromHeader()
     }else{
@@ -182,8 +182,8 @@ export default function Index(props) {
       width: laptop ? '120px' : '176px',
       render: (_, record) => (
         <Space size={laptop ? "small" : "middle"}>
-          <CustLink text="edit" onClick={() => setMulti(record)} /> 
-          <CustLink type="danger" onClick={() => clickDel(record)} /> 
+          <CustLink text="edit" onClick={() => setMulti(record)} />
+          <CustLink type="danger" onClick={() => clickDel(record)} />
         </Space>
       ),
     },
@@ -381,7 +381,7 @@ export default function Index(props) {
       }
     })
   }
-  
+
 
   const closeModal = () =>{
     setEditModal(false)
@@ -501,7 +501,7 @@ export default function Index(props) {
               })}
             </Select>
           </Item>
-          
+
           <Item name='siteId' label=''>
             <Select
               placeholder="请选择站点"
@@ -514,7 +514,7 @@ export default function Index(props) {
               })}
             </Select>
           </Item>
-          
+
           <Item name='alike' label='设备查询'>
             <Serach
               placeholder='请输入设备名称/设备编号/安装地址'
@@ -526,15 +526,15 @@ export default function Index(props) {
         <Space>
         <CustButtonT text="new" src="new" onClick={() => addData()} />
           <CustButtonT text="batchImport" src="export" wh="auto" onClick={() => setAddModal(true)} />
-          <CustButtonT  text="export"  src="export" onClick={() => exportData()} />  
+          <CustButtonT  text="export"  src="export" onClick={() => exportData()} />
         </Space>
-      </div> 
+      </div>
       <Usetable ref={tableRef} columns={columns} dataSource={tableData} rowKey='sn' pagination={pagination} onChange={tableOnchange} sheetName='电池堆.xlsx' />
       <Custmodl title='删除提示' ref={dref} mold="cust" width={512} type="warn" onOk={() => onDelete()} maskClosable={false}>
-         是否确认删除该电池堆？ 
+         是否确认删除该电池堆？
       </Custmodl>
       <Custmodl className={style.addModal} title="批量导入" open={addModal} onOk={onUpload}  width={600} >
-       
+
         <div className={style.addBody}>
           <div style={{ display: "flex", alignItems: "center", position: 'relative' }}>
             <Dragger {...propData} maxCount={1}>
@@ -552,7 +552,7 @@ export default function Index(props) {
           <Table columns={errColumns} dataSource={errorData} bordered size='middle' rowKey='row' pagination={false} scroll={{ y: 300 }}></Table>
         </div>
       </Custmodl>
-      <Custmodl mold="cust" ref={addedit}  title={modalTitle} custft={modalTitle == '新增电池堆'} className={style.addModal} onOk={onAdd} width={782} >      
+      <Custmodl mold="cust" ref={addedit}  title={modalTitle} custft={modalTitle == '新增电池堆'} className={style.addModal} onOk={onAdd} width={782} >
         <div className={style.addBody}>
           <Form form={addForm} colon={false} labelCol={{span:7}} labelAlign='left' requiredMark={false }>
             <div style={{display:'flex'}}>
@@ -563,7 +563,7 @@ export default function Index(props) {
                     size="middle"
                     style={{width: '200px'}}
                     onChange={changeAddArea}
-                    
+
                   >
                     {areaList.map(item => {
                       return <Select.Option key={item.id} value={item.id}>{item.name}</Select.Option>
@@ -619,7 +619,7 @@ export default function Index(props) {
                     })}
                   </Select>
                 </Item>
-                
+
                 <Item  name='address' label='安装地址' rules={[{required: true, message:'请输入安装地址'}]}>
                   <Input style={{width: 200}} placeholder='请输入安装地址'></Input>
                 </Item>

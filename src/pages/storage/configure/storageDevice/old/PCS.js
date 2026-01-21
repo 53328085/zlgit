@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useRef } from 'react'
 import { Button, Form, Input, Select, Space, message, Divider, Upload, Modal, Table } from 'antd'
-import style from './style.module.less'
+import style from '../style.module.less'
 import { useSelector, useDispatch } from 'react-redux'
 import { selectProjectId, selectOneLevel, levelDefaultLabel, selectOneLevelDefaultId, setCurrentlevel,adaptation } from '@redux/systemconfig.js'
 import Usetable from '@com/useTable'
@@ -39,7 +39,7 @@ export default function Index(props) {
     DeleteEquipment,
     BatchImportPcs,
     QueryCategoryUsed } = StorageEquipmentDesigner
-  
+
   const dispatch = useDispatch()
   const projectId = useSelector(selectProjectId)
   const areaList = useSelector(selectOneLevel)
@@ -99,7 +99,7 @@ export default function Index(props) {
       pageNum: pagination.current,
       pageSize: pagination.pageSize,
     }
-    
+
     QueryPcsByPage(params).then(res => {
       if (res.success) {
         if (res.data && res.data.length > 0) {
@@ -182,8 +182,8 @@ export default function Index(props) {
       width: laptop ? '120px' : '176px',
       render: (_, record) => (
         <Space size={laptop ? "small" : "middle"}>
-          <CustLink text="edit" onClick={() => setMulti(record)} /> 
-          <CustLink text="delete" onClick={() => clickDel(record)} /> 
+          <CustLink text="edit" onClick={() => setMulti(record)} />
+          <CustLink text="delete" onClick={() => clickDel(record)} />
         </Space>
       ),
     },
@@ -442,7 +442,7 @@ export default function Index(props) {
       }
     })
     setModalTitle('编辑PCS')
-    addedit.current.onOpen() 
+    addedit.current.onOpen()
   }
   const saveEdit = () => {
   }
@@ -464,7 +464,7 @@ export default function Index(props) {
               })}
             </Select>
           </Item>
-         
+
           <Item name='siteId' label=''>
             <Select
               placeholder="请选择站点"
@@ -477,7 +477,7 @@ export default function Index(props) {
               })}
             </Select>
           </Item>
-          
+
           <Item name='alike' label='设备查询'>
             <Serach
               style={{ width: laptop ? 200 : 400 }}
@@ -490,15 +490,15 @@ export default function Index(props) {
 
          <CustButtonT text="new" src="new" onClick={() => addData()} />
           <CustButtonT text="batchImport" src="export" wh="auto" onClick={() => setAddModal(true)} />
-          <CustButtonT  text="export"  src="export" onClick={() => exportData()} />  
+          <CustButtonT  text="export"  src="export" onClick={() => exportData()} />
         </Space>
-      </div> 
+      </div>
       <Usetable ref={tableRef} columns={columns} dataSource={tableData} rowKey='sn' pagination={pagination} onChange={tableOnchange} sheetName='PCS.xlsx' />
       <Custmodl title='删除提示' ref={dref} mold="cust" width={512} type="warn" onOk={() => onDelete()} maskClosable={false}>
-          是否确认删除PCS设备？ 
+          是否确认删除PCS设备？
       </Custmodl>
       <Custmodl  title="批量导入" className={style.addModal} open={addModal} onOk={onUpload} onCancel={handleCancel} width={600} mold="cust" >
-      
+
         <div className={style.addBody}>
           <div style={{ display: "flex", alignItems: "center", position: 'relative' }}>
             <Dragger {...propData} maxCount={1}>
@@ -517,7 +517,7 @@ export default function Index(props) {
         </div>
       </Custmodl>
       <Custmodl mold="cust" ref={addedit} title={modalTitle} className={style.addModal}  width={782} custft={modalTitle == '新增PCS'} onOk={onAdd}>
-       
+
         <div className={style.addBody}>
           <Form form={addForm} colon={false} labelCol={{ span: 7 }} labelAlign='left' requiredMark={false}>
             <Space>
