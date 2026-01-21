@@ -38,7 +38,7 @@ const Mainbox = styled.div`
   justify-content: flex-end;
   ${props => props.laptop ? sty : null}
   .down {
-    
+
       display: grid;
       grid-template-rows:20px 1fr;
       .chart {
@@ -63,11 +63,11 @@ const Mainbox = styled.div`
          justify-content: space-between;
       }
     }
-    
+
     .content {
       display: grid;
       grid-template-columns: 1fr;
-      height: 100%;    
+      height: 100%;
       .cl {
         display: flex;
         align-items: center;
@@ -116,11 +116,11 @@ justify-items: center;
     width: 100%;
     padding:11px 12px;
     font-weight: bold;
-    div{ 
+    div{
         font-size: 13px;
         color:#606266;
         display: flex;
-        flex-direction: column; 
+        flex-direction: column;
         justify-content: space-between;
         border-left: 1px solid #E4E7ED;
         padding-left: 11px;
@@ -139,12 +139,12 @@ justify-items: center;
  grid-template-rows: repeat(3, 1fr);
  row-gap: 24px;
  div.warning {
- 
-  display: flex; 
+
+  display: flex;
   column-gap: 12px;
   align-items: center;
   img {
-    width: 36px; 
+    width: 36px;
   }
    .content{
     display: flex;
@@ -160,7 +160,7 @@ justify-items: center;
       font-weight: bold;
     }
    }
-   
+
   //  &:first-of-type {
   //   border-left: 2px solid #f8857d;
   //  }
@@ -168,14 +168,14 @@ justify-items: center;
   //   border-left: 2px solid #5d9fff;
   //  }
  }
- 
+
 }`
 const ContentWrap = styled.div`
 && {
    width: 365px;
    height: 78px;
    font-size: 13px;
-   color:#606266; 
+   color:#606266;
    border-radius: 4px;
    background-color: #F2F7FF;
    border-left: 4px solid ${ props => props.level==1 ? "#E27D75" : props.level==2 ? "#F8D26D" : "#A46BDD"};
@@ -217,7 +217,7 @@ export default function Index() {
  .ant-timeline-item {
    padding-bottom: 10px;
  }
- 
+
  .title {
    color:#1e1e1e;
    margin-top:-4px;
@@ -233,7 +233,7 @@ export default function Index() {
       transform:translateY(0)
    }
    100%{
-    
+
     transform:translateY(-${props=>props.dmheight}px)
       /* transform:translateY(${props=>{ if(-(props.children.props.children?.length)*91.84){return -(props.children.props.children?.length)*91.84+280} }}px) */
    }
@@ -250,12 +250,12 @@ const {laptop} = useSelector(adaptation)
   const navigate = useNavigate()
   const projectId = useSelector(state => state.system.menus.projectId)
 
- 
+
   const [warnData, setWarnData] = useState()
-  const areaId = useSelector(selectOneLevelDefaultId);  
+  const areaId = useSelector(selectOneLevelDefaultId);
   const [datasetMonthl, setDatasetMonthl] = useState()
   const [warnlist, setWarnlist] = useState([])//最新告警
-  
+
   const pageParmasRef = useRef()
   pageParmasRef.current = {
       pageSize:6,
@@ -263,7 +263,7 @@ const {laptop} = useSelector(adaptation)
   }
   const pageTotalRef = useRef()
   pageTotalRef.current = 0
- 
+
   let params = {
     projectId,
     areaId
@@ -272,7 +272,7 @@ const {laptop} = useSelector(adaptation)
 
 
   //查询今日告警
-  const getQueryWarningDetails = async () => {  
+  const getQueryWarningDetails = async () => {
     try {
       const res = await safeElectric.TodayWarningStatistics(params)
     if (res.success) {
@@ -281,9 +281,9 @@ const {laptop} = useSelector(adaptation)
       message.error(res.errMsg)
     }
     } catch (error) {
-      
+
     }
-    
+
   }
   //查询本月告警趋势
   const getQueryMonthWarningTrends = async () => {
@@ -304,9 +304,9 @@ const {laptop} = useSelector(adaptation)
         message.error(res.errMsg)
       }
     } catch (error) {
-      
+
     }
-   
+
   }
   drawEcharts(lref.current, {
     dataset: datasetMonthl,
@@ -336,7 +336,7 @@ const {laptop} = useSelector(adaptation)
       ...pageParmasRef.current
     }
     const res = await safeElectric.WarningDetailsPage(parma)
-  
+
     if (res.success) {
       pageTotalRef.current = res.total
       if (res.data && Array.isArray(res.data)) {
@@ -350,10 +350,10 @@ const {laptop} = useSelector(adaptation)
   }
   //查询最新告警（总数）
   const getWarningDetailsList= async () => {
-    const res = await safeElectric.WarningDetailsList(params)  
+    const res = await safeElectric.WarningDetailsList(params)
     if (res.success) {
       pageTotalRef.current = res.data.length*64
-     
+
       if (res.data && Array.isArray(res.data)) {
         setWarnlist([...res.data])
       } else {
@@ -400,16 +400,16 @@ const {laptop} = useSelector(adaptation)
             }
          }
         },
-        
+
       },
-      
+
     }
     })
   }
 useEffect(() => {
     tdrawEcharts()
 },[warnData,warningColor])
-  useEffect(() => {    
+  useEffect(() => {
     getQueryWarningDetails()
     getQueryMonthWarningTrends()
     // getWarningDetailsPage()
@@ -430,14 +430,14 @@ useEffect(() => {
 
 
   return (
-    
-      <Pagecount bgcolor="transparent" pd="0px">       
+
+      <Pagecount bgcolor="transparent" pd="0px">
         <Mainbox laptop={laptop}>
           <Titlelayout title={'今日告警'} {...fs}>
             <Warnbox>
               <div style={{ width: '158px', height: '158px' }} ref={warnref}>
-            
-                
+
+
               </div>
               <div className='alarm'>
                 <div className='warning'>
@@ -447,7 +447,7 @@ useEffect(() => {
                     <span className='num'>{warnData?.levelOneCnt} </span>
                   </div>
                 </div>
-                
+
                 <div className='warning'>
                   <img src={second}  ></img>
                   <div className="content">
@@ -455,16 +455,16 @@ useEffect(() => {
                   <span className='num'>{warnData?.levelTwoCnt} </span>
 
                   </div>
-                
+
                 </div>
-               
+
                 <div className='warning'>
                   <img src={third}></img>
                   <div className="content">
                   <span>三级告警</span>
                   <span className='num'>{warnData?.levelThreeCnt} </span>
                   </div>
-                
+
                 </div>
 
               </div>
@@ -484,7 +484,7 @@ useEffect(() => {
               </div>
             </Warnbox>
           </Titlelayout>
-       
+
           {/* <div onClick={()=>{navigate("/index/runtimeSafe/alarmDetail",{state: {title: '告警详情', nested: 'alarmDetail', primary: 'runtimeSafe'}})}}>查看详情</div> */}
           <Titlelayout title={'最新告警'} extra={<NavLink to={{ pathname: "/index/runtimeSafe/alarmDetail" }} state={{ title: '告警详情', nested: 'alarmDetail', primary: 'runtimeSafe' }}>查看详情</NavLink>} {...fs}>
             <Timelinebox dmheight={domheight} speed={speed}>
@@ -498,7 +498,7 @@ useEffect(() => {
                     <Timeline.Item dot={<Dot level={it.level} />}>
                       <ContentWrap level={it.level}>
                         <p>
-                          <span>{it.warningTime}</span>  
+                          <span>{it.warningTime}</span>
                           <span className='warn'>{mapobj.get(it.level).text}</span>
                         </p>
                         <p className='b'>{it.alarmEvent}</p>
@@ -515,7 +515,7 @@ useEffect(() => {
                     <Timeline.Item dot={<Dot level={it.level} /> }>
                        <ContentWrap level={it.level}>
                         <p>
-                          <span>{it.warningTime}</span>  
+                          <span>{it.warningTime}</span>
                           <span className='warn'>{mapobj.get(it.level).text}</span>
                         </p>
                         <p className='b'>{it.alarmEvent}</p>
@@ -532,7 +532,7 @@ useEffect(() => {
                         <Timeline.Item dot={<Dot level={it.level} />}>
                             <ContentWrap level={it.level}>
                         <p>
-                          <span>{it.warningTime}</span>  
+                          <span>{it.warningTime}</span>
                           <span className='warn'>{mapobj.get(it.level).text}</span>
                         </p>
                         <p className='b'>{it.alarmEvent}</p>
@@ -546,8 +546,8 @@ useEffect(() => {
              }
              </Timeline>
               </div>
-           
-            
+
+
             </Timelinebox>
           </Titlelayout>
           <Titlelayout className="down" title="本月告警趋势" {...fs}>
@@ -560,7 +560,7 @@ useEffect(() => {
           <AlarmRank bref={bref} areaId={areaId} />
         </Mainbox>
       </Pagecount>
-    
+
   )
 }
 
@@ -586,7 +586,7 @@ const Alarm = ({ pref, opref, areaId }) => {
         }else{
           setPieData(null)
         }
-   
+
       } else {
         setPieData(null)
       }
@@ -602,13 +602,13 @@ const Alarm = ({ pref, opref, areaId }) => {
             }else{
               arr[2]=val
             }
-            
+
           }
           setOpieData(arr)
         }else{
           setOpieData(null)
         }
-       
+
       } else {
         setOpieData(null)
       }
@@ -619,7 +619,7 @@ const Alarm = ({ pref, opref, areaId }) => {
   }
   //获取日期格式
   const getdateformat = (dateType, date) => {
-  
+
     if (dateType === 1) {
       date = moment(date).format('YYYY-MM-01')
     } else if (dateType === 2) {
@@ -640,10 +640,10 @@ const Alarm = ({ pref, opref, areaId }) => {
     getQueryWarningDistributed(datecatrgory, date)
   }
 
- 
+
   useEffect(() => {
      console.log(areaId)
-    if(arealist.length===0)return 
+    if(arealist.length===0)return
     const formvalue = dateform.getFieldsValue()
     const type = formvalue.datetype
     const date = getdateformat(type, formvalue.datevalue)
@@ -652,15 +652,15 @@ const Alarm = ({ pref, opref, areaId }) => {
   useEffect(()=>{
     drawEcharts(pref.current, {
       pieData: { data: pieData, radius: '65%' }, type: 3, legend: {
-       
+
         top: 'auto',
         bottom: 0,
-  
+
       },
     })
   },[pieData])
   useEffect(()=>{
-     
+
   drawEcharts(opref.current, {
     pieData: { data: opieData, radius: ['45%', '65%'] }, type: 3, legend: {
 
@@ -681,7 +681,7 @@ const Alarm = ({ pref, opref, areaId }) => {
       <div className='chart'>
         {pieData?<div ref={pref}></div>:null}
         {opieData?<div ref={opref}></div>:null}
-        
+
       </div>
     </Titlelayout>
   )
@@ -762,7 +762,7 @@ const AlarmRank = ({ bref, areaId }) => {
   }
 
   useEffect(() => {
-    if(arealist.length===0)return 
+    if(arealist.length===0)return
     const formvalue = dateform.getFieldsValue()
     const type = formvalue.datetype
 
@@ -826,7 +826,7 @@ const AlarmRank = ({ bref, areaId }) => {
   return (
     <Titlelayout className="down" title="告警类型排名" {...fs} extra={<DateComp ChangDate={changedate} changPicker={changPicker} dateform={dateform} />} >
       {datasetStack?  <div className='stack' ref={bref}></div>:null}
-    
+
     </Titlelayout>
   )
 
