@@ -1870,6 +1870,8 @@ export const Monitoring = {
       server.post(`/Monitor/Device/QueryByPageElectric`, data), //获取电表
     QueryByPageHotWater: (data) =>
       server.post(`/Monitor/Device/QueryByPageHotWater`, data), //获取热水表
+    QueryByPageStorageDevice: (data) =>
+      server.post(`/Monitor/Device/QueryByPageStorageDevice`, data), //获取储能设备
     QueryByPage: (data) => server.post(`/Monitor/Device/QueryByPage`, data),
     QueryByPagePV: (data) => server.post(`/Monitor/Device/QueryByPagePV`, data), //光伏设备查询
     QueryByPageGateWay: (data) =>
@@ -1894,10 +1896,13 @@ export const Monitoring = {
       server.get(`/Safe/Alarm/QueryPlanList?projectId=${projectId}`), //告警计划
     AddElectric: (data) => server.post(`/Monitor/Device/AddElectric`, data), //新增电表
     AddHotWater: (data) => server.post(`/Monitor/Device/AddHotWater`, data), //新增热水表
+    AddStorageDevice: (data) => server.post(`/Monitor/Device/AddStorageDevice`, data), //新增储能设备
     UpdateElectric: (data) =>
       server.post(`/Monitor/Device/UpdateElectric`, data), //更新电表
     UpdateHotWater: (data) =>
       server.post(`/Monitor/Device/UpdateHotWater`, data), //更新电表
+    UpdateStorageDevice: (data) =>
+      server.post(`/Monitor/Device/UpdateStorageDevice`, data), //更新储能设备
     UpdateFactor: (data) => server.post(`/Monitor/Device/UpdateFactor`, data), //更新倍率
     DeleteElectric: (data) =>
       server.delete(
@@ -1907,6 +1912,10 @@ export const Monitoring = {
       server.delete(
         `/Monitor/Device/DeleteHotWater?projectId=${data.projectId}&sn=${data.sn}`
       ), //删除电表
+    DeleteStorageDevice: (data) =>
+      server.delete(
+        `/Monitor/Device/DeleteStorageDevice?projectId=${data.projectId}&sn=${data.sn}`
+      ), //删除储能设备
     QueryByPageWater: (data) =>
       server.post(`/Monitor/Device/QueryByPageWater`, data), //查询水表
     AddWater: (data) => server.post(`/Monitor/Device/AddWater`, data), //新增水表
@@ -1965,6 +1974,8 @@ export const Monitoring = {
     ImportGas: (data) => server.post(`/Monitor/Device/ImportGas`, data), //导入燃气表
     ImportHotWater: (data) =>
       server.post(`/Monitor/Device/ImportHotWater`, data), //导入热水表
+    ImportStorageDevice: (data) =>
+      server.post(`/Monitor/Device/ImportStorageDevice`, data), //导入储能设备
     ImportSensor: (data) => server.post(`/Monitor/Device/ImportSensor`, data), //导入传感器
     ImportTransformer: (data) =>
       server.post(`/Monitor/Device/ImportTransformer`, data), //导入变压器
