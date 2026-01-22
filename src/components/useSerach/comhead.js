@@ -15,7 +15,7 @@ import {
   SyncOutlined,
 } from '@ant-design/icons';
 const { Link } = Typography
-import { publicdateType, Daterange,   w88,viewopt } from "./data"
+import { publicdateType, Daterange,   w88,viewopt,DefineDateRange } from "./data"
 import Enery from "./enery";
 import AreaLevel from './areas'
 import SubAreas from './subareas'
@@ -581,6 +581,9 @@ export default function UseSerach(props) {
         }
         {
           props.config?.inverter && inverter //光伏发电-逆变器
+        }
+        {
+          props.config?.definedaterange && <DefineDateRange />
         }
       </Space>
       <Space size={16}>

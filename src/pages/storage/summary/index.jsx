@@ -10,7 +10,7 @@ import imgurl from './imgs'
 import deep from './imgs/deep.svg'
 import light from './imgs/light.svg'
 import styled, {css} from 'styled-components'
- 
+import {isObject} from "@com/usehandler"
 import Pagecount from "@com/pagecontent";
  
 import Titlelayout from "@com/titlelayout";
@@ -20,8 +20,9 @@ import {Tabsbox} from "@com/comstyled"
 import {Mainbox,Station } from "./style"
 import {tabs} from './data'
 import {Power} from "./comm"
+import {useQuerySiteInfo} from './api'
 const {Link, Paragraph, Text} = Typography
-console.log(Power)
+ 
  
 const CircleDiv = styled.div`
 margin-top: 4px;
@@ -50,8 +51,8 @@ export default function Index() {
   let {exparams} = useOutletContext()
   
   let {areaId, stationName,  projectId} = exparams
-  const title =useMemo(()=>{
-    return `${stationName?.label}(${stationName?.value})`
+  const [title,siteId] =useMemo(()=>{
+    return [`${stationName?.label}(${stationName?.value})`,stationName?.value]
   },[stationName])  
   
   let {islight} = useSelector(themeColor)
@@ -64,20 +65,30 @@ export default function Index() {
     onGridDevice: {},
     storageDevice: {}
   }) //接线图数据
+ const getsiteData =async () => { 
+    try {
+       let {data, success} = await  useQuerySiteInfo({siteId,projectId,areaId})
+       if(success && isObject(data)) {
+        setCardData(data)
+       }else{
+        setCardData({})
+       }
+    } catch (error) {
+      
+    }
+  }
 
+  useEffect(() => {
+    if([siteId,areaId, projectId].every(item => Number.isInteger(parseInt(item)))) {
+      getsiteData()
+    }
+    
+  }, [siteId,areaId, projectId])
   useEffect(() => {
     
     if(!(Number.isFinite(areaId) && Number.isFinite(projectId) && stationName?.value && isFinite(stationName?.value))) return
    
-    querySiteInfo(projectId, areaId, stationName.value).then(res => {
-      const {success, data} = res
-      if (success && Object.prototype.toString.call(data).slice(8,-1)=="Object") {
-        setCardData(res.data)
-      } else {
-        setCardData(null)
-       //message.error(res.errMsg)
-      }
-    }).catch()
+   
 
     queryStorageIncome(projectId,  areaId, stationName.value).then(res => {
       let { success, data } = res
@@ -361,7 +372,6 @@ export default function Index() {
         </Titlelayout>
         </div>
         <div className="right">
-          <img src={imgurl["error"]}></img>
           <div className="rightup">
                   <Titlelayout title={title} layout="flex">
                     <Station>
