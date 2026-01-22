@@ -1,23 +1,21 @@
 import React, {Fragment, useEffect, useState} from 'react'
 import style from './style.module.less'
-import { Select, Form, Table, message } from 'antd'
-import { useSelector, useDispatch } from 'react-redux'
+import { message, DatePicker } from 'antd';
 import { selectProjectId, selectOneLevel, levelDefaultLabel, selectOneLevelDefaultId, setCurrentlevel,themeColor } from '@redux/systemconfig.js'
-import PowerChart from './powerChart'
-import SocChart from './SocChart'
 import {PCSMonitorRuntime, SiteManagerDesigner, StorageContainerDesigner } from '@api/api.js'
 import { useReactive, useRequest } from 'ahooks'
+import { useSelector } from 'react-redux'
 import { useNavigate, useOutletContext} from 'react-router-dom'
 import pcs from './imgs/pcs.png'
 import online from './imgs/online.png'
 import offline from './imgs/offline.png'
 import error from './imgs/error.png'
 import Pagecount from "@com/pagecontent";
-import Ichart  from '@com/useEcharts/Ichart'; 
-import Titlelayout from "@com/titlelayout"; 
 import styled from 'styled-components'
- 
-import Usetable from '@com/useTable'
+
+import RuntimeParamsPanel from './RuntimeParamsPanel'
+import PowerCompareChart from './PowerCompareChart'
+import Titlelayout from '@com/titlelayout'
 const Mainbox = styled.div`
  && {
    .leftlayout {
@@ -42,21 +40,21 @@ const Mainbox = styled.div`
      flex:1;
      display: grid;
      grid-template-columns: 1fr;
-     grid-template-rows: 320px 320px 1fr ;
+     grid-template-rows: 360px 1fr;
      row-gap: 16px;
    }
  }
 `
 export default function Index() {
-  let {exparams} = useOutletContext() 
+  let {exparams} = useOutletContext()
   let {areaId,  projectId,  pcsId} = exparams
   let {value: pcs_id, label} = pcsId || {}
   const {errorColor,successColor,warningColor} = useSelector(themeColor)
-  const { 
+  const {
     queryPCSInfo,
-    queryPCSWarningInfo, 
-    queryPowerTrends, 
-    querySocTrends, 
+    queryPCSWarningInfo,
+    queryPowerTrends,
+    querySocTrends,
     queryAcTable } = PCSMonitorRuntime
 
   //页面组件
@@ -222,7 +220,7 @@ export default function Index() {
         name: "SOC(%)",
         data:  Array.isArray(socData.y) ? socData.y : [],
         type: 'line',
-        symbol:'none', 
+        symbol:'none',
         smooth: true,
         areaStyle: {}
       }
@@ -267,7 +265,7 @@ export default function Index() {
         name: "实时总功率(kwh)",
         data: Array.isArray(powerData.y) ? powerData.y : [],
         type: 'line',
-        symbol:'none', 
+        symbol:'none',
         smooth: true,
         areaStyle: {}
       }
@@ -312,8 +310,27 @@ export default function Index() {
     },
   ]
 
- 
 
+
+
+  // 静态数据演示
+  const runtimeData = {
+    uab: 2300,
+    ubc: 2300,
+    uca: 2300,
+    ia: 2300,
+    ib: 2300,
+    ic: 2300,
+    pwr: 2300,
+    q: 2300,
+    s: 2300,
+    pf: 0.98
+  }
+
+  const chartData = {
+    series1: [100, 150, 120, 180, 200, 170, 140, 160, 190, 220, 200, 180],
+    series2: [90, 140, 130, 170, 190, 160, 150, 170, 180, 210, 190, 170]
+  }
 
   const rightStyle={
     borderRight: 'none'
@@ -324,12 +341,12 @@ export default function Index() {
 
   return (
     <Pagecount bgcolor='transparent' pd="0">
-      
+
       <Mainbox className={style.pcsContent}>
         <div className={style.left + " leftlayout"} key="left">
           <div className={style.title + " leftTitle"}>
             <span>储能交流器</span>
-           {label && <span className={style.pcsName}>{label}</span>} 
+           {label && <span className={style.pcsName}>{label}</span>}
           </div>
           <div className={style.firstValue} key="leftup">
             <div className={style.stateList}>
@@ -374,20 +391,19 @@ export default function Index() {
             }
           </div>
         </div>
-        <div className="rightlayout" key="right">
-          <Titlelayout  title="总功率" layout="flex" key="up">
-             <div style={{display: "flex", flex:1}}>
-              <Ichart {...poweroption} />
-          {/*    <PowerChart lineData={powerData} Unit='实时总功率(kwh)' color={successColor}></PowerChart> */}
-             </div>
+        <div className={`rightlayout ${style.rightlayout}`} key="right">
+          <Titlelayout title="实时运行参数">
+            <RuntimeParamsPanel data={runtimeData} />
           </Titlelayout>
-          <Titlelayout title="SOC" key="down">
-             <Ichart {...socOption} />
-         {/*    <SocChart lineData={socData} Unit='SOC(%)' color={warningColor}></SocChart> */}
+          <Titlelayout title="总有功功率" extra={
+            <div style={{ display: 'flex', gap: 12, alignItems: 'center' }}>
+              <DatePicker />
+              <span style={{ color: '#333', fontSize: 12 }}>对比</span>
+              <DatePicker />
+            </div>
+          }>
+            <PowerCompareChart chartData={chartData} />
           </Titlelayout>
-         
-          <Usetable   dataSource={state.ACData} columns={AcClomns} rowKey='name' pagination={false} hbg="#036" />
-          
         </div>
       </Mainbox>
     </Pagecount>
