@@ -130,9 +130,6 @@ export default function Index() {
     designerSolar: [//光伏发电
       "station",
       "inverter"
-    ],
-    storage:[
-      'storageDevice'
     ]
   }); // 需要显示搜索的页面
 
@@ -369,12 +366,6 @@ export default function Index() {
             break;
           case "inverter":
             setConfig({ custview: true });
-            break;
-        }
-      }else if(primary == "storage"){
-        switch (nested) {
-          case 'storageDevice':
-            setConfig({ isSite: true, isTank: true });
             break;
         }
       }
