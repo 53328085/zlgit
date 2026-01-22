@@ -1,4 +1,4 @@
-import React, {Fragment, useEffect, useState} from 'react'
+import React, { useEffect, useState} from 'react'
 import style from './style.module.less'
 import { message, DatePicker } from 'antd';
 import { selectProjectId, selectOneLevel, levelDefaultLabel, selectOneLevelDefaultId, setCurrentlevel,themeColor } from '@redux/systemconfig.js'
@@ -7,9 +7,6 @@ import { useReactive, useRequest } from 'ahooks'
 import { useSelector } from 'react-redux'
 import { useNavigate, useOutletContext} from 'react-router-dom'
 import pcs from './imgs/pcs.png'
-import online from './imgs/online.png'
-import offline from './imgs/offline.png'
-import error from './imgs/error.png'
 import Pagecount from "@com/pagecontent";
 import styled from 'styled-components'
 
@@ -49,136 +46,64 @@ export default function Index() {
   let {exparams} = useOutletContext()
   let {areaId,  projectId,  pcsId} = exparams
   let {value: pcs_id, label} = pcsId || {}
-  const {errorColor,successColor,warningColor} = useSelector(themeColor)
+  const {successColor, warningColor} = useSelector(themeColor)
   const {
     queryPCSInfo,
     queryPCSWarningInfo,
     queryPowerTrends,
     querySocTrends,
-    queryAcTable } = PCSMonitorRuntime
+    queryAcTable} = PCSMonitorRuntime
 
   //页面组件
-  const Card = props => {
-    return <div className={style.card}>
-      <div className={style.cardtitle}>{props.title}</div>
-      <div className={style.unit}>({props.unit})</div>
-      <div className={style.values}>{props.values}</div>
-    </div>
+  // 状态卡片：显示运行状态、热备状态、充放电状态
+  const StatusCard = props => {
+    const { name, value } = props
+    return (
+      <div className={style.statusCard}>
+        <div className={style.cardLabel}>{name}</div>
+        <div className={style.statusValue}>{value}</div>
+      </div>
+    )
   }
-  const StateItem = props => {
-    let { state } = props
-    state = state === '0' ? 'normal' : state === '1' ? 'error' : 'offline'
-    return <div className={style.stateItem} style={props.styles}>
-      <span>{props.name}</span>
-      <img src={state == 'offline' ? offline : state == 'normal' ? online : error} className={style.stateImg}></img>
-    </div>
+  // 数据卡片：显示数值和单位
+  const DataCard = props => {
+    const { name, unit, value } = props
+    return (
+      <div className={style.dataCard}>
+        <div className={style.cardLabel}>{name}（{unit}）</div>
+        <div className={style.dataValue}>{value}</div>
+      </div>
+    )
   }
-
-  //页面参数
-  const [leftValues, setLeftValues] = useState([])
-  const [powerData, setPowerData] = useState({})
-  const [socData, setSocData] = useState({})
+  //页面参数 - 初始静态数据
+  const [leftValues, setLeftValues] = useState([
+    { name: '运行状态', value: '运行' },
+    { name: '热备状态', value: '热备' },
+    { name: '充放电状态', value: '充电' },
+    { name: '直流电流', unit: 'A', value: '19.9' },
+    { name: '总母线电压', unit: 'V', value: '568.5' },
+    { name: '直流功率', unit: 'kW', value: '0.99' },
+    { name: '电网频率', unit: 'Hz', value: '50.0' },
+    { name: 'IGBT温度', unit: '°C', value: '43' },
+  ])
+  const [powerData, setPowerData] = useState({
+    x: ['00:00', '04:00', '08:00', '12:00', '16:00', '20:00'],
+    y: [120, 150, 180, 200, 170, 140]
+  })
+  const [socData, setSocData] = useState({
+    x: ['00:00', '04:00', '08:00', '12:00', '16:00', '20:00'],
+    y: [85, 80, 75, 70, 65, 60]
+  })
   const state = useReactive({
-    gridState:'',
-    chargeState:'',
     warningInfo:[],
     ACData:[]
   })
   const getContent = () => {
-    //左侧数据
-    queryPCSInfo(projectId, areaId, pcs_id).then(res => {
-      if(res.success){
-        if(res.data ){
-          state.gridState = res.data[0]?.name || ''
-          state.chargeState = res.data[1]?.name || ''
-          let arr = []
-          res.data.map((item, index) => {
-            if(index > 1){
-              arr.push(item)
-            }
-          })
-          setLeftValues(arr)
-        }else{
-          state.gridState = []
-          state.chargeState = []
-          setLeftValues([])
-        }
-      }else{
-        message.error(res.errMsg)
-      }
-    })
-    queryPCSWarningInfo(projectId, pcs_id).then(res => {
-      if(res.success){
-        if(res.data){
-          state.warningInfo = res.data
-        }else{
-          state.warningInfo = []
-        }
-      }else{
-        message.error(res.errMsg)
-      }
-    })
-    //实时功率
-    queryPowerTrends(projectId, areaId, pcs_id).then(res => {
-      if(res.success){
-        if(res.data){
-          let x= [];
-          let y = [];
-          res.data.map((item, index) => {
-            x.push(item.x)
-            y.push(item.y)
-          })
-          setPowerData({
-            x,
-            y
-          })
-        }else{
-          setPowerData({x:[], y:[]})
-        }
-      }else{
-        message.error(res.errMsg)
-      }
-    })
-    //soc
-    querySocTrends(projectId, areaId, pcs_id).then(res => {
-      if(res.success){
-        if(res.data){
-          let x= [];
-          let y = [];
-          res.data.map((item, index) => {
-            x.push(item.x)
-            y.push(item.y)
-          })
-          setSocData({
-            x,
-            y
-          })
-        }else{
-          setSocData({x:[], y:[]})
-        }
-      }else{
-        message.error(res.errMsg)
-      }
-    })
-    //ac Table
-    queryAcTable(projectId, areaId, pcs_id).then(res=> {
-      if(res.success){
-        if(res.data && res.data.length > 0){
-          res.data[0].name = 'A'
-          res.data[1].name = 'B'
-          res.data[2].name = 'C'
-          state.ACData = res.data
-        }else{
-          state.ACData = []
-        }
-      }else{
-        message.error(res.errMsg)
-      }
-    })
+    // 接口数据（待接口接入后替换）
   }
   useEffect(() => {
      if(!pcs_id) return;
-     if(Number.isInteger(areaId) && Number.isInteger(projectId)) {
+     if(areaId && projectId) {
        getContent()
      }
 
@@ -332,12 +257,6 @@ export default function Index() {
     series2: [90, 140, 130, 170, 190, 160, 150, 170, 180, 210, 190, 170]
   }
 
-  const rightStyle={
-    borderRight: 'none'
-  }
-  const bottomStyle = {
-    borderBottom:'none'
-  }
 
   return (
     <Pagecount bgcolor='transparent' pd="0">
@@ -348,47 +267,19 @@ export default function Index() {
             <span>储能交流器</span>
            {label && <span className={style.pcsName}>{label}</span>}
           </div>
-          <div className={style.firstValue} key="leftup">
-            <div className={style.stateList}>
-              <div className={style.stateItem}>
-                <img src={online} className={style.circle}></img>
-                <span style={{color:successColor}}>无故障</span>
-              </div>
-              <div className={style.stateItem}>
-              <img src={error} className={style.circle}></img>
-                <span style={{color:errorColor}}>告警</span>
-              </div>
-              <div className={style.stateItem}>
-              <img src={offline} className={style.circle}></img>
-                <span style={{color:'#595959'}}>未知</span>
-              </div>
-            </div>
-            <div className={style.pcsImgs}>
-              <span className={style.imgTitle}>储能交流器</span>
-              <img className={style.pcsImg} src={pcs}></img>
-            </div>
-            <div className={style.pcsStatus}>
-              <span>{state.gridState}</span>
-              <span>{state.chargeState + ' . . .'}</span>
-            </div>
+          <div className={style.pcsImgs}>
+            <span className={style.imgTitle}>储能交流器</span>
+            <img className={style.pcsImg} src={pcs}></img>
           </div>
-          <div className={style.dataCard} key="leftdown">
-            {
-              leftValues.map((item, index) => {
-                return <Fragment key={index}>
-                  <Card  title={item.name} unit={item.unit} values={item.value}></Card>
-                  {((index + 1) % 3 == 0 && (index + 1) < leftValues.length ) ? <div className={style.line}></div> : null}
-                </Fragment>
-              })
-            }
-          </div>
-          {/* ((index == state.warningInfo.length - 4) || (index == state.warningInfo.length - 3) || (index == state.warningInfo.length - 2) || (index == state.warningInfo.length - 1)) ? bottomStyle : null */}
-          <div className={style.status} key="status">
-            {
-              state.warningInfo.map((item, index) => {
-                return <StateItem key={index} name={item.name} state={item.value} styles={((index + 1) % 4) == 0 ? rightStyle : null}></StateItem>
-              })
-            }
+          <div className={style.pcsGrid} key="leftdown">
+            {/* 前3个：状态卡片 */}
+            {leftValues.slice(0, 3).map((item, index) => (
+              <StatusCard key={index} name={item.name} value={item.value} />
+            ))}
+            {/* 后5个：数据卡片 */}
+            {leftValues.slice(3).map((item, index) => (
+              <DataCard key={index + 3} name={item.name} unit={item.unit} value={item.value} />
+            ))}
           </div>
         </div>
         <div className={`rightlayout ${style.rightlayout}`} key="right">
