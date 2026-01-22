@@ -126,7 +126,7 @@ export default function Index() {
   },[])
   return (
     <Pagecount bgcolor='transparent' pd="0">
-      <div className={style.header}>
+     {/*  <div className={style.header}>
         <Form form={form} layout='inline'>
           { showPage == 'containerPage' ? 
           <>
@@ -199,7 +199,7 @@ export default function Index() {
         <Button size="middle" style={{ marginLeft: 'auto', marginRight: 16, width: 96}} type="primary" onClick={()=> backBatteryCluster()}>返回</Button> : null }
         { showPage == 'batteryPage' ? 
         <Button size="middle" style={{ marginLeft: 'auto', marginRight: 16, width: 96}} type="primary" onClick={()=> backBMS()}>返回</Button> : null }
-      </div>
+      </div> */}
       { showPage == 'mainPage' ? <MainPage getshowTab={getFromChild} headerValues={selectValues}></MainPage> : null }
       { showPage == 'batteryPage' ? <BatteryPage batteryData={batteryData} getshowPack={getFromCluster}></BatteryPage> : null }
       { showPage == 'batteryPackPage' ? <BatteryPackPage batteryPackData={batteryPackData}></BatteryPackPage> : null }

@@ -2,7 +2,7 @@ export { ReactComponent as def } from './default.svg'
 // 默认图标
 
 export { ReactComponent as report } from './report.svg'
-export { ReactComponent as runtimeStoragestroageReport } from './report.svg' // 储能运行报告
+export { ReactComponent as runtimeStoragestorageReport } from './report.svg' // 储能运行报告
 export { ReactComponent as runtimeEnergyrunReport } from './report.svg' // 能源管理运行报告
 // 报告图标
 
@@ -13,14 +13,14 @@ export { ReactComponent as environment } from './environment.svg'
 export { ReactComponent as runtimeSolarstation } from './environment.svg'
 // **监控
 
-export { ReactComponent as runtimeStoragestation } from './station.svg'
-export { ReactComponent as runtimeStoragePCSMonitor } from './PCSMonitor.svg'
-export { ReactComponent as runtimeStorageBMSMonitor } from './BMSMonitor.svg'
-export { ReactComponent as runtimeStoragestorageControl } from './storageControl.svg'
+export { ReactComponent as runtimeStoragestorageOverview } from './station.svg'
+export { ReactComponent as runtimeStoragepCSMonitor } from './PCSMonitor.svg'
+export { ReactComponent as runtimeStoragecabinetMonitor } from './BMSMonitor.svg'
+export { ReactComponent as runtimeStoragebMSMonitor} from './storageControl.svg'
 export { ReactComponent as runtimeStorageconsumeStatistics } from './consumeStatistics.svg'
 export { ReactComponent as runtimeStorageearningsStatistics } from './earningsStatistics.svg'
 export { ReactComponent as runtimeStoragechargingOrder } from './chargingOrder.svg'
-export { ReactComponent as runtimeStorageenvironment } from './environment.svg'
+export { ReactComponent as runtimeStorageENVMonitor } from './environment.svg'
 export { ReactComponent as runtimeStoragealarmMessage } from './alarmMessage.svg'
 export { ReactComponent as runtimeStorageoperationLog } from './operationLog.svg'
 // export {ReactComponent as runtimeStoragestroageReport}   from './stroageReport.svg'
