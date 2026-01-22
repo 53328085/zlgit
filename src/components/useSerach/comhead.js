@@ -9,7 +9,7 @@ import { levelDefaultLabel,getsaveDeviceID,prodeviceType, selectProjectId, devic
 import moment from "moment";
 import 'moment/locale/zh-cn';
 const { RangePicker } = DatePicker;
-import { SiteManagerDesigner, PCSMonitorRuntime, StorageContainerDesigner, Editapi, PhotovoltaicPowerGeneration } from '@api/api' 
+import { SiteManagerDesigner, PCSMonitorRuntime, StorageContainerDesigner, Editapi, PhotovoltaicPowerGeneration } from '@api/api'
 import { filterProps } from '@com/usehandler'
 import {
   SyncOutlined,
@@ -19,7 +19,7 @@ import { publicdateType, Daterange,   w88,viewopt,DefineDateRange } from "./data
 import Enery from "./enery";
 import AreaLevel from './areas'
 import SubAreas from './subareas'
- 
+
 const { FindContainerList } = StorageContainerDesigner  //储能柜
 
 const Cform = styled(Form)`
@@ -44,18 +44,18 @@ const { Item } = Form;
 export const AreaSelect = ({ value, onChange, isall,    ...otherProps }) => {
   const levelone = useSelector(selectOneLevel)
   const laptop = useSelector(adaptation)?.laptop
-   const lightone = useSelector(lightlevel)  
+   const lightone = useSelector(lightlevel)
   const location = useLocation();
    const { state } = location
    const w200 = laptop ? { width: 160 } : { width: 200 }
   const options = useMemo(() => {
      let levels = state?.primary==="lightManagement" ? lightone : levelone
      const filter = levels?.filter?.(f => f.id != 0);
- 
-    
+
+
      return isall ? [isall, ...filter] : filter
-   
-    
+
+
   }, [levelone,lightone, state?.primary, isall])
   return (
     <Select   style={w200} {...otherProps} defaultValue={value} onChange={onChange} options={options}  fieldNames={{ label: 'name', value: 'id', options: 'options' }}>
@@ -83,25 +83,25 @@ export default function UseSerach(props) {
 
   const projectId = useSelector(selectProjectId)
   const varlabel = useSelector(levelDefaultLabel)
-  const oneLevelDefaultId = useSelector(selectOneLevelDefaultId) // 选择后的值 
+  const oneLevelDefaultId = useSelector(selectOneLevelDefaultId) // 选择后的值
   let [AreaID, setAreaid] = useState(oneLevelDefaultId)
   const [energyoptions, setEnergyoptions] = useState([])
   const energyTypeDefault = useRef(1)
   const levelone = useSelector(selectOneLevel)
   const { laptop } = useSelector(adaptation)
   const defauledeviceID =useSelector(deviceID)
-  //const DeviceStyle = useSelector(filterDeviceStyle)  
+  //const DeviceStyle = useSelector(filterDeviceStyle)
   const [DeviceStyle, setDeviceStyle] = useState(null)
 
   const devices =useSelector(prodeviceType)
   const w200 = useMemo(()=> {
    return laptop ? { width: 160 } : { width: 200 }
   }, [laptop])
- 
+
   let shifts = useSelector(selectshifts)
 
   const [allshifts] = useState([...shifts, { id: 0, name: i18t("comm", "Allflights"), startTime: "", endTime: "" }])
-  const [options, setOptions] = useState([]) // 
+  const [options, setOptions] = useState([]) //
 
   const [pcsoptions, setPcsoptions] = useState([])
   const [tankoptions, setTankoptions] = useState([])
@@ -121,7 +121,7 @@ export default function UseSerach(props) {
          form.setFieldValue('deviceStyle', initdeviceStyle)
         } else {
           form.setFieldValue('deviceStyle', filte[0].value)
-        }  
+        }
       } else {
         setDeviceStyle([])
         form.setFieldValue('deviceStyle', null)
@@ -199,8 +199,8 @@ export default function UseSerach(props) {
   }, [projectId])
 
   const onChange = (e, option) => {
-    dispatch(setCurrentlevel(option))    
-    setAreaid(e)  
+    dispatch(setCurrentlevel(option))
+    setAreaid(e)
   }
   let dateoption = daterang == 'week' ? [
     { value: 1, label: i18t("comm", "week") },
@@ -218,7 +218,7 @@ export default function UseSerach(props) {
   const dateselect = (
     <Space size={16}>
       <Item name="type" initialValue={1} key="electricity" preserve={false}>
-        <Select style={w88} onChange={changetype} options={dateoption} disabled={config?.disabledDate} ></Select>
+        <Select style={w88} onChange={changetype} options={dateoption} ></Select>
       </Item>
       <Item noStyle shouldUpdate={(pre, cur) => pre.type != cur.type}  >
         {
@@ -226,7 +226,7 @@ export default function UseSerach(props) {
             let type = (daterang == 'week' ? ['week', 'week', 'month', 'year'] : ['date', 'date', 'month', 'year'])[getFieldValue('type')]
             return (
               <Item name="date" initialValue={moment()} >
-                <DatePicker picker={type} style={w200} disabled={config?.disabledDate || config?.reportType} />
+                <DatePicker picker={type} style={w200} disabled={config?.disabledDate} />
               </Item>
             )
           }
@@ -302,6 +302,9 @@ export default function UseSerach(props) {
 
 
   const getPcs = async () => {
+    if(!props.config?.isPcs){
+      return
+    }
     try {
       let { areaId, stationName, containerId = { value: 0 } } = form.getFieldsValue(true)
       let { success, data, errMsg } = await PCSMonitorRuntime.queryPCSList(projectId, areaId, stationName?.value, containerId.value)
@@ -337,8 +340,8 @@ export default function UseSerach(props) {
       return(<Item name="deviceStyle" label={i18t("comm", "type", { text: "设备" })} initialValue={defauledeviceID} >
       <Select options={devices} fieldNames={{label:"name",value:"deviceStyle"}}   style={w200} onChange={deviceStyleChange} {...filterProps}></Select>
     </Item>)
-    
-  },[defauledeviceID,devices]) 
+
+  },[defauledeviceID,devices])
   // 站点选择
   const site = (<Item name="stationName" label="站点"   >
     <Select options={options} onChange={getTank} fieldNames={{ label: 'name', value: 'id' }} style={w200} labelInValue></Select>
@@ -515,7 +518,7 @@ export default function UseSerach(props) {
     if (levelone.length < 1) message.error('当前项目尚未创建园区!')
   }, [levelone])
 
-  const onValuesChange = (_, allValues) => { 
+  const onValuesChange = (_, allValues) => {
     console.log("allValues",allValues)
     props.setexparams({ ...allValues })
   }
@@ -533,7 +536,7 @@ export default function UseSerach(props) {
       form.setFieldValue('type', 1)
     }
 
-  /*   if (config.meterType) {     
+  /*   if (config.meterType) {
       form.setFieldValue('deviceStyle', config.meterType)
     } */
     if(oneLevelDefaultId==0) {
@@ -542,10 +545,10 @@ export default function UseSerach(props) {
     props.setexparams({ ...form.getFieldsValue(true) })
 
   }, [props.config, projectId, oneLevelDefaultId])
- 
+
 
   /*   useEffect(() => {
-  
+
       if (nested == "public" && primary == 'runtimeEnergy') {
         form.setFieldValue('date', [moment().startOf("day"), moment()])
       } else {
@@ -566,7 +569,7 @@ export default function UseSerach(props) {
         </Item>
         }
         {props.config?.issubarea && <SubAreas  setexparams={props.setexparams}  />}
-         {props.config?.isLevles && <AreaLevel setexparams={props.setexparams} />} 
+         {props.config?.isLevles && <AreaLevel setexparams={props.setexparams} />}
         {props.config?.isSite && site}
         {props.config?.isTank && tank}
         {props.config?.isPcs && pcs}
