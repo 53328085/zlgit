@@ -9,7 +9,7 @@ import { levelDefaultLabel,getsaveDeviceID,prodeviceType, selectProjectId, devic
 import moment from "moment";
 import 'moment/locale/zh-cn';
 const { RangePicker } = DatePicker;
-import { SiteManagerDesigner, PCSMonitorRuntime, StorageContainerDesigner, Editapi, PhotovoltaicPowerGeneration } from '@api/api' 
+import { SiteManagerDesigner, PCSMonitorRuntime, StorageContainerDesigner, Editapi, PhotovoltaicPowerGeneration, BMSRuntime } from '@api/api' 
 import { filterProps } from '@com/usehandler'
 import {
   SyncOutlined,
@@ -105,6 +105,7 @@ export default function UseSerach(props) {
 
   const [pcsoptions, setPcsoptions] = useState([])
   const [tankoptions, setTankoptions] = useState([])
+  const [bmsoptions, setBmsoptions] = useState([])
   //const deviceStyles = useSelector(deviceStyle)
   console.log("defauledeviceID",defauledeviceID)
  // let currdeviceStyle = `deviceStyle_${projectId}`
@@ -164,6 +165,7 @@ export default function UseSerach(props) {
 
         if (props.config.isTank) getTank();
         if (props.config.isPcs && !props.config.isTank) getPcs();
+        if (props.config.isBms && !props.config.isTank) getBms();
       } else {
         setOptions([])
         form.setFieldsValue({
@@ -285,6 +287,7 @@ export default function UseSerach(props) {
         form.setFieldValue('containerId', { value: data[0].id, label: data[0].name })
         props.setexparams({ ...form.getFieldsValue(true) })
         if (props.config?.isPcs) getPcs()
+        if (props.config?.isBms) getBms()
 
       } else {
         form.setFieldValue('containerId', { label: null, value: null })
@@ -325,6 +328,28 @@ export default function UseSerach(props) {
 
   }
 
+  const getBms = async () => {
+    try {
+      let { areaId } = form.getFieldsValue(true)
+      let { success, data, errMsg } = await BMSRuntime.queryBatterClusterList(projectId, areaId)
+      if (success && Array.isArray(data) && data.length > 0) {
+        setBmsoptions(data)
+        form.setFieldsValue({
+          bmsId: { value: data[0].id, label: data[0].name }
+        })
+        props.setexparams({ ...form.getFieldsValue(true) })
+      } else {
+        setBmsoptions([])
+        form.setFieldValue('bmsId', { label: null, value: null })
+        props.setexparams({ ...form.getFieldsValue(true) })
+        if (!success) return message.warning(errMsg || "数据出错")
+        if (data?.length == 0) return message.warning('当前站点不存在BMS!')
+      }
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
 
   // 设备类型
 
@@ -338,18 +363,29 @@ export default function UseSerach(props) {
       <Select options={devices} fieldNames={{label:"name",value:"deviceStyle"}}   style={w200} onChange={deviceStyleChange} {...filterProps}></Select>
     </Item>)
     
-  },[defauledeviceID,devices]) 
+  },[defauledeviceID,devices])
+
+  // 储能柜变化时触发
+  const onTankChange = () => {
+    if (props.config.isPcs) getPcs();
+    if (props.config.isBms) getBms();
+  }
+
   // 站点选择
   const site = (<Item name="stationName" label="站点"   >
     <Select options={options} onChange={getTank} fieldNames={{ label: 'name', value: 'id' }} style={w200} labelInValue></Select>
   </Item>)
   // 储能柜
   const tank = (<Item name="containerId" label="储能柜" >
-    <Select options={tankoptions} onChange={getPcs} fieldNames={{ label: 'name', value: 'id' }} style={w200} labelInValue></Select>
+    <Select options={tankoptions} onChange={onTankChange} fieldNames={{ label: 'name', value: 'id' }} style={w200} labelInValue></Select>
   </Item>)
   // pcs选择
   const pcs = (<Item name="pcsId" label="PCS" >
     <Select options={pcsoptions} fieldNames={{ label: 'sn', value: 'id' }} style={w200} {...filterProps}></Select>
+  </Item>)
+  // bms选择
+  const bms = (<Item name="bmsId" label="BMS" >
+    <Select options={bmsoptions} fieldNames={{ label: 'name', value: 'id' }} style={w200} {...filterProps}></Select>
   </Item>)
 
   const { primaryColor } = useSelector(themeColor)
@@ -570,6 +606,7 @@ export default function UseSerach(props) {
         {props.config?.isSite && site}
         {props.config?.isTank && tank}
         {props.config?.isPcs && pcs}
+        {props.config?.isBms && bms}
         {props.config?.isdevsty && deviceStyleNode}
         {props.config?.isview && viewtype}
         {props.config?.energytype && energytype}

@@ -252,7 +252,7 @@ export default function Index() {
             setConfig({ isSite: true, isTank: true, isPcs: true });
             break;
           case "bMSMonitor":
-            setConfig({ isSite: true, isTank: true });
+            setConfig({ isSite: true, isTank: true, isBms: true });
             break;
           case "earningsStatistics":
           case "ENVMonitor":
