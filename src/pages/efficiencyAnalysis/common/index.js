@@ -1,9 +1,13 @@
-import React, {useEffect, useMemo} from 'react'
+import React, {useEffect, useMemo,useState} from 'react'
 import moment from 'moment'
 import {useTranslation} from "react-i18next"
+import {useRequest} from "ahooks"
 import {Form, Select, Space, DatePicker, ConfigProvider} from 'antd'
+import { useSelector } from "react-redux";
+import { selectProjectId } from "@redux/systemconfig";
 import enUS from 'antd/lib/calendar/locale/en_US'
 import  {Cform} from "@com/useSerach/comhead.js"
+import {  useQuerySNFReportData } from "./api";
 const  dateType=[
   {
       value:1,
@@ -27,18 +31,23 @@ const  dateType=[
   };
 const w200 = { width: 200 }
 const w88 = { width: 88 }
-export default function Index() {
+export default function Index({setexparams}) {
   const [form]=Form.useForm()
   const {i18n}=useTranslation()
   useEffect(()=>{
      i18n.changeLanguage("en")
+     
+     setexparams(form.getFieldsValue())
      return () => {
        i18n.changeLanguage("zh")
      }
   },[])
+  const onValuesChange = (_, allValues) => {
+   setexparams(allValues)
+  }
   return (
     <ConfigProvider locale={enUS}>
-   <Cform form={form} layout="inline" initialValues={{ areaId: 1, type: 1 }}>
+   <Cform form={form} layout="inline" initialValues={{ areaId: 1, type: 1 }} onValuesChange={onValuesChange}>
     <Space size={16}>
      <Form.Item name="areaId" label="Park selection">
       <Select options={[{value:1,label:"Sanofi( HangZhou)"}]} style={w200}></Select>
@@ -69,8 +78,11 @@ export default function Index() {
    </ConfigProvider>
   )
 }
-export function useGauge({data,radius="100px", center=['50%', 110]}){
+export function useGauge({data,radius="100px", center=['50%',  110], startAngle=180, endAngle=0}){
+  let len=  Array.isArray(data) ? data.length : 0
+  let max = data?.[len-1]??NaN
   const  goption =useMemo(()=>{
+    let i=1
      const  series={
        type:5,
        series: [
@@ -78,16 +90,19 @@ export function useGauge({data,radius="100px", center=['50%', 110]}){
          type: 'gauge',
          radius,
          center,
-         startAngle:180,
-         endAngle:0,
+         startAngle,
+         endAngle,
+         min:data?.[0],
+         max,
+         splitNumber:3,
          axisLine: {
            lineStyle: {
              width: 18,
-             color: [
-               [0.6, 'rgba(5, 192, 110, 1)'],
-               [0.7, 'rgba(255, 177, 43, 1)'],
-               [1, 'rgba(255, 96, 33, 1)']
-             ],
+             color:len ? [
+               [data?.[1]/max, 'rgba(5, 192, 110, 1)'],
+               [data?.[2]/max, 'rgba(255, 177, 43, 1)'],
+               [max, 'rgba(255, 96, 33, 1)']
+             ]:[],
              opacity: 0.8
            }
          },
@@ -117,17 +132,21 @@ export function useGauge({data,radius="100px", center=['50%', 110]}){
            color: 'auto',
            distance: 5,
            fontStyle: "bold",
-           fontSize: 13,
-           formatter: function (value) { 
-             console.log(value)
-             if(value==60) {
-               return 0.60;
-             }else if(value==70) {
-               return 0.70;
+           fontSize: 12,
+         formatter: function (value) { 
+           //  console.log("i",i++)
+             return value?.toFixed(2)
+            
+           /*  console.log("value",value)
+             if(value ) {
+              
+               return    value
+             }else if(value==data?.[2]) {
+               return  value
              }else {
                return  ''
-             }
-           }
+             }  */
+           }   
          },
          detail: {
            valueAnimation: true, 
@@ -135,15 +154,84 @@ export function useGauge({data,radius="100px", center=['50%', 110]}){
            fontSize: 20,
            offsetCenter: [0, "-30%"]
          },
-         data: [
+         data: len>0 ?  [
            {
-             value: data || 0
+             value: data?.[1] || null,
+           //  name: "value"
            }
-         ]
+         ]:[]
        }
      ]}
      return series
   }, [data,radius]) 
   
  return goption
+}
+export function useLine(chartdata={}) { 
+  const lineopt=useMemo(()=>{
+    return{ 
+        series: [{ 
+          type: "line", 
+          seriesLayoutBy: 'row', 
+          smooth:0.2,
+         }],
+        grid: {
+          left: "0px",
+          right: "0px",
+          top: "0px",
+          bottom: "0px",
+          containLabel: true,
+        },
+        legend: {
+          show:false
+          // itemHeight: 4,
+          // itemWidth: 16,
+        },
+        yAxis:{
+         show:true,
+         axisLabel:{
+            show:false
+         }
+        },
+        xAxis: {
+         axisLabel: {
+            color: "#909399",
+            fontSize: 12,
+            align: "left"
+          },
+          axisTick: {
+            show: false
+          },
+          axisLine: {
+             lineStyle: {
+                color: 'rgba(144, 147, 153, 0.30)',
+              },
+          },
+        },
+        dataset: {
+            dimensions: [
+                { name: 'time', type: 'time' },
+                { name: 'value' },
+    
+              ],
+              source: [chartdata?.x, chartdata?.y],
+              sourceHeader: false,
+        },
+    }
+}, [chartdata])
+return lineopt
+}
+ 
+export const settings = {
+  dots: false,
+  infinite: true,
+  slidesToShow:3,
+  slidesToScroll: 1, 
+  vertical: true,
+  verticalSwiping: true,
+  speed: 2000,
+  autoplaySpeed: 1000,
+  autoplay:true,
+  effect:"fade"
+ 
 }

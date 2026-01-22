@@ -73,16 +73,15 @@ export default function Index() {
       'timePeriodEnergy'
     ],
     runtimeStorage: [ // 储能管理
-      "station",
-      "PCSMonitor", // pcs监控
-      // "BMSMonitor",
-      "storageControl",
-      "consumeStatistics",
+      "storageOverview",
+      "cabinetMonitor",
+      "pCSMonitor",
+      "bMSMonitor",
+      "ENVMonitor",
       "earningsStatistics",
-      "chargingOrder",
-      "environment",
       "alarmMessage",
       "operationLog",
+      "storageReport",
     ],
     runtimeMaintenance: [ // 运维管理
       "summary",
@@ -249,21 +248,21 @@ export default function Index() {
       }
       if (primary == "runtimeStorage") {
         switch (nested) {
-          case "PCSMonitor":
+          case "cabinetMonitor":
             setConfig({ isSite: true, isTank: true, isPcs: true });
             break;
-          /*  case "BMSMonitor":
-             setConfig({ isSite: true});
-             break;   */
-          case "storageControl":
-            setConfig({ isSite: true, isPcs: true });
+          case "pCSMonitor":
+            setConfig({ isSite: true, isTank: true, isPcs: true });
+            break;
+          case "bMSMonitor":
+            setConfig({ isSite: true, isTank: true });
             break;
           case "earningsStatistics":
-          case "environment":
-          case "consumeStatistics":
-          case "station":
+          case "ENVMonitor":
+          case "storageOverview":
           case "alarmMessage":
           case "operationLog":
+          case "storageReport":
             setConfig({ isSite: true });
             break;
           default:

@@ -165,5 +165,6 @@ export { ReactComponent as efficiencyAnalysiskpiReport } from './efficiencyAnaly
 export { ReactComponent as efficiencyAnalysisairCompressorKPI } from './efficiencyAnalysis/airCompressorKPI.svg'
 export { ReactComponent as efficiencyAnalysisrefrigeratorCOP } from './efficiencyAnalysis/refrigeratorCOP.svg'
 export { ReactComponent as efficiencyAnalysisairConditionerKPI} from './efficiencyAnalysis/airConditionerKPI.svg'
-
-//
+export { ReactComponent as efficiencyAnalysisheatPumpKPI} from './efficiencyAnalysis/heatPumpKPI.svg'
+export { ReactComponent as efficiencyAnalysisboilerKPI} from './efficiencyAnalysis/boilerKPI.svg'
+//能效分析
