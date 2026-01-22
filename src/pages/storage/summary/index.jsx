@@ -361,6 +361,7 @@ export default function Index() {
         </Titlelayout>
         </div>
         <div className="right">
+          <img src={imgurl["error"]}></img>
           <div className="rightup">
                   <Titlelayout title={title} layout="flex">
                     <Station>

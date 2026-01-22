@@ -595,8 +595,19 @@ export const Selectmenus  =createSelector(
 //export const allsinderRunMenus  = state => state.system.menus?.allsinderRunMenus
 export const selectProjectId = state => state.system.menus?.projectId
 export const selectOneLevel = state =>  state.system.onelevel
-export const selectOneLevelDefaultId = state => Number.isFinite(state.system.currlevel?.id) ? state.system.currlevel?.id : Number.isFinite(state.system.onelevel[0]?.id) ? state.system.onelevel[0]?.id : null
-
+export const selectcurrlevel = state => state.system.currlevel
+//export const selectOneLevelDefaultId = state => Number.isFinite(state.system.currlevel?.id) ? state.system.currlevel?.id : Number.isFinite(state.system.onelevel[0]?.id) ? state.system.onelevel[0]?.id : null
+export const selectOneLevelDefaultId = createSelector(
+  [selectcurrlevel, selectOneLevel],
+  (currlevel, onelevel) => {
+     let ids = onelevel.map(m => m.id)
+      if(Number.isInteger(currlevel?.id) && ids.includes(currlevel?.id)) {
+        return currlevel?.id
+      }else {
+        return   Number.isInteger(onelevel[0]?.id) ? onelevel[0]?.id : null
+      }
+  }
+)
 export const lightlevel= state=>state.system.lightlevel
 
 
