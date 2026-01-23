@@ -1,22 +1,32 @@
 import React from 'react'
-import { Space} from 'antd'
-import Titlelayout from "@com/titlelayout";
-import {CdatePicker} from '@com/comstyled/index'
+
+import {useQueryMeterPower,useQueryChargeAndDischargePower,useQueryLoadSummaryPower} from '../api'
+
+import Chartcom from './chart'
+import { isObject } from 'lodash';
 export default function Index() {
-  const extra=<Space><CdatePicker style={{width: "120px"}} /> <CdatePicker style={{width: "120px"}} /></Space>
-  const props ={
-    bg:'transparent',
-    bordered:'no',
-    extra
+   
+  
+ 
+  const onHander =(api) => {
+    return async (params)=>{
+        const {data, success} = await api(params)
+         if(success && isObject(data)) {
+            return data
+         }else {
+            return []
+         }
   }
+}
+  const getData = onHander(useQueryMeterPower)  
+  const getData2 = onHander(useQueryChargeAndDischargePower)
+  const getData3 = onHander(useQueryLoadSummaryPower)
   return (
     <div className='power'>
-       <Titlelayout title='关口表功率' {...props} > 
-
-       </Titlelayout>
+        <Chartcom title="关口表功率" getData={getData} />
        <div className="down">
-        <Titlelayout title='充放电'{...props}></Titlelayout>
-        <Titlelayout title='负载总功率' {...props}></Titlelayout>
+       <Chartcom title="充放电功率" getData={getData2} /> 
+       <Chartcom title="负载总表功率" getData={getData3} />  
        </div>
     </div>
   )
