@@ -1,7 +1,8 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useSelector } from "react-redux";
 import { useOutletContext } from "react-router-dom";
 import { selectProjectId } from "@redux/systemconfig.js";
+import { StorageMonitorRuntime } from "@api/api.js";
 import Pagecount from "@com/pagecontent";
 import Titlelayout from "@com/titlelayout";
 import styled from "styled-components";
@@ -113,18 +114,49 @@ export default function BmsMonitor() {
     ],
   };
 
-  // 静态演示数据 - BMS设备数据总览（9个卡片）
-  const bmsOverviewData = {
-    stackVoltage: 702,
-    stackCurrent: 36,
-    stackPower: 356,
-    soc: 9,
-    soh: 45,
-    maxCellVoltage: 3.17,
-    minCellVoltage: 3.12,
-    maxCellTemp: 27,
-    minCellTemp: 25,
-  };
+  // BMS设备数据总览 - 从接口获取
+  const [bmsOverviewData, setBmsOverviewData] = useState({
+    stackVoltage: 0,
+    stackCurrent: 0,
+    maxCellVoltage: 0,
+    minCellVoltage: 0,
+    maxCellTemp: 0,
+    minCellTemp: 0,
+    maxDischargePower: 0,
+    maxChargePower: 0,
+  });
+
+  // 获取BMS数据总览
+  const getBmsDataInfo = () => {
+    const bmsIdValue = bms_id || -1 // 先写死
+    console.log('Calling QueryBMSDataInfo API with:', { projectId, bmsId: bmsIdValue })
+    StorageMonitorRuntime.queryBMSDataInfo(projectId, bmsIdValue).then(res => {
+      console.log('QueryBMSDataInfo response:', res)
+      if (res.success && res.data && Array.isArray(res.data)) {
+        // 将数组格式转换为对象格式
+        const dataMap = {}
+        res.data.forEach(item => {
+          dataMap[item.index] = item.value
+        })
+        setBmsOverviewData({
+          stackVoltage: Number(dataMap[1]) || 0,           // 电池堆电压
+          stackCurrent: Number(dataMap[2]) || 0,           // 电池堆电流
+          maxCellVoltage: Number(dataMap[3]) || 0,         // 堆最高电池电压
+          minCellVoltage: Number(dataMap[4]) || 0,         // 堆最低电池电压
+          maxCellTemp: Number(dataMap[5]) || 0,            // 系统最高温度
+          minCellTemp: Number(dataMap[6]) || 0,            // 最低电池温度
+          maxDischargePower: Number(dataMap[7]) || 0,      // 堆允许最大放电功率
+          maxChargePower: Number(dataMap[8]) || 0,         // 堆允许最大充电功率
+        })
+      }
+    })
+  }
+
+  useEffect(() => {
+    if (projectId) {
+      getBmsDataInfo()
+    }
+  }, [projectId, bms_id])
 
   // 静态演示数据 - BMS电池组数据详情
   const [batteryData] = useState([
