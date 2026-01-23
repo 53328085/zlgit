@@ -81,7 +81,7 @@ export default function Index() {
       "earningsStatistics",
       "alarmMessage",
       "operationLog",
-      "storageReport",
+     // "storageReport",
     ],
     runtimeMaintenance: [ // 运维管理
       "summary",
@@ -130,6 +130,9 @@ export default function Index() {
     designerSolar: [//光伏发电
       "station",
       "inverter"
+    ],
+    storage:[
+      'storageDevice'
     ]
   }); // 需要显示搜索的页面
 
@@ -246,7 +249,7 @@ export default function Index() {
       if (primary == "runtimeStorage") {
         switch (nested) {
           case "cabinetMonitor":
-            setConfig({ isSite: true, isTank: true, isPcs: true });
+            setConfig({ isSite: true, isTank: true, isPcs: false });
             break;
           case "pCSMonitor":
             setConfig({ isSite: true, isTank: true, isPcs: true });
@@ -255,9 +258,13 @@ export default function Index() {
             setConfig({ isSite: true, isTank: true, isBms: true });
             break;
           case "earningsStatistics":
+            setConfig({ isSite: true, isdate: true,shiftNo: true });
+            break;
+          case "alarmMessage":  //definedaterange
+          setConfig({ isSite: true, definedaterange: true  });
+          break;
           case "ENVMonitor":
-          case "storageOverview":
-          case "alarmMessage":
+          case "storageOverview":        
           case "operationLog":
           case "storageReport":
             setConfig({ isSite: true });
@@ -366,6 +373,12 @@ export default function Index() {
             break;
           case "inverter":
             setConfig({ custview: true });
+            break;
+        }
+      }else if(primary == "storage"){
+        switch (nested) {
+          case 'storageDevice':
+            setConfig({ isSite: true, isTank: true });
             break;
         }
       }

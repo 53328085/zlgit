@@ -1,4 +1,4 @@
-import { DatePicker } from 'antd';
+import { DatePicker,Form } from 'antd';
 import React, { useState, useEffect } from 'react';
 import moment from 'moment';
 const { RangePicker } = DatePicker;
@@ -72,4 +72,10 @@ export const Daterange = ({value, onChange,rangeDate}) => {
     value: 2,
   }]
 
- 
+ export const  DefineDateRange=(props)=>{
+    return (
+      <Form.Item name="definerangedate" initialValue={[moment().startOf("day"), moment().endOf("day")]}  >
+        <Daterange rangeDate={props.config?.rangeDate || 31} />
+      </Form.Item>
+    )
+ }

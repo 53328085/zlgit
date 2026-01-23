@@ -378,13 +378,13 @@ export const FormComp = (props) => {
                                 return Promise.resolve()
                             } else {
                                 let val = value.trim()
- 
+
                                 if (val.split(" ").join("").length !== 12) {
                                     return Promise.reject(new Error("设备编号长度12位"))
                                 } else {
                                     return Promise.resolve()
                                 }
-                            } 
+                            }
                         }
                     }]}>
                         <Input />
@@ -392,7 +392,8 @@ export const FormComp = (props) => {
           <Form.Item label="设备名称" name="name" rules={rules}>
             <Input />
           </Form.Item>
-          {deviceStyle !== 13 &&
+          {deviceStyle !== 11 &&
+            deviceStyle !== 13 &&
             deviceStyle !== 14 &&
             deviceStyle !== 18 &&
             deviceStyle !== 20 &&
@@ -452,12 +453,12 @@ export const FormComp = (props) => {
                             </Col>
                             <Col span={7}>
                                 <div style={{paddingBottom: 12}}>通道配置</div>
-                                    
+
                                     <Form.Item
                                         label={ <Checkbox onChange={(e)=>{checklistRef.current.check1=e.target.checked}}></Checkbox>}
                                         name="channel1" rules={[...rules,validator]}
                                         labelCol={2}
-                                    >   
+                                    >
                                         <Space size='large'>
                                             <Input value={name1} onChange={(e) => {
                                                 setChannelName1(e.target.value)
@@ -469,13 +470,13 @@ export const FormComp = (props) => {
                                             }}>分区配置</Button>
                                         </Space>
                                     </Form.Item>
- 
-                                
-                                <Form.Item 
-                                label={<Checkbox onChange={(e)=>{checklistRef.current.check2=e.target.checked}}></Checkbox>} 
+
+
+                                <Form.Item
+                                label={<Checkbox onChange={(e)=>{checklistRef.current.check2=e.target.checked}}></Checkbox>}
                                 name="channel2"  rules={[...rules,validator]}
                                 labelCol={2}
-                                
+
                                 >
                                     <Space size='large'>
                                     <Input value={name2} onChange={(e)=>{
@@ -488,11 +489,11 @@ export const FormComp = (props) => {
                                     }}>分区配置</Button>
                                     </Space>
                                 </Form.Item>
-                                <Form.Item 
-                                label={<Checkbox onChange={(e)=>{checklistRef.current.check3=e.target.checked}}></Checkbox>} 
+                                <Form.Item
+                                label={<Checkbox onChange={(e)=>{checklistRef.current.check3=e.target.checked}}></Checkbox>}
                                 name="channel3"  rules={[...rules,validator]}
                                 labelCol={2}
-                                
+
                                 >
                                     <Space size='large'>
                                     <Input value={name3} onChange={(e)=>{
@@ -505,11 +506,11 @@ export const FormComp = (props) => {
                                     }}>分区配置</Button>
                                     </Space>
                                 </Form.Item>
-                                <Form.Item 
-                                label={<Checkbox onChange={(e)=>{checklistRef.current.check4=e.target.checked}}></Checkbox>} 
+                                <Form.Item
+                                label={<Checkbox onChange={(e)=>{checklistRef.current.check4=e.target.checked}}></Checkbox>}
                                 name="channel4" rules={[...rules,validator]}
                                 labelCol={2}
-                                
+
                                 >
                                     <Space size='large'>
                                     <Input value={name4} onChange={(e)=>{
@@ -524,7 +525,7 @@ export const FormComp = (props) => {
                                 </Form.Item>
                             </Col>
                         </>
-                        
+
                     ) : null
                 } */}
       </Row>
@@ -739,7 +740,7 @@ export const EditFormComp = (props) => {
       form.setFieldsValue({ commAddress: 0, commPort: 0, commProtocol: 0 });
     }
   };
- 
+
   useEffect(() => {
     if (form?.getFieldsValue().gatewayId !== 0) {
       setIsdisable(true);
@@ -847,7 +848,8 @@ export const EditFormComp = (props) => {
           <Form.Item label="设备名称" name="name" rules={rules}>
             <Input />
           </Form.Item>
-          {deviceStyle !== 13 &&
+          {deviceStyle !== 11 &&
+            deviceStyle !== 13 &&
             deviceStyle !== 14 &&
             deviceStyle !== 18 &&
             deviceStyle !== 20 &&

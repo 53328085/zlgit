@@ -21,6 +21,7 @@ import IntelligentControl from './intelligentControl' //智能控制
 import Pv from './pv' //光伏设备
 import { Monitoring } from '@api/api.js'
 import { message } from 'antd'
+import Storage from '@pages/monitoring/configure/device/Storage'
 const { DeviceTypeManager: { AllDeviceStyle, }, DeviceManager: { OneLevel } } = Monitoring
 
 export default function Index() {
@@ -65,6 +66,7 @@ export default function Index() {
           arr[7] = <HotWater deviceStyle={k.deviceStyle} />
         } else if (k.deviceStyle > 7) {
           let i = Number(k.deviceStyle)
+          i == 11 ? arr[i] = <Storage deviceStyle={k.deviceStyle} name={k.name} /> :
           i == 12 ? arr[i] = <Circuit deviceStyle={k.deviceStyle} name={k.name} /> :
             i == 13 ? arr[i] = <Shock deviceStyle={k.deviceStyle} name={k.name} /> :
               i == 14 ? arr[i] = <Fiber deviceStyle={k.deviceStyle} name={k.name} /> :

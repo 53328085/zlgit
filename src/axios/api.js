@@ -608,7 +608,7 @@ export class EnergyOverView {
     server.post(
       `/Energy/EnergyOverViewRuntime/QueryEnergyInfoOverview?projectId=${projectId}`
     );
-  static QueryImageBuilding = (projectId, buildingId,date,type) =>
+  static QueryImageBuilding = (projectId, buildingId, date, type) =>
     server.get(
       `Energy/EnergyOverViewRuntime/QueryImageBuilding?projectId=${projectId}&buildingId=${buildingId}&date=${date}&dayMonthYear=${type}`
     );
@@ -986,6 +986,38 @@ export class StorageContainerDesigner {
     server.delete(
       `/Storage/StorageContainerDesigner/DeleteContainer?projectId=${projectId}&id=${id}`
     );
+}
+
+// 储能管理设置--储能设备、环境监控配置
+export class StorageDeviceDesigner {
+  //获取储能设备Tab页数据
+  static getStorageDeviceTabsApi = (projectId, containerId) =>
+    server.get(
+      `/Storage/StorageEquipmentDesigner/QueryTabsEquipment?projectId=${projectId}&containerId=${containerId}`
+    );
+
+  //获取环境监控Tab页数据
+  static getStorageEnvironmentTabsApi = (projectId, containerId) =>
+    server.get(
+      `/Storage/StorageEquipmentDesigner/QueryTabsENV?projectId=${projectId}&containerId=${containerId}`
+    );
+
+  //获取储能设备、环境监控设备列表数据
+  // params = { projectId, areaId, siteId, containerId, tab }
+  // tab:10-电表 201-PCS 202-协控EMU 203-电池堆ARR 204-电池簇 205-电池组 301-除湿机 302-液冷系统 303-消防系统 304-风冷空调 305-环境温度传感器 306-水浸传感器
+  static getStorageDeviceListByTabApi = (params) =>
+    server.post(`/Storage/StorageEquipmentDesigner/QueryDeviceList`, params);
+
+  //获取储能设备、环境监控设备配置列表和未配置列表
+  static getStorageDeviceConfigListApi = (projectId, siteId, containerId, tab) =>
+    server.get(
+      `/Storage/StorageEquipmentDesigner/GetDeviceInfo?projectId=${projectId}&siteId=${siteId}&containerId=${containerId}&tab=${tab}`
+    );
+
+  //配置储能设备、环境监控设备
+  //params = [{sn:'',type: 101-关口电表 102-计量电表 103-负载总表 201-PCS 202-协控EMU 203-电池堆ARR 204-电池簇 205-电池组 301-除湿机 302-液冷系统 303-消防系统 304-风冷空调 305-环境温度传感器 306-水浸传感器}]
+  static setStorageDeviceConfigApi = (params, projectId, siteId, containerId, tab) =>
+    server.post(`/Storage/StorageEquipmentDesigner/Config?projectId=${projectId}&siteId=${siteId}&containerId=${containerId}&tab=${tab}`, params);
 }
 
 export class RuntimeHMI {
@@ -1870,6 +1902,8 @@ export const Monitoring = {
       server.post(`/Monitor/Device/QueryByPageElectric`, data), //获取电表
     QueryByPageHotWater: (data) =>
       server.post(`/Monitor/Device/QueryByPageHotWater`, data), //获取热水表
+    QueryByPageStorageDevice: (data) =>
+      server.post(`/Monitor/Device/QueryByPageStorageDevice`, data), //获取储能设备
     QueryByPage: (data) => server.post(`/Monitor/Device/QueryByPage`, data),
     QueryByPagePV: (data) => server.post(`/Monitor/Device/QueryByPagePV`, data), //光伏设备查询
     QueryByPageGateWay: (data) =>
@@ -1894,10 +1928,13 @@ export const Monitoring = {
       server.get(`/Safe/Alarm/QueryPlanList?projectId=${projectId}`), //告警计划
     AddElectric: (data) => server.post(`/Monitor/Device/AddElectric`, data), //新增电表
     AddHotWater: (data) => server.post(`/Monitor/Device/AddHotWater`, data), //新增热水表
+    AddStorageDevice: (data) => server.post(`/Monitor/Device/AddStorageDevice`, data), //新增储能设备
     UpdateElectric: (data) =>
       server.post(`/Monitor/Device/UpdateElectric`, data), //更新电表
     UpdateHotWater: (data) =>
       server.post(`/Monitor/Device/UpdateHotWater`, data), //更新电表
+    UpdateStorageDevice: (data) =>
+      server.post(`/Monitor/Device/UpdateStorageDevice`, data), //更新储能设备
     UpdateFactor: (data) => server.post(`/Monitor/Device/UpdateFactor`, data), //更新倍率
     DeleteElectric: (data) =>
       server.delete(
@@ -1907,6 +1944,10 @@ export const Monitoring = {
       server.delete(
         `/Monitor/Device/DeleteHotWater?projectId=${data.projectId}&sn=${data.sn}`
       ), //删除电表
+    DeleteStorageDevice: (data) =>
+      server.delete(
+        `/Monitor/Device/DeleteStorageDevice?projectId=${data.projectId}&sn=${data.sn}`
+      ), //删除储能设备
     QueryByPageWater: (data) =>
       server.post(`/Monitor/Device/QueryByPageWater`, data), //查询水表
     AddWater: (data) => server.post(`/Monitor/Device/AddWater`, data), //新增水表
@@ -1965,6 +2006,8 @@ export const Monitoring = {
     ImportGas: (data) => server.post(`/Monitor/Device/ImportGas`, data), //导入燃气表
     ImportHotWater: (data) =>
       server.post(`/Monitor/Device/ImportHotWater`, data), //导入热水表
+    ImportStorageDevice: (data) =>
+      server.post(`/Monitor/Device/ImportStorageDevice`, data), //导入储能设备
     ImportSensor: (data) => server.post(`/Monitor/Device/ImportSensor`, data), //导入传感器
     ImportTransformer: (data) =>
       server.post(`/Monitor/Device/ImportTransformer`, data), //导入变压器
@@ -2153,8 +2196,8 @@ export const Monitoring = {
       server.get(
         `/Monitor/Runtime/QueryMonthUsage?projectId=${data.projectId}&areaId=${data.areaId}&type=${data.type}`
       ), //月用量
-      GetInpuList: (projectId, alike) => server.get(`Monitor/RuntimeManualInput/GetInpuList?projectId=${projectId}&alike=${alike}`), //获取手动输入列表
-      ManualInput: (projectId, sn, value, date, time) => server.post(`Monitor/RuntimeManualInput/ManualInput?projectId=${projectId}&sn=${sn}&value=${value}&date=${date}&time=${time}`),//手动录入
+    GetInpuList: (projectId, alike) => server.get(`Monitor/RuntimeManualInput/GetInpuList?projectId=${projectId}&alike=${alike}`), //获取手动输入列表
+    ManualInput: (projectId, sn, value, date, time) => server.post(`Monitor/RuntimeManualInput/ManualInput?projectId=${projectId}&sn=${sn}&value=${value}&date=${date}&time=${time}`),//手动录入
   },
   //网关检测
   RuntimeGateway: {
@@ -2686,13 +2729,13 @@ export class energyDesigner {
     );
   static queryEnergyConfigedDevicesInfo = (params) =>
     server.get(
-      `Energy/EnergyClassifyDesigner/QueryEnergyConfigedDevicesInfo`,{params}
+      `Energy/EnergyClassifyDesigner/QueryEnergyConfigedDevicesInfo`, { params }
     );
   static queryEnergyNoConfigedDevices = (projectId, type) =>
     server.get(
       `Energy/EnergyClassifyDesigner/QueryEnergyNoConfigedDevices?projectId=${projectId}&type=${type}`
     );
-  static saveEnergyDevices = (projectId, type, classifyId,areaId, data) =>
+  static saveEnergyDevices = (projectId, type, classifyId, areaId, data) =>
     server.post(
       `Energy/EnergyClassifyDesigner/SaveEnergyDevices?projectId=${projectId}&type=${type}&classifyId=${classifyId}&areaId=${areaId}`,
       data
@@ -3073,7 +3116,7 @@ export class DistributionMeter {
   static QueryGXCWBaseInfo = () =>
     server.get(`/Distribution/DistributionMeter/QueryGXCWBaseInfo`);
 
-  static DeleteGXCWInfo = (id,projectId) => //配置态光纤测温
+  static DeleteGXCWInfo = (id, projectId) => //配置态光纤测温
     server.delete(`/Distribution/DistributionMeter/DeleteGXCWInfo?id=${id}&projectId=${projectId}`);
 }
 
@@ -4365,7 +4408,7 @@ export class EnergyManagement {
    *
    */
   static setTimePeriodSettingInfoApi = (params) =>
-    server.post('/Energy/EnergyTariffTimeDesigner/AddTimeSharePlan',  params );
+    server.post('/Energy/EnergyTariffTimeDesigner/AddTimeSharePlan', params);
   /**
    * 启用/禁用项目分时配置
    * @param {{projectId: *, enable: number}} params
@@ -4373,7 +4416,7 @@ export class EnergyManagement {
    * @param {Number} params.enable 1-启用，0-禁用
    */
   static updateProjectTimePeriodSettingStatusApi = (params) =>
-    server.post('/Energy/EnergyTariffTimeDesigner/EnableTariffTimePlan',  params );
+    server.post('/Energy/EnergyTariffTimeDesigner/EnableTariffTimePlan', params);
   /**
    * 获取项目分时配置状态
    * @param {Object} params
@@ -4406,7 +4449,7 @@ export class EnergyManagement {
    *
    */
   static editTimePeriodSettingInfoApi = (params) =>
-    server.post('/Energy/EnergyTariffTimeDesigner/UpdateTariffTimePlan',  params );
+    server.post('/Energy/EnergyTariffTimeDesigner/UpdateTariffTimePlan', params);
   /**
    * 删除分时设置信息
    * @param {Object} params
@@ -4414,7 +4457,7 @@ export class EnergyManagement {
    * @param {String} params.enableDate 启用时间
    */
   static deleteTimePeriodSettingInfoApi = (params) =>
-    server.delete('/Energy/EnergyTariffTimeDesigner/DeleteTimeSharePlan',  { params } );
+    server.delete('/Energy/EnergyTariffTimeDesigner/DeleteTimeSharePlan', { params });
 }
 
 

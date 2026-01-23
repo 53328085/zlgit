@@ -428,6 +428,7 @@ export default function GatewayDetail(props) {
       5: "用电量 (kWh)",
       7: "用水量 (m³)",
       18: "流量 (m³)",
+      8: "流量 (m³)",
     }[deviceStyle] || "";
   let todayA =
     {
@@ -438,6 +439,7 @@ export default function GatewayDetail(props) {
       5: "用电量",
       7: "用水量",
       18: "流量",
+      8: "流量",
     }[deviceStyle] || "";
   let unit =
     {
@@ -448,6 +450,7 @@ export default function GatewayDetail(props) {
       5: "(kWh)",
       7: "(m³)",
       18: "(m³)",
+      8: "(m³)",
     }[deviceStyle] || "";
   const [boptions, setOptions] = useState({
     //能耗趋势图表

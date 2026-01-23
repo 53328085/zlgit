@@ -23,6 +23,7 @@
     "@topology/flow-diagram": "^0.3.0",
     "@topology/layout": "^0.3.0",
     "@topology/sequence-diagram": "^0.3.0",
+    "@xyflow/react": "^12.10.0",
     "ahooks": "3.7.8",
     "antd": "^4.24.8",
     "axios": "^0.27.2",
