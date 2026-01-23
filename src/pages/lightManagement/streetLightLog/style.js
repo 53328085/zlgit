@@ -11,6 +11,10 @@ export  const Mainwrap = styled.div`
      display: flex;
      align-items: center;
      background-color: #fff;
+     .ant-form-inline .ant-form-item-with-help {
+       margin-bottom: 0px;
+
+     }
    }
    .down {
     flex:1;
