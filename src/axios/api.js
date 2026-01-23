@@ -3724,6 +3724,10 @@ export class StorageMonitorRuntime {
     server.get(
       `/Storage/StorageMonitorBMS/QueryBMSDataInfo?projectId=${projectId}&pcsId=${pcsId}`
     );
+  static queryBMSTableInfo = (projectId, pcsId) =>
+    server.get(
+      `/Storage/StorageMonitorBMS/QueryBMSTableInfo?projectId=${projectId}&pcsId=${pcsId}`
+    );
 }
 //储能设备管理
 export class StorageEquipmentDesigner {

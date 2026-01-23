@@ -126,6 +126,11 @@ export default function BmsMonitor() {
     maxChargePower: 0,
   });
 
+  // BMS电池组数据详情 - 从接口获取
+  const [batteryData, setBatteryData] = useState([]);
+  const [batteryTableLoading, setBatteryTableLoading] = useState(false);
+  const [batteryTableHeads, setBatteryTableHeads] = useState([]);
+
   // 获取BMS数据总览
   const getBmsDataInfo = () => {
     const bmsIdValue = bms_id || -1 // 先写死
@@ -152,41 +157,44 @@ export default function BmsMonitor() {
     })
   }
 
+  // 获取BMS电池组数据详情
+  const getBMSTableInfo = () => {
+    const bmsIdValue = bms_id || -1
+    setBatteryTableLoading(true)
+    StorageMonitorRuntime.queryBMSTableInfo(projectId, bmsIdValue).then(res => {
+      if (res.success && res.data) {
+        const { heads, datas } = res.data
+        // 根据 heads 动态生成 columns 配置
+        const columns = heads.map((title, index) => ({
+          title,
+          dataIndex: `col_${index}`,
+          key: `col_${index}`,
+          align: 'center',
+          width: 100,
+        }))
+        // 转换 datas 为 dataSource 格式
+        const dataSource = datas.map((row, rowIndex) => {
+          const item = { key: rowIndex }
+          row.forEach((val, colIndex) => {
+            item[`col_${colIndex}`] = val
+          })
+          return item
+        })
+        setBatteryTableHeads(columns)
+        setBatteryData(dataSource)
+        setPagination((prev) => ({ ...prev, total: datas.length }))
+      }
+    }).finally(() => {
+      setBatteryTableLoading(false)
+    })
+  }
+
   useEffect(() => {
     if (projectId) {
       getBmsDataInfo()
+      getBMSTableInfo()
     }
   }, [projectId, bms_id])
-
-  // 静态演示数据 - BMS电池组数据详情
-  const [batteryData] = useState([
-    {
-      clusterNo: 1,
-      soc: 85,
-      soh: 98,
-      voltage: 700,
-      current: 508,
-      maxVoltage: 3195,
-      maxVoltageCellNo: 35,
-      minVoltage: 3170,
-      minVoltageCellNo: 35,
-      maxTemp: 28,
-      maxTempCellNo: 35,
-    },
-    {
-      clusterNo: 2,
-      soc: 82,
-      soh: 97,
-      voltage: 698,
-      current: 505,
-      maxVoltage: 3192,
-      maxVoltageCellNo: 32,
-      minVoltage: 3168,
-      minVoltageCellNo: 32,
-      maxTemp: 27,
-      maxTempCellNo: 32,
-    },
-  ]);
 
   const [pagination, setPagination] = useState({
     current: 1,
@@ -224,6 +232,8 @@ export default function BmsMonitor() {
           <Titlelayout title="BMS电池组数据详情">
             <BmsBatteryTable
               dataSource={batteryData}
+              columns={batteryTableHeads}
+              loading={batteryTableLoading}
               pagination={pagination}
               onChange={handleTableChange}
             />
