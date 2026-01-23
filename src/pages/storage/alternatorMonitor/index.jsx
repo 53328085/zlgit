@@ -2,7 +2,7 @@ import React, { useEffect, useState} from 'react'
 import style from './style.module.less'
 import { message, DatePicker } from 'antd';
 import { selectProjectId, selectOneLevel, levelDefaultLabel, selectOneLevelDefaultId, setCurrentlevel,themeColor } from '@redux/systemconfig.js'
-import {PCSMonitorRuntime, SiteManagerDesigner, StorageContainerDesigner } from '@api/api.js'
+import {PCSMonitorRuntime, SiteManagerDesigner, StorageContainerDesigner, StorageMonitorRuntime } from '@api/api.js'
 import { useReactive, useRequest } from 'ahooks'
 import { useSelector } from 'react-redux'
 import { useNavigate, useOutletContext} from 'react-router-dom'
@@ -44,8 +44,17 @@ const Mainbox = styled.div`
 `
 export default function Index() {
   let {exparams} = useOutletContext()
-  let {areaId,  projectId,  pcsId} = exparams
+  let {areaId, projectId: exparamsProjectId, pcsId} = exparams || {}
   let {value: pcs_id, label} = pcsId || {}
+
+  // 优先使用 exparams 的 projectId，否则使用 redux 中的
+  const reduxProjectId = useSelector(selectProjectId)
+  const projectId = exparamsProjectId || reduxProjectId
+
+  console.log('exparams:', exparams)
+  console.log('pcsId:', pcsId, 'pcs_id:', pcs_id)
+  console.log('exparamsProjectId:', exparamsProjectId, 'reduxProjectId:', reduxProjectId, 'projectId:', projectId)
+
   const {successColor, warningColor} = useSelector(themeColor)
   const {
     queryPCSInfo,
@@ -55,22 +64,12 @@ export default function Index() {
     queryAcTable} = PCSMonitorRuntime
 
   //页面组件
-  // 状态卡片：显示运行状态、热备状态、充放电状态
-  const StatusCard = props => {
-    const { name, value } = props
-    return (
-      <div className={style.statusCard}>
-        <div className={style.cardLabel}>{name}</div>
-        <div className={style.statusValue}>{value}</div>
-      </div>
-    )
-  }
-  // 数据卡片：显示数值和单位
+  // 数据卡片：显示名称、单位、数值
   const DataCard = props => {
-    const { name, unit, value } = props
+    const { name, unit = '', value } = props
     return (
       <div className={style.dataCard}>
-        <div className={style.cardLabel}>{name}（{unit}）</div>
+        <div className={style.cardLabel}>{name}{unit ? `（${unit}）` : ''}</div>
         <div className={style.dataValue}>{value}</div>
       </div>
     )
@@ -86,6 +85,7 @@ export default function Index() {
     { name: '电网频率', unit: 'Hz', value: '50.0' },
     { name: 'IGBT温度', unit: '°C', value: '43' },
   ])
+  const [pcsName, setPcsName] = useState('')
   const [powerData, setPowerData] = useState({
     x: ['00:00', '04:00', '08:00', '12:00', '16:00', '20:00'],
     y: [120, 150, 180, 200, 170, 140]
@@ -98,16 +98,28 @@ export default function Index() {
     warningInfo:[],
     ACData:[]
   })
-  const getContent = () => {
-    // 接口数据（待接口接入后替换）
-  }
-  useEffect(() => {
-     if(!pcs_id) return;
-     if(areaId && projectId) {
-       getContent()
-     }
 
-  }, [areaId, projectId, pcs_id])
+  const getContent = () => {
+    if (!projectId) return
+    const pcsId = -1 // 先写死
+    console.log('Calling API with:', { projectId, pcsId })
+    StorageMonitorRuntime.queryPCSStatusInfo(projectId, pcsId).then(res => {
+      console.log('API response:', res)
+      if (res.success && res.data) {
+        setPcsName(res.data.name || '')
+        if (res.data.items && res.data.items.length > 0) {
+          setLeftValues(res.data.items)
+        }
+      } else {
+        console.warn('获取PCS状态数据失败:', res.errMsg)
+      }
+    })
+  }
+
+  useEffect(() => {
+    console.log('useEffect triggered:', { pcs_id, projectId })
+    getContent()
+  }, [pcs_id, projectId])
   const socOption = {
     type:2,
     color:[warningColor],
@@ -264,21 +276,15 @@ export default function Index() {
       <Mainbox className={style.pcsContent}>
         <div className={style.left + " leftlayout"} key="left">
           <div className={style.title + " leftTitle"}>
-            <span>储能交流器</span>
-           {label && <span className={style.pcsName}>{label}</span>}
+            <span>PCS信息</span>
           </div>
           <div className={style.pcsImgs}>
-            <span className={style.imgTitle}>储能交流器</span>
+            <span className={style.imgTitle}>{pcsName}</span>
             <img className={style.pcsImg} src={pcs}></img>
           </div>
           <div className={style.pcsGrid} key="leftdown">
-            {/* 前3个：状态卡片 */}
-            {leftValues.slice(0, 3).map((item, index) => (
-              <StatusCard key={index} name={item.name} value={item.value} />
-            ))}
-            {/* 后5个：数据卡片 */}
-            {leftValues.slice(3).map((item, index) => (
-              <DataCard key={index + 3} name={item.name} unit={item.unit} value={item.value} />
+            {leftValues.map((item, index) => (
+              <DataCard key={index} name={item.name} unit={item.unit} value={item.value} />
             ))}
           </div>
         </div>
