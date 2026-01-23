@@ -7,6 +7,7 @@ import Titlelayout from "@com/titlelayout";
 import styled from "styled-components";
 import BmsOverviewPanel from "./BmsOverviewPanel";
 import BmsBatteryTable from "./BmsBatteryTable";
+import BmsDeviceDiagram from "./BmsDeviceDiagram";
 import style from "./style.module.less";
 
 // 主布局容器 - 参考PCS页面的rightlayout样式
@@ -18,10 +19,11 @@ const Mainbox = styled.div`
     padding-bottom: 16px;
 
     .leftlayout {
+      position: relative;
       border-radius: 8px;
-      background-color: ${(props) => props.theme.imgbgcolor || "rgb(0, 0, 51)"};
+      background: linear-gradient(rgb(10, 22, 40) 0%, rgb(13, 27, 46) 100%);
       padding: 20px;
-      width: 544px;
+      width: 504px;
       flex-shrink: 0;
 
       .leftTitle {
@@ -56,6 +58,60 @@ export default function BmsMonitor() {
   let { exparams } = useOutletContext() || {};
   let { areaId, bmsId } = exparams || {};
   let { value: bms_id, label: bmsLabel } = bmsId || {};
+
+  // 静态演示数据 - BMS设备拓扑图数据
+  const bmsDiagramData = {
+    stack: {
+      id: 1,
+      name: "电池堆1（DCD001）",
+      items: [
+        { name: "堆当前状态", value: "充电", color: "blue", style: "Value" },
+        { name: "堆 SOC", value: "85.0", unit: "%", color: "green", style: "NameValueOne" },
+        { name: "堆 SOH", value: "99.60", unit: "", color: "green", style: "NameValueOne" },
+      ],
+    },
+    clusters: [
+      {
+        id: 2,
+        name: "1_1 电池簇",
+        pId: 1,
+        items: [
+          { name: "工作状态", value: "充电", unit: "", color: "blue", style: "NameValueTwo" },
+          { name: "SOC", value: "25.0", unit: "%", color: "orange", style: "NameValueTwo" },
+          { name: "电压高值", value: "3.195", unit: "V", color: "green", style: "NameValueTwo" },
+          { name: "电压低值", value: "3.170", unit: "V", color: "green", style: "NameValueTwo" },
+          { name: "温度高值", value: "28", unit: "°C", color: "green", style: "NameValueTwo" },
+          { name: "温度低值", value: "26", unit: "°C", color: "green", style: "NameValueTwo" },
+        ],
+      },
+      {
+        id: 3,
+        name: "1_2 电池簇",
+        pId: 1,
+        items: [
+          { name: "工作状态", value: "就绪", unit: "", color: "blue", style: "NameValueTwo" },
+          { name: "SOC", value: "100.0", unit: "%", color: "green", style: "NameValueTwo" },
+          { name: "电压高值", value: "3.192", unit: "V", color: "green", style: "NameValueTwo" },
+          { name: "电压低值", value: "3.168", unit: "V", color: "green", style: "NameValueTwo" },
+          { name: "温度高值", value: "27", unit: "°C", color: "green", style: "NameValueTwo" },
+          { name: "温度低值", value: "25", unit: "°C", color: "green", style: "NameValueTwo" },
+        ],
+      },
+      {
+        id: 4,
+        name: "1_3 电池簇",
+        pId: 1,
+        items: [
+          { name: "工作状态", value: "放电", unit: "", color: "blue", style: "NameValueTwo" },
+          { name: "SOC", value: "60.0", unit: "%", color: "green", style: "NameValueTwo" },
+          { name: "电压高值", value: "3.200", unit: "V", color: "green", style: "NameValueTwo" },
+          { name: "电压低值", value: "3.180", unit: "V", color: "green", style: "NameValueTwo" },
+          { name: "温度高值", value: "29", unit: "°C", color: "orange", style: "NameValueTwo" },
+          { name: "温度低值", value: "26", unit: "°C", color: "green", style: "NameValueTwo" },
+        ],
+      },
+    ],
+  };
 
   // 静态演示数据 - BMS设备数据总览（9个卡片）
   const bmsOverviewData = {
@@ -116,18 +172,16 @@ export default function BmsMonitor() {
   return (
     <Pagecount bgcolor="transparent" pd="0">
       <Mainbox className={style.bmsContent}>
-        {/* 左侧区域 - 预留给BMS设备图示区域 */}
+        {/* 左侧区域 - BMS设备拓扑图 */}
         <div className="leftlayout" key="left">
           <div className="leftTitle">
-            <span>BMS监控</span>
+            <span>设备拓扑图</span>
             {bmsLabel && <span className={style.bmsName}>{bmsLabel}</span>}
           </div>
-          <div className={style.placeholder}>
-            {/* BMS设备图示区域 - 待后续实现 */}
-            <div style={{ color: "#fff", textAlign: "center", paddingTop: 100 }}>
-              BMS设备图示区域
-            </div>
-          </div>
+          <BmsDeviceDiagram
+            stackData={bmsDiagramData.stack}
+            clusterData={bmsDiagramData.clusters}
+          />
         </div>
 
         {/* 右侧区域 - BMS数据展示 */}
