@@ -94,6 +94,55 @@ export default function Index() {
     x: ['00:00', '04:00', '08:00', '12:00', '16:00', '20:00'],
     y: [85, 80, 75, 70, 65, 60]
   })
+  const [reverseDate, setReverseDate] = useState(null)
+  // 对比数据
+  const [compareData, setCompareData] = useState({
+    series1: [],
+    series2: []
+  })
+  // 获取功率趋势数据
+  const fetchPowerTrends = async (params) => {
+    try {
+      const res = await queryPowerTrends(params.projectId, params.pcsId, params.startTime, params.endTime)
+      if (res.success && res.data) {
+        return {
+          time: res.data.time || [],
+          power: res.data.power || []
+        }
+      } else {
+        console.warn('获取功率趋势数据失败:', res.errMsg)
+        return null
+      }
+    } catch (error) {
+      console.error('获取功率趋势数据异常:', error)
+      return null
+    }
+  }
+  // 反向日期变化时触发接口调用
+  const handleReverseDateChange = async (date, dateString) => {
+    setReverseDate(date)
+    if (date && projectId) {
+      // 构建开始和结束时间（当天00:00:00 到 23:59:59）
+      const startTime = `${dateString} 00:00:00`
+      const endTime = `${dateString} 23:59:59`
+      const res = await fetchPowerTrends({
+        projectId,
+        pcsId: 1,
+        startTime,
+        endTime
+      })
+      if (res) {
+        setCompareData({
+          series1: res.power || [],
+          series2: []
+        })
+        setPowerData({
+          x: res.time || [],
+          y: res.power || []
+        })
+      }
+    }
+  }
   const state = useReactive({
     warningInfo:[],
     ACData:[]
@@ -296,10 +345,10 @@ export default function Index() {
             <div style={{ display: 'flex', gap: 12, alignItems: 'center' }}>
               <DatePicker />
               <span style={{ color: '#333', fontSize: 12 }}>对比</span>
-              <DatePicker />
+              <DatePicker onChange={handleReverseDateChange} />
             </div>
           }>
-            <PowerCompareChart chartData={chartData} />
+            <PowerCompareChart chartData={compareData} />
           </Titlelayout>
         </div>
       </Mainbox>
