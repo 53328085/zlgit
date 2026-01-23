@@ -100,6 +100,19 @@ export default function Index() {
     series1: [],
     series2: []
   })
+  // 实时运行参数数据
+  const [runtimeData, setRuntimeData] = useState({
+    uab: 0,
+    ubc: 0,
+    uca: 0,
+    ia: 0,
+    ib: 0,
+    ic: 0,
+    pwr: 0,
+    q: 0,
+    s: 0,
+    pf: 0
+  })
   // 获取功率趋势数据
   const fetchPowerTrends = async (params) => {
     try {
@@ -165,9 +178,41 @@ export default function Index() {
     })
   }
 
+  // 获取实时运行参数数据
+  const getRuntimeData = () => {
+    if (!projectId) return
+    const pcsId = -1 // 先写死
+    console.log('Calling QueryPCSDataInfo API with:', { projectId, pcsId })
+    StorageMonitorRuntime.queryPCSDataInfo(projectId, pcsId).then(res => {
+      console.log('QueryPCSDataInfo response:', res)
+      if (res.success && res.data && Array.isArray(res.data)) {
+        // 将数组格式转换为对象格式
+        const dataMap = {}
+        res.data.forEach(item => {
+          dataMap[item.index] = item.value
+        })
+        setRuntimeData({
+          uab: Number(dataMap[1]) || 0,  // 线电压AB
+          ia: Number(dataMap[2]) || 0,   // A相电流
+          pwr: Number(dataMap[3]) || 0,  // 有功功率
+          ubc: Number(dataMap[4]) || 0,  // 线电压BC
+          ib: Number(dataMap[5]) || 0,   // B相电流
+          q: Number(dataMap[6]) || 0,    // 无功功率
+          uca: Number(dataMap[7]) || 0,  // 线电压CA
+          ic: Number(dataMap[8]) || 0,   // C相电流
+          s: Number(dataMap[9]) || 0,    // 视在功率
+          pf: Number(dataMap[10]) || 0   // 功率因数
+        })
+      } else {
+        console.warn('获取实时运行参数数据失败:', res.errMsg)
+      }
+    })
+  }
+
   useEffect(() => {
     console.log('useEffect triggered:', { pcs_id, projectId })
     getContent()
+    getRuntimeData()
   }, [pcs_id, projectId])
   const socOption = {
     type:2,
@@ -295,23 +340,6 @@ export default function Index() {
       align:'center'
     },
   ]
-
-
-
-
-  // 静态数据演示
-  const runtimeData = {
-    uab: 2300,
-    ubc: 2300,
-    uca: 2300,
-    ia: 2300,
-    ib: 2300,
-    ic: 2300,
-    pwr: 2300,
-    q: 2300,
-    s: 2300,
-    pf: 0.98
-  }
 
   const chartData = {
     series1: [100, 150, 120, 180, 200, 170, 140, 160, 190, 220, 200, 180],

@@ -3716,6 +3716,10 @@ export class StorageMonitorRuntime {
     server.get(
       `/Storage/StorageMonitorPCS/QueryPCSStatusInfo?projectId=${projectId}&pcsId=${pcsId}`
     );
+  static queryPCSDataInfo = (projectId, pcsId) =>
+    server.get(
+      `/Storage/StorageMonitorPCS/QueryPCSDataInfo?projectId=${projectId}&pcsId=${pcsId}`
+    );
 }
 //储能设备管理
 export class StorageEquipmentDesigner {
