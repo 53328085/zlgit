@@ -132,7 +132,8 @@ export default function Index() {
       "inverter"
     ],
     storage:[
-      'storageDevice'
+      'storageDevice',
+      'storageEnvironment'
     ]
   }); // 需要显示搜索的页面
 
@@ -264,7 +265,7 @@ export default function Index() {
           setConfig({ isSite: true, definedaterange: true  });
           break;
           case "ENVMonitor":
-          case "storageOverview":        
+          case "storageOverview":
           case "operationLog":
           case "storageReport":
             setConfig({ isSite: true });
@@ -378,6 +379,9 @@ export default function Index() {
       }else if(primary == "storage"){
         switch (nested) {
           case 'storageDevice':
+            setConfig({ isSite: true, isTank: true });
+            break;
+          case 'storageEnvironment':
             setConfig({ isSite: true, isTank: true });
             break;
         }

@@ -1018,6 +1018,12 @@ export class StorageDeviceDesigner {
   //params = [{sn:'',type: 101-关口电表 102-计量电表 103-负载总表 201-PCS 202-协控EMU 203-电池堆ARR 204-电池簇 205-电池组 301-除湿机 302-液冷系统 303-消防系统 304-风冷空调 305-环境温度传感器 306-水浸传感器}]
   static setStorageDeviceConfigApi = (params, projectId, siteId, containerId, tab) =>
     server.post(`/Storage/StorageEquipmentDesigner/Config?projectId=${projectId}&siteId=${siteId}&containerId=${containerId}&tab=${tab}`, params);
+
+  //删除配置的储能设备、环境监控设备
+  static deleteStorageDeviceApi = (projectId, sn) =>
+    server.delete(
+      `/Storage/StorageEquipmentDesigner/Delete?projectId=${projectId}&sn=${sn}`
+    );
 }
 
 export class RuntimeHMI {
@@ -3460,9 +3466,9 @@ export class PCSMonitorRuntime {
     server.get(
       `Storage/PCSMonitorRuntime/QueryPCSWarningInfo?projectId=${projectId}&pcsId=${pcsId}`
     );
-  static queryPowerTrends = (projectId, areaId, pcsId) =>
+  static queryPowerTrends = (projectId, pcsId, startTime, endTime) =>
     server.get(
-      `Storage/PCSMonitorRuntime/QueryPowerTrends?projectId=${projectId}&areaId=${areaId}&pcsId=${pcsId}`
+      `Storage/PCSMonitorRuntime/QueryPowerTrends?projectId=${projectId}&pcsId=${pcsId}&startTime=${startTime}&endTime=${endTime}`
     );
   static querySocTrends = (projectId, areaId, pcsId) =>
     server.get(
@@ -3712,176 +3718,21 @@ export class StorageMonitorRuntime {
     server.get(
       `/Storage/StorageMonitorRuntime/QueryContainersStacks?projectId=${projectId}&areaId=${areaId}&siteId=${siteId}`
     );
-}
-//储能设备管理
-export class StorageEquipmentDesigner {
-  static QueryConfigInfo = (projectId, areaId, siteId, alike) =>
+  static queryPCSStatusInfo = (projectId, pcsId) =>
     server.get(
-      `/Storage/StorageEquipmentDesigner/QueryConfigInfo?projectId=${projectId}&areaId=${areaId}&siteId=${siteId}&alike=${alike}`
+      `/Storage/StorageMonitorPCS/QueryPCSStatusInfo?projectId=${projectId}&pcsId=${pcsId}`
     );
-  static GetDeviceInfo = (projectId, siteId, alike) =>
+  static queryPCSDataInfo = (projectId, pcsId) =>
     server.get(
-      `/Storage/StorageEquipmentDesigner/GetDeviceInfo?projectId=${projectId}&siteId=${siteId}&alike=${alike}`
+      `/Storage/StorageMonitorPCS/QueryPCSDataInfo?projectId=${projectId}&pcsId=${pcsId}`
     );
-  static Config = (projectId, siteId, data) =>
-    server.post(
-      `/Storage/StorageEquipmentDesigner/Config?projectId=${projectId}&siteId=${siteId}`,
-      data
-    );
-  static Delete = (projectId, sn) =>
-    server.delete(
-      `/Storage/StorageEquipmentDesigner/Delete?projectId=${projectId}&sn=${sn}`
-    );
-  static BatchConfig = (data) =>
-    server.post(`/Storage/StorageEquipmentDesigner/BatchConfig`, data);
-  static QueryPcsByPage = (data) =>
-    server.post(`/Storage/StorageEquipmentDesigner/QueryPcsByPage`, data);
-  static AddPcs = (projectId, data) =>
-    server.post(
-      `/Storage/StorageEquipmentDesigner/AddPcs?projectId=${projectId}`,
-      data
-    );
-  static UpdatePcs = (projectId, data) =>
-    server.post(
-      `/Storage/StorageEquipmentDesigner/UpdatePcs?projectId=${projectId}`,
-      data
-    );
-  static DeleteEquipment = (projectId, id, type) =>
-    server.delete(
-      `/Storage/StorageEquipmentDesigner/DeleteEquipment?projectId=${projectId}&id=${id}&type=${type}`
-    );
-  static BatchImportPcs = (data) =>
-    server.post(`/Storage/StorageEquipmentDesigner/BatchImportPcs`, data);
-  static QueryBatteryStackByPage = (data) =>
-    server.post(
-      `/Storage/StorageEquipmentDesigner/QueryBatteryStackByPage`,
-      data
-    );
-  static AddBatteryStack = (projectId, data) =>
-    server.post(
-      `/Storage/StorageEquipmentDesigner/AddBatteryStack?projectId=${projectId}`,
-      data
-    );
-  static UpdateBatteryStack = (projectId, data) =>
-    server.post(
-      `/Storage/StorageEquipmentDesigner/UpdateBatteryStack?projectId=${projectId}`,
-      data
-    );
-  static QueryBatteryClusterByPage = (data) =>
-    server.post(
-      `/Storage/StorageEquipmentDesigner/QueryBatteryClusterByPage`,
-      data
-    );
-  static AddBatteryCluster = (projectId, data) =>
-    server.post(
-      `/Storage/StorageEquipmentDesigner/AddBatteryCluster?projectId=${projectId}`,
-      data
-    );
-  static UpdateBatteryCluster = (projectId, data) =>
-    server.post(
-      `/Storage/StorageEquipmentDesigner/UpdateBatteryCluster?projectId=${projectId}`,
-      data
-    );
-  static QueryBatteryPackByPage = (data) =>
-    server.post(
-      `/Storage/StorageEquipmentDesigner/QueryBatteryPackByPage`,
-      data
-    );
-  static AddBatteryPack = (projectId, data) =>
-    server.post(
-      `/Storage/StorageEquipmentDesigner/AddBatteryPack?projectId=${projectId}`,
-      data
-    );
-  static UpdateBatteryPack = (projectId, data) =>
-    server.post(
-      `/Storage/StorageEquipmentDesigner/UpdateBatteryPack?projectId=${projectId}`,
-      data
-    );
-  static QueryCategoryUsed = (projectId, style) =>
+  static queryBMSDataInfo = (projectId, pcsId) =>
     server.get(
-      `/Storage/StorageEquipmentDesigner/QueryCategoryUsed?projectId=${projectId}&style=${style}`
+      `/Storage/StorageMonitorBMS/QueryBMSDataInfo?projectId=${projectId}&pcsId=${pcsId}`
     );
-  static QueryClusterList = (projectId, areaId, siteId, containerId, stackId) =>
+  static queryBMSTableInfo = (projectId, pcsId) =>
     server.get(
-      `/Storage/StorageEquipmentDesigner/QueryClusterList?projectId=${projectId}&areaId=${areaId}&siteId=${siteId}&containerId=${containerId}&stackId=${stackId}`
-    );
-  static BatchImportBatteryStack = (data) =>
-    server.post(
-      `/Storage/StorageEquipmentDesigner/BatchImportBatteryStack`,
-      data
-    );
-  static BatchImportBatteryCluster = (data) =>
-    server.post(
-      `/Storage/StorageEquipmentDesigner/BatchImportBatteryCluster`,
-      data
-    );
-  static BatchImportBatteryPack = (data) =>
-    server.post(
-      `/Storage/StorageEquipmentDesigner/BatchImportBatteryPack`,
-      data
-    );
-}
-
-//环境监控设备
-export class StorageMonitorDesigner {
-  static QueryCategoryUsed = (projectId, style) =>
-    server.get(
-      `/Storage/StorageMonitorDesigner/QueryCategoryUsed?projectId=${projectId}&style=${style}`
-    );
-  static QueryAirByPage = (projectId, data) =>
-    server.post(
-      `/Storage/StorageMonitorDesigner/QueryAirByPage?projectId=${projectId}`,
-      data
-    );
-  static AddAir = (projectId, data) =>
-    server.post(
-      `/Storage/StorageMonitorDesigner/AddAir?projectId=${projectId}`,
-      data
-    );
-  static UpdateAir = (projectId, data) =>
-    server.post(
-      `/Storage/StorageMonitorDesigner/UpdateAir?projectId=${projectId}`,
-      data
-    );
-  static BatchImportAir = (data) =>
-    server.post(`/Storage/StorageMonitorDesigner/BatchImportAir`, data);
-  static QueryTHByPage = (projectId, data) =>
-    server.post(
-      `/Storage/StorageMonitorDesigner/QueryTHByPage?projectId=${projectId}`,
-      data
-    );
-  static AddTH = (projectId, data) =>
-    server.post(
-      `/Storage/StorageMonitorDesigner/AddTH?projectId=${projectId}`,
-      data
-    );
-  static UpdateTH = (projectId, data) =>
-    server.post(
-      `/Storage/StorageMonitorDesigner/UpdateTH?projectId=${projectId}`,
-      data
-    );
-  static BatchImportTH = (data) =>
-    server.post(`/Storage/StorageMonitorDesigner/BatchImportTH`, data);
-  static QueryWByPage = (projectId, data) =>
-    server.post(
-      `/Storage/StorageMonitorDesigner/QueryWByPage?projectId=${projectId}`,
-      data
-    );
-  static AddW = (projectId, data) =>
-    server.post(
-      `/Storage/StorageMonitorDesigner/AddW?projectId=${projectId}`,
-      data
-    );
-  static UpdateW = (projectId, data) =>
-    server.post(
-      `/Storage/StorageMonitorDesigner/UpdateW?projectId=${projectId}`,
-      data
-    );
-  static BatchImportW = (data) =>
-    server.post(`/Storage/StorageMonitorDesigner/BatchImportW`, data);
-  static Delete = (projectId, id, type) =>
-    server.delete(
-      `/Storage/StorageMonitorDesigner/Delete?projectId=${projectId}&id=${id}&type=${type}`
+      `/Storage/StorageMonitorBMS/QueryBMSTableInfo?projectId=${projectId}&pcsId=${pcsId}`
     );
 }
 

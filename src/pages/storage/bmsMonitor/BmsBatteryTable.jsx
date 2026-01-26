@@ -95,7 +95,7 @@ const columns = [
   },
 ];
 
-const BmsBatteryTable = memo(({ dataSource = [], loading = false, pagination, onChange }) => {
+const BmsBatteryTable = memo(({ dataSource = [], loading = false, pagination, onChange, columns }) => {
   return (
     <TableWrapper>
       <Table
