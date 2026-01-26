@@ -256,7 +256,7 @@ const pieOption = ({ data = [], total = 0, radius= ["60%", "80%"],center=["50%",
   },
   legend: {
     top:0,
-    icon: 'circle',
+  //  icon: 'circle',
     itemHeight: 8,
     itemWidth: 8,
     itemGap: 20,

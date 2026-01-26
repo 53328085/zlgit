@@ -173,7 +173,7 @@ module.exports = function (webpackEnv) {
       lessOptions: {
         javascriptEnabled: true,
       }
-      
+
     } : {
       sourceMap: true,
     };
@@ -195,7 +195,7 @@ module.exports = function (webpackEnv) {
     return loaders;
   };
 
-  return {   
+  return {
     target: ['browserslist'],
     // Webpack noise constrained to errors and warnings
     stats: 'errors-warnings',
@@ -352,7 +352,7 @@ module.exports = function (webpackEnv) {
           reactRefreshWebpackPluginRuntimeEntry,
           babelRuntimeEntry,
           babelRuntimeEntryHelpers,
-          babelRuntimeRegenerator,         
+          babelRuntimeRegenerator,
         ]),
       ],
     },
@@ -394,7 +394,7 @@ module.exports = function (webpackEnv) {
                   maxSize: imageInlineSizeLimit,
                 },
               },
-            },            
+            },
             {
               test: /\.svg$/,
               use: [
@@ -403,11 +403,11 @@ module.exports = function (webpackEnv) {
                   options: {
                     svgoConfig: {
                       plugins: [
-                        { 
-                          name: 'preset-default',  
+                        {
+                          name: 'preset-default',
                           params: {
                             overrides: {
-                              removeViewBox: false  
+                              removeViewBox: false
                             }
                           }
                         }
@@ -420,12 +420,12 @@ module.exports = function (webpackEnv) {
                   options: {
                     name: 'static/media/[name].[hash].[ext]',
                   },
-                },  
+                },
               ],
               issuer: {
                 and: [/\.(ts|tsx|js|jsx|md|mdx)$/],
-              }, 
-            }, 
+              },
+            },
             // Process application JS with Babel.
             // The preset includes JSX, Flow, TypeScript, and some ESnext features.
             {
@@ -444,7 +444,7 @@ module.exports = function (webpackEnv) {
                     },
                   ],
                 ],
-                
+
                 plugins: [
                   isEnvDevelopment &&
                     shouldUseReactRefresh &&
@@ -478,7 +478,7 @@ module.exports = function (webpackEnv) {
                 cacheDirectory: true,
                 // See #6846 for context on why cacheCompression is disabled
                 cacheCompression: false,
-                
+
                 // Babel sourcemaps are needed for debugging into node_modules
                 // code.  Without the options below, debuggers like VSCode
                 // show incorrect code and set breakpoints on the wrong lines.
@@ -567,14 +567,14 @@ module.exports = function (webpackEnv) {
                 },
                 'less-loader'
               ),
-            }, 
+            },
             // "file" loader makes sure those assets get served by WebpackDevServer.
             // When you `import` an asset, you get its (virtual) filename.
             // In production, they would get copied to the `build` folder.
             // This loader doesn't use a "test" so it will catch all modules
             // that fall through the other loaders.
-          
-           
+
+
             {
               // Exclude `js` files to keep "css" loader working as it injects
               // its runtime that would otherwise be processed through "file" loader.

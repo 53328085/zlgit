@@ -188,7 +188,7 @@ export default function UseSerach(props) {
     }
 
 
-  }, [props.config?.isSite, AreaID, projectId])
+  }, [props.config, AreaID, projectId])
 /*   useEffect(() => {
     if (Number.isInteger(projectId) && props.config?.isdevsty) {
       getDever()
@@ -433,7 +433,6 @@ export default function UseSerach(props) {
       }
 
   </Space>
-
 
   useEffect(() => {
     if (!props.config?.photovoltaicPowerStation) return;

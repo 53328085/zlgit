@@ -1,14 +1,13 @@
 import { useAntdTable, useMemoizedFn } from 'ahooks'
-import { StorageDeviceDesigner } from '@api/api'
+import { StorageDeviceDesigner, StorageEquipmentDesigner } from '@api/api'
 import React, { useEffect, useRef, useState } from 'react'
 import { message, Space } from 'antd'
 import { CustButton } from '@com/useButton'
-import { getDeviceTitle, getTableColumns } from '@pages/storage/configure/storageDevice/Constant'
 import styled from 'styled-components'
 import CustomTable from '@com/useTable'
 import CustomModal from '@com/useModal'
-import DeviceSettingDialog from '@pages/storage/configure/storageDevice/components/DeviceSettingDialog'
-import ElectricSettingDialog from './ElectricSettingDialog'
+import EnvironmentSettingDialog from '@pages/storage/configure/storageEnvironment/components/EnvironmentSettingDialog'
+import { getDeviceTitle, getTableColumns } from '@pages/storage/configure/storageEnvironment/Constant'
 
 const CustomTitle = styled.div`
     display: flex;
@@ -30,11 +29,10 @@ const CustomTitle = styled.div`
     }
 `
 
-export default function DeviceCommView ({ tab, areaId, projectId, containerId, stationName = {} }) {
+export default function EnvironmentCommView ({ tab, areaId, projectId, containerId, stationName = {} }) {
   const tableRef = useRef(null)
   const deleteDialogRef = useRef(null)
   const deviceSettingDialogRef = useRef(null)
-  const electricSettingDialogRef = useRef(null)
   const { value: siteId = 0 } = stationName
   const [selectId, setSelectId] = useState(0)
   //分页相关数据
@@ -58,12 +56,7 @@ export default function DeviceCommView ({ tab, areaId, projectId, containerId, s
    * 配置按钮点击事件
    */
   const onSettingClick = useMemoizedFn(() => {
-    if (Number(tab) === 10) {
-      //电表页签特殊处理
-      electricSettingDialogRef.current?.showDialog()
-    } else {
-      deviceSettingDialogRef.current?.showDialog()
-    }
+    deviceSettingDialogRef.current?.showDialog()
   })
 
   /**
@@ -93,7 +86,7 @@ export default function DeviceCommView ({ tab, areaId, projectId, containerId, s
       } else {
         message.error({ content: errMsg || '数据出错', duration: 0.3 })
       }
-    }catch (e) {
+    } catch (e) {
       message.error(e.message)
     }
   })
@@ -146,7 +139,7 @@ export default function DeviceCommView ({ tab, areaId, projectId, containerId, s
           <div className="icon"></div>
           <div className="title">{title}列表</div>
         </Space>
-        <CustButton onClick={onSettingClick}>配置{title}</CustButton>
+        <CustButton onClick={onSettingClick} wh="auto" style={{ minWidth: '96px' }}>配置{title}</CustButton>
       </CustomTitle>
       <CustomTable
         ref={tableRef}
@@ -169,16 +162,8 @@ export default function DeviceCommView ({ tab, areaId, projectId, containerId, s
       >
         是否确认删除{title}？
       </CustomModal>
-      <DeviceSettingDialog
+      <EnvironmentSettingDialog
         ref={deviceSettingDialogRef}
-        siteId={siteId}
-        projectId={projectId}
-        containerId={containerId}
-        tab={tab}
-        onRefreshClick={onRefreshClick}
-      />
-      <ElectricSettingDialog
-        ref={electricSettingDialogRef}
         siteId={siteId}
         projectId={projectId}
         containerId={containerId}
