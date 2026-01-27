@@ -2,7 +2,8 @@
 import {lazy} from 'react'
 
 const Summary = lazy(() => import("@pages/storage/summary"))
-const StorageMonitor = lazy(() => import("@pages/storage/storageMonitor"))
+//const StorageMonitor = lazy(() => import("@pages/storage/storageMonitor"))
+const CabinetMonitor = lazy(() => import("@pages/storage/cabinetMonitor"))
 const AlternatorMonitor = lazy(() => import("@pages/storage/alternatorMonitor"))
 const BMSMonitor = lazy(() => import("@pages/storage/bmsMonitor"))
 const Environment = lazy(() => import("@pages/storage/environment"))
@@ -13,7 +14,7 @@ const StroageReport = lazy(() => import("@pages/storage/StroageReport"))
 
 export let runtimeStorage = {
     '011101': Summary,         //储能总览
-    '011102': StorageMonitor,  //储能柜监控
+    '011102': CabinetMonitor,  //储能柜监控
     '011103': AlternatorMonitor,  //PCS监控 (复用storageMonitor)
     '011104': BMSMonitor, //BMS监控
     '011105': Environment,      //环境监控

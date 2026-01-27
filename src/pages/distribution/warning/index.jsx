@@ -42,7 +42,15 @@ const Mainbox = styled.div`
           }
         }
       }
-       
+       .outwrap {
+        flex:1;
+        position: relative;
+        
+        .inwrap {
+          position: absolute;
+          width: 100%;
+        }
+       }
        }
 
 `
@@ -234,7 +242,8 @@ export default  function Index() {
             </Form>
 
            
-            <div>
+            <div className="outwrap">
+              <div className="inwrap">
             <Usetable 
             hbg="#f0f9ff"
             hbc="#515151"
@@ -251,6 +260,7 @@ export default  function Index() {
             }}
             onChange={changePage}
             />
+            </div>
           </div>
           </div>
         </Titlelayout>
