@@ -1,483 +1,676 @@
 import React, { useState, useEffect, useRef } from 'react'
 import styled from 'styled-components'
- 
-import { Button, DatePicker, message, Form, Typography} from 'antd'
+
+import { Button, DatePicker, message, Form, Typography } from 'antd'
 import moment from 'moment'
-import { CaretLeftOutlined, CaretRightOutlined, SearchOutlined } from '@ant-design/icons'
+import { SearchOutlined, CheckCircleOutlined, ExclamationCircleOutlined } from '@ant-design/icons'
 import CustModal from '@com/useModal'
-import {  useOutletContext} from 'react-router-dom'
+import { useOutletContext } from 'react-router-dom'
 import * as echarts from 'echarts'
-import bgImg from './imgs/background.png'
-import icon from './imgs/icon.png'
-import iconHover from './imgs/icon_hover.png'
 import { BMSRuntime } from '@api/api'
- 
- 
+
 import { useReactive } from 'ahooks'
-import Titlelayout from '@com/titlelayout'
 import Pagecount from "@com/pagecontent";
-import {Ichart} from '@com/useEcharts'
 import style from './style.module.less'
-const {Paragraph} = Typography
-  const Maibox = styled.div`
-  background-color: ${props => props.theme.primaryderived || "#000033"};
-  `
-  //页面组件
-  const CustomCss = styled.div`
-    width: 260px;
-    height: 680px;
-    margin-right: 122px;
-    background-image: url('${bgImg}');
-    background-size: 100% 100%;
-    position:relative;
-    .name{
-      position: absolute;
-      padding: 0 4px;
-      top: 30px;
-      right: 20px;
-      height: 20px;
-      line-height: 20px;
-      color: #fff;
-      background-color:  ${props => props.theme.primaryColor};
-    }
-    .itemTitle{
-      position: absolute;
-      left: 0;
-      bottom: 456px;
-      width: 260px;
-      height: 24px;
-      text-align: center;
-      font-size: 14px;
-      color: #fff;
-      line-height: 24px;
-    }
-    .itemData{
-      position: absolute;
-      left: 0;
-      bottom: 0;
-      width: 260px;
-      height: 456px;
-      padding: 10px;
-      padding-top: 16px;
-      .item{
-        margin-bottom: 16px;
-        width: 240px;
-        background-color: #fff;
-        .monitorTitle{
-          width: 100%;
-          height: 24px;
-          line-height: 24px;
-          text-align: center;
-          font-size:12px;
-          color: #fff;
-        }
-        .primarycol {
-          background-color: ${props => props.theme.primaryColor};
-          border: 1px solid ${props => props.theme.primaryColor};
-        }
-        .leftIcon{
-            width: 16px;
-            height: 8px;
-            transform: rotate(-90deg);
-            background-image: url('${icon}');
-            background-size: 100% 100%;
-            background-repeat: no-repeat;
-            &:hover{
-              background-image: url('${iconHover}');
+import deviceImg from '../../../assets/image/energyStorageEquipment.png'
+
+const { Paragraph, Text } = Typography
+const { Item } = Form
+
+// ==================== 样式定义 ====================
+
+// 主容器 - 储能柜卡片
+const ContainerCard = styled.div`
+  width: 280px;
+  min-height: 680px;
+  margin-right: 24px;
+  background: linear-gradient(180deg, #1a2a3f 0%, #0d1624 100%);
+  border: 1px solid #1890ff;
+  border-radius: 8px;
+  position: relative;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+`
+
+// 卡片顶部名称标签
+const CardHeader = styled.div`
+  padding: 12px 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid rgba(24, 144, 255, 0.3);
+`
+
+const NameTag = styled.div`
+  background: #1890ff;
+  color: #fff;
+  padding: 4px 12px;
+  border-radius: 12px;
+  font-size: 13px;
+  font-weight: 500;
+`
+
+// 设备图片区
+const DeviceImage = styled.div`
+  height: 120px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-bottom: 1px solid rgba(24, 144, 255, 0.2);
+  overflow: hidden;
+
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+  }
+`
+
+// 子系统模块容器
+const ModuleSection = styled.div`
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+
+  &:last-child {
+    border-bottom: none;
+  }
+`
+
+// 子系统标题（横向蓝色横条）
+const ModuleTitle = styled.div`
+  background: #1890ff;
+  color: #fff;
+  font-size: 15px;
+  font-weight: 500;
+  padding: 10px 16px;
+  text-align: center;
+`
+
+// 数据网格容器 - 液冷系统（2列）
+const DataGrid2 = styled.div`
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  padding: 16px 12px;
+  gap: 16px;
+`
+
+// 数据网格容器 - 除湿机（3列）
+const DataGrid3 = styled.div`
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  padding: 16px 12px;
+  gap: 12px;
+`
+
+// 单个数据项（列布局）
+const DataItem = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+
+  .label {
+    font-size: 12px;
+    color: rgba(255, 255, 255, 0.6);
+    text-align: center;
+  }
+
+  .value {
+    font-size: 20px;
+    color: ${props => props.$color || '#fff'};
+    font-weight: 600;
+    text-align: center;
+  }
+
+  .unit {
+    font-size: 14px;
+    color: rgba(255, 255, 255, 0.7);
+  }
+`
+
+// 消防系统容器
+const FireSystemContent = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 32px 12px;
+  gap: 12px;
+
+  .icon-wrapper {
+    width: 64px;
+    height: 64px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(82, 196, 26, 0.1);
+    border-radius: 50%;
+  }
+
+  .fire-icon {
+    font-size: 36px;
+    color: #52c41a;
+  }
+
+  .status-text {
+    font-size: 14px;
+    color: rgba(255, 255, 255, 0.8);
+  }
+`
+
+// 拓扑连接线容器
+const TopologyLines = styled.div`
+  width: 100%;
+  height: 80px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  /* margin: 0 0 20px 0; */
+  position: relative;
+`
+
+// SVG 连接线组件
+const ConnectionSVG = styled.svg`
+  width: 100%;
+  height: 100%;
+
+  .main-line {
+    stroke: #1890ff;
+    stroke-width: 2;
+    fill: none;
+  }
+
+  .branch-line {
+    stroke: #1890ff;
+    stroke-width: 2;
+    fill: none;
+  }
+
+  .node-dot {
+    fill: #1890ff;
+  }
+
+  .end-dot {
+    fill: #52c41a;
+  }
+`
+
+// ==================== Mock 数据 ====================
+
+// 临时 Mock 数据函数
+const getMockData = () => {
+  return {
+    success: true,
+    errMsg: "",
+    data: {
+      id: 1,
+      name: "储能站点_示例",
+      containers: [
+        {
+          id: 1,
+          name: "环境监控",
+          types: [
+            {
+              id: 0,
+              name: "液冷系统",
+              index: 0,
+              items: [
+                {
+                  name: "工作模式",
+                  value: "制冷",
+                  unit: "",
+                  index: 1,
+                  time: "2026/01/26 14:30:15",
+                  style: "UD"
+                },
+                {
+                  name: "环境温度",
+                  value: "23.5",
+                  unit: "℃",
+                  index: 2,
+                  time: "2026/01/26 14:30:15",
+                  style: "UD"
+                }
+              ]
+            },
+            {
+              id: 1,
+              name: "除湿机",
+              index: 1,
+              items: [
+                {
+                  name: "当前湿度",
+                  value: "12",
+                  unit: "%",
+                  index: 1,
+                  time: "2026/01/26 14:30:15",
+                  style: "UD"
+                },
+                {
+                  name: "当前温度",
+                  value: "23.5",
+                  unit: "℃",
+                  index: 2,
+                  time: "2026/01/26 14:30:15",
+                  style: "UD"
+                },
+                {
+                  name: "工作状态",
+                  value: "运行",
+                  unit: "",
+                  index: 3,
+                  time: "2026/01/26 14:30:15",
+                  style: "UD"
+                }
+              ]
+            },
+            {
+              id: 2,
+              name: "消防系统",
+              index: 2,
+              items: [
+                {
+                  name: "系统状态",
+                  value: "正常",
+                  unit: "",
+                  index: 1,
+                  time: "2026/01/26 14:30:15",
+                  style: "LR"
+                }
+              ]
             }
-            z-index: 1000;
-          }
-          .rightIcon{
-            width: 16px;
-            height: 8px;
-            transform: rotate(90deg);
-            background-image: url('${icon}');
-            background-size: 100% 100%;
-            background-repeat: no-repeat;
-            &:hover{
-              background-image: url('${iconHover}');
+          ]
+        },
+        {
+          id: 2,
+          name: "环境监控",
+          types: [
+            {
+              id: 0,
+              name: "液冷系统",
+              index: 0,
+              items: [
+                {
+                  name: "工作模式",
+                  value: "制冷",
+                  unit: "",
+                  index: 1,
+                  time: "2026/01/26 14:30:18",
+                  style: "UD"
+                },
+                {
+                  name: "环境温度",
+                  value: "23.5",
+                  unit: "℃",
+                  index: 2,
+                  time: "2026/01/26 14:30:18",
+                  style: "UD"
+                }
+              ]
+            },
+            {
+              id: 1,
+              name: "除湿机",
+              index: 1,
+              items: [
+                {
+                  name: "当前湿度",
+                  value: "12",
+                  unit: "%",
+                  index: 1,
+                  time: "2026/01/26 14:30:18",
+                  style: "UD"
+                },
+                {
+                  name: "当前温度",
+                  value: "23.5",
+                  unit: "℃",
+                  index: 2,
+                  time: "2026/01/26 14:30:18",
+                  style: "UD"
+                },
+                {
+                  name: "工作状态",
+                  value: "运行",
+                  unit: "",
+                  index: 3,
+                  time: "2026/01/26 14:30:18",
+                  style: "UD"
+                }
+              ]
+            },
+            {
+              id: 2,
+              name: "消防系统",
+              index: 2,
+              items: []
             }
-            z-index: 1000;
-          }
-        .temData{
-          padding-top: 6px;
-          display: flex;
-          align-items: center;
-          justify-content: space-around;
-          
-          .tem{
-            width: 90px;
-            font-size: 12px;
-            color: #515151;
-            padding-left: 24px;
-          }
+          ]
         }
-        .tempTime{
-          font-size: 12px;
-          height: 24px;
-          line-height: 24px;
-          color: #999;
-          text-align: center;
-        }
-        .monitorData{
-          height: 48px;
-          padding: 0 10px;
-          font-size: 14px;
-          color: #000;
-          display: flex;
-          align-items: center;
-          justify-content: space-around;
-          span{
-            display: inline-block;
-            min-width: 20px;
-            text-align: center;
-          }
-        }
-      }
+      ]
     }
-  `
-  const LeftButton = styled(CaretLeftOutlined)`
-    font-size: 64px;
-    position: absolute;
-    left: -12px;
-    top: 76px;
-    color: #3c3c62;
-    cursor: pointer;
-      &:hover{
-        color: #f2f2f2;
-      }
-  `
-  const RightButton = styled(CaretRightOutlined)`
-    font-size: 64px;
-    position: absolute;
-    right: -12px;
-    top: 76px;
-    color: #3c3c62;
-    cursor: pointer;
-      &:hover{
-        color: #f2f2f2;
-      }
-  `
+  }
+}
+
+// ==================== 辅助函数 ====================
+
+// ==================== 子组件 ====================
+
+// 拓扑连接线组件
+const TopologyConnection = ({ containerCount }) => {
+  if (containerCount === 0) return null
+
+  const svgWidth = 1200
+  const svgHeight = 80
+  const centerX = svgWidth / 2
+  const mainLineLength = 30
+  const branchY = mainLineLength + 20
+
+  // 计算每个分支的 X 位置
+  const containerWidth = 280
+  const containerGap = 24
+  const totalWidth = containerCount * containerWidth + (containerCount - 1) * containerGap
+  const startX = (svgWidth - totalWidth) / 2
+
+  // 生成分支位置数组
+  const branches = []
+  for (let i = 0; i < containerCount; i++) {
+    const branchX = startX + i * (containerWidth + containerGap) + containerWidth / 2
+    branches.push(branchX)
+  }
+
+  return (
+    <TopologyLines>
+      <ConnectionSVG viewBox={`0 0 ${svgWidth} ${svgHeight}`}>
+        {/* 主干线 */}
+        <line
+          x1={centerX}
+          y1={0}
+          x2={centerX}
+          y2={mainLineLength}
+          className="main-line"
+        />
+
+        {/* 主干节点 */}
+        <circle cx={centerX} cy={0} r={4} className="node-dot" />
+        <circle cx={centerX} cy={mainLineLength} r={4} className="node-dot" />
+
+        {/* 横向分支线 */}
+        {containerCount > 1 && (
+          <line
+            x1={branches[0]}
+            y1={mainLineLength}
+            x2={branches[branches.length - 1]}
+            y2={mainLineLength}
+            className="branch-line"
+          />
+        )}
+
+        {/* 各个分支到储能柜的垂直线 */}
+        {branches.map((branchX, index) => (
+          <g key={index}>
+            <line
+              x1={branchX}
+              y1={mainLineLength}
+              x2={branchX}
+              y2={branchY + 30}
+              className="branch-line"
+            />
+            <circle cx={branchX} cy={mainLineLength} r={3} className="node-dot" />
+            <circle cx={branchX} cy={branchY + 30} r={4} className="end-dot" />
+          </g>
+        ))}
+      </ConnectionSVG>
+    </TopologyLines>
+  )
+}
+
+// 渲染单个数据项
+const RenderDataItem = ({ item }) => {
+  // UD 上下布局
+  if (item.style === 'UD') {
+    let color = '#fff'
+    if (item.name === '工作状态' && item.value === '运行') {
+      color = '#52c41a'
+    }
+
+    return (
+      <DataItem $color={color}>
+        <span className="label">{item.name}</span>
+        <div className="value">
+          {item.value}
+          {item.unit && <span className="unit">{item.unit}</span>}
+        </div>
+      </DataItem>
+    )
+  }
+
+  // LR 左右布局（暂不实现，根据需要可扩展）
+  return null
+}
+
+// 渲染子系统模块
+const RenderModule = ({ module }) => {
+  const moduleName = module.name
+
+  // 消防系统特殊处理
+  if (moduleName === '消防系统') {
+    if (!module.items || module.items.length === 0) {
+      return (
+        <ModuleSection>
+          <ModuleTitle>{moduleName}</ModuleTitle>
+          <FireSystemContent>
+            <div className="icon-wrapper">
+              <CheckCircleOutlined className="fire-icon" />
+            </div>
+            <div className="status-text">暂无告警</div>
+          </FireSystemContent>
+        </ModuleSection>
+      )
+    }
+
+    const hasWarning = module.items.some(item =>
+      String(item.value).toLowerCase().includes('异常') ||
+      String(item.value).toLowerCase().includes('故障') ||
+      String(item.value).toLowerCase().includes('报警')
+    )
+
+    return (
+      <ModuleSection>
+        <ModuleTitle>{moduleName}</ModuleTitle>
+        <FireSystemContent>
+          <div className="icon-wrapper">
+            {hasWarning ? (
+              <ExclamationCircleOutlined className="fire-icon" style={{ color: '#ff4d4f' }} />
+            ) : (
+              <CheckCircleOutlined className="fire-icon" />
+            )}
+          </div>
+          <div className="status-text">
+            {hasWarning ? '系统告警' : '暂无告警'}
+          </div>
+        </FireSystemContent>
+      </ModuleSection>
+    )
+  }
+
+  // 液冷系统：2列布局
+  if (moduleName === '液冷系统') {
+    return (
+      <ModuleSection>
+        <ModuleTitle>{moduleName}</ModuleTitle>
+        <DataGrid2>
+          {module.items?.map((item, idx) => (
+            <RenderDataItem key={idx} item={item} />
+          ))}
+        </DataGrid2>
+      </ModuleSection>
+    )
+  }
+
+  // 除湿机：3列布局
+  if (moduleName === '除湿机') {
+    return (
+      <ModuleSection>
+        <ModuleTitle>{moduleName}</ModuleTitle>
+        <DataGrid3>
+          {module.items?.map((item, idx) => (
+            <RenderDataItem key={idx} item={item} />
+          ))}
+        </DataGrid3>
+      </ModuleSection>
+    )
+  }
+
+  // 默认布局（如果有其他子系统）
+  return null
+}
+
+// 渲染单个储能柜卡片
+const ContainerCardView = ({ container }) => {
+  return (
+    <ContainerCard>
+      <CardHeader>
+        <NameTag>{container.name}</NameTag>
+      </CardHeader>
+      <DeviceImage>
+        <img src={deviceImg} alt={container.name} />
+      </DeviceImage>
+
+      {/* 渲染所有子系统模块 */}
+      {container.types?.map((module, idx) => (
+        <RenderModule key={idx} module={module} />
+      ))}
+    </ContainerCard>
+  )
+}
+
+// ==================== 主组件 ====================
 export default function Index() {
-  let {exparams} = useOutletContext()
-  let {areaId,  projectId,stationName } = exparams
-  const TempRef = useRef()
+  let { exparams } = useOutletContext()
+  let { areaId, projectId, stationName } = exparams
   const lineRef = useRef()
-  const { queryEnvironmentInfo, queryTrends } = BMSRuntime
-  let time = new Date()
-  let year = time.getFullYear()
-  let month = time.getMonth() + 1
-  month = month < 10 ? '0' + month : month
-  let day = time.getDate()
-  day = day < 10 ? '0' + day : day
+  const { queryENVStatusInfo, queryTrends } = BMSRuntime
 
-  const today = year + '-' + month + '-' + day
+  const today = moment().format('YYYY-MM-DD')
   const [form] = Form.useForm()
- 
-  const Item = Form.Item
 
- 
+  // Mock 数据开关：true=使用Mock，false=使用真实接口
+  const USE_MOCK_DATA = true
 
- 
+  // 数据状态
+  const [storageData, setStorageData] = useState([])
 
-   const [storageData, setStorageData] = useState([])
-   let length = storageData?.length??0;
-  const [count, setCount] = useState(0)
-  const transLeft = () => {
-    if ((count) <= 0) return;
-    setCount(count - 1)
-  }
-  const transRight = () => {
-    if ((count + 4) >= length) return;
-    setCount(count + 1)
-  }
-  const CustomData = props => {
-    let { data } = props
-    let { air, env, fireMonitor, waterMonitor } = data
-    const state = useReactive({
-      airCount: 0,
-      envCount: 0,
-      fireCount: 0,
-      waterCount: 0,
-    })
-
-    const changePrefer = (name) => {
-      if (name == 'air') {
-        if (state.airCount == 0) {
-          return;
-        } else {
-          state.airCount--;
-        }
-      }
-      if (name == 'env') {
-        if (state.envCount == 0) {
-          return;
-        } else {
-          state.envCount--;
-        }
-      }
-      if (name == 'fire') {
-        if (state.fireCount == 0) {
-          return;
-        } else {
-          state.fireCount--;
-        }
-      }
-      if (name == 'water') {
-        if (state.waterCount == 0) {
-          return;
-        } else {
-          state.waterCount--;
-        }
-      }
-    }
-
-    const changeNext = (name) => {
-      if (name == 'air') {
-        if (state.airCount == air.length) {
-          return;
-        } else {
-          state.airCount++;
-        }
-      }
-      if (name == 'env') {
-        if (state.envCount == env.length) {
-          return;
-        } else {
-          state.envCount++;
-        }
-      }
-      if (name == 'fire') {
-        if (state.fireCount == fireMonitor.length) {
-          return;
-        } else {
-          state.fireCount++;
-        }
-      }
-      if (name == 'water') {
-        if (state.waterCount == waterMonitor.length) {
-          return;
-        } else {
-          state.waterCount++;
-        }
-      }
-    }
-
-    return <CustomCss>
-      <div className='name'>{data.name}</div>
-      <div className='itemTitle'>环境监控</div>
-      <div className='itemData'>
-        <div className='item' style={{ cursor: 'pointer' }}>
-          <div className='monitorTitle primarycol'>{air[state.airCount]?.name || '空调监控'}</div>
-          <div className='temData'>
-            {(air.length <= 1 || state.airCount == 0) ? <div style={{ width: 8, height: '16px' }}></div> : <div className='leftIcon' onClick={() => changePrefer('air')}></div>}
-            <div className='tem' onClick={() => showChart(data.id)}>
-              <span>温度</span>
-              <div>
-                <span style={{ fontSize: 20 }}>{air[state.airCount]?.temp || '/'}</span>
-              </div>
-            </div>
-            <div className='tem' onClick={() => showChart(data.id)}>
-              <span>湿度</span>
-              <div>
-                <span style={{ fontSize: 20 }}>{air[state.airCount]?.humidity || '/'}</span>
-              </div>
-            </div>
-            {(air.length <= 1 || state.airCount >= air.length - 1) ? <div style={{ width: 8, height: '16px' }}></div> : <div className='rightIcon' onClick={() => changeNext('air')}></div>}
-          </div>
-          <div className='tempTime'> {air[state.airCount]?.reportTime || '/'}</div>
-        </div>
-        <div className='item' style={{ cursor: 'pointer' }}>
-          <div className='monitorTitle primarycol'>{env[state.envCount]?.name || '环境温湿度'}</div>
-          <div className='temData'>
-            {(env.length <= 1 || state.envCount == 0) ? <div style={{ width: 8, height: '16px' }}></div> : <div className='leftIcon' onClick={() => changePrefer('env')}></div>}
-            <div className='tem'>
-              <span>温度</span>
-              <div>
-                <span style={{ fontSize: 20 }}>{env[state.envCount]?.temp || '/'}</span>
-              </div>
-            </div>
-            <div className='tem'>
-              <span>湿度</span>
-              <div>
-                <span style={{ fontSize: 20 }}>{env[state.envCount]?.humidity || '/'}</span>
-              </div>
-            </div>
-            {(env.length <= 1 || state.envCount >= env.length - 1) ? <div style={{ width: 8, height: '16px' }}></div> : <div className='rightIcon' onClick={() => changeNext('env')}></div>}
-          </div>
-          <div className='tempTime'> {env[state.envCount]?.reportTime || '/'}</div>
-        </div>
-        <div className='item'>
-          <div className='monitorTitle' style={{ backgroundColor: '#093', border: '1px solid #093', height: 32, lineHeight: '32px' }}>{waterMonitor[state.waterCount]?.name || '水浸监控'}</div>
-          <div className='monitorData'>
-            {(waterMonitor.length <= 1 || state.waterCount == 0) ? <div style={{ width: 8, height: '16px' }}></div> : <div className='leftIcon' onClick={() => changePrefer('water')}></div>}
-            <span>{waterMonitor[state.waterCount]?.warningTime || '/'}</span>
-            <span>{waterMonitor[state.waterCount]?.warning || '/'}</span>
-            {(waterMonitor.length <= 1 || state.waterCount >= waterMonitor.length - 1) ? <div style={{ width: 8, height: '16px' }}></div> : <div className='rightIcon' onClick={() => changeNext('water')}></div>}
-          </div>
-          
-        </div>
-        <div className='item'>
-          <div className='monitorTitle' style={{ backgroundColor: '#093', border: '1px solid #093', height: 32, lineHeight: '32px' }}>{fireMonitor[state.fireCount]?.name || '灭火器监控'}</div>
-          <div className='monitorData'>
-            {(fireMonitor.length <= 1 || state.fireCount == 0) ? <div style={{ width: 8, height: '16px' }}></div> : <div className='leftIcon' onClick={() => changePrefer('fire')}></div>}
-            <span>{fireMonitor[state.fireCount]?.warningTime || '/'}</span>
-            <span>{fireMonitor[state.fireCount]?.warning || '/'}</span>
-            {(fireMonitor.length <= 1 || state.fireCount >= fireMonitor.length - 1) ? <div style={{ width: 8, height: '16px' }}></div> : <div className='rightIcon' onClick={() => changeNext('fire')}></div>}
-          </div>
-        </div>
-      </div>
-    </CustomCss>
-  }
-  const getFromHeader = () => {
-    if(!stationName?.value) return;
-    if(!(Number.isInteger(projectId) && Number.isInteger(areaId))) return 
-    queryEnvironmentInfo(projectId, areaId, stationName.value).then(res => {
-      if (res.success) {
-        if (res.data) {
-          setStorageData(res.data)
-        } else {
-          setStorageData([])
-        }
-      } else {
-        setStorageData([])
-       // message.error(res.errMsg)
-      }
-    })
-  }
+  // 加载数据
   useEffect(() => {
-     getFromHeader();
-  }, [projectId, areaId, stationName])
-  //弹窗
+    if (USE_MOCK_DATA) {
+      // 使用 Mock 数据
+      const mockData = getMockData()
+      setStorageData(mockData.data.containers)
+      console.log('当前使用 Mock 数据')
+    } else {
+      // 使用真实接口数据
+      queryENVStatusInfo(1, 1).then(res => {
+        if (res.success && res.data?.containers && res.data.containers.length > 0) {
+          setStorageData(res.data.containers)
+        } else {
+          // 接口无数据时使用 Mock 数据
+          const mockData = getMockData()
+          setStorageData(mockData.data.containers)
+          console.log('接口无数据，使用 Mock 数据')
+        }
+      }).catch(err => {
+        // 接口异常时也使用 Mock 数据
+        const mockData = getMockData()
+        setStorageData(mockData.data.containers)
+        console.error('接口异常，使用 Mock 数据:', err)
+      })
+    }
+  }, [])
+
+  // 温湿度趋势相关（保留原有逻辑）
   const [roomId, setRoomId] = useState(0)
+  const TempRef = useRef()
+
   const getTrends = (projectId, roomId, date) => {
     queryTrends(projectId, roomId, date).then(res => {
       let { success, data } = res
-      if (success) {
-        if (data) {
-          let tempTrends = []
-          let humidityTrends = []
-          let time = []
-          time = data.x
-          tempTrends = data.y
-          humidityTrends = data.y1
-          setTimeout(() => {
-            drawLine({
-              time,
-              humidityTrends,
-              tempTrends,
-            })
-          })
-        } else {
-          drawLine({
-            time: [],
-            tempTrends: [],
-            humidityTrends: [],
-          })
-        }
+      if (success && data) {
+        drawLine({
+          time: data.x || [],
+          tempTrends: data.y || [],
+          humidityTrends: data.y1 || [],
+        })
       } else {
-        message.error(res.errMsg)
+        drawLine({ time: [], tempTrends: [], humidityTrends: [] })
       }
     })
   }
+
   const showChart = (id) => {
     setRoomId(id)
     form.setFieldValue('date', moment(today, 'YYYY-MM-DD'))
     getTrends(projectId, id, today)
-    TempRef.current.onOpen()
+    TempRef.current?.onOpen()
   }
 
-  const onOk = () => {
-    TempRef.current.onCancel()
-  }
   const drawLine = (lineData) => {
-    let lineChart = echarts.init(lineRef.current);
+    if (!lineRef.current) return
+    const lineChart = echarts.init(lineRef.current)
     lineChart.clear()
     lineChart.setOption({
       color: ['#237ae4', '#093'],
-      tooltip: {
-        trigger: 'axis',
-        axisPointer: {
-          type: 'shadow'
-        }
-      },
-      legend: {
-        top: '0',
-        left: 'center'
-      },
-      grid: {
-        left: '32px',
-        right: '20px',
-        bottom: '48px',
-        top: '32px',
-        containLabel: true
-      },
-      xAxis: {
-        type: 'category',
-        boundaryGap: true,
-        axisTick: {
-          alignWithLabel: true
-        },
-        data: lineData.time
-      },
-      yAxis: {
-        type: 'value',
-        // min: 24
-        scale: true, //自适应
-      },
-      dataZoom: {
-        type: 'slider',
-        height: 24
-      },
+      tooltip: { trigger: 'axis', axisPointer: { type: 'shadow' } },
+      legend: { top: '0', left: 'center' },
+      grid: { left: '32px', right: '20px', bottom: '48px', top: '32px', containLabel: true },
+      xAxis: { type: 'category', boundaryGap: true, data: lineData.time },
+      yAxis: { type: 'value', scale: true },
+      dataZoom: { type: 'slider', height: 24 },
       series: [
-        {
-          name: '温度(℃)',
-          data: lineData.tempTrends,
-          type: 'line',
-          symbol: 'circle',
-        },
-        {
-          name: '湿度(%)',
-          data: lineData.humidityTrends,
-          type: 'line',
-          symbol: 'circle',
-        }
+        { name: '温度(℃)', data: lineData.tempTrends, type: 'line', symbol: 'circle' },
+        { name: '湿度(%)', data: lineData.humidityTrends, type: 'line', symbol: 'circle' }
       ]
     }, true)
   }
+
   const onSearch = () => {
-    const date = form.getFieldValue('date').format('YYYY-MM-DD')
-    getTrends(projectId, roomId, date)
+    const date = form.getFieldValue('date')?.format('YYYY-MM-DD')
+    if (date) getTrends(projectId, roomId, date)
   }
 
-  //defaultValue={moment(today,'YYYY-MM-DD')}
   return (
-    <Pagecount pd="0">     
-      <Maibox className={style.mainContent}>
+    <Pagecount pd="0">
+      <div className={style.mainContent}>
+        {/* 标题 */}
         <div className={style.title}>
-            <Paragraph  style={{marginBottom: '0', color: "#fff"}}  ellipsis={{tooltip: stationName?.value}}>{stationName?.label}</Paragraph>  
-          </div>
-        <div className={style.yaxis}></div>
-        <div className={style.xaxis}></div>
-        <div className={style.dataList}>
-          <div className={style.transLate} style={{ width: (parseInt(storageData.length / 4) + 1) * 100 + '%', left: (-(count * 382) + 65) }}>
-            {storageData.map((item, index) => {
-              return <CustomData data={item} key={index}></CustomData>
-            })}
-          </div>
-          <LeftButton onClick={() => transLeft()}></LeftButton>
-          <RightButton onClick={() => transRight()}></RightButton>
+          <Paragraph style={{ marginBottom: '0', color: "#fff" }} ellipsis={{ tooltip: stationName?.value }}>
+            {stationName?.label || '环境监控'}
+          </Paragraph>
         </div>
-      </Maibox>
-      <CustModal title='温湿度趋势' ref={TempRef} mold="cust" width={1680} onOk={() => onOk()}>
+
+        {/* 拓扑连接线 */}
+        <TopologyConnection containerCount={storageData.length} />
+
+        {/* 储能柜卡片列表 */}
+        <div className={style.cardList}>
+          <div className={style.cardContainer}>
+            {storageData.map((container) => (
+              <ContainerCardView key={container.id} container={container} />
+            ))}
+          </div>
+        </div>
+      </div>
+
+      {/* 温湿度趋势弹窗 */}
+      <CustModal title='温湿度趋势' ref={TempRef} mold="cust" width={1680} onOk={() => TempRef.current?.onCancel()}>
         <div style={{ position: 'absolute', right: 32, top: 32, display: 'flex', alignItems: 'center' }}>
           <span>日期</span>
           <Form name='addForm' form={form}>
             <Item name='date' label=''>
-              <DatePicker style={{ width: 182, margin: '0 16px' }} ></DatePicker>
+              <DatePicker style={{ width: 182, margin: '0 16px' }} defaultValue={moment(today, 'YYYY-MM-DD')} />
             </Item>
           </Form>
-          <Button type='primary' icon={<SearchOutlined />} style={{ width: 96 }} onClick={() => onSearch()}>查询</Button>
+          <Button type='primary' icon={<SearchOutlined />} style={{ width: 96 }} onClick={onSearch}>查询</Button>
         </div>
         <div className={style.lineChart} ref={lineRef}></div>
       </CustModal>

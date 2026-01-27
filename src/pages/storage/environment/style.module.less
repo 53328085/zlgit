@@ -1,52 +1,39 @@
- 
+
 .mainContent {
-   // background-color: #003;
     border-radius: 4px;
     display: flex;
     flex-direction: column;
     align-items: center;
     flex: 1;
+    padding: 20px 0;
+    background: #1C2C43;
+
     .title {
-        margin-top: 34px;
-        width: 328px;
-        height: 40px;
-        background-color: var(--ant-primary-color);
+        // margin-bottom: 24px;
+        padding: 8px 24px;
+        background: #1E50E6;
+        border-radius: 4px;
         text-align: center;
-        line-height: 40px;
         color: #fff;
         font-size: 16px;
     }
 
-    .yaxis {
-        width: 0;
-        height: 32px;
-        border-left: 2px solid #069;
-    }
-
-    .xaxis {
-        width: 1517px;
-        height: 0;
-        border-top: 2px solid #069;
-    }
-
-    .dataList {
-        width: 1517px;
-        height: 680px;
-        padding-left: 65px;
+    // 卡片列表容器
+    .cardList {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 100%;
         overflow: hidden;
-        position: relative;
 
-        .transLate {
+        .cardContainer {
             display: flex;
-            // width: 200%;
-            transition: all 1s;
-            position: absolute;
-            left: 65px;
-            top: 0;
+            flex-wrap: nowrap;
         }
     }
 }
-.lineChart{
+
+.lineChart {
     width: 1616px;
     height: 486px;
 }

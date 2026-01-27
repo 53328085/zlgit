@@ -3528,6 +3528,11 @@ export class BMSRuntime {
       `Storage/BMSRuntime/QueryBatteryWarning?projectId=${projectId}&areaId=${areaId}&batteryPackId=${batteryPackId}`,
       data
     );
+  // 环境监控状态查询
+  static queryENVStatusInfo = (projectId, siteId) =>
+    server.get(
+      `Storage/StorageMonitorEnvironment/QueryENVStatusInfo?projectId=${projectId}&siteId=${siteId}`
+    );
 }
 //电气安全(设计态)
 //告警管理
