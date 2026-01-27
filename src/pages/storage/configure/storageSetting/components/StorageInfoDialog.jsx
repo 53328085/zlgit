@@ -201,7 +201,7 @@ const StorageInfoDialog = ({ onRefreshClick }, ref) => {
           </Form.Item>
           <Form.Item
             name="capacity"
-            label="站点容量 (kVA)"
+            label="站点容量 (kWh)"
             rules={[{ required: true, message: '请输入站点容量' }]}
           >
             <InputNumber placeholder="请输入站点容量" style={{ width: '100%' }}/>

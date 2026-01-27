@@ -135,6 +135,8 @@ export default function Index() {
   }
 
   const getChartDetail = async (id) => {
+    try {
+
     clearTimeout(state.timer)
     state.spining = true
     state.getGuid = guid()
@@ -163,6 +165,10 @@ export default function Index() {
       }, 1000)
       message.error(res.errMsg)
     }
+          
+  } catch (error) {
+      console.log(error)
+  }
   }
 
   const getMqtt = () => {

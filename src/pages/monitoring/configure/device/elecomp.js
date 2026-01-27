@@ -7,10 +7,10 @@ import React, {
   useMemo,
   forwardRef,
   useImperativeHandle,
-} from "react";
-import Modal from "@com/useModal";
-import BlueColumn from "@com/bluecolumn";
-import style from "./style.module.less";
+} from 'react'
+import Modal from '@com/useModal'
+import BlueColumn from '@com/bluecolumn'
+import style from './style.module.less'
 import {
   Form,
   Row,
@@ -25,85 +25,86 @@ import {
   InputNumber,
   message,
   Alert,
-} from "antd";
-import { snValidator, snValidatorE } from "@pages/rule";
+} from 'antd'
+import { snStorageValidator, snValidator, snValidatorE } from '@pages/rule'
+
 export const MyContext = createContext({
   addopts: [],
   gatewaylist: [],
   devicelist: [],
   alarmopts: [],
-});
+})
 
 //新增com
-let coms = 0;
+let coms = 0
 // 1 电表, 11 断路器
 let Com = ({ form, deviceStyle }) => {
   const tip = (
-    <div style={{ marginBottom: "24px" }}>
+    <div style={{ marginBottom: '24px' }}>
       <p>倍率=PT*CT！</p>
       <p>修改倍率会影响结算金额，请设置准确！</p>
       <p>添加完毕不允许修改</p>
     </div>
-  );
-  const [isaddress, setIsaddress] = useState(true);
-  let options = [];
+  )
+  const [isaddress, setIsaddress] = useState(true)
+  let options = []
   const rules = [
     {
       required: true,
     },
-  ];
+  ]
   for (let i = 1; i <= coms; i++) {
     options.push({
       label: `COM${i}`,
       value: i,
-    });
+    })
   }
   const changeProtocol = (v, option) => {
     if (v === 1) {
-      setIsaddress(true);
+      setIsaddress(true)
     } else {
-      setIsaddress(false);
+      setIsaddress(false)
     }
-  };
+  }
   useEffect(() => {
     if (form.getFieldsValue().commAddress) {
-      setIsaddress(true);
+      setIsaddress(true)
     } else {
-      setIsaddress(false);
+      setIsaddress(false)
     }
-  }, [form.getFieldsValue().commAddress]);
+  }, [form.getFieldsValue().commAddress])
   return (
     <>
       {/*  {deviceStyle == 12 ? (
-                <Form.Item label="倍率" name="factor" rules={[...rules,
-                {
-                    validator: (_, value) => {
-                        if (!value) {
-                            return Promise.resolve()
-                        } else if (parseInt(value) < 0) {
-                            return Promise.reject(new Error("请输入正整数"))
-                        } else {
-                            return Promise.resolve()
-                        }
-                    }
-                },]}>
-                    <Input />
-                </Form.Item>
-            ) :  null} */}
+       <Form.Item label="倍率" name="factor" rules={[...rules,
+       {
+       validator: (_, value) => {
+       if (!value) {
+       return Promise.resolve()
+       } else if (parseInt(value) < 0) {
+       return Promise.reject(new Error("请输入正整数"))
+       } else {
+       return Promise.resolve()
+       }
+       }
+       },]}>
+       <Input />
+       </Form.Item>
+       ) :  null} */}
       {(deviceStyle == 1 || deviceStyle == 12) && (
         <>
           <Form.Item label="CT" name="ct" initialValue={1}>
             <InputNumber
               min={1}
               parser={(value) => parseInt(value)}
-              style={{ width: "100%" }}
+              style={{ width: '100%' }}
             />
           </Form.Item>
           <Form.Item label="PT" name="pt" initialValue={1}>
             <InputNumber
               min={1}
               parser={(value) => parseInt(value)}
-              style={{ width: "100%" }}
+              style={{ width: '100%' }}
             />
           </Form.Item>
         </>
@@ -111,7 +112,7 @@ let Com = ({ form, deviceStyle }) => {
       {
         <Form.Item shouldUpdate={(pre, cur) => pre.gatewayId !== cur.gatewayId} noStyle>
           {({ getFieldValue }) => {
-            return getFieldValue("gatewayId") ? (
+            return getFieldValue('gatewayId') ? (
               <>
                 <Form.Item label="通讯端口" name="commPort" rules={rules}>
                   <Select options={options} placeholder></Select>
@@ -121,11 +122,11 @@ let Com = ({ form, deviceStyle }) => {
                     onChange={changeProtocol}
                     options={[
                       {
-                        label: "Modbus",
+                        label: 'Modbus',
                         value: 1,
                       },
                       {
-                        label: "DL645",
+                        label: 'DL645',
                         value: 2,
                       },
                     ]}
@@ -140,40 +141,40 @@ let Com = ({ form, deviceStyle }) => {
                       {
                         validator: (_, value) => {
                           if (!value) {
-                            return Promise.resolve();
+                            return Promise.resolve()
                           } else {
                             if (Number(value) < 255 && Number(value) > 0) {
-                              return Promise.resolve();
+                              return Promise.resolve()
                             } else {
                               return Promise.reject(
-                                new Error("通讯地址范围(0-255)")
-                              );
+                                new Error('通讯地址范围(0-255)')
+                              )
                             }
                           }
                         },
                       },
                     ]}
                   >
-                    <Input placeholder="通讯地址范围(0-255)" />
+                    <Input placeholder="通讯地址范围(0-255)"/>
                     {/* 默认1-255 */}
                   </Form.Item>
                 ) : null}
               </>
-            ) : null;
+            ) : null
           }}
         </Form.Item>
       }
       {deviceStyle == 1 && (
         <Form.Item noStyle>
-          <Alert message={tip} type="error" />
+          <Alert message={tip} type="error"/>
         </Form.Item>
       )}
     </>
-  );
-};
+  )
+}
 //新增form表单组件
 export const FormComp = (props) => {
-  const { TextArea } = Input;
+  const { TextArea } = Input
   const {
     addopts,
     gatewaylist,
@@ -194,37 +195,37 @@ export const FormComp = (props) => {
     path4Gruop,
     setTransition,
     setMaskTransitionName,
-  } = useContext(MyContext);
-  const [name1, setName1] = useState("通道1");
-  const [name2, setName2] = useState("通道2");
-  const [name3, setName3] = useState("通道3");
-  const [name4, setName4] = useState("通道4");
-  const [area, setArea] = useState([]);
+  } = useContext(MyContext)
+  const [name1, setName1] = useState('通道1')
+  const [name2, setName2] = useState('通道2')
+  const [name3, setName3] = useState('通道3')
+  const [name4, setName4] = useState('通道4')
+  const [area, setArea] = useState([])
   //const [coms, setComs] = useState(0)
   const rules = [
     {
       required: true,
     },
-  ];
+  ]
   const changeGateway = (v, option) => {
-    console.log(v, option);
+    console.log(v, option)
     if (v) {
-      const arr = addopts?.filter((it) => it.id === option.areaId);
-      setArea([...arr]);
-      coms = option.com;
-      form.setFieldsValue({ areaId: arr[0].id, commPort: "" });
+      const arr = addopts?.filter((it) => it.id === option.areaId)
+      setArea([...arr])
+      coms = option.com
+      form.setFieldsValue({ areaId: arr[0].id, commPort: '' })
     } else {
-      setArea([]);
+      setArea([])
     }
-  };
+  }
   const validator = () => ({
-    validator(_, value) {
-      console.log(_, value, checklistRef.current);
-      let count = 0;
+    validator (_, value) {
+      console.log(_, value, checklistRef.current)
+      let count = 0
       for (const key in checklistRef.current) {
         if (Object.hasOwnProperty.call(checklistRef.current, key)) {
           if (checklistRef.current[key]) {
-            count++;
+            count++
           }
         }
       }
@@ -234,16 +235,16 @@ export const FormComp = (props) => {
         path3Gruop.current.length == 0 &&
         path4Gruop.current.length == 0
       ) {
-        count = 0;
+        count = 0
       }
-      console.log(count);
+      console.log(count)
       if (count) {
-        return Promise.resolve();
+        return Promise.resolve()
       } else {
-        return Promise.reject(new Error("通道配置未勾选或未配置"));
+        return Promise.reject(new Error('通道配置未勾选或未配置'))
       }
     },
-  });
+  })
   return (
     <Form
       labelAlign="left"
@@ -252,86 +253,86 @@ export const FormComp = (props) => {
       labelCol={{
         span: 9
       }}
-    /*  initialValues={{
-           channel1:'通道1',
-           channel2:'通道2',
-           channel3:'通道3',
-           channel4:'通道4'
+      /*  initialValues={{
+       channel1:'通道1',
+       channel2:'通道2',
+       channel3:'通道3',
+       channel4:'通道4'
        }} */
     >
       <Row className={style.customItem}>
         <Col span={10}>
           <Form.Item label={levelname?.current} name="areaId" rules={rules}>
-          <Select
-                showSearch
-                filterOption={(val, opts) => {
-                  if (opts.name.includes(val)) {
-                    return true;
-                  } else {
-                    return false;
-                  }
-                }}
-                fieldNames={{
-                  label: "name",
-                  value: "id",
-                }}
-                options={addopts}
-              ></Select>
-          {/*   {area.length > 0 ? (
-              <Select
-                fieldNames={{
-                  label: "name",
-                  value: "id",
-                }}
-                options={area}
-                showSearch
-                filterOption={(val, opts) => {
-                  if (opts.name.includes(val)) {
-                    return true;
-                  } else {
-                    return false;
-                  }
-                }}
-                disabled
-              ></Select>
-            ) : (
-              <Select
-                showSearch
-                filterOption={(val, opts) => {
-                  if (opts.name.includes(val)) {
-                    return true;
-                  } else {
-                    return false;
-                  }
-                }}
-                fieldNames={{
-                  label: "name",
-                  value: "id",
-                }}
-                options={addopts}
-              ></Select>
-            )} */}
+            <Select
+              showSearch
+              filterOption={(val, opts) => {
+                if (opts.name.includes(val)) {
+                  return true
+                } else {
+                  return false
+                }
+              }}
+              fieldNames={{
+                label: 'name',
+                value: 'id',
+              }}
+              options={addopts}
+            ></Select>
+            {/*   {area.length > 0 ? (
+             <Select
+             fieldNames={{
+             label: "name",
+             value: "id",
+             }}
+             options={area}
+             showSearch
+             filterOption={(val, opts) => {
+             if (opts.name.includes(val)) {
+             return true;
+             } else {
+             return false;
+             }
+             }}
+             disabled
+             ></Select>
+             ) : (
+             <Select
+             showSearch
+             filterOption={(val, opts) => {
+             if (opts.name.includes(val)) {
+             return true;
+             } else {
+             return false;
+             }
+             }}
+             fieldNames={{
+             label: "name",
+             value: "id",
+             }}
+             options={addopts}
+             ></Select>
+             )} */}
           </Form.Item>
           <Form.Item label="安装地址" name="address" rules={rules}>
-            <Input />
+            <Input/>
           </Form.Item>
           <Form.Item label="告警方案" name="alarmPlanId" rules={rules}>
             <Select
               options={alarmopts}
               fieldNames={{
-                label: "name",
-                value: "id",
+                label: 'name',
+                value: 'id',
               }}
             ></Select>
           </Form.Item>
           <Form.Item label="备注" name="remark">
-            <TextArea />
+            <TextArea/>
           </Form.Item>
         </Col>
         <Col>
           <Divider
             type="vertical"
-            style={{ height: "100%", margin: "0 32px", borderColor: "#bcbcbc" }}
+            style={{ height: '100%', margin: '0 32px', borderColor: '#bcbcbc' }}
             dashed
           />
         </Col>
@@ -341,14 +342,14 @@ export const FormComp = (props) => {
               showSearch
               filterOption={(val, opts) => {
                 if (opts.sn.includes(val)) {
-                  return true;
+                  return true
                 } else {
-                  return false;
+                  return false
                 }
               }}
               fieldNames={{
-                label: "sn",
-                value: "id",
+                label: 'sn',
+                value: 'id',
               }}
               onChange={changeGateway}
               options={gatewaylist}
@@ -366,49 +367,49 @@ export const FormComp = (props) => {
                 required: true,
               },
               {
-                validator: deviceStyle != 7 ? snValidator : snValidatorE,
+                validator: deviceStyle !== 7 ? deviceStyle === 11 ? snStorageValidator : snValidator : snValidatorE,
               },
             ]}
           >
-            <Input />
+            <Input/>
           </Form.Item>
           {/* <Form.Item label="设备编号" name="sn" rules={[...rules, {
-                        validator: (_, value) => {
-                            if (!value) {
-                                return Promise.resolve()
-                            } else {
-                                let val = value.trim()
+           validator: (_, value) => {
+           if (!value) {
+           return Promise.resolve()
+           } else {
+           let val = value.trim()
 
-                                if (val.split(" ").join("").length !== 12) {
-                                    return Promise.reject(new Error("设备编号长度12位"))
-                                } else {
-                                    return Promise.resolve()
-                                }
-                            }
-                        }
-                    }]}>
-                        <Input />
-                    </Form.Item> */}
+           if (val.split(" ").join("").length !== 12) {
+           return Promise.reject(new Error("设备编号长度12位"))
+           } else {
+           return Promise.resolve()
+           }
+           }
+           }
+           }]}>
+           <Input />
+           </Form.Item> */}
           <Form.Item label="设备名称" name="name" rules={rules}>
-            <Input />
+            <Input/>
           </Form.Item>
           {deviceStyle !== 11 &&
-            deviceStyle !== 13 &&
-            deviceStyle !== 14 &&
-            deviceStyle !== 18 &&
-            deviceStyle !== 20 &&
-            deviceStyle !== 21 &&
-            deviceStyle !== 22 &&
-            deviceStyle !== 23 ? (
+          deviceStyle !== 13 &&
+          deviceStyle !== 14 &&
+          deviceStyle !== 18 &&
+          deviceStyle !== 20 &&
+          deviceStyle !== 21 &&
+          deviceStyle !== 22 &&
+          deviceStyle !== 23 ? (
             <Form.Item label="用能类型" name="customerType" rules={rules}>
               <Select
                 options={[
                   {
-                    label: "客户用能",
+                    label: '客户用能',
                     value: 1,
                   },
                   {
-                    label: "公共用能",
+                    label: '公共用能',
                     value: 2,
                   },
                 ]}
@@ -416,122 +417,122 @@ export const FormComp = (props) => {
             </Form.Item>
           ) : null}
           {
-             deviceStyle == 19 &&  <Form.Item label="额定功率" name="power" rules={rules}>
-              <InputNumber min={0} style={{width: "100%"}} />
-           </Form.Item>
+            deviceStyle == 19 && <Form.Item label="额定功率" name="power" rules={rules}>
+              <InputNumber min={0} style={{ width: '100%' }}/>
+            </Form.Item>
           }
 
           {/* {
-                        deviceStyle === 21 ? (
-                            <Form.Item label="计量电表" name="customerType" rules={rules}>
-                                <Select
-                                    options={[{
-                                        label: '客户用能',
-                                        value: 1
-                                    }, {
-                                        label: '公共用能',
-                                        value: 2
-                                    }]}></Select>
-                            </Form.Item>
-                        ) : null
-                    } */}
+           deviceStyle === 21 ? (
+           <Form.Item label="计量电表" name="customerType" rules={rules}>
+           <Select
+           options={[{
+           label: '客户用能',
+           value: 1
+           }, {
+           label: '公共用能',
+           value: 2
+           }]}></Select>
+           </Form.Item>
+           ) : null
+           } */}
           {deviceStyle === 1 ||
-            deviceStyle == 12 ||
-            deviceStyle == 13 ||
-            deviceStyle == 14 ||
-            deviceStyle == 20 ||
-            deviceStyle == 22 ||
-            deviceStyle == 23 ? (
+          deviceStyle == 12 ||
+          deviceStyle == 13 ||
+          deviceStyle == 14 ||
+          deviceStyle == 20 ||
+          deviceStyle == 22 ||
+          deviceStyle == 23 ? (
             <Com form={form} deviceStyle={deviceStyle}></Com>
           ) : null}
         </Col>
         {/*   {
-                    props.isfiber ? (
-                        <>
-                            <Col >
-                                <Divider type='vertical' style={{ height: '100%', margin: '0 32px', borderColor: '#bcbcbc' }} dashed />
-                            </Col>
-                            <Col span={7}>
-                                <div style={{paddingBottom: 12}}>通道配置</div>
+         props.isfiber ? (
+         <>
+         <Col >
+         <Divider type='vertical' style={{ height: '100%', margin: '0 32px', borderColor: '#bcbcbc' }} dashed />
+         </Col>
+         <Col span={7}>
+         <div style={{paddingBottom: 12}}>通道配置</div>
 
-                                    <Form.Item
-                                        label={ <Checkbox onChange={(e)=>{checklistRef.current.check1=e.target.checked}}></Checkbox>}
-                                        name="channel1" rules={[...rules,validator]}
-                                        labelCol={2}
-                                    >
-                                        <Space size='large'>
-                                            <Input value={name1} onChange={(e) => {
-                                                setChannelName1(e.target.value)
-                                                setName1(e.target.value)
-                                            }}></Input>
-                                            <Button type='primary' onClick={() => {
-                                                props.openarea(1);
-                                                setIndex(1);
-                                            }}>分区配置</Button>
-                                        </Space>
-                                    </Form.Item>
+         <Form.Item
+         label={ <Checkbox onChange={(e)=>{checklistRef.current.check1=e.target.checked}}></Checkbox>}
+         name="channel1" rules={[...rules,validator]}
+         labelCol={2}
+         >
+         <Space size='large'>
+         <Input value={name1} onChange={(e) => {
+         setChannelName1(e.target.value)
+         setName1(e.target.value)
+         }}></Input>
+         <Button type='primary' onClick={() => {
+         props.openarea(1);
+         setIndex(1);
+         }}>分区配置</Button>
+         </Space>
+         </Form.Item>
 
 
-                                <Form.Item
-                                label={<Checkbox onChange={(e)=>{checklistRef.current.check2=e.target.checked}}></Checkbox>}
-                                name="channel2"  rules={[...rules,validator]}
-                                labelCol={2}
+         <Form.Item
+         label={<Checkbox onChange={(e)=>{checklistRef.current.check2=e.target.checked}}></Checkbox>}
+         name="channel2"  rules={[...rules,validator]}
+         labelCol={2}
 
-                                >
-                                    <Space size='large'>
-                                    <Input value={name2} onChange={(e)=>{
-                                         setChannelName2(e.target.value)
-                                         setName2(e.target.value)
-                                    }}></Input>
-                                    <Button type='primary'onClick={()=>{
-                                        props.openarea(2);
-                                        setIndex(2);
-                                    }}>分区配置</Button>
-                                    </Space>
-                                </Form.Item>
-                                <Form.Item
-                                label={<Checkbox onChange={(e)=>{checklistRef.current.check3=e.target.checked}}></Checkbox>}
-                                name="channel3"  rules={[...rules,validator]}
-                                labelCol={2}
+         >
+         <Space size='large'>
+         <Input value={name2} onChange={(e)=>{
+         setChannelName2(e.target.value)
+         setName2(e.target.value)
+         }}></Input>
+         <Button type='primary'onClick={()=>{
+         props.openarea(2);
+         setIndex(2);
+         }}>分区配置</Button>
+         </Space>
+         </Form.Item>
+         <Form.Item
+         label={<Checkbox onChange={(e)=>{checklistRef.current.check3=e.target.checked}}></Checkbox>}
+         name="channel3"  rules={[...rules,validator]}
+         labelCol={2}
 
-                                >
-                                    <Space size='large'>
-                                    <Input value={name3} onChange={(e)=>{
-                                         setChannelName3(e.target.value)
-                                         setName3(e.target.value)
-                                    }}></Input>
-                                    <Button type='primary ' onClick={()=>{
-                                        props.openarea(3);
-                                        setIndex(3);
-                                    }}>分区配置</Button>
-                                    </Space>
-                                </Form.Item>
-                                <Form.Item
-                                label={<Checkbox onChange={(e)=>{checklistRef.current.check4=e.target.checked}}></Checkbox>}
-                                name="channel4" rules={[...rules,validator]}
-                                labelCol={2}
+         >
+         <Space size='large'>
+         <Input value={name3} onChange={(e)=>{
+         setChannelName3(e.target.value)
+         setName3(e.target.value)
+         }}></Input>
+         <Button type='primary ' onClick={()=>{
+         props.openarea(3);
+         setIndex(3);
+         }}>分区配置</Button>
+         </Space>
+         </Form.Item>
+         <Form.Item
+         label={<Checkbox onChange={(e)=>{checklistRef.current.check4=e.target.checked}}></Checkbox>}
+         name="channel4" rules={[...rules,validator]}
+         labelCol={2}
 
-                                >
-                                    <Space size='large'>
-                                    <Input value={name4} onChange={(e)=>{
-                                        setChannelName4(e.target.value)
-                                        setName4(e.target.value)
-                                    }}></Input>
-                                    <Button type='primary' onClick={()=>{
-                                        props.openarea(4);
-                                        setIndex(4);
-                                    }}>分区配置</Button>
-                                    </Space>
-                                </Form.Item>
-                            </Col>
-                        </>
+         >
+         <Space size='large'>
+         <Input value={name4} onChange={(e)=>{
+         setChannelName4(e.target.value)
+         setName4(e.target.value)
+         }}></Input>
+         <Button type='primary' onClick={()=>{
+         props.openarea(4);
+         setIndex(4);
+         }}>分区配置</Button>
+         </Space>
+         </Form.Item>
+         </Col>
+         </>
 
-                    ) : null
-                } */}
+         ) : null
+         } */}
       </Row>
     </Form>
-  );
-};
+  )
+}
 
 //新增设备
 export let AddModalForm = ({
@@ -557,13 +558,13 @@ export let AddModalForm = ({
           onOk={onOk}
         >
           <FormComp isfiber={isfiber} openarea={openarea}>
-            {" "}
+            {' '}
           </FormComp>
         </Modal>
       }
     </>
-  );
-};
+  )
+}
 //编辑设备
 export const EditModalForm = ({
   EditModalFormRef,
@@ -579,61 +580,61 @@ export const EditModalForm = ({
       title={other.name}
       {...other}
       onOk={onOk} /* footer={[
-            <Button onClick={other.onEditCancel}>取消</Button>,
-            <Button style={{ backgroundColor: '#237ae4', color: '#fff', borderColor: "#237ae4" }} onClick={other.onOk}>保存</Button>,
-            <Button style={{ backgroundColor: '#237ae4', color: '#fff', borderColor: "#237ae4" }} onClick={other.onSure}>应用</Button>,
-        ]} */
+     <Button onClick={other.onEditCancel}>取消</Button>,
+     <Button style={{ backgroundColor: '#237ae4', color: '#fff', borderColor: "#237ae4" }} onClick={other.onOk}>保存</Button>,
+     <Button style={{ backgroundColor: '#237ae4', color: '#fff', borderColor: "#237ae4" }} onClick={other.onSure}>应用</Button>,
+     ]} */
     >
       {/* <BlueColumn name={other.name} styled={{ padding: '24px 0px' }}></BlueColumn> */}
       <EditFormComp isfiber={isfiber} openarea={openarea}></EditFormComp>
     </Modal>
-  );
-};
+  )
+}
 //编辑com组件
 let EditCom = ({ form, coms, deviceStyle }) => {
   const [isaddress, setIsaddress] = useState(
-    form.getFieldValue("commProtocol") == 1
-  );
-  let options = [];
+    form.getFieldValue('commProtocol') == 1
+  )
+  let options = []
   const rules = [
     {
       required: true,
     },
-  ];
+  ]
   for (let i = 1; i <= coms; i++) {
     options.push({
       label: `COM${i}`,
       value: i,
-    });
+    })
   }
   const changeProtocol = (v, option) => {
     if (v === 1) {
-      setIsaddress(true);
+      setIsaddress(true)
     } else {
-      setIsaddress(false);
+      setIsaddress(false)
     }
-  };
+  }
   useEffect(() => {
     if (form.getFieldsValue().commAddress) {
-      setIsaddress(true);
+      setIsaddress(true)
     } else {
-      setIsaddress(false);
+      setIsaddress(false)
     }
-  }, [form.getFieldsValue().commAddress]);
+  }, [form.getFieldsValue().commAddress])
   return (
     <>
       {![1, 13, 14, 12, 20, 21, 22, 23].includes(deviceStyle) ? (
         <Form.Item label="倍率" name="factor" rules={rules}>
-          <Input disabled />
+          <Input disabled/>
         </Form.Item>
       ) : [1, 12].includes(deviceStyle) ? (
         <>
-          {" "}
+          {' '}
           <Form.Item label="CT" name="ct" initialValue={1}>
             <InputNumber
               min={1}
               parser={(value) => parseInt(value)}
-              style={{ width: "100%" }}
+              style={{ width: '100%' }}
               disabled
             />
           </Form.Item>
@@ -641,14 +642,14 @@ let EditCom = ({ form, coms, deviceStyle }) => {
             <InputNumber
               min={1}
               parser={(value) => parseInt(value)}
-              style={{ width: "100%" }}
+              style={{ width: '100%' }}
               disabled
             />
           </Form.Item>
         </>
       ) : null}
 
-      {form.getFieldValue("gatewayId") ? (
+      {form.getFieldValue('gatewayId') ? (
         <>
           <Form.Item label="通讯端口" name="commPort" rules={rules}>
             <Select options={options} placeholder></Select>
@@ -658,11 +659,11 @@ let EditCom = ({ form, coms, deviceStyle }) => {
               onChange={changeProtocol}
               options={[
                 {
-                  label: "Modbus",
+                  label: 'Modbus',
                   value: 1,
                 },
                 {
-                  label: "DL645",
+                  label: 'DL645',
                   value: 2,
                 },
               ]}
@@ -677,30 +678,30 @@ let EditCom = ({ form, coms, deviceStyle }) => {
                 {
                   validator: (_, value) => {
                     if (!value) {
-                      return Promise.resolve();
+                      return Promise.resolve()
                     } else {
                       if (Number(value) < 255 && Number(value) > 0) {
-                        return Promise.resolve();
+                        return Promise.resolve()
                       } else {
-                        return Promise.reject(new Error("通讯地址范围(0-255)"));
+                        return Promise.reject(new Error('通讯地址范围(0-255)'))
                       }
                     }
                   },
                 },
               ]}
             >
-              <Input placeholder="通讯地址范围(0-255)" />
+              <Input placeholder="通讯地址范围(0-255)"/>
               {/* 默认1-255 */}
             </Form.Item>
           ) : null}
         </>
       ) : null}
     </>
-  );
-};
+  )
+}
 //编辑form表单组件
 export const EditFormComp = (props) => {
-  const { TextArea } = Input;
+  const { TextArea } = Input
   const {
     addopts,
     gatewaylist,
@@ -710,53 +711,53 @@ export const EditFormComp = (props) => {
     deviceStyle,
     levelname,
     setIndex,
-  } = useContext(MyContext);
-  const [area, setArea] = useState([]);
-  const [coms, setComs] = useState(0);
-  const [isdisable, setIsdisable] = useState(false);
-  const [formdata, setFormData] = useState({});
+  } = useContext(MyContext)
+  const [area, setArea] = useState([])
+  const [coms, setComs] = useState(0)
+  const [isdisable, setIsdisable] = useState(false)
+  const [formdata, setFormData] = useState({})
 
   const rules = [
     {
       required: true,
     },
-  ];
+  ]
 
   const changeGateway = (v, option) => {
-    console.log(v, option);
-    setIsdisable(false);
+    console.log(v, option)
+    setIsdisable(false)
     if (v) {
-      const arr = addopts?.filter((it) => it.id === option.areaId);
-      setArea([...arr]);
-      setComs(option.com);
+      const arr = addopts?.filter((it) => it.id === option.areaId)
+      setArea([...arr])
+      setComs(option.com)
       form.setFieldsValue({
         areaId: arr[0].id,
-        commPort: "",
+        commPort: '',
         commAddress: 0,
-        commProtocol: "",
-      });
+        commProtocol: '',
+      })
     } else {
-      setArea([]);
-      form.setFieldsValue({ commAddress: 0, commPort: 0, commProtocol: 0 });
+      setArea([])
+      form.setFieldsValue({ commAddress: 0, commPort: 0, commProtocol: 0 })
     }
-  };
+  }
 
   useEffect(() => {
     if (form?.getFieldsValue().gatewayId !== 0) {
-      setIsdisable(true);
+      setIsdisable(true)
     }
     if (gatewaylist.filter) {
       const comsnum = gatewaylist.filter(
         (it) => it.id === form?.getFieldsValue().gatewayId
-      );
-      comsnum[0] && setComs(comsnum[0].com);
+      )
+      comsnum[0] && setComs(comsnum[0].com)
     }
-    const obj = form?.getFieldsValue();
-    const len = Object.keys(obj);
+    const obj = form?.getFieldsValue()
+    const len = Object.keys(obj)
     if (len.length > 0) {
-      setFormData({ ...obj });
+      setFormData({ ...obj })
     }
-  }, []);
+  }, [])
   return (
     <Form
       labelAlign="left"
@@ -770,52 +771,52 @@ export const EditFormComp = (props) => {
       <Row className={style.customItem}>
         <Col span={10}>
           <Form.Item label={levelname?.current} name="areaId" rules={rules}>
-          <Select
-                fieldNames={{
-                  label: "name",
-                  value: "id",
-                }}
-                options={addopts}
-              ></Select>
-           {/*  {(area.length || isdisable) > 0 ? (
-              <Select
-                fieldNames={{
-                  label: "name",
-                  value: "id",
-                }}
-                options={area}
-                disabled
-              ></Select>
-            ) : (
-              <Select
-                fieldNames={{
-                  label: "name",
-                  value: "id",
-                }}
-                options={addopts}
-              ></Select>
-            )} */}
+            <Select
+              fieldNames={{
+                label: 'name',
+                value: 'id',
+              }}
+              options={addopts}
+            ></Select>
+            {/*  {(area.length || isdisable) > 0 ? (
+             <Select
+             fieldNames={{
+             label: "name",
+             value: "id",
+             }}
+             options={area}
+             disabled
+             ></Select>
+             ) : (
+             <Select
+             fieldNames={{
+             label: "name",
+             value: "id",
+             }}
+             options={addopts}
+             ></Select>
+             )} */}
           </Form.Item>
           <Form.Item label="安装地址" name="address" rules={rules}>
-            <Input />
+            <Input/>
           </Form.Item>
           <Form.Item label="告警方案" name="alarmPlanId" rules={rules}>
             <Select
               options={alarmopts}
               fieldNames={{
-                label: "name",
-                value: "id",
+                label: 'name',
+                value: 'id',
               }}
             ></Select>
           </Form.Item>
           <Form.Item label="备注" name="remark">
-            <TextArea />
+            <TextArea/>
           </Form.Item>
         </Col>
         <Col>
           <Divider
             type="vertical"
-            style={{ height: "100%", margin: "0 32px", borderColor: "#bcbcbc" }}
+            style={{ height: '100%', margin: '0 32px', borderColor: '#bcbcbc' }}
             dashed
           />
         </Col>
@@ -825,79 +826,79 @@ export const EditFormComp = (props) => {
               showSearch
               filterOption={(val, opts) => {
                 if (opts.sn.includes(val)) {
-                  return true;
+                  return true
                 } else {
-                  return false;
+                  return false
                 }
               }}
               fieldNames={{
-                label: "sn",
-                value: "id",
+                label: 'sn',
+                value: 'id',
               }}
               onChange={changeGateway}
               options={gatewaylist}
             ></Select>
           </Form.Item>
           <Form.Item label="设备型号" name="category" rules={rules}>
-            <Select disabled  showSearch options={devicelist}></Select>
+            <Select disabled showSearch options={devicelist}></Select>
           </Form.Item>
           <Form.Item label="设备编号" name="sn" rules={rules}>
-            <Input disabled />
+            <Input disabled/>
           </Form.Item>
 
           <Form.Item label="设备名称" name="name" rules={rules}>
-            <Input />
+            <Input/>
           </Form.Item>
           {deviceStyle !== 11 &&
-            deviceStyle !== 13 &&
-            deviceStyle !== 14 &&
-            deviceStyle !== 18 &&
-            deviceStyle !== 20 &&
-            deviceStyle !== 21 &&
-            deviceStyle !== 22 &&
-            deviceStyle !== 23 ? (
+          deviceStyle !== 13 &&
+          deviceStyle !== 14 &&
+          deviceStyle !== 18 &&
+          deviceStyle !== 20 &&
+          deviceStyle !== 21 &&
+          deviceStyle !== 22 &&
+          deviceStyle !== 23 ? (
             <Form.Item label="用能类型" name="customerType" rules={rules}>
               <Select
                 options={[
                   {
-                    label: "客户用能",
+                    label: '客户用能',
                     value: 1,
                   },
                   {
-                    label: "公共用能",
+                    label: '公共用能',
                     value: 2,
                   },
                 ]}
               ></Select>
             </Form.Item>
           ) : null}
-           {
-             deviceStyle == 19 &&  <Form.Item label="额定功率" name="power" rules={rules}>
-              <InputNumber min={0} style={{width: "100%"}} />
-           </Form.Item>
+          {
+            deviceStyle == 19 && <Form.Item label="额定功率" name="power" rules={rules}>
+              <InputNumber min={0} style={{ width: '100%' }}/>
+            </Form.Item>
           }
           {/* {
-                        deviceStyle === 21 ? (
-                            <Form.Item label="计量电表" name="customerType" rules={rules}>
-                                <Select
-                                    options={[{
-                                        label: '客户用能',
-                                        value: 1
-                                    }, {
-                                        label: '公共用能',
-                                        value: 2
-                                    }]}></Select>
-                            </Form.Item>
-                        ) : null
-                    } */}
+           deviceStyle === 21 ? (
+           <Form.Item label="计量电表" name="customerType" rules={rules}>
+           <Select
+           options={[{
+           label: '客户用能',
+           value: 1
+           }, {
+           label: '公共用能',
+           value: 2
+           }]}></Select>
+           </Form.Item>
+           ) : null
+           } */}
           {/* {deviceStyle === 1? <EditCom form={form} coms={coms}></EditCom> : null} */}
           {deviceStyle === 1 ||
-            deviceStyle == 12 ||
-            deviceStyle == 13 ||
-            deviceStyle == 14 ||
-            deviceStyle == 20 ||
-            deviceStyle == 22 ||
-            deviceStyle == 23 ? (
+          deviceStyle == 12 ||
+          deviceStyle == 13 ||
+          deviceStyle == 14 ||
+          deviceStyle == 20 ||
+          deviceStyle == 22 ||
+          deviceStyle == 23 ? (
             <EditCom
               form={form}
               coms={coms}
@@ -907,8 +908,8 @@ export const EditFormComp = (props) => {
         </Col>
       </Row>
     </Form>
-  );
-};
+  )
+}
 
 //分区配置
 export const AreaOption = ({
@@ -920,7 +921,7 @@ export const AreaOption = ({
   index,
   ...other
 }) => {
-  const channelname = (text = "分区配置") => {
+  const channelname = (text = '分区配置') => {
     return index == 1
       ? `${channelName1}${text}`
       : index == 2
@@ -929,10 +930,10 @@ export const AreaOption = ({
           ? `${channelName3}${text}`
           : index == 4
             ? `${channelName4}${text}`
-            : "";
-  };
+            : ''
+  }
 
-  useEffect(() => { }, [channelName1]);
+  useEffect(() => { }, [channelName1])
   return (
     <Modal
       mold="cust"
@@ -943,9 +944,9 @@ export const AreaOption = ({
         <Button onClick={other.areacancel}>返回</Button>,
         <Button
           style={{
-            backgroundColor: "#237ae4",
-            color: "#fff",
-            borderColor: "#237ae4",
+            backgroundColor: '#237ae4',
+            color: '#fff',
+            borderColor: '#237ae4',
           }}
           onClick={other.areaok}
         >
@@ -957,11 +958,11 @@ export const AreaOption = ({
       {/* <BlueColumn name={channelname()} styled={{ padding: '24px 0px' }}></BlueColumn> */}
       <WrapDiv channelname={channelname}></WrapDiv>
     </Modal>
-  );
-};
+  )
+}
 const WrapDiv = ({ channelname }) => {
   const { path1Gruop, path2Gruop, path3Gruop, path4Gruop, rankindex } =
-    useContext(MyContext);
+    useContext(MyContext)
   const pathGruop =
     rankindex == 1
       ? path1Gruop
@@ -971,73 +972,73 @@ const WrapDiv = ({ channelname }) => {
           ? path3Gruop
           : rankindex == 4
             ? path4Gruop
-            : [{ current: { name: "", remakr: "" } }];
-  const cardRef = useRef();
-  const [numchannel, setNumChannel] = useState();
-  const [list, setList] = useState([]);
+            : [{ current: { name: '', remakr: '' } }]
+  const cardRef = useRef()
+  const [numchannel, setNumChannel] = useState()
+  const [list, setList] = useState([])
   const setChannel = () => {
     if (!numchannel) {
-      message.warning("请设置通道数");
-      return;
+      message.warning('请设置通道数')
+      return
     }
-    pathGruop.current = [];
+    pathGruop.current = []
     setList(
       Array(numchannel)
         ?.fill(0)
         .map((it, i) => {
           // pathGruop.current=[]
-          const order = i + 1 < 10 ? "0" + (i + 1) : i + 1;
+          const order = i + 1 < 10 ? '0' + (i + 1) : i + 1
           pathGruop.current[i] = {
-            name: `${channelname("")}-分区${order}`,
-            remark: "",
-          };
+            name: `${channelname('')}-分区${order}`,
+            remark: '',
+          }
           // if( cardRef.current){
           //     cardRef.current.setCardValue(`${channelname('')}-分区${order}`)
           // }
-          console.log(i);
+          console.log(i)
           return (
             <Card
               Index={i}
-              key={pathGruop.current[i]["name"]}
-              channelname={channelname("")}
+              key={pathGruop.current[i]['name']}
+              channelname={channelname('')}
               pathGruop={pathGruop}
               ref={cardRef}
             />
-          );
+          )
         })
-    );
-    console.log(pathGruop);
-  };
+    )
+    console.log(pathGruop)
+  }
   useEffect(() => {
     if (Array.isArray(pathGruop.current) && pathGruop.current.length > 0) {
-      const len = pathGruop.current.length;
-      setNumChannel(len);
+      const len = pathGruop.current.length
+      setNumChannel(len)
       setList(
         pathGruop.current.map((it, i) => {
           return (
             <Card
               Index={i}
-              key={pathGruop.current[i]["name"]}
-              channelname={channelname("")}
+              key={pathGruop.current[i]['name']}
+              channelname={channelname('')}
               pathGruop={pathGruop}
               ref={cardRef}
             />
-          );
+          )
         })
-      );
+      )
     }
-  }, []);
+  }, [])
   return (
     <div>
-      <div style={{ display: "flex", alignItems: "center" }}>
-        <span style={{ paddingRight: 16 }}>{channelname("分区个数")}</span>
+      <div style={{ display: 'flex', alignItems: 'center' }}>
+        <span style={{ paddingRight: 16 }}>{channelname('分区个数')}</span>
         <InputNumber
           style={{ width: 64, marginRight: 16 }}
           value={numchannel}
           min={1}
           max={40}
           onChange={(value) => {
-            setNumChannel(value);
+            setNumChannel(value)
           }}
         ></InputNumber>
         <span style={{ paddingRight: 16 }}>(1~40)</span>
@@ -1047,46 +1048,46 @@ const WrapDiv = ({ channelname }) => {
       </div>
       <Divider
         type="horizontal"
-        style={{ height: "100%", borderColor: "#bcbcbc" }}
+        style={{ height: '100%', borderColor: '#bcbcbc' }}
         dashed
       />
       <div className={style.gridcss}>{list}</div>
     </div>
-  );
-};
+  )
+}
 
 const Card = forwardRef(({ Index = 1, channelname, pathGruop }, ref) => {
-  const [cardvalue, setCardValue] = useState();
-  const [reamrk, setRemark] = useState();
-  const order = Index + 1 < 10 ? "0" + (Index + 1) : Index + 1;
+  const [cardvalue, setCardValue] = useState()
+  const [reamrk, setRemark] = useState()
+  const order = Index + 1 < 10 ? '0' + (Index + 1) : Index + 1
 
   useImperativeHandle(ref, () => {
     return {
       setCardValue,
-    };
-  });
-  useEffect(() => {
-    if (pathGruop.current[Index]["name"]) {
-      setCardValue(pathGruop.current[Index]["name"]);
     }
-  }, [pathGruop.current[Index]["name"]]);
+  })
+  useEffect(() => {
+    if (pathGruop.current[Index]['name']) {
+      setCardValue(pathGruop.current[Index]['name'])
+    }
+  }, [pathGruop.current[Index]['name']])
   return (
     <div
       style={{
         width: 248,
         height: 90,
-        display: "flex",
-        border: "1px solid rgba(215, 215, 215, 1)",
+        display: 'flex',
+        border: '1px solid rgba(215, 215, 215, 1)',
       }}
     >
       <div
         style={{
           width: 32,
           height: 90,
-          textAlign: "center",
-          lineHeight: "82px",
-          backgroundColor: "#3399ff",
-          color: "#fff",
+          textAlign: 'center',
+          lineHeight: '82px',
+          backgroundColor: '#3399ff',
+          color: '#fff',
         }}
       >
         {Index + 1 < 10 ? `0${Index + 1}` : Index + 1}
@@ -1094,47 +1095,47 @@ const Card = forwardRef(({ Index = 1, channelname, pathGruop }, ref) => {
       <div
         style={{
           flex: 1,
-          display: "flex",
-          alignItems: "center",
-          flexDirection: "column",
-          justifyContent: "space-around",
+          display: 'flex',
+          alignItems: 'center',
+          flexDirection: 'column',
+          justifyContent: 'space-around',
         }}
       >
-        <div style={{ display: "flex", alignItems: "center" }}>
-          <span style={{ flexShrink: 0, padding: "0 6px" }}>名称</span>
+        <div style={{ display: 'flex', alignItems: 'center' }}>
+          <span style={{ flexShrink: 0, padding: '0 6px' }}>名称</span>
           <Input
             size="middle"
             style={{ width: 165 }}
             defaultValue={
               pathGruop.current[Index]
-                ? pathGruop.current[Index]["name"]
+                ? pathGruop.current[Index]['name']
                 : `${channelname}-分区${order}`
             }
             value={cardvalue}
             onChange={(e) => {
-              pathGruop.current[Index]["name"] = e.target.value;
-              setCardValue(e.target.value);
+              pathGruop.current[Index]['name'] = e.target.value
+              setCardValue(e.target.value)
             }}
           ></Input>
         </div>
-        <div style={{ display: "flex", alignItems: "center" }}>
-          <span style={{ flexShrink: 0, padding: "0 6px" }}>备注</span>
+        <div style={{ display: 'flex', alignItems: 'center' }}>
+          <span style={{ flexShrink: 0, padding: '0 6px' }}>备注</span>
           <Input
             size="middle"
             style={{ width: 165 }}
             defaultValue={
               pathGruop.current[Index]
-                ? pathGruop.current[Index]["remark"]
+                ? pathGruop.current[Index]['remark']
                 : null
             }
             value={reamrk}
             onChange={(e) => {
-              pathGruop.current[Index]["remark"] = e.target.value;
-              setRemark(e.target.value);
+              pathGruop.current[Index]['remark'] = e.target.value
+              setRemark(e.target.value)
             }}
           ></Input>
         </div>
       </div>
     </div>
-  );
-});
+  )
+})

@@ -47,7 +47,9 @@ export default function Index() {
                 deviceStyle={22} 
                 state={item.state}
                 fields={item.fields} 
-                category={item.no}
+                category={item.cSn}
+                value={item.address}
+                lastSampleTime={item.lastSampleTime}
                 device={3}
               />
             </Link>

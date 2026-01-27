@@ -44,7 +44,7 @@ export const getTableColumns = (isPublish, areaFirstName, onTableEditClick, onTa
       key: 'no',
     },
     {
-      title: '站点容量 (kVA)',
+      title: '站点容量 (kWh)',
       dataIndex: 'capacity',
       key: 'capacity',
       align: 'center',
