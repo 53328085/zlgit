@@ -37,3 +37,8 @@ export const { useQueryStorageWarning } = new Apimethod( //最新告警
     "get",
     "Storage/SiteSummaryRuntime/QuerySOC"
   );
+
+  export const { useQueryTopologyDiagramInfo } = new Apimethod( // 拓扑图信息
+    "get",
+    "Storage/SiteSummaryRuntime/QueryTopologyDiagramInfo"
+  );

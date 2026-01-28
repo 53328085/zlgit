@@ -50,12 +50,14 @@ export default function Index({title,getData,dataZoom }={}) {
    
     onValuesChange={onValuesChange}
   > 
-     <Space><Form.Item name="startTime" style={{marginBottom:0}} initialValue={time?.startTime}   >
+     <Space>
+      <Form.Item name="" style={{marginBottom:0}}>
+        <Select options={[]} style={{width:80}}></Select>
+      </Form.Item>
+      <Form.Item name="startTime" style={{marginBottom:0}} initialValue={time?.startTime}   >
   <DatePicker style={{width: "120px"}} />
 </Form.Item>
-<Form.Item noStyle>
-<span>对比</span>
-</Form.Item>
+ 
 <Form.Item name="endTime" style={{marginBottom:0}} initialValue={time?.endTime}  >
   <DatePicker style={{width: "120px"}} />
 </Form.Item></Space>

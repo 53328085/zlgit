@@ -5,7 +5,7 @@ import { useRequest } from 'ahooks'
 import styled from "styled-components";
 import { ExportExcel, i18t, CustTransO } from '@com/useButton'
 import { useSelector, useDispatch } from 'react-redux'
-import { levelDefaultLabel,getsaveDeviceID,prodeviceType, selectProjectId, deviceID,selectshifts, filterDeviceStyle, selectOneLevelDefaultId, selectOneLevel, setCurrentlevel, deviceStyle, getThemeColor, themeColor, setIntl, adaptation,lightlevel } from '@redux/systemconfig.js'
+import { levelDefaultLabel,getsaveDeviceID,prodeviceType, selectProjectId, deviceID,selectshifts,energyType, filterDeviceStyle, selectOneLevelDefaultId, selectOneLevel, setCurrentlevel, deviceStyle, getThemeColor, themeColor, setIntl, adaptation,lightlevel } from '@redux/systemconfig.js'
 import moment from "moment";
 import 'moment/locale/zh-cn';
 const { RangePicker } = DatePicker;
@@ -72,7 +72,7 @@ export default function UseSerach(props) {
 
   const { config = {}, custview = null, record = null } = props
 
-  const { isAreaId = true, gas = true, isLevles=false, daterang = 'day', formsty = {} } = config
+  const { isAreaId = true, gas = true, isLevles=false, daterang = 'day', formsty = {}, onlye=false } = config
   const dispatch = useDispatch()
 
 
@@ -85,8 +85,17 @@ export default function UseSerach(props) {
   const varlabel = useSelector(levelDefaultLabel)
   const oneLevelDefaultId = useSelector(selectOneLevelDefaultId) // 选择后的值
   let [AreaID, setAreaid] = useState(oneLevelDefaultId)
-  const [energyoptions, setEnergyoptions] = useState([])
-  const energyTypeDefault = useRef(1)
+ // const [energyoptions, setEnergyoptions] = useState([])
+  const energyTypes=useSelector(energyType)
+  const energyoptions =useMemo(()=> {
+     let options = energyTypes?.map?.(i => ({ label: i.name, value: i.type }))
+     if (onlye) {
+       options = options.filter(d => d.value == 1)
+     }
+     return options 
+  }, [energyTypes,onlye])
+
+  
   const levelone = useSelector(selectOneLevel)
   const { laptop } = useSelector(adaptation)
   const defauledeviceID =useSelector(deviceID)
@@ -107,7 +116,7 @@ export default function UseSerach(props) {
   const [tankoptions, setTankoptions] = useState([])
   const [bmsoptions, setBmsoptions] = useState([])
   //const deviceStyles = useSelector(deviceStyle)
-  console.log("defauledeviceID",defauledeviceID)
+ // console.log("defauledeviceID",defauledeviceID)
  // let currdeviceStyle = `deviceStyle_${projectId}`
  /*   const getDever = async () => {
     try {
@@ -137,7 +146,7 @@ export default function UseSerach(props) {
 
   }  */
 
-  const getEnergyType = async () => {
+/*   const getEnergyType = async () => {
     try {
       if (!Number.isInteger(parseInt(projectId))) return
       let { success, data } = await Editapi.QueryEnergyType(projectId)
@@ -152,7 +161,7 @@ export default function UseSerach(props) {
     } catch (error) {
       console.log(error)
     }
-  }
+  } */
   const getopti = async () => { // 站点选择
     try {
       let { success, data, errMsg } = await SiteManagerDesigner.FindSiteList(projectId, AreaID)
@@ -196,9 +205,9 @@ export default function UseSerach(props) {
 
   }, [projectId, props.config?.isdevsty]) */
 
-  useEffect(() => {
+/*   useEffect(() => {
     getEnergyType()
-  }, [projectId])
+  }, [projectId]) */
 
   const onChange = (e, option) => {
     dispatch(setCurrentlevel(option))
@@ -220,7 +229,7 @@ export default function UseSerach(props) {
   const dateselect = (
     <Space size={16}>
       <Item name="type" initialValue={1} key="electricity" preserve={false}>
-        <Select style={w88} onChange={changetype} options={dateoption} ></Select>
+        <Select style={w88} onChange={changetype} options={dateoption} disabled={config?.disabledDate}></Select>
       </Item>
       <Item noStyle shouldUpdate={(pre, cur) => pre.type != cur.type}  >
         {
@@ -228,7 +237,7 @@ export default function UseSerach(props) {
             let type = (daterang == 'week' ? ['week', 'week', 'month', 'year'] : ['date', 'date', 'month', 'year'])[getFieldValue('type')]
             return (
               <Item name="date" initialValue={moment()} >
-                <DatePicker picker={type} style={w200} disabled={config?.disabledDate} />
+                <DatePicker picker={type} style={w200} disabled={config?.disabledDate || config?.reportType} />
               </Item>
             )
           }
@@ -265,12 +274,12 @@ export default function UseSerach(props) {
   )
 
   const energyChange = (v) => {
-    let e = v > 1 ? 2 : 1 //电表默认日，其他设备默认月
+    let e = v > 1 ? 2 : 1  //电表默认日，其他设备默认月
     form.setFieldValue("type", e)
     changetype(e)
   }
   const energytype = (
-    <Item label="能源类型" name="energytype" initialValue={energyTypeDefault.current}>
+    <Item label="能源类型" name="energytype" >
       <Select style={{ width: 112 }} options={energyoptions} onChange={energyChange}></Select>
     </Item>
   )
@@ -559,10 +568,13 @@ export default function UseSerach(props) {
   }
 
   useEffect(() => {
-    form.resetFields()
+   // form.resetFields()
     if (!config.gas) {
       let v = form.getFieldValue('energytype');
       if (v == 3) form.setFieldValue('energytype', 1)
+    }
+    if(props.config?.energytype) {
+      form.setFieldValue('energytype', 1)
     }
     if (config.dateType) {
       form.setFieldValue('type', config.dateType)
@@ -579,7 +591,7 @@ export default function UseSerach(props) {
     }
     props.setexparams({ ...form.getFieldsValue(true) })
 
-  }, [props.config, projectId, oneLevelDefaultId])
+  }, [props.config.gas,props.config?.energytype,config.dateType, projectId, oneLevelDefaultId])
 
 
   /*   useEffect(() => {

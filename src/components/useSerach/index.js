@@ -168,7 +168,7 @@ export default function UseSerach(props) {
   return (
 
     <Cform layout="inline" form={form}   {...props} onValuesChange={onValuesChange} >
-      <Space size={64} split={<Divider style={{ margin: '0px', height: '32px' }} type="vertical" />}>
+      <Space size={32}  >
         {isAreaId && <Item label={varlabel} name='area'>
           <Select style={{ width: "200px" }} onChange={onChange} options={props.isHaveAll != undefined ? areaOptions : levelone} fieldNames={{ label: 'name', value: 'id', options: 'options' }}>
 

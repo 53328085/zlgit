@@ -19,7 +19,7 @@ import { themeColor } from '@redux/systemconfig.js'
 import {Tabsbox} from "@com/comstyled"
 import {Mainbox,Station,CTimeline  } from "./style"
 import {tabs} from './data'
-import {Power, Income, Dischange} from "./comm"
+import {Power, Income, Dischange,Topology} from "./comm"
 import {useQuerySiteInfo,useQueryStorageWarning} from './api'
 import {Paramscontext} from './context'
 const {Link, Paragraph, Text} = Typography
@@ -45,11 +45,7 @@ export default function Index() {
   const navigate = useNavigate()
   const [cardData, setCardData] = useState(null)//卡片数据
   const [warningData, setWarningData] = useState([])//最新告警
-  const [topologyData, setTopologyData] = useState({
-    loadDevice: {},
-    onGridDevice: {},
-    storageDevice: {}
-  }) //接线图数据
+ 
  const getsiteData =async () => { 
     try {
        let {data, success} = await  useQuerySiteInfo({siteId:9,projectId,areaId:5})
@@ -83,40 +79,7 @@ export default function Index() {
     }
     
   }, [siteId,areaId, projectId])
-  useEffect(() => {
-    
-    if(!(Number.isFinite(areaId) && Number.isFinite(projectId) && stationName?.value && isFinite(stationName?.value))) return
-   
-   
 
- 
- 
-
-    queryTopologyDiagramInfo(projectId,  areaId, stationName.value).then(res => {
-      if (res.success) {
-        if (res.data) {
-          setTopologyData(res.data)
-        } else {
-          setTopologyData({
-            loadDevice: {},
-            onGridDevice: {},
-            storageDevice: {}
-          })
-        }
-      } else {
-        setTopologyData({
-          loadDevice: {},
-          onGridDevice: {},
-          storageDevice: {}
-        })
-        //message.error(res.errMsg)
-      }
-    }).catch()
-
-
-    
-
-  }, [exparams])
  
   const Comm ={
     1: Power,
@@ -134,34 +97,7 @@ export default function Index() {
   }
  
  
-  const [options, setOptions] = useState({
-    series: [{ type: "bar",  seriesLayoutBy: 'row' }, { type: "bar",  seriesLayoutBy: 'row' },  { type: "line", seriesLayoutBy: 'row' },],  
-    grid: { 
-      left: "0px",
-      right: "0",
-      top: "30px",
-      bottom: "0px",
-      containLabel: true,
-    },
-    legend: {
-      top: 0,  
-    },
-    dataset: {}
-  })
-  const [loptions, setLoptions] = useState({
-    series: [{ type: "line",  seriesLayoutBy: 'row' }, { type: "line",  seriesLayoutBy: 'row' }],  
-    grid: { 
-      left: "0px",
-      right: "0",
-      top: "30px",
-      bottom: "0px",
-      containLabel: true,
-    },
-    legend: {
-      icon: 'circle'
-     },
-    dataset: {}
-  })
+
   const ontabChange = (e) => {
     setTabvalue(e)
     
@@ -169,73 +105,9 @@ export default function Index() {
   return (
     <Pagecount  pd={0} bgcolor='transparent'  >
       <Mainbox>
+      <Paramscontext.Provider value={{areaId, stationName,  projectId}}>
         <div className="left">
-        <Titlelayout title='站点接线图' pv="0" bgcolor="transparent" bg="transparent">
-        <div className="topology">
-          
-         {
-                       islight ? <img src={light} className="zhanwei"></img> :<img src={deep} className="zhanwei" ></img> 
-                      } 
-                       {/* 储能总表 */}
-                       <div className='storageMeter'>
-                         <div className='meterData'>
-                           <span>电压:</span>
-                           <span>{topologyData?.storageDevice.v}</span>
-                           <span>(V)</span>
-                         </div>
-                         <div className='meterData'>
-                           <span>电流:</span>
-                           <span>{topologyData?.storageDevice.i}</span>
-                           <span>(A)</span>
-                         </div>
-                         <div className='meterData'>
-                           <span>功率:</span>
-                           <span >{topologyData?.storageDevice.p}</span>
-                           <span>(kW)</span>
-                         </div>
-                       </div>
-                       {/*并网总表器*/}
-                       <div className='transformer'>
-                         <div className='meterData'>
-                           <span >电压:</span>
-                           <span>{topologyData?.onGridDevice.v}</span>
-                           <span>(V)</span>
-                         </div>
-                         <div className='meterData'>
-                           <span>电流:</span>
-                           <span>{topologyData?.onGridDevice.i}</span>
-                           <span>(A)</span>
-                         </div>
-                         <div className='meterData'>
-                           <span>功率:</span>
-                           <span>{topologyData?.onGridDevice.p}</span>
-                           <span>(kW)</span>
-                         </div>
-                       </div>
-                       {/*负载总表*/}
-                       <div className='batterys'>
-                         <div  className='meterData'>
-                           <span>电压:</span>
-                           <span>{topologyData?.loadDevice.v}</span>
-                           <span>(V)</span>
-                         </div>
-                         <div  className='meterData'>
-                           <span >电流:</span>
-                           <span  >{topologyData?.loadDevice.i}</span>
-                           <span >(A)</span>
-                         </div>
-                         <div  className='meterData'>
-                           <span>功率:</span>
-                           <span>{topologyData?.loadDevice.p}</span>
-                           <span>(kW)</span>
-                         </div>
-                       </div>
-                       <div className='batteryPlaceholder' onClick={() => toPage('BMSMonitor', 'BMS监控')}></div>
-          
-          
-         
-        </div>
-        </Titlelayout>
+        <Topology />
         </div>
         <div className="right">
           <div className="rightup">
@@ -286,13 +158,12 @@ export default function Index() {
           </div>
           <div className="rightdown">
             <Tabsbox defaultActiveKey={1} items={tabs} onChange={ontabChange} /> 
-            <div className="chartbox">
-              <Paramscontext.Provider value={{areaId, stationName,  projectId}}>
-                 <Comm    /> 
-               </Paramscontext.Provider>
+            <div className="chartbox"> 
+                 <Comm /> 
               </div>
           </div>
         </div>
+        </Paramscontext.Provider>
       </Mainbox>
     </Pagecount>
    

@@ -1,7 +1,7 @@
 import React, { useState, useCallback, useRef, useEffect, useMemo, Children } from 'react'
 import { Checkbox, DatePicker, message, Tooltip, Descriptions, Radio, Select,Input } from 'antd'
 import moment from 'moment'
-
+ 
 import { useOutletContext } from 'react-router-dom'
 import { useAntdTable } from 'ahooks'
 import CustContext from '@com/content.js'
@@ -59,10 +59,30 @@ const Chartwrap = styled.div`
   }
 
 `
-
+/* 
+[
+    {
+        "name": "电",
+        "type": 1
+    },
+    {
+        "name": "冷水",
+        "type": 2
+    },
+    {
+        "name": "热水",
+        "type": 7
+    },
+    {
+        "name": "燃气",
+        "type": 3
+    }
+]
+ */
 export default function Index() {
 
   let { exparams, setCustview ,setConfig} = useOutletContext()
+  
   const [dates, setDates] = useState([moment().startOf("day"), moment().endOf("hour")]);
   
   const [startDateTime, setStartDateTime] = useState('')
@@ -74,7 +94,7 @@ export default function Index() {
   const [line, setLine] = useState(0)
   const [treeId, setTreeId] = useState()
   let { areaId, projectId, type, date, energytype } = exparams // projectId = 30 安庆旺旺 项目定制 水电 只显示电能报表
-
+  
   const [concolumns, setConcolumns] = useState([])
   const [alike, setAlike] = useState("")
   const [alikev, setAlikev]=useState("")
@@ -145,17 +165,21 @@ export default function Index() {
  
 
 const tabs = useMemo(()=> {
- 
+  console.log("energytype",energytype)
   if( projectId==30) {
      setvalue("1")
     return aqtabs
-  }else if(energytype==1) {
+  }else if(energytype==1 ) {
+  // setvalue("0")
      return etabs
   }else   {
+   // setvalue("0")
     return wtabs
   } 
 
 }, [projectId, energytype])
+
+ 
 
 useEffect(()=> {
     if(["0","1","4"].includes(value) && isrange.range) {       
@@ -164,13 +188,14 @@ useEffect(()=> {
       setConfig((o)=> ({...o,  disabledDate:false}))
     }
     setConfig((o)=> ({...o,  reportType:value=="1" && isrange.range}))
+    setConfig((o)=> ({...o,  onlye: ["2","4"].includes(value)})) // 分时能耗，账单表单只有电
     let str =typeof alikeRef.current?.[value]==="string" ? alikeRef.current?.[value] :  ""
     setAlike(str)
     setAlikev(str)
 }, [value,isrange])
 useEffect(()=> {
    return () => {
-    setConfig((o)=> ({...o,  disabledDate:false,reportType:false}))
+    setConfig((o)=> ({...o,  disabledDate:false,reportType:false, onlye:false}))
   }
 }, [])
 
@@ -218,24 +243,12 @@ useEffect(()=> {
 
  
 
-  // let columns = [cols(startDateTime, endDateTime), [], timecols, typecols, fromlot, shitcols][index] // 
-
-   /*     columns.forEach(c => {
-      if (c.dataIndex == 'consume' && index == 0) { // 实时抄表
-        console.log("实时抄表")
-        c.title = (energytype == 1 ? '用能(kWh)' : '用水量(m³)')
-      }
-      if (c.dataIndex == 'consume' && index == 3) {  // 分类报表
-        c.title = (energytype == 1 ? '用能(kWh)' : '用水量（m³）')
-      }
-      
-      
-    }) */
+ 
 
   const getTableData = ({ current, pageSize, areaId, projectId, type, date, energytype, treeId, index, line, isrange, dates, alike,reportType }) => {
     //  console.log(date)
 
-
+    console.log("接口调用")
 
     let f = [areaId, projectId, type, energytype, index, line].every(v => Number.isInteger(v)) && Array.isArray(treeId) && date
 
@@ -245,6 +258,7 @@ useEffect(()=> {
     if (index === 0 && isrange.range && !Array.isArray(dates)) {
       return
     }
+     
     let hander = [
       QueryConsumeRegion,
       QueryConsumeHourTime,
@@ -264,7 +278,7 @@ useEffect(()=> {
       pageSize,
       queryType: line,
       ids: treeId,
-      type,
+      type: range ?1 : type ,
       reportType,
       filterInfo:alike,
       customTime:range // 日期范围优化
@@ -307,6 +321,7 @@ useEffect(()=> {
       setTotal(total)
       let fag =  [1,5].includes(index) && isObject(data)
       let arrData = [], counsume=[]
+      console.log("index",index)
       if (success && ((Array.isArray(data) && data.length > 0) || fag)) {
         if (index == 1) {
           let { detailHeaders,detailDatas} = data
@@ -556,14 +571,16 @@ const dateprops = useMemo(()=>{
     setValuet(date)
   };
 
-  let dataProps = {
-    value,
-    setvalue,
-    tabs,
-    //  tabsprops,
-    //  form,
-    //  custview: <CustView />,
-  }
+  let dataProps =useMemo(()=>(
+    {
+      value,
+      setvalue,
+      tabs,
+      //  tabsprops,
+      //  form,
+      //  custview: <CustView />,
+    }
+  ), [value, tabs, setvalue ]) 
 
   useEffect(() => {
     setCustview(CustView);

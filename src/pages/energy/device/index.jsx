@@ -338,10 +338,7 @@ export default function Index() {
     const viewstyle = {
       display: 'flex',
       justifyContent: "space-between",
-      flex: 1,
-      'marginLeft': '32px',
-      'paddingLeft': '32px',
-      'borderLeft': '1px dotted #d7d7d7',
+      flex: 1, 
     }
     return (
       <div style={viewstyle}>

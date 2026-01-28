@@ -41,7 +41,7 @@ export default function Index({title,getData, dataZoom }={}) {
       
      
       let params = {
-        areaId:1,
+        areaId,
         siteId:stationName.value,
         projectId,
         type,
