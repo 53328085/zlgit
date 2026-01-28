@@ -116,7 +116,7 @@ const StackPanel = memo(({ data }) => {
 });
 
 // 主组件
-export default memo(function BmsDeviceDiagram({ stackData, clusterData = [] }) {
+export default memo(function BmsDeviceDiagram({ loading, stackData, clusterData = [] }) {
   // 常量定义
   const CONTAINER_WIDTH = 504; // DiagramContainer 宽度
   const CLUSTER_WIDTH = 140; // ClusterBox 宽度

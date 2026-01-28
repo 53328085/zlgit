@@ -3528,6 +3528,11 @@ export class BMSRuntime {
       `Storage/BMSRuntime/QueryBatteryWarning?projectId=${projectId}&areaId=${areaId}&batteryPackId=${batteryPackId}`,
       data
     );
+  // 环境监控状态查询
+  static queryENVStatusInfo = (projectId, siteId) =>
+    server.get(
+      `Storage/StorageMonitorEnvironment/QueryENVStatusInfo?projectId=${projectId}&siteId=${siteId}`
+    );
 }
 //电气安全(设计态)
 //告警管理
@@ -3726,6 +3731,10 @@ export class StorageMonitorRuntime {
     server.get(
       `/Storage/StorageMonitorPCS/QueryPCSDataInfo?projectId=${projectId}&pcsId=${pcsId}`
     );
+}
+
+//BMS监控
+export class StorageMonitorBMS {
   static queryBMSDataInfo = (projectId, pcsId) =>
     server.get(
       `/Storage/StorageMonitorBMS/QueryBMSDataInfo?projectId=${projectId}&pcsId=${pcsId}`
@@ -3733,6 +3742,10 @@ export class StorageMonitorRuntime {
   static queryBMSTableInfo = (projectId, pcsId) =>
     server.get(
       `/Storage/StorageMonitorBMS/QueryBMSTableInfo?projectId=${projectId}&pcsId=${pcsId}`
+    );
+  static queryBMSStatusInfo = (projectId, pcsId) =>
+    server.get(
+      `/Storage/StorageMonitorBMS/QueryBMSStatusInfo?projectId=${projectId}&pcsId=${pcsId}`
     );
 }
 

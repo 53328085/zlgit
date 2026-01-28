@@ -7,7 +7,7 @@ import Table from '@com/useTable'
 import Modal from '@com/useModal'
 
 import { MultImport, ErrorMessage } from './modalCom'
-import { Monitoring } from '@api/api.js'
+import { Monitoring, StorageDeviceDesigner } from '@api/api.js'
 import { DeleteModal } from './modalCom'
 import { AddModalForm, MyContext, EditModalForm } from './elecomp'
 import cutContext from '@com/content'
@@ -517,7 +517,7 @@ export default function Storage ({ deviceStyle, name }) {
     const formData = new FormData()
     formData.append('file', flies[0])
     formData.append('projectId', projectId)
-    const res = await ImportElectric(formData)
+    const res = await Monitoring.DeviceManager.ImportStorageDevice(formData)
     if (res.success) {
       if (res.data.success) {
         message.success('上传成功')
