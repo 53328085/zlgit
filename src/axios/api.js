@@ -3731,6 +3731,10 @@ export class StorageMonitorRuntime {
     server.get(
       `/Storage/StorageMonitorPCS/QueryPCSDataInfo?projectId=${projectId}&pcsId=${pcsId}`
     );
+}
+
+//BMS监控
+export class StorageMonitorBMS {
   static queryBMSDataInfo = (projectId, pcsId) =>
     server.get(
       `/Storage/StorageMonitorBMS/QueryBMSDataInfo?projectId=${projectId}&pcsId=${pcsId}`
@@ -3738,6 +3742,10 @@ export class StorageMonitorRuntime {
   static queryBMSTableInfo = (projectId, pcsId) =>
     server.get(
       `/Storage/StorageMonitorBMS/QueryBMSTableInfo?projectId=${projectId}&pcsId=${pcsId}`
+    );
+  static queryBMSStatusInfo = (projectId, pcsId) =>
+    server.get(
+      `/Storage/StorageMonitorBMS/QueryBMSStatusInfo?projectId=${projectId}&pcsId=${pcsId}`
     );
 }
 
