@@ -104,13 +104,24 @@ const StackPanel = memo(({ data }) => {
     );
   }
 
+  // 去重：只保留每个名称的第一个item，避免重复显示
+  const uniqueItems = [];
+  const seenNames = new Set();
+  for (const item of data.items) {
+    if (!seenNames.has(item.name)) {
+      seenNames.add(item.name);
+      uniqueItems.push(item);
+    }
+  }
+
   return (
     <StackBox>
       <StackName>{data.name}</StackName>
-      {data.items.map((item) => renderDataItem(item, "Value"))}
-      {data.items
-        .filter((item) => item.style === "NameValueOne")
-        .map((item) => renderDataItem(item, "NameValueOne"))}
+      {uniqueItems.map((item) => {
+        // 根据 item.style 决定使用哪种渲染样式，避免重复渲染
+        const renderStyle = item.style === "NameValueOne" ? "NameValueOne" : "Value";
+        return renderDataItem(item, renderStyle);
+      })}
     </StackBox>
   );
 });
