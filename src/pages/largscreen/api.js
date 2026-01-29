@@ -1,5 +1,5 @@
 import {Apimethod} from "@api/api.js"
-export const { useQueryData} = new Apimethod( // 获取区域能耗数据
+export const { useQueryData} = new Apimethod( // 制冷机，空压机，光伏发电统计
   "get",
   "/LargeScreen/LargeScreenSaNoFi/QueryData"
 );
@@ -51,3 +51,4 @@ export  const body={  // 参数先写死
     "post",
     "/Energy/EnergyClassifyRuntime/QueryEnergyDetail"
   );
+ 

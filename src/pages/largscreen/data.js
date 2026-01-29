@@ -1,7 +1,7 @@
 import React,{useState,useEffect, useMemo} from 'react'
 
 import dayjs from 'dayjs'
- 
+import {isObject} from "@com/usehandler"
 export const useTime = () => {
   const [time, setTime] = useState(dayjs())
   const timeformat = `${time.format('YYYY年MM月DD日')} 星期${['日', '一', '二', '三', '四', '五', '六'][time.day()]} ${time.format('HH:mm:ss')}`
@@ -125,7 +125,7 @@ return {
 };
 export function useLineopt({datas, index,name}){
   const lineopt=useMemo(()=>{
-    const {x=[], y=[]}=datas
+    const {x=[], y=[]}= isObject(datas) ? datas : {}
      return{
          series:[{ 
            type: "line", 

@@ -27,7 +27,8 @@ export default function Index() {
     loadTrend, // 用电负荷趋势01月
     rankClassify,// 分项用能排名
     monthTotal,
-    
+    latest7DaysCOPCurve,
+    latest7DaysKPICurve
   } = useMemo(()=>{ 
      
      try {
@@ -68,7 +69,7 @@ export default function Index() {
  
   },[datas])
 
- 
+  console.log("latest7DaysCOPCurve",latest7DaysCOPCurve)
   const getData=async ()=>{  
     try {
       let data =await useQueryData({projectId,meterType })
@@ -98,11 +99,11 @@ export default function Index() {
          <div className="center">
             <Centerupcom  datas={loadTrend} /> 
             <Centercom datas={consumeTrend} />
-            <Centerdowncom datas={rankClassify} />
+            <Centerdowncom datas={rankClassify} monthTotal={monthTotal} />
          </div>
          <div className="right">
-            <Rightupcom />
-            <Rightcentercom />
+            <Rightupcom datas={latest7DaysCOPCurve} />
+            <Rightcentercom datas={latest7DaysKPICurve} />
             <Rightdowncom />
          </div>
        </div>

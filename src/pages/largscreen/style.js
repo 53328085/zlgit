@@ -20,7 +20,7 @@ export const Pagelayout = styled.div`
   ${bgsty}
   display: flex;
   flex-direction: column;
-  row-gap: 16px;
+//  row-gap: 16px;
   padding: 0 16px 16px 16px;
   .hearder {
     height: 84px;
@@ -33,6 +33,7 @@ export const Pagelayout = styled.div`
       align-items: center;
       justify-content: center;
       font-size: 32px;
+      line-height: 1;
       ${title}// height: 44px;;
     }
     .opt {
@@ -122,7 +123,7 @@ export const Pagelayout = styled.div`
 `;
 
 export const Layoutcom = styled.div`
-  flex-basis:  ${(props) => props.flex};
+  flex-basis: ${(props) => props.flex};
   display: flex;
   flex-direction: column;
   background: linear-gradient( 270deg, rgba(2,40,85,0.77) 0%, rgba(13,41,50,0.81) 100%);
@@ -132,7 +133,7 @@ export const Layoutcom = styled.div`
     flex:1;
     display: flex;
     justify-content: center;
-    padding: 20px;
+    padding: ${props=>props.pd || "20px"};
     .mgr{
         margin-right: 2px;
     }
@@ -242,12 +243,12 @@ export const Leftdown = styled.div`
 export const Centerdown = styled.div`
    flex: 1;
    display: grid;
-   grid-template-rows: 34px 1fr;
-   row-gap: 8px;
+   grid-template-rows: 38px 1fr;
+   row-gap: 10px;
    color: #FFFFFF;
    .centertitle{
       display: grid;
-      grid-template-rows: 14px 14px;
+      grid-template-rows: 14px 18px;
       row-gap: 6px;
       .percentage{
         justify-self: flex-end;
@@ -257,6 +258,7 @@ export const Centerdown = styled.div`
       .info{
         justify-content: space-between;
         display: flex;
+        align-items: center;
         .centertotal{
           .month{
             color: ${colors[0]};
@@ -313,10 +315,10 @@ export const Centerdown = styled.div`
         color: #FFFFFF;
         .ant-badge-status-text {
           color:#fff;
-        }
-        &:even{
-          background-color:  rgba(13, 129, 180, 0.5)
-        }
+        } 
+    }
+    .ant-carousel .slick-list .slick-slide:even>div>div.row{ 
+          background-color:  rgba(13, 129, 180, 0.5) 
 
     }
 }
@@ -327,7 +329,7 @@ export const Rightupcenter = styled.div`
    display: flex;
   
    .slider-container{
-     width:488px;
+    width:488px;
     // height: calc(100% - 32px - 42px);
     flex:1;
      .ant-carousel{

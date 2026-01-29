@@ -11,9 +11,9 @@ const Titlecom = function ({ title, subtitle }) {
     </Titlesty>
   );
 };
-export default function Index({ children, title, subtitle, flex, ...props }) {
+export default function Index({ children, title, subtitle, flex,pd, ...props }) {
   return (
-    <Layoutcom flex={flex}>
+    <Layoutcom flex={flex} pd={pd}>
       <Titlecom title={title} subtitle={subtitle}></Titlecom>
       <div className="chartwrap">{children}</div>
     </Layoutcom>
@@ -51,7 +51,7 @@ export  const Prowarp = function({datas,idx}) {
 }
 
 export const Chartcom=function({index, datas}){
-  const lineopt= useLineopt({index, datas, name:"1#chiller"})
+  const lineopt= useLineopt({index, datas:datas?.detail, name:datas?.equipmentName})
   return (
       <div className="chartbox">
            <Ichart {...lineopt}></Ichart>

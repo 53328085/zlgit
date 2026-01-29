@@ -114,7 +114,7 @@ export default function Index({datas}) {
  
   const title=`用电负荷趋势${dayjs().format("MM")}月`
   return (
-    <Layoutcom title={title}    flex="316px">
+    <Layoutcom title={title}    flex="318px">
         <Ichart {...lineopt}></Ichart>
     </Layoutcom>
   );
