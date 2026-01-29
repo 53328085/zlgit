@@ -8,9 +8,9 @@ export const { useQueryStorageWarning } = new Apimethod( //最新告警
     "Storage/SiteSummaryRuntime/QueryStorageWarning"
   );
 
-  export const { useQueryMeterPower } = new Apimethod( // 关口表功率
+  export const { useQueryMeterPower } = new Apimethod( //  查询关口表/充放电/负载表功率
     "get",
-    "Storage/SiteSummaryRuntime/QueryMeterPower"
+    "Storage/SiteSummaryRuntime/QueryMeterPower"   
   );
 
   export const { useQueryChargeAndDischargePower } = new Apimethod( // 充放电
@@ -42,3 +42,9 @@ export const { useQueryStorageWarning } = new Apimethod( //最新告警
     "get",
     "Storage/SiteSummaryRuntime/QueryTopologyDiagramInfo"
   );
+
+  export const { useQueryMeterList } = new Apimethod( // 查询关口表列表 101-关口表 102-储能表 103-负载表 202-EMU协控
+    "get",
+    "Storage/SiteSummaryRuntime/QueryMeterList"   
+  );
+

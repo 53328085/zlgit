@@ -76,6 +76,8 @@ export default function Index(props) {
  
   let {exparams} = useOutletContext()
   let {deviceStyle} = exparams
+  console.log("exparams",exparams)
+  console.log("deviceStyle",deviceStyle)
   const dstate = useSelector(deviceState)
   let {laptop} = useSelector(adaptation)
   // const [messageApi, contextHolder] = message.useMessage();
@@ -195,6 +197,7 @@ export default function Index(props) {
   };
   let initparams = useRef(); 
   const getOverviewData = ({ current, pageSize }, formData) => {
+    console.log("areaId",areaId, projectId,deviceStyle)
     let f = [areaId, deviceStyle, projectId].every(s => Number.isInteger(s))
     if(!f) return;
     initparams.current = {

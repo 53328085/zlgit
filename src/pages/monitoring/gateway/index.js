@@ -223,6 +223,8 @@ export default function Index(props) {
           total: 0,
         };
       }
+    }).catch(e=>{
+      console.log(e)
     });
   };
 

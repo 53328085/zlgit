@@ -71,8 +71,9 @@ export default function UseSerach(props) {
 
 
   const { config = {}, custview = null, record = null } = props
-
+   
   const { isAreaId = true, gas = true, isLevles=false, daterang = 'day', formsty = {}, onlye=false } = config
+  const {energytype:showtype, ...restconfig} = config
   const dispatch = useDispatch()
 
 
@@ -198,6 +199,12 @@ export default function UseSerach(props) {
 
 
   }, [props.config, AreaID, projectId])
+  useEffect(()=>{
+     if(config.isdevsty) {
+       form.setFieldValue("deviceStyle",defauledeviceID)
+       props.setexparams({ ...form.getFieldsValue(true) })
+     }
+  },[config.isdevsty,defauledeviceID])
 /*   useEffect(() => {
     if (Number.isInteger(projectId) && props.config?.isdevsty) {
       getDever()
@@ -573,11 +580,9 @@ export default function UseSerach(props) {
       let v = form.getFieldValue('energytype');
       if (v == 3) form.setFieldValue('energytype', 1)
     }
-    if(props.config?.energytype) {
-      form.setFieldValue('energytype', 1)
-    }
+   
     if (config.dateType) {
-      form.setFieldValue('type', config.dateType)
+      form.setFieldValue('type', restconfig.dateType)
 
     } else {
       form.setFieldValue('type', 1)
@@ -591,7 +596,13 @@ export default function UseSerach(props) {
     }
     props.setexparams({ ...form.getFieldsValue(true) })
 
-  }, [props.config.gas,props.config?.energytype,config.dateType, projectId, oneLevelDefaultId])
+  }, [config, projectId, oneLevelDefaultId])
+
+  useEffect(()=>{
+    if(config.energytype) {
+      form.setFieldValue('energytype', 1)
+    }
+  }, [config.energytype])
 
 
   /*   useEffect(() => {

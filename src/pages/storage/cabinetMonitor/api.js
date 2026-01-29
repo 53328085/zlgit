@@ -13,12 +13,12 @@ export const { useQueryStorageContainerInfo } = new Apimethod( //查询储能柜
     "Storage/StorageMonitorRuntime/QueryContainerCapacity"
   );
 
-  export const { useQueryChargeAndDischargePower } = new Apimethod( // 查询储能柜充放电功率
+  export const { useQueryContainerPower } = new Apimethod( // 查询储能柜充放电功率
     "get",
-    "Storage/SiteSummaryRuntime/QueryChargeAndDischargePower"
+    "Storage/StorageMonitorRuntime/QueryContainerPower"
   );
 
-  export const { useQueryContainerTopologyInfo } = new Apimethod( // 查询储能柜充放电功率
+  export const { useQueryContainerTopologyInfo } = new Apimethod( // 查询储能柜topology信息
     "get",
     "Storage/StorageMonitorRuntime/QueryContainerTopologyInfo"
   );

@@ -1,6 +1,6 @@
 import React from 'react'
 
-import {useQueryContainerCapacity,useQueryChargeAndDischargePower } from '../api'
+import {useQueryContainerCapacity,useQueryContainerPower } from '../api'
 
 import Chartcom from './chart'
 import ChartBar from './chartbar'
@@ -11,16 +11,19 @@ export default function Index() {
  
   const onHander =(api) => {
     return async (params)=>{
-        const {data, success} = await api(params)
+        const {data, success,errMsg} = await api(params)
          if(success && isObject(data)) {
             return data
          }else {
+            if (!success){
+              message.error(errMsg || "请求失败")
+            }
             return []
          }
   }
 }
   const getData = onHander(useQueryContainerCapacity)  
-  const getData2 = onHander(useQueryChargeAndDischargePower)
+  const getData2 = onHander(useQueryContainerPower)
  // const getData3 = onHander(useQueryLoadSummaryPower)
   return (
     <div className='power'>

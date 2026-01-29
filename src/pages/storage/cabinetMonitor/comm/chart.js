@@ -7,11 +7,12 @@ import {isObject} from '@com/usehandler'
 import {useLine} from '../data'
 import Titlelayout from "@com/titlelayout"
 import Ichart  from '@com/useEcharts/Ichart'
+import { parseInt } from 'lodash'
 export default function Index({title,getData,dataZoom }={}) {
    
   const [form] = Form.useForm()
  
-  const {areaId, stationName,  projectId} = useContext(Paramscontext)
+  const {areaId, stationName,  projectId,containerId} = useContext(Paramscontext)
   const [data, setData] = useState([])
   const  [time, setTime] = useState({startTime:moment().subtract(1, 'days'),
     endTime:moment()})
@@ -34,17 +35,16 @@ export default function Index({title,getData,dataZoom }={}) {
   let lineopt = useLine({data,dimensions, icon:'circle'})
   useEffect(()=>{
     const {startTime, endTime} = time 
-    if([areaId,  projectId].every((id)=>Number.isInteger(parseInt(id))) && isObject(stationName) && startTime && endTime) { 
-      let params = {
-        areaId,
-        siteId:stationName.value,
+    if([projectId].every((id)=>Number.isInteger(parseInt(id))) && Number.isInteger(parseInt(containerId?.value)) && startTime && endTime) { 
+      let params = { 
+        containerId:containerId?.value,
         projectId,
         startTime: startTime.format('YYYY-MM-DD'),
         endTime: endTime.format('YYYY-MM-DD'),
       }  
       getChartData(params) 
    }
-  },[areaId, stationName,  projectId,time ])
+  }, [containerId,  projectId,time ])
  
   const extra=<Form form={form}
    

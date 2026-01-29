@@ -9,26 +9,14 @@ export default function Index() {
    
   
  
-  const onHander =(api) => {
-    return async (params)=>{
-        const {data, success, errMsg} = await api(params)
-         if(success && isObject(data)) {
-            return data
-         }else {
-           !success &&  message.warning(errMsg || "数据出错")
-            return {}
-         }
-  }
-}
-  const getData = onHander(useQueryMeterPower)  
-  const getData2 = onHander(useQueryChargeAndDischargePower)
-  const getData3 = onHander(useQueryLoadSummaryPower)
+ 
+ 
   return (
     <div className='power'>
-        <Chartdouble title="关口表功率" getData={getData} />
+        <Chartdouble title="关口表功率" type={101} />
        <div className="down">
-       <Chartcom title="充放电功率" getData={getData2} /> 
-       <Chartcom title="负载总表功率" getData={getData3} />  
+       <Chartdouble title="充放电功率" type={102} /> 
+       <Chartdouble title="负载总表功率" type={103} />  
        </div>
     </div>
   )

@@ -12,10 +12,11 @@ export default function Index({title,getData, dataZoom }={}) {
   const [form] = Form.useForm()
   const datetype = Form.useWatch('type', form)
   const {areaId, stationName,  projectId} = useContext(Paramscontext)
-  const [data, setData] = useState([])
+  const [data, setData] = useState({})
+  console.log("data",data)
  
   const [typevalue, setTypevalue] =useState({
-    type:1,
+    type:0,
     date: moment()
   })
    const dimensions =[
@@ -31,8 +32,14 @@ export default function Index({title,getData, dataZoom }={}) {
   }
  */
   const getChartData = async (params)=>{
-    const data = await getData(params)
-    setData(data)
+    try {
+       let data= await getData(params)
+       setData(data)
+   
+    } catch (error) {
+      console.log(error)
+    }
+    
   }
   let lineopt = useLine({data,dimensions, type:"bar",dataZoom})
   useEffect(()=>{
@@ -45,7 +52,7 @@ export default function Index({title,getData, dataZoom }={}) {
         siteId:stationName.value,
         projectId,
         type,
-        date: date.format('YYYY-MM-DD'),
+        date: type==0 ? date.format('YYYY-MM') : date.format("YYYY")+"-01-01",
       }  
       getChartData(params) 
    }
@@ -55,10 +62,10 @@ export default function Index({title,getData, dataZoom }={}) {
    
     onValuesChange={onValuesChange}
   > 
-    <Space><Form.Item name="type" style={{marginBottom:0}} initialValue={0}  >
+    <Space><Form.Item name="type" style={{marginBottom:0}} initialValue={typevalue.type}  >
         <Select options={option} style={{width: "120px"}} />
       </Form.Item> 
-      <Form.Item name="date" style={{marginBottom:0}} initialValue={moment()} >
+      <Form.Item name="date" style={{marginBottom:0}} initialValue={typevalue.date} >
         <DatePicker picker={['month',"year"][datetype]} style={{width: "120px"}} />
       </Form.Item></Space>
        </Form>)

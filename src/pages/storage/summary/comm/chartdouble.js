@@ -1,13 +1,14 @@
 import React, {useContext,useEffect, useMemo, useState} from 'react'
-import { Space, Form, DatePicker,Badge, Select} from 'antd'
+import { Space, Form, DatePicker,Badge, Select, message} from 'antd'
 import moment from 'moment'
 import {Paramscontext} from  '../context'
 import {isObject} from '@com/usehandler'
  
-import {useLine} from '../data'
+import {lineoptdoub} from '../data'
 import Titlelayout from "@com/titlelayout"
 import Ichart  from '@com/useEcharts/Ichart'
-export default function Index({title,getData,dataZoom }={}) {
+import {useQueryMeterPower,useQueryMeterList,useQuerySOC} from '../api'
+export default function Index({title,type}) {
    
   const [form] = Form.useForm()
  
@@ -42,125 +43,94 @@ export default function Index({title,getData,dataZoom }={}) {
         }
     ]
 })
-  const  [time, setTime] = useState({startTime:moment().subtract(1, 'days'),
-    endTime:moment()})
+ const [list, setList] = useState([])
+  const  [formdata, setFormdata] = useState({
+      startTime:moment().subtract(1, 'days'),
+     endTime:moment(),
+    sn:null
+    }
+  )
  
-   const dimensions = [
-     {
-     name: time?.startTime?.format?.('YYYY-MM-DD'),
-    
-   },
-   {name: time?.endTime?.format?.('YYYY-MM-DD'),}
-  ] 
+    let lineopt =  lineoptdoub(data, formdata?.startTime, formdata?.endTime) 
   const onValuesChange = (_, b)=>{  
-      setTime(b) 
+      console.log("b",b)
+      setFormdata(b) 
   }
  
   const getChartData = async (params)=>{
-    const data = await getData(params)
+    try {
+      const data = await type==202 ? useQuerySOC(params) : useQueryMeterPower(params)
+    } catch (error) {
+      console.log(error)
+    }
+  
    // setData(data)
   }
 
-
-
-
-
-  let lineopt = useMemo(()=>{ 
-    const {startTime,endTime} = time
-    const {earlyData=[], lateData=[]} = data
-    const earlyX = earlyData.map(item=>item.x)
-    const earlyY = earlyData.map(item=>item.y)
-    const lateX = lateData.map(item=>item.x)
-    const lateY = lateData.map(item=>item.y)
-    const early = startTime?.format?.('YYYY-MM-DD'), late = endTime?.format?.('YYYY-MM-DD');
-
-  return { 
-      type:5,
-      legend: {
-          data: [early, late]
-      }, 
-      tooltip: {
-        trigger: 'axis'
-      },
-      grid: {
-        left: "10px",
-        right: "10px",
-        top: "40px",
-        bottom: "2px",
-        containLabel:true,
-      },
-      xAxis: [
-          {
-              type: 'category',
-              name: early,
-              boundaryGap: true,
-              data:  earlyX ,
-          },
-          {
-              type: 'category',
-              name: late,
-              boundaryGap: true,
-              data:  lateX ,
-          }
-      ],  
-      yAxis: [
-          {
-              type: 'value',
-              name: early
-          },
-          {
-              type: 'value',
-              name: late
-          }
-      ],
-      // 系列列表
-      series: [
-          {
-              name: early,
-              type: 'line',
-              xAxisIndex: 0, // 对应第一个X轴
-              yAxisIndex: 0, // 对应第一个Y轴
-              data: earlyY, // 数据集1的数据
-              smooth:3,
-          },
-          {
-              name: late,
-              type: 'line',
-              xAxisIndex: 1, // 对应第二个X轴
-              yAxisIndex: 1, // 对应第二个Y轴
-              data: lateY, // 数据集2的数据
-              smooth:3
-          }
-      ]
-  };
-  
-  },[data ])
-  useEffect(()=>{
-    const {startTime, endTime} = time 
-    if([areaId,  projectId].every((id)=>Number.isInteger(parseInt(id))) && isObject(stationName) && startTime && endTime) { 
+  const getList = async (params)=>{
+     try{
+      const {data, success, errMsg} = await useQueryMeterList(params)
+      if(success && Array.isArray(data)){
+        setList(data)
+        form.setFieldValue("sn", data[0].sn)
+        setFormdata({...formdata,  sn:data[0].sn})
+      }else {
+        if(!success) {
+        //  message.error(errMsg || "数据出错")
+        }
+        form.setFieldValue("sn", null)
+        setFormdata({...formdata,  sn:null})
+        setList([])
+      }
+      
+    } catch (error) {
+      console.log(error)
+    }
+   
+  }
+  useEffect(()=>{ 
+    if([areaId,  projectId, type].every((id)=>Number.isInteger(parseInt(id))) && Number.isInteger(parseInt(stationName?.value))) { 
       let params = {
         areaId,
         siteId:stationName.value,
+        projectId, 
+        type
+      }  
+      getList(params) 
+   }
+  },[areaId, stationName,  projectId, type  ])
+
+
+  
+  useEffect(()=>{
+    const {startTime, endTime,sn} = formdata
+   
+    if([areaId,  projectId].every((id)=>Number.isInteger(parseInt(id)))   && startTime && endTime &&sn) { 
+      console.log("222")
+      let params = {
+        areaId,
+        sn,
         projectId,
         startTime: startTime.format('YYYY-MM-DD'),
         endTime: endTime.format('YYYY-MM-DD'),
       }  
       getChartData(params) 
    }
-  },[areaId, stationName,  projectId,time ])
- 
+  },[areaId, formdata,  projectId  ])
+  const wd =  {width: type==101 ?  140: 115 }
   const extra=<Form form={form}
    
     onValuesChange={onValuesChange}
   > 
-     <Space><Form.Item name="startTime" style={{marginBottom:0}} initialValue={time?.startTime}   >
-  <DatePicker style={{width: "120px"}} />
+     <Space size={4}>
+       <Form.Item name="sn" style={{marginBottom:0}} size="small">
+        <Select options={list} style={wd} fieldNames={{label:"name", value:"sn"}}></Select>
+       </Form.Item>
+      <Form.Item name="startTime" style={{marginBottom:0}} initialValue={formdata?.startTime}   >
+  <DatePicker style={wd} />
 </Form.Item>
-<Form.Item noStyle>
-<span>对比</span>
-</Form.Item>
-<Form.Item name="endTime" style={{marginBottom:0}} initialValue={time?.endTime}  >
-  <DatePicker style={{width: "120px"}} />
+<Form.Item name="endTime" style={{marginBottom:0}} initialValue={formdata?.endTime}  >
+  <DatePicker style={wd} />
 </Form.Item></Space>
        </Form>
     const props ={
@@ -168,6 +138,7 @@ export default function Index({title,getData,dataZoom }={}) {
       bordered:'no',
       layout:"flex",
       bl:"none",
+      pr:"10px",
       extra
     }
   return (

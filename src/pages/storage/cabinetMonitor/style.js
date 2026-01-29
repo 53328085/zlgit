@@ -159,11 +159,14 @@ export const TopologySty = styled.div`
     padding-bottom: 32px;
     border-bottom: 2px solid #46c7ff;
     justify-content: center;
+    transform: translateY(1px);
+   
     .outwrap {
       flex-basis: 300px;
       display: flex;
       align-items: center;
       justify-content: space-between;
+      position: relative;
       .line1 {
         width: 164px;
         transform: translate(10px, 10px);
@@ -181,6 +184,10 @@ export const TopologySty = styled.div`
             width: 100%;
           }
         }
+        .imgbox { 
+          position: relative;
+        
+        }
         .imgbox2 {
           width: 114px;
         }
@@ -188,7 +195,15 @@ export const TopologySty = styled.div`
       .box.offset {
         transform: translate(-20px, -12px);
       }
+     
     }
+    .line2 {
+      position: absolute;
+    left: 0;
+    bottom: 0;
+    width: 9px;
+    transform: translate(351px, -2px);
+          }
   }
   .down {
     display: flex;
@@ -303,3 +318,26 @@ border-radius: 2px
     }
   }
 `;
+export const Custbtn = styled.div`
+position: absolute;
+right: 0;
+top: 0;
+transform: translate(48px, 18px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  
+ width: 64px;
+height: 28px;
+//background: ${props=>props.status="停机" ? props.theme.errorColor:  props.theme.successColor};
+color: #fff;
+border-radius: 6px;
+border: 1px solid ${props=>props.status="停机" ? props.theme.errorColor:  props.theme.successColor};
+.circle {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: ${props=>props.status="停机" ? props.theme.errorColor:  props.theme.successColor};
+  margin-right: 4px;
+}
+`
