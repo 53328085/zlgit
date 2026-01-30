@@ -362,7 +362,25 @@ export const Rightupcenter = styled.div`
 }
 `;
 
-
+export const Rightdown = styled.div`
+&&{
+   flex: 1;
+   display: grid;
+   grid-template-rows: 45px 1fr;
+   row-gap: 10px;
+   color: #FFFFFF;
+   .ant-statistic-title{
+    color: #FFFFFF;
+    margin-bottom: 0;
+    line-height: 18px;
+   }
+   .ant-statistic-content {
+    color:#0AEEFF;
+    font-size: 18px;
+    line-height: 26px;
+   }
+}
+   `
 
 export const Titlesty = styled.div`
   ${normal}

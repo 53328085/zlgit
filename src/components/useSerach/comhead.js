@@ -73,7 +73,7 @@ export default function UseSerach(props) {
   const { config = {}, custview = null, record = null } = props
    
   const { isAreaId = true, gas = true, isLevles=false, daterang = 'day', formsty = {}, onlye=false } = config
-  const {energytype:showtype, ...restconfig} = config
+  
   const dispatch = useDispatch()
 
 
@@ -582,7 +582,7 @@ export default function UseSerach(props) {
     }
    
     if (config.dateType) {
-      form.setFieldValue('type', restconfig.dateType)
+      form.setFieldValue('type', config.dateType)
 
     } else {
       form.setFieldValue('type', 1)
@@ -591,9 +591,12 @@ export default function UseSerach(props) {
   /*   if (config.meterType) {
       form.setFieldValue('deviceStyle', config.meterType)
     } */
-    if(oneLevelDefaultId==0) {
-      form.setFieldValue('areaId', 0)
+    if(Number.isInteger(parseInt(oneLevelDefaultId))) {
+      form.setFieldValue('areaId', oneLevelDefaultId)
     }
+   /*  if(oneLevelDefaultId==0) {
+       form.setFieldValue('areaId', 0)
+    }  */
     props.setexparams({ ...form.getFieldsValue(true) })
 
   }, [config, projectId, oneLevelDefaultId])
@@ -601,6 +604,7 @@ export default function UseSerach(props) {
   useEffect(()=>{
     if(config.energytype) {
       form.setFieldValue('energytype', 1)
+      props.setexparams({ ...form.getFieldsValue(true) })
     }
   }, [config.energytype])
 

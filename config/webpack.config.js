@@ -1,5 +1,5 @@
 'use strict';
-
+ 
 const fs = require('fs');
 const path = require('path');
 const webpack = require('webpack');
@@ -25,12 +25,13 @@ const ForkTsCheckerWebpackPlugin =
     ? require('react-dev-utils/ForkTsCheckerWarningWebpackPlugin')
     : require('react-dev-utils/ForkTsCheckerWebpackPlugin');
 const ReactRefreshWebpackPlugin = require('@pmmmwh/react-refresh-webpack-plugin');
-
+ 
 const createEnvironmentHash = require('./webpack/persistentCache/createEnvironmentHash');
+const NodePolyfillPlugin = require('node-polyfill-webpack-plugin')
 // Source maps are resource heavy and can cause out of memory issue for large source files.
 // const shouldUseSourceMap = process.env.GENERATE_SOURCEMAP !== 'false';
 const shouldUseSourceMap = false;
-
+ 
 const reactRefreshRuntimeEntry = require.resolve('react-refresh/runtime');
 const reactRefreshWebpackPluginRuntimeEntry = require.resolve(
   '@pmmmwh/react-refresh-webpack-plugin'
@@ -43,29 +44,29 @@ const babelRuntimeEntryHelpers = require.resolve(
 const babelRuntimeRegenerator = require.resolve('@babel/runtime/regenerator', {
   paths: [babelRuntimeEntry],
 });
-
+ 
 // Some apps do not need the benefits of saving a web request, so not inlining the chunk
 // makes for a smoother build process.
 const shouldInlineRuntimeChunk = process.env.INLINE_RUNTIME_CHUNK !== 'false';
-
+ 
 const emitErrorsAsWarnings = process.env.ESLINT_NO_DEV_ERRORS === 'true';
 const disableESLintPlugin = process.env.DISABLE_ESLINT_PLUGIN === 'true';
-
+ 
 const imageInlineSizeLimit = parseInt(
   process.env.IMAGE_INLINE_SIZE_LIMIT || '10000'
 );
-
+ 
 // Check if TypeScript is setup
 const useTypeScript = fs.existsSync(paths.appTsConfig);
-
+ 
 // Check if Tailwind config exists
 const useTailwind = fs.existsSync(
   path.join(paths.appPath, 'tailwind.config.js')
 );
-
+ 
 // Get the path to the uncompiled service worker (if it exists).
 const swSrc = paths.swSrc;
-
+ 
 // style files regexes
 const cssRegex = /\.css$/;
 const cssModuleRegex = /\.module\.css$/;
@@ -77,7 +78,7 @@ const hasJsxRuntime = (() => {
   if (process.env.DISABLE_NEW_JSX_TRANSFORM === 'true') {
     return false;
   }
-
+ 
   try {
     require.resolve('react/jsx-runtime');
     return true;
@@ -91,20 +92,20 @@ const Version = new Date().getTime()
 module.exports = function (webpackEnv) {
   const isEnvDevelopment = webpackEnv === 'development';
   const isEnvProduction = webpackEnv === 'production';
-
+ 
   // Variable used for enabling profiling in Production
   // passed into alias object. Uses a flag if passed into the build command
   const isEnvProductionProfile =
     isEnvProduction && process.argv.includes('--profile');
-
+ 
   // We will provide `paths.publicUrlOrPath` to our app
   // as %PUBLIC_URL% in `index.html` and `process.env.PUBLIC_URL` in JavaScript.
   // Omit trailing slash as %PUBLIC_URL%/xyz looks better than %PUBLIC_URL%xyz.
   // Get environment variables to inject into our app.
   const env = getClientEnvironment(paths.publicUrlOrPath.slice(0, -1));
-
+ 
   const shouldUseReactRefresh = env.raw.FAST_REFRESH;
-
+ 
   // common function to get style loaders
   const getStyleLoaders = (cssOptions, preProcessor) => {
     const loaders = [
@@ -167,13 +168,13 @@ module.exports = function (webpackEnv) {
         },
       },
     ].filter(Boolean);
-
+ 
     let custoption =  preProcessor == "less-loader" ? {
       sourceMap: true,
       lessOptions: {
         javascriptEnabled: true,
       }
-
+      
     } : {
       sourceMap: true,
     };
@@ -194,8 +195,8 @@ module.exports = function (webpackEnv) {
     }
     return loaders;
   };
-
-  return {
+ 
+  return {   
     target: ['browserslist'],
     // Webpack noise constrained to errors and warnings
     stats: 'errors-warnings',
@@ -319,8 +320,6 @@ module.exports = function (webpackEnv) {
         .map(ext => `.${ext}`)
         .filter(ext => useTypeScript || !ext.includes('ts')),
       alias: {
-        // 浏览器兼容 path 模块
-        'path': 'path-browserify',
         // Support React Native Web
         // https://www.smashingmagazine.com/2016/08/a-glimpse-into-the-future-with-react-native-for-web/
         'react-native': 'react-native-web',
@@ -352,7 +351,7 @@ module.exports = function (webpackEnv) {
           reactRefreshWebpackPluginRuntimeEntry,
           babelRuntimeEntry,
           babelRuntimeEntryHelpers,
-          babelRuntimeRegenerator,
+          babelRuntimeRegenerator,         
         ]),
       ],
     },
@@ -394,7 +393,7 @@ module.exports = function (webpackEnv) {
                   maxSize: imageInlineSizeLimit,
                 },
               },
-            },
+            },            
             {
               test: /\.svg$/,
               use: [
@@ -403,11 +402,11 @@ module.exports = function (webpackEnv) {
                   options: {
                     svgoConfig: {
                       plugins: [
-                        {
-                          name: 'preset-default',
+                        { 
+                          name: 'preset-default',  
                           params: {
                             overrides: {
-                              removeViewBox: false
+                              removeViewBox: false  
                             }
                           }
                         }
@@ -420,12 +419,12 @@ module.exports = function (webpackEnv) {
                   options: {
                     name: 'static/media/[name].[hash].[ext]',
                   },
-                },
+                },  
               ],
               issuer: {
                 and: [/\.(ts|tsx|js|jsx|md|mdx)$/],
-              },
-            },
+              }, 
+            }, 
             // Process application JS with Babel.
             // The preset includes JSX, Flow, TypeScript, and some ESnext features.
             {
@@ -444,7 +443,7 @@ module.exports = function (webpackEnv) {
                     },
                   ],
                 ],
-
+                
                 plugins: [
                   isEnvDevelopment &&
                     shouldUseReactRefresh &&
@@ -478,7 +477,7 @@ module.exports = function (webpackEnv) {
                 cacheDirectory: true,
                 // See #6846 for context on why cacheCompression is disabled
                 cacheCompression: false,
-
+                
                 // Babel sourcemaps are needed for debugging into node_modules
                 // code.  Without the options below, debuggers like VSCode
                 // show incorrect code and set breakpoints on the wrong lines.
@@ -567,14 +566,14 @@ module.exports = function (webpackEnv) {
                 },
                 'less-loader'
               ),
-            },
+            }, 
             // "file" loader makes sure those assets get served by WebpackDevServer.
             // When you `import` an asset, you get its (virtual) filename.
             // In production, they would get copied to the `build` folder.
             // This loader doesn't use a "test" so it will catch all modules
             // that fall through the other loaders.
-
-
+          
+           
             {
               // Exclude `js` files to keep "css" loader working as it injects
               // its runtime that would otherwise be processed through "file" loader.
@@ -591,6 +590,7 @@ module.exports = function (webpackEnv) {
     },
     plugins: [
       // Generates an `index.html` file with the <script> injected.
+      new NodePolyfillPlugin(),
       new HtmlWebpackPlugin(
         Object.assign(
           {},
@@ -672,7 +672,7 @@ module.exports = function (webpackEnv) {
           const entrypointFiles = entrypoints.main.filter(
             fileName => !fileName.endsWith('.map')
           );
-
+ 
           return {
             files: manifestFiles,
             entrypoints: entrypointFiles,

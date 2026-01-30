@@ -75,16 +75,11 @@ export const lightcol =[
       dataIndex: "no",
       key: "no",
     },
-    {
+   /*  {
       title: "所属计量设备",
       dataIndex: "mSn",
       key: "mSn",
-    },
-    {
-      title: "所属控制器编号",
-      dataIndex: "cSn",
-      key: "cSn",
-    },
+    }, */
     {
       title: "所属控制器编号",
       dataIndex: "cSn",
@@ -94,7 +89,7 @@ export const lightcol =[
       title: "在线状态",
       dataIndex: "state",
       key: "state",
-      render: (t)=>{ t<1 ? "离线" : "正常" }
+      render: (t)=>  t<1 ? "离线" : "正常" 
        
     },
     {

@@ -82,6 +82,7 @@ const Chartwrap = styled.div`
 export default function Index() {
 
   let { exparams, setCustview ,setConfig} = useOutletContext()
+  console.log("exparams",exparams)
   
   const [dates, setDates] = useState([moment().startOf("day"), moment().endOf("hour")]);
   
@@ -248,11 +249,11 @@ useEffect(()=> {
   const getTableData = ({ current, pageSize, areaId, projectId, type, date, energytype, treeId, index, line, isrange, dates, alike,reportType }) => {
     //  console.log(date)
 
-    console.log("接口调用")
+    console.log("接口调用1")
 
     let f = [areaId, projectId, type, energytype, index, line].every(v => Number.isInteger(v)) && Array.isArray(treeId) && date
 
-
+    console.log("接口调用2",f)
     let range = [0, 1, 4].includes(index) && isrange.range && Array.isArray(dates) && dates?.length > 1
     if (!f) return;
     if (index === 0 && isrange.range && !Array.isArray(dates)) {

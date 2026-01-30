@@ -1,9 +1,9 @@
-import React from 'react'
+import React  from 'react'
 import {useFullscreen} from 'ahooks'
 import imgurl from "../icon"
 import {useTime} from '../data'
-export default function index({pgref,setMeterType,meterType}) {
-      const [isFullscreen, { enterFullscreen, exitFullscreen }] = useFullscreen(pgref)
+export default function index({pgref,setMeterType,meterType,isFullscreen,enterFullscreen,exitFullscreen }) {
+    //  const [isFullscreen, { enterFullscreen, exitFullscreen }] = useFullscreen(pgref)
       const timeformat = useTime()
       const fullhandler=()=>{
         isFullscreen ? exitFullscreen() : enterFullscreen()
@@ -12,6 +12,7 @@ export default function index({pgref,setMeterType,meterType}) {
         setMeterType(v)
 
       }
+ 
   return (
     <div className='hearder'>
             <div className="h">

@@ -5,6 +5,7 @@ import {Pagelayout} from './style'
 import { useSelector } from "react-redux";
 import { selectProjectId  } from "@redux/systemconfig";
 import {isObject,chunkArray} from "@com/usehandler"
+import {useFullscreen} from 'ahooks'
  import Topcom from './comm/top'
  import Leftupcom from './comm/leftup'
  import Leftdowncom from './comm/leftdown'
@@ -14,12 +15,24 @@ import {isObject,chunkArray} from "@com/usehandler"
  import Rightupcom from './comm/rightup'
  import Rightcentercom from './comm/rightcenter'
  import Rightdowncom from './comm/rightdown'
- import {useQueryData} from './api'
+ import {useQueryData,useQueryKPICurve} from './api'
 export default function Index() {
   const pgref= useRef()
+   const [isFullscreen, { enterFullscreen, exitFullscreen ,toggleFullscreen}] = useFullscreen(pgref )
   const projectId = useSelector(selectProjectId);
   const [meterType,setMeterType]=useState(1)
   const [datas,setDatas] = useState({})
+  const [kpidata, setKpiData] = useState({})
+  const { latest7DaysCOPCurve=[],latest7DaysKPICurve=[]} = useMemo(()=>{
+    if(isObject(kpidata)) {
+      return { 
+       ...kpidata
+      }
+    }else {
+      return {}
+    }
+  },[kpidata])
+ 
   const {
     consumeTrend,//用能趋势01月
     latest7DaysEnergyOfArea,//区域用能排名
@@ -27,8 +40,6 @@ export default function Index() {
     loadTrend, // 用电负荷趋势01月
     rankClassify,// 分项用能排名
     monthTotal,
-    latest7DaysCOPCurve,
-    latest7DaysKPICurve
   } = useMemo(()=>{ 
      
      try {
@@ -70,6 +81,20 @@ export default function Index() {
   },[datas])
 
   console.log("latest7DaysCOPCurve",latest7DaysCOPCurve)
+
+  const getKpi = async ()=>{ 
+    try{
+      let data =await useQueryKPICurve({projectId})
+      console.log("data",data)
+      if(isObject(data)){
+        setKpiData(data)
+      }else {
+        setKpiData({})
+      }
+    } catch (error) {
+      
+    }
+  }
   const getData=async ()=>{  
     try {
       let data =await useQueryData({projectId,meterType })
@@ -88,9 +113,19 @@ export default function Index() {
       getData()
     }
   },[projectId,meterType])
+
+  useEffect(()=>{ 
+    if(Number.isInteger(parseInt(projectId))) {
+      getKpi()
+    }
+    
+  },[projectId])
+ 
+
+ 
   return (
     <Pagelayout ref={pgref} >
-       <Topcom pgref={pgref} setMeterType={setMeterType} meterType={meterType}></Topcom>
+       <Topcom pgref={pgref} setMeterType={setMeterType} exitFullscreen={exitFullscreen} enterFullscreen={enterFullscreen} meterType={meterType} isFullscreen={isFullscreen}></Topcom>
        <div className="content">
          <div className="left">
              <Leftupcom  datas={latest7DaysEnergyOfClassify}/> 

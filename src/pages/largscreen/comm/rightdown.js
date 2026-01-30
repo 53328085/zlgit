@@ -1,46 +1,36 @@
 import React, { useEffect, useMemo, useState } from "react";
-import {Badge} from 'antd'
+import {Row, Col,Statistic } from 'antd'
 import { useSelector } from "react-redux";
-import { selectProjectId, selectOneLevelDefaultId } from "@redux/systemconfig";
+import { selectProjectId  } from "@redux/systemconfig";
 import { isObject } from "@com/usehandler";
 import Ichart from '@com/useEcharts/Ichart'
-import { Leftup } from "../style";
-import { colors } from "../data";
-import { useQueryOverview } from "../api";
-import dayjs from "dayjs";
+ 
+import { useQueryPVGeneration } from "../api";
+ 
 import Layoutcom from './layout'
+import {Rightdown} from '../style'
 export default function Index() {
-  const areaId = useSelector(selectOneLevelDefaultId);
+  
   const projectId = useSelector(selectProjectId);
   const [datas, setDatas] = useState({});
    
   const getData = async () => {
     try {
-      let body = {
-        projectId: projectId,
-        dayMonthYear: 2,
-        startDate: dayjs().startOf().format("YYYY-MM-DD"),
-        endDate: dayjs().endOf().format("YYYY-MM-DD"),
-        areaIds: [areaId],
-        meterType: 1,
-        name: "全部",
-        group: 1,
-      };
-      let { data, success } = await useQueryOverview({}, body);
-      if (success && isObject(data)) {
-        let { detail } = data;
-        if (isObject(detail)) {
-          setDatas(detail);
-        } else {
-          setDatas({});
+      
+      let data = await useQueryPVGeneration({projectId} );
+      if (isObject(data)) { 
+          setDatas(data);
         }
+     else {
+          setDatas({});
+       
       }
     } catch (e) {
       console.log(e);
     }
   };
  const baropt=useMemo(()=>{
-    const {x=[], y=[],y1=[]}=datas
+    const {x=[], y=[]}=isObject(datas?.detail) ? datas.detail : {}
      return{
          series:   [{ 
            type: "bar", 
@@ -48,15 +38,7 @@ export default function Index() {
            tooltip:{
           // valueFormatter: value=> value+unit
            }, 
-          },
-          { 
-           type: "bar", 
-           seriesLayoutBy: 'row',  
-           tooltip:{
-            // valueFormatter: value=> value+unit
-             }, 
-          }
-         
+          } 
          ] ,
          grid: {
            left: "0px",
@@ -104,10 +86,9 @@ export default function Index() {
          dataset: {
              dimensions: [
                  { name: '时间', type: 'time' },
-                 { name: "本月用电量" },
-                 { name: "上月用电量" },
+                 { name: "发电量" }, 
                ] ,
-               source: [x,y, y1],
+               source: [x,y],
                sourceHeader: false,
          },
          color:[
@@ -123,32 +104,32 @@ export default function Index() {
                 offset: 1, color: '#0079ED' // 100% 处的颜色
             }],
             
-          },
-          {
-            type: 'linear',
-            x: 0,
-            y: 0,
-            x2: 0,
-            y2: 1,
-            colorStops: [{
-                offset: 0, color: '#7FF2CC' // 0% 处的颜色
-            }, {
-                offset: 1, color: '#58CBA5' // 100% 处的颜色
-            }],
-            
-          }
+          }, 
          ],
      }
  }, [datas])
   useEffect(() => {
-    if ([areaId, projectId].some((id) => Number.isInteger(parseInt(id)))) {
-      // getData();
+    if ([ projectId].every((id) => Number.isInteger(parseInt(id)))) {
+      getData();
     }
-  }, [areaId, projectId]);
-  const title=`用能趋势${dayjs().format("MM")}月`
+  }, [ projectId]);
+  
   return (
-    <Layoutcom title="光伏发电统计"    flex="318px">
+    <Layoutcom title="光伏发电统计"    flex="318px" >
+     <Rightdown>
+      <Row gutter={8}>
+         <Col span={8}>
+         <Statistic title="本月发电量(kWh)" value={datas?.curMonth} />
+         </Col>
+         <Col span={8}>
+         <Statistic title="本年发电量(kWh)" value={datas?.curYear} />
+         </Col>
+         <Col span={8}>
+         <Statistic title="累计发电量(kWh)" value={datas?.total} />
+         </Col>
+      </Row>
         <Ichart {...baropt}></Ichart>
+        </Rightdown>
     </Layoutcom>
   );
 }

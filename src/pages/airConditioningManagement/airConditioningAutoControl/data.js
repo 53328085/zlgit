@@ -25,11 +25,11 @@ export const cols = [
     dataIndex: "gSn",
     key: "gSn",
   },
-  {
+ /*  {
     title: "所属计量设备",
     dataIndex: "mSn",
     key: "mSn",
-  },
+  }, */
   {
     title: "安装地址",
     dataIndex: "address",

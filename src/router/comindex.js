@@ -178,11 +178,15 @@ export default function Index() {
   const sethandler = () => {
     try {
       console.log(primary)
-      if (primary == "runtimeMonitor" && nested == "point") {
-        if (!config.isdevsty) setConfig({ isdevsty: true, meterType });
-      } else {
-        setConfig({ isdevsty: false });
-      }
+      if (primary == "runtimeMonitor") {
+        switch(nested) {
+          case "point":
+          setConfig({ isdevsty: true, meterType })
+          break;
+          default:
+            setConfig({ isdevsty: false });
+        }
+      }  
       if (primary == "runtimeEnergy") {   //issubarea
         switch (nested) {
           case "summary":
