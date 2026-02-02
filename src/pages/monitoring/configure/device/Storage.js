@@ -1,13 +1,12 @@
 import React, { useEffect, useRef, useState, useContext, useMemo } from 'react'
 import { useSelector } from 'react-redux'
-import { Form, Row, Col, Select, Input, Space, message, Typography } from 'antd'
+import { Form, Space, message, Typography } from 'antd'
 import { useTranslation } from 'react-i18next'
 import Comp from './comp'
 import Table from '@com/useTable'
-import Modal from '@com/useModal'
 
 import { MultImport, ErrorMessage } from './modalCom'
-import { Monitoring, StorageDeviceDesigner } from '@api/api.js'
+import { Monitoring } from '@api/api.js'
 import { DeleteModal } from './modalCom'
 import { AddModalForm, MyContext, EditModalForm } from './elecomp'
 import cutContext from '@com/content'
@@ -25,7 +24,6 @@ const {
     UpdateStorageDevice,
     UpdateFactor,
     DeleteStorageDevice,
-    ImportElectric,
     OneLevel,
     QueryByPage,
   }
@@ -72,7 +70,6 @@ export default function Storage ({ deviceStyle, name }) {
   const [addform] = Form.useForm()
   const [editform] = Form.useForm()
   const [factorform] = Form.useForm()
-  const content = useContext(cutContext)
   const levelname = useRef()
   let delid = useRef()
   let flies
@@ -266,28 +263,6 @@ export default function Storage ({ deviceStyle, name }) {
       message.error(errMsg)
     }
   }
-  //打开倍率窗口
-  const onFactor = (record) => {
-    FactorRef?.current?.onOpen()
-    factorform.setFieldsValue({ ...record })
-  }
-  //确认倍率修改
-  const factorOk = async () => {
-
-    const formvalue = factorform.getFieldValue()
-    const res = await UpdateFactor({
-      projectId,
-      id: formvalue.id,
-      factor: formvalue.factor
-    })
-    if (res.success) {
-      message.success('修改成功')
-      FactorRef?.current?.onCancel()
-      getQueryByPageStorageDevice(pageRef.current.current, pageRef.current.pageNum, compRef.current.selvalue, compRef.current.inpvalue, compRef.current.energyVal)
-    } else {
-      message.error(res.errMsg)
-    }
-  }
   //打开新增窗口
   const addopen = () => {
     if (!levelname.current) {
@@ -435,7 +410,6 @@ export default function Storage ({ deviceStyle, name }) {
     try {
       const resp = await QueryListGateWay(projectId)
       if (resp.success && Array.isArray(resp.data)) {
-        console.log('resp', resp)
         const arr = resp.data.map(it => ({ ...it }))
         setGatewaylist(() => ([{ sn: '(无)直连设备', id: 0 }, ...arr]))
       } else {
@@ -447,8 +421,6 @@ export default function Storage ({ deviceStyle, name }) {
   //获取告警计划
   const getQueryPlanList = async () => {
     const res = await QueryPlanList(projectId)
-    console.log(res)
-
     if (res.success && Array.isArray(res.data)) {
       setAlarmopts([{ name: '不启用告警方案', id: 0 }, ...res.data])
     } else {
@@ -467,7 +439,6 @@ export default function Storage ({ deviceStyle, name }) {
         alike: like ? like : '',
         customerType: customerType ? customerType : 0,
         deviceStyle,
-
       }
       const resp = await QueryByPage(params)
       setLoading(false)
@@ -479,15 +450,12 @@ export default function Storage ({ deviceStyle, name }) {
       })
       if (resp.success && Array.isArray(resp.data)) {
         setDataSource([...resp.data.reverse()])
-
       } else {
         setDataSource([])
       }
-
     } catch (error) {
       console.log(error)
     }
-
   }
   //导出
   const exportExecel = () => {
@@ -503,7 +471,6 @@ export default function Storage ({ deviceStyle, name }) {
         alike: compRef.current.inpvalue,
         customerType: compRef.current.energyVal ? compRef.current.energyVal : 0
       }
-
       const resp = await QueryByPageStorageDevice(params)
       if (resp.success) {
         resolve({ list: resp.data ? resp.data : [], total: resp.total })
@@ -560,9 +527,6 @@ export default function Storage ({ deviceStyle, name }) {
     modalFormRef,
     width: 746,
     name: `新增${name}`,
-    // addopts,
-    // gatewaylist,
-    // devicelist:deviceRef.current,
     transitionName: transitionName,
     maskTransitionName: maskTransitionName,
     onOk: addOk,
@@ -625,9 +589,7 @@ export default function Storage ({ deviceStyle, name }) {
           }))
           getQueryByPageStorageDevice(page.current, page.pageSize, compRef.current.selvalue, compRef.current.inpvalue, compRef.current.energyVal)
         }} onExport={onExport}></Table>
-
       </Comp>
-
       <MyContext.Provider value={{
         addopts: addoptsRef.current,
         gatewaylist: gatewayRef.current,
@@ -640,8 +602,6 @@ export default function Storage ({ deviceStyle, name }) {
         <AddModalForm {...ModalFormProps} >
         </AddModalForm>
       </MyContext.Provider>
-
-
       <MultImport {...ImportProps}></MultImport>
       <DeleteModal DelModalRef={DelModalRef} name="删除提示" content="是否确认删除储能设备？" onOk={delOk}></DeleteModal>
       {EditModalComp}

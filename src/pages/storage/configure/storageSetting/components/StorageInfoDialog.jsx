@@ -77,7 +77,7 @@ const StorageInfoDialog = ({ onRefreshClick }, ref) => {
       }
       if (result.success) {
         if(operation === 'add'){
-          message.success('站点删除成功!')
+          message.success('新增站点成功!')
         }else{
           message.success('站点信息修改成功!')
           modalRef.current?.onCancel()
