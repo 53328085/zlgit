@@ -1,5 +1,5 @@
 import { useAntdTable, useMemoizedFn } from 'ahooks'
-import { StorageDeviceDesigner, StorageEquipmentDesigner } from '@api/api'
+import { StorageDeviceDesigner } from '@api/api'
 import React, { useEffect, useRef, useState } from 'react'
 import { message, Space } from 'antd'
 import { CustButton } from '@com/useButton'
@@ -31,9 +31,12 @@ const CustomTitle = styled.div`
 
 export default function EnvironmentCommView ({ tab, areaId, projectId, containerId, stationName = {} }) {
   const tableRef = useRef(null)
+  //删除弹窗
   const deleteDialogRef = useRef(null)
+  //配置弹窗
   const deviceSettingDialogRef = useRef(null)
   const { value: siteId = 0 } = stationName
+  //
   const [selectId, setSelectId] = useState(0)
   //分页相关数据
   const totalItem = useRef()

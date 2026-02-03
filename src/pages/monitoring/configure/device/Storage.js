@@ -63,13 +63,11 @@ export default function Storage ({ deviceStyle, name }) {
   const modalImportRef = useRef()
   const DelModalRef = useRef()
   const EditModalFormRef = useRef()
-  const FactorRef = useRef()
   const ErrModalRef = useRef()
   const errlistRef = useRef()
   const tableLoadRef = useRef()
   const [addform] = Form.useForm()
   const [editform] = Form.useForm()
-  const [factorform] = Form.useForm()
   const levelname = useRef()
   let delid = useRef()
   let flies

@@ -39,7 +39,6 @@ const ContainerInfoDialog = ({ onRefreshClick }, ref) => {
 
     if (info) {
       setOperation('edit')
-      console.log(info)
       form.setFieldsValue({
         ...info,
         bmsStruct: binaryToValue(info?.bmsStructFlag ?? 0),

@@ -30,10 +30,21 @@ const CustomTitle = styled.div`
     }
 `
 
+/**
+ * 设备配置列表
+ * @param tab 页签标识
+ * @param areaId
+ * @param projectId
+ * @param containerId 当前储能柜ID
+ * @param stationName 当前站点ID
+ */
 export default function DeviceCommView ({ tab, areaId, projectId, containerId, stationName = {} }) {
   const tableRef = useRef(null)
+  //删除弹窗
   const deleteDialogRef = useRef(null)
+  //配置弹窗
   const deviceSettingDialogRef = useRef(null)
+  //电表配置弹窗（特殊处理）
   const electricSettingDialogRef = useRef(null)
   const { value: siteId = 0 } = stationName
   const [selectId, setSelectId] = useState(0)
