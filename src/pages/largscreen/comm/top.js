@@ -2,12 +2,12 @@ import React  from 'react'
 import {useFullscreen} from 'ahooks'
 import imgurl from "../icon"
 import {useTime} from '../data'
-export default function index({pgref,setMeterType,meterType,isFullscreen,enterFullscreen,exitFullscreen }) {
-    //  const [isFullscreen, { enterFullscreen, exitFullscreen }] = useFullscreen(pgref)
+export default function index({pgref,setMeterType,meterType }) {
+     const [isFullscreen, { enterFullscreen, exitFullscreen }] = useFullscreen(pgref)
       const timeformat = useTime()
-      const fullhandler=()=>{
+       const fullhandler=()=>{
         isFullscreen ? exitFullscreen() : enterFullscreen()
-      }
+      }  
       const onClick=(v)=>{
         setMeterType(v)
 
@@ -46,8 +46,8 @@ export default function index({pgref,setMeterType,meterType,isFullscreen,enterFu
                 <div className="fullimg">
                 <img src={isFullscreen ? imgurl["exit"]:imgurl["full"]}></img>
                 </div>
-                <span>{isFullscreen?"退出全屏":"全屏"}</span>
-            </div>
+              <span>{isFullscreen?"退出全屏":"全屏"}</span> 
+            </div>  
          </div>
          </div>
        

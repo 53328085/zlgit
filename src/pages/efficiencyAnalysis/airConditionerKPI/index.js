@@ -6,19 +6,21 @@ import { selectProjectId } from "@redux/systemconfig";
 import Titlelayout from "@com/titlelayout";
 import { getTime } from "@com/usehandler";
 import { useQuerySNFReportData } from "../common/api";
-
+import {useRequest} from "ahooks"
 import { Mainwrap ,TitleBox} from "./style";
 
 import Cform from "../common";
 import Aircom from "./air";
+import {Cspin} from "@com/comstyled"
+import Empty from "@com/useEmpty.js";
 export default function Index() {
   const projectId = useSelector(selectProjectId);
   const [params, setParams] = useState({});
-  const [datas, setDatas] = useState([]);
+//  const [datas, setDatas] = useState([]);
   const setexparams = useCallback((value) => {
     setParams(value);
   }, []);
-  console.log(datas)
+ 
   const getData = async () => {
     try {
       const { type, date, areaId } = params;
@@ -49,36 +51,46 @@ export default function Index() {
       );
 
       if (success && Array.isArray(data) && data.length) {
-        setDatas(data);
+        return data;
+       // setDatas(data);
       } else {
-        setDatas([]);
+        return [];
+       // setDatas([]);
       }
     } catch (error) {
       console.log(error);
     }
   };
 
-  useEffect(() => {
-    getData();
-  }, [params, projectId]);
+   const {data,loading } = useRequest(getData,{
+    refreshDeps:[params,projectId],
+    loadingDelay:300,
+   
+  })
 
   return (
     <Pagecount pd="0" bgcolor="none">
       <Mainwrap>
         <Cform setexparams={setexparams} />
-       
+        <Cspin spinning={loading} tip={"loading.."}>
           <Titlelayout
             layout="flex"
             title={<TitleBox>Air-Conditioner KPI</TitleBox>}
             dr="column"
           >
              <div className="contentwrap">
-            {datas?.map((d) => (
+             
+            {data?.map?.((d) => (
               <Aircom  {...d} key={d.kpiName}></Aircom>
             ))}
+             {
+                        data?.length==0  && <Empty />
+                         
+                      }
+           
             </div>
           </Titlelayout>
-        
+          </Cspin>
       </Mainwrap>
     </Pagecount>
   );

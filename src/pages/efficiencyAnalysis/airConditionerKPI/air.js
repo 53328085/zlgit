@@ -1,19 +1,22 @@
 import React from 'react'
-import {List, Typography, Carousel } from "antd";
+import {List, Typography, Badge } from "antd";
 
 import Ichart from '@com/useEcharts/Ichart'
  
-import {useGauge, useLine}from "../common"
+import {useGauge, useLine,Custitem}from "../common"
 export default function Index(data) { 
     const lineopt=useLine(data?.detail)
-    const goption = useGauge({data:data?.ranges,radius:"100px", center:['50%',  180]  });
+    const goption = useGauge({data:data?.ranges,startAngle:180, endAngle:0 });
   return (
  
     <div className="innerlayout">
       <div className="sublayout">
       <div className="sub rows" >
                   <div className='scrollbox' style={{height: 200}}>
-                <Carousel vertical={true}  autoplay style={{height: 200}} dots={false} >
+                     {
+                                            Array.isArray(data?.kpiKeyData) &&  <Custitem data={data?.kpiKeyData} h={200} len={6} />
+                                        }
+              {/*   <Carousel vertical={true}  autoplay style={{height: 200}} dots={false} >
                   {
                    data?.kpiKeyData?.map((item,index)=>{
                       return <div className="row" key={item.sn+index}> 
@@ -23,7 +26,7 @@ export default function Index(data) {
                     })
  
                   }
-                  </Carousel>
+                  </Carousel> */}
                   </div>
                   
                 </div>
@@ -37,6 +40,10 @@ export default function Index(data) {
             </div>
         </div>
         <div className="sub chart">
+        <div className='range'> 
+                      <Badge color='rgba(255, 177, 43, 1)' text={data?.ranges?.[1]} className='step1'></Badge>
+                      <Badge color='rgba(255, 96, 33, 1)' text={data?.ranges?.[2]} className='step2'></Badge>
+                   </div>
            <Ichart custoption={goption} />
         </div>
         <div className="sub">

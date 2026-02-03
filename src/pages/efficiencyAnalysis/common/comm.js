@@ -1,23 +1,27 @@
 import React,{useEffect,useState} from 'react'
-import { List, Typography,Carousel } from "antd";
+import { List, Typography,Badge } from "antd";
 import {  TitleBox } from "./style";
-import {useGauge, useLine } from './index'
+import {useGauge, useLine,Custitem } from './index'
 import Titlelayout from "@com/titlelayout";
 import Ichart from '@com/useEcharts/Ichart' 
 export default function Index(data) { 
      const lineopt=useLine(data?.detail)
-     const goption = useGauge({data:data?.ranges}); 
+     const goption = useGauge({data:data?.ranges});  
   return (
     <Titlelayout
             layout="flex"
             title={<TitleBox>{data?.equipmentName}</TitleBox>}
             dr="column"
+            pv="16px"
           >
             <div className="innerlayout">
               <div className="sublayout">
                 <div className="sub rows" >
                   <div className='scrollbox' style={{height: 120}}>
-                <Carousel vertical={true}  autoplay style={{height: 120}} dots={false} >
+                    {
+                        Array.isArray(data?.kpiKeyData) &&  <Custitem data={data?.kpiKeyData} />
+                    }
+              {/*   <Carousel vertical={true}  autoplay  style={{height: 120}} dots={false} >
                   {
                     data?.kpiKeyData?.map((item,index)=>{
                       return <div className="row" key={item.sn+index}> 
@@ -27,7 +31,7 @@ export default function Index(data) {
                     })
  
                   }
-                  </Carousel>
+                  </Carousel> */}
                   </div>
                   
                 </div>
@@ -44,6 +48,11 @@ export default function Index(data) {
                   <Ichart {...lineopt} /> 
                 </div>
                 <div className="sub chart">
+                <div className='range'>
+                     {/*  <Badge color='rgba(5, 192, 110, 1)' text={data?.ranges?.[0]+'-' +data?.ranges?.[1]}></Badge> */}
+                      <Badge color='rgba(255, 177, 43, 1)' text={data?.ranges?.[1]} className='step1'></Badge>
+                      <Badge color='rgba(255, 96, 33, 1)' text={data?.ranges?.[2]} className='step2'></Badge>
+                   </div>
                    <Ichart custoption={goption} />
                 </div>
               </div>
@@ -57,3 +66,6 @@ export default function Index(data) {
           </Titlelayout>
   )
 }
+ /*  [data?.[1]/max, 'rgba(5, 192, 110, 1)'],
+               [data?.[2]/max, 'rgba(255, 177, 43, 1)'],
+               [max, 'rgba(255, 96, 33, 1)'] */

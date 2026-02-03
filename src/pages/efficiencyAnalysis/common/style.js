@@ -34,6 +34,7 @@ export  const Mainwrap = styled.div`
           background: #E5ECF5;
           padding: 0;
           .scrollbox {
+            flex:1;
             .ant-carousel {
               .slick-slider{
                 height: 100%; 
@@ -58,7 +59,19 @@ export  const Mainwrap = styled.div`
             }
           }
          // overflow: hidden;
-   
+         .row {
+              display: flex !important;
+              padding: 0 10px;
+              align-items: center;
+              height:30px;
+              justify-content: space-between;
+              .ant-typography {
+                margin-bottom: 0;
+              }
+              &:nth-of-type(even) {
+                background:rgba(80, 200, 255, 0.08);
+              }
+            }
         }
  
         .sub.text {
@@ -82,6 +95,25 @@ export  const Mainwrap = styled.div`
         } 
         .sub.chart{
           padding: 0;
+          position: relative;
+          .range {
+            position: absolute;
+            right: 12px;
+            display: flex;
+            column-gap: 8px;
+            .step1 {
+              .ant-badge-status-text {
+                color: rgba(255, 177, 43, 1);
+
+              }
+            }
+            .step2 {
+              .ant-badge-status-text {
+                color: rgba(255, 96, 33, 1);
+
+              }
+            }
+          }
         }
        }
        .line{

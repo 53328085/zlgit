@@ -16,9 +16,9 @@ import {useFullscreen} from 'ahooks'
  import Rightcentercom from './comm/rightcenter'
  import Rightdowncom from './comm/rightdown'
  import {useQueryData,useQueryKPICurve} from './api'
+import { document } from 'postcss';
 export default function Index() {
   const pgref= useRef()
-   const [isFullscreen, { enterFullscreen, exitFullscreen ,toggleFullscreen}] = useFullscreen(pgref )
   const projectId = useSelector(selectProjectId);
   const [meterType,setMeterType]=useState(1)
   const [datas,setDatas] = useState({})
@@ -80,7 +80,9 @@ export default function Index() {
  
   },[datas])
 
-  console.log("latest7DaysCOPCurve",latest7DaysCOPCurve)
+ 
+ 
+ 
 
   const getKpi = async ()=>{ 
     try{
@@ -110,33 +112,33 @@ export default function Index() {
   }
   useEffect(()=>{
     if([projectId,meterType].every(i=> Number.isInteger(parseInt(i)))) {
-      getData()
+     getData()
     }
   },[projectId,meterType])
 
   useEffect(()=>{ 
     if(Number.isInteger(parseInt(projectId))) {
-      getKpi()
+    getKpi()
     }
     
   },[projectId])
  
-
+ 
  
   return (
-    <Pagelayout ref={pgref} >
-       <Topcom pgref={pgref} setMeterType={setMeterType} exitFullscreen={exitFullscreen} enterFullscreen={enterFullscreen} meterType={meterType} isFullscreen={isFullscreen}></Topcom>
-       <div className="content">
-         <div className="left">
+    <Pagelayout ref={pgref}   >
+       <Topcom pgref={pgref} setMeterType={setMeterType}   meterType={meterType}  ></Topcom>
+       <div className="content" key="content">
+         <div className="left" key="left">
              <Leftupcom  datas={latest7DaysEnergyOfClassify}/> 
              <Leftdowncom datas={latest7DaysEnergyOfArea} /> 
          </div>
-         <div className="center">
+         <div className="center" key="center">
             <Centerupcom  datas={loadTrend} /> 
             <Centercom datas={consumeTrend} />
             <Centerdowncom datas={rankClassify} monthTotal={monthTotal} />
          </div>
-         <div className="right">
+         <div className="right" key="right">
             <Rightupcom datas={latest7DaysCOPCurve} />
             <Rightcentercom datas={latest7DaysKPICurve} />
             <Rightdowncom />
@@ -145,4 +147,3 @@ export default function Index() {
     </Pagelayout>
   )
 }
-

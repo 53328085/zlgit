@@ -410,6 +410,7 @@ useEffect(()=> {
     refreshDeps: [areaId, projectId, type, date, energytype, treeId, index, line, isrange, dates, alike,reportType]
   })
   
+  console.log("tableProps", tableProps)
   // 对比分析 图表
   const modref = useRef()
   const [checkvalue, setCheckvalue] = useState(["1"])
@@ -631,15 +632,15 @@ const dateprops = useMemo(()=>{
              
               </div>
               {
-                ["1", "5"].includes(value) ? <div key={value}><UserTable ref={tbref} rowSelection={value == 1 ? rowSelection : null} columns={concolumns} {...tableProps} rowKey={row => row.sn+row.nodeName} key={value} scroll={{
+                ["1", "5"].includes(value) ? <div key={value}><UserTable ref={tbref} rowSelection={value == 1 ? rowSelection : null} columns={concolumns} {...tableProps} rowKey={row => Object.values(row).join()} key={value} scroll={{
                   scrollToFirstRowOnChange: true,
                   x: 1400,
                   y: 685
                 }
                 }
                   sheetName={sheetName} onExport={onExport}
-                ></UserTable></div>
-                  : <div key={value}><UserTable ref={tbref} columns={columns} {...tableProps} key={value} sheetName={sheetName} onExport={onExport}  ></UserTable></div>
+                ></UserTable></div>  
+                  : <div key={value}><UserTable ref={tbref} columns={columns} {...tableProps} rowKey={(row)=> Object.values(row).join() }  sheetName={sheetName} onExport={onExport}  ></UserTable></div>
               }
             </div>
           </div>

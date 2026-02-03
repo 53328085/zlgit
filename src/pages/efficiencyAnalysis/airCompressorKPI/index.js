@@ -3,7 +3,7 @@ import React, {  useState, useEffect,  useCallback } from "react";
 import Pagecount from "@com/pagecontent";
 import { useSelector } from "react-redux";
 import { selectProjectId } from "@redux/systemconfig";
-
+import {useRequest} from "ahooks"
  
 import { useQuerySNFReportData } from "../common/api.js";
 
@@ -13,12 +13,14 @@ import Cform  from "../common";
 import {getTime} from "@com/usehandler.js"
 import moment from "moment";
 import Comm from "../common/comm.js"
+import {Cspin} from "@com/comstyled"
+import Empty from "@com/useEmpty.js";
 export default function Index() {
  
 
   const projectId = useSelector(selectProjectId);
   const [params, setParams] = useState({});
-  const [datas, setDatas] = useState([]); 
+ // const [datas, setDatas] = useState([]); 
   const setexparams =useCallback((value)=>{
   setParams(value)
 
@@ -42,21 +44,27 @@ export default function Index() {
        });
       
       if (success && Array.isArray(data) && data.length) {
-       
-         setDatas(data);
+         return data;
+         //setDatas(data);
            
       } else {
-         setDatas([]);
+        return []
+        // setDatas([]);
         
       }
     } catch (error) {
        console.log(error)
     }
   };
-
- useEffect(()=>{ 
+   const {data,loading } = useRequest(getData,{
+    refreshDeps:[params,projectId],
+    loadingDelay:300,
+   
+  })
+  console.log("loading",loading)
+/*  useEffect(()=>{ 
    getData();
-  },[params,projectId])
+  },[params,projectId]) */
 
   const config={
      height:122, width:390
@@ -64,16 +72,23 @@ export default function Index() {
  
   return (
     <Pagecount pd="0" bgcolor="none">
+     
       <Mainwrap>
         <Cform setexparams={setexparams} />
+        <Cspin spinning={loading} tip={"loading.."}>
         <div className="contentwrap">
           {
-            datas?.map?.(d=> <Comm {...d} config={config} key={d.equipmentName
+            data?.map?.(d=> <Comm {...d} config={config} key={d.equipmentName
               } />)
           }
-        
+          {
+            data?.length==0  && <Empty />
+             
+          }
         </div>
+        </Cspin>
       </Mainwrap>
+      
     </Pagecount>
   );
 }

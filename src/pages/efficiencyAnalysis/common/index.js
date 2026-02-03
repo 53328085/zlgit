@@ -2,12 +2,14 @@ import React, {useEffect, useMemo,useState} from 'react'
 import moment from 'moment'
 import {useTranslation} from "react-i18next"
 import {useRequest} from "ahooks"
-import {Form, Select, Space, DatePicker, ConfigProvider} from 'antd'
+import {Form, Select, Space, DatePicker, ConfigProvider,Carousel,Typography} from 'antd'
 import { useSelector } from "react-redux";
 import { selectProjectId } from "@redux/systemconfig";
 import enUS from 'antd/lib/calendar/locale/en_US'
 import  {Cform} from "@com/useSerach/comhead.js"
 import {  useQuerySNFReportData } from "./api";
+import {AreaSelect} from "@com/useSerach/comhead"
+import {isObject} from "@com/usehandler"
 const  dateType=[
   {
       value:1,
@@ -50,7 +52,8 @@ export default function Index({setexparams}) {
    <Cform form={form} layout="inline" initialValues={{ areaId: 1, type: 1 }} onValuesChange={onValuesChange}>
     <Space size={16}>
      <Form.Item name="areaId" label="Park selection">
-      <Select options={[{value:1,label:"Sanofi( HangZhou)"}]} style={w200}></Select>
+      <AreaSelect></AreaSelect>
+      {/* <Select options={[{value:1,label:"Sanofi( HangZhou)"}]} style={w200}></Select> */}
      </Form.Item>
      <Form.Item name="type">
       <Select options={dateType} style={w88}></Select>
@@ -78,13 +81,34 @@ export default function Index({setexparams}) {
    </ConfigProvider>
   )
 }
-export function useGauge({data,radius="100px", center=['50%',  110], startAngle=180, endAngle=0}){
+
+export function Custitem(props) { 
+  const {data,h=120,len=5} = props
+  if(data?.length<len) {
+    return   data?.map((item,index)=>(<div className="row" key={item.sn+index}> 
+               <Typography.Paragraph  ellipsis={{tooltip: item?.keyName}}>{item?.keyName}</Typography.Paragraph>  <Typography.Paragraph type="success">{item.keyValue}</Typography.Paragraph>
+            
+      </div>))
+  } 
+  return (<Carousel vertical={true}  autoplay  style={{height: h}} dots={false} >
+    {
+      data?.map((item,index)=>{
+        return <div className="row" key={item.sn+index}> 
+                 <Typography.Paragraph  ellipsis={{tooltip: item?.keyName}}>{item?.keyName}</Typography.Paragraph>  <Typography.Paragraph type="success">{item.keyValue}</Typography.Paragraph>
+              
+        </div>
+      })
+
+    }
+    </Carousel>)
+}
+export function useGauge(params){
+  const {data,radius="100px", center=['50%',  110],splitNumber=10, startAngle=180, endAngle=0} = isObject(params) ? params : {}
   let len=  Array.isArray(data) ? data.length : 0
   let max = data?.[len-1]??NaN
-  const  goption =useMemo(()=>{
-    let i=1
+  const  goption =useMemo(()=>{ 
      const  series={
-       type:5,
+       type:5, 
        series: [
        {
          type: 'gauge',
@@ -93,14 +117,15 @@ export function useGauge({data,radius="100px", center=['50%',  110], startAngle=
          startAngle,
          endAngle,
          min:data?.[0],
-         max,
-         splitNumber:3,
+         max:data?.[len-1],
+         splitNumber,
+        
          axisLine: {
            lineStyle: {
              width: 18,
              color:len ? [
-               [data?.[1]/max, 'rgba(5, 192, 110, 1)'],
-               [data?.[2]/max, 'rgba(255, 177, 43, 1)'],
+               [(data?.[1]/max)?.toFixed(2), 'rgba(5, 192, 110, 1)'],
+               [(data?.[2]/max)?.toFixed(2), 'rgba(255, 177, 43, 1)'],
                [max, 'rgba(255, 96, 33, 1)']
              ]:[],
              opacity: 0.8
@@ -132,21 +157,15 @@ export function useGauge({data,radius="100px", center=['50%',  110], startAngle=
            color: 'auto',
            distance: 5,
            fontStyle: "bold",
-           fontSize: 12,
-         formatter: function (value) { 
-           //  console.log("i",i++)
-             return value?.toFixed(2)
-            
-           /*  console.log("value",value)
-             if(value ) {
-              
-               return    value
-             }else if(value==data?.[2]) {
-               return  value
-             }else {
-               return  ''
-             }  */
-           }   
+           fontSize: 12, 
+           formatter: (value) => {
+             if (value==data?.[0]) {
+               return value
+             } else if (value==data?.[3]) {
+               return value
+
+             }
+           } 
          },
          detail: {
            valueAnimation: true, 
@@ -159,7 +178,8 @@ export function useGauge({data,radius="100px", center=['50%',  110], startAngle=
              value: data?.[1] || null,
            //  name: "value"
            }
-         ]:[]
+         ]:[],
+         
        }
      ]}
      return series
@@ -235,3 +255,4 @@ export const settings = {
   effect:"fade"
  
 }
+ 

@@ -3,7 +3,7 @@ import React, { useRef, useState, useEffect,useMemo, useCallback } from "react";
 import Pagecount from "@com/pagecontent";
 import { useSelector } from "react-redux";
 import { selectProjectId } from "@redux/systemconfig";
-
+import {useRequest} from "ahooks"
  
 import { useQuerySNFReportData } from "../common/api.js";
 
@@ -13,12 +13,14 @@ import Cform,{useGauge } from "../common";
 import {getTime} from "@com/usehandler.js"
 import moment from "moment";
 import Comm from "../common/comm.js"
+import {Cspin} from "@com/comstyled"
+import Empty from "@com/useEmpty.js";
 export default function Index() {
  
 
   const projectId = useSelector(selectProjectId);
   const [params, setParams] = useState({});
-  const [datas, setDatas] = useState([]);
+  //const [datas, setDatas] = useState([]);
   console.log("params" )
   const goption = useGauge({data:54});
   //console.log(goption)
@@ -45,11 +47,12 @@ export default function Index() {
        });
       
       if (success && Array.isArray(data) && data.length) {
-       
-         setDatas(data);
+         return data;
+        // setDatas(data);
            
       } else {
-         setDatas([]);
+        return [];
+         //setDatas([]);
         
       }
     } catch (error) {
@@ -57,9 +60,11 @@ export default function Index() {
     }
   };
 
- useEffect(()=>{ 
-   getData();
-  },[params,projectId])
+   const {data,loading } = useRequest(getData,{
+    refreshDeps:[params,projectId],
+    loadingDelay:300,
+   
+  })
 
  
  
@@ -67,13 +72,18 @@ export default function Index() {
     <Pagecount pd="0" bgcolor="none">
       <Mainwrap>
         <Cform setexparams={setexparams} />
+         <Cspin spinning={loading} tip={"loading.."}>
         <div className="contentwrap">
           {
-            datas?.map?.(d=> <Comm {...d} key={d.equipmentName
+            data?.map?.(d=> <Comm {...d} key={d.equipmentName
               } />)
           }
-        
+            {
+                      data?.length==0  && <Empty />
+                       
+                    }
         </div>
+        </Cspin>
       </Mainwrap>
     </Pagecount>
   );

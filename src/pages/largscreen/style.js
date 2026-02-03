@@ -331,28 +331,26 @@ export const Rightupcenter = styled.div`
    .slider-container{
     width:488px;
     // height: calc(100% - 32px - 42px);
-    flex:1;
-     .ant-carousel{
-      height: 100%;
-      .slick-slider{
-        height: 100%;
+    
+      .ant-carousel{ 
+      .slick-slider{ 
         .slick-list{
-          height: 100%;
-           .slick-track{
-            height: 100%;
-            .slick-slide{ 
-              height: 100%;
-              div{
-                height: 100%;
-                div.chartbox{
-                  height: 100% ;
+          .slick-track {
+            .slick-slide{
+              >div{
+                .chartbox{
+                  height:234px; 
                 }
+               
               }
+             
             }
+           
           }
+          
         }
       }
-     }
+     }  
       
    }
 
