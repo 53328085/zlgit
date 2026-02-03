@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
 import PageContent from '@com/pagecontent'
 import CustContext from '@com/content.js'
 import DeviceCommView from '@pages/storage/configure/storageDevice/components/DeviceCommView'

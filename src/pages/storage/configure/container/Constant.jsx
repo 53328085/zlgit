@@ -77,13 +77,14 @@ export const valueToBinary = (value) => {
 export const binaryToValue = (binaryNumber) => {
   // 初始化一个空数组
   const value = []
-  // 遍历 binaryNumber 的每一位
+  // 遍历 binaryNumber 的每一位（最多8位）
   for (let i = 0; i < 8; i++) {
-    // 检查第 i 位是否为1
-    if (binaryNumber && (1 << i)) {
-      value.push(i.toString()) // 将对应的位推入数组
+    // 使用按位与运算检查第 i 位是否为 1
+    if (binaryNumber & (1 << i)) {
+      value.push(i) // 将对应的位推入数组
     }
   }
   // 返回最终的 value 数组
   return value
 }
+

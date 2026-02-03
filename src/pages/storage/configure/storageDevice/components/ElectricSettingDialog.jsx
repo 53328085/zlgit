@@ -39,7 +39,7 @@ const ElectricSettingDialog = ({ onRefreshClick, projectId, siteId, containerId,
         const gridDevices = config.filter(item => item.type === 101)
         const mainDevices = config.filter(item => item.type === 102)
         const loadDevices = config.filter(item => item.type === 103)
-        
+
         setGridTable(gridDevices)
         setMainTable(mainDevices)
         setLoadTable(loadDevices)
@@ -96,8 +96,6 @@ const ElectricSettingDialog = ({ onRefreshClick, projectId, siteId, containerId,
   }))
 
   const handleSaveValue = (data) => {
-    // 处理 ElectricTransfer 组件传递回来的数据
-    console.log('ElectricTransfer data:', data)
     // 更新状态以供后续使用
     setMainTable(data.mainData || [])
     setLoadTable(data.loadData || [])

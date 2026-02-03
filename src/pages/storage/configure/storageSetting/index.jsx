@@ -20,11 +20,12 @@ export default function Index () {
   const storageInfoDialogRef = useRef(null)
   const tableRef = useRef()
   const projectId = useSelector(selectProjectId)
+  //权限 true-仅查看 false-可编辑
   const isPublish = useSelector(publishState)
   const areaFirstName = useSelector(levelDefaultLabel) || '园区'
-  //删除告警类型弹窗
+  //删除弹窗
   const [showDeleteModal, setShowDeleteModal] = useState(false)
-  const { GetSites, DeleteSite } = SiteManagerDesigner
+  //分页相关参数
   const totalItem = useRef()
   const curPage = useRef()
   const PageSize = 14
@@ -42,7 +43,7 @@ export default function Index () {
         total: 0
       })
     })
-    return GetSites(projectId, current, pageSize).then(res => {
+    return SiteManagerDesigner.GetSites(projectId, current, pageSize).then(res => {
       let { success, data, total } = res
       totalItem.current = Number.isInteger(total) ? total : 0
       if (success) {
@@ -94,7 +95,7 @@ export default function Index () {
    * 删除站点确认
    */
   const onDialogDeleteClick = async () => {
-    let res = await DeleteSite(projectId, selectId)
+    let res = await SiteManagerDesigner.DeleteSite(projectId, selectId)
     if (res.success) {
       message.success('站点删除成功!')
       let current = Math.ceil((totalItem.current - 1) / PageSize) < curPage.current

@@ -14,7 +14,9 @@ export default function Index () {
   const containerIdValue = containerId && typeof containerId === 'object' ? containerId.value : containerId
   let [searchParams] = useSearchParams()
   const itemParam = searchParams.get('item')
+  //默认选中页签
   const initialTabValue = itemParam !== null ? itemParam.toString() || '10' : '10'
+  //多页签相关参数
   const [tabValue, setTabValue] = useState(initialTabValue)
   const [tabs, setTabs] = useState([])
   const tabProps = {

@@ -1,6 +1,9 @@
 import { Space } from 'antd'
 import { CustLink } from '@com/useButton'
 
+/**
+ * 根据设备类型获取设备名称
+ */
 export const getDeviceTitle = (type) => {
   switch (type) {
     case '201':
