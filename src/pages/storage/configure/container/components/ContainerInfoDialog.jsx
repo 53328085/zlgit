@@ -8,7 +8,7 @@ import { levelDefaultLabel, selectOneLevel, selectProjectId } from '@redux/syste
 import CModal from '@com/useModal'
 import styled from 'styled-components'
 import { SiteManagerDesigner, StorageContainerDesigner } from '@api/api.js'
-import { binaryToValue, dealBMSData, getBMSOptions, valueToBinary } from '@pages/storage/configure/container/Constant'
+import { binaryToValue, getBMSOptions, valueToBinary } from '@pages/storage/configure/container/Constant'
 
 const CustomForm = styled(Form)`
     && {
@@ -128,6 +128,11 @@ const ContainerInfoDialog = ({ onRefreshClick }, ref) => {
    * 上传文件之前的钩子，参数为上传的文件
    */
   const beforeUpload = async (file) => {
+    const isLt2M = file.size < 2 * 1024 * 1024 // 判断文件大小是否小于2MB
+    if (!isLt2M) {
+      message.error('文件大小不能超过2MB!')
+      return false // 阻止上传
+    }
     const url = await getBase64(file)
     setImageUrl(url)
     return false
@@ -247,7 +252,22 @@ const ContainerInfoDialog = ({ onRefreshClick }, ref) => {
             <Upload
               listType="picture-card"
               fileList={fileList}
-              onChange={({ fileList: newFileList }) => setFileList(newFileList)}
+              onChange={({ fileList: newFileList }) => {
+                // 检查是否有文件超出大小限制
+                const validFiles = newFileList.filter(file => {
+                  if (file.size > 2 * 1024 * 1024) {
+                    return false
+                  }
+                  return true
+                })
+                // 如果所有文件都被过滤掉了，则清空列表
+                if (validFiles.length === 0) {
+                  setFileList([])
+                } else {
+                  // 否则设置有效的文件列表
+                  setFileList(validFiles)
+                }
+              }}
               onPreview={handlePreview}
               beforeUpload={beforeUpload}
               maxCount={1}
