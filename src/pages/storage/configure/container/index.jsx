@@ -137,7 +137,7 @@ export default function Index () {
           type="warn"
           onOk={onDialogDeleteClick}
         >
-          是否确认删除站点?
+          是否确认删除储能柜?
         </CustomModal>
       </TitleLayout>
       <ContainerInfoDialog ref={containerInfoDialogRef} onRefreshClick={onRefreshClick}/>
