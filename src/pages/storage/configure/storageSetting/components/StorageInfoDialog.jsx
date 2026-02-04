@@ -1,13 +1,12 @@
 import CustomModal from '@com/useModal'
 import React, { useImperativeHandle, useRef, forwardRef, useState } from 'react'
 import { useMemoizedFn } from 'ahooks'
-import { DatePicker, Form, Input, InputNumber, Select, Upload, message } from 'antd'
+import { DatePicker, Form, Input, InputNumber, Select, message } from 'antd'
+import CustomUpload from "@com/useUpload.js"
 import { natureOptions } from '@pages/storage/configure/storageSetting/Constant'
-import { PlusOutlined } from '@ant-design/icons'
 import { useSelector } from 'react-redux'
 import { selectOneLevel, selectProjectId } from '@redux/systemconfig'
 import moment from 'moment/moment'
-import CModal from '@com/useModal'
 import styled from 'styled-components'
 import { SiteManagerDesigner } from '@api/api.js'
 
@@ -17,6 +16,12 @@ const CustomForm = styled(Form)`
             margin-bottom: ${props => props.theme.laptop ? '8px' : '24px'};
         }
     }
+`
+const ImageContentView = styled.div`
+    width: 160px;
+    height: 160px;
+    border: 1px dotted #dedede;
+    display: flex;
 `
 
 const StorageInfoDialog = ({ onRefreshClick }, ref) => {
@@ -28,10 +33,6 @@ const StorageInfoDialog = ({ onRefreshClick }, ref) => {
   const areaList = useSelector(selectOneLevel)
   const [operation, setOperation] = useState('add')
   const [operationInfo, setOperationInfo] = useState(null)
-  const [fileList, setFileList] = useState([]) //文件列表
-  const [imageUrl, setImageUrl] = useState('') //上传的图片
-  const [previewImage, setPreviewImage] = useState('')
-  const [previewOpen, setPreviewOpen] = useState(false)
 
   const showDialog = useMemoizedFn((info) => {
     //重置
@@ -47,13 +48,6 @@ const StorageInfoDialog = ({ onRefreshClick }, ref) => {
     } else {
       setOperation('add')
     }
-    if (info && info.image) {
-      setImageUrl(info?.image)
-      setFileList([{ url: info?.image }])
-    } else {
-      setImageUrl('')
-      setFileList([])
-    }
     modalRef.current?.onOpen()
   })
 
@@ -66,7 +60,6 @@ const StorageInfoDialog = ({ onRefreshClick }, ref) => {
       let params = {
         ...values,
         deliveryTime: moment(values.deliveryTime).format('YYYY-MM-DD'),
-        image: imageUrl ?? '',
       }
       let result
       if (operation === 'add') {
@@ -90,46 +83,6 @@ const StorageInfoDialog = ({ onRefreshClick }, ref) => {
       throw error
     }
   })
-
-  /**
-   * 获取文件base64
-   */
-  const getBase64 = (file) =>
-    new Promise((resolve, reject) => {
-      const reader = new FileReader()
-      if (file.status === 'removed') {
-        setImageUrl()
-      } else {
-        reader.readAsDataURL(file)
-        reader.onload = () => resolve(reader.result)
-        reader.onerror = (error) => reject(error)
-      }
-    })
-
-  /**
-   * 上传文件之前的钩子，参数为上传的文件
-   */
-  const beforeUpload = async (file) => {
-    const isLt2M = file.size < 2 * 1024 * 1024 // 判断文件大小是否小于2MB
-    if (!isLt2M) {
-      message.error('文件大小不能超过2MB!')
-      return false // 阻止上传
-    }
-    const url = await getBase64(file)
-    setImageUrl(url)
-    return false
-  }
-
-  /**
-   * 预览图标时的回调
-   */
-  const handlePreview = async (file) => {
-    if (!file.url && !file.preview) {
-      file.preview = await getBase64(file.originFileObj)
-    }
-    setPreviewImage(file.url || file.preview)
-    setPreviewOpen(true)
-  }
 
   useImperativeHandle(ref, () => ({
     showDialog
@@ -246,61 +199,21 @@ const StorageInfoDialog = ({ onRefreshClick }, ref) => {
           <Form.Item name="remark" label="备注信息">
             <Input placeholder="请输入备注信息"/>
           </Form.Item>
-          <Form.Item name="image" label="站点图片" getValueFromEvent={(e) => getBase64(e.file)}>
-            <Upload
-              listType="picture-card"
-              fileList={fileList}
-              onChange={({ fileList: newFileList }) => {
-                // 检查是否有文件超出大小限制
-                const validFiles = newFileList.filter(file => {
-                  if (file.size > 2 * 1024 * 1024) {
-                    return false;
-                  }
-                  return true;
-                });
-                // 如果所有文件都被过滤掉了，则清空列表
-                if (validFiles.length === 0) {
-                  setFileList([]);
-                } else {
-                  // 否则设置有效的文件列表
-                  setFileList(validFiles);
-                }
-              }}
-              onPreview={handlePreview}
-              beforeUpload={beforeUpload}
-              maxCount={1}
-            >
-              {imageUrl ?
-                null : (
-                  <div>
-                    <PlusOutlined/>
-                    <div
-                      style={{
-                        marginTop: 8,
-                      }}
-                    >
-                      Upload
-                    </div>
-                  </div>
-                )}
-            </Upload>
+          <Form.Item label="站点图片">
+            <ImageContentView>
+              <Form.Item noStyle name="image">
+              <CustomUpload
+                wpx={160}
+                hpx={160}
+                swpx={160}
+                shpx={120}
+                maximum={100}
+              />
+              </Form.Item>
+            </ImageContentView>
           </Form.Item>
         </CustomForm>
       </CustomModal>
-      <CModal
-        open={previewOpen}
-        footer={null}
-        mold="cust"
-        onCancel={() => setPreviewOpen(false)}
-      >
-        <img
-          alt="example"
-          style={{
-            width: '100%',
-          }}
-          src={previewImage}
-        />
-      </CModal>
     </>
   )
 }
