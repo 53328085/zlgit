@@ -70,7 +70,6 @@ const Topology = lazy(() => import("../pages/topology"))
 //const Devicedetail = lazy(() => import("../pages/electric/devicedetail/devicedetail"))
 const DeviceDetail = lazy(() => import("../pages/monitoring/gateway/deviceDetail"))
 const GatewayDetail = lazy(() => import("../pages/monitoring/gateway/gatewayDetail"))
-const Fform = lazy(() => import("../pages/test/fform.js"))
 // const Directionful = lazy(() => import("../pages/energy/direction"))
 const Directionful = lazy(() => import("../pages/energy/direction/directionfull"))
 const Notfound = lazy(() => import("./notfound"))
@@ -190,13 +189,13 @@ const loginrouter =  [{
     path: '/directionfull',
     element: <Directionful />
   },
-   {
-     path: '/zltest',
-     element: <Fform/>,
-     loader: async (params)=> {
-
-     }
-   },
+   // {
+   //   path: '/zltest',
+   //   element: <Fform/>,
+   //   loader: async (params)=> {
+   //
+   //   }
+   // },
 
    {
     path: "/granary",

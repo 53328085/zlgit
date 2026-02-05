@@ -35,6 +35,9 @@ export default function TableTransfer ({ leftColumns, rightColumns, ...restProps
           columns={columns}
           dataSource={filteredItems}
           size="small"
+          scroll={{
+            x:'max-content',
+          }}
           style={{
             pointerEvents: listDisabled ? 'none' : undefined,
           }}

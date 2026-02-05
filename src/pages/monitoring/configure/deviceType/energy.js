@@ -43,7 +43,7 @@ export default function Electric() {
     cursor: 'pointer',
   }
   let categoryId;
- 
+
   //获取设备列表
   const getTableData = async () => {
     setLoading(true)
@@ -88,7 +88,7 @@ export default function Electric() {
         })
       }else{
         getTableData()
-      } 
+      }
       getDeviceQueryNotUsed()
     }else{
       message.error(resp.errMsg)
@@ -99,8 +99,8 @@ export default function Electric() {
     DelModalRef.current.onOpen();
     categoryId=record.category;
 
-  } 
-  
+  }
+
 //获取打开编辑窗口数据
 const editOption=(record)=>{
   EditModalRef.current.onOpen()
@@ -124,9 +124,6 @@ const editOption=(record)=>{
     dataOrder: item.secquence
   }))
   setEditDefaultTableData(arr)
-  // const watchPointArr = arr.filter(it=>it.watchPoint)
-  // console.log(watchPointArr)
-  // editFromRef.current.setSwitched(watchPointArr)
 }
 let columns =  [
     {
@@ -145,7 +142,7 @@ let columns =  [
         align:'center',
         render:(text)=>{
           return( <Image src={text} width={64} height={53}></Image>)
-         
+
         }
     },
     {
@@ -207,7 +204,7 @@ if(publish){
 }
 //确认编辑应用
 const onSureEditModal=async()=>{
- 
+
   const tabledata =  editFromRef.current.choosemes()
   if(!tabledata){
     message.warning('请至少选择一项标记检测运行点！')
@@ -237,7 +234,7 @@ const onSureEditModal=async()=>{
     message.error(resp.errMsg)
   }
 }
-  
+
   //新增时获取未使用的储能表名
   const getDeviceQueryNotUsed = async () => {
     let params = {
@@ -247,7 +244,7 @@ const onSureEditModal=async()=>{
     const r = await DeviceQueryNotUsed(params)
     if (r.success && Array.isArray(r.data)) {
       if(r.data.length > 0){
-        
+
         const arr = r.data.map((item, index) => ({ label: item, value: item }))
         setDataSource(arr)
         getDeviceQueryCategoryFull(r.data[0])
@@ -257,7 +254,7 @@ const onSureEditModal=async()=>{
         setIsAdd(true)
         ModalRef.current.onCancel()
       }
-      
+
     }
   }
 
@@ -280,7 +277,7 @@ const onSureEditModal=async()=>{
         dataOrder: item.secquence,
         category:data.category
       }))
-      
+
       updateTableRef.current = lodash.cloneDeep(arr)
       if (foRef.current) {
         const watchPointArr = arr.filter(it=>it.watchPoint)
@@ -313,8 +310,8 @@ const onSureEditModal=async()=>{
     }else{
       message.warning('无可用新增设备!')
     }
-    
-    
+
+
   }
   //关闭新增modal
   const onCancel=()=>{
@@ -472,10 +469,10 @@ const onSureEditModal=async()=>{
     <div>
       <cusContext.Provider value={{updateTableRef:updateTableRef.current}}>
       <DeviceContent {...deviceProps} >
-        <Table 
-        columns={columns} 
-        dataSource={tableDataSource} 
-        bordered={false} 
+        <Table
+        columns={columns}
+        dataSource={tableDataSource}
+        bordered={false}
         ref={tableLoadRef}
         loading={ loading}
         pagination={tableParams}

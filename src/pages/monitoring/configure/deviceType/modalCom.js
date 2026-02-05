@@ -63,7 +63,7 @@ let ImageUpload = ({ value = {} }) => {
 //表格组件（新增）
 let TableForm = forwardRef(({ defaultTableData, tabledatas,sortedInfo }, ref) => {
   const { updateTableRef } = useContext(cusContext)
- 
+
   const TableParam = useMemo(() => {
     return { current: 1, pageSize: defaultTableData?.length || 0, hideOnSinglePage: true }
   }, [defaultTableData])
@@ -75,7 +75,7 @@ let TableForm = forwardRef(({ defaultTableData, tabledatas,sortedInfo }, ref) =>
   defaultTableData?.forEach(it => { if (it.watchPoint) { checedList.push(it.index) } })
   const [siwtched, setSwitched] = useState([...checedList])
   const [tableParams, setTableParams] = useState({ current: 1, pageSize: 10 })
-  
+
   tableDataRef.current = cloneDeep(pointSource)
   const choosemes = () => {
     let count = 0;
@@ -284,8 +284,8 @@ export let AddModal = forwardRef(
                 <Form.Item label="远程控制" name="Control" valuePropName="checked">
                   <Switch
                     checkedChildren="是" unCheckedChildren="否"
-                  // disabled={!isControl} 
-                  // checked={addForm.getFieldsValue().Control} 
+                  // disabled={!isControl}
+                  // checked={addForm.getFieldsValue().Control}
                   />
                 </Form.Item>
 
@@ -293,7 +293,7 @@ export let AddModal = forwardRef(
                 {metering ? <Col className={style.ColGap}>
                   <Form.Item label="是否计量" name="IsCount" valuePropName="checked">
                     <Switch checkedChildren="是" unCheckedChildren="否"
-                    // disabled={!IsCount} 
+                    // disabled={!IsCount}
                     />
 
                   </Form.Item>
@@ -504,10 +504,17 @@ export let EditModal = forwardRef(
       >
         <Row align='bottom'>
           <Col span={16}>
-            <Row style={{ marginBottom: 16 }}>
+            <Row style={{ marginBottom: 16 }} gutter={8}>
+              <Col>
               <Form.Item label="设备型号" name="DeviceType">
                 <Input disabled />
               </Form.Item>
+              </Col>
+              <Col>
+                <Form.Item label="描述" name="description" >
+                  <Input readOnly />
+                </Form.Item>
+              </Col>
             </Row>
             <Row >
               {/* <Col>
@@ -519,15 +526,15 @@ export let EditModal = forwardRef(
                 {!flow ? <Col className={style.ColGap}>
                   <Form.Item label="远程控制" name="Control" valuePropName="checked">
                     <Switch checkedChildren="是" unCheckedChildren="否"
-                    //disabled={!isControl} 
-                    // checked={addForm.getFieldsValue().Control} 
+                    //disabled={!isControl}
+                    // checked={addForm.getFieldsValue().Control}
                     />
                   </Form.Item>
                 </Col> : null}
                 {metering ? <Col className={style.ColGap}>
                   <Form.Item label="是否计量" name="IsCount" valuePropName="checked">
                     <Switch checkedChildren="是" unCheckedChildren="否"
-                    // disabled={!IsCount} 
+                    // disabled={!IsCount}
                     />
                   </Form.Item>
                 </Col> : null}
