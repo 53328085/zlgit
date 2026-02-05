@@ -3456,7 +3456,7 @@ export class StorageAlarmRuntime {
 export class PCSMonitorRuntime {
   static queryPCSList = (projectId, areaId, siteId, containerId) =>
     server.get(
-      `Storage/PCSMonitorRuntime/QueryPCSList?projectId=${projectId}&areaId=${areaId}&siteId=${siteId}&containerId=${containerId}`
+      `Storage/StorageMonitorPCS/QueryPCSList?projectId=${projectId}&areaId=${areaId}&siteId=${siteId}&containerId=${containerId}`
     );
   static queryPCSInfo = (projectId, areaId, pcsId) =>
     server.get(
@@ -3486,9 +3486,9 @@ export class PCSMonitorRuntime {
 
 // bmsRuntime
 export class BMSRuntime {
-  static queryBatterClusterList = (projectId, areaId) =>
+  static queryBatterClusterList = (projectId, containerId) =>
     server.get(
-      `Storage/BMSRuntime/QueryBatteryClusterList?projectId=${projectId}&areaId=${areaId}`
+      `Storage/StorageMonitorBMS/QueryBMSList?projectId=${projectId}&containerId=${containerId}`
     );
   static querySOCTrends = (projectId, areaId, bcId) =>
     server.get(
