@@ -95,7 +95,8 @@ export  const Mainwrap = styled.div`
           position: relative;
           .range {
             position: absolute;
-            right: 12px;
+            right: 20px;
+            top: 20px;
             display: flex;
             column-gap: 8px;
             .step1 {

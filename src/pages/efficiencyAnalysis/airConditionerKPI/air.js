@@ -6,7 +6,8 @@ import Ichart from '@com/useEcharts/Ichart'
 import {useGauge, useLine,Custitem}from "../common"
 export default function Index(data) { 
     const lineopt=useLine(data?.detail)
-    const goption = useGauge({data:data?.ranges,startAngle:180, endAngle:0 });
+    //const goption = useGauge({data:data?.ranges,startAngle:180, endAngle:0 });
+    const goption = useGauge({data: data?.ranges,radius:"120px", center:['50%',  170],startAngle:180, endAngle:0 });
   return (
  
     <div className="innerlayout">

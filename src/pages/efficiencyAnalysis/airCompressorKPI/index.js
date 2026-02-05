@@ -61,7 +61,7 @@ export default function Index() {
     loadingDelay:300,
    
   })
-  console.log("loading",loading)
+ // console.log("loading",loading)
 /*  useEffect(()=>{ 
    getData();
   },[params,projectId]) */

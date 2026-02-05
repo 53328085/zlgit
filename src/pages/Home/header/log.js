@@ -375,7 +375,7 @@ export default function Log() {
 }
  */
  
-const onJump = useCallback(() => {  
+  const onJump = useCallback(() => {  
   let {bigScreenEnabled, bigScreenUrl} = Datascreen   
 
   if(bigScreenEnabled == 0) return ;
@@ -387,8 +387,12 @@ const onJump = useCallback(() => {
   }
  
  
-}, [Datascreen])
+}, [Datascreen])  
 
+/* const onJump = ()=>{  
+  const newPageUrl = `${window.location.origin}/largscreen`;
+    window.open(newPageUrl, '_blank', 'noopener,noreferrer');
+}  赛诺菲项目本地大屏*/
 
  // moment 语言环境设置 antd 组件国际化 中文 zh-cn, 英文 en， echart图表国际化 中文 ZH， 英文 EN， 页面中自定义的文字国际 i18 中文 zh-Cn, 英文 en 
 const lref = useRef();
