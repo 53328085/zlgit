@@ -95,16 +95,20 @@ export default function DeviceCommView ({ tab, areaId, projectId, containerId, s
       if (success) {
         message.success('删除成功!')
         let current = Math.ceil((totalItem.current - 1) / PageSize) < curPage.current
-        if (current) {
-          run({ current: curPage.current - 1, pageSize: PageSize })
+          ? Math.max(1, curPage.current - 1)  // 确保页码最小为1
+          : curPage.current;
+        if (current !== curPage.current) {
+          // 如果删除后需要跳转页码
+          run({ current: current, pageSize: PageSize })
         } else {
+          // 直接刷新当前页数据
           refresh()
         }
         deleteDialogRef.current?.onCancel()
       } else {
         message.error({ content: errMsg || '数据出错', duration: 0.3 })
       }
-    }catch (e) {
+    } catch (e) {
       message.error(e.message)
     }
   })
@@ -112,7 +116,7 @@ export default function DeviceCommView ({ tab, areaId, projectId, containerId, s
   /**
    * 获取表格数据
    */
-  const getTableData = ({ current, pageSize }) => {
+  const getTableData = async ({ current, pageSize }) => {
     const requiredParams = [projectId, areaId, siteId, containerId]
     if (requiredParams.some(param => param === undefined || param === null)) {
       return {
@@ -122,8 +126,8 @@ export default function DeviceCommView ({ tab, areaId, projectId, containerId, s
     }
     curPage.current = current
     let params = { projectId, areaId, siteId, containerId, tab, pageNum: current, pageSize }
-    return StorageDeviceDesigner.getStorageDeviceListByTabApi(params).then(res => {
-      let { success, data, total } = res
+    try {
+      const { success, data, total } = await StorageDeviceDesigner.getStorageDeviceListByTabApi(params)
       totalItem.current = Number.isInteger(total) ? total : 0
       if (success && Array.isArray(data) && data.length > 0) {
         return {
@@ -136,18 +140,25 @@ export default function DeviceCommView ({ tab, areaId, projectId, containerId, s
           total: 0
         }
       }
-    }).catch(e => {
+    } catch (e) {
       console.log(e)
-    })
+      return {
+        list: [],
+        total: 0
+      }
+    }
   }
 
   const { tableProps, refresh, run } = useAntdTable(getTableData, {
     defaultPageSize: PageSize,
-    refreshDeps: [],
+    refreshDeps: [projectId, tab, areaId, siteId, containerId],  // 添加依赖项，确保参数变化时能更新
   })
 
   useEffect(() => {
-    run({ current: 1, pageSize: PageSize })
+    // 直接响应参数变化，不再使用防抖
+    if(projectId !== undefined && tab !== undefined && areaId !== undefined && siteId !== undefined && containerId !== undefined){
+      run({ current: 1, pageSize: PageSize })
+    }
   }, [projectId, tab, areaId, siteId, containerId])
 
   return (
