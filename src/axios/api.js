@@ -3468,7 +3468,7 @@ export class PCSMonitorRuntime {
     );
   static queryPowerTrends = (projectId, pcsId, startTime, endTime) =>
     server.get(
-      `Storage/PCSMonitorRuntime/QueryPowerTrends?projectId=${projectId}&pcsId=${pcsId}&startTime=${startTime}&endTime=${endTime}`
+      `Storage/StorageMonitorPCS/QueryPowerTrends?projectId=${projectId}&pcsId=${pcsId}&startTime=${startTime}&endTime=${endTime}`
     );
   static querySocTrends = (projectId, areaId, pcsId) =>
     server.get(

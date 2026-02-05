@@ -94,7 +94,8 @@ export default function Index() {
     x: ['00:00', '04:00', '08:00', '12:00', '16:00', '20:00'],
     y: [85, 80, 75, 70, 65, 60]
   })
-  const [reverseDate, setReverseDate] = useState(null)
+  const [startDate, setStartDate] = useState(null)
+  const [endDate, setEndDate] = useState(null)
   // 对比数据
   const [compareData, setCompareData] = useState({
     series1: [],
@@ -131,18 +132,38 @@ export default function Index() {
       return null
     }
   }
-  // 反向日期变化时触发接口调用
-  const handleReverseDateChange = async (date, dateString) => {
-    setReverseDate(date)
-    if (date && projectId) {
-      // 只使用日期部分，不需要时分秒
-      const startTime = dateString
-      const endTime = dateString
+  // 开始日期变化时触发接口调用
+  const handleStartDateChange = async (date, dateString) => {
+    setStartDate(date)
+    if (dateString && endDate && projectId) {
       const res = await fetchPowerTrends({
         projectId,
         pcsId: 1,
-        startTime,
-        endTime
+        startTime: dateString,
+        endTime: typeof endDate === 'string' ? endDate : endDate?.format('YYYY-MM-DD')
+      })
+      if (res) {
+        setCompareData({
+          series1: res.power || [],
+          series2: []
+        })
+        setPowerData({
+          x: res.time || [],
+          y: res.power || []
+        })
+      }
+    }
+  }
+
+  // 结束日期变化时触发接口调用
+  const handleEndDateChange = async (date, dateString) => {
+    setEndDate(date)
+    if (startDate && dateString && projectId) {
+      const res = await fetchPowerTrends({
+        projectId,
+        pcsId: 1,
+        startTime: typeof startDate === 'string' ? startDate : startDate?.format('YYYY-MM-DD'),
+        endTime: dateString
       })
       if (res) {
         setCompareData({
@@ -371,9 +392,9 @@ export default function Index() {
           </Titlelayout>
           <Titlelayout title="总有功功率" extra={
             <div style={{ display: 'flex', gap: 12, alignItems: 'center' }}>
-              <DatePicker />
+              <DatePicker onChange={handleStartDateChange} />
               <span style={{ color: '#333', fontSize: 12 }}>对比</span>
-              <DatePicker onChange={handleReverseDateChange} />
+              <DatePicker onChange={handleEndDateChange} />
             </div>
           }>
             <PowerCompareChart chartData={compareData} />
