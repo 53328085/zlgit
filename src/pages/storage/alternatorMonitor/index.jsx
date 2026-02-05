@@ -135,9 +135,9 @@ export default function Index() {
   const handleReverseDateChange = async (date, dateString) => {
     setReverseDate(date)
     if (date && projectId) {
-      // 构建开始和结束时间（当天00:00:00 到 23:59:59）
-      const startTime = `${dateString} 00:00:00`
-      const endTime = `${dateString} 23:59:59`
+      // 只使用日期部分，不需要时分秒
+      const startTime = dateString
+      const endTime = dateString
       const res = await fetchPowerTrends({
         projectId,
         pcsId: 1,
