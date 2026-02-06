@@ -57,8 +57,10 @@ const Mainbox = styled.div`
 export default function BmsMonitor() {
   const projectId = useSelector(selectProjectId);
   let { exparams } = useOutletContext() || {};
+  // 兼容 bmsId 可能是 { value, label } 对象或直接的值
   let { areaId, bmsId } = exparams || {};
-  let { value: bms_id, label: bmsLabel } = bmsId || {};
+  let bms_id = bmsId?.value ?? bmsId ?? undefined;
+  let bmsLabel = bmsId?.label ?? "";
 
   // BMS设备拓扑图数据 - 从接口获取
   const [bmsDiagramData, setBmsDiagramData] = useState({
@@ -69,9 +71,8 @@ export default function BmsMonitor() {
 
   // 获取BMS设备拓扑图数据
   const getBmsDiagramData = () => {
-    const bmsIdValue = bms_id || -1;
     setDiagramLoading(true);
-    StorageMonitorBMS.queryBMSStatusInfo(projectId, bmsIdValue)
+    StorageMonitorBMS.queryBMSStatusInfo(projectId, bms_id)
       .then((res) => {
         if (res.success && res.data && Array.isArray(res.data)) {
           // 解析树形数据：pId=0 为堆，pId>0 为簇
@@ -164,7 +165,8 @@ export default function BmsMonitor() {
   }
 
   useEffect(() => {
-    if (projectId) {
+    // 必须同时有 projectId 和 bms_id 才请求数据，避免初始时 bms_id 为 undefined 传入 -1 导致返回默认数据
+    if (projectId && bms_id) {
       getBmsDiagramData()
       getBmsDataInfo()
       getBMSTableInfo()
