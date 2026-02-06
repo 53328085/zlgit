@@ -138,6 +138,7 @@ const DeviceSettingDialog = ({ onRefreshClick, projectId, siteId, containerId, t
         rightColumns={rightTableColumns}
         render={item => item.title}
         rowKey={record => record.sn}
+        showSelectAll={false}
       />
     </CustomModal>
   )

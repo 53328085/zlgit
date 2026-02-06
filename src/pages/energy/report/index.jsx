@@ -100,6 +100,7 @@ export default function Index() {
   const [alike, setAlike] = useState("")
   const [alikev, setAlikev]=useState("")
   const [reportType, setReportType] = useState(1)
+  const [detailHeaders, setDetailHeaders] =useState([])
   const alikeRef= useRef({})
   const onSearch = (e) => {
     setAlike(e)
@@ -136,7 +137,7 @@ export default function Index() {
   }, [date, type])
 
   const [selectedRowKeys, setSelectedRowKeys] = useState([]);
-
+  console.log(selectedRowKeys)
   const onSelectChange = (newkey, rows) => {
     console.log(newkey, rows)
     if (newkey?.length > 3) {
@@ -279,7 +280,7 @@ useEffect(()=> {
       pageSize,
       queryType: line,
       ids: treeId,
-      type: range ?1 : type ,
+      type: type , // 
       reportType,
       filterInfo:alike,
       customTime:range // 日期范围优化
@@ -326,6 +327,7 @@ useEffect(()=> {
       if (success && ((Array.isArray(data) && data.length > 0) || fag)) {
         if (index == 1) {
           let { detailHeaders,detailDatas} = data
+          setDetailHeaders(detailHeaders)
           if(!Array.isArray(detailHeaders)) return
           let last = detailHeaders.length - 1
           let column = detailHeaders.map((col,index) => ({ title: col,  children:[
@@ -425,12 +427,13 @@ useEffect(()=> {
   }
   const [source, dimensions, chartlen, unit] = useMemo(() => {
     let { dataSource = [] } = tableProps || {}
-    let datas = dataSource.filter(d => selectedRowKeys.includes(d.sn))
-    let { detailHeaders = [], unit } = datas?.[0] || {}
+    let datas = dataSource.filter(d => selectedRowKeys.some(s =>s.includes(d.sn)))
+    console.log("datas", datas)
+    let {  unit } = datas?.[0] || {}
     let dimensions = datas?.map?.(d => d.name) || []
     let source = checkvalue?.length > 0 ? (datas?.map?.(d => d.detailValues) || []) : []
     return [[detailHeaders, ...source], ["time", ...dimensions], dimensions.length, unit]
-  }, [selectedRowKeys, tableProps, checkvalue])
+  }, [selectedRowKeys, tableProps, checkvalue,detailHeaders])
 
   const baroption = {
     series: new Array(chartlen).fill({ type: "bar", seriesLayoutBy: 'row' }), // [{ type: "bar",seriesLayoutBy: 'row' }], 
@@ -603,7 +606,7 @@ const dateprops = useMemo(()=>{
               <div  className='opt' >
               {
                 value!="3" &&  <div className='search'    >
-                <Serach placeholder="请输入设备名称/设备编号"     value={alikev} onChange={alikeChange}     style={{ width: "362px" }} onSearch={onSearch} />
+                <Serach placeholder="请输入设备名称/设备编号/安装位置"     value={alikev} onChange={alikeChange}     style={{ width: "362px" }} onSearch={onSearch} />
               </div>
               } 
               {(["0","1","4"].includes(value) || projectId==30)   && <div style={{ marginBottom: "16px", display: "flex" }} key="custdate">
