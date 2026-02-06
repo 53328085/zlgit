@@ -157,6 +157,7 @@ export default function DeviceCommView ({ tab, areaId, projectId, containerId, s
   useEffect(() => {
     // 直接响应参数变化，不再使用防抖
     if(projectId !== undefined && tab !== undefined && areaId !== undefined && siteId !== undefined && containerId !== undefined){
+      console.log('projectId, tab, areaId, siteId, containerId', projectId, tab, areaId, siteId, containerId)
       run({ current: 1, pageSize: PageSize })
     }
   }, [projectId, tab, areaId, siteId, containerId])

@@ -2,13 +2,9 @@ import React, {   useState, useEffect, useRef, useMemo } from 'react'
  
 import { useNavigate, useOutletContext} from 'react-router-dom'
 import {useSelector} from "react-redux"
-import { SiteSummaryRuntime, StorageAlarmRuntime, SiteManagerDesigner } from '@api/api.js'
-import { message, Typography,   Badge, Empty, Timeline, Carousel } from 'antd'
-import Ichart  from '@com/useEcharts/Ichart'; 
  
-import imgurl from './imgs'
-import deep from './imgs/deep.svg'
-import light from './imgs/light.svg'
+import { message, Typography,   Badge, Empty, Timeline, Carousel } from 'antd'
+ 
  
 import {isObject} from "@com/usehandler"
 import Pagecount from "@com/pagecontent";
@@ -21,16 +17,12 @@ import {Mainbox,Station,CTimeline  } from "./style"
 import {tabs} from './data'
 import {Power, Income, Dischange,Topology} from "./comm"
 import {useQuerySiteInfo,useQueryStorageWarning} from './api'
+import imgurl from './imgs'
 import {Paramscontext} from './context'
 const {Link, Paragraph, Text} = Typography
  
  
-
-const { querySiteInfo,
-  queryStorageIncome,
-  queryStorageWarning,
-  queryTopologyDiagramInfo,
-  queryChargeETrends } = SiteSummaryRuntime
+ 
 export default function Index() {
    const [tabvalue, setTabvalue] = useState(1)
   let {exparams} = useOutletContext()
@@ -48,7 +40,7 @@ export default function Index() {
  
  const getsiteData =async () => { 
     try {
-       let {data, success} = await  useQuerySiteInfo({siteId:9,projectId,areaId:5})
+       let {data, success} = await  useQuerySiteInfo({siteId,projectId,areaId})
        if(success && isObject(data)) {
         setCardData(data)
        }else{
@@ -60,7 +52,7 @@ export default function Index() {
   }
  const getwarningData = async () => { 
     try {
-      let {data, success} = await  useQueryStorageWarning({siteId:1,projectId:1,areaId:1})
+      let {data, success} = await  useQueryStorageWarning({siteId,projectId,areaId})
        if(success && Array.isArray(data)) {
         setWarningData(data)
        }else{
@@ -114,7 +106,7 @@ export default function Index() {
                   <Titlelayout title={title} layout="flex" pv="16px">
                     <Station>
                       <div className='imgbox'>
-                         <img src={cardData?.image} alt="" className='img' />
+                         <img src={cardData?.image || imgurl["bg"]} alt="" className='img' />
                       </div>
                       <div className="right">
                          <div className="part">
@@ -138,7 +130,7 @@ export default function Index() {
                      <CTimeline>
                       <Carousel vertical={true} autoplay   style={{height: 168}} dots={false} >
                       {
-                        warningData?.map((item, index) =>  <Timeline.Item key={item.sn} dot={<Badge status={{1: 'error', 1: 'warning', 2: 'default'}[item.level]}></Badge>} >
+                        warningData?.map?.((item, index) =>  <Timeline.Item key={item.sn} dot={<Badge status={{1: 'error', 1: 'warning', 2: 'default'}[item.level]}></Badge>} >
                            <div className="content">
                              <div className="title">
                               <div className='time'>{item?.warningTime?.slice?.(11)}</div>

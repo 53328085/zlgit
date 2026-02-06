@@ -13,36 +13,7 @@ export default function Index({title,type}) {
   const [form] = Form.useForm()
  
   const {areaId, stationName,  projectId} = useContext(Paramscontext)
-  const [data, setData] = useState({
-    "earlyData": [
-        {
-          "x" : "00:00",
-          "y" : "392.00"   
-        },
-        {
-          "x" : "01:00",
-          "y" : "634.00"
-        },
-        {
-           "x" : "02:00",
-           "y" : "226.00"
-        }
-    ],
-    "lateData" : [
-        {
-          "x" : "00:00",
-          "y" : "623..00"   
-        },
-        {
-          "x" : "01:00",
-          "y" : "635.00"
-        },
-        {
-           "x" : "02:00",
-           "y" : "524.00"
-        }
-    ]
-})
+  const [data, setData] = useState({})
  const [list, setList] = useState([])
   const  [formdata, setFormdata] = useState({
       startTime:moment().subtract(1, 'days'),
@@ -59,7 +30,10 @@ export default function Index({title,type}) {
  
   const getChartData = async (params)=>{
     try {
-      const data = await type==202 ? useQuerySOC(params) : useQueryMeterPower(params)
+      const {data, success} = await type==202 ? useQuerySOC(params) : useQueryMeterPower(params)
+      if(success && isObject(data)) {
+        setData(data)
+      }
     } catch (error) {
       console.log(error)
     }

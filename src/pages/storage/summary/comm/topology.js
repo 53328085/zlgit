@@ -1,6 +1,6 @@
 import React,{useContext, useEffect,useState } from 'react'
-import {Button } from 'antd'
- 
+import {Button, Typography } from 'antd'
+import { useNavigate } from 'react-router-dom'
 import Titlelayout from "@com/titlelayout";
 import {isObject} from "@com/usehandler"
 import {TopologySty} from "../style"
@@ -9,6 +9,7 @@ import {useQueryTopologyDiagramInfo} from "../api"
 import imgurl from '../imgs'
  
 export default function Index() {
+    const navigate = useNavigate()
     const {areaId, stationName,  projectId } = useContext(Paramscontext)
     const [datas,setDatas]=useState({})
   
@@ -45,6 +46,11 @@ export default function Index() {
       backgroundColor: "#E94126",
       borderColor: "#E94126",
       color:"#fff",
+  }
+  const toPage = (key, label) => {
+    navigate(`/index/runtimeStorage/${key}`, {
+      state: { type: 'index', primary: 'runtimeStorage', title: label, nested: key }
+    })
   }
   return (
     <Titlelayout title={<span style={{color:"#fff"}}>站点接线图</span>} pv="24px" bgcolor="transparent" bg="transparent" layout="flex">
@@ -87,7 +93,7 @@ export default function Index() {
              <div className="upm">
              <Button type="primary">储能柜</Button>
              <div className="simgbox">
-             <img src={imgurl["cabinet"]} className='eimg'></img>
+             <Typography.Link onClick={()=>toPage("cabinetMonitor", "储能柜监控")}><img src={imgurl["cabinet"]} className='eimg'></img></Typography.Link>
              </div>
              </div>
              

@@ -2,10 +2,16 @@ import React from 'react'
 import {Typography} from 'antd'
 import {Stacksty} from '../style'
 import imgurl from '../imgs'
- 
+import { useNavigate} from 'react-router-dom'
 export default function Index({data}) {
+  const navigate = useNavigate()
+  const toPage = (key, label,params) => {
+    navigate(`/index/runtimeStorage/${key}`, {
+      state: { type: 'index', primary: 'runtimeStorage', title: label, nested: key ,params }
+    })
+  }
   return (
-    <Stacksty soc={data.soc} soh={data.soh}>
+    <Stacksty soc={data.soc} soh={data.soh} onClick={()=>toPage('bMSMonitor', 'BMS监控', data)}>
         <img src={imgurl['line']} className='line'></img>
         <div className="detail">
             <Typography.Paragraph className='title' ellipsis={{tooltip: data.name}}>{data.name}</Typography.Paragraph>
