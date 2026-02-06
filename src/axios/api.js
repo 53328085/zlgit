@@ -3735,17 +3735,17 @@ export class StorageMonitorRuntime {
 
 //BMS监控
 export class StorageMonitorBMS {
-  static queryBMSDataInfo = (projectId, pcsId) =>
+  static queryBMSDataInfo = (projectId, bmsId) =>
     server.get(
-      `/Storage/StorageMonitorBMS/QueryBMSDataInfo?projectId=${projectId}&pcsId=${pcsId}`
+      `/Storage/StorageMonitorBMS/QueryBMSDataInfo?projectId=${projectId}&bmsId=${bmsId}`
     );
-  static queryBMSTableInfo = (projectId, pcsId) =>
+  static queryBMSTableInfo = (projectId, bmsId) =>
     server.get(
-      `/Storage/StorageMonitorBMS/QueryBMSTableInfo?projectId=${projectId}&pcsId=${pcsId}`
+      `/Storage/StorageMonitorBMS/QueryBMSTableInfo?projectId=${projectId}&bmsId=${bmsId}`
     );
-  static queryBMSStatusInfo = (projectId, pcsId) =>
+  static queryBMSStatusInfo = (projectId, bmsId) =>
     server.get(
-      `/Storage/StorageMonitorBMS/QueryBMSStatusInfo?projectId=${projectId}&pcsId=${pcsId}`
+      `/Storage/StorageMonitorBMS/QueryBMSStatusInfo?projectId=${projectId}&bmsId=${bmsId}`
     );
 }
 
