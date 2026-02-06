@@ -1,7 +1,7 @@
 import React from 'react'
 
 import {useQueryContainerCapacity,useQueryContainerPower } from '../api'
-
+import { message } from 'antd'
 import Chartcom from './chart'
 import ChartBar from './chartbar'
 import { isObject } from 'lodash';
