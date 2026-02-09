@@ -1,679 +1,207 @@
-import React, { useState, useEffect, useRef } from 'react'
-import styled from 'styled-components'
-
-import { Button, DatePicker, message, Form, Typography } from 'antd'
-import moment from 'moment'
-import { SearchOutlined, CheckCircleOutlined, ExclamationCircleOutlined } from '@ant-design/icons'
-import CustModal from '@com/useModal'
-import { useOutletContext } from 'react-router-dom'
-import * as echarts from 'echarts'
-import { BMSRuntime } from '@api/api'
-
-import { useReactive } from 'ahooks'
+import React, { useEffect, useState } from "react";
+import { useOutletContext } from "react-router-dom";
+import { useSelector } from "react-redux";
+import { BMSRuntime } from "@api/api";
+import { selectProjectId } from "@redux/systemconfig.js";
 import Pagecount from "@com/pagecontent";
-import style from './style.module.less'
-import deviceImg from '../../../assets/image/energyStorageEquipment.png'
+import style from "./style.module.less";
+import EnvDeviceDiagram from "./EnvDeviceDiagram";
 
-const { Paragraph, Text } = Typography
-const { Item } = Form
-
-// ==================== 样式定义 ====================
-
-// 主容器 - 储能柜卡片
-const ContainerCard = styled.div`
-  width: 280px;
-  min-height: 680px;
-  margin-right: 24px;
-  background: linear-gradient(180deg, #1a2a3f 0%, #0d1624 100%);
-  border: 1px solid #1890ff;
-  border-radius: 8px;
-  position: relative;
-  flex-shrink: 0;
-  display: flex;
-  flex-direction: column;
-`
-
-// 卡片顶部名称标签
-const CardHeader = styled.div`
-  padding: 12px 16px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  border-bottom: 1px solid rgba(24, 144, 255, 0.3);
-`
-
-const NameTag = styled.div`
-  background: #1890ff;
-  color: #fff;
-  padding: 4px 12px;
-  border-radius: 12px;
-  font-size: 13px;
-  font-weight: 500;
-`
-
-// 设备图片区
-const DeviceImage = styled.div`
-  height: 120px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-bottom: 1px solid rgba(24, 144, 255, 0.2);
-  overflow: hidden;
-
-  img {
-    width: 100%;
-    height: 100%;
-    object-fit: contain;
+function resolveDisplayText(input, fallback = "") {
+  if (input === null || input === undefined) return fallback;
+  if (typeof input === "string" || typeof input === "number") {
+    const text = String(input).trim();
+    return text || fallback;
   }
-`
-
-// 子系统模块容器
-const ModuleSection = styled.div`
-  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-
-  &:last-child {
-    border-bottom: none;
+  if (typeof input === "object") {
+    const candidate =
+      input.label ??
+      input.name ??
+      input.displayName ??
+      input.title ??
+      input.text ??
+      input.value;
+    if (candidate === input) return fallback;
+    return resolveDisplayText(candidate, fallback);
   }
-`
+  return fallback;
+}
 
-// 子系统标题（横向蓝色横条）
-const ModuleTitle = styled.div`
-  background: #1890ff;
-  color: #fff;
-  font-size: 15px;
-  font-weight: 500;
-  padding: 10px 16px;
-  text-align: center;
-`
-
-// 数据网格容器 - 液冷系统（2列）
-const DataGrid2 = styled.div`
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  padding: 16px 12px;
-  gap: 16px;
-`
-
-// 数据网格容器 - 除湿机（3列）
-const DataGrid3 = styled.div`
-  display: grid;
-  grid-template-columns: 1fr 1fr 1fr;
-  padding: 16px 12px;
-  gap: 12px;
-`
-
-// 单个数据项（列布局）
-const DataItem = styled.div`
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 8px;
-
-  .label {
-    font-size: 12px;
-    color: rgba(255, 255, 255, 0.6);
-    text-align: center;
-  }
-
-  .value {
-    font-size: 20px;
-    color: ${props => props.$color || '#fff'};
-    font-weight: 600;
-    text-align: center;
-  }
-
-  .unit {
-    font-size: 14px;
-    color: rgba(255, 255, 255, 0.7);
-  }
-`
-
-// 消防系统容器
-const FireSystemContent = styled.div`
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding: 32px 12px;
-  gap: 12px;
-
-  .icon-wrapper {
-    width: 64px;
-    height: 64px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: rgba(82, 196, 26, 0.1);
-    border-radius: 50%;
-  }
-
-  .fire-icon {
-    font-size: 36px;
-    color: #52c41a;
-  }
-
-  .status-text {
-    font-size: 14px;
-    color: rgba(255, 255, 255, 0.8);
-  }
-`
-
-// 拓扑连接线容器
-const TopologyLines = styled.div`
-  width: 100%;
-  height: 80px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  /* margin: 0 0 20px 0; */
-  position: relative;
-`
-
-// SVG 连接线组件
-const ConnectionSVG = styled.svg`
-  width: 100%;
-  height: 100%;
-
-  .main-line {
-    stroke: #1890ff;
-    stroke-width: 2;
-    fill: none;
-  }
-
-  .branch-line {
-    stroke: #1890ff;
-    stroke-width: 2;
-    fill: none;
-  }
-
-  .node-dot {
-    fill: #1890ff;
-  }
-
-  .end-dot {
-    fill: #52c41a;
-  }
-`
-
-// ==================== Mock 数据 ====================
-
-// 临时 Mock 数据函数
-const getMockData = () => {
-  return {
-    success: true,
-    errMsg: "",
-    data: {
-      id: 1,
-      name: "储能站点_示例",
-      containers: [
+/**
+ * 联调前占位，联调后删除：环境监控拓扑 mock 数据。
+ *
+ * @returns 容器列表
+ *
+ * @author ybdpx
+ */
+function getMockContainers() {
+  return [
+    {
+      id: 101,
+      name: "储能柜_1",
+      types: [
         {
-          id: 1,
-          name: "环境监控",
-          types: [
-            {
-              id: 0,
-              name: "液冷系统",
-              index: 0,
-              items: [
-                {
-                  name: "工作模式",
-                  value: "制冷",
-                  unit: "",
-                  index: 1,
-                  time: "2026/01/26 14:30:15",
-                  style: "UD"
-                },
-                {
-                  name: "环境温度",
-                  value: "23.5",
-                  unit: "℃",
-                  index: 2,
-                  time: "2026/01/26 14:30:15",
-                  style: "UD"
-                }
-              ]
-            },
-            {
-              id: 1,
-              name: "除湿机",
-              index: 1,
-              items: [
-                {
-                  name: "当前湿度",
-                  value: "12",
-                  unit: "%",
-                  index: 1,
-                  time: "2026/01/26 14:30:15",
-                  style: "UD"
-                },
-                {
-                  name: "当前温度",
-                  value: "23.5",
-                  unit: "℃",
-                  index: 2,
-                  time: "2026/01/26 14:30:15",
-                  style: "UD"
-                },
-                {
-                  name: "工作状态",
-                  value: "运行",
-                  unit: "",
-                  index: 3,
-                  time: "2026/01/26 14:30:15",
-                  style: "UD"
-                }
-              ]
-            },
-            {
-              id: 2,
-              name: "消防系统",
-              index: 2,
-              items: [
-                {
-                  name: "系统状态",
-                  value: "正常",
-                  unit: "",
-                  index: 1,
-                  time: "2026/01/26 14:30:15",
-                  style: "LR"
-                }
-              ]
-            }
-          ]
+          name: "液冷系统",
+          items: [
+            { name: "工作模式", value: "制冷", unit: "" },
+            { name: "环境温度", value: "23.5", unit: "℃" },
+          ],
         },
         {
-          id: 2,
-          name: "环境监控",
-          types: [
-            {
-              id: 0,
-              name: "液冷系统",
-              index: 0,
-              items: [
-                {
-                  name: "工作模式",
-                  value: "制冷",
-                  unit: "",
-                  index: 1,
-                  time: "2026/01/26 14:30:18",
-                  style: "UD"
-                },
-                {
-                  name: "环境温度",
-                  value: "23.5",
-                  unit: "℃",
-                  index: 2,
-                  time: "2026/01/26 14:30:18",
-                  style: "UD"
-                }
-              ]
-            },
-            {
-              id: 1,
-              name: "除湿机",
-              index: 1,
-              items: [
-                {
-                  name: "当前湿度",
-                  value: "12",
-                  unit: "%",
-                  index: 1,
-                  time: "2026/01/26 14:30:18",
-                  style: "UD"
-                },
-                {
-                  name: "当前温度",
-                  value: "23.5",
-                  unit: "℃",
-                  index: 2,
-                  time: "2026/01/26 14:30:18",
-                  style: "UD"
-                },
-                {
-                  name: "工作状态",
-                  value: "运行",
-                  unit: "",
-                  index: 3,
-                  time: "2026/01/26 14:30:18",
-                  style: "UD"
-                }
-              ]
-            },
-            {
-              id: 2,
-              name: "消防系统",
-              index: 2,
-              items: []
-            }
-          ]
-        }
-      ]
-    }
-  }
+          name: "除湿机",
+          items: [
+            { name: "当前湿度", value: "12", unit: "%" },
+            { name: "当前温度", value: "23.5", unit: "℃" },
+            { name: "工作状态", value: "运行", unit: "" },
+          ],
+        },
+        {
+          name: "消防系统",
+          items: [
+            { name: "烟感探测器异常", value: "异常", time: "2026/02/09 18:00" },
+            { name: "烟感探测器异常", value: "异常", time: "2026/02/09 17:20" },
+            { name: "烟感探测器异常", value: "异常", time: "2026/02/09 16:40" },
+          ],
+        },
+      ],
+    },
+    {
+      id: 102,
+      name: "储能柜_2",
+      types: [
+        {
+          name: "液冷系统",
+          items: [
+            { name: "工作模式", value: "制冷", unit: "" },
+            { name: "环境温度", value: "23.5", unit: "℃" },
+          ],
+        },
+        {
+          name: "除湿机",
+          items: [
+            { name: "当前湿度", value: "12", unit: "%" },
+            { name: "当前温度", value: "23.5", unit: "℃" },
+            { name: "工作状态", value: "运行", unit: "" },
+          ],
+        },
+        {
+          name: "消防系统",
+          mode: "status",
+          items: [{ name: "系统状态", value: "暂无告警", unit: "" }],
+        },
+      ],
+    },
+    {
+      id: 103,
+      name: "储能柜_3",
+      types: [
+        {
+          name: "液冷系统",
+          items: [
+            { name: "工作模式", value: "制冷", unit: "" },
+            { name: "环境温度", value: "23.5", unit: "℃" },
+          ],
+        },
+        {
+          name: "除湿机",
+          items: [
+            { name: "当前湿度", value: "12", unit: "%" },
+            { name: "当前温度", value: "23.5", unit: "℃" },
+            { name: "工作状态", value: "运行", unit: "" },
+          ],
+        },
+        {
+          name: "消防系统",
+          mode: "empty",
+          items: [],
+        },
+      ],
+    },
+  ];
 }
 
-// ==================== 辅助函数 ====================
-
-// ==================== 子组件 ====================
-
-// 拓扑连接线组件
-const TopologyConnection = ({ containerCount }) => {
-  if (containerCount === 0) return null
-
-  const svgWidth = 1200
-  const svgHeight = 80
-  const centerX = svgWidth / 2
-  const mainLineLength = 30
-  const branchY = mainLineLength + 20
-
-  // 计算每个分支的 X 位置
-  const containerWidth = 280
-  const containerGap = 24
-  const totalWidth = containerCount * containerWidth + (containerCount - 1) * containerGap
-  const startX = (svgWidth - totalWidth) / 2
-
-  // 生成分支位置数组
-  const branches = []
-  for (let i = 0; i < containerCount; i++) {
-    const branchX = startX + i * (containerWidth + containerGap) + containerWidth / 2
-    branches.push(branchX)
+/**
+ * 标准化接口容器数据，避免字段缺失导致拓扑渲染异常。
+ *
+ * @param containers 接口容器列表
+ * @returns 标准化后的容器列表
+ *
+ * @author ybdpx
+ */
+function normalizeEnvContainers(containers) {
+  if (!Array.isArray(containers) || containers.length === 0) {
+    return [];
   }
 
-  return (
-    <TopologyLines>
-      <ConnectionSVG viewBox={`0 0 ${svgWidth} ${svgHeight}`}>
-        {/* 主干线 */}
-        <line
-          x1={centerX}
-          y1={0}
-          x2={centerX}
-          y2={mainLineLength}
-          className="main-line"
-        />
-
-        {/* 主干节点 */}
-        <circle cx={centerX} cy={0} r={4} className="node-dot" />
-        <circle cx={centerX} cy={mainLineLength} r={4} className="node-dot" />
-
-        {/* 横向分支线 */}
-        {containerCount > 1 && (
-          <line
-            x1={branches[0]}
-            y1={mainLineLength}
-            x2={branches[branches.length - 1]}
-            y2={mainLineLength}
-            className="branch-line"
-          />
-        )}
-
-        {/* 各个分支到储能柜的垂直线 */}
-        {branches.map((branchX, index) => (
-          <g key={index}>
-            <line
-              x1={branchX}
-              y1={mainLineLength}
-              x2={branchX}
-              y2={branchY + 30}
-              className="branch-line"
-            />
-            <circle cx={branchX} cy={mainLineLength} r={3} className="node-dot" />
-            <circle cx={branchX} cy={branchY + 30} r={4} className="end-dot" />
-          </g>
-        ))}
-      </ConnectionSVG>
-    </TopologyLines>
-  )
+  return containers.map((container, index) => {
+    const rawName = resolveDisplayText(
+      container?.displayName ?? container?.containerName ?? container?.name,
+      ""
+    );
+    const fallbackName = `储能柜_${index + 1}`;
+    const name = !rawName || rawName === "环境监控" ? fallbackName : rawName;
+    return {
+      ...container,
+      id: container?.id ?? `env-container-${index + 1}`,
+      name,
+      types: Array.isArray(container?.types) ? container.types : [],
+    };
+  });
 }
 
-// 渲染单个数据项
-const RenderDataItem = ({ item }) => {
-  // UD 上下布局
-  if (item.style === 'UD') {
-    let color = '#fff'
-    if (item.name === '工作状态' && item.value === '运行') {
-      color = '#52c41a'
-    }
+export default function EnvironmentMonitor() {
+  const { exparams } = useOutletContext() || {};
+  const reduxProjectId = useSelector(selectProjectId);
 
-    return (
-      <DataItem $color={color}>
-        <span className="label">{item.name}</span>
-        <div className="value">
-          {item.value}
-          {item.unit && <span className="unit">{item.unit}</span>}
-        </div>
-      </DataItem>
-    )
-  }
+  const projectId = exparams?.projectId ?? reduxProjectId;
+  const stationName = resolveDisplayText(exparams?.stationName, "储能站点");
+  const rawSiteId = exparams?.siteId ?? exparams?.areaId;
+  const siteId = rawSiteId?.value ?? rawSiteId;
 
-  // LR 左右布局（暂不实现，根据需要可扩展）
-  return null
-}
+  const [diagramLoading, setDiagramLoading] = useState(false);
+  const [storageData, setStorageData] = useState(getMockContainers());
 
-// 渲染子系统模块
-const RenderModule = ({ module }) => {
-  const moduleName = module.name
+  const { queryENVStatusInfo } = BMSRuntime;
 
-  // 消防系统特殊处理
-  if (moduleName === '消防系统') {
-    if (!module.items || module.items.length === 0) {
-      return (
-        <ModuleSection>
-          <ModuleTitle>{moduleName}</ModuleTitle>
-          <FireSystemContent>
-            <div className="icon-wrapper">
-              <CheckCircleOutlined className="fire-icon" />
-            </div>
-            <div className="status-text">暂无告警</div>
-          </FireSystemContent>
-        </ModuleSection>
-      )
-    }
-
-    const hasWarning = module.items.some(item =>
-      String(item.value).toLowerCase().includes('异常') ||
-      String(item.value).toLowerCase().includes('故障') ||
-      String(item.value).toLowerCase().includes('报警')
-    )
-
-    return (
-      <ModuleSection>
-        <ModuleTitle>{moduleName}</ModuleTitle>
-        <FireSystemContent>
-          <div className="icon-wrapper">
-            {hasWarning ? (
-              <ExclamationCircleOutlined className="fire-icon" style={{ color: '#ff4d4f' }} />
-            ) : (
-              <CheckCircleOutlined className="fire-icon" />
-            )}
-          </div>
-          <div className="status-text">
-            {hasWarning ? '系统告警' : '暂无告警'}
-          </div>
-        </FireSystemContent>
-      </ModuleSection>
-    )
-  }
-
-  // 液冷系统：2列布局
-  if (moduleName === '液冷系统') {
-    return (
-      <ModuleSection>
-        <ModuleTitle>{moduleName}</ModuleTitle>
-        <DataGrid2>
-          {module.items?.map((item, idx) => (
-            <RenderDataItem key={idx} item={item} />
-          ))}
-        </DataGrid2>
-      </ModuleSection>
-    )
-  }
-
-  // 除湿机：3列布局
-  if (moduleName === '除湿机') {
-    return (
-      <ModuleSection>
-        <ModuleTitle>{moduleName}</ModuleTitle>
-        <DataGrid3>
-          {module.items?.map((item, idx) => (
-            <RenderDataItem key={idx} item={item} />
-          ))}
-        </DataGrid3>
-      </ModuleSection>
-    )
-  }
-
-  // 默认布局（如果有其他子系统）
-  return null
-}
-
-// 渲染单个储能柜卡片
-const ContainerCardView = ({ container }) => {
-  return (
-    <ContainerCard>
-      <CardHeader>
-        <NameTag>{container.name}</NameTag>
-      </CardHeader>
-      <DeviceImage>
-        <img src={deviceImg} alt={container.name} />
-      </DeviceImage>
-
-      {/* 渲染所有子系统模块 */}
-      {container.types?.map((module, idx) => (
-        <RenderModule key={idx} module={module} />
-      ))}
-    </ContainerCard>
-  )
-}
-
-// ==================== 主组件 ====================
-export default function Index() {
-  let { exparams } = useOutletContext()
-  let { areaId, projectId, stationName } = exparams
-  const lineRef = useRef()
-  const { queryENVStatusInfo, queryTrends } = BMSRuntime
-
-  const today = moment().format('YYYY-MM-DD')
-  const [form] = Form.useForm()
-
-  // Mock 数据开关：true=使用Mock，false=使用真实接口
-  const USE_MOCK_DATA = true
-
-  // 数据状态
-  const [storageData, setStorageData] = useState([])
-
-  // 加载数据
   useEffect(() => {
-    if (USE_MOCK_DATA) {
-      // 使用 Mock 数据
-      const mockData = getMockData()
-      setStorageData(mockData.data.containers)
-      console.log('当前使用 Mock 数据')
-    } else {
-      // 使用真实接口数据
-      queryENVStatusInfo(1, 1).then(res => {
-        if (res.success && res.data?.containers && res.data.containers.length > 0) {
-          setStorageData(res.data.containers)
-        } else {
-          // 接口无数据时使用 Mock 数据
-          const mockData = getMockData()
-          setStorageData(mockData.data.containers)
-          console.log('接口无数据，使用 Mock 数据')
-        }
-      }).catch(err => {
-        // 接口异常时也使用 Mock 数据
-        const mockData = getMockData()
-        setStorageData(mockData.data.containers)
-        console.error('接口异常，使用 Mock 数据:', err)
-      })
+    let cancelled = false;
+
+    const applyFallback = () => {
+      if (!cancelled) setStorageData(getMockContainers());
+    };
+
+    if (!projectId || !siteId) {
+      applyFallback();
+      return () => {
+        cancelled = true;
+      };
     }
-  }, [])
 
-  // 温湿度趋势相关（保留原有逻辑）
-  const [roomId, setRoomId] = useState(0)
-  const TempRef = useRef()
+    setDiagramLoading(true);
+    queryENVStatusInfo(projectId, siteId)
+      .then((res) => {
+        const list = res?.success ? normalizeEnvContainers(res?.data?.containers) : [];
+        if (!cancelled) {
+          setStorageData(list.length > 0 ? list : getMockContainers());
+        }
+      })
+      .catch(() => applyFallback())
+      .finally(() => {
+        if (!cancelled) {
+          setDiagramLoading(false);
+        }
+      });
 
-  const getTrends = (projectId, roomId, date) => {
-    queryTrends(projectId, roomId, date).then(res => {
-      let { success, data } = res
-      if (success && data) {
-        drawLine({
-          time: data.x || [],
-          tempTrends: data.y || [],
-          humidityTrends: data.y1 || [],
-        })
-      } else {
-        drawLine({ time: [], tempTrends: [], humidityTrends: [] })
-      }
-    })
-  }
-
-  const showChart = (id) => {
-    setRoomId(id)
-    form.setFieldValue('date', moment(today, 'YYYY-MM-DD'))
-    getTrends(projectId, id, today)
-    TempRef.current?.onOpen()
-  }
-
-  const drawLine = (lineData) => {
-    if (!lineRef.current) return
-    const lineChart = echarts.init(lineRef.current)
-    lineChart.clear()
-    lineChart.setOption({
-      color: ['#237ae4', '#093'],
-      tooltip: { trigger: 'axis', axisPointer: { type: 'shadow' } },
-      legend: { top: '0', left: 'center' },
-      grid: { left: '32px', right: '20px', bottom: '48px', top: '32px', containLabel: true },
-      xAxis: { type: 'category', boundaryGap: true, data: lineData.time },
-      yAxis: { type: 'value', scale: true },
-      dataZoom: { type: 'slider', height: 24 },
-      series: [
-        { name: '温度(℃)', data: lineData.tempTrends, type: 'line', symbol: 'circle' },
-        { name: '湿度(%)', data: lineData.humidityTrends, type: 'line', symbol: 'circle' }
-      ]
-    }, true)
-  }
-
-  const onSearch = () => {
-    const date = form.getFieldValue('date')?.format('YYYY-MM-DD')
-    if (date) getTrends(projectId, roomId, date)
-  }
+    return () => {
+      cancelled = true;
+    };
+  }, [projectId, queryENVStatusInfo, siteId]);
 
   return (
     <Pagecount pd="0">
       <div className={style.mainContent}>
-        {/* 标题 */}
-        <div className={style.title}>
-          <Paragraph style={{ marginBottom: '0', color: "#fff" }} ellipsis={{ tooltip: stationName?.value }}>
-            {stationName?.label || '环境监控'}
-          </Paragraph>
-        </div>
-
-        {/* 拓扑连接线 */}
-        <TopologyConnection containerCount={storageData.length} />
-
-        {/* 储能柜卡片列表 */}
-        <div className={style.cardList}>
-          <div className={style.cardContainer}>
-            {storageData.map((container) => (
-              <ContainerCardView key={container.id} container={container} />
-            ))}
-          </div>
-        </div>
+        <EnvDeviceDiagram loading={diagramLoading} stationTitle={stationName} containers={storageData} />
       </div>
-
-      {/* 温湿度趋势弹窗 */}
-      <CustModal title='温湿度趋势' ref={TempRef} mold="cust" width={1680} onOk={() => TempRef.current?.onCancel()}>
-        <div style={{ position: 'absolute', right: 32, top: 32, display: 'flex', alignItems: 'center' }}>
-          <span>日期</span>
-          <Form name='addForm' form={form}>
-            <Item name='date' label=''>
-              <DatePicker style={{ width: 182, margin: '0 16px' }} defaultValue={moment(today, 'YYYY-MM-DD')} />
-            </Item>
-          </Form>
-          <Button type='primary' icon={<SearchOutlined />} style={{ width: 96 }} onClick={onSearch}>查询</Button>
-        </div>
-        <div className={style.lineChart} ref={lineRef}></div>
-      </CustModal>
     </Pagecount>
-  )
+  );
 }
