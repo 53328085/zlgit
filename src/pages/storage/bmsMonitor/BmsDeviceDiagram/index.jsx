@@ -1,181 +1,356 @@
-import React, { memo } from "react";
+import React, { memo, useEffect, useMemo, useRef, useState } from "react";
+import { LeftOutlined, RightOutlined } from "@ant-design/icons";
+import imgurl from "../../cabinetMonitor/imgs";
 import {
-  DiagramContainer,
-  ConnectionLayer,
-  StackArea,
-  StackBox,
-  StackName,
-  ClusterContainer,
-  ClusterBox,
-  ClusterName,
-  DataRow,
-  DataLabel,
-  DataValue,
-  DataUnit,
-  StatusBadge,
-  ProgressBar,
-  NoData,
+  DiagramViewport,
+  DiagramScroller,
+  DiagramCanvas,
+  ScrollActionButton,
+  StackNameBadge,
+  StackBlockWrap,
+  TopStemLine,
+  MainBusLine,
+  ClusterRow,
+  ClusterNode,
+  BranchLineImg,
+  DetailCard,
+  CardTitle,
+  StateGrid,
+  StateLabel,
+  StateValue,
+  ProgressGroup,
+  ProgressLine,
+  ValueGrid,
+  ValueLabel,
+  ValueText,
+  EmptyData,
 } from "./styled.js";
 
-// 簇组件 - 不再需要 ref，位置通过数学计算
-const ClusterPanel = memo(({ data }) => {
-  if (!data || !data.items || data.items.length === 0) {
-    return (
-      <ClusterBox>
-        <ClusterName>{data.name || "未知簇"}</ClusterName>
-        <NoData>暂无数据</NoData>
-      </ClusterBox>
-    );
-  }
+const SIDE_PADDING = 36;
+const CLUSTER_CARD_WIDTH = 224;
+const CLUSTER_GAP = 22;
+const STACK_CARD_WIDTH = 224;
+const STACK_TOP = 48;
+// 这里要和 styled.js 里 DetailCard($isStack) 的高度保持一致，否则会出现卡片和竖线脱节
+const STACK_BLOCK_HEIGHT = 130;
+const BUS_Y = 314;
+const CLUSTER_TOP = BUS_Y + 4;
+const CARD_ROLL_STEP = CLUSTER_CARD_WIDTH + CLUSTER_GAP;
+const EPSILON = 2;
 
+/**
+ * 把接口值转换成进度条百分比，兼容百分比/千分比/历史数值。
+ *
+ * @param value 数值原文
+ * @param unit 单位原文
+ * @returns 0-100 的进度值
+ *
+ * @author ybdpx
+ */
+function toProgressPercent(value, unit) {
+  const numeric = Number.parseFloat(String(value ?? "").replace(/[^\d.-]/g, ""));
+  if (!Number.isFinite(numeric)) return 0;
+
+  const hasPermille = String(unit ?? "").includes("‰") || String(value ?? "").includes("‰");
+  if (hasPermille) {
+    return Math.max(0, Math.min(100, numeric / 10));
+  }
+  if (numeric > 100 && numeric <= 1000) {
+    return Math.max(0, Math.min(100, numeric / 10));
+  }
+  if (numeric > 0 && numeric <= 1) {
+    return Math.max(0, Math.min(100, numeric * 100));
+  }
+  return Math.max(0, Math.min(100, numeric));
+}
+
+/**
+ * 按关键字匹配数据项。
+ *
+ * @param items 指标数组
+ * @param patterns 正则关键字
+ * @returns 匹配项或 null
+ *
+ * @author ybdpx
+ */
+function findByNamePatterns(items, patterns) {
+  const list = Array.isArray(items) ? items : [];
   return (
-    <ClusterBox>
-      <ClusterName>{data.name}</ClusterName>
-      {data.items.map((item) => renderDataItem(item, "NameValueTwo"))}
-    </ClusterBox>
+    list.find((item) => patterns.some((pattern) => pattern.test(String(item?.name ?? "")))) ??
+    null
   );
-});
+}
 
-// 渲染单个数据项
-const renderDataItem = (item, style = "NameValueOne") => {
-  if (!item) return null;
+/**
+ * 把接口节点映射成统一展示模型。
+ *
+ * @param node 拓扑节点
+ * @param isStack 是否堆节点
+ * @returns 展示模型
+ *
+ * @author ybdpx
+ */
+function buildDisplayModel(node, isStack = false) {
+  const items = Array.isArray(node?.items) ? node.items : [];
+  const statusItem =
+    findByNamePatterns(items, [/状态/, /运行/, /charge/i]) ||
+    items.find((item) => item?.style === "Value") ||
+    null;
+  const socItem = findByNamePatterns(items, [/soc/i]);
+  const sohItem = findByNamePatterns(items, [/soh/i]);
+  const maxVoltageItem = findByNamePatterns(items, [/电压高/, /最高电压/, /max.?v/i]);
+  const minVoltageItem = findByNamePatterns(items, [/电压低/, /最低电压/, /min.?v/i]);
+  const maxTempItem = findByNamePatterns(items, [/温度高/, /最高温度/, /max.?temp/i]);
+  const minTempItem = findByNamePatterns(items, [/温度低/, /最低温度/, /min.?temp/i]);
 
-  const { name, value, unit = "", color = "white", style: itemStyle } = item;
-  const finalStyle = itemStyle || style;
+  const rawTitle = String(node?.name || (isStack ? "BMS设备" : "电池簇"));
+  const sn = String(node?.sn || "").trim();
+  const title = sn && !rawTitle.includes(sn) ? `${rawTitle}（${sn}）` : rawTitle;
 
-  // 状态标签样式（Value）
-  if (finalStyle === "Value") {
-    return (
-      <StatusBadge key={item.index} $color={color}>
-        {value}
-      </StatusBadge>
-    );
-  }
+  return {
+    title,
+    status: String(statusItem?.value ?? "充电"),
+    socText: String(socItem?.value ?? "--"),
+    socUnit: String(socItem?.unit ?? ""),
+    socPercent: toProgressPercent(socItem?.value, socItem?.unit),
+    sohText: String(sohItem?.value ?? "--"),
+    sohUnit: String(sohItem?.unit ?? ""),
+    sohPercent: toProgressPercent(sohItem?.value, sohItem?.unit),
+    maxVoltage: String(maxVoltageItem?.value ?? "--"),
+    maxVoltageUnit: String(maxVoltageItem?.unit ?? "V"),
+    minVoltage: String(minVoltageItem?.value ?? "--"),
+    minVoltageUnit: String(minVoltageItem?.unit ?? "V"),
+    maxTemp: String(maxTempItem?.value ?? "--"),
+    maxTempUnit: String(maxTempItem?.unit ?? "℃"),
+    minTemp: String(minTempItem?.value ?? "--"),
+    minTempUnit: String(minTempItem?.unit ?? "℃"),
+  };
+}
 
-  // 百分比进度条样式（NameValueOne - SOC/SOH）
-  if (finalStyle === "NameValueOne") {
-    const percent = parseFloat(value) || 0;
-    return (
-      <div key={item.index}>
-        <DataRow>
-          <DataLabel>{name}</DataLabel>
-          <div style={{ display: "flex", alignItems: "baseline" }}>
-            <DataValue $color={color}>{value}</DataValue>
-            <DataUnit>{unit}</DataUnit>
-          </div>
-        </DataRow>
-        <ProgressBar $percent={Math.min(percent, 100)} $color={color} />
-      </div>
-    );
-  }
+function formatValue(value, unit) {
+  if (!value || value === "--") return "--";
+  return unit ? `${value}(${unit})` : value;
+}
 
-  // 双列数据样式（NameValueTwo - 电压/温度等）
-  if (finalStyle === "NameValueTwo") {
-    return (
-      <DataRow key={item.index}>
-        <DataLabel>{name}</DataLabel>
-        <div style={{ display: "flex", alignItems: "baseline" }}>
-          <DataValue $color={color}>{value}</DataValue>
-          <DataUnit>{unit}</DataUnit>
-        </div>
-      </DataRow>
-    );
-  }
-
-  // 默认样式
-  return (
-    <DataRow key={item.index}>
-      <DataLabel>{name}</DataLabel>
-      <div style={{ display: "flex", alignItems: "baseline" }}>
-        <DataValue $color={color}>{value}</DataValue>
-        <DataUnit>{unit}</DataUnit>
-      </div>
-    </DataRow>
-  );
-};
-
-// 电池堆组件
-const StackPanel = memo(({ data }) => {
-  if (!data || !data.items || data.items.length === 0) {
-    return (
-      <StackBox>
-        <NoData>暂无数据</NoData>
-      </StackBox>
-    );
-  }
-
-  // 去重：只保留每个名称的第一个item，避免重复显示
-  const uniqueItems = [];
-  const seenNames = new Set();
-  for (const item of data.items) {
-    if (!seenNames.has(item.name)) {
-      seenNames.add(item.name);
-      uniqueItems.push(item);
-    }
-  }
-
-  return (
-    <StackBox>
-      <StackName>{data.name}</StackName>
-      {uniqueItems.map((item) => {
-        // 根据 item.style 决定使用哪种渲染样式，避免重复渲染
-        const renderStyle = item.style === "NameValueOne" ? "NameValueOne" : "Value";
-        return renderDataItem(item, renderStyle);
-      })}
-    </StackBox>
-  );
-});
-
-// 主组件
-export default memo(function BmsDeviceDiagram({ loading, stackData, clusterData = [] }) {
-  // 常量定义
-  const CONTAINER_WIDTH = 504; // DiagramContainer 宽度
-  const CLUSTER_WIDTH = 140; // ClusterBox 宽度
-  const CLUSTER_GAP = 16; // 簇间距
-  const BUS_Y = 320; // 水平总线 Y 坐标
-  const CLUSTER_OFFSET = -22; // 簇整体左偏移量（负数向左，正数向右）
-
-  // 数学计算簇的中心位置
-  const clusterCount = clusterData.length;
-  const totalClusterWidth = clusterCount * CLUSTER_WIDTH + (clusterCount - 1) * CLUSTER_GAP;
-  const startX = (CONTAINER_WIDTH - totalClusterWidth) / 2;
-
-  // 计算每个簇的中心 X 坐标
-  const clusterPositions = clusterData.map((_, index) => {
-    return startX + index * (CLUSTER_WIDTH + CLUSTER_GAP) + CLUSTER_WIDTH / 2 + CLUSTER_OFFSET;
+function calcCanvasLayout(viewportWidth, clusterCount) {
+  const safeCount = Math.max(clusterCount, 1);
+  const contentWidth = safeCount * CLUSTER_CARD_WIDTH + (safeCount - 1) * CLUSTER_GAP;
+  const minimumCanvasWidth = SIDE_PADDING * 2 + contentWidth;
+  const canvasWidth = Math.max(viewportWidth, minimumCanvasWidth);
+  const clusterStartX = (canvasWidth - contentWidth) / 2;
+  const centers = Array.from({ length: safeCount }, (_, idx) => {
+    return clusterStartX + idx * (CLUSTER_CARD_WIDTH + CLUSTER_GAP) + CLUSTER_CARD_WIDTH / 2;
   });
 
-  // 计算水平总线的范围
-  const minX = clusterPositions.length > 0 ? Math.min(...clusterPositions) : 230;
-  const maxX = clusterPositions.length > 0 ? Math.max(...clusterPositions) : 230;
+  const minCenter = centers[0];
+  const maxCenter = centers[centers.length - 1];
+  return {
+    canvasWidth,
+    clusterStartX,
+    centers,
+    busStart: Math.max(SIDE_PADDING, minCenter - 110),
+    busEnd: Math.min(canvasWidth - SIDE_PADDING, maxCenter + 110),
+  };
+}
+
+const TopStackCard = memo(function TopStackCard({ model }) {
+  return (
+    <DetailCard $isStack>
+      <StateGrid>
+        <StateLabel>当前状态</StateLabel>
+        <StateValue>{model.status}</StateValue>
+      </StateGrid>
+      <ProgressGroup>
+        <ProgressLine $variant="soc" $percent={model.socPercent}>
+          SOC {model.socText}
+          {model.socUnit}
+        </ProgressLine>
+        <ProgressLine $variant="soh" $percent={model.sohPercent}>
+          SOH {model.sohText}
+          {model.sohUnit}
+        </ProgressLine>
+      </ProgressGroup>
+    </DetailCard>
+  );
+});
+
+const ClusterCard = memo(function ClusterCard({ model }) {
+  return (
+    <ClusterNode>
+      <BranchLineImg src={imgurl.line} alt="" />
+      <DetailCard>
+        <CardTitle>{model.title}</CardTitle>
+        <StateGrid>
+          <StateLabel>当前状态</StateLabel>
+          <StateValue>{model.status}</StateValue>
+        </StateGrid>
+        <ProgressGroup>
+          <ProgressLine $variant="soc" $percent={model.socPercent}>
+            SOC {model.socText}
+            {model.socUnit}
+          </ProgressLine>
+          <ProgressLine $variant="soh" $percent={model.sohPercent}>
+            SOH {model.sohText}
+            {model.sohUnit}
+          </ProgressLine>
+        </ProgressGroup>
+        <ValueGrid>
+          <ValueLabel>电压高值</ValueLabel>
+          <ValueLabel>电压低值</ValueLabel>
+          <ValueText>{formatValue(model.maxVoltage, model.maxVoltageUnit)}</ValueText>
+          <ValueText>{formatValue(model.minVoltage, model.minVoltageUnit)}</ValueText>
+        </ValueGrid>
+        <ValueGrid>
+          <ValueLabel>温度高值</ValueLabel>
+          <ValueLabel>温度低值</ValueLabel>
+          <ValueText>{formatValue(model.maxTemp, model.maxTempUnit)}</ValueText>
+          <ValueText>{formatValue(model.minTemp, model.minTempUnit)}</ValueText>
+        </ValueGrid>
+      </DetailCard>
+    </ClusterNode>
+  );
+});
+
+export default memo(function BmsDeviceDiagram({ loading, stackData, clusterData = [] }) {
+  const viewportRef = useRef(null);
+  const scrollerRef = useRef(null);
+  const [viewportWidth, setViewportWidth] = useState(0);
+  const [hasOverflow, setHasOverflow] = useState(false);
+  const [canScrollLeft, setCanScrollLeft] = useState(false);
+  const [canScrollRight, setCanScrollRight] = useState(false);
+
+  const stackModel = useMemo(() => buildDisplayModel(stackData, true), [stackData]);
+  const clusters = useMemo(() => {
+    return Array.isArray(clusterData)
+      ? clusterData.map((item, idx) => ({
+          id: item?.id ?? item?.sn ?? item?.name ?? `cluster-${idx}`,
+          model: buildDisplayModel(item),
+        }))
+      : [];
+  }, [clusterData]);
+
+  const layout = useMemo(() => calcCanvasLayout(viewportWidth, clusters.length), [
+    viewportWidth,
+    clusters.length,
+  ]);
+
+  const updateScrollState = () => {
+    const node = scrollerRef.current;
+    if (!node) return;
+    const overflow = node.scrollWidth - node.clientWidth > EPSILON;
+    setHasOverflow(overflow);
+    setCanScrollLeft(node.scrollLeft > EPSILON);
+    setCanScrollRight(node.scrollLeft + node.clientWidth < node.scrollWidth - EPSILON);
+  };
+
+  useEffect(() => {
+    const viewport = viewportRef.current;
+    const scroller = scrollerRef.current;
+    if (!viewport || !scroller) return undefined;
+
+    const syncLayout = () => {
+      setViewportWidth(viewport.clientWidth || 0);
+      updateScrollState();
+    };
+
+    const onScroll = () => updateScrollState();
+    scroller.addEventListener("scroll", onScroll);
+    const observer = new ResizeObserver(() => syncLayout());
+    observer.observe(viewport);
+    observer.observe(scroller);
+    window.addEventListener("resize", syncLayout);
+
+    const raf = requestAnimationFrame(syncLayout);
+    return () => {
+      cancelAnimationFrame(raf);
+      scroller.removeEventListener("scroll", onScroll);
+      observer.disconnect();
+      window.removeEventListener("resize", syncLayout);
+    };
+  }, [clusters.length]);
+
+  useEffect(() => {
+    updateScrollState();
+  }, [layout.canvasWidth, clusters.length]);
+
+  const onStepScroll = (direction) => {
+    const node = scrollerRef.current;
+    if (!node) return;
+    node.scrollBy({
+      left: direction === "left" ? -CARD_ROLL_STEP : CARD_ROLL_STEP,
+      behavior: "smooth",
+    });
+  };
+
+  if (loading && !stackData && clusters.length === 0) {
+    return <EmptyData>加载中...</EmptyData>;
+  }
+
+  if (!stackData && clusters.length === 0) {
+    return <EmptyData>暂无拓扑数据</EmptyData>;
+  }
+
+  const stackLeft = (layout.canvasWidth - STACK_CARD_WIDTH) / 2;
+  const stackCenter = stackLeft + STACK_CARD_WIDTH / 2;
 
   return (
-    <DiagramContainer>
-      {/* SVG 连接线层 */}
-      <ConnectionLayer>
-        {/* 从堆到底部总线的垂直线 */}
-        <line x1="230" y1="230" x2="230" y2={BUS_Y} />
-        {/* 水平总线 - 固定位置和长度 */}
-        {clusterPositions.length > 0 && (
-          <line x1="36" y1={BUS_Y} x2="468" y2={BUS_Y} />
-        )}
-        {/* 从总线到每个簇的垂直线 */}
-        {clusterPositions.map((x, index) => (
-          <line key={index} x1={x} y1={BUS_Y} x2={x} y2="380" />
-        ))}
-      </ConnectionLayer>
+    <DiagramViewport ref={viewportRef}>
+      {hasOverflow && (
+        <>
+          <ScrollActionButton
+            type="button"
+            $side="left"
+            onClick={() => onStepScroll("left")}
+            disabled={!canScrollLeft}
+            aria-label="向左滚动电池簇"
+          >
+            <LeftOutlined />
+          </ScrollActionButton>
+          <ScrollActionButton
+            type="button"
+            $side="right"
+            onClick={() => onStepScroll("right")}
+            disabled={!canScrollRight}
+            aria-label="向右滚动电池簇"
+          >
+            <RightOutlined />
+          </ScrollActionButton>
+        </>
+      )}
 
-      {/* 电池堆 */}
-      <StackArea>
-        <StackPanel data={stackData} />
-      </StackArea>
+      <DiagramScroller ref={scrollerRef}>
+        <DiagramCanvas style={{ width: layout.canvasWidth }}>
+          <StackNameBadge style={{ left: stackCenter }}>{stackModel.title || "BMS设备"}</StackNameBadge>
+          <StackBlockWrap style={{ left: stackLeft, top: STACK_TOP }}>
+            <TopStackCard model={stackModel} />
+          </StackBlockWrap>
 
-      {/* 电池簇容器 */}
-      <ClusterContainer>
-        {clusterData.map((cluster) => (
-          <ClusterPanel key={cluster.id} data={cluster} />
-        ))}
-      </ClusterContainer>
-    </DiagramContainer>
+          <TopStemLine
+            src={imgurl.line2}
+            alt=""
+            style={{
+              left: stackCenter,
+              top: STACK_TOP + STACK_BLOCK_HEIGHT,
+              height: Math.max(BUS_Y - (STACK_TOP + STACK_BLOCK_HEIGHT), 24),
+            }}
+          />
+
+          <MainBusLine
+            style={{
+              left: layout.busStart,
+              top: BUS_Y,
+              width: Math.max(layout.busEnd - layout.busStart, 1),
+            }}
+          />
+          {clusters.length > 0 && (
+            <ClusterRow style={{ left: layout.clusterStartX, top: CLUSTER_TOP }}>
+              {clusters.map((cluster) => (
+                <ClusterCard key={cluster.id} model={cluster.model} />
+              ))}
+            </ClusterRow>
+          )}
+        </DiagramCanvas>
+      </DiagramScroller>
+    </DiagramViewport>
   );
 });
