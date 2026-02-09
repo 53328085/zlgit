@@ -1,5 +1,6 @@
 import React,{useContext, useEffect,useState,useRef} from 'react'
-import {Button,Carousel, Badge} from 'antd'
+import {Button,Carousel, Typography} from 'antd'
+import { useNavigate} from 'react-router-dom'
 import {CaretLeftOutlined,CaretRightOutlined} from "@ant-design/icons"
 import Titlelayout from "@com/titlelayout";
 import {isObject} from "@com/usehandler"
@@ -73,7 +74,7 @@ let moke={
 }
 export default function Index() {
     const {  projectId,containerId} = useContext(Paramscontext)
-    console.log(containerId)
+    const navigate = useNavigate()
     const [datas,setDatas]=useState({})
     const ref=useRef()
     const getData = async()=>{
@@ -104,6 +105,12 @@ export default function Index() {
     const prev=()=>{
        ref.current.prev()
     }
+    const toPage = (key, label, params) => {
+      navigate(`/index/runtimeStorage/${key}`, {
+        state: { type: 'index', primary: 'runtimeStorage', title: label, nested: key, params }
+      })
+    }
+   
   return (
     <Titlelayout title={<span style={{color:"#fff"}}>储能柜拓扑图</span>} pv="28px" bgcolor="transparent" bg="transparent" layout="flex">
     <TopologySty>
@@ -121,7 +128,7 @@ export default function Index() {
         <div className="box offset">
         <Button type="primary">{datas?.pcsName}</Button>
             <div className="imgbox2">
-            <img src={imgurl["pcs"]} className='img' />
+            <Typography.Link onClick={()=>{toPage("pCSMonitor","PCS监控",datas)}}><img src={imgurl["pcs"]} className='img' /></Typography.Link>
             </div>
         </div>
          <Custbtn status={datas.status}>  <div className="circle"></div>{datas.status}</Custbtn> 

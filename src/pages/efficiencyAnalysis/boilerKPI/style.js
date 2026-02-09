@@ -7,6 +7,7 @@ export  const Mainwrap = styled.div`
    grid-template-rows: 48px minmax(817px, auto);
    row-gap: 16px;
    color: #303133;
+ 
   .contentwrap {
     display: grid;
     grid-template-columns: 1fr 1fr;

@@ -71,9 +71,13 @@ export default function Index () {
     if (success) {
       message.success('删除成功!')
       let current = Math.ceil((totalItem.current - 1) / PageSize) < curPage.current
-      if (current) {
-        run({ current: curPage.current - 1, pageSize: PageSize })
+        ? Math.max(1, curPage.current - 1)  // 确保页码最小为1
+        : curPage.current;
+      if (current !== curPage.current) {
+        // 如果删除后需要跳转页码
+        run({ current: current, pageSize: PageSize })
       } else {
+        // 直接刷新当前页数据
         refresh()
       }
       deleteDialogRef.current?.onCancel()
@@ -137,7 +141,7 @@ export default function Index () {
           type="warn"
           onOk={onDialogDeleteClick}
         >
-          是否确认删除站点?
+          是否确认删除储能柜?
         </CustomModal>
       </TitleLayout>
       <ContainerInfoDialog ref={containerInfoDialogRef} onRefreshClick={onRefreshClick}/>

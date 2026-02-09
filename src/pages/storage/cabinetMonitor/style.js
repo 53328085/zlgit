@@ -237,6 +237,9 @@ export const Stacksty = styled.div`
   flex:1;
   justify-content: flex-start;
   align-items: center;
+  &:hover{
+    cursor: pointer;
+  }
   .line{
     flex-basis: 160px;
     width: 150px;

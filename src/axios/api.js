@@ -3456,7 +3456,7 @@ export class StorageAlarmRuntime {
 export class PCSMonitorRuntime {
   static queryPCSList = (projectId, areaId, siteId, containerId) =>
     server.get(
-      `Storage/PCSMonitorRuntime/QueryPCSList?projectId=${projectId}&areaId=${areaId}&siteId=${siteId}&containerId=${containerId}`
+      `Storage/StorageMonitorPCS/QueryPCSList?projectId=${projectId}&areaId=${areaId}&siteId=${siteId}&containerId=${containerId}`
     );
   static queryPCSInfo = (projectId, areaId, pcsId) =>
     server.get(
@@ -3468,7 +3468,7 @@ export class PCSMonitorRuntime {
     );
   static queryPowerTrends = (projectId, pcsId, startTime, endTime) =>
     server.get(
-      `Storage/PCSMonitorRuntime/QueryPowerTrends?projectId=${projectId}&pcsId=${pcsId}&startTime=${startTime}&endTime=${endTime}`
+      `Storage/StorageMonitorPCS/QueryPowerTrends?projectId=${projectId}&pcsId=${pcsId}&startTime=${startTime}&endTime=${endTime}`
     );
   static querySocTrends = (projectId, areaId, pcsId) =>
     server.get(
@@ -3486,9 +3486,9 @@ export class PCSMonitorRuntime {
 
 // bmsRuntime
 export class BMSRuntime {
-  static queryBatterClusterList = (projectId, areaId) =>
+  static queryBatterClusterList = (projectId, containerId) =>
     server.get(
-      `Storage/BMSRuntime/QueryBatteryClusterList?projectId=${projectId}&areaId=${areaId}`
+      `Storage/StorageMonitorBMS/QueryBMSList?projectId=${projectId}&containerId=${containerId}`
     );
   static querySOCTrends = (projectId, areaId, bcId) =>
     server.get(
@@ -3735,17 +3735,17 @@ export class StorageMonitorRuntime {
 
 //BMS监控
 export class StorageMonitorBMS {
-  static queryBMSDataInfo = (projectId, pcsId) =>
+  static queryBMSDataInfo = (projectId, bmsId) =>
     server.get(
-      `/Storage/StorageMonitorBMS/QueryBMSDataInfo?projectId=${projectId}&pcsId=${pcsId}`
+      `/Storage/StorageMonitorBMS/QueryBMSDataInfo?projectId=${projectId}&bmsId=${bmsId}`
     );
-  static queryBMSTableInfo = (projectId, pcsId) =>
+  static queryBMSTableInfo = (projectId, bmsId) =>
     server.get(
-      `/Storage/StorageMonitorBMS/QueryBMSTableInfo?projectId=${projectId}&pcsId=${pcsId}`
+      `/Storage/StorageMonitorBMS/QueryBMSTableInfo?projectId=${projectId}&bmsId=${bmsId}`
     );
-  static queryBMSStatusInfo = (projectId, pcsId) =>
+  static queryBMSStatusInfo = (projectId, bmsId) =>
     server.get(
-      `/Storage/StorageMonitorBMS/QueryBMSStatusInfo?projectId=${projectId}&pcsId=${pcsId}`
+      `/Storage/StorageMonitorBMS/QueryBMSStatusInfo?projectId=${projectId}&bmsId=${bmsId}`
     );
 }
 

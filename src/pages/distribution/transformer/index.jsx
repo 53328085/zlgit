@@ -141,7 +141,8 @@ useRequest(RuntimePoints, {
       let startTime ,endTime;
       if(timeRanger){
         startTime =  moment(timeRanger).startOf().format('YYYY-MM-DD 00:00:00')
-        endTime=moment(timeRanger).format('YYYY-MM-DD HH:mm:ss')
+       // console.log("在前",timeRanger.isBefore(moment()))
+      //  endTime= timeRanger.isBefore(moment())  ?  moment(timeRanger).endOf().format('YYYY-MM-DD HH:mm:ss') :moment(timeRanger).format('YYYY-MM-DD HH:mm:ss')
       }else{
         message.error('请选择日期！')
       }
@@ -151,7 +152,7 @@ useRequest(RuntimePoints, {
       sn:siteData?.sn,
       type,
       start:startTime,
-      end:endTime
+      end:moment(moment(timeRanger).format('YYYY-MM-DD')).isBefore(moment(moment().format('YYYY-MM-DD'))) ?  moment(timeRanger).endOf("day").format('YYYY-MM-DD HH:mm:ss')  : moment(timeRanger).format('YYYY-MM-DD HH:mm:ss')
     }
      
     const {success,errMsg,data} = await DistributionRoomRuntime.HistoryTrends(params)
@@ -167,19 +168,20 @@ useRequest(RuntimePoints, {
 }
   //数据趋势（table）
   const HistoryTable = async () => {
+    console.log('HistoryTable~~', moment(timeRanger).endOf('day').format('YYYY-MM-DD HH:mm:ss'))
     if(!siteData?.sn) return
     try {
       setLoading(true)
       let startTime, endTime;
       startTime = moment(timeRanger).startOf().format('YYYY-MM-DD 00:00:00')
       endTime = moment(timeRanger).format('YYYY-MM-DD HH:mm:ss')
-      console.log(startTime)
+      
       let params = {
         projectId,
         sn:siteData?.sn,
         // type,
         start: startTime,
-        end: endTime
+        end: moment(moment(timeRanger).format('YYYY-MM-DD')).isBefore(moment(moment().format('YYYY-MM-DD'))) ?  moment(timeRanger).endOf("day").format('YYYY-MM-DD HH:mm:ss')  : moment(timeRanger).format('YYYY-MM-DD HH:mm:ss')
       }
       const res = await DistributionRoomRuntime.HistoryTable(params)
       if(res.success){

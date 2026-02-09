@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import PageContent from '@com/pagecontent'
 import CustContext from '@com/content.js'
 import DeviceCommView from '@pages/storage/configure/storageDevice/components/DeviceCommView'
@@ -11,7 +11,7 @@ import { isArray } from 'lodash'
 export default function Index () {
   let { exparams } = useOutletContext()
   let { areaId, projectId, containerId, stationName } = exparams
-  const containerIdValue = containerId && typeof containerId === 'object' ? containerId.value : containerId
+  const [containerIdValue, setContainerIdValue] = useState(containerId && typeof containerId === 'object' ? containerId.value : containerId)
   let [searchParams] = useSearchParams()
   const itemParam = searchParams.get('item')
   const initialTabValue = itemParam !== null ? itemParam.toString() || '10' : '10'
@@ -22,6 +22,10 @@ export default function Index () {
     value: tabValue,
     setvalue: setTabValue
   }
+
+  useEffect(() => {
+    setContainerIdValue(containerId && typeof containerId === 'object' ? containerId.value : containerId)
+  }, [containerId])
 
   /**
    * 获取动态页签数据
@@ -44,7 +48,8 @@ export default function Index () {
     onSuccess: ({ data }) => {
       setTabs(data.map(item => {return { label: item.value, key: item.key.toString() }}))
       if (isArray(data) && data.length > 0) {
-        setTabValue(data[0].key.toString())
+        let isIncludeItem = data.find(item => item.key.toString() === initialTabValue)
+        setTabValue(isIncludeItem ? initialTabValue : data[0].key.toString())
       }
     },
     refreshDeps: [projectId, containerIdValue],

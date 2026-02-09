@@ -349,8 +349,8 @@ export default function UseSerach(props) {
 
   const getBms = async () => {
     try {
-      let { areaId } = form.getFieldsValue(true)
-      let { success, data, errMsg } = await BMSRuntime.queryBatterClusterList(projectId, areaId)
+      let { containerId = { value: 0 } } = form.getFieldsValue(true)
+      let { success, data, errMsg } = await BMSRuntime.queryBatterClusterList(projectId, containerId.value)
       if (success && Array.isArray(data) && data.length > 0) {
         setBmsoptions(data)
         form.setFieldsValue({
