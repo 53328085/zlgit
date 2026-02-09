@@ -112,6 +112,7 @@ const editOption=(record)=>{
     IsCount: editModalData[0]?.calculate,
     IsRead: editModalData[0]?.realTimeReading,
     DefaulImg:editModalData[0]?.imageBase64,
+    description:editModalData[0]?.description,
     ImageUpload: '',
   })
   const arr = editModalData[0]?.points.map((item, index) => ({
@@ -191,7 +192,8 @@ if(publish){
     calculate:formvalues.IsCount,
     realTimeReading:formvalues.IsRead,
     imageBase64:formvalues.ImageUpload?formvalues.ImageUpload:formvalues.DefaulImg,
-    points:tableData
+    points:tableData,
+    description:formvalues.description
   }
   const resp = await UpdateDeviceCategory(params)
   if(resp.success){
@@ -340,7 +342,8 @@ const onSureEditModal=async()=>{
       calculate:formValue.IsCount,
       realTimeReading:formValue.IsRead,
       imageBase64:formValue.ImageUpload?formValue.ImageUpload:formValue.DefaulImg,
-      points:tableData
+      points:tableData,
+      description:formValue.description
     }
     const resp = await AddDeviceCategory(params)
     console.log(resp)
