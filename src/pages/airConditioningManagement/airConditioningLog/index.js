@@ -462,7 +462,7 @@ export default function Index(props) {
                       <div className="time">
                         <div>{e.desc}</div>
                         <div className="day">
-                          {e.weeks.map?.(time => <div key={time} className="daybox">{getweek.get(time)}</div>)}
+                          {e?.weeks?.map?.(time => <div key={time} className="daybox">{getweek.get(time)}</div>)}
                         </div>
                       </div>
                       <div className="titleName">方案内容</div>
