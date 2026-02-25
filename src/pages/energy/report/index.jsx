@@ -82,7 +82,7 @@ const Chartwrap = styled.div`
 export default function Index() {
 
   let { exparams, setCustview ,setConfig} = useOutletContext()
-  console.log("exparams",exparams)
+   
   
   const [dates, setDates] = useState([moment().startOf("day"), moment().endOf("hour")]);
   
@@ -101,6 +101,7 @@ export default function Index() {
   const [alikev, setAlikev]=useState("")
   const [reportType, setReportType] = useState(1)
   const [detailHeaders, setDetailHeaders] =useState([])
+  const [valuet, setValuet] = useState(null);
   const alikeRef= useRef({})
   const onSearch = (e) => {
     setAlike(e)
@@ -133,13 +134,13 @@ export default function Index() {
       3: "YYYY",
       
     }[type]
-    return `对比分析()` //${date.format(format)}
+    return `对比分析` //${date.format(format)}
   }, [date, type])
 
   const [selectedRowKeys, setSelectedRowKeys] = useState([]);
-  console.log(selectedRowKeys)
+ 
   const onSelectChange = (newkey, rows) => {
-    console.log(newkey, rows)
+    
     if (newkey?.length > 3) {
       return message.warning("最多选择3条信息进行对比")
     } else {
@@ -167,7 +168,7 @@ export default function Index() {
  
 
 const tabs = useMemo(()=> {
-  console.log("energytype",energytype)
+   
   if( projectId==30) {
      setvalue("1")
     return aqtabs
@@ -215,12 +216,12 @@ useEffect(()=> {
     let filename = "sheet"
     let f = ["0", "1", "4"].includes(value)
     //  console.log(dates)
-    if (Array.isArray(dates) && dates?.[0] && dates?.[1]) {
-      filename = getTime(dates?.[0], 1).toString() + "-" + getTime(dates?.[1], 1).toString() + tabs?.[index]?.label
+    if (Array.isArray(valuet) && valuet?.[0] && valuet?.[1]) {
+      filename = getTime(valuet?.[0], 1).toString() + "-" + getTime(valuet?.[1], 1).toString() + tabs?.[index]?.label
     }
-    return (f && isrange.range && dates?.length) ? filename : (tabs?.[index]?.label ?? 'sheet')
+    return (f && isrange.range && valuet?.length) ? filename : (tabs?.[index]?.label ?? 'sheet')
 
-  }, [value, dates, tabs, isrange])
+  }, [value, valuet, tabs, isrange])
 
   let columns = useMemo(()=> {
     
@@ -247,17 +248,17 @@ useEffect(()=> {
 
  
 
-  const getTableData = ({ current, pageSize, areaId, projectId, type, date, energytype, treeId, index, line, isrange, dates, alike,reportType }) => {
+  const getTableData = ({ current, pageSize, areaId, projectId, type, date, energytype, treeId, index, line, isrange, valuet, alike,reportType }) => {
     //  console.log(date)
 
-    console.log("接口调用1")
+    
 
     let f = [areaId, projectId, type, energytype, index, line].every(v => Number.isInteger(v)) && Array.isArray(treeId) && date
 
-    console.log("接口调用2",f)
-    let range = [0, 1, 4].includes(index) && isrange.range && Array.isArray(dates) && dates?.length > 1
+     
+    let range = [0, 1, 4].includes(index) && isrange.range && Array.isArray(valuet) && valuet?.length > 1
     if (!f) return;
-    if (index === 0 && isrange.range && !Array.isArray(dates)) {
+    if (index === 0 && isrange.range && !Array.isArray(valuet)) {
       return
     }
      
@@ -274,8 +275,8 @@ useEffect(()=> {
     let params = {
       projectId,
       meterType: energytype,
-      startDate: range ? dates?.[0].format("YYYY-MM-DD HH:mm") : date?.startOf(dateType).format("YYYY-MM-DD HH:mm"),
-      endDate: range ? dates?.[1].format("YYYY-MM-DD HH:mm") : date?.endOf(dateType).format("YYYY-MM-DD HH:mm"),
+      startDate: range ? valuet?.[0].format("YYYY-MM-DD HH:mm") : date?.startOf(dateType).format("YYYY-MM-DD HH:mm"),
+      endDate: range ? valuet?.[1].format("YYYY-MM-DD HH:mm") : date?.endOf(dateType).format("YYYY-MM-DD HH:mm"),
       pageNum: current,
       pageSize,
       queryType: line,
@@ -287,8 +288,8 @@ useEffect(()=> {
     } 
     //新需求 除分类能耗外 都添加搜索
    // let params = range ? {...query, customTime:true} : query
-    setStartDateTime(range ? dates?.[0].format("YYYY-MM-DD HH:mm") : date?.startOf(dateType).format("YYYY-MM-DD HH:mm"))
-    setEndDateTime(range ? dates?.[1].format("YYYY-MM-DD HH:mm") : date?.endOf(dateType).format("YYYY-MM-DD HH:mm"))
+    setStartDateTime(range ? valuet?.[0].format("YYYY-MM-DD HH:mm") : date?.startOf(dateType).format("YYYY-MM-DD HH:mm"))
+    setEndDateTime(range ? valuet?.[1].format("YYYY-MM-DD HH:mm") : date?.endOf(dateType).format("YYYY-MM-DD HH:mm"))
    /*  if (index == 0) {
       params.filterInfo = alike
     } */
@@ -323,7 +324,7 @@ useEffect(()=> {
       setTotal(total)
       let fag =  [1,5].includes(index) && isObject(data)
       let arrData = [], counsume=[]
-      console.log("index",index)
+     
       if (success && ((Array.isArray(data) && data.length > 0) || fag)) {
         if (index == 1) {
           let { detailHeaders,detailDatas} = data
@@ -358,7 +359,7 @@ useEffect(()=> {
             }
             return item
           })
-          console.log("counsume",counsume)
+           
         } else if (index == 5) {
           let { heads, datas } = data
           let ishead = Array.isArray(heads) && heads?.length
@@ -407,12 +408,12 @@ useEffect(()=> {
 
 
   }
-  const { tableProps } = useAntdTable((params) => getTableData({ ...params, areaId, projectId, type, date, energytype, treeId, index, line, isrange, dates, alike,reportType }), {
+  const { tableProps } = useAntdTable((params) => getTableData({ ...params, areaId, projectId, type, date, energytype, treeId, index, line, isrange, valuet, alike,reportType }), {
     defaultParams: [{ current: 1, pageSize: 18}],
-    refreshDeps: [areaId, projectId, type, date, energytype, treeId, index, line, isrange, dates, alike,reportType]
+    refreshDeps: [areaId, projectId, type, date, energytype, treeId, index, line, isrange, valuet, alike,reportType]
   })
   
-  console.log("tableProps", tableProps)
+   
   // 对比分析 图表
   const modref = useRef()
   const [checkvalue, setCheckvalue] = useState(["1"])
@@ -427,8 +428,8 @@ useEffect(()=> {
   }
   const [source, dimensions, chartlen, unit] = useMemo(() => {
     let { dataSource = [] } = tableProps || {}
-    let datas = dataSource.filter(d => selectedRowKeys.some(s =>s.includes(d.sn)))
-    console.log("datas", datas)
+    let datas = dataSource.filter(d => selectedRowKeys.some(s =>s.includes(d.sn) && s.includes(d.nodeName)))
+    
     let {  unit } = datas?.[0] || {}
     let dimensions = datas?.map?.(d => d.name) || []
     let source = checkvalue?.length > 0 ? (datas?.map?.(d => d.detailValues) || []) : []
@@ -482,17 +483,17 @@ useEffect(()=> {
     modref.current.onOpen()
   }
   const CustView = useMemo(() => {
-    const showdefined = ["1", "4"].includes(value)
+  //  const showdefined = ["1", "4"].includes(value)
     return (
       <Space size={16}>
-        <ExportExcel tb={tbref} defined={showdefined} setIsrange={setIsrange} getDates={setDates} value={dates} />
+        <ExportExcel tb={tbref} defined={false} setIsrange={setIsrange} getDates={setDates} value={valuet} />
       </Space>
     )
   }, [value])
   const onExport = useCallback(() => {
-    return getTableData({ current: 1, pageSize: total, areaId, projectId, type, date, energytype, treeId, index,alike, line, isrange, dates,reportType
+    return getTableData({ current: 1, pageSize: total, areaId, projectId, type, date, energytype, treeId, index,alike, line, isrange, valuet,reportType
     })
-  }, [total, concolumns, type, date, energytype, areaId, treeId, index, line, isrange, dates, sheetName,reportType,alike  ])
+  }, [total, concolumns, type, date, energytype, areaId, treeId, index, line, isrange, valuet, sheetName,reportType,alike  ])
 
   const boxchange = (e) => {
     const f = e.target.checked
@@ -515,17 +516,14 @@ useEffect(()=> {
 
  const disabledDate2 = useCallback((current)=>{
   if(!dates) return false
-  let difftime =  {1:7,2:45,3:3}[type]
-  const date = current && current > moment().endOf("day");
+  let difftime =  {1:6,2:44,3:2}[type]  // 7天，45天，3年
+  const date = current && (current > moment().endOf("day"));
   const dateuint={1:"days",2:"days",3:"years"}[type]
-  if(type== 2){
+ 
     const tooLate = dates[0] && current.diff(dates[0], dateuint) >difftime;
     const tooEarly = dates[1] && dates[1].diff(current, dateuint) > difftime;
     
-    return !!tooEarly || !!tooLate || !!date
-  }
- 
-
+    return !!tooEarly || !!tooLate || !!date 
  },[dates,type  ]) 
 
 const disabledDate=useMemo(()=>{
@@ -535,6 +533,7 @@ const disabledDate=useMemo(()=>{
   }
   return disabledDate1
 },[value,disabledDate2,disabledDate1])
+ 
 
 /* 
 format="YYYY-MM-DD HH:mm"
@@ -565,17 +564,23 @@ const dateprops = useMemo(()=>{
   }
 },[value,type])
 
-  const [valuet, setValuet] = useState(null);
+  
 
   const onTimeOk = (date = [], dataString) => {
-    console.log(data, dataString)
-    let f = dataString.some((d) => d);
+    
+    let f = dataString.every((d) => d);
     if (!f) return;
     // console.log(dataString)
-    setDates(date)
+   // setDates(date)
     setValuet(date)
   };
-
+  const onOpenChange=(open)=>{ 
+    if(open) {
+      setDates([null, null])
+    }else {
+      setDates(null)
+    }
+  }
   let dataProps =useMemo(()=>(
     {
       value,
@@ -615,9 +620,13 @@ const dateprops = useMemo(()=>{
                   <Checkbox onChange={boxchange} checked={isrange.range}>使用日期范围（优先）</Checkbox>  <RangePicker
                     value={dates || valuet}
                     disabledDate={disabledDate}
-                    onCalendarChange={(val) => setDates(val)}
+                    onCalendarChange={(val) => {
+                     // console.log("待选日期发生变化的回调",val)
+                      setDates(val)
+                    }}
                     onChange={onTimeOk}
                     disabled={!isrange.range}
+                    onOpenChange={onOpenChange}
                     defaultValue={[moment().startOf("day"), moment().endOf("hour")]}
                     {...dateprops}
                   />

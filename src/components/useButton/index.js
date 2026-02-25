@@ -536,7 +536,7 @@ export function ExportExcel({tb,  single=false,defined=false, byData=false, setI
       
      if (key == '1') { 
       if(byData)  {    
-        console.log("button~~",tbData)
+        
         tb.current.downloadByData(tbData)
       } else {
         tb.current.download()
