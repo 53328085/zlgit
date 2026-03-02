@@ -11,7 +11,7 @@ import { isArray } from 'lodash'
 export default function Index () {
   let { exparams } = useOutletContext()
   let { areaId, projectId, containerId, stationName } = exparams
-  const [containerIdValue, setContainerIdValue] = useState(containerId && typeof containerId === 'object' ? containerId.value : containerId)
+  const [containerIdValue, setContainerIdValue] = useState(containerId && typeof containerId === 'object' ? containerId.value : null)
   let [searchParams] = useSearchParams()
   const itemParam = searchParams.get('item')
   const initialTabValue = itemParam !== null ? itemParam.toString() || '10' : '10'
@@ -24,7 +24,7 @@ export default function Index () {
   }
 
   useEffect(() => {
-    setContainerIdValue(containerId && typeof containerId === 'object' ? containerId.value : containerId)
+    setContainerIdValue(containerId && typeof containerId === 'object' ? containerId.value : null)
   }, [containerId])
 
   /**
