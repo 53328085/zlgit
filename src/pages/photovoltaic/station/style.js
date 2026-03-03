@@ -32,11 +32,16 @@ export const TopBox = styled.div`
     .powerStation {
       width: 160px;
       height: 150px;
+      overflow: hidden;
+      .img {
+         max-width: 100%;
+      }
     }
     .content {
       display: grid;
       align-items: center;
       font-size: 13px;
+      flex:1;
       .info {
         display: flex;
         align-items: baseline;
@@ -60,12 +65,13 @@ export const TopBox = styled.div`
         .value{
           color:#303133;
           font-weight: 500;
+          margin-bottom: 0px;
         }
       }
     }
   }
   .powerNum {
-    height: 60px;
+    flex:1;
     margin-top: 10px;
     border-radius: 4px;
     display: flex;
@@ -97,17 +103,22 @@ export const TopBox = styled.div`
   .infoBox2 {
     display: flex;
     align-items: center;
-    justify-content: space-around;
+    justify-content: space-between;
+    flex:1;
+    column-gap: 16px;
     .info {
       display: grid;
       gap: 16px;
       color: #606266;
+      height: 100%;
+      gird-template-rows: repeat(3, 1fr);
+      flex:1;
       .box {
         display: flex;
         align-items: center;
         border-radius: 4px;
-        height: 62px;
-        width: 250px;
+      //  height: 62px;
+     //   width: 250px;
         padding-left: 16px;
         background-color: ${(props) => getBackgroundColor(props.theme)};
         .powerIcon {
@@ -155,6 +166,7 @@ export const FotterBox = styled.div`
       row-gap: 16px;
       justify-content: space-between;
       background-color: ${(props) => getBackgroundColor(props.theme)};
+      cursor: pointer;
       .title {
         border-radius: 8px 8px 0px 0px;
         // width: 281px;

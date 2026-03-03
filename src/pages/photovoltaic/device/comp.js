@@ -29,47 +29,48 @@ const HistoricalDataModal = (props) => {
   // const [tableData, setTableData]=useState([])
   const [datas, setDatas] = useState({});
 
-  const [tableData,columns, lineopt] = useMemo(() => {
+  const [tableData, columns, lineopt] = useMemo(() => {
+    console.log("datas", datas)
     const format = dateType == 1 ? "HH:mm" : "DD";
-    const { data = [], group } = datas // mock.filter((d) => d.group == ectype)?.[0] || {}; //
+    const { data = [] } = datas // mock.filter((d) => d.group == ectype)?.[0] || {}; //
     const points = {
-     "Pt": "总有功功率（kW）",
-     "Ia": "A相电流（A）",
-     "Ib": "B相电流（A）",
-     "Ic": "C相电流（A）",
-     "Ua": "A相电压（V）",
-     "Ub": "B相电压（V）",
-     "Uc": "C相电压（V）",
-     "Freq": "频率（Hz）"
-    }  
-      const cols = [
-        {
-          title: "时间",
-          dataIndex: `time`,
-          align: "center",
-          width: 120,
-          sorter: (a, b) =>
-            moment(a.time, format).diff(
-              moment(b.time, format)
-            ) > 0,
-        },
-        ...data.map(item => ({
-            title:points[item.point],
-            dataIndex: item.point,
+      "Pt": "总有功功率（kW）",
+      "Ia": "A相电流（A）",
+      "Ib": "B相电流（A）",
+      "Ic": "C相电流（A）",
+      "Ua": "A相电压（V）",
+      "Ub": "B相电压（V）",
+      "Uc": "C相电压（V）",
+      "Freq": "频率（Hz）"
+    }
+    const cols = [
+      {
+        title: "时间",
+        dataIndex: `time`,
+        align: "center",
+        width: 120,
+        sorter: (a, b) =>
+          moment(a.time, format).diff(
+            moment(b.time, format)
+          ) > 0,
+      },
+      ...data.map(item => ({
+        title: points[item.point],
+        dataIndex: item.point,
 
-        }) )
+      }))
     ];
-    let tbdata =[]
-    data.forEach((item,index) =>{
-       let {point,data} = item;
-       if(index==0) {
-        tbdata  = data.map((t) => ({time: moment(t.time, "YYYY-MM-DD HH:mm:ss").format(format),[point]:t.value}))
-       }else if(index>0) {
-         tbdata =data.map((t,i) => ({...tbdata[i],[point]:t.value}))
-       }
-      
+    let tbdata = []
+    data.forEach((item, index) => {
+      let { point, data } = item;
+      if (index == 0) {
+        tbdata = data.map((t) => ({ time: moment(t.time, "YYYY-MM-DD HH:mm:ss").format(format), [point]: t.value }))
+      } else if (index > 0) {
+        tbdata = data.map((t, i) => ({ ...tbdata[i], [point]: t.value }))
+      }
+
     })
-    
+
     let dimensions = ["time"];
     let source = [];
     let series = Array(data.length).fill({
@@ -79,15 +80,26 @@ const HistoricalDataModal = (props) => {
       stack: null,
     });
 
+
     data.forEach((d, index) => {
-      let { point, data } = d;
-      dimensions.push(point);
+      dimensions.push(d.point);
       if (index == 0) {
-        source.push(data.map((t) => t.time));
-        source.push(data.map((t) => t.value));
+        source.push(d?.data?.map((t) => t.time));
+        source.push(d?.data?.map((t) => t.value));
       } else {
-        source.push(data.map((t) => t.value));
+        source.push(d?.data?.map((t) => t.value));
+
       }
+
+
+
+
+      // if (index == 0) {
+      //   source.push(data.map((t) => t.time));
+      //   source.push(data.map((t) => t.value));
+      // } else {
+      //   source.push(data.map((t) => t.value));
+      // }
     });
     const lineopt = {
       series,
@@ -128,10 +140,10 @@ const HistoricalDataModal = (props) => {
       },
     };
 
-    return [tbdata,cols, lineopt];
-  }, [datas, ectype, dateType]);
+    return [tbdata, cols, lineopt];
+  }, [datas]);
 
- 
+  console.log(lineopt)
 
   const getTrend = async () => {
     try {
@@ -145,12 +157,12 @@ const HistoricalDataModal = (props) => {
         projectId,
       };
       const { success, data } = await useQueryInverterPointTrend({}, body);
-      if (success && isArray(data) && data.length && isObject(data[0])) {
+      if (success && Array.isArray(data) && data.length && isObject(data[0])) {
         setDatas(data[0]);
       } else {
         setDatas({});
       }
-    } catch (error) {}
+    } catch (error) { }
   };
 
   useEffect(() => {
@@ -162,11 +174,11 @@ const HistoricalDataModal = (props) => {
   const disabledDate = (current) => {
     return current > moment().endOf("day");
   };
-  const onexprot = ()=> {
+  const onexprot = () => {
     tableRef.current.download();
   };
 
-  const onValuesChange =()=> {
+  const onValuesChange = () => {
     getTrend();
   }
   return (
@@ -194,16 +206,16 @@ const HistoricalDataModal = (props) => {
                 ]}
               />
             </Form.Item>
-            <Form.Item shouldUpdate={(cur,pre)=>cur.type!=pre.type} noStyle>
-                {
-                     ({getFieldValue, setFieldValue}) => {
-                           let type = getFieldValue('type')
-                           setPicker(type == 1 ? "date" : "month");
-                           setFieldValue('date', moment())
-                           return null
-                      }
- 
+            <Form.Item shouldUpdate={(cur, pre) => cur.type != pre.type} noStyle>
+              {
+                ({ getFieldValue, setFieldValue }) => {
+                  let type = getFieldValue('type')
+                  setPicker(type == 1 ? "date" : "month");
+                  setFieldValue('date', moment())
+                  return null
                 }
+
+              }
             </Form.Item>
             <Form.Item name="date" initialValue={moment()}>
               <DatePicker
