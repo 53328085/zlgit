@@ -6,6 +6,12 @@ import { CustLink } from '@com/useButton'
  */
 export const getDeviceTitle = (type) => {
   switch (type) {
+    case '101':
+      return '并网关口表'
+    case '102':
+      return '储能计量表'
+    case '103':
+      return '负载总表'
     case '201':
       return 'PCS'
     case '202':
