@@ -153,7 +153,7 @@ export default function DeviceCommView ({ tab, areaId, projectId, containerId, s
           <div className="icon"></div>
           <div className="title">{title}列表</div>
         </Space>
-        <CustButton onClick={onSettingClick}>配置{title}</CustButton>
+        <CustButton wh="auto" style={{ minWidth: 96 }} onClick={onSettingClick}>配置{title}</CustButton>
       </CustomTitle>
       <CustomTable
         ref={tableRef}
