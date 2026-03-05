@@ -169,7 +169,7 @@ export const StateValue = styled.div`
 
 export const ProgressGroup = styled.div`
   display: grid;
-  grid-template-rows: repeat(2, 24px);
+  grid-auto-rows: 24px;
   row-gap: 4px;
 `;
 
@@ -189,7 +189,7 @@ export const ProgressLine = styled.div`
 export const ValueGrid = styled.div`
   display: grid;
   grid-template-columns: 1fr 1fr;
-  grid-template-rows: repeat(2, 24px);
+  grid-auto-rows: 24px;
   border-radius: 2px;
   overflow: hidden;
   background: ${colorBlock};
@@ -206,6 +206,17 @@ export const ValueText = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
+`;
+
+export const EmptyMetric = styled.div`
+  min-height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #8aa0c4;
+  font-size: 13px;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 2px;
 `;
 
 export const EmptyData = styled.div`
