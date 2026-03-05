@@ -2,7 +2,7 @@ import React, { useEffect, useState} from 'react'
 import style from './style.module.less'
 import { message, DatePicker } from 'antd';
 import moment from 'moment'
-import { selectProjectId, selectOneLevel, levelDefaultLabel, selectOneLevelDefaultId, setCurrentlevel,themeColor } from '@redux/systemconfig.js'
+import { selectProjectId } from '@redux/systemconfig.js'
 import {PCSMonitorRuntime, SiteManagerDesigner, StorageContainerDesigner, StorageMonitorRuntime } from '@api/api.js'
 import { useReactive, useRequest } from 'ahooks'
 import { useSelector } from 'react-redux'
@@ -56,13 +56,9 @@ export default function Index() {
   console.log('pcsId:', pcsId, 'currentPcsId:', currentPcsId)
   console.log('exparamsProjectId:', exparamsProjectId, 'reduxProjectId:', reduxProjectId, 'projectId:', projectId)
 
-  const {successColor, warningColor} = useSelector(themeColor)
   const {
-    queryPCSInfo,
-    queryPCSWarningInfo,
     queryPowerTrends,
-    querySocTrends,
-    queryAcTable} = PCSMonitorRuntime
+  } = PCSMonitorRuntime
 
   //页面组件
   // 数据卡片：显示名称、单位、数值
@@ -75,31 +71,14 @@ export default function Index() {
       </div>
     )
   }
-  //页面参数 - 初始静态数据
-  const [leftValues, setLeftValues] = useState([
-    { name: '运行状态', value: '运行' },
-    { name: '热备状态', value: '热备' },
-    { name: '充放电状态', value: '充电' },
-    { name: '直流电流', unit: 'A', value: '19.9' },
-    { name: '总母线电压', unit: 'V', value: '568.5' },
-    { name: '直流功率', unit: 'kW', value: '0.99' },
-    { name: '电网频率', unit: 'Hz', value: '50.0' },
-    { name: 'IGBT温度', unit: '°C', value: '43' },
-  ])
+  const [leftValues, setLeftValues] = useState([])
   const [pcsName, setPcsName] = useState('')
-  const [powerData, setPowerData] = useState({
-    x: ['00:00', '04:00', '08:00', '12:00', '16:00', '20:00'],
-    y: [120, 150, 180, 200, 170, 140]
-  })
-  const [socData, setSocData] = useState({
-    x: ['00:00', '04:00', '08:00', '12:00', '16:00', '20:00'],
-    y: [85, 80, 75, 70, 65, 60]
-  })
   const [startDate, setStartDate] = useState(moment().subtract(1, 'day'))
   const [endDate, setEndDate] = useState(moment())
-  // 对比数据
   const [compareData, setCompareData] = useState({
     xAxis: [],
+    series1Name: '',
+    series2Name: '',
     series1: [],
     series2: []
   })
@@ -136,6 +115,8 @@ export default function Index() {
       return null
     }
   }
+
+  const buildSeries1Name = (start, end) => `${start} ~ ${end}`
   // 开始日期变化时触发接口调用
   const handleStartDateChange = async (date, dateString) => {
     if (date && endDate && (date.isAfter?.(endDate, 'day') || date.isSame?.(endDate, 'day'))) {
@@ -153,12 +134,10 @@ export default function Index() {
       if (res) {
         setCompareData({
           xAxis: res.time || [],
+          series1Name: buildSeries1Name(dateString, endDate?.format('YYYY-MM-DD')),
+          series2Name: '',
           series1: res.power || [],
           series2: []
-        })
-        setPowerData({
-          x: res.time || [],
-          y: res.power || []
         })
       }
     }
@@ -181,12 +160,10 @@ export default function Index() {
       if (res) {
         setCompareData({
           xAxis: res.time || [],
+          series1Name: buildSeries1Name(startDate?.format('YYYY-MM-DD'), dateString),
+          series2Name: '',
           series1: res.power || [],
           series2: []
-        })
-        setPowerData({
-          x: res.time || [],
-          y: res.power || []
         })
       }
     }
@@ -261,149 +238,15 @@ export default function Index() {
       if (res) {
         setCompareData({
           xAxis: res.time || [],
+          series1Name: buildSeries1Name(startDate.format('YYYY-MM-DD'), endDate.format('YYYY-MM-DD')),
+          series2Name: '',
           series1: res.power || [],
           series2: []
-        })
-        setPowerData({
-          x: res.time || [],
-          y: res.power || []
         })
       }
     }
     run()
   }, [projectId, currentPcsId])
-  const socOption = {
-    type:2,
-    color:[warningColor],
-    tooltip: {
-      trigger: 'axis',
-      axisPointer: {
-        type: 'shadow'
-      }
-    },
-    legend: {
-      top: '0',
-      left: 'center'
-    },
-    grid: {
-      left: '3%',
-      right: '4%',
-      bottom: '3%',
-      containLabel: true
-    },
-    xAxis: {
-      type: 'category',
-      boundaryGap: true,
-      axisTick:{
-        alignWithLabel:true
-      },
-      data: Array.isArray(socData.x) ? socData.x : []
-    },
-    yAxis: {
-      type: 'value',
-      // min: 24
-      scale: true, //自适应
-    },
-    series: [
-      {
-        name: "SOC(%)",
-        data:  Array.isArray(socData.y) ? socData.y : [],
-        type: 'line',
-        symbol:'none',
-        smooth: true,
-        areaStyle: {}
-      }
-    ]
-  }
-  const poweroption = {
-    type:2,
-    color:[successColor],
-    tooltip: {
-      trigger: 'axis',
-      axisPointer: {
-        type: 'shadow'
-      }
-    },
-    legend: {
-      top: '0',
-      left: 'center'
-    },
-    grid: {
-      left: '3%',
-      right: '4%',
-      bottom: '3%',
-      containLabel: true
-    },
-    xAxis: {
-      type: 'category',
-      data:   Array.isArray(powerData.x) ? powerData.x : [],
-      boundaryGap: true,
-      axisTick:{
-        alignWithLabel:true
-      },
-    },
-    yAxis: {
-      type: 'value',
-      scale: true, //自适应
-      // min: function(value){
-      //   return (value / 1000) * 1000
-      // }
-    },
-    series: [
-      {
-        name: "实时总功率(kwh)",
-        data: Array.isArray(powerData.y) ? powerData.y : [],
-        type: 'line',
-        symbol:'none',
-        smooth: true,
-        areaStyle: {}
-      }
-    ]
-  }
-  const AcClomns = [
-    {
-      title:'AC',
-      dataIndex:'name',
-      key:'name',
-      align:'center'
-    },{
-      title:'电压 (V)',
-      dataIndex:'v',
-      key:'v',
-      align:'center'
-    },{
-      title:'电流 (A)',
-      dataIndex:'i',
-      key:'i',
-      align:'center'
-    },{
-      title:'有功功率(kW)',
-      dataIndex:'p',
-      key:'p',
-      align:'center'
-    },{
-      title:'视在功率 (kVA)',
-      dataIndex:'ps',
-      key:'ps',
-      align:'center'
-    },{
-      title:'无功功率 (kVar)',
-      dataIndex:'q',
-      key:'q',
-      align:'center'
-    },{
-      title:'功率因数',
-      dataIndex:'pf',
-      key:'pf',
-      align:'center'
-    },
-  ]
-
-  const chartData = {
-    series1: [100, 150, 120, 180, 200, 170, 140, 160, 190, 220, 200, 180],
-    series2: [90, 140, 130, 170, 190, 160, 150, 170, 180, 210, 190, 170]
-  }
-
 
   return (
     <Pagecount bgcolor='transparent' pd="0">

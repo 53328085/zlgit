@@ -18,6 +18,8 @@ const ChartWrapper = styled.div`
 const PowerCompareChart = memo(({ chartData }) => {
   const { successColor, warningColor } = useSelector(themeColor);
   const hasSeries2 = Array.isArray(chartData?.series2) && chartData.series2.length > 0;
+  const series1Name = chartData?.series1Name || '功率趋势';
+  const series2Name = chartData?.series2Name || '对比趋势';
 
   const option = useMemo(() => ({
     type: 2,
@@ -27,7 +29,7 @@ const PowerCompareChart = memo(({ chartData }) => {
       axisPointer: { type: 'cross' }
     },
     legend: {
-      data: hasSeries2 ? ['08/01', '08/02'] : ['08/01'],
+      data: hasSeries2 ? [series1Name, series2Name] : [series1Name],
       top: 0,
       left: 'center',
       textStyle: { color: '#333' }
@@ -57,7 +59,7 @@ const PowerCompareChart = memo(({ chartData }) => {
     },
     series: [
       {
-        name: '08/01',
+        name: series1Name,
         type: 'line',
         data: chartData?.series1 || [],
         smooth: true,
@@ -68,7 +70,7 @@ const PowerCompareChart = memo(({ chartData }) => {
     ].concat(
       hasSeries2
         ? [{
-            name: '08/02',
+            name: series2Name,
             type: 'line',
             data: chartData?.series2 || [],
             smooth: true,
@@ -78,7 +80,7 @@ const PowerCompareChart = memo(({ chartData }) => {
           }]
         : []
     )
-  }), [chartData, hasSeries2, successColor, warningColor]);
+  }), [chartData, hasSeries2, series1Name, series2Name, successColor, warningColor]);
 
   return (
     <ChartWrapper>
