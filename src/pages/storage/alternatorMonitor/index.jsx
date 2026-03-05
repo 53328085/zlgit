@@ -1,6 +1,7 @@
 import React, { useEffect, useState} from 'react'
 import style from './style.module.less'
 import { message, DatePicker } from 'antd';
+import moment from 'moment'
 import { selectProjectId, selectOneLevel, levelDefaultLabel, selectOneLevelDefaultId, setCurrentlevel,themeColor } from '@redux/systemconfig.js'
 import {PCSMonitorRuntime, SiteManagerDesigner, StorageContainerDesigner, StorageMonitorRuntime } from '@api/api.js'
 import { useReactive, useRequest } from 'ahooks'
@@ -45,14 +46,14 @@ const Mainbox = styled.div`
 export default function Index() {
   let {exparams} = useOutletContext()
   let {areaId, projectId: exparamsProjectId, pcsId} = exparams || {}
-  let {value: pcs_id, label} = pcsId || {}
+  const currentPcsId = pcsId?.value
 
   // 优先使用 exparams 的 projectId，否则使用 redux 中的
   const reduxProjectId = useSelector(selectProjectId)
   const projectId = exparamsProjectId || reduxProjectId
 
   console.log('exparams:', exparams)
-  console.log('pcsId:', pcsId, 'pcs_id:', pcs_id)
+  console.log('pcsId:', pcsId, 'currentPcsId:', currentPcsId)
   console.log('exparamsProjectId:', exparamsProjectId, 'reduxProjectId:', reduxProjectId, 'projectId:', projectId)
 
   const {successColor, warningColor} = useSelector(themeColor)
@@ -94,10 +95,11 @@ export default function Index() {
     x: ['00:00', '04:00', '08:00', '12:00', '16:00', '20:00'],
     y: [85, 80, 75, 70, 65, 60]
   })
-  const [startDate, setStartDate] = useState(null)
-  const [endDate, setEndDate] = useState(null)
+  const [startDate, setStartDate] = useState(moment().subtract(1, 'day'))
+  const [endDate, setEndDate] = useState(moment())
   // 对比数据
   const [compareData, setCompareData] = useState({
+    xAxis: [],
     series1: [],
     series2: []
   })
@@ -118,10 +120,12 @@ export default function Index() {
   const fetchPowerTrends = async (params) => {
     try {
       const res = await queryPowerTrends(params.projectId, params.pcsId, params.startTime, params.endTime)
-      if (res.success && res.data) {
+      if (res.success && Array.isArray(res.data)) {
+        const time = res.data.map(item => item?.x || '')
+        const power = res.data.map(item => Number(item?.y) || 0)
         return {
-          time: res.data.time || [],
-          power: res.data.power || []
+          time,
+          power
         }
       } else {
         console.warn('获取功率趋势数据失败:', res.errMsg)
@@ -134,16 +138,21 @@ export default function Index() {
   }
   // 开始日期变化时触发接口调用
   const handleStartDateChange = async (date, dateString) => {
+    if (date && endDate && (date.isAfter?.(endDate, 'day') || date.isSame?.(endDate, 'day'))) {
+      message.warning('开始日期必须早于结束日期')
+      return
+    }
     setStartDate(date)
-    if (dateString && endDate && projectId) {
+    if (dateString && endDate && projectId && currentPcsId) {
       const res = await fetchPowerTrends({
         projectId,
-        pcsId: 1,
+        pcsId: currentPcsId,
         startTime: dateString,
         endTime: typeof endDate === 'string' ? endDate : endDate?.format('YYYY-MM-DD')
       })
       if (res) {
         setCompareData({
+          xAxis: res.time || [],
           series1: res.power || [],
           series2: []
         })
@@ -157,16 +166,21 @@ export default function Index() {
 
   // 结束日期变化时触发接口调用
   const handleEndDateChange = async (date, dateString) => {
+    if (date && startDate && (date.isBefore?.(startDate, 'day') || date.isSame?.(startDate, 'day'))) {
+      message.warning('结束日期必须晚于开始日期')
+      return
+    }
     setEndDate(date)
-    if (startDate && dateString && projectId) {
+    if (startDate && dateString && projectId && currentPcsId) {
       const res = await fetchPowerTrends({
         projectId,
-        pcsId: 1,
+        pcsId: currentPcsId,
         startTime: typeof startDate === 'string' ? startDate : startDate?.format('YYYY-MM-DD'),
         endTime: dateString
       })
       if (res) {
         setCompareData({
+          xAxis: res.time || [],
           series1: res.power || [],
           series2: []
         })
@@ -183,10 +197,9 @@ export default function Index() {
   })
 
   const getContent = () => {
-    if (!projectId) return
-    const pcsId = -1 // 先写死
-    console.log('Calling API with:', { projectId, pcsId })
-    StorageMonitorRuntime.queryPCSStatusInfo(projectId, pcsId).then(res => {
+    if (!projectId || !currentPcsId) return
+    console.log('Calling API with:', { projectId, pcsId: currentPcsId })
+    StorageMonitorRuntime.queryPCSStatusInfo(projectId, currentPcsId).then(res => {
       console.log('API response:', res)
       if (res.success && res.data) {
         setPcsName(res.data.name || '')
@@ -201,10 +214,9 @@ export default function Index() {
 
   // 获取实时运行参数数据
   const getRuntimeData = () => {
-    if (!projectId) return
-    const pcsId = -1 // 先写死
-    console.log('Calling QueryPCSDataInfo API with:', { projectId, pcsId })
-    StorageMonitorRuntime.queryPCSDataInfo(projectId, pcsId).then(res => {
+    if (!projectId || !currentPcsId) return
+    console.log('Calling QueryPCSDataInfo API with:', { projectId, pcsId: currentPcsId })
+    StorageMonitorRuntime.queryPCSDataInfo(projectId, currentPcsId).then(res => {
       console.log('QueryPCSDataInfo response:', res)
       if (res.success && res.data && Array.isArray(res.data)) {
         // 将数组格式转换为对象格式
@@ -231,10 +243,35 @@ export default function Index() {
   }
 
   useEffect(() => {
-    console.log('useEffect triggered:', { pcs_id, projectId })
+    console.log('useEffect triggered:', { currentPcsId, projectId })
     getContent()
     getRuntimeData()
-  }, [pcs_id, projectId])
+  }, [currentPcsId, projectId])
+
+  useEffect(() => {
+    if (!projectId || !currentPcsId || !startDate || !endDate) return
+    if (!startDate.isBefore?.(endDate, 'day')) return
+    const run = async () => {
+      const res = await fetchPowerTrends({
+        projectId,
+        pcsId: currentPcsId,
+        startTime: startDate.format('YYYY-MM-DD'),
+        endTime: endDate.format('YYYY-MM-DD')
+      })
+      if (res) {
+        setCompareData({
+          xAxis: res.time || [],
+          series1: res.power || [],
+          series2: []
+        })
+        setPowerData({
+          x: res.time || [],
+          y: res.power || []
+        })
+      }
+    }
+    run()
+  }, [projectId, currentPcsId])
   const socOption = {
     type:2,
     color:[warningColor],
@@ -392,9 +429,21 @@ export default function Index() {
           </Titlelayout>
           <Titlelayout title="总有功功率" extra={
             <div style={{ display: 'flex', gap: 12, alignItems: 'center' }}>
-              <DatePicker onChange={handleStartDateChange} />
+              <DatePicker
+                value={startDate}
+                onChange={handleStartDateChange}
+                disabledDate={(current) =>
+                  !!endDate && (current?.isAfter?.(endDate, 'day') || current?.isSame?.(endDate, 'day'))
+                }
+              />
               <span style={{ color: '#333', fontSize: 12 }}>对比</span>
-              <DatePicker onChange={handleEndDateChange} />
+              <DatePicker
+                value={endDate}
+                onChange={handleEndDateChange}
+                disabledDate={(current) =>
+                  !!startDate && (current?.isBefore?.(startDate, 'day') || current?.isSame?.(startDate, 'day'))
+                }
+              />
             </div>
           }>
             <PowerCompareChart chartData={compareData} />
