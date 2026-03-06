@@ -2,8 +2,8 @@ import React, { useEffect, useRef, useState, useCallback, useMemo } from 'react'
 import Building from '@com/building'
 import * as XLSX from "xlsx";
 import { useOutletContext } from 'react-router-dom';
-import { useSelector } from 'react-redux'
-import { adaptation } from "@redux/systemconfig";
+import { useSelector, useDispatch } from 'react-redux'
+import { adaptation, getinverterSN } from "@redux/systemconfig";
 import { useReactive, useRequest } from "ahooks";
 import Pagecount from "@com/pagecontent";
 import Ichart from "@com/useEcharts/Ichart"
@@ -36,7 +36,7 @@ export default function Index() {
 
   const { projectId, cabinet, refresh } = exparams || { cabinet: { value: '' } }
   const { value: cabinetId } = cabinet || { value: NaN }
-
+  const dispatch = useDispatch()
   const [cabinetDtl, setCabinetDtl] = useState({})
   const { coalInfo = {}, generationInfo = {} } = cabinetDtl || {}
   const [cabinetList, setCabinetList] = useState([])
@@ -169,7 +169,9 @@ export default function Index() {
 
   }, [projectId, cabinetId, refresh])
 
-
+  // useEffect(() => {
+  //   dispatch(getinverterSN(null))
+  // }, [])
 
 
 
@@ -303,6 +305,8 @@ export default function Index() {
   const navigate = useNavigate();
   const toDevicePage = (item) => {
     try {
+      console.log("item", item)
+      dispatch(getinverterSN(item.sn))
       navigate(`/index/runtimeSolar/inverterMonitor`, {
         state: {
           type: 'index', primary: 'runtimeSolar', title: '逆变器监控', nested: 'inverterMonitor'

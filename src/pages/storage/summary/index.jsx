@@ -28,14 +28,15 @@ export default function Index() {
   let { exparams } = useOutletContext()
 
   let { areaId, stationName, projectId } = exparams
-  const [title, siteId] = useMemo(() => {
-    return [`${stationName?.label}(${stationName?.value})`, stationName?.value]
-  }, [stationName])
-
+  const [cardData, setCardData] = useState(null)//卡片数据
+  const title = useMemo(() => {
+    return `${cardData?.name}(${cardData?.no})`
+  }, [cardData])
+  const siteId = stationName?.value
   let { islight } = useSelector(themeColor)
 
   const navigate = useNavigate()
-  const [cardData, setCardData] = useState(null)//卡片数据
+
   const [warningData, setWarningData] = useState([])//最新告警
 
   const getsiteData = async () => {

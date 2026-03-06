@@ -129,7 +129,7 @@ export default function Index() {
   }
 
   useEffect(() => {
-    if (Number.isInteger(parseInt(projectId)) && inverter && typeof inverter === 'string') {
+    if (Number.isInteger(parseInt(projectId)) && inverter && typeof inverter === 'string' && Number.isInteger(parseInt(refresh))) {
       queryInfo()
       getTrend()
     }
@@ -338,7 +338,7 @@ export default function Index() {
           <Titlelayout title={'发电实时功率'}>
             <Ichart custoption={custoption} />
           </Titlelayout>
-          <Titlelayout title={'发电概览'}>
+          <Titlelayout title={'发电概览'} layout="flex">
             <div className='infoBox2'>
               <div className='info'>
                 <div className='box'>
@@ -389,7 +389,7 @@ export default function Index() {
               </div>
             </div>
           </Titlelayout>
-          <Titlelayout title={'碳排概览'}>
+          <Titlelayout title={'碳排概览'} layout="flex">
             <div className='infoBox2'>
               <div className='info'>
                 <div className='box'>

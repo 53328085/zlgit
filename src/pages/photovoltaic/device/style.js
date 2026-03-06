@@ -128,17 +128,22 @@ export const TopBox = styled.div`
  .infoBox2{
  display:flex;
  align-items: center;
- justify-content: space-around;
+ justify-content: space-between;
+ flex:1;
+ column-gap: 16px;
  .info{
     display: grid;
     gap: 16px;
     color:#606266;
+     height: 100%;
+      grid-template-rows: repeat(3, 1fr);
+      flex:1;
     .box{
     display: flex;
     align-items: center;
     border-radius: 4px;
-    height: 62px;
-    width: 250px;
+  //  height: 62px;
+   // width: 250px;
     padding-left:16px;
     background-color:${(props) => getBackgroundColor(props.theme)};
   .powerIcon{

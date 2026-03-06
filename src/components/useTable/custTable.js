@@ -1,5 +1,5 @@
-import styled, {css} from "styled-components"
-import {Table} from 'antd'
+import styled, { css } from "styled-components"
+import { Table } from 'antd'
 const sty = css`
 .ant-empty-normal .ant-empty-image {
   display: none;
@@ -14,7 +14,7 @@ flex-direction: column;
 .ant-table-title {
   border: none;
   font-size: ${props => props.tfs || '16px'};
-  color:${props=> props.theme.isdark ? 'dark' : "#515151"} ;
+  color:${props => props.theme.isdark ? 'dark' : "#515151"} ;
   padding-bottom: 16px;
 }
 .ant-table-tbody {
@@ -30,11 +30,14 @@ flex-direction: column;
     .ant-table-thead{
       .ant-table-cell {
         padding: ${props => props.pd || '4px 4px'} ;
-        background-color: ${props=>  props.theme.isdark ? 'dark' : "#ecf5ff"};//${props => props.istheme ? props.theme.primaryColor : props.hbg};
-        color: ${props=>props.theme.isdark ? "dark" : "#515151"} ; //${props => props.hbc || ((props.istheme || props.hbg) ? '#fff' : '#515151')};
+        background-color: ${props => props.theme.isdark ? 'dark' : "#ecf5ff"};//${props => props.istheme ? props.theme.primaryColor : props.hbg};
+        color: ${props => props.theme.isdark ? "dark" : "#515151"} ; //${props => props.hbc || ((props.istheme || props.hbg) ? '#fff' : '#515151')};
       }
     }
     .ant-table-tbody {
+     tr:nth-child(odd) {
+       background-color: ${props => props.theme.isdark ? 'dark' : (props.oddbg || "#fff")} 
+     }
       .ant-table-row{
         .ant-table-cell {
           padding: ${props => props.pd || '4px 4px'} ;
