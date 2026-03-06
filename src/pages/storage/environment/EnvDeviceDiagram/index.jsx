@@ -1,17 +1,14 @@
-import React, { memo, useEffect, useMemo, useRef, useState } from "react";
+import React, { memo, useMemo } from "react";
 import {
   CheckCircleOutlined,
   ExclamationCircleOutlined,
   FileTextOutlined,
-  LeftOutlined,
-  RightOutlined,
 } from "@ant-design/icons";
 import deviceImg from "../../../../assets/image/energyStorageEquipment.png";
 import {
   DiagramViewport,
   DiagramScroller,
   DiagramCanvas,
-  ScrollActionButton,
   StationBadge,
   StationStem,
   MainBusLine,
@@ -48,12 +45,10 @@ import {
 } from "../constants";
 
 const SIDE_PADDING = 36;
-const CARD_WIDTH = 372;
-const CARD_GAP = 34;
-const CARD_ROLL_STEP = CARD_WIDTH + CARD_GAP;
-const BUS_Y = 84;
-const NODE_TOP = 134;
-const EPSILON = 2;
+const CARD_WIDTH = 340;
+const CARD_GAP = 28;
+const BUS_Y = 60;
+const NODE_TOP = 88;
 
 const DEFAULT_LIQUID = { mode: "--", temperature: "--" };
 const DEFAULT_DEHUMIDIFIER = { humidity: "--", temperature: "--", status: "--" };
@@ -286,11 +281,11 @@ function toContainerVM(container, index) {
  *
  * @author ybdpx
  */
-function calcCanvasLayout(viewportWidth, count) {
+function calcCanvasLayout(count) {
   const safeCount = Math.max(count, 1);
   const contentWidth = safeCount * CARD_WIDTH + (safeCount - 1) * CARD_GAP;
   const minimumCanvasWidth = SIDE_PADDING * 2 + contentWidth;
-  const canvasWidth = Math.max(viewportWidth, minimumCanvasWidth);
+  const canvasWidth = minimumCanvasWidth;
   const startX = (canvasWidth - contentWidth) / 2;
   const centers = Array.from({ length: safeCount }, (_, idx) => {
     return startX + idx * (CARD_WIDTH + CARD_GAP) + CARD_WIDTH / 2;
@@ -387,70 +382,12 @@ export default memo(function EnvDeviceDiagram({
   errorText,
   onRetry,
 }) {
-  const viewportRef = useRef(null);
-  const scrollerRef = useRef(null);
-  const [viewportWidth, setViewportWidth] = useState(0);
-  const [hasOverflow, setHasOverflow] = useState(false);
-  const [canScrollLeft, setCanScrollLeft] = useState(false);
-  const [canScrollRight, setCanScrollRight] = useState(false);
 
   const containerVMs = useMemo(() => {
     return safeList(containers).map((item, index) => toContainerVM(item, index));
   }, [containers]);
 
-  const layout = useMemo(() => calcCanvasLayout(viewportWidth, containerVMs.length), [
-    viewportWidth,
-    containerVMs.length,
-  ]);
-
-  const updateScrollState = () => {
-    const node = scrollerRef.current;
-    if (!node) return;
-    const overflow = node.scrollWidth - node.clientWidth > EPSILON;
-    setHasOverflow(overflow);
-    setCanScrollLeft(node.scrollLeft > EPSILON);
-    setCanScrollRight(node.scrollLeft + node.clientWidth < node.scrollWidth - EPSILON);
-  };
-
-  useEffect(() => {
-    const viewport = viewportRef.current;
-    const scroller = scrollerRef.current;
-    if (!viewport || !scroller) return undefined;
-
-    const syncLayout = () => {
-      setViewportWidth(viewport.clientWidth || 0);
-      updateScrollState();
-    };
-
-    const onScroll = () => updateScrollState();
-    scroller.addEventListener("scroll", onScroll);
-
-    const observer = new ResizeObserver(syncLayout);
-    observer.observe(viewport);
-    observer.observe(scroller);
-    window.addEventListener("resize", syncLayout);
-
-    const raf = requestAnimationFrame(syncLayout);
-    return () => {
-      cancelAnimationFrame(raf);
-      scroller.removeEventListener("scroll", onScroll);
-      observer.disconnect();
-      window.removeEventListener("resize", syncLayout);
-    };
-  }, [containerVMs.length]);
-
-  useEffect(() => {
-    updateScrollState();
-  }, [layout.canvasWidth, containerVMs.length]);
-
-  const onStepScroll = (direction) => {
-    const node = scrollerRef.current;
-    if (!node) return;
-    node.scrollBy({
-      left: direction === "left" ? -CARD_ROLL_STEP : CARD_ROLL_STEP,
-      behavior: "smooth",
-    });
-  };
+  const layout = useMemo(() => calcCanvasLayout(containerVMs.length), [containerVMs.length]);
 
   if (loading && containerVMs.length === 0) {
     return <EmptyData>{ENV_MONITOR_TEXT.LOADING}</EmptyData>;
@@ -477,31 +414,8 @@ export default memo(function EnvDeviceDiagram({
   const stationCenter = layout.canvasWidth / 2;
 
   return (
-    <DiagramViewport ref={viewportRef}>
-      {hasOverflow && (
-        <>
-          <ScrollActionButton
-            type="button"
-            $side="left"
-            onClick={() => onStepScroll("left")}
-            disabled={!canScrollLeft}
-            aria-label="向左滚动储能柜"
-          >
-            <LeftOutlined />
-          </ScrollActionButton>
-          <ScrollActionButton
-            type="button"
-            $side="right"
-            onClick={() => onStepScroll("right")}
-            disabled={!canScrollRight}
-            aria-label="向右滚动储能柜"
-          >
-            <RightOutlined />
-          </ScrollActionButton>
-        </>
-      )}
-
-      <DiagramScroller ref={scrollerRef}>
+    <DiagramViewport>
+      <DiagramScroller>
         <DiagramCanvas style={{ width: layout.canvasWidth }}>
           <StationBadge style={{ left: stationCenter }}>{stationText}</StationBadge>
           <StationStem style={{ left: stationCenter, top: 56, height: BUS_Y - 56 }} />

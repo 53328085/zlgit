@@ -8,19 +8,23 @@ const colorCardBg = "rgba(0, 0, 0, 0.5)";
 
 export const DiagramViewport = styled.div`
   position: relative;
+  flex: 1;
   width: 100%;
-  height: 860px;
+  height: 100%;
+  min-height: 0;
   margin-top: 14px;
   overflow: hidden;
 `;
 
 export const DiagramScroller = styled.div`
   position: relative;
+  display: flex;
+  justify-content: center;
   width: 100%;
   height: 100%;
-  overflow-x: auto;
-  overflow-y: hidden;
-  scroll-behavior: smooth;
+  min-height: 0;
+  overflow-x: hidden;
+  overflow-y: auto;
 
   scrollbar-width: none;
   -ms-overflow-style: none;
@@ -31,59 +35,29 @@ export const DiagramScroller = styled.div`
 
 export const DiagramCanvas = styled.div`
   position: relative;
-  height: 100%;
-  min-width: 100%;
-`;
-
-export const ScrollActionButton = styled.button`
-  position: absolute;
-  top: 50%;
-  ${(props) => (props.$side === "left" ? "left: 6px;" : "right: 6px;")}
-  transform: translateY(-50%);
-  z-index: 4;
-  width: 30px;
-  height: 52px;
-  border: 1px solid rgba(70, 199, 255, 0.5);
-  border-radius: 6px;
-  background: rgba(10, 22, 40, 0.85);
-  color: #d8efff;
-  cursor: pointer;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  transition: all 0.2s ease;
-
-  &:hover:not(:disabled) {
-    color: #fff;
-    border-color: rgba(70, 199, 255, 0.85);
-    box-shadow: 0 0 10px rgba(70, 199, 255, 0.34);
-  }
-  &:disabled {
-    color: rgba(216, 239, 255, 0.35);
-    border-color: rgba(70, 199, 255, 0.24);
-    cursor: not-allowed;
-  }
+  min-height: 100%;
+  flex: 0 0 auto;
 `;
 
 export const StackNameBadge = styled.div`
   position: absolute;
   top: 0;
   transform: translateX(-50%);
-  min-width: 230px;
+  min-width: 210px;
   border-radius: 10px;
   background: linear-gradient(180deg, #2f5ce6 0%, #1f43bb 100%);
   color: ${colorText};
-  font-size: 18px;
+  font-size: 16px;
   font-weight: 600;
   line-height: 1;
   text-align: center;
-  padding: 12px 16px;
+  padding: 10px 14px;
   white-space: nowrap;
 `;
 
 export const StackBlockWrap = styled.div`
   position: absolute;
-  width: 224px;
+  width: 208px;
 `;
 
 export const TopStemLine = styled.img`
@@ -103,11 +77,11 @@ export const MainBusLine = styled.div`
 export const ClusterRow = styled.div`
   position: absolute;
   display: flex;
-  gap: 22px;
+  gap: 18px;
 `;
 
 export const ClusterNode = styled.div`
-  width: 224px;
+  width: 208px;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -115,29 +89,29 @@ export const ClusterNode = styled.div`
 `;
 
 export const BranchLineImg = styled.img`
-  width: 150px;
-  height: 160px;
+  width: 132px;
+  height: 132px;
   object-fit: fill;
   pointer-events: none;
 `;
 
 export const DetailCard = styled.div`
-  width: 224px;
-  min-height: ${(props) => (props.$isStack ? "130px" : "294px")};
+  width: 208px;
+  min-height: ${(props) => (props.$isStack ? "120px" : "268px")};
   background: ${colorCardBg};
   border-radius: 6px;
   border: 1px solid ${colorBorder};
   box-shadow: 0 0 10px rgba(70, 199, 255, 0.18);
-  padding: ${(props) => (props.$isStack ? "10px" : "12px")};
+  padding: ${(props) => (props.$isStack ? "8px" : "10px")};
   color: ${colorText};
   display: flex;
   flex-direction: column;
-  row-gap: ${(props) => (props.$isStack ? "10px" : "12px")};
+  row-gap: ${(props) => (props.$isStack ? "8px" : "10px")};
 `;
 
 export const CardTitle = styled.div`
   font-weight: 600;
-  font-size: 15px;
+  font-size: 14px;
   color: ${colorText};
   display: flex;
   justify-content: center;
@@ -148,7 +122,7 @@ export const CardTitle = styled.div`
 
 export const StateGrid = styled.div`
   display: grid;
-  grid-template-rows: repeat(2, 24px);
+  grid-template-rows: repeat(2, 22px);
   border-radius: 2px;
   overflow: hidden;
 `;
@@ -169,8 +143,8 @@ export const StateValue = styled.div`
 
 export const ProgressGroup = styled.div`
   display: grid;
-  grid-auto-rows: 24px;
-  row-gap: 4px;
+  grid-auto-rows: 22px;
+  row-gap: 3px;
 `;
 
 export const ProgressLine = styled.div`
@@ -189,7 +163,7 @@ export const ProgressLine = styled.div`
 export const ValueGrid = styled.div`
   display: grid;
   grid-template-columns: 1fr 1fr;
-  grid-auto-rows: 24px;
+  grid-auto-rows: 22px;
   border-radius: 2px;
   overflow: hidden;
   background: ${colorBlock};
@@ -220,7 +194,8 @@ export const EmptyMetric = styled.div`
 `;
 
 export const EmptyData = styled.div`
-  height: 860px;
+  flex: 1;
+  min-height: 0;
   display: flex;
   align-items: center;
   justify-content: center;

@@ -9,18 +9,21 @@ const colorWarn = "#ffb629";
 
 export const DiagramViewport = styled.div`
   position: relative;
+  flex: 1;
   width: 100%;
-  min-height: 880px;
+  min-height: 0;
   overflow: hidden;
 `;
 
 export const DiagramScroller = styled.div`
   position: relative;
+  display: flex;
+  justify-content: center;
+  height: 100%;
   width: 100%;
-  min-height: 880px;
-  overflow-x: auto;
-  overflow-y: hidden;
-  scroll-behavior: smooth;
+  min-height: 0;
+  overflow-x: hidden;
+  overflow-y: auto;
   scrollbar-width: none;
   -ms-overflow-style: none;
 
@@ -31,39 +34,8 @@ export const DiagramScroller = styled.div`
 
 export const DiagramCanvas = styled.div`
   position: relative;
-  min-height: 880px;
-  min-width: 100%;
-`;
-
-export const ScrollActionButton = styled.button`
-  position: absolute;
-  top: 50%;
-  ${(props) => (props.$side === "left" ? "left: 8px;" : "right: 8px;")}
-  transform: translateY(-50%);
-  z-index: 8;
-  width: 30px;
-  height: 56px;
-  border-radius: 6px;
-  border: 1px solid rgba(70, 199, 255, 0.5);
-  background: rgba(10, 22, 40, 0.88);
-  color: #d8efff;
-  cursor: pointer;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  transition: all 0.2s ease;
-
-  &:hover:not(:disabled) {
-    color: #fff;
-    border-color: rgba(70, 199, 255, 0.85);
-    box-shadow: 0 0 10px rgba(70, 199, 255, 0.36);
-  }
-
-  &:disabled {
-    color: rgba(216, 239, 255, 0.35);
-    border-color: rgba(70, 199, 255, 0.24);
-    cursor: not-allowed;
-  }
+  min-height: 100%;
+  flex: 0 0 auto;
 `;
 
 export const StationBadge = styled.div`
@@ -74,11 +46,11 @@ export const StationBadge = styled.div`
   border-radius: 8px;
   background: linear-gradient(180deg, #2f5ce6 0%, #1f43bb 100%);
   color: ${colorText};
-  font-size: 18px;
+  font-size: 16px;
   font-weight: 600;
   line-height: 1;
   text-align: center;
-  padding: 10px 18px;
+  padding: 8px 16px;
   white-space: nowrap;
 `;
 
@@ -117,7 +89,7 @@ export const NodeStem = styled.div`
 
 export const CardNode = styled.div`
   position: absolute;
-  width: 372px;
+  width: 340px;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -125,27 +97,27 @@ export const CardNode = styled.div`
 `;
 
 export const NodeBadge = styled.div`
-  min-width: 160px;
+  min-width: 148px;
   border-radius: 8px;
   background: linear-gradient(180deg, #2f5ce6 0%, #1f43bb 100%);
   color: ${colorText};
-  font-size: 18px;
+  font-size: 16px;
   font-weight: 600;
   line-height: 1;
   text-align: center;
-  padding: 10px 14px;
-  margin-bottom: 10px;
+  padding: 8px 12px;
+  margin-bottom: 8px;
 `;
 
 export const CabinetFigure = styled.div`
-  width: 110px;
-  height: 132px;
+  width: 96px;
+  height: 116px;
   border-radius: 6px;
   display: flex;
   align-items: center;
   justify-content: center;
   padding: 4px;
-  margin-bottom: 10px;
+  margin-bottom: 8px;
 `;
 
 export const CabinetImage = styled.img`
@@ -155,8 +127,8 @@ export const CabinetImage = styled.img`
 `;
 
 export const CabinetBase = styled.div`
-  width: 84px;
-  height: 16px;
+  width: 72px;
+  height: 14px;
   border: 1px solid ${colorBorder};
   border-bottom: none;
   border-radius: 2px;
@@ -164,23 +136,23 @@ export const CabinetBase = styled.div`
 `;
 
 export const DetailCard = styled.div`
-  width: 372px;
-  min-height: 438px;
+  width: 340px;
+  min-height: 392px;
   background: ${colorCardBg};
   border-radius: 8px;
   border: 1px solid ${colorBorder};
   box-shadow: 0 0 10px rgba(70, 199, 255, 0.2);
   color: ${colorText};
-  padding: 14px;
+  padding: 12px;
   display: flex;
   flex-direction: column;
-  row-gap: 14px;
+  row-gap: 12px;
   margin-top: 0;
 `;
 
 export const CardTitle = styled.div`
   font-weight: 600;
-  font-size: 16px;
+  font-size: 15px;
   line-height: 1;
   text-align: center;
 `;
@@ -192,12 +164,12 @@ export const ModuleBlock = styled.div`
 `;
 
 export const ModuleTitle = styled.div`
-  height: 30px;
+  height: 28px;
   background: rgba(30, 80, 230, 0.9);
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 15px;
+  font-size: 14px;
   border-radius: 2px 2px 0 0;
 `;
 
@@ -214,7 +186,7 @@ export const MetricItem = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: ${(props) => (props.$small ? "14px" : "16px")};
+  font-size: ${(props) => (props.$small ? "13px" : "14px")};
   color: ${(props) => (props.$highlight ? colorValue : "#dce5f7")};
 `;
 
@@ -225,8 +197,8 @@ export const MetricLabel = styled(MetricItem)`
 export const FireList = styled.div`
   background: ${colorBlock};
   border-radius: 0 0 2px 2px;
-  min-height: 104px;
-  padding: 10px 12px;
+  min-height: 92px;
+  padding: 8px 10px;
   display: flex;
   flex-direction: column;
   row-gap: 8px;
@@ -257,7 +229,7 @@ export const FireTime = styled.span`
 `;
 
 export const FireStatus = styled.div`
-  min-height: 104px;
+  min-height: 92px;
   background: ${colorBlock};
   border-radius: 0 0 2px 2px;
   display: flex;
@@ -268,7 +240,7 @@ export const FireStatus = styled.div`
   color: rgba(238, 243, 250, 0.9);
 
   .icon {
-    font-size: 30px;
+    font-size: 26px;
     color: ${(props) => {
       if (props.$warning === true) return "#ff4d4f";
       if (props.$warning === false) return "#52c41a";
@@ -278,7 +250,8 @@ export const FireStatus = styled.div`
 `;
 
 export const EmptyData = styled.div`
-  min-height: 880px;
+  flex: 1;
+  min-height: 0;
   display: flex;
   flex-direction: column;
   align-items: center;
