@@ -1,11 +1,11 @@
 import React, { useState, useEffect, useRef, useMemo, Fragment } from "react";
-import {useLocation} from 'react-router-dom'
+import { useLocation } from 'react-router-dom'
 import { Form, Select, Space, DatePicker, message, Input, Button, Typography } from "antd";
 import { useRequest } from 'ahooks'
 import styled from "styled-components";
 import { ExportExcel, i18t, CustTransO } from '@com/useButton'
 import { useSelector, useDispatch } from 'react-redux'
-import { levelDefaultLabel,getsaveDeviceID,prodeviceType, selectProjectId, deviceID,selectshifts,energyType, filterDeviceStyle, selectOneLevelDefaultId, selectOneLevel, setCurrentlevel, deviceStyle, getThemeColor, themeColor, setIntl, adaptation,lightlevel } from '@redux/systemconfig.js'
+import { levelDefaultLabel, getsaveDeviceID, prodeviceType, selectProjectId, deviceID, selectshifts, energyType, filterDeviceStyle, selectOneLevelDefaultId, selectOneLevel, setCurrentlevel, deviceStyle, getThemeColor, themeColor, setIntl, adaptation, lightlevel, inverterSN } from '@redux/systemconfig.js'
 import moment from "moment";
 import 'moment/locale/zh-cn';
 const { RangePicker } = DatePicker;
@@ -15,7 +15,7 @@ import {
   SyncOutlined,
 } from '@ant-design/icons';
 const { Link } = Typography
-import { publicdateType, Daterange,   w88,viewopt,DefineDateRange } from "./data"
+import { publicdateType, Daterange, w88, viewopt, DefineDateRange } from "./data"
 import Enery from "./enery";
 import AreaLevel from './areas'
 import SubAreas from './subareas'
@@ -23,10 +23,10 @@ import SubAreas from './subareas'
 const { FindContainerList } = StorageContainerDesigner  //储能柜
 
 const Cform = styled(Form)`
-    background: ${props=>props.theme.isdark ? "dark" : "#fff"} ;
+    background: ${props => props.theme.isdark ? "dark" : "#fff"} ;
     padding: 7px 16px;
-    border-top: 1px solid ${props=>props.theme.isdark ? "dark" : "#dedede"};
-    border-bottom: 1px solid ${props=>props.theme.isdark ? "dark" : "#dedede"};
+    border-top: 1px solid ${props => props.theme.isdark ? "dark" : "#dedede"};
+    border-bottom: 1px solid ${props => props.theme.isdark ? "dark" : "#dedede"};
     height: max-content;
     display: flex;
     gap: 16px;
@@ -38,27 +38,28 @@ const Cform = styled(Form)`
    }
 `
 
-export {Cform};
+export { Cform };
 
 const { Item } = Form;
-export const AreaSelect = ({ value, onChange, isall,    ...otherProps }) => {
+let refreshvalue = 1
+export const AreaSelect = ({ value, onChange, isall, ...otherProps }) => {
   const levelone = useSelector(selectOneLevel)
   const laptop = useSelector(adaptation)?.laptop
-   const lightone = useSelector(lightlevel)
+  const lightone = useSelector(lightlevel)
   const location = useLocation();
-   const { state } = location
-   const w200 = laptop ? { width: 160 } : { width: 200 }
+  const { state } = location
+  const w200 = laptop ? { width: 160 } : { width: 200 }
   const options = useMemo(() => {
-     let levels = state?.primary==="lightManagement" ? lightone : levelone
-     const filter = levels?.filter?.(f => f.id != 0);
+    let levels = state?.primary === "lightManagement" ? lightone : levelone
+    const filter = levels?.filter?.(f => f.id != 0);
 
 
-     return isall ? [isall, ...filter] : filter
+    return isall ? [isall, ...filter] : filter
 
 
-  }, [levelone,lightone, state?.primary, isall])
+  }, [levelone, lightone, state?.primary, isall])
   return (
-    <Select   style={w200} {...otherProps} defaultValue={value} onChange={onChange} options={options}  fieldNames={{ label: 'name', value: 'id', options: 'options' }}>
+    <Select style={w200} {...otherProps} defaultValue={value} onChange={onChange} options={options} fieldNames={{ label: 'name', value: 'id', options: 'options' }}>
 
     </Select>
   )
@@ -72,7 +73,7 @@ export default function UseSerach(props) {
 
   const { config = {}, custview = null, record = null } = props
 
-  const { isAreaId = true, gas = true, isLevles=false, daterang = 'day', formsty = {}, onlye=false } = config
+  const { isAreaId = true, gas = true, isLevles = false, daterang = 'day', formsty = {}, onlye = false } = config
 
   const dispatch = useDispatch()
 
@@ -86,26 +87,27 @@ export default function UseSerach(props) {
   const varlabel = useSelector(levelDefaultLabel)
   const oneLevelDefaultId = useSelector(selectOneLevelDefaultId) // 选择后的值
   let [AreaID, setAreaid] = useState(oneLevelDefaultId)
- // const [energyoptions, setEnergyoptions] = useState([])
-  const energyTypes=useSelector(energyType)
-  const energyoptions =useMemo(()=> {
-     let options = energyTypes?.map?.(i => ({ label: i.name, value: i.type }))
-     if (onlye) {
-       options = options.filter(d => d.value == 1)
-     }
-     return options
-  }, [energyTypes,onlye])
+  // const [energyoptions, setEnergyoptions] = useState([])
+  const energyTypes = useSelector(energyType)
+  const energyoptions = useMemo(() => {
+    let options = energyTypes?.map?.(i => ({ label: i.name, value: i.type }))
+    if (onlye) {
+      options = options.filter(d => d.value == 1)
+    }
+    return options
+  }, [energyTypes, onlye])
 
 
   const levelone = useSelector(selectOneLevel)
   const { laptop } = useSelector(adaptation)
-  const defauledeviceID =useSelector(deviceID)
+  const defauledeviceID = useSelector(deviceID)
+  const invertersn = useSelector(inverterSN)
   //const DeviceStyle = useSelector(filterDeviceStyle)
   const [DeviceStyle, setDeviceStyle] = useState(null)
 
-  const devices =useSelector(prodeviceType)
-  const w200 = useMemo(()=> {
-   return laptop ? { width: 160 } : { width: 200 }
+  const devices = useSelector(prodeviceType)
+  const w200 = useMemo(() => {
+    return laptop ? { width: 160 } : { width: 200 }
   }, [laptop])
 
   let shifts = useSelector(selectshifts)
@@ -116,53 +118,7 @@ export default function UseSerach(props) {
   const [pcsoptions, setPcsoptions] = useState([])
   const [tankoptions, setTankoptions] = useState([])
   const [bmsoptions, setBmsoptions] = useState([])
-  //const deviceStyles = useSelector(deviceStyle)
- // console.log("defauledeviceID",defauledeviceID)
- // let currdeviceStyle = `deviceStyle_${projectId}`
- /*   const getDever = async () => {
-    try {
-      let stordevices = window.localStorage.getItem(currdeviceStyle);
-      let initdeviceStyle = parseInt(stordevices)
 
-      let { success, data } = await Editapi.FilterDeviceStyle(projectId)
-      if (success && Array.isArray(data) && data.length > 0) {
-        let filte = data.filter(d => d.deviceStyle != 6)?.map(i=>({label: i.name, value: i.deviceStyle}))
-        setDeviceStyle(filte)
-      if (initdeviceStyle && filte.find(d => d.deviceStyle == initdeviceStyle)) {
-         form.setFieldValue('deviceStyle', initdeviceStyle)
-        } else {
-          form.setFieldValue('deviceStyle', filte[0].value)
-        }
-      } else {
-        setDeviceStyle([])
-        form.setFieldValue('deviceStyle', null)
-        if (!success) return
-        if (filte?.length == 0) message.warning('没有设置设备')
-      }
-
-      props.setexparams({ ...form.getFieldsValue(true) })
-    } catch (error) {
-      console.log(error)
-    }
-
-  }  */
-
-/*   const getEnergyType = async () => {
-    try {
-      if (!Number.isInteger(parseInt(projectId))) return
-      let { success, data } = await Editapi.QueryEnergyType(projectId)
-      if (success && Array.isArray(data) && data?.length) {
-        let types = data.map((d, index) => ({ label: d.name, value: d.type }))
-        energyTypeDefault.current = types[0].value
-        setEnergyoptions(types)
-      } else {
-        energyTypeDefault.current = 1
-        setEnergyoptions([])
-      }
-    } catch (error) {
-      console.log(error)
-    }
-  } */
   const getopti = async () => { // 站点选择
     try {
       let { success, data, errMsg } = await SiteManagerDesigner.FindSiteList(projectId, AreaID)
@@ -181,7 +137,7 @@ export default function UseSerach(props) {
         setOptions([])
         form.setFieldsValue({
           stationName: { label: null, value: null, id: null },
-          containerId:{ label: null, value: null },
+          containerId: { label: null, value: null },
         })
         props.setexparams({ ...form.getFieldsValue(true) })
         if (!success) return message.warning(errMsg)
@@ -201,22 +157,22 @@ export default function UseSerach(props) {
 
 
   }, [props.config, AreaID, projectId])
-  useEffect(()=>{
-     if(config.isdevsty) {
-       form.setFieldValue("deviceStyle",defauledeviceID)
-       props.setexparams({ ...form.getFieldsValue(true) })
-     }
-  },[config.isdevsty,defauledeviceID])
-/*   useEffect(() => {
-    if (Number.isInteger(projectId) && props.config?.isdevsty) {
-      getDever()
+  useEffect(() => {
+    if (config.isdevsty) {
+      form.setFieldValue("deviceStyle", defauledeviceID)
+      props.setexparams({ ...form.getFieldsValue(true) })
     }
+  }, [config.isdevsty, defauledeviceID])
+  /*   useEffect(() => {
+      if (Number.isInteger(projectId) && props.config?.isdevsty) {
+        getDever()
+      }
+  
+    }, [projectId, props.config?.isdevsty]) */
 
-  }, [projectId, props.config?.isdevsty]) */
-
-/*   useEffect(() => {
-    getEnergyType()
-  }, [projectId]) */
+  /*   useEffect(() => {
+      getEnergyType()
+    }, [projectId]) */
 
   const onChange = (e, option) => {
     dispatch(setCurrentlevel(option))
@@ -276,8 +232,8 @@ export default function UseSerach(props) {
   const viewtype = (<Item label="能源类型" name="view" initialValue={1} >
     <Select
       options={viewopt}
-       style={w200}
-       onChange={() => props.setexparams({ ...form.getFieldsValue(true) })}
+      style={w200}
+      onChange={() => props.setexparams({ ...form.getFieldsValue(true) })}
     />
   </Item>
   )
@@ -323,7 +279,7 @@ export default function UseSerach(props) {
 
 
   const getPcs = async () => {
-    if(!props.config?.isPcs){
+    if (!props.config?.isPcs) {
       return
     }
     try {
@@ -376,15 +332,15 @@ export default function UseSerach(props) {
 
   const deviceStyleChange = (v) => {
 
-     dispatch(getsaveDeviceID(v))
+    dispatch(getsaveDeviceID(v))
   }
 
-  const deviceStyleNode =useMemo(()=>{
-      return(<Item name="deviceStyle" label={i18t("comm", "type", { text: "设备" })} initialValue={defauledeviceID} >
-      <Select options={devices} fieldNames={{label:"name",value:"deviceStyle"}}   style={w200} onChange={deviceStyleChange} {...filterProps}></Select>
+  const deviceStyleNode = useMemo(() => {
+    return (<Item name="deviceStyle" label={i18t("comm", "type", { text: "设备" })} initialValue={defauledeviceID} >
+      <Select options={devices} fieldNames={{ label: "name", value: "deviceStyle" }} style={w200} onChange={deviceStyleChange} {...filterProps}></Select>
     </Item>)
 
-  },[defauledeviceID,devices])
+  }, [defauledeviceID, devices])
 
   // 储能柜变化时触发
   const onTankChange = () => {
@@ -433,7 +389,7 @@ export default function UseSerach(props) {
 
           if (type == 4) {
             return <Form.Item name="publicrangedate" initialValue={[moment().startOf("day"), moment().endOf("day")]}  >
-              <Daterange rangeDate={props.config?.rangeDate || 31} />
+              <Daterange rangeDate={props.config?.rangeDate || 45} />
             </Form.Item>
           } else {
             return <Form.Item name="publicdate" initialValue={moment()}>
@@ -444,11 +400,11 @@ export default function UseSerach(props) {
       }
     </Form.Item>
     {!props.config?.shiftNo && <Item name="shiftNo" initialValue={0}>
-        <Select style={{ width: '100px' }} options={allshifts} fieldNames={{ label: 'name', value: 'id' }}
+      <Select style={{ width: '100px' }} options={allshifts} fieldNames={{ label: 'name', value: 'id' }}
 
-        ></Select>
-      </Item>
-      }
+      ></Select>
+    </Item>
+    }
 
   </Space>
 
@@ -488,7 +444,7 @@ export default function UseSerach(props) {
     try {
       if (!props.config.cabinet) return
       let { areaId, photovoltaicPowerStation } = form.getFieldsValue(true)
-    //  console.log(areaId, photovoltaicPowerStation)
+      //  console.log(areaId, photovoltaicPowerStation)
       let { success, data, errMsg } = await PhotovoltaicPowerGeneration.QueryGirdCabientList(projectId, areaId, photovoltaicPowerStation?.value)
       if (success && Array.isArray(data) && data.length > 0) {
         setCabinetData(data)
@@ -518,9 +474,16 @@ export default function UseSerach(props) {
       if (success && Array.isArray(data) && data.length > 0) {
         setInverterData(data)
 
-        form.setFieldsValue({
-          inverter: data[0].sn
-        })
+        if (invertersn && data.findIndex(d => d.sn == invertersn) > -1) {
+          form.setFieldsValue({
+            inverter: invertersn
+          })
+        } else {
+          form.setFieldsValue({
+            inverter: data[0].sn
+          })
+        }
+
         props.setexparams({ ...form.getFieldsValue(true) })
       } else {
         setInverterData([])
@@ -557,10 +520,10 @@ export default function UseSerach(props) {
     </Item>
   )
   const onRefresh = () => {
-    props.setexparams({ ...form.getFieldsValue(), refresh: {} });
+    props.setexparams({ ...form.getFieldsValue(), refresh: ++refreshvalue });
   }
   const refresh = (
-    <Item name="refresh" style={{ color: `${primaryColor}` }} initialValue={{ name: "refresh" }}>
+    <Item name="refresh" style={{ color: `${primaryColor}` }} initialValue={1}>
       <Link onClick={onRefresh}><SyncOutlined style={{ color: `${primaryColor}` }} /> 刷新</Link>
     </Item>
 
@@ -572,12 +535,12 @@ export default function UseSerach(props) {
   }, [levelone])
 
   const onValuesChange = (_, allValues) => {
-    console.log("allValues",allValues)
+    console.log("allValues", allValues)
     props.setexparams({ ...allValues })
   }
 
   useEffect(() => {
-   // form.resetFields()
+    // form.resetFields()
     if (!config.gas) {
       let v = form.getFieldValue('energytype');
       if (v == 3) form.setFieldValue('energytype', 1)
@@ -590,21 +553,21 @@ export default function UseSerach(props) {
       form.setFieldValue('type', 1)
     }
 
-  /*   if (config.meterType) {
-      form.setFieldValue('deviceStyle', config.meterType)
-    } */
-    if(Number.isInteger(parseInt(oneLevelDefaultId))) {
+    /*   if (config.meterType) {
+        form.setFieldValue('deviceStyle', config.meterType)
+      } */
+    if (Number.isInteger(parseInt(oneLevelDefaultId))) {
       form.setFieldValue('areaId', oneLevelDefaultId)
     }
-   /*  if(oneLevelDefaultId==0) {
-       form.setFieldValue('areaId', 0)
-    }  */
+    /*  if(oneLevelDefaultId==0) {
+        form.setFieldValue('areaId', 0)
+     }  */
     props.setexparams({ ...form.getFieldsValue(true) })
 
   }, [config, projectId, oneLevelDefaultId])
 
-  useEffect(()=>{
-    if(config.energytype) {
+  useEffect(() => {
+    if (config.energytype) {
       form.setFieldValue('energytype', 1)
       props.setexparams({ ...form.getFieldsValue(true) })
     }
@@ -623,7 +586,7 @@ export default function UseSerach(props) {
 
     <Cform layout="inline" form={form} colon={false}  {...props.formprop}
       onValuesChange={onValuesChange}
-      style={{ displey: 'flex',  ...formsty }} >
+      style={{ displey: 'flex', ...formsty }} >
       <Space size={16} >
         {isAreaId && <Item label={varlabel} name='areaId' initialValue={AreaID}>
           <Select style={w200} onChange={onChange} options={levelone} fieldNames={{ label: 'name', value: 'id', options: 'options' }}>
@@ -632,8 +595,8 @@ export default function UseSerach(props) {
 
         </Item>
         }
-        {props.config?.issubarea && <SubAreas  setexparams={props.setexparams}  />}
-         {props.config?.isLevles && <AreaLevel setexparams={props.setexparams} />}
+        {props.config?.issubarea && <SubAreas setexparams={props.setexparams} />}
+        {props.config?.isLevles && <AreaLevel setexparams={props.setexparams} />}
         {props.config?.isSite && site}
         {props.config?.isTank && tank}
         {props.config?.isPcs && pcs}

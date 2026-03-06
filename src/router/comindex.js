@@ -16,28 +16,28 @@ import {
 export default function Index() {
   const dispatch = useDispatch();
   const location = useLocation();
-  
+
   let { state = {} } = location;
-  let { nested = "", primary, meterType } = state??{}; // meterType 从运行监控 =》 运行监控 跳转到 运行监控-》 设备管理
+  let { nested = "", primary, meterType } = state ?? {}; // meterType 从运行监控 =》 运行监控 跳转到 运行监控-》 设备管理
 
   let whole = ["runtimeMonitor", "runtimeSafe", "runtimeEnergy", "runtimeStorage", "runtimeMaintenance", "runtimeSolar", "designerSolar"]; // 需要显示搜索 ***（全部）的模块
-  let include =useMemo(() => { // 需要显示搜索 ***（全部）的页面
-   let nesteds = {
-      [primary]:[""]
+  let include = useMemo(() => { // 需要显示搜索 ***（全部）的页面
+    let nesteds = {
+      [primary]: [""]
     }[primary] || []
-    return  nesteds.includes(nested) ? {} : false
+    return nesteds.includes(nested) ? {} : false
   }, [primary, nested]);
 
-  console.log("include",include)
+  console.log("include", include)
 
-  let includemodule=useMemo(() => {  // 需要显示搜索 ***（全部）的模块中排除的页面
+  let includemodule = useMemo(() => {  // 需要显示搜索 ***（全部）的模块中排除的页面
     let primaries = {
-      runtimeEnergy:[nested]
+      runtimeEnergy: [nested]
     }[primary]
 
-    return  Array.isArray(primaries) ? primaries.includes("summary") : false
+    return Array.isArray(primaries) ? primaries.includes("summary") : false
   }, [primary, nested]);
-  console.log("includemodule",includemodule)
+  console.log("includemodule", includemodule)
 
   const onelevel = useSelector(selectOneLevel);
   const varlabel = useSelector(levelDefaultLabel);
@@ -82,7 +82,7 @@ export default function Index() {
       "earningsStatistics",
       "alarmMessage",
       "operationLog",
-     // "storageReport",
+      // "storageReport",
     ],
     runtimeMaintenance: [ // 运维管理
       "summary",
@@ -120,9 +120,9 @@ export default function Index() {
       "spareParts", "ledgerManagement", "spareParts"
     ],
     lightManagement: [  // 照明控制
-    //  "streetLightEnergyMonitor",
+      //  "streetLightEnergyMonitor",
       "lightControl",
-   //   "streetLightDataReport",
+      //   "streetLightDataReport",
 
     ],
     streetLightManagement: [ // 照明控制 设置态
@@ -132,7 +132,7 @@ export default function Index() {
       "station",
       "inverter"
     ],
-    storage:[
+    storage: [
       'storageDevice',
       'storageEnvironment'
     ]
@@ -180,24 +180,24 @@ export default function Index() {
     try {
       console.log(primary)
       if (primary == "runtimeMonitor") {
-        switch(nested) {
+        switch (nested) {
           case "point":
-          setConfig({ isdevsty: true, meterType })
-          break;
+            setConfig({ isdevsty: true, meterType })
+            break;
           default:
             setConfig({ isdevsty: false });
         }
-      }  
+      }
       if (primary == "runtimeEnergy") {   //issubarea
         switch (nested) {
           case "summary":
-            setConfig({ isdate: true,shiftNo: true });
+            setConfig({ isdate: true, shiftNo: true });
             break;
           case "area":
-            setConfig({ isview: true, publicDate: true, shiftNo:false, rangeDate:45 });
+            setConfig({ isview: true, publicDate: true, shiftNo: false, rangeDate: 45 });
             break;
           case "assorting":
-            setConfig({ isview: true, isdate: true, shiftNo:false , issubarea:true});
+            setConfig({ isview: true, isdate: true, shiftNo: false, issubarea: true });
             break;
           case "range":
             setConfig({ energytype: false, isdate: false, custview: true, isAreaId: false, });
@@ -242,10 +242,10 @@ export default function Index() {
             setConfig({ isview: true, isdate: true, shiftNo: true });
             break;
           case "region":
-            setConfig({ energytype: true, isdate: true, shiftNo: true, gas: false, isAreaId:false,isLevles:true });
+            setConfig({ energytype: true, isdate: true, shiftNo: true, gas: false, isAreaId: false, isLevles: true });
             break;
           case "timePeriodEnergy":
-            setConfig({ isdate: true , shiftNo: true });
+            setConfig({ isdate: true, shiftNo: true });
             break;
           default:
             setConfig({});
@@ -264,11 +264,11 @@ export default function Index() {
             setConfig({ isSite: true, isTank: true, isBms: true });
             break;
           case "earningsStatistics":
-            setConfig({ isSite: true, isdate: true,shiftNo: true });
+            setConfig({ isSite: true, isdate: true, shiftNo: true });
             break;
           case "alarmMessage":  //definedaterange
-          setConfig({ isSite: true, definedaterange: true  });
-          break;
+            setConfig({ isSite: true, definedaterange: true });
+            break;
           case "ENVMonitor":
           case "storageOverview":
           case "operationLog":
@@ -317,9 +317,9 @@ export default function Index() {
           case "lightControl":
             setConfig({ isview: true, isdate: true, shiftNo: true });
             break;
-         /*  case "streetLightDataReport":
-            setConfig({ isview: false, isdate: true, shiftNo: true });
-            break; */
+          /*  case "streetLightDataReport":
+             setConfig({ isview: false, isdate: true, shiftNo: true });
+             break; */
         }
 
       }
@@ -332,7 +332,7 @@ export default function Index() {
             setConfig({ refresh: true, cabinet: true, inverter: true, photovoltaicPowerStation: true });
             break;
           case "statistic":
-            setConfig({ isdate: true,   shiftNo: true, photovoltaicPowerStation: false, inverter: false });
+            setConfig({ publicDate: true, shiftNo: true, photovoltaicPowerStation: false, inverter: false });
             break;
           case "warning":
             setConfig({ dateR: true, cabinet: false, shiftNo: true, photovoltaicPowerStation: true, inverter: false });
@@ -381,7 +381,7 @@ export default function Index() {
             setConfig({ custview: true });
             break;
         }
-      }else if(primary == "storage"){
+      } else if (primary == "storage") {
         switch (nested) {
           case 'storageDevice':
             setConfig({ isSite: true, isTank: true });
@@ -414,7 +414,7 @@ export default function Index() {
       dispatch(setCurrentlevel(level?.[0]))
       dispatch(getOnelevel([...level]));
     }
-  }, [primary,include,includemodule]);
+  }, [primary, include, includemodule]);
 
   useEffect(() => {
     sethandler();

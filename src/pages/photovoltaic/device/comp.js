@@ -18,7 +18,7 @@ import { HistoricalModal } from "./style";
 import { getTime, isObject } from "@com/usehandler";
 
 const HistoricalDataModal = (props) => {
-  console.log(props, props.modalType);
+
   const { modalType, sn, projectId } = props;
   const [form] = Form.useForm();
   const [modal, setModal] = useState("1");
@@ -30,8 +30,8 @@ const HistoricalDataModal = (props) => {
   const [datas, setDatas] = useState({});
 
   const [tableData, columns, lineopt] = useMemo(() => {
-    console.log("datas", datas)
-    const format = dateType == 1 ? "HH:mm" : "DD";
+
+    const format = dateType == 1 ? "HH:mm" : "DD:HH:mm";
     const { data = [] } = datas // mock.filter((d) => d.group == ectype)?.[0] || {}; //
     const points = {
       "Pt": "总有功功率（kW）",
@@ -143,7 +143,7 @@ const HistoricalDataModal = (props) => {
     return [tbdata, cols, lineopt];
   }, [datas]);
 
-  console.log(lineopt)
+
 
   const getTrend = async () => {
     try {
@@ -181,6 +181,9 @@ const HistoricalDataModal = (props) => {
   const onValuesChange = () => {
     getTrend();
   }
+  const onChange = (v) => {
+    setPicker(v == 1 ? "date" : "month");
+  };
   return (
     <HistoricalModal>
       <div className="searchBox">
@@ -200,23 +203,25 @@ const HistoricalDataModal = (props) => {
             <Form.Item name="type" initialValue={1}>
               <Select
                 style={{ width: 96 }}
+                onChange={onChange}
                 options={[
                   { value: 1, label: "日" },
                   { value: 2, label: "月" },
                 ]}
               />
             </Form.Item>
-            <Form.Item shouldUpdate={(cur, pre) => cur.type != pre.type} noStyle>
+            {/* <Form.Item shouldUpdate={(cur, pre) => cur.type != pre.type} noStyle>
               {
                 ({ getFieldValue, setFieldValue }) => {
                   let type = getFieldValue('type')
                   setPicker(type == 1 ? "date" : "month");
+                  console.log("type")
                   setFieldValue('date', moment())
                   return null
                 }
 
               }
-            </Form.Item>
+            </Form.Item> */}
             <Form.Item name="date" initialValue={moment()}>
               <DatePicker
                 picker={picker}
