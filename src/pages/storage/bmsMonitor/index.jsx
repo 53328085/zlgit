@@ -16,11 +16,15 @@ const Mainbox = styled.div`
   && {
     display: flex;
     flex: 1;
+    min-height: 0;
     column-gap: 16px;
     padding-bottom: 16px;
 
     .leftlayout {
       position: relative;
+      display: flex;
+      flex-direction: column;
+      min-height: 0;
       border-radius: 8px;
       background: linear-gradient(rgb(10, 22, 40) 0%, rgb(13, 27, 46) 100%);
       padding: 20px;
@@ -28,12 +32,18 @@ const Mainbox = styled.div`
       flex-shrink: 0;
       overflow: hidden;
 
+      > *:last-child {
+        flex: 1;
+        min-height: 0;
+      }
+
       .leftTitle {
         position: relative;
         border-left: none;
         padding-left: 11px;
         color: #fff;
         font-size: 14px;
+        flex-shrink: 0;
         &::before {
           position: absolute;
           left: 0px;
@@ -47,10 +57,16 @@ const Mainbox = styled.div`
 
     .rightlayout {
       flex: 1;
+      min-height: 0;
       display: grid;
       grid-template-columns: 1fr;
       grid-template-rows: auto 1fr;
       row-gap: 16px;
+      overflow: hidden;
+
+      > * {
+        min-height: 0;
+      }
     }
   }
 `;

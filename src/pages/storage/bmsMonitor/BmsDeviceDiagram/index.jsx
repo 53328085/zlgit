@@ -1,11 +1,9 @@
-import React, { memo, useEffect, useMemo, useRef, useState } from "react";
-import { LeftOutlined, RightOutlined } from "@ant-design/icons";
+import React, { memo, useMemo } from "react";
 import imgurl from "../../cabinetMonitor/imgs";
 import {
   DiagramViewport,
   DiagramScroller,
   DiagramCanvas,
-  ScrollActionButton,
   StackNameBadge,
   StackBlockWrap,
   TopStemLine,
@@ -28,16 +26,14 @@ import {
 } from "./styled.js";
 
 const SIDE_PADDING = 36;
-const CLUSTER_CARD_WIDTH = 224;
-const CLUSTER_GAP = 22;
-const STACK_CARD_WIDTH = 224;
-const STACK_TOP = 48;
+const CLUSTER_CARD_WIDTH = 208;
+const CLUSTER_GAP = 18;
+const STACK_CARD_WIDTH = 208;
+const STACK_TOP = 32;
 // 这里要和 styled.js 里 DetailCard($isStack) 的高度保持一致，否则会出现卡片和竖线脱节
-const STACK_BLOCK_HEIGHT = 130;
-const BUS_Y = 314;
+const STACK_BLOCK_HEIGHT = 120;
+const BUS_Y = 222;
 const CLUSTER_TOP = BUS_Y + 4;
-const CARD_ROLL_STEP = CLUSTER_CARD_WIDTH + CLUSTER_GAP;
-const EPSILON = 2;
 
 /**
  * 把接口值转换成进度条百分比，兼容百分比/千分比/历史数值。
@@ -139,11 +135,11 @@ function formatValue(value, unit) {
   return unit ? `${value}(${unit})` : value;
 }
 
-function calcCanvasLayout(viewportWidth, clusterCount) {
+function calcCanvasLayout(clusterCount) {
   const safeCount = Math.max(clusterCount, 1);
   const contentWidth = safeCount * CLUSTER_CARD_WIDTH + (safeCount - 1) * CLUSTER_GAP;
   const minimumCanvasWidth = SIDE_PADDING * 2 + contentWidth;
-  const canvasWidth = Math.max(viewportWidth, minimumCanvasWidth);
+  const canvasWidth = minimumCanvasWidth;
   const clusterStartX = (canvasWidth - contentWidth) / 2;
   const centers = Array.from({ length: safeCount }, (_, idx) => {
     return clusterStartX + idx * (CLUSTER_CARD_WIDTH + CLUSTER_GAP) + CLUSTER_CARD_WIDTH / 2;
@@ -220,12 +216,6 @@ const ClusterCard = memo(function ClusterCard({ model }) {
 });
 
 export default memo(function BmsDeviceDiagram({ loading, stackData, clusterData = [] }) {
-  const viewportRef = useRef(null);
-  const scrollerRef = useRef(null);
-  const [viewportWidth, setViewportWidth] = useState(0);
-  const [hasOverflow, setHasOverflow] = useState(false);
-  const [canScrollLeft, setCanScrollLeft] = useState(false);
-  const [canScrollRight, setCanScrollRight] = useState(false);
 
   const stackModel = useMemo(() => buildDisplayModel(stackData, true), [stackData]);
   const clusters = useMemo(() => {
@@ -237,58 +227,7 @@ export default memo(function BmsDeviceDiagram({ loading, stackData, clusterData 
       : [];
   }, [clusterData]);
 
-  const layout = useMemo(() => calcCanvasLayout(viewportWidth, clusters.length), [
-    viewportWidth,
-    clusters.length,
-  ]);
-
-  const updateScrollState = () => {
-    const node = scrollerRef.current;
-    if (!node) return;
-    const overflow = node.scrollWidth - node.clientWidth > EPSILON;
-    setHasOverflow(overflow);
-    setCanScrollLeft(node.scrollLeft > EPSILON);
-    setCanScrollRight(node.scrollLeft + node.clientWidth < node.scrollWidth - EPSILON);
-  };
-
-  useEffect(() => {
-    const viewport = viewportRef.current;
-    const scroller = scrollerRef.current;
-    if (!viewport || !scroller) return undefined;
-
-    const syncLayout = () => {
-      setViewportWidth(viewport.clientWidth || 0);
-      updateScrollState();
-    };
-
-    const onScroll = () => updateScrollState();
-    scroller.addEventListener("scroll", onScroll);
-    const observer = new ResizeObserver(() => syncLayout());
-    observer.observe(viewport);
-    observer.observe(scroller);
-    window.addEventListener("resize", syncLayout);
-
-    const raf = requestAnimationFrame(syncLayout);
-    return () => {
-      cancelAnimationFrame(raf);
-      scroller.removeEventListener("scroll", onScroll);
-      observer.disconnect();
-      window.removeEventListener("resize", syncLayout);
-    };
-  }, [clusters.length]);
-
-  useEffect(() => {
-    updateScrollState();
-  }, [layout.canvasWidth, clusters.length]);
-
-  const onStepScroll = (direction) => {
-    const node = scrollerRef.current;
-    if (!node) return;
-    node.scrollBy({
-      left: direction === "left" ? -CARD_ROLL_STEP : CARD_ROLL_STEP,
-      behavior: "smooth",
-    });
-  };
+  const layout = useMemo(() => calcCanvasLayout(clusters.length), [clusters.length]);
 
   if (loading && !stackData && clusters.length === 0) {
     return <EmptyData>加载中...</EmptyData>;
@@ -302,31 +241,8 @@ export default memo(function BmsDeviceDiagram({ loading, stackData, clusterData 
   const stackCenter = stackLeft + STACK_CARD_WIDTH / 2;
 
   return (
-    <DiagramViewport ref={viewportRef}>
-      {hasOverflow && (
-        <>
-          <ScrollActionButton
-            type="button"
-            $side="left"
-            onClick={() => onStepScroll("left")}
-            disabled={!canScrollLeft}
-            aria-label="向左滚动电池簇"
-          >
-            <LeftOutlined />
-          </ScrollActionButton>
-          <ScrollActionButton
-            type="button"
-            $side="right"
-            onClick={() => onStepScroll("right")}
-            disabled={!canScrollRight}
-            aria-label="向右滚动电池簇"
-          >
-            <RightOutlined />
-          </ScrollActionButton>
-        </>
-      )}
-
-      <DiagramScroller ref={scrollerRef}>
+    <DiagramViewport>
+      <DiagramScroller>
         <DiagramCanvas style={{ width: layout.canvasWidth }}>
           <StackNameBadge style={{ left: stackCenter }}>{stackModel.title || "BMS设备"}</StackNameBadge>
           <StackBlockWrap style={{ left: stackLeft, top: STACK_TOP }}>
