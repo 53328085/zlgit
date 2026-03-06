@@ -4,28 +4,13 @@ import { useSelector } from "react-redux";
 import { BMSRuntime } from "@api/api";
 import { selectProjectId } from "@redux/systemconfig.js";
 import Pagecount from "@com/pagecontent";
+import {
+  ENV_MONITOR_DEV_MOCK_FLAG,
+  ENV_MONITOR_TEXT,
+} from "./constants";
 import style from "./style.module.less";
 import EnvDeviceDiagram from "./EnvDeviceDiagram";
-
-function resolveDisplayText(input, fallback = "") {
-  if (input === null || input === undefined) return fallback;
-  if (typeof input === "string" || typeof input === "number") {
-    const text = String(input).trim();
-    return text || fallback;
-  }
-  if (typeof input === "object") {
-    const candidate =
-      input.label ??
-      input.name ??
-      input.displayName ??
-      input.title ??
-      input.text ??
-      input.value;
-    if (candidate === input) return fallback;
-    return resolveDisplayText(candidate, fallback);
-  }
-  return fallback;
-}
+import { normalizeEnvContainers, resolveDisplayText } from "./utils";
 
 /**
  * 联调前占位，联调后删除：环境监控拓扑 mock 数据。
@@ -120,72 +105,78 @@ function getMockContainers() {
   ];
 }
 
-/**
- * 标准化接口容器数据，避免字段缺失导致拓扑渲染异常。
- *
- * @param containers 接口容器列表
- * @returns 标准化后的容器列表
- *
- * @author ybdpx
- */
-function normalizeEnvContainers(containers) {
-  if (!Array.isArray(containers) || containers.length === 0) {
-    return [];
-  }
-
-  return containers.map((container, index) => {
-    const rawName = resolveDisplayText(
-      container?.displayName ?? container?.containerName ?? container?.name,
-      ""
-    );
-    const fallbackName = `储能柜_${index + 1}`;
-    const name = !rawName || rawName === "环境监控" ? fallbackName : rawName;
-    return {
-      ...container,
-      id: container?.id ?? `env-container-${index + 1}`,
-      name,
-      types: Array.isArray(container?.types) ? container.types : [],
-    };
-  });
-}
+const ENABLE_ENV_MONITOR_DEV_MOCK =
+  process.env.NODE_ENV !== "production" &&
+  process.env[ENV_MONITOR_DEV_MOCK_FLAG] === "true";
 
 export default function EnvironmentMonitor() {
   const { exparams } = useOutletContext() || {};
   const reduxProjectId = useSelector(selectProjectId);
 
   const projectId = exparams?.projectId ?? reduxProjectId;
-  const stationName = resolveDisplayText(exparams?.stationName, "储能站点");
-  const rawSiteId = exparams?.siteId ?? exparams?.areaId;
+  const stationName = resolveDisplayText(
+    exparams?.stationName,
+    ENV_MONITOR_TEXT.DEFAULT_STATION_NAME
+  );
+  const rawSiteId =
+    exparams?.siteId ??
+    exparams?.stationId ??
+    exparams?.stationName?.value ??
+    exparams?.stationName?.id ??
+    exparams?.site?.value ??
+    exparams?.site?.id;
   const siteId = rawSiteId?.value ?? rawSiteId;
 
   const [diagramLoading, setDiagramLoading] = useState(false);
-  const [storageData, setStorageData] = useState(getMockContainers());
+  const [storageData, setStorageData] = useState([]);
+  const [requestError, setRequestError] = useState("");
+  const [retrySeed, setRetrySeed] = useState(0);
 
   const { queryENVStatusInfo } = BMSRuntime;
 
   useEffect(() => {
     let cancelled = false;
-
-    const applyFallback = () => {
-      if (!cancelled) setStorageData(getMockContainers());
+    const applyMockFallback = () => {
+      if (!ENABLE_ENV_MONITOR_DEV_MOCK || cancelled) return false;
+      setStorageData(getMockContainers());
+      setRequestError("");
+      return true;
     };
 
-    if (!projectId || !siteId) {
-      applyFallback();
+    const hasProjectId = Number.isInteger(parseInt(projectId, 10));
+    const hasSiteId = Number.isInteger(parseInt(siteId, 10));
+
+    if (!hasProjectId || !hasSiteId) {
+      setStorageData([]);
+      setRequestError("");
+      setDiagramLoading(false);
       return () => {
         cancelled = true;
       };
     }
 
     setDiagramLoading(true);
+    setRequestError("");
     queryENVStatusInfo(projectId, siteId)
       .then((res) => {
         const list = res?.success ? normalizeEnvContainers(res?.data?.containers) : [];
         if (!cancelled) {
-          setStorageData(list.length > 0 ? list : getMockContainers());
+          if (list.length > 0) {
+            setStorageData(list);
+            return;
+          }
+          if (!applyMockFallback()) {
+            setStorageData([]);
+          }
         }
       })
-      .catch(() => applyFallback())
+      .catch(() => {
+        if (applyMockFallback()) return;
+        if (!cancelled) {
+          setStorageData([]);
+          setRequestError(ENV_MONITOR_TEXT.FETCH_ERROR);
+        }
+      })
       .finally(() => {
         if (!cancelled) {
           setDiagramLoading(false);
@@ -195,12 +186,18 @@ export default function EnvironmentMonitor() {
     return () => {
       cancelled = true;
     };
-  }, [projectId, queryENVStatusInfo, siteId]);
+  }, [projectId, queryENVStatusInfo, retrySeed, siteId]);
 
   return (
     <Pagecount pd="0">
       <div className={style.mainContent}>
-        <EnvDeviceDiagram loading={diagramLoading} stationTitle={stationName} containers={storageData} />
+        <EnvDeviceDiagram
+          loading={diagramLoading}
+          stationTitle={stationName}
+          containers={storageData}
+          errorText={requestError}
+          onRetry={() => setRetrySeed((seed) => seed + 1)}
+        />
       </div>
     </Pagecount>
   );
