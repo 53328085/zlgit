@@ -280,8 +280,26 @@ export const FireStatus = styled.div`
 export const EmptyData = styled.div`
   min-height: 880px;
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
+  row-gap: 10px;
   color: #8aa0c4;
   font-size: 14px;
+`;
+
+export const RetryButton = styled.button`
+  border: 1px solid rgba(70, 199, 255, 0.5);
+  background: rgba(10, 22, 40, 0.88);
+  color: #d8efff;
+  border-radius: 4px;
+  min-width: 72px;
+  height: 30px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+
+  &:hover {
+    border-color: rgba(70, 199, 255, 0.85);
+    box-shadow: 0 0 10px rgba(70, 199, 255, 0.36);
+  }
 `;

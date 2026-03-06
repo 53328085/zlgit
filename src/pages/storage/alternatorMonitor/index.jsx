@@ -1,7 +1,8 @@
 import React, { useEffect, useState} from 'react'
 import style from './style.module.less'
 import { message, DatePicker } from 'antd';
-import { selectProjectId, selectOneLevel, levelDefaultLabel, selectOneLevelDefaultId, setCurrentlevel,themeColor } from '@redux/systemconfig.js'
+import moment from 'moment'
+import { selectProjectId } from '@redux/systemconfig.js'
 import {PCSMonitorRuntime, SiteManagerDesigner, StorageContainerDesigner, StorageMonitorRuntime } from '@api/api.js'
 import { useReactive, useRequest } from 'ahooks'
 import { useSelector } from 'react-redux'
@@ -45,23 +46,19 @@ const Mainbox = styled.div`
 export default function Index() {
   let {exparams} = useOutletContext()
   let {areaId, projectId: exparamsProjectId, pcsId} = exparams || {}
-  let {value: pcs_id, label} = pcsId || {}
+  const currentPcsId = pcsId?.value
 
   // 优先使用 exparams 的 projectId，否则使用 redux 中的
   const reduxProjectId = useSelector(selectProjectId)
   const projectId = exparamsProjectId || reduxProjectId
 
   console.log('exparams:', exparams)
-  console.log('pcsId:', pcsId, 'pcs_id:', pcs_id)
+  console.log('pcsId:', pcsId, 'currentPcsId:', currentPcsId)
   console.log('exparamsProjectId:', exparamsProjectId, 'reduxProjectId:', reduxProjectId, 'projectId:', projectId)
 
-  const {successColor, warningColor} = useSelector(themeColor)
   const {
-    queryPCSInfo,
-    queryPCSWarningInfo,
     queryPowerTrends,
-    querySocTrends,
-    queryAcTable} = PCSMonitorRuntime
+  } = PCSMonitorRuntime
 
   //页面组件
   // 数据卡片：显示名称、单位、数值
@@ -74,30 +71,14 @@ export default function Index() {
       </div>
     )
   }
-  //页面参数 - 初始静态数据
-  const [leftValues, setLeftValues] = useState([
-    { name: '运行状态', value: '运行' },
-    { name: '热备状态', value: '热备' },
-    { name: '充放电状态', value: '充电' },
-    { name: '直流电流', unit: 'A', value: '19.9' },
-    { name: '总母线电压', unit: 'V', value: '568.5' },
-    { name: '直流功率', unit: 'kW', value: '0.99' },
-    { name: '电网频率', unit: 'Hz', value: '50.0' },
-    { name: 'IGBT温度', unit: '°C', value: '43' },
-  ])
+  const [leftValues, setLeftValues] = useState([])
   const [pcsName, setPcsName] = useState('')
-  const [powerData, setPowerData] = useState({
-    x: ['00:00', '04:00', '08:00', '12:00', '16:00', '20:00'],
-    y: [120, 150, 180, 200, 170, 140]
-  })
-  const [socData, setSocData] = useState({
-    x: ['00:00', '04:00', '08:00', '12:00', '16:00', '20:00'],
-    y: [85, 80, 75, 70, 65, 60]
-  })
-  const [startDate, setStartDate] = useState(null)
-  const [endDate, setEndDate] = useState(null)
-  // 对比数据
+  const [startDate, setStartDate] = useState(moment().subtract(1, 'day'))
+  const [endDate, setEndDate] = useState(moment())
   const [compareData, setCompareData] = useState({
+    xAxis: [],
+    series1Name: '',
+    series2Name: '',
     series1: [],
     series2: []
   })
@@ -118,10 +99,12 @@ export default function Index() {
   const fetchPowerTrends = async (params) => {
     try {
       const res = await queryPowerTrends(params.projectId, params.pcsId, params.startTime, params.endTime)
-      if (res.success && res.data) {
+      if (res.success && Array.isArray(res.data)) {
+        const time = res.data.map(item => item?.x || '')
+        const power = res.data.map(item => Number(item?.y) || 0)
         return {
-          time: res.data.time || [],
-          power: res.data.power || []
+          time,
+          power
         }
       } else {
         console.warn('获取功率趋势数据失败:', res.errMsg)
@@ -132,24 +115,29 @@ export default function Index() {
       return null
     }
   }
+
+  const buildSeries1Name = (start, end) => `${start} ~ ${end}`
   // 开始日期变化时触发接口调用
   const handleStartDateChange = async (date, dateString) => {
+    if (date && endDate && (date.isAfter?.(endDate, 'day') || date.isSame?.(endDate, 'day'))) {
+      message.warning('开始日期必须早于结束日期')
+      return
+    }
     setStartDate(date)
-    if (dateString && endDate && projectId) {
+    if (dateString && endDate && projectId && currentPcsId) {
       const res = await fetchPowerTrends({
         projectId,
-        pcsId: 1,
+        pcsId: currentPcsId,
         startTime: dateString,
         endTime: typeof endDate === 'string' ? endDate : endDate?.format('YYYY-MM-DD')
       })
       if (res) {
         setCompareData({
+          xAxis: res.time || [],
+          series1Name: buildSeries1Name(dateString, endDate?.format('YYYY-MM-DD')),
+          series2Name: '',
           series1: res.power || [],
           series2: []
-        })
-        setPowerData({
-          x: res.time || [],
-          y: res.power || []
         })
       }
     }
@@ -157,22 +145,25 @@ export default function Index() {
 
   // 结束日期变化时触发接口调用
   const handleEndDateChange = async (date, dateString) => {
+    if (date && startDate && (date.isBefore?.(startDate, 'day') || date.isSame?.(startDate, 'day'))) {
+      message.warning('结束日期必须晚于开始日期')
+      return
+    }
     setEndDate(date)
-    if (startDate && dateString && projectId) {
+    if (startDate && dateString && projectId && currentPcsId) {
       const res = await fetchPowerTrends({
         projectId,
-        pcsId: 1,
+        pcsId: currentPcsId,
         startTime: typeof startDate === 'string' ? startDate : startDate?.format('YYYY-MM-DD'),
         endTime: dateString
       })
       if (res) {
         setCompareData({
+          xAxis: res.time || [],
+          series1Name: buildSeries1Name(startDate?.format('YYYY-MM-DD'), dateString),
+          series2Name: '',
           series1: res.power || [],
           series2: []
-        })
-        setPowerData({
-          x: res.time || [],
-          y: res.power || []
         })
       }
     }
@@ -183,10 +174,9 @@ export default function Index() {
   })
 
   const getContent = () => {
-    if (!projectId) return
-    const pcsId = -1 // 先写死
-    console.log('Calling API with:', { projectId, pcsId })
-    StorageMonitorRuntime.queryPCSStatusInfo(projectId, pcsId).then(res => {
+    if (!projectId || !currentPcsId) return
+    console.log('Calling API with:', { projectId, pcsId: currentPcsId })
+    StorageMonitorRuntime.queryPCSStatusInfo(projectId, currentPcsId).then(res => {
       console.log('API response:', res)
       if (res.success && res.data) {
         setPcsName(res.data.name || '')
@@ -201,10 +191,9 @@ export default function Index() {
 
   // 获取实时运行参数数据
   const getRuntimeData = () => {
-    if (!projectId) return
-    const pcsId = -1 // 先写死
-    console.log('Calling QueryPCSDataInfo API with:', { projectId, pcsId })
-    StorageMonitorRuntime.queryPCSDataInfo(projectId, pcsId).then(res => {
+    if (!projectId || !currentPcsId) return
+    console.log('Calling QueryPCSDataInfo API with:', { projectId, pcsId: currentPcsId })
+    StorageMonitorRuntime.queryPCSDataInfo(projectId, currentPcsId).then(res => {
       console.log('QueryPCSDataInfo response:', res)
       if (res.success && res.data && Array.isArray(res.data)) {
         // 将数组格式转换为对象格式
@@ -231,142 +220,33 @@ export default function Index() {
   }
 
   useEffect(() => {
-    console.log('useEffect triggered:', { pcs_id, projectId })
+    console.log('useEffect triggered:', { currentPcsId, projectId })
     getContent()
     getRuntimeData()
-  }, [pcs_id, projectId])
-  const socOption = {
-    type:2,
-    color:[warningColor],
-    tooltip: {
-      trigger: 'axis',
-      axisPointer: {
-        type: 'shadow'
-      }
-    },
-    legend: {
-      top: '0',
-      left: 'center'
-    },
-    grid: {
-      left: '3%',
-      right: '4%',
-      bottom: '3%',
-      containLabel: true
-    },
-    xAxis: {
-      type: 'category',
-      boundaryGap: true,
-      axisTick:{
-        alignWithLabel:true
-      },
-      data: Array.isArray(socData.x) ? socData.x : []
-    },
-    yAxis: {
-      type: 'value',
-      // min: 24
-      scale: true, //自适应
-    },
-    series: [
-      {
-        name: "SOC(%)",
-        data:  Array.isArray(socData.y) ? socData.y : [],
-        type: 'line',
-        symbol:'none',
-        smooth: true,
-        areaStyle: {}
-      }
-    ]
-  }
-  const poweroption = {
-    type:2,
-    color:[successColor],
-    tooltip: {
-      trigger: 'axis',
-      axisPointer: {
-        type: 'shadow'
-      }
-    },
-    legend: {
-      top: '0',
-      left: 'center'
-    },
-    grid: {
-      left: '3%',
-      right: '4%',
-      bottom: '3%',
-      containLabel: true
-    },
-    xAxis: {
-      type: 'category',
-      data:   Array.isArray(powerData.x) ? powerData.x : [],
-      boundaryGap: true,
-      axisTick:{
-        alignWithLabel:true
-      },
-    },
-    yAxis: {
-      type: 'value',
-      scale: true, //自适应
-      // min: function(value){
-      //   return (value / 1000) * 1000
-      // }
-    },
-    series: [
-      {
-        name: "实时总功率(kwh)",
-        data: Array.isArray(powerData.y) ? powerData.y : [],
-        type: 'line',
-        symbol:'none',
-        smooth: true,
-        areaStyle: {}
-      }
-    ]
-  }
-  const AcClomns = [
-    {
-      title:'AC',
-      dataIndex:'name',
-      key:'name',
-      align:'center'
-    },{
-      title:'电压 (V)',
-      dataIndex:'v',
-      key:'v',
-      align:'center'
-    },{
-      title:'电流 (A)',
-      dataIndex:'i',
-      key:'i',
-      align:'center'
-    },{
-      title:'有功功率(kW)',
-      dataIndex:'p',
-      key:'p',
-      align:'center'
-    },{
-      title:'视在功率 (kVA)',
-      dataIndex:'ps',
-      key:'ps',
-      align:'center'
-    },{
-      title:'无功功率 (kVar)',
-      dataIndex:'q',
-      key:'q',
-      align:'center'
-    },{
-      title:'功率因数',
-      dataIndex:'pf',
-      key:'pf',
-      align:'center'
-    },
-  ]
+  }, [currentPcsId, projectId])
 
-  const chartData = {
-    series1: [100, 150, 120, 180, 200, 170, 140, 160, 190, 220, 200, 180],
-    series2: [90, 140, 130, 170, 190, 160, 150, 170, 180, 210, 190, 170]
-  }
-
+  useEffect(() => {
+    if (!projectId || !currentPcsId || !startDate || !endDate) return
+    if (!startDate.isBefore?.(endDate, 'day')) return
+    const run = async () => {
+      const res = await fetchPowerTrends({
+        projectId,
+        pcsId: currentPcsId,
+        startTime: startDate.format('YYYY-MM-DD'),
+        endTime: endDate.format('YYYY-MM-DD')
+      })
+      if (res) {
+        setCompareData({
+          xAxis: res.time || [],
+          series1Name: buildSeries1Name(startDate.format('YYYY-MM-DD'), endDate.format('YYYY-MM-DD')),
+          series2Name: '',
+          series1: res.power || [],
+          series2: []
+        })
+      }
+    }
+    run()
+  }, [projectId, currentPcsId])
 
   return (
     <Pagecount bgcolor='transparent' pd="0">
@@ -392,9 +272,21 @@ export default function Index() {
           </Titlelayout>
           <Titlelayout title="总有功功率" extra={
             <div style={{ display: 'flex', gap: 12, alignItems: 'center' }}>
-              <DatePicker onChange={handleStartDateChange} />
+              <DatePicker
+                value={startDate}
+                onChange={handleStartDateChange}
+                disabledDate={(current) =>
+                  !!endDate && (current?.isAfter?.(endDate, 'day') || current?.isSame?.(endDate, 'day'))
+                }
+              />
               <span style={{ color: '#333', fontSize: 12 }}>对比</span>
-              <DatePicker onChange={handleEndDateChange} />
+              <DatePicker
+                value={endDate}
+                onChange={handleEndDateChange}
+                disabledDate={(current) =>
+                  !!startDate && (current?.isBefore?.(startDate, 'day') || current?.isSame?.(startDate, 'day'))
+                }
+              />
             </div>
           }>
             <PowerCompareChart chartData={compareData} />

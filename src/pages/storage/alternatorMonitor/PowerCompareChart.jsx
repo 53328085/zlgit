@@ -17,6 +17,9 @@ const ChartWrapper = styled.div`
 
 const PowerCompareChart = memo(({ chartData }) => {
   const { successColor, warningColor } = useSelector(themeColor);
+  const hasSeries2 = Array.isArray(chartData?.series2) && chartData.series2.length > 0;
+  const series1Name = chartData?.series1Name || '功率趋势';
+  const series2Name = chartData?.series2Name || '对比趋势';
 
   const option = useMemo(() => ({
     type: 2,
@@ -26,7 +29,7 @@ const PowerCompareChart = memo(({ chartData }) => {
       axisPointer: { type: 'cross' }
     },
     legend: {
-      data: ['08/01', '08/02'],
+      data: hasSeries2 ? [series1Name, series2Name] : [series1Name],
       top: 0,
       left: 'center',
       textStyle: { color: '#333' }
@@ -41,7 +44,7 @@ const PowerCompareChart = memo(({ chartData }) => {
     xAxis: {
       type: 'category',
       boundaryGap: false,
-      data: ['01-01', '01-02', '01-03', '01-04', '01-05', '01-06', '01-07', '01-08', '01-09', '01-10', '01-11', '01-12'],
+      data: chartData?.xAxis || [],
       axisLabel: { color: '#333' },
       axisLine: { lineStyle: { color: '#333' } }
     },
@@ -56,25 +59,28 @@ const PowerCompareChart = memo(({ chartData }) => {
     },
     series: [
       {
-        name: '08/01',
+        name: series1Name,
         type: 'line',
         data: chartData?.series1 || [],
         smooth: true,
         symbol: 'circle',
         symbolSize: 6,
         lineStyle: { width: 2 }
-      },
-      {
-        name: '08/02',
-        type: 'line',
-        data: chartData?.series2 || [],
-        smooth: true,
-        symbol: 'circle',
-        symbolSize: 6,
-        lineStyle: { width: 2 }
       }
-    ]
-  }), [chartData, successColor, warningColor]);
+    ].concat(
+      hasSeries2
+        ? [{
+            name: series2Name,
+            type: 'line',
+            data: chartData?.series2 || [],
+            smooth: true,
+            symbol: 'circle',
+            symbolSize: 6,
+            lineStyle: { width: 2 }
+          }]
+        : []
+    )
+  }), [chartData, hasSeries2, series1Name, series2Name, successColor, warningColor]);
 
   return (
     <ChartWrapper>

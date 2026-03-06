@@ -36,7 +36,16 @@ import {
   FireTime,
   FireStatus,
   EmptyData,
+  RetryButton,
 } from "./styled.js";
+import {
+  ENV_FIRE_DISPLAY_TYPE,
+  ENV_METRIC_CODE,
+  ENV_METRIC_CODE_ALIASES,
+  ENV_MODULE_TYPE,
+  ENV_MODULE_TYPE_ALIASES,
+  ENV_MONITOR_TEXT,
+} from "../constants";
 
 const SIDE_PADDING = 36;
 const CARD_WIDTH = 372;
@@ -48,7 +57,12 @@ const EPSILON = 2;
 
 const DEFAULT_LIQUID = { mode: "--", temperature: "--" };
 const DEFAULT_DEHUMIDIFIER = { humidity: "--", temperature: "--", status: "--" };
-const DEFAULT_FIRE = { mode: "empty", statusText: "暂无数据", warning: false, rows: [] };
+const DEFAULT_FIRE = {
+  mode: ENV_FIRE_DISPLAY_TYPE.EMPTY.toLowerCase(),
+  statusText: ENV_MONITOR_TEXT.NO_DATA,
+  warning: false,
+  rows: [],
+};
 
 function safeList(list) {
   return Array.isArray(list) ? list : [];
@@ -84,6 +98,28 @@ function normalizeWithUnit(value, unit) {
   return unit ? `${text}${unit}` : text;
 }
 
+function extractIdentityTokens(entity) {
+  const keys = [
+    entity?.moduleType,
+    entity?.type,
+    entity?.code,
+    entity?.itemType,
+    entity?.metricCode,
+    entity?.name,
+  ];
+  return keys
+    .filter((item) => item !== null && item !== undefined && String(item).trim() !== "")
+    .map((item) => String(item).trim().toUpperCase());
+}
+
+function isMatchedByAliases(tokens, aliases) {
+  if (!tokens.length || !aliases.length) return false;
+  return aliases.some((candidate) => {
+    const upperCandidate = String(candidate).trim().toUpperCase();
+    return tokens.some((token) => token === upperCandidate || token.includes(upperCandidate));
+  });
+}
+
 /**
  * 从模块指标数组里按名称关键字匹配数据项。
  *
@@ -93,8 +129,11 @@ function normalizeWithUnit(value, unit) {
  *
  * @author ybdpx
  */
-function findMetric(items, patterns) {
+function findMetric(items, patterns, metricCode) {
   const list = safeList(items);
+  const aliases = metricCode ? ENV_METRIC_CODE_ALIASES[metricCode] || [metricCode] : [];
+  const byCode = list.find((item) => isMatchedByAliases(extractIdentityTokens(item), aliases));
+  if (byCode) return byCode;
   return list.find((item) => patterns.some((pattern) => pattern.test(String(item?.name ?? "")))) ?? null;
 }
 
@@ -117,25 +156,25 @@ function resolveFireVM(fireModule) {
   const items = safeList(fireModule?.items);
   const hasWarningKeyword = (text) => /告警|报警|异常|故障|故障中|fault|alarm|warning/i.test(text);
 
-  if (mode.includes("list")) {
+  if (mode.includes(ENV_FIRE_DISPLAY_TYPE.LIST.toLowerCase())) {
     const rows = items.map((item, index) => ({
       id: `${fireModule?.id ?? "fire"}-${index}`,
-      text: normalizeText(item?.name || item?.value || "消防告警"),
+      text: normalizeText(item?.name || item?.value || ENV_MONITOR_TEXT.FIRE_DEFAULT_ALARM),
       time: normalizeText(item?.time, "--"),
     }));
     return rows.length > 0
-      ? { mode: "list", rows, statusText: "告警列表", warning: true }
-      : { mode: "empty", rows: [], statusText: "暂无数据", warning: false };
+      ? { mode: ENV_FIRE_DISPLAY_TYPE.LIST.toLowerCase(), rows, statusText: ENV_MONITOR_TEXT.FIRE_ALARM_LIST, warning: true }
+      : { mode: ENV_FIRE_DISPLAY_TYPE.EMPTY.toLowerCase(), rows: [], statusText: ENV_MONITOR_TEXT.NO_DATA, warning: false };
   }
 
-  if (mode.includes("status")) {
+  if (mode.includes(ENV_FIRE_DISPLAY_TYPE.STATUS.toLowerCase())) {
     const first = items[0];
-    const statusText = normalizeText(first?.value || first?.name, "暂无数据");
+    const statusText = normalizeText(first?.value || first?.name, ENV_MONITOR_TEXT.NO_DATA);
     const warning = hasWarningKeyword(statusText);
-    return { mode: "status", rows: [], statusText, warning };
+    return { mode: ENV_FIRE_DISPLAY_TYPE.STATUS.toLowerCase(), rows: [], statusText, warning };
   }
 
-  if (mode.includes("empty")) {
+  if (mode.includes(ENV_FIRE_DISPLAY_TYPE.EMPTY.toLowerCase())) {
     return DEFAULT_FIRE;
   }
 
@@ -147,29 +186,31 @@ function resolveFireVM(fireModule) {
     .filter((item) => hasWarningKeyword(`${item?.name ?? ""}${item?.value ?? ""}`) || item?.time)
     .map((item, index) => ({
       id: `${fireModule?.id ?? "fire"}-${index}`,
-      text: normalizeText(item?.name || item?.value || "消防告警"),
+      text: normalizeText(item?.name || item?.value || ENV_MONITOR_TEXT.FIRE_DEFAULT_ALARM),
       time: normalizeText(item?.time, "--"),
     }));
 
   if (alarmRows.length > 0) {
     return {
-      mode: "list",
+      mode: ENV_FIRE_DISPLAY_TYPE.LIST.toLowerCase(),
       rows: alarmRows,
-      statusText: "告警列表",
+      statusText: ENV_MONITOR_TEXT.FIRE_ALARM_LIST,
       warning: true,
     };
   }
 
   const first = items[0];
-  const statusText = normalizeText(first?.value || first?.name, "暂无数据");
+  const statusText = normalizeText(first?.value || first?.name, ENV_MONITOR_TEXT.NO_DATA);
   const warning = hasWarningKeyword(statusText);
-  return { mode: "status", rows: [], statusText, warning };
+  return { mode: ENV_FIRE_DISPLAY_TYPE.STATUS.toLowerCase(), rows: [], statusText, warning };
 }
 
-function findModule(modules, patterns) {
-  return safeList(modules).find((module) =>
-    patterns.some((pattern) => pattern.test(String(module?.name ?? "")))
-  );
+function findModule(modules, moduleType, patterns) {
+  const list = safeList(modules);
+  const aliases = ENV_MODULE_TYPE_ALIASES[moduleType] || [moduleType];
+  const byType = list.find((module) => isMatchedByAliases(extractIdentityTokens(module), aliases));
+  if (byType) return byType;
+  return list.find((module) => patterns.some((pattern) => pattern.test(String(module?.name ?? ""))));
 }
 
 /**
@@ -183,25 +224,37 @@ function findModule(modules, patterns) {
  */
 function toContainerVM(container, index) {
   const modules = safeList(container?.types);
-  const liquidModule = findModule(modules, [/液冷/]);
-  const dehumidifierModule = findModule(modules, [/除湿/]);
-  const fireModule = findModule(modules, [/消防/]);
+  const liquidModule = findModule(modules, ENV_MODULE_TYPE.LIQUID_COOLING, [/液冷/]);
+  const dehumidifierModule = findModule(modules, ENV_MODULE_TYPE.DEHUMIDIFIER, [/除湿/]);
+  const fireModule = findModule(modules, ENV_MODULE_TYPE.FIRE, [/消防/]);
 
   const liquidItems = safeList(liquidModule?.items);
   const dehumidifierItems = safeList(dehumidifierModule?.items);
 
-  const liquidMode = findMetric(liquidItems, [/工作模式/, /运行模式/, /模式/]);
-  const liquidTemp = findMetric(liquidItems, [/环境温度/, /温度/]);
+  const liquidMode = findMetric(liquidItems, [/工作模式/, /运行模式/, /模式/], ENV_METRIC_CODE.MODE);
+  const liquidTemp = findMetric(liquidItems, [/环境温度/, /温度/], ENV_METRIC_CODE.TEMPERATURE);
 
-  const currentHumidity = findMetric(dehumidifierItems, [/当前湿度/, /湿度/]);
-  const currentTemp = findMetric(dehumidifierItems, [/当前温度/, /温度/]);
-  const dehumidifierStatus = findMetric(dehumidifierItems, [/工作状态/, /运行状态/, /状态/]);
+  const currentHumidity = findMetric(
+    dehumidifierItems,
+    [/当前湿度/, /湿度/],
+    ENV_METRIC_CODE.HUMIDITY
+  );
+  const currentTemp = findMetric(
+    dehumidifierItems,
+    [/当前温度/, /温度/],
+    ENV_METRIC_CODE.TEMPERATURE
+  );
+  const dehumidifierStatus = findMetric(
+    dehumidifierItems,
+    [/工作状态/, /运行状态/, /状态/],
+    ENV_METRIC_CODE.STATUS
+  );
 
   return {
     id: container?.id ?? `env-node-${index + 1}`,
     name: normalizeText(
       container?.displayName ?? container?.containerName ?? container?.name,
-      `储能柜_${index + 1}`
+      `${ENV_MONITOR_TEXT.DEFAULT_CONTAINER_PREFIX}${index + 1}`
     ),
     liquid: {
       mode: liquidMode ? normalizeWithUnit(liquidMode?.value, liquidMode?.unit) : DEFAULT_LIQUID.mode,
@@ -283,7 +336,7 @@ const FireModule = memo(function FireModule({ fire }) {
   return (
     <FireStatus>
       <FileTextOutlined className="icon" />
-      <div>暂无数据</div>
+      <div>{ENV_MONITOR_TEXT.NO_DATA}</div>
     </FireStatus>
   );
 });
@@ -297,29 +350,29 @@ const EnvCardNode = memo(function EnvCardNode({ model, left }) {
       </CabinetFigure>
       <CabinetBase />
       <DetailCard>
-        <CardTitle>环境监控</CardTitle>
+        <CardTitle>{ENV_MONITOR_TEXT.ENV_TITLE}</CardTitle>
         <ModuleBlock>
-          <ModuleTitle>液冷系统</ModuleTitle>
+          <ModuleTitle>{ENV_MONITOR_TEXT.LIQUID_TITLE}</ModuleTitle>
           <MetricsGrid $cols={2}>
-            <MetricLabel>工作模式</MetricLabel>
-            <MetricLabel>环境温度</MetricLabel>
+            <MetricLabel>{ENV_MONITOR_TEXT.LIQUID_MODE}</MetricLabel>
+            <MetricLabel>{ENV_MONITOR_TEXT.LIQUID_TEMP}</MetricLabel>
             <MetricItem $highlight>{model.liquid.mode}</MetricItem>
             <MetricItem>{model.liquid.temperature}</MetricItem>
           </MetricsGrid>
         </ModuleBlock>
         <ModuleBlock>
-          <ModuleTitle>除湿机</ModuleTitle>
+          <ModuleTitle>{ENV_MONITOR_TEXT.DEHUMIDIFIER_TITLE}</ModuleTitle>
           <MetricsGrid $cols={3}>
-            <MetricLabel>当前湿度</MetricLabel>
-            <MetricLabel>当前温度</MetricLabel>
-            <MetricLabel>工作状态</MetricLabel>
+            <MetricLabel>{ENV_MONITOR_TEXT.DEHUMIDIFIER_HUMIDITY}</MetricLabel>
+            <MetricLabel>{ENV_MONITOR_TEXT.DEHUMIDIFIER_TEMP}</MetricLabel>
+            <MetricLabel>{ENV_MONITOR_TEXT.DEHUMIDIFIER_STATUS}</MetricLabel>
             <MetricItem>{model.dehumidifier.humidity}</MetricItem>
             <MetricItem>{model.dehumidifier.temperature}</MetricItem>
             <MetricItem $highlight>{model.dehumidifier.status}</MetricItem>
           </MetricsGrid>
         </ModuleBlock>
         <ModuleBlock>
-          <ModuleTitle>消防系统</ModuleTitle>
+          <ModuleTitle>{ENV_MONITOR_TEXT.FIRE_TITLE}</ModuleTitle>
           <FireModule fire={model.fire} />
         </ModuleBlock>
       </DetailCard>
@@ -331,6 +384,8 @@ export default memo(function EnvDeviceDiagram({
   loading,
   stationTitle,
   containers = [],
+  errorText,
+  onRetry,
 }) {
   const viewportRef = useRef(null);
   const scrollerRef = useRef(null);
@@ -398,14 +453,27 @@ export default memo(function EnvDeviceDiagram({
   };
 
   if (loading && containerVMs.length === 0) {
-    return <EmptyData>加载中...</EmptyData>;
+    return <EmptyData>{ENV_MONITOR_TEXT.LOADING}</EmptyData>;
+  }
+
+  if (errorText && containerVMs.length === 0) {
+    return (
+      <EmptyData>
+        <div>{errorText}</div>
+        {typeof onRetry === "function" && (
+          <RetryButton type="button" onClick={onRetry}>
+            {ENV_MONITOR_TEXT.RETRY}
+          </RetryButton>
+        )}
+      </EmptyData>
+    );
   }
 
   if (containerVMs.length === 0) {
-    return <EmptyData>暂无拓扑数据</EmptyData>;
+    return <EmptyData>{ENV_MONITOR_TEXT.EMPTY}</EmptyData>;
   }
 
-  const stationText = normalizeText(stationTitle, "储能站点");
+  const stationText = normalizeText(stationTitle, ENV_MONITOR_TEXT.DEFAULT_STATION_NAME);
   const stationCenter = layout.canvasWidth / 2;
 
   return (

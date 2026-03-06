@@ -23,6 +23,7 @@ import {
   ValueGrid,
   ValueLabel,
   ValueText,
+  EmptyMetric,
   EmptyData,
 } from "./styled.js";
 
@@ -64,21 +65,26 @@ function toProgressPercent(value, unit) {
   return Math.max(0, Math.min(100, numeric));
 }
 
-/**
- * 按关键字匹配数据项。
- *
- * @param items 指标数组
- * @param patterns 正则关键字
- * @returns 匹配项或 null
- *
- * @author ybdpx
- */
-function findByNamePatterns(items, patterns) {
-  const list = Array.isArray(items) ? items : [];
-  return (
-    list.find((item) => patterns.some((pattern) => pattern.test(String(item?.name ?? "")))) ??
-    null
-  );
+function getItemStyle(item) {
+  return String(item?.style ?? "").trim();
+}
+
+function getSortIndex(item, fallback) {
+  const idx = Number(item?.index);
+  return Number.isFinite(idx) ? idx : fallback;
+}
+
+function getItemLabel(item, fallback) {
+  const name = String(item?.name ?? "").trim();
+  if (name) return name;
+  const point = String(item?.point ?? "").trim();
+  if (point) return point;
+  return fallback;
+}
+
+function formatRawValue(value) {
+  const text = String(value ?? "").trim();
+  return text || "--";
 }
 
 /**
@@ -93,15 +99,26 @@ function findByNamePatterns(items, patterns) {
 function buildDisplayModel(node, isStack = false) {
   const items = Array.isArray(node?.items) ? node.items : [];
   const statusItem =
-    findByNamePatterns(items, [/状态/, /运行/, /charge/i]) ||
-    items.find((item) => item?.style === "Value") ||
-    null;
-  const socItem = findByNamePatterns(items, [/soc/i]);
-  const sohItem = findByNamePatterns(items, [/soh/i]);
-  const maxVoltageItem = findByNamePatterns(items, [/电压高/, /最高电压/, /max.?v/i]);
-  const minVoltageItem = findByNamePatterns(items, [/电压低/, /最低电压/, /min.?v/i]);
-  const maxTempItem = findByNamePatterns(items, [/温度高/, /最高温度/, /max.?temp/i]);
-  const minTempItem = findByNamePatterns(items, [/温度低/, /最低温度/, /min.?temp/i]);
+    items.find((item) => getItemStyle(item).toLowerCase() === "value") || null;
+  const progressItems = items
+    .filter((item) => getItemStyle(item).toLowerCase() === "namevalueone")
+    .sort((a, b) => getSortIndex(a, 0) - getSortIndex(b, 0))
+    .map((item, index) => ({
+      key: `progress-${getSortIndex(item, index)}-${item?.point || item?.name || index}`,
+      label: getItemLabel(item, `指标${index + 1}`),
+      value: formatRawValue(item?.value),
+      unit: String(item?.unit ?? ""),
+      percent: toProgressPercent(item?.value, item?.unit),
+    }));
+  const valueItems = items
+    .filter((item) => getItemStyle(item).toLowerCase() === "namevaluetwo")
+    .sort((a, b) => getSortIndex(a, 0) - getSortIndex(b, 0))
+    .map((item, index) => ({
+      key: `value-${getSortIndex(item, index)}-${item?.point || item?.name || index}`,
+      label: getItemLabel(item, `点位${index + 1}`),
+      value: formatRawValue(item?.value),
+      unit: String(item?.unit ?? ""),
+    }));
 
   const rawTitle = String(node?.name || (isStack ? "BMS设备" : "电池簇"));
   const sn = String(node?.sn || "").trim();
@@ -109,21 +126,11 @@ function buildDisplayModel(node, isStack = false) {
 
   return {
     title,
-    status: String(statusItem?.value ?? "充电"),
-    socText: String(socItem?.value ?? "--"),
-    socUnit: String(socItem?.unit ?? ""),
-    socPercent: toProgressPercent(socItem?.value, socItem?.unit),
-    sohText: String(sohItem?.value ?? "--"),
-    sohUnit: String(sohItem?.unit ?? ""),
-    sohPercent: toProgressPercent(sohItem?.value, sohItem?.unit),
-    maxVoltage: String(maxVoltageItem?.value ?? "--"),
-    maxVoltageUnit: String(maxVoltageItem?.unit ?? "V"),
-    minVoltage: String(minVoltageItem?.value ?? "--"),
-    minVoltageUnit: String(minVoltageItem?.unit ?? "V"),
-    maxTemp: String(maxTempItem?.value ?? "--"),
-    maxTempUnit: String(maxTempItem?.unit ?? "℃"),
-    minTemp: String(minTempItem?.value ?? "--"),
-    minTempUnit: String(minTempItem?.unit ?? "℃"),
+    statusLabel: getItemLabel(statusItem, "当前状态"),
+    statusValue: formatRawValue(statusItem?.value),
+    progressItems,
+    valueItems,
+    hasData: items.length > 0,
   };
 }
 
@@ -157,19 +164,21 @@ const TopStackCard = memo(function TopStackCard({ model }) {
   return (
     <DetailCard $isStack>
       <StateGrid>
-        <StateLabel>当前状态</StateLabel>
-        <StateValue>{model.status}</StateValue>
+        <StateLabel>{model.statusLabel}</StateLabel>
+        <StateValue>{model.statusValue}</StateValue>
       </StateGrid>
-      <ProgressGroup>
-        <ProgressLine $variant="soc" $percent={model.socPercent}>
-          SOC {model.socText}
-          {model.socUnit}
-        </ProgressLine>
-        <ProgressLine $variant="soh" $percent={model.sohPercent}>
-          SOH {model.sohText}
-          {model.sohUnit}
-        </ProgressLine>
-      </ProgressGroup>
+      {model.progressItems.length > 0 ? (
+        <ProgressGroup>
+          {model.progressItems.map((item, index) => (
+            <ProgressLine key={item.key} $variant={index % 2 === 1 ? "soh" : "soc"} $percent={item.percent}>
+              {item.label} {item.value}
+              {item.unit}
+            </ProgressLine>
+          ))}
+        </ProgressGroup>
+      ) : (
+        <EmptyMetric>暂无指标数据</EmptyMetric>
+      )}
     </DetailCard>
   );
 });
@@ -181,31 +190,30 @@ const ClusterCard = memo(function ClusterCard({ model }) {
       <DetailCard>
         <CardTitle>{model.title}</CardTitle>
         <StateGrid>
-          <StateLabel>当前状态</StateLabel>
-          <StateValue>{model.status}</StateValue>
+          <StateLabel>{model.statusLabel}</StateLabel>
+          <StateValue>{model.statusValue}</StateValue>
         </StateGrid>
-        <ProgressGroup>
-          <ProgressLine $variant="soc" $percent={model.socPercent}>
-            SOC {model.socText}
-            {model.socUnit}
-          </ProgressLine>
-          <ProgressLine $variant="soh" $percent={model.sohPercent}>
-            SOH {model.sohText}
-            {model.sohUnit}
-          </ProgressLine>
-        </ProgressGroup>
-        <ValueGrid>
-          <ValueLabel>电压高值</ValueLabel>
-          <ValueLabel>电压低值</ValueLabel>
-          <ValueText>{formatValue(model.maxVoltage, model.maxVoltageUnit)}</ValueText>
-          <ValueText>{formatValue(model.minVoltage, model.minVoltageUnit)}</ValueText>
-        </ValueGrid>
-        <ValueGrid>
-          <ValueLabel>温度高值</ValueLabel>
-          <ValueLabel>温度低值</ValueLabel>
-          <ValueText>{formatValue(model.maxTemp, model.maxTempUnit)}</ValueText>
-          <ValueText>{formatValue(model.minTemp, model.minTempUnit)}</ValueText>
-        </ValueGrid>
+        {model.progressItems.length > 0 ? (
+          <ProgressGroup>
+            {model.progressItems.map((item, index) => (
+              <ProgressLine key={item.key} $variant={index % 2 === 1 ? "soh" : "soc"} $percent={item.percent}>
+                {item.label} {item.value}
+                {item.unit}
+              </ProgressLine>
+            ))}
+          </ProgressGroup>
+        ) : null}
+        {model.valueItems.length > 0 ? (
+          <ValueGrid>
+            {model.valueItems.map((item) => (
+              <React.Fragment key={item.key}>
+                <ValueLabel>{item.label}</ValueLabel>
+                <ValueText>{formatValue(item.value, item.unit)}</ValueText>
+              </React.Fragment>
+            ))}
+          </ValueGrid>
+        ) : null}
+        {!model.hasData ? <EmptyMetric>暂无指标数据</EmptyMetric> : null}
       </DetailCard>
     </ClusterNode>
   );
