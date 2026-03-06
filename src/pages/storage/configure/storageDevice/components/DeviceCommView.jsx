@@ -8,7 +8,6 @@ import styled from 'styled-components'
 import CustomTable from '@com/useTable'
 import CustomModal from '@com/useModal'
 import DeviceSettingDialog from '@pages/storage/configure/storageDevice/components/DeviceSettingDialog'
-import ElectricSettingDialog from './ElectricSettingDialog'
 
 const CustomTitle = styled.div`
     display: flex;
@@ -44,8 +43,6 @@ export default function DeviceCommView ({ tab, areaId, projectId, containerId, s
   const deleteDialogRef = useRef(null)
   //配置弹窗
   const deviceSettingDialogRef = useRef(null)
-  //电表配置弹窗（特殊处理）
-  const electricSettingDialogRef = useRef(null)
   const { value: siteId = 0 } = stationName
   const [selectId, setSelectId] = useState(0)
   //分页相关数据
@@ -69,12 +66,7 @@ export default function DeviceCommView ({ tab, areaId, projectId, containerId, s
    * 配置按钮点击事件
    */
   const onSettingClick = useMemoizedFn(() => {
-    if (Number(tab) === 10) {
-      //电表页签特殊处理
-      electricSettingDialogRef.current?.showDialog()
-    } else {
-      deviceSettingDialogRef.current?.showDialog()
-    }
+    deviceSettingDialogRef.current?.showDialog()
   })
 
   /**
@@ -96,7 +88,7 @@ export default function DeviceCommView ({ tab, areaId, projectId, containerId, s
         message.success('删除成功!')
         let current = Math.ceil((totalItem.current - 1) / PageSize) < curPage.current
           ? Math.max(1, curPage.current - 1)  // 确保页码最小为1
-          : curPage.current;
+          : curPage.current
         if (current !== curPage.current) {
           // 如果删除后需要跳转页码
           run({ current: current, pageSize: PageSize })
@@ -151,16 +143,8 @@ export default function DeviceCommView ({ tab, areaId, projectId, containerId, s
 
   const { tableProps, refresh, run } = useAntdTable(getTableData, {
     defaultPageSize: PageSize,
-    refreshDeps: [projectId, tab, areaId, siteId, containerId],  // 添加依赖项，确保参数变化时能更新
+    refreshDeps: [projectId, tab, containerId],  // 添加依赖项，确保参数变化时能更新
   })
-
-  useEffect(() => {
-    // 直接响应参数变化，不再使用防抖
-    if(projectId !== undefined && tab !== undefined && areaId !== undefined && siteId !== undefined && containerId !== undefined){
-      console.log('projectId, tab, areaId, siteId, containerId', projectId, tab, areaId, siteId, containerId)
-      run({ current: 1, pageSize: PageSize })
-    }
-  }, [projectId, tab, areaId, siteId, containerId])
 
   return (
     <>
@@ -169,7 +153,7 @@ export default function DeviceCommView ({ tab, areaId, projectId, containerId, s
           <div className="icon"></div>
           <div className="title">{title}列表</div>
         </Space>
-        <CustButton onClick={onSettingClick}>配置{title}</CustButton>
+        <CustButton wh="auto" style={{ minWidth: 96 }} onClick={onSettingClick}>配置{title}</CustButton>
       </CustomTitle>
       <CustomTable
         ref={tableRef}
@@ -199,14 +183,7 @@ export default function DeviceCommView ({ tab, areaId, projectId, containerId, s
         containerId={containerId}
         tab={tab}
         onRefreshClick={onRefreshClick}
-      />
-      <ElectricSettingDialog
-        ref={electricSettingDialogRef}
-        siteId={siteId}
-        projectId={projectId}
-        containerId={containerId}
-        tab={tab}
-        onRefreshClick={onRefreshClick}
+        limit={[101, 102].includes(Number(tab)) ? 1 : 0} // 限制最多选中一个设备
       />
     </>
   )

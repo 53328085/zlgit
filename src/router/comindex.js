@@ -16,8 +16,9 @@ import {
 export default function Index() {
   const dispatch = useDispatch();
   const location = useLocation();
+  
   let { state = {} } = location;
-  let { nested = "", primary, meterType } = state; // meterType 从运行监控 =》 运行监控 跳转到 运行监控-》 设备管理
+  let { nested = "", primary, meterType } = state??{}; // meterType 从运行监控 =》 运行监控 跳转到 运行监控-》 设备管理
 
   let whole = ["runtimeMonitor", "runtimeSafe", "runtimeEnergy", "runtimeStorage", "runtimeMaintenance", "runtimeSolar", "designerSolar"]; // 需要显示搜索 ***（全部）的模块
   let include =useMemo(() => { // 需要显示搜索 ***（全部）的页面

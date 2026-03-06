@@ -38,27 +38,32 @@ export const TopBox = styled.div`
 .content{
   display: grid;
   align-items: center;
+  flex:1;
   .info{
     display: flex;
     align-items: baseline;
+       .value {
+         color:#303133;
+          font-weight: 500;
+          margin-bottom: 0px;
+          flex:1
+
+    }
     span:nth-of-type(1){
     width: 6px;
     height: 6px;
     background: #1E50E6;
     display: inline-block;
     border-radius: 50%;
-    margin-right: 10px;
+   margin-right: 10px;
+ 
     }
  span:nth-of-type(2){
     display: inline-block;
     width: 70px;
     color: #606266;
 }
-    span:nth-of-type(3){
-    display: inline-block;
-    width: 150px;
-    
-    }
+ 
 }
   }
   }

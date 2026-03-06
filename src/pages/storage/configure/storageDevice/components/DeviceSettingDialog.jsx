@@ -46,7 +46,7 @@ const rightTableColumns = [
   },
 ]
 
-const DeviceSettingDialog = ({ onRefreshClick, projectId, siteId, containerId, tab }, ref) => {
+const DeviceSettingDialog = ({ onRefreshClick, projectId, siteId, containerId, tab, limit = 0 }, ref) => {
   const modalRef = useRef(null)
   const [sourceData, setSourceData] = useState([])
   const [targetKeys, setTargetKeys] = useState([])
@@ -83,6 +83,13 @@ const DeviceSettingDialog = ({ onRefreshClick, projectId, siteId, containerId, t
       message.error('请选择设备')
       return
     }
+
+    // 限制选中设备数量
+    if (limit > 0 && targetKeys.length > limit) {
+      message.error(`最多只能选择 ${limit} 个设备`)
+      return
+    }
+
     const params = targetKeys.map(item => {
       return {
         sn: item,
@@ -112,6 +119,13 @@ const DeviceSettingDialog = ({ onRefreshClick, projectId, siteId, containerId, t
 
   const onChange = (newTargetKeys, direction, moveKeys) => {
     console.log(newTargetKeys, direction, moveKeys)
+
+    // 限制添加数量
+    if (limit > 0 && direction === 'right' && newTargetKeys.length > limit) {
+      message.error(`最多只能选择 ${limit} 个设备`)
+      return
+    }
+
     setTargetKeys(newTargetKeys)
   }
 

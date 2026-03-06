@@ -1,7 +1,7 @@
 import React, { useRef, useImperativeHandle, forwardRef, useEffect, useState, useCallback, memo, useMemo } from 'react'
 import { createPortal, flushSync } from 'react-dom'
 import { message, Input, Button, Space } from 'antd'
-import {SearchOutlined} from "@ant-design/icons"
+import { SearchOutlined } from "@ant-design/icons"
 import { useSelector } from "react-redux";
 import styled from 'styled-components'
 import { useTranslation } from 'react-i18next'
@@ -67,7 +67,7 @@ flex-direction: column;
 // 生成表格模板 
 
 // 表格搜索函数
-export const getColumnSearchProps = (dataIndex,desc) => ({
+export const getColumnSearchProps = (dataIndex, desc) => ({
   filterDropdown: ({ setSelectedKeys, selectedKeys, confirm, clearFilters, close }) => (
     <div
       style={{
@@ -84,8 +84,8 @@ export const getColumnSearchProps = (dataIndex,desc) => ({
           marginBottom: 8,
           display: 'block',
         }}
-          
-      />   
+
+      />
       <Space>
         <Button
           type="primary"
@@ -96,11 +96,11 @@ export const getColumnSearchProps = (dataIndex,desc) => ({
           刷选
         </Button>
         <Button
-          onClick={() => {clearFilters?.(); confirm()}}
+          onClick={() => { clearFilters?.(); confirm() }}
           size="small"
         >
-         清空
-        </Button> 
+          清空
+        </Button>
         <Button
           type="link"
           size="small"
@@ -108,7 +108,7 @@ export const getColumnSearchProps = (dataIndex,desc) => ({
             close();
           }}
         >
-         关闭
+          关闭
         </Button>
       </Space>
     </div>
@@ -121,7 +121,7 @@ export const getColumnSearchProps = (dataIndex,desc) => ({
     />
   ),
   onFilter: (value, record) =>
-     record[dataIndex]?.toString().toLowerCase().includes(value?.toLowerCase()),  
+    record[dataIndex]?.toString().toLowerCase().includes(value?.toLowerCase()),
 });
 
 
@@ -134,6 +134,7 @@ function Index(props, ref) {
   const allref = useRef()
   const [lists, setLists] = useState()
   const [total, setTotal] = useState(0)
+  const [showtb, setShowtb] = useState(false) // 表格全部导出后，移除表格
   const tempref = useRef();
   const { t } = useTranslation("comm")
 
@@ -178,8 +179,9 @@ function Index(props, ref) {
 
   const downloadAll = async () => {
     try {
-      let { list, total } = await onExport()      
+      let { list, total } = await onExport()
       flushSync(() => {
+        setShowtb(true)
         setLists(list)
         setTotal(total)
       })
@@ -187,6 +189,7 @@ function Index(props, ref) {
       download()
     } catch (error) {
       console.log(error)
+      setShowtb(false)
       message.warning('导出出错！')
 
     }
@@ -218,7 +221,7 @@ function Index(props, ref) {
 
     let fileName = sheetName.split(".")[0]
     writeFile(workbook, `${fileName}.${file}`, { bookType: file }); // 下载
-
+    setShowtb(false)
   }, [lists, total, sheetName])
 
   const domExprot = () => { // 通过table DOM 导出  
@@ -248,13 +251,13 @@ function Index(props, ref) {
     writeFile(workbook, `${fileName}.${file}`, { bookType: file }); // 下载
   }
   const dataExport = (params) => {  // 根据数据创建表格，可以选择要导出的列
-    console.log("params",params)
+    console.log("params", params)
     const { header, data, skipHeader = true, sheetName = 'sheet1', option = {} } = isObject(params) ? params : {}
-     
+
     const workbook = utils.book_new(); // 新建工作簿
     // var ws = utils.aoa_to_sheet([header]); // 添加标题到工作表
     //utils.sheet_add_json(ws, data, { skipHeader: true, origin: "A2" }); // 添加数据到工作表
-    let ws = utils.json_to_sheet(data, option )
+    let ws = utils.json_to_sheet(data, option)
 
     let { rowinfo, colinfo } = option
     rowinfo ? ws["!rows"] = rowinfo : ''
@@ -268,7 +271,7 @@ function Index(props, ref) {
   }
   useImperativeHandle(ref, () => ({
     download: domExprot,
-    downloadByData:(params)=> dataExport(params),
+    downloadByData: (params) => dataExport(params),
     printContent: tableref.current,
     downloadAll, // 下载全部数据
     downTemp,
@@ -294,7 +297,7 @@ function Index(props, ref) {
         scrollToFirstRowOnChange: true,
         ...scroll,
       }} laptop={laptop} />
-      {Array.isArray(lists) && <Allupdate lists={lists} total={total} />}
+      {Array.isArray(lists) && showtb && <Allupdate lists={lists} total={total} />}
       {props.istemp && <TableTemp />}
     </Divbox>
   )

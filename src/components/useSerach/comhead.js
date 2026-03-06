@@ -71,9 +71,9 @@ export default function UseSerach(props) {
 
 
   const { config = {}, custview = null, record = null } = props
-   
+
   const { isAreaId = true, gas = true, isLevles=false, daterang = 'day', formsty = {}, onlye=false } = config
-  
+
   const dispatch = useDispatch()
 
 
@@ -93,10 +93,10 @@ export default function UseSerach(props) {
      if (onlye) {
        options = options.filter(d => d.value == 1)
      }
-     return options 
+     return options
   }, [energyTypes,onlye])
 
-  
+
   const levelone = useSelector(selectOneLevel)
   const { laptop } = useSelector(adaptation)
   const defauledeviceID =useSelector(deviceID)
@@ -177,9 +177,11 @@ export default function UseSerach(props) {
         if (props.config.isPcs && !props.config.isTank) getPcs();
         if (props.config.isBms && !props.config.isTank) getBms();
       } else {
+        console.log("站点暂无数据")
         setOptions([])
         form.setFieldsValue({
-          stationName: { label: null, value: null, id: null }
+          stationName: { label: null, value: null, id: null },
+          containerId:{ label: null, value: null },
         })
         props.setexparams({ ...form.getFieldsValue(true) })
         if (!success) return message.warning(errMsg)
@@ -580,7 +582,7 @@ export default function UseSerach(props) {
       let v = form.getFieldValue('energytype');
       if (v == 3) form.setFieldValue('energytype', 1)
     }
-   
+
     if (config.dateType) {
       form.setFieldValue('type', config.dateType)
 

@@ -13,52 +13,53 @@ import powerStation from './images/powerStation.png'
 import inverter from './images/inverter.png'
 import installedCapacity from './images/installedCapacity.png'
 import runtimeDuration from './images/runtimeDuration.png'
-import { DatePicker, Table, Checkbox, Space, Radio, Divider, Select, Tree, Button, message, Form} from "antd";
+import { DatePicker, Table, Checkbox, Space, Radio, Divider, Select, Tree, Button, message, Form, Typography } from "antd";
 import { CustButtonT, ExportExcel, CustButton, ExportButton } from '@com/useButton'
 import { Container, TopBox, FotterBox, Header } from "./style";
 
-import { isObject,getTime } from '@com/usehandler';
+import { isObject, getTime } from '@com/usehandler';
 import moment from "moment";
- 
+
 import { useNavigate, Link } from "react-router-dom";
 import SolarPowerGenerationChart from './weatherEcharts.js';
-import  {useQueryGirdCabinetInfo, useQueryInverterList,useQueryEnergyTrend} from './api'
-import {options} from './data'
-import imgurl from './images/index' 
+import { useQueryGirdCabinetInfo, useQueryInverterList, useQueryEnergyTrend } from './api'
+import { options } from './data'
+import imgurl from './images/index'
 const { RangePicker } = DatePicker;
 const fs = {
   fc: '#333'
 }
 export default function Index() {
-    const [form] = Form.useForm()
-    const mode = Form.useWatch('mode', form)
-    let { exparams } = useOutletContext()
-    
-    const { projectId, cabinet, refresh } = exparams || {cabinet:{value: ''}}
-    const  {value: cabinetId} = cabinet || {value:NaN}
-     
-    const [cabinetDtl, setCabinetDtl] = useState({})
-    const {coalInfo={},generationInfo={}  } =cabinetDtl || {}
-    const [cabinetList, setCabinetList] = useState([])
-    const [curstate, setCurstate] = useState("1")
-    const [weather, setWeather] = useState({})
-   
-    const [filtrlist, states] = useMemo(()=> {
-       let filtrlist = curstate == 0 ? cabinetList: cabinetList.filter(f => f.state == curstate)
-       let all =  cabinetList?.length;
-       let online= cabinetList.filter(f=>f.state==1)?.length ;
-       let offline = cabinetList.filter(f=>f.state!=1)?.length;
-       let states=[
-        {label:`全部 (${all})`,value:'0'},
-        {label: `在线 (${online})`,value:'1'},
-        {label: `离线 (${offline})`,value:'2'},
-     
+  const [form] = Form.useForm()
+  const mode = Form.useWatch('mode', form)
+  let { exparams } = useOutletContext()
+
+  const { projectId, cabinet, refresh } = exparams || { cabinet: { value: '' } }
+  const { value: cabinetId } = cabinet || { value: NaN }
+
+  const [cabinetDtl, setCabinetDtl] = useState({})
+  const { coalInfo = {}, generationInfo = {} } = cabinetDtl || {}
+  const [cabinetList, setCabinetList] = useState([])
+  const [curstate, setCurstate] = useState("1")
+  const [weather, setWeather] = useState({})
+
+
+  const [filtrlist, states] = useMemo(() => {
+    let filtrlist = curstate == 0 ? cabinetList : cabinetList.filter(f => f.state == curstate)
+    let all = cabinetList?.length;
+    let online = cabinetList.filter(f => f.state == 1)?.length;
+    let offline = cabinetList.filter(f => f.state != 1)?.length;
+    let states = [
+      { label: `全部 (${all})`, value: '0' },
+      { label: `在线 (${online})`, value: '1' },
+      { label: `离线 (${offline})`, value: '2' },
+
     ]
-       
-      return [filtrlist, states]
-    },[cabinetList, curstate])
-    const weatherOpt = useMemo(()=> {
-   
+
+    return [filtrlist, states]
+  }, [cabinetList, curstate])
+  const weatherOpt = useMemo(() => {
+
     return {
       series: [{ type: "bar", seriesLayoutBy: 'row' }], // [{ type: "bar",seriesLayoutBy: 'row' }], 
       grid: {
@@ -68,105 +69,105 @@ export default function Index() {
         bottom: "16px",
         containLabel: true,
       },
-      legend:{
+      legend: {
         show: false,
       },
-     /*  legend: {
-        top: "5px",
-      },
-      xAxis: {
-        type: 'category',
-  
-      },
-      yAxis: {
-        type: 'value',
-        axisLabel: {
-          formatter: (value) => value + unit
-        }
-      }, */
+      /*  legend: {
+         top: "5px",
+       },
+       xAxis: {
+         type: 'category',
+   
+       },
+       yAxis: {
+         type: 'value',
+         axisLabel: {
+           formatter: (value) => value + unit
+         }
+       }, */
       dataset: {
-        dimensions:[{
+        dimensions: [{
           name: '时间', type: "date",
-        }, {name: "发电量"}],
-        source:[Array.isArray(weather?.x) ? weather?.x : [], Array.isArray(weather?.y) ? weather?.y : []],
+        }, { name: "发电量" }],
+        source: [Array.isArray(weather?.x) ? weather?.x : [], Array.isArray(weather?.y) ? weather?.y : []],
         sourceHeader: false,
       },
-     /*  toolbox: {
-        show: true,
-        feature: {
-          magicType: {
-            type: ['line', 'bar',]
-          },
-          saveAsImage: {},
-  
-        },
-        top: "5px",
-        right: "10px"
-      } */
+      /*  toolbox: {
+         show: true,
+         feature: {
+           magicType: {
+             type: ['line', 'bar',]
+           },
+           saveAsImage: {},
+   
+         },
+         top: "5px",
+         right: "10px"
+       } */
     }
 
 
 
-    },[weather])
- 
+  }, [weather])
 
-  const queryInfo=async()=> {
+
+  const queryInfo = async () => {
     try {
-      
-      let {success, data} =  await useQueryGirdCabinetInfo({projectId, cabinetId})
-      if(success && isObject(data)) {
+
+      let { success, data } = await useQueryGirdCabinetInfo({ projectId, cabinetId })
+      if (success && isObject(data)) {
         setCabinetDtl(data)
-      }else{
+      } else {
         setCabinetDtl({})
       }
     } catch (error) {
-      
+
     }
   }
-  const getList=async()=> { 
+  const getList = async () => {
     try {
-      let {success, data} = await useQueryInverterList({projectId, cabinetId})
-      if(success && Array.isArray(data)){
+      let { success, data } = await useQueryInverterList({ projectId, cabinetId })
+      if (success && Array.isArray(data)) {
         setCabinetList(data)
-      }else {
+      } else {
         setCabinetList([])
       }
     } catch (error) {
-      
+
     }
   }
-  const getTrend =async()=> {
+  const getTrend = async () => {
     try {
       let values = form.getFieldsValue();
-      console.log("values",values)
-      const {type, date} = values
+      console.log("values", values)
+      const { type, date } = values
       let body = {
         projectId,
         cabinetId,
         type,
-        date:getTime(date, type)
+        date: getTime(date, type)
       }
-      let {success, data} = await useQueryEnergyTrend({}, body)
-      if(success && isObject(data?.detail)){
+      let { success, data } = await useQueryEnergyTrend({}, body)
+      if (success && isObject(data?.detail)) {
         setWeather(data?.detail)
-      }else {
+      } else {
         setWeather({})
       }
     } catch (error) {
       console.log(error)
     }
-    
-   }
+
+  }
   useEffect(() => {
-   
-    if(Number.isInteger(parseInt(projectId)) && Number.isInteger(parseInt(cabinetId)) && refresh){
-      
+
+    if (Number.isInteger(parseInt(projectId)) && Number.isInteger(parseInt(cabinetId)) && refresh) {
+      console.log("调用次数")
       queryInfo()
       getList()
       getTrend()
     }
-   
-  }, [projectId, cabinetId,refresh])
+
+  }, [projectId, cabinetId, refresh])
 
 
 
@@ -220,7 +221,7 @@ export default function Index() {
 
   })
   let comoption = comoptionfn(laptop)
-  const custoption =useMemo(() => ({
+  const custoption = useMemo(() => ({
     ...comoption,
     series: [
       {
@@ -240,19 +241,19 @@ export default function Index() {
     ]
   }), [cabinetDtl])
 
- 
 
- 
+
+
   const tableRef = useRef()
-  
-  
- 
- 
+
+
+
+
   const disabledDate = (current) => {
     return current > moment().endOf('day');
   };
 
- 
+
 
   const columns = [
     {
@@ -280,55 +281,47 @@ export default function Index() {
           <div>{record.weather == 1 ? '晴' :
             record.weather == 2 ? '多云' :
               record.weather == 3 ? '雨' :
-                '未知'}</div>
+                ''}</div>
         )
       }
     }
   ]
-  const tabledata = [
-    { time: "00:00", kWh: 250.54, weather: 1 },
-    { time: "01:00", kWh: 22, weather: 1 },
-    { time: "02:00", kWh: 18.5, weather: 2 },
-    { time: "03:00", kWh: 16.8, weather: 3 },
-    { time: "04:00", kWh: 15.2, weather: 3 },
-    { time: "05:00", kWh: 14.7, weather: 2 },
-    { time: "06:00", kWh: 8.9, weather: 1 },
-    { time: "07:00", kWh: 35.6, weather: 1 },
-    { time: "08:00", kWh: 48.9, weather: 1 },
-    { time: "09:00", kWh: 52.3, weather: 1 },
-    { time: "10:00", kWh: 49.8, weather: 1 },
-    { time: "11:00", kWh: 45.2, weather: 1 },
-    { time: "12:00", kWh: 42.7, weather: 1 },
-    { time: "13:00", kWh: 40.1, weather: 2 },
-    { time: "14:00", kWh: 38.5, weather: 2 },
-    { time: "15:00", kWh: 36.9, weather: 1 },
-    { time: "16:00", kWh: 39.2, weather: 1 },
-    { time: "17:00", kWh: 44.8, weather: 1 },
-    { time: "18:00", kWh: 52.1, weather: 1 },
-    { time: "19:00", kWh: 58.7, weather: 2 },
-    { time: "20:00", kWh: 62.3, weather: 3 },
-    { time: "21:00", kWh: 59.8, weather: 3 },
-    { time: "22:00", kWh: 48.5, weather: 2 },
-    { time: "23:00", kWh: 32.1, weather: 2 }
-  ]
+  const tabledata = useMemo(() => {
+    if (isObject(weather) && Array.isArray(weather.x) && Array.isArray(weather.y)) {
+      let { x, y } = weather
+      return x.map((item, index) => {
+        return {
+          time: item,
+          kWh: y[index]
+        }
+      })
+    } else {
+      return []
+    }
+  }, [weather])
 
   const navigate = useNavigate();
   const toDevicePage = (item) => {
-    navigate(`/index/runtimeSolar/device`, {
-      state: {
-        type: 'index', primary: 'runtimeSolar', title: '逆变器监控', nested: 'device'
-      }
-    })
+    try {
+      navigate(`/index/runtimeSolar/inverterMonitor`, {
+        state: {
+          type: 'index', primary: 'runtimeSolar', title: '逆变器监控', nested: 'inverterMonitor'
+        }
+      })
+    } catch (error) {
+      console.log(error)
+    }
+
   }
 
   const onExport = async () => {
     tableRef.current.download()
   }
-  const typeChange = (e)=>{
-     if(e!=3) {
+  const typeChange = (e) => {
+    if (e != 3) {
       form.setFieldValue('date', moment())
-     }
-     getTrend()
+    }
+    getTrend()
   }
   return (
     // <div style={{flex: 1, display:"flex", justifyContent: 'center', alignContent: 'center'}}>
@@ -337,20 +330,22 @@ export default function Index() {
     < Pagecount bgcolor="#eeeff4" pd={0} >
       <Container>
         <TopBox>
-          <Titlelayout title={'并网柜信息'} {...fs}>
+          <Titlelayout title={'并网柜信息'} {...fs} layout="flex" dr="column">
             <div className='infoBox1'>
-              <img src={powerStation} className='powerStation' />
+              <div className='powerStation'>
+                <img src={powerStation} />
+              </div>
               <div className='content'>
                 <div className='info'>
-                  <span></span><span>名  称： </span> <span className='value'>{cabinetDtl?.name}</span></div>
+                  <span></span><span>名  称： </span> <Typography.Paragraph className='value' ellipsis={{ tooltip: cabinetDtl?.name }}>{cabinetDtl?.name}</Typography.Paragraph></div>
                 <div className='info'>
-                  <span></span> <span>编  号：</span> <span className='value'>{cabinetDtl?.no}</span></div>
+                  <span></span> <span>编  号：</span> <Typography.Paragraph className='value' ellipsis={{ tooltip: cabinetDtl?.no }}>{cabinetDtl?.no}</Typography.Paragraph></div>
                 <div className='info'>
-                  <span></span> <span>总表名称：</span><span className='value'>{cabinetDtl?.meterName}</span></div>
+                  <span></span> <span>总表名称：</span><Typography.Paragraph className='value' ellipsis={{ tooltip: cabinetDtl?.meterName }}>{cabinetDtl?.meterName}</Typography.Paragraph></div>
                 <div className='info'>
-                  <span></span> <span>总表编号：</span><span className='value'>{cabinetDtl?.meterSn}</span></div>
+                  <span></span> <span>总表编号：</span><Typography.Paragraph className='value' ellipsis={{ tooltip: cabinetDtl?.meterSn }}>{cabinetDtl?.meterSn}</Typography.Paragraph></div>
                 <div className='info'>
-                  <span></span><span>安装地址：</span> <span className='value'>{cabinetDtl?.address}</span></div>
+                  <span></span><span>安装地址：</span> <Typography.Paragraph className='value' ellipsis={{ tooltip: cabinetDtl?.address }}>{cabinetDtl?.address}</Typography.Paragraph></div>
               </div>
             </div>
             <div className='powerNum'>
@@ -384,7 +379,7 @@ export default function Index() {
                 <Header>
                   <Link
                     className='historicalData'
-                    to={`/deviceDetail?sn=${encodeURIComponent("202304220001")}&deviceStyle=${encodeURIComponent(1)}`}
+                    to={`/deviceDetail?sn=${encodeURIComponent(cabinetDtl?.meterSn)}&deviceStyle=${encodeURIComponent(1)}`}
                     target="_blank"
                   >
                     历史数据
@@ -394,7 +389,8 @@ export default function Index() {
             }>
             <Ichart custoption={custoption} />
           </Titlelayout>
-          <Titlelayout title={'发电概览'}>
+          <Titlelayout title={'发电概览'} layout="flex" key="overview" >
+
             <div className='infoBox2'>
               <div className='info'>
                 <div className='box'>
@@ -445,7 +441,7 @@ export default function Index() {
               </div>
             </div>
           </Titlelayout>
-          <Titlelayout title={'碳排概览'}>
+          <Titlelayout title={'碳排概览'} layout="flex">
             <div className='infoBox2'>
               <div className='info'>
                 <div className='box'>
@@ -478,10 +474,10 @@ export default function Index() {
           <Titlelayout title={'逆变器'} layout="flex" extra={
             <Header>
               <div style={{ marginRight: "16px" }}>
-                <Radio.Group options={states} value={curstate} onChange={(e)=>{
+                <Radio.Group options={states} value={curstate} onChange={(e) => {
                   setCurstate(e.target.value)
-                }}  optionType="button"
-        buttonStyle="solid"></Radio.Group>                
+                }} optionType="button"
+                  buttonStyle="solid"></Radio.Group>
               </div>
             </Header>}>
 
@@ -512,61 +508,68 @@ export default function Index() {
           </Titlelayout>
 
           <Titlelayout title={'光伏发电量趋势'} layout="flex" extra={
-            <Header> 
-                <Form form={form} layout='inline'>
-                  <Space size={16}> 
+            <Header>
+              <Form form={form} layout='inline'>
+                <Space size={16}>
                   <Form.Item name="type" initialValue="1">
-                    <Select   style={{ width: 96}} 
-                  onChange={typeChange}
-                  options={[
-                    { value: '1', label: '日', },
-                    { value: '2', label: '月', },
-                    { value: '3', label: '年' },
-                    // { value: '4', label: '自定义' },
-                  ]}
-                />
-                </Form.Item>
-                <Form.Item name="date" initialValue={moment()} >
-                  <DatePicker picker={["date","date", "month","year"][Form.useWatch("type",form)]} style={{ width: 240 }} onChange={getTrend}   disabledDate={disabledDate} />
-                 </Form.Item> 
-                <Form.Item name="mode" initialValue="1">
-                <Radio.Group
-                block
-                options={options}
-                optionType="button"
-                buttonStyle="solid"
-                onChange={getTrend}
-              />
-                </Form.Item> 
-              <CustButtonT text="export" src='export' onClick={onExport} disabled={mode == 1} />
-              </Space>
+                    <Select style={{ width: 96 }}
+                      onChange={typeChange}
+                      options={[
+                        { value: '1', label: '日', },
+                        { value: '2', label: '月', },
+                        { value: '3', label: '年' },
+                        // { value: '4', label: '自定义' },
+                      ]}
+                    />
+                  </Form.Item>
+                  <Form.Item name="date" initialValue={moment()} >
+                    <DatePicker picker={["date", "date", "month", "year"][Form.useWatch("type", form)]} style={{ width: 240 }} onChange={getTrend} disabledDate={disabledDate} />
+                  </Form.Item>
+                  <Form.Item name="mode" initialValue="1">
+                    <Radio.Group
+                      block
+                      options={options}
+                      optionType="button"
+                      buttonStyle="solid"
+                      onChange={getTrend}
+                    />
+                  </Form.Item>
+                  <CustButtonT text="export" src='export' onClick={onExport} disabled={mode == 1} />
+                </Space>
               </Form>
             </Header>
           }>
             {mode == 1 ?
-               <div style={{flex:1, display: "flex"}}>
+              <div style={{ flex: 1, display: "flex" }}>
                 <Ichart  {...weatherOpt} />
-               </div> :
+              </div> :
               <UserTable
-                scroll={{ y: 280 }} columns={columns} dataSource={[]}
-
+                scroll={{ y: 280 }} columns={columns} dataSource={tabledata}
+                ref={tableRef}
+                sheetName='光伏发电量趋势.xlsx'
                 summary={(pageData) => {
                   let eleTotal = 0
                   pageData?.forEach(({ kWh }) => {
-                    eleTotal = Math.round((eleTotal + kWh) * 100) / 100
+
+                    let val = parseFloat(kWh, 2)
+                    if (typeof val === 'number') {
+                      eleTotal += val
+                    }
+
                   });
 
                   return (
                     <Table.Summary fixed>
                       <Table.Summary.Row style={{ backgroundColor: "#f6f6f6", textAlign: "center" }}>
                         <Table.Summary.Cell index={0} >汇总</Table.Summary.Cell>
-                        <Table.Summary.Cell index={1} colSpan={2} >{eleTotal}</Table.Summary.Cell>
+                        <Table.Summary.Cell index={1}  >{eleTotal}</Table.Summary.Cell>
+                        <Table.Summary.Cell index={2}  ></Table.Summary.Cell>
                       </Table.Summary.Row>
                     </Table.Summary>)
                 }}
               >
               </UserTable>}
-            <UserTable
+            {/* <UserTable
               style={{ display: 'none' }} // 隐藏表格
               columns={columns} dataSource={tabledata}
               ref={tableRef} sheetName='光伏发电量趋势.xlsx'
@@ -585,7 +588,7 @@ export default function Index() {
                   </Table.Summary>)
               }}
             >
-            </UserTable>
+            </UserTable> */}
           </Titlelayout>
         </FotterBox>
       </Container >
