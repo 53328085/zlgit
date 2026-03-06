@@ -439,11 +439,12 @@ export default forwardRef(function Index({ projectId, updata, modalTitle, curPag
   const onOk = async () => {
     try {
       // 验证表单
+      console.log("selectedMeter", selectedMeter)
       return formTop.validateFields().then(async () => {
-        if (selectedMeter == null) {
-          message.warning("总表未绑定");
-          throw new Error("总表未绑定"); // 抛出错误阻止关闭
-        }
+        //    if (selectedMeter == null) {
+        //    message.warning("总表未绑定");
+        //    throw new Error("总表未绑定");  
+        //  }
         const formData = formTop.getFieldsValue()
         let deviceIds = [];
         deviceIds = modalTitle === '编辑光伏并网柜'
@@ -455,7 +456,7 @@ export default forwardRef(function Index({ projectId, updata, modalTitle, curPag
           stationId: formData.stationId,
           name: formData.name,
           no: formData.no,
-          sn: selectedMeter.sn || selectedMeter.meterSn,
+          sn: selectedMeter === null ? "" : (selectedMeter?.sn || selectedMeter?.meterSn), // 后端： 为null时传空字符
           address: formData.address,
           deviceIds: deviceIds
         }
@@ -476,6 +477,7 @@ export default forwardRef(function Index({ projectId, updata, modalTitle, curPag
         }
       })
     } catch (error) {
+      console.error('保存并网柜配置失败:', error)
       return Promise.reject("")
     }
   }
@@ -624,6 +626,7 @@ export default forwardRef(function Index({ projectId, updata, modalTitle, curPag
                 notFoundContent={deviceData.length === 0 ? "暂无设备数据" : "无匹配设备"}
                 onChange={handleMeterChange}
                 value={selectedMeter?.sn || selectedMeter?.meterSn || undefined}
+                allowClear
               />
             </div>
             <div className='searchDevice'>

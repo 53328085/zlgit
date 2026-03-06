@@ -7,14 +7,17 @@ import { useRequest } from "ahooks"
 
 import { useQuerySNFReportData } from "../common/api.js";
 
-import { Mainwrap } from "../common/style.js";
-import Cform from "../common/index.js";
+import { WasteWater } from "../common/style.js";
+import Titlelayout from "@com/titlelayout";
 
 import { getTime } from "@com/usehandler.js"
 import moment from "moment";
 import Comm from "../common/comm.js"
 import { Cspin } from "@com/comstyled"
 import Empty from "@com/useEmpty.js";
+import ph from "./icon/ph.png"
+import co2 from "./icon/co2.png"
+import water from "./icon/water.png";
 export default function Index() {
 
 
@@ -72,23 +75,41 @@ export default function Index() {
 
   return (
     <Pagecount pd="0" bgcolor="none">
+      <WasteWater>
+        <Titlelayout title="实时监测数据" key="moniter" layout="flex" pv="5px 16px 16px" className="moniter" >
+          <div className="cards">
+            <div className="card" key="water">
+              <div className="imgbox">
+                <img className="img" src={water} />
+              </div>
+              <div className="note">
+                <div className="title">流量</div>
+                <div className="value">0.478</div>
+              </div>
 
-      <Mainwrap>
-        <Cform setexparams={setexparams} />
-        <Cspin spinning={loading} tip={"loading.."}>
-          <div className="contentwrap">
-            {
-              data?.map?.(d => <Comm {...d} config={config} key={d.equipmentName
-              } />)
-            }
-            {
-              data?.length == 0 && <Empty />
-
-            }
+            </div>
+            <div className="card" key="ph">
+              <div className="imgbox">
+                <img className="img" src={ph} />
+              </div>
+              <div className="note">
+                <div className="title">PH值</div>
+                <div className="value">0.478</div>
+              </div>
+            </div>
+            <div className="card" key="co2">
+              <div className="imgbox">
+                <img className="img" src={co2} />
+              </div>
+              <div className="note">
+                <div className="title"><span>COD(mg/L)</span><span className="strong">正常范围(&lt;350)</span></div>
+                <div className="value">0.478</div>
+              </div>
+            </div>
           </div>
-        </Cspin>
-      </Mainwrap>
-
+        </Titlelayout>
+        <Titlelayout title="历史监测数据" key="history"></Titlelayout>
+      </WasteWater>
     </Pagecount>
   );
 }

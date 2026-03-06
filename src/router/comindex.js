@@ -99,6 +99,9 @@ export default function Index() {
       "statistic",
       "warning",
     ],
+    efficiencyAnalysis: [
+      "wasteWaterMonitor"
+    ],
     /*    runtimeQuota: [
          "runtimeParkQuota", //园区是专门的接口
          "runtimeQuotaDetailed",
@@ -246,6 +249,16 @@ export default function Index() {
             break;
           case "timePeriodEnergy":
             setConfig({ isdate: true, shiftNo: true });
+            break;
+
+          default:
+            setConfig({});
+            break;
+        }
+      } else if (primary == "efficiencyAnalysis") {
+        switch (nested) {
+          case "wasteWaterMonitor":
+            setConfig({ shiftNo: true, publicDate: true, wasteWater: true, isAreaId: false });
             break;
           default:
             setConfig({});

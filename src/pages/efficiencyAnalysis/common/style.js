@@ -1,5 +1,5 @@
-import styled,{keyframes} from "styled-components";
-export  const Mainwrap = styled.div`
+import styled, { keyframes } from "styled-components";
+export const Mainwrap = styled.div`
 && {
    flex:1;
    display: grid;
@@ -146,5 +146,65 @@ export const TitleBox = styled.div`
   color: #303133;
   font-size: 15px;
 `;
+
+
+export const WasteWater = styled.div`
+&& {
+   flex:1;
+   display: grid;
+   grid-template-columns: 1fr;
+   grid-template-rows: 157px 1fr;
+   row-gap: 16px;
+    .moniter {
+     .ant-card-body{
+       background: ${(props) => props.theme.isdark ? "dark" : (props.bg || props.theme.cardHeadBg)};
+     }
+    }
+   .cards {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-rows: 1fr;
+    gap:16px;
+    flex:1;
+       .card {
+    background: #fff;
+    display: flex; 
+    column-gap: 16px;
+    align-items: center;
+    padding: 16px;
+    .imgbox{
+      width: 54px;
+      height: 54px;
+      overflow: hidden;
+      .img{ 
+      max-width: 100%;
+      }
+    }
+      .note{
+       display: flex;
+       flex-direction: column;
+       height: 100%;
+       justify-content: space-between;
+       flex:1;
+       .title{
+         color: #606266;
+         font-size: 16px;
+         line-height:1.5;
+         display: flex;
+         .strong{
+         margin-left: auto;
+         font-size: small;
+         }
+       }
+         .value{
+         font-size: 31px;
+         line-height:1;
+         color: #05c06e;
+         }
+      }
+   }
+
+   }
  
- 
+}
+`

@@ -342,6 +342,14 @@ export default function UseSerach(props) {
 
   }, [defauledeviceID, devices])
 
+  // 污水设备
+  const wasteWaterDevice = useMemo(() => {
+    return (<Item name="wasteWater" label={i18t("comm", "type", { text: "设备" })}   >
+      <Select options={[]} fieldNames={{ label: "name", value: "deviceStyle" }} style={w200}  ></Select>
+    </Item>)
+
+  }, [])
+
   // 储能柜变化时触发
   const onTankChange = () => {
     if (props.config.isPcs) getPcs();
@@ -595,6 +603,7 @@ export default function UseSerach(props) {
 
         </Item>
         }
+        {props.config?.wasteWater && wasteWaterDevice}
         {props.config?.issubarea && <SubAreas setexparams={props.setexparams} />}
         {props.config?.isLevles && <AreaLevel setexparams={props.setexparams} />}
         {props.config?.isSite && site}
