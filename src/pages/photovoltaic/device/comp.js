@@ -196,7 +196,7 @@ const HistoricalDataModal = (props) => {
                   { value: "EP", label: "电压" },
                   { value: "EC", label: "电流" },
                   { value: "PPT", label: "总有功功率" },
-                  { value: "req", label: "频率" },
+                  { value: "Freq", label: "频率" },
                 ]}
               />
             </Form.Item>

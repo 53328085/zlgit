@@ -9,7 +9,7 @@ import { useQuerySNFReportData } from "../common/api.js";
 
 import { WasteWater } from "../common/style.js";
 import Titlelayout from "@com/titlelayout";
-
+import Ichart from '@com/useEcharts/Ichart'
 import { getTime } from "@com/usehandler.js"
 import moment from "moment";
 import Comm from "../common/comm.js"
@@ -18,6 +18,7 @@ import Empty from "@com/useEmpty.js";
 import ph from "./icon/ph.png"
 import co2 from "./icon/co2.png"
 import water from "./icon/water.png";
+import {lineoptdoub} from "./data.js"
 export default function Index() {
 
 
@@ -28,7 +29,7 @@ export default function Index() {
     setParams(value)
 
   }, [])
-
+  const lineopt = lineoptdoub()
   const getData = async () => {
 
     try {
@@ -108,7 +109,9 @@ export default function Index() {
             </div>
           </div>
         </Titlelayout>
-        <Titlelayout title="历史监测数据" key="history"></Titlelayout>
+        <Titlelayout title="历史监测数据" key="history" layout="flex"   >
+           <Ichart custoption={lineopt} />
+        </Titlelayout>
       </WasteWater>
     </Pagecount>
   );

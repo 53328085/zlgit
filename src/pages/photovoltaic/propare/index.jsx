@@ -31,23 +31,26 @@ export default function Index() {
   let { exparams } = useOutletContext()
   console.log(exparams)
   const { projectId, publictype: type, publicdate: date, publicrangedate, areaId } = exparams
-
+   
   const { laptop } = useSelector(adaptation)
 
-  const getTableData = async ({ current, pageSize, areaId, treeId, type, date, projectId }) => {
+  
+   const getTableData = async ({ current, pageSize, areaId, treeId, type, date, projectId,publicrangedate }) => {
     try {
       if (!Array.isArray(treeId)) return;
       if (![projectId, type, areaId].every(i => Number.isInteger(parseInt(i)))) return;
-      if (!date) return;
-      let flag = type == 4 && publicrangedate[0] && publicrangedate[1]
-      if (!flag) return;
+      if (!date && type!=4) return;
+
+      let flag = type == 4 && !(publicrangedate?.[0] && publicrangedate?.[1])
+      if (flag)  return;
       let body = {
         pageNum: current,
         pageSize,
         projectId,
         areaId,
         type,
-        date: getTime(date, type),
+        startDate: type!=4 ? getTime(date, type) :  publicrangedate[0]?.format("YYYY-MM-DD"),
+        endDate: type!=4 ? getTime(date, type) : publicrangedate[1]?.format("YYYY-MM-DD"),
         snGroup: treeId,
       }
       let { success, data, total, errMsg } = await useQueryStatisticTable({}, body)
@@ -171,6 +174,7 @@ export default function Index() {
                 tableLayout="fixed"
                 sticky
                 sheetName="光伏发电站发电量统计"
+                rowKey={(row)=>Object.values(row).join('')}
                 onExport={onExport}
               >
 
