@@ -90,7 +90,7 @@ export default forwardRef(function Index({ projectId, updata, modalTitle, curPag
           capacity,
           address: address ? address : '',
           type,
-          sn: selectedMeter?.sn || selectedMeter?.meterSn || '',
+          sn: selectedMeter === null ? "" : (selectedMeter?.sn || selectedMeter?.meterSn), // 后端： 为null时传空字符
           id: editData.id || editData.id,
         }
         let { success, errMsg } = await interfaceName({ projectId }, params)
@@ -260,6 +260,7 @@ export default forwardRef(function Index({ projectId, updata, modalTitle, curPag
               style={{ width: "280px", marginLeft: "16px" }} // 增加底部间距，优化布局
               options={deviceData}
               showSearch
+              allowClear
               placeholder="请选择总表设备"
               notFoundContent={deviceData.length === 0 ? "暂无设备数据" : "无匹配设备"}
               onChange={handleMeterChange} // 绑定选中变化事件
