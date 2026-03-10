@@ -1,4 +1,4 @@
-import { React, useState, useEffect, useRef, useMemo } from "react"; 
+import { React, useState, useEffect, useRef, useMemo,useCallback } from "react"; 
 import styled, { css } from "styled-components";
 import style from "./style.module.less";
 import { useSelector } from "react-redux";
@@ -42,13 +42,13 @@ import {
 import { isObject, disabledDate } from "@com/usehandler";
 import { selectUser } from "@redux/user.js";
 import Ichart from "@com/useEcharts/Ichart";
-import Table from "@com/useTable";
+import Table,{dataExport} from "@com/useTable";
 import Devicelog from "./deviceLogs.js";
 import moment from "moment";
 
 import deviceDetail3 from "./images/deviceDetail3.jpg";
 import Control from "./Control";
-
+import {ExportButton} from "@com/useButton"
 
 const { Text } = Typography;
 const sty = css`
@@ -410,7 +410,7 @@ export default function GatewayDetail(props) {
     { label: '专业', value: 'profess' },
     { label: '标准', value: 'normal' },
   ]
-  console.log(OtherdeviceStyle, detail);
+ 
   // 能耗趋势 文本 1： 电， 2. 7 冷水，热水，3. 燃气 4. 传感器 不显示 5.变压器,6. 视频 7.热水表 后面的不知道用什么单位？？
   // let todayT = ['用电量 (kWh)', '用电量 (kWh)', '用水量 (m³)', '用气量 (m³)', '', '用电量 (kWh)', '', '用水量 (m³)'][deviceStyle] || '用电量 (kWh)'   //今日, 本月, 本年 文本， 数据表格中
 
@@ -530,7 +530,7 @@ export default function GatewayDetail(props) {
   const onchangeTab = (val) => {
     setstate(val);
     setDisplaypoint(false);
-    console.log(val, deviceStyle);
+    
     setreportTypeTime(1);
     if (dtlkeys) return;
 
@@ -728,7 +728,7 @@ export default function GatewayDetail(props) {
       })
       .catch((e) => {
         setDetail({});
-        console.log(e);
+        
       });
   };
 
@@ -1022,7 +1022,7 @@ export default function GatewayDetail(props) {
     getAlarmPage();
   };
   const changeTime = (e) => {
-    console.log(e.target.value);
+    
     setreportTypeTime(parseInt(e.target.value));
     //reportType=parseInt(e.target.value)
   }; //切换日月年
@@ -1031,18 +1031,18 @@ export default function GatewayDetail(props) {
     if (!dateString) return;
     if (reportTypeTime == 1) {
       setdateValue(dateString);
-      console.log(dateString);
+      
     } else if (reportTypeTime == 2) {
       setdateValue(dateString + "-01");
-      console.log(dateString + "-01");
+       
     } else {
       setdateValue(dateString + "-01-01");
-      console.log(dateString + "-01-01");
+      
     }
   }; //能耗趋势图表接口传参日期
 
   const changeTable = (e) => {
-    console.log(e.target.value);
+     
     if (e.target.value == "trend") {
       settrend(1);
     } else if (e.target.value == "list") {
@@ -1163,7 +1163,7 @@ export default function GatewayDetail(props) {
 
   useEffect(() => {
     if (dtlkeys) return;
-    console.log(dtlkeys);
+    
     if (displaypoint) { //[4, 18].includes(deviceStyle)
       historycurve(pointval);
     } else {
@@ -1200,6 +1200,29 @@ export default function GatewayDetail(props) {
     Close: "关闭",
     Open: "打开",
   };
+
+ 
+  const exportData=useCallback(()=>{
+    
+      let {description,data, unit } = isObject(ptrend)  ?  ptrend :  {}
+      if(!Array.isArray(data) || !data?.length) return message.error('没有数据导出')
+      if(!pointval) return message.error('请选择数据标识')
+      let datas =data?.map?.(d=>{
+        return {
+          更新时间: d.x,
+          数据标识: pointval,
+          描述: description,
+          数值: d.y,
+          单位: unit,
+          
+        }
+      })
+      dataExport({
+        data: Array.isArray(datas) ? datas : [] ,
+        option: {header:['更新时间','数据标识','描述','数值','单位'],},
+        sheetName:description,
+      })
+  },[ptrend,pointval])
   return (
     <Mainbox className={style.main} laptop={laptop}>
       <div className={style.head + " head"}>
@@ -1358,7 +1381,7 @@ export default function GatewayDetail(props) {
             </div>
           ) : state == 2 ? (
             <div className={style.newTime}>
-              <span style={{ marginRight: 16 }}>请选择日期范围</span>
+              <span>请选择日期范围</span>
               <RangePicker
                 value={dates || value}
                 disabledDate={disabledDate}
@@ -1371,23 +1394,27 @@ export default function GatewayDetail(props) {
               />
               {/* <RangePicker
                                 format='YYYY-MM-DD HH:mm:ss' disabledDate={disabledDate} showTime onChange={onTimeOk} defaultValue={[moment(yesterday), moment(today)]} /> */}
+
               {displaypoint && (
                 <Select
                   options={points}
                   value={pointval}
                   onChange={ponchange}
                   fieldNames={{ label: "description", value: "name" }}
-                  style={{ width: 200, marginLeft: "16px" }}
+                  style={{ width: 200}}
                 ></Select>
               )}
               <Button
-                style={{ marginLeft: 16, width: 96, height: 32 }}
+                style={{  width: 96, height: 32 }}
                 type="primary"
                 onClick={onSearch}
                 icon={<SearchOutlined />}
               >
                 查询
               </Button>
+              {
+                displaypoint && <ExportButton  onClick={exportData} />
+              }
               <Radio.Group style={{ marginLeft: 'auto', marginRight:16 }} onChange={onChangeType} block options={radioOptions} defaultValue="normal" optionType="button" buttonStyle="solid" />
             </div>
           ) : state == 3 ? (

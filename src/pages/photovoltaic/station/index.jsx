@@ -344,12 +344,16 @@ export default function Index() {
                   <span></span><span>名  称： </span> <Typography.Paragraph className='value' ellipsis={{ tooltip: cabinetDtl?.name }}>{cabinetDtl?.name}</Typography.Paragraph></div>
                 <div className='info'>
                   <span></span> <span>编  号：</span> <Typography.Paragraph className='value' ellipsis={{ tooltip: cabinetDtl?.no }}>{cabinetDtl?.no}</Typography.Paragraph></div>
-                <div className='info'>
-                  <span></span> <span>总表名称：</span><Typography.Paragraph className='value' ellipsis={{ tooltip: cabinetDtl?.meterName }}>{cabinetDtl?.meterName}</Typography.Paragraph></div>
-                <div className='info'>
-                  <span></span> <span>总表编号：</span><Typography.Paragraph className='value' ellipsis={{ tooltip: cabinetDtl?.meterSn }}>{cabinetDtl?.meterSn}</Typography.Paragraph></div>
-                <div className='info'>
-                  <span></span><span>安装地址：</span> <Typography.Paragraph className='value' ellipsis={{ tooltip: cabinetDtl?.address }}>{cabinetDtl?.address}</Typography.Paragraph></div>
+                  <div className='info'>
+                  <span></span><span>安装地址：</span> <Typography.Paragraph className='value' ellipsis={{ tooltip: cabinetDtl?.address }}>{cabinetDtl?.address}</Typography.Paragraph>
+                  </div>
+                
+                 <div className='info'>
+                 {cabinetDtl?.meterName &&  <><span></span> <span>总表名称：</span><Typography.Paragraph className='value' ellipsis={{ tooltip: cabinetDtl?.meterName }}>{cabinetDtl?.meterName}</Typography.Paragraph></>} 
+                  </div>               
+                 <div className='info'>
+                 {cabinetDtl?.meterSn && <><span></span> <span>总表编号：</span><Typography.Paragraph className='value' ellipsis={{ tooltip: cabinetDtl?.meterSn }}>{cabinetDtl?.meterSn}</Typography.Paragraph></>} </div>
+                
               </div>
             </div>
             <div className='powerNum'>
@@ -381,13 +385,13 @@ export default function Index() {
             extra={
               <>
                 <Header>
-                  <Link
+                {cabinetDtl?.meterSn && <Link
                     className='historicalData'
                     to={`/deviceDetail?sn=${encodeURIComponent(cabinetDtl?.meterSn)}&deviceStyle=${encodeURIComponent(1)}`}
                     target="_blank"
                   >
                     历史数据
-                  </Link>
+                  </Link>}  
                 </Header>
               </>
             }>

@@ -63,10 +63,30 @@ flex-direction: column;
  
 }
 ` */
+// 通过数据导出表格，没有表格实例
+  export const dataExport = (params) => {   
+   
+    const { header, data, skipHeader = true, sheetName = 'sheet1', option = {} } = isObject(params) ? params : {}
 
+    const workbook = utils.book_new(); // 新建工作簿
+    // var ws = utils.aoa_to_sheet([header]); // 添加标题到工作表
+    //utils.sheet_add_json(ws, data, { skipHeader: true, origin: "A2" }); // 添加数据到工作表
+    let ws = utils.json_to_sheet(data, option)
+
+    let { rowinfo, colinfo } = option
+    rowinfo ? ws["!rows"] = rowinfo : ''
+    colinfo ? ws["!cols"] = colinfo : ''
+
+    utils.book_append_sheet(workbook, ws, sheetName); // 把工作表添加到工作簿
+    let file = sheetName.split(".").length == 1 ? "xlsx" : sheetName.split(".")[1];
+    let fileName = sheetName.split(".")[0]
+
+    writeFile(workbook, `${fileName}.${file}`, { bookType: file }); // 下载
+  }
 // 生成表格模板 
 
 // 表格搜索函数
+
 export const getColumnSearchProps = (dataIndex, desc) => ({
   filterDropdown: ({ setSelectedKeys, selectedKeys, confirm, clearFilters, close }) => (
     <div

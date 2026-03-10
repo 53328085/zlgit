@@ -58,7 +58,7 @@ export default function Index() {
         setTotal(total)
         let { x } = data[0].detail;
         let cols = x.map((item, index, array) => {
-          let unit = ['', '', '日', '月',][type]
+          let unit = ['', '', '日', '月',""][type]
           let fag = index == array.length - 1
           let col = {
             title: item + unit,

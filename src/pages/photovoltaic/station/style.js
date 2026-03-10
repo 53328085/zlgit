@@ -42,6 +42,7 @@ export const TopBox = styled.div`
       align-items: center;
       font-size: 13px;
       flex:1;
+      grid-template-rows: repeat(5, 1fr);
       .info {
         display: flex;
         align-items: baseline;
