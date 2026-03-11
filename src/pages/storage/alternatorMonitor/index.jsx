@@ -46,15 +46,11 @@ const Mainbox = styled.div`
 export default function Index() {
   let {exparams} = useOutletContext()
   let {areaId, projectId: exparamsProjectId, pcsId} = exparams || {}
-  const currentPcsId = pcsId?.value
+  const currentPcsId = pcsId?.value ?? pcsId
 
   // 优先使用 exparams 的 projectId，否则使用 redux 中的
   const reduxProjectId = useSelector(selectProjectId)
   const projectId = exparamsProjectId || reduxProjectId
-
-  console.log('exparams:', exparams)
-  console.log('pcsId:', pcsId, 'currentPcsId:', currentPcsId)
-  console.log('exparamsProjectId:', exparamsProjectId, 'reduxProjectId:', reduxProjectId, 'projectId:', projectId)
 
   const {
     queryPowerTrends,
@@ -82,19 +78,63 @@ export default function Index() {
     series1: [],
     series2: []
   })
+  const DEFAULT_RUNTIME_ITEMS = [
+    { key: 'uab', iconText: 'Uab', name: 'Uab线电压AB', unit: 'V' },
+    { key: 'ubc', iconText: 'Ubc', name: 'Ubc线电压BC', unit: 'V' },
+    { key: 'uca', iconText: 'Uca', name: 'Uca线电压CA', unit: 'V' },
+    { key: 'ia', iconText: 'Ia', name: 'Ia A相电流', unit: 'A' },
+    { key: 'ib', iconText: 'Ib', name: 'Ib B相电流', unit: 'A' },
+    { key: 'ic', iconText: 'Ic', name: 'Ic C相电流', unit: 'A' },
+    { key: 'pwr', iconText: 'Pwr', name: '有功功率', unit: 'kW' },
+    { key: 'q', iconText: 'Q', name: '无功功率', unit: 'kVar' },
+    { key: 's', iconText: 'S', name: '视在功率', unit: 'kVA' },
+    { key: 'pf', iconText: 'PF', name: '功率因数', unit: '' },
+  ]
+
+  const getRuntimeIconText = (unit, fallback) => {
+    const text = String(unit ?? '').trim()
+    const lower = text.toLowerCase()
+    if (lower.includes('kvar')) return 'Q'
+    if (lower.includes('kva')) return 'S'
+    if (lower.includes('kw') || lower.includes('w')) return 'Pwr'
+    if (lower.includes('a')) return 'A'
+    if (lower.includes('v')) return 'V'
+    return fallback || text || 'P'
+  }
+
+  const normalizeRuntimeData = data => {
+    if (Array.isArray(data)) {
+      return data
+        .slice()
+        .sort((a, b) => Number(a?.index ?? 0) - Number(b?.index ?? 0))
+        .map((item, idx) => {
+          const fallback = DEFAULT_RUNTIME_ITEMS[idx] || {}
+          return {
+            key: item?.key || item?.point || fallback.key || `item-${idx}`,
+            name: item?.name || item?.title || fallback.name || `参数${idx + 1}`,
+            value: item?.value ?? '--',
+            unit: item?.unit ?? fallback.unit ?? '',
+            iconText: item?.iconText || getRuntimeIconText(item?.unit, fallback.iconText),
+          }
+        })
+    }
+
+    if (data && typeof data === 'object') {
+      return DEFAULT_RUNTIME_ITEMS.map(item => ({
+        ...item,
+        value: data[item.key] ?? '--',
+        iconText: getRuntimeIconText(item.unit, item.iconText),
+      }))
+    }
+
+    return DEFAULT_RUNTIME_ITEMS.map(item => ({
+      ...item,
+      value: '--',
+    }))
+  }
+
   // 实时运行参数数据
-  const [runtimeData, setRuntimeData] = useState({
-    uab: 0,
-    ubc: 0,
-    uca: 0,
-    ia: 0,
-    ib: 0,
-    ic: 0,
-    pwr: 0,
-    q: 0,
-    s: 0,
-    pf: 0
-  })
+  const [runtimeData, setRuntimeData] = useState(() => normalizeRuntimeData())
   // 获取功率趋势数据
   const fetchPowerTrends = async (params) => {
     try {
@@ -175,9 +215,7 @@ export default function Index() {
 
   const getContent = () => {
     if (!projectId || !currentPcsId) return
-    console.log('Calling API with:', { projectId, pcsId: currentPcsId })
     StorageMonitorRuntime.queryPCSStatusInfo(projectId, currentPcsId).then(res => {
-      console.log('API response:', res)
       if (res.success && res.data) {
         setPcsName(res.data.name || '')
         if (res.data.items && res.data.items.length > 0) {
@@ -192,35 +230,21 @@ export default function Index() {
   // 获取实时运行参数数据
   const getRuntimeData = () => {
     if (!projectId || !currentPcsId) return
-    console.log('Calling QueryPCSDataInfo API with:', { projectId, pcsId: currentPcsId })
-    StorageMonitorRuntime.queryPCSDataInfo(projectId, currentPcsId).then(res => {
-      console.log('QueryPCSDataInfo response:', res)
-      if (res.success && res.data && Array.isArray(res.data)) {
-        // 将数组格式转换为对象格式
-        const dataMap = {}
-        res.data.forEach(item => {
-          dataMap[item.index] = item.value
-        })
-        setRuntimeData({
-          uab: Number(dataMap[1]) || 0,  // 线电压AB
-          ia: Number(dataMap[2]) || 0,   // A相电流
-          pwr: Number(dataMap[3]) || 0,  // 有功功率
-          ubc: Number(dataMap[4]) || 0,  // 线电压BC
-          ib: Number(dataMap[5]) || 0,   // B相电流
-          q: Number(dataMap[6]) || 0,    // 无功功率
-          uca: Number(dataMap[7]) || 0,  // 线电压CA
-          ic: Number(dataMap[8]) || 0,   // C相电流
-          s: Number(dataMap[9]) || 0,    // 视在功率
-          pf: Number(dataMap[10]) || 0   // 功率因数
-        })
-      } else {
-        console.warn('获取实时运行参数数据失败:', res.errMsg)
-      }
-    })
+    StorageMonitorRuntime.queryPCSDataInfo(projectId, currentPcsId)
+      .then(res => {
+        if (res.success) {
+          setRuntimeData(normalizeRuntimeData(res.data))
+        } else {
+          console.warn('获取实时运行参数数据失败:', res.errMsg)
+          setRuntimeData(normalizeRuntimeData())
+        }
+      })
+      .catch(() => {
+        setRuntimeData(normalizeRuntimeData())
+      })
   }
 
   useEffect(() => {
-    console.log('useEffect triggered:', { currentPcsId, projectId })
     getContent()
     getRuntimeData()
   }, [currentPcsId, projectId])
