@@ -86,52 +86,40 @@ const CompactCard = ({ iconText, name, value, unit }) => (
   </CompactCardWrapper>
 );
 
-// 参数配置数据
-const PARAM_CONFIG = {
-  // 第1列 - 线电压
-  voltage: [
-    { key: 'uab', iconText: 'Uab', name: 'Uab线电压AB', unit: 'V' },
-    { key: 'ubc', iconText: 'Ubc', name: 'Ubc线电压BC', unit: 'V' },
-    { key: 'uca', iconText: 'Uca', name: 'Uca线电压CA', unit: 'V' },
-  ],
-  // 第2列 - 电流
-  current: [
-    { key: 'ia', iconText: 'Ia', name: 'Ia A相电流', unit: 'A' },
-    { key: 'ib', iconText: 'Ib', name: 'Ib B相电流', unit: 'A' },
-    { key: 'ic', iconText: 'Ic', name: 'Ic C相电流', unit: 'A' },
-  ],
-  // 第3列 - 功率指标
-  power: [
-    { key: 'pwr', iconText: 'Pwr', name: '有功功率', unit: 'kW' },
-    { key: 'q', iconText: 'Q', name: '无功功率', unit: 'kVar' },
-    { key: 's', iconText: 'S', name: '视在功率', unit: 'kVA' },
-    { key: 'pf', iconText: 'PF', name: '功率因数', unit: '' },
-  ],
-};
+function splitRuntimeColumns(items) {
+  const list = Array.isArray(items) ? items : [];
+  return [
+    list.slice(0, 3),
+    list.slice(3, 6),
+    list.slice(6),
+  ];
+}
 
-const RuntimeParamsPanel = memo(({ data = {} }) => {
-  const renderNormalColumn = (params) => (
-    <ColumnWrapper>
+const RuntimeParamsPanel = memo(({ data = [] }) => {
+  const [voltage, current, power] = splitRuntimeColumns(data);
+
+  const renderNormalColumn = (params, columnIndex) => (
+    <ColumnWrapper key={`normal-${columnIndex}`}>
       {params.map((param) => (
         <RuntimeParamCard
           key={param.key}
           iconText={param.iconText}
           name={param.name}
-          value={data[param.key] ?? '--'}
+          value={param.value ?? '--'}
           unit={param.unit}
         />
       ))}
     </ColumnWrapper>
   );
 
-  const renderCompactColumn = (params) => (
-    <ColumnWrapper>
+  const renderCompactColumn = (params, columnIndex) => (
+    <ColumnWrapper key={`compact-${columnIndex}`}>
       {params.map((param) => (
         <CompactCard
           key={param.key}
           iconText={param.iconText}
           name={param.name}
-          value={data[param.key] ?? '--'}
+          value={param.value ?? '--'}
           unit={param.unit}
         />
       ))}
@@ -140,9 +128,9 @@ const RuntimeParamsPanel = memo(({ data = {} }) => {
 
   return (
     <PanelWrapper>
-      {renderNormalColumn(PARAM_CONFIG.voltage)}
-      {renderNormalColumn(PARAM_CONFIG.current)}
-      {renderCompactColumn(PARAM_CONFIG.power)}
+      {renderNormalColumn(voltage, 0)}
+      {renderNormalColumn(current, 1)}
+      {renderCompactColumn(power, 2)}
     </PanelWrapper>
   );
 });

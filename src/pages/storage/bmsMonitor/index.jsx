@@ -88,6 +88,57 @@ function normalizeBmsDiagramData(list) {
   return { stack, clusters };
 }
 
+const DEFAULT_OVERVIEW_ITEMS = [
+  { key: 'stackVoltage', name: '电池堆电压', unit: 'V', iconText: 'V' },
+  { key: 'stackCurrent', name: '电池堆电流', unit: 'A', iconText: 'A' },
+  { key: 'maxCellVoltage', name: '堆最高电池电压', unit: 'V', iconText: 'V' },
+  { key: 'minCellVoltage', name: '堆最低电池电压', unit: 'V', iconText: 'V' },
+  { key: 'maxCellTemp', name: '系统最高温度', unit: '℃', iconText: '℃' },
+  { key: 'minCellTemp', name: '最低电池温度', unit: '℃', iconText: '℃' },
+  { key: 'maxDischargePower', name: '堆允许最大放电功率', unit: 'kW', iconText: 'P' },
+  { key: 'maxChargePower', name: '堆允许最大充电功率', unit: 'kW', iconText: 'P' },
+];
+
+function getOverviewIconText(unit, fallback) {
+  const text = String(unit ?? '').trim();
+  if (text.includes('℃') || text.toLowerCase().includes('c')) return '℃';
+  if (text.toLowerCase().includes('kw') || text.toLowerCase().includes('w')) return 'P';
+  if (text.toLowerCase().includes('a')) return 'A';
+  if (text.toLowerCase().includes('v')) return 'V';
+  return fallback || text || 'P';
+}
+
+function normalizeBmsOverviewData(data) {
+  if (Array.isArray(data)) {
+    return data
+      .slice()
+      .sort((a, b) => Number(a?.index ?? 0) - Number(b?.index ?? 0))
+      .map((item, idx) => {
+        const fallback = DEFAULT_OVERVIEW_ITEMS[idx] || {};
+        return {
+          key: item?.key || item?.point || fallback.key || `item-${idx}`,
+          name: item?.name || item?.title || fallback.name || `参数${idx + 1}`,
+          value: item?.value ?? '--',
+          unit: item?.unit ?? fallback.unit ?? '',
+          iconText: getOverviewIconText(item?.unit, fallback.iconText),
+        };
+      });
+  }
+
+  if (data && typeof data === 'object') {
+    return DEFAULT_OVERVIEW_ITEMS.map((item) => ({
+      ...item,
+      value: data[item.key] ?? '--',
+      iconText: getOverviewIconText(item.unit, item.iconText),
+    }));
+  }
+
+  return DEFAULT_OVERVIEW_ITEMS.map((item) => ({
+    ...item,
+    value: '--',
+  }));
+}
+
 export default function BmsMonitor() {
   const projectId = useSelector(selectProjectId);
   let { exparams } = useOutletContext() || {};
@@ -116,16 +167,7 @@ export default function BmsMonitor() {
   };
 
   // BMS设备数据总览 - 从接口获取
-  const [bmsOverviewData, setBmsOverviewData] = useState({
-    stackVoltage: 0,
-    stackCurrent: 0,
-    maxCellVoltage: 0,
-    minCellVoltage: 0,
-    maxCellTemp: 0,
-    minCellTemp: 0,
-    maxDischargePower: 0,
-    maxChargePower: 0,
-  });
+  const [bmsOverviewData, setBmsOverviewData] = useState(() => normalizeBmsOverviewData());
 
   // BMS电池组数据详情 - 从接口获取
   const [batteryData, setBatteryData] = useState([]);
@@ -134,50 +176,15 @@ export default function BmsMonitor() {
 
   // 获取BMS数据总览
   const getBmsDataInfo = () => {
-    console.log('Calling QueryBMSDataInfo API with:', { projectId, bmsId: bms_id })
-    StorageMonitorBMS.queryBMSDataInfo(projectId, bms_id).then(res => {
-      console.log('QueryBMSDataInfo response:', res)
-      if (res.success && res.data && Array.isArray(res.data)) {
-        // 将数组格式转换为对象格式
-        const dataMap = {}
-        res.data.forEach(item => {
-          dataMap[item.index] = item.value
-        })
-        setBmsOverviewData({
-          stackVoltage: Number(dataMap[1]) || 0,           // 电池堆电压
-          stackCurrent: Number(dataMap[2]) || 0,           // 电池堆电流
-          maxCellVoltage: Number(dataMap[3]) || 0,         // 堆最高电池电压
-          minCellVoltage: Number(dataMap[4]) || 0,         // 堆最低电池电压
-          maxCellTemp: Number(dataMap[5]) || 0,            // 系统最高温度
-          minCellTemp: Number(dataMap[6]) || 0,            // 最低电池温度
-          maxDischargePower: Number(dataMap[7]) || 0,      // 堆允许最大放电功率
-          maxChargePower: Number(dataMap[8]) || 0,         // 堆允许最大充电功率
-        })
-      } else {
-        setBmsOverviewData({
-          stackVoltage: 0,
-          stackCurrent: 0,
-          maxCellVoltage: 0,
-          minCellVoltage: 0,
-          maxCellTemp: 0,
-          minCellTemp: 0,
-          maxDischargePower: 0,
-          maxChargePower: 0,
-        })
-      }
-    }).catch(() => {
-      setBmsOverviewData({
-        stackVoltage: 0,
-        stackCurrent: 0,
-        maxCellVoltage: 0,
-        minCellVoltage: 0,
-        maxCellTemp: 0,
-        minCellTemp: 0,
-        maxDischargePower: 0,
-        maxChargePower: 0,
+    StorageMonitorBMS.queryBMSDataInfo(projectId, bms_id)
+      .then((res) => {
+        const overviewItems = res?.success ? normalizeBmsOverviewData(res?.data) : normalizeBmsOverviewData();
+        setBmsOverviewData(overviewItems);
       })
-    })
-  }
+      .catch(() => {
+        setBmsOverviewData(normalizeBmsOverviewData());
+      });
+  };
 
   // 获取BMS电池组数据详情
   const getBMSTableInfo = () => {
@@ -229,16 +236,7 @@ export default function BmsMonitor() {
       setBatteryTableHeads([])
       setBatteryData([])
       setPagination((prev) => ({ ...prev, total: 0 }))
-      setBmsOverviewData({
-        stackVoltage: 0,
-        stackCurrent: 0,
-        maxCellVoltage: 0,
-        minCellVoltage: 0,
-        maxCellTemp: 0,
-        minCellTemp: 0,
-        maxDischargePower: 0,
-        maxChargePower: 0,
-      })
+      setBmsOverviewData(normalizeBmsOverviewData())
     }
   }, [projectId, bms_id])
 
