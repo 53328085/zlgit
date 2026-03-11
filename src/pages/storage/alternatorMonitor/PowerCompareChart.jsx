@@ -21,6 +21,21 @@ const PowerCompareChart = memo(({ chartData }) => {
   const series1Name = chartData?.series1Name || '功率趋势';
   const series2Name = chartData?.series2Name || '对比趋势';
 
+  const { yAxisMax, yAxisInterval } = useMemo(() => {
+    const values = [chartData?.series1, chartData?.series2]
+      .flat()
+      .filter((value) => Number.isFinite(Number(value)))
+      .map((value) => Number(value));
+
+    const dataMax = Math.max(...values, 0);
+    const baseInterval = [10, 20, 25, 50, 100, 200, 500].find((value) => dataMax <= value * 4) || 500;
+
+    return {
+      yAxisInterval: baseInterval,
+      yAxisMax: Math.max(baseInterval * 4, baseInterval)
+    };
+  }, [chartData]);
+
   const option = useMemo(() => ({
     type: 2,
     color: [successColor, warningColor],
@@ -50,9 +65,10 @@ const PowerCompareChart = memo(({ chartData }) => {
     },
     yAxis: {
       type: 'value',
-      name: '单位(%)',
+      name: '单位(kW)',
       min: 0,
-      max: 400,
+      max: yAxisMax,
+      interval: yAxisInterval,
       axisLabel: { color: '#333' },
       axisLine: { lineStyle: { color: '#333' } },
       splitLine: { lineStyle: { color: '#eee' } }
@@ -80,7 +96,7 @@ const PowerCompareChart = memo(({ chartData }) => {
           }]
         : []
     )
-  }), [chartData, hasSeries2, series1Name, series2Name, successColor, warningColor]);
+  }), [chartData, hasSeries2, series1Name, series2Name, successColor, warningColor, yAxisInterval, yAxisMax]);
 
   return (
     <ChartWrapper>
