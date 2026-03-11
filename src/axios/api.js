@@ -3444,9 +3444,9 @@ export class SiteSummaryRuntime {
 }
 //储能告警信息
 export class StorageAlarmRuntime {
-  static alarmStatistic = (projectId, areaId, siteId) =>
+  static alarmStatistic = (params) =>
     server.get(
-      `Storage/StorageAlarmRuntime/AlarmStatistics?projectId=${projectId}&areaId=${areaId}&siteId=${siteId}`
+      `Storage/StorageAlarmRuntime/AlarmStatistics`, {params}
     );
   static QueryStorageAlarmByPage = (params = {}) =>
     server.post(`/Storage/StorageAlarmRuntime/QueryStorageAlarmByPage`, params);
