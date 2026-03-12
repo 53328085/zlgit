@@ -21,18 +21,59 @@ const PowerCompareChart = memo(({ chartData }) => {
   const series1Name = chartData?.series1Name || '功率趋势';
   const series2Name = chartData?.series2Name || '对比趋势';
 
-  const { yAxisMax, yAxisInterval } = useMemo(() => {
+  const { yAxisMin, yAxisMax, yAxisInterval } = useMemo(() => {
     const values = [chartData?.series1, chartData?.series2]
       .flat()
       .filter((value) => Number.isFinite(Number(value)))
       .map((value) => Number(value));
 
-    const dataMax = Math.max(...values, 0);
-    const baseInterval = [10, 20, 25, 50, 100, 200, 500].find((value) => dataMax <= value * 4) || 500;
+    if (!values.length) {
+      return {
+        yAxisMin: 0,
+        yAxisMax: 40,
+        yAxisInterval: 10
+      };
+    }
+
+    const dataMin = Math.min(...values);
+    const dataMax = Math.max(...values);
+    const absMax = Math.max(Math.abs(dataMin), Math.abs(dataMax));
+    const roughStep = absMax / 4 || 1;
+    const magnitude = 10 ** Math.floor(Math.log10(roughStep));
+    const normalizedStep = roughStep / magnitude;
+    const stepFactor = normalizedStep <= 1 ? 1 : normalizedStep <= 2 ? 2 : normalizedStep <= 2.5 ? 2.5 : normalizedStep <= 5 ? 5 : 10;
+    const interval = stepFactor * magnitude;
+
+    let min = Math.floor(dataMin / interval) * interval;
+    let max = Math.ceil(dataMax / interval) * interval;
+
+    if (dataMin < 0 && dataMax > 0) {
+      min = Math.min(min, 0);
+      max = Math.max(max, 0);
+    }
+
+    if (dataMax <= 0) {
+      max = Math.min(0, max);
+    }
+
+    if (dataMin >= 0) {
+      min = Math.max(0, min);
+    }
+
+    if (min === max) {
+      if (max === 0) {
+        max = interval * 4;
+      } else if (max > 0) {
+        min = Math.max(0, max - interval * 4);
+      } else {
+        max = Math.min(0, min + interval * 4);
+      }
+    }
 
     return {
-      yAxisInterval: baseInterval,
-      yAxisMax: Math.max(baseInterval * 4, baseInterval)
+      yAxisMin: min,
+      yAxisMax: max,
+      yAxisInterval: interval
     };
   }, [chartData]);
 
@@ -66,7 +107,7 @@ const PowerCompareChart = memo(({ chartData }) => {
     yAxis: {
       type: 'value',
       name: '单位(kW)',
-      min: 0,
+      min: yAxisMin,
       max: yAxisMax,
       interval: yAxisInterval,
       axisLabel: { color: '#333' },
@@ -96,7 +137,7 @@ const PowerCompareChart = memo(({ chartData }) => {
           }]
         : []
     )
-  }), [chartData, hasSeries2, series1Name, series2Name, successColor, warningColor, yAxisInterval, yAxisMax]);
+  }), [chartData, hasSeries2, series1Name, series2Name, successColor, warningColor, yAxisInterval, yAxisMax, yAxisMin]);
 
   return (
     <ChartWrapper>
