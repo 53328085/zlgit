@@ -173,7 +173,7 @@ height: 680px;
 color: #fff;
 .digital {
     width: 162px;
-    height: 96px;
+ //   height: 96px;
     background: rgba(0,0,0,0.5);
     border-radius: 6px;
     border: 1px solid #46C7FF;
@@ -195,12 +195,15 @@ color: #fff;
             width: 24px;
             height: 2px;
             border-bottom: 2px dashed #46C7FF;
-            transform: translate(-36px, 42px); 
+            transform: translate(-36px, 110px); 
         }
   }
   .digital.downleft{
     align-self: flex-start;
     transform: translate3d(-16px, 78px, 10px);
+    &::before { 
+        transform: translate(-36px, 122px); 
+    }
   }
   .digital.downright{
     align-self: flex-start; 

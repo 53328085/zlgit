@@ -53,7 +53,7 @@ const Mainbox = styled.div`
       }
       .content {
         display: grid;
-        grid-template-rows: 32px 4px 1fr;
+        grid-template-rows: 32px  1fr;
         row-gap: 16px; 
         flex: 1;
         color:#515151;
@@ -127,15 +127,22 @@ const columns = [
  export default   function Index() {
   let {exparams} = useOutletContext()
   console.log(exparams);
-  let {stationName,  projectId, areaId} = exparams
-  const condition = Number.isInteger(projectId) && Number.isInteger(areaId) && stationName?.value
+  let {stationName,  projectId, areaId,definerangedate} = exparams
+  
    const [form] = Form.useForm()
    const [statistics ,setStatistics] = useState({})
    const [total, setTotal] = useState(0)
   const getData = async() => {
    
     try {
-        let {success, data} = await StorageAlarmRuntime.alarmStatistic(projectId, areaId, stationName?.value)        
+        let params ={
+          projectId,
+          areaId,
+          siteId: stationName?.value,
+          startDate: definerangedate?.[0].format('YYYY-MM-DD'),
+          endDate: definerangedate?.[1].format('YYYY-MM-DD'),
+        }
+        let {success, data} = await StorageAlarmRuntime.alarmStatistic(params)        
         success && setStatistics({...data})
         !success && setStatistics({})
     } catch (error) {
@@ -145,20 +152,20 @@ const columns = [
   } 
  
  
-  const QueryReports =  ({current, pageSize}, form) => {   
+  const QueryReports =  ({current, pageSize}, form) => {  
+     const condition =  Number.isInteger(projectId) && Number.isInteger(areaId) && stationName?.value && definerangedate?.[0] && definerangedate?.[1] 
     if(!condition) return;
-    let {time, ...rest} = form
-    let start = time[0].format('YYYY-MM-DD')
-    let end = time[1].format('YYYY-MM-DD')
+    
+    
     let params = {
       pageNum: current,
       pageSize,
-      start,
-      end,
+      startDate: definerangedate?.[0].format('YYYY-MM-DD'),
+      endDate: definerangedate?.[1].format('YYYY-MM-DD'),
       projectId,
       areaId,
       siteId: stationName?.value,
-      ...rest
+      ...form
     }
     return StorageAlarmRuntime.QueryStorageAlarmByPage(params).then(res => {
       let {success, data, total} = res
@@ -182,8 +189,8 @@ const columns = [
   const {tableProps, search,  params} = useAntdTable(QueryReports, {
     form,
     defaultParams: [{pageSize: 14, pageNum: 1}, {
-      start: moment().subtract(7, 'day').format('YYYY-MM-DD'),
-      end: moment().format('YYYY-MM-DD'),
+      startDate:  definerangedate?.[0]?.format('YYYY-MM-DD'),
+      endDate: definerangedate?.[1]?.format('YYYY-MM-DD'),
       projectId, 
       areaId,
       siteId: stationName?.value,
@@ -192,7 +199,7 @@ const columns = [
       level: 0
 
     }],
-    refreshDeps: [projectId, areaId, stationName],
+    refreshDeps: [projectId, areaId, stationName, definerangedate],
     manual: false,
   })
   
@@ -205,12 +212,12 @@ const columns = [
   }, [total])
  
   useEffect(() => {
-    
+    const condition =  Number.isInteger(projectId) && Number.isInteger(areaId) && stationName?.value && definerangedate?.[0] && definerangedate?.[1]
     if(condition) {
       getData() 
     }
   
-  }, [exparams])
+  }, [stationName,  projectId, areaId,definerangedate])
  
  
   return (
@@ -262,7 +269,6 @@ const columns = [
              <Item label="告警查询" name="content">
               <Input placeholder='告警内容/设备名称' />
              </Item>
-             <Divider style={{margin: '0', height: '32px'}}  type="vertical" />
              <Item label="设备类型" name="deviceType">
               <Select options={[
                 {label: '全部', value: 0},
@@ -274,11 +280,10 @@ const columns = [
                 {label: '环境温度传感器', value: 6},
                 {label: '水浸传感器', value: 7},
               ]}
-              style={{width: '112px'}}
+              style={{width: '200px'}}
               onChange={submit}
               ></Select>
              </Item>
-             <Divider style={{margin: '0', height: '32px'}} type="vertical" />
              <Item label="告警等级" name="level">
               <Select options={[
                 {label: '全部告警', value: 0},
@@ -290,10 +295,6 @@ const columns = [
               onChange={submit}
               ></Select>
              </Item>
-             <Divider style={{margin: '0', height: '32px'}} type="vertical" />
-             <Item label="告警时间" name="time" >
-               <RangePicker  onChange={submit}  format="YYYY-MM-DD" style={{width: '320px'}}  disabledDate={disabledDate} />
-            </Item>
            </Space>
            <Item noStyle>
              {/*  <Button onClick={onExport} type="primary">导出</Button> */}
@@ -301,8 +302,6 @@ const columns = [
               <ExportExcel tb={tbref} />
            </Item>
         </Form>
-        
-         <Divider style={{margin: '0px'}}/>
         <Usetable columns={columns} ref={tbref} {...tableProps}   rowKey={nanoid()} hbg="#f0f9ff" hbc="#515151"  sheetName="告警信息" onExport={onExport} />
       
     </div>
