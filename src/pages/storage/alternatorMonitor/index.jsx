@@ -135,16 +135,28 @@ export default function Index() {
 
   // 实时运行参数数据
   const [runtimeData, setRuntimeData] = useState(() => normalizeRuntimeData())
+  const normalizeTrendSeries = (list = []) => {
+    if (!Array.isArray(list)) return { time: [], power: [] }
+
+    return list.reduce((acc, item) => {
+      const value = Number(item?.y)
+      if (!Number.isFinite(value)) return acc
+      acc.time.push(item?.x || '')
+      acc.power.push(value)
+      return acc
+    }, { time: [], power: [] })
+  }
+
   // 获取功率趋势数据
   const fetchPowerTrends = async (params) => {
     try {
       const res = await queryPowerTrends(params.projectId, params.pcsId, params.startTime, params.endTime)
-      if (res.success && Array.isArray(res.data)) {
-        const time = res.data.map(item => item?.x || '')
-        const power = res.data.map(item => Number(item?.y) || 0)
+      if (res.success && res.data && typeof res.data === 'object') {
+        const series1 = normalizeTrendSeries(res.data?.data1st)
+        const series2 = normalizeTrendSeries(res.data?.data2nd)
         return {
-          time,
-          power
+          series1,
+          series2
         }
       } else {
         console.warn('获取功率趋势数据失败:', res.errMsg)
@@ -156,7 +168,6 @@ export default function Index() {
     }
   }
 
-  const buildSeries1Name = (start, end) => `${start} ~ ${end}`
   // 开始日期变化时触发接口调用
   const handleStartDateChange = async (date, dateString) => {
     if (date && endDate && (date.isAfter?.(endDate, 'day') || date.isSame?.(endDate, 'day'))) {
@@ -173,11 +184,11 @@ export default function Index() {
       })
       if (res) {
         setCompareData({
-          xAxis: res.time || [],
-          series1Name: buildSeries1Name(dateString, endDate?.format('YYYY-MM-DD')),
-          series2Name: '',
-          series1: res.power || [],
-          series2: []
+          xAxis: res.series1?.time || [],
+          series1Name: dateString,
+          series2Name: endDate?.format('YYYY-MM-DD') || '',
+          series1: res.series1?.power || [],
+          series2: res.series2?.power || []
         })
       }
     }
@@ -199,11 +210,11 @@ export default function Index() {
       })
       if (res) {
         setCompareData({
-          xAxis: res.time || [],
-          series1Name: buildSeries1Name(startDate?.format('YYYY-MM-DD'), dateString),
-          series2Name: '',
-          series1: res.power || [],
-          series2: []
+          xAxis: res.series1?.time || [],
+          series1Name: startDate?.format('YYYY-MM-DD') || '',
+          series2Name: dateString,
+          series1: res.series1?.power || [],
+          series2: res.series2?.power || []
         })
       }
     }
@@ -261,11 +272,11 @@ export default function Index() {
       })
       if (res) {
         setCompareData({
-          xAxis: res.time || [],
-          series1Name: buildSeries1Name(startDate.format('YYYY-MM-DD'), endDate.format('YYYY-MM-DD')),
-          series2Name: '',
-          series1: res.power || [],
-          series2: []
+          xAxis: res.series1?.time || [],
+          series1Name: startDate.format('YYYY-MM-DD'),
+          series2Name: endDate.format('YYYY-MM-DD'),
+          series1: res.series1?.power || [],
+          series2: res.series2?.power || []
         })
       }
     }
