@@ -11,64 +11,14 @@ import imgurl from './icon'
 import {  ExportExcel} from '@com/useButton'
 import Pagecount from "@com/pagecontent";
 import {  useOutletContext} from 'react-router-dom'
+import {Mainbox} from './style'
+import {columns,useStorageType} from './data'
+ 
 const {Text, Link, Title, Paragraph} = Typography
 const {Item} = Form
-const { RangePicker } = DatePicker;
-const disabledDate = (current) => {   
-  return current && current > moment().endOf('day');
-}
-const Mainbox = styled.div`
-    && {
-      display: grid;
-      grid-template-rows: 64px 1fr;
-      row-gap: 16px;
-      flex: 1;
-      .items {
-         display: grid;
-         grid-template-columns: repeat(4, 320px);
-         grid-template-rows: 64px;
-         column-gap: 16px;
-        .item {
-          width: 320px;
-          height: 64px;
-          background-color: rgba(255, 255, 255, 1); 
-          border: 1px solid rgba(215, 215, 215, 1); 
-          border-radius: 4px; 
-          box-shadow: none;
-          padding:  8px 12px;
-          display: grid;
-          grid-template-columns: 48px 1fr;
-          align-items: center;
-          justify-items: center;
-          column-gap: 22px;
-          .info { 
-            width: 100%;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            font-size: 16px;;
-          } 
-        }
-        
-      }
-      .content {
-        display: grid;
-        grid-template-rows: 32px  1fr;
-        row-gap: 16px; 
-        flex: 1;
-        color:#515151;
-        padding-top: 16px;
-        .top {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
 
-        }
-      }
-       
-       }
 
-`
+
 const P = styled(Paragraph)`
 && {
   margin-bottom: 0px;
@@ -78,52 +28,7 @@ const P = styled(Paragraph)`
 }
  
 `
-const columns = [
-    {
-        title: '告警时间',
-        dataIndex: 'warningTime',
-        key: 'warningTime',
-        align: 'center'
-    },
-    {
-        title: '告警描述',
-        dataIndex: 'alarmEvent',
-        key: 'alarmEvent',
-        align: 'center'
-    },
-    {
-      title: '告警等级',
-      dataIndex: 'level',
-      key: 'level',
-      align: 'center'
-     },
-     {
-      title: '设备名称',
-      dataIndex: 'name',
-      key: 'name',
-      align: 'center'
-     },
-    {
-      title: '安装地址',
-      dataIndex: 'address',
-      key: 'address',
-      align: 'center'
-  },
-  {
-    title: '设备编号',
-    dataIndex: 'sn',
-    key: 'sn',
-    align: 'center'
-},
- 
-   {
-    title: '设备型号',
-    dataIndex: 'category',
-    key: 'category',
-    align: 'center'
-   },
-  
-   ]
+
  export default   function Index() {
   let {exparams} = useOutletContext()
   console.log(exparams);
@@ -132,7 +37,8 @@ const columns = [
    const [form] = Form.useForm()
    const [statistics ,setStatistics] = useState({})
    const [total, setTotal] = useState(0)
-  const getData = async() => {
+   const options = useStorageType(projectId)
+    const getData = async() => {
    
     try {
         let params ={
@@ -270,16 +176,8 @@ const columns = [
               <Input placeholder='告警内容/设备名称' />
              </Item>
              <Item label="设备类型" name="deviceType">
-              <Select options={[
-                {label: '全部', value: 0},
-                {label: 'PCS', value: 1},
-                {label: '电堆', value: 2},
-                {label: '电池簇', value: 3},
-                {label: '电池组', value: 4},
-                {label: '储能柜空调', value: 5},
-                {label: '环境温度传感器', value: 6},
-                {label: '水浸传感器', value: 7},
-              ]}
+              <Select options={options}
+              fieldNames={{label: 'value', value: 'key'}}
               style={{width: '200px'}}
               onChange={submit}
               ></Select>

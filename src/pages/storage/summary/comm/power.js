@@ -1,10 +1,8 @@
 import React from 'react'
 
-import {useQueryMeterPower,useQueryChargeAndDischargePower,useQueryLoadSummaryPower} from '../api'
-import {message} from 'antd'
-import Chartcom from './chart'
+
 import Chartdouble from './chartdouble'
-import { isObject } from 'lodash';
+
 export default function Index() {
    
   

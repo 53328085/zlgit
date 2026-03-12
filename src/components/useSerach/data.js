@@ -34,10 +34,12 @@ export const Daterange = ({value, onChange,rangeDate}) => {
     if (!dates) {
       return false;
     }
-    
-    const tooLate = dates[0] && current.diff(dates[0], 'days') > rangeDate;
-    const tooEarly = dates[1] && dates[1].diff(current, 'days') > rangeDate;
-    return !!tooEarly || !!tooLate || (current && current> moment().endOf("day"));
+    if (!rangeDate) {
+      const tooLate = dates[0] && current.diff(dates[0], 'days') > rangeDate;
+      const tooEarly = dates[1] && dates[1].diff(current, 'days') > rangeDate;
+      return !!tooEarly || !!tooLate || (current && current> moment().endOf("day"));
+    }
+    return current && current> moment().endOf("day");
   };
   const onOpenChange = (open) => {
     if (open) {
@@ -74,8 +76,8 @@ export const Daterange = ({value, onChange,rangeDate}) => {
 
  export const  DefineDateRange=(props)=>{
     return (
-      <Form.Item name="definerangedate" initialValue={[moment().startOf("day"), moment().endOf("day")]}  >
-        <Daterange rangeDate={props.config?.rangeDate || 31} />
+      <Form.Item name="definerangedate" initialValue={[moment().subtract(1, "month"), moment()]}  >
+        <Daterange  {...props} />
       </Form.Item>
     )
  }
