@@ -110,8 +110,8 @@ export const NodeBadge = styled.div`
 `;
 
 export const CabinetFigure = styled.div`
-  width: 96px;
-  height: 116px;
+  width: 190px;
+  height: 160px;
   border-radius: 6px;
   display: flex;
   align-items: center;
@@ -127,8 +127,8 @@ export const CabinetImage = styled.img`
 `;
 
 export const CabinetBase = styled.div`
-  width: 72px;
-  height: 14px;
+  width: 88px;
+  height: 16px;
   border: 1px solid ${colorBorder};
   border-bottom: none;
   border-radius: 2px;

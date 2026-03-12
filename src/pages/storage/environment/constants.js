@@ -6,6 +6,7 @@ export const ENV_MONITOR_TEXT = Object.freeze({
   FETCH_ERROR: "环境监控数据加载失败，请稍后重试",
   RETRY: "重试",
   NO_DATA: "暂无数据",
+  FIRE_NO_ALARM: "暂无告警",
   FIRE_ALARM_LIST: "告警列表",
   FIRE_DEFAULT_ALARM: "消防告警",
   ENV_TITLE: "环境监控",

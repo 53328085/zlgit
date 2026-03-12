@@ -54,7 +54,7 @@ const DEFAULT_LIQUID = { mode: "--", temperature: "--" };
 const DEFAULT_DEHUMIDIFIER = { humidity: "--", temperature: "--", status: "--" };
 const DEFAULT_FIRE = {
   mode: ENV_FIRE_DISPLAY_TYPE.EMPTY.toLowerCase(),
-  statusText: ENV_MONITOR_TEXT.NO_DATA,
+  statusText: ENV_MONITOR_TEXT.FIRE_NO_ALARM,
   warning: false,
   rows: [],
 };
@@ -159,12 +159,15 @@ function resolveFireVM(fireModule) {
     }));
     return rows.length > 0
       ? { mode: ENV_FIRE_DISPLAY_TYPE.LIST.toLowerCase(), rows, statusText: ENV_MONITOR_TEXT.FIRE_ALARM_LIST, warning: true }
-      : { mode: ENV_FIRE_DISPLAY_TYPE.EMPTY.toLowerCase(), rows: [], statusText: ENV_MONITOR_TEXT.NO_DATA, warning: false };
+      : { mode: ENV_FIRE_DISPLAY_TYPE.EMPTY.toLowerCase(), rows: [], statusText: ENV_MONITOR_TEXT.FIRE_NO_ALARM, warning: false };
   }
 
   if (mode.includes(ENV_FIRE_DISPLAY_TYPE.STATUS.toLowerCase())) {
     const first = items[0];
-    const statusText = normalizeText(first?.value || first?.name, ENV_MONITOR_TEXT.NO_DATA);
+    const statusText = normalizeText(
+      first?.value || first?.name,
+      ENV_MONITOR_TEXT.FIRE_NO_ALARM
+    );
     const warning = hasWarningKeyword(statusText);
     return { mode: ENV_FIRE_DISPLAY_TYPE.STATUS.toLowerCase(), rows: [], statusText, warning };
   }
@@ -195,7 +198,10 @@ function resolveFireVM(fireModule) {
   }
 
   const first = items[0];
-  const statusText = normalizeText(first?.value || first?.name, ENV_MONITOR_TEXT.NO_DATA);
+  const statusText = normalizeText(
+    first?.value || first?.name,
+    ENV_MONITOR_TEXT.FIRE_NO_ALARM
+  );
   const warning = hasWarningKeyword(statusText);
   return { mode: ENV_FIRE_DISPLAY_TYPE.STATUS.toLowerCase(), rows: [], statusText, warning };
 }
@@ -331,7 +337,7 @@ const FireModule = memo(function FireModule({ fire }) {
   return (
     <FireStatus>
       <FileTextOutlined className="icon" />
-      <div>{ENV_MONITOR_TEXT.NO_DATA}</div>
+      <div>{ENV_MONITOR_TEXT.FIRE_NO_ALARM}</div>
     </FireStatus>
   );
 });
