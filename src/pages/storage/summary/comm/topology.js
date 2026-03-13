@@ -82,9 +82,9 @@ export default function Index() {
             <div className="item">
               <span>C相电压</span><span>{datas?.onGridDevice?.uc}(V)</span>
             </div>
-            <div className="item"><span>A相电流</span><span>{datas?.onGridDevice?.ia}(I)</span></div>
-            <div className="item"><span>B相电流</span><span>{datas?.onGridDevice?.ib}(I)</span></div>
-            <div className="item"><span>C相电流</span><span>{datas?.onGridDevice?.ic}(I)</span></div>
+            <div className="item"><span>A相电流</span><span>{datas?.onGridDevice?.ia}(A)</span></div>
+            <div className="item"><span>B相电流</span><span>{datas?.onGridDevice?.ib}(A)</span></div>
+            <div className="item"><span>C相电流</span><span>{datas?.onGridDevice?.ic}(A)</span></div>
             <div className="item"><span>功率</span><span>{datas?.onGridDevice?.p}(kW)</span></div>
 
 
@@ -117,9 +117,9 @@ export default function Index() {
             <div className="item">
               <span>C相电压</span><span>{datas?.storageDevice?.uc}(V)</span>
             </div>
-            <div className="item"><span>A相电流</span><span>{datas?.storageDevice?.ia}(I)</span></div>
-            <div className="item"><span>B相电流</span><span>{datas?.storageDevice?.ib}(I)</span></div>
-            <div className="item"><span>C相电流</span><span>{datas?.storageDevice?.ic}(I)</span></div>
+            <div className="item"><span>A相电流</span><span>{datas?.storageDevice?.ia}(A)</span></div>
+            <div className="item"><span>B相电流</span><span>{datas?.storageDevice?.ib}(A)</span></div>
+            <div className="item"><span>C相电流</span><span>{datas?.storageDevice?.ic}(A)</span></div>
             <div className="item"><span>功率</span><span>{datas?.storageDevice?.p}(kW)</span></div>
 
 
@@ -135,9 +135,9 @@ export default function Index() {
             <div className="item">
               <span>C相电压</span><span>{datas?.loadDevice?.uc}(V)</span>
             </div>
-            <div className="item"><span>A相电流</span><span>{datas?.loadDevice?.ia}(I)</span></div>
-            <div className="item"><span>B相电流</span><span>{datas?.loadDevice?.ib}(I)</span></div>
-            <div className="item"><span>C相电流</span><span>{datas?.loadDevice?.ic}(I)</span></div>
+            <div className="item"><span>A相电流</span><span>{datas?.loadDevice?.ia}(A)</span></div>
+            <div className="item"><span>B相电流</span><span>{datas?.loadDevice?.ib}(A)</span></div>
+            <div className="item"><span>C相电流</span><span>{datas?.loadDevice?.ic}(A)</span></div>
             <div className="item"><span>功率</span><span>{datas?.loadDevice?.p}(kW)</span></div>
 
 

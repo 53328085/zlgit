@@ -107,6 +107,7 @@ const P = styled(Paragraph)`
     }],
     refreshDeps: [projectId, areaId, stationName, definerangedate],
     manual: false,
+    debounceWait:500
   })
   
   const {submit} = search
@@ -173,7 +174,7 @@ const P = styled(Paragraph)`
         }}>
           <Space size={16}>
              <Item label="告警查询" name="content">
-              <Input placeholder='告警内容/设备名称' />
+              <Input placeholder='告警内容/设备名称'  onChange={submit} />
              </Item>
              <Item label="设备类型" name="deviceType">
               <Select options={options}
@@ -185,9 +186,9 @@ const P = styled(Paragraph)`
              <Item label="告警等级" name="level">
               <Select options={[
                 {label: '全部告警', value: 0},
-                {label: '一级告警', value: 2},
-                {label: '二级告警', value: 3},
-                {label: '三级告警', value: 4},
+                {label: '一级告警', value: 1},
+                {label: '二级告警', value: 2},
+                {label: '三级告警', value: 3},
               ]}
               style={{width: '112px'}}
               onChange={submit}

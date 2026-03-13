@@ -9,7 +9,7 @@ export function useStorageType(projectId) {
       useQueryStorageType({ projectId })
         .then((res) => {
           if (res.success && Array.isArray(res.data) && res.data.length) {
-            setData([{key:"全部", value:0},...res.data]);
+            setData(res.data);
           } else {
             setData([]);
           }

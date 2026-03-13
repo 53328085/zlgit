@@ -54,7 +54,7 @@ export const lineoptdoub = (data, startTime, endTime) => {
         const earlyY = earlyData.map(item => item.y)
         const lateX = lateData.map(item => item.x)
         const lateY = lateData.map(item => item.y)
-        const early = startTime?.format?.('YYYY-MM-DD'), late = endTime?.format?.('YYYY-MM-DD');
+        const early = startTime?.format?.('YYYY-MM-DD') , late = endTime?.format?.('YYYY-MM-DD');
 
         return {
             type: 5,
@@ -71,9 +71,10 @@ export const lineoptdoub = (data, startTime, endTime) => {
                 bottom: "2px",
                 containLabel: true,
             },
-            dataZoom: {
+            dataZoom: [{
                 type: "inside",
-            },
+                xAxisIndex:0,
+            }],
             xAxis: [
                 {
                     type: 'category',
@@ -85,7 +86,9 @@ export const lineoptdoub = (data, startTime, endTime) => {
                             return moment(value, "YYYY-MM-DD HH:mm:ss").format("HH:mm:ss");
                         },
                         interval: "auto",
+                        
                     },
+                    
                 },
                 {
                     type: 'category',
@@ -96,7 +99,8 @@ export const lineoptdoub = (data, startTime, endTime) => {
                         formatter: (value, index) => {
                             return moment(value, "YYYY-MM-DD HH:mm:ss").format("HH:mm:ss");
                         },
-                        interval: "auto",
+                        interval: "auto", 
+                         color:"rgba(0,0,0,0.4)",
                     },
                 }
             ],
