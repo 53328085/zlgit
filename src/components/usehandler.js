@@ -1,4 +1,5 @@
 import React, {useState, useEffect} from 'react'
+import moment from 'moment'
 import styled, {css} from 'styled-components'
 import {message} from 'antd'
 import {getOnelevel} from '@redux/systemconfig.js'
@@ -284,3 +285,18 @@ export  const Statebox = styled.div`
   
     return result;
   }
+  export function divide(num1, num2) {
+    console.log(num1, num2)
+    const num1Digits = (num1.toString().split('.')[1] || '').length;
+    const num2Digits = (num2.toString().split('.')[1] || '').length;
+    
+    
+    const factor = Math.pow(10, Math.max(num1Digits, num2Digits));
+    console.log(factor)
+    console.log((num1 * factor) ,(num2 * factor),(num1 * factor) / (num2 * factor))
+    return (num1 * factor) / (num2 * factor);
+}
+export function disabledDate(current){
+  // Can not select days before today and today
+  return current && current > moment().endOf('day');
+};

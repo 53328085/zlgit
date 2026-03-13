@@ -2,7 +2,7 @@ import React, { useContext, useEffect, useMemo, useState } from 'react'
 import { Space, Form, DatePicker, Badge, Select, message } from 'antd'
 import moment from 'moment'
 import { Paramscontext } from '../context'
-import { isObject } from '@com/usehandler'
+import { isObject ,disabledDate} from '@com/usehandler'
 
 import { lineoptdoub } from '../data'
 import Titlelayout from "@com/titlelayout"
@@ -103,10 +103,10 @@ export default function Index({ title, type }) {
         <Select options={list} style={wd} fieldNames={{ label: "name", value: "sn" }}></Select>
       </Form.Item>
       <Form.Item name="startTime" style={{ marginBottom: 0 }} initialValue={formdata?.startTime}   >
-        <DatePicker style={wd} />
+        <DatePicker style={wd} disabledDate={disabledDate} allowClear={false} />
       </Form.Item>
       <Form.Item name="endTime" style={{ marginBottom: 0 }} initialValue={formdata?.endTime}  >
-        <DatePicker style={wd} />
+        <DatePicker style={wd} disabledDate={disabledDate} allowClear={false} />
       </Form.Item></Space>
   </Form>
   const props = {
