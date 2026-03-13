@@ -9,7 +9,8 @@ import enUS from 'antd/lib/calendar/locale/en_US'
 import { Cform } from "@com/useSerach/comhead.js"
 import { useQuerySNFReportData } from "./api";
 import { AreaSelect } from "@com/useSerach/comhead"
-import { isObject } from "@com/usehandler"
+import { isObject,divide } from "@com/usehandler"
+ 
 const dateType = [
   {
     value: 1,
@@ -123,9 +124,9 @@ export function useGauge(params) {
             lineStyle: {
               width: 18,
               color: len ? [
-                [(data?.[1] / max)?.toFixed(2), 'rgba(5, 192, 110, 1)'],
-                [(data?.[2] / max)?.toFixed(2), 'rgba(255, 177, 43, 1)'],
-                [max, 'rgba(255, 96, 33, 1)']
+                [divide(data[1], max), 'rgba(5, 192, 110, 1)'],
+                [divide(data[2], max), 'rgba(255, 177, 43, 1)'],
+                [1, 'rgba(255, 96, 33, 1)']
               ] : [],
               opacity: 0.8
             }

@@ -2,7 +2,7 @@ import React, {useContext,useEffect, useState} from 'react'
 import { Space, Form, DatePicker,Badge} from 'antd'
 import moment from 'moment'
 import {Paramscontext} from  '../context'
-import {isObject} from '@com/usehandler'
+import {isObject, disabledDate} from '@com/usehandler'
 import {useQueryStorageIncome} from '../api'
 import {useLine} from '../data'
 import Titlelayout from "@com/titlelayout";
@@ -62,13 +62,13 @@ export default function Index() {
     onValuesChange={onValuesChange}
   > 
       <Space><Form.Item name="startTime" style={{marginBottom:0}}   >
-        <DatePicker style={{width: "120px"}} />
+        <DatePicker style={{width: "120px"}} disabledDate={disabledDate} allowClear={false}   />
       </Form.Item>
       <Form.Item noStyle>
       <span>对比</span>
       </Form.Item>
       <Form.Item name="endTime" style={{marginBottom:0}} >
-        <DatePicker style={{width: "120px"}} />
+        <DatePicker style={{width: "120px"}} disabledDate={disabledDate} allowClear={false} />
       </Form.Item></Space>
        </Form>
     const props ={

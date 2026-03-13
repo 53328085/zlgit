@@ -22,20 +22,20 @@ export default function Index({data}) {
                   <div className="value item">{data.chargeState}</div>
             </div>
             <div className='progress'>
-                <div className="soc">SOC {data.soc}‰</div>
-                <div className="soh">SOH {data.soh}‰</div>
+                <div className="soc">SOC {data.soc}</div>
+                <div className="soh">SOH {data.soh}</div>
             </div>
             <div className='voltage'>
                     <div className="labelv">电压高值</div>
                     <div className="labelv">电压低值</div>
-                    <div className="valuev">{data?.maxV}(V)</div>
-                    <div className="valuev">{data?.minV}(V)</div>
+                    <div className="valuev">{data?.maxV}</div>
+                    <div className="valuev">{data?.minV}</div>
             </div>
             <div className='voltage'>
                     <div className="labelv">温度高值</div>
                     <div className="labelv">温度低值</div>
-                    <div className="valuev">{data?.maxTemp}(℃)</div>
-                    <div className="valuev">{data?.minTemp}(℃)</div>
+                    <div className="valuev">{data?.maxTemp}</div>
+                    <div className="valuev">{data?.minTemp}</div>
             </div>
         </div>
     </Stacksty>

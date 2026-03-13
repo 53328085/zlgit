@@ -29,16 +29,16 @@ const {Link, Paragraph, Text} = Typography
 export default function Index() {
    const [tabvalue, setTabvalue] = useState(1)
   let {exparams} = useOutletContext()
-  console.log(exparams)
+ const [cardData, setCardData] = useState(null)//卡片数据
   let {containerId,areaId, stationName, projectId} = exparams
   const [title,cid] =useMemo(()=>{
-    return [`${containerId?.label}(${containerId?.value})`,containerId?.value]
-  },[containerId])  
+    return [cardData?.no ? `${containerId?.label}(${cardData?.no})` :containerId?.label ,containerId?.value]
+  },[containerId,cardData])  
   console.log("cid",cid,projectId)
   let {islight} = useSelector(themeColor)
   
   const navigate = useNavigate()
-  const [cardData, setCardData] = useState(null)//卡片数据
+ 
  
  
  const getContainerData =async () => {  // 查询储能柜信息

@@ -291,10 +291,10 @@ border-radius: 2px
       row-gap: 4px;
 
       .soc {
-        background-image:linear-gradient(90deg,#05C06E 0%,#05C06E ${props=> (props.soc/1000)*100}%, #3D434D ${props=> (props.soc/1000)*100}%, #3D434D 100% ) ;
+        background-image:linear-gradient(90deg,#05C06E 0%,#05C06E ${props=> props.soc}, #3D434D ${props=> props.soc}, #3D434D 100% ) ;
       }
       .soh {
-        background-image:linear-gradient(90deg,#4B48F7 0%,#4B48F7 ${props=> (props.soh/1000)*100}%, #3D434D ${props=> (props.soh/1000)*100}%, #3D434D 100% ) ;
+        background-image:linear-gradient(90deg,#4B48F7 0%,#4B48F7 ${props=> props.soh}%, #3D434D ${props=> props.soh}%, #3D434D 100% ) ;
       }
       .soc,.soh{
         display: flex;

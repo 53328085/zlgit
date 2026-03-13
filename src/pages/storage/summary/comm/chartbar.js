@@ -2,7 +2,7 @@ import React, {useContext,useEffect, useState} from 'react'
 import { Space, Form, DatePicker,Badge, Select} from 'antd'
 import moment from 'moment'
 import {Paramscontext} from  '../context'
-import {isObject} from '@com/usehandler'
+import {isObject,disabledDate} from '@com/usehandler'
  
 import {useLine,option} from '../data'
 import Titlelayout from "@com/titlelayout"
@@ -66,7 +66,7 @@ export default function Index({title,getData, dataZoom }={}) {
         <Select options={option} style={{width: "120px"}} />
       </Form.Item> 
       <Form.Item name="date" style={{marginBottom:0}} initialValue={typevalue.date} >
-        <DatePicker picker={['month',"year"][datetype]} style={{width: "120px"}} />
+        <DatePicker picker={['month',"year"][datetype]} style={{width: "120px"}} disabledDate={disabledDate} allowClear={false}  />
       </Form.Item></Space>
        </Form>)
     const props ={

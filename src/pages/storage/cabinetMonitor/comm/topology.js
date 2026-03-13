@@ -15,63 +15,7 @@ const setting ={
     dots:false,
     autoplay:true,
 }
-let moke={
-    "containerId": 1, //储能柜Id
-    "containerName": "储能柜1", //储能柜名称
-    "pcsId": 1, //PCSId
-    "pcsName": "PCS1", //PSC名称
-    "status": "停机", //PSC运行状态 直接返回中文
-    "batteryStackInfo": [ //电池堆信息列表
-        {
-            "id": 1, //电池堆Id
-            "sn": "20260001", //电池堆Sn
-            "name": "电池堆1", //电池堆名称
-            "chargeState": "充电", //电池堆当前状态 静置 放电 充电
-            "soc": "250", //电池堆soc
-            "soh": "972", //电池堆soh
-            "maxV": "52.4", //电池堆电压高值
-            "minV": "51.3", //电池堆电压低值
-            "maxTemp": "36.2", //电池堆温度高值
-            "minTemp": "19.7" //电池堆温度低值
-        },
-        {
-            "id": 2,
-            "sn": "20260002",
-            "name": "电池堆2",
-            "chargeState": "2",
-            "soc": "250",
-            "soh": "972",
-            "maxV": "52.4",
-            "minV": "51.3",
-            "maxTemp": "36.2",
-            "minTemp": "19.7"
-        },
-        {
-            "id": 3,
-            "sn": "20260003",
-            "name": "电池堆3",
-            "chargeState": "2",
-            "soc": "250",
-            "soh": "972",
-            "maxV": "52.4",
-            "minV": "51.3",
-            "maxTemp": "36.2",
-            "minTemp": "19.7"
-        },
-        {
-            "id": 4,
-            "sn": "20260004",
-            "name": "电池堆4",
-            "chargeState": "2",
-            "soc": "250",
-            "soh": "972",
-            "maxV": "52.4",
-            "minV": "51.3",
-            "maxTemp": "36.2",
-            "minTemp": "19.7"
-        }
-    ]
-}
+
 export default function Index() {
     const {  projectId,containerId} = useContext(Paramscontext)
     const navigate = useNavigate()
@@ -87,7 +31,7 @@ export default function Index() {
         if(success && isObject(data)) {
             setDatas(data)
         }else {
-            setDatas(moke)
+            setDatas([])
         }
       } catch (error) {
         console.log(error)
