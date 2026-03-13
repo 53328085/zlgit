@@ -8,6 +8,15 @@ import { useReactive, useRequest } from 'ahooks'
 import { useSelector } from 'react-redux'
 import { useNavigate, useOutletContext} from 'react-router-dom'
 import pcs from './imgs/pcs.png'
+import charge from './imgs/charge.png'
+import busVoltage from './imgs/busVoltage.png'
+import hotStandby from './imgs/hotStandby.png'
+import dcPower from './imgs/dcPower.png'
+import dcCurrent from './imgs/dcCurrent.png'
+import running from './imgs/running.png'
+import frequency from './imgs/frequency.png'
+import igbtTemperature from './imgs/igbtTemperature.png'
+import offline from './imgs/offline.png'
 import Pagecount from "@com/pagecontent";
 import styled from 'styled-components'
 
@@ -56,12 +65,55 @@ export default function Index() {
     queryPowerTrends,
   } = PCSMonitorRuntime
 
+  const CARD_ICON_RULES = [
+    {
+      test: ({value}) => /运行/.test(value),
+      icon: running
+    },
+    {
+      test: ({value}) => /停机|关机/.test(value),
+      icon: offline
+    },
+    { test: ({name}) => /总母线电压|母线电压/.test(name), icon: busVoltage },
+    { test: ({name}) => /直流总电流|直流电流/.test(name), icon: dcCurrent },
+    { test: ({name}) => /直流功率/.test(name), icon: dcPower },
+    { test: ({name}) => /频率/.test(name), icon: frequency },
+    { test: ({name}) => /IGBT温度|IGBT/.test(name), icon: igbtTemperature },
+    { test: ({name}) => /热备/.test(name), icon: hotStandby },
+    { test: ({name, value}) => /充电|放电|充放电/.test(name) || /充电|放电/.test(value), icon: charge },
+    {
+      test: ({name, value}) => /停机|关机/.test(name) || /停机|关机/.test(value),
+      icon: offline
+    },
+    {
+      test: ({name, value}) => /运行/.test(name) || /运行/.test(value),
+      icon: running
+    },
+  ]
+
+  const getCardIcon = (name, value) => {
+    const normalizedName = String(name ?? '').trim()
+    const normalizedValue = String(value ?? '').trim()
+    const matchedRule = CARD_ICON_RULES.find(rule =>
+      rule.test({name: normalizedName, value: normalizedValue})
+    )
+    return matchedRule?.icon || ''
+  }
+
   //页面组件
   // 数据卡片：显示名称、单位、数值
   const DataCard = props => {
     const { name, unit = '', value } = props
+    const icon = getCardIcon(name, value)
     return (
       <div className={style.dataCard}>
+        {icon ? (
+          <div className={style.cardIconWrap}>
+            <img className={style.cardIcon} src={icon} alt={name} />
+          </div>
+        ) : (
+          <div className={style.cardIconPlaceholder} />
+        )}
         <div className={style.cardLabel}>{name}{unit ? `（${unit}）` : ''}</div>
         <div className={style.dataValue}>{value}</div>
       </div>

@@ -86,17 +86,42 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            justify-content: center;
+            justify-content: flex-start;
             height: 100px;
+            gap: 4px;
+            overflow: hidden;
+            .cardIconWrap{
+                width: 28px;
+                height: 28px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                flex-shrink: 0;
+            }
+            .cardIcon{
+                max-width: 100%;
+                max-height: 100%;
+                object-fit: contain;
+            }
+            .cardIconPlaceholder{
+                width: 28px;
+                height: 28px;
+                flex-shrink: 0;
+            }
             .cardLabel{
                 color: #fff;
                 font-size: 12px;
+                text-align: center;
+                line-height: 16px;
             }
             .dataValue{
                 color: #0f0;
                 font-size: 26px;
                 font-weight: bold;
-                margin: 8px 0;
+                margin: 0;
+                line-height: 1;
+                text-align: center;
+                word-break: break-word;
             }
         }
     }
