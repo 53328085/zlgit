@@ -75,7 +75,7 @@ export default function Index() {
             <Typography.Link onClick={()=>{toPage("pCSMonitor","PCS监控",datas)}}><img src={imgurl["pcs"]} className='img' /></Typography.Link>
             </div>
         </div>
-         <Custbtn status={datas.status}>  <div className="circle"></div>{datas.status}</Custbtn> 
+         <Custbtn runstatus={datas.status}>  <div className="circle"></div>{datas.status}</Custbtn> 
         </div>
         <img src={imgurl["line2"]} className='line2'></img>
       </div>

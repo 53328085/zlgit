@@ -34,8 +34,9 @@ export default function Index() {
   const [title,cid] =useMemo(()=>{
     return [cardData?.no ? `${containerId?.label}(${cardData?.no})` :containerId?.label ,containerId?.value]
   },[containerId,cardData])  
-  console.log("cid",cid,projectId)
-  let {islight} = useSelector(themeColor)
+   
+  let colors = useSelector(themeColor)
+  console.log("themeColor",colors)
   
   const navigate = useNavigate()
  

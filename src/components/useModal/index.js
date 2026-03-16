@@ -190,7 +190,7 @@ function Custmodal({
       }
       title={
         title ? <div
-          style={{ cursor: 'move' }}
+          style={{ cursor: 'move',flex:1 }}
           onMouseOver={() => {
             if (disabled) {
               setDisabled(false)

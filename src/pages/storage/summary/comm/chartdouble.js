@@ -7,7 +7,7 @@ import { isObject ,disabledDate} from '@com/usehandler'
 import { lineoptdoub } from '../data'
 import Titlelayout from "@com/titlelayout"
 import Ichart from '@com/useEcharts/Ichart'
-import { useQueryMeterPower, useQueryMeterList, useQuerySOC } from '../api'
+import { useQueryMeterPower, useQueryMeterList, useQuerySOC,useQueryPCSList,useQueryPowerTrends } from '../api'
 export default function Index({ title, type }) {
 
   const [form] = Form.useForm()
@@ -22,7 +22,7 @@ export default function Index({ title, type }) {
   }
   )
 
-  let lineopt = lineoptdoub(datas, formdata?.startTime, formdata?.endTime)
+  let lineopt = lineoptdoub(datas, formdata?.startTime, formdata?.endTime,type)
   const onValuesChange = (_, b) => {
 
     setFormdata(b)
@@ -30,7 +30,7 @@ export default function Index({ title, type }) {
 
   const getChartData = async (params) => {
     try {
-      let hander = type == 202 ? useQuerySOC : useQueryMeterPower
+      let hander = type == 202 ? useQuerySOC : type==102 ? useQueryPowerTrends :   useQueryMeterPower
       const resp = await hander(params)
 
       if (resp?.success && isObject(resp?.data)) {
@@ -42,7 +42,26 @@ export default function Index({ title, type }) {
 
     // setData(data)
   }
-
+  const getPclist=async (params)=>{ 
+     try {
+       let {success, data}  = await useQueryPCSList(params)
+        if (success && Array.isArray(data)) {
+        setList(data)
+        form.setFieldValue("sn", data[0].sn)
+        setFormdata({ ...formdata, sn: data[0].sn })
+      } else {
+        if (!success) {
+          //  message.error(errMsg || "数据出错")
+        }
+        form.setFieldValue("sn", null)
+        setFormdata({ ...formdata, sn: null })
+        setList([])
+      }
+     } catch (error) {
+      
+     }
+      
+  }
   const getList = async (params) => {
     try {
       const { data, success, errMsg } = await useQueryMeterList(params)
@@ -65,7 +84,7 @@ export default function Index({ title, type }) {
 
   }
   useEffect(() => {
-    if ([areaId, projectId, type].every((id) => Number.isInteger(parseInt(id))) && Number.isInteger(parseInt(stationName?.value))) {
+    if ([areaId, projectId].every((id) => Number.isInteger(parseInt(id))) && Number.isInteger(parseInt(stationName?.value)) &&(type==101 || type == 103 || type==202)) {
       let params = {
         areaId,
         siteId: stationName.value,
@@ -76,19 +95,30 @@ export default function Index({ title, type }) {
     }
   }, [areaId, stationName, projectId, type])
 
-
+  useEffect(() => {
+    if ([areaId, projectId].every((id) => Number.isInteger(parseInt(id))) && Number.isInteger(parseInt(stationName?.value)) &&type==102) {
+      let params = {
+        areaId,
+        siteId: stationName.value,
+        projectId,
+        containerId:0
+      }
+      getPclist(params)
+    }
+  }, [areaId, stationName, projectId, type])
 
   useEffect(() => {
     const { startTime, endTime, sn } = formdata
 
     if ([areaId, projectId].every((id) => Number.isInteger(parseInt(id))) && startTime && endTime && sn) {
-      console.log("222")
+      
       let params = {
         areaId,
         sn,
         projectId,
         startTime: startTime.format('YYYY-MM-DD'),
         endTime: endTime.format('YYYY-MM-DD'),
+        pcsId: list.find((item) => item.sn == sn)?.id
       }
       getChartData(params)
     }

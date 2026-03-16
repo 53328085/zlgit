@@ -45,15 +45,15 @@ export const useLine = ({ data, dimensions, type = "line", dataZoom = true }) =>
     return lineopt
 }
 
-export const lineoptdoub = (data, startTime, endTime) => {
+export const lineoptdoub = (data, startTime, endTime,type) => {
     console.log("data", data)
     let opt = useMemo(() => {
 
-        const { earlyData = [], lateData = [] } = data
-        const earlyX = earlyData.map(item => item.x)
-        const earlyY = earlyData.map(item => item.y)
-        const lateX = lateData.map(item => item.x)
-        const lateY = lateData.map(item => item.y)
+        const { earlyData=[],data1st=[],data2nd=[], lateData = [] } = data
+        const earlyX =type==102 ?  data1st.map(item=>item.x): earlyData.map(item => item.x)
+        const earlyY =type==102 ? data1st.map(item=>item.y): earlyData.map(item => item.y)
+        const lateX = type==102 ?  data2nd.map(item=>item.x): lateData.map(item => item.x)
+        const lateY =type==102 ?  data2nd.map(item=>item.y): lateData.map(item => item.y)
         const early = startTime?.format?.('YYYY-MM-DD') , late = endTime?.format?.('YYYY-MM-DD');
 
         return {
@@ -83,7 +83,7 @@ export const lineoptdoub = (data, startTime, endTime) => {
                     data: earlyX,
                     axisLabel: {
                         formatter: (value, index) => {
-                            return moment(value, "YYYY-MM-DD HH:mm:ss").format("HH:mm:ss");
+                            return  type==102 ? value:    moment(value, "YYYY-MM-DD HH:mm:ss").format("HH:mm:ss");
                         },
                         interval: "auto",
                         
@@ -97,7 +97,7 @@ export const lineoptdoub = (data, startTime, endTime) => {
                     data: lateX,
                     axisLabel: {
                         formatter: (value, index) => {
-                            return moment(value, "YYYY-MM-DD HH:mm:ss").format("HH:mm:ss");
+                            return   type==102 ? value: moment(value, "YYYY-MM-DD HH:mm:ss").format("HH:mm:ss");
                         },
                         interval: "auto", 
                          color:"rgba(0,0,0,0.4)",

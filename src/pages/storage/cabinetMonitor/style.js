@@ -335,12 +335,12 @@ height: 28px;
 //background: ${props=>props.status="停机" ? props.theme.errorColor:  props.theme.successColor};
 color: #fff;
 border-radius: 6px;
-border: 1px solid ${props=>props.status=="停机" ? props.theme.offlineColor:  props.theme.successColor};
+border: 1px solid ${props=> props.runstatus=="停机" ? props.theme.offlineColor:  props.theme.successColor};
 .circle {
   width: 8px;
   height: 8px;
   border-radius: 50%;
-  background: ${props=>props.status=="停机" ? props.theme.offlineColor:  props.theme.successColor};
+  background: ${props=> props.runstatus=="停机" ? props.theme.offlineColor:  props.theme.successColor};
   margin-right: 4px;
 }
 `

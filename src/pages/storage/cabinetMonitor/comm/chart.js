@@ -4,7 +4,7 @@ import moment from 'moment'
 import {Paramscontext} from  '../context'
 import {isObject} from '@com/usehandler'
  
-import {useLine} from '../data'
+import {useLine,lineoptdoub} from '../data'
 import Titlelayout from "@com/titlelayout"
 import Ichart  from '@com/useEcharts/Ichart'
 import { parseInt } from 'lodash'
@@ -13,7 +13,8 @@ export default function Index({title,getData,dataZoom }={}) {
   const [form] = Form.useForm()
  
   const {areaId, stationName,  projectId,containerId} = useContext(Paramscontext)
-  const [data, setData] = useState([])
+  const [data, setData] = useState({})
+  console.log("充放电功率",data)
   const  [time, setTime] = useState({startTime:moment().subtract(1, 'days'),
     endTime:moment()})
  
@@ -29,10 +30,16 @@ export default function Index({title,getData,dataZoom }={}) {
   }
  
   const getChartData = async (params)=>{
-    const data = await getData(params)
-    setData(data)
+    try {
+      const data = await getData(params)
+      setData(data)
+    } catch (error) {
+      console.log(error)
+    }
+    
   }
-  let lineopt = useLine({data,dimensions, icon:'circle'})
+  let lineopt = lineoptdoub(data,time?.startTime, time?.endTime)
+console.log("lineopt",lineopt)
   useEffect(()=>{
     const {startTime, endTime} = time 
     if([projectId].every((id)=>Number.isInteger(parseInt(id))) && Number.isInteger(parseInt(containerId?.value)) && startTime && endTime) { 
@@ -51,13 +58,13 @@ export default function Index({title,getData,dataZoom }={}) {
     onValuesChange={onValuesChange}
   > 
      <Space><Form.Item name="startTime" style={{marginBottom:0}} initialValue={time?.startTime}   >
-  <DatePicker style={{width: "120px"}} />
+  <DatePicker style={{width: "120px"}} allowClear={false} />
 </Form.Item>
 <Form.Item noStyle>
 <span>对比</span>
 </Form.Item>
 <Form.Item name="endTime" style={{marginBottom:0}} initialValue={time?.endTime}  >
-  <DatePicker style={{width: "120px"}} />
+  <DatePicker style={{width: "120px"}} allowClear={false} />
 </Form.Item></Space>
        </Form>
     const props ={ 
@@ -68,7 +75,7 @@ export default function Index({title,getData,dataZoom }={}) {
     }
   return (
     <Titlelayout title={title} {...props} > 
-       <Ichart {...lineopt} />
+       <Ichart custoption={lineopt} />
           </Titlelayout>
   )
 }

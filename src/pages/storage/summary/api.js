@@ -48,3 +48,12 @@ export const { useQueryStorageWarning } = new Apimethod( //最新告警
     "Storage/SiteSummaryRuntime/QueryMeterList"   
   );
 
+  export const { useQueryPCSList } = new Apimethod( // 充放电下拉列表
+    "get",
+    "Storage/StorageMonitorPCS/QueryPCSList"   
+  );
+
+    export const { useQueryPowerTrends } = new Apimethod( // 充放电下拉列表
+    "get",
+    "Storage/StorageMonitorPCS/QueryPowerTrends"   
+  );
