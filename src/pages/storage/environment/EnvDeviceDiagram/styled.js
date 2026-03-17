@@ -188,6 +188,11 @@ export const MetricItem = styled.div`
   justify-content: center;
   font-size: ${(props) => (props.$small ? "13px" : "14px")};
   color: ${(props) => (props.$highlight ? colorValue : "#dce5f7")};
+  padding: 0 8px;
+  text-align: center;
+  white-space: normal;
+  word-break: break-all;
+  line-height: 1.35;
 `;
 
 export const MetricLabel = styled(MetricItem)`
@@ -198,16 +203,18 @@ export const FireList = styled.div`
   background: ${colorBlock};
   border-radius: 0 0 2px 2px;
   min-height: 92px;
+  max-height: 160px;
   padding: 8px 10px;
   display: flex;
   flex-direction: column;
   row-gap: 8px;
+  overflow-y: auto;
 `;
 
 export const FireListItem = styled.div`
   display: grid;
-  grid-template-columns: auto 1fr auto;
-  align-items: center;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: start;
   column-gap: 8px;
   font-size: 14px;
 `;
@@ -222,10 +229,15 @@ export const FireDot = styled.span`
 
 export const FireText = styled.span`
   color: rgba(238, 243, 250, 0.9);
+  line-height: 1.4;
+  white-space: normal;
+  word-break: break-all;
 `;
 
 export const FireTime = styled.span`
   color: rgba(238, 243, 250, 0.52);
+  white-space: nowrap;
+  align-self: start;
 `;
 
 export const FireStatus = styled.div`

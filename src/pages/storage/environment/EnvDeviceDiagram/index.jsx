@@ -206,12 +206,12 @@ function resolveFireVM(fireModule) {
   return { mode: ENV_FIRE_DISPLAY_TYPE.STATUS.toLowerCase(), rows: [], statusText, warning };
 }
 
-function findModule(modules, moduleType, patterns) {
+function findModules(modules, moduleType, patterns) {
   const list = safeList(modules);
   const aliases = ENV_MODULE_TYPE_ALIASES[moduleType] || [moduleType];
-  const byType = list.find((module) => isMatchedByAliases(extractIdentityTokens(module), aliases));
-  if (byType) return byType;
-  return list.find((module) => patterns.some((pattern) => pattern.test(String(module?.name ?? ""))));
+  const matched = list.filter((module) => isMatchedByAliases(extractIdentityTokens(module), aliases));
+  if (matched.length > 0) return matched;
+  return list.filter((module) => patterns.some((pattern) => pattern.test(String(module?.name ?? ""))));
 }
 
 /**
@@ -223,33 +223,67 @@ function findModule(modules, moduleType, patterns) {
  *
  * @author ybdpx
  */
-function toContainerVM(container, index) {
-  const modules = safeList(container?.types);
-  const liquidModule = findModule(modules, ENV_MODULE_TYPE.LIQUID_COOLING, [/液冷/]);
-  const dehumidifierModule = findModule(modules, ENV_MODULE_TYPE.DEHUMIDIFIER, [/除湿/]);
-  const fireModule = findModule(modules, ENV_MODULE_TYPE.FIRE, [/消防/]);
+function toLiquidVM(module, index) {
+  const items = safeList(module?.items);
+  const liquidMode = findMetric(items, [/工作模式/, /运行模式/, /模式/], ENV_METRIC_CODE.MODE);
+  const liquidTemp = findMetric(items, [/环境温度/, /温度/], ENV_METRIC_CODE.TEMPERATURE);
 
-  const liquidItems = safeList(liquidModule?.items);
-  const dehumidifierItems = safeList(dehumidifierModule?.items);
+  return {
+    id: module?.id ?? `liquid-${index + 1}`,
+    name: normalizeText(module?.name, ENV_MONITOR_TEXT.LIQUID_TITLE),
+    mode: liquidMode ? normalizeWithUnit(liquidMode?.value, liquidMode?.unit) : DEFAULT_LIQUID.mode,
+    temperature: liquidTemp
+      ? normalizeWithUnit(liquidTemp?.value, liquidTemp?.unit)
+      : DEFAULT_LIQUID.temperature,
+  };
+}
 
-  const liquidMode = findMetric(liquidItems, [/工作模式/, /运行模式/, /模式/], ENV_METRIC_CODE.MODE);
-  const liquidTemp = findMetric(liquidItems, [/环境温度/, /温度/], ENV_METRIC_CODE.TEMPERATURE);
-
+function toDehumidifierVM(module, index) {
+  const items = safeList(module?.items);
   const currentHumidity = findMetric(
-    dehumidifierItems,
+    items,
     [/当前湿度/, /湿度/],
     ENV_METRIC_CODE.HUMIDITY
   );
   const currentTemp = findMetric(
-    dehumidifierItems,
+    items,
     [/当前温度/, /温度/],
     ENV_METRIC_CODE.TEMPERATURE
   );
   const dehumidifierStatus = findMetric(
-    dehumidifierItems,
+    items,
     [/工作状态/, /运行状态/, /状态/],
     ENV_METRIC_CODE.STATUS
   );
+
+  return {
+    id: module?.id ?? `dehumidifier-${index + 1}`,
+    name: normalizeText(module?.name, ENV_MONITOR_TEXT.DEHUMIDIFIER_TITLE),
+    humidity: currentHumidity
+      ? normalizeWithUnit(currentHumidity?.value, currentHumidity?.unit)
+      : DEFAULT_DEHUMIDIFIER.humidity,
+    temperature: currentTemp
+      ? normalizeWithUnit(currentTemp?.value, currentTemp?.unit)
+      : DEFAULT_DEHUMIDIFIER.temperature,
+    status: dehumidifierStatus
+      ? normalizeWithUnit(dehumidifierStatus?.value, dehumidifierStatus?.unit)
+      : DEFAULT_DEHUMIDIFIER.status,
+  };
+}
+
+function toFireVM(module, index) {
+  return {
+    id: module?.id ?? `fire-${index + 1}`,
+    name: normalizeText(module?.name, ENV_MONITOR_TEXT.FIRE_TITLE),
+    ...resolveFireVM(module),
+  };
+}
+
+function toContainerVM(container, index) {
+  const modules = safeList(container?.types);
+  const liquids = findModules(modules, ENV_MODULE_TYPE.LIQUID_COOLING, [/液冷/]).map(toLiquidVM);
+  const dehumidifiers = findModules(modules, ENV_MODULE_TYPE.DEHUMIDIFIER, [/除湿/]).map(toDehumidifierVM);
+  const fires = findModules(modules, ENV_MODULE_TYPE.FIRE, [/消防/]).map(toFireVM);
 
   return {
     id: container?.id ?? `env-node-${index + 1}`,
@@ -257,24 +291,9 @@ function toContainerVM(container, index) {
       container?.displayName ?? container?.containerName ?? container?.name,
       `${ENV_MONITOR_TEXT.DEFAULT_CONTAINER_PREFIX}${index + 1}`
     ),
-    liquid: {
-      mode: liquidMode ? normalizeWithUnit(liquidMode?.value, liquidMode?.unit) : DEFAULT_LIQUID.mode,
-      temperature: liquidTemp
-        ? normalizeWithUnit(liquidTemp?.value, liquidTemp?.unit)
-        : DEFAULT_LIQUID.temperature,
-    },
-    dehumidifier: {
-      humidity: currentHumidity
-        ? normalizeWithUnit(currentHumidity?.value, currentHumidity?.unit)
-        : DEFAULT_DEHUMIDIFIER.humidity,
-      temperature: currentTemp
-        ? normalizeWithUnit(currentTemp?.value, currentTemp?.unit)
-        : DEFAULT_DEHUMIDIFIER.temperature,
-      status: dehumidifierStatus
-        ? normalizeWithUnit(dehumidifierStatus?.value, dehumidifierStatus?.unit)
-        : DEFAULT_DEHUMIDIFIER.status,
-    },
-    fire: resolveFireVM(fireModule),
+    liquids,
+    dehumidifiers,
+    fires,
   };
 }
 
@@ -310,7 +329,7 @@ const FireModule = memo(function FireModule({ fire }) {
   if (fire.mode === "list") {
     return (
       <FireList>
-        {fire.rows.slice(0, 3).map((row) => (
+        {fire.rows.map((row) => (
           <FireListItem key={row.id}>
             <FireDot />
             <FireText>{row.text}</FireText>
@@ -352,30 +371,36 @@ const EnvCardNode = memo(function EnvCardNode({ model, left }) {
       <CabinetBase />
       <DetailCard>
         <CardTitle>{ENV_MONITOR_TEXT.ENV_TITLE}</CardTitle>
-        <ModuleBlock>
-          <ModuleTitle>{ENV_MONITOR_TEXT.LIQUID_TITLE}</ModuleTitle>
-          <MetricsGrid $cols={2}>
-            <MetricLabel>{ENV_MONITOR_TEXT.LIQUID_MODE}</MetricLabel>
-            <MetricLabel>{ENV_MONITOR_TEXT.LIQUID_TEMP}</MetricLabel>
-            <MetricItem $highlight>{model.liquid.mode}</MetricItem>
-            <MetricItem>{model.liquid.temperature}</MetricItem>
-          </MetricsGrid>
-        </ModuleBlock>
-        <ModuleBlock>
-          <ModuleTitle>{ENV_MONITOR_TEXT.DEHUMIDIFIER_TITLE}</ModuleTitle>
-          <MetricsGrid $cols={3}>
-            <MetricLabel>{ENV_MONITOR_TEXT.DEHUMIDIFIER_HUMIDITY}</MetricLabel>
-            <MetricLabel>{ENV_MONITOR_TEXT.DEHUMIDIFIER_TEMP}</MetricLabel>
-            <MetricLabel>{ENV_MONITOR_TEXT.DEHUMIDIFIER_STATUS}</MetricLabel>
-            <MetricItem>{model.dehumidifier.humidity}</MetricItem>
-            <MetricItem>{model.dehumidifier.temperature}</MetricItem>
-            <MetricItem $highlight>{model.dehumidifier.status}</MetricItem>
-          </MetricsGrid>
-        </ModuleBlock>
-        <ModuleBlock>
-          <ModuleTitle>{ENV_MONITOR_TEXT.FIRE_TITLE}</ModuleTitle>
-          <FireModule fire={model.fire} />
-        </ModuleBlock>
+        {model.liquids.map((module, index) => (
+          <ModuleBlock key={`liquid-${module.id}-${index}`}>
+            <ModuleTitle>{module.name}</ModuleTitle>
+            <MetricsGrid $cols={2}>
+              <MetricLabel>{ENV_MONITOR_TEXT.LIQUID_MODE}</MetricLabel>
+              <MetricLabel>{ENV_MONITOR_TEXT.LIQUID_TEMP}</MetricLabel>
+              <MetricItem $highlight>{module.mode}</MetricItem>
+              <MetricItem>{module.temperature}</MetricItem>
+            </MetricsGrid>
+          </ModuleBlock>
+        ))}
+        {model.dehumidifiers.map((module, index) => (
+          <ModuleBlock key={`dehumidifier-${module.id}-${index}`}>
+            <ModuleTitle>{module.name}</ModuleTitle>
+            <MetricsGrid $cols={3}>
+              <MetricLabel>{ENV_MONITOR_TEXT.DEHUMIDIFIER_HUMIDITY}</MetricLabel>
+              <MetricLabel>{ENV_MONITOR_TEXT.DEHUMIDIFIER_TEMP}</MetricLabel>
+              <MetricLabel>{ENV_MONITOR_TEXT.DEHUMIDIFIER_STATUS}</MetricLabel>
+              <MetricItem>{module.humidity}</MetricItem>
+              <MetricItem>{module.temperature}</MetricItem>
+              <MetricItem $highlight>{module.status}</MetricItem>
+            </MetricsGrid>
+          </ModuleBlock>
+        ))}
+        {model.fires.map((module, index) => (
+          <ModuleBlock key={`fire-${module.id}-${index}`}>
+            <ModuleTitle>{module.name}</ModuleTitle>
+            <FireModule fire={module} />
+          </ModuleBlock>
+        ))}
       </DetailCard>
     </CardNode>
   );
