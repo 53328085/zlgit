@@ -4,7 +4,8 @@ import maxCellVoltage from './bmsMonitor/imgs/maxCellVoltage.png';
 import minCellVoltage from './bmsMonitor/imgs/minCellVoltage.png';
 import maxSystemTemp from './bmsMonitor/imgs/maxSystemTemp.png';
 import minSystemTemp from './bmsMonitor/imgs/minSystemTemp.png';
-import stackPower from './bmsMonitor/imgs/stackPower.png';
+import dischargePowerMax from './bmsMonitor/imgs/dischargePowerMax.png';
+import chargePowerMax from './bmsMonitor/imgs/chargePowerMax.png';
 
 import voltageAb from './alternatorMonitor/imgs/voltageAb.png';
 import voltageBc from './alternatorMonitor/imgs/voltageBc.png';
@@ -24,8 +25,8 @@ export const BMS_OVERVIEW_ICON_ENUM = {
   ArrBatteryVoltageMin: minCellVoltage,
   SystemTemperature: maxSystemTemp,
   BatteryTemperatureMin: minSystemTemp,
-  DischargePowerMax: stackPower,
-  ChargePowerMax: stackPower,
+  DischargePowerMax: dischargePowerMax,
+  ChargePowerMax: chargePowerMax,
 };
 
 export const PCS_OVERVIEW_ICON_ENUM = {
