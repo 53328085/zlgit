@@ -44,6 +44,7 @@ export default function DeviceCommView ({ tab, areaId, projectId, containerId, s
   //配置弹窗
   const deviceSettingDialogRef = useRef(null)
   const { value: siteId = 0 } = stationName
+  //
   const [selectId, setSelectId] = useState(0)
   //分页相关数据
   const totalItem = useRef()
@@ -54,13 +55,6 @@ export default function DeviceCommView ({ tab, areaId, projectId, containerId, s
   useEffect(() => {
     setTitle(getDeviceTitle(tab))
   }, [tab])
-
-  /**
-   * 刷新表格
-   */
-  const onRefreshClick = useMemoizedFn(() => {
-    refresh()
-  })
 
   /**
    * 配置按钮点击事件
@@ -182,7 +176,7 @@ export default function DeviceCommView ({ tab, areaId, projectId, containerId, s
         projectId={projectId}
         containerId={containerId}
         tab={tab}
-        onRefreshClick={onRefreshClick}
+        onRefreshClick={refresh}
         limit={[101, 102].includes(Number(tab)) ? 1 : 0} // 限制最多选中一个设备
       />
     </>

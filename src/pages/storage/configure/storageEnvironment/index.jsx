@@ -15,7 +15,7 @@ export default function Index () {
   let [searchParams] = useSearchParams()
   const itemParam = searchParams.get('item')
   //默认选中页签
-  const initialTabValue = itemParam !== null ? itemParam.toString() || '10' : '10'
+  const initialTabValue = itemParam !== null ? itemParam.toString() : '301'
   //多页签相关参数
   const [tabValue, setTabValue] = useState(initialTabValue)
   const [tabs, setTabs] = useState([])
@@ -46,7 +46,8 @@ export default function Index () {
     onSuccess: ({ data }) => {
       setTabs(data.map(item => {return { label: item.value, key: item.key.toString() }}))
       if (isArray(data) && data.length > 0) {
-        setTabValue(data[0].key.toString())
+        let isIncludeItem = data.find(item => item.key.toString() === initialTabValue)
+        setTabValue(isIncludeItem ? initialTabValue : data[0].key.toString())
       }
     },
     refreshDeps: [projectId, containerIdValue],
