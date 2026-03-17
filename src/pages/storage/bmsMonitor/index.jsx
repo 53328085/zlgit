@@ -9,6 +9,7 @@ import styled from "styled-components";
 import BmsOverviewPanel from "./BmsOverviewPanel";
 import BmsBatteryTable from "./BmsBatteryTable";
 import BmsDeviceDiagram from "./BmsDeviceDiagram";
+import { BMS_OVERVIEW_ICON_ENUM, getOverviewIcon } from "../overviewIconEnum";
 import style from "./style.module.less";
 
 // 主布局容器 - 参考PCS页面的rightlayout样式
@@ -89,15 +90,26 @@ function normalizeBmsDiagramData(list) {
 }
 
 const DEFAULT_OVERVIEW_ITEMS = [
-  { key: 'stackVoltage', name: '电池堆电压', unit: 'V', iconText: 'V' },
-  { key: 'stackCurrent', name: '电池堆电流', unit: 'A', iconText: 'A' },
-  { key: 'maxCellVoltage', name: '堆最高电池电压', unit: 'V', iconText: 'V' },
-  { key: 'minCellVoltage', name: '堆最低电池电压', unit: 'V', iconText: 'V' },
-  { key: 'maxCellTemp', name: '系统最高温度', unit: '℃', iconText: '℃' },
-  { key: 'minCellTemp', name: '最低电池温度', unit: '℃', iconText: '℃' },
-  { key: 'maxDischargePower', name: '堆允许最大放电功率', unit: 'kW', iconText: 'P' },
-  { key: 'maxChargePower', name: '堆允许最大充电功率', unit: 'kW', iconText: 'P' },
+  { key: 'BatteryArrVoltage', name: '电池堆电压', unit: 'V', iconText: 'V' },
+  { key: 'BatteryArrCurrent', name: '电池堆电流', unit: 'A', iconText: 'A' },
+  { key: 'ArrBatteryVoltageMax', name: '堆最高电池电压', unit: 'V', iconText: 'V' },
+  { key: 'ArrBatteryVoltageMin', name: '堆最低电池电压', unit: 'V', iconText: 'V' },
+  { key: 'SystemTemperature', name: '系统最高温度', unit: '℃', iconText: '℃' },
+  { key: 'BatteryTemperatureMin', name: '最低电池温度', unit: '℃', iconText: '℃' },
+  { key: 'DischargePowerMax', name: '堆允许最大放电功率', unit: 'kW', iconText: 'P' },
+  { key: 'ChargePowerMax', name: '堆允许最大充电功率', unit: 'kW', iconText: 'P' },
 ];
+
+const OVERVIEW_INDEX_MAP = {
+  0: { key: 'BatteryArrVoltage', defaultName: '电池堆电压', unit: 'V', iconText: 'V' },
+  1: { key: 'BatteryArrCurrent', defaultName: '电池堆电流', unit: 'A', iconText: 'A' },
+  2: { key: 'ArrBatteryVoltageMax', defaultName: '堆最高电池电压', unit: 'V', iconText: 'V' },
+  3: { key: 'ArrBatteryVoltageMin', defaultName: '堆最低电池电压', unit: 'V', iconText: 'V' },
+  4: { key: 'SystemTemperature', defaultName: '系统最高温度', unit: '℃', iconText: '℃' },
+  5: { key: 'BatteryTemperatureMin', defaultName: '最低电池温度', unit: '℃', iconText: '℃' },
+  6: { key: 'DischargePowerMax', defaultName: '堆允许最大放电功率', unit: 'kW', iconText: 'P' },
+  7: { key: 'ChargePowerMax', defaultName: '堆允许最大充电功率', unit: 'kW', iconText: 'P' },
+};
 
 function getOverviewIconText(unit, fallback) {
   const text = String(unit ?? '').trim();
@@ -109,33 +121,32 @@ function getOverviewIconText(unit, fallback) {
 }
 
 function normalizeBmsOverviewData(data) {
-  if (Array.isArray(data)) {
-    return data
+  const items = Array.isArray(data?.items) ? data.items : data;
+
+  if (Array.isArray(items)) {
+    return items
       .slice()
       .sort((a, b) => Number(a?.index ?? 0) - Number(b?.index ?? 0))
       .map((item, idx) => {
-        const fallback = DEFAULT_OVERVIEW_ITEMS[idx] || {};
+        const mappedByIndex = OVERVIEW_INDEX_MAP[item?.index];
+        const fallback = mappedByIndex || DEFAULT_OVERVIEW_ITEMS[idx] || {};
+        const overviewKey = item?.icon || mappedByIndex?.key || item?.key || item?.point || fallback.key || `item-${idx}`;
         return {
-          key: item?.key || item?.point || fallback.key || `item-${idx}`,
-          name: item?.name || item?.title || fallback.name || `参数${idx + 1}`,
+          key: overviewKey,
+          index: Number.isFinite(Number(item?.index)) ? Number(item.index) : idx,
+          name: item?.name || item?.title || fallback.defaultName || fallback.name || `参数${idx + 1}`,
           value: item?.value ?? '--',
           unit: item?.unit ?? fallback.unit ?? '',
-          iconText: getOverviewIconText(item?.unit, fallback.iconText),
+          iconText: item?.iconText || fallback.iconText || getOverviewIconText(item?.unit, fallback.iconText),
+          icon: getOverviewIcon(BMS_OVERVIEW_ICON_ENUM, overviewKey),
         };
       });
-  }
-
-  if (data && typeof data === 'object') {
-    return DEFAULT_OVERVIEW_ITEMS.map((item) => ({
-      ...item,
-      value: data[item.key] ?? '--',
-      iconText: getOverviewIconText(item.unit, item.iconText),
-    }));
   }
 
   return DEFAULT_OVERVIEW_ITEMS.map((item) => ({
     ...item,
     value: '--',
+    icon: getOverviewIcon(BMS_OVERVIEW_ICON_ENUM, item.key),
   }));
 }
 

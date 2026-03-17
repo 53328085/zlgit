@@ -27,8 +27,6 @@ const CompactCardWrapper = styled.div`
   .icon-wrapper {
     width: 28px;
     height: 28px;
-    border-radius: 50%;
-    background: ${({ theme }) => theme.primaryColor || '#1890ff'};
     display: flex;
     align-items: center;
     justify-content: center;
@@ -72,10 +70,14 @@ const CompactCardWrapper = styled.div`
   }
 `;
 
-const CompactCard = ({ iconText, name, value, unit }) => (
+const CompactCard = ({ iconText, icon, name, value, unit }) => (
   <CompactCardWrapper>
     <div className="icon-wrapper">
-      <span className="icon-text">{iconText}</span>
+      {icon ? (
+        <img src={icon} alt={name} style={{ width: 18, height: 18, objectFit: 'contain' }} />
+      ) : (
+        <span className="icon-text">{iconText}</span>
+      )}
     </div>
     <div className="info">
       <div className="param-name">{name}</div>
@@ -86,17 +88,38 @@ const CompactCard = ({ iconText, name, value, unit }) => (
   </CompactCardWrapper>
 );
 
-function splitRuntimeColumns(items) {
+const RUNTIME_COLUMN_KEYS = {
+  voltage: ['LineVoltageAB', 'LineVoltageBC', 'LineVoltageCA'],
+  current: ['PhaseCurrentA', 'PhaseCurrentB', 'PhaseCurrentC'],
+  power: ['ActivePower', 'ReactivePower', 'ApparentPower', 'PowerFactor'],
+};
+
+function buildRuntimeColumns(items) {
   const list = Array.isArray(items) ? items : [];
-  return [
-    list.slice(0, 3),
-    list.slice(3, 6),
-    list.slice(6),
-  ];
+  const itemMap = new Map(list.map(item => [item.key, item]));
+
+  const voltage = RUNTIME_COLUMN_KEYS.voltage
+    .map(key => itemMap.get(key))
+    .filter(Boolean);
+  const current = RUNTIME_COLUMN_KEYS.current
+    .map(key => itemMap.get(key))
+    .filter(Boolean);
+  const power = RUNTIME_COLUMN_KEYS.power
+    .map(key => itemMap.get(key))
+    .filter(Boolean);
+
+  const knownKeys = new Set([
+    ...RUNTIME_COLUMN_KEYS.voltage,
+    ...RUNTIME_COLUMN_KEYS.current,
+    ...RUNTIME_COLUMN_KEYS.power,
+  ]);
+  const extras = list.filter(item => !knownKeys.has(item.key));
+
+  return [voltage, current, power.concat(extras)];
 }
 
 const RuntimeParamsPanel = memo(({ data = [] }) => {
-  const [voltage, current, power] = splitRuntimeColumns(data);
+  const [voltage, current, power] = buildRuntimeColumns(data);
 
   const renderNormalColumn = (params, columnIndex) => (
     <ColumnWrapper key={`normal-${columnIndex}`}>
@@ -104,6 +127,7 @@ const RuntimeParamsPanel = memo(({ data = [] }) => {
         <RuntimeParamCard
           key={param.key}
           iconText={param.iconText}
+          icon={param.icon}
           name={param.name}
           value={param.value ?? '--'}
           unit={param.unit}
@@ -118,6 +142,7 @@ const RuntimeParamsPanel = memo(({ data = [] }) => {
         <CompactCard
           key={param.key}
           iconText={param.iconText}
+          icon={param.icon}
           name={param.name}
           value={param.value ?? '--'}
           unit={param.unit}

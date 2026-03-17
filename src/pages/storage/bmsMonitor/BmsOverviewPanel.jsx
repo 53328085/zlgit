@@ -35,6 +35,7 @@ const BmsOverviewPanel = memo(({ data = [] }) => {
         <RuntimeParamCard
           key={param.key}
           iconText={param.iconText}
+          icon={param.icon}
           name={param.name}
           value={param.value ?? '--'}
           unit={param.unit}

@@ -11,8 +11,6 @@ const CardWrapper = styled.div`
   .icon-wrapper {
     width: 40px;
     height: 40px;
-    border-radius: 50%;
-    background: ${({ theme }) => theme.primaryColor || '#1890ff'};
     display: flex;
     align-items: center;
     justify-content: center;
@@ -56,11 +54,15 @@ const CardWrapper = styled.div`
   }
 `;
 
-const RuntimeParamCard = memo(({ iconText, name, value, unit }) => {
+const RuntimeParamCard = memo(({ iconText, icon, name, value, unit }) => {
   return (
     <CardWrapper>
       <div className="icon-wrapper">
-        <span className="icon-text">{iconText}</span>
+        {icon ? (
+          <img src={icon} alt={name} style={{ width: 24, height: 24, objectFit: 'contain' }} />
+        ) : (
+          <span className="icon-text">{iconText}</span>
+        )}
       </div>
       <div className="info">
         <div className="param-name">{name}</div>
