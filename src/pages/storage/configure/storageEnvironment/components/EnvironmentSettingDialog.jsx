@@ -111,7 +111,7 @@ const EnvironmentSettingDialog = ({ onRefreshClick, projectId, siteId, container
   }))
 
   const onChange = (newTargetKeys, direction, moveKeys) => {
-    console.log(newTargetKeys, direction, moveKeys)
+    //
     setTargetKeys(newTargetKeys)
   }
 

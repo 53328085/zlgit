@@ -118,7 +118,6 @@ const DeviceSettingDialog = ({ onRefreshClick, projectId, siteId, containerId, t
   }))
 
   const onChange = (newTargetKeys, direction, moveKeys) => {
-    console.log(newTargetKeys, direction, moveKeys)
 
     // 限制添加数量
     if (limit > 0 && direction === 'right' && newTargetKeys.length > limit) {
@@ -152,7 +151,6 @@ const DeviceSettingDialog = ({ onRefreshClick, projectId, siteId, containerId, t
         rightColumns={rightTableColumns}
         render={item => item.title}
         rowKey={record => record.sn}
-        showSelectAll={false}
       />
     </CustomModal>
   )
