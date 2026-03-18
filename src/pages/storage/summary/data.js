@@ -46,14 +46,21 @@ export const useLine = ({ data, dimensions, type = "line", dataZoom = true }) =>
 }
 
 export const lineoptdoub = (data, startTime, endTime,type) => {
-    console.log("data", data)
+   
     let opt = useMemo(() => {
 
         const { earlyData=[],data1st=[],data2nd=[], lateData = [] } = data
-        const earlyX =type==102 ?  data1st.map(item=>item.x): earlyData.map(item => item.x)
-        const earlyY =type==102 ? data1st.map(item=>item.y): earlyData.map(item => item.y)
+        let earlyX =type==102 ?  data1st.map(item=>item.x): earlyData.map(item => item.x)
+        let earlyY =type==102 ? data1st.map(item=>item.y): earlyData.map(item => item.y)
         const lateX = type==102 ?  data2nd.map(item=>item.x): lateData.map(item => item.x)
         const lateY =type==102 ?  data2nd.map(item=>item.y): lateData.map(item => item.y)
+
+        let lastLatex =moment(lateX[lateX.length - 1],"YYYY-MM-DD HH:mm:ss").subtract(1, 'days')
+        let idx = earlyX.findIndex(item => moment(item, "YYYY-MM-DD HH:mm:ss").isAfter(lastLatex))
+         earlyX=earlyX.slice(0,idx)
+         earlyY=earlyY.slice(0,idx)
+        
+        
         const early = startTime?.format?.('YYYY-MM-DD') , late = endTime?.format?.('YYYY-MM-DD');
 
         return {

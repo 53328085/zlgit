@@ -23,8 +23,7 @@ import imgurl from "./icon";
 import Listitem from "./Listitem";
 import Username from "./Username";
 import Phonelog from "./Phonelog";
-import Copyright from './Copyright'
- 
+import Copyright from './Copyright' 
 const Loginpage =  styled.div`
   display: flex;
   flex:1;
@@ -193,6 +192,10 @@ const CheckAuthorization = async (value, type=0, codekey, setLoading,getCode) =>
     }
     let { success, errMsg, data} = await dispatch(loginByName(value)).unwrap();
     if(success) {
+      // let audio = document.getElementById("audio")
+      // audio?.play?.()?.catch(error => {
+      //   console.log("播放失败，请确保用户已与页面交互。", error);
+      // }); 银犁项目 全局报警
       dispatch(getPassword(pwd))
       setLoading &&  setLoading(false) 
        let {projectId, roleType, userId } = data          
@@ -262,6 +265,13 @@ const CheckAuthorization = async (value, type=0, codekey, setLoading,getCode) =>
     ongetLang()
     
   }, []);
+
+  useEffect(()=>{
+ let el = document.getElementById("audio")
+      if (el) {
+       el.muted=true
+      } 
+  }, [])
  
   const tabChange=(key)=> {
     window.localStorage.setItem("default_login", key)

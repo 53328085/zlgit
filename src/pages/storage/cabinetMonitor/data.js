@@ -1,137 +1,147 @@
-import {useMemo} from 'react';
+import { useMemo } from "react";
 import moment from "moment";
-import {isObject} from "@com/usehandler"
+import { isObject } from "@com/usehandler";
 
-export const tabs =[
-    { label: "功率", key: 1, },
-    { label: "收益", key: 2, },
-    { label: "充放电", key: 3, }
-]
-export const option =[
-    { label: "月", value: 0, },
-    { label: "年", value: 1, },
-    
-]
-export const useLine=({data,dimensions,type="line",icon="rect" }={})=>{ 
-  const{x=[], y=[], y1=[]} = isObject(data) ? data :  {}
-  const lineopt = useMemo(()=>{
+export const tabs = [
+  { label: "功率", key: 1 },
+  { label: "收益", key: 2 },
+  { label: "充放电", key: 3 },
+];
+export const option = [
+  { label: "月", value: 0 },
+  { label: "年", value: 1 },
+];
+export const useLine = ({
+  data,
+  dimensions,
+  type = "line",
+  icon = "rect",
+} = {}) => {
+  const { x = [], y = [], y1 = [] } = isObject(data) ? data : {};
+  const lineopt = useMemo(() => {
     return {
-        series: [{ type,  seriesLayoutBy: 'row' }, { type,  seriesLayoutBy: 'row' }],  
-        grid: { 
-          left: "0px",
-          right: "0",
-          top: "30px",
-          bottom: "0px",
-          containLabel: true,
-        },
-        legend: {
-          icon 
-         }, 
-        dataset: {
-            dimensions: [
-              {name:   "时间", type: 'time'}, 
-              ...dimensions
-            ],
-            source: [x, y, y1],
-            sourceHeader: false,
-          }
-        
-    }
-  },[data,dimensions, type,icon ])
- return lineopt
-}
+      series: [
+        { type, seriesLayoutBy: "row" },
+        { type, seriesLayoutBy: "row" },
+      ],
+      grid: {
+        left: "0px",
+        right: "0",
+        top: "30px",
+        bottom: "0px",
+        containLabel: true,
+      },
+      legend: {
+        icon,
+      },
+      dataset: {
+        dimensions: [{ name: "时间", type: "time" }, ...dimensions],
+        source: [x, y, y1],
+        sourceHeader: false,
+      },
+    };
+  }, [data, dimensions, type, icon]);
+  return lineopt;
+};
 export const lineoptdoub = (data, startTime, endTime) => {
-    console.log("data", data)
-    let opt = useMemo(() => {
+  let opt = useMemo(() => {
+    const { earlyData = [], lateData = [] } = data;
+    let earlyX = earlyData.map((item) => item.x);
+    let earlyY = earlyData.map((item) => item.y);
+    const lateX = lateData.map((item) => item.x);
+    const lateY = lateData.map((item) => item.y);
+    let lastLatex = moment(
+      lateX[lateX.length - 1],
+      "YYYY-MM-DD HH:mm:ss",
+    ).subtract(1, "days");
+    let idx = earlyX.findIndex((item) =>
+      moment(item, "YYYY-MM-DD HH:mm:ss").isAfter(lastLatex),
+    );
+    earlyX = earlyX.slice(0, idx);
+    earlyY = earlyY.slice(0, idx);
+    const early = startTime?.format?.("YYYY-MM-DD"),
+      late = endTime?.format?.("YYYY-MM-DD");
 
-        const { earlyData = [], lateData = [] } = data
-        const earlyX = earlyData.map(item => item.x)
-        const earlyY = earlyData.map(item => item.y)
-        const lateX = lateData.map(item => item.x)
-        const lateY = lateData.map(item => item.y)
-        const early = startTime?.format?.('YYYY-MM-DD') , late = endTime?.format?.('YYYY-MM-DD');
-
-        return {
-            type: 5,
-            legend: {
-                data: [early, late]
+    return {
+      type: 5,
+      legend: {
+        data: [early, late],
+      },
+      tooltip: {
+        trigger: "axis",
+      },
+      grid: {
+        left: "10px",
+        right: "10px",
+        top: "40px",
+        bottom: "2px",
+        containLabel: true,
+      },
+      dataZoom: [
+        {
+          type: "inside",
+          xAxisIndex: 0,
+        },
+      ],
+      xAxis: [
+        {
+          type: "category",
+          name: early,
+          boundaryGap: true,
+          data: earlyX,
+          axisLabel: {
+            formatter: (value, index) => {
+              return moment(value, "YYYY-MM-DD HH:mm:ss").format("HH:mm:ss");
             },
-            tooltip: {
-                trigger: 'axis'
+            interval: "auto",
+          },
+        },
+        {
+          type: "category",
+          name: late,
+          boundaryGap: true,
+          data: lateX,
+          axisLabel: {
+            formatter: (value, index) => {
+              return moment(value, "YYYY-MM-DD HH:mm:ss").format("HH:mm:ss");
             },
-            grid: {
-                left: "10px",
-                right: "10px",
-                top: "40px",
-                bottom: "2px",
-                containLabel: true,
-            },
-            dataZoom: [{
-                type: "inside",
-                xAxisIndex:0,
-            }],
-            xAxis: [
-                {
-                    type: 'category',
-                    name: early,
-                    boundaryGap: true,
-                    data: earlyX,
-                    axisLabel: {
-                        formatter: (value, index) => {
-                            return moment(value, "YYYY-MM-DD HH:mm:ss").format("HH:mm:ss");
-                        },
-                        interval: "auto",
-                        
-                    },
-                    
-                },
-                {
-                    type: 'category',
-                    name: late,
-                    boundaryGap: true,
-                    data: lateX,
-                    axisLabel: {
-                        formatter: (value, index) => {
-                            return moment(value, "YYYY-MM-DD HH:mm:ss").format("HH:mm:ss");
-                        },
-                        interval: "auto", 
-                         color:"rgba(0,0,0,0.4)",
-                    },
-                }
-            ],
-            yAxis: [
-                {
-                    type: 'value',
-                    name: early,
-                    nameGap: 20,
-                },
-                {
-                    type: 'value',
-                    name: late,
-                    nameGap: 20,
-                }
-            ],
-            // 系列列表
-            series: [
-                {
-                    name: early,
-                    type: 'line',
-                    xAxisIndex: 0, // 对应第一个X轴
-                    yAxisIndex: 0, // 对应第一个Y轴
-                    data: earlyY, // 数据集1的数据
-                    smooth: 3,
-                },
-                {
-                    name: late,
-                    type: 'line',
-                    xAxisIndex: 1, // 对应第二个X轴
-                    yAxisIndex: 1, // 对应第二个Y轴
-                    data: lateY, // 数据集2的数据
-                    smooth: 3
-                }
-            ]
-        };
-
-    }, [data, startTime, endTime])
-    return opt
-}
+            interval: "auto",
+            color: "rgba(0,0,0,0.4)",
+          },
+        },
+      ],
+      yAxis: [
+        {
+          type: "value",
+          name: early,
+          nameGap: 20,
+        },
+        {
+          type: "value",
+          name: late,
+          nameGap: 20,
+        },
+      ],
+      // 系列列表
+      series: [
+        {
+          name: early,
+          type: "line",
+          xAxisIndex: 0, // 对应第一个X轴
+          yAxisIndex: 0, // 对应第一个Y轴
+          data: earlyY, // 数据集1的数据
+          smooth: 3,
+        },
+        {
+          name: late,
+          type: "line",
+          xAxisIndex: 1, // 对应第二个X轴
+          yAxisIndex: 1, // 对应第二个Y轴
+          data: lateY, // 数据集2的数据
+          smooth: 3,
+        },
+      ],
+    };
+  }, [data, startTime, endTime]);
+  return opt;
+};

@@ -735,6 +735,12 @@ const closeModl = () => {
 useEffect(()=> {
   queryMainTheme()
 }, [])
+  useEffect(()=>{
+ let el = document.getElementById("audio")
+      if (el) {
+       el.muted=true
+      } 
+  }, [])
   return (
       
       <Mainbox laptop={laptop}>

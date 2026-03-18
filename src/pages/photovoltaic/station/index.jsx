@@ -570,7 +570,7 @@ export default function Index() {
                     <Table.Summary fixed>
                       <Table.Summary.Row style={{ backgroundColor: "#f6f6f6", textAlign: "center" }}>
                         <Table.Summary.Cell index={0} >汇总</Table.Summary.Cell>
-                        <Table.Summary.Cell index={1}  >{eleTotal}</Table.Summary.Cell>
+                        <Table.Summary.Cell index={1}  >{eleTotal?.toFixed?.(2)}</Table.Summary.Cell>
                         <Table.Summary.Cell index={2}  ></Table.Summary.Cell>
                       </Table.Summary.Row>
                     </Table.Summary>)

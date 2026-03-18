@@ -18,6 +18,7 @@ import {themeColor, intl,setadaptation,getThemeColor,adaptation, dark, iszhCN} f
 import CustConfig from './custConfig';
 import { clearToken} from "@redux/user";
 import {getprimarycolors} from "@com/usehandler";
+import warning from "@imgs/warning.mp3"
 function App() {
   const dispatch = useDispatch()
   const theme = useSelector(themeColor)
@@ -101,7 +102,7 @@ ratiostr.addEventListener("change", updateratio)
   <BrowserRouter>
     <Suspense fallback={<Loading/>}>  
          <EL/>
-        
+         {/* <audio autoPlay loop id="audio" src={warning} muted={true} >audio</audio>  告警全局提醒--成都银犁项目*/}
     </Suspense>  
     </BrowserRouter>
     </ErrorBoundary>
