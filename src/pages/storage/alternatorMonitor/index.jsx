@@ -23,6 +23,7 @@ import styled from 'styled-components'
 import RuntimeParamsPanel from './RuntimeParamsPanel'
 import PowerCompareChart from './PowerCompareChart'
 import Titlelayout from '@com/titlelayout'
+import { PCS_OVERVIEW_ICON_ENUM, getOverviewIcon } from '../overviewIconEnum'
 const Mainbox = styled.div`
  && {
    .leftlayout {
@@ -131,16 +132,16 @@ export default function Index() {
     series2: []
   })
   const DEFAULT_RUNTIME_ITEMS = [
-    { key: 'uab', iconText: 'Uab', name: 'Uab线电压AB', unit: 'V' },
-    { key: 'ubc', iconText: 'Ubc', name: 'Ubc线电压BC', unit: 'V' },
-    { key: 'uca', iconText: 'Uca', name: 'Uca线电压CA', unit: 'V' },
-    { key: 'ia', iconText: 'Ia', name: 'Ia A相电流', unit: 'A' },
-    { key: 'ib', iconText: 'Ib', name: 'Ib B相电流', unit: 'A' },
-    { key: 'ic', iconText: 'Ic', name: 'Ic C相电流', unit: 'A' },
-    { key: 'pwr', iconText: 'Pwr', name: '有功功率', unit: 'kW' },
-    { key: 'q', iconText: 'Q', name: '无功功率', unit: 'kVar' },
-    { key: 's', iconText: 'S', name: '视在功率', unit: 'kVA' },
-    { key: 'pf', iconText: 'PF', name: '功率因数', unit: '' },
+    { key: 'LineVoltageAB', iconText: 'Uab', name: 'Uab线电压AB', unit: 'V' },
+    { key: 'LineVoltageBC', iconText: 'Ubc', name: 'Ubc线电压BC', unit: 'V' },
+    { key: 'LineVoltageCA', iconText: 'Uca', name: 'Uca线电压CA', unit: 'V' },
+    { key: 'PhaseCurrentA', iconText: 'Ia', name: 'Ia A相电流', unit: 'A' },
+    { key: 'PhaseCurrentB', iconText: 'Ib', name: 'Ib B相电流', unit: 'A' },
+    { key: 'PhaseCurrentC', iconText: 'Ic', name: 'Ic C相电流', unit: 'A' },
+    { key: 'ActivePower', iconText: 'Pwr', name: '有功功率', unit: 'kW' },
+    { key: 'ReactivePower', iconText: 'Q', name: '无功功率', unit: 'kVar' },
+    { key: 'ApparentPower', iconText: 'S', name: '视在功率', unit: 'kVA' },
+    { key: 'PowerFactor', iconText: 'PF', name: '功率因数', unit: '' },
   ]
 
   const getRuntimeIconText = (unit, fallback) => {
@@ -155,33 +156,31 @@ export default function Index() {
   }
 
   const normalizeRuntimeData = data => {
-    if (Array.isArray(data)) {
-      return data
+    const items = Array.isArray(data?.items) ? data.items : data
+
+    if (Array.isArray(items)) {
+      return items
         .slice()
         .sort((a, b) => Number(a?.index ?? 0) - Number(b?.index ?? 0))
         .map((item, idx) => {
           const fallback = DEFAULT_RUNTIME_ITEMS[idx] || {}
+          const runtimeKey = item?.icon || fallback.key || `item-${idx}`
           return {
-            key: item?.key || item?.point || fallback.key || `item-${idx}`,
+            key: runtimeKey,
+            index: Number.isFinite(Number(item?.index)) ? Number(item.index) : idx,
             name: item?.name || item?.title || fallback.name || `参数${idx + 1}`,
             value: item?.value ?? '--',
             unit: item?.unit ?? fallback.unit ?? '',
-            iconText: item?.iconText || getRuntimeIconText(item?.unit, fallback.iconText),
+            iconText: item?.iconText || fallback.iconText || getRuntimeIconText(item?.unit, fallback.iconText),
+            icon: getOverviewIcon(PCS_OVERVIEW_ICON_ENUM, runtimeKey),
           }
         })
-    }
-
-    if (data && typeof data === 'object') {
-      return DEFAULT_RUNTIME_ITEMS.map(item => ({
-        ...item,
-        value: data[item.key] ?? '--',
-        iconText: getRuntimeIconText(item.unit, item.iconText),
-      }))
     }
 
     return DEFAULT_RUNTIME_ITEMS.map(item => ({
       ...item,
       value: '--',
+      icon: getOverviewIcon(PCS_OVERVIEW_ICON_ENUM, item.key),
     }))
   }
 

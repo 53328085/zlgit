@@ -1,3 +1,7 @@
+/**
+ * 设备设置对话框组件
+ * 用于选择和配置储能设备
+ */
 import CustomModal from '@com/useModal'
 import React, { useImperativeHandle, useRef, forwardRef, useState, useEffect } from 'react'
 import { useMemoizedFn, useRequest } from 'ahooks'
@@ -6,6 +10,10 @@ import { getDeviceTitle } from '@pages/storage/configure/storageDevice/Constant'
 import { StorageDeviceDesigner } from '@api/api'
 import { message } from 'antd'
 
+/**
+ * 左侧表格列配置
+ * 显示未选中设备的信息
+ */
 const leftTableColumns = [
   {
     dataIndex: 'sn',
@@ -28,6 +36,10 @@ const leftTableColumns = [
     align: 'center',
   },
 ]
+/**
+ * 右侧表格列配置
+ * 显示已选中设备的信息
+ */
 const rightTableColumns = [
   {
     dataIndex: 'sn',
@@ -46,11 +58,26 @@ const rightTableColumns = [
   },
 ]
 
+/**
+ * 设备设置对话框组件
+ * @param {Function} onRefreshClick - 刷新点击回调函数
+ * @param {string} projectId - 项目ID
+ * @param {string} siteId - 站点ID
+ * @param {string} containerId - 容器ID
+ * @param {string} tab - Tab页标识
+ * @param {number} limit - 选择设备数量限制，默认为0（无限制）
+ * @param {RefObject} ref - 组件引用
+ * @returns {JSX.Element} 设备设置对话框
+ */
 const DeviceSettingDialog = ({ onRefreshClick, projectId, siteId, containerId, tab, limit = 0 }, ref) => {
   const modalRef = useRef(null)
   const [sourceData, setSourceData] = useState([])
   const [targetKeys, setTargetKeys] = useState([])
 
+  /**
+   * 显示对话框并获取配置信息
+   * 重置状态并加载设备配置数据
+   */
   const showDialog = useMemoizedFn(() => {
     //重置
     setSourceData([])
@@ -59,6 +86,10 @@ const DeviceSettingDialog = ({ onRefreshClick, projectId, siteId, containerId, t
     modalRef.current?.onOpen()
   })
 
+  /**
+   * 获取设备配置信息的请求
+   * 根据项目、站点、容器和tab参数获取设备配置列表
+   */
   const { run: getConfigInfo } = useRequest(() => {
     const requiredParams = [projectId, siteId, containerId]
     if (requiredParams.some(param => param === undefined || param === null)) {
@@ -78,6 +109,10 @@ const DeviceSettingDialog = ({ onRefreshClick, projectId, siteId, containerId, t
     refreshDeps: [containerId, tab]
   })
 
+  /**
+   * 保存设备配置
+   * 验证选择的设备数量并调用API保存配置
+   */
   const onSaveClick = useMemoizedFn(async () => {
     if (targetKeys.length <= 0) {
       message.error('请选择设备')
@@ -113,12 +148,22 @@ const DeviceSettingDialog = ({ onRefreshClick, projectId, siteId, containerId, t
     }
   })
 
+  /**
+   * 使用useImperativeHandle暴露组件方法给父组件
+   * 使得父组件可以通过ref调用showDialog方法
+   */
   useImperativeHandle(ref, () => ({
     showDialog
   }))
 
+  /**
+   * 处理设备转移变化
+   * 当设备从左侧移动到右侧或反之，检查是否超出数量限制
+   * @param {Array} newTargetKeys - 新的目标键数组
+   * @param {string} direction - 移动方向 ('left' 或 'right')
+   * @param {Array} moveKeys - 被移动的键数组
+   */
   const onChange = (newTargetKeys, direction, moveKeys) => {
-    console.log(newTargetKeys, direction, moveKeys)
 
     // 限制添加数量
     if (limit > 0 && direction === 'right' && newTargetKeys.length > limit) {
@@ -152,7 +197,6 @@ const DeviceSettingDialog = ({ onRefreshClick, projectId, siteId, containerId, t
         rightColumns={rightTableColumns}
         render={item => item.title}
         rowKey={record => record.sn}
-        showSelectAll={false}
       />
     </CustomModal>
   )

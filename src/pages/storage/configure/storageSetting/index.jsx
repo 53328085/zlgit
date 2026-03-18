@@ -16,24 +16,37 @@ import { CustButtonT } from '@com/useButton'
 import { getTableColumns } from '@pages/storage/configure/storageSetting/Constant'
 import StorageInfoDialog from '@pages/storage/configure/storageSetting/components/StorageInfoDialog'
 
+/**
+ * 站点管理页面组件
+ * 用于展示和管理站点信息，支持增删改查操作
+ */
 export default function Index () {
+  //引用StorageInfoDialog组件实例，用于显示站点信息对话框
   const storageInfoDialogRef = useRef(null)
+  //引用表格组件实例
   const tableRef = useRef()
+  //获取当前项目ID
   const projectId = useSelector(selectProjectId)
-  //权限 true-仅查看 false-可编辑
+  //获取发布状态，用于判断用户权限（true-仅查看 false-可编辑）
   const isPublish = useSelector(publishState)
+  //获取区域层级默认名称，如"园区"
   const areaFirstName = useSelector(levelDefaultLabel) || '园区'
-  //删除弹窗
+  //控制删除确认弹窗的显示状态
   const [showDeleteModal, setShowDeleteModal] = useState(false)
-  //分页相关参数
+  //用于存储总记录数的引用
   const totalItem = useRef()
+  //用于存储当前页码的引用
   const curPage = useRef()
   const PageSize = 14
-  //编辑站点的ID
+  //当前选中要编辑/删除的站点ID
   const [selectId, setSelectId] = useState(0)
 
   /**
-   * 获取表格数据
+   * 获取表格数据的异步函数
+   * @param {Object} params - 分页参数
+   * @param {number} params.current - 当前页码
+   * @param {number} params.pageSize - 每页记录数
+   * @returns {Promise<Object>} 表格数据Promise
    */
   const getTableData = ({ current, pageSize }) => {
     curPage.current = current
@@ -65,7 +78,7 @@ export default function Index () {
   }
 
   /**
-   * 表格操作Hook
+   * 表格操作Hook，包含表格属性、刷新和执行功能
    */
   const { tableProps, refresh, run } = useAntdTable(getTableData, {
     defaultPageSize: PageSize,
@@ -73,26 +86,29 @@ export default function Index () {
   })
 
   /**
-   * 新增站点
+   * 新增站点按钮点击事件处理函数
    */
   const onAddClick = () => {
     storageInfoDialogRef?.current?.showDialog(null)
   }
   /**
-   * 表格编辑
+   * 表格编辑按钮点击事件处理函数
+   * @param {Object} record - 要编辑的表格行数据
    */
   const onTableEditClick = (record) => {
     storageInfoDialogRef?.current?.showDialog(record)
   }
   /**
-   * 表格删除
+   * 表格删除按钮点击事件处理函数
+   * @param {Object} record - 要删除的表格行数据
    */
   const onTableDeleteClick = (record) => {
     setSelectId(record.id)
     setShowDeleteModal(true)
   }
   /**
-   * 删除站点确认
+   * 删除站点确认按钮点击事件处理函数
+   * @returns {Promise<void>} 删除操作的Promise
    */
   const onDialogDeleteClick = async () => {
     let res = await SiteManagerDesigner.DeleteSite(projectId, selectId)
@@ -115,12 +131,15 @@ export default function Index () {
   }
 
   /**
-   * 表格刷新监听
+   * 表格刷新监听函数，用于刷新表格数据
    */
   const onRefreshClick = useMemoizedFn(() => {
     refresh()
   })
 
+  /**
+   * 页面标题组件
+   */
   const Title = (
     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
       <span>站点管理</span>

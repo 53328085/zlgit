@@ -49,13 +49,6 @@ export default function EnvironmentCommView ({ tab, areaId, projectId, container
   }, [tab])
 
   /**
-   * 刷新表格
-   */
-  const onRefreshClick = useMemoizedFn(() => {
-    refresh()
-  })
-
-  /**
    * 配置按钮点击事件
    */
   const onSettingClick = useMemoizedFn(() => {
@@ -81,7 +74,7 @@ export default function EnvironmentCommView ({ tab, areaId, projectId, container
         message.success('删除成功!')
         let current = Math.ceil((totalItem.current - 1) / PageSize) < curPage.current
           ? Math.max(1, curPage.current - 1)  // 确保页码最小为1
-          : curPage.current;
+          : curPage.current
         if (current !== curPage.current) {
           // 如果删除后需要跳转页码
           run({ current: current, pageSize: PageSize })
@@ -101,7 +94,7 @@ export default function EnvironmentCommView ({ tab, areaId, projectId, container
   /**
    * 获取表格数据
    */
-  const getTableData = ({ current, pageSize }) => {
+  const getTableData = async ({ current, pageSize }) => {
     const requiredParams = [projectId, areaId, siteId, containerId]
     if (requiredParams.some(param => param === undefined || param === null)) {
       return {
@@ -111,8 +104,8 @@ export default function EnvironmentCommView ({ tab, areaId, projectId, container
     }
     curPage.current = current
     let params = { projectId, areaId, siteId, containerId, tab, pageNum: current, pageSize }
-    return StorageDeviceDesigner.getStorageDeviceListByTabApi(params).then(res => {
-      let { success, data, total } = res
+    try {
+      const { success, data, total } = await StorageDeviceDesigner.getStorageDeviceListByTabApi(params)
       totalItem.current = Number.isInteger(total) ? total : 0
       if (success && Array.isArray(data) && data.length > 0) {
         return {
@@ -125,19 +118,19 @@ export default function EnvironmentCommView ({ tab, areaId, projectId, container
           total: 0
         }
       }
-    }).catch(e => {
+    } catch (e) {
       console.log(e)
-    })
+      return {
+        list: [],
+        total: 0
+      }
+    }
   }
 
   const { tableProps, refresh, run } = useAntdTable(getTableData, {
     defaultPageSize: PageSize,
-    refreshDeps: [],
+    refreshDeps: [projectId, tab, containerId],  // 添加依赖项，确保参数变化时能更新
   })
-
-  useEffect(() => {
-    run({ current: 1, pageSize: PageSize })
-  }, [projectId, tab, areaId, siteId, containerId])
 
   return (
     <>
@@ -146,7 +139,7 @@ export default function EnvironmentCommView ({ tab, areaId, projectId, container
           <div className="icon"></div>
           <div className="title">{title}列表</div>
         </Space>
-        <CustButton onClick={onSettingClick} wh="auto" style={{ minWidth: '96px' }}>配置{title}</CustButton>
+        <CustButton wh="auto" style={{ minWidth: 96 }} onClick={onSettingClick}>配置{title}</CustButton>
       </CustomTitle>
       <CustomTable
         ref={tableRef}
@@ -175,7 +168,7 @@ export default function EnvironmentCommView ({ tab, areaId, projectId, container
         projectId={projectId}
         containerId={containerId}
         tab={tab}
-        onRefreshClick={onRefreshClick}
+        onRefreshClick={refresh}
       />
     </>
   )

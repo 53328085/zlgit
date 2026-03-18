@@ -10,6 +10,7 @@ import moment from 'moment/moment'
 import styled from 'styled-components'
 import { SiteManagerDesigner } from '@api/api.js'
 
+// 自定义表单样式
 const CustomForm = styled(Form)`
     && {
         .ant-form-item {
@@ -17,6 +18,7 @@ const CustomForm = styled(Form)`
         }
     }
 `
+// 图片显示区域样式
 const ImageContentView = styled.div`
     width: 160px;
     height: 160px;
@@ -24,18 +26,26 @@ const ImageContentView = styled.div`
     display: flex;
 `
 
+// 存储信息对话框组件
 const StorageInfoDialog = ({ onRefreshClick }, ref) => {
+  // 模态框引用
   const modalRef = useRef()
+  // 表单引用
   const [form] = Form.useForm()
+  // 项目ID
   const projectId = useSelector(selectProjectId)
+  // 一级组织结构
   const oneLevel = useSelector((state) => state.system.onelevel)
-  //&所属园区
+  // 所属园区列表
   const areaList = useSelector(selectOneLevel)
+  // 操作类型 ('add' 或 'edit')
   const [operation, setOperation] = useState('add')
+  // 当前操作的信息
   const [operationInfo, setOperationInfo] = useState(null)
 
+  // 显示对话框方法
   const showDialog = useMemoizedFn((info) => {
-    //重置
+    // 重置表单
     form.resetFields()
     setOperationInfo(info)
 
@@ -53,6 +63,8 @@ const StorageInfoDialog = ({ onRefreshClick }, ref) => {
 
   /**
    * 保存按钮点击事件
+   * 根据操作类型新增或更新站点信息
+   * @returns {Promise<void>}
    */
   const onSaveClick = useMemoizedFn(async () => {
     try {
@@ -84,6 +96,7 @@ const StorageInfoDialog = ({ onRefreshClick }, ref) => {
     }
   })
 
+  // 暴露方法给父组件调用
   useImperativeHandle(ref, () => ({
     showDialog
   }))

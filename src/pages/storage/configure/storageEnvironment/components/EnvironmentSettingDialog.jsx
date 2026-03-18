@@ -6,6 +6,10 @@ import { message } from 'antd'
 import TableTransfer from '@pages/storage/configure/storageEnvironment/components/TableTransfer'
 import { getDeviceTitle } from '@pages/storage/configure/storageEnvironment/Constant'
 
+/**
+ * 左侧表格列配置
+ * 包含设备编号、设备名称、设备类型和安装地址列
+ */
 const leftTableColumns = [
   {
     dataIndex: 'sn',
@@ -28,6 +32,10 @@ const leftTableColumns = [
     align: 'center',
   },
 ]
+/**
+ * 右侧表格列配置
+ * 包含设备编号、设备名称和设备类型列
+ */
 const rightTableColumns = [
   {
     dataIndex: 'sn',
@@ -46,11 +54,40 @@ const rightTableColumns = [
   },
 ]
 
+/**
+ * 环境配置对话框组件
+ * 用于选择和配置存储设备
+ * @param {Object} props - 组件属性
+ * @param {Function} props.onRefreshClick - 刷新按钮点击回调
+ * @param {string} props.projectId - 项目ID
+ * @param {string} props.siteId - 站点ID
+ * @param {string} props.containerId - 容器ID
+ * @param {string} props.tab - 标签页标识
+ * @param {Object} ref - 组件引用
+ * @returns {JSX.Element} 环境配置对话框
+ */
 const EnvironmentSettingDialog = ({ onRefreshClick, projectId, siteId, containerId, tab }, ref) => {
+  /**
+   * 模态框引用
+   * @type {React.RefObject}
+   */
   const modalRef = useRef(null)
+  /**
+   * 源数据状态 - 包含所有设备数据（已配置和未配置）
+   * @type {Array}
+   */
   const [sourceData, setSourceData] = useState([])
+  /**
+   * 目标键状态 - 已选中的设备SN列表
+   * @type {Array}
+   */
   const [targetKeys, setTargetKeys] = useState([])
 
+  /**
+   * 显示对话框函数
+   * 重置数据并获取配置信息
+   * @returns {void}
+   */
   const showDialog = useMemoizedFn(() => {
     //重置
     setSourceData([])
@@ -59,6 +96,11 @@ const EnvironmentSettingDialog = ({ onRefreshClick, projectId, siteId, container
     modalRef.current?.onOpen()
   })
 
+  /**
+   * 获取配置信息请求
+   * 根据项目、站点、容器ID和标签页获取设备配置数据
+   * @type {Function}
+   */
   const { run: getConfigInfo } = useRequest(() => {
     const requiredParams = [projectId, siteId, containerId]
     if (requiredParams.some(param => param === undefined || param === null)) {
@@ -78,6 +120,11 @@ const EnvironmentSettingDialog = ({ onRefreshClick, projectId, siteId, container
     refreshDeps: [containerId, tab]
   })
 
+  /**
+   * 保存点击事件处理函数
+   * 验证选择的设备并调用API保存配置
+   * @returns {Promise<void>}
+   */
   const onSaveClick = useMemoizedFn(async () => {
     if (targetKeys.length <= 0) {
       message.error('请选择设备')
@@ -106,12 +153,24 @@ const EnvironmentSettingDialog = ({ onRefreshClick, projectId, siteId, container
     }
   })
 
+  /**
+   * 使用useImperativeHandle暴露组件方法给父组件
+   * @returns {Object} 暴露的方法对象
+   */
   useImperativeHandle(ref, () => ({
     showDialog
   }))
 
+  /**
+   * 表格转移变化处理函数
+   * 更新目标键状态
+   * @param {Array} newTargetKeys - 新的目标键数组
+   * @param {string} direction - 移动方向
+   * @param {Array} moveKeys - 被移动的键数组
+   * @returns {void}
+   */
   const onChange = (newTargetKeys, direction, moveKeys) => {
-    console.log(newTargetKeys, direction, moveKeys)
+    //
     setTargetKeys(newTargetKeys)
   }
 

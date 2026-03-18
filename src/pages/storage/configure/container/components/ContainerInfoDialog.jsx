@@ -21,21 +21,38 @@ const ImageContentView = styled.div`
     width: 160px;
     height: 160px;
     border: 1px dotted #dedede;
-    display: flex;
+    display: flex
 `
 
+/**
+ * 容器信息弹窗组件
+ * 用于新增或编辑储能柜信息
+ */
 const ContainerInfoDialog = ({ onRefreshClick }, ref) => {
+  // 弹窗引用
   const modalRef = useRef()
+  // 表单引用
   const [form] = Form.useForm()
+  // 项目ID
   const projectId = useSelector(selectProjectId)
+  // 一级层级标签
   const levelLabel = useSelector(levelDefaultLabel)
+  // 一级选项
   const oneLevelOptions = useSelector(selectOneLevel)
+  // 当前操作类型 (add: 添加, edit: 编辑)
   const [operation, setOperation] = useState('add')
+  // 当前操作的信息
   const [operationInfo, setOperationInfo] = useState(null)
+  // 站点选项
   const [options, setOptions] = useState([])
 
+  /**
+   * 显示弹窗
+   * @param {Object} info - 要编辑的信息，如果是新增则为null
+   * @param {string} areaId - 区域ID
+   */
   const showDialog = useMemoizedFn((info, areaId) => {
-    //重置
+    // 重置表单
     form.resetFields()
     setOperationInfo(info)
 
@@ -48,13 +65,14 @@ const ContainerInfoDialog = ({ onRefreshClick }, ref) => {
     } else {
       setOperation('add')
     }
-    //获取区域下的站点枚举
+    // 获取区域下的站点枚举
     getSiteOptions(areaId)
     modalRef.current?.onOpen()
   })
 
   /**
    * 获取区域站点枚举
+   * @param {string} areaId - 区域ID
    */
   const getSiteOptions = useMemoizedFn(async (areaId) => {
     try {
@@ -105,6 +123,8 @@ const ContainerInfoDialog = ({ onRefreshClick }, ref) => {
 
   /**
    * 获取文件base64
+   * @param {Object} file - 文件对象
+   * @returns {Promise} 返回base64字符串
    */
   const getBase64 = (file) =>
     new Promise((resolve, reject) => {
@@ -120,10 +140,11 @@ const ContainerInfoDialog = ({ onRefreshClick }, ref) => {
 
   /**
    * 改变所属园区时，改变所属站点
+   * @param {string} e - 选中的园区ID
    */
   const onChange = (e) => {
     form.setFieldsValue({ siteId: null })
-    //重新获取枚举
+    // 重新获取枚举
     getSiteOptions(e)
   }
 
