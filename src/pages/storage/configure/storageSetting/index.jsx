@@ -131,13 +131,6 @@ export default function Index () {
   }
 
   /**
-   * 表格刷新监听函数，用于刷新表格数据
-   */
-  const onRefreshClick = useMemoizedFn(() => {
-    refresh()
-  })
-
-  /**
    * 页面标题组件
    */
   const Title = (
@@ -176,7 +169,7 @@ export default function Index () {
       >
         是否确认删除站点？
       </CModal>
-      <StorageInfoDialog ref={storageInfoDialogRef} onRefreshClick={onRefreshClick}/>
+      <StorageInfoDialog ref={storageInfoDialogRef} onRefreshClick={refresh}/>
     </PageContent>
   )
 }

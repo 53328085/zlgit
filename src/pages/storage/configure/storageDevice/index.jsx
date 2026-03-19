@@ -17,23 +17,23 @@ export default function Index () {
   let { exparams } = useOutletContext()
   // 从exparams中解构出区域ID、项目ID、容器ID和站点名称
   let { areaId, projectId, containerId, stationName } = exparams
-  
+
   // 容器ID的state，用于存储容器ID的值
   const [containerIdValue, setContainerIdValue] = useState(containerId && typeof containerId === 'object' ? containerId.value : null)
-  
+
   // 获取URL搜索参数
   let [searchParams] = useSearchParams()
   // 从URL参数中获取item值，用于确定默认选中的页签
   const itemParam = searchParams.get('item')
-  
+
   // 默认选中的页签值，如果URL中有item参数则使用该参数，否则默认为'101'
   const initialTabValue = itemParam !== null ? itemParam.toString() : '101'
-  
+
   // 当前选中的页签state
   const [tabValue, setTabValue] = useState(initialTabValue)
   // 页签数据state
   const [tabs, setTabs] = useState([])
-  
+
   // 页签属性对象，用于传递给上下文提供者
   const tabProps = {
     tabs,
@@ -95,19 +95,17 @@ export default function Index () {
     <>
       {
         tabs.length > 0 &&
-        <>
-          <CustContext.Provider value={tabProps}>
-            <PageContent pd="16px">
-              <DeviceCommView
-                tab={tabValue}
-                areaId={areaId}
-                containerId={containerIdValue}
-                projectId={projectId}
-                stationName={stationName}
-              />
-            </PageContent>
-          </CustContext.Provider>
-        </>
+        <CustContext.Provider value={tabProps}>
+          <PageContent pd="16px">
+            <DeviceCommView
+              tab={tabValue}
+              areaId={areaId}
+              containerId={containerIdValue}
+              projectId={projectId}
+              stationName={stationName}
+            />
+          </PageContent>
+        </CustContext.Provider>
       }
     </>
   )
