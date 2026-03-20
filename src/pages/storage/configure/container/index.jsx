@@ -29,7 +29,6 @@ export default function Index () {
   const deleteDialogRef = useRef(null)
   // 容器信息对话框的引用
   const containerInfoDialogRef = useRef(null)
-  //
   // 获取一级默认区域ID
   const areaId = useSelector(selectOneLevelDefaultId)
   // 获取默认层级标签

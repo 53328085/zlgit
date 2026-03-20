@@ -72,19 +72,17 @@ export default function Index () {
     <>
       {
         tabs.length > 0 &&
-        <>
-          <CustContext.Provider value={tabProps}>
-            <PageContent pd="16px">
-              <EnvironmentCommView
-                tab={tabValue}
-                areaId={areaId}
-                containerId={containerIdValue}
-                projectId={projectId}
-                stationName={stationName}
-              />
-            </PageContent>
-          </CustContext.Provider>
-        </>
+        <CustContext.Provider value={tabProps}>
+          <PageContent pd="16px">
+            <EnvironmentCommView
+              tab={tabValue}
+              areaId={areaId}
+              containerId={containerIdValue}
+              projectId={projectId}
+              stationName={stationName}
+            />
+          </PageContent>
+        </CustContext.Provider>
       }
     </>
   )

@@ -67,20 +67,11 @@ const rightTableColumns = [
  * @returns {JSX.Element} 环境配置对话框
  */
 const EnvironmentSettingDialog = ({ onRefreshClick, projectId, siteId, containerId, tab }, ref) => {
-  /**
-   * 模态框引用
-   * @type {React.RefObject}
-   */
+  //模态框引用
   const modalRef = useRef(null)
-  /**
-   * 源数据状态 - 包含所有设备数据（已配置和未配置）
-   * @type {Array}
-   */
+  //源数据状态 - 包含所有设备数据（已配置和未配置）
   const [sourceData, setSourceData] = useState([])
-  /**
-   * 目标键状态 - 已选中的设备SN列表
-   * @type {Array}
-   */
+  //目标键状态 - 已选中的设备SN列表
   const [targetKeys, setTargetKeys] = useState([])
 
   /**
