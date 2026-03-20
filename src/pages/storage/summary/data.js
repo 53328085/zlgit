@@ -50,15 +50,22 @@ export const lineoptdoub = (data, startTime, endTime,type) => {
     let opt = useMemo(() => {
 
         const { earlyData=[],data1st=[],data2nd=[], lateData = [] } = data
-        let earlyX =type==102 ?  data1st.map(item=>item.x): earlyData.map(item => item.x)
+        let earlyX =type==102 ?  data1st.map(item=>  startTime.format("YYYY-MM-DD")+" "+ item.x): earlyData.map(item => item.x)
         let earlyY =type==102 ? data1st.map(item=>item.y): earlyData.map(item => item.y)
-        const lateX = type==102 ?  data2nd.map(item=>item.x): lateData.map(item => item.x)
+        const lateX = type==102 ?  data2nd.map(item=> endTime.format("YYYY-MM-DD") + " " +item.x): lateData.map(item => item.x)
         const lateY =type==102 ?  data2nd.map(item=>item.y): lateData.map(item => item.y)
+        if (endTime.format("YYYY-MM-DD") == moment().format("YYYY-MM-DD")) {
 
-        let lastLatex =moment(lateX[lateX.length - 1],"YYYY-MM-DD HH:mm:ss").subtract(1, 'days')
-        let idx = earlyX.findIndex(item => moment(item, "YYYY-MM-DD HH:mm:ss").isAfter(lastLatex))
-         earlyX=earlyX.slice(0,idx)
-         earlyY=earlyY.slice(0,idx)
+            
+            let dif = endTime.diff(startTime, "days")
+           
+            let lastLatex = moment(lateX[lateX.length - 1], "YYYY-MM-DD HH:mm:ss").subtract(dif, "days")
+           
+            let idx = earlyX.findIndex(item => moment(item, "YYYY-MM-DD HH:mm:ss").isAfter(lastLatex))
+           
+            earlyX=earlyX.slice(0,idx)
+            earlyY=earlyY.slice(0,idx)
+        }
         
         
         const early = startTime?.format?.('YYYY-MM-DD') , late = endTime?.format?.('YYYY-MM-DD');
@@ -90,7 +97,7 @@ export const lineoptdoub = (data, startTime, endTime,type) => {
                     data: earlyX,
                     axisLabel: {
                         formatter: (value, index) => {
-                            return  type==102 ? value:    moment(value, "YYYY-MM-DD HH:mm:ss").format("HH:mm:ss");
+                            return    moment(value, "YYYY-MM-DD HH:mm:ss").format("HH:mm:ss");
                         },
                         interval: "auto",
                         
@@ -99,12 +106,13 @@ export const lineoptdoub = (data, startTime, endTime,type) => {
                 },
                 {
                     type: 'category',
+                    show:false,
                     name: late,
                     boundaryGap: true,
                     data: lateX,
                     axisLabel: {
                         formatter: (value, index) => {
-                            return   type==102 ? value: moment(value, "YYYY-MM-DD HH:mm:ss").format("HH:mm:ss");
+                            return      moment(value, "YYYY-MM-DD HH:mm:ss").format("HH:mm:ss");
                         },
                         interval: "auto", 
                          color:"rgba(0,0,0,0.4)",

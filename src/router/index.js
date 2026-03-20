@@ -82,6 +82,8 @@ const Diskchart = lazy(() => import("../pages/cabinet/exhibition/index.jsx"))
 const DigitalTwin = lazy(() => import("../pages/digitalTwin"))
 const Websitmap = lazy(() => import("@pages/websitmap"))
 const Largscreen = lazy(() => import("../pages/largscreen"))
+const DigitalTwinHD = lazy(() => import("../pages/largscreenofHD"))
+const Fform= lazy(() => import("../pages/test/fform"))
 import {designerComponents,  designerRoutes} from "./designer";
 
 
@@ -189,13 +191,13 @@ const loginrouter =  [{
     path: '/directionfull',
     element: <Directionful />
   },
-   // {
-   //   path: '/zltest',
-   //   element: <Fform/>,
-   //   loader: async (params)=> {
-   //
-   //   }
-   // },
+   {
+     path: '/zltest',
+     element: <Fform/>,
+     loader: async (params)=> {
+   
+     }
+   },
 
    {
     path: "/granary",
@@ -226,8 +228,12 @@ const loginrouter =  [{
       element: <Websitmap />
     },
     {
-      path: "/largscreen", // 网站
+      path: "/largscreen", // 赛诺菲大屏
       element: <Largscreen />
+    },
+     {
+      path: "/digitalTwin", // 华东大屏
+      element: <DigitalTwinHD />
     },
    {
     path: '*',

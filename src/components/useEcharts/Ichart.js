@@ -49,7 +49,9 @@ export default function Ichart(props={}) {
     if(typechart == 4 && Array.isArray(props?.liuqiu?.series?.data) && props?.liuqiu?.series?.data?.length) { // liuqiu      
       drawEcharts(ref.current, {...props})
     }
-    
+   if(typechart == 6 && Array.isArray(custoption?.graphic)) {     // graphic 类型图表     
+        drawEcharts(ref.current, {...props})
+    }
   }, [props, change]) // intl 语言切换时图表需要重绘
   if(typechart == 1) {
     if(!contidtion(dataset?.source)) {

@@ -368,7 +368,7 @@ export default function Index(props) {
                           : imgurl.category
                       }
                       title={item.sn}
-                      value={item.address}
+                      value={item.sn}
                       state={item.state}
                       childrenCnt={item.childrenCnt}
                       connMethod={item.connMethod}

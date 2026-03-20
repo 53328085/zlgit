@@ -50,15 +50,18 @@ export const lineoptdoub = (data, startTime, endTime) => {
     let earlyY = earlyData.map((item) => item.y);
     const lateX = lateData.map((item) => item.x);
     const lateY = lateData.map((item) => item.y);
-    let lastLatex = moment(
-      lateX[lateX.length - 1],
-      "YYYY-MM-DD HH:mm:ss",
-    ).subtract(1, "days");
-    let idx = earlyX.findIndex((item) =>
-      moment(item, "YYYY-MM-DD HH:mm:ss").isAfter(lastLatex),
-    );
-    earlyX = earlyX.slice(0, idx);
-    earlyY = earlyY.slice(0, idx);
+  if (endTime.format("YYYY-MM-DD") == moment().format("YYYY-MM-DD")) {
+ 
+             
+             let dif = endTime.diff(startTime, "days")
+            
+             let lastLatex = moment(lateX[lateX.length - 1], "YYYY-MM-DD HH:mm:ss").subtract(dif, "days")
+            
+             let idx = earlyX.findIndex(item => moment(item, "YYYY-MM-DD HH:mm:ss").isAfter(lastLatex))
+            
+             earlyX=earlyX.slice(0,idx)
+             earlyY=earlyY.slice(0,idx)
+         }
     const early = startTime?.format?.("YYYY-MM-DD"),
       late = endTime?.format?.("YYYY-MM-DD");
 
@@ -101,6 +104,7 @@ export const lineoptdoub = (data, startTime, endTime) => {
           name: late,
           boundaryGap: true,
           data: lateX,
+          show: false,
           axisLabel: {
             formatter: (value, index) => {
               return moment(value, "YYYY-MM-DD HH:mm:ss").format("HH:mm:ss");
