@@ -119,7 +119,6 @@ export default function EnvironmentCommView ({ tab, areaId, projectId, container
         }
       }
     } catch (e) {
-      console.log(e)
       return {
         list: [],
         total: 0

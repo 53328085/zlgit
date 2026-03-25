@@ -41,18 +41,15 @@ export const getTableColumns = (levelLabel, onTableEditClick, onTableDeleteClick
   ]
 }
 
+/**
+ * 获取BMS结构枚举
+ */
 export const getBMSOptions = () => {
   return [
     { label: '电池堆', value: 0 },
     { label: '电池簇', value: 1 },
     { label: '电池组', value: 2 }
   ]
-}
-
-export const ContainerDeviceType = {
-  BatteryStack: 0,
-  BatteryCluster: 1,
-  BatteryPack: 2
 }
 
 /**
@@ -74,6 +71,10 @@ export const valueToBinary = (value) => {
   return binaryNumber
 }
 
+/**
+ * 处理BMS数据
+ * @param binaryNumber 二进制数
+ */
 export const binaryToValue = (binaryNumber) => {
   // 初始化一个空数组
   const value = []

@@ -127,7 +127,6 @@ export default function DeviceCommView ({ tab, areaId, projectId, containerId, s
         }
       }
     } catch (e) {
-      console.log(e)
       return {
         list: [],
         total: 0
