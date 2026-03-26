@@ -1,8 +1,9 @@
-import React, {   useMemo , useState } from "react";
+import React from "react";
 import {useRequest} from 'ahooks'
-import {Badge} from 'antd'
+ 
  
 import Ichart from '@com/useEcharts/Ichart'
+
 import {isObject} from "@com/usehandler"
 import { Leftup } from "../style";
 import { colors,intervalTime ,useLineopt} from "../data";
@@ -32,13 +33,15 @@ export default function Index({projectId}) {
  const {data} = useRequest(getData,{
     manual:false,
     pollingInterval: intervalTime,
-    pollingErrorRetryCount: 3
+    pollingErrorRetryCount: 3,
+    refreshDeps:[projectId],
+  
  })
  const {hourEnergies,totalEnergies} = isObject(data) ? data : {}
   
  
   const lineopt= useLineopt({datas:hourEnergies})
-  console.log(lineopt)
+   
   return (
     <Layoutcom title="今日能耗统计"  flex="420px">
         <Leftup>

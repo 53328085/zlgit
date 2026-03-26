@@ -6,7 +6,7 @@ import Titlelayout from "@com/titlelayout";
 import Ichart from '@com/useEcharts/Ichart' 
 export default function Index(data) { 
      const lineopt=useLine(data?.detail)
-     const goption = useGauge({data:data?.ranges});  
+     const goption = useGauge({data:data?.ranges, value: data?.kpiValue});  
   return (
     <Titlelayout
             layout="flex"

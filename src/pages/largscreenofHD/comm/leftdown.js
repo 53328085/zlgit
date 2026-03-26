@@ -1,24 +1,65 @@
-import React  from "react";
-import {Carousel } from 'antd'
- 
+import React from "react";
+import { useRequest } from "ahooks";
+import { isObject } from "@com/usehandler";
+import { useGetHuaDongDeviceRunInfo } from "../api";
+import imgurl from "../icon";
+import { Leftdown } from "../style";
+import { intervalTime } from "../data";
 
-import { Leftdown,Circle } from "../style";
+import Layoutcom from "./layout";
+export default function Index({ projectId }) {
+  const getData = async () => {
+    try {
+      console.log("启动轮询");
+      const { data, success } = await useGetHuaDongDeviceRunInfo({ projectId });
+      if (success && isObject(data)) {
+        return data;
+      } else {
+        return {};
+      }
+    } catch (error) {
+      console.log(error);
+      return {};
+    }
+  };
+  const { data } = useRequest(getData, {
+    manual: false,
+    pollingInterval: intervalTime,
+    pollingErrorRetryCount: 3,
+    refreshDeps: [projectId],
+  });
 
- 
-import Layoutcom,{Prowarp} from './layout'
-export default function Index({datas}) { 
   return (
-    <Layoutcom title="区域用能排名" subtitle="近7天" flex="382px">
-        <Leftdown>
-          <div className="downtitle"><div className="circle"><Circle/>用电量</div><span>一级区域</span></div>
-          <div className="slider-container">
-<Carousel autoplay>
-           {
-            datas?.map?.((d,index)=>  <Prowarp datas={d} idx={index} ></Prowarp>)
-           }  
-</Carousel>
-</div>
-        </Leftdown>
+    <Layoutcom title="设备运行工况" flex="420px">
+      <Leftdown>
+        <div className="part">
+          <div className="title">在线率</div>
+          <div className="value">{data?.onlineRate}</div>
+          <div className="imgbox">
+            <img src={imgurl["online"]} className="img"></img>
+          </div>
+        </div>
+        <div className="part">
+          <div className="sub">
+            <div className="imgbox">
+              <img src={imgurl["normal"]} className="img"></img>
+            </div>
+            <div className="valuewrap">
+              <div className="title">正常</div>
+              <div className="value">{data?.onlineNum}</div>
+            </div>
+          </div>
+         <div className="sub">
+            <div className="imgbox">
+              <img src={imgurl["offline"]} className="img"></img>
+            </div>
+            <div className="valuewrap">
+              <div className="title">离线</div>
+              <div className="value">{data?.offlineNum}</div>
+            </div>
+          </div>
+        </div>
+      </Leftdown>
     </Layoutcom>
   );
 }

@@ -3,66 +3,36 @@ export const { useGetHuaDongTodyEnergyInfo} = new Apimethod( //  今日能耗统
   "get",
   "LargeScreen/LargeScreenChintHuaDong/GetHuaDongTodyEnergyInfo"
 );
-export const { useQueryData} = new Apimethod( //  获取大屏数据
+export const { useGetHuaDongCarbonInfo} = new Apimethod( //  碳排管理
   "get",
-  "/LargeScreen/LargeScreenSaNoFi/QueryData"
+  "LargeScreen/LargeScreenChintHuaDong/GetHuaDongCarbonInfo"
 );
-export const { useQueryPVGeneration} = new Apimethod( //  光伏发电统计
+export const { useGetHuaDongDeviceRunInfo} = new Apimethod( //  设备运行工况
   "get",
-  "LargeScreen/LargeScreenSaNoFi/QueryPVGeneration"
+  "LargeScreen/LargeScreenChintHuaDong/GetHuaDongDeviceRunInfo"
 );
 
-export const { useQueryKPICurve} = new Apimethod( //  制冷机，空压机，
+export const { useGetHuaDongMapInfo} = new Apimethod( //  地图
   "get",
-  "LargeScreen/LargeScreenSaNoFi/QueryKPICurve"
+  "LargeScreen/LargeScreenChintHuaDong/GetHuaDongMapInfo"
 );
 
-/* export const { useQueryOverview } = new Apimethod( // 获取区域能耗数据
-  "post",
-  "Energy/EnergyComprehensiveRuntime/QueryOverview"
+export const { useGetHuaDongAreaEnergyInfo} = new Apimethod( //  区域能耗趋势
+  "get",
+  "LargeScreen/LargeScreenChintHuaDong/GetHuaDongAreaEnergyInfo"
+);
+export const { useGetHuaDongDistributionInfo} = new Apimethod( //  变配电情况
+  "get",
+  "LargeScreen/LargeScreenChintHuaDong/GetHuaDongDistributionInfo"
 );
  
-export const { useQueryEnergyRankByArea } = new Apimethod( // 区域能耗排名
-    "get",
-    "Energy/EnergyRankingRuntime/QueryEnergyRankByArea"
-  ); */
-export  const body={  // 参数先写死
-    "projectId": 20,
-    "dayMonthYear": 1,
-    "date": "2025-12-31",
-    "areaIds": [
-        638,
-        627,
-        677,
-        678,
-        680,
-        681,
-        639,
-        640,
-        664,
-        665,
-        666,
-        667,
-        668,
-        669,
-        670,
-        641,
-        671,
-        672,
-        673,
-        674,
-        675,
-        676,
-        661,
-        662
-    ],
-    "type": 1,
-    "name": "E厂房用电",
-    "areaId": 0,
-    "group": 1
-}
-/*   export const { useQueryEnergyDetail } = new Apimethod( // 区域能耗排名
-    "post",
-    "/Energy/EnergyClassifyRuntime/QueryEnergyDetail"
-  ); */
+export const { useGetHuaDongAirConditionerRunInfo} = new Apimethod( //  空调运行情况
+  "get",
+  "LargeScreen/LargeScreenChintHuaDong/GetHuaDongAirConditionerRunInfo"
+);
  
+ 
+ export const { useGetHuaDongStreetLightRunInfo} = new Apimethod( //  路灯运行情况
+  "get",
+  "LargeScreen/LargeScreenChintHuaDong/GetHuaDongStreetLightRunInfo"
+);

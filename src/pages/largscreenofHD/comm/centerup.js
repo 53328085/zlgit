@@ -1,121 +1,95 @@
-import React, {  useMemo} from "react";
+import React, {  useEffect,useState} from "react";
 
-import Ichart from '@com/useEcharts/Ichart'
+import {useRequest} from 'ahooks'
 import {isObject} from "@com/usehandler"
-import dayjs from "dayjs";
-import Layoutcom from './layout'
-export default function Index({datas}) {
  
-  
-  
- const lineopt=useMemo(()=>{
-    const {x=[], y=[],y1=[]}=isObject(datas) ? datas : {}
-     return{
-         series:   [{ 
-           type: "line", 
-           seriesLayoutBy: 'row', 
-           smooth:0.3, 
-           tooltip:{
-          // valueFormatter: value=> value+unit
-           }, 
-          },
-          { 
-           type: "line", 
-           seriesLayoutBy: 'row',  
-           smooth:0.3, 
-           tooltip:{
-            // valueFormatter: value=> value+unit
-             }, 
-          }
+import {Centerup} from '../style'
+import { intervalTime ,delayTime} from "../data";
+import {useGetHuaDongMapInfo} from '../api'
+import Positioncom from "./posintion"
+export default function Index({projectId}) {
+   const [index, setIndex] = useState(0)
+   const getData = async()=>{
+     try{
+       console.log("启动轮询")
+        const {data, success} = await useGetHuaDongMapInfo({projectId})
+        if (success && Array.isArray(data) && data.length){
+           for (let i = 0; i < data.length; i++) {
+              let item = data[i];
+              switch (item.id) {
+                case 627: // 食堂
+                 item.x=1117
+                 item.y= 332;
+                 break;
+                case 639: // 研发楼
+                 item.x= 661;
+                 item.y= 500;
+                 break;
+                 case 640: // 宿舍楼F
+                 item.x= 1041;
+                 item.y= 223;
+                 break;
+                  case 641: // 宿舍楼G
+                 item.x= 1192;
+                 item.y= 283;
+                 break;
+                  case 661: // E厂房
+                 item.x= 915;
+                 item.y= 355;
+                 break;
+                  case 662: // D厂房
+                 item.x= 783;
+                 item.y= 467;
+                 break;
+
+              }
+           }
+           return data
+        }else {
+          return []
+        }
          
-         ] ,
-         grid: {
-           left: "0px",
-           right: "0",
-           top: "40px",
-           bottom: "0px",
-           containLabel: true,
-           
-         },
-         legend: {
-           show:true,
-           icon: "circle",
-           color:[
-            {
-              type: 'linear',
-              x: 0,
-              y: 0,
-              x2: 0,
-              y2: 1,
-              colorStops: [{
-                  offset: 0, color: '#00C5FF' // 0% 处的颜色
-              }, {
-                  offset: 1, color: '#0079ED' // 100% 处的颜色
-              }],
-              
-            },
-            {
-              type: 'linear',
-              x: 0,
-              y: 0,
-              x2: 0,
-              y2: 1,
-              colorStops: [{
-                  offset: 0, color: '#7FF2CC' // 0% 处的颜色
-              }, {
-                  offset: 1, color: '#58CBA5' // 100% 处的颜色
-              }],
-              
-            }
-           ],
-           textStyle: {
-             color: "#fff",
-             
-           },
-           // itemHeight: 4,
-           // itemWidth: 16,
-         },
-         yAxis:{
-          name:"kW",
-          nameTextStyle:{
-            color:"#fff",
-          },
-          axisLine:{ 
-            show:false,
-           },
-           axisLabel: {
-             color: "#fff",
-             
-           },
-           splitLine:{
-            show:false
-           }
-         },
-         xAxis: {
-           axisLabel: {
-             showMaxLabel: true,
-             hideOverlap: true,
-             interval: "auto",
-             color: "#fff",
-           }
-         },
-         dataset: {
-             dimensions: [
-                 { name: '时间', type: 'time' },
-                 { name: "本月最高负荷" },
-                 { name: "上月最高负荷" },
-               ] ,
-               source: [x,y, y1],
-               sourceHeader: false,
-         },
-         color:["#3772FF","#5ED9A7"]
+     } catch (error) {
+      
+       console.log(error)
+       return []
      }
- }, [datas])
+    
+     
+   }
+  const {data} = useRequest(getData,{
+     manual:false,
+     pollingInterval: intervalTime,
+     pollingErrorRetryCount: 3,
+     refreshDeps:[projectId],
+   
+  })
+   
+ const len = data?.length
+  
+ useEffect(()=>{ 
+   let timer, count=0
+   if(len>0) {
+      timer = setInterval(()=>{
+        
+          if(count>=len) {
+            count=0
+          }
+         count++
+          setIndex(count)
+       },delayTime)
+   }
+   return ()=>{
+     clearInterval(timer)
+   }
+  },[len])
  
-  const title=`用电负荷趋势${dayjs().format("MM")}月`
+   
   return (
-    <Layoutcom title={title}    flex="318px">
-        <Ichart {...lineopt}></Ichart>
-    </Layoutcom>
+    <Centerup>
+       {
+        data?.map((d,i)=> <Positioncom key={d.id} visiable={index == i} {...d}></Positioncom>)
+       }
+    </Centerup>
   );
 }

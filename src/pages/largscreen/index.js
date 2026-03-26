@@ -5,7 +5,7 @@ import {Pagelayout} from './style'
 import { useSelector } from "react-redux";
 import { selectProjectId  } from "@redux/systemconfig";
 import {isObject,chunkArray} from "@com/usehandler"
-import {useFullscreen} from 'ahooks'
+import {useRequest} from 'ahooks'
  import Topcom from './comm/top'
  import Leftupcom from './comm/leftup'
  import Leftdowncom from './comm/leftdown'
@@ -16,7 +16,7 @@ import {useFullscreen} from 'ahooks'
  import Rightcentercom from './comm/rightcenter'
  import Rightdowncom from './comm/rightdown'
  import {useQueryData,useQueryKPICurve} from './api'
-import { document } from 'postcss';
+ const delay=1000*60*15
 export default function Index() {
   const pgref= useRef()
   const projectId = useSelector(selectProjectId);
@@ -71,7 +71,7 @@ export default function Index() {
             top5:[]
         } 
       }
-       console.log("rankClassify",rankClassify)
+       
       return {...rest,latest7DaysEnergyOfArea,rankClassify}
      } catch (error) {
       console.log(error)
@@ -86,8 +86,9 @@ export default function Index() {
 
   const getKpi = async ()=>{ 
     try{
+      if(!Number.isInteger(parseInt(projectId))) {return}
       let data =await useQueryKPICurve({projectId})
-      console.log("data",data)
+      
       if(isObject(data)){
         setKpiData(data)
       }else {
@@ -99,29 +100,54 @@ export default function Index() {
   }
   const getData=async ()=>{  
     try {
+      if(![projectId, meterType].every(i =>Number.isInteger(parseInt(i)))) return
       let data =await useQueryData({projectId,meterType })
      
       if(isObject(data)){
-        setDatas(data)
+         setDatas(data) 
       }else {
-        setDatas({})
+        setDatas({})  
       }
     } catch (error) {
-      
+       setDatas({}) 
     }   
   }
-  useEffect(()=>{
-    if([projectId,meterType].every(i=> Number.isInteger(parseInt(i)))) {
-     getData()
-    }
-  },[projectId,meterType])
-
-  useEffect(()=>{ 
-    if(Number.isInteger(parseInt(projectId))) {
-    getKpi()
-    }
+ useRequest(getData,{
+    // manual:false,
+    // pollingInterval: 1000*60*15,
+    // pollingErrorRetryCount: 3,
+    refreshDeps:[projectId,meterType],
+  
+ })
+ useEffect(()=>{ 
+  let count = 0
+ let timer = setInterval(()=>{
+     count++
+     if (count === 4) {
+       count = 1
+     }
+     setMeterType(count%4)
     
-  },[projectId])
+  }, [delay])
+  return ()=>{
+    clearInterval(timer)
+  }
+  },[])
+
+  useRequest(getKpi,{
+    manual:false,
+    pollingInterval: delay,
+    pollingErrorRetryCount: 3,
+    refreshDeps:[projectId ],
+  
+ })
+
+  // useEffect(()=>{ 
+  //   if(Number.isInteger(parseInt(projectId))) {
+  //   getKpi()
+  //   }
+    
+  // },[projectId])
  
  
  

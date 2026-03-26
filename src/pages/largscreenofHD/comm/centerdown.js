@@ -1,12 +1,14 @@
 import React, { useEffect, useMemo, useState } from "react";
-import {Badge,Carousel} from 'antd'
- 
+import { Carousel} from 'antd'
+ import {isObject} from '@com/usehandler'
 import { Centerdown } from "../style";
-import { colors, useOpt } from "../data";
- 
+ import Ichart from '@com/useEcharts/Ichart'
+import {delayTime}  from '../data'
 import Layoutcom from './layout'
-export default function Index({datas,monthTotal}) {
-   
+import Btncom from "./Btn"
+import imgurl from '../icon'
+import {useGetHuaDongAreaEnergyInfo} from '../api'
+import {useGetData,usebarline} from '../usehook'
   const settings = {
     dots: false,
     infinite: true,
@@ -18,11 +20,42 @@ export default function Index({datas,monthTotal}) {
    autoplaySpeed: 1000,
    
   }
-  
+export default function Index() {
+  const [meterType, setMeterType] = useState(1)
+  const datas = useGetData(useGetHuaDongAreaEnergyInfo)
+  const data = useMemo(()=>{
+    if (!Array.isArray(datas) || datas.length==0) return  {}
+    let data = datas?.find(d =>d.id==meterType)
+    return  isObject(data) ? data : {}
+  }, [datas, meterType])
+  const baroption = usebarline({datas:data?.monthEnergies, type:meterType})
+   
+  const imgnames= {0:"1st", 1:"2nd", 2:"3rd"}
+  const text =useMemo(()=>{
+     return  {1:"本月用电量(kWh)", 2:"本月冷水((m³)", 7:"本月热水(m³)"}[meterType]
+  },[meterType])
+  useEffect(()=>{ 
+    let timer, count=0
+    timer = setInterval(()=>{
+       if(count>=3) {
+         count=0
+       }
+      
+       setMeterType([1,2,7][count])
+       count++
+    },delayTime)
+    return ()=>{
+      clearInterval(timer)
+    }
+  },[])
+
   return (
-    <Layoutcom title="分项用能排名" subtitle="近7天"    flex="318px" pd="0px 20px 20px 20px">
+    <Layoutcom title="区域能耗趋势" extend={<Btncom meterType={meterType} onClick={setMeterType} />}    flex="232px" pd="0px 20px 20px 20px">
         <Centerdown>
-         <div className="centertitle">
+          <div className="charbox">
+            <Ichart custoption={baroption} />
+          </div>
+    {/*      <div className="centertitle">
           <div className="percentage">
              前五区域用电量占比{datas?.percent}
           </div>
@@ -34,20 +67,20 @@ export default function Index({datas,monthTotal}) {
               {datas?.top5?.map?.((item,index)=>(<div   style={{width: item.width+'px',backgroundColor:colors?.[index]}}></div>) )}
             </div>
           </div>
-         </div>
+         </div> */}
          <div className="contentwrap">
           <div className="cols">
-            <div>排名</div>
-            <div>区域名称</div>
-            <div>用电量(kWh)</div>
-            <div>用电量占比(%)</div>
+            <div>#</div>
+            <div>区域</div>
+            <div>{text}</div>
+          
           </div>
          <div className="slider-container">
          <Carousel autoplay {...settings} style={{height: 160 }}>
-             {datas?.data?.map?.((d,index)=>(
+             { data?.rank?.map?.((d,index)=>(
               <div className="row" key={d.name}>
-                <span>NO.{index+1}</span>
-                <Badge color={colors[index%colors.length]} text={d.name}/>
+                <div className={index<3 ? "imgbox" : "circle"}> {index<3 ? <img src={imgurl[imgnames[index]]} className="img"></img>: index+1 }</div>
+                <span>{d.name}</span>  
                 <span>{d.value}</span>
               </div>
              ))}

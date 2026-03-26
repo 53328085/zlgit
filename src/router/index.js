@@ -224,7 +224,7 @@ const loginrouter =  [{
       element: <Diskchart />
     },
     {
-      path: "/websitmap", // 网站
+      path: "/websitmap", // 安庆旺旺网站导航
       element: <Websitmap />
     },
     {

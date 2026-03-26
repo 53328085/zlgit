@@ -103,7 +103,8 @@ export function Custitem(props) {
   </Carousel>)
 }
 export function useGauge(params) {
-  const { data, radius = "100px", center = ['50%', 110], splitNumber = 10, startAngle = 180, endAngle = 0 } = isObject(params) ? params : {}
+  let { data,value, radius = "100px", center = ['50%', 110], splitNumber = 10, startAngle = 180, endAngle = 0 } = isObject(params) ? params : {}
+  data =  data?.sort?.((a, b)=>a-b) // 排序
   let len = Array.isArray(data) ? data.length : 0
   let max = data?.[len - 1] ?? NaN
   const goption = useMemo(() => {
@@ -175,7 +176,7 @@ export function useGauge(params) {
           },
           data: len > 0 ? [
             {
-              value: data?.[1] || null,
+              value: value || null,
               //  name: "value"
             }
           ] : [],
@@ -184,7 +185,7 @@ export function useGauge(params) {
       ]
     }
     return series
-  }, [data, radius])
+  }, [data, radius, value])
 
   return goption
 }

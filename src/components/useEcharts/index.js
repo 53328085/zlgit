@@ -492,3 +492,4 @@ export const drawEcharts = (
 
 };
 
+export default echarts
