@@ -83,7 +83,7 @@ const ContainerInfoDialog = ({ onRefreshClick }, ref) => {
         setOptions([])
       }
     } catch (error) {
-      console.log(error)
+      setOptions([])
     }
   })
 
