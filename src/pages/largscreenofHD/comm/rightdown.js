@@ -1,134 +1,89 @@
 import React, { useEffect, useMemo, useState } from "react";
-import {Row, Col,Statistic } from 'antd'
-import { useSelector } from "react-redux";
-import { selectProjectId  } from "@redux/systemconfig";
-import { isObject } from "@com/usehandler";
-import Ichart from '@com/useEcharts/Ichart'
- 
-import { useQueryPVGeneration } from "../api";
+import { Carousel, Badge} from 'antd'
+ import {isObject} from '@com/usehandler'
+import { Rightdown } from "../style";
+ import Ichart from '@com/useEcharts/Ichart'
  
 import Layoutcom from './layout'
-import {Rightdown} from '../style'
-export default function Index() {
-  
-  const projectId = useSelector(selectProjectId);
-  const [datas, setDatas] = useState({});
+ 
+import {useGetHuaDongAlarmInfo} from '../api'
+import {useGetData,usecustompie} from '../usehook'
+  const settings = {
+    dots: false,
+    infinite: true,
+    slidesToShow: 5,
+    slidesToScroll: 1,
+    vertical: true,
+   // verticalSwiping: true,
+   speed: 2000,
+   autoplaySpeed: 1000,
    
-  const getData = async () => {
-    try {
-      
-      let data = await useQueryPVGeneration({projectId} );
-      if (isObject(data)) { 
-          setDatas(data);
-        }
-     else {
-          setDatas({});
-       
-      }
-    } catch (e) {
-      console.log(e);
-    }
-  };
- const baropt=useMemo(()=>{
-    const {x=[], y=[]}=isObject(datas?.detail) ? datas.detail : {}
-     return{
-         series:   [{ 
-           type: "bar", 
-           seriesLayoutBy: 'row',           
-           tooltip:{
-          // valueFormatter: value=> value+unit
-           }, 
-          } 
-         ] ,
-         grid: {
-           left: "0px",
-           right: "0",
-           top: "40px",
-           bottom: "0px",
-           containLabel: true,
-           
-         },
-         legend: {
-          show:true,
-         // icon: "circle",
-          itemWidth:12,
-          itemHeight:8,
-          textStyle: {
-            color: "#fff",
-            
-          },
-          // itemHeight: 4,
-          // itemWidth: 16,
-        },
-        yAxis:{
-         nameTextStyle:{
-           color:"#fff",
-         },
-         axisLine:{ 
-           show:false,
-          },
-          axisLabel: {
-            color: "#fff",
-            
-          },
-          splitLine:{
-           show:false
-          }
-        },
-        xAxis: {
-          axisLabel: {
-            showMaxLabel: true,
-            hideOverlap: true,
-            interval: "auto",
-            color: "#fff",
-          }
-        },
-         dataset: {
-             dimensions: [
-                 { name: '时间', type: 'time' },
-                 { name: "发电量" }, 
-               ] ,
-               source: [x,y],
-               sourceHeader: false,
-         },
-         color:[
-          {
-            type: 'linear',
-            x: 0,
-            y: 0,
-            x2: 0,
-            y2: 1,
-            colorStops: [{
-                offset: 0, color: '#00C5FF' // 0% 处的颜色
-            }, {
-                offset: 1, color: '#0079ED' // 100% 处的颜色
-            }],
-            
-          }, 
-         ],
-     }
- }, [datas])
-  useEffect(() => {
-    if ([ projectId].every((id) => Number.isInteger(parseInt(id)))) {
-      getData();
-    }
-  }, [ projectId]);
+  }
+  const piecolor=["#FFB12B","#FF6021","#FF07A4"]
+   const piecolor2=["rgba(255, 177, 43, 0.3)","rgba(255, 96, 33, 0.3)","rgba(255, 7, 164, 0.3)"]
+export default function Index() {
+ 
+  const datas = useGetData(useGetHuaDongAlarmInfo)
+  const {levelNums=[],alarmInfos=[]} =  isObject(datas) ? datas : {}
+  let chartDatas=levelNums?.map?.((d,i)=>({
+    value:d.num,
+    name:d.level,
+    icon: "circle",
+    itemStyle: {
+               color: piecolor2[i%3] , 
+             }
+  }))  
+    let chartDatas2=levelNums?.map?.((d,i)=>({
+    value:d.num,
+    name:d.level,
+    icon: "circle",
+    itemStyle: {
+               color: piecolor[i%3] , 
+             }
+  })) 
+  const baroption = usecustompie({datas:chartDatas, datas2:chartDatas2})
+   
+ 
   
+ 
+
   return (
-    <Layoutcom title="光伏发电统计"    flex="318px" >
-     <Rightdown>
-      <Row gutter={8}>
-         <Col span={8}>
-         <Statistic title="本月发电量(kWh)" value={datas?.curMonth} />
-         </Col>
-         <Col span={8}>
-         <Statistic title="本年发电量(kWh)" value={datas?.curYear} />
-         </Col>
-         <Col span={8}>
-         <Statistic title="累计发电量(kWh)" value={datas?.total} />
-         </Col>
-      </Row>
-        <Ichart {...baropt}></Ichart>
+    <Layoutcom title="告警信息"     flex="283px" pd="0px 20px 20px 20px">
+        <Rightdown>
+          <div className="levelchart">
+
+            <Ichart custoption={baroption} />
+            <div className="levels">
+      {
+      levelNums?.map((d,i)=>(<div className="level">
+           <Badge color={piecolor[i%3]} text={new Intl.NumberFormat("zh-Hans-CN-u-nu-hanidec").format(d.level)+"告警"}/> 
+           <span className="value">{d.num}</span>
+        </div>
+       ))
+      }
+            
+          </div> 
+          </div>   
+         <div className="contentwrap">
+          <div className="cols">
+            <div>设备名称</div>
+            <div>告警信息</div>
+            <div>告警时间</div>
+          
+          </div>
+         <div className="slider-container">
+         <Carousel autoplay {...settings} style={{height: 128 }}>
+             { alarmInfos?.map?.(d=>(
+              <div className="row" key={d.name}>
+                <div> {d.deviceName}</div>
+                <span>{d.alarmName}</span>  
+                <span>{d.alarmTime}</span>
+              </div>
+             ))}
+          </Carousel>
+          </div>
+         </div>
+ 
         </Rightdown>
     </Layoutcom>
   );

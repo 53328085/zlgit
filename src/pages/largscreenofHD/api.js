@@ -36,3 +36,8 @@ export const { useGetHuaDongAirConditionerRunInfo} = new Apimethod( //  空调�
   "get",
   "LargeScreen/LargeScreenChintHuaDong/GetHuaDongStreetLightRunInfo"
 );
+
+ export const { useGetHuaDongAlarmInfo} = new Apimethod( //  告警信息
+  "get",
+  "LargeScreen/LargeScreenChintHuaDong/GetHuaDongAlarmInfo"
+);

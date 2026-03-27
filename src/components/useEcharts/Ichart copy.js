@@ -1,4 +1,4 @@
-import React, {useEffect, useRef, useContext,useImperativeHandle,forwardRef} from 'react'
+import React, {useEffect, useRef, useContext} from 'react'
 import {useSelector} from "react-redux"
 import {isObject} from '@com/usehandler'
 import {drawEcharts} from './index'
@@ -21,9 +21,9 @@ const contidtion = (a) => {
     }
     return f;
 }
- function Ichart(props={},ref) {
+export default function Ichart(props={}) {
  
-  const cref = useRef()
+  const ref = useRef()
   const {change} = useContext(custcontext)
  // const langch = useSelector(intl)
   let {dataset={}, type=1, pieData, custoption, tip='', xAxis={}, series} = props 
@@ -31,46 +31,27 @@ const contidtion = (a) => {
   let typechart = custoption?.type || type
  
   let info = `${tip} 暂无数据` 
-  let instance = useRef()
-useImperativeHandle(ref, () =>({
-   dispatchAction: (params) => {
-    instance.current?.dispatchAction(params)
-  },
-}))
   useEffect(() => {  
-     let f = Array.isArray(series) && series?.length>0 && series.some?.(s => Array.isArray(s?.data) && s?.data?.length >0)
-     let contions = [
-      typechart == 1 && contidtion(dataset?.source),
-      typechart == 3 && pieData?.data?.length > 0,
-      typechart == 5 && custoption?.series?.[0]?.data?.length > 0,
-      typechart == 2 && Array.isArray(xAxis?.data) && xAxis?.data?.length > 0  && f,
-      typechart == 4 && Array.isArray(props?.liuqiu?.series?.data) && props?.liuqiu?.series?.data?.length,
-      typechart == 6 && Array.isArray(custoption?.graphic)
-     ]
-
-     if(contions.some(c => c)) {
-       instance.current= drawEcharts(cref.current, {...props})
-    }
-
-/*     if(typechart == 1 && contidtion(dataset?.source)) {
+    if(typechart == 1 && contidtion(dataset?.source)) {
       
-       drawEcharts(cref.current, {...props})
-    }else if(typechart == 3 && pieData?.data?.length > 0) {
-       drawEcharts(cref.current, {...props})
+        drawEcharts(ref.current, {...props})
+    }
+    if(typechart == 3 && pieData?.data?.length > 0) {
+      drawEcharts(ref.current, {...props})
     }
     if(typechart == 5 && custoption?.series?.[0]?.data?.length > 0) {         
-        drawEcharts(cref.current, {...props})
+        drawEcharts(ref.current, {...props})
     }
     let f = Array.isArray(series) && series?.length>0 && series.some?.(s => Array.isArray(s?.data) && s?.data?.length >0)
     if(typechart == 2 && Array.isArray(xAxis?.data) && xAxis?.data?.length > 0  && f) {
-      drawEcharts(cref.current, {...props})
+      drawEcharts(ref.current, {...props})
     }
     if(typechart == 4 && Array.isArray(props?.liuqiu?.series?.data) && props?.liuqiu?.series?.data?.length) { // liuqiu      
-      drawEcharts(cref.current, {...props})
+      drawEcharts(ref.current, {...props})
     }
-   if(typechart == 6 && Array.isArray(custoption?.graphic)) {        
-        drawEcharts(cref.current, {...props})
-    } */
+   if(typechart == 6 && Array.isArray(custoption?.graphic)) {     // graphic 类型图表     
+        drawEcharts(ref.current, {...props})
+    }
   }, [props, change]) // intl 语言切换时图表需要重绘
   if(typechart == 1) {
     if(!contidtion(dataset?.source)) {
@@ -100,9 +81,8 @@ useImperativeHandle(ref, () =>({
     }
   }
   return (
-     <div style={{flex:1, height: "100%"}}  ref={cref} className='ichartmap'>
+     <div style={{flex:1, height: "100%"}}  ref={ref} className='ichartmap'>
       
     </div>
   )
 }
-export default forwardRef(Ichart)

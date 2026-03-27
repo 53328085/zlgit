@@ -3,7 +3,7 @@ import React, { useState, useEffect, useMemo } from "react";
 import dayjs from "dayjs";
 import { isObject } from "@com/usehandler";
 import echarts from "@com/useEcharts";
-import imgurl from './icon'
+import imgurl from "./icon";
 export const useTime = () => {
   const [time, setTime] = useState(dayjs());
   const timeformat = `${time.format("YYYY年MM月DD日")} 星期${["日", "一", "二", "三", "四", "五", "六"][time.day()]} ${time.format("HH:mm:ss")}`;
@@ -246,12 +246,17 @@ export function useLineopt({ datas }) {
   return lineopt;
 }
 
-export function usebarline({datas}) {
-  let {x=[],y=[]} = datas
-  y = y.map((_,i)=>Math.round(Math.random()*1000))
+export function usebarline({ datas }) {
+  let { x = [], y = [] } = datas;
+  y = y.map((_, i) => Math.round(Math.random() * 1000));
+   var lineCoords = [];
+   for (let i = 0; i < x.length; i++) {
+    lineCoords.push([x[i], y[i]]);
+  }
+  var linesData = [{ coords: lineCoords }];
   return useMemo(() => {
     return {
-      type:5,
+      type: 5,
       grid: {
         left: 0,
         right: 0,
@@ -277,9 +282,8 @@ export function usebarline({datas}) {
         },
       },
 
-      yAxis: { 
-        show: false, 
-       
+      yAxis: {
+        show: false,
       },
       // 提示框
       tooltip: {
@@ -288,10 +292,10 @@ export function usebarline({datas}) {
       // 系列配置
       series: [
         {
-          type: "bar", 
+          type: "bar",
           barWidth: 2,
           itemStyle: {
-             color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+            color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
               {
                 offset: 0,
                 color: "rgba(5, 192, 110, 1)",
@@ -302,25 +306,42 @@ export function usebarline({datas}) {
               },
             ]),
           },
-          data:y, 
+          data: y,
         },
         {
           type: "line",
           data: y,
-          label:{
-            show:true,
-            position:"top",
-            color:"#fff",
-           fontSize:15,
-             
+          label: {
+            show: true,
+            position: "top",
+            color: "#fff",
+            fontSize: 15,
           },
-          color:"rgba(25, 235, 255, 1)",
-          symbol: `image://${imgurl["circle"]}`  ,
-          symbolSize:20,
-          symbolKeepAspect:true,
-        }
+          smooth:false,
+          color: "rgba(25, 235, 255, 1)",
+           symbol: `image://${imgurl["circle"]}`,
+         symbolSize: 20,
+         symbolKeepAspect: true,
+        },
+        {
+          type: "lines",
+          coordinateSystem: "cartesian2d",
+          polyline: true, // 设置为多段线，以匹配折线图的形状
+          data: linesData,
+          effect: {
+            show: true,
+            period: 6, // 特效动画周期，单位秒，值越小速度越快
+            trailLength: 0.8, // 尾迹长度，范围 0 到 1
+            symbol: "circle", // 流星头部形状
+            symbolSize: [4,8], // 流星头部大小
+            color: "#fff", // 流星颜色
+            opacity: 1,
+          },
+          lineStyle: {
+            opacity: 0, // 隐藏 lines 系列本身的线条，只显示特效
+          },
+        },
       ],
-      
     };
   }, [datas]);
 }
@@ -331,4 +352,4 @@ export const areas = [
   { label: "正泰西北产业园", value: "3" },
 ];
 export const intervalTime = 60 * 1000 * 15; // 延迟15分钟请求时间
-export const delayTime = 30 * 1000 ; // 延迟30秒切换坐标 和 水 、冷水、热水
+export const delayTime = 30 * 1000; // 延迟30秒切换坐标 和 水 、冷水、热水
