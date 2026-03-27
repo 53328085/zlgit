@@ -3,13 +3,13 @@ import {Power} from "../style"
 import  {Typography} from 'antd'
 import {CaretUpOutlined, CaretDownOutlined} from '@ant-design/icons'
 const {Text} = Typography
-export default function Index({data, date,energytype,active,idx, view}) {   
+export default function Index({data, date,energytype,active,idx, view }) {   
     let { lastDayPeriodValue, lastMonthPeriodValue, lastYearPeriodValue,mom, yoy,unit } = data;
     let past=['',lastDayPeriodValue, lastMonthPeriodValue, lastYearPeriodValue][date]
     //let current = ['', '今日','本月','本年'][date]+['','用电量',"用水量","用气量"][energytype]+ "("+unit+")"
-    let current = ['', '今日','本月','本年'][date]
+    let current = ['', '今日','本月','本年', '--'][date]
    // let pastmsg = ['', '昨日','上月','上年'][date]+['','用电量',"用水量","用气量"][energytype]+ "("+unit+")"
-    let pastmsg = ['', '昨日','上月','上年'][date]
+    let pastmsg = ['', '昨日','上月','上年','--'][date]
   const currentitem = active==idx ? "active" : ""
   return (
     <Power>

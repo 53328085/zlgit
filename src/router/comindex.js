@@ -200,7 +200,7 @@ export default function Index() {
             setConfig({ isview: true, publicDate: true, shiftNo: false, rangeDate: 45 });
             break;
           case "assorting":
-            setConfig({ isview: true, isdate: true, shiftNo: false, issubarea: true });
+            setConfig({ isview: true, publicDate: true,rangeDate: 45, shiftNo: false, issubarea: true });
             break;
           case "range":
             setConfig({ energytype: false, isdate: false, custview: true, isAreaId: false, });

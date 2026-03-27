@@ -15,7 +15,7 @@ import {
   SyncOutlined,
 } from '@ant-design/icons';
 const { Link } = Typography
-import { publicdateType, Daterange, w88, viewopt, DefineDateRange } from "./data"
+import { publicdateType, Daterange, w88, viewopt, DefineDateRange ,disableDate} from "./data"
 import Enery from "./enery";
 import AreaLevel from './areas'
 import SubAreas from './subareas'
@@ -401,7 +401,7 @@ export default function UseSerach(props) {
             </Form.Item>
           } else {
             return <Form.Item name="publicdate" initialValue={moment()}>
-              <DatePicker picker={picker} />
+              <DatePicker picker={picker} disabledDate={disableDate}   />
             </Form.Item>
           }
         }

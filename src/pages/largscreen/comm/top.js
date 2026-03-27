@@ -26,7 +26,7 @@ export default function index({pgref,setMeterType,meterType }) {
                     </div>
                     用电
                 </div>
-                <div className={`btn ${meterType == 2 ? 'act' : ''} `} onClick={()=>onClick(2)}>
+            {/*     <div className={`btn ${meterType == 2 ? 'act' : ''} `} onClick={()=>onClick(2)}>
 
                 <div className="img">
                     <img src={imgurl["water"]}></img>
@@ -38,7 +38,7 @@ export default function index({pgref,setMeterType,meterType }) {
                     <img src={imgurl["gas"]}></img>
                     </div>
                     用气
-                </div>
+                </div> */}
             </div>
             <div className="date">
             <div className='time'>{timeformat}</div>

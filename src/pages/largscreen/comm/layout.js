@@ -19,14 +19,14 @@ export default function Index({ children, title, subtitle, flex,pd, ...props }) 
     </Layoutcom>
   );
 }
-  const Probar = function ({  data, index,order }) {
+  const Probar = function ({  data, index  }) {
   let i = index + 1
-  let fag = i<4 && order==0;
+  let fag = i<4  ;
   
   return (
       <div className="proitem">
         <div className="rank">
-           <span className={fag ? "top" : "top other"}><span className="mgr">TOP</span> {i+5*order}</span>
+           <span className={fag ? "top" : "top other"}><span className="mgr">TOP</span> {i}</span>
            <div className="keyval">
              <span>{data.name}</span>
              <span>{data.value}kWh</span> 
@@ -39,12 +39,12 @@ export default function Index({ children, title, subtitle, flex,pd, ...props }) 
       </div>
   );
 };
-export  const Prowarp = function({datas,idx}) { 
+export  const Prowarp = function({datas }) { 
  
   return (
       <div className="probox">
            {
-                      datas?.map?.((d,index)=>  <Probar index={index} data={d}  order={idx} key={d.name}></Probar>)
+                      datas?.map?.((d,index)=>  <Probar index={index} data={d}    key={d.name}></Probar>)
                      }  
       </div>
   )

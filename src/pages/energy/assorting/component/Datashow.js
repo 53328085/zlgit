@@ -114,7 +114,11 @@ export default function Index({ datas = {}, quota = [], showquota, energyTypes, 
         left: 0,
         right: 0,
       },
-
+      toolbox: {
+        feature: {
+          saveAsImage: {},
+        },
+      },
     }
   }, [proportion, unit])
   const lineopt = useMemo(() => {
@@ -182,6 +186,11 @@ export default function Index({ datas = {}, quota = [], showquota, energyTypes, 
         ],
         source: isdiplay ? [consumeDetail?.[0]?.x, consumeDetail?.[0]?.y, quota] : [consumeDetail?.[0]?.x, consumeDetail?.[0]?.y],
         sourceHeader: false,
+      },
+       toolbox: {
+        feature: {
+          saveAsImage: {},
+        },
       },
     }
   }, [consumeDetail, etitle, display, unit, isdiplay])

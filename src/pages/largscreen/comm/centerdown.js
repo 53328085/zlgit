@@ -48,7 +48,8 @@ export default function Index({datas,monthTotal}) {
               <div className="row" key={d.name}>
                 <span>NO.{index+1}</span>
                 <Badge color={colors[index%colors.length]} text={d.name}/>
-                <span>{d.value}</span>
+                <span>{d?.value}</span>
+                <span>{d?.percent}</span>
               </div>
              ))}
           </Carousel>

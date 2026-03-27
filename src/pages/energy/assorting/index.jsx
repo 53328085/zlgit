@@ -19,7 +19,8 @@ export default function Index() {
   const [active, setActive] = useState(0)
   
   let {exparams} = useOutletContext()
-  let { sublevel,areaId, date, type:dateType, view,  projectId} = exparams 
+  console.log(exparams)
+  let { sublevel,areaId, publicdate:date, publictype:dateType,publicrangedate, view,  projectId} = exparams 
  
   
   const [quota, setQuota] =useState([])
@@ -52,7 +53,8 @@ const getEnergyType = async()=> {
       let body = {
         projectId,
         dayMonthYear: dateType,
-        date: getTime(date, dateType),
+        startDate: dateType==4 ? publicrangedate?.[0]?.format?.("YYYY-MM-DD"):  date.format('YYYY-MM-DD'),
+        endDate:  dateType==4 ? publicrangedate?.[1]?.format?.("YYYY-MM-DD"):  date.format('YYYY-MM-DD'),
         areaIds:sublevel?.filter(id => id!=0),
         type: energytype,
         name, 
@@ -72,13 +74,14 @@ const getEnergyType = async()=> {
     }
   }
   //查询分类能耗
-  const getEnergyData = async ({sublevel,areaId, date, dateType,   projectId,treeId, view}) => {
+  const getEnergyData = async ({sublevel,areaId, date, dateType,   projectId,treeId, view,publicrangedate}) => {
     try {  
       let areaIds = (Array.isArray(sublevel) ? sublevel : [sublevel]).filter(item => item!=0) 
       let params ={
         projectId,
         dayMonthYear: dateType,
-        date: getTime(date, dateType),
+        startDate: dateType==4 ? publicrangedate?.[0]?.format?.("YYYY-MM-DD"):  date.format('YYYY-MM-DD'),
+        endDate:  dateType==4 ? publicrangedate?.[1]?.format?.("YYYY-MM-DD"):  date.format('YYYY-MM-DD'),
         areaId,
         areaIds,
         type: energytype,  
@@ -133,25 +136,33 @@ const getEnergyType = async()=> {
     return datas?.consumeTotal?.map((data, idx) => <div className='card' onClick={()=> {
       queryEnergyDetail(data.name,idx)
    //   getQuota(id)
-    }} key={data.name}><Powercom  active={active} idx={idx} view={view} data={data} date={dateType} energytype={energytype}  /></div>)
+    }} key={data.name}><Powercom  active={active} idx={idx} view={view} data={data} date={dateType} energytype={energytype}    /></div>)
   }, [datas, dateType,energytype,active, sublevel])
 
   useEffect(() => {
-    let f =  [dateType, areaId, projectId,energytype, view].every(v => Number.isInteger(v)) && date && Array.isArray(treeId) && (Array.isArray(sublevel) || typeof sublevel == 'number' )
-    if(f) {
-      getEnergyData({ sublevel, date, dateType, areaId, projectId,treeId,energytype,view})
-    } 
-  }, [ sublevel, date, dateType, treeId, projectId,energytype, view, areaId])
+    let f =  [dateType, areaId, projectId,energytype, view].every(v => Number.isInteger(v)) && Array.isArray(treeId) && (Array.isArray(sublevel) || typeof sublevel == 'number' )
+    
+    
+    if(f &&  [1,2,3].includes(dateType) && date ) {
+      getEnergyData({ sublevel, date, dateType, areaId, projectId,treeId,energytype,view })
+    }else if(f &&  dateType == 4 && Array.isArray(publicrangedate) && publicrangedate?.[0] && publicrangedate?.[1]) {
+      getEnergyData({ sublevel,   dateType, areaId, projectId,treeId,energytype,view,publicrangedate})
+    }
+  }, [ sublevel, date, dateType, treeId, projectId,energytype, view, areaId,publicrangedate])
 
   useEffect(() => {
     let f =  [  dateType,  projectId].every(v => Number.isInteger(v)) &&   typeof energyName?.name == "string" && (Array.isArray(sublevel) || typeof sublevel == 'number' )
-    if(f) {
+     
+    if(f && [1,2,3].includes(dateType) && date) {
       queryEnergyDetail(energyName?.name)
-    } 
+    }else if(f && dateType == 4 && Array.isArray(publicrangedate)  && publicrangedate?.[0] && publicrangedate?.[1]) {
+      queryEnergyDetail(energyName?.name)
+
+    }
     if(f && areaId == 0 && dateType == 3) {
       getQuota(energyName?.id)
     } 
-  }, [ areaId, date, dateType, sublevel, projectId, energyName])
+  }, [ areaId, date, dateType, sublevel, projectId, energyName,publicrangedate])
  
 
   const title =<CustTitle>

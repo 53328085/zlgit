@@ -43,11 +43,19 @@ export default function Index() {
   } = useMemo(()=>{ 
      
      try {
-      let {latest7DaysEnergyOfArea=[],rankClassify=[],...rest}= isObject(datas) ? datas : {};
-      if(Array.isArray(latest7DaysEnergyOfArea)){
-        let total =latest7DaysEnergyOfArea?.reduce((a,b)=> a + parseFloat(b.value) ,0)
-        latest7DaysEnergyOfArea=latest7DaysEnergyOfArea?.map(d=>({...d,percent:(parseFloat(d.value)/total*100)?.toFixed(2)}))
-        latest7DaysEnergyOfArea =chunkArray(latest7DaysEnergyOfArea,5)
+      let {latest7DaysEnergyOfArea={},rankClassify=[],...rest}= isObject(datas) ? datas : {};
+       let dataOfArea=[]
+      if(isObject(latest7DaysEnergyOfArea) && Object.keys(latest7DaysEnergyOfArea).length){
+       latest7DaysEnergyOfArea.length = Object.keys(latest7DaysEnergyOfArea).length
+       dataOfArea=Array.from(latest7DaysEnergyOfArea)
+       console.log("dataOfArea",dataOfArea)
+         dataOfArea.forEach((arr,idx,arrs) => {
+          let total =arr?.reduce((a,b)=> a + parseFloat(b.value) ,0)
+          arrs[idx] = arr.map(d=>({...d,percent:(parseFloat(d.value)/total*100)?.toFixed(2)}))  
+         })         
+       // let total =latest7DaysEnergyOfArea?.reduce((a,b)=> a + parseFloat(b.value) ,0)
+       // latest7DaysEnergyOfArea=latest7DaysEnergyOfArea?.map(d=>({...d,percent:(parseFloat(d.value)/total*100)?.toFixed(2)}))
+       // latest7DaysEnergyOfArea =chunkArray(latest7DaysEnergyOfArea,5)
       }
       if(Array.isArray(rankClassify)) {
         let ranks = rankClassify.sort((a,b)=> parseFloat(b.value) - parseFloat(a.value))?.map(a=>({...a, value:parseFloat(a.value)}));
@@ -72,7 +80,7 @@ export default function Index() {
         } 
       }
        
-      return {...rest,latest7DaysEnergyOfArea,rankClassify}
+      return {...rest,latest7DaysEnergyOfArea:dataOfArea,rankClassify}
      } catch (error) {
       console.log(error)
       return {}
@@ -119,7 +127,7 @@ export default function Index() {
     refreshDeps:[projectId,meterType],
   
  })
- useEffect(()=>{ 
+/*  useEffect(()=>{ 
   let count = 0
  let timer = setInterval(()=>{
      count++
@@ -132,7 +140,7 @@ export default function Index() {
   return ()=>{
     clearInterval(timer)
   }
-  },[])
+  },[]) */
 
   useRequest(getKpi,{
     manual:false,

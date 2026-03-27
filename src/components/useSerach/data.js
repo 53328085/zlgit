@@ -1,5 +1,5 @@
 import { DatePicker,Form } from 'antd';
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import moment from 'moment';
 const { RangePicker } = DatePicker;
 
@@ -27,19 +27,19 @@ export const w200 = {
 export const w88 = {
   width:88
 }
-export const Daterange = ({value, onChange,rangeDate}) => {
+export const Daterange = ({value, onChange,rangeDate=45}) => {
   const [dates, setDates] = useState(null);
-  
-  const disabledDate = (current) => {
+  console.log("Daterange", rangeDate)
+  const disabledDate =(current) => {
     if (!dates) {
       return false;
     }
-    if (!rangeDate) {
+    
       const tooLate = dates[0] && current.diff(dates[0], 'days') > rangeDate;
       const tooEarly = dates[1] && dates[1].diff(current, 'days') > rangeDate;
       return !!tooEarly || !!tooLate || (current && current> moment().endOf("day"));
-    }
-    return current && current> moment().endOf("day");
+     
+   
   };
   const onOpenChange = (open) => {
     if (open) {
@@ -81,3 +81,6 @@ export const Daterange = ({value, onChange,rangeDate}) => {
       </Form.Item>
     )
  }
+ export const disableDate=(current)=>{
+  return current && current> moment().endOf("day");
+}

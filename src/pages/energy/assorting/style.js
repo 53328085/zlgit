@@ -130,7 +130,7 @@ export const ChartWrap = styled.div`
     gap: 16px;
     .pip {
         height: 100%;
-        flex-basis: 354px;
+        flex-basis: 454px;
         display:flex;
     }
     .bar {

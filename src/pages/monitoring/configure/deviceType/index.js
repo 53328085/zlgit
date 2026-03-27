@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react'
+import React, { use, useEffect, useMemo, useState } from 'react'
 import CustContext from '@com/content.js'
 import Pagecount from '@com/pagecontent'
 import { Monitoring } from '@api/api.js'
@@ -25,6 +25,7 @@ import Flowmeter from './flowmeter' //流量计
 import Microcomputer from './microcomputer' //微机保护
 import AirConditioning from './airConditioning' //空调
 import Pv from './pv'
+import Purewaer from "./purewater"
 import { message } from 'antd'
 export default function Index() {
   const [value, setvalue] = useState('0')
@@ -33,13 +34,13 @@ export default function Index() {
 
 
 
-  let dataProps = {
+  let dataProps =useMemo(() =>({
     value,
     setvalue,
     tabs,
     tabwidth: "120px",
     tabgap: 8,
-  };
+  }), [tabs, value]);
   let Coms = [
     <GateWay />,
     <Electric />,
@@ -65,7 +66,7 @@ export default function Index() {
     <AirConditioning />, //空调
     <Electric />,//路灯控制器
     <Electric />,//智能控制
-    
+    <Purewaer />, // 纯水类型
   ]
   const getAllDeviceStyle = async () => {
     try {
@@ -73,7 +74,6 @@ export default function Index() {
       const { data, errMsg, success } = result;
       if (success) {
         if (Array.isArray(data)) {
-          console.log(59, data)
           let arr = data.map(item => {
             if (item.state === 1) {
               return {
@@ -83,13 +83,11 @@ export default function Index() {
             }
 
           })
-          let list = arr.filter(it => it)
-          console.log(69, arr)
+          let list = arr.filter(it => it) 
           list.unshift({ key: '0', label: '网关类型' })
-          console.log(list)
           setTabs(list)
-          dataProps = { ...dataProps, list }
-          console.log(dataProps)
+       //   dataProps = { ...dataProps, list }
+        //  console.log(dataProps)
         }
       } else {
         message.error(errMsg)
