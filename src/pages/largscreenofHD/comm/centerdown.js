@@ -50,24 +50,11 @@ export default function Index() {
   },[])
 
   return (
-    <Layoutcom title="区域能耗趋势" extend={<Btncom meterType={meterType} onClick={setMeterType} />}    flex="232px" pd="0px 20px 20px 20px">
+    <Layoutcom title="区域能耗趋势" extend={<Btncom meterType={meterType} onClick={setMeterType} />}    flex="232px" pd="0px 20px 0px 20px">
         <Centerdown>
           <div className="charbox">
             <Ichart custoption={baroption} />
           </div>
-    {/*      <div className="centertitle">
-          <div className="percentage">
-             前五区域用电量占比{datas?.percent}
-          </div>
-          <div className="info">
-            <div className="centertotal">
-               本月共计用电<span className="month">{monthTotal}kWh</span>
-            </div>
-            <div className="percentline">
-              {datas?.top5?.map?.((item,index)=>(<div   style={{width: item.width+'px',backgroundColor:colors?.[index]}}></div>) )}
-            </div>
-          </div>
-         </div> */}
          <div className="contentwrap">
           <div className="cols">
             <div>#</div>

@@ -14,7 +14,7 @@ export default function Index() {
   const { runNumm, eUse,eSave,monthEnergies={} } =isObject(data) ? data : {}
   const option = usebarlineright2nd({datas:monthEnergies})
   return (
-    <Layoutcom title="空调运行情况" flex="185px">
+    <Layoutcom title="空调运行情况" flex="285px">
       <Right2nd>
         <div className="tip">
          <div className="item">

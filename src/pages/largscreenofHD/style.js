@@ -180,7 +180,7 @@ export const Layoutcom = styled.div`
 export const Leftup = styled.div`
   flex: 1;
   display: grid;
-  grid-template-rows: 120px 1fr;
+  grid-template-rows: 120px 165px;
   row-gap: 8px;
 
   .items {
@@ -215,9 +215,12 @@ export const Leftup = styled.div`
 export const Leftcenter = styled.div`
   flex: 1;
   display: grid;
-  grid-template-rows: 60px 1fr;
+  grid-template-rows: 60px 176px;
   row-gap: 26px;
-
+   .carbon {
+    display: flex;
+    height: 176px;
+   }
   .item {
     display: flex;
     align-items: center;
@@ -306,13 +309,15 @@ export const Centerup = styled.div`
   flex: 1;
 `;
 export const Centerdown = styled.div`
-  flex: 1;
+  height: 160px;
   display: grid;
   grid-template-columns: 1fr 1fr;
+ 
   column-gap: 32px;
   color: #ffffff;
   .chartbox {
     display: flex;
+    height: 160px;
   }
   .centertitle {
     display: grid;
@@ -423,7 +428,7 @@ export const Rightup = styled.div`
 export const Right2nd = styled.div`
   flex: 1;
   display: grid;
-  grid-template-rows: 78px 1fr;
+  grid-template-rows: 78px 137px;
   .tip {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
@@ -460,16 +465,19 @@ export const Right2nd = styled.div`
   }
   .airConditionerMap {
     display: flex;
+    height: 137px;
   }
 `;
 
 export const Right3rd = styled.div`
   flex: 1;
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
-
+  grid-template-columns: repeat(3, 140px);
+  height: 120px;
   .streetlingtMap {
     display: flex;
+    width: 140px;
+    height: 120px;
   }
   .part {
     display: flex;
@@ -533,6 +541,10 @@ export const Rightdown = styled.div`
     .levelchart {
       display: grid;
      grid-template-columns: 1fr 2fr;
+     .barchart {
+      display: flex;
+      height: 90px;
+     }
      .levels {
       display: flex;
         flex-direction: column;
@@ -615,10 +627,13 @@ export const Position = styled.div`
   transform: translateY(-132px);
   width: 232px;
   height: 162px;
-  background-image: url(${imgulr["pzbg"]});
+  background-image:${(props) => (props.visiable ? `url(${imgulr["pzbg"]})`: "none")} ;
   background-size: 100% 100%;
   background-repeat: no-repeat;
-  visibility: ${(props) => (props.visiable ? "visible" : "hidden")};
+  .contentmain{
+    display: ${(props) => (props.visiable ? "flex" : "none")};
+    flex-direction: column;
+ // visibility: ${(props) => (props.visiable ? "visible" : "hidden")};
   .ptitle {
     color: #fff;
     font-size: 16px;
@@ -646,10 +661,12 @@ export const Position = styled.div`
       }
     }
   }
-  .mark {
+
+}
+  .mark{
     position: absolute;
-    left: 0;
-    bottom: 0;
+    left:0;
+    bottom:0;
     width: 24px;
   }
 `;

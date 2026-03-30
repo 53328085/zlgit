@@ -81,22 +81,22 @@ useImperativeHandle(ref, () =>({
     let f = Array.isArray(series) && series?.length>0 && series?.every(s => Array.isArray(s?.data) && s?.data?.length >0)
    
     if(!Array.isArray(xAxis.data) || (Array.isArray(xAxis.data) && xAxis.data?.length ===0) || !f) {
-      return <Cempty tip={info} />
+      return <Cempty tip={info} imgStyle={props.emptyStyle} />
     }
   }
   if(typechart == 3) {
     if(!Array.isArray(pieData.data) || (Array.isArray(pieData.data) && pieData.data?.length ===0)) {
-      return <Cempty tip={info} />
+      return <Cempty tip={info} imgStyle={props.emptyStyle} />
     }
   }
   if(typechart==5) {   
     if(!Array.isArray(custoption?.series) || (Array.isArray(custoption?.series?.[0]?.data) && custoption?.series?.[0]?.data?.length ===0)) {
-      return <Cempty tip={info} />
+      return <Cempty tip={info} imgStyle={props.emptyStyle}  />
     }
   }
   if(typechart==4) {   
     if(!Array.isArray(props?.liuqiu?.series?.data) || props?.liuqiu?.series?.data?.length==0 || props?.liuqiu?.series?.data?.every(d => typeof parseFloat(d) !== "number")) {
-      return <Cempty tip={info} />
+      return <Cempty tip={info} imgStyle={props.emptyStyle} />
     }
   }
   return (

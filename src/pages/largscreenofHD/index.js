@@ -1,9 +1,8 @@
-import React,{useState,useEffect,useRef, useMemo} from 'react'
+import React,{ useRef } from 'react'
  
 
 import {Pagelayout} from './style'
-import { useSelector } from "react-redux";
-import { selectProjectId  } from "@redux/systemconfig";
+ 
  
  import Topcom from './comm/top'
  import Leftupcom from './comm/leftup'
@@ -18,19 +17,17 @@ import { selectProjectId  } from "@redux/systemconfig";
  import Rightdowncom from './comm/rightdown'
  export default function Index() {
   const pgref= useRef()
-  const projectId = useSelector(selectProjectId);
- 
   return (
     <Pagelayout ref={pgref}   >
        <Topcom pgref={pgref}  ></Topcom>
        <div className="content" key="content">
          <div className="left" key="left">
-             <Leftupcom  projectId={projectId}/> 
-             <Leftcentecom projectId={projectId} />
-             <Leftdowncom projectId={projectId} /> 
+             <Leftupcom  /> 
+             <Leftcentecom   />
+             <Leftdowncom   /> 
          </div>
          <div className="center" key="center">
-             <Centerupcom projectId={projectId} /> 
+             <Centerupcom  /> 
              
             <Centerdowncom  /> 
          </div>

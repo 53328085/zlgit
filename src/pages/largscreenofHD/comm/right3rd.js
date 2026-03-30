@@ -16,7 +16,9 @@ export default function Index() {
   const { lightRate, lightTypes,todayEUsed } =isObject(data) ? data : {}
   const option = usepieoption({datas:lightTypes?.map(d=>({name:d.typeName,value:d.num}))})
   const rateopt = usepieoption({datas:[{name:'亮灯率',value:Number.parseFloat(lightRate)},{name:'灭灯率',value:100-Number.parseFloat(lightRate)}],emphasis:{label:{formatter: ["{d}%", "{a|{b}}"].join("\n")}}})
-useEffect(()=>{
+ 
+
+  useEffect(()=>{
    let timer,dataIndex=0;
 
    timer= setInterval(()=>{ 

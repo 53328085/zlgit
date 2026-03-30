@@ -6,37 +6,15 @@ import Ichart from '@com/useEcharts/Ichart'
 
 import {isObject} from "@com/usehandler"
 import { Leftup } from "../style";
-import { colors,intervalTime ,useLineopt} from "../data";
+import { useLineopt} from "../data";
 import {useGetHuaDongTodyEnergyInfo} from '../api'
 import Layoutcom from './layout'
 import Item from "./item"
-export default function Index({projectId}) {
+import {useGetData } from '../usehook'
+export default function Index() {
    
-  const getData = async()=>{
-    try{
-      console.log("启动轮询")
-       const {data, success} = await useGetHuaDongTodyEnergyInfo({projectId})
-       if (success && isObject(data)){
-        return data
-       }else {
-         return {}
-       }
-        
-    } catch (error) {
-     
-      console.log(error)
-      return {}
-    }
-   
-    
-  }
- const {data} = useRequest(getData,{
-    manual:false,
-    pollingInterval: intervalTime,
-    pollingErrorRetryCount: 3,
-    refreshDeps:[projectId],
-  
- })
+ 
+ const data = useGetData(useGetHuaDongTodyEnergyInfo)
  const {hourEnergies,totalEnergies} = isObject(data) ? data : {}
   
  

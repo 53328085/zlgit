@@ -136,13 +136,13 @@ export function useLineopt({ datas }) {
           data: y, // 数据集1的数据
           areaStyle: {
             color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
-              {
+               {
                 offset: 0,
-                color: "rgba(233, 165, 82, 1)",
+                color: "rgba(25,235,255,0.20)",
               },
               {
                 offset: 1,
-                color: "rgba(233, 165, 82, 0)",
+                color: "rgba(25,235,255,0.00)",
               },
             ]),
           },
@@ -152,16 +152,49 @@ export function useLineopt({ datas }) {
         {
           name: "冷水量",
           type: "line",
-
+        //  z:3,
           yAxisIndex: 1, // 对应第二个Y轴
           data: y1, // 数据集2的数据
+           areaStyle: {
+            color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+                   {
+                offset:0,
+                color: "rgba(0,221,163,0.00)",
+              },
+              {
+                offset: 0.23,
+                color: "rgba(0,221,163,0.00)",
+              },
+              {
+                offset: 1,
+                color: "rgba(5,192,110,0.20)",
+              },
+            ]),
+          },
           //  smooth: 2
         },
         {
           name: "热水量",
           type: "line",
           yAxisIndex: 2, // 对应第三个Y轴
+        //  z:4,
           data: y2, // 数据集2的数据
+           areaStyle: {
+            color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+              {
+                offset: 0,
+                color: "rgba(233,165,82,0.20)",
+              },
+              {
+                offset: 0.23,
+                color: "rgba(233,165,82,0.20)",
+              },
+              {
+                offset: 1,
+                color: "rgba(233,165,82,0.00)",
+              },
+            ]),
+          },
           // smooth: 2
         },
       ],
@@ -192,6 +225,9 @@ export function useLineopt({ datas }) {
       yAxis: [
         {
           name: "kWh",
+          nameTextStyle: {
+            align: "right",
+          },
           axisLine: {
             show: false,
           },
@@ -204,14 +240,17 @@ export function useLineopt({ datas }) {
         },
         {
           name: "m³",
+           nameTextStyle: {
+            align: "right",
+          },
           axisLine: {
             show: false,
           },
           axisLabel: {
             color: "#fff",
-            formatter: (value) => {
-              return value == Math.max.apply(null, y1) ? value : null;
-            },
+            // formatter: (value) => {
+            //   return value == Math.max.apply(null, y1) ? value : null;
+            // },
           },
           splitLine: {
             show: false,

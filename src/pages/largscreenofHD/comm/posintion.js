@@ -3,8 +3,9 @@ import {Position} from '../style'
 import mark from '../icon/mark.gif'
 export default function Index(props) {
   let {x,y,name,items, visiable} = props
-  return (
-    <Position left={x} top={y} visiable={visiable}>
+  return ( 
+    <Position  visiable={visiable} left={x} top={y}> 
+       <div className="contentmain">
         <div className="ptitle">今日用能—{name}</div>
           <div className="pcontent">
  {
@@ -13,9 +14,11 @@ export default function Index(props) {
                     <div className='pvalue'>{i.value}</div>
                     </div>)
             }
+          </div> 
           </div>
           <img src={mark} className='mark'></img>
     </Position>
+    
   )
 }
 

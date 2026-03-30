@@ -46,7 +46,7 @@ export function usebarline({ datas, type }) {
         left: 0,
         right: 0,
         top: 16,
-        bottom: 0,
+        bottom: 16,
         containLabel: true,
       },
       title: {
@@ -164,7 +164,8 @@ export function usebarlineright2nd({ datas }) {
             show: false,
           },
           axisLabel: {
-            show: false,
+            color: "#fff",
+            show: true,
           },
           splitLine: {
             show: false,
@@ -179,7 +180,8 @@ export function usebarlineright2nd({ datas }) {
             show: false,
           },
           axisLabel: {
-            show: false,
+            color: "#fff",
+            show: true,
           },
           splitLine: {
             show: false,

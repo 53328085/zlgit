@@ -6,38 +6,18 @@ import Ichart from '@com/useEcharts/Ichart'
 
 import {isObject} from "@com/usehandler"
 import { Leftcenter } from "../style";
-import { colors,intervalTime ,usebarline} from "../data";
+import { usebarline} from "../data";
 import {useGetHuaDongCarbonInfo} from '../api'
 import Layoutcom from './layout'
 import imgurl from '../icon'
+import {useGetData } from '../usehook'
 // 碳排管理
 export default function Index({projectId}) {
    
-  const getData = async()=>{
-    try{
-      console.log("启动轮询")
-       const {data, success} = await useGetHuaDongCarbonInfo({projectId})
-       if (success && isObject(data)){
-        return data
-       }else {
-         return {}
-       }
-        
-    } catch (error) {
-     
-      console.log(error)
-      return {}
-    }
-   
-    
-  }
- const {data} = useRequest(getData,{
-    manual:false,
-    pollingInterval: intervalTime,
-    pollingErrorRetryCount: 3,
-    refreshDeps:[projectId],
-  
- })
+ 
+ 
+
+ const data = useGetData(useGetHuaDongCarbonInfo)
  const {monthCarbons={}} = isObject(data) ? data : {}
   
  
@@ -55,8 +35,9 @@ export default function Index({projectId}) {
                   <div className="value">{data?.total}</div>
                </div>
             </div>
- 
-        <Ichart custoption={lineopt}></Ichart>
+        <div className="carbon">
+ <Ichart custoption={lineopt}></Ichart>
+        </div>
         </Leftcenter>
     </Layoutcom>
   );

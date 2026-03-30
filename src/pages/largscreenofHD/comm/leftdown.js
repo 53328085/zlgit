@@ -1,34 +1,15 @@
 import React from "react";
-import { useRequest } from "ahooks";
-import { isObject } from "@com/usehandler";
+ 
 import { useGetHuaDongDeviceRunInfo } from "../api";
 import imgurl from "../icon";
 import { Leftdown } from "../style";
-import { intervalTime } from "../data";
-
+ 
+import {useGetData } from '../usehook'
 import Layoutcom from "./layout";
 export default function Index({ projectId }) {
-  const getData = async () => {
-    try {
-      console.log("启动轮询");
-      const { data, success } = await useGetHuaDongDeviceRunInfo({ projectId });
-      if (success && isObject(data)) {
-        return data;
-      } else {
-        return {};
-      }
-    } catch (error) {
-      console.log(error);
-      return {};
-    }
-  };
-  const { data } = useRequest(getData, {
-    manual: false,
-    pollingInterval: intervalTime,
-    pollingErrorRetryCount: 3,
-    refreshDeps: [projectId],
-  });
-
+ 
+ 
+  const data  = useGetData(useGetHuaDongDeviceRunInfo)
   return (
     <Layoutcom title="设备运行工况" flex="420px">
       <Leftdown>

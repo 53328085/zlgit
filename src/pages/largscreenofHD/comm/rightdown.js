@@ -3,11 +3,12 @@ import { Carousel, Badge} from 'antd'
  import {isObject} from '@com/usehandler'
 import { Rightdown } from "../style";
  import Ichart from '@com/useEcharts/Ichart'
- 
+ import Cempty from "@com/useEmpty"
 import Layoutcom from './layout'
  
 import {useGetHuaDongAlarmInfo} from '../api'
 import {useGetData,usecustompie} from '../usehook'
+import nodata from "../icon/noData.png"
   const settings = {
     dots: false,
     infinite: true,
@@ -50,12 +51,14 @@ export default function Index() {
   return (
     <Layoutcom title="告警信息"     flex="283px" pd="0px 20px 20px 20px">
         <Rightdown>
-          <div className="levelchart">
-
-            <Ichart custoption={baroption} />
+       {levelNums?.length  ?  <div className="levelchart">
+        
+           <div className="barchart">
+             <Ichart custoption={baroption} emptyStyle={{height:"60px"}} />
+            </div> 
             <div className="levels">
       {
-      levelNums?.map((d,i)=>(<div className="level">
+      levelNums?.map?.((d,i)=>(<div className="level">
            <Badge color={piecolor[i%3]} text={new Intl.NumberFormat("zh-Hans-CN-u-nu-hanidec").format(d.level)+"告警"}/> 
            <span className="value">{d.num}</span>
         </div>
@@ -63,7 +66,9 @@ export default function Index() {
       }
             
           </div> 
-          </div>   
+          </div>  
+          : <Cempty image={nodata} imgStyle={{height:"75px"}} tip={"暂无告警数据"} ></Cempty> 
+    }
          <div className="contentwrap">
           <div className="cols">
             <div>设备名称</div>
