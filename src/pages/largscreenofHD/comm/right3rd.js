@@ -50,6 +50,15 @@ useEffect(()=>{
         });
    }
  },[lightRate])
+ useEffect(()=>{
+   if (Array.isArray(lightTypes) && lightTypes.length>0) {
+     pieRef?.current?.dispatchAction?.({
+          type: 'highlight',
+          seriesIndex: 0,
+          dataIndex: 0,
+        });
+   }
+ },[lightTypes])
   return (
     <Layoutcom title="路灯运行情况" flex="185px">
       <Right3rd>

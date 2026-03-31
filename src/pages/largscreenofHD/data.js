@@ -287,7 +287,7 @@ export function useLineopt({ datas }) {
 
 export function usebarline({ datas }) {
   let { x = [], y = [] } = datas;
-  y = y.map((_, i) => Math.round(Math.random() * 1000));
+ // y = y.map((_, i) => Math.round(Math.random() * 1000));
    var lineCoords = [];
    for (let i = 0; i < x.length; i++) {
     lineCoords.push([x[i], y[i]]);

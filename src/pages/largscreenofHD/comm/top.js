@@ -24,7 +24,7 @@ export default function index({pgref,setMeterType,meterType }) {
             </div>
          <div className="opt">
             <div className="btns">
-                 <Cselect options={areas} value={value} onChange={setValue}  dropdownStyle={{backgroundColor: "transparent"}}   labelInValue={true}></Cselect>
+                 <Cselect options={areas} value={value} onChange={setValue}  dropdownStyle={{backgroundColor: "rgba(255,255,255,0.4)"}}   labelInValue={true}></Cselect>
             </div>
             <div className="date">
             <div className='time'>{timeformat}</div>

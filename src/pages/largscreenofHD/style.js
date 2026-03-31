@@ -38,6 +38,9 @@ export const Cselect = styled(Select)`
         color: #fff;
       }
     }
+    .ant-select-arrow{
+      color: rgba(41, 189, 250, 1);
+    }
   }
 `;
 export const Pagelayout = styled.div`
@@ -472,11 +475,10 @@ export const Right2nd = styled.div`
 export const Right3rd = styled.div`
   flex: 1;
   display: grid;
-  grid-template-columns: repeat(3, 140px);
+  grid-template-columns: repeat(3, 1fr);
   height: 120px;
   .streetlingtMap {
     display: flex;
-    width: 140px;
     height: 120px;
   }
   .part {

@@ -59,7 +59,7 @@ export default function Index() {
             <div className="levels">
       {
       levelNums?.map?.((d,i)=>(<div className="level">
-           <Badge color={piecolor[i%3]} text={new Intl.NumberFormat("zh-Hans-CN-u-nu-hanidec").format(d.level)+"告警"}/> 
+           <Badge color={piecolor[i%3]} text={new Intl.NumberFormat("zh-Hans-CN-u-nu-hanidec").format(d.level)+"级告警"}/> 
            <span className="value">{d.num}</span>
         </div>
        ))

@@ -4,8 +4,8 @@ import styled, {css} from 'styled-components'
 import UseHeader from '@com/useHeader'
 import CustModal from '@com/useModal'
 import {useSelector} from "react-redux"
-import { Divider, message, Form, Space, Input, Button, Select } from 'antd'
-import style from './style.module.less'
+import { Divider, message, Form, Space, Input, Button, Select, InputNumber } from 'antd'
+//import style from './style.module.less'
 import { StorageStrategyDesigner } from '@api/api.js'
 import { CaretRightOutlined, CaretUpOutlined, CaretDownOutlined } from '@ant-design/icons';
 import { timeToValue, controlList, timeList, idToTime, timeToId } from './changeJson'
@@ -179,8 +179,11 @@ const Mainbox = styled.div`
                     font-size: ${props => props.theme.laptop ? "14px" : "16px"};
                     color: #000;
                     display: grid;
-                    grid-template-columns: repeat(4,1fr);
+                    grid-template-columns: repeat(5,1fr);
                     padding-right: ${props=> props.theme.laptop ? "136px" : "200px"};
+                    span>b{
+                      color: ${props=> props.theme.errorColor};
+                    }
                 }
                 .items {
                   display: flex;
@@ -487,10 +490,11 @@ export default function Index() {
                   </div>
                 </div>
                 <div className="fieldTitle">
-                  <span>开始时间</span>
-                  <span >结束时间</span>
-                  <span>储能控制类型</span>
-                  <span>储能计划功率</span>
+                  <span><b>*</b>开始时间</span>
+                  <span ><b>*</b>结束时间</span>
+                  <span><b>*</b>执行动作</span>
+                  <span><b>*</b>执行功率(kW)</span>
+                   <span><b>*</b>电价(元)</span>
                 </div>
                 <Item shouldUpdate noStyle>
                   {() => (
@@ -516,7 +520,6 @@ export default function Index() {
                               })}
                             </Select>
                           </Item>
-                          <div className='tip'>执行</div>
                           <Item   {...restField} name={[name, 'controlType']} shouldUpdate rules={[{required:true, message:'请选择控制类型'}]}>
                             <Select style={{width: timewd}} onChange={val => { if(val == 3 || val == 4){ strategyForm.setFieldValue(['strategyTime', name, 'planP' ], 0) }}}>
                               {controlList.map(item => {
@@ -524,10 +527,13 @@ export default function Index() {
                               })}
                             </Select>
                           </Item>
-                          <div className='tip ext'>预设计划执行功率 (kW)</div>
                           <Item   {...restField} name={[name, 'planP']} shouldUpdate={true} rules={[{required:true, message:'请输入功率'}]}>
                             {/*['strategyTime', name, 'controlType' ]  */}
                             <Input style={{width: laptop ? 100 : 200}} disabled={(strategyForm.getFieldValue(['strategyTime', name, 'controlType' ]) == 3 || strategyForm.getFieldValue(['strategyTime', name, 'controlType' ]) == 4) ? true : false}></Input>
+                          </Item>
+                           <Item   {...restField} name={[name, 'price']}   rules={[{required:true, message:'请输入单价'}]}>
+                            {/*['strategyTime', name, 'controlType' ]  */}
+                            <InputNumber style={{width: laptop ? 100 : 200}}  min={0} precision={2}></InputNumber>
                           </Item>
                           <CustButtonT danger onClick={()=> remove(name)} text="delete" wh={laptop ? '60px' : "96px"} /> 
                           {index == fields.length - 1 ? <CustButtonT onClick={()=> add() } text="new" ghost  wh={laptop ? '60px' : "96px"}  style={{position: "absolute", right:  "0px"}} />: null}  

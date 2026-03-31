@@ -305,7 +305,7 @@ export default function Index() {
     //   key:'sn'
     // },
     {
-      title:   i18t("comm","sn",{text:"监控设备编号"}),
+      title:   i18t("comm","sn",{text:"监控设备"}),
       dataIndex: 'sn',
       align: 'center',
       key: 'sn'
@@ -596,7 +596,7 @@ export default function Index() {
 
           </div> 
 
-          <Table bordered columns={columns} {...tableProps} rowKey='sn' size='small' />
+          <Table bordered columns={columns} {...tableProps} rowKey={row =>row.sn+row.id} size='small' />
 
 
         </Mainbox>

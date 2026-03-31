@@ -375,7 +375,7 @@ export default function Log() {
 }
  */
  
-/*     const onJump = useCallback(() => {  
+     const onJump = useCallback(() => {  
   let {bigScreenEnabled, bigScreenUrl} = Datascreen   
 
   if(bigScreenEnabled == 0) return ;
@@ -387,12 +387,12 @@ export default function Log() {
   }
  
  
-}, [Datascreen])  */  
+}, [Datascreen])  
 
-   const onJump = ()=>{  
+/*    const onJump = ()=>{  
   const newPageUrl = `${window.location.origin}/largscreen`;
     window.open(newPageUrl, '_blank', 'noopener,noreferrer');
-}   
+} */   
 
  // moment 语言环境设置 antd 组件国际化 中文 zh-cn, 英文 en， echart图表国际化 中文 ZH， 英文 EN， 页面中自定义的文字国际 i18 中文 zh-Cn, 英文 en 
 const lref = useRef();
@@ -601,18 +601,18 @@ const settheme = async (themeId) => {
           </Logbox>)
           :
         <>
-    {/*   { isgranary ? <Logbox laptop={adap.laptop}  onClick={() => window.open('http://10.5.7.60:4242/ses', '_blank')}>
+       { isgranary ? <Logbox laptop={adap.laptop}  onClick={() => window.open('http://10.5.7.60:4242/ses', '_blank')}>
           <Micon iconname="screen" />
           <span> {dataScreen}</span>
         </Logbox> : showscreen  &&  <Logbox laptop={adap.laptop}  onClick={onJump}>
         <Micon iconname="screen" />
           <span> {dataScreen}</span>
         </Logbox>
-        }  */}
-        <Logbox laptop={adap.laptop}  onClick={onJump}>
+        }   
+      {/*   <Logbox laptop={adap.laptop}  onClick={onJump}>
         <Micon iconname="screen" />
           <span> {dataScreen}</span>
-        </Logbox>  
+        </Logbox>  */} 
  
  
         { roleType < 4 ? (<Logbox laptop={adap.laptop}    onClick={onConfigure}> 

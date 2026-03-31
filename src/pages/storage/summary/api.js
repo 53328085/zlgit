@@ -57,3 +57,7 @@ export const { useQueryStorageWarning } = new Apimethod( //最新告警
     "get",
     "Storage/StorageMonitorPCS/QueryPowerTrends"   
   );
+ export const { useRevenues } = new Apimethod( // 收益统计
+    "get",
+    "Storage/StorageRevenueRuntime/Revenues"   
+  );

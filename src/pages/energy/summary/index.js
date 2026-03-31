@@ -35,10 +35,11 @@ const Imgbg = memo(({ projectId, areaVos,date, type }) => {
   let tipRef = useRef()
   let boxRef = useRef()
   let xyRef=useRef({})
-  console.log(info)
+  let params= useRef(null)
   const { primaryderived, imgbgcolor } = useSelector(themeColor);
   const getbuild = async ({ buildingId, x, y }, curRef) => {
     try {
+      if (curRef && curRef?.current ) {
       const {width=0, height=0} =   curRef.current?.getBoundingClientRect() || {}
       const topRect = boxRef.current.getBoundingClientRect()
     //  console.log(topRect)
@@ -48,6 +49,7 @@ const Imgbg = memo(({ projectId, areaVos,date, type }) => {
       if((topRect.width - x)<291) {
         x = x - 291 - width-36
       }
+    }
     /*   if((topRect.height - y)<172) {
 
       } */
@@ -61,13 +63,20 @@ const Imgbg = memo(({ projectId, areaVos,date, type }) => {
       );
       if (success && Array.isArray(data?.datas)) {
         setInfo({datas: data.datas, x, y,buildingName:data.buildingName });
+        params.current = {buildingId, x, y}
       } else {
+        params.current = null
         setInfo({datas: [], x, y,buildingName:data.buildingName });
       }
     } catch (error) {
       console.log(error);
     }
   };
+  useEffect(() => {
+     if (params.current && date && Number.isInteger(parseInt(type))){
+       getbuild(params.current)
+     }
+  }, [date, type]);
   const map =
     build?.length > 0
       ? build.map((l) => (
@@ -197,7 +206,7 @@ export default function Index() {
   //const [form] = Form.useForm();
    let { exparams } = useOutletContext()
     let { laptop } = useSelector(adaptation)
-    console.log("exparams", exparams)
+   // console.log("exparams", exparams)
    const { areaId, projectId, date, type } = exparams || {};
 
   const [energyValue, setEnergyValue] = useState({});
