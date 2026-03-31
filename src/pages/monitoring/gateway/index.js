@@ -72,7 +72,7 @@ export default function Index(props) {
       id: "id",
     },
     {
-      title: i18t("comm","category",{text:"型号"}),
+      title: i18t("comm","category",{text:"网关"}),
       dataIndex: "category",
       key: "category",
       id: "id",

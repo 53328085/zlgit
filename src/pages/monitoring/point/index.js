@@ -76,10 +76,11 @@ export default function Index(props) {
  
   let {exparams} = useOutletContext()
   let {deviceStyle} = exparams
-  console.log("exparams",exparams)
-  console.log("deviceStyle",deviceStyle)
+  
   const dstate = useSelector(deviceState)
   let {laptop} = useSelector(adaptation)
+  const category = Form.useWatch("category", form);
+
   // const [messageApi, contextHolder] = message.useMessage();
   const {
    
@@ -193,12 +194,16 @@ export default function Index(props) {
       } else {
         message.error(res.errMsg);
       }
+    }).then(()=>{
+      form.setFieldsValue({
+        category: "",
+      });
     });
   };
   let initparams = useRef(); 
-  const getOverviewData = ({ current, pageSize }, formData) => {
-    console.log("areaId",areaId, projectId,deviceStyle)
-    let f = [areaId, deviceStyle, projectId].every(s => Number.isInteger(s))
+  const getOverviewData = ({ current, pageSize }, form) => {
+    const {category:cate,...formData} = form
+    let f = [areaId, deviceStyle, projectId].every(s => Number.isInteger(s)) && typeof category=="string"
     if(!f) return;
     initparams.current = {
       projectId,
@@ -206,6 +211,7 @@ export default function Index(props) {
       deviceStyle,
       pageNum: current,
       pageSize,
+      category,
       ...formData,
     }
    
@@ -240,7 +246,7 @@ export default function Index(props) {
   const { tableProps, search, run } = useAntdTable(getOverviewData, {
     form,
     defaultPageSize: 12,
-    refreshDeps: [areaId, deviceStyle, projectId],
+    refreshDeps: [areaId, deviceStyle, projectId,category],
   });
 
   const { submit } = search; 
@@ -365,7 +371,6 @@ export default function Index(props) {
                 style={{
                   width: laptop ? 180 : 200,
                 }}
-                onChange={submit}
               >
                 <Select.Option value={""}>{i18t("comm","All",{text:""})}</Select.Option>
                 {optionsGateway.map((item, index) => {
