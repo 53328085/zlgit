@@ -166,12 +166,13 @@ export const CTimeline = styled(Timeline)`
 `
 export const TopologySty = styled.div`
 position: relative;
-flex: 1;
+//width: 618px;
 display: flex;
 flex-direction: column;
 height: 680px;
 color: #fff;
-.digital {
+overflow: hidden;
+ .digitalup {
     width: 162px;
  //   height: 96px;
     background: rgba(0,0,0,0.5);
@@ -198,26 +199,12 @@ color: #fff;
             transform: translate(-36px, 110px); 
         }
   }
-  .digital.downleft{
-    align-self: flex-start;
-    transform: translate3d(-16px, 78px, 10px);
-    &::before { 
-        transform: translate(-36px, 122px); 
-    }
-  }
-  .digital.downright{
-    align-self: flex-start; 
-    transform: translate3d(16px, 78px, 10px);
-    &::before { 
-        transform: translate(150px, 42px); 
-    }
   
-  }
 .up {
     flex-basis:308px;
   display: flex;
  // align-items: center; 
-  border-bottom: 2px dashed #FF6021;
+ // border-bottom: 2px dashed #FF6021;
 // justify-content: center;
  // flex-direction: column;
    justify-content: flex-end;
@@ -265,13 +252,19 @@ color: #fff;
  
 }
 .down {
-    flex:1;
   display: flex;
- // flex-wrap: nowrap;
- // overflow-x: auto;
- justify-content: space-around;
+ flex-wrap: nowrap;
+  overflow-x: auto;
+  justify-content: space-around;
   flex:1;
-  overflow: hidden;
+  overflow-x: auto;
+  border-top: 2px dashed #FF6021;
+  column-gap: 16px;
+  .meters {
+    display: flex;
+    flex:0 0 290px;
+  //  width: 280px;
+    justify-content: space-between;
    .meter{
      flex-basis: 90px;
      display: flex;
@@ -313,5 +306,53 @@ color: #fff;
     }
      }
    }
+   .digital {
+    width: 162px;
+ //   height: 96px;
+    background: rgba(0,0,0,0.5);
+    border-radius: 6px;
+    border: 1px solid #46C7FF;
+    display: flex;
+    flex-direction: column;
+    padding: 6px 12px;
+    position: relative;
+    align-self: flex-end;
+    transform: translate(10px, -20px);
+    justify-content: space-between;
+     align-self: flex-start;
+    transform: translate3d(-10px, 78px, 10px);
+    .item{
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+    &::before {
+            content: '';
+            display: block; 
+            width: 24px;
+            height: 2px;
+            border-bottom: 2px dashed #46C7FF;
+            transform: translate(-36px, 122px); ; 
+        }
+  }
+/*   .digital.downleft{
+    align-self: flex-start;
+    transform: translate3d(-16px, 78px, 10px);
+    &::before { 
+        transform: translate(-36px, 122px); 
+    }
+  } */
+ }
+ .last.meters {
+     
+    .digital{
+    align-self: flex-start; 
+    transform: translate3d(16px, 78px, 10px);
+    &::before { 
+        transform: translate(150px, 42px); 
+    }
+  
+  }
+ }
 }
 `;

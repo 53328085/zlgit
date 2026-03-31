@@ -7,12 +7,12 @@ import { TopologySty } from "../style"
 import { Paramscontext } from '../context'
 import { useQueryTopologyDiagramInfo } from "../api"
 import imgurl from '../imgs'
-
+import Meter from "./meter"
 export default function Index() {
   const navigate = useNavigate()
   const { areaId, stationName, projectId } = useContext(Paramscontext)
   const [datas, setDatas] = useState({})
-
+  const {loadDevice,onGridDevice,storageDevice} = datas
   const getData = async () => {
     try {
       let params = {
@@ -72,7 +72,7 @@ export default function Index() {
             </div>
 
           </div>
-          <div className='digital'>
+          <div className='digitalup'>
             <div className="item">
               <span>A相电压</span><span>{datas?.onGridDevice?.ua}(V)</span>
             </div>
@@ -91,6 +91,11 @@ export default function Index() {
           </div>
         </div>
         <div className='down'>
+          {
+            storageDevice?.map?.((d,idx)=><Meter datas={d} key={d.sn} index={idx}  />)
+          }
+         {/*   <div className="meters"> 
+           
           <div className="meter">
             <div className="upm">
               <Button type="primary">储能总表</Button>
@@ -106,7 +111,7 @@ export default function Index() {
             </div>
 
           </div>
-          <div className='digital downleft'>
+          <div className='digital'>
            
               <div className="item">
               <span>A相电压</span><span>{datas?.storageDevice?.ua}(V)</span>
@@ -124,7 +129,9 @@ export default function Index() {
 
 
           </div>
-          <div className='digital downright'>
+          </div> */}
+          <div className="meters last"> 
+               <div className='digital'>
            
               <div className="item">
               <span>A相电压</span><span>{datas?.loadDevice?.ua}(V)</span>
@@ -157,6 +164,8 @@ export default function Index() {
             </div>
 
           </div>
+          </div>
+       
         </div>
       </TopologySty>
     </Titlelayout>
