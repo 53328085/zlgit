@@ -1,9 +1,10 @@
-import React ,{useState} from 'react'
-import {Select} from 'antd'
+import React ,{useState} from 'react' 
 import {useFullscreen} from 'ahooks'
 import imgurl from "../icon"
 import {useTime,areas} from '../data'
-import {Cselect} from '../style'
+import {Cselect,Dropsty} from '../style'
+import { body } from '@pages/largscreen/api'
+
 export default function index({pgref,setMeterType,meterType }) {
      const [value, setValue] = useState({label:"正泰华东产业园",value:"1"}) 
      const [isFullscreen, { enterFullscreen, exitFullscreen }] = useFullscreen(pgref)
@@ -24,7 +25,8 @@ export default function index({pgref,setMeterType,meterType }) {
             </div>
          <div className="opt">
             <div className="btns">
-                 <Cselect options={areas} value={value} onChange={setValue}  dropdownStyle={{backgroundColor: "rgba(255,255,255,0.4)"}}   labelInValue={true}></Cselect>
+              <Dropsty/>
+                 <Cselect options={areas} value={value} onChange={setValue}  popupClassName={{backgroundColor: "rgba(0,0,0,0.85)"}} getPopupContainer={triggerNode =>  triggerNode.parentNode}  labelInValue={true}></Cselect>
             </div>
             <div className="date">
             <div className='time'>{timeformat}</div>

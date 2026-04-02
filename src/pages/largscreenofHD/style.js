@@ -1,4 +1,4 @@
-import styled, { css } from "styled-components";
+import styled, { css, createGlobalStyle } from "styled-components";
 import { Select } from "antd";
 import { colors } from "./data";
 import imgulr from "./icon";
@@ -167,6 +167,7 @@ export const Layoutcom = styled.div`
   );
   border-radius: 8px;
   color: #fff;
+  backdrop-filter: blur(6px);
   .chartwrap {
     flex: 1;
     display: flex;
@@ -357,12 +358,14 @@ export const Centerdown = styled.div`
     display: flex;
     flex-direction: column;
     row-gap: 8px;
-    .cols {
-      opacity: 0.5;
+    .cols { 
       color: #ffffff;
       display: grid;
       grid-template-columns: 40px 100px 1fr;
       grid-template-rows: 32px;
+      background: linear-gradient( 270deg, rgba(0, 122, 237, 0.32) 0%, rgba(31, 185, 189, 0.32) 100%);
+       align-items: center;
+       justify-items: center;
     }
   }
   .slider-container {
@@ -373,6 +376,9 @@ export const Centerdown = styled.div`
       grid-template-columns: 40px 100px 1fr;
       grid-template-rows: 32px;
       color: #ffffff;
+      align-items: center;
+      justify-items: center;
+    
       .imgbox {
         width: 24px;
         overflow: hidden;
@@ -392,8 +398,9 @@ export const Centerdown = styled.div`
       }
     }
 
-    .ant-carousel .slick-list .slick-slide:even > div > div.row {
-      background-color: rgba(13, 129, 180, 0.5);
+   .ant-carousel .slick-list .slick-slide:nth-of-type(odd) > div > div.row {
+      background: linear-gradient( 270deg, rgba(0, 122, 237, 0.32) 0%, rgba(31, 185, 189, 0.32) 100%);
+      
     }
   }
 `;
@@ -540,9 +547,13 @@ export const Rightdown = styled.div`
     grid-template-rows: 75px 1fr;
     row-gap: 12px;
     color: #ffffff;
+    align-items: center;
+    justify-items: center;
     .levelchart {
       display: grid;
      grid-template-columns: 1fr 2fr;
+     width: 100%;
+     height: 75px;
      .barchart {
       display: flex;
       height: 90px;
@@ -728,3 +739,39 @@ export const Btns = styled.div`
     }
   }
 `;
+export const Dropsty=createGlobalStyle`
+ .ant-select-dropdown,.ant-select-dropdown:fullscreen{
+  background: linear-gradient( 170deg, rgba(11,23,51,0.4) 0%, rgba(13,28,37,0.5) 100%);
+border-radius: 4px;
+border: 1px solid;
+border-image: linear-gradient(270deg, rgba(30, 80, 230, 1), rgba(20, 220, 200, 1)) 1 1;
+backdrop-filter: blur(8px);
+padding: 6px;
+>div{
+  width: 100%;
+  .ant-select-item-option-selected:not(.ant-select-item-option-disabled),.ant-select-item-option-active:not(.ant-select-item-option-disabled) {
+    background: rgba(30,80,230,0.6);
+    border-radius: 4px;
+  }
+  .ant-select-item-option {
+    color: #fff;
+    margin-bottom: 8px;
+  }
+}
+ }
+`
+export const Defempty= styled.div`
+  width: 380px;
+  height: 128px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: #fff;
+  background-image: url(${imgulr["noData"]});
+  background-size: 100% 100%;
+  background-repeat: no-repeat;
+  span {
+    font-size: 12px;
+    transform:translateY(50%);
+  }
+`

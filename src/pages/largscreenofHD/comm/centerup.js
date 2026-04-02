@@ -24,23 +24,23 @@ export default function Index() {
                  break;
                 case 639: // 研发楼
                  item.x= 661;
-                 item.y= 510;
+                 item.y= 550;
                  break;
                  case 640: // 宿舍楼F
-                 item.x= 1041;
-                 item.y= 223;
+                 item.x= 1048;
+                 item.y= 195;
                  break;
                   case 641: // 宿舍楼G
-                 item.x= 1192;
-                 item.y= 283;
+                 item.x= 1132;
+                 item.y= 250;
                  break;
                   case 661: // E厂房
-                 item.x= 915;
-                 item.y= 355;
+                 item.x= 815;
+                 item.y= 294;
                  break;
                   case 662: // D厂房
-                 item.x= 783;
-                 item.y= 477;
+                 item.x= 650;
+                 item.y= 460;
                  break;
 
               }
@@ -60,7 +60,7 @@ export default function Index() {
    if(len>0) {
       timer = setInterval(()=>{
         
-          if(count>=len) {
+          if(count>=len-1) {
             count=0
           }
          count++
@@ -76,7 +76,7 @@ export default function Index() {
   return (
     <Centerup>
        {
-        data?.map((d,i)=> <Positioncom key={d.id} visiable={index == i} {...d}></Positioncom>)
+        data?.map((d,i)=> <Positioncom key={d.id} visiable={index==i} {...d}></Positioncom>)
        }
     </Centerup>
   );

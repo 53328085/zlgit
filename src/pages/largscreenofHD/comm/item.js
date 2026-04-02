@@ -9,7 +9,7 @@ export default function Index({name, value}) {
   return (
     <div className="item">
        <div className="text"> <div className='title'>{title}</div>
-       <div className='value'>{value}</div></div>
+       <div className='value'>{Math.round(value) }</div></div>
       
        <div className="icon">
  <img src={imgurl[name]} alt="" className='img' />

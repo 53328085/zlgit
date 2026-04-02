@@ -9,6 +9,7 @@ import Layoutcom from './layout'
 import {useGetHuaDongAlarmInfo} from '../api'
 import {useGetData,usecustompie} from '../usehook'
 import nodata from "../icon/noData.png"
+import Defempty from "./empty"
   const settings = {
     dots: false,
     infinite: true,
@@ -25,7 +26,12 @@ import nodata from "../icon/noData.png"
 export default function Index() {
  
   const datas = useGetData(useGetHuaDongAlarmInfo)
-  const {levelNums=[],alarmInfos=[]} =  isObject(datas) ? datas : {}
+  let {levelNums=[],alarmInfos=[]} =  isObject(datas) ? datas : {}
+  levelNums = levelNums?.length>0 ? levelNums : [
+    {level:1,num:0},
+    {level:2,num:0},
+    {level:3,num:0},
+  ]
   let chartDatas=levelNums?.map?.((d,i)=>({
     value:d.num,
     name:d.level,
@@ -51,7 +57,7 @@ export default function Index() {
   return (
     <Layoutcom title="告警信息"     flex="283px" pd="0px 20px 20px 20px">
         <Rightdown>
-       {levelNums?.length  ?  <div className="levelchart">
+        <div className="levelchart">
         
            <div className="barchart">
              <Ichart custoption={baroption} emptyStyle={{height:"60px"}} />
@@ -67,9 +73,9 @@ export default function Index() {
             
           </div> 
           </div>  
-          : <Cempty image={nodata} imgStyle={{height:"75px"}} tip={"暂无告警数据"} ></Cempty> 
-    }
-         <div className="contentwrap">
+          
+    
+       {alarmInfos?.length>0? <div className="contentwrap">
           <div className="cols">
             <div>设备名称</div>
             <div>告警信息</div>
@@ -87,7 +93,7 @@ export default function Index() {
              ))}
           </Carousel>
           </div>
-         </div>
+         </div> : <Defempty tip="暂无告警数据" />}  
  
         </Rightdown>
     </Layoutcom>

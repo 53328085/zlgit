@@ -16,7 +16,7 @@ import { Apimethod } from "@api/api.js"
 import { isObject } from '@com/usehandler'
 import moment from 'moment'
  
-const { useQueryWarningDetails } = new Apimethod( // 获取总览图及点位
+const { useQueryWarningDetails } = new Apimethod( // 成都银犁项目 警报声
   "post",
   "Safe/SafeRuntime/QueryWarningDetails"
 );

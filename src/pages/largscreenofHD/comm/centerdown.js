@@ -63,7 +63,7 @@ export default function Index() {
           
           </div>
          <div className="slider-container">
-         <Carousel autoplay {...settings} style={{height: 160 }}>
+         <Carousel autoplay  {...settings} style={{height: 160 }}>
              { data?.rank?.map?.((d,index)=>(
               <div className="row" key={d.name}>
                 <div className={index<3 ? "imgbox" : "circle"}> {index<3 ? <img src={imgurl[imgnames[index]]} className="img"></img>: index+1 }</div>

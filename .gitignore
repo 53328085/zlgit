@@ -43,3 +43,4 @@ package.json
 /yarn.lock
 /src/pages/test/fform.js
 /build.zip
+/src/setupProxy.js

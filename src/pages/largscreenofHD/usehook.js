@@ -39,13 +39,14 @@ export function usebarline({ datas, type }) {
     2: ["本月冷水", "同期冷水"],
     7: ["本月热水", "同期热水"],
   }[type];
+  
   return useMemo(() => {
     return {
       type: 5,
       grid: {
         left: 0,
         right: 0,
-        top: 16,
+        top: 24,
         bottom: 16,
         containLabel: true,
       },
@@ -72,12 +73,34 @@ export function usebarline({ datas, type }) {
         },
         axisLabel: {
           color: "#fff",
+          fontSize: 11,
         },
       },
 
       yAxis: {
-        show: false,
-      },
+          name:  type==1 ?  "kWh" : "m³",
+          nameLocation: "end",
+          nameGap:8,
+          nameTextStyle: {
+            color: "#fff",
+            fontSize: 11, 
+          
+          },
+          axisLine: {
+            show: false,
+          },
+          axisTick: {
+            show: false,
+          },
+          axisLabel: {
+            color: "#fff",
+            show: true,
+            fontSize: 11,
+          },
+          splitLine: {
+            show: false,
+          },
+        },
       // 提示框
       tooltip: {
         show: false,
@@ -152,11 +175,21 @@ export function usebarlineright2nd({ datas }) {
         axisTick: {
           show: false,
         },
+        axisLabel: {
+          show: true,
+          color: "#fff",
+          fontSize: 11,
+        },
       },
 
       yAxis: [
         {
           name: "kWh",
+          nameTextStyle: {
+            align: "right",
+            color: "#fff",
+            fontSize: 11,
+          },
           axisLine: {
             show: false,
           },
@@ -166,6 +199,7 @@ export function usebarlineright2nd({ datas }) {
           axisLabel: {
             color: "#fff",
             show: true,
+            fontSize: 11,
           },
           splitLine: {
             show: false,
@@ -173,6 +207,11 @@ export function usebarlineright2nd({ datas }) {
         },
         {
           name: "kWh",
+           nameTextStyle: {
+            align: "right",
+            color: "#fff",
+            fontSize: 11,
+          },
           axisLine: {
             show: false,
           },
@@ -182,7 +221,9 @@ export function usebarlineright2nd({ datas }) {
           axisLabel: {
             color: "#fff",
             show: true,
+            fontSize: 11,
           },
+         
           splitLine: {
             show: false,
           },

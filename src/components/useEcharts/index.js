@@ -2,6 +2,7 @@
 import { message } from "antd";
 import _ from 'lodash'
 import * as echarts from "echarts";
+import 'echarts-gl';
 import 'echarts-liquidfill'
 import store from '@redux/store'
 import {i18t} from "@com/useButton"

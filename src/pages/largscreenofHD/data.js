@@ -122,7 +122,7 @@ export function useOpt(datas) {
 export function useLineopt({ datas }) {
   const lineopt = useMemo(() => {
     let { x = [], y = [], y1 = [], y2 = [] } = isObject(datas) ? datas : {};
-    y = y.map((item) => Number.parseFloat(item));
+    y = y.map((item) => Number.parseFloat(item)/1000);
     y1 = y1.map((item) => Number.parseFloat(item));
     y2 = y2.map((item) => Number.parseFloat(item));
     console.log("y1", y1);
@@ -224,15 +224,18 @@ export function useLineopt({ datas }) {
       },
       yAxis: [
         {
-          name: "kWh",
+          name: "MWh",
           nameTextStyle: {
             align: "right",
+            color: "#fff",
+            fontSize: 11,
           },
           axisLine: {
             show: false,
           },
           axisLabel: {
             color: "#fff",
+            fontSize:11,
           },
           splitLine: {
             show: false,
@@ -242,12 +245,15 @@ export function useLineopt({ datas }) {
           name: "m³",
            nameTextStyle: {
             align: "right",
+            color: "#fff",
+            fontSize: 11,
           },
           axisLine: {
             show: false,
           },
           axisLabel: {
             color: "#fff",
+            fontSize:11,
             // formatter: (value) => {
             //   return value == Math.max.apply(null, y1) ? value : null;
             // },
@@ -275,6 +281,7 @@ export function useLineopt({ datas }) {
           hideOverlap: true,
           interval: "auto",
           color: "#fff",
+          fontSize: 11,
         },
         data: x,
       },
@@ -319,6 +326,10 @@ export function usebarline({ datas }) {
         axisTick: {
           show: false,
         },
+        axisLabel:{
+          color:"#fff",
+          fontSize:11,
+        }
       },
 
       yAxis: {

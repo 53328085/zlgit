@@ -68,7 +68,7 @@ const handlermenu = (Meundata, id, homeMenuNO) => {
     if (!exclude.includes(item.no)) {
       siderDesignerMenus[key] = sidermenu.filter(m => m.parentNo == no)?.sort((a, b) => a.index - b.index)
     }
-  })
+  }) 
   const menus = {
     fullmenu: Meundata,
     designerMenus,
