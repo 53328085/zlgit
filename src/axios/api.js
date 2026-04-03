@@ -1020,9 +1020,9 @@ export class StorageDeviceDesigner {
     server.post(`/Storage/StorageEquipmentDesigner/Config?projectId=${projectId}&siteId=${siteId}&containerId=${containerId}&tab=${tab}`, params);
 
   //删除配置的储能设备、环境监控设备
-  static deleteStorageDeviceApi = (projectId, containerId,sn) =>
+  static deleteStorageDeviceApi = (projectId,type, containerId,sn) =>
     server.delete(
-      `/Storage/StorageEquipmentDesigner/Delete?projectId=${projectId}&containerId=${containerId}&sn=${sn}`
+      `/Storage/StorageEquipmentDesigner/Delete?projectId=${projectId}&type=${type}&containerId=${containerId}&sn=${sn}`
     );
 }
 
