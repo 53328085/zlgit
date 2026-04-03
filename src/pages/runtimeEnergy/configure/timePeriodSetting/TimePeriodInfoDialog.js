@@ -8,7 +8,7 @@ import {
   DefaultFormInfo, getStepOptions,
   getTimePeriodOptions,
   getTimePeriodTypeOptions
-} from '@pages/energy/configure/timePeriodSetting/Constant'
+} from '@pages/runtimeEnergy/configure/timePeriodSetting/Constant'
 import { useSelector } from 'react-redux'
 import { selectProjectId } from '@redux/systemconfig'
 import { EnergyManagement } from '@api/api'

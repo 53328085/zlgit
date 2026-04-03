@@ -1,26 +1,26 @@
 /*  能源管理 */
 import {lazy} from 'react'
 
-const Summary = lazy(() => import("../pages/energy/summary"))
-const Synthetical = lazy(() => import("../pages/energy/synthetical"))
-const Assorting = lazy(() => import("../pages/energy/assorting"))
-const Ranking= lazy(() => import("../pages/energy/ranking"))
-const TimePeriodEnergy = lazy(() => import("../pages/energy/timePeriodEnergy"))
-const Report = lazy(() => import("../pages/energy/report"))
+const Summary = lazy(() => import("../pages/runtimeEnergy/summary"))
+const Synthetical = lazy(() => import("../pages/runtimeEnergy/synthetical"))
+const Assorting = lazy(() => import("../pages/runtimeEnergy/assorting"))
+const Ranking= lazy(() => import("../pages/runtimeEnergy/ranking"))
+const TimePeriodEnergy = lazy(() => import("../pages/runtimeEnergy/timePeriodEnergy"))
+const Report = lazy(() => import("../pages/runtimeEnergy/report"))
 
 
-const Direction = lazy(() => import("../pages/energy/direction"))
-const Analysis = lazy(() => import("../pages/energy/analysis"))
-const Quota = lazy(() => import("../pages/energy/quota"))
-const Comm = lazy(() => import("../pages/energy/comm"))
-const Cost = lazy(() => import("../pages/energy/cost"))
-const LightingC = lazy(() => import("../pages/energy/lingingC") )
-const Streetlamp = lazy(() => import("../pages/energy/streetLamp") )
-const Air = lazy(() => import("../pages/energy/air"))
-const Streetlight = lazy(() => import("../pages/energy/light"))
-const Runreport = lazy(() => import("../pages/energy/runreport"))
-const Region = lazy(() =>import("../pages/energy/region"))
-const Device = lazy(() =>import("../pages/energy/device"))
+const Direction = lazy(() => import("../pages/runtimeEnergy/direction"))
+const Analysis = lazy(() => import("../pages/runtimeEnergy/analysis"))
+const Quota = lazy(() => import("../pages/runtimeEnergy/quota"))
+const Comm = lazy(() => import("../pages/runtimeEnergy/comm"))
+const Cost = lazy(() => import("../pages/runtimeEnergy/cost"))
+const LightingC = lazy(() => import("../pages/runtimeEnergy/lingingC") )
+const Streetlamp = lazy(() => import("../pages/runtimeEnergy/streetLamp") )
+const Air = lazy(() => import("../pages/runtimeEnergy/air"))
+const Streetlight = lazy(() => import("../pages/runtimeEnergy/light"))
+const Runreport = lazy(() => import("../pages/runtimeEnergy/runreport"))
+const Region = lazy(() =>import("../pages/runtimeEnergy/region"))
+const Device = lazy(() =>import("../pages/runtimeEnergy/device"))
 export let runtimeEnergy = {
     '010901': Summary, // 概述
     '010902': Synthetical, // 园区能耗

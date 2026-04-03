@@ -18,7 +18,7 @@ import {
   DefaultOptions, DefaultSingleOptions,
   getRightTableColumns,
   getTableColumns
-} from '@pages/energy/timePeriodEnergy/Constant'
+} from '@pages/runtimeEnergy/timePeriodEnergy/Constant'
 import { ExportExcel } from '@com/useButton'
 
 const { getTimePeriodEnergyApi, getLastTimePeriodInfoApi } = energyShare

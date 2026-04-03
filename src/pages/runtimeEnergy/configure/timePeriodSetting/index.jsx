@@ -6,11 +6,11 @@ import { CustButton } from '@com/useButton'
 import UserTable from '@com/useTable'
 import { useMemoizedFn, useRequest } from 'ahooks'
 import { useRef, useState } from 'react'
-import { getColumns } from '@pages/energy/configure/timePeriodSetting/Constant'
+import { getColumns } from '@pages/runtimeEnergy/configure/timePeriodSetting/Constant'
 import { selectProjectId } from '@redux/systemconfig'
 import { useSelector } from 'react-redux'
 import { EnergyManagement } from '@api/api'
-import TimePeriodInfoDialog from '@pages/energy/configure/timePeriodSetting/TimePeriodInfoDialog'
+import TimePeriodInfoDialog from '@pages/runtimeEnergy/configure/timePeriodSetting/TimePeriodInfoDialog'
 import { isArray } from 'lodash'
 
 const ContentView = styled.div`

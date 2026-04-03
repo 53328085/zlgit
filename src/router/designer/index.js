@@ -11,7 +11,7 @@ const Electric = lazy(() => import("@pages/electric/configure/index"))
 //const Distribution = lazy(() => import("@pages/distribution/configure/index"))
 
 const Distribution = lazy(() => import("@pages/distribution/index"))
-const Energy = lazy(() => import("@pages/energy/configure/index"))
+ 
 
 const Devops = lazy(() => import("@pages/devops/configure/index"))
 
