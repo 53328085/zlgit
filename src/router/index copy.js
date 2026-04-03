@@ -92,10 +92,6 @@ const lazyLoad = (moduleName) => {
   return <Module />;
 }
 
-const lazyLoadsub = ({st,nd, key,label} ) => {
-  const Module = lazy(() => import(`@pages/${st}/${nd}/${key}`));
-  return <Module pagename={label} />;
-}
 const loginrouter =  [{
   path: "/login",
   element: <Login />
@@ -246,24 +242,18 @@ const loginrouter =  [{
 
 ];
 
-const getNestRout = (sider,routes,st) => {
- // console.log(sider)
+const getNestRout = (sider,routes) => {
+//  console.log(sider)
 //  console.log(routes)
   let menus = []
   if (Array.isArray(sider) && sider.length > 0) {
     sider.forEach(r => {
-       
-      let {no, key, label, children} = r;
+      // /console.log(r,routes)
+      let {no, key, label} = r;
       let Com =routes ? routes[no] : Emptycom;
-      if(Array.isArray(children) && children.length > 0) {
-        let submenus =  children.map((c)=>({path: key+"/"+c.key ,element:lazyLoadsub({...c,nd:key,st})}))
-        menus = menus.concat(submenus)
-      }else  if (Com) {
-         menus.push({path: key, element: <Com pagename={label} />})
-      }
+      if (Com) menus.push({path: key, element: <Com pagename={label} />})
      })
   }
- // console.log("menus",menus)
   return menus
 }
 function useRoute() { // 重写路由
@@ -277,7 +267,7 @@ function useRoute() { // 重写路由
    }];
   const {runMenus, designerMenus, siderDesignerMenus, siderRunMenus } = useSelector(Menus) || {} // 登录页面时会报错
   const bigScreen = useSelector(currentscreen) || {}
- 
+
   runMenus?.forEach(r => {
     let {no, key} = r;
     let Com = components[no];
@@ -297,7 +287,7 @@ function useRoute() { // 重写路由
       }) : RunRoute.push( {
         path: key,
         element: <Com><Navigate to={siderRunMenus[key]?.[0]?.key} replace={true}></Navigate> </Com>,
-        children: getNestRout(sider, nestroute,key)
+        children: getNestRout(sider, nestroute)
       })
     }
   })

@@ -42,7 +42,7 @@ const MiconSet = ({iconname}) => { // 设计态
 /*   siderRunMenus: null, // 项目 sider
         siderDesignerMenus: null, // 设置 sider */
 
-
+const mixkey =(itme,key)=>({...itme,key:key+"/"+itme.key})
         
 export default function Sider() {
   const navigate = useNavigate()
@@ -67,7 +67,7 @@ export default function Sider() {
 
   const [path, setPath] = useState('')
 
-   console.log("menus",menus)
+ //  console.log("menus",menus)
 /*   const Showimg = () => {
     let {primary} = location.state || {}   
     let imgsrc = config ? imgurl.config : imgurl[primary]
@@ -91,7 +91,7 @@ export default function Sider() {
       dispatch(getisDistribution(primary === 'runtimeDistribution'))
       setPath(primary)
       let sidermenu = config ? siderDesignerMenu[primary] : siderRunMenu[primary];
-      let sidermenus = sidermenu?.map(({no, label, key,children=[]}) => config ? {no, label,key, children:children?.length>0 ? children : null, icon: <MiconSet iconname={key}  />} : {no, label,key, children:children?.length>0 ? children : null, icon: <Micon iconname={key}  />}) || [];        
+      let sidermenus = sidermenu?.map(({no, label, key,children=[]}) => config ? {no, label,key, children:children?.length>0 ? children.map(c=>mixkey(c,key)) : null, icon: <MiconSet iconname={key}  />} : {no, label,key, children:children?.length>0 ? children.map(c=>mixkey(c,key)) : null, icon: <Micon iconname={key}  />}) || [];        
      setMenus(sidermenus)
       Setkey(nested) 
     } catch (error) {
@@ -100,7 +100,8 @@ export default function Sider() {
   
   },[location, config, siderDesignerMenu,siderRunMenu])
 
-  const onSelect = ({key}) => {       
+  const onSelect = ({key,selectedKeys}) => { 
+     console.log(key,selectedKeys)      
      let label = menus?.find(item => item.key == key)?.label
      Setkey(key)
      let url;

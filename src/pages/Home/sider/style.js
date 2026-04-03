@@ -36,7 +36,7 @@ export const Cmenu = styled(Menu)`
     overflow-x: hidden;
    }
   
-   .ant-menu-item,.ant-menu-submenu.ant-menu-submenu-inline {
+   .ant-menu-item {
      padding-left: 10px !important;
      display: flex;
      align-items: center;
@@ -146,8 +146,30 @@ export const Cmenu = styled(Menu)`
      }
    }
    .ant-menu-submenu.ant-menu-submenu-inline{
+     padding-left:10px;
     .ant-menu-submenu-title{
-        
+       padding-left: 0px !important;
+       .ant-menu-submenu-arrow{
+        color: #fff;
+       }
+    }
+    .ant-menu.ant-menu-sub.ant-menu-inline {
+        background-color: transparent;
+        margin-left:9px;
+        padding-left: 19px;
+        .ant-menu-item{
+            width: 150px;
+           .ant-menu-title-content {
+             padding-left: 0px;
+           }
+        }
+    }
+   }
+   .ant-menu-submenu.ant-menu-submenu-inline.ant-menu-submenu-active.ant-menu-submenu-selected {
+    .ant-menu-submenu-title{ 
+       .ant-menu-submenu-arrow{
+        color: ${props => props.theme.primaryColor};
+       }
     }
    }
 `

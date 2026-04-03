@@ -439,7 +439,7 @@ const settheme = async (themeId) => {
     //  userId,
       projectId,
      }
-    console.log(projectId)
+ //   console.log(projectId)
     let {success} = await  CustTheme.SelProjectTheme(params) // 选择项目主题
     if(success){
         getTheme()
@@ -473,7 +473,7 @@ const settheme = async (themeId) => {
   const onOk = () => {
     form.validateFields().then(() => {
       let {mobile, pwd, oldPwd} = form.getFieldsValue()
-      console.log(oldPwd)
+    //  console.log(oldPwd)
       Login.UpdateCurrentAccount({mobile, pwd, oldPwd}).then(res => {
          let {success, errMsg} = res
          if(success) {
@@ -486,7 +486,7 @@ const settheme = async (themeId) => {
       message.warning(e.message || '保存失败', 1)
     })
   }
-  console.log(router)
+ // console.log(router)
   const back = () => {
     try {
       const {jumpath, substate, menu={}} = router
