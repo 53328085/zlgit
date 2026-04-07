@@ -42,14 +42,14 @@ const MiconSet = ({iconname}) => { // 设计态
 /*   siderRunMenus: null, // 项目 sider
         siderDesignerMenus: null, // 设置 sider */
 
-const mixkey =(itme,key)=>({...itme,key:key+"/"+itme.key})
-        
+const mixkey =(itme,key)=>({...itme,key:key+"/"+itme.key,title:itme.label})
+         
 export default function Sider() {
   const navigate = useNavigate()
   const location = useLocation()
   const config = useSelector(configState)
   const siderRunMenu = useSelector(siderRunMenus)
-   
+  console.log(location)
   const siderDesignerMenu = useSelector(siderDesignerMenus)
   const {laptop} = useSelector(adaptation)
   const curtheme = useSelector(themeColor)
@@ -91,7 +91,7 @@ export default function Sider() {
       dispatch(getisDistribution(primary === 'runtimeDistribution'))
       setPath(primary)
       let sidermenu = config ? siderDesignerMenu[primary] : siderRunMenu[primary];
-      let sidermenus = sidermenu?.map(({no, label, key,children=[]}) => config ? {no, label,key, children:children?.length>0 ? children.map(c=>mixkey(c,key)) : null, icon: <MiconSet iconname={key}  />} : {no, label,key, children:children?.length>0 ? children.map(c=>mixkey(c,key)) : null, icon: <Micon iconname={key}  />}) || [];        
+      let sidermenus = sidermenu?.map(({no, label, key,children=[]}) => config ? {no, label,key,title:label, children:children?.length>0 ? children.map(c=>mixkey(c,key)) : null, icon: <MiconSet iconname={key}  />} : {no, label,key,title:label, children:children?.length>0 ? children.map(c=>mixkey(c,key)) : null, icon: <Micon iconname={key}  />}) || [];        
      setMenus(sidermenus)
       Setkey(nested) 
     } catch (error) {
@@ -100,9 +100,8 @@ export default function Sider() {
   
   },[location, config, siderDesignerMenu,siderRunMenu])
 
-  const onSelect = ({key,selectedKeys}) => { 
-     console.log(key,selectedKeys)      
-     let label = menus?.find(item => item.key == key)?.label
+  const onSelect = ({item,key}) => {  
+     let label =item?.props?.title??""
      Setkey(key)
      let url;
      if (config) {
@@ -110,10 +109,11 @@ export default function Sider() {
      }else {
       url = `/index/${path}/` + key
      }
+     let nested = key?.split?.("/")
     // dispatch(getPgTitle(label))
-     navigate(url, {state: {title: label, nested: key, primary: path}})
+     navigate(url, {state: {title: label, nested: nested?.[1]??nested?.[0], primary: path}})
   }
-
+  
   return (
     <Sdiv> 
        <Title/>
@@ -121,7 +121,7 @@ export default function Sider() {
        <ShowSide show={false} /> */}
        <div className='sidecontent'>
        <ShowSide   />
-       <Cmenu laptop={laptop} onClick={onSelect} selectedKeys={[key]} items={menus} mode="inline" rgb={rgb} rgba={rgba} path={path}></Cmenu>
+       <Cmenu laptop={laptop}  onClick={onSelect} selectedKeys={[key]} items={menus} mode="inline" rgb={rgb} rgba={rgba} path={path}></Cmenu>
        </div>
     </Sdiv>
   )

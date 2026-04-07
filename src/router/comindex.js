@@ -28,7 +28,7 @@ export default function Index() {
     return nesteds.includes(nested) ? {} : false
   }, [primary, nested]);
 
-  console.log("include", include)
+  console.log("nested", nested,"primary", primary)
 
   let includemodule = useMemo(() => {  // 需要显示搜索 ***（全部）的模块中排除的页面
     let primaries = {
@@ -71,7 +71,9 @@ export default function Index() {
       "light",
       "region",
       "comm",
-      'timePeriodEnergy'
+      'timePeriodEnergy',
+      "reportNh",
+      "reportZd",
     ],
     runtimeStorage: [ // 储能管理
       "storageOverview",
@@ -220,6 +222,22 @@ export default function Index() {
               custview: true,
             });
             break;
+          case "reportNh":{
+            setConfig({
+              energytype: true,
+              publicDate: true,
+               rangeDate: 45,
+              shiftNo: true,
+              gas: false,
+              custview: true,
+              alike:true,
+              showTime: {
+                format: 'HH:mm',
+                minuteStep: 15
+              }
+            });
+            break;
+          }
           case "direction":
             setConfig({
               energytype: true,

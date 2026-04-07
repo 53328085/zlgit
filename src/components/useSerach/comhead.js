@@ -11,17 +11,18 @@ import 'moment/locale/zh-cn';
 const { RangePicker } = DatePicker;
 import { SiteManagerDesigner, PCSMonitorRuntime, StorageContainerDesigner, Editapi, PhotovoltaicPowerGeneration, BMSRuntime } from '@api/api'
 import { filterProps } from '@com/usehandler'
+import { Serach } from "@com/comstyled"
 import {
   SyncOutlined,
 } from '@ant-design/icons';
-const { Link } = Typography
+
 import { publicdateType, Daterange, w88, viewopt, DefineDateRange ,disableDate} from "./data"
 import Enery from "./enery";
 import AreaLevel from './areas'
 import SubAreas from './subareas'
 
 const { FindContainerList } = StorageContainerDesigner  //储能柜
-
+const { Link } = Typography
 const Cform = styled(Form)`
     background: ${props => props.theme.isdark ? "dark" : "#fff"} ;
     padding: 7px 16px;
@@ -119,6 +120,12 @@ export default function UseSerach(props) {
   const [tankoptions, setTankoptions] = useState([])
   const [bmsoptions, setBmsoptions] = useState([])
 
+  const onSearch=(v)=>{
+    console.log(v)
+  }
+  const alike = (<Item name="alike" initialValue="">
+    <Serach onSearch={onSearch}></Serach>
+  </Item>)
   const getopti = async () => { // 站点选择
     try {
       let { success, data, errMsg } = await SiteManagerDesigner.FindSiteList(projectId, AreaID)
@@ -386,7 +393,7 @@ export default function UseSerach(props) {
   }
   const publicDate = <Space size={16}>
     <Form.Item name="publictype" initialValue={1}>
-      <Select options={publicdateType} style={{ width: "140px" }} onChange={changepublic}></Select>
+      <Select options={publicdateType} style={{ width: "88px" }} onChange={changepublic}></Select>
     </Form.Item>
     <Form.Item noStyle shouldUpdate={(cur, pre) => cur.publictype != pre.publictype}>
       {
@@ -397,7 +404,7 @@ export default function UseSerach(props) {
 
           if (type == 4) {
             return <Form.Item name="publicrangedate" initialValue={[moment().startOf("day"), moment().endOf("day")]}  >
-              <Daterange rangeDate={props.config?.rangeDate || 45} />
+              <Daterange rangeDate={props.config?.rangeDate || 45} showTime={props.config?.showTime} />
             </Form.Item>
           } else {
             return <Form.Item name="publicdate" initialValue={moment()}>
@@ -645,6 +652,7 @@ export default function UseSerach(props) {
         {
           props.config.publicDate && publicDate // 能源管理--公共能耗/分类能耗
         }
+        {props.config.alike && alike}  
         {
           props.config?.refresh && refresh //光伏发电
         }

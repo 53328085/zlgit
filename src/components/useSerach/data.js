@@ -27,7 +27,7 @@ export const w200 = {
 export const w88 = {
   width:88
 }
-export const Daterange = ({value, onChange,rangeDate=45}) => {
+export const Daterange = ({value, onChange,rangeDate=45,showTime=false}) => {
   const [dates, setDates] = useState(null);
   console.log("Daterange", rangeDate)
   const disabledDate =(current) => {
@@ -60,6 +60,7 @@ export const Daterange = ({value, onChange,rangeDate=45}) => {
       onCalendarChange={onCalendarChange}
       onChange={onChange}
       onOpenChange={onOpenChange} 
+      showTime={showTime}
     />
   );
 };
