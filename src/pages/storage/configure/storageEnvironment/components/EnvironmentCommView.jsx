@@ -69,7 +69,10 @@ export default function EnvironmentCommView ({ tab, areaId, projectId, container
   const onDialogDeleteClick = useMemoizedFn(async () => {
     if (!selectId) return
     try {
-      let { success, errMsg } = await StorageDeviceDesigner.deleteStorageDeviceApi(projectId, containerId, selectId)
+      let {
+        success,
+        errMsg
+      } = await StorageDeviceDesigner.deleteStorageDeviceApi(projectId, tab, containerId, selectId)
       if (success) {
         message.success('删除成功!')
         let current = Math.ceil((totalItem.current - 1) / PageSize) < curPage.current
