@@ -103,9 +103,7 @@ let {exparams} = useOutletContext()
     refreshDeps: [  projectId], 
   })
 
-  const config = {
-    height: 122, width: 390
-  }
+ 
 
   return (
     <Pagecount pd="0" bgcolor="none">

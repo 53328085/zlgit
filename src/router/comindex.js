@@ -276,7 +276,7 @@ export default function Index() {
       } else if (primary == "efficiencyAnalysis") {
         switch (nested) {
           case "wasteWaterMonitor":
-            setConfig({ shiftNo: true, publicDate: true,   isAreaId: false });
+            setConfig({ shiftNo: true, publicDate: true,   isAreaId: false,formsty:{gap:0} });
             break;
           default:
             setConfig({});

@@ -24,7 +24,7 @@ export const lineoptdoub = ({data,type}) => {
             },
             grid: {
                 left: "10px",
-                right: "150px",
+                right: "100px",
                 top: "40px",
                 bottom: "2px",
                 containLabel: true,
@@ -64,7 +64,7 @@ export const lineoptdoub = ({data,type}) => {
                     type: 'value',
                     name: "流量：L/S",
                     nameGap: 20,
-                    offset: 100,
+                    offset: 80,
                 }
             ],
             // 系列列表

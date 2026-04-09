@@ -610,7 +610,7 @@ export default function UseSerach(props) {
 
         </Item>
         }
-        {props.config?.wasteWater && wasteWaterDevice}
+      {/*   {props.config?.wasteWater && wasteWaterDevice} */}
         {props.config?.issubarea && <SubAreas setexparams={props.setexparams} />}
         {props.config?.isLevles && <AreaLevel setexparams={props.setexparams} />}
         {props.config?.isSite && site}
