@@ -12,42 +12,40 @@ import UserTree from "@com/useTree"
 import { getTime, isObject } from '@com/usehandler'
  
 import CModal from '@com/useModal'
-import { ExportExcel, CustButton,SetButton } from '@com/useButton'
+import { ExportExcel, CustButton } from '@com/useButton'
  
-import {   conscols,setcols, labelStyle, contentStyle } from '../data'
+import {   conscols, labelStyle, contentStyle } from '../data'
 import Ichart from '@com/useEcharts/Ichart';
 import {Contentbox,Chartwrap} from "../style"
 import {useQueryConsumeReport} from "../api"
 import {useBaript} from "../usehook"
-import Draggable from '../DraggableTransfer'
  
 
+ 
 export default function Index() {
 
   let { exparams  } = useOutletContext()
- 
+  console.log(exparams)
 
- const draggleRef = useRef()
+  const [dates, setDates] = useState([moment().startOf("day"), moment().endOf("hour")]);
+
+  const [startDateTime, setStartDateTime] = useState('')
+  const [endDateTime, setEndDateTime] = useState('')
+
+ 
 
  
   const [line, setLine] = useState(0)
   const [treeId, setTreeId] = useState()
-  let { areaId, projectId, publictype:type, publicdate:date, energytype, alike,publicrangedate } = exparams  
+  let { areaId, projectId, publictype:type, publicdate:date, energytype, alike,publicrangedate } = exparams // projectId = 30 安庆旺旺 项目定制 水电 只显示电能报表
 
   const [concolumns, setConcolumns] = useState(conscols)
-  let [dataSource, setDataSource]= useState([...conscols,...setcols])
-  let [targetKeys, setTargetKeys] = useState(["name","sn","total","sr","er","power"])
+ 
  
   const [detailHeaders, setDetailHeaders] = useState([])
   
 
   const [selectedRowKeys, setSelectedRowKeys] = useState([]);
-  const transferProps = useMemo(()=>({
-    dataSource,
-    targetKeys,
-    setTargetKeys,
-    
-  }),[dataSource, selectedRowKeys])
 
   const onSelectChange = (newkey, rows) => {
 
@@ -99,7 +97,10 @@ export default function Index() {
       filterInfo: alike,
       customTime: type== 4,
     }
- 
+    //新需求 除分类能耗外 都添加搜索
+    // let params = range ? {...query, customTime:true} : query
+    setStartDateTime(date?.startOf(dateType).format("YYYY-MM-DD HH:mm"))
+    setEndDateTime(date?.endOf(dateType).format("YYYY-MM-DD HH:mm"))
  
 
     conscols?.forEach(e => {
@@ -123,21 +124,14 @@ export default function Index() {
           let column = detailHeaders.map((col, index) => ({
             title: col, children: [
               {
-                title: "起始读数",
+                title: "读数",
                 dataIndex: col + 'r',
                 key: col + 'r',
                 width: 70,
                 fixed: index == last ? "right" : false
               },
-               {
-                title: "结束读数",
-                dataIndex: col + 'er',
-                key: col + 'er',
-                width: 70,
-                fixed: index == last ? "right" : false
-              },
               {
-                title: "用能(kWh)",
+                title: "用量",
                 dataIndex: col + 'v',
                 key: col + 'v',
                 width: 70,
@@ -146,13 +140,14 @@ export default function Index() {
 
             ]
           }))
+          // let column = detailHeaders.map(col => ({title: col, dataIndex: col, key: col,width: "96px", render: (text)=> Math.round(parseFloat(text))}))  
+
           setConcolumns([...conscols, ...column])
           counsume = detailDatas.map(item => {
-            let { detailValues, eDetailReadings,sDetailReadings } = item;
+            let { detailValues, detailReadings } = item;
             for (const [index, val] of detailHeaders?.entries()) {
               item[val + 'v'] = detailValues[index]
-              item[val + 'r'] = sDetailReadings[index]
-              item[val + 'er'] = eDetailReadings[index]
+              item[val + 'r'] = detailReadings[index]
             }
             return item
           })
@@ -175,6 +170,7 @@ export default function Index() {
   const { tableProps } = useAntdTable((params) => getTableData({ ...params, areaId, projectId, type, date, energytype, treeId,   line,    alike,publicrangedate  }), {
     defaultParams: [{ current: 1, pageSize: 18 }],
     refreshDeps: [areaId, projectId, type, date, energytype, treeId,  line,   alike,publicrangedate ],
+    throttleWait:300,
   })
   
 
@@ -202,9 +198,7 @@ export default function Index() {
       current: 1, pageSize: total, areaId, projectId, type, date, energytype, treeId,   alike, line,publicrangedate    })
   }, [total, concolumns, type, date, energytype, areaId, treeId,   line, alike,publicrangedate])
 
-  const onSet=()=>{
-    draggleRef.current.onDisplay()
-  }
+  
   return (
    
       <Pagecount showSearch={false} custserach={true} >
@@ -216,7 +210,6 @@ export default function Index() {
                   <Space>
                     <Tooltip title="最多选择三条信息进行对比"><CustButton onClick={oncompare}>勾选对比</CustButton></Tooltip>
                     <ExportExcel tb={tbref}   />
-                    <SetButton onClick={onSet} />
                   </Space>
              </div>
             
@@ -252,7 +245,7 @@ export default function Index() {
             </div>
           </Chartwrap>
         </CModal>
-         <Draggable ref={draggleRef} {...transferProps} />
+
       </Pagecount>
     
   )

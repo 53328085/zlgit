@@ -45,6 +45,7 @@ const Textscroll = styled.div`
   }
  
 `
+//  hallway
 const App = ({num=2}) => {
    const arr =[
     {

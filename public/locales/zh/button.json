@@ -83,5 +83,6 @@
   "open": "开",
   "close": "关",
   "quotaallocation": "定额配置",
-  "matchenergy": "同步去年能耗"
+  "matchenergy": "同步去年能耗",
+  "set":"设置"
 }

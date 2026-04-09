@@ -5,9 +5,9 @@ export const { useQueryConsumeRegion } = new Apimethod( // 实时抄表
   "Energy/DataReportRuntime/QueryConsumeRegion"
 );
 
-export const { useQueryConsumeHourTime } = new Apimethod( // 能耗抄表
+export const { useQueryConsumeReport } = new Apimethod( // 能耗抄表
   "post",
-  "Energy/DataReportRuntime/QueryConsumeHourTime"
+  "Energy/DataReportRuntime/QueryConsumeReport"
 );
 
 export const { useQueryConsumeByTime } = new Apimethod( // 分时能耗

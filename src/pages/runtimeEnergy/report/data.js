@@ -124,7 +124,8 @@ export let conscols = [   //  conscols 能耗报表
     width: 84,
     key: "name",
     fixed: 'left',
-    ellipsis:true
+    ellipsis:true,
+    disabled: true
   },
   {
     title: '设备编号',
@@ -132,6 +133,7 @@ export let conscols = [   //  conscols 能耗报表
     width: 134,
     key: "sn",
     fixed: 'left',
+    disabled: true
   },
   {
     title: '安装位置',
@@ -141,13 +143,35 @@ export let conscols = [   //  conscols 能耗报表
     ellipsis:true
   },
   {
-    title: '能耗(kWh)',
+    title: '总用能(kWh)',
     dataIndex: 'total',
     key: 'total',
     width: 92,
-    sorter: (a, b) => parseFloat(a?.total) - parseFloat(b?.total)
+    sorter: (a, b) => parseFloat(a?.total) - parseFloat(b?.total),
+    disabled: true
   },
 ]
+export const setcols =[ // 能耗报表 --设置
+  {
+     title: '起始读数', 
+     key: 'sr',
+  },
+  {
+     title: '结束读数', 
+     key: 'er',
+  },
+    {
+     title: '用能(kWh)', 
+     key: 'power',
+     disabled: true
+  },
+   {
+     title: '综合陪率', 
+     key: 'rate',
+     
+  },
+]
+ 
 const cellstyle = {
   textAlign: "center",
   color: "#fff"

@@ -84,5 +84,6 @@
   "close": "Close",
   "quotaallocation":"Quota Allocation",
   "matchenergy": "Match last year's energy consumption",
+  "set":"set",
   "z": ""
 }

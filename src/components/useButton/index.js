@@ -110,7 +110,15 @@ export  const Wtag = styled(Normal)`
    }
 
 `
-
+export const OperateBtn =styled(Button).attrs(props=>({
+  type: props.type || 'text'
+}))`
+&&{
+   display: flex;
+   align-items: center;
+   column-gap: 6px;
+}
+`
 export const i18warning = (text) => {  //  出错提示
     let msg = text || i18.t("dataerr", {ns: "comm"})  
     message.warning(msg)
@@ -584,10 +592,9 @@ export function ExportExcel({tb,  single=false,defined=false, byData=false, setI
   return (
     <div>
     <Dropdown menu={{items, onClick}} {...other}>
-        <Custbtn >
-      <img src={icon.export}  />
+       <OperateBtn icon={<img src={icon.exp} style={{width:18}} />} >
       {i18.t('export', {ns: "button"})}
-    </Custbtn>
+    </OperateBtn>
     </Dropdown>
     <CModal width={485} title={i18.t('Customexports', {ns: "button"})} ref={mref} onOk={onOk}  mold='cust' >
     <Form form={form} layout="vertical">
@@ -659,4 +666,9 @@ export function WegButton(props) {
        {props.children}
     </Wegbtn>
   );
+}
+export function SetButton(props){
+  return (
+    <OperateBtn icon={<img src={icon.setting} style={{width:18}} />}  type="text" {...props}> {i18.t('set', {ns: "button"})}</OperateBtn>
+  )
 }

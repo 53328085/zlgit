@@ -1,4 +1,5 @@
 import styled from 'styled-components'
+import {Transfer} from 'antd'
 export const Contentbox = styled.div`
   display: grid;
   grid-template-columns: 296px 1fr;
@@ -28,4 +29,20 @@ export const Chartwrap = styled.div`
     column-gap: 8px;
   }
 
+`
+export const CTransfer=styled(Transfer)` 
+ &&{
+     .ant-transfer-operation {
+        align-items: center;
+        gap:14px;
+        .ant-btn-icon-only.ant-btn-sm{
+            width: 42px;
+            height:36px;
+        }
+     }
+     .ant-transfer-list{
+        width:232px;
+        height: 302px;
+     }
+ }
 `

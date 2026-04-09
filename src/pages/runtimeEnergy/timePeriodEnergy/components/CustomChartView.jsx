@@ -1,7 +1,7 @@
 
 import * as echarts from "echarts";
 import { useEffect, useRef } from "react";
-
+import Cempty from '@com/useEmpty'
 // 将数值转换为HH:mm格式的时间字符串
 const formatTime = (value) => {
   const hours = Math.floor(value);
@@ -132,5 +132,8 @@ export default function CustomChartView({dailyChartData}) {
       };
     }, [dailyChartData]);
 
+  if(!Array.isArray(dailyChartData.data) || dailyChartData?.data?.length === 0) {
+    return <Cempty />
+  } 
   return <div ref={chartRef} style={{flex:1, height: "100%"}}>Custom Chart View</div>;
 }

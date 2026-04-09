@@ -1,22 +1,18 @@
 import { useMemo } from 'react';
 import { isObject } from "@com/usehandler"
 import moment from "moment"
-let date = moment().subtract(1, "days")
-const systematic =  Array.from({length: 24 }, (_,i)=> date.add(i, "m").format("HH:mm") )
-const effort = Array.from({length: 24 }, (_, i)=> Math.round(Math.random() * 100*i))
-const custom = Array.from({length: 24 }, (_, i)=> Math.round(Math.random() * 100*i))
-const cover = Array.from({length: 24 }, (_, i)=> Math.round(Math.random() * 100*i))
-console.log(systematic)
-export const lineoptdoub = (data, startTime, endTime) => {
+ 
+export const lineoptdoub = ({data,type}) => {
    // console.log("data", data)
     let opt = useMemo(() => {
 
-        // const { earlyData = [], lateData = [] } = data
-        // const earlyX = earlyData.map(item => item.x)
-        // const earlyY = earlyData.map(item => item.y)
-        // const lateX = lateData.map(item => item.x)
-        // const lateY = lateData.map(item => item.y)
-        // const early = startTime?.format?.('YYYY-MM-DD'), late = endTime?.format?.('YYYY-MM-DD');
+        const {x=[], y=[], y1=[],y2=[] } = isObject(data) ? data :{}
+        let end = {
+            1:10,
+            2:1,
+            3:0.1,
+            4:1
+        }[type]
 
         return {
             type: 5,
@@ -34,17 +30,20 @@ export const lineoptdoub = (data, startTime, endTime) => {
                 containLabel: true,
             },
             dataZoom: {
-                
+                start:0,
+                end,
+                maxSpan:end
             },
             xAxis: [
                 {
                     type: 'category',
                    // name: "",
                     boundaryGap: true,
-                    data: systematic,
+                    data: x,
                     axisLabel: {
                         formatter: (value, index) => {
-                           return value
+                           
+                           return moment(value,"YYYY-MM-DD HH:mm")?.format?.("HH:mm")
                         },
                         interval: "auto",
                     },
@@ -65,7 +64,7 @@ export const lineoptdoub = (data, startTime, endTime) => {
                     type: 'value',
                     name: "流量：L/S",
                     nameGap: 20,
-                    offset: 120,
+                    offset: 100,
                 }
             ],
             // 系列列表
@@ -74,26 +73,38 @@ export const lineoptdoub = (data, startTime, endTime) => {
                     name: "PH",
                     type: 'line', 
                     yAxisIndex: 0, // 对应第一个Y轴
-                    data: effort, // PH
-                    smooth: 3,
+                    data: y1, // PH
+                     progressive: 1000,          // 每批次渲染的图形元素数量
+                    progressiveThreshold: 5000, // 数据量超过此阈值时，才启用渐进式渲染
+                    // 可选：启用 LTTB 降采样
+                    sampling: 'lttb',
+                    symbol:"none",
                 },
                 {
                     name: "COD",
                     type: 'line', 
                     yAxisIndex: 1, // 对应第二个Y轴
-                    data: custom, // COD
-                    smooth: 3
+                    data: y2, // COD
+                     progressive: 1000,          // 每批次渲染的图形元素数量
+                    progressiveThreshold: 5000, // 数据量超过此阈值时，才启用渐进式渲染
+                    // 可选：启用 LTTB 降采样
+                    sampling: 'lttb',
+                    symbol:"none",
                 },
                 {
                     name: "流量",
                     type: 'line', 
                     yAxisIndex: 2, // 对应第三个Y轴
-                    data: cover, // 流量
-                    smooth: 3 
+                    data: y, // 流量
+                     progressive: 1000,          // 每批次渲染的图形元素数量
+                    progressiveThreshold: 5000, // 数据量超过此阈值时，才启用渐进式渲染
+                    // 可选：启用 LTTB 降采样
+                    sampling: 'lttb',
+                    symbol:"none",
                 }
             ]
         };
 
-    }, [])
+    }, [data])
     return opt
 }

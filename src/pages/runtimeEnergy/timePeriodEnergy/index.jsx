@@ -186,7 +186,7 @@ export default function Index () {
     //总计
     const total = `${proportion.map(p => parseFloat(p.value, 2)).reduce((a, b) => a + b, 0)?.toFixed(2)} kWh`
 
-    if(x.length > 0 && type === 1){
+    if(x.length > 0 && type === 1 &&  Array.isArray( markAreaData?.data) && markAreaData?.data?.length > 0){
       const data = []
       const pointXLabel = []
       const markArea = { data: [] }
@@ -213,6 +213,8 @@ export default function Index () {
         tableData.push({ dateTime:`${xStart}~${xEnd}`, timePeriod: valueLabel , totalEnergy: value })
       })
       setDailyChartData({ data, colorList, markArea, pointXLabel })
+    }else {
+      setDailyChartData({ data: [], markArea: [], pointXLabel:[] })
     }
 
     return [
@@ -228,7 +230,7 @@ export default function Index () {
             { name: 'y4', displayName: '深谷能耗' },
           ],
           source: [
-            x.map(time => time.replace(/^(\d):/, '0$1:')), // 格式化时间
+            x.map?.(time => time?.replace?.(/^(\d):/, '0$1:')), // 格式化时间
             y, y1, y2, y3, y4
           ],
           sourceHeader: false //false（默认值）：所有行/列都被视为纯数据
@@ -254,7 +256,8 @@ export default function Index () {
       },
       momYoy
     ]
-  }, [energyDataList, markAreaData])
+  }, [energyDataList, markAreaData,type])
+   
 
   /**
    * 根据日期、日期类型、下拉树节点id获取数据
@@ -377,7 +380,7 @@ export default function Index () {
         <div className="right-layout">
           <TitleLayout title="分时占比" key="pie" layout="flex">
             <div className="chart">
-              <Ichart {...pieOptions} />
+             {/*  <Ichart {...pieOptions} /> */}
             </div>
           </TitleLayout>
           <TitleLayout title="分时能耗同环比" key="momyoy">
