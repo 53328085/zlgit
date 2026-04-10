@@ -608,7 +608,7 @@ export const Rightdown = styled.div`
 
 export const Titlesty = styled.div`
   ${normal}
-  height: 42px;
+  flex:0 0 42px;
   justify-content: space-between;
   background-image: url(${imgulr["titbg"]});
   background-size: contain;

@@ -68,60 +68,63 @@ const DraggableTransfer = ({dataSource,targetKeys,setTargetKeys}, ref) => {
   const modref=useRef()
  
 
-
- // const [mockData] = useState(generateData());
- // const [targetKeys, setTargetKeys] = useState(selectedKeys);
+ const [changekey, setChangekey]=useState(targetKeys)
 
   // 处理穿梭变化
   const handleChange = (newTargetKeys) => {
-    setTargetKeys(newTargetKeys);
+    console.log("newTargetKeys",newTargetKeys)
+    setChangekey(newTargetKeys);
   };
 
   // 处理列表内移动
   const handleMove = (dragKey, hoverKey) => {
      
-   // const dragIndex = dataSource.findIndex(item => item.key === dragKey);
-   // const hoverIndex = dataSource.findIndex(item => item.key === hoverKey);
+    console.log("dragKey",dragKey,"hoverKey",hoverKey)
 
     // 判断拖拽项和目标项是否都在同一侧（都是源或都是目标）
-    const isDragInTarget = targetKeys.includes(dragKey);
-    const isHoverInTarget = targetKeys.includes(hoverKey);
+    const isDragInTarget = changekey.includes(dragKey);
+    const isHoverInTarget = changekey.includes(hoverKey);
 
     if (isDragInTarget === isHoverInTarget) {
       // 如果在同一侧，则进行排序
-      const newTargetKeys = [...targetKeys];
+      const newTargetKeys = [...changekey];
       const dragItemIndex = newTargetKeys.indexOf(dragKey);
       const hoverItemIndex = newTargetKeys.indexOf(hoverKey);
-      
+    //  console.log("dragItemIndex",dragItemIndex,"hoverItemIndex",hoverItemIndex)
       // 交换位置
       newTargetKeys.splice(dragItemIndex, 1);
       newTargetKeys.splice(hoverItemIndex, 0, dragKey);
       
-      setTargetKeys(newTargetKeys);
+      setChangekey(newTargetKeys);
     }
   };
 
   // 处理跨列表穿梭（通过 drop 事件触发）
   const handleTransfer = (keys) => {
-    const newTargetKeys = [...targetKeys];
+    const newTargetKeys = [...changekey];
     // 简单的穿梭逻辑：如果 key 不在 targetKeys 中，就添加
     keys.forEach(key => {
         if (!newTargetKeys.includes(key)) {
             newTargetKeys.push(key);
         }
     });
-    setTargetKeys(newTargetKeys);
+    setChangekey(newTargetKeys);
   };
+  const onOk=()=>{
+    console.log("targetKeys",changekey)
+    setTargetKeys(changekey)
+    modref.current.onCancel()
+  }
   useImperativeHandle(ref,()=>({
     onDisplay:()=> modref.current.onOpen()
   }))
   return (
-    <CModal title="表格设置"   ref={modref}   width={594} height={440} mold="cust" closable={true}>
+    <CModal title="表格设置"   ref={modref} onOk={onOk}   width={594} height={440} mold="cust" closable={true}>
     <DndProvider backend={HTML5Backend}>
       <CTransfer
         dataSource={dataSource}
         titles={['未选字段', '已选字段']}
-        targetKeys={targetKeys}
+        targetKeys={changekey}
         onChange={handleChange} 
         operationStyle={{width:74}}
         render={(item) => (
@@ -129,7 +132,7 @@ const DraggableTransfer = ({dataSource,targetKeys,setTargetKeys}, ref) => {
             item={item}
             onMove={handleMove}
             onTransfer={handleTransfer}
-            isTargetList={targetKeys.includes(item.key)}
+            isTargetList={changekey.includes(item.key)}
           />
         )}
         showSelectAll={false}

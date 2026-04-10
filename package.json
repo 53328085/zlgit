@@ -1,5 +1,5 @@
 {
-  "name": "NRSApp",
+  "name": "nrs-app",
   "version": "4.1.0",
   "private": true,
   "dependencies": {
@@ -8,7 +8,7 @@
     "@ant-design/charts": "^1.4.2",
     "@ant-design/icons": "^4.7.0",
     "@ant-design/plots": "^1.2.1",
-    "@ant-design/pro-components": "^1.1.21",
+    "@ant-design/pro-components": "1.1.x",
     "@babel/core": "^7.16.0",
     "@csstools/normalize.css": "^12.0.0",
     "@pmmmwh/react-refresh-webpack-plugin": "^0.5.3",

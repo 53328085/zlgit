@@ -116,7 +116,9 @@ export let conscols = [   //  conscols 能耗报表
     dataIndex: 'nodeName',
     key: "nodeName",
     fixed: 'left',
-    width: 100
+    width: 100, 
+    hideInSetting:true,
+     ellipsis:true, 
   },
   {
     title: '设备名称',
@@ -124,8 +126,8 @@ export let conscols = [   //  conscols 能耗报表
     width: 84,
     key: "name",
     fixed: 'left',
-    ellipsis:true,
-    disabled: true
+    ellipsis:true, 
+     hideInSetting:true,
   },
   {
     title: '设备编号',
@@ -133,22 +135,46 @@ export let conscols = [   //  conscols 能耗报表
     width: 134,
     key: "sn",
     fixed: 'left',
-    disabled: true
+    disabled: true,
+    hideInForm:false,
+    hideInSetting:true,
   },
   {
-    title: '安装位置',
-    dataIndex: 'address',
-    key: 'address',
+    title: '安装地址',
+    dataIndex: "address",
+    key: "address",
     width: 84,
-    ellipsis:true
+    ellipsis:true,
+    fixed:"left", 
+   // hideInTable:true,
+   //  hideInSetting:false,
   },
   {
-    title: '总用能(kWh)',
+    title: '总用能',
     dataIndex: 'total',
     key: 'total',
     width: 92,
+    hideInSetting:true,
     sorter: (a, b) => parseFloat(a?.total) - parseFloat(b?.total),
-    disabled: true
+  },
+   {
+    title: '综合倍率',
+    dataIndex: 'ratio',
+    key: 'ratio',
+  
+ 
+  },
+  {
+    ttile: "起始读数",
+    key:"sr",
+    dataIndex: 'sr',
+    
+  },
+   {
+    ttile: "结束读数",
+    key:"er",
+    dataIndex:"er",
+    
   },
 ]
 export const setcols =[ // 能耗报表 --设置

@@ -1,7 +1,7 @@
 import React, { useState, useCallback, useRef, useEffect, useMemo   } from 'react'
 import { Checkbox, DatePicker, message, Tooltip, Descriptions, Radio, Space} from 'antd'
 import moment from 'moment'
-import { ProTable  } from '@ant-design/pro-components';
+
 import { useOutletContext } from 'react-router-dom'
 import { useAntdTable } from 'ahooks'
  
@@ -21,7 +21,6 @@ import {useQueryConsumeReport} from "../api"
 import {useBaript} from "../usehook"
 import Draggable from '../DraggableTransfer'
  
-import setting from "../icon/setting.png"
 
 export default function Index() {
 
@@ -29,39 +28,26 @@ export default function Index() {
  
 
  const draggleRef = useRef()
-   const [columnsStateMap, setColumnsStateMap] = useState({
-    adrress: {
-      show: false,
-      order: 0,
-    },
-    ratio:{
-      show: false,
-      order: 1,
-    },
-   er:{
-    show:false,
-    order:2
-   },
-   sr:{ 
-    show:false,
-    order:3
-   }
-  })
+
  
   const [line, setLine] = useState(0)
   const [treeId, setTreeId] = useState()
   let { areaId, projectId, publictype:type, publicdate:date, energytype, alike,publicrangedate } = exparams  
 
   const [concolumns, setConcolumns] = useState(conscols)
+  let [dataSource, setDataSource]= useState([...conscols,...setcols])
+  let [targetKeys, setTargetKeys] = useState(["name","sn","total","sr","er","power"])
  
-  const colChange=(value)=>{ 
-    setConcolumns(value)
-  }
   const [detailHeaders, setDetailHeaders] = useState([])
   
 
   const [selectedRowKeys, setSelectedRowKeys] = useState([]);
- 
+  const transferProps = useMemo(()=>({
+    dataSource,
+    targetKeys,
+    setTargetKeys,
+    
+  }),[dataSource, selectedRowKeys])
 
   const onSelectChange = (newkey, rows) => {
 
@@ -83,44 +69,42 @@ export default function Index() {
 
   //  对比分析 end
 
-  // 使用ProTable
-  const params=useMemo(()=>{
-  let dateType = { 1: "day", 2: "month", 3: "year" }[type]
-  return  {
-      projectId,
-      meterType: energytype,
-      startDate: type!=4 ?  date?.startOf(dateType).format("YYYY-MM-DD HH:mm") :publicrangedate?.[0]?.format("YYYY-MM-DD HH:mm"),
-      endDate:   type!=4 ? date?.endOf(dateType).format("YYYY-MM-DD HH:mm") :publicrangedate?.[1]?.format("YYYY-MM-DD HH:mm"),
-   //   pageNum: current,
-     // pageSize,
-      queryType: line,
-      ids: treeId,
-      type: type, // 
-      reportType:1,
-      filterInfo: alike,
-      customTime: type== 4,
-      areaId
-    }
-  }, [projectId, areaId, type, date, energytype, treeId,  line,   alike,publicrangedate])
-
   const [total, setTotal] = useState(0)
   const tbref = useRef()
  
-  const getTableData =async (params) => {
-    params.pageNum = params.current
-    let  {  projectId, type,  meterType, ids, areaId,  queryType,   startDate,endDate}= params
+  const getTableData =async ({ current, pageSize, areaId, projectId, type, date, energytype, treeId,   line,   alike ,publicrangedate }) => {
      try { 
-    let f = [ projectId, type, meterType,areaId,   queryType].every(v => Number.isInteger(v)) && Array.isArray(ids) && startDate && endDate
+    let f = [areaId, projectId, type, energytype,   line].every(v => Number.isInteger(v)) && Array.isArray(treeId) &&((type!==4 && date ) || (type==4 && publicrangedate?.[0]&& publicrangedate?.[1] )) 
 
 
     
     if (!f) return;
  
  
+    let dateType = { 1: "day", 2: "month", 3: "year" }[type]
+
+    let params = {
+      projectId,
+      meterType: energytype,
+      startDate: type!=4 ?  date?.startOf(dateType).format("YYYY-MM-DD HH:mm") :publicrangedate?.[0]?.format("YYYY-MM-DD HH:mm"),
+      endDate:   type!=4 ? date?.endOf(dateType).format("YYYY-MM-DD HH:mm") :publicrangedate?.[1]?.format("YYYY-MM-DD HH:mm"),
+      pageNum: current,
+      pageSize,
+      queryType: line,
+      ids: treeId,
+      type: type, // 
+      reportType:1,
+      filterInfo: alike,
+      customTime: type== 4,
+    }
  
  
 
-    
+    conscols?.forEach(e => {
+        if (e?.dataIndex == 'total') {
+          e.title = energytype == 1 ? '能耗(kWh)' : '能耗（m³）'
+        }
+      })
  
       let { success, data, total = 0 }= await useQueryConsumeReport({},params) 
     
@@ -133,16 +117,12 @@ export default function Index() {
           let { detailHeaders, detailDatas } = data
           setDetailHeaders(detailHeaders)
           if (!Array.isArray(detailHeaders)) return {
-            data: [],
-            total: 0,
-            success,
+            list: [],
+            total: 0
           } 
           let last = detailHeaders.length - 1
           let column = detailHeaders.map((col, index) => ({
-            title: col,
-            hideInSetting:true,
-            key: col,
-             children: [
+            title: col, children: [
               {
                 title: "起始读数",
                 dataIndex: col + 'r',
@@ -168,29 +148,23 @@ export default function Index() {
             ]
           }))
           setConcolumns([...conscols, ...column])
-          counsume = detailDatas.map((item,idx) => {
+          counsume = detailDatas.map(item => {
             let { detailValues, eDetailReadings,sDetailReadings } = item;
             for (const [index, val] of detailHeaders?.entries()) {
               item[val + 'v'] = detailValues[index]
               item[val + 'r'] = sDetailReadings[index]
               item[val + 'er'] = eDetailReadings[index]
-              item["er"]=idx.toString()
-              item["sr"]=idx.toString()
-              item["power"]=idx.toString()
             }
             return item
           })
-        console.log("counsume",counsume)
         return {
-          data:  counsume  ,
-          total: total,
-          success,
+          list:  counsume  ,
+          total: total
         }
       } else {
         return {
-          data: [],
-          total: 0,
-          success,
+          list: [],
+          total: 0
         }
       }
     
@@ -199,11 +173,11 @@ export default function Index() {
       console.log(error)
      }
   }
-/*   const { tableProps } = useAntdTable((params) => getTableData({ ...params, areaId, projectId, type, date, energytype, treeId,   line,    alike,publicrangedate  }), {
+  const { tableProps } = useAntdTable((params) => getTableData({ ...params, areaId, projectId, type, date, energytype, treeId,   line,    alike,publicrangedate  }), {
     defaultParams: [{ current: 1, pageSize: 18 }],
     refreshDeps: [areaId, projectId, type, date, energytype, treeId,  line,   alike,publicrangedate ],
   })
-   */
+  
 
   // 对比分析 图表
   const modref = useRef()
@@ -217,7 +191,7 @@ export default function Index() {
   const comparehandler = () => { // 留着待用
     setChecks(checkedRef.current)
   }
-  const tableProps=[]
+ 
   const baroption= useBaript({selectedRowKeys, tableProps, checkvalue, detailHeaders, type})
   const oncompare = () => {
     if (selectedRowKeys?.length == 0) return message.info("请选择最多3条数据")
@@ -229,9 +203,9 @@ export default function Index() {
       current: 1, pageSize: total, areaId, projectId, type, date, energytype, treeId,   alike, line,publicrangedate    })
   }, [total, concolumns, type, date, energytype, areaId, treeId,   line, alike,publicrangedate])
 
- 
-  const toolbar = [  <Tooltip title="最多选择三条信息进行对比"><CustButton onClick={oncompare}>勾选对比</CustButton></Tooltip>,
-                    <ExportExcel tb={tbref}   />]
+  const onSet=()=>{
+    draggleRef.current.onDisplay()
+  }
   return (
    
       <Pagecount showSearch={false} custserach={true} >
@@ -239,46 +213,22 @@ export default function Index() {
           <UserTree areaId={areaId} energytype={energytype} setTreeId={setTreeId} setLine={setLine} showline={true} datatype={NaN} />
           <div style={{ position: "relative", flex: 1 }} >
             <div style={{ position: "absolute", width: "100%", }} >
-              <div>
-                <ProTable 
-                rowKey={row => Object.values(row).join()} 
-                columns={concolumns} 
-                request={getTableData} 
-                params={params} 
-                search={false}
-                toolBarRender={() => toolbar}
-                columnsState={{
-                  value:columnsStateMap,
-                  persistenceKey: "runtimeEnergyreportreportNh",
-                  persistenceType:"localStorage",
-              //   onChange:colChange,
-                }}
-                options={{
-                    fullScreen: true,
-                    reload: false,
-                    density: false,
-                    setting: {
-                   //   settingIcon:()=><img src={setting} alt="" style={{height:18}}/>,
-                      listsHeight:400,
-                      
-                    },
-                  }
-                }
-                scroll={{
-                  scrollToFirstRowOnChange: true,
-                  x: 1400,
-                  y: 685
-                }
-                }
-                ></ProTable>
-                {/* <UserTable ref={tbref} rowSelection={rowSelection} columns={concolumns}   rowKey={row => Object.values(row).join()}   scroll={{
+             <div className="opt">
+                  <Space>
+                    <Tooltip title="最多选择三条信息进行对比"><CustButton onClick={oncompare}>勾选对比</CustButton></Tooltip>
+                    <ExportExcel tb={tbref}   />
+                    <SetButton onClick={onSet} />
+                  </Space>
+             </div>
+            
+              <div><UserTable ref={tbref} rowSelection={rowSelection} columns={concolumns} {...tableProps} rowKey={row => Object.values(row).join()}   scroll={{
                   scrollToFirstRowOnChange: true,
                   x: 1400,
                   y: 685
                 }
                 }
                   sheetName="能耗报表" onExport={onExport}
-                ></UserTable> */}
+                ></UserTable>
                 </div>
                 </div>
           </div>
@@ -303,7 +253,7 @@ export default function Index() {
             </div>
           </Chartwrap>
         </CModal>
-        {/*  <Draggable ref={draggleRef} {...transferProps} /> */}
+         <Draggable ref={draggleRef} {...transferProps} />
       </Pagecount>
     
   )
