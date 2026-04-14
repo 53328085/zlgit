@@ -6,15 +6,15 @@ import { useOutletContext } from 'react-router-dom'
 import { useAntdTable } from 'ahooks'
  
 import Pagecount from '@com/pagecontent'
-import UserTable from "@com/useTable";
+import UseProTable from "@com/useTable/proTable";
 import UserTree from "@com/useTree"
  
 import { getTime, isObject } from '@com/usehandler'
  
 import CModal from '@com/useModal'
-import { ExportExcel, CustButton,SetButton } from '@com/useButton'
+import { ProExportExcel, CustButton,SetButton } from '@com/useButton'
  
-import {   conscols,setcols, labelStyle, contentStyle } from '../data'
+import {   conscols,Nhconfig, labelStyle, contentStyle } from '../data'
 import Ichart from '@com/useEcharts/Ichart';
 import {Contentbox,Chartwrap} from "../style"
 import {useQueryConsumeReport} from "../api"
@@ -27,42 +27,64 @@ export default function Index() {
 
   let { exparams  } = useOutletContext()
  
-
- const draggleRef = useRef()
-   const [columnsStateMap, setColumnsStateMap] = useState({
-    adrress: {
-      show: false,
-      order: 0,
-    },
-    ratio:{
-      show: false,
-      order: 1,
-    },
-   er:{
-    show:false,
-    order:2
-   },
-   sr:{ 
-    show:false,
-    order:3
-   }
-  })
+  const [tableData, setTableData] = useState([])
+ 
+   const [columnsStateMap, setColumnsStateMap] = useState(Nhconfig)
  
   const [line, setLine] = useState(0)
   const [treeId, setTreeId] = useState()
   let { areaId, projectId, publictype:type, publicdate:date, energytype, alike,publicrangedate } = exparams  
 
-  const [concolumns, setConcolumns] = useState(conscols)
  
-  const colChange=(value)=>{ 
-    setConcolumns(value)
-  }
+  
   const [detailHeaders, setDetailHeaders] = useState([])
   
 
   const [selectedRowKeys, setSelectedRowKeys] = useState([]);
+  const colsettingChange =(v) =>{
+    console.log(v)
+    setColumnsStateMap(v)
+  }
  
+  const concolumns = useMemo(()=>{
+    let column = []
+      if (detailHeaders.length) {
+          let last = detailHeaders.length - 1
+          column = detailHeaders.map((col, index) => ({
+            title: col,
+            hideInSetting:true,
+            key: col,
+             children: [
+              {
+                title: "起始读数",
+                dataIndex: col + 'r',
+                key: col + 'r',
+                width: 70,
+                hidden:!columnsStateMap?.sr?.show,
+                fixed: index == last ? "right" : false
+              },
+               {
+                title: "结束读数",
+                dataIndex: col + 'er',
+                key: col + 'er',
+                width: 70,
+                hidden:!columnsStateMap?.er?.show,
+                fixed: index == last ? "right" : false
+              },
+              {
+                title: "用能",
+                dataIndex: col + 'v',
+                key: col + 'v',
+                width: 70,
+                fixed: index == last ? "right" : false
+              }
 
+            ]
+          }))
+        }
+        return  [...conscols,...column]
+
+  },[detailHeaders,columnsStateMap?.er?.show,columnsStateMap?.sr?.show,conscols])
   const onSelectChange = (newkey, rows) => {
 
     if (newkey?.length > 3) {
@@ -77,7 +99,7 @@ export default function Index() {
     onChange: onSelectChange,
     hideSelectAll: true,
     preserveSelectedRowKeys: false,
-
+   
   };
 
 
@@ -137,56 +159,31 @@ export default function Index() {
             total: 0,
             success,
           } 
-          let last = detailHeaders.length - 1
-          let column = detailHeaders.map((col, index) => ({
-            title: col,
-            hideInSetting:true,
-            key: col,
-             children: [
-              {
-                title: "起始读数",
-                dataIndex: col + 'r',
-                key: col + 'r',
-                width: 70,
-                fixed: index == last ? "right" : false
-              },
-               {
-                title: "结束读数",
-                dataIndex: col + 'er',
-                key: col + 'er',
-                width: 70,
-                fixed: index == last ? "right" : false
-              },
-              {
-                title: "用能",
-                dataIndex: col + 'v',
-                key: col + 'v',
-                width: 70,
-                fixed: index == last ? "right" : false
-              }
-
-            ]
-          }))
-          setConcolumns([...conscols, ...column])
+         
+        
+         // setConcolumns([...conscols, ...column])
           counsume = detailDatas.map((item,idx) => {
             let { detailValues, eDetailReadings,sDetailReadings } = item;
             for (const [index, val] of detailHeaders?.entries()) {
               item[val + 'v'] = detailValues[index]
               item[val + 'r'] = sDetailReadings[index]
               item[val + 'er'] = eDetailReadings[index]
-              item["er"]=idx.toString()
-              item["sr"]=idx.toString()
-              item["power"]=idx.toString()
+
+            //  item["er"]=idx.toString()
+            //  item["sr"]=idx.toString()
+            //  item["power"]=idx.toString()
             }
             return item
           })
-        console.log("counsume",counsume)
+          setTableData(counsume)
+     //   console.log("counsume",counsume)
         return {
           data:  counsume  ,
           total: total,
           success,
         }
       } else {
+         setTableData([])
         return {
           data: [],
           total: 0,
@@ -199,11 +196,7 @@ export default function Index() {
       console.log(error)
      }
   }
-/*   const { tableProps } = useAntdTable((params) => getTableData({ ...params, areaId, projectId, type, date, energytype, treeId,   line,    alike,publicrangedate  }), {
-    defaultParams: [{ current: 1, pageSize: 18 }],
-    refreshDeps: [areaId, projectId, type, date, energytype, treeId,  line,   alike,publicrangedate ],
-  })
-   */
+
 
   // 对比分析 图表
   const modref = useRef()
@@ -217,21 +210,22 @@ export default function Index() {
   const comparehandler = () => { // 留着待用
     setChecks(checkedRef.current)
   }
-  const tableProps=[]
-  const baroption= useBaript({selectedRowKeys, tableProps, checkvalue, detailHeaders, type})
+
+  const baroption= useBaript({selectedRowKeys, tableData, checkvalue, detailHeaders, type})
   const oncompare = () => {
     if (selectedRowKeys?.length == 0) return message.info("请选择最多3条数据")
     modref.current.onOpen()
   }
  
   const onExport = useCallback(() => {
-    return getTableData({
-      current: 1, pageSize: total, areaId, projectId, type, date, energytype, treeId,   alike, line,publicrangedate    })
-  }, [total, concolumns, type, date, energytype, areaId, treeId,   line, alike,publicrangedate])
+    params.pageSize=total
+    params.current=1
+    return getTableData(params)
+  }, [total, concolumns, params])
 
  
   const toolbar = [  <Tooltip title="最多选择三条信息进行对比"><CustButton onClick={oncompare}>勾选对比</CustButton></Tooltip>,
-                    <ExportExcel tb={tbref}   />]
+                    <ProExportExcel tb={tbref} className="reportNh"   />]
   return (
    
       <Pagecount showSearch={false} custserach={true} >
@@ -239,47 +233,30 @@ export default function Index() {
           <UserTree areaId={areaId} energytype={energytype} setTreeId={setTreeId} setLine={setLine} showline={true} datatype={NaN} />
           <div style={{ position: "relative", flex: 1 }} >
             <div style={{ position: "absolute", width: "100%", }} >
-              <div>
-                <ProTable 
-                rowKey={row => Object.values(row).join()} 
+              
+                <UseProTable 
+                headerTitle="能耗报表"
+                tableClassName="reportNh"
+              //  ref={tbref}
                 columns={concolumns} 
                 request={getTableData} 
                 params={params} 
                 search={false}
                 toolBarRender={() => toolbar}
+                rowSelection={rowSelection}
                 columnsState={{
+                  defaultValue:Nhconfig,
                   value:columnsStateMap,
                   persistenceKey: "runtimeEnergyreportreportNh",
                   persistenceType:"localStorage",
-              //   onChange:colChange,
+                  onChange:colsettingChange,
                 }}
-                options={{
-                    fullScreen: true,
-                    reload: false,
-                    density: false,
-                    setting: {
-                   //   settingIcon:()=><img src={setting} alt="" style={{height:18}}/>,
-                      listsHeight:400,
-                      
-                    },
-                  }
-                }
-                scroll={{
-                  scrollToFirstRowOnChange: true,
-                  x: 1400,
-                  y: 685
-                }
-                }
-                ></ProTable>
-                {/* <UserTable ref={tbref} rowSelection={rowSelection} columns={concolumns}   rowKey={row => Object.values(row).join()}   scroll={{
-                  scrollToFirstRowOnChange: true,
-                  x: 1400,
-                  y: 685
-                }
-                }
-                  sheetName="能耗报表" onExport={onExport}
-                ></UserTable> */}
-                </div>
+           
+               sheetName="能耗报表"
+               onExport={onExport} 
+                ></UseProTable>
+              
+                 
                 </div>
           </div>
         </Contentbox>

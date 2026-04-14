@@ -1,6 +1,6 @@
 import {useMemo} from 'react';
 import moment from 'moment';
-export  function useBaript({selectedRowKeys, tableProps, checkvalue, detailHeaders,type}) {
+export  function useBaript({selectedRowKeys, tableData, checkvalue, detailHeaders,type}) {
 
       const toformat = {
         1: "HH:mm",
@@ -15,14 +15,14 @@ export  function useBaript({selectedRowKeys, tableProps, checkvalue, detailHeade
         4: "YYYY-MM-DD HH:mm",
       }[type]
       const [source, dimensions, chartlen, unit] = useMemo(() => {
-        let { dataSource = [] } = tableProps || {}
-        let datas = dataSource.filter(d => selectedRowKeys.some(s => s.includes(d.sn) && s.includes(d.nodeName)))
+       
+        let datas = tableData.filter(d => selectedRowKeys.some(s => s.includes(d.sn) && s.includes(d.nodeName)))
     
         let { unit } = datas?.[0] || {}
         let dimensions = datas?.map?.(d => d.name) || []
         let source = checkvalue?.length > 0 ? (datas?.map?.(d => d.detailValues) || []) : []
         return [[detailHeaders, ...source], ["time", ...dimensions], dimensions.length, unit]
-      }, [selectedRowKeys, tableProps, checkvalue, detailHeaders])
+      }, [selectedRowKeys, tableData, checkvalue, detailHeaders])
     
       const baroption = {
         series: new Array(chartlen).fill({ type: "bar", seriesLayoutBy: 'row' }), // [{ type: "bar",seriesLayoutBy: 'row' }], 

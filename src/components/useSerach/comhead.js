@@ -660,8 +660,8 @@ export default function UseSerach(props) {
 
 
 
-      <Item noStyle name="projectId" initialValue={projectId}>
-        <Input hidden />
+      <Item noStyle name="projectId" initialValue={projectId} hidden>
+        <Input  />
       </Item>
 
       {/* {

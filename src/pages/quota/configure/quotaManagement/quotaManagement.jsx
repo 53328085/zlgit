@@ -268,7 +268,7 @@ export default function QuotaManagement() {
 
 
   return (
-    <Pagecount bgcolor="transparent" pd="0">
+    (<Pagecount bgcolor="transparent" pd="0">
       <Mainbox className="drawlayout">
         <Titlelayout title="定额能耗设置" layout="flex" key="left">
           <CTree
@@ -289,7 +289,7 @@ export default function QuotaManagement() {
           width='100%'
           closeIcon={null}
           title={<Bluecolumn name="配置详细" />}
-          style={{ position: 'relative', overflow: 'hidden' }}
+          rootStyle={{ position: 'relative', overflow: 'hidden' }}
           bodyStyle={{ padding: '16px 24px', border: '1px solid #d7d7d7', borderRadius: '4px', overflow: 'hidden', display: 'flex', flexDirection: 'column' }}
           getContainer={() => document.querySelector(".drawlayout")}
         >
@@ -345,6 +345,6 @@ export default function QuotaManagement() {
 
       </CModal>
       <CustomDraw ref={drawref} params={params} />
-    </Pagecount>
-  )
+    </Pagecount>)
+  );
 }

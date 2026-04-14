@@ -114,11 +114,10 @@ export let conscols = [   //  conscols 能耗报表
   {
     title: '区域名称',
     dataIndex: 'nodeName',
-    key: "nodeName",
-    fixed: 'left',
+    key: "nodeName", 
     width: 100, 
-    hideInSetting:true,
-     ellipsis:true, 
+    ellipsis:true, 
+    
   },
   {
     title: '设备名称',
@@ -127,7 +126,6 @@ export let conscols = [   //  conscols 能耗报表
     key: "name",
     fixed: 'left',
     ellipsis:true, 
-     hideInSetting:true,
   },
   {
     title: '设备编号',
@@ -135,9 +133,8 @@ export let conscols = [   //  conscols 能耗报表
     width: 134,
     key: "sn",
     fixed: 'left',
-    disabled: true,
-    hideInForm:false,
-    hideInSetting:true,
+    
+    
   },
   {
     title: '安装地址',
@@ -146,37 +143,71 @@ export let conscols = [   //  conscols 能耗报表
     width: 84,
     ellipsis:true,
     fixed:"left", 
-   // hideInTable:true,
-   //  hideInSetting:false,
   },
   {
     title: '总用能',
     dataIndex: 'total',
-    key: 'total',
+    key: "total",
     width: 92,
-    hideInSetting:true,
     sorter: (a, b) => parseFloat(a?.total) - parseFloat(b?.total),
   },
    {
     title: '综合倍率',
     dataIndex: 'ratio',
-    key: 'ratio',
-  
- 
+    key: "ratio",
   },
   {
-    ttile: "起始读数",
-    key:"sr",
-    dataIndex: 'sr',
+    title: '起始读数',
+    key: "sr", 
+     hidden:true,
     
-  },
-   {
-    ttile: "结束读数",
-    key:"er",
-    dataIndex:"er",
-    
-  },
+  },{
+    title: '结束读数',
+    key: "er", 
+     hidden:true,
+   
+  },{
+    title: '用能',
+    key: "pw", 
+     hidden:true,
+  }, 
 ]
+export const Nhconfig ={  // 能耗表格配置
+  nodeName:{
+    disable:true,
+     fixed:'left',
+  },
+  name: {
+    disable:true,
+     fixed:'left',
+  },
+  sn:{
+    disable:true,
+     fixed:'left',
+  },
+  total:{
+    disable:true,
+    fixed:'left',
+  },
+ address:{
+   show:false,
+   fixed:'left',
+ },
+ ratio:{
+  show:false
+ },
+ sr:{
+  show:false,
+ },
+ er:{
+  show:false,
+ },
+ pw:{
+   
+  disable:true,
+ },
+ 
+}
 export const setcols =[ // 能耗报表 --设置
   {
      title: '起始读数', 
