@@ -55,9 +55,9 @@ function Index(props, ref) {
   const tempref = useRef();
   const { t } = useTranslation("comm")
   const location = useLocation()
-
-
-
+  const {pathname, state} = location
+ 
+  console.log("pathname",pathname)
   const downTemp = useCallback(() => {  // 下载模板
     const params = { raw: true };
     const workbook = utils.book_new(); // 新建工作簿      
@@ -131,10 +131,10 @@ function Index(props, ref) {
 
     let file = sheetName.split(".").length == 1 ? "xlsx" : sheetName.split(".")[1];
 
-    let fileName = sheetName.split(".")[0]
+    let fileName = sheetName.split(".")[0] || state?.title
     writeFile(workbook, `${fileName}.${file}`, { bookType: file }); // 下载
     setShowtb(false)
-  }, [lists, total, sheetName])
+  }, [lists, total, sheetName,state])
 
   const domExprot = (className) => { // 通过table DOM 导出  
     try {
@@ -163,7 +163,7 @@ function Index(props, ref) {
     };
 
     let file = sheetName.split(".").length == 1 ? "xlsx" : sheetName.split(".")[1];
-    let fileName = sheetName.split(".")[0]
+    let fileName = sheetName.split(".")[0] || state?.title
     writeFile(workbook, `${fileName}.${file}`, { bookType: file }); // 下载
   }  
     } catch (error) {
@@ -185,7 +185,7 @@ function Index(props, ref) {
 
     utils.book_append_sheet(workbook, ws, sheetName); // 把工作表添加到工作簿
     let file = sheetName.split(".").length == 1 ? "xlsx" : sheetName.split(".")[1];
-    let fileName = sheetName.split(".")[0]
+    let fileName = sheetName.split(".")[0] || state?.title
 
     writeFile(workbook, `${fileName}.${file}`, { bookType: file }); // 下载
   }
@@ -200,6 +200,8 @@ function Index(props, ref) {
  
   return (
     <TableContainer flex={props.flex} style={{ ...style }}>
+      <div className="outwrap">
+        <div className="innerwrap">
       <ProTablecom bordered defaultSize="small"  
         tableClassName={props.tableClassName }
         rowKey={row=>Object.values(row).join()} 
@@ -224,11 +226,19 @@ function Index(props, ref) {
                      
                       }
                       }
+                      columnsState={{
+                         persistenceKey:  pathname.replace(/\//g, ""),
+                         persistenceType:"localStorage",
+                         ...props.columnsState,
+                      }}
                       {...otherprops}
                       laptop={laptop} />
+                      </div>
+      </div>
       {Array.isArray(lists) && showtb && <Allupdate lists={lists} total={total} />}
-   
+    
     </TableContainer>
+     
   )
 }
 

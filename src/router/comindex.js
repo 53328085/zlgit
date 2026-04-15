@@ -222,7 +222,8 @@ export default function Index() {
               custview: true,
             });
             break;
-          case "reportNh":{
+          case "reportNh":
+          case "reportZd":{
             setConfig({
               energytype: true,
               publicDate: true,

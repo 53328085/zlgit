@@ -20,7 +20,7 @@ export const { useQueryConsumeClassify } = new Apimethod( // 分类能耗
   "Energy/DataReportRuntime/QueryConsumeClassify"
 );
 
-export const { useQueryConsumeFromIot } = new Apimethod( // 电能报表
+export const { useQueryConsumeFromIot } = new Apimethod( // 电能报表(账单报表)
   "post",
   "Energy/DataReportRuntime/QueryConsumeFromIot"
 );

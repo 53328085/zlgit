@@ -247,8 +247,6 @@ export default function Index() {
                 columnsState={{
                   defaultValue:Nhconfig,
                   value:columnsStateMap,
-                  persistenceKey: "runtimeEnergyreportreportNh",
-                  persistenceType:"localStorage",
                   onChange:colsettingChange,
                 }}
            

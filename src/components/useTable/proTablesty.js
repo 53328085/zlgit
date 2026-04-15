@@ -43,11 +43,12 @@ flex-direction: column;
         padding: ${props => props.pd || '4px 4px'} ;
         background-color: ${props => props.theme.isdark ? 'dark' : "#ecf5ff"};//${props => props.istheme ? props.theme.primaryColor : props.hbg};
         color: ${props => props.theme.isdark ? "dark" : "#515151"} ; //${props => props.hbc || ((props.istheme || props.hbg) ? '#fff' : '#515151')};
+        text-align: center;
       }
     }
     .ant-table-tbody {
      tr:nth-child(odd) {
-       background-color: ${props => props.theme.isdark ? 'dark' : (props.oddbg || "#fff")} 
+       background-color: ${props => props.theme.isdark ? 'dark' : (props.oddbg || "#DCDFE6")} 
      }
       .ant-table-row{
         .ant-table-cell {
@@ -84,7 +85,7 @@ ${props => props.laptop ? sty : null}
     .outwrap {
       position: relative;
       flex:1;
-      .inwarp{
+      .innerwrap{
         position: absolute;
         width: 100%;
       }

@@ -66,7 +66,7 @@ box-shadow: 1px 16px 23px 0px rgba(0,0,0,0.16);
         .ant-menu-item.ant-menu-item-selected,.ant-menu-item:hover,.ant-menu-item:active { 
       //  color:${props => props.theme.menusactivefontcolor || '#ffffff'};
       background-color:  rgba(${props => props.rgba[0]},${props => props.rgba[1]},${props => props.rgba[2]}, 0.2) ; //${props => props.theme.menusactive || '#1c62b6'} ;
-      color:${props =>props.theme.isdark ? "dark" : (props.theme.menusactivefontcolor || '#ffffff')};
+      color:${props =>props.theme.isdark ? "dark" : (props.theme.menusactivefontcolor || '#ffffff')} !important;
         border-radius: 6px;
         .custicon {
               g path:nth-of-type(1) {
@@ -177,8 +177,8 @@ const Cmenu = styled(Menu)`
         }
    
         &:hover, &:active {
-            background-color:  rgba(${props => props.rgba[0]},${props => props.rgba[1]},${props => props.rgba[2]}, 0.2) ; //${props => props.theme.menusactive || '#1c62b6'} ;
-            color:${props =>props.theme.isdark ? "dark" : (props.theme.menusactivefontcolor || '#ffffff')};
+            background-color:  rgba(${props => props.rgba[0]},${props => props.rgba[1]},${props => props.rgba[2]}, 0.2) !important; //${props => props.theme.menusactive || '#1c62b6'} ;
+            color:${props =>props.theme.isdark ? "dark" : (props.theme.menusactivefontcolor || '#ffffff')} !important;
           //  border-bottom: 2px solid  ${props => props.theme.menusborder || '#00ff66'};
             bottom: 0px;
             border-radius: 6px;

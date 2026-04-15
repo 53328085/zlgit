@@ -208,26 +208,7 @@ export const Nhconfig ={  // 能耗表格配置
  },
  
 }
-export const setcols =[ // 能耗报表 --设置
-  {
-     title: '起始读数', 
-     key: 'sr',
-  },
-  {
-     title: '结束读数', 
-     key: 'er',
-  },
-    {
-     title: '用能(kWh)', 
-     key: 'power',
-     disabled: true
-  },
-   {
-     title: '综合陪率', 
-     key: 'rate',
-     
-  },
-]
+
  
 const cellstyle = {
   textAlign: "center",
@@ -336,7 +317,7 @@ export const typecols = [  // 分类能耗
     key: "mom"
   },
 ]
-export const fromlot = [ // 电能报表 
+export const fromlot = [ // 电能报表 /账单报表
   {
     title: '区域名称',
     dataIndex: 'nodeName',
@@ -355,7 +336,7 @@ export const fromlot = [ // 电能报表
   }, {
     title: '结束电量',
     dataIndex: 'eEnd',
-    key: "End",
+    key: "eEnd",
   }, {
     title: '用能(kWh)',
     dataIndex: 'consume',
@@ -386,6 +367,44 @@ export const fromlot = [ // 电能报表
     ellipsis:true
   },
 ]
+export const Zdconfig ={  // 账单表格配置
+  nodeName:{
+    disable:true,
+    
+  },
+  name: {
+    disable:true,
+    
+  },
+  sn:{
+    disable:true,
+    
+  }, 
+ address:{
+   show:false,
+ 
+ },
+ eStart:{
+  show:false,
+ },
+ eEnd:{
+  show:false,
+ },
+
+ start:{
+  show:false,
+ },
+ end:{
+  show:false,
+ },
+  magnification:{
+  show:false
+ },
+ consume:{
+  show:true,
+ },
+ 
+}
 /* export const fromlot = [ // 电能报表 
   {
     title: '区域名称',
