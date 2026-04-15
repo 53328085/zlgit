@@ -1,5 +1,5 @@
 import React,{useState, useEffect} from 'react'
-import moment from 'moment';
+import dayjs from 'dayjs';
 import styled, {css} from 'styled-components';
 import Ichart from "@com/useEcharts/Ichart"
 import Titlelayout from '@com/titlelayout' 
@@ -142,7 +142,7 @@ export default function Chart({ht, data,laptop}) {
     xAxis: {
         axisLabel: {
             formatter: (value, index) => {
-                return moment(value, "YYYY-MM-DD hh:mm:ss").format("HH:mm")
+                return dayjs(value, "YYYY-MM-DD hh:mm:ss").format("HH:mm")
             }
          }
        },

@@ -5,7 +5,7 @@ import { useRequest } from "ahooks";
 import Custmodl from '@com/useModal'
 import  CustTable from "@com/useTable"
 import { Input, Form, message, Spin, Upload, Modal, Table,DatePicker } from "antd";
-import moment from "moment";
+import dayjs from 'dayjs';
 import style from './style.module.less'
 import UseTransfer from '@com/useTransfer/assorting'
 import { useSelector } from 'react-redux'
@@ -28,7 +28,7 @@ export default function Index(props) {
     const [isAdd, setIsAdd] = useState(false)
     const [tableData, setTableData] = useState([])
    
-    const  time =useRef(moment())
+    const  time =useRef(dayjs())
    // const curryear = time.format('YYYY')
     const { Dragger } = Upload
     const projectId = useSelector(selectProjectId);
@@ -117,7 +117,7 @@ export default function Index(props) {
                     qform.setFieldValue([key, "quotaValue"],  value)
                }
             }
-          //  qform.setFieldValue("year", typeof data.year=="number" ? moment(data.year, "YYYY")  : moment())
+          //  qform.setFieldValue("year", typeof data.year=="number" ? dayjs(data.year, "YYYY")  : dayjs())
             qref.current.onOpen()
             
           }
@@ -161,7 +161,7 @@ export default function Index(props) {
             setFileList([])
             setAddModal(true)
         }else if(values.tag == 'config') {
-            getQuota(values.data.energyId, moment())
+            getQuota(values.data.energyId, dayjs())
         }
 
     }
@@ -481,7 +481,7 @@ export default function Index(props) {
                 
                  <div className="tool">
                     
-                        <DatePicker picker="year" style={{ width: 200 }}   onChange={(e)=> getQuota(undefined,e)}  defaultValue={moment()} />
+                        <DatePicker picker="year" style={{ width: 200 }}   onChange={(e)=> getQuota(undefined,e)}  defaultValue={dayjs()} />
                     
                      <CustButtonT  wh="auto" text="matchenergy" onClick={onSwitch}  /></div> 
                      <Form form={qform} component={false} preserve={false}>

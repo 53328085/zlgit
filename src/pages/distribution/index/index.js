@@ -1,5 +1,5 @@
 import React, {useState, useEffect} from 'react'
-import moment from 'moment'
+import dayjs from 'dayjs'
 import {Layout} from 'antd'
 import {Outlet, useSearchParams, useLocation} from 'react-router-dom'
 import Comhead from '../usehead/com'
@@ -25,7 +25,7 @@ export default function Index() {
  const showroute = {
   designerDistribution: ["line"]
  }
- const [dateval, setDateVal] = useState(moment())
+ const [dateval, setDateVal] = useState(dayjs())
  const [showRoom, setShowroom] = useState(true) // 是否显示配电房选择框
  const [showArea, setShowarea] = useState(true)
  const [showSite, setShowSite] = useState(false)

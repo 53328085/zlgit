@@ -2,7 +2,7 @@ import React, {useImperativeHandle, forwardRef, useRef} from 'react'
 import {Form, Select, Input, Switch, DatePicker} from 'antd'
 import {pwdValidator, phoneValidator} from '@pages/rule.js'
 import {useTranslation} from "react-i18next"
-import moment from 'moment'
+import dayjs from 'dayjs'
  const auto = "off"
  function Useform(props, ref) {
   const [form] = Form.useForm()
@@ -11,7 +11,7 @@ import moment from 'moment'
   const {t} = useTranslation("platformcig")
   const disabledDate = (current) => {
     // Can not select days before today and today
-    return current && current < moment().endOf('day');
+    return current && current < dayjs().endOf('day');
   }
   const getValue = () => {
    return  new Promise((resolve, reject) => {

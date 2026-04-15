@@ -11,7 +11,7 @@ import {
   message,
 } from "antd";
 import styled, { css } from "styled-components";
-import moment from "moment";
+import dayjs from 'dayjs';
 
 import { ProjectSetting } from "@api/api.js";
 
@@ -411,7 +411,7 @@ export default function ProjectSet({ projectId }) {
 
       for (let key of Object.keys(params)) {
         if (key == "validStageTime" && data[key]) {
-          params[key] = moment(data[key]);
+          params[key] = dayjs(data[key]);
         } else if (key == "themeColor") {
           params[key] = data[key] || "#237ae4";
         } else {
@@ -431,7 +431,7 @@ export default function ProjectSet({ projectId }) {
   };
   const disabledDate = (current) => {
     // Can not select days before today and today
-    return current && current < moment().endOf("day");
+    return current && current < dayjs().endOf("day");
   };
 
   const config = {

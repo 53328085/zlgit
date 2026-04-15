@@ -1,5 +1,5 @@
 import { useMemo } from "react";
-import moment from "moment";
+import dayjs from 'dayjs';
 import { isObject } from "@com/usehandler";
 
 export const tabs = [
@@ -50,14 +50,14 @@ export const lineoptdoub = (data, startTime, endTime) => {
     let earlyY = earlyData.map((item) => item.y);
     const lateX = lateData.map((item) => item.x);
     const lateY = lateData.map((item) => item.y);
-  if (endTime.format("YYYY-MM-DD") == moment().format("YYYY-MM-DD")) {
+  if (endTime.format("YYYY-MM-DD") == dayjs().format("YYYY-MM-DD")) {
  
              
              let dif = endTime.diff(startTime, "days")
             
-             let lastLatex = moment(lateX[lateX.length - 1], "YYYY-MM-DD HH:mm:ss").subtract(dif, "days")
+             let lastLatex = dayjs(lateX[lateX.length - 1], "YYYY-MM-DD HH:mm:ss").subtract(dif, "days")
             
-             let idx = earlyX.findIndex(item => moment(item, "YYYY-MM-DD HH:mm:ss").isAfter(lastLatex))
+             let idx = earlyX.findIndex(item => dayjs(item, "YYYY-MM-DD HH:mm:ss").isAfter(lastLatex))
             
              earlyX=earlyX.slice(0,idx)
              earlyY=earlyY.slice(0,idx)
@@ -94,7 +94,7 @@ export const lineoptdoub = (data, startTime, endTime) => {
           data: earlyX,
           axisLabel: {
             formatter: (value, index) => {
-              return moment(value, "YYYY-MM-DD HH:mm:ss").format("HH:mm:ss");
+              return dayjs(value, "YYYY-MM-DD HH:mm:ss").format("HH:mm:ss");
             },
             interval: "auto",
           },
@@ -107,7 +107,7 @@ export const lineoptdoub = (data, startTime, endTime) => {
           show: false,
           axisLabel: {
             formatter: (value, index) => {
-              return moment(value, "YYYY-MM-DD HH:mm:ss").format("HH:mm:ss");
+              return dayjs(value, "YYYY-MM-DD HH:mm:ss").format("HH:mm:ss");
             },
             interval: "auto",
             color: "rgba(0,0,0,0.4)",

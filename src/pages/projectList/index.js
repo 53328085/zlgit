@@ -4,7 +4,7 @@ import { nanoid } from "@reduxjs/toolkit";
 import { useNavigate } from "react-router-dom";
 import {useTranslation} from "react-i18next"
 import styled, {css} from "styled-components";
-import moment from "moment";
+import dayjs from 'dayjs';
 import {
   Space,
   Image,
@@ -50,13 +50,17 @@ import Account from "./account";
 const CustTable = styled(Table)`
   && {
     .ant-table-container {
-      border-color: #2b4576;
+      border-color: #2b4576 !important;
       
        
     }
     .ant-table-content {
       table {
         border-top-color: #2b4576 !important;
+        border-radius:2px 2px 0 0 !important;
+      }
+      .ant-table-thead { 
+       font-weight: normal;
       }
     }
     .ant-pagination-item-active {
@@ -104,8 +108,8 @@ const CustBtn = styled(Button)`
     margin-left: ${(props) => props.mgl || "16px"};
   }
   &:hover, &:active, &:focus  {
-    background-color: #0033ff;
-    color: #fff;
+    background-color: #0033ff !important;
+    color: #fff !important;
   }
 `;
 const CutSerachBt = styled(CustBtn)`
@@ -115,12 +119,12 @@ const CutSerachBt = styled(CustBtn)`
   font-size: 16px;
   color:#fff !important;
   border:none;
-  background-color: #0030ca;
-  height: ${props => props.laptop ? "32px" : "40px"} ;
-/*   &:hover, &:focus {
-    background-color: #0033ff;
+  background-color: #0030ca !important;
+  height: ${props => props.laptop ? "32px" : "40px"} !important;
+   &:hover, &:focus {
+    background-color: #0033ff !important;
     border-color: none;
-  } */
+  }
 `;
 const maisty=css`
   padding: 16px;
@@ -234,7 +238,7 @@ const Mainbox = styled.div`
       font-size: ${props => props.laptop ? "12px" : "16px"};
       
       .ant-table-tbody > tr.rowclass > td {
-        border-color: #2b4576;
+        border-color: #2b4576 !important;
         padding-top: 0px;
         padding-bottom: 0px;
         height: ${props => props.laptop ? "42px" : "56px"}; 
@@ -250,13 +254,14 @@ const Mainbox = styled.div`
         }
       }
       .ant-table-thead > tr > th {
-        background-color: #476299;
+        background-color: #476299 !important;
         font-size: 18px;
         color: #fff;
         text-align: center;
         border-color: #2b4576 !important;
         height: 40px;
         padding: 0px;
+        font-weight: 400;
         ${props => props.laptop ? thsty : null}
       }
     }
@@ -529,7 +534,7 @@ export default function Index() {
       dataIndex: "validStageTime",
       align: "center",
       width: 200,
-     // render: (text) => moment(text).format("YYYY-MM-DD"),
+     // render: (text) => dayjs(text).format("YYYY-MM-DD"),
     },
     {
       title: t("comm:Operation"),
@@ -701,7 +706,7 @@ tableProps.pagination.size=laptop ? "small" : "default" // 页码大小默认
  let {submit} = search
  const disabledDate = (current) => {
  
-  return current && current > moment() ;
+  return current && current > dayjs() ;
 };
  return  <Opbox>
          
@@ -779,11 +784,7 @@ useEffect(()=> {
             form={form}
             autoComplete="off"
           >
-            <Space size={64} split={ <Divider
-                  dashed
-                  style={{ borderColor: "#999", height: "32px", margin: "0px" }}
-                  type="vertical"
-                />} >
+            <Space size={64}  >
               
               <Item name="name" normalize={(v) => v.trim() }>
               <Iptserach

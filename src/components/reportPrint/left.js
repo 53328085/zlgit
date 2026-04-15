@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect, useCallback, useContext } from 'react'
 import styled from 'styled-components'
 import {Typography, Image, Form,  DatePicker,   Descriptions, Divider,   Radio, message } from 'antd'
- import moment from 'moment'
+ import dayjs from 'dayjs'
  import {useReactToPrint} from 'react-to-print'
 
  import printContext from './context'
@@ -69,7 +69,7 @@ const create = async () => {
         let {type, date} = form.getFieldsValue(true);
         let params = {
             type,
-            date:  type== 2? date.startOf('month').format("yyyy-MM-DD") : date.startOf("year").format("yyyy-MM-DD"),
+            date:  type== 2? date.startOf('month').format("YYYY-MM-DD") : date.startOf("year").format("YYYY-MM-DD"),
             projectId
         }
      let suc =  await  getReport(params)
@@ -120,7 +120,7 @@ const onPrint = () => {
          <Left laptop={laptop}>
            <Titlelayout title='运行报告' bordered={'n'} style={{flex: 'auto'}} pv="0px" rad="0px" > 
                  
-            <Form className="content" form={form} initialValues={{type: 2, date: moment()}}>
+            <Form className="content" form={form} initialValues={{type: 2, date: dayjs()}}>
               <Item name="type" noStyle>
               <RadioGroup  options={[{
                 label: '月度报告',

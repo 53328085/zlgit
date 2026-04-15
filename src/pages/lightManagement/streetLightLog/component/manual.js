@@ -1,6 +1,6 @@
 import React, { useRef, useState, useEffect, useMemo } from "react";
 import { Space, Form,   Input, Table, DatePicker, Select, message } from "antd";
-import moment from "moment";
+import dayjs from 'dayjs';
  
 import { useSelector } from "react-redux";
 import { selectProjectId } from "@redux/systemconfig";
@@ -119,7 +119,7 @@ const onControl =async()=> {
             <Form.Item
               name="time"
               label="操作时间"
-              initialValue={[moment().subtract(1,"months"), moment()]}
+              initialValue={[dayjs().subtract(1,"months"), dayjs()]}
               rules={[{
                 required: true,
                 message: "请选择执行执行时间"

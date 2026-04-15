@@ -10,7 +10,7 @@ import { useOutletContext } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { selectProjectId } from "@redux/systemconfig";
 import { useReactive } from "ahooks";
-import moment from "moment";
+import dayjs from 'dayjs';
 export default function Index() {
   const projectId = useSelector(selectProjectId);
   const [treeId, setTreeId] = useState([]);
@@ -26,10 +26,10 @@ export default function Index() {
     const values = form.getFieldsValue();
     const date =
       values.dtype == 1
-        ? moment(values.date).format("YYYY-MM-DD")
+        ? dayjs(values.date).format("YYYY-MM-DD")
         : values.dtype == 2
-        ? moment(values.date).format("YYYY-MM-01")
-        : moment(values.date).format("YYYY-01-01");
+        ? dayjs(values.date).format("YYYY-MM-01")
+        : dayjs(values.date).format("YYYY-01-01");
     const params = {
       projectId,
       ids: treeId,

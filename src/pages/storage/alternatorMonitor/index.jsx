@@ -1,7 +1,7 @@
 import React, { useEffect, useState} from 'react'
 import style from './style.module.less'
 import { message, DatePicker } from 'antd';
-import moment from 'moment'
+import dayjs from 'dayjs'
 import { selectProjectId } from '@redux/systemconfig.js'
 import {PCSMonitorRuntime, SiteManagerDesigner, StorageContainerDesigner, StorageMonitorRuntime } from '@api/api.js'
 import { useReactive, useRequest } from 'ahooks'
@@ -122,8 +122,8 @@ export default function Index() {
   }
   const [leftValues, setLeftValues] = useState([])
   const [pcsName, setPcsName] = useState('')
-  const [startDate, setStartDate] = useState(moment().subtract(1, 'day'))
-  const [endDate, setEndDate] = useState(moment())
+  const [startDate, setStartDate] = useState(dayjs().subtract(1, 'day'))
+  const [endDate, setEndDate] = useState(dayjs())
   const [compareData, setCompareData] = useState({
     xAxis: [],
     series1Name: '',

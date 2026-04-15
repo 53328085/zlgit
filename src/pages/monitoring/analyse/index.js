@@ -3,7 +3,7 @@ import Pagecount from "@com/pagecontent";
 import { useSelector } from 'react-redux'
 import Titlelayout from '@com/titlelayout';
 import { Serach, Cdivider, Borderleft } from "@com/comstyled"
-import moment from 'moment'
+import dayjs from 'dayjs'
 import { Select, DatePicker, InputNumber, Checkbox, Radio, Pagination, message, Space, Form, Button } from "antd";
 
 import { Monitoring } from '@api/api.js'
@@ -17,7 +17,7 @@ import { drawEcharts } from "@com/useEcharts"
 import {CustTransO, i18t, i18warning,ExportExcel, RadioT,CustButtonT} from "@com/useButton"
 const { RangePicker } = DatePicker;
 const disabledDate = (current) => {
-  return current && current > moment().endOf('day');
+  return current && current > dayjs().endOf('day');
 }
 const {
   ComparativeAnalysis: {
@@ -71,8 +71,8 @@ export default function Index() {
   const onChangeBaseLineValue = (newValue) => {
     setBaseLineValue(newValue); // 更新状态
   };
-  let dataToday = moment().format('YYYY-MM-DD 23:59:59')
-  let [startTime, setstartTime] = useState(moment().startOf('day').format('YYYY-MM-DD 00:00:00'))
+  let dataToday = dayjs().format('YYYY-MM-DD 23:59:59')
+  let [startTime, setstartTime] = useState(dayjs().startOf('day').format('YYYY-MM-DD 00:00:00'))
   let [endTime, setendTime] = useState(dataToday)
   // setBaseLine(val)
   const onChangeTime = (date = [], dataString) => {
@@ -286,7 +286,7 @@ export default function Index() {
 
 
   }, [])
-  const [dates, setDates] = useState([moment().startOf('day'), moment()]);
+  const [dates, setDates] = useState([dayjs().startOf('day'), dayjs()]);
   return (
 <Pagecount bgcolor="transparent" pd="0">
     <Titlelayout title={i18t("monitor","contrastiveanalysis")}>      
@@ -335,7 +335,7 @@ export default function Index() {
               onChange={onChangeTime}
               onCalendarChange={(val) => setDates(val)}
               disabledDate={disabledDate}
-              defaultValue={[moment().startOf('day'), moment()]}
+              defaultValue={[dayjs().startOf('day'), dayjs()]}
               format="YYYY-MM-DD"
               style={{ width: laptop ? '220px' : '320px' }} />
           </Form.Item >

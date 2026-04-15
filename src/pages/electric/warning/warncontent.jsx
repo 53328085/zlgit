@@ -7,7 +7,7 @@ import { columns } from './columns'
 import { useAntdTable, usePagination } from 'ahooks'
 import BlueColumn from '@com/bluecolumn'
 import {warnDetail} from '@api/api'
-import moment from 'moment';
+import dayjs from 'dayjs';
 import Titlelayout from '@com/titlelayout'
 const { Search } = Input;
 const {RangePicker } = DatePicker
@@ -57,11 +57,11 @@ export default function Warncontent({ style,form, areaId }) {
 //     let date = warnform.getFieldsValue().datevalue
 //     const type =warnform.getFieldsValue().datetype
 //     if (type === 0) {
-//       date = moment(date).format('YYYY-MM-DD')
+//       date = dayjs(date).format('YYYY-MM-DD')
 //     } else if (type === 1) {
-//       date = moment(date).format('YYYY-MM-01')
+//       date = dayjs(date).format('YYYY-MM-01')
 //     } else if (type === 2) {
-//       date = moment(date).format('YYYY-01-01')
+//       date = dayjs(date).format('YYYY-01-01')
 //     }
 //     return date
 //   }
@@ -143,7 +143,7 @@ export default function Warncontent({ style,form, areaId }) {
                  initialValues={{
                     status:1,
                     warn:0,
-                    datetype:[moment().subtract(7,'days'),moment()]
+                    datetype:[dayjs().subtract(7,'days'),dayjs()]
               
                  }}
                 >

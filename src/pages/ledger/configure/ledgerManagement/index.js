@@ -8,7 +8,7 @@ import { SpareParts, distributionRoom } from '@api/api.js'
 import Usetable from '@com/useTable'
 import CModal from '@com/useModal'
 import { PlusOutlined } from '@ant-design/icons';
-import moment from 'moment';
+import dayjs from 'dayjs';
 const {Link} = Typography
 const { TextArea } = Input;
 
@@ -256,7 +256,7 @@ export default function Index() {
     label: '维护信息', data: [
       { label: '维护周期', data: '', unit: '' },
       { label: '维护人员', data: '', unit: '' },
-      { label: '最后一次维护时间', data: moment(), unit: '' },
+      { label: '最后一次维护时间', data: dayjs(), unit: '' },
       { label: '维护详情', data: '', unit: '' },
     ]
   })
@@ -517,7 +517,7 @@ export default function Index() {
         data: [
           ...dataMap.repairInfo.data.slice(0, 2),
           { label: dataMap.repairInfo.data[2].label, 
-            data: moment(dataMap.repairInfo.data[2].data).clone(),
+            data: dayjs(dataMap.repairInfo.data[2].data).clone(),
             unit: dataMap.repairInfo.data[2].unit },
           dataMap.repairInfo.data[3],
         ],
@@ -635,7 +635,7 @@ export default function Index() {
         ...repairInfo,
         data: [
           ...repairInfo.data.slice(0, 2),
-          { label: repairInfo.data[2].label, data: moment(date).clone, unit: repairInfo.data[2].unit },
+          { label: repairInfo.data[2].label, data: dayjs(date).clone, unit: repairInfo.data[2].unit },
           repairInfo.data[3],
         ],
       };
@@ -645,7 +645,7 @@ export default function Index() {
   // 禁止选择今天的日期之前的日期
   const disabledDate = (current) => {
     // Can not select days before today and today
-    return current && current > moment().endOf('day');
+    return current && current > dayjs().endOf('day');
   };
   const [imageUrl, setImageUrl] = useState(''); // 初始图片路径
   // 初始图片路径

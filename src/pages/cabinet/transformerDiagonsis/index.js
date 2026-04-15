@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect, useCallback } from "react";
 import Titlelayout from "@com/titlelayout";
 import { DatePicker, Space, Radio, Divider, Select, Tree, Button, message } from "antd";
-import moment from "moment";
+import dayjs from 'dayjs';
 import styled from "styled-components";
 import { DistributionCabinet } from "@api/api.js";
 import { useSelector } from "react-redux";
@@ -9,7 +9,7 @@ import { useReactive } from "ahooks";
 import Icharts from "@com/useEcharts/Ichart";
 import Cempty from '@com/useEmpty'
 import { drawEcharts } from "@com/useEcharts"
-import dayjs from 'dayjs';
+
 import Modal from "@com/useModal"
 import Table from "@com/useTable"
 import { ExportExcel } from '@com/useButton'
@@ -122,23 +122,23 @@ export default function index() {
       type: 1,
     },
   });
-  const today = moment().startOf('day');
-  const tmonth = moment().startOf('month')
-  const tyear = moment().startOf('year')
+  const today = dayjs().startOf('day');
+  const tmonth = dayjs().startOf('month')
+  const tyear = dayjs().startOf('year')
   const tbref = useRef()
   const params = useReactive({
     siteId: 1,
     transformerId: 1,
     type: 1,//不平衡率时间选择
-    startDate: moment(today).format('YYYY-MM-DD'),
-    endDate: moment(today).format('YYYY-MM-DD'),
+    startDate: dayjs(today).format('YYYY-MM-DD'),
+    endDate: dayjs(today).format('YYYY-MM-DD'),
   });
   const params1 = useReactive({
     siteId: 1,
     transformerId: 1,
     type: 1,//不平衡率时间选择
-    startDate: moment(today).format('YYYY-MM-DD'),
-    endDate: moment(today).format('YYYY-MM-DD'),
+    startDate: dayjs(today).format('YYYY-MM-DD'),
+    endDate: dayjs(today).format('YYYY-MM-DD'),
   });
   const [option, setOption] = useState({
     type: 5,
@@ -420,10 +420,10 @@ export default function index() {
                   { value: '4', label: '自定义' },
                 ]}
               />
-              {params.type == 1 ? <DatePicker style={{ width: 240 }} onChange={(date, dateString) => onChangeDate(date, dateString, 1)} defaultValue={moment(today)} disabledDate={disabledDate} /> :
-                params.type == 2 ? <DatePicker style={{ width: 240 }} onChange={(date, dateString) => onChangeDate(date, dateString, 1)} defaultValue={moment(tmonth)} picker='month' disabledDate={disabledDate} /> :
-                  params.type == 3 ? <DatePicker style={{ width: 240 }} onChange={(date, dateString) => onChangeDate(date, dateString, 1)} picker='year' defaultValue={moment(tyear)} disabledDate={disabledDate} /> :
-                    <RangePicker style={{ width: 240 }} onChange={(date, dateString) => onChangeDate(date, dateString, 1)} defaultValue={[moment(today), moment(today)]} disabledDate={disabledDate} />
+              {params.type == 1 ? <DatePicker style={{ width: 240 }} onChange={(date, dateString) => onChangeDate(date, dateString, 1)} defaultValue={dayjs(today)} disabledDate={disabledDate} /> :
+                params.type == 2 ? <DatePicker style={{ width: 240 }} onChange={(date, dateString) => onChangeDate(date, dateString, 1)} defaultValue={dayjs(tmonth)} picker='month' disabledDate={disabledDate} /> :
+                  params.type == 3 ? <DatePicker style={{ width: 240 }} onChange={(date, dateString) => onChangeDate(date, dateString, 1)} picker='year' defaultValue={dayjs(tyear)} disabledDate={disabledDate} /> :
+                    <RangePicker style={{ width: 240 }} onChange={(date, dateString) => onChangeDate(date, dateString, 1)} defaultValue={[dayjs(today), dayjs(today)]} disabledDate={disabledDate} />
               }
             </div>
           </Header>
@@ -476,10 +476,10 @@ export default function index() {
                   { value: '4', label: '自定义' },
                 ]}
               />
-              {params1.type == 1 ? <DatePicker style={{ marginRight: '16px', width: 240 }} onChange={(date, dateString) => onChangeDate(date, dateString, 2)} defaultValue={moment(today)} disabledDate={disabledDate} /> :
+              {params1.type == 1 ? <DatePicker style={{ marginRight: '16px', width: 240 }} onChange={(date, dateString) => onChangeDate(date, dateString, 2)} defaultValue={dayjs(today)} disabledDate={disabledDate} /> :
                 params1.type == 2 ? <DatePicker style={{ marginRight: '16px', width: 240 }} onChange={(date, dateString) => onChangeDate(date, dateString, 2)} picker='month' disabledDate={disabledDate} /> :
-                  params1.type == 3 ? <DatePicker style={{ marginRight: '16px', width: 240 }} onChange={(date, dateString) => onChangeDate(date, dateString, 2)} picker='year' defaultValue={moment(tyear)} disabledDate={disabledDate} /> :
-                    <RangePicker style={{ marginRight: '16px', width: 240 }} disabledDate={disabledDate} onChange={(date, dateString) => onChangeDate(date, dateString, 2)} defaultValue={[moment(today), moment(today)]} />
+                  params1.type == 3 ? <DatePicker style={{ marginRight: '16px', width: 240 }} onChange={(date, dateString) => onChangeDate(date, dateString, 2)} picker='year' defaultValue={dayjs(tyear)} disabledDate={disabledDate} /> :
+                    <RangePicker style={{ marginRight: '16px', width: 240 }} disabledDate={disabledDate} onChange={(date, dateString) => onChangeDate(date, dateString, 2)} defaultValue={[dayjs(today), dayjs(today)]} />
               }
             </div>
           </Header>

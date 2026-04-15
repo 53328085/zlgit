@@ -4,10 +4,8 @@ import {useSelector,useDispatch} from 'react-redux'
 import {ThemeProvider} from 'styled-components'
 import enUS from 'antd/es/locale/en_US'; // 国际化时使用
 import zhCN from 'antd/es/locale/zh_CN';
-import moment from 'moment';
-import 'moment/locale/zh-cn';
 
-moment.locale('zhCN');
+//dayjs.locale('zh-cn');
 
 import Loading from './pages/Loading';
 import EL from './router'

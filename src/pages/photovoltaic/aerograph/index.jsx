@@ -4,7 +4,7 @@ import { Typography, message, Space } from 'antd'
 import UseTree from "@com/useTree";
 import { useSelector } from 'react-redux'
 import { useAntdTable } from "ahooks";
-import moment from 'moment';
+import dayjs from 'dayjs';
 import { DistributionRoomRuntime } from '@api/api.js'
 import { selectcurlRommidl, roomId, adaptation } from "@redux/systemconfig";
 //import {Link} from 'react-router-dom'

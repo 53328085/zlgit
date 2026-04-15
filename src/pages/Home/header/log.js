@@ -14,12 +14,12 @@ import { configProject, comSetFirst, getJump, currentscreen, isGranary,datascree
  defaultroute,
  } from "@redux/systemconfig";
 
-import moment from "moment";
+import dayjs from 'dayjs';
 import {useTranslation, Trans, Translation} from 'react-i18next';
 import enUS from 'antd/es/locale/en_US';
 import zhCN from 'antd/es/locale/zh_CN';
  
-import 'moment/locale/zh-cn';
+import 'dayjs/locale/zh-cn';
  import './log.less'
 import CModal from "@com/useModal"
 import imgurl from "./icon";
@@ -394,7 +394,7 @@ export default function Log() {
     window.open(newPageUrl, '_blank', 'noopener,noreferrer');
 } */   
 
- // moment 语言环境设置 antd 组件国际化 中文 zh-cn, 英文 en， echart图表国际化 中文 ZH， 英文 EN， 页面中自定义的文字国际 i18 中文 zh-Cn, 英文 en 
+ // dayjs 语言环境设置 antd 组件国际化 中文 zh-cn, 英文 en， echart图表国际化 中文 ZH， 英文 EN， 页面中自定义的文字国际 i18 中文 zh-Cn, 英文 en 
 const lref = useRef();
 const zhcn = localStorage.getItem('i18nextLng')?.slice(0,2)?.toLowerCase()?? 'zh'
 const [lngval, setLngval] = useState(zhcn)
@@ -408,7 +408,7 @@ const lngOk = () => {
     const lang = langpack[lngval]
     let key = lngval==='zh' ? 'zh-cn' : lngval
     
-    moment(key);
+    dayjs(key);
     dispatch(setIntl({lang, locale: key}))
     dispatch(setIszhCN(lngval==='zh'))
     i18n.changeLanguage(lngval)

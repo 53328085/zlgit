@@ -3,7 +3,7 @@ import {useSelector} from 'react-redux'
 import { selectProjectId } from '@redux/systemconfig.js'
 import {TitlelayoutOv as Titlelayout} from '@com/titlelayout';
  
-import moment from 'moment';
+import dayjs from 'dayjs';
 import {CustTransO} from "@com/useButton"
 import {useTranslation} from "react-i18next"
 import { HomeRuntime } from '@api/api.js'
@@ -47,8 +47,8 @@ export default function DefaultHome(props){
             let dataset = {
               dimensions: [
                 {name: t("comm:date"), type: 'time'},
-                {name: moment().format('yyyy') },
-                {name: moment().subtract(1, 'y').format('yyyy') },
+                {name: dayjs().format('YYYY') },
+                {name: dayjs().subtract(1, 'y').format('YYYY') },
               ],
               source: [
                 x, 

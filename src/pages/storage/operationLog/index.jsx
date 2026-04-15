@@ -4,7 +4,7 @@ import {Typography,  Form, Space, Input, Select, DatePicker,  Divider } from 'an
 import {useAntdTable} from 'ahooks'
 import {nanoid} from "@reduxjs/toolkit"
 import {  useOutletContext} from 'react-router-dom'
-import moment from 'moment'
+import dayjs from 'dayjs'
 import Titlelayout from '@com/titlelayout'
 import Usetable from '@com/useTable'
 import {OperationLogRuntime} from '@api/api'
@@ -15,7 +15,7 @@ const {Paragraph} = Typography
 const {Item} = Form
 const { RangePicker } = DatePicker;
 const disabledDate = (current) => {   
-  return current && current > moment().endOf('day');
+  return current && current > dayjs().endOf('day');
 };
 const Mainbox = styled.div`
     && {
@@ -126,8 +126,8 @@ export default function Index() {
   const {tableProps, search} = useAntdTable(QueryReports, {
     form,
     defaultParams: [{pageSize: 14, pageNum: 1}, {
-      start: moment().subtract(7, 'day').format('YYYY-MM-DD'),
-      end: moment().format('YYYY-MM-DD'),
+      start: dayjs().subtract(7, 'day').format('YYYY-MM-DD'),
+      end: dayjs().format('YYYY-MM-DD'),
       projectId, 
       siteId: stationName?.value,
       content : "",
@@ -158,7 +158,7 @@ export default function Index() {
           content: '',
           deviceType:0,
           level: 0,
-          time: [moment().subtract(7, 'day'), moment()]
+          time: [dayjs().subtract(7, 'day'), dayjs()]
         }}>
           <Space size={32}>
              <Item label="日志查询" name="content">

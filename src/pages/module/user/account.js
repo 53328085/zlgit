@@ -4,7 +4,7 @@ import {useRequest, useAntdTable} from 'ahooks'
 import {Typography, Space, Form, Input, Select, Switch, message, DatePicker} from 'antd'
 import {WarningFilled} from '@ant-design/icons'
 import styled from 'styled-components'
-import moment from 'moment';
+import dayjs from 'dayjs';
 import {User} from '@api/api.js'
 import {useSelector} from 'react-redux'
 import {selectUser} from "@redux/user";
@@ -102,7 +102,7 @@ const showModl = () => {
      
     setIsAdd(false)
     let {validStageTime} = record;
-    record.validStageTime = moment(validStageTime);
+    record.validStageTime = dayjs(validStageTime);
     console.log(record.validStageTime)
     mform.setFieldsValue({
       ...record,
@@ -118,7 +118,7 @@ const showModl = () => {
   setRecord({...item});
    
   setIsAdd(false)
-  item.validStageTime = moment(item.validStageTime, 'YYYY-MM-DD HH:mm:ss')
+  item.validStageTime = dayjs(item.validStageTime, 'YYYY-MM-DD HH:mm:ss')
  item.enabled = item.enabled  == 1
  flushSync(() => {
   setInitialValues({

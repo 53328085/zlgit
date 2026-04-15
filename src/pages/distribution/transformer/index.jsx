@@ -11,7 +11,7 @@ import {useRequest} from "ahooks"
  
 import {DistributionRoomRuntime} from '@api/api.js'
  
-import moment from 'moment'
+import dayjs from 'dayjs'
 import {isObject} from "@com/usehandler" 
 import Titlelayout from '@com/titlelayout' 
 import {ComDatePicker} from "@com/comstyled"
@@ -33,8 +33,8 @@ export default function Index() {
   const [value, setvalue] =useState("1")
   const [tabledata,setTableData]=useState([])
   const [type,setType] =useState(1)
-//  const [timeRanger,setTimeRanger] = useState([moment().subtract(6,'day'), moment()])
-const [timeRanger,setTimeRanger] = useState(moment())
+//  const [timeRanger,setTimeRanger] = useState([dayjs().subtract(6,'day'), dayjs()])
+const [timeRanger,setTimeRanger] = useState(dayjs())
   const [header,setHeader] = useState([])
   const [tabletrend,setTabletrend] = useState([])
   const [disableDate,setDisableDate] = useState([])
@@ -85,7 +85,7 @@ const [timeRanger,setTimeRanger] = useState(moment())
     }
     const tooLate = disableDate[0]&& current.diff(disableDate[0],'days')>6
     const tooEarly = disableDate[1] && disableDate[1].diff(current,'days')>6
-    return tooLate || tooEarly ||(current && current > moment().endOf('day'))
+    return tooLate || tooEarly ||(current && current > dayjs().endOf('day'))
     
   }
  
@@ -140,9 +140,9 @@ useRequest(RuntimePoints, {
     try{
       let startTime ,endTime;
       if(timeRanger){
-        startTime =  moment(timeRanger).startOf().format('YYYY-MM-DD 00:00:00')
-       // console.log("在前",timeRanger.isBefore(moment()))
-      //  endTime= timeRanger.isBefore(moment())  ?  moment(timeRanger).endOf().format('YYYY-MM-DD HH:mm:ss') :moment(timeRanger).format('YYYY-MM-DD HH:mm:ss')
+        startTime =  dayjs(timeRanger).startOf().format('YYYY-MM-DD 00:00:00')
+       // console.log("在前",timeRanger.isBefore(dayjs()))
+      //  endTime= timeRanger.isBefore(dayjs())  ?  dayjs(timeRanger).endOf().format('YYYY-MM-DD HH:mm:ss') :dayjs(timeRanger).format('YYYY-MM-DD HH:mm:ss')
       }else{
         message.error('请选择日期！')
       }
@@ -152,7 +152,7 @@ useRequest(RuntimePoints, {
       sn:siteData?.sn,
       type,
       start:startTime,
-      end:moment(moment(timeRanger).format('YYYY-MM-DD')).isBefore(moment(moment().format('YYYY-MM-DD'))) ?  moment(timeRanger).endOf("day").format('YYYY-MM-DD HH:mm:ss')  : moment(timeRanger).format('YYYY-MM-DD HH:mm:ss')
+      end:dayjs(dayjs(timeRanger).format('YYYY-MM-DD')).isBefore(dayjs(dayjs().format('YYYY-MM-DD'))) ?  dayjs(timeRanger).endOf("day").format('YYYY-MM-DD HH:mm:ss')  : dayjs(timeRanger).format('YYYY-MM-DD HH:mm:ss')
     }
      
     const {success,errMsg,data} = await DistributionRoomRuntime.HistoryTrends(params)
@@ -168,20 +168,20 @@ useRequest(RuntimePoints, {
 }
   //数据趋势（table）
   const HistoryTable = async () => {
-    console.log('HistoryTable~~', moment(timeRanger).endOf('day').format('YYYY-MM-DD HH:mm:ss'))
+    console.log('HistoryTable~~', dayjs(timeRanger).endOf('day').format('YYYY-MM-DD HH:mm:ss'))
     if(!siteData?.sn) return
     try {
       setLoading(true)
       let startTime, endTime;
-      startTime = moment(timeRanger).startOf().format('YYYY-MM-DD 00:00:00')
-      endTime = moment(timeRanger).format('YYYY-MM-DD HH:mm:ss')
+      startTime = dayjs(timeRanger).startOf().format('YYYY-MM-DD 00:00:00')
+      endTime = dayjs(timeRanger).format('YYYY-MM-DD HH:mm:ss')
       
       let params = {
         projectId,
         sn:siteData?.sn,
         // type,
         start: startTime,
-        end: moment(moment(timeRanger).format('YYYY-MM-DD')).isBefore(moment(moment().format('YYYY-MM-DD'))) ?  moment(timeRanger).endOf("day").format('YYYY-MM-DD HH:mm:ss')  : moment(timeRanger).format('YYYY-MM-DD HH:mm:ss')
+        end: dayjs(dayjs(timeRanger).format('YYYY-MM-DD')).isBefore(dayjs(dayjs().format('YYYY-MM-DD'))) ?  dayjs(timeRanger).endOf("day").format('YYYY-MM-DD HH:mm:ss')  : dayjs(timeRanger).format('YYYY-MM-DD HH:mm:ss')
       }
       const res = await DistributionRoomRuntime.HistoryTable(params)
       if(res.success){

@@ -6,8 +6,8 @@ import styled from "styled-components";
 import { ExportExcel, i18t, CustTransO } from '@com/useButton'
 import { useSelector, useDispatch } from 'react-redux'
 import { levelDefaultLabel, getsaveDeviceID, prodeviceType, selectProjectId, deviceID, selectshifts, energyType, filterDeviceStyle, selectOneLevelDefaultId, selectOneLevel, setCurrentlevel, deviceStyle, getThemeColor, themeColor, setIntl, adaptation, lightlevel, inverterSN } from '@redux/systemconfig.js'
-import moment from "moment";
-import 'moment/locale/zh-cn';
+import dayjs from "dayjs";
+//import 'dayjs/locale/zh-cn';
 const { RangePicker } = DatePicker;
 import { SiteManagerDesigner, PCSMonitorRuntime, StorageContainerDesigner, Editapi, PhotovoltaicPowerGeneration, BMSRuntime } from '@api/api'
 import { filterProps } from '@com/usehandler'
@@ -195,7 +195,7 @@ export default function UseSerach(props) {
     { value: 3, label: i18t("comm", "year") },
   ]
   const changetype = (v) => {
-    form.setFieldValue("date", moment())
+    form.setFieldValue("date", dayjs())
     props.setexparams({ ...form.getFieldsValue(true) })
   }
   const dateselect = (
@@ -207,8 +207,9 @@ export default function UseSerach(props) {
         {
           ({ getFieldValue, setFieldValue }) => {
             let type = (daterang == 'week' ? ['week', 'week', 'month', 'year'] : ['date', 'date', 'month', 'year'])[getFieldValue('type')]
+            console.log("type",type)
             return (
-              <Item name="date" initialValue={moment()} >
+              <Item name="date" initialValue={dayjs()} >
                 <DatePicker picker={type} style={w200} disabled={config?.disabledDate || config?.reportType} />
               </Item>
             )
@@ -226,12 +227,12 @@ export default function UseSerach(props) {
   )
 
   const carbonDateY = (
-    <Item label={<CustTransO ns="comm" text="Assessmentyear" />} name="carbonY" initialValue={moment()} >
+    <Item label={<CustTransO ns="comm" text="Assessmentyear" />} name="carbonY" initialValue={dayjs()} >
       <DatePicker picker="year" />
     </Item>
   )
   const carbonDateR = (
-    <Item label="" name="rangePicker" initialValue={[moment().subtract(1, 'months'), moment()]}>
+    <Item label="" name="rangePicker" initialValue={[dayjs().subtract(1, 'months'), dayjs()]}>
       <RangePicker />
     </Item>
   )
@@ -385,9 +386,9 @@ export default function UseSerach(props) {
   // 能源管理 --公共能耗
   const changepublic = (e) => {
     if (e == 4) {
-      form.setFieldValue("publicrangedate", [moment().subtract("day", 7), moment().endOf("day")])
+      form.setFieldValue("publicrangedate", [dayjs().subtract(7,"day"), dayjs().endOf("day")])
     } else {
-      form.setFieldValue("publicdate", moment())
+      form.setFieldValue("publicdate", dayjs())
     }
     props.setexparams({ ...form.getFieldsValue(true) })
   }
@@ -403,11 +404,11 @@ export default function UseSerach(props) {
           const picker = { "1": "date", "2": "month", "3": "year" }[type?.toString()]
 
           if (type == 4) {
-            return <Form.Item name="publicrangedate" initialValue={[moment().startOf("day"), moment().endOf("day")]}  >
+            return <Form.Item name="publicrangedate" initialValue={[dayjs().startOf("day"), dayjs().endOf("day")]}  >
               <Daterange rangeDate={props.config?.rangeDate || 45} showTime={props.config?.showTime} />
             </Form.Item>
           } else {
-            return <Form.Item name="publicdate" initialValue={moment()}>
+            return <Form.Item name="publicdate" initialValue={dayjs()}>
               <DatePicker picker={picker} disabledDate={disableDate}   />
             </Form.Item>
           }
@@ -589,14 +590,7 @@ export default function UseSerach(props) {
   }, [config.energytype])
 
 
-  /*   useEffect(() => {
-
-      if (nested == "public" && primary == 'runtimeEnergy') {
-        form.setFieldValue('date', [moment().startOf("day"), moment()])
-      } else {
-        form.setFieldValue('date', moment(new Date(), "YYYY-MM-DD"))
-      }
-    }, [nested, primary]) */
+ 
   return (
 
     <Cform layout="inline" form={form} colon={false}  {...props.formprop}

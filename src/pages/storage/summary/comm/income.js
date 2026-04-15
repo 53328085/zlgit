@@ -1,6 +1,6 @@
 import React, {useContext,useEffect, useState} from 'react'
 import { Space, Form, DatePicker,Badge} from 'antd'
-import moment from 'moment'
+import dayjs from 'dayjs'
 import {Paramscontext} from  '../context'
 import {isObject, disabledDate} from '@com/usehandler'
 import {useQueryStorageIncome} from '../api'
@@ -13,8 +13,8 @@ export default function Index() {
   const [form] = Form.useForm()
   const {areaId, stationName,  projectId} = useContext(Paramscontext)
   const [data, setData] = useState([])
-  const  [time, setTime] = useState({startTime:moment().subtract(1, 'days'),
-    endTime:moment()})
+  const  [time, setTime] = useState({startTime:dayjs().subtract(1, 'days'),
+    endTime:dayjs()})
 
    const dimensions =[
      {

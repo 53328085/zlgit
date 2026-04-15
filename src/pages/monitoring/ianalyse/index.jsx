@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect, useCallback } from "react";
 import Titlelayout from "@com/titlelayout";
 import { DatePicker, Space, Radio, Divider } from "antd";
-import moment from "moment";
+import dayjs from "dayjs";
 import styled from "styled-components";
 import { Monitoring } from "@api/api.js";
 import { useSelector } from "react-redux";
@@ -97,8 +97,8 @@ const columns = [{
 export default function index() {
   const projectId = useSelector((state) => state.system.menus.projectId);
   const { RangePicker } = DatePicker;
-  const currentDate = moment();
-  const oneWeekAgo = moment().subtract(1, "weeks");
+  const currentDate = dayjs();
+  const oneWeekAgo = dayjs().subtract(1, "weeks");
   const dateFormat = "YYYY-MM-DD";
   const ModalRef = useRef(null)
   const [indexBtn, setIndexBtn] = useState(0)
@@ -244,32 +244,9 @@ export default function index() {
     // console.log(minValSn)
     return minValues;
   }
-  const getTime = () => {
-
-    if (state.timeType == 1) {
-      let date = moment().format('YYYY-MM-DD ')
-      return { start: date + "00:00:00", end: date + "23:59:59" }
-    } else if (state.timeType == 2) {
-      let date = moment().subtract(7, 'days').format('YYYY-MM-DD ')
-      return { start: date + "00:00:00", end: moment().format('YYYY-MM-DD ') + "23:59:59" }
-    } else if (state.timeType == 3) {
-      let date = moment().subtract(31, 'days').format('YYYY-MM-DD ');
-      return { start: date + "00:00:00", end: moment().format('YYYY-MM-DD ') + "23:59:59" }
-    }
-    return null
-  }
+ 
   const HistoryCompares = async () => {
-    //const timer = getTime()
-    // console.log(timer, dates)
-    
-    // const params = [{
-    //   projectId,
-    //   type: radioVal,
-    //   groupName: state.groupName,
-    //   sNs: state.snGroup,
-    //   start: dates[0],
-    //   end: dates[1],
-    // }];
+ 
     if (params.length == 0) return
     const resp = await HistoryCompare(params);
     if (resp.success) {
@@ -372,10 +349,10 @@ export default function index() {
  
   const [dateList, setDateList] = useState([])
   const getDefaultValue = (type) => {
-    const today = moment();
-    const oneDayAgo = moment().subtract(1, 'days');
-    const oneWeekAgo = moment().subtract(7, 'days');
-    const oneMonthAgo = moment().subtract(1, 'months');
+    const today = dayjs();
+    const oneDayAgo = dayjs().subtract(1, 'days');
+    const oneWeekAgo = dayjs().subtract(7, 'days');
+    const oneMonthAgo = dayjs().subtract(1, 'months');
     let List = [today, today, oneWeekAgo, oneMonthAgo]
     setDateList(List)
     switch (type) {
@@ -387,11 +364,11 @@ export default function index() {
         return [oneMonthAgo, today];
     }
   };
-  const disabledDate = (current, type) => {
-    const today = moment();
-    const oneDayAgo = moment().subtract(1, 'days');
-    const oneWeekAgo = moment().subtract(7, 'days');
-    const oneMonthAgo = moment().subtract(1, 'months');
+  const disabledDate =useCallback( (current, type) => {
+    const today = dayjs();
+    const oneDayAgo = dayjs().subtract(1, 'days');
+    const oneWeekAgo = dayjs().subtract(7, 'days');
+    const oneMonthAgo = dayjs().subtract(1, 'months');
     if (!current) {
       return false; // 显式处理 current 为 null 或 undefined 的情况
     }
@@ -406,7 +383,7 @@ export default function index() {
       default:
         return false;
     }
-  };
+  }, [radioVal])
 
   return (
    /*  <div style={{ width: "100%", height: "100%", display: "flex", flexDirection: "column" }}> */

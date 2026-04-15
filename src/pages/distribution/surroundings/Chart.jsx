@@ -1,5 +1,5 @@
 import React,{useState, useEffect} from 'react'
-import moment from 'moment';
+import dayjs from 'dayjs';
 import {Space,DatePicker} from 'antd'
 import {SerachButton} from '@com/useButton'
 import Ichart from "@com/useEcharts/Ichart"

@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next'
 import { Typography, Image, Form, Space, Button, Input, InputNumber, Select, DatePicker, TimePicker, Divider, Drawer, Checkbox, message } from 'antd'
 import { useAntdTable } from 'ahooks'
 import { nanoid } from "@reduxjs/toolkit"
-import moment from 'moment'
+import dayjs from 'dayjs'
 import Titlelayout from '@com/titlelayout'
 import { CustButton, ExportExcel, NewButton, AllExportButton } from '@com/useButton'
 import UseSerach, { AreaSelect } from '@com/useSerach'
@@ -279,8 +279,8 @@ function Main({ projectId, areaId }) {
     setIsAdd(false)
     let { autoCloseTime, autoOpenTime, ...rest } = record
     form.setFieldsValue({
-      autoCloseTime: moment(autoCloseTime, "HH:mm"),
-      autoOpenTime: moment(autoOpenTime, "HH:mm"),
+      autoCloseTime: dayjs(autoCloseTime, "HH:mm"),
+      autoOpenTime: dayjs(autoOpenTime, "HH:mm"),
       ...rest
     })
     modal.current.onOpen()
@@ -538,14 +538,16 @@ function Main({ projectId, areaId }) {
             title="被控设备"
             width={928}
             open={open}
-            bodyStyle={{
+            styles={{
+              body:{
               backgroundColor: '#f2f2f2',
               padding: '32px'
-            }}
-            headerStyle={{
-              backgroundColor: '#f2f2f2',
+              },
+              header:{
+  backgroundColor: '#f2f2f2',
               padding: '32px 32px 0 32px',
               borderBottom: 'none'
+              }
             }}
             closable={false}
 

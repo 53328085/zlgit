@@ -1,5 +1,5 @@
 import React, { useState, useMemo, useEffect, useRef, forwardRef, useImperativeHandle, memo } from 'react'
-import moment from 'moment'
+import dayjs from 'dayjs'
 import styled from 'styled-components'
 import { useSelector, useDispatch } from 'react-redux'
 import { Select, Button, DatePicker, Form, Divider, message,Space } from 'antd'
@@ -258,7 +258,7 @@ return (
                     showDevlist &&<Devicelist roomId={curid} projectId={projectId} /> 
                   }
                   {
-                    showDate && <Form.Item label="日期" name="dateval" initialValue={moment()}>
+                    showDate && <Form.Item label="日期" name="dateval" initialValue={dayjs()}>
                       <DatePicker size='middle'  onChange={changeTime}></DatePicker>
                     </Form.Item>
                   }

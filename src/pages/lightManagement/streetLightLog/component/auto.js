@@ -1,6 +1,6 @@
 import React, { useRef, useState, useEffect, useMemo } from "react";
 import { Space, Form,   Input, Table, DatePicker } from "antd";
-import moment from "moment";
+import dayjs from 'dayjs';
  
 import { useSelector } from "react-redux";
 import { selectProjectId } from "@redux/systemconfig";
@@ -75,7 +75,7 @@ export default function Index() {
             <Form.Item
               name="time"
               label="执行时间"
-              initialValue={[moment().subtract(1, "months"), moment().add(1, "years")]}
+              initialValue={[dayjs().subtract(1, "months"), dayjs().add(1, "years")]}
               rules={[{
                 required: true,
                 message: "请选择执行执行时间"

@@ -1,11 +1,11 @@
-import moment from "moment";
+import dayjs from 'dayjs';
 import {useMemo} from "react"
 import imgUrl from "./imgs/index";
 import rise from "./imgs/rise.png";
 import down from "./imgs/down.png";
 export const Init_Value = {
   dtype: "1",
-  date: moment().subtract(1,"day"),
+  date: dayjs().subtract(1,"day"),
 };
 export const Date_Value = [
   {

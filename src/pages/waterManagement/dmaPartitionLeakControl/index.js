@@ -7,14 +7,14 @@ import { Container } from "./style";
 import { Tabs, Leakage, LeakageTrend, PartAlarm } from "./comps";
 import { DMAPartition } from "@api/api";
 import { Form, message } from "antd";
-import moment from "moment";
+import dayjs from 'dayjs';
 import CustContext from "@com/content";
 export default function Index() {
   const [treeId, setTreeId] = useState();
   const [tabId, setTabId] = useState("1");
   const [formState, setFormState] = useState({
-    StartTime: moment().format("YYYY-MM-DD"),
-    EndTime: moment().format("YYYY-MM-DD"),
+    StartTime: dayjs().format("YYYY-MM-DD"),
+    EndTime: dayjs().format("YYYY-MM-DD"),
     TimeType: "1",
   });
   const [alarmForm, setAlarmForm] = useState({

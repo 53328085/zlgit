@@ -1,6 +1,6 @@
 import React, {useContext,useEffect, useState} from 'react'
 import { Space, Form, DatePicker,Badge, Select} from 'antd'
-import moment from 'moment'
+import dayjs from 'dayjs'
 import {Paramscontext} from  '../context'
 import {isObject} from '@com/usehandler'
  
@@ -16,7 +16,7 @@ export default function Index({title,getData  }={}) {
  
   const [typevalue, setTypevalue] =useState({
     type:1,
-    date: moment()
+    date: dayjs()
   })
    const dimensions =[
     {name:"充电量"},
@@ -59,7 +59,7 @@ export default function Index({title,getData  }={}) {
     <Space><Form.Item name="type" style={{marginBottom:0}} initialValue={0}  >
         <Select options={option} style={{width: "120px"}} />
       </Form.Item> 
-      <Form.Item name="date" style={{marginBottom:0}} initialValue={moment()} >
+      <Form.Item name="date" style={{marginBottom:0}} initialValue={dayjs()} >
         <DatePicker picker={['month',"year"][datetype]} style={{width: "120px"}} allowClear={false} />
       </Form.Item></Space>
        </Form>)

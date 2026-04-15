@@ -13,7 +13,7 @@ import second from '../imgs/second.png'
 import third from '../imgs/third.png'
 import { safeElectric } from '@api/api'
 import {  selectOneLevelDefaultId,adaptation, themeColor} from '@redux/systemconfig.js'
-import moment from 'moment'
+import dayjs from 'dayjs'
 const Dotel =styled.div`
 && {
   width: 14px;
@@ -571,7 +571,7 @@ const Alarm = ({ pref, opref, areaId }) => {
   const [opieData, setOpieData] = useState()
   const [dateform] = Form.useForm()
   const arealist = useSelector(state => state.system.onelevel)
-  const getQueryWarningDistributed = async (type = 1, date = moment().format('YYYY-MM-DD')) => {
+  const getQueryWarningDistributed = async (type = 1, date = dayjs().format('YYYY-MM-DD')) => {
     let params = {
       projectId,
       type,
@@ -621,9 +621,9 @@ const Alarm = ({ pref, opref, areaId }) => {
   const getdateformat = (dateType, date) => {
 
     if (dateType === 1) {
-      date = moment(date).format('YYYY-MM-01')
+      date = dayjs(date).format('YYYY-MM-01')
     } else if (dateType === 2) {
-      date = moment(date).format('YYYY-01-01')
+      date = dayjs(date).format('YYYY-01-01')
     }
     return date
   }
@@ -713,7 +713,7 @@ const AlarmRank = ({ bref, areaId }) => {
   const [dateform] = Form.useForm()
   let lengend = { dimensions: ["type", "一级报警", "二级报警", "三级报警"] }
   const [datasetStack, setDatasetStack] = useState()
-  const getQueryWarningTypeRanking = async (type = 1, date = moment().format('YYYY-MM-DD')) => {
+  const getQueryWarningTypeRanking = async (type = 1, date = dayjs().format('YYYY-MM-DD')) => {
     let params = {
       projectId,
       type,
@@ -742,9 +742,9 @@ const AlarmRank = ({ bref, areaId }) => {
   //获取日期格式
   const getdateformat = (dateType, date) => {
     if (dateType === 1) {
-      date = moment(date).format('YYYY-MM-01')
+      date = dayjs(date).format('YYYY-MM-01')
     } else if (dateType === 2) {
-      date = moment(date).format('YYYY-01-01')
+      date = dayjs(date).format('YYYY-01-01')
     }
     return date
   }
@@ -845,7 +845,7 @@ const DateComp = ({ ChangDate, changPicker, dateform }) => {
       initialValues={
         {
           datetype: datecatrgory,
-          datevalue: moment(),
+          datevalue: dayjs(),
         }
       }
     >

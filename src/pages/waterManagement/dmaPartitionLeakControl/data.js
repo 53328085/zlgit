@@ -1,4 +1,4 @@
-import moment from "moment";
+import dayjs from 'dayjs';
 export const Radio_Options = [
   {
     label: "本级管网漏损",
@@ -17,7 +17,7 @@ export const Date_Value = [
 
 export const Init_Value = {
   dtype: "1",
-  date: moment(),
+  date: dayjs(),
 };
 //仪表盘数据
 export const Guage_Data = {
@@ -370,5 +370,5 @@ export const AlarmLevel = [
 //报警头部初始化信息
 export const AlarmHeader = {
   type: null,
-  // dateRange:[moment(), moment()]
+  // dateRange:[dayjs(), dayjs()]
 };

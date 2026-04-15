@@ -1,5 +1,5 @@
 import React, { useState, useEffect, memo, useRef } from "react";
-import moment from "moment";
+import dayjs from 'dayjs';
 import Pagecount from '@com/pagecontent'
 import { useSearchParams, useOutletContext } from 'react-router-dom'
 import { EnergyFlowRuntime } from "@api/api"
@@ -122,7 +122,7 @@ export default function Index() {
       projectId,
       energyType: energytype,
       type,
-      date: getTime(moment(date), type)
+      date: getTime(dayjs(date), type)
     }
     try {
       // let hander = ['', queryElectric, queryWater, '', '', '', '', queryWater][energytype]
@@ -217,7 +217,7 @@ export default function Index() {
     let params = {
       projectId, meterType: energytype,
       dayMonthYear: type,
-      date: getTime(moment(date), type)
+      date: getTime(dayjs(date), type)
     }
     try {
       let { success, data, errMsg } = await QueryConsumeRankByDevice(params)

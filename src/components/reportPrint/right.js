@@ -6,7 +6,7 @@ import {hextodec} from '@com/usehandler'
  
 import {useSelector} from "react-redux" 
 import { systemConfigInfo, currProject,themeColor} from '@redux/systemconfig.js'
-import moment from 'moment'
+import dayjs from 'dayjs'
  import up from './upbg.png'
  
  import down from './downbg.png'
@@ -122,7 +122,7 @@ const Mainbox = styled.div`
 export default  forwardRef(function Rightlayout(props, ref) { 
   const {reportName='', params} = props
   const {address, projectName, logoImage} = useSelector(currProject)  
-  let reportDate = moment().format("yyyy-MM-DD")
+  let reportDate = dayjs().format("YYYY-MM-DD")
   const {chineseTitle } = useSelector(systemConfigInfo)
    let {  primaryColor} = useSelector(themeColor)
    let rgb = hextodec(primaryColor)

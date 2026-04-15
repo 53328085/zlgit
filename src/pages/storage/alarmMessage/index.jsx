@@ -3,7 +3,7 @@ import styled from 'styled-components'
 import {Typography, Image, Form, Space,  Input, Select, DatePicker,  Divider } from 'antd'
 import {useAntdTable} from 'ahooks'
 import {nanoid} from "@reduxjs/toolkit"
-import moment from 'moment'
+import dayjs from 'dayjs'
 import Titlelayout from '@com/titlelayout'
 import Usetable from '@com/useTable'
 import {StorageAlarmRuntime} from '@api/api'
@@ -170,7 +170,7 @@ const P = styled(Paragraph)`
           content: '',
           deviceType:0,
           level: 0,
-          time: [moment().subtract(7, 'day'), moment()]
+          time: [dayjs().subtract(7, 'day'), dayjs()]
         }}>
           <Space size={16}>
              <Item label="告警查询" name="content">

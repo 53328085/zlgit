@@ -3,7 +3,7 @@ import CModal from '@com/useModal'
 import { useMemoizedFn, useRequest } from 'ahooks'
 import styled from 'styled-components'
 import { DatePicker, Divider, Form, Input, message, Select, Space, TimePicker } from 'antd'
-import moment from 'moment'
+import dayjs from 'dayjs'
 import {
   DefaultFormInfo, getStepOptions,
   getTimePeriodOptions,
@@ -64,7 +64,7 @@ const Index = ({ onRefreshClick }, ref) => {
       form.setFieldsValue({
         ...info,
         step: info.count,
-        enableDate: moment(info.enableDate)
+        enableDate: dayjs(info.enableDate)
       })
       //获取详情
       getInfoDetail({ projectId, enableDate: info.enableDate })
@@ -91,10 +91,10 @@ const Index = ({ onRefreshClick }, ref) => {
         newTariffTimes: []
       }, values)
       if (isAdd) {
-        params.enableDate = moment(params.enableDate).format('YYYY-MM-DD')
+        params.enableDate = dayjs(params.enableDate).format('YYYY-MM-DD')
       } else {
-        params.newEnableDate = moment(params.enableDate).format('YYYY-MM-DD')
-        params.oldEnableDate = moment(editKey).format('YYYY-MM-DD')
+        params.newEnableDate = dayjs(params.enableDate).format('YYYY-MM-DD')
+        params.oldEnableDate = dayjs(editKey).format('YYYY-MM-DD')
         delete params.enableDate
       }
       params.newTariffTimes.forEach(item => {
@@ -126,7 +126,7 @@ const Index = ({ onRefreshClick }, ref) => {
   }))
 
   const disabledDate = (current) => {
-    return current && current <= moment().endOf('day')
+    return current && current <= dayjs().endOf('day')
   }
 
   // 在组件内添加时间处理函数
@@ -151,8 +151,8 @@ const Index = ({ onRefreshClick }, ref) => {
 
       // 处理同一时段endTime > startTime
       if (currentTime.startTime && currentTime.endTime) {
-        const start = moment(currentTime.startTime, 'HH:mm')
-        const end = moment(currentTime.endTime, 'HH:mm')
+        const start = dayjs(currentTime.startTime, 'HH:mm')
+        const end = dayjs(currentTime.endTime, 'HH:mm')
         if (end.isSameOrBefore(start)) {
           // 清空当前endTime和后一时段startTime
           form.setFieldsValue({
@@ -203,27 +203,27 @@ const Index = ({ onRefreshClick }, ref) => {
     // 2. 检查单个时段的时间有效性
     for (let i = 0; i < newTariffTimes.length; i++) {
       const { startTime, endTime } = newTariffTimes[i]
-      const start = moment(startTime, 'HH:mm')
-      const end = moment(endTime, 'HH:mm')
+      const start = dayjs(startTime, 'HH:mm')
+      const end = dayjs(endTime, 'HH:mm')
       if (end.isSameOrBefore(start)) {
         throw new Error(`时段${i + 1}的结束时间必须大于开始时间`)
       }
     }
     // 3. 检查时段连续性
     for (let i = 1; i < newTariffTimes.length; i++) {
-      const prevEnd = moment(newTariffTimes[i - 1].endTime, 'HH:mm')
-      const currentStart = moment(newTariffTimes[i].startTime, 'HH:mm')
+      const prevEnd = dayjs(newTariffTimes[i - 1].endTime, 'HH:mm')
+      const currentStart = dayjs(newTariffTimes[i].startTime, 'HH:mm')
       if (!currentStart.isSame(prevEnd)) {
         throw new Error(`时段${i}的结束时间必须等于时段${i + 1}的开始时间`)
       }
     }
     // 4. 检查首尾时段
-    const firstStart = moment(newTariffTimes[0].startTime, 'HH:mm')
-    if (!firstStart.isSame(moment('00:00', 'HH:mm'))) {
+    const firstStart = dayjs(newTariffTimes[0].startTime, 'HH:mm')
+    if (!firstStart.isSame(dayjs('00:00', 'HH:mm'))) {
       throw new Error('第一个时段的开始时间必须为00:00')
     }
-    const lastEnd = moment(newTariffTimes[newTariffTimes.length - 1].endTime, 'HH:mm')
-    if (!lastEnd.isSame(moment('24:00', 'HH:mm'))) {
+    const lastEnd = dayjs(newTariffTimes[newTariffTimes.length - 1].endTime, 'HH:mm')
+    if (!lastEnd.isSame(dayjs('24:00', 'HH:mm'))) {
       throw new Error('最后一个时段的结束时间必须为24:00')
     }
     return true // 所有校验通过

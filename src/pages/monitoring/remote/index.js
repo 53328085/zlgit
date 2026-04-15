@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef, forwardRef, useImperativeHandle } from 'react'
 import { useSelector } from 'react-redux'
-import moment from 'moment'
+import dayjs from 'dayjs'
 import { useAntdTable } from 'ahooks'
 import { Remote, Monitoring,operationDesigin } from '@api/api.js'
 import { Form, Button, Table, Select, message, Divider, Space, DatePicker,Input } from 'antd'
@@ -113,7 +113,7 @@ export default function Index() {
         let { time, alike, deviceStyle } = logparams
         if (!time) return
         let [start, end] = time
-        let params = { pageNum: current, pageSize, projectId, start: start.format("yyyy-MM-DD"), end: end.format("yyyy-MM-DD") }
+        let params = { pageNum: current, pageSize, projectId, start: start.format("YYYY-MM-DD"), end: end.format("YYYY-MM-DD") }
         return QueryDeviceLogs(areaId, alike.trim(), deviceStyle, params).then(res => {
             let { success, data, total } = res
 
@@ -420,7 +420,7 @@ export default function Index() {
         tabs,
     }
     // 设置initialValues之前检查options数组是否有数据
-    const initialValues = deviceStyles.length > 0 ? { deviceStyle: deviceStyles[0]?.deviceStyle, alike: '', time: [moment().subtract(7, 'day'), moment()] } : {};
+    const initialValues = deviceStyles.length > 0 ? { deviceStyle: deviceStyles[0]?.deviceStyle, alike: '', time: [dayjs().subtract(7, 'day'), dayjs()] } : {};
     return (
         <CustContext.Provider value={dataProps}>
             <Pagecount>

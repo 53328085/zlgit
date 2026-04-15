@@ -9,7 +9,7 @@ import {useTranslation} from "react-i18next"
 import {useSelector} from 'react-redux'
 import {adaptation} from "@redux/systemconfig"
 import imgurl from "@imgs/index";
-import moment from "moment";
+import dayjs from "dayjs";
 const {Search, Password, TextArea} = Input
 const { Item } = Form;
 
@@ -188,13 +188,13 @@ export const CdatePicker = styled(DatePicker)`
 `
 
 export  const disabledDate = (current) => {
-  return current && current > moment().endOf('day');
+  return current && current > dayjs().endOf('day');
 };
 
 
 export const ComDatePicker = (props) => {
   const disabledDate = (current) => {
-    return current && current > moment().endOf('day');
+    return current && current > dayjs().endOf('day');
   };
   return (<DatePicker 
     disabledDate={disabledDate} {...props} />)
@@ -218,7 +218,7 @@ export const Iptserach = styled(Search)`
   &:focus:not(.ant-input-disabled), &:hover:not(.ant-input-disabled) {    
     border-color: #1f83fe !important;
     .ant-input {
-      color: #1f83fe;
+      color: #1f83fe !important;
     }    
   }
  .ant-input-group>.ant-input-group-addon:last-child {
@@ -227,7 +227,7 @@ export const Iptserach = styled(Search)`
 
   .ant-input {
     background-color: transparent;
-    color:#999;
+    color:#999 !important;
   
   } 
  .ant-input::placeholder {
@@ -250,13 +250,13 @@ export const Cselect = styled(Select)`
   &:hover {
     border-color: #1f83fe !important;  
     .ant-input {
-      color: #1f83fe;
+      color: #1f83fe !important;
     }
   }
   && {
-    color: #999;     
+    color: #999 !important;     
     border-radius: 4px;
-    overflow: hidden;
+  //  overflow: hidden;
   }
   
  &:hover,&:focus {
@@ -275,10 +275,12 @@ export const Cselect = styled(Select)`
     border: 1px solid #8091b2;
     border-radius: 4px;
     overflow: hidden;
-    width: ${props => props.w || 'auto'};
+    width: ${props => props.w || 'auto'} !important;
     height: ${props => props.h || 'auto'} !important ;
     .ant-select-selection-item{
       line-height: ${props => props.h} !important;
+      color: #999 !important;
+      height: ${props => props.h} !important;
     }
     &:focus, &:hover {    
     border-color: #1f83fe !important;
@@ -439,7 +441,7 @@ export const Logipt = styled(Input)`
   }
   .ant-input {
     background-color: transparent;
-    color: #999;
+    color: #999 !important;
   }
   .ant-input::placeholder {
     color: #999;
@@ -465,7 +467,7 @@ export const Logpsd = styled(Input.Password)`
       background-image: url(${(props) => props.aurl});
     }
     .ant-input {
-      color: #1f83fe;
+      color: #1f83fe !important;
     }
     .ant-input-password-icon.anticon {
       color: #1f83fe !important;
@@ -484,7 +486,7 @@ export const Logpsd = styled(Input.Password)`
   }
   .ant-input {
     background-color: transparent;
-    color: #999;
+    color: #999 !important;
   }
   .ant-input::placeholder {
     color: #999;
@@ -537,7 +539,7 @@ export const Logbtn = styled(Button)`
   font-size: 18px;
   color: #fff;
   &:hover, &:active, &:focus {   
-    background-color:  rgba(0,51,255,0.8);
+    background-color:  rgba(0,51,255,0.8) !important;
     color: #fff;
   }
 `;

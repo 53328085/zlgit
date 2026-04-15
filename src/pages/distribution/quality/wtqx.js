@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import styled from 'styled-components'
 import {nanoid} from '@reduxjs/toolkit'
-import moment from 'moment'
+import dayjs from 'dayjs'
 import {Form, Select} from 'antd'
 import Ichart  from '@com/useEcharts/Ichart';
 import UserTable from "@com/useTable";
@@ -98,7 +98,7 @@ const arrlen =(arr) => {
     xAxis: {
       axisLabel: {
         formatter: (value) => {
-            return moment(value, "YYYY-MM-DD HH:mm:ss").format("HH:mm")
+            return dayjs(value, "YYYY-MM-DD HH:mm:ss").format("HH:mm")
         },
         interval: "auto"
      },
@@ -136,19 +136,19 @@ export default function Index({projectId, day, sn}) {
         1: {
         projectId,
         sn,
-        day: day.format("yyyy-MM-DD"),
+        day: day.format("YYYY-MM-DD"),
         group,
         param
        },
        2: {
         projectId,
         sn,
-        day: day.format("yyyy-MM-DD")
+        day: day.format("YYYY-MM-DD")
        },
       3: {
         projectId,
         sn,
-        day: day.format("yyyy-MM-DD")
+        day: day.format("YYYY-MM-DD")
        }
       }[pattern]
       const method ={

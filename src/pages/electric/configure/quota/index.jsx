@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from "react";
 import style from "./style.module.less";
 import { useTranslation } from 'react-i18next'
 import { PlusOutlined } from "@ant-design/icons";
-import moment from "moment";
+import dayjs from 'dayjs';
 import Mask from '@com/mask.jsx'
 import UseTransfer from './transfer';
 import { ExportExcel } from '@com/useButton'
@@ -430,7 +430,7 @@ export default function Index() {
   const editAlarmInfo = (record) => {
 
     console.log('record', record)
-    setGiveChildFormRecord({ ...record, HourRange: [moment(record.HourStart, 'HH'), moment(record.HourEnd, 'HH')] });
+    setGiveChildFormRecord({ ...record, HourRange: [dayjs(record.HourStart, 'HH'), dayjs(record.HourEnd, 'HH')] });
     setEditTypeId(record.Id);
     setAddAlarmEvent(true);
     setNoDataInForm(false); //区分新增编辑

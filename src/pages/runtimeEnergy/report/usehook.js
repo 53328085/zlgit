@@ -1,5 +1,5 @@
 import {useMemo} from 'react';
-import moment from 'moment';
+import dayjs from 'dayjs';
 export  function useBaript({selectedRowKeys, tableData, checkvalue, detailHeaders,type}) {
 
       const toformat = {
@@ -39,7 +39,7 @@ export  function useBaript({selectedRowKeys, tableData, checkvalue, detailHeader
         xAxis: {
           type: 'category',
           axisLabel: {
-            formatter: (value) => moment(value, timeformt).format(toformat)
+            formatter: (value) => dayjs(value, timeformt).format(toformat)
           }
         },
         yAxis: {

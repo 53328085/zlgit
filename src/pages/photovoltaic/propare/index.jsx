@@ -5,7 +5,7 @@ import UseTree from "@com/useTree";
 import { useSelector } from 'react-redux'
 import { useAntdTable } from "ahooks";
 import { useOutletContext } from 'react-router-dom'
-import moment from 'moment';
+import dayjs from 'dayjs';
 
 import { adaptation } from "@redux/systemconfig";
 //import {Link} from 'react-router-dom'

@@ -2,7 +2,7 @@ import React, { useState, useRef, useEffect, useCallback } from "react";
 import Titlelayout from "@com/titlelayout";
 import { DatePicker, Input, Radio, Divider, Select, message, Button, Tag, Drawer, Steps } from "antd";
 import dayjs from 'dayjs';
-import moment from "moment";
+
 import styled from "styled-components";
 import { DistributionCabinet } from "@api/api.js";
 import { useSelector } from "react-redux";
@@ -206,16 +206,16 @@ export default function index() {
       ...option,
     },
   });
-  const today = moment().startOf('day');
-  const tmonth = moment().startOf('month')
-  const tyear = moment().startOf('year')
+  const today = dayjs().startOf('day');
+  const tmonth = dayjs().startOf('month')
+  const tyear = dayjs().startOf('year')
   const tbref = useRef()
   const params = useReactive({
     siteId: 1,
     alarmLevel: 0,
     type: 1,
-    startDate: moment(today).format('YYYY-MM-DD'),
-    endDate: moment(today).format('YYYY-MM-DD'),
+    startDate: dayjs(today).format('YYYY-MM-DD'),
+    endDate: dayjs(today).format('YYYY-MM-DD'),
   });
   const GetSns = async () => {
     try {
@@ -240,17 +240,17 @@ export default function index() {
     console.log(e)
     params.type = parseInt(e)
     if (params.type == 1) {
-      params.startDate = moment(today).format('YYYY-MM-DD')
-      params.endDate = moment(today).format('YYYY-MM-DD')
+      params.startDate = dayjs(today).format('YYYY-MM-DD')
+      params.endDate = dayjs(today).format('YYYY-MM-DD')
     } else if (params.type == 2) {
-      params.startDate = moment(tmonth).format('YYYY-MM') + '-01'
-      params.endDate = moment(tmonth).format('YYYY-MM') + '-01'
+      params.startDate = dayjs(tmonth).format('YYYY-MM') + '-01'
+      params.endDate = dayjs(tmonth).format('YYYY-MM') + '-01'
     } else if (params.type == 3) {
-      params.startDate = moment(today).format('YYYY') + '-01-01'
-      params.endDate = moment(today).format('YYYY') + '-01-01'
+      params.startDate = dayjs(today).format('YYYY') + '-01-01'
+      params.endDate = dayjs(today).format('YYYY') + '-01-01'
     } else {
-      params.startDate = moment(today).format('YYYY-MM-DD')
-      params.endDate = moment(today).format('YYYY-MM-DD')
+      params.startDate = dayjs(today).format('YYYY-MM-DD')
+      params.endDate = dayjs(today).format('YYYY-MM-DD')
     }
     run(1, 14)
   }//切换日月年
@@ -470,10 +470,10 @@ export default function index() {
                   { value: '4', label: '自定义' },
                 ]}
               />
-              {params.type == 1 ? <DatePicker style={{ width: 240 }} onChange={onChangeDate} defaultValue={moment(today)} disabledDate={disabledDate} /> :
-                params.type == 2 ? <DatePicker style={{ width: 240 }} onChange={onChangeDate} defaultValue={moment(tmonth)} picker='month' disabledDate={disabledDate} /> :
-                  params.type == 3 ? <DatePicker style={{ width: 240 }} onChange={onChangeDate} picker='year' defaultValue={moment(tyear)} disabledDate={disabledDate} /> :
-                    <RangePicker style={{ width: 240 }} onChange={onChangeDate} defaultValue={[moment(today), moment(today)]} disabledDate={disabledDate} />
+              {params.type == 1 ? <DatePicker style={{ width: 240 }} onChange={onChangeDate} defaultValue={dayjs(today)} disabledDate={disabledDate} /> :
+                params.type == 2 ? <DatePicker style={{ width: 240 }} onChange={onChangeDate} defaultValue={dayjs(tmonth)} picker='month' disabledDate={disabledDate} /> :
+                  params.type == 3 ? <DatePicker style={{ width: 240 }} onChange={onChangeDate} picker='year' defaultValue={dayjs(tyear)} disabledDate={disabledDate} /> :
+                    <RangePicker style={{ width: 240 }} onChange={onChangeDate} defaultValue={[dayjs(today), dayjs(today)]} disabledDate={disabledDate} />
               }
               {/* <Button type="primary" style={{ marginLeft: 32, width: 96 }}  onClick={submit}>开始诊断</Button> */}
             </div>

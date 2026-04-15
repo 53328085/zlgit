@@ -1,6 +1,6 @@
 import React, { useState, useCallback, useRef, useEffect, useMemo   } from 'react'
 import { Checkbox, DatePicker, message, Tooltip, Descriptions, Radio, Space} from 'antd'
-import moment from 'moment'
+import dayjs from 'dayjs'
 
 import { useOutletContext } from 'react-router-dom'
 import { useAntdTable } from 'ahooks'

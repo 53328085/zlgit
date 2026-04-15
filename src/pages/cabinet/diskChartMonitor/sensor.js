@@ -7,7 +7,7 @@ import React, {
 } from "react";
 import { DatePicker, Typography, Form, Select, Space } from "antd";
 import { CloseOutlined } from "@ant-design/icons";
-import moment from "moment";
+import dayjs from 'dayjs';
 import { CDrawer, Extrea } from "./comstyle";
 import Ichart from "@com/useEcharts/Ichart";
 import { DiskChart } from "@api/api.js";
@@ -115,7 +115,7 @@ const temparr = [
     ]
 ]
 const disabledDate = (current) => { 
-    return current && current > moment().endOf('day');
+    return current && current > dayjs().endOf('day');
   };
 const Chart = ({temps, TempData, moption}) => {
     return (
@@ -190,7 +190,7 @@ function Index(props, ref) {
       
       let values = form.getFieldsValue(true);
       
-      let { dateType = "date", time= moment() } = values || {};
+      let { dateType = "date", time= dayjs() } = values || {};
       
       let start, end;
       if (dateType !== "cust") { 
@@ -298,9 +298,9 @@ function Index(props, ref) {
   }
   const changeType = (v) => {
     if (v !="cust") {
-      form.setFieldValue("time", moment());
+      form.setFieldValue("time", dayjs());
     } else  {
-      form.setFieldValue("time", [moment().subtract(1, "day"), moment()]);
+      form.setFieldValue("time", [dayjs().subtract(1, "day"), dayjs()]);
     }
   };
   useImperativeHandle(ref, () => ({
@@ -310,16 +310,19 @@ function Index(props, ref) {
     <CDrawer
       title={title}
       open={open}
-      bodyStyle={{
-        backgroundColor: "#fff",
-      }}
-      width={1036}
-      headerStyle={{
-        backgroundColor: "#f2f2f2",
+      styles={{
+        body:{
+          backgroundColor: "#fff",
+        },
+        header:{
+          backgroundColor: "#f2f2f2",
         padding: "10px 16px",
         borderBottom: "none",
         display: "flex",
+        }
       }}
+      width={1036}
+  
       // closable={false}
       onClose={() => setOpen(false)}
     >
@@ -367,7 +370,7 @@ function Index(props, ref) {
                 {({ getFieldValue }) => {
                   let picker = getFieldValue("dateType");
                   return (
-                    <Form.Item name="time" initialValue={moment()}>
+                    <Form.Item name="time" initialValue={dayjs()}>
                       {picker != "cust" ? (
                         <DatePicker
                           picker={picker}

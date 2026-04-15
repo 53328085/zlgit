@@ -3,7 +3,7 @@ import {useSelector} from 'react-redux'
 import { selectProjectId } from '@redux/systemconfig.js'
 import {TitlelayoutOv as Titlelayout} from '@com/titlelayout';
 import { HomeRuntime } from '@api/api.js'
-import moment from 'moment';
+import dayjs from 'dayjs';
 import {CustTransO} from "@com/useButton" 
 import { message } from 'antd';
 import Ichart  from '@com/useEcharts/Ichart';
@@ -36,7 +36,7 @@ export default function DefaultHome(props){
   const getData = async () => {
      try {
        
-      let date = moment().format("yyyy-MM-DD")
+      let date = dayjs().format("YYYY-MM-DD")
       let {success, data} =  await HomeRuntime.EnergyProportion(projectId, date)
        if (success) {
          

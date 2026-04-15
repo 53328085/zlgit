@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
 import { isObject } from "@com/usehandler"
-import moment from "moment"
+import dayjs from 'dayjs'
  
 export const lineoptdoub = ({data,type}) => {
    // console.log("data", data)
@@ -43,7 +43,7 @@ export const lineoptdoub = ({data,type}) => {
                     axisLabel: {
                         formatter: (value, index) => {
                            
-                           return moment(value,"YYYY-MM-DD HH:mm")?.format?.("HH:mm")
+                           return dayjs(value,"YYYY-MM-DD HH:mm")?.format?.("HH:mm")
                         },
                         interval: "auto",
                     },

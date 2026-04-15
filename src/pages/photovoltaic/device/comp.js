@@ -8,7 +8,7 @@ import React, {
 import { DatePicker, Table, Radio, Select, Space, message, Form } from "antd";
 import UserTable from "@com/useTable";
 import { useReactive } from "ahooks";
-import moment from "moment";
+import dayjs from 'dayjs';
 import Ichart from "@com/useEcharts/Ichart";
 import { options } from "./data";
 import { useQueryInverterPointTrend } from "./api";
@@ -50,8 +50,8 @@ const HistoricalDataModal = (props) => {
         align: "center",
         width: 120,
         sorter: (a, b) =>
-          moment(a.time, format).diff(
-            moment(b.time, format)
+          dayjs(a.time, format).diff(
+            dayjs(b.time, format)
           ) > 0,
       },
       ...data.map(item => ({
@@ -64,7 +64,7 @@ const HistoricalDataModal = (props) => {
     data.forEach((item, index) => {
       let { point, data } = item;
       if (index == 0) {
-        tbdata = data.map((t) => ({ time: moment(t.time, "YYYY-MM-DD HH:mm:ss").format(format), [point]: t.value }))
+        tbdata = data.map((t) => ({ time: dayjs(t.time, "YYYY-MM-DD HH:mm:ss").format(format), [point]: t.value }))
       } else if (index > 0) {
         tbdata = data.map((t, i) => ({ ...tbdata[i], [point]: t.value }))
       }
@@ -117,7 +117,7 @@ const HistoricalDataModal = (props) => {
       xAxis: {
         axisLabel: {
           formatter: (value, index) => {
-            return moment(value, "YYYY-MM-DD HH:mm:ss").format(format);
+            return dayjs(value, "YYYY-MM-DD HH:mm:ss").format(format);
           },
           interval: "auto",
         },
@@ -172,7 +172,7 @@ const HistoricalDataModal = (props) => {
   }, [projectId, sn]);
 
   const disabledDate = (current) => {
-    return current > moment().endOf("day");
+    return current > dayjs().endOf("day");
   };
   const onexprot = () => {
     tableRef.current.download();
@@ -216,13 +216,13 @@ const HistoricalDataModal = (props) => {
                   let type = getFieldValue('type')
                   setPicker(type == 1 ? "date" : "month");
                   console.log("type")
-                  setFieldValue('date', moment())
+                  setFieldValue('date', dayjs())
                   return null
                 }
 
               }
             </Form.Item> */}
-            <Form.Item name="date" initialValue={moment()}>
+            <Form.Item name="date" initialValue={dayjs()}>
               <DatePicker
                 picker={picker}
                 style={{ width: 240 }}

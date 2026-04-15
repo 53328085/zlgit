@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import styled from 'styled-components'
 import {nanoid} from '@reduxjs/toolkit'
 import Ichart  from '@com/useEcharts/Ichart';
-import moment from 'moment';
+import dayjs from 'dayjs';
 import {PowerQuality} from "@api/api"
 import { isObject } from '@com/usehandler';
 import {RadiogroupB} from '@com/comstyled'
@@ -72,7 +72,7 @@ export default function Index({projectId, day, sn}) {
        const body = {
         projectId,
         sn,
-        day: day.format("yyyy-MM-DD"),
+        day: day.format("YYYY-MM-DD"),
         group
        }
       let {success, data} = await  PowerQuality.FHQX(body)
@@ -106,7 +106,7 @@ export default function Index({projectId, day, sn}) {
     xAxis: {
       axisLabel: { 
         formatter: (value) => {
-          return moment(value, "YYYY-MM-DD HH:mm:ss").format("HH:mm")
+          return dayjs(value, "YYYY-MM-DD HH:mm:ss").format("HH:mm")
       },
          interval: "auto"
       },

@@ -1,6 +1,6 @@
 import React,{useMemo, useRef, useState, useCallback} from 'react'
 import {Space, Form, message, Typography, DatePicker} from 'antd'
-import moment from 'moment'
+import dayjs from 'dayjs'
 import {useAntdTable} from "ahooks"
 import {useSelector} from "react-redux"
 import {useOutletContext} from "react-router-dom"
@@ -111,7 +111,7 @@ export default function Index({formData}) {
           let [type, timing] = excueTime.split("|") || []
           return {excueTime: type, timing,light:brightness, ...r}
          }else {
-          return {timeType, excueTime2:moment(excueTime,"HH:mm"),light:brightness, ...r }
+          return {timeType, excueTime2:dayjs(excueTime,"HH:mm"),light:brightness, ...r }
          }
        })
        arr[index] ={
@@ -223,7 +223,7 @@ export default function Index({formData}) {
      
       let curyear = dates?.[0]?.year()
       let second= current?.year()
-      return (curyear && second && second!== curyear) || ( current && current < moment().startOf('day'));
+      return (curyear && second && second!== curyear) || ( current && current < dayjs().startOf('day'));
   };
    const onCalendarChange=(val)=> {
      setDates(val)

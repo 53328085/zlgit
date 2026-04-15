@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import style from './style.module.less'
 import { Button, Modal, Form, Input, TimePicker, Space, message } from 'antd'
 import dayjs from 'dayjs';
-import moment from 'moment';
+
 import customParseFormat from 'dayjs/plugin/customParseFormat';
 dayjs.extend(customParseFormat);
 import dashed from '@imgs/dashed.png'
@@ -247,15 +247,15 @@ export default function Index() {
   
       // 检查是否有结束时间早于开始时间
       for (let range of validRanges) {
-        if (range.end <= range.start && moment(range.end).format('HH:mm') != '00:00') {
+        if (range.end <= range.start && dayjs(range.end).format('HH:mm') != '00:00') {
           return { isValid: false, message: '结束时间必须晚于开始时间' };
         }
       }
   
       // 检查时间段是否重叠
       for (let i = 1; i < validRanges.length; i++) {
-        let newStart = moment(validRanges[i].start).format('HH:mm')
-        let newEnd = moment(validRanges[i - 1].end).format('HH:mm')
+        let newStart = dayjs(validRanges[i].start).format('HH:mm')
+        let newEnd = dayjs(validRanges[i - 1].end).format('HH:mm')
 
         if (newStart.slice(0, 2) < newEnd.slice(0,2) || 
         (newStart.slice(0, 2) == newEnd.slice(0,2) && newStart.slice(3) < newEnd.slice(3))) {
@@ -280,8 +280,8 @@ export default function Index() {
       for(let i = 0; i<classes; i++){
         params.push({
           Name: values['name' + i],
-          StartTime: moment(values['start' + i]).format('HH:mm'),
-          EndTime: moment(values['end' + i]).format('HH:mm'),
+          StartTime: dayjs(values['start' + i]).format('HH:mm'),
+          EndTime: dayjs(values['end' + i]).format('HH:mm'),
         })
       }
       insertShift(projectId, classes, params).then(res => {
@@ -305,13 +305,13 @@ export default function Index() {
     let newRanges = []
     for(let i = 0; i<shiftList.length; i++){
       editform.setFieldValue(`name${i}`, shiftList[i].name)
-      editform.setFieldValue(`start${i}`, moment(shiftList[i].startTime, 'HH:mm'))
-      editform.setFieldValue(`end${i}`, moment(shiftList[i].endTime, 'HH:mm'))
+      editform.setFieldValue(`start${i}`, dayjs(shiftList[i].startTime, 'HH:mm'))
+      editform.setFieldValue(`end${i}`, dayjs(shiftList[i].endTime, 'HH:mm'))
       newRanges.push({
         id: shiftList[i].id,
         name: shiftList[i].name,
-        start: moment(shiftList[i].startTime, 'HH:mm'),
-        end:  moment(shiftList[i].endTime, 'HH:mm')
+        start: dayjs(shiftList[i].startTime, 'HH:mm'),
+        end:  dayjs(shiftList[i].endTime, 'HH:mm')
       })
     }
     setTimeRanges(newRanges);
@@ -333,8 +333,8 @@ export default function Index() {
         params.push({
           Id: shiftList[i].id,
           Name: values['name' + i],
-          StartTime: moment(values['start' + i]).format('HH:mm'),
-          EndTime: moment(values['end' + i]).format('HH:mm'),
+          StartTime: dayjs(values['start' + i]).format('HH:mm'),
+          EndTime: dayjs(values['end' + i]).format('HH:mm'),
         })
       }
 

@@ -2,7 +2,7 @@ import React, {useContext} from "react";
 import styled from "styled-components";
 import {useSelector} from 'react-redux'
 import { systemConfigInfo} from '@redux/systemconfig.js'
-import moment from "moment";
+import dayjs from 'dayjs';
 import printContext from "./context";
 const Pagecont = styled.div`
   height: 806px;
@@ -32,7 +32,7 @@ export default function Index(props) {
   const {params} = useContext(printContext)
   let date 
   if (params) {
-     date = params.type == 2 ? moment(params.date, "yyyy-MM-DD").format("yyyy-MM") : params.type == 3 ? moment(params.date, "yyyy-MM-DD").format("yyyy") : ''
+     date = params.type == 2 ? dayjs(params.date, "YYYY-MM-DD").format("YYYY-MM") : params.type == 3 ? dayjs(params.date, "YYYY-MM-DD").format("YYYY") : ''
   }
   let title = ''
   if(date) {

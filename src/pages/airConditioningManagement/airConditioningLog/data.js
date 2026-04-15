@@ -1,4 +1,4 @@
-import moment from "moment";
+import dayjs from 'dayjs';
 import { Typography } from 'antd'
 const { Link } = Typography
 export const Radio_Options = [
@@ -157,5 +157,5 @@ export const AirAutomaticControlTableColumns =
 //报警头部初始化信息
 export const AlarmHeader = {
   type: null,
-  // dateRange:[moment(), moment()]
+  // dateRange:[dayjs(), dayjs()]
 };

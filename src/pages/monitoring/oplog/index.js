@@ -12,7 +12,7 @@ import CustContext from '@com/content.js'
 import { selectProjectId, selectOneLevel } from '@redux/systemconfig.js'
 import imgurl from './images/index.js'
 import style from './style.module.less'
-import moment from 'moment'
+import dayjs from 'dayjs'
 const { RangePicker } = DatePicker;
 
 export default function Index() {

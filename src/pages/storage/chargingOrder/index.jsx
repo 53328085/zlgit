@@ -5,7 +5,7 @@ import {Typography,  Form, Space, Button,    Select, DatePicker, Descriptions,  
  import {useAntdTable} from 'ahooks'
 import {nanoid} from "@reduxjs/toolkit"
 import {  useOutletContext} from 'react-router-dom'
-import moment from 'moment'
+import dayjs from 'dayjs'
 import Titlelayout from '@com/titlelayout'
 import Usetable from '@com/useTable'
 import {StorageOrderRuntime} from '@api/api'
@@ -17,7 +17,7 @@ const {Text, Link,} = Typography
 const {Item} = Form
 const { RangePicker } = DatePicker;
 const disabledDate = (current) => {   
-  return current && current > moment().endOf('day');
+  return current && current > dayjs().endOf('day');
 }
 const Mainbox = styled.div`
     && {
@@ -76,9 +76,9 @@ const Mainbox = styled.div`
    const [toption, setToption] = useState([])
    
    const [form] = Form.useForm();
-   const end = moment();
-   const star = moment().subtract(7, 'day')
-   const [dates, setDates] = useState([moment(star, 'YYYY-MM-DD'), moment(end, 'YYYY-MM-DD')])
+   const end = dayjs();
+   const star = dayjs().subtract(7, 'day')
+   const [dates, setDates] = useState([dayjs(star, 'YYYY-MM-DD'), dayjs(end, 'YYYY-MM-DD')])
  
   const getStatus = async() => {
     try {
@@ -241,7 +241,7 @@ let getTableData = ({current, pageSize}, formData) => {
    form,
    defaultParams: [
     {current: 1, pageSize: 15},
-    {state: 1, type:1, date: [moment().subtract(7, 'day'), moment()]}
+    {state: 1, type:1, date: [dayjs().subtract(7, 'day'), dayjs()]}
    ],
    manual: false,  
    onError: (error) => {

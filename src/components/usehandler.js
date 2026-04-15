@@ -1,5 +1,5 @@
 import React, {useState, useEffect} from 'react'
-import moment from 'moment'
+import dayjs from 'dayjs'
 import styled, {css} from 'styled-components'
 import {message} from 'antd'
 import {getOnelevel} from '@redux/systemconfig.js'
@@ -298,5 +298,5 @@ export  const Statebox = styled.div`
 }
 export function disabledDate(current){
   // Can not select days before today and today
-  return current && current > moment().endOf('day');
+  return current && current > dayjs().endOf('day');
 };

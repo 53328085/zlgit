@@ -10,7 +10,7 @@ import Ichart  from '@com/useEcharts/Ichart';
 import UseTable from '@com/useTable'
 import {isObject} from '@com/usehandler'
 import {DistributionRoomRuntime} from '@api/api.js'
-import moment from 'moment'
+import dayjs from 'dayjs'
 import {CustButtonT} from '@com/useButton'
 const Loopmain = styled.div`
   display: grid;
@@ -129,8 +129,8 @@ export default function Index({projectId}) {
             projectId,
             sn: encodeURIComponent(sn),
             type: parseInt(value),
-            start: dateval.startOf('day').format('yyyy-MM-DD HH:mm:ss'),
-            end: dateval.endOf('day').format('yyyy-MM-DD HH:mm:ss')
+            start: dateval.startOf('day').format('YYYY-MM-DD HH:mm:ss'),
+            end: dateval.endOf('day').format('YYYY-MM-DD HH:mm:ss')
          }
     getData(params.current)
     getTbdata(params.current)
@@ -176,7 +176,7 @@ export default function Index({projectId}) {
     xAxis: {
       axisLabel: {
          formatter: (value, index) => {
-             return moment(value, "YYYY-MM-DD HH:mm:ss").format("HH:mm")
+             return dayjs(value, "YYYY-MM-DD HH:mm:ss").format("HH:mm")
          },
          interval: "auto"
       },

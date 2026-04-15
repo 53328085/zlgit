@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useMemo, useState } from 'react'
 import { Space, Form, DatePicker, Badge, Select, message } from 'antd'
-import moment from 'moment'
+import dayjs from 'dayjs'
 import { Paramscontext } from '../context'
 import { isObject ,disabledDate} from '@com/usehandler'
 
@@ -16,8 +16,8 @@ export default function Index({ title, type }) {
   const [datas, setDatas] = useState({})
   const [list, setList] = useState([])
   const [formdata, setFormdata] = useState({
-    startTime: moment().subtract(1, 'days'),
-    endTime: moment(),
+    startTime: dayjs().subtract(1, 'days'),
+    endTime: dayjs(),
     sn: null
   }
   )

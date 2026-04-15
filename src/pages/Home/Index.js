@@ -14,7 +14,7 @@ import Loading from '@pages/Loading';
 import { Apimethod } from "@api/api.js"
 
 import { isObject } from '@com/usehandler'
-import moment from 'moment'
+import dayjs from 'dayjs'
  
 const { useQueryWarningDetails } = new Apimethod( // 成都银犁项目 警报声
   "post",
@@ -49,8 +49,8 @@ export default function Index(props) {
   //     pageSize: 10,
   //   projectId,
   //     level: 0,
-  //     start: moment().format("YYYY-MM-DD"),
-  //     end: moment().format("YYYY-MM-DD"),
+  //     start: dayjs().format("YYYY-MM-DD"),
+  //     end: dayjs().format("YYYY-MM-DD"),
   //   status: 1,
   //      }
   //      let {data, success, total}= await useQueryWarningDetails({},params)

@@ -1,6 +1,6 @@
 import {useMemo} from 'react'
 import {Typography} from 'antd' 
-import moment from 'moment'
+import dayjs from 'dayjs'
 const {Link} = Typography
 export   function useCols(callback) {
    return useMemo(()=> {
@@ -38,7 +38,7 @@ export   function useCols(callback) {
         title: "执行时间",
         dataIndex: "excuteTime",
         key: "excuteTime",
-        render: (text) => moment(text,"YYYY-MM-DD HH:mm:ss").format("YYYY-MM-DD")
+        render: (text) => dayjs(text,"YYYY-MM-DD HH:mm:ss").format("YYYY-MM-DD")
       }, 
       {
         title: "创建时间",
@@ -120,7 +120,7 @@ export const state =[
 ]
  export const disabledDate = (current) => {
     
-    return   current > moment().endOf('day');
+    return   current > dayjs().endOf('day');
   };
   export const manualcol =[
     {

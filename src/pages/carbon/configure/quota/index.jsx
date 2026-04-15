@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from 'react'
 import Pagecount from '@com/pagecontent'
 import styled from 'styled-components'
-import moment from 'moment'
+import dayjs from 'dayjs'
 import {Trans,Translation, useTranslation} from 'react-i18next'
 import {Form,  Space, DatePicker, Tooltip, InputNumber, message} from 'antd'
 import Usetable from "@com/useTable"
@@ -130,8 +130,8 @@ export default function Index() {
   const {enterpriseId} = useSelector(enterprise)
   const [tableData, setTableData] = useState([])
   const [targetData, setTargetData] = useState([])
-  const lastyear =moment().subtract(1, 'year').year()
-  const curyear = moment().year()
+  const lastyear =dayjs().subtract(1, 'year').year()
+  const curyear = dayjs().year()
   const [curtal, setCurtal] = useState(0)
   const [pretal, setPretal] = useState(0)
    

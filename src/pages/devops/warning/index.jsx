@@ -243,12 +243,12 @@ export default function Index() {
           okText="立即派单"
           onOk={dispatchOrderOk}
           title="派单提示"
+          type="ok"
         >
           {/* <BlueColumn name="派单提示" styled={{padding: '24px 0'}}/> */}
-          <div style={{ margin: '16px 0' }}>
-            <img src={unknow} alt="" style={{ margin: '0 16px' }} />
+           
             <span>是否要对本告警事件进行派单？</span>
-          </div>
+           
         </UseModal>
         <DispatchComp order={order} setOrder={setOrder} orderdetail={orderdetail} />
       </Mainbox>
@@ -269,7 +269,13 @@ let DispatchComp = ({ order, setOrder, orderdetail = null, orderSn = "" }) => {
       width={960}
       onCancel={() => { setOrder(false) }}
       closable={false}
-      bodyStyle={{ paddingLeft: 52 }}
+      styles={
+        {
+          body:{
+            paddingLeft:32
+          }
+        }
+      }
       footer={
         null
       }

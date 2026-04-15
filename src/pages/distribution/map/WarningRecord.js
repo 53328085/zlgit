@@ -3,7 +3,7 @@ import style from './style.module.less'
 import { message, Spin, DatePicker, Button, Table } from 'antd'
 import { Monitoring } from '@api/api.js'
 import { useReactive } from "ahooks";
-import moment from "moment";
+import dayjs from 'dayjs';
 import { SearchOutlined, CaretUpOutlined, CaretDownOutlined } from '@ant-design/icons';
 
 export default function index(props) {
@@ -86,7 +86,7 @@ export default function index(props) {
     return (
         <div className={style.warningContent}>
             <div className={style.warnHeader}>
-                <RangePicker showTime defaultValue={[moment(defaultStartTime, dateFormat), moment(defaultEndTime, dateFormat)]} format={dateFormat} onChange={changeDate}></RangePicker>
+                <RangePicker showTime defaultValue={[dayjs(defaultStartTime, dateFormat), dayjs(defaultEndTime, dateFormat)]} format={dateFormat} onChange={changeDate}></RangePicker>
                 <Button style={{ marginLeft: 16, width: 96, height: 32 }} type="primary" onClick={onSearch} icon={<SearchOutlined />} >查询</Button>
             </div>
             <div>

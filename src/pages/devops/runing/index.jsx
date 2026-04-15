@@ -1,5 +1,5 @@
 import React, { useState, useCallback} from 'react'
-import moment from 'moment'
+import dayjs from 'dayjs'
 import { operation } from '@api/api'
 //import './index.less'
 import Report from '@com/reportPrint'
@@ -17,7 +17,7 @@ export default function Index() {
     console.log(params)
 
     let {date, projectId} = params
-    let today = moment().format("YYYY-MM-DD")
+    let today = dayjs().format("YYYY-MM-DD")
 
     let post = {
       start: date,

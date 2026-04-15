@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react'
-import moment from 'moment'
+import dayjs from 'dayjs'
 import { useTranslation } from "react-i18next"
 import { useRequest } from "ahooks"
 import { Form, Select, Space, DatePicker, ConfigProvider, Carousel, Typography } from 'antd'
@@ -30,7 +30,7 @@ const dateType = [
   }
 ];
 const disabledDate = (current) => {
-  return (current && current > moment().endOf("day"));
+  return (current && current > dayjs().endOf("day"));
 };
 const w200 = { width: 200 }
 const w88 = { width: 88 }
@@ -65,11 +65,11 @@ export default function Index({ setexparams }) {
                 console.log("type", type)
                 const picker = { "1": "date", "2": "month", "3": "year" }[type?.toString()]
                 if (type == 4) {
-                  return <Form.Item name="date" initialValue={[moment().startOf("day"), moment().endOf("day")]}  >
+                  return <Form.Item name="date" initialValue={[dayjs().startOf("day"), dayjs().endOf("day")]}  >
                     <DatePicker.RangePicker disabledDate={disabledDate} format="DD/MM/YYYY" style={w200} />
                   </Form.Item>
                 } else {
-                  return <Form.Item name="date" initialValue={moment()}>
+                  return <Form.Item name="date" initialValue={dayjs()}>
                     <DatePicker picker={picker} disabledDate={disabledDate} style={w200} />
                   </Form.Item>
                 }

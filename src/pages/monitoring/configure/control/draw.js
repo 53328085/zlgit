@@ -1,7 +1,7 @@
 import React, { useState, forwardRef, useImperativeHandle, useRef, useEffect } from 'react'
 import { Drawer, Select, Button, Typography, Space, Form, Input, message, Switch } from 'antd'
 import { LeftOutlined, RightOutlined } from "@ant-design/icons";
-import styled,{css} from 'styled-components'
+import styled,{css,createGlobalStyle} from 'styled-components'
 import {useSelector} from 'react-redux'
 import Titlelayout from '@com/titlelayout.js'
 import UserTable from "@com/useTable";
@@ -29,14 +29,14 @@ const Inptserach = styled(Input.Search)`
     }
   }
 `;
-const Drawerbox = styled(Drawer)`
-  && {
+const Drawerbox = createGlobalStyle`
+  .drawerbox {
     .ant-drawer-content-wrapper {
       width: calc(100% - 200px) !important;
       height: calc(100% - 64px);
       top: 64px;
     }
-    .ant-drawer-wrapper-body {
+    .ant-drawer-content {
       background-color: #003366;
       .ant-drawer-body {
         display: grid;
@@ -393,15 +393,24 @@ function Draw({ params }, ref) {
  
 
   return (
-    <Drawerbox
+    <><Drawerbox />
+    <Drawer
       onClose={drawClose}
       open={open}
-      width={null}
+    //  width={null}
       closable={false}
       maskClosable={false}
-      contentWrapperStyle={{ margingRight: '16px' }}
+     rootClassName="drawerbox"
+      styles={{
+        content: {
+          margingRight: '16px',
+        
+          // width: 'calc(100% - 200px)'
+        }
+      }}
+    //  contentWrapperStyle={{ margingRight: '16px' }}
      
-      destroyOnClose
+      destroyOnHidden
     >
       <div className='leftpart'>
       <Titlelayout title="选中设备" layout="flex">
@@ -491,7 +500,8 @@ function Draw({ params }, ref) {
         </div>
       </Titlelayout>
 
-    </Drawerbox>
+    </Drawer>
+    </>
   )
 }
 export default forwardRef(Draw)

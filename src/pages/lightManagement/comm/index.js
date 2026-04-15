@@ -2,7 +2,7 @@ import React, { useEffect, useMemo } from "react";
 import { Space, Form, Select, Input } from "antd";
 import { ComDatePicker } from "@com/comstyled";
 import {useSelector} from "react-redux"
-import moment from "moment";
+import dayjs from 'dayjs';
 import { Cform, AreaSelect } from "@com/useSerach/comhead";
 import { selectProjectId, levelDefaultLabel,lightlevel } from "@redux/systemconfig.js";
 import { publicdateType } from "@com/useSerach/data.js";
@@ -18,7 +18,7 @@ export default function Index({ setParams,allselect=true, tbref }) {
         projectId,
         areaId: allselect ? 0 : lightone?.[0]?.id ,
         type: 1,
-        date: moment(),
+        date: dayjs(),
       };
     if(typeof setParams === 'function'){
         setParams(params)
@@ -26,7 +26,7 @@ export default function Index({ setParams,allselect=true, tbref }) {
     return params
 },[allselect,projectId,lightone,setParams]) 
   const changedate = () => {
-    form.setFieldValue("date", moment());
+    form.setFieldValue("date", dayjs());
   };
  
   const isall =useMemo(()=> {
@@ -59,7 +59,7 @@ export default function Index({ setParams,allselect=true, tbref }) {
           {({ getFieldValue }) => {
             let type = ["date", "date", "month", "year"][getFieldValue("type")];
             return (
-              <Form.Item name="date" initialValue={moment()}>
+              <Form.Item name="date" initialValue={dayjs()}>
                 <ComDatePicker picker={type} style={{ width: 200 }} />
               </Form.Item>
             );

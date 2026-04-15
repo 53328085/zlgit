@@ -72,7 +72,7 @@ export default function Index({projectId, day, sn}) {
        const body = {
         projectId,
         sn,
-        day: day.format("yyyy-MM-DD"),
+        day: day.format("YYYY-MM-DD"),
         group
        }
       let {success, data} = await  PowerQuality.XBPP(body)

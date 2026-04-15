@@ -44,7 +44,7 @@ import { selectUser } from "@redux/user.js";
 import Ichart from "@com/useEcharts/Ichart";
 import Table,{dataExport} from "@com/useTable";
 import Devicelog from "./deviceLogs.js";
-import moment from "moment";
+ 
 
 import deviceDetail3 from "./images/deviceDetail3.jpg";
 import Control from "./Control";
@@ -318,7 +318,7 @@ const Chartin = (props) => {
       xAxis: {
         axisLabel: {
           formatter: (value, index) => {
-            return moment(value, "YYYY-MM-DD HH:mm:ss").format("HH:mm");
+            return dayjs(value, "YYYY-MM-DD HH:mm:ss").format("HH:mm");
           },
           interval: "auto",
         },
@@ -501,11 +501,11 @@ export default function GatewayDetail(props) {
     (month > 9 ? month : "0" + month) +
     "-" +
     (day > 9 ? day : "0" + day);
-  const today = moment().startOf("day");
-  const tmonth = moment().startOf("month");
+  const today = dayjs().startOf("day");
+  const tmonth = dayjs().startOf("month");
   //  console.log(today)
   // const yesterday = date + ' ' + "00:00:00"
-  const yesterday = moment();
+  const yesterday = dayjs();
   let [dataList, setdataList] = useState([]);
   let [dateValue, setdateValue] = useState(date);
   let [dataSourceLog, setdataSourceLog] = useState([]);
@@ -514,13 +514,13 @@ export default function GatewayDetail(props) {
   let [actuary, setactuary] = useState({});
   // let dataToday = new Date()
 
-  let dataToday = moment().format("YYYY-MM-DD HH:mm:ss");
+  let dataToday = dayjs().format("YYYY-MM-DD HH:mm:ss");
   let [startTime, setstartTime] = useState(
-    moment().startOf("day").format("YYYY-MM-DD HH:mm:ss")
+    dayjs().startOf("day").format("YYYY-MM-DD HH:mm:ss")
   );
   let [endTime, setendTime] = useState(dataToday);
   let [startTimeAlarm, setstartTimeAlarm] = useState(
-    moment().startOf("day").format("YYYY-MM-DD HH:mm:ss")
+    dayjs().startOf("day").format("YYYY-MM-DD HH:mm:ss")
   );
   let [endTimeAlarm, setendTimeAlarm] = useState(dataToday);
 
@@ -549,21 +549,21 @@ export default function GatewayDetail(props) {
   // const disabledDate = (current) => {
   //     return current && current > dayjs().endOf('day');
   // };
-  let pday = moment().subtract(7, "day"),
-    cday = moment();
+  let pday = dayjs().subtract(7, "day"),
+    cday = dayjs();
   const [logparm, setLogparm] = useState({
     alike: "",
     deviceStyle: 12,
-    start: pday.format("yyyy-MM-DD"),
-    end: cday.format("yyyy-MM-DD"),
+    start: pday.format("YYYY-MM-DD"),
+    end: cday.format("YYYY-MM-DD"),
   });
   let [logdata, setLogData] = useState([]);
   const changelog = (v) => {
     let [start, end] = v;
     setLogparm({
       ...logparm,
-      start: start.format("yyyy-MM-DD"),
-      end: end.format("yyyy-MM-DD"),
+      start: start.format("YYYY-MM-DD"),
+      end: end.format("YYYY-MM-DD"),
     });
   };
   /*    const getLog= async () => {
@@ -647,7 +647,7 @@ export default function GatewayDetail(props) {
     xAxis: {
       axisLabel: {
         formatter: (value, index) => {
-          return moment(value, "YYYY-MM-DD HH:mm:ss").format("HH:mm:ss");
+          return dayjs(value, "YYYY-MM-DD HH:mm:ss").format("HH:mm:ss");
         },
         interval: "auto",
       },
@@ -944,7 +944,7 @@ export default function GatewayDetail(props) {
       },
       axisLabel: {
         //     formatter: (value) => {
-        //        return moment(value, "YYYY-MM-DD HH:mm:ss").format("HH:mm")
+        //        return dayjs(value, "YYYY-MM-DD HH:mm:ss").format("HH:mm")
         //       //return  type.value == 1 ? Utlis.chintDate(value, 3) : value;
         //     },
       },
@@ -984,7 +984,7 @@ export default function GatewayDetail(props) {
     setendTime(dataString[1]);
     setValue(date);
   }; //监控趋势选择时间
-  const [dates, setDates] = useState([moment().startOf("day"), moment()]);
+  const [dates, setDates] = useState([dayjs().startOf("day"), dayjs()]);
 
   const disabledDate = (current) => {
     if (!dates) {
@@ -1388,12 +1388,12 @@ export default function GatewayDetail(props) {
                 onCalendarChange={(val) => setDates(val)}
                 onChange={onTimeOk}
                 //    onOpenChange={onOpenChange}
-                defaultValue={[moment().startOf("day"), moment()]}
+                defaultValue={[dayjs().startOf("day"), dayjs()]}
                 format="YYYY-MM-DD HH:mm:ss"
                 showTime
               />
               {/* <RangePicker
-                                format='YYYY-MM-DD HH:mm:ss' disabledDate={disabledDate} showTime onChange={onTimeOk} defaultValue={[moment(yesterday), moment(today)]} /> */}
+                                format='YYYY-MM-DD HH:mm:ss' disabledDate={disabledDate} showTime onChange={onTimeOk} defaultValue={[dayjs(yesterday), dayjs(today)]} /> */}
 
               {displaypoint && (
                 <Select
@@ -1444,7 +1444,7 @@ export default function GatewayDetail(props) {
               <RangePicker
                 format="YYYY-MM-DD HH:mm:ss"
                 showTime
-                disabledDate={(cur) => cur && cur >= moment().endOf("day")}
+                disabledDate={(cur) => cur && cur >= dayjs().endOf("day")}
                 onChange={onTimeOkAlarm}
                 defaultValue={[today, yesterday]}
               />
@@ -1683,14 +1683,14 @@ export default function GatewayDetail(props) {
                       {reportTypeTime == 1 ? (
                         <DatePicker
                           onChange={onChangeDate}
-                          defaultValue={moment(today)}
+                          defaultValue={dayjs(today)}
                           style={{ marginLeft: 32 }}
                         />
                       ) : reportTypeTime == 2 ? (
                         <DatePicker
                           onChange={onChangeDate}
                           style={{ marginLeft: 32 }}
-                          defaultValue={moment(tmonth)}
+                          defaultValue={dayjs(tmonth)}
                           picker="month"
                         />
                       ) : (

@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useImperativeHandle, forwardRef, useRef} from "react";
 import {useSelector} from "react-redux"
-import moment from 'moment';
+import dayjs from 'dayjs';
 import {
   Form,
   Input,
@@ -235,7 +235,7 @@ const imgToBase = (url) => {
   const onInput = (e) =>   map.current?.serachMap(e.target.value)
   const disabledDate = (current) => {
     // Can not select days before today and today
-    return current && current < moment().endOf('day');
+    return current && current < dayjs().endOf('day');
   }
 
   useImperativeHandle(ref, () => ({

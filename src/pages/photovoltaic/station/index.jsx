@@ -18,7 +18,7 @@ import { CustButtonT, ExportExcel, CustButton, ExportButton } from '@com/useButt
 import { Container, TopBox, FotterBox, Header } from "./style";
 
 import { isObject, getTime } from '@com/usehandler';
-import moment from "moment";
+import dayjs from 'dayjs';
 
 import { useNavigate, Link } from "react-router-dom";
 import SolarPowerGenerationChart from './weatherEcharts.js';
@@ -252,7 +252,7 @@ export default function Index() {
 
 
   const disabledDate = (current) => {
-    return current > moment().endOf('day');
+    return current > dayjs().endOf('day');
   };
 
 
@@ -323,7 +323,7 @@ export default function Index() {
   }
   const typeChange = (e) => {
     if (e != 3) {
-      form.setFieldValue('date', moment())
+      form.setFieldValue('date', dayjs())
     }
     getTrend()
   }
@@ -530,7 +530,7 @@ export default function Index() {
                       ]}
                     />
                   </Form.Item>
-                  <Form.Item name="date" initialValue={moment()} >
+                  <Form.Item name="date" initialValue={dayjs()} >
                     <DatePicker picker={["date", "date", "month", "year"][Form.useWatch("type", form)]} style={{ width: 240 }} onChange={getTrend} disabledDate={disabledDate} />
                   </Form.Item>
                   <Form.Item name="mode" initialValue="1">

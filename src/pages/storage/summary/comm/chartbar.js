@@ -1,6 +1,6 @@
 import React, {useContext,useEffect, useState} from 'react'
 import { Space, Form, DatePicker,Badge, Select} from 'antd'
-import moment from 'moment'
+import dayjs from 'dayjs'
 import {Paramscontext} from  '../context'
 import {isObject,disabledDate} from '@com/usehandler'
  
@@ -17,7 +17,7 @@ export default function Index({title,getData, dataZoom }={}) {
  
   const [typevalue, setTypevalue] =useState({
     type:0,
-    date: moment()
+    date: dayjs()
   })
    const dimensions =[
     {name:"充电量"},

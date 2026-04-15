@@ -3,7 +3,7 @@ import {useSelector} from 'react-redux'
 import { selectProjectId, iszhCN } from '@redux/systemconfig.js'
 import {TitlelayoutOv as Titlelayout} from '@com/titlelayout';
  
-import moment from 'moment';
+import dayjs from 'dayjs';
 import {useTranslation} from 'react-i18next'
 import { HomeRuntime } from '@api/api.js'
 import { message } from 'antd';
@@ -50,7 +50,7 @@ export default function DefaultHome(props){
   })
   useEffect(() => {
     if(projectId && type == "runtTime") {
-    let date = moment().format("yyyy-MM-DD")
+    let date = dayjs().format("YYYY-MM-DD")
     QueryElectricToday(projectId, date).then(res => {
         let { success, data } = res
         if (success) {

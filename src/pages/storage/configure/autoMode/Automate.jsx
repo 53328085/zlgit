@@ -2,7 +2,7 @@ import React, { useState, useRef, useEffect, useCallback, useMemo } from 'react'
 import styled,{css} from 'styled-components'
 import {Typography, Image, Form, Space, Button, Input, Select, DatePicker,  Calendar, Descriptions, Divider, Checkbox, message } from 'antd'
 import {CaretRightOutlined, CaretUpFilled, CaretDownFilled, WarningFilled, CheckCircleFilled}  from '@ant-design/icons'
-import moment from 'moment'
+import dayjs from 'dayjs'
 import {nanoid} from "@reduxjs/toolkit"
 import {useSelector} from "react-redux"
 import Titlelayout from '@com/titlelayout'
@@ -13,7 +13,7 @@ import { themeColor,adaptation  } from '@redux/systemconfig.js'
 const {Text, Link, Title, Paragraph} = Typography
 const {Item} = Form
 const { RangePicker } = DatePicker;
-moment.updateLocale('zh-cn', {
+dayjs.updateLocale('zh-cn', {
     weekdaysMin :["周日", "周一", "周二", "周三", "周四", "周五", "周六"]
   })
 const Mainbox = styled.div`
@@ -319,8 +319,8 @@ const Sblock = styled.span`
 `
 const  enumerateDaysBetweenDates = (startDate, endDate) => {  
     let daysList = [];
-    let SDate=moment(startDate);
-    let EDate=moment(endDate);
+    let SDate=dayjs(startDate);
+    let EDate=dayjs(endDate);
      
     daysList.push(SDate.format('YYYY-MM-DD'));
     while( SDate.add(1,"days").isBefore( EDate) ){   
@@ -336,20 +336,20 @@ const getvalidate = (start, end, type, choosedate) => {
     let dayslist = enumerateDaysBetweenDates(start, end)
     if(type == 1) return dayslist
     if(type == 2) {
-      return  dayslist.filter(d => choosedate.includes(moment(d, 'YYYY-MM-DD').day())) // 每周
+      return  dayslist.filter(d => choosedate.includes(dayjs(d, 'YYYY-MM-DD').day())) // 每周
     }
     if(type == 3) {
-      return dayslist.filter(d => choosedate.includes(moment(d, 'YYYY-MM-DD').date()))
+      return dayslist.filter(d => choosedate.includes(dayjs(d, 'YYYY-MM-DD').date()))
     }
       /*  let type = params.executionCycle  // 此部分逻辑暂时不需要， 后端判断
       const datalist = enumerateDaysBetweenDates(date[0], date[1])   
       
        let week = datalist.filter(d => {     
-         return dateType.includes(moment(d, 'YYYY-MM-DD').day())
+         return dateType.includes(dayjs(d, 'YYYY-MM-DD').day())
        })
        let day = datalist.filter(d => {   
         
-        return dateType.includes(moment(d, 'YYYY-MM-DD').date())
+        return dateType.includes(dayjs(d, 'YYYY-MM-DD').date())
        })
       
         let dateChoose = {
@@ -406,8 +406,8 @@ const getvalidate = (start, end, type, choosedate) => {
   }
   const initform = (data) => {
 
-    let start =data.startDate ? moment(data.startDate, 'YYYY-MM-DD HH:mm:ss') : moment();
-    let end =data.endDate ? moment(data.endDate, 'YYYY-MM-DD HH:mm:ss'): moment();
+    let start =data.startDate ? dayjs(data.startDate, 'YYYY-MM-DD HH:mm:ss') : dayjs();
+    let end =data.endDate ? dayjs(data.endDate, 'YYYY-MM-DD HH:mm:ss'): dayjs();
     form.setFieldsValue({
         ...data,
         date: [start, end]
@@ -707,7 +707,7 @@ const Planview = ({data, strategyDetail}) => { // status 1, 充电， 2， 放 3
     let {name, strategyName,priority, executionCycle,  startDate, endDate, dateChoose} = data
    
     let {primaryderived,primaryColor} = useSelector(themeColor)
-    const getminutes = (end, start) => moment(end, 'hh:mm').diff(moment(start, 'hh:mm'), 'minutes')   
+    const getminutes = (end, start) => dayjs(end, 'hh:mm').diff(dayjs(start, 'hh:mm'), 'minutes')   
     let status =   strategyDetail.map(s => ({start: getminutes(s.start, '00:00') / 15, end: getminutes(s.end, '00:00') / 15, type: s.status}) )   
     const items = Array.from({length: 96}, (v, i) => ({index: i+1, type: 3}))  
      status.forEach(s => {
@@ -728,10 +728,10 @@ const Planview = ({data, strategyDetail}) => { // status 1, 充电， 2， 放 3
      console.log(datalist)
     const dateCellRender = useCallback((value) => {
 
-        let time = moment(value).format('YYYY-MM-DD')
+        let time = dayjs(value).format('YYYY-MM-DD')
          
         let date = value.date()
-        let issome = moment(value).isSame(moment(), 'day')
+        let issome = dayjs(value).isSame(dayjs(), 'day')
         return (
           datalist.includes(time) ?  <Datebox bg={issome && datalist.includes(time) ? '#f0f9ff' : 'none'}>
             <span >{date}日</span>
@@ -803,7 +803,7 @@ const Strategy = ({data,   form, disabled, executionCycle}) => {
    }
    const disabledDate = (current) => {
     
-    return current && current < moment().subtract(1, 'day').endOf('day');
+    return current && current < dayjs().subtract(1, 'day').endOf('day');
     };
    useEffect(() => {
      console.log('executionCycle', executionCycle)

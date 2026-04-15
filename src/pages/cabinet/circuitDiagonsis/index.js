@@ -2,7 +2,6 @@ import React, { useState, useRef, useEffect, useCallback } from "react";
 import Titlelayout from "@com/titlelayout";
 import { DatePicker, Space, Radio, Divider, Select, Tree, Button, message } from "antd";
 import dayjs from 'dayjs';
-import moment from "moment";
 import styled from "styled-components";
 import { DistributionCabinet } from "@api/api.js";
 import { useSelector } from "react-redux";
@@ -176,16 +175,16 @@ export default function index() {
     deviceFrequentOfflineNum: 0,
     deviceOfflineNum: 0
   });
-  const today = moment().startOf('day');
-  const tmonth = moment().startOf('month')
-  const tyear = moment().startOf('year')
+  const today = dayjs().startOf('day');
+  const tmonth = dayjs().startOf('month')
+  const tyear = dayjs().startOf('year')
   const tbref = useRef()
   const params = useReactive({
     siteId: 1,
     structureIds: [],
     type: 1,
-    startDate: moment(today).format('YYYY-MM-DD'),
-    endDate: moment(today).format('YYYY-MM-DD'),
+    startDate: dayjs(today).format('YYYY-MM-DD'),
+    endDate: dayjs(today).format('YYYY-MM-DD'),
   });
   const [dataList, setDataList] = useState([])
   const GetSns = async () => {
@@ -420,10 +419,10 @@ export default function index() {
                   { value: '4', label: '自定义' },
                 ]}
               />
-              {params.type == 1 ? <DatePicker style={{ width: 240 }} onChange={onChangeDate} defaultValue={moment(today)} disabledDate={disabledDate} /> :
-                params.type == 2 ? <DatePicker style={{ width: 240 }} onChange={onChangeDate} defaultValue={moment(tmonth)} picker='month' disabledDate={disabledDate} /> :
-                  params.type == 3 ? <DatePicker style={{ width: 240 }} onChange={onChangeDate} picker='year' defaultValue={moment(tyear)} disabledDate={disabledDate} /> :
-                    <RangePicker style={{ width: 240 }} onChange={onChangeDate} defaultValue={[moment(today), moment(today)]} disabledDate={disabledDate} />
+              {params.type == 1 ? <DatePicker style={{ width: 240 }} onChange={onChangeDate} defaultValue={dayjs(today)} disabledDate={disabledDate} /> :
+                params.type == 2 ? <DatePicker style={{ width: 240 }} onChange={onChangeDate} defaultValue={dayjs(tmonth)} picker='month' disabledDate={disabledDate} /> :
+                  params.type == 3 ? <DatePicker style={{ width: 240 }} onChange={onChangeDate} picker='year' defaultValue={dayjs(tyear)} disabledDate={disabledDate} /> :
+                    <RangePicker style={{ width: 240 }} onChange={onChangeDate} defaultValue={[dayjs(today), dayjs(today)]} disabledDate={disabledDate} />
               }
               <Button type="primary" style={{ marginLeft: 32, width: 96 }} onClick={submit}>开始诊断</Button>
             </div>

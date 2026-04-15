@@ -4,7 +4,7 @@ import { Modal, Input, Form, DatePicker, Select, message } from 'antd'
 import BlueColumn from '@com/bluecolumn'
 import RedWarn from '@imgs/redwarn.png'
 import { PriceSolution } from '@api/api.js'
-import moment from 'moment';
+import dayjs from 'dayjs';
 import Loading from './Loading';
 import { useEffect } from 'react'
 
@@ -242,7 +242,10 @@ const PriceRecordModal = ({ isOpen = false, setIsOpen, priceRecord, ...otherprop
                 width={1440}
                 title={<BlueColumn name="调价记录" />}
                 footer={null}
-                bodyStyle={otherprops.isLoading?{minHeight:168,display:'flex',alignItems: 'center',justifyContent: 'center'}:{}}
+                styles={{
+                    body:otherprops.isLoading?{minHeight:168,display:'flex',alignItems: 'center',justifyContent: 'center'}:{}
+                }}
+                 
             >
                {
                 otherprops.isLoading?<Loading/>:(priceRecord.map((item, index) => <Card {...item} key={index} />))
@@ -283,7 +286,7 @@ const EditElectricModal = ({ editElectric,setEditElectric,priceType, ...otherpro
         tierValueMin3: otherprops.tierPrice.tierValueMin3,
         tierPrice2: otherprops.tierPrice.tierPrice2,
         tierPrice3: otherprops.tierPrice.tierPrice3,
-        Birth: moment(otherprops.startDate)
+        Birth: dayjs(otherprops.startDate)
     }
     const BasePrice = (
         <Item label={<strong>基准价(元/度)</strong>} name="BasePrice" style={priceType !== 1 ? itemStyle : {}}>
@@ -427,7 +430,7 @@ const ChangePrice = ({ isChangeOpen, setIsChangeOpen, priceType, ...otherprops }
         tierValueMin3: otherprops.tierPrice.tierValueMin3,
         tierPrice2: otherprops.tierPrice.tierPrice2,
         tierPrice3: otherprops.tierPrice.tierPrice3,
-        Birth: moment(otherprops.startDate)
+        Birth: dayjs(otherprops.startDate)
     }
     const BasePrice = (
         <Item label={<strong>基准价(元/度)</strong>} name="BasePrice" style={priceType !== 1 ? itemStyle : {}}>

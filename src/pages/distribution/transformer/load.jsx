@@ -4,7 +4,7 @@ import {Loadwrapper, Item} from './style'
 import{useTransformerLoadRate} from './api'
 import Ichart from '@com/useEcharts/Ichart';
 import {isObject} from "@com/usehandler"
-import moment from "moment";
+import dayjs from 'dayjs';
 import CustContext from '@com/content'
 import {Cspin} from "@com/comstyled"
 export default function Index({sn, projectId }) {
@@ -142,7 +142,7 @@ export default function Index({sn, projectId }) {
           xAxis: {
              axisLabel:{
                 formatter: (value) => {
-                    return moment(value).format('HH:mm')
+                    return dayjs(value).format('HH:mm')
                 }
              }
           },

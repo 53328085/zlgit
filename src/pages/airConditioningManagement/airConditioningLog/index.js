@@ -26,7 +26,7 @@ import {
 } from "./data";
 
 import { usePage, useDetail, useList, useSetReControl } from "./api.js";
-import moment from 'moment'
+import dayjs from 'dayjs'
 import { Container, Header, TitleBox } from "./style";
 import UserTable from '@com/useTable'
 
@@ -130,7 +130,7 @@ export default function Index(props) {
   }]);
   const [selectedRowKeys, setSelectedRowKeys] = useState([]); // 新增状态
   const schemeModalState = useRef(false); // 记录是否是第一次打开
-  const [rangerTime, setRangerTime] = useState([moment().subtract(2, 'months'), moment()])
+  const [rangerTime, setRangerTime] = useState([dayjs().subtract(2, 'months'), dayjs()])
 
   // 清空选中状态的函数
   const clearSelectedRows = useCallback(() => {
@@ -184,8 +184,8 @@ export default function Index(props) {
         schemeId: formDate.scheme,
         operater: formDate.operator,
         result: formDate.status,
-        dtStart: formDate.operatorTime && formDate.operatorTime[0] ? moment(formDate.operatorTime[0]).format('YYYY-MM-DD 00:00:00') : moment().format('YYYY-MM-DD 00:00:00'),
-        dtEnd: formDate.operatorTime && formDate.operatorTime[1] ? moment(formDate.operatorTime[1]).format('YYYY-MM-DD 23:59:59') : moment().format('YYYY-MM-DD 23:59:59'),
+        dtStart: formDate.operatorTime && formDate.operatorTime[0] ? dayjs(formDate.operatorTime[0]).format('YYYY-MM-DD 00:00:00') : dayjs().format('YYYY-MM-DD 00:00:00'),
+        dtEnd: formDate.operatorTime && formDate.operatorTime[1] ? dayjs(formDate.operatorTime[1]).format('YYYY-MM-DD 23:59:59') : dayjs().format('YYYY-MM-DD 23:59:59'),
       }
       let { data, success, total, errMsg } = await usePage({}, params)
       if (success && Array.isArray(data) && data.length) {
@@ -328,8 +328,8 @@ export default function Index(props) {
       schemeId: formDate.scheme,
       operater: formDate.operator,
       result: formDate.status,
-      dtStart: formDate.operatorTime && formDate.operatorTime[0] ? moment(formDate.operatorTime[0]).format('YYYY-MM-DD 00:00:00') : moment().format('YYYY-MM-DD 00:00:00'),
-      dtEnd: formDate.operatorTime && formDate.operatorTime[1] ? moment(formDate.operatorTime[1]).format('YYYY-MM-DD 23:59:59') : moment().format('YYYY-MM-DD 23:59:59'),
+      dtStart: formDate.operatorTime && formDate.operatorTime[0] ? dayjs(formDate.operatorTime[0]).format('YYYY-MM-DD 00:00:00') : dayjs().format('YYYY-MM-DD 00:00:00'),
+      dtEnd: formDate.operatorTime && formDate.operatorTime[1] ? dayjs(formDate.operatorTime[1]).format('YYYY-MM-DD 23:59:59') : dayjs().format('YYYY-MM-DD 23:59:59'),
     }
     return usePage({}, params).then((res) => {
       let { success, data, total } = res;
@@ -446,7 +446,6 @@ export default function Index(props) {
           ref={schemeRef}
           closable={true}
           onCancel={handleClose}
-          bodyStyle={{ paddingLeft: 52 }}
           footer={[]}
           destroyOnClose={false}
         >

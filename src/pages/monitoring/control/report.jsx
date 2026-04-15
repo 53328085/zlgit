@@ -286,14 +286,17 @@ week.forEach(w => {
         width={928}
         open= {open}
         closable={false}
-        bodyStyle={{
-          backgroundColor: '#f2f2f2',
+        styles={{
+          body:{
+              backgroundColor: '#f2f2f2',
           padding: '32px'
-        }}
-        headerStyle={{
-          backgroundColor: '#f2f2f2',
+          },
+          header:{
+            backgroundColor: '#f2f2f2',
           padding: '32px 32px 0 32px'
+          }
         }}
+    
         extra={<Button type="primary" onClick={() => setOpen(false)} style={{width: '96px'}}>关闭</Button>}
        >    
        <Cdivider  borderColor="#2a2f55" type="h" margin='0 0 16px 0' />

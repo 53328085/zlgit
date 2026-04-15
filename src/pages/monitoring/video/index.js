@@ -8,7 +8,7 @@ import style from './style.module.less'
 import BlueColumn from '@com/bluecolumn'
 import cameraBG from '@imgs/carmeraBG.png'
 import EZUIKit from "ezuikit-js";
-import moment from 'moment';
+import dayjs from 'dayjs';
 import { themeData } from './themeData'
 import { selectUser } from '@redux/user'
 import totalCamera from './images/totalCamera.png';
@@ -84,7 +84,7 @@ export default function Index() {
   const [localModal, setLocalModal] = useState(false)
   // const [play,setplay] =useState('') //小屏监控实例
   const [bigplay, setbigplay] = useState('')
-  const [disabledendDate, setdisabledendDate] = useState(() => (current => current && current > moment().endOf('day')))
+  const [disabledendDate, setdisabledendDate] = useState(() => (current => current && current > dayjs().endOf('day')))
   const [startTime, setStartTime] = useState(null)
   const [endTime, setEndTime] = useState(null)
   const [startTimeHistory, setStartTimeHistory] = useState(null)
@@ -251,12 +251,12 @@ export default function Index() {
   const onChangePage = (page, pageSize) => {
     setpageNum(page)
   }//翻页
-  const disabledDate = current => current && current > moment().endOf('day')
+  const disabledDate = current => current && current > dayjs().endOf('day')
 
   const changestartdate = (date, dateString) => {
     setStartTime(date)
     setStartTimeHistory(dateString)
-    setdisabledendDate(() => (current => (current < date || current > moment().endOf('day'))))
+    setdisabledendDate(() => (current => (current < date || current > dayjs().endOf('day'))))
   }
   const changeEndDate = (date, dateString) => {
     setEndTime(date);
@@ -636,7 +636,7 @@ export default function Index() {
                       <Item style={{ width: '100%' }}>
                         <DatePicker
                           showTime={{
-                            defaultValue: moment('00:00:00', 'HH:mm:ss'),
+                            defaultValue: dayjs('00:00:00', 'HH:mm:ss'),
                           }}
                           format="YYYY-MM-DD HH:mm:ss"
                           
@@ -712,7 +712,7 @@ export default function Index() {
                   <Panel header={<Borderleft>{i18t("comm","playback")}</Borderleft>} key="1">
                     <DatePicker
                       showTime={{
-                        defaultValue: moment('00:00:00', 'HH:mm:ss'),
+                        defaultValue: dayjs('00:00:00', 'HH:mm:ss'),
                       }}
                       format="YYYY-MM-DD HH:mm:ss" 
                       className={style.wd100}

@@ -1,6 +1,6 @@
 import React, {useContext,useEffect, useState} from 'react'
 import { Space, Form, DatePicker,Badge, Select} from 'antd'
-import moment from 'moment'
+import dayjs from 'dayjs'
 import {Paramscontext} from  '../context'
 import {isObject} from '@com/usehandler'
  
@@ -15,8 +15,8 @@ export default function Index({title,getData,dataZoom }={}) {
   const {areaId, stationName,  projectId,containerId} = useContext(Paramscontext)
   const [data, setData] = useState({})
   console.log("充放电功率",data)
-  const  [time, setTime] = useState({startTime:moment().subtract(1, 'days'),
-    endTime:moment()})
+  const  [time, setTime] = useState({startTime:dayjs().subtract(1, 'days'),
+    endTime:dayjs()})
  
    const dimensions = [
      {

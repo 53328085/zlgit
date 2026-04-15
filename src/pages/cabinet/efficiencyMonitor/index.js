@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react'
 import { useReactive } from "ahooks";
 
 import { DatePicker, Select, Button, message } from "antd";
-import moment from "moment";
 import dayjs from 'dayjs';
 import advancedFormat from 'dayjs/plugin/advancedFormat'
 import customParseFormat from 'dayjs/plugin/customParseFormat'

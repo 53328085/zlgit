@@ -8,7 +8,7 @@ import WarningPng from '@imgs/warning.png'
 import MyModal from '@com/useModal'
 import style from './style.module.less'
 import { operationDesigin } from '@api/api'
-import moment from 'moment';
+import dayjs from 'dayjs';
 const FlexDiv = styled.div`
   display: flex;
   justify-content: space-between;
@@ -318,10 +318,10 @@ function Buildplan({plansObj,areaId},ref) {
       name2,
       name3,
       name4,
-      time1:[moment(startTime1,'HH:mm'),moment(endTime1,'HH:mm')],
-      time2:[moment(startTime2,'HH:mm'),moment(endTime2,'HH:mm')],
-      time3:[moment(startTime3,'HH:mm'),moment(endTime3,'HH:mm')],
-      time4:[moment(startTime4,'HH:mm'),moment(endTime4,'HH:mm')],
+      time1:[dayjs(startTime1,'HH:mm'),dayjs(endTime1,'HH:mm')],
+      time2:[dayjs(startTime2,'HH:mm'),dayjs(endTime2,'HH:mm')],
+      time3:[dayjs(startTime3,'HH:mm'),dayjs(endTime3,'HH:mm')],
+      time4:[dayjs(startTime4,'HH:mm'),dayjs(endTime4,'HH:mm')],
     })
     
   }else{

@@ -7,7 +7,7 @@ import styled from 'styled-components'
 import UseTable from '@com/useTable'
 import { ExportExcel, CustButtonT, ExportButton } from "@com/useButton"
 import { DistributionRoomRuntime } from '@api/api.js'
-import moment from 'moment'
+import dayjs from 'dayjs'
 
 
 const Ctitle = styled.div`
@@ -67,7 +67,7 @@ export default function Run({ projectId, lineIds }) {
 
   const CusTitle = (
     <Ctitle> <span>详细参数</span>
-      <Space><span className='time'> 参量采集时间：{moment().format('yyyy-MM-DD HH:mm:ss')}</span><CustButtonT text="refresh" />   <ExportExcel single={true} tb={tbref} /></Space>
+      <Space><span className='time'> 参量采集时间：{dayjs().format('YYYY-MM-DD HH:mm:ss')}</span><CustButtonT text="refresh" />   <ExportExcel single={true} tb={tbref} /></Space>
     </Ctitle>
   )
   const columns = [

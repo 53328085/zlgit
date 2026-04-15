@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
 import { isObject } from "@com/usehandler"
-import moment from "moment"
+import dayjs from 'dayjs'
 export const tabs = [
     { label: "功率", key: 1, },
     { label: "收益", key: 2, },
@@ -54,14 +54,14 @@ export const lineoptdoub = (data, startTime, endTime,type) => {
         let earlyY =type==102 ? data1st.map(item=>item.y): earlyData.map(item => item.y)
         const lateX = type==102 ?  data2nd.map(item=> endTime.format("YYYY-MM-DD") + " " +item.x): lateData.map(item => item.x)
         const lateY =type==102 ?  data2nd.map(item=>item.y): lateData.map(item => item.y)
-        if (endTime.format("YYYY-MM-DD") == moment().format("YYYY-MM-DD")) {
+        if (endTime.format("YYYY-MM-DD") == dayjs().format("YYYY-MM-DD")) {
 
             
             let dif = endTime.diff(startTime, "days")
            
-            let lastLatex = moment(lateX[lateX.length - 1], "YYYY-MM-DD HH:mm:ss").subtract(dif, "days")
+            let lastLatex = dayjs(lateX[lateX.length - 1], "YYYY-MM-DD HH:mm:ss").subtract(dif, "days")
            
-            let idx = earlyX.findIndex(item => moment(item, "YYYY-MM-DD HH:mm:ss").isAfter(lastLatex))
+            let idx = earlyX.findIndex(item => dayjs(item, "YYYY-MM-DD HH:mm:ss").isAfter(lastLatex))
            
             earlyX=earlyX.slice(0,idx)
             earlyY=earlyY.slice(0,idx)
@@ -97,7 +97,7 @@ export const lineoptdoub = (data, startTime, endTime,type) => {
                     data: earlyX,
                     axisLabel: {
                         formatter: (value, index) => {
-                            return    moment(value, "YYYY-MM-DD HH:mm:ss").format("HH:mm:ss");
+                            return    dayjs(value, "YYYY-MM-DD HH:mm:ss").format("HH:mm:ss");
                         },
                         interval: "auto",
                         
@@ -112,7 +112,7 @@ export const lineoptdoub = (data, startTime, endTime,type) => {
                     data: lateX,
                     axisLabel: {
                         formatter: (value, index) => {
-                            return      moment(value, "YYYY-MM-DD HH:mm:ss").format("HH:mm:ss");
+                            return      dayjs(value, "YYYY-MM-DD HH:mm:ss").format("HH:mm:ss");
                         },
                         interval: "auto", 
                          color:"rgba(0,0,0,0.4)",

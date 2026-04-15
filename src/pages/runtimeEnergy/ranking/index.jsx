@@ -9,7 +9,7 @@ import Titlelayout from '@com/titlelayout';
 import { getTime } from '@com/usehandler'
 import { useRequest } from 'ahooks'
 import { Select, Form, Radio, DatePicker, Divider, message,Cascader, Space } from 'antd'
-import moment from "moment";
+import dayjs from 'dayjs';
 import first from './img/first.png'
 import second from './img/second.png'
 import third from './img/third.png'
@@ -70,7 +70,7 @@ export default function Index() {
   console.log(exparams)
   const projectId = useSelector(state => state.system.menus.projectId)
   const [dataList, setDataList] = useState([])
-  const [dateRang, setDateRang] = useState([moment().subtract(1, 'month'), moment()])
+  const [dateRang, setDateRang] = useState([dayjs().subtract(1, 'month'), dayjs()])
 
   const getQuery = () => {
     let params = {
@@ -254,7 +254,7 @@ console.log(optionsDevice)
     getDeviceList()
   }, [projectId, JSON.stringify(exparams)])
   const disabledDate = (current) => {
-    return current && current > moment().endOf('day');
+    return current && current > dayjs().endOf('day');
   };
   const [sortSelected, setSortSelected] = useState('')
   const handleSortChange = (val,select) => {

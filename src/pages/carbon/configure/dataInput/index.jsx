@@ -1,6 +1,6 @@
 import React, {useEffect, useState, useRef, useMemo} from 'react'
 import styled from 'styled-components'
-import moment from 'moment'
+import dayjs from 'dayjs'
 import {Form,  Space, DatePicker, Tooltip, Upload, Typography, message,InputNumber} from 'antd'
 import {useSelector} from 'react-redux'
 import {useTranslation, Trans} from 'react-i18next'
@@ -36,7 +36,7 @@ const Mainbox = styled.div`
 const splitarr = (arr) => {  
   if( Array.isArray(arr) && arr.length > 0) {
   // 先获取当前的月份
-   let date =moment(arr[0].date, "YYYY-MM-DD hh:mm:ss") 
+   let date =dayjs(arr[0].date, "YYYY-MM-DD hh:mm:ss") 
    let days = date.daysInMonth()  //数组最后一项为总计
    let month= date.month()
    let year = date.year()
@@ -65,7 +65,7 @@ const splitarr = (arr) => {
       }
       arrs.forEach(item => {
        
-        let index =  moment(item.date, "YYYY-MM-DD hh:mm:ss").date() -1
+        let index =  dayjs(item.date, "YYYY-MM-DD hh:mm:ss").date() -1
         
         if(item.consumption!==0)  unit.consumption.splice(index, 1, item.consumption)
       })
@@ -220,8 +220,8 @@ const formartcol = (data, month) => {
 
  /*  const [init, setInit] = useState(false)
   let unitDatas
-  let yvalue = moment().year()-1
-  let mvalue = moment().month()+1
+  let yvalue = dayjs().year()-1
+  let mvalue = dayjs().month()+1
   const {data:unidata, isSuccess} =useEmissionUnitQuery({year: yvalue, month:mvalue, enterpriseId}, {
     skip: !Number.isInteger(enterpriseId) || init,
     refetchOnMountOrArgChange: true
@@ -388,8 +388,8 @@ const onQuery = async () => {
             <Mainbox>
                <Form form={form} layout="inline" colon={false} labelCol={{flex: 'auto'}} 
                initialValues={{
-            year: moment(),
-            month: moment()
+            year: dayjs(),
+            month: dayjs()
           }}>  
           <Space size={16}>
                   <Form.Item name="year" label={<CustTransO ns="comm" text="year" param="度" />} >

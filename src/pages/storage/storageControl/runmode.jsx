@@ -5,7 +5,7 @@ import {ExclamationCircleFilled} from '@ant-design/icons'
 import {StorageControlRuntime} from '@api/api'
 import {custMsg}  from '@com/usehandler'
 import imgurl from './icon'
-import { duration } from 'moment'
+
 const {Text, Link, Title} = Typography
 const {Item} = Form
 const Mainbox = styled.div`

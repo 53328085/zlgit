@@ -4,7 +4,7 @@ import {Typography,  Form, Space, Button, Input, Select, DatePicker, Checkbox, C
  
  
 import {  useOutletContext} from 'react-router-dom'
- import moment from 'moment'
+ import dayjs from 'dayjs'
  import {ConsumeStatisticsRuntime} from '@api/api'
  import Pagecount from "@com/pagecontent";
 import Titlelayout from '@com/titlelayout'
@@ -16,7 +16,7 @@ const { Paragraph} = Typography
 const {Item} = Form
 const { RangePicker } = DatePicker;
 const disabledDate = (current) => {   
-  return current && current > moment().endOf('day');
+  return current && current > dayjs().endOf('day');
 };
 const Mainbox = styled.div`
     && {
@@ -369,7 +369,7 @@ const Formlayout = ({form, handler}) => {
   return (
     <Form layout='inline' form={form} initialValues={{
       type: 2,
-      date: moment()
+      date: dayjs()
     }}>
       <Space size={16}>
         <Item noStyle name="type">

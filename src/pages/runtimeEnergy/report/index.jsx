@@ -1,6 +1,6 @@
 import React, { useState, useCallback, useRef, useEffect, useMemo, Children } from 'react'
 import { Checkbox, DatePicker, message, Tooltip, Descriptions, Radio, Select, Input } from 'antd'
-import moment from 'moment'
+import dayjs from 'dayjs'
 
 import { useOutletContext } from 'react-router-dom'
 import { useAntdTable } from 'ahooks'
@@ -84,7 +84,7 @@ export default function Index() {
   let { exparams, setCustview, setConfig } = useOutletContext()
 
 
-  const [dates, setDates] = useState([moment().startOf("day"), moment().endOf("hour")]);
+  const [dates, setDates] = useState([dayjs().startOf("day"), dayjs().endOf("hour")]);
 
   const [startDateTime, setStartDateTime] = useState('')
   const [endDateTime, setEndDateTime] = useState('')
@@ -453,7 +453,7 @@ export default function Index() {
     xAxis: {
       type: 'category',
       axisLabel: {
-        formatter: (value) => moment(value, timeformt).format(toformat)
+        formatter: (value) => dayjs(value, timeformt).format(toformat)
       }
     },
     yAxis: {
@@ -502,8 +502,8 @@ export default function Index() {
     const f = e.target.checked
     setIsrange({ range: f })
     if (!f) {
-      setDates([moment().startOf("day"), moment()])
-      setValuet([moment().startOf("day"), moment()])
+      setDates([dayjs().startOf("day"), dayjs()])
+      setValuet([dayjs().startOf("day"), dayjs()])
     }
   }
 
@@ -513,7 +513,7 @@ export default function Index() {
     }
     const tooLate = dates[0] && current.diff(dates[0], 'days') > 45;
     const tooEarly = dates[1] && dates[1].diff(current, 'days') > 45;
-    const date = current && current > moment().endOf("day");
+    const date = current && current > dayjs().endOf("day");
     return !!tooEarly || !!tooLate || !!date
   };
 
@@ -521,7 +521,7 @@ export default function Index() {
 
     if (!dates) return false
     let difftime = { 1: 6, 2: 44, 3: 2 }[type]  // 7天，45天，3年
-    const date = current && (current > moment().endOf("day"));
+    const date = current && (current > dayjs().endOf("day"));
     const dateuint = { 1: "days", 2: "days", 3: "years" }[type]
     //  console.log("dates", dates?.[0]?.format("YYYY-MM-DD"), dates?.[1]?.format("YYYY-MM-DD"))
     const tooLate = dates[0] && current.diff(dates[0], dateuint) > difftime;
@@ -637,7 +637,7 @@ export default function Index() {
                       onChange={onTimeOk}
                       disabled={!isrange.range}
                       onOpenChange={onOpenChange}
-                      defaultValue={[moment().startOf("day"), moment().endOf("hour")]}
+                      defaultValue={[dayjs().startOf("day"), dayjs().endOf("hour")]}
                       {...dateprops}
                     />
                   </div>

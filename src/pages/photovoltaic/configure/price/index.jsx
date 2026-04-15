@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useCallback, useMemo } from 'react';
 import Pagecount from '@com/pagecontent';
 import styled from 'styled-components';
-import moment from 'moment';
+import dayjs from 'dayjs';
 import { useTranslation } from 'react-i18next';
 import { Form, Space, InputNumber, message } from 'antd';
 import Usetable from "@com/useTable";
@@ -55,7 +55,7 @@ export default function ElectricityPriceTable() {
   const [originalData, setOriginalData] = useState(null); // 用于取消编辑时恢复数据
   const [editable, setEditable] = useState(false);
   const [loading, setLoading] = useState(false);
-  const curyear = moment().year();
+  const curyear = dayjs().year();
 
 
 

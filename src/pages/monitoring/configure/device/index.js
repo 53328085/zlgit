@@ -41,8 +41,9 @@ export default function Index() {
     tabgap: 8,
   }
 
-
+ 
   const getAllDeviceStyle = async () => {
+    try {
     const resp = await AllDeviceStyle()
     if (resp.success && Array.isArray(resp.data)) {
       const data = resp.data
@@ -80,21 +81,21 @@ export default function Index() {
         }
       }
 
-      const tabs = data.map(it => {
-        if (it.state === 1) {
-          return { key: it.deviceStyle.toString(), label: it.name }
-        }
-
-      })
-
-      //   console.log(tabs)
-      // tabs.pop()
+ 
+      const tabs=data.filter(it=>it.state===1).map(k=>({ key: k.deviceStyle.toString(), label: k.name }))
+     
+      
       setTabs([{ key: '0', label: '网关' },
       ...tabs
       ])
 
       setComs([...arr])
 
+
+    }
+       } catch (error) {
+        console.log(error)
+      
     }
   }
   useEffect(() => {

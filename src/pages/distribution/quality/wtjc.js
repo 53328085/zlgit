@@ -115,7 +115,7 @@ export default function Index({ projectId, day, sn, laptop }) {
       const body = {
         projectId,
         sn,
-        day: day.format("yyyy-MM-DD"),
+        day: day.format("YYYY-MM-DD"),
       };
       let { success, data } = await PowerQuality.WTJC(body);
       if (success && isObject(data)) {

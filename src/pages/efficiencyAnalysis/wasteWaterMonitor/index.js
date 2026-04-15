@@ -11,7 +11,7 @@ import { WasteWater } from "../common/style.js";
 import Titlelayout from "@com/titlelayout";
 import Ichart from '@com/useEcharts/Ichart'
 import { getTime } from "@com/usehandler.js"
-import moment from "moment";
+import dayjs from 'dayjs';
 import Comm from "../common/comm.js"
 import { Cspin } from "@com/comstyled"
 import Empty from "@com/useEmpty.js";
@@ -66,13 +66,13 @@ let {exparams} = useOutletContext()
         4:"days"
       } 
        
-          let dif = type!=4 ? moment().diff(date, datetype[type]) :moment().diff(publicrangedate?.[1], datetype[type])
+          let dif = type!=4 ? dayjs().diff(date, datetype[type]) :dayjs().diff(publicrangedate?.[1], datetype[type])
           console.log("dif",dif)
           if(dif>0) {
            
             EndDate = type!=4 ?  date.endOf(difftype).format("YYYY-MM-DD HH:mm") : publicrangedate?.[1].endOf(difftype).format("YYYY-MM-DD HH:mm")
           }else { 
-            EndDate =type!=4 ? moment().format("YYYY-MM-DD HH:mm") : publicrangedate?.[1].format("YYYY-MM-DD HH:mm")
+            EndDate =type!=4 ? dayjs().format("YYYY-MM-DD HH:mm") : publicrangedate?.[1].format("YYYY-MM-DD HH:mm")
        
           }
     

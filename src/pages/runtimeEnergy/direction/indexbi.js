@@ -1,7 +1,7 @@
 import React, { useState, useEffect, } from "react";
 
 import { Form, Space, DatePicker, Select } from "antd";
-import moment from 'moment';
+import dayjs from 'dayjs';
 import Pagecount from '@com/pagecontent'
 import CustContext from "@com/content.js";
 
@@ -38,7 +38,7 @@ export default function Index() {
   const picker = ['', 'date', 'month', 'year'][timetype];
   const [params, setParams] = useState({
     type: 1,
-    date: moment().format('yyyy-MM-DD'),
+    date: dayjs().format('YYYY-MM-DD'),
     projectId
   })
   const [options, setOptions] = useState({
@@ -110,7 +110,7 @@ export default function Index() {
 
   const timechange = (e) => {
     setTimetype(e);
-    let date = getTime(moment(), e)
+    let date = getTime(dayjs(), e)
     setParams({
       ...params,
       type: e,
@@ -161,7 +161,7 @@ export default function Index() {
             ></Select>
           </Item>
 
-          <Item nostyle name="date" initialValue={moment(new Date(), 'YYYY-MM-DD')}>
+          <Item nostyle name="date" initialValue={dayjs(new Date(), 'YYYY-MM-DD')}>
             <DatePicker placeholder="请选择日期" picker={picker} onChange={datechange} style={{ width: '160px' }} />
           </Item>
         </Space>

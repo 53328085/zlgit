@@ -1,6 +1,6 @@
 import { DatePicker,Form } from 'antd';
 import React, { useState, useEffect, useCallback } from 'react';
-import moment from 'moment';
+import day from 'dayjs';
 const { RangePicker } = DatePicker;
 
 export const publicdateType=[
@@ -37,7 +37,7 @@ export const Daterange = ({value, onChange,rangeDate=45,showTime=false}) => {
     
       const tooLate = dates[0] && current.diff(dates[0], 'days') > rangeDate;
       const tooEarly = dates[1] && dates[1].diff(current, 'days') > rangeDate;
-      return !!tooEarly || !!tooLate || (current && current> moment().endOf("day"));
+      return !!tooEarly || !!tooLate || (current && current> day().endOf("day"));
      
    
   };
@@ -77,11 +77,11 @@ export const Daterange = ({value, onChange,rangeDate=45,showTime=false}) => {
 
  export const  DefineDateRange=(props)=>{
     return (
-      <Form.Item name="definerangedate" initialValue={[moment().subtract(1, "month"), moment()]}  >
+      <Form.Item name="definerangedate" initialValue={[day().subtract(1, "month"), day()]}  >
         <Daterange  {...props} />
       </Form.Item>
     )
  }
  export const disableDate=(current)=>{
-  return current && current> moment().endOf("day");
+  return current && current> day().endOf("day");
 }

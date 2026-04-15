@@ -11,7 +11,7 @@ import { Topology } from "@topology/core/src/core";
 import { register as registerFlow } from '@topology/flow-diagram'
 import { Cspin } from '@com/comstyled'
 import mqtt from 'mqtt'
-import moment from "moment";
+import dayjs from 'dayjs';
 import { SearchOutlined } from '@ant-design/icons';
 import { drawEcharts } from "@com/useEcharts"
 import style from './style.module.less'
@@ -612,7 +612,7 @@ export default function Index() {
           <div className={style.tabContent} style={{ borderTopLeftRadius: '4px' }}>
             <div className={style.warningContent}>
               <div className={style.warnHeader}>
-                <RangePicker showTime defaultValue={[moment().startOf('day'), moment()]} format={dateFormat} onChange={changeDate}></RangePicker>
+                <RangePicker showTime defaultValue={[dayjs().startOf('day'), dayjs()]} format={dateFormat} onChange={changeDate}></RangePicker>
 
                 <Button style={{ marginLeft: 16, width: 96, height: 32 }} type="primary" onClick={onSearch} icon={<SearchOutlined />}>查询</Button>
               </div>

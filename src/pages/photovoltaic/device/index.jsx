@@ -16,7 +16,7 @@ import imgurl from './images/index'
 import { DatePicker, Table, Checkbox, Space, Radio, Divider, Select, Tree, Button, message, Form, Typography } from "antd";
 import { ExportExcel, CustButton, ExportButton, CustButtonT } from '@com/useButton'
 import { Container, TopBox, FotterBox, Header } from "./style";
-import moment from "moment";
+import dayjs from 'dayjs';
 
 import { useOutletContext } from "react-router-dom";
 
@@ -218,7 +218,7 @@ export default function Index() {
 
 
   const disabledDate = (current) => {
-    return current > moment().endOf('day');
+    return current > dayjs().endOf('day');
   };
 
 
@@ -284,7 +284,7 @@ export default function Index() {
   }
   const typeChange = (e) => {
     if (e != 3) {
-      form.setFieldValue('date', moment())
+      form.setFieldValue('date', dayjs())
     }
     getTrend()
   }
@@ -468,7 +468,7 @@ export default function Index() {
                       ]}
                     />
                   </Form.Item>
-                  <Form.Item name="date" initialValue={moment()} >
+                  <Form.Item name="date" initialValue={dayjs()} >
                     <DatePicker picker={["date", "date", "month", "year"][Form.useWatch("type", form)]} style={{ width: 240 }} onChange={getTrend} disabledDate={disabledDate} />
                   </Form.Item>
                   <Form.Item name="mode" initialValue="1">

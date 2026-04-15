@@ -17,7 +17,7 @@ import {
   message,
   Tag,
 } from "antd";
-import moment from "moment";
+import dayjs from 'dayjs';
 import { WarningFilled } from "@ant-design/icons";
 import { Project } from "@api/api.js";
 import { User } from "@api/api.js";
@@ -240,7 +240,7 @@ export default function Account({ projectId, CModal }) {
         setAreas([...areaAuthority]);
         form.setFieldsValue({
           ...params,
-          validStageTime: moment(validStageTime, "YYYY-MM-DD").format(
+          validStageTime: dayjs(validStageTime, "YYYY-MM-DD").format(
             "YYYY/MM/DD"
           ),
         });
@@ -352,7 +352,7 @@ export default function Account({ projectId, CModal }) {
       type
     ];
     let name = ["", "", "运营管理员", "项目管理员", "运维人员"][type];
-    item.validStageTime = moment(item.validStageTime, "YYYY-MM-DD HH:mm:ss");
+    item.validStageTime = dayjs(item.validStageTime, "YYYY-MM-DD HH:mm:ss");
     item.enabled = item.enabled == 1;
     flushSync(() => {
       setInitialValues({
@@ -448,7 +448,7 @@ export default function Account({ projectId, CModal }) {
       if(isObject(field)) {
          let {validStageTime, ...reset} = field
          form.setFieldsValue({...reset})
-         form.setFieldValue("validStageTime",moment(
+         form.setFieldValue("validStageTime",dayjs(
            validStageTime,
           "YYYY-MM-DD HH:mm:ss"
         ).format("YYYY/MM/DD"))
@@ -547,7 +547,7 @@ export default function Account({ projectId, CModal }) {
               <Input
                 size="middle"
                 readOnly
-                value={moment(
+                value={dayjs(
                   item.validStageTime,
                   "YYYY-MM-DD HH:mm:ss"
                 ).format("YYYY/MM/DD")}

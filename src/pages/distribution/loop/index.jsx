@@ -5,7 +5,7 @@ import { Typography, message,Space } from 'antd'
 import LoopSelect from './loopSelect'
  
 import { useSelector } from 'react-redux'
-import moment from 'moment';
+import dayjs from 'dayjs';
 import {DistributionRoomRuntime,distributionRoom} from '@api/api.js'
 import { selectcurlRommidl, roomId ,adaptation} from "@redux/systemconfig";
 //import {Link} from 'react-router-dom'
@@ -64,7 +64,7 @@ export default function Index() {
     const selectRef=useRef()
     const [tableData,setTableData] =useState([])
     const tableRef=useRef()
-    const time = moment().format("YYYY-MM-DD hh:mm:ss")
+    const time = dayjs().format("YYYY-MM-DD hh:mm:ss")
     const columns = [
         {
             title: '回路名称',

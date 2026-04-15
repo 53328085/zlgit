@@ -4,7 +4,7 @@ import { useSelector } from "react-redux";
 import { useAntdTable } from 'ahooks'
 import { useOutletContext } from 'react-router-dom'
 import Usetable from '@com/useTable'
-import moment from "moment";
+import dayjs from 'dayjs';
 import BindAir from './bind'
 import { Mainbox } from './style'
 import { Serach } from "@com/comstyled"

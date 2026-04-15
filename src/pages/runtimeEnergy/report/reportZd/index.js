@@ -1,6 +1,6 @@
 import React, { useState, useCallback, useRef, useEffect, useMemo   } from 'react'
 import { Checkbox, DatePicker, message, Tooltip, Descriptions, Radio, Space} from 'antd'
-import moment from 'moment'
+import dayjs from 'dayjs'
 
 import { useOutletContext } from 'react-router-dom'
 import { useAntdTable } from 'ahooks'
@@ -27,7 +27,7 @@ export default function Index() {
   let { exparams  } = useOutletContext()
   console.log(exparams)
 
-  const [dates, setDates] = useState([moment().startOf("day"), moment().endOf("hour")]);
+  const [dates, setDates] = useState([dayjs().startOf("day"), dayjs().endOf("hour")]);
 
   const [startDateTime, setStartDateTime] = useState('')
   const [endDateTime, setEndDateTime] = useState('')

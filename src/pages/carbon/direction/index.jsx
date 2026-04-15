@@ -1,5 +1,5 @@
 import React, { useState,  useEffect,memo, useRef } from "react";
-import moment from "moment";
+import dayjs from 'dayjs';
 import {Space, DatePicker} from 'antd'
 import Pagecount from '@com/pagecontent' 
 
@@ -14,7 +14,7 @@ const {RangePicker} = DatePicker
 export default function Index() {   
   let {enterpriseId} = useOutletContext() || {}
  
-  const [dateRang, setDateRang] = useState([moment().subtract(1, 'month'), moment()])
+  const [dateRang, setDateRang] = useState([dayjs().subtract(1, 'month'), dayjs()])
 
  const [options, setOptions] = useState({
   tooltip: {
@@ -103,7 +103,7 @@ export default function Index() {
   }, [enterpriseId, dateRang])
   const disabledDate = (current) => {
      
-    return current && current > moment().endOf('day');
+    return current && current > dayjs().endOf('day');
   };
   const  onChange=(datas, dateStrings) => {
     setDateRang(datas)

@@ -2,7 +2,7 @@ import React, { useEffect, useState, memo, useRef, useMemo } from "react";
 
 import Titlelayout from "@com/titlelayout";
 import Usetable from '@com/useTable'
-import moment from "moment";
+ 
 import { CloseOutlined } from "@ant-design/icons";
 import { useOutletContext } from "react-router-dom";
 import {  Image,  Typography, Tabs} from "antd";

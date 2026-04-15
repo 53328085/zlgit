@@ -1,4 +1,4 @@
-import moment from 'moment'
+import dayjs from 'dayjs'
 import { Popconfirm, Space, Tag, Typography } from 'antd'
 
 const { Link } = Typography
@@ -18,7 +18,7 @@ export const getColumns = (onTableEditClick, onTableDeleteClick) => {
     {
       title: '启用日期',
       dataIndex: 'enableDate',
-      render: (_, record) => moment(record.enableDate).format('YYYY-MM-DD')
+      render: (_, record) => dayjs(record.enableDate).format('YYYY-MM-DD')
     },
     {
       title: '时段数',
@@ -79,7 +79,7 @@ export const getStepOptions = () => {
 export const DefaultFormInfo = {
   planName: '',
   step: 4,
-  enableDate: moment().add(1, 'day'),
+  enableDate: dayjs().add(1, 'day'),
   newTariffTimes: [
     {
       tariffTimeType: null,

@@ -427,7 +427,11 @@ const getWrokTicketWrold = async({no}, type) => {
                 width={960}
                 ref ={ticketRef}
                 closable={true}
-                bodyStyle={{paddingLeft:52}}
+                styles={{
+                  body:{
+                    paddingLeft:52
+                  }
+                }}
                 footer={<div ><CustButton style={{marginLeft: "auto"}} onClick={() => {ticketRef.current.onCancel() }}>关闭</CustButton></div>}
                 >
                 <CTimeline mode='left' >

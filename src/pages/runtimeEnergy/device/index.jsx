@@ -11,7 +11,7 @@ import Citem from './item'
 import CitemAll from './itemAll'
 import { useSelector } from 'react-redux'
 import { selectProjectId, selectOneLevelDefaultId, selectOneLevel, levelDefaultLabel,adaptation } from '@redux/systemconfig.js'
-import moment from "moment";
+import dayjs from 'dayjs';
 import { getTime } from "@com/usehandler"
 import UseTable from "@com/useTable"
 import { ExportExcel } from '@com/useButton'
@@ -113,7 +113,7 @@ export default function Index() {
     pageSize: 12,
     areaId,
     type: 1,
-    date: getTime(moment(), 1)
+    date: getTime(dayjs(), 1)
   })
 
   // const {detail, total='', proportion, coalStandard, consume={}, analysisDes='', ...energyitem} = qverview;
@@ -327,7 +327,7 @@ export default function Index() {
 
   const timechange = (e) => {
     setTimetype(e);
-    let date = getTime(moment(), e)
+    let date = getTime(dayjs(), e)
 
     setParams({ ...params, type: e, date })
   }
@@ -354,7 +354,7 @@ export default function Index() {
             ></Select>
           </Item>
 
-          <Item nostyle name="date" initialValue={moment(new Date(), 'YYYY-MM-DD')}>
+          <Item nostyle name="date" initialValue={dayjs(new Date(), 'YYYY-MM-DD')}>
             <DatePicker placeholder="请选择日期" picker={picker} onChange={dateChange} style={{ width: '160px' }} />
           </Item>
         </Space>

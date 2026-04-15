@@ -12,7 +12,7 @@ import { columns } from './columns'
 import { useAntdTable, useRequest  } from 'ahooks'
 import { operation } from '@api/api'
 import zhanwei from '@imgs/zhanwei.png'
-import moment from 'moment'
+import dayjs from 'dayjs'
 import {  ExportExcel, CustButton} from '@com/useButton'
 import { Cdivider, Cspin } from "@com/comstyled";
 import styled from 'styled-components';
@@ -50,7 +50,7 @@ export default function Warncontent() {
     const [order,setOrder]=useState(false)
     const [orderdetail,setOrderdetail]=useState()
     const [tableParams,setTableParams] = useState({current:1,pageSize:10})
-    const [rangerTime,setRangerTime] = useState([moment().subtract(1, 'months'),moment()])
+    const [rangerTime,setRangerTime] = useState([dayjs().subtract(1, 'months'),dayjs()])
     const [status,setStatus] = useState(0)   
     const [key,setKey] = useState()
     const [stateopts,setStateopts] = useState([{
@@ -240,7 +240,12 @@ export default function Warncontent() {
                 width={960}
                 onCancel={()=>{setOrder(false)}}
                 closable={false}
-                bodyStyle={{paddingLeft:52}}
+                styles={{
+                    body:{
+                        paddingLeft:30
+                    }
+                }}
+            
                 footer={
                     null
                     // <div style={{ textAlign: 'center' }}>

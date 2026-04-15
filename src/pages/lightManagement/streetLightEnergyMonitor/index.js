@@ -1,6 +1,6 @@
 import React, { useMemo, useRef, useState, useCallback } from "react";
 import { Space  } from "antd";
-import moment from "moment";
+import dayjs from 'dayjs';
 import Pagecount from "@com/pagecontent";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useAntdTable, useRequest } from "ahooks";
@@ -45,9 +45,9 @@ export default function Index() {
           2: "MM-DD",
           3:"YYYY-MM"
         }[type]
-        return moment(text, "YYYY-MM-DD HH:mm:ss").format(format)
+        return dayjs(text, "YYYY-MM-DD HH:mm:ss").format(format)
       },
-      sorter: (a, b) => moment(a.time,"YYYY-MM-DD HH:mm:ss").diff(moment(b.time,"YYYY-MM-DD HH:mm:ss"))
+      sorter: (a, b) => dayjs(a.time,"YYYY-MM-DD HH:mm:ss").diff(dayjs(b.time,"YYYY-MM-DD HH:mm:ss"))
     }
     return [time, ...cols]
  }, [type, date])

@@ -5,7 +5,7 @@ import { Image, Form, Space, Button, Input, Select, DatePicker,   Divider, messa
 import { useAntdTable, useSetState } from 'ahooks'
 import { nanoid } from "@reduxjs/toolkit"
 import { selectcurlRommid, selectProjectId } from "@redux/systemconfig";
-import moment from 'moment'
+import dayjs from 'dayjs'
 import Titlelayout from '@com/titlelayout'
 import Usetable from '@com/useTable'
 import { OperationLogRuntime, distributionRoom, DistributionRoomRuntime } from '@api/api'
@@ -151,7 +151,7 @@ export default  function Index() {
     })
   }
   const disabledDate=(date)=>{
-   return date&&date>moment()
+   return date&&date>dayjs()
   }
   const changePage=(page,pageSize)=>{
     console.log(page,pageSize)
@@ -216,7 +216,7 @@ export default  function Index() {
           <div className='content'>
             <Form form={form} className='top' layout='inline' initialValues={{            
               type: 0,
-              time: [moment().subtract(7, 'day'), moment()]
+              time: [dayjs().subtract(7, 'day'), dayjs()]
             }}>
               <Space size={16}>               
                 <Item label="告警等级" name="type">

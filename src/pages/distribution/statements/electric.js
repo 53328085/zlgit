@@ -4,7 +4,7 @@ import { Space, Select, DatePicker, Form } from "antd";
 import UseTable from "@com/useTable";
 import { ExportExcel, CustButtonT } from "@com/useButton";
 import styled from "styled-components";
-import moment from "moment";
+import dayjs from 'dayjs';
 import {useRequest} from 'ahooks'
 import {DistributionRoomRuntime} from '@api/api.js'
 const Mainbox = styled.div`
@@ -170,7 +170,7 @@ export default function Electric({lineIds, projectId}) {
                 2: '点击选择日期（默认当月）'
                }[key]
                console.log(info)
-               return <Form.Item name="Day" initialValue={moment()}>
+               return <Form.Item name="Day" initialValue={dayjs()}>
                <DatePicker picker={type} placeholder={info} style={{width: 220}}></DatePicker>
                </Form.Item>
              }

@@ -10,7 +10,7 @@ import Titlelayout from '@com/titlelayout'
 import { Serach } from "@com/comstyled";
 import { Monitoring } from '@api/api.js'
 import CModal from '@com/useModal'
-import moment from 'moment'
+import dayjs from 'dayjs'
 
 export default function Index() {
     const projectId = useSelector(selectProjectId)

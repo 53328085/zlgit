@@ -4,7 +4,7 @@ import {useSelector} from 'react-redux'
 import { Button, Dropdown, Menu, Upload, Typography, message,Radio, Form, DatePicker} from "antd";
 import {CaretDownFilled, CloseOutlined} from '@ant-design/icons'
 import {useTranslation} from 'react-i18next' 
-import moment from "moment";
+import dayjs from 'dayjs';
 import i18 from '../../i18n'
 import icon from "./icon";
 import {hextodec} from '@com/usehandler'
@@ -536,7 +536,7 @@ export function ExportExcel({tb,  single=false,defined=false, byData=false, setI
   }
   const tooLate = dates[0] && current.diff(dates[0], 'days') > 31;
   const tooEarly = dates[1] && dates[1].diff(current, 'days') > 31;
-  const date = current && current > moment().endOf("day");
+  const date = current && current > dayjs().endOf("day");
   return !!tooEarly || !!tooLate || !!date
 };
  const onClick =useCallback(async({key}) => {
@@ -640,7 +640,7 @@ export function  ProExportExcel({tb,className,  single=false,defined=false, byDa
   }
   const tooLate = dates[0] && current.diff(dates[0], 'days') > 31;
   const tooEarly = dates[1] && dates[1].diff(current, 'days') > 31;
-  const date = current && current > moment().endOf("day");
+  const date = current && current > dayjs().endOf("day");
   return !!tooEarly || !!tooLate || !!date
 };
  const onClick =useCallback(async({key}) => {

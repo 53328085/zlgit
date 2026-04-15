@@ -295,7 +295,13 @@ const publishing = (
             
            </CModal>
 
-           <CModal ref={delmodal} title={t("common:DeleteItem")} mold='cust' onOk={delProject} width={640} type="warn" warnimg={false} bodyStyle={{padding: "32px"}}>
+           <CModal ref={delmodal} title={t("common:DeleteItem")} mold='cust' onOk={delProject} width={640} type="warn" warnimg={false}
+           styles={{
+            body:{
+              padding: "32px"
+            }
+           }}
+           >
                <div>
                  <Title level={4}>{t("common:Noticeproject")}</Title>
                  <Paragraph>{t("common:delaccounts")}</Paragraph>

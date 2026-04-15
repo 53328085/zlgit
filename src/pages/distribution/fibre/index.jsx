@@ -13,7 +13,7 @@ import { selectProjectId, selectcurlRommid,adaptation} from '@redux/systemconfig
 import { useReactive } from 'ahooks'
 import UseModal from '@com/useModal' 
 import  Ichart from '@com/useEcharts/Ichart' 
-import moment from 'moment';
+import dayjs from 'dayjs';
 import Titlelayout from '@com/titlelayout'
 import Pagecount from "@com/pagecontent";
 const {Paragraph} = Typography
@@ -359,7 +359,7 @@ export default function Index() {
      xAxis: {
       axisLabel: {
          formatter: (value, index) => {
-             return moment(value, "YYYY-MM-DD HH:mm:ss").format("HH:mm")
+             return dayjs(value, "YYYY-MM-DD HH:mm:ss").format("HH:mm")
          }
       }
     },
@@ -388,7 +388,7 @@ export default function Index() {
       xAxis: {
         axisLabel: {
            formatter: (value, index) => {
-               return moment(value, "YYYY-MM-DD hh:mm:ss").format("hh:mm")
+               return dayjs(value, "YYYY-MM-DD hh:mm:ss").format("hh:mm")
            }
         }
       },
@@ -455,8 +455,8 @@ export default function Index() {
     try {
       const formvalue = form.getFieldsValue()
       console.log(formvalue)
-      const start =formvalue.time&&formvalue.time[0]?moment(formvalue.time[0]).format('YYYY-MM-DD 00:00:00'):moment().format('YYYY-MM-DD 00:00:00')
-      const end =formvalue.time&&formvalue.time[1]?moment(formvalue.time[1]).format('YYYY-MM-DD 23:59:59'):moment().format('YYYY-MM-DD 23:59:59')
+      const start =formvalue.time&&formvalue.time[0]?dayjs(formvalue.time[0]).format('YYYY-MM-DD 00:00:00'):dayjs().format('YYYY-MM-DD 00:00:00')
+      const end =formvalue.time&&formvalue.time[1]?dayjs(formvalue.time[1]).format('YYYY-MM-DD 23:59:59'):dayjs().format('YYYY-MM-DD 23:59:59')
       const alarmType = formvalue.dangerType?formvalue.dangerType:(channelInfo.typeopts&&channelInfo.typeopts[0])?channelInfo.typeopts[0]:1
       
       const res = await DistributionRoomRuntime.QueryFibreTempilWarningRecords({
@@ -487,7 +487,7 @@ export default function Index() {
  
   const disabledDate = (current) => {
     
-    return current && current > moment().endOf('day');
+    return current && current > dayjs().endOf('day');
   };
 
   useEffect(() => {
@@ -647,7 +647,7 @@ export default function Index() {
             layout='inline'
             form={form}
             initialValues={{
-              time: [moment().subtract(7, 'day'), moment()],
+              time: [dayjs().subtract(7, 'day'), dayjs()],
               dangerType: channelInfo.typeopts[0]?.x
             }}
           >

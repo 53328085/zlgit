@@ -10,7 +10,7 @@ import {
   message
 } from "antd";
 import styled from "styled-components";
-import moment from 'moment';
+import dayjs from 'dayjs';
 
 import {ProjectSetting} from '@api/api.js'
 import Mapcom from "@com/useMap";
@@ -290,7 +290,7 @@ const queryProjectInfo = async () => {
      initial = data;
     for(let key of Object.keys(params)) {
       if (key == 'validStageTime' && data[key]) {
-         params[key] = moment(data[key]);
+         params[key] = dayjs(data[key]);
       } else {
          params[key] = data[key];
       }

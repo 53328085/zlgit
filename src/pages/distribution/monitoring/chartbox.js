@@ -1,5 +1,5 @@
 import React, {useState, useRef, useEffect, Fragment} from 'react'
-import moment from 'moment'
+import dayjs from 'dayjs'
 
 import  Ichart from '@com/useEcharts/Ichart' 
 import Titlelayout from '@com/titlelayout' 
@@ -45,7 +45,7 @@ export default function Index({device, projectId}) {
     const [tabledata,setTableData]=useState([])
     const [columns,setColumns] = useState([])
     const [disableDate,setDisableDate] = useState([])
-    const [timeRanger,setTimeRanger] = useState([moment().subtract(6,'day'), moment()])
+    const [timeRanger,setTimeRanger] = useState([dayjs().subtract(6,'day'), dayjs()])
     const tableRef = useRef()
     const [treand, setTreand] = useState({
       lineData: [],
@@ -138,7 +138,7 @@ export default function Index({device, projectId}) {
     xAxis: {
       axisLabel: {
          formatter: (value, index) => {
-             return moment(value, "YYYY-MM-DD HH:mm:ss").format("HH:mm")
+             return dayjs(value, "YYYY-MM-DD HH:mm:ss").format("HH:mm")
          },
          interval: "auto"
       },
@@ -192,7 +192,7 @@ export default function Index({device, projectId}) {
         }
         const tooLate = disableDate[0]&& current.diff(disableDate[0],'days')>6
         const tooEarly = disableDate[1] && disableDate[1].diff(current,'days')>6
-        return tooLate || tooEarly ||(current && current > moment().endOf('day'))
+        return tooLate || tooEarly ||(current && current > dayjs().endOf('day'))
         
       }
  

@@ -1,6 +1,6 @@
 import React, { useMemo, useRef, useState, useCallback } from "react";
 import { Space, Form, message, Typography, Input } from "antd";
-import moment from "moment";
+import dayjs from 'dayjs';
 import { useAntdTable } from "ahooks";
 import { useSelector } from "react-redux";
 import { useOutletContext } from "react-router-dom";
@@ -147,12 +147,12 @@ export default function Index() {
       const {dtEnd,dtStart,weeks,...rest} =section
       return {
          weeks: (Array.isArray(weeks) && weeks.length > 0) ? weeks : null,
-         date: [moment(dtStart, "YYYY-MM-DD"),moment(dtEnd, "YYYY-MM-DD")],
+         date: [dayjs(dtStart, "YYYY-MM-DD"),dayjs(dtEnd, "YYYY-MM-DD")],
          forbidControls:forbidControls.map(f => {
           let {type, dtStart, dtEnd} = f
-          return {type, time: [moment(dtStart, "HH:mm"),moment(dtEnd, "HH:mm")]}
+          return {type, time: [dayjs(dtStart, "HH:mm"),dayjs(dtEnd, "HH:mm")]}
          }) ,
-         timings:  timings.map(t =>  ({...t, time: moment(t.time, "HH:mm")})),
+         timings:  timings.map(t =>  ({...t, time: dayjs(t.time, "HH:mm")})),
          eTiming,
          eForbid,
          ...rest

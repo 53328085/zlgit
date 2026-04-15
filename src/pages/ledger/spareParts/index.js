@@ -12,7 +12,7 @@ import UseModal from '@com/useModal'
 import { getInitialProps } from 'react-i18next';
 import { useOutletContext } from 'react-router-dom'
 import { isArray } from 'lodash';
-import moment from "moment";
+import dayjs from 'dayjs';
 
 const Mainbox = styled.div`
     && {
@@ -255,8 +255,8 @@ export default function Index() {
     setBeiName(e)
   }
   const getDefaultDates = () => {
-    const today = moment();
-    const lastWeek = moment().subtract(7, 'days');
+    const today = dayjs();
+    const lastWeek = dayjs().subtract(7, 'days');
     let date=[]
     date.push(lastWeek)
     date.push(today)
@@ -264,8 +264,8 @@ export default function Index() {
     return date;
   };
   const getDefaultDates1 = () => {
-    const today = moment().format('YYYY-MM-DD');
-    const lastWeek = moment().subtract(7, 'days').format('YYYY-MM-DD');
+    const today = dayjs().format('YYYY-MM-DD');
+    const lastWeek = dayjs().subtract(7, 'days').format('YYYY-MM-DD');
     let date=[]
     date.push(lastWeek)
     date.push(today)
@@ -283,7 +283,7 @@ export default function Index() {
   // 禁止选择今天的日期之前的日期
   const disabledDate = (current) => {
     // Can not select days before today and today
-    return current && current > moment().endOf('day');
+    return current && current > dayjs().endOf('day');
   };
   const columnsRecord = [
     {

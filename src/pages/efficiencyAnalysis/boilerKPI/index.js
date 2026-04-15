@@ -11,7 +11,7 @@ import { Mainwrap } from "../common/style.js";
 import Cform  from "../common";
  
 import {getTime} from "@com/usehandler.js"
-import moment from "moment";
+import dayjs from 'dayjs';
 import Comm from "../common/comm.js"
 import {Cspin} from "@com/comstyled"
 import Empty from "@com/useEmpty.js";
@@ -38,7 +38,7 @@ export default function Index() {
          projectId,
          type,
          startDate: type<4 ? getTime(date, type) :date?.[0]?.startOf()?.format("YYYY-MM-DD"),
-         endDate: type==1 ?   date?.format("YYYY-MM-DD") : [2,3].includes(type) ? moment().format("YYYY-MM-DD"):  date?.[1]?.format("YYYY-MM-DD"),
+         endDate: type==1 ?   date?.format("YYYY-MM-DD") : [2,3].includes(type) ? dayjs().format("YYYY-MM-DD"):  date?.[1]?.format("YYYY-MM-DD"),
          key:6,
          areaId
        });

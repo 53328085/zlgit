@@ -33,6 +33,7 @@ const CModal = styled(Modal)`
     border-radius: 12px;
     box-shadow: none;
     overflow: hidden;
+    padding: 0;
    //  background-color: ${(props) => props.type == 'dark' ? '#1b1d23' : '#fff'};
   }
   .ant-modal-header {
@@ -179,14 +180,16 @@ function Custmodal({
       onOk={onOk}
       type={type}
       confirmLoading={loading}
-      bodyStyle={
-        (type == "warn" || type == "ok") ? {
+      styles={{
+        body:(type == "warn" || type == "ok") ? {
           display: 'flex',
           alignItems: 'center',
           fontSize: '16px',
           color: "#515151",
-          ...bodyStyle
-        } : null
+        } : null,
+       
+        ...props.styles
+      }
       }
       title={
         title ? <div

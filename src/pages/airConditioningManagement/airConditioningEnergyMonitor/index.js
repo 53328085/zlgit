@@ -14,7 +14,7 @@ import { AirConditioningManagement } from "@api/api.js";
 import { selectProjectId } from "@redux/systemconfig";
 import { useSelector } from "react-redux";
 import { useReactive } from "ahooks";
-import moment from "moment";
+import dayjs from 'dayjs';
 import {ExportExcel} from "@com/useButton"
 import {isObject, getTime} from "@com/usehandler"
 import exportImg from "./imgs/export.png";
@@ -63,7 +63,7 @@ export default function Index() {
     totalCount: 0,
   });
   const timedate = useReactive({
-    date: moment().subtract(1,"days").format("YYYY-MM-DD"),
+    date: dayjs().subtract(1,"days").format("YYYY-MM-DD"),
     datetype: 1,
   });
   // 添加loading状态管理
@@ -81,10 +81,10 @@ export default function Index() {
   };
 /*   const getDateType = (type, date) => {
     return type == 1
-      ? moment(date).format("YYYY-MM-DD")
+      ? dayjs(date).format("YYYY-MM-DD")
       : type == 2
-        ? moment().format("YYYY-MM-01")
-        : moment().format("YYYY-01-01");
+        ? dayjs().format("YYYY-MM-01")
+        : dayjs().format("YYYY-01-01");
   }; */
   //查询能耗监控数据
   const QueryEnergyConsumptions = async () => {

@@ -1,6 +1,6 @@
 import React, { useMemo, useRef, useState, useCallback, useContext} from "react";
 import { Space, Form, message, Typography } from "antd";
-import moment from "moment";
+import dayjs from 'dayjs';
 import Pagecount from "@com/pagecontent";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useAntdTable, useRequest } from "ahooks";

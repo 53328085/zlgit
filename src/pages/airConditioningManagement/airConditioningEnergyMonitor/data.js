@@ -1,4 +1,4 @@
-import moment from "moment";
+import dayjs from 'dayjs';
 export const Radio_Options = [
   {
     label: "空调用能",
@@ -8,7 +8,7 @@ export const Radio_Options = [
 ];
 export const Init_Value = {
   dtype: "1",
-  date: moment().subtract(1, "day"),
+  date: dayjs().subtract(1, "day"),
 };
 export const Date_Value = [
   {

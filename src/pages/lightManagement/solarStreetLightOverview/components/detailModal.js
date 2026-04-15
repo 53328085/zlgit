@@ -9,7 +9,7 @@ import {timeoption,viewoption, useColumns,usedOption,useBaroption,useBaroptionEC
 import {useEuDetail,useEcDetail,useEiDetail,useEeDetail} from "../api"
 import { getTime,isObject } from '@com/usehandler'
 import {ExportExcel} from "@com/useButton"
-import moment from 'moment'
+import dayjs from 'dayjs'
 import Ichart from "@com/useEcharts/Ichart";
 import { user } from '@pages/Home/header/icon';
  
@@ -38,7 +38,7 @@ export default forwardRef(function Index({cRef}){
      // const {index, projectId}= params
       if(!(Number.isInteger(index) && Number.isInteger(projectId))) return
     //  console.log(form.getFieldsValue())
-      const {type="date", date=moment()} =  form.getFieldsValue(true)
+      const {type="date", date=dayjs()} =  form.getFieldsValue(true)
       if (!(type && date)) return
       const value ={
         date:1,
@@ -182,12 +182,12 @@ export default forwardRef(function Index({cRef}){
                     ({getFieldValue, setFieldValue})=>{
                        let dtype = getFieldValue("type")
                        setDtype(dtype)
-                       setFieldValue("date", moment())
+                       setFieldValue("date", dayjs())
                        return  null
                     }
                   }
                 </Form.Item>
-                <Form.Item name="date" initialValue={moment()}>
+                <Form.Item name="date" initialValue={dayjs()}>
                   <DatePicker picker={dtype} style={{width: "200px"}}></DatePicker>
                 </Form.Item>
                 <Form.Item name="view" initialValue={2} >

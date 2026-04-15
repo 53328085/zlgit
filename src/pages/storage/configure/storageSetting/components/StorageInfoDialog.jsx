@@ -6,7 +6,7 @@ import CustomUpload from "@com/useUpload.js"
 import { natureOptions } from '@pages/storage/configure/storageSetting/Constant'
 import { useSelector } from 'react-redux'
 import { selectOneLevel, selectProjectId } from '@redux/systemconfig'
-import moment from 'moment/moment'
+import dayjs from 'dayjs'
 import styled from 'styled-components'
 import { SiteManagerDesigner } from '@api/api.js'
 
@@ -53,7 +53,7 @@ const StorageInfoDialog = ({ onRefreshClick }, ref) => {
       setOperation('edit')
       form.setFieldsValue({
         ...info,
-        deliveryTime: moment(info?.deliveryTime)
+        deliveryTime: dayjs(info?.deliveryTime)
       })
     } else {
       setOperation('add')
@@ -71,7 +71,7 @@ const StorageInfoDialog = ({ onRefreshClick }, ref) => {
       const values = await form.validateFields()
       let params = {
         ...values,
-        deliveryTime: moment(values.deliveryTime).format('YYYY-MM-DD'),
+        deliveryTime: dayjs(values.deliveryTime).format('YYYY-MM-DD'),
       }
       let result
       if (operation === 'add') {

@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef, useMemo } from "react";
-import moment from "moment";
+import dayjs from 'dayjs';
 import { useSelector } from "react-redux";
 import {useReactive} from 'ahooks'
 import mqtt from 'mqtt'
@@ -998,7 +998,7 @@ const queryResult = async(params) => {
      let {success, data,message:msg} = await DoOpenClose(params)
      if(success) {
       if(!data) return   // message.warning("缺少key")
-        let post = {tm: moment().format("YYYY-MM-DD HH:mm:ss"),key:data}
+        let post = {tm: dayjs().format("YYYY-MM-DD HH:mm:ss"),key:data}
         setRstate(3) 
         getResult(post)
         
@@ -1010,7 +1010,7 @@ const queryResult = async(params) => {
     }
  }
 
- const [dates, setDates] = useState([moment().startOf("day"), moment()]);
+ const [dates, setDates] = useState([dayjs().startOf("day"), dayjs()]);
  const [eldata, setEldata] = useState()
 
 
@@ -1102,13 +1102,13 @@ const queryResult = async(params) => {
 /*    [
     {
       level: 1,
-      startTime: moment().subtract(7, "days").format("yyyy-MM-DD HH:mm:ss"),
+      startTime: dayjs().subtract(7, "days").format("YYYY-MM-DD HH:mm:ss"),
       alarmType: "温度超限",
       state: 2,
     },
     {
       level: 1,
-      startTime: moment().subtract(27, "days").format("yyyy-MM-DD HH:mm:ss"),
+      startTime: dayjs().subtract(27, "days").format("YYYY-MM-DD HH:mm:ss"),
       alarmType: "设备离线",
       state: 2,
     },
@@ -1139,7 +1139,7 @@ const queryResult = async(params) => {
      xAxis: {
             axisLabel: {
               formatter: (value, index) => {
-                return moment(value, "YYYY-MM-DD HH:mm:ss").format("HH:mm");
+                return dayjs(value, "YYYY-MM-DD HH:mm:ss").format("HH:mm");
               },
               interval: "auto",
             },
@@ -1167,7 +1167,7 @@ const queryResult = async(params) => {
 
 
 const disabledDate = (current) => { 
-    return current && current > moment().endOf('day');
+    return current && current > dayjs().endOf('day');
   };
 
   const Extra = ({ ist,  fn }) => {
@@ -1668,26 +1668,30 @@ const disabledDate = (current) => {
             inner={true}
             wh="524px"
             open={iopen}
-            bodyStyle={{
+            styles={{
+              body:{
               backgroundColor: "#fff",
               padding: "16px 24px 16px 16px",
-            }}
-            headerStyle={{
-              backgroundColor: "#fff",
+            },
+            heaer:{
+               backgroundColor: "#fff",
               padding: "16px 24px 16px 16px",
               borderBottom: "none",
               display: "flex",
+            },
+            footer:{
+              display: "flex",
+              backgroundColor: "#fff",
+              justifyContent: "flex-end",
+            }
             }}
+       
             placement="right"
             mask={false}
             closable={false}
             getContainer={false}
             extra={<Extra fn={() => setIopen(false)} />}
-            footerStyle={{
-              display: "flex",
-              backgroundColor: "#fff",
-              justifyContent: "flex-end",
-            }}
+           
             footer={
               <Space>
                 <CustButtonT
@@ -1733,9 +1737,9 @@ const disabledDate = (current) => {
                     <Space size={laptop ? 16 : 32}>
                       <Text type="danger">告警发生</Text>{" "}
                       <Text>
-                        {moment()
+                        {dayjs()
                           .subtract(7, "hours")
-                          .format("yyyy-MM-DD HH:mm:ss")}
+                          .format("YYYY-MM-DD HH:mm:ss")}
                       </Text>
                     </Space>
                   </Timeline.Item>
@@ -1743,16 +1747,16 @@ const disabledDate = (current) => {
                     <Space size={laptop ? 16 : 32}>
                       <Link>告警确认</Link>{" "}
                       <Link>
-                        {moment()
+                        {dayjs()
                           .subtract(1, "hours")
-                          .format("yyyy-MM-DD HH:mm:ss")}
+                          .format("YYYY-MM-DD HH:mm:ss")}
                       </Link>
                     </Space>
                   </Timeline.Item>
                   <Timeline.Item dot={<Dot state={3} />}>
                     <Space size={laptop ? 16 : 32}>
                       <Text type="success">报警解除</Text>{" "}
-                      <Text>{moment().format("yyyy-MM-DD HH:mm:ss")}</Text>
+                      <Text>{dayjs().format("YYYY-MM-DD HH:mm:ss")}</Text>
                     </Space>
                   </Timeline.Item>
                 </Timeline>
@@ -1797,7 +1801,7 @@ const disabledDate = (current) => {
           </div>
           <div className="htitle">
             <span>设备快照</span>
-            <span>{moment().format("yyyy-MM-DD HH:mm:ss")}</span>
+            <span>{dayjs().format("YYYY-MM-DD HH:mm:ss")}</span>
           </div>
           <Info vstate={snapshot} />
           <div className="htitle">

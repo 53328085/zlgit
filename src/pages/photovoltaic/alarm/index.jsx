@@ -3,7 +3,7 @@ import styled from 'styled-components'
 import { Typography, Image } from 'antd'
 import { useAntdTable } from 'ahooks'
 import { nanoid } from "@reduxjs/toolkit"
-import moment from 'moment'
+import dayjs from 'dayjs'
 import Titlelayout from '@com/titlelayout'
 import Usetable from '@com/useTable'
 import { useQueryWarningStatistics, useQueryAlarmDetails } from './api';
@@ -197,8 +197,8 @@ export default function Index() {
   const { tableProps } = useAntdTable(QueryReports, {
     defaultParams: [{ pageSize: 14, pageNum: 1 },
     {
-      start: moment().subtract(7, 'day').format('YYYY-MM-DD'),
-      end: moment().format('YYYY-MM-DD'),
+      start: dayjs().subtract(7, 'day').format('YYYY-MM-DD'),
+      end: dayjs().format('YYYY-MM-DD'),
       projectId,
     }
     ],

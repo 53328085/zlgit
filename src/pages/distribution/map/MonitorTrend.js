@@ -3,7 +3,7 @@ import style from './style.module.less'
 import { message, Spin, DatePicker, Button, Select } from 'antd'
 import { Monitoring } from '@api/api.js'
 import { useReactive } from "ahooks";
-import moment from "moment";
+import dayjs from 'dayjs';
 import { isObject, disabledDate } from "@com/usehandler"
 import { SearchOutlined, CaretUpOutlined, CaretDownOutlined } from '@ant-design/icons';
 import { drawEcharts } from "@com/useEcharts"
@@ -134,7 +134,7 @@ export default function Index(props) {
     return (
         <div className={style.warningContent}>
             <div className={style.warnHeader}>
-                <RangePicker showTime defaultValue={[moment(defaultStartTime, dateFormat), moment(defaultEndTime, dateFormat)]} format={dateFormat} onChange={changeDate}></RangePicker>
+                <RangePicker showTime defaultValue={[dayjs(defaultStartTime, dateFormat), dayjs(defaultEndTime, dateFormat)]} format={dateFormat} onChange={changeDate}></RangePicker>
                 <Select showSearch style={{ width: '200px', marginLeft: '16px' }} placeholder='请选择测点' onChange={handleChangePoint} optionLabelProp="label">
                     {
                         state.pointList.map((item, index) => {

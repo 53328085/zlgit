@@ -290,7 +290,16 @@ export default function QuotaManagement() {
           closeIcon={null}
           title={<Bluecolumn name="配置详细" />}
           rootStyle={{ position: 'relative', overflow: 'hidden' }}
-          bodyStyle={{ padding: '16px 24px', border: '1px solid #d7d7d7', borderRadius: '4px', overflow: 'hidden', display: 'flex', flexDirection: 'column' }}
+          styles={{
+            body:{
+                padding: '16px 24px', 
+                border: '1px solid #d7d7d7', 
+                borderRadius: '4px', 
+                overflow: 'hidden', 
+                display: 'flex', 
+                flexDirection: 'column'
+            }
+          }}       
           getContainer={() => document.querySelector(".drawlayout")}
         >
           <Bluecolumn name="配置详细" />

@@ -10,7 +10,7 @@ import { columns } from './columns'
 import { useAntdTable, usePagination } from 'ahooks'
 import { operation } from '@api/api'
 import zhanwei from '@imgs/zhanwei.png'
-import moment from 'moment'
+import dayjs from 'dayjs'
 import { useForm } from 'antd/lib/form/Form';
 import { ExportExcel, CustButton } from '@com/useButton'
 import  CModal from "@com/useModal"
@@ -18,6 +18,7 @@ import { Cdivider, Cspin } from "@com/comstyled";
 import styled from 'styled-components';
 import style from './style.module.less'
 import Pagecount from '@com/pagecontent'
+import { body } from '@pages/largscreen/api';
 const { Search } = Input;
 const { RangePicker } = DatePicker;
 const { TextArea } = Input;
@@ -85,7 +86,7 @@ export default function Warncontent() {
     // order.current=false
     const [order, setOrder] = useState(false)
     const [orderdetail, setOrderdetail] = useState({})
-    const [rangerTime, setRangerTime] = useState([moment().subtract('day', 7), moment()])
+    const [rangerTime, setRangerTime] = useState([dayjs().subtract(7, 'day'), dayjs()])
     const [stateopts, setStateopts] = useState([{
         label: '全部',
         value: 0,
@@ -102,7 +103,8 @@ export default function Warncontent() {
 
     const getInspectionPage = ({ current, pageSize }, form) => {
         if(!condition) return
-        let { state, date } = form       
+        let { state, date } = form   
+        if(! (date?.[0] && date?.[1])) return   
         let start = date[0]?.format('YYYY-MM-DD')
         let end = date[1]?.format('YYYY-MM-DD')
         let params = { pageSize, pageNum: current, state, start, end, areaId, projectId }
@@ -133,10 +135,12 @@ export default function Warncontent() {
    
     // 工单状态查询
     const getInspectionStatistics = async () => {
+        if (!(rangerTime?.[0] && rangerTime?.[1])) return
+        console.log(rangerTime)
         let params = {
             projectId,
-            start: rangerTime[0].format('YYYY-MM-DD'),
-            end: rangerTime[1].format('YYYY-MM-DD'),
+            start: rangerTime?.[0].format('YYYY-MM-DD'),
+            end: rangerTime?.[1].format('YYYY-MM-DD'),
             areaId,
         }
         const res = await operation.InspectionStatisticsTime(params)
@@ -218,7 +222,7 @@ export default function Warncontent() {
         <Pagecount>
             <Mainbox>
             <Form form={form} layout='inline' className={style.SearchContent} initialValues={{
-                date: [moment().subtract(7, 'day'), moment()],
+                date: [dayjs().subtract(7, 'day'), dayjs()],
                 state: 0,
             }}>
                 <Item name="date" style={{ marginRight: '0px' }}>
@@ -257,8 +261,11 @@ export default function Warncontent() {
                 open={order}
                 width={960}
                 onCancel={() => { setOrder(false) }}
-               
-                bodyStyle={{ paddingLeft: 52 }}
+                styles={{
+                    body: {
+                        paddingLeft: 52
+                    }
+                }}
                 footer={
                     null
                     // <div style={{ textAlign: 'center' }}>

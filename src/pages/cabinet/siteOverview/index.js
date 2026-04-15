@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect, useCallback } from "react";
 import Titlelayout from "@com/titlelayout";
 import { DatePicker, Space, Radio, Divider, message } from "antd";
-import moment from "moment";
+import dayjs from 'dayjs';
 import styled from "styled-components";
 import { DistributionCabinet } from "@api/api.js";
 import { useSelector } from "react-redux";

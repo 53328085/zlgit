@@ -1,4 +1,4 @@
-import moment from "moment"
+import dayjs from 'dayjs'
 
 export const columns = [{
         title: '',
@@ -195,7 +195,7 @@ export const wtqxcolumns= [ // 稳态曲线
             dataIndex: 'MaxTime',
             key: 'MaxTime',
             render(text) {
-                return text && <span>{(moment(text, 'YYYY-MM-DD HH:mm:ss').format("HH:mm"))}</span>
+                return text && <span>{(dayjs(text, 'YYYY-MM-DD HH:mm:ss').format("HH:mm"))}</span>
             }
          }
        ]
@@ -214,7 +214,7 @@ export const wtqxcolumns= [ // 稳态曲线
             dataIndex: 'MinTime',
             key: 'MinTime',
             render(text) {
-                return text && <span>{(moment(text, 'YYYY-MM-DD HH:mm:ss').format("HH:mm"))}</span>
+                return text && <span>{(dayjs(text, 'YYYY-MM-DD HH:mm:ss').format("HH:mm"))}</span>
             }
          }
        ]
@@ -238,7 +238,7 @@ export const ztfxcolumns = [ // 暂态分析
         dataIndex: 'time',
         key: 'time',
         render(text) {
-            return text && <span>{(moment(text, 'YYYY-MM-DD HH:mm:ss').format("HH:mm"))}</span>
+            return text && <span>{(dayjs(text, 'YYYY-MM-DD HH:mm:ss').format("HH:mm"))}</span>
         }
     },
     {
@@ -284,7 +284,7 @@ export const soecolumns = [ // SOE事件
         dataIndex: 'time',
         key: 'time',
         render(text) {
-            return text && <span>{(moment(text, 'YYYY-MM-DD HH:mm:ss').format("HH:mm"))}</span>
+            return text && <span>{(dayjs(text, 'YYYY-MM-DD HH:mm:ss').format("HH:mm"))}</span>
         }
     },
     {

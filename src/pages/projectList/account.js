@@ -4,7 +4,7 @@ import { flushSync } from 'react-dom'
 import { Typography, Space, Form, Input, Divider, message } from 'antd'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
-import moment from 'moment';
+import dayjs from 'dayjs';
 import { User } from '@api/api.js'
 import UserTable from '@com/useTable'
 import { CustButtonT, CustLink } from '@com/useButton'
@@ -95,7 +95,7 @@ export default function Account() {
     setRecord({ ...item });
 
     setIsAdd(false)
-    item.validStageTime = moment(item.validStageTime, 'YYYY-MM-DD HH:mm:ss')
+    item.validStageTime = dayjs(item.validStageTime, 'YYYY-MM-DD HH:mm:ss')
     item.enabled = item.enabled == 1
     flushSync(() => {
       setInitialValues({

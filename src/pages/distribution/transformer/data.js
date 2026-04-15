@@ -1,5 +1,5 @@
 import { useMemo } from "react"
-import moment from "moment"
+import dayjs from 'dayjs'
 export const tabs=[
     {key:"1",label:'负载率分析'},
     {key:"2",label:'数据监测'},
@@ -184,7 +184,7 @@ export function useChartopt(data){
           axisLabel:{
             color:"#303133",
               formatter: (value) => {
-                                return moment(value).format('HH:mm')
+                                return dayjs(value).format('HH:mm')
               }
           },
         },

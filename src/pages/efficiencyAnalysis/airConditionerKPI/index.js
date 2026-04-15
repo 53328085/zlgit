@@ -43,7 +43,7 @@ export default function Index() {
             type == 1
               ? date?.format("YYYY-MM-DD")
               : [2, 3].includes(type)
-              ? moment().format("YYYY-MM-DD")
+              ? dayjs().format("YYYY-MM-DD")
               : date?.[1]?.format("YYYY-MM-DD"),
           key: 3,
           areaId,

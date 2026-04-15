@@ -2,7 +2,7 @@ import React, { useEffect, useState, useRef, useCallback } from "react";
 
 import { useSelector } from "react-redux";
 
-import moment from "moment";
+import dayjs from 'dayjs';
 import styled, { css } from "styled-components";
 import Pagecount from "@com/pagecontent";
 import Titlelayout from '@com/titlelayout';
@@ -366,7 +366,7 @@ export default function Index() {
                       : type == 2
                         ? "上月"
                         : type == 1
-                          ? moment().add(-1, "y").format("yyyy")
+                          ? dayjs().add(-1, "y").format("YYYY")
                           : "",
                 },
                 {
@@ -377,7 +377,7 @@ export default function Index() {
                       : type == 2
                         ? "本月"
                         : type == 1
-                          ? moment().format("yyyy")
+                          ? dayjs().format("YYYY")
                           : "",
                 },
               ],

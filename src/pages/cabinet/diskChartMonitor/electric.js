@@ -1,7 +1,7 @@
 //遥测
 import React from 'react'
 import styled from 'styled-components'
-import moment from 'moment'
+import dayjs from 'dayjs'
 import {Typography} from 'antd'
 import arrow from './imgs/arrow.svg'
 
@@ -50,7 +50,7 @@ export default function Index({datas, onClick}) {
       <>
          <div className="htitle">
                    <span>遥测</span>
-                   <span>{moment().format("yyyy-MM-DD HH:mm:ss")}</span>
+                   <span>{dayjs().format("YYYY-MM-DD HH:mm:ss")}</span>
                  </div>
         <Elects>
             {

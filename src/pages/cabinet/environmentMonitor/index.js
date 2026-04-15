@@ -1,12 +1,12 @@
 import React, { useEffect, useMemo, useState, useRef } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
-import moment from "moment";
+import dayjs from 'dayjs';
 import { Button, DatePicker, message, Space, Empty, Select } from 'antd'
 import { useOutletContext } from 'react-router-dom'
 import Pagecount from '@com/pagecontent'
 import Titlelayout from '@com/titlelayout'
 import ItemCard from './itemCard'
-import dayjs from 'dayjs';
+
 
 import { selectcurlRommid, adaptation } from "@redux/systemconfig";
 import styled from 'styled-components'
@@ -119,9 +119,9 @@ export default function Index() {
     }
 
   }
-  const today = moment().startOf('date');
-  const tmonth = moment().startOf('month')
-  const tyear = moment().startOf('year')
+  const today = dayjs().startOf('date');
+  const tmonth = dayjs().startOf('month')
+  const tyear = dayjs().startOf('year')
   const [timePickers, setTimePickers] = useState({});
   const disabledDate = (current) => {
     return current > dayjs().endOf('date');
@@ -140,13 +140,13 @@ export default function Index() {
     let date = ''
     let dateList = []
     if (pickerType === 'date') {
-      date = moment().format('YYYY-MM-DD')
+      date = dayjs().format('YYYY-MM-DD')
     } else if (pickerType === 'month') {
-      date = moment().format('YYYY-MM-01')
+      date = dayjs().format('YYYY-MM-01')
     } else if (pickerType === 'year') {
-      date = moment().format('YYYY-01-01')
+      date = dayjs().format('YYYY-01-01')
     } else {
-      dateList = [moment().format('YYYY-MM-DD'), moment().format('YYYY-MM-DD')]
+      dateList = [dayjs().format('YYYY-MM-DD'), dayjs().format('YYYY-MM-DD')]
     }
     EnvironmentChart(pickerType === 'custom' ? dateList : date, dataId, pickerType)
   };
@@ -217,11 +217,11 @@ export default function Index() {
                       style={{ width: 320 }}
                       disabledDate={disabledDate}
                       //value={value.length ? value[0] : null} // 只显示单个日期（对于非自定义选择器）
-                      defaultValue={pickerType == 'date' ? moment(today) : pickerType == 'month' ? moment(tmonth) : pickerType == 'year' ? moment(tyear) : null}
+                      defaultValue={pickerType == 'date' ? dayjs(today) : pickerType == 'month' ? dayjs(tmonth) : pickerType == 'year' ? dayjs(tyear) : null}
                       onChange={(date, dateString) =>
                         handleDateChange([date], dateString, item.id, pickerType) // 确保传递数组以保持状态一致
                       }
-                    /> : <RangePicker style={{ width: 320 }} disabledDate={disabledDate} defaultValue={[moment(today), moment(today)]} onChange={(dates, dateString) => handleDateChange(dates, dateString, item.id, pickerType)} />}
+                    /> : <RangePicker style={{ width: 320 }} disabledDate={disabledDate} defaultValue={[dayjs(today), dayjs(today)]} onChange={(dates, dateString) => handleDateChange(dates, dateString, item.id, pickerType)} />}
                 </div>
               </Header>
               <Chart data={item} laptop={laptop} allData={htdata} />

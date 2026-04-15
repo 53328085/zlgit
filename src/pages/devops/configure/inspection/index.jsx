@@ -6,7 +6,7 @@ import Modal from '@com/useModal'
 import { useSelector } from 'react-redux'
 import Table from '@com/useTable'
 import { operationDesigin } from '@api/api'
-import moment from 'moment'
+import dayjs from 'dayjs'
 import { useAntdTable } from 'ahooks'
 import style from './style.module.less'
 import { publishState,adaptation } from '@redux/systemconfig'
@@ -359,14 +359,14 @@ let AddPlan = forwardRef(
       if (!form.getFieldValue('endtime')) {
         form.setFieldValue('endtime', undefined)
       }
-      return current && (current < moment().subtract(1, 'days') || current > form.getFieldValue('endtime'));
+      return current && (current < dayjs().subtract(1, 'days') || current > form.getFieldValue('endtime'));
     }
     //结束时间禁用
     const disabledEndDate = (current) => {
       if (!form.getFieldValue('starttime')) {
         form.setFieldValue('starttime', undefined)
       }
-      return current && (current < moment().subtract(1, 'days') || current <= form.getFieldValue('starttime'));
+      return current && (current < dayjs().subtract(1, 'days') || current <= form.getFieldValue('starttime'));
     }
     //获取巡检点
     const QueryInspectionPlanAddress = async () => {
@@ -400,11 +400,11 @@ let AddPlan = forwardRef(
             content,
             cycle,
             time,
-            triggerTime: moment(triggerTime).format('HH:mm'),
+            triggerTime: dayjs(triggerTime).format('HH:mm'),
             span,
             group: groups,
-            startTime: moment(timeRange[0]).format('YYYY-MM-DD'),
-            endTime: moment(timeRange[1]).format('YYYY-MM-DD'),
+            startTime: dayjs(timeRange[0]).format('YYYY-MM-DD'),
+            endTime: dayjs(timeRange[1]).format('YYYY-MM-DD'),
           }
         } else {
           params = {
@@ -436,11 +436,11 @@ let AddPlan = forwardRef(
 
     }
     const format = 'HH:mm';
-    const threeDaysLater = moment().add(3, 'days').format('YYYY-MM-DD');
+    const threeDaysLater = dayjs().add(3, 'days').format('YYYY-MM-DD');
     // 默认开始日期为今天
-    const defaultStartDate = moment().format('YYYY-MM-DD');
-    const [defaultHM, setDefaultHM] = useState(moment().format('HH:mm'))
-    // const defaultHM = moment().format('HH:mm');
+    const defaultStartDate = dayjs().format('YYYY-MM-DD');
+    const [defaultHM, setDefaultHM] = useState(dayjs().format('HH:mm'))
+    // const defaultHM = dayjs().format('HH:mm');
     console.log(defaultStartDate, threeDaysLater, defaultHM)
     const houropts = [{ label: '2小时', value: 2 }, { label: '4小时', value: 4 },
     { label: '8小时', value: 8 }, { label: '12小时', value: 12 },
@@ -453,7 +453,7 @@ let AddPlan = forwardRef(
       form.setFieldValue('date', null)
       form.setFieldValue('time', null)
       setDataCycle(v)
-      setDefaultHM(moment().format('HH:mm'))
+      setDefaultHM(dayjs().format('HH:mm'))
       console.log(v, dateCycle)
     }
     const inspectRef = useRef()
@@ -496,7 +496,7 @@ let AddPlan = forwardRef(
             <Input placeholder="请输入计划名称"></Input>
           </Form.Item>
           {dateCycle == 0 ? <Form.Item label="计划有效期" >
-            <RangePicker style={{ width: '100%' }} defaultValue={[moment(defaultStartDate), moment(threeDaysLater)]} disabled />
+            <RangePicker style={{ width: '100%' }} defaultValue={[dayjs(defaultStartDate), dayjs(threeDaysLater)]} disabled />
           </Form.Item> : <Form.Item label="计划有效期" name="timeRange" rules={[rule]}>
             <RangePicker style={{ width: '100%' }} />
           </Form.Item>}
@@ -528,7 +528,7 @@ let AddPlan = forwardRef(
           }
 
           {dateCycle == 0 ? <Form.Item label="开始时间">
-            <TimePicker allowClear={false} format={format} style={{ width: 128 }} onChange={onChangeStartTime} defaultValue={moment(defaultHM, "HH:mm")} />
+            <TimePicker allowClear={false} format={format} style={{ width: 128 }} onChange={onChangeStartTime} defaultValue={dayjs(defaultHM, "HH:mm")} />
           </Form.Item>
             : <Form.Item label="开始时间" name="triggerTime" rules={[rule]}>
               <TimePicker format={format} style={{ width: 128 }} />
