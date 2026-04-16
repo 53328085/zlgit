@@ -6,21 +6,21 @@ export default function Index({index, datas}) {
          <div className="meters"> 
            
           <div className="meter">
-            <div className="upm">
-              <Button type="primary">储能总表{index+1}</Button>
+            <div className="upm" style={{display:datas.name=="/" ?'none':'flex'}}>
+              <Button type="primary">{datas.name}</Button>
               <div className="eimgbox">
                 <img src={imgurl["meter"]} className='eimg'></img>
               </div>
             </div>
             <div className="upm">
-              <Button type="primary">{datas?.name}</Button>
+              <Button type="primary">{datas?.cName}</Button>
               <div className="simgbox">
                 <Typography.Link onClick={() => toPage("cabinetMonitor", "储能柜监控")}><img src={imgurl["cabinet"]} className='eimg'></img></Typography.Link>
               </div>
             </div>
 
           </div>
-          <div className='digital'>
+          <div className='digital' style={{display:datas.name=="/" ?'none':'flex'}}>
            
               <div className="item">
               <span>A相电压</span><span>{datas?.ua}(V)</span>

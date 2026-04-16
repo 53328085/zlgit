@@ -586,7 +586,7 @@ const savesty = laptop
           onClose={drawClose}
           open={open}         
           closable={false}
-          destroyOnClose
+          destroyOnHidden
           contentWrapperStyle={{ margingRight: '16px' }}
         >
           <div className="selected">

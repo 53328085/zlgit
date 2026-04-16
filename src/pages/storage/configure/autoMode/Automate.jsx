@@ -13,9 +13,7 @@ import { themeColor,adaptation  } from '@redux/systemconfig.js'
 const {Text, Link, Title, Paragraph} = Typography
 const {Item} = Form
 const { RangePicker } = DatePicker;
-dayjs.updateLocale('zh-cn', {
-    weekdaysMin :["周日", "周一", "周二", "周三", "周四", "周五", "周六"]
-  })
+ 
 const Mainbox = styled.div`
     && {
        display: grid;

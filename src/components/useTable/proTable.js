@@ -209,14 +209,16 @@ function Index(props, ref) {
                       tableAlertRender={false}
                       options={{
                          fullScreen: true,
-                          reload: false,
-                          density: false,
+                          reload: true,
+                          density: true,
                           setting: {
                             settingIcon: <Settingicon><img src={setting} className='img' /></Settingicon> ,
                             listsHeight:400,
                             
                           },
+                          ...props.options
                         }
+                        
                       }
                       scroll={{
                         scrollToFirstRowOnChange: true,

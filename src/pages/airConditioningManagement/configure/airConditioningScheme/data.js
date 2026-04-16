@@ -235,7 +235,7 @@ export const section = ({
               <Form.Item
                 noStyle
                 shouldUpdate={(cur, pre) =>
-                  cur.section[filed.name]?.type != pre.section[filed.name]?.type
+                  cur.section?.[filed.name]?.type != pre.section?.[filed.name]?.type
                 }
               >
                 {({ getFieldValue, setFieldValue }) => {
@@ -317,7 +317,7 @@ export const section = ({
                                 >
                                   <Form.Item
                                     noStyle
-                                    shouldUpdate={(cur, pre) => cur["section"][filed.name]?.["timings"]?.[i.name]!= pre["section"][filed.name]?.["timings"]?.[i.name]   }
+                                    shouldUpdate={(cur, pre) => cur?.["section"]?.[filed.name]?.["timings"]?.[i.name]!= pre?.["section"]?.[filed.name]?.["timings"]?.[i.name]   }
                                   >
                                     {({ getFieldValue }) => {
                                       let values = getFieldValue(["section",filed.name,])?.["timings"]?.[i.name] ;
@@ -476,7 +476,7 @@ export const section = ({
                                 >
                                   <Form.Item
                                     noStyle
-                                    shouldUpdate={(cur, pre) => cur["section"][filed.name]?.["forbidControls"]?.[i.name]!= pre["section"][filed.name]?.["forbidControls"]?.[i.name] }
+                                    shouldUpdate={(cur, pre) => cur["section"]?.[filed.name]?.["forbidControls"]?.[i.name]!= pre["section"]?.[filed.name]?.["forbidControls"]?.[i.name] }
                                   >
                                     {({ getFieldValue }) => {
                                        let values = getFieldValue(["section",filed.name,])?.["forbidControls"]?.[i.name] ;

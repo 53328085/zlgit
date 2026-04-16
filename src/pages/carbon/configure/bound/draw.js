@@ -414,7 +414,7 @@ function Draw({params}, ref) {
     maskClosable={false}
     contentWrapperStyle={{margingRight: '16px'}}
     title={Ctitle}
-    destroyOnClose
+    destroyOnHidden
   >
   {type==2 ? (<Titlelayout title={t("comm:APIinterface")} layout="flex" style={{height: '376px'}} >
        <Apibox>

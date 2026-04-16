@@ -354,8 +354,8 @@ export default function Index() {
             ></Select>
           </Item>
 
-          <Item nostyle name="date" initialValue={dayjs(new Date(), 'YYYY-MM-DD')}>
-            <DatePicker placeholder="请选择日期" picker={picker} onChange={dateChange} style={{ width: '160px' }} />
+          <Item nostyle name="date" initialValue={dayjs()}>
+            <DatePicker placeholder="请选择日期" picker={picker} onChange={dateChange} style={{ width: '160px' }} format={"YYYY-MM-DD"} />
           </Item>
         </Space>
       </div>

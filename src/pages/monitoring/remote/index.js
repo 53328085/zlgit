@@ -532,7 +532,7 @@ export default function Index() {
                     open={brakeResult}
                     centered={true}
                     closable={false}
-                    destroyOnClose
+                    destroyOnHidden
                     mold="cust"
                     onCancel={() => {
                         setbrakeResult(false)
@@ -545,7 +545,7 @@ export default function Index() {
                 <CModal
                     title="输入控制密码"
                     width={440}
-                    destroyOnClose
+                    destroyOnHidden
                     ref={pwdmodal}
                     mold="cust" 
                     onOk={()=>onInputpwd()}
@@ -571,7 +571,7 @@ export default function Index() {
                 <CModal
                     title="设置控制密码"
                     width={440}
-                    destroyOnClose
+                    destroyOnHidden
                     ref={setmodal}
                     mold="cust" 
                     onOk={()=>onsetpwd()}

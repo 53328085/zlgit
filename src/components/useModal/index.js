@@ -213,7 +213,7 @@ function Custmodal({
           <div ref={draggleRef}>{modal}</div>
         </Draggable>
       )}
-      destroyOnClose
+      destroyOnHidden
       {...rest}
     >
       {type == "warn" && warnimg && <img src={redwarn} style={{ width: '54px', marginRight: "32px" }} />}

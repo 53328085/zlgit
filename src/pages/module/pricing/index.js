@@ -111,7 +111,7 @@ const AddModal = ({ addPlan, setAddPlan }) => {
   return (
     <Modal
       centered
-      destroyOnClose
+      destroyOnHidden
       width={elecType === '4' ? 1114 : 614}
       forceRender={true}
       closable={false}

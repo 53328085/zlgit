@@ -11,20 +11,20 @@ import UserTree from "@com/useTree"
  
 import { getTime, isObject } from '@com/usehandler'
  
-import CModal from '@com/useModal'
+
 import { ProExportExcel, CustButton,SetButton } from '@com/useButton'
  
-import {   fromlot,Zdconfig, labelStyle, contentStyle } from '../data'
+import {   timecols,Zdconfig, labelStyle, contentStyle } from '../reportdata'
 
 import {Contentbox,Chartwrap} from "../style"
-import {useQueryBillReport} from "../api"
+import {useQueryShiftEnergy} from "../api"
 
 
 export default function Index() {
 
   let { exparams  } = useOutletContext()
  
- 
+  console.log(exparams)
  
    const [columnsStateMap, setColumnsStateMap] = useState(Zdconfig)
  
@@ -34,10 +34,6 @@ export default function Index() {
 
  
   
-  const colsettingChange =(v) =>{
-    console.log(v)
-    setColumnsStateMap(v)
-  }
  
 
 
@@ -52,8 +48,7 @@ export default function Index() {
       meterType: energytype,
       startDate: type!=4 ?  date?.startOf(dateType).format("YYYY-MM-DD HH:mm") :publicrangedate?.[0]?.format("YYYY-MM-DD HH:mm"),
       endDate:   type!=4 ? date?.endOf(dateType).format("YYYY-MM-DD HH:mm") :publicrangedate?.[1]?.format("YYYY-MM-DD HH:mm"),
-   //   pageNum: current,
-     // pageSize,
+ 
       queryType: line,
       ids: treeId,
       type: type, // 
@@ -76,7 +71,7 @@ export default function Index() {
     
     if (!f) return;
  
-      let { success, data, total = 0 }= await useQueryBillReport({},params) 
+      let { success, data, total = 0 }= await useQueryShiftEnergy({},params) 
     
       setTotal(total)
       if (success && Array.isArray(data) ) {   
@@ -110,7 +105,7 @@ export default function Index() {
   }, [total,  params])
 
  
-  const toolbar = [<ProExportExcel tb={tbref} className="reportZd"   />]
+  const toolbar = [<ProExportExcel tb={tbref} className="reportFs"   />]
   // fromlot,Zdconfig
   return (
    
@@ -120,22 +115,20 @@ export default function Index() {
           
               
                 <UseProTable 
-                headerTitle="账单报表"
-                tableClassName="reportZd"
-              //  ref={tbref}
-                columns={fromlot} 
+                headerTitle="参数报表"
+                tableClassName="reportCs"
+           
+                columns={timecols} 
                 request={getTableData} 
                 params={params} 
                 search={false}
                 toolBarRender={() => toolbar}
-            
-                columnsState={{
-                  defaultValue:Zdconfig,
-                  value:columnsStateMap,
-                  onChange:colsettingChange,
-                }}
+                options={{
+                  setting: false,
+
+                }}           
            
-               sheetName="账单报表"
+               sheetName="参数报表"
                onExport={onExport} 
                 ></UseProTable>
         </Contentbox>

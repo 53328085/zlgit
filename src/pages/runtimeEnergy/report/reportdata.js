@@ -1,52 +1,5 @@
  
- 
-// export const cols =[ // 实时抄表  
-//     {
-//       title: '区域名称',
-//       dataIndex: 'nodeName', 
-//       key:'nodeName',
-//       sorter: (a, b) => a?.nodeName?.localeCompare?.(b?.nodeName)
-//     },
-//       {
-//         title: '设备名称',
-//         dataIndex: 'name', 
-//         key: "name",
-//         sorter: (a, b) => a?.name?.localeCompare?.(b?.name)
-//       }, {
-//         title: '起始读数',
-//         dataIndex: 'start',
-//         key: "start",
-//       }, {
-//         title: '结束读数',
-//         dataIndex: 'end',
-//         key:"end",
-//       },
-//       {
-//         title: '用能(kWh)',
-//         dataIndex: 'consume',
-//         key: "consume",
-//         sorter: (a, b) => parseFloat(a?.consume) - parseFloat(b?.consume)
-//       }, 
-//       {
-//         title: '设备编号',
-//         dataIndex: 'sn',
-//         key:"sn",
-//         sorter: (a, b) => a?.sn?.localeCompare?.(b?.sn)
-//       },
-//       {
-//         title: '安装位置',
-//         dataIndex: 'address',
-//         key: "address",
-//         sorter: (a, b) => a?.address?.localeCompare?.(b?.address)
-//       },
-//       {
-//         title: '开始时间',
-//         dataIndex: 'startDate',
-//         key: "startDate",
-//         render: (text, record, index) => `2025-07-01`
-//       },
-//     ]
- 
+
 export const cols = (startDate, endDate) => {
  
   return [ // 实时抄表  
@@ -405,65 +358,37 @@ export const Zdconfig ={  // 账单表格配置
  },
  
 }
-/* export const fromlot = [ // 电能报表 
-  {
+
+  export const shitcols ={  // 班次能耗 
+ 0: {
     title: '区域名称',
     dataIndex: 'nodeName',
     key: "nodeName"
   },
-  {
-    title: '设备名称',
-    dataIndex: 'name',
-    key: "name"
-  }, {
-    title: '起始读数',
-    dataIndex: 'start',
-    key: "start",
-  }, {
-    title: '结束读数',
-    dataIndex: 'end',
-    key: "end",
-  },
-  {
-    title: '用能(kWh)',
-    dataIndex: 'consume',
-    key: "consume",
-  },
-  {
-    title: '设备编号',
-    dataIndex: 'sn',
-    key: "sn"
-  },
-  {
-    title: '安装位置',
-    dataIndex: 'address',
-    key: "address"
-  },
-] */
-export const shitcols = [  // 班次能耗 
-  {
-    title: '区域名称',
-    dataIndex: 'nodeName',
-    key: "nodeName"
-  },
-  {
+ 1: {
     title: '设备名称',
     dataIndex: 'name',
     key: "name",
     ellipsis:true,
   },
-  {
-    title: '编号',
+ 2: {
+    title: '设备编号',
     dataIndex: 'sn',
     key: "sn"
   },
-  {
-    title: '地址',
+  3: {
+    title: '用能',
+    dataIndex: 'consume',
+    key: "consume"
+  },
+ 4: {
+    title: '安装地址',
     dataIndex: 'address',
     key: "address",
     ellipsis:true,
   },
-]
+  length: 5
+  }
 export const etabs = [
   { key: '0', label: '实时抄表' },
   { key: '1', label: '能耗报表' },

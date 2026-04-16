@@ -561,8 +561,8 @@ useEffect(()=>{
         </Item>
        
      
-      <Item   name="id" noStyle initialValue={0} >
-          <Input hidden></Input>
+      <Item   name="id" noStyle hidden initialValue={0} >
+          <Input ></Input>
        </Item>
       
       

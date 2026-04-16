@@ -306,14 +306,14 @@ export const items = (
         </Scene>
       )}
     </Form.List>
-    <Form.Item name="id" initialValue={0} noStyle>
-      <Input hidden />
+    <Form.Item name="id" initialValue={0} hidden noStyle>
+      <Input  />
     </Form.Item>
-    <Form.Item name="creater" initialValue="" noStyle>
-      <Input hidden></Input>
+    <Form.Item name="creater" initialValue="" hidden noStyle>
+      <Input ></Input>
     </Form.Item>
-    <Form.Item name="projectId" noStyle>
-      <Input hidden></Input>
+    <Form.Item name="projectId" hidden noStyle>
+      <Input ></Input>
     </Form.Item>
   </>
 );
@@ -530,14 +530,14 @@ export const itemsline = (
         </Scene>
       )}
     </Form.List>
-    <Form.Item name="id" initialValue={0} noStyle>
-      <Input hidden />
+    <Form.Item name="id" initialValue={0} hidden noStyle>
+      <Input  />
     </Form.Item>
-    <Form.Item name="creater" initialValue="">
-      <Input hidden></Input>
+    <Form.Item name="creater" hidden initialValue="">
+      <Input ></Input>
     </Form.Item>
-    <Form.Item name="projectId">
-      <Input hidden></Input>
+    <Form.Item hidden name="projectId">
+      <Input ></Input>
     </Form.Item>
   </>
 );

@@ -122,7 +122,7 @@ export function useOpt(datas) {
 export function useLineopt({ datas }) {
   const lineopt = useMemo(() => {
     let { x = [], y = [], y1 = [], y2 = [] } = isObject(datas) ? datas : {};
-    y = y.map((item) => Number.parseFloat(item)/1000);
+    y = y.map((item) => Number.parseFloat(item));
     y1 = y1.map((item) => Number.parseFloat(item));
     y2 = y2.map((item) => Number.parseFloat(item));
     console.log("y1", y1);
@@ -224,7 +224,7 @@ export function useLineopt({ datas }) {
       },
       yAxis: [
         {
-          name: "MWh",
+          name: "kWh",
           nameTextStyle: {
             align: "right",
             color: "#fff",

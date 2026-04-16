@@ -73,8 +73,8 @@ const onSubmit= async()=> {
         <div className="item bg">
           <span>分区持续多天未生成漏损</span>
           <Space align='center' size={16}>
-            <Form.Item name={["0", "alarmType"]} initialValue={1}>
-<Input hidden></Input>
+            <Form.Item name={["0", "alarmType"]} hidden initialValue={1}>
+<Input ></Input>
             </Form.Item>
             <Form.Item label="报警级别" name={["0", "level"]} initialValue="1">
               <Select options={alarmoption} style={{width: "160px"}}></Select>
@@ -95,8 +95,8 @@ const onSubmit= async()=> {
         <div className="item bg">
           <span>分区漏损率连续超限</span>
           <Space align='center' size={16}>
-          <Form.Item name={["1", "alarmType"]} initialValue={2}>
-          <Input hidden></Input>
+          <Form.Item name={["1", "alarmType"]} hidden initialValue={2}>
+          <Input ></Input>
           </Form.Item>
             <Form.Item label="报警级别" name={["1", "level"]} initialValue="1">
               <Select options={alarmoption} style={{width: "160px"}}></Select>
@@ -128,8 +128,8 @@ const onSubmit= async()=> {
         <div className="item bg">
           <span>分区漏损量连续超限</span>
           <Space align='center' size={16}>
-          <Form.Item name={["2", "alarmType"]} initialValue={3}>
-          <Input hidden></Input>
+          <Form.Item name={["2", "alarmType"]} hidden initialValue={3}>
+          <Input ></Input>
           </Form.Item>
             <Form.Item label="报警级别" name={["2", "level"]} initialValue="1" >
               <Select options={alarmoption} style={{width: "160px"}}></Select>
@@ -163,8 +163,8 @@ const onSubmit= async()=> {
       <div className="item bg">
           <span>分区漏损量连续超限</span>
           <Space align='center' size={16}>
-          <Form.Item name={["3", "alarmType"]} initialValue={4}>
-          <Input hidden></Input>
+          <Form.Item name={["3", "alarmType"]} hidden initialValue={4}>
+          <Input ></Input>
           </Form.Item>
             <Form.Item label="报警级别" name={["3", "level"]} initialValue="1">
               <Select options={alarmoption} style={{width: "160px"}}></Select>

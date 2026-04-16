@@ -613,8 +613,8 @@ const savesty = laptop
                 onSearch={submit}
               />
             </Form.Item>
-            <Item name="topAreaId" initialValue={0} noStyle>
-              <Input hidden />
+            <Item name="topAreaId" initialValue={0} hidden noStyle>
+              <Input  />
             </Item>
             </>
           )}
@@ -656,7 +656,7 @@ const savesty = laptop
           onClose={drawClose}
           open={open}         
           closable={false}
-          destroyOnClose
+          destroyOnHidden
           contentWrapperStyle={{ margingRight: '16px' }}
         >
           <div className="selected">

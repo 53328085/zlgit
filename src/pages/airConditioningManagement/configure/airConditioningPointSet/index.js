@@ -385,11 +385,11 @@ export default function Index() {
                   <Form.Item name={[a.conditionerId, 'checked']} valuePropName="checked" noStyle>
                   <Checkbox onChange={(f) =>onset(f,a) } />
                   </Form.Item>
-                  <Form.Item name={[a.conditionerId, 'conditionerId']}  noStyle>
-                   <Input hidden></Input>
+                  <Form.Item name={[a.conditionerId, 'conditionerId']} hidden  noStyle>
+                   <Input ></Input>
                   </Form.Item> 
-                  <Form.Item name={[a.conditionerId, 'airConditionerName']}  noStyle>
-                   <Input hidden></Input>
+                  <Form.Item name={[a.conditionerId, 'airConditionerName']} hidden noStyle>
+                   <Input ></Input>
                   </Form.Item>     
                   </Space>
                </Form.Item>)

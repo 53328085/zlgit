@@ -74,6 +74,10 @@ export default function Index() {
       'timePeriodEnergy',
       "reportNh",
       "reportZd",
+      "reportFs",
+      "reportFl",
+      "reportCs",
+      "reportBc",
     ],
     runtimeStorage: [ // 储能管理
       "storageOverview",
@@ -223,7 +227,10 @@ export default function Index() {
             });
             break;
           case "reportNh":
-          case "reportZd":{
+          case "reportZd":
+          case "reportFs":
+          case "reportFl":
+          case "reportBc":
             setConfig({
               energytype: true,
               publicDate: true,
@@ -238,7 +245,22 @@ export default function Index() {
               }
             });
             break;
-          }
+          case "reportCs":
+             setConfig({
+              energytype: true,
+              publicDate: true,
+               rangeDate: 45,
+              shiftNo: true,
+              gas: false,
+              custview: true,
+              alike:true,
+              period:true,
+              showTime: {
+                format: 'HH:mm',
+                minuteStep: 15
+              }
+            });
+            break;
           case "direction":
             setConfig({
               energytype: true,

@@ -66,8 +66,8 @@ export  const cols =[ // 实时抄表
      <Form.Item>
         <Typography.Text>（图片尺寸136*136px，容量小于100KB）</Typography.Text>
      </Form.Item> 
-     <Form.Item name="id" initialValue={0} noStyle>
-        <Input hidden></Input>
+     <Form.Item name="id" initialValue={0} hidden noStyle>
+        <Input ></Input>
      </Form.Item>
     </>
   )

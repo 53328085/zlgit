@@ -714,7 +714,7 @@ const onRest =()=> {
         </div>
       </Cmodal>
 
-      <CDrawer placement='left' onClose={onClose} open={basicOpen} mask={false} destroyOnClose={true} >
+      <CDrawer placement='left' onClose={onClose} open={basicOpen} mask={false} destroyOnHidden={true} >
         <div className={style.searchInput}>
           <Serach
             placeholder={t("overview:Modulename")}

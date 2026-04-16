@@ -50,7 +50,7 @@ export default memo(function Index({ areaId, setTreeId, setLine, setNode, showli
   selectobj,
   multiple = true,
   treeName = '',
-  title = "",
+  title = "分类列表",
   mode = null,
   correlation = Number.POSITIVE_INFINITY, // 是否关联 属性
   hv = "32px", // 标题高度

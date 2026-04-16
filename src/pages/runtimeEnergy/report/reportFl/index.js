@@ -14,17 +14,17 @@ import { getTime, isObject } from '@com/usehandler'
 import CModal from '@com/useModal'
 import { ProExportExcel, CustButton,SetButton } from '@com/useButton'
  
-import {   fromlot,Zdconfig, labelStyle, contentStyle } from '../data'
+import {   timecols,Zdconfig, labelStyle, contentStyle } from '../reportdata'
 
 import {Contentbox,Chartwrap} from "../style"
-import {useQueryBillReport} from "../api"
+import {useQueryEnergy} from "../api"
 
 
 export default function Index() {
 
   let { exparams  } = useOutletContext()
  
- 
+  console.log(exparams)
  
    const [columnsStateMap, setColumnsStateMap] = useState(Zdconfig)
  
@@ -76,7 +76,7 @@ export default function Index() {
     
     if (!f) return;
  
-      let { success, data, total = 0 }= await useQueryBillReport({},params) 
+      let { success, data, total = 0 }= await useQueryEnergy({},params) 
     
       setTotal(total)
       if (success && Array.isArray(data) ) {   
@@ -110,32 +110,28 @@ export default function Index() {
   }, [total,  params])
 
  
-  const toolbar = [<ProExportExcel tb={tbref} className="reportZd"   />]
+  const toolbar = [<ProExportExcel tb={tbref} className="reportFl"   />]
   // fromlot,Zdconfig
   return (
    
       <Pagecount showSearch={false} custserach={true} >
         <Contentbox>
-          <UserTree areaId={areaId} energytype={energytype} setTreeId={setTreeId} setLine={setLine} showline={true} datatype={NaN} />
+          <UserTree datatype={6} allselect={false} energytype={energytype} areaId={0} multiple={false} showline={false} setTreeId={setTreeId}/>
           
               
                 <UseProTable 
-                headerTitle="账单报表"
-                tableClassName="reportZd"
-              //  ref={tbref}
-                columns={fromlot} 
+                headerTitle="分类能耗"
+                tableClassName="reportFl"
+                columns={timecols} 
                 request={getTableData} 
                 params={params} 
                 search={false}
                 toolBarRender={() => toolbar}
-            
-                columnsState={{
-                  defaultValue:Zdconfig,
-                  value:columnsStateMap,
-                  onChange:colsettingChange,
+                options={{
+                  setting: false,
+
                 }}
-           
-               sheetName="账单报表"
+               sheetName="分类能耗"
                onExport={onExport} 
                 ></UseProTable>
         </Contentbox>

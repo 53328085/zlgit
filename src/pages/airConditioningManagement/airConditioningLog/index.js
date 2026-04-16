@@ -447,7 +447,7 @@ export default function Index(props) {
           closable={true}
           onCancel={handleClose}
           footer={[]}
-          destroyOnClose={false}
+          destroyOnHidden={false}
         >
           <ModalBoX>
             <div className='titleTip'>— 控制方案 —</div>

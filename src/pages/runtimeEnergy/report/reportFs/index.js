@@ -14,17 +14,17 @@ import { getTime, isObject } from '@com/usehandler'
 import CModal from '@com/useModal'
 import { ProExportExcel, CustButton,SetButton } from '@com/useButton'
  
-import {   fromlot,Zdconfig, labelStyle, contentStyle } from '../data'
+import {   timecols,Zdconfig, labelStyle, contentStyle } from '../reportdata'
 
 import {Contentbox,Chartwrap} from "../style"
-import {useQueryBillReport} from "../api"
+import {useQueryTimeDivisionEnergy} from "../api"
 
 
 export default function Index() {
 
   let { exparams  } = useOutletContext()
  
- 
+  console.log(exparams)
  
    const [columnsStateMap, setColumnsStateMap] = useState(Zdconfig)
  
@@ -76,7 +76,7 @@ export default function Index() {
     
     if (!f) return;
  
-      let { success, data, total = 0 }= await useQueryBillReport({},params) 
+      let { success, data, total = 0 }= await useQueryTimeDivisionEnergy({},params) 
     
       setTotal(total)
       if (success && Array.isArray(data) ) {   
@@ -110,7 +110,7 @@ export default function Index() {
   }, [total,  params])
 
  
-  const toolbar = [<ProExportExcel tb={tbref} className="reportZd"   />]
+  const toolbar = [<ProExportExcel tb={tbref} className="reportFs"   />]
   // fromlot,Zdconfig
   return (
    
@@ -120,22 +120,25 @@ export default function Index() {
           
               
                 <UseProTable 
-                headerTitle="账单报表"
-                tableClassName="reportZd"
-              //  ref={tbref}
-                columns={fromlot} 
+                headerTitle="分时能耗"
+                tableClassName="reportFs"
+           
+                columns={timecols} 
                 request={getTableData} 
                 params={params} 
                 search={false}
                 toolBarRender={() => toolbar}
-            
+                options={{
+                  setting: false,
+
+                }}
                 columnsState={{
-                  defaultValue:Zdconfig,
-                  value:columnsStateMap,
-                  onChange:colsettingChange,
+                 // defaultValue:Zdconfig,
+                //  value:columnsStateMap,
+                //  onChange:colsettingChange,
                 }}
            
-               sheetName="账单报表"
+               sheetName="分时能耗"
                onExport={onExport} 
                 ></UseProTable>
         </Contentbox>

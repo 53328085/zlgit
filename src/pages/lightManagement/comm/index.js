@@ -67,8 +67,8 @@ export default function Index({ setParams,allselect=true, tbref }) {
         </Form.Item>
       {tbref &&  <ExportExcel tb={tbref}></ExportExcel>} 
       </Space>
-      <Form.Item noStyle name="projectId">
-        <Input hidden></Input>
+      <Form.Item noStyle hidden name="projectId">
+        <Input ></Input>
       </Form.Item>
     </Cform>
   );

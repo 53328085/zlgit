@@ -352,7 +352,7 @@ function Draw({ params }, ref) {
       maskClosable={false}
       contentWrapperStyle={{ margingRight: '16px' }}
      
-      destroyOnClose
+      destroyOnHidden
     >
       <Titlelayout title="选中设备">
 

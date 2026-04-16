@@ -296,7 +296,7 @@ const EditElectricModal = ({ editElectric,setEditElectric,priceType, ...otherpro
     return (
         <Modal
             centered
-            destroyOnClose
+            destroyOnHidden
             zIndex={1001}
             width={priceType === 4 ? 1114 : 614}
             forceRender={true}
@@ -440,7 +440,7 @@ const ChangePrice = ({ isChangeOpen, setIsChangeOpen, priceType, ...otherprops }
     return (
         <Modal
             centered
-            destroyOnClose
+            destroyOnHidden
             width={priceType === 4 ? 1114 : 614}
             forceRender={true}
             closable={false}

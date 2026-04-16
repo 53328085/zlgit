@@ -12,7 +12,7 @@ import CustContext from '@com/content.js'
 export let  SetPosition =({positionRef,savePosition})=>{
     const loaclRef=useRef()
     return (
-        <Modal mold="cust" ref={positionRef} width={800} onOk={()=>{savePosition(loaclRef.current)}} destroyOnClose={true} title="设置坐标">
+        <Modal mold="cust" ref={positionRef} width={800} onOk={()=>{savePosition(loaclRef.current)}} destroyOnHidden={true} title="设置坐标">
             {/* <BlueColumn name="设置坐标" styled={{padding:'16px 0',color:'#237ae4'}}/> */}
             <LoaclForm  ref={loaclRef}/>
         </Modal>

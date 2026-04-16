@@ -721,7 +721,7 @@ export default function Index() {
         open={localModal}
         onCancel={closeWS}
         maskClosable={false}
-        destroyOnClose={true}
+        destroyOnHidden={true}
       >
         <div className={style.dialogBody}>
           <div className="bodyLeft" style={{ width: 1278, height: 718 }}>

@@ -400,14 +400,14 @@ export default function Index() {
                 {sectionItems}
               {/*   {timingsItems}
                 {forbidControlsItems}  */}
-                <Form.Item name="id" initialValue={0} noStyle>
-                  <Input hidden />
+                <Form.Item name="id" initialValue={0} hidden noStyle>
+                  <Input  />
                 </Form.Item>
-                <Form.Item name="creater" initialValue="" noStyle>
-                  <Input hidden></Input>
+                <Form.Item name="creater" initialValue="" hidden noStyle>
+                  <Input ></Input>
                 </Form.Item>
-                <Form.Item name="projectId" noStyle>
-                  <Input hidden></Input>
+                <Form.Item name="projectId" hidden noStyle>
+                  <Input ></Input>
                 </Form.Item>
               </div>
               <div className="layout" key="rightlayout">

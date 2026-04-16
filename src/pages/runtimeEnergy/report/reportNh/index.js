@@ -14,7 +14,7 @@ import { getTime, isObject } from '@com/usehandler'
 import CModal from '@com/useModal'
 import { ProExportExcel, CustButton,SetButton } from '@com/useButton'
  
-import {   conscols,Nhconfig, labelStyle, contentStyle } from '../data'
+import {   conscols,Nhconfig, labelStyle, contentStyle } from '../reportdata'
 import Ichart from '@com/useEcharts/Ichart';
 import {Contentbox,Chartwrap} from "../style"
 import {useQueryConsumeReport} from "../api"

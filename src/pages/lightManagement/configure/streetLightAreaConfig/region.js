@@ -20,7 +20,7 @@ import UserTable from "@com/useTable";
 import { Area } from "@api/api.js";
 import { WarningFilled, LeftOutlined, RightOutlined } from "@ant-design/icons";
 
-import { Serach } from '@com/comstyled'
+import { Serach,Drawerbox } from '@com/comstyled'
 
 import { selectOneLevel, selectOneLevelDefaultId, getOnelevel, publishState, filterDeviceStyle,adaptation } from '@redux/systemconfig.js'
 import { useSelector, useDispatch } from 'react-redux'
@@ -47,7 +47,7 @@ const iconsty = css`
   width: 48px;
   height: 32px;
 `
-const Drawerbox = styled(Drawer)`
+/* const Drawerbox = styled(Drawer)`
   && {
   //  z-index: 10001;
     .ant-drawer-content-wrapper {
@@ -127,7 +127,7 @@ const Drawerbox = styled(Drawer)`
      
     }
   }
-`;
+`; */
 const Inptserach = styled(Input.Search)`
   && {
     
@@ -577,13 +577,20 @@ const savesty = laptop
       {/* 抽屉 */}
       {/*  devices.current.deviceSummary = [];
         devices.current.deviceSub = [] */}
-     
-        <Drawerbox
+       <Drawerbox />
+        <Drawer
           onClose={drawClose}
           open={open}         
           closable={false}
-          destroyOnClose
-          contentWrapperStyle={{ margingRight: '16px' }}
+          destroyOnHidden
+           rootClassName="drawerbox"
+              styles={{
+        content: {
+          margingRight: '16px',
+        
+          // width: 'calc(100% - 200px)'
+        }
+      }}
         >
           <div className="selected">
             <div className="total">
@@ -714,7 +721,7 @@ const savesty = laptop
             </div>
            
           </div>
-        </Drawerbox>
+        </Drawer>
      
     </Mainbox>
   );

@@ -15,6 +15,122 @@ const { Item } = Form;
 
 
 const $color= '#237AE4'
+export const Drawerbox = createGlobalStyle` // 解决升级后抽屉样式错乱问题
+  .drawerbox {
+    .ant-drawer-content-wrapper {
+      width: calc(100% - 200px) !important;
+      height: calc(100% - 64px);
+      top: 64px;
+    }
+    .ant-drawer-content {
+      background-color: #003366;
+      .ant-drawer-body {
+        display: grid;
+        grid-template-columns: 692px 1fr 714px;
+        column-gap: 30px;
+        grid-template-rows: 1fr;
+        .outwrap{
+            padding-top: 16px;
+            position: relative;
+            flex:1;
+            
+          }
+          .inwrap {
+            position: absolute;
+            width: 100%;
+            height: calc(100% - 16px);
+            overflow: auto;
+          }
+          .outwrapr{ 
+            position: relative;
+            flex:1;
+            
+          }
+          .inwrapr {
+            position: absolute;
+            width: 100%;
+            height: calc(100% - 32px);
+            overflow: auto;
+          }
+        .leftpart{
+          display: flex;
+          flex-direction: column;
+          row-gap: 16px;
+         
+        }
+        ${props=> props.theme.laptop ? sty : null}
+        .title {
+          padding-left: 16px;
+          border-left: 4px ${props => props.theme.primaryColor} solid;
+          color: #333;
+          display: flex;
+          align-items: center;
+        }
+        .selected {
+          display: grid;
+          grid-template-rows: 1fr 1fr;
+          row-gap: 32px;
+
+          .ant-table {
+            height: 100%;
+          }
+          .total {
+            display: grid;
+            grid-template-rows: 32px 1fr;
+            row-gap: 16px;
+            padding: 16px;
+            background-color: #fff;
+          }
+          .sub {
+            display: grid;
+            grid-template-rows: 32px 32px 1fr;
+            padding: 16px;
+            row-gap: 16px;
+            background-color: #fff;
+          }
+        }
+        .unselected {
+          flex:1;
+          display: flex;
+          flex-direction: column;
+          padding: ${props => props.theme.laptop  ? "16px 0 0 0" : "16px" } ;
+          row-gap: 16px;
+          background-color: #fff;
+
+          .serachbox{
+            display: grid;
+            grid-template-columns: minmax(150px, auto) auto;
+            justify-content: space-between;
+            height: 32px;
+            .ant-form-item{
+              margin-bottom: 0px;
+            }
+            
+          }
+        }
+        .optab {
+          display: flex;
+          flex-direction: column;
+          justify-content: space-between;
+          padding: 32px 0;
+          text-align: center;
+          align-items: center;
+          > div {
+            .ant-typography {
+              color: #fff;
+            }
+            .ant-btn-icon-only {
+              width: 64px;
+              height: 46px;
+              ${props => props.theme.laptop ? iconsty : null}
+            }
+          }
+        }
+      }
+    }
+   
+  }
+`;
 export const Tabsbox = styled(Tabs)`
   transform: translateY(1px);
   .ant-tabs-nav {

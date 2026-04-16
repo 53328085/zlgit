@@ -1035,8 +1035,8 @@ const EditModalForm = ({ modalEditRef,  addopts, editform, levelname, ...other }
             <Form.Item label="心跳周期" name="heartInterval" rules={[{ pattern: /^[1-9]+[0-9]*$/, message: '心跳周期需为正整数' }]}>
               <Count></Count>
             </Form.Item>
-            <Form.Item noStyle name="id">
-              <Input hidden></Input>
+            <Form.Item hidden noStyle name="id">
+              <Input ></Input>
             </Form.Item>
           </Col>
         </Row>

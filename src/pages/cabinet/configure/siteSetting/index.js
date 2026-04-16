@@ -340,7 +340,7 @@ export default function Index() {
                             <div ref={draggleRef}>{modal}</div>
                         </Draggable>
                     )}
-                    destroyOnClose
+                    destroyOnHidden
 
                     footer={timeStatus == 1 ? [
                         <Button key="submit" style={{ width: 160 }} type="primary" onClick={() => onNextStep(timeStatus)}>

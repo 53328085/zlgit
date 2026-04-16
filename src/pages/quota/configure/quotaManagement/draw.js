@@ -397,7 +397,7 @@ function Draw({params }, ref) {
     maskClosable={false}
     contentWrapperStyle={{margingRight: '16px'}}
     title=""
-    destroyOnClose
+    destroyOnHidden
   >
  
    <div className='leftpart'>

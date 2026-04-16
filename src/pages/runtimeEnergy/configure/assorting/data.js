@@ -55,8 +55,8 @@ export const EditableCell = ({
       <td {...restProps}>
         {editing && ipt? (
             <>
-            <Form.Item name={[dataIndex,"month"]} initialValue={dataIndex} noStyle>
-             <Input hidden></Input>
+            <Form.Item name={[dataIndex,"month"]} initialValue={dataIndex} hidden noStyle>
+             <Input ></Input>
             </Form.Item>
           <Form.Item
             name={[dataIndex,"quotaValue"]}

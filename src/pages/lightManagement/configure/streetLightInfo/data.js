@@ -95,11 +95,11 @@ export const items =(option, csn, msn)=> (
       <Form.Item label="路灯类型" name="type">
         <Select options={options} allowClear></Select>
       </Form.Item>
-      <Form.Item name="id" noStyle initialValue={0}>
-        <Input hidden></Input>
+      <Form.Item name="id" hidden noStyle initialValue={0}>
+        <Input ></Input>
       </Form.Item>
-      <Form.Item name="projectId" noStyle>
-        <Input hidden></Input>
+      <Form.Item name="projectId" hidden noStyle>
+        <Input ></Input>
       </Form.Item>
     </div>
   </Frombox>

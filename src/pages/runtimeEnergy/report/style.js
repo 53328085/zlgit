@@ -5,6 +5,7 @@ export const Contentbox = styled.div`
   grid-template-columns: 296px 1fr;
   column-gap: 16px;
   flex: 1;
+  background: transparent;
   .opt {
     display: flex;
     justify-content: flex-end;
@@ -16,6 +17,16 @@ export const Contentbox = styled.div`
    justify-content: flex-end;
    padding-bottom: 8px;
   }
+  .rightwrap {
+    display: flex;
+    flex-direction: column;
+  }
+  .tbwrap {
+      flex: 1; 
+      display: flex;
+       padding: 20px;
+       background: #fff;
+    }
 `
 export const Chartwrap = styled.div`
   .chart {

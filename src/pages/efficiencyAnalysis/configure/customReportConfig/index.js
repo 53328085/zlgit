@@ -293,8 +293,8 @@ const allchange= (e) => {
                 <Form.Item name="list">
                   <Checkbox.Group options={ckoptions} onChange={onCkChange}></Checkbox.Group>
                 </Form.Item>
-                <Form.Item name="indeterminate" noStyle>
-        <Input hidden></Input>
+                <Form.Item name="indeterminate" hidden noStyle>
+        <Input ></Input>
       </Form.Item>
                 </div>
             </div>

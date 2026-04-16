@@ -185,12 +185,9 @@ export const items = ({ csn = [], msn = [], model = [],type }) => (
       <Form.Item label="数据来源"  name="dataSource" rules={rules}>
         <Select options={dataSource} placeholder="请选择"></Select>
       </Form.Item>
-      <Form.Item name="id" noStyle initialValue={0}>
-        <Input hidden></Input>
+      <Form.Item name="id" noStyle initialValue={0} hidden>
+        <Input ></Input>
       </Form.Item>
-      {/* <Form.Item name="projectId" noStyle>
-        <Input hidden></Input>
-      </Form.Item> */}
     </div>
     </div>
   </Formbox>
@@ -344,23 +341,18 @@ export const initems = ({ model = [],cusac, setcusac, params,csn,onCsnChange }) 
                     disabled
                   ></Select>
                 </Form.Item>
-                <Form.Item name={[name, "id"]} noStyle initialValue={null}> {/* 内机的id */}
-                  <Input hidden></Input>
+                <Form.Item name={[name, "id"]} noStyle hidden  initialValue={null}> {/* 内机的id */}
+                  <Input ></Input>
                 </Form.Item>
                 <Form.Item
                   name={[name, "exteriorId"]}
                   noStyle
                   initialValue={null}
-                >
-                  {" "}
-                  {/* 外机的id exteriorId */}
-                  <Input hidden></Input>
+                  hidden
+                ><Input ></Input>
                 </Form.Item>
-             {/*    <Form.Item name={[name, "projectId"]} noStyle>
-                  <Input hidden></Input>
-                </Form.Item> */}
-                <Form.Item name={[name, "shareRatio"]} noStyle>
-                  <Input hidden></Input>
+                <Form.Item name={[name, "shareRatio"]} hidden noStyle>
+                  <Input ></Input>
                 </Form.Item>
               </div>
             </div>

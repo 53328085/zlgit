@@ -10,22 +10,22 @@ export const { useQueryConsumeReport } = new Apimethod( // 能耗抄表
   "Energy/DataReportRuntime/QueryConsumeReport"
 );
 
-export const { useQueryConsumeByTime } = new Apimethod( // 分时能耗
+export const { useQueryTimeDivisionEnergy } = new Apimethod( // 分时能耗
   "post",
-  "Energy/DataReportRuntime/QueryConsumeByTime"
+  "Energy/DataReportRuntime/QueryTimeDivisionEnergy"
 );
 
-export const { useQueryConsumeClassify } = new Apimethod( // 分类能耗
+export const { useQueryEnergy } = new Apimethod( // 分类能耗
   "post",
-  "Energy/DataReportRuntime/QueryConsumeClassify"
+  "Energy/EnergyClassifyRuntime/QueryEnergy"
 );
 
-export const { useQueryConsumeFromIot } = new Apimethod( // 电能报表(账单报表)
+export const { useQueryBillReport } = new Apimethod( // 电能报表(账单报表)
   "post",
-  "Energy/DataReportRuntime/QueryConsumeFromIot"
+  "Energy/DataReportRuntime/QueryBillReport"
 );
 
-export const { useQueryConsumeDeviceShit } = new Apimethod( // 班次能耗
+export const { useQueryShiftEnergy } = new Apimethod( // 班次能耗
   "post",
-  "Energy/DataReportRuntime/QueryConsumeDeviceShit"
+  "Energy/DataReportRuntime/QueryShiftEnergy"
 );

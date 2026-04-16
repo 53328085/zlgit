@@ -1,32 +1,31 @@
 import React, { useState, useCallback, useRef, useEffect, useMemo   } from 'react'
 import { Checkbox, DatePicker, message, Tooltip, Descriptions, Radio, Space} from 'antd'
-import dayjs from 'dayjs'
-import { ProTable  } from '@ant-design/pro-components';
+
 import { useOutletContext } from 'react-router-dom'
-import { useAntdTable } from 'ahooks'
+
  
 import Pagecount from '@com/pagecontent'
 import UseProTable from "@com/useTable/proTable";
 import UserTree from "@com/useTree"
- 
+import {Tabsbox} from "@com/comstyled"
 import { getTime, isObject } from '@com/usehandler'
  
 import CModal from '@com/useModal'
 import { ProExportExcel, CustButton,SetButton } from '@com/useButton'
  
-import {   fromlot,Zdconfig, labelStyle, contentStyle } from '../data'
+import {   shitcols,tabs, labelStyle, contentStyle } from '../reportdata'
 
 import {Contentbox,Chartwrap} from "../style"
-import {useQueryBillReport} from "../api"
-
+import {useQueryShiftEnergy} from "../api"
+import {useCol} from "../usehook"
 
 export default function Index() {
 
   let { exparams  } = useOutletContext()
  
+  const [key, setKey]=useState('1')
+  
  
- 
-   const [columnsStateMap, setColumnsStateMap] = useState(Zdconfig)
  
   const [line, setLine] = useState(0)
   const [treeId, setTreeId] = useState()
@@ -34,11 +33,7 @@ export default function Index() {
 
  
   
-  const colsettingChange =(v) =>{
-    console.log(v)
-    setColumnsStateMap(v)
-  }
- 
+  let columns = useCol(shitcols,3, '用能(kWh)')
 
 
 
@@ -59,10 +54,11 @@ export default function Index() {
       type: type, // 
       reportType:1,
       filterInfo: alike,
-      customTime: type== 4,
-      areaId
+     // customTime: type== 4,
+      areaId,
+      tab:key
     }
-  }, [projectId, areaId, type, date, energytype, treeId,  line,   alike,publicrangedate])
+  }, [projectId, areaId, type, date, energytype, treeId,  line, key,  alike,publicrangedate])
 
   const [total, setTotal] = useState(0)
   const tbref = useRef()
@@ -71,12 +67,12 @@ export default function Index() {
     params.pageNum = params.current
     let  {  projectId, type,  meterType, ids, areaId,  queryType,   startDate,endDate}= params
      try { 
-    let f = [ projectId, type, meterType,areaId,   queryType].every(v => Number.isInteger(v)) && Array.isArray(ids) && startDate && endDate
+    let f = [ projectId, type, meterType,areaId,   queryType].every(v => Number.isInteger(v)) && Array.isArray(ids) && startDate && endDate && key
  
     
     if (!f) return;
  
-      let { success, data, total = 0 }= await useQueryBillReport({},params) 
+      let { success, data, total = 0 }= await useQueryShiftEnergy({},params) 
     
       setTotal(total)
       if (success && Array.isArray(data) ) {   
@@ -110,34 +106,34 @@ export default function Index() {
   }, [total,  params])
 
  
-  const toolbar = [<ProExportExcel tb={tbref} className="reportZd"   />]
+  const toolbar = [<ProExportExcel tb={tbref} className="reportFs"   />]
   // fromlot,Zdconfig
   return (
    
-      <Pagecount showSearch={false} custserach={true} >
-        <Contentbox>
+      <Pagecount showSearch={false} custserach={true} pd="0" bgcolor="none" >
+        <Contentbox rtbg="none">
           <UserTree areaId={areaId} energytype={energytype} setTreeId={setTreeId} setLine={setLine} showline={true} datatype={NaN} />
           
-              
+                <div className='rightwrap'>
+                <Tabsbox items={tabs} activeKey={key} onTabClick={setKey} size="small"></Tabsbox>
+                  <div className="tbwrap">
                 <UseProTable 
-                headerTitle="账单报表"
-                tableClassName="reportZd"
-              //  ref={tbref}
-                columns={fromlot} 
+                headerTitle="班次能耗"
+                tableClassName="reportBc"
+                columns={columns} 
                 request={getTableData} 
                 params={params} 
                 search={false}
                 toolBarRender={() => toolbar}
-            
-                columnsState={{
-                  defaultValue:Zdconfig,
-                  value:columnsStateMap,
-                  onChange:colsettingChange,
+                options={{
+                  setting: false,
+
                 }}
-           
-               sheetName="账单报表"
+               sheetName="班次能耗"
                onExport={onExport} 
                 ></UseProTable>
+                </div>
+                </div>
         </Contentbox>
    
       </Pagecount>

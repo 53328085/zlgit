@@ -332,7 +332,7 @@ overflow: hidden;
             width: 24px;
             height: 2px;
             border-bottom: 2px dashed #46C7FF;
-            transform: translate(-36px, 122px); ; 
+            transform: translate(-36px, 20px); ; 
         }
   }
 /*   .digital.downleft{
