@@ -6,6 +6,7 @@ const sty = css`
 }
 
 `
+ 
  export default  styled(ProTable)`
 && {
 display: flex;
@@ -18,8 +19,16 @@ flex-direction: column;
 .ant-pro-table-list-toolbar-container {
   padding-block: 0px 16px;
   .ant-pro-table-list-toolbar-left{
-    padding-inline: 3px 0px;
-    border-left: 3px solid ${props => props.theme.primaryColor}
+     .ant-pro-table-list-toolbar-title {
+      font-size: ${({fz}) => fz || '15px'};
+      color: ${({fc, theme}) =>theme.isdark?"dark": (fc || theme.cardHeadlColor)};
+      padding: 0 0 0 11px;
+      font-weight: 600;
+      border-left: 3px solid ${({bl, theme}) => bl  ?  bl=="none" ? "transparent" : bl : theme.primaryColor } ;
+    
+    }
+ 
+  
   }
 }
 .ant-table-title {
@@ -88,6 +97,7 @@ ${props => props.laptop ? sty : null}
       .innerwrap{
         position: absolute;
         width: 100%;
+      
       }
     }
 

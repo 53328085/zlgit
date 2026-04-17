@@ -426,7 +426,7 @@ export default memo(function Index({ areaId, setTreeId, setLine, setNode, showli
 
   //  单选模式
   const onSelect = (selectedKeys, e) => {   // 损耗分析 不是一级节点而且没有子节点的不需要查询。传入一个函数
-    console.log(selectedKeys)
+    console.log(selectedKeys,e.node)
     if (mode) return
     setNode && setNode?.(e.node)
     if (datatype == 5) {

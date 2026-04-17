@@ -8,7 +8,7 @@ import { useAntdTable } from 'ahooks'
 import Pagecount from '@com/pagecontent'
 import UseProTable from "@com/useTable/proTable";
 import UserTree from "@com/useTree"
- 
+import {useRequest} from 'ahooks'
 import { getTime, isObject } from '@com/usehandler'
  
 import CModal from '@com/useModal'
@@ -17,97 +17,130 @@ import { ProExportExcel, CustButton,SetButton } from '@com/useButton'
 import {   timecols,Zdconfig, labelStyle, contentStyle } from '../reportdata'
 
 import {Contentbox,Chartwrap} from "../style"
-import {useQueryEnergy} from "../api"
+import {useQueryClassifyConsumeReport} from "../api"
 
 
 export default function Index() {
 
   let { exparams  } = useOutletContext()
  
-  console.log(exparams)
  
-   const [columnsStateMap, setColumnsStateMap] = useState(Zdconfig)
  
-  const [line, setLine] = useState(0)
+   const [columns, setColumns] = useState([])
+   const [dataSource, setDataSource] = useState([])
+  const [node, setNode] = useState()
+  console.log("node",node)
   const [treeId, setTreeId] = useState()
-  let { areaId, projectId, publictype:type, publicdate:date, energytype, alike,publicrangedate } = exparams  
-
+  let { areaId, projectId, publictype:type, publicdate:date, energytype,  publicrangedate } = exparams  
  
-  
-  const colsettingChange =(v) =>{
-    console.log(v)
-    setColumnsStateMap(v)
-  }
- 
-
-
-
-
-
 
   const params=useMemo(()=>{
   let dateType = { 1: "day", 2: "month", 3: "year" }[type]
   return  {
       projectId,
-      meterType: energytype,
+      type: energytype,
       startDate: type!=4 ?  date?.startOf(dateType).format("YYYY-MM-DD HH:mm") :publicrangedate?.[0]?.format("YYYY-MM-DD HH:mm"),
       endDate:   type!=4 ? date?.endOf(dateType).format("YYYY-MM-DD HH:mm") :publicrangedate?.[1]?.format("YYYY-MM-DD HH:mm"),
    //   pageNum: current,
      // pageSize,
-      queryType: line,
-      ids: treeId,
-      type: type, // 
-      reportType:1,
-      filterInfo: alike,
-      customTime: type== 4,
-      areaId
-    }
-  }, [projectId, areaId, type, date, energytype, treeId,  line,   alike,publicrangedate])
+   //   queryType: line,
+      areaIds: treeId,
+      dayMonthYear: type, // 
+    //  reportType:1,
+     // filterInfo: alike,
+     // customTime: type== 4,
+      areaId,
+      name: node?.energyName
 
-  const [total, setTotal] = useState(0)
+    }
+  }, [projectId, areaId, type, date, energytype, treeId,node,    publicrangedate])
+
+  
   const tbref = useRef()
  
-  const getTableData =async (params) => {
-    params.pageNum = params.current
-    let  {  projectId, type,  meterType, ids, areaId,  queryType,   startDate,endDate}= params
+  const getTableData =async () => {
+    
+    let  {  projectId, dayMonthYear,  type, areaIds, areaId,  name,  startDate,endDate}= params
      try { 
-    let f = [ projectId, type, meterType,areaId,   queryType].every(v => Number.isInteger(v)) && Array.isArray(ids) && startDate && endDate
+    let condition = [ projectId, type,areaId,dayMonthYear].every(v => Number.isInteger(v)) && Array.isArray(areaIds) && startDate && endDate && name
  
     
-    if (!f) return;
+    if (!condition) return;
  
-      let { success, data, total = 0 }= await useQueryEnergy({},params) 
+      let { success, data}= await useQueryClassifyConsumeReport({},params) 
     
-      setTotal(total)
-      if (success && Array.isArray(data) ) {   
-        return {
-          data:  data  ,
-          total: total,
-          success,
-        }
-      } else {
-        return {
-          data: [],
-          total: 0,
-          success,
-        }
-      }
-    
+    //  setTotal(total)
+      if (success && isObject(data) ) {   
+        const {tableDatas} = data
+       if (isObject(tableDatas)) {
+        let { datas, heads } = tableDatas
+
+
+          let columns = heads.map(t => ({ ...t, spans: {} }))
+               if (Array.isArray(datas) && Array.isArray(heads)) {
+                 let tbdata = datas.map((d, i) => {
+                   let { data, mergeInfo, ...rest } = d
+                   for (let [key, value] of Object.entries(mergeInfo)) {
+                     let idx = columns.findIndex(h => h.dataIndex === key)
+                     if (isObject(columns[idx])) {
+                       columns[idx].spans[i] = value
+                     }
+       
+                   }
+                   if (isObject(data)) {
+                     return { ...rest, ...data }
+                   } else {
+                     return { ...rest }
+                   }
+                 })
+                 columns?.forEach(c => {
+                   let handlers = {}
+                   if (Object.keys(c.spans)?.length > 0) {
+                     for (let [key, value] of Object.entries(c.spans)) {
+       
+                       handlers[key] = () => value
+       
+                     }
+                   }
+                   c["handlers"] = handlers
+                 })
+                 columns?.forEach(c => {
+                   const { spans, handlers } = c
+                   c["onCell"] = (row, idx) => {
+                     if (Object.keys(spans)?.length > 0) {
+       
+                       return handlers?.[idx]?.()
+                     } else {
+                       return {}
+                     }
+       
+                   }
+                 })
+                 setColumns(columns)
+                 setDataSource(tbdata)
+               } else {
+                  setColumns([])
+                  setDataSource([])
+       
+               }
+       
+      }  
+    }
 
      } catch (error) {
       console.log(error)
      }
   }
 
-
+  useRequest(getTableData,{
+   refreshDeps:[params]
+  })
 
  
  
-  const onExport = useCallback(() => {
-    params.pageSize=total
-    params.current=1
+  const onExport = useCallback(() => { 
     return getTableData(params)
-  }, [total,  params])
+  }, [ params])
 
  
   const toolbar = [<ProExportExcel tb={tbref} className="reportFl"   />]
@@ -116,15 +149,14 @@ export default function Index() {
    
       <Pagecount showSearch={false} custserach={true} >
         <Contentbox>
-          <UserTree datatype={6} allselect={false} energytype={energytype} areaId={0} multiple={false} showline={false} setTreeId={setTreeId}/>
+          <UserTree datatype={6} allselect={false} setNode={setNode} energytype={energytype} areaId={0} multiple={false} showline={false} setTreeId={setTreeId}/>
           
               
                 <UseProTable 
                 headerTitle="分类能耗"
                 tableClassName="reportFl"
-                columns={timecols} 
-                request={getTableData} 
-                params={params} 
+                columns={columns} 
+                dataSource={dataSource}
                 search={false}
                 toolBarRender={() => toolbar}
                 options={{
@@ -132,6 +164,7 @@ export default function Index() {
 
                 }}
                sheetName="分类能耗"
+               pagination={false}
                onExport={onExport} 
                 ></UseProTable>
         </Contentbox>

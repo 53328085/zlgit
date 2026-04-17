@@ -66,8 +66,7 @@ export default function Sider() {
   const [menus, setMenus] = useState()
 
   const [path, setPath] = useState('')
-
- //  console.log("menus",menus)
+  console.log("menus",menus)
 /*   const Showimg = () => {
     let {primary} = location.state || {}   
     let imgsrc = config ? imgurl.config : imgurl[primary]
@@ -91,7 +90,9 @@ export default function Sider() {
       dispatch(getisDistribution(primary === 'runtimeDistribution'))
       setPath(primary)
       let sidermenu = config ? siderDesignerMenu[primary] : siderRunMenu[primary];
-      let sidermenus = sidermenu?.map(({no, label, key,children=[]}) => config ? {no, label,key,title:label, children:children?.length>0 ? children.map(c=>mixkey(c,key)) : null, icon: <MiconSet iconname={key}  />} : {no, label,key,title:label, children:children?.length>0 ? children.map(c=>mixkey(c,key)) : null, icon: <Micon iconname={key}  />}) || [];        
+   //   let sidermenus = sidermenu?.map(({no, label, key,children=[]}) => config ? {no, label,key,title:label, children:children?.length>0 ? children.map(c=>mixkey(c,key)) : null, icon: <MiconSet iconname={key}  />} : {no, label,key,title:label, children:children?.length>0 ? children.map(c=>mixkey(c,key)) : null, icon: <Micon iconname={key}  />}) || [];   
+    let sidermenus = sidermenu?.map(({no, label, key,children=[]}) => ({no, label,key,title:label,children:children?.length ? children : null,  icon: config ? <MiconSet iconname={key}  />  
+      : <Micon iconname={key} />}) ) || [];       
      setMenus(sidermenus)
       Setkey(nested) 
     } catch (error) {
@@ -100,14 +101,15 @@ export default function Sider() {
   
   },[location, config, siderDesignerMenu,siderRunMenu])
 
-  const onSelect = ({item,key}) => {  
+  const onSelect = ({item,key,keyPath}) => {  
      let label =item?.props?.title??""
+     let fragment = keyPath?.reverse().join?.("/")
      Setkey(key)
      let url;
      if (config) {
-      url = `/config/${path}/` + key
+      url = `/config/${path}/` + fragment
      }else {
-      url = `/index/${path}/` + key
+      url = `/index/${path}/` + fragment
      }
      let nested = key?.split?.("/")
     // dispatch(getPgTitle(label))

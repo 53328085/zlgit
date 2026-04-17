@@ -827,3 +827,20 @@ export const GlobalStyle = createGlobalStyle`  // 解决Select组件在配置类
     }
   }
 `;
+
+export  const RadiogroupSolid = styled(Radio.Group).attrs({
+  buttonStyle: 'solid',
+  optionType: "button",
+  size: "middle",
+})`
+ && {
+  .ant-radio-button-wrapper:first-child,.ant-radio-button-wrapper:last-child{
+    border-radius: 0;
+  }
+  .ant-radio-button-wrapper {
+      min-width: ${props => props.wh || '96px'};
+      text-align: center;
+      
+    }
+ }
+`

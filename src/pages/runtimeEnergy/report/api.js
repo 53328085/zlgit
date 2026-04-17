@@ -15,9 +15,9 @@ export const { useQueryTimeDivisionEnergy } = new Apimethod( // 分时能耗
   "Energy/DataReportRuntime/QueryTimeDivisionEnergy"
 );
 
-export const { useQueryEnergy } = new Apimethod( // 分类能耗
+export const { useQueryClassifyConsumeReport } = new Apimethod( // 分类能耗
   "post",
-  "Energy/EnergyClassifyRuntime/QueryEnergy"
+  "Energy/DataReportRuntime/QueryClassifyConsumeReport"
 );
 
 export const { useQueryBillReport } = new Apimethod( // 电能报表(账单报表)
@@ -28,4 +28,9 @@ export const { useQueryBillReport } = new Apimethod( // 电能报表(账单报�
 export const { useQueryShiftEnergy } = new Apimethod( // 班次能耗
   "post",
   "Energy/DataReportRuntime/QueryShiftEnergy"
+);
+
+export const { useQueryShifts } = new Apimethod( //获取班次
+  "get",
+  "Energy/DataReportRuntime/QueryShifts"
 );

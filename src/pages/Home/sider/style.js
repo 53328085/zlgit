@@ -159,6 +159,9 @@ export const Cmenu = styled(Menu)`
         padding-left: 19px;
         .ant-menu-item{
             width: 150px;
+            &:active,&:hover{
+              background-color:transparent;
+            }
            .ant-menu-title-content {
              padding-left: 0px;
            }

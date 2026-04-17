@@ -83,7 +83,7 @@ const DigitalTwin = lazy(() => import("../pages/digitalTwin"))
 const Websitmap = lazy(() => import("@pages/websitmap"))
 const Largscreen = lazy(() => import("../pages/largscreen"))
 const DigitalTwinHD = lazy(() => import("../pages/largscreenofHD"))
-const Fform= lazy(() => import("../pages/test/fform"))
+const Fform= lazy(() => import("../pages/example"))
 import {designerComponents,  designerRoutes} from "./designer";
 
 

@@ -9,9 +9,10 @@ import { useTranslation } from 'react-i18next'
 import { utils, writeFile } from 'xlsx'
 import { nanoid } from '@reduxjs/toolkit'
 import Tablecom from './index'
-import ProTablecom,{TableContainer,Settingicon} from './proTablesty'
+import ProTablecom,{TableContainer,Settingicon } from './proTablesty'
 import setting from './icon/setting.png'
 import {isObject} from "@com/usehandler"
+import {useGetY} from "./useMetherr"
 import {
 
   adaptation
@@ -196,17 +197,19 @@ function Index(props, ref) {
     downloadAll, // 下载全部数据
     downTemp,
   }))
-
+  let scrollY = useGetY()
  
   return (
     <TableContainer flex={props.flex} style={{ ...style }}>
       <div className="outwrap">
         <div className="innerwrap">
       <ProTablecom bordered defaultSize="small"  
-        tableClassName={props.tableClassName }
+        tableClassName={`${props.tableClassName}` }
+       
         rowKey={row=>Object.values(row).join()} 
                     
                       tableAlertRender={false}
+
                       options={{
                          fullScreen: true,
                           reload: true,
@@ -223,16 +226,17 @@ function Index(props, ref) {
                       scroll={{
                         scrollToFirstRowOnChange: true,
                         x: "max-content",
-                        y: 500,
+                        y: scrollY,
                         ...scroll,
                      
                       }
                       }
-                      columnsState={{
+                      columnsState={props.columnsState ? {
                          persistenceKey:  pathname.replace(/\//g, ""),
                          persistenceType:"localStorage",
                          ...props.columnsState,
-                      }}
+                      }: null}
+                      pagination={pagination}
                       {...otherprops}
                       laptop={laptop} />
                       </div>

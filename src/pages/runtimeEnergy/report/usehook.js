@@ -1,4 +1,4 @@
-import {useMemo} from 'react';
+import {useMemo, useCallback} from 'react';
 import dayjs from 'dayjs';
 import { isObject } from '@com/usehandler';
 export  function useBaript({selectedRowKeys, tableData, checkvalue, detailHeaders,type}) {
@@ -75,7 +75,11 @@ export function useCol(cols, index, title) {
   return  useMemo(() => { 
       if(isObject(cols)&& Object.values(cols) && index && title) { 
         console.log("cols",cols)
-        cols[index]?.title = title
+       let col=  cols[index]
+       if(col){
+        col.title = title
+       }
+       
         return  Array.from(cols)
       }else {
         return []
@@ -84,3 +88,4 @@ export function useCol(cols, index, title) {
     }, [cols,index, title])
 
 }
+ 

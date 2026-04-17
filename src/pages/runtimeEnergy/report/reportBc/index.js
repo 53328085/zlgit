@@ -7,16 +7,16 @@ import { useOutletContext } from 'react-router-dom'
 import Pagecount from '@com/pagecontent'
 import UseProTable from "@com/useTable/proTable";
 import UserTree from "@com/useTree"
-import {Tabsbox} from "@com/comstyled"
+import {RadiogroupSolid} from "@com/comstyled"
 import { getTime, isObject } from '@com/usehandler'
  
 import CModal from '@com/useModal'
 import { ProExportExcel, CustButton,SetButton } from '@com/useButton'
  
-import {   shitcols,tabs, labelStyle, contentStyle } from '../reportdata'
+import {   shitcols,  labelStyle, contentStyle } from '../reportdata'
 
 import {Contentbox,Chartwrap} from "../style"
-import {useQueryShiftEnergy} from "../api"
+import {useQueryShiftEnergy,useQueryShifts} from "../api"
 import {useCol} from "../usehook"
 
 export default function Index() {
@@ -25,7 +25,7 @@ export default function Index() {
  
   const [key, setKey]=useState('1')
   
- 
+  const [options, setOptions]=useState([])
  
   const [line, setLine] = useState(0)
   const [treeId, setTreeId] = useState()
@@ -34,14 +34,31 @@ export default function Index() {
  
   
   let columns = useCol(shitcols,3, '用能(kWh)')
+ const onChange =(e)=>{
+   setKey(e.target.value)
+ }
 
-
-
+ const getShift = async  ()=>{ 
+  try {
+     let {success, data} = await useQueryShifts({projectId})
+     if (success && Array.isArray(data) && data.length) { 
+       setOptions(data.map(d =>({...d, label:d.name, value:d.no})))
+       setKey(data[0].no)
+     }else {
+       setOptions([])
+       setKey(null)
+       message.error('获取班次失败')
+     }
+  } catch (error) {
+     console.log(error)
+  }
+    
+  }
 
 
 
   const params=useMemo(()=>{
-  let dateType = { 1: "day", 2: "month", 3: "year" }[type]
+   let dateType = { 1: "day", 2: "month", 3: "year" }[type]
   return  {
       projectId,
       meterType: energytype,
@@ -52,27 +69,29 @@ export default function Index() {
       queryType: line,
       ids: treeId,
       type: type, // 
-      reportType:1,
+   //   reportType:1,
       filterInfo: alike,
      // customTime: type== 4,
       areaId,
-      tab:key
+      tab:key 
     }
+   
   }, [projectId, areaId, type, date, energytype, treeId,  line, key,  alike,publicrangedate])
 
   const [total, setTotal] = useState(0)
   const tbref = useRef()
  
-  const getTableData =async (params) => {
-    params.pageNum = params.current
-    let  {  projectId, type,  meterType, ids, areaId,  queryType,   startDate,endDate}= params
+   const getTableData =async (params) => {
+    const {current,...body} = params
+    body.pageNum = current
+    let  {  projectId, type,  meterType, ids, areaId,  queryType, tab,  startDate,endDate}= body
      try { 
-    let f = [ projectId, type, meterType,areaId,   queryType].every(v => Number.isInteger(v)) && Array.isArray(ids) && startDate && endDate && key
+    let f = [ projectId, type, meterType,areaId, tab,  queryType].every(v => Number.isInteger(Number.parseInt(v))) && Array.isArray(ids) && startDate && endDate && key
  
     
     if (!f) return;
  
-      let { success, data, total = 0 }= await useQueryShiftEnergy({},params) 
+      let { success, data, total = 0 }= await useQueryShiftEnergy({},body) 
     
       setTotal(total)
       if (success && Array.isArray(data) ) {   
@@ -94,9 +113,7 @@ export default function Index() {
       console.log(error)
      }
   }
-
-
-
+ 
  
  
   const onExport = useCallback(() => {
@@ -105,8 +122,13 @@ export default function Index() {
     return getTableData(params)
   }, [total,  params])
 
- 
-  const toolbar = [<ProExportExcel tb={tbref} className="reportFs"   />]
+ useEffect(() => {
+    if(Number.isInteger(projectId)) {
+      getShift(params)
+    }
+   
+  }, [projectId])
+  const toolbar = [<ProExportExcel tb={tbref} className="reportBc"   />]
   // fromlot,Zdconfig
   return (
    
@@ -115,7 +137,7 @@ export default function Index() {
           <UserTree areaId={areaId} energytype={energytype} setTreeId={setTreeId} setLine={setLine} showline={true} datatype={NaN} />
           
                 <div className='rightwrap'>
-                <Tabsbox items={tabs} activeKey={key} onTabClick={setKey} size="small"></Tabsbox>
+                <RadiogroupSolid options={options} defaultValue={key} value={key}   onChange={onChange}  ></RadiogroupSolid>
                   <div className="tbwrap">
                 <UseProTable 
                 headerTitle="班次能耗"
