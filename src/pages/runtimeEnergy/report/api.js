@@ -34,3 +34,13 @@ export const { useQueryShifts } = new Apimethod( //获取班次
   "get",
   "Energy/DataReportRuntime/QueryShifts"
 );
+
+export const { useQuerysParameterReportTabs } = new Apimethod( //参数报表-Tabs
+  "get",
+  "Energy/DataReportRuntime/QuerysParameterReportTabs"
+);
+
+export const { useQueryParameterReport } = new Apimethod( //参数报表
+  "post",
+  "Energy/DataReportRuntime/QueryParameterReport"
+);

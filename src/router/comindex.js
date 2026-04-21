@@ -258,7 +258,15 @@ export default function Index() {
               showTime: {
                 format: 'HH:mm',
                 minuteStep: 15
-              }
+              },
+              cycleTime:true,
+              dateOpt:[{
+        value:1,
+        label: "日"
+    }, {
+        value:4,
+        label: "自定义"
+    },]
             });
             break;
           case "direction":

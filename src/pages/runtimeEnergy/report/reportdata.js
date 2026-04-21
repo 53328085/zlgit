@@ -389,24 +389,64 @@ export const Zdconfig ={  // 账单表格配置
   },
   length: 5
   }
-export const etabs = [
-  { key: '0', label: '实时抄表' },
-  { key: '1', label: '能耗报表' },
-  { key: '2', label: '分时能耗' },
-  { key: '3', label: '分类能耗' },
-  { key: '4', label: '账单报表' },
-  { key: '5', label: '班次能耗' },
+
+export const Cscol = [ //  参数报表
+ {
+    title: '区域名称',
+    dataIndex: 'nodeName',
+    key: "nodeName"
+  },
+  {
+    title: '设备名称',
+    dataIndex: 'name',
+    key: "name",
+    ellipsis:true,
+  }, 
+  {
+    title: '设备编号',
+    dataIndex: 'sn',
+    key: "sn",
+    ellipsis:true
+  },
+  {
+    title: '安装位置',
+    dataIndex: 'address',
+    key: "address",
+    ellipsis:true
+  },
+   {
+    title: '电量(kWh)',
+    dataIndex: 'address',
+    key: "address",
+    ellipsis:true
+  },
 ]
-export const wtabs = [
-  { key: '0', label: '实时抄表' },
-  { key: '1', label: '能耗报表' },
-  { key: '3', label: '分类能耗' },
-  { key: '5', label: '班次能耗' },
-]
-export const aqtabs = [   //安庆旺旺
-  { key: '1', label: '能耗报表' },
-  { key: '4', label: '电能报表' },
-]
+ export const Csconfig ={  // 参数表格配置
+  nodeName:{
+    show:false,
+    
+  },
+  name: {
+    disable:true,
+    
+  },
+  sn:{
+    disable:true,
+    
+  }, 
+ address:{
+   show:false,
+ 
+ },
+ 
+  magnification:{
+  show:false
+ },
+ consume:{
+  show:true,
+ },
+ 
+}
 export const labelStyle = { width: "65px", padding: "4px 16px", background: "#ecf5ff" }
 export const contentStyle = { padding: "4px 16px" } 
 export const reportTypeopt=[

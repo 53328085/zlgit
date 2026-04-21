@@ -1,10 +1,11 @@
+// 参数报表
+
 import React, { useState, useCallback, useRef, useEffect, useMemo   } from 'react'
 import { Checkbox, DatePicker, message, Tooltip, Descriptions, Radio, Space} from 'antd'
-import dayjs from 'dayjs'
-import { ProTable  } from '@ant-design/pro-components';
-import { useOutletContext } from 'react-router-dom'
-import { useAntdTable } from 'ahooks'
  
+import { useOutletContext } from 'react-router-dom'
+ 
+ import {RadiogroupSolid,Tabsbox} from "@com/comstyled"
 import Pagecount from '@com/pagecontent'
 import UseProTable from "@com/useTable/proTable";
 import UserTree from "@com/useTree"
@@ -14,10 +15,11 @@ import { getTime, isObject } from '@com/usehandler'
 
 import { ProExportExcel, CustButton,SetButton } from '@com/useButton'
  
-import {   timecols,Zdconfig, labelStyle, contentStyle } from '../reportdata'
+import {   Cscol,Csconfig, labelStyle, contentStyle } from '../reportdata'
 
 import {Contentbox,Chartwrap} from "../style"
-import {useQueryShiftEnergy} from "../api"
+import {useQueryParameterReport,useQuerysParameterReportTabs} from "../api"
+import { t } from 'i18next'
 
 
 export default function Index() {
@@ -26,15 +28,32 @@ export default function Index() {
  
   console.log(exparams)
  
-   const [columnsStateMap, setColumnsStateMap] = useState(Zdconfig)
- 
+   const [columnsStateMap, setColumnsStateMap] = useState(Csconfig)
+   const [key, setKey]=useState(1)
+   
+   const [options, setOptions]=useState([])
   const [line, setLine] = useState(0)
   const [treeId, setTreeId] = useState()
-  let { areaId, projectId, publictype:type, publicdate:date, energytype, alike,publicrangedate } = exparams  
+  let { areaId, projectId, publictype:type,cycleTime, publicdate:date, energytype, alike,publicrangedate } = exparams  
 
- 
+  console.log(exparams)
   
- 
+  const getParameterTabs = async  ()=>{ 
+   try {
+      let {success, data} = await useQuerysParameterReportTabs({projectId})
+      if (success && Array.isArray(data) && data.length) { 
+        setOptions(data.map(d =>({...d, label:d.value})))
+        setKey(data[0].key)
+      }else {
+        setOptions([])
+        setKey(null)
+        message.error('获取参数失败')
+      }
+   } catch (error) {
+      console.log(error)
+   }
+     
+   }
 
 
 
@@ -54,10 +73,12 @@ export default function Index() {
       type: type, // 
       reportType:1,
       filterInfo: alike,
-      customTime: type== 4,
-      areaId
+      
+      areaId,
+      cycleTime,
+      tab:key,
     }
-  }, [projectId, areaId, type, date, energytype, treeId,  line,   alike,publicrangedate])
+  }, [projectId, areaId, type, date, energytype, treeId, key,cycleTime, line,   alike,publicrangedate])
 
   const [total, setTotal] = useState(0)
   const tbref = useRef()
@@ -71,7 +92,7 @@ export default function Index() {
     
     if (!f) return;
  
-      let { success, data, total = 0 }= await useQueryShiftEnergy({},params) 
+      let { success, data, total = 0 }= await useQueryParameterReport({},params) 
     
       setTotal(total)
       if (success && Array.isArray(data) ) {   
@@ -103,7 +124,12 @@ export default function Index() {
     params.current=1
     return getTableData(params)
   }, [total,  params])
-
+ useEffect(() => { 
+  if(Number.isInteger(Number.parseInt(projectId))) {
+    getParameterTabs()
+  }
+ 
+}, [projectId])
  
   const toolbar = [<ProExportExcel tb={tbref} className="reportFs"   />]
   // fromlot,Zdconfig
@@ -111,26 +137,36 @@ export default function Index() {
    
       <Pagecount showSearch={false} custserach={true} >
         <Contentbox>
-          <UserTree areaId={areaId} energytype={energytype} setTreeId={setTreeId} setLine={setLine} showline={true} datatype={NaN} />
+          <UserTree correlation={1} isshow={true} areaId={areaId} showSearch={true} allselect={false} energytype={energytype} setTreeId={setTreeId} setLine={setLine} showline={true} datatype={8} />
           
-              
+               <div className="rightwrap">
+                 <Tabsbox items={options} tabwidth="88px" activeKey={key} tabBarGutter={4} size='small'  onChange={setKey}  ></Tabsbox>
+                                  <div className="tbwrap"> 
                 <UseProTable 
                 headerTitle="参数报表"
                 tableClassName="reportCs"
            
-                columns={timecols} 
+                columns={Cscol} 
                 request={getTableData} 
                 params={params} 
                 search={false}
                 toolBarRender={() => toolbar}
-                options={{
-                  setting: false,
+            
+                columnsState={{
+                  defaultValue:Csconfig,
+                  value:columnsStateMap,
+                  onChange:setColumnsStateMap,
+                  
+                }}
+              
 
-                }}           
+                        
            
                sheetName="参数报表"
                onExport={onExport} 
                 ></UseProTable>
+                </div>
+                </div>
         </Contentbox>
    
       </Pagecount>

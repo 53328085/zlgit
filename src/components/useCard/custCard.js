@@ -1,5 +1,5 @@
 import React from "react";
-import { Card, Image, Typography } from "antd";
+import { Typography } from "antd";
 import { nanoid } from "@reduxjs/toolkit";
 import icon from "./img/electric.png";
 import style from './style.module.less'

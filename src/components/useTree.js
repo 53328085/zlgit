@@ -29,6 +29,10 @@ const { useQuerySpaceTree } = new Apimethod( // 光伏发电--发电统计
   "get",
   "Solar/RuntimeStatistic/QuerySpaceTree"
 )
+const { useTree } = new Apimethod( // 数据报表--参数报表
+  "post",
+  "Common/CommonTree/Tree"
+)
 const { QuerySpaceTrees, } = energyShare
 const { DMAGetTree } = DMAPartition
 const { LineManagerQuery } = Monitoring.LineManager // 线路查询
@@ -76,7 +80,7 @@ export default memo(function Index({ areaId, setTreeId, setLine, setNode, showli
   const [typeTree, setTypeTree] = useState(0)
 
   //const treekey = datatype === 0 ? 'areaId' : datatype === 2||3 ? 'id' :  typeTree == 0 ? "areaId" : "id";
-  const treekey = datatype === 0 ? 'areaId' : [1, 2, 3, 4].includes(datatype) ? 'id' : [5].includes(datatype) ? "key" : typeTree == 0 ? "areaId" : "id";
+  const treekey = datatype === 0 ? 'areaId' : [1, 2, 3, 4,8].includes(datatype) ? 'id' : [5].includes(datatype) ? "key" : typeTree == 0 ? "areaId" : "id";
 
 
   // const treekey =  typeTree == 0 ?  "areaId" : "id" ; 
@@ -87,7 +91,7 @@ export default memo(function Index({ areaId, setTreeId, setLine, setNode, showli
   const [indeterminate, setIndeterminate] = useState(false);
   const [checked, setChecked] = useState(false)
   const [schecked, setschecked] = useState(correlation)
-  const strictyly = schecked == 1
+  const strictyly  =schecked == 1
 
   const allSelected = ({ target: { checked } }) => {
     
@@ -130,7 +134,7 @@ export default memo(function Index({ areaId, setTreeId, setLine, setNode, showli
     
     if (Array.isArray(nodes)) { 
       for (let node of nodes) {
-        let { level, areaId, id, sn } = node
+        let { level, areaId, id, sn,nodeType,nodes:children  } = node
 
         if (level <= 2 && treekey == 'areaId') {
           expand.push(areaId)
@@ -158,8 +162,17 @@ export default memo(function Index({ areaId, setTreeId, setLine, setNode, showli
           }
 
         }
+      
         if (!allselect && arr.length == 0) {
-          arr.push(nodes[0][type])
+            console.log('arr',arr,allselect)
+          if(datatype == 8 && nodeType ==3) {
+             console.log('children',children)
+              arr.push(id)
+          }else if(datatype !=8) {
+            arr.push(nodes[0][type])
+          }
+          
+
         }
         if (mode && node?.[child]?.length > 0) {
           // console.log(node)
@@ -186,6 +199,7 @@ export default memo(function Index({ areaId, setTreeId, setLine, setNode, showli
         "5": { title: 'name', key: treekey, children: 'nodes' },
         "6": { title: 'energyName', key: "energyId", children: 'childs' },
         "7": { title: 'name', key: "sn", children: 'nodes' },
+        "8": { title: 'name', key: "keyStr", children: 'nodes' },
       }[datatype?.toString()] || { title: 'name', key: treekey, children: 'nodes' }
     }
   }, [datatype, treekey, areaId])
@@ -236,6 +250,14 @@ export default memo(function Index({ areaId, setTreeId, setLine, setNode, showli
         projectId,
         areaId,
         //  name: name,
+      },
+      {
+          projectId, 
+    "queryType" : typeTree,
+    "areaIds":[areaId], 
+    "keyword":name, 
+    "showDevice":true,
+    "meterType":energytype
       }
       ][idx]
       if (idx == 3 && name) {
@@ -249,7 +271,7 @@ export default memo(function Index({ areaId, setTreeId, setLine, setNode, showli
         setTreeId(arr);
         return
       }
-      let hander = [QuerySpaceTrees, LineManagerQuery, queryEnergyCategoryTree, DMAGetTree, lightTree, AirTree, useQueryElectricClassifys, useQuerySpaceTree][idx]
+      let hander = [QuerySpaceTrees, LineManagerQuery, queryEnergyCategoryTree, DMAGetTree, lightTree, AirTree, useQueryElectricClassifys, useQuerySpaceTree,useTree][idx]
 
       /*  if(lineType == "3") {
          hander = QuerySpaceTrees
@@ -260,7 +282,7 @@ export default memo(function Index({ areaId, setTreeId, setLine, setNode, showli
            }
        } */
 
-      let { success, data, errMsg } = await hander(params)
+      let { success, data, errMsg } =datatype==8 ? await hander({}, params) : await hander(params)
 
 
       if (success && Array.isArray(data) && data.length > 0) {
@@ -292,6 +314,7 @@ export default memo(function Index({ areaId, setTreeId, setLine, setNode, showli
               getId(data, 'id', 'children')
               break;
             case 4:
+            case 8:
               getId(data, 'id', 'nodes')
               break;
             case 5:
@@ -309,7 +332,7 @@ export default memo(function Index({ areaId, setTreeId, setLine, setNode, showli
 
           }
         }
-
+        console.log("data",data)
 
         treeIdRef.current = arr
         setIndeterminate(false)
@@ -388,6 +411,7 @@ export default memo(function Index({ areaId, setTreeId, setLine, setNode, showli
   // 复选框模式
   const onCheck = (data, e) => { // 受控
     console.log(e)
+    console.log(data)
     try {
       if (mode && !mode(e.node)) return message.warning("该线路没有子线路，末级节点没有线损")
       let checked

@@ -85,3 +85,21 @@ export const Daterange = ({value, onChange,rangeDate=45,showTime=false}) => {
  export const disableDate=(current)=>{
   return current && current> day().endOf("day");
 }
+export const cycleTime=[
+    {
+        value:5,
+        label: "5分钟"
+    },
+    {
+        value:15,
+        label: "15分钟"
+    },
+    {
+        value:30,
+        label: "半小时"
+    },
+    {
+        value:60,
+        label: "1小时"
+    }
+]

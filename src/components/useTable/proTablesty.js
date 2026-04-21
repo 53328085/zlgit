@@ -56,8 +56,8 @@ flex-direction: column;
       }
     }
     .ant-table-tbody {
-     tr:nth-child(odd) {
-       background-color: ${props => props.theme.isdark ? 'dark' : (props.oddbg || "#DCDFE6")} 
+     tr:nth-child(odd),.ant-table-row.ant-table-row-level-0:nth-child(odd) .ant-table-cell {
+       background-color: ${props => props.theme.isdark ? 'dark' : (props.oddbg || "#DCDFE6")} !important
      }
       .ant-table-row{
         .ant-table-cell {

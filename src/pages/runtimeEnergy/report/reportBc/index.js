@@ -1,3 +1,5 @@
+// 班次能耗
+
 import React, { useState, useCallback, useRef, useEffect, useMemo   } from 'react'
 import { Checkbox, DatePicker, message, Tooltip, Descriptions, Radio, Space} from 'antd'
 
@@ -7,7 +9,7 @@ import { useOutletContext } from 'react-router-dom'
 import Pagecount from '@com/pagecontent'
 import UseProTable from "@com/useTable/proTable";
 import UserTree from "@com/useTree"
-import {RadiogroupSolid} from "@com/comstyled"
+import {RadiogroupSolid,Tabsbox} from "@com/comstyled"
 import { getTime, isObject } from '@com/usehandler'
  
 import CModal from '@com/useModal'
@@ -18,6 +20,7 @@ import {   shitcols,  labelStyle, contentStyle } from '../reportdata'
 import {Contentbox,Chartwrap} from "../style"
 import {useQueryShiftEnergy,useQueryShifts} from "../api"
 import {useCol} from "../usehook"
+ 
 
 export default function Index() {
 
@@ -34,15 +37,13 @@ export default function Index() {
  
   
   let columns = useCol(shitcols,3, '用能(kWh)')
- const onChange =(e)=>{
-   setKey(e.target.value)
- }
+ 
 
  const getShift = async  ()=>{ 
   try {
      let {success, data} = await useQueryShifts({projectId})
      if (success && Array.isArray(data) && data.length) { 
-       setOptions(data.map(d =>({...d, label:d.name, value:d.no})))
+       setOptions(data.map(d =>({...d, label:d.name, key:d.no})))
        setKey(data[0].no)
      }else {
        setOptions([])
@@ -79,8 +80,14 @@ export default function Index() {
   }, [projectId, areaId, type, date, energytype, treeId,  line, key,  alike,publicrangedate])
 
   const [total, setTotal] = useState(0)
+
   const tbref = useRef()
- 
+  const headTitle = useMemo(() => { 
+     console.log("option",options)
+     let datas = options.find((item)=>item.key==key)
+     console.log("datas",datas,key)
+    return isObject(datas) ? `班次能耗-${datas?.name} (${datas?.startTime}-${datas?.endTime})`:`班次能耗`
+  }, [options, key])
    const getTableData =async (params) => {
     const {current,...body} = params
     body.pageNum = current
@@ -94,13 +101,15 @@ export default function Index() {
       let { success, data, total = 0 }= await useQueryShiftEnergy({},body) 
     
       setTotal(total)
-      if (success && Array.isArray(data) ) {   
+      if (success && Array.isArray(data) && data?.length ) {  
+       
         return {
           data:  data  ,
           total: total,
           success,
         }
       } else {
+       
         return {
           data: [],
           total: 0,
@@ -137,10 +146,10 @@ export default function Index() {
           <UserTree areaId={areaId} energytype={energytype} setTreeId={setTreeId} setLine={setLine} showline={true} datatype={NaN} />
           
                 <div className='rightwrap'>
-                <RadiogroupSolid options={options} defaultValue={key} value={key}   onChange={onChange}  ></RadiogroupSolid>
+                <Tabsbox items={options} tabwidth="88px" activeKey={key} tabBarGutter={4} size='small'  onChange={setKey}  ></Tabsbox>
                   <div className="tbwrap">
                 <UseProTable 
-                headerTitle="班次能耗"
+                headerTitle={headTitle}
                 tableClassName="reportBc"
                 columns={columns} 
                 request={getTableData} 

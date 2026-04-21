@@ -16,7 +16,7 @@ import {
   SyncOutlined,
 } from '@ant-design/icons';
 
-import { publicdateType, Daterange, w88, viewopt, DefineDateRange ,disableDate} from "./data"
+import { publicdateType, Daterange, w88, viewopt, DefineDateRange ,disableDate,cycleTime} from "./data"
 import Enery from "./enery";
 import AreaLevel from './areas'
 import SubAreas from './subareas'
@@ -394,7 +394,7 @@ export default function UseSerach(props) {
   }
   const publicDate = <Space size={16}>
     <Form.Item name="publictype" initialValue={1}>
-      <Select options={publicdateType} style={{ width: "88px" }} onChange={changepublic}></Select>
+      <Select options={props.config?.dateOpt ?? publicdateType} style={{ width: "88px" }} onChange={changepublic}></Select>
     </Form.Item>
     <Form.Item noStyle shouldUpdate={(cur, pre) => cur.publictype != pre.publictype}>
       {
@@ -415,6 +415,12 @@ export default function UseSerach(props) {
         }
       }
     </Form.Item>
+     {props.config?.cycleTime && <Item name="cycleTime" initialValue={15}>
+      <Select style={{ width: '100px' }} options={cycleTime} 
+
+      ></Select>
+    </Item>
+    }
     {!props.config?.shiftNo && <Item name="shiftNo" initialValue={0}>
       <Select style={{ width: '100px' }} options={allshifts} fieldNames={{ label: 'name', value: 'id' }}
 
