@@ -22,7 +22,7 @@ import { Area } from "@api/api.js";
 import { WarningFilled, LeftOutlined, RightOutlined } from "@ant-design/icons";
 import { DndProvider } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
-import { Serach } from '@com/comstyled'
+import { Serach ,Drawerbox} from '@com/comstyled'
 
 import { selectOneLevel, selectOneLevelDefaultId, getOnelevel, publishState, filterDeviceStyle,adaptation } from '@redux/systemconfig.js'
 import { useSelector, useDispatch } from 'react-redux'
@@ -50,88 +50,7 @@ const iconsty = css`
   width: 48px;
   height: 32px;
 `
-const Drawerbox = styled(Drawer)`
-  && {
-  //  z-index: 10001;
-    .ant-drawer-content-wrapper {
-      width: calc(100% - 200px)!important;
-      height: calc(100% - 64px);
-      top:64px;
-    }
-    .ant-drawer-wrapper-body {
-      background-color: #003366;
-      .ant-drawer-body {
-        display: grid;
-        grid-template-columns: 692px 1fr 714px;
-        column-gap: 30px;
-        grid-template-rows: 1fr;
-       
-        .title {
-          padding-left: 16px;
-          border-left: 4px ${props=> props.theme.primaryColor} solid;
-          color: #333;
-          display: flex;
-          align-items: center;
-          justify-content: space-between;
-        }
-        .selected {
-          display: flex;  
-          row-gap: 32px;
-          flex-direction:column;
-          .total {
-            display: grid;
-            grid-template-rows: 32px 32px 1fr;
-            row-gap: 16px;
-            padding: 16px;
-            background-color: #fff;
-            flex:1;
-          }
-          .sub {
-            display: grid;
-            grid-template-rows: 32px 32px 1fr;
-            padding: 16px;
-            row-gap: 16px;
-            background-color: #fff;
-            flex: 1;
-          }
-        }
-        .outwrap {
-          position: relative;
-          height: 100%;
-          overflow: auto;
-          .inwrap {
-            position: absolute;
-            width: 100%;
-          }
-        }
-        .unselected {
-          display: grid;
-          grid-template-rows: 32px 32px 1fr;
-          padding: 16px;
-          row-gap: 16px;
-          background-color: #fff;
-        }
-        .optab {
-          display: flex;
-          flex-direction: column;
-          justify-content: space-between;
-          padding: 32px 0;
-          > div {
-            .ant-typography {
-              color: #fff;
-            }
-            .ant-btn-icon-only {
-              width: 64px;
-              height: 46px;
-            }
-          }
-        }
-        ${props=> props.theme.laptop ? sty : null}
-      }
-     
-    }
-  }
-`;
+
 const Inptserach = styled(Input.Search)`
   && {
     width: 288px;
@@ -645,19 +564,21 @@ const savesty = laptop
         </Space>
       </Form>
       <UserTable columns={columns}  {...tableProps} rowKey="areaId" />
-      {/*    <UserTable columns={columns} {...tableProps} rowKey='areaId'  style={{display: level==1 ?'block' : 'none' }} /> 
-          <UserTable columns={columns} {...tableProps} rowKey='areaId' style={{display: level>1 ?'block' : 'none' }} />   */}
-
-      {/* 抽屉 */}
-      {/*  devices.current.deviceSummary = [];
-        devices.current.deviceSub = [] */}
-    {/*   <Mask task={open} > */}
-        <Drawerbox
+    
+    <Drawerbox/>
+        <Drawer
           onClose={drawClose}
           open={open}         
           closable={false}
           destroyOnHidden
-          contentWrapperStyle={{ margingRight: '16px' }}
+              rootClassName="drawerbox"
+              styles={{
+        content: {
+          margingRight: '16px',
+        
+           
+        }
+      }}
         >
           <div className="selected">
             <div className="total">
@@ -832,7 +753,7 @@ const savesty = laptop
             </div>
            
           </div>
-        </Drawerbox>
+        </Drawer>
       {/* </Mask> */}
     </Mainbox>
   );

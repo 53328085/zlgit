@@ -71,7 +71,7 @@ export  function useBaript({selectedRowKeys, tableData, checkvalue, detailHeader
 }
 
 
-export function useCol(cols, index, title) { 
+export function useCol(cols, index, title, rowspan) { 
   return  useMemo(() => { 
       if(isObject(cols)&& Object.values(cols) && index && title) { 
         console.log("cols",cols)
@@ -80,6 +80,25 @@ export function useCol(cols, index, title) {
         col.title = title
        }
        
+        return  Array.from(cols)
+      }else {
+        return []
+      }
+
+    }, [cols,index, title])
+
+}
+ export function useCsCol(cols, index, title,  rows=0, spans ) { 
+  return  useMemo(() => { 
+      if(isObject(cols)&& Object.values(cols) && index && title) { 
+        console.log("cols",cols)
+       let col=  cols[index]
+       if(col && title){
+        col.title = title
+       }
+       for(let i=0;i<rows;i++) {
+         cols[i].onCell = (_,index)=> ({rowSpan: index%spans=== 0 ? spans : 0})
+       }
         return  Array.from(cols)
       }else {
         return []

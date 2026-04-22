@@ -368,7 +368,7 @@ export default function Index() {
         setThemes(data.map(d => ({...d,    context: JSON.parse(d.context)})))
       }else {
         setThemes([])
-        message.warning(errMsg || "无法获取主题")
+       // message.warning(errMsg || "无法获取主题")
       }
     } catch (error) {
       

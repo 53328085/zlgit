@@ -8,7 +8,7 @@ import { useOutletContext } from 'react-router-dom'
  import {RadiogroupSolid,Tabsbox} from "@com/comstyled"
 import Pagecount from '@com/pagecontent'
 import UseProTable from "@com/useTable/proTable";
-import UserTree from "@com/useTree"
+import UserTree from "@com/useTree/cstree"
  
 import { getTime, isObject } from '@com/usehandler'
  
@@ -16,6 +16,7 @@ import { getTime, isObject } from '@com/usehandler'
 import { ProExportExcel, CustButton,SetButton } from '@com/useButton'
  
 import {   Cscol,Csconfig, labelStyle, contentStyle } from '../reportdata'
+import  {useCsCol} from '../usehook'
 
 import {Contentbox,Chartwrap} from "../style"
 import {useQueryParameterReport,useQuerysParameterReportTabs} from "../api"
@@ -35,9 +36,24 @@ export default function Index() {
   const [line, setLine] = useState(0)
   const [treeId, setTreeId] = useState()
   let { areaId, projectId, publictype:type,cycleTime, publicdate:date, energytype, alike,publicrangedate } = exparams  
+  const [unit, setUnit] = useState()
+  const  [title, headerTitle] = useMemo(() => {
+    let label = options?.find(d => d.key == key)?.label ?? ''
+    return [`${label}(${unit})`, `参数报表-${label}`]
+  }, [unit, key])
 
-  console.log(exparams)
-  
+
+ const spans = useMemo(() => {
+     if (energytype == 1){
+       return [7,7,3,3,3,4,4,4][key]
+      }else {
+         return 1
+      }
+     
+    }, [key,energytype ])
+
+  const columns = useCsCol(Cscol, 4, title, 4, spans)
+  console.log(columns)
   const getParameterTabs = async  ()=>{ 
    try {
       let {success, data} = await useQuerysParameterReportTabs({projectId})
@@ -87,18 +103,20 @@ export default function Index() {
     params.pageNum = params.current
     let  {  projectId, type,  meterType, ids, areaId,  queryType,   startDate,endDate}= params
      try { 
-    let f = [ projectId, type, meterType,areaId,   queryType].every(v => Number.isInteger(v)) && Array.isArray(ids) && startDate && endDate
+    let f = [ projectId, type, meterType,areaId,   queryType].every(v => Number.isInteger(v)) && Array.isArray(ids) && ids?.length && startDate && endDate
  
     
     if (!f) return;
  
       let { success, data, total = 0 }= await useQueryParameterReport({},params) 
     
-      setTotal(total)
-      if (success && Array.isArray(data) ) {   
+     
+      const  {detailDatas,detailHeaders} = data
+      if (success && Array.isArray(detailDatas) ) { 
+         setUnit(detailDatas[0]?.unit)
         return {
-          data:  data  ,
-          total: total,
+          data:  detailDatas  ,
+          total: detailDatas?.length,
           success,
         }
       } else {
@@ -137,21 +155,21 @@ export default function Index() {
    
       <Pagecount showSearch={false} custserach={true} >
         <Contentbox>
-          <UserTree correlation={1} isshow={true} areaId={areaId} showSearch={true} allselect={false} energytype={energytype} setTreeId={setTreeId} setLine={setLine} showline={true} datatype={8} />
+          <UserTree correlation={1} isshow={true} areaId={areaId} showSearch={true} allselect={false} energytype={energytype} setTreeId={setTreeId} setLine={setLine} showline={true}   />
           
                <div className="rightwrap">
                  <Tabsbox items={options} tabwidth="88px" activeKey={key} tabBarGutter={4} size='small'  onChange={setKey}  ></Tabsbox>
                                   <div className="tbwrap"> 
                 <UseProTable 
-                headerTitle="参数报表"
+                headerTitle= {headerTitle}
                 tableClassName="reportCs"
            
-                columns={Cscol} 
+                columns={columns} 
                 request={getTableData} 
                 params={params} 
                 search={false}
                 toolBarRender={() => toolbar}
-            
+                 pagination={false}
                 columnsState={{
                   defaultValue:Csconfig,
                   value:columnsStateMap,

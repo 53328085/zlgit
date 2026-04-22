@@ -588,7 +588,7 @@ const savesty = laptop
         content: {
           margingRight: '16px',
         
-          // width: 'calc(100% - 200px)'
+           
         }
       }}
         >

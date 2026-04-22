@@ -5,10 +5,11 @@ import styled, {css} from 'styled-components'
 import {useSelector} from 'react-redux'
 import Titlelayout from '@com/titlelayout.js'
 import UserTable from "@com/useTable";
+
 // import { boundarySlice, useConfigDeviceMutation, useApiDataMutation } from './boundary'
 import { isObject } from "@com/usehandler"
 import { CustButton,CustButtonT } from "@com/useButton"
-import { Cdivider } from '@com/comstyled'
+import { Cdivider,Drawerbox } from '@com/comstyled'
 import {adaptation} from '@redux/systemconfig'
 const { Paragraph } = Typography
 import {QuotaManage} from '@api/api'
@@ -43,7 +44,7 @@ const Inptserach = styled(Input.Search)`
     }
   }
 `;
-const Drawerbox = styled(Drawer)`
+/* const Drawerbox = styled(Drawer)`
   && {
     .ant-drawer-content-wrapper {
       width: calc(100% - 200px) !important;
@@ -159,7 +160,7 @@ const Drawerbox = styled(Drawer)`
       }
     }
   }
-`;
+`; */
 const deviceColumns = [
   {
     title: '设备编号',
@@ -389,13 +390,23 @@ function Draw({params }, ref) {
          }
       }
   return (
-    <Drawerbox
+    <>
+    <Drawerbox />
+   
+    <Drawer
     onClose={drawClose}
      open={open}
      
     closable={false}
     maskClosable={false}
-    contentWrapperStyle={{margingRight: '16px'}}
+     rootClassName="drawerbox"
+   styles={{
+        content: {
+          margingRight: '16px',
+        
+           
+        }
+      }}
     title=""
     destroyOnHidden
   >
@@ -500,7 +511,8 @@ function Draw({params }, ref) {
       </Titlelayout>
       
  
-  </Drawerbox>
+  </Drawer>
+   </>
   )
 }
 export default forwardRef(Draw)

@@ -343,9 +343,9 @@ const imgToBase = (url) => {
           </Col>
         </Row>
       </Item>
-      <div className="map">
+    {/*   <div className="map">
         <Mapcom setAaddress={setAaddress} initialValues={initialValues} ref={map} />
-      </div>
+      </div> */}
     </Formbox>
   );
 }
