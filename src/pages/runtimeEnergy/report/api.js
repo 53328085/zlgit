@@ -44,3 +44,10 @@ export const { useQueryParameterReport } = new Apimethod( //参数报表
   "post",
   "Energy/DataReportRuntime/QueryParameterReport"
 );
+
+ 
+
+export const { useQueryMaxNeedInfo } = new Apimethod( //最大需量
+  "post",
+  "Energy/DataReportRuntime/QueryMaxNeedInfo"
+);

@@ -114,11 +114,11 @@ export default function Index() {
   // fromlot,Zdconfig
   return (
    
-      <Pagecount showSearch={false} custserach={true} >
+      <Pagecount showSearch={false} custserach={true} pd="0" bgcolor="none" >
         <Contentbox>
           <UserTree areaId={areaId} energytype={energytype} setTreeId={setTreeId} setLine={setLine} showline={true} datatype={NaN} />
-          
-              
+          <div className="rightwrap">
+               <div className="tbwrap">
                 <UseProTable 
                 headerTitle="账单报表"
                 tableClassName="reportZd"
@@ -138,6 +138,8 @@ export default function Index() {
                sheetName="账单报表"
                onExport={onExport} 
                 ></UseProTable>
+                </div>
+                </div>
         </Contentbox>
    
       </Pagecount>

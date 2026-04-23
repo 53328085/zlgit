@@ -12,7 +12,7 @@ import Tablecom from './index'
 import ProTablecom,{TableContainer,Settingicon } from './proTablesty'
 import setting from './icon/setting.png'
 import {isObject} from "@com/usehandler"
-import {useGetY} from "./useMetherr"
+import {useGetY} from "./useMethod"
 import {
 
   adaptation

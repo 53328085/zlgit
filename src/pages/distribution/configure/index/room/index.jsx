@@ -395,8 +395,8 @@ export default function Index() {
             <Item label='备注' name='remark'>
               <TextArea rows={laptop ? 2 : 4} style={{width:'400px'}}></TextArea>
             </Item>
-            <Item name="imgBgKey" noStyle>
-                  <Input type="text" hidden />
+            <Item name="imgBgKey" hidden noStyle>
+                  <Input type="text"  />
             </Item>
           </Form>
         </Mainbox>

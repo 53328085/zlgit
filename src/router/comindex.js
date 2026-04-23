@@ -11,7 +11,7 @@ import {
   enterprise,
   selectProjectId,
   setCurrentlevel,
-  iszhCN
+  iszhCN,
 } from "@redux/systemconfig.js";
 export default function Index() {
   const dispatch = useDispatch();
@@ -20,30 +20,41 @@ export default function Index() {
   let { state = {} } = location;
   let { nested = "", primary, meterType } = state ?? {}; // meterType 从运行监控 =》 运行监控 跳转到 运行监控-》 设备管理
 
-  let whole = ["runtimeMonitor", "runtimeSafe", "runtimeEnergy", "runtimeStorage", "runtimeMaintenance", "runtimeSolar", "designerSolar"]; // 需要显示搜索 ***（全部）的模块
-  let include = useMemo(() => { // 需要显示搜索 ***（全部）的页面
-    let nesteds = {
-      [primary]: [""]
-    }[primary] || []
-    return nesteds.includes(nested) ? {} : false
+  let whole = [
+    "runtimeMonitor",
+    "runtimeSafe",
+    "runtimeEnergy",
+    "runtimeStorage",
+    "runtimeMaintenance",
+    "runtimeSolar",
+    "designerSolar",
+  ]; // 需要显示搜索 ***（全部）的模块
+  let include = useMemo(() => {
+    // 需要显示搜索 ***（全部）的页面
+    let nesteds =
+      {
+        [primary]: [""],
+      }[primary] || [];
+    return nesteds.includes(nested) ? {} : false;
   }, [primary, nested]);
 
-  console.log("nested", nested,"primary", primary)
+  console.log("nested", nested, "primary", primary);
 
-  let includemodule = useMemo(() => {  // 需要显示搜索 ***（全部）的模块中排除的页面
+  let includemodule = useMemo(() => {
+    // 需要显示搜索 ***（全部）的模块中排除的页面
     let primaries = {
-      runtimeEnergy: [nested]
-    }[primary]
+      runtimeEnergy: [nested],
+    }[primary];
 
-    return Array.isArray(primaries) ? primaries.includes("summary") : false
+    return Array.isArray(primaries) ? primaries.includes("summary") : false;
   }, [primary, nested]);
-  console.log("includemodule", includemodule)
+  console.log("includemodule", includemodule);
 
   const onelevel = useSelector(selectOneLevel);
   const varlabel = useSelector(levelDefaultLabel);
-  const projectId = useSelector(selectProjectId)
-  const iszh = useSelector(iszhCN)
-  const { enterpriseId } = useSelector(enterprise)
+  const projectId = useSelector(selectProjectId);
+  const iszh = useSelector(iszhCN);
+  const { enterpriseId } = useSelector(enterprise);
   const [inpage, setInpage] = useState({
     runtimeMonitor: [
       "monitor",
@@ -55,7 +66,8 @@ export default function Index() {
       "call",
     ], // 运行监控
     runtimeSafe: ["summary", "alarmDetail"], // 电气安全
-    runtimeEnergy: [ // 能源管理
+    runtimeEnergy: [
+      // 能源管理
       "summary",
       "area",
       "assorting",
@@ -71,15 +83,17 @@ export default function Index() {
       "light",
       "region",
       "comm",
-      'timePeriodEnergy',
+      "timePeriodEnergy",
       "reportNh",
       "reportZd",
       "reportFs",
       "reportFl",
       "reportCs",
       "reportBc",
+      "reportXl",
     ],
-    runtimeStorage: [ // 储能管理
+    runtimeStorage: [
+      // 储能管理
       "storageOverview",
       "cabinetMonitor",
       "pCSMonitor",
@@ -90,94 +104,102 @@ export default function Index() {
       "operationLog",
       // "storageReport",
     ],
-    runtimeMaintenance: [ // 运维管理
+    runtimeMaintenance: [
+      // 运维管理
       "summary",
       "alarm",
       "order",
       "inspection",
       "class",
-      "chart"
+      "chart",
     ],
-    runtimeSolar: [//光伏发电
+    runtimeSolar: [
+      //光伏发电
       "stationTopo",
       "cabinetMonitor",
       "inverterMonitor",
       "statistic",
       "warning",
     ],
-    efficiencyAnalysis: [
-      "wasteWaterMonitor"
-    ],
+    efficiencyAnalysis: ["wasteWaterMonitor"],
     /*    runtimeQuota: [
          "runtimeParkQuota", //园区是专门的接口
          "runtimeQuotaDetailed",
         "runtimeQuotaAlarms"
        ], */
     // 设计态
-    designerEnergy: [ // 能源管理
+    designerEnergy: [
+      // 能源管理
       "price",
       "norm",
       "energy",
-      "type", "energyRank"
+      "type",
+      "energyRank",
     ],
-    runtimeCarbonEmissionManager: [  //碳排管理
+    runtimeCarbonEmissionManager: [
+      //碳排管理
       "runtimeCarbonData",
       "runtimeCarbonExamine",
     ],
-    ledger: [  //台账管理
+    ledger: [
+      //台账管理
       "deviceLedger",
-      "spareParts", "ledgerManagement", "spareParts"
+      "spareParts",
+      "ledgerManagement",
+      "spareParts",
     ],
-    lightManagement: [  // 照明控制
+    lightManagement: [
+      // 照明控制
       //  "streetLightEnergyMonitor",
       "lightControl",
       //   "streetLightDataReport",
-
     ],
-    streetLightManagement: [ // 照明控制 设置态
+    streetLightManagement: [
+      // 照明控制 设置态
       "streetLightLineConfig",
     ],
-    designerSolar: [//光伏发电
+    designerSolar: [
+      //光伏发电
       "station",
-      "inverter"
+      "inverter",
     ],
-    storage: [
-      'storageDevice',
-      'storageEnvironment'
-    ]
+    storage: ["storageDevice", "storageEnvironment"],
   }); // 需要显示搜索的页面
 
   const [showRoom, setShowroom] = useState(true); // 是否显示配电房选择框
 
   // const [exparams, setexparams] = useState({ deviceStyle: 1 });
   const [exparams, setexparams] = useState({});
-  const [areaName, setAreaName] = useState()
+  const [areaName, setAreaName] = useState();
   const [config, setConfig] = useState({});
   const [custview, setCustview] = useState(undefined);
   let showSerach = inpage[primary]?.includes(nested);
 
   let style = showSerach
     ? {
-      flex: 1,
-      display: "grid",
-      gridTemplateRows: "auto 1fr",
-      rowGap: "16px",
-    }
+        flex: 1,
+        display: "grid",
+        gridTemplateRows: "auto 1fr",
+        rowGap: "16px",
+      }
     : {
-      display: "flex",
-      flex: 1,
-    };
-  const context = useMemo(() => ({
-    setInpage,
-    setShowroom,
-    setConfig,
-    exparams,
-    setCustview,
-    areaName,
-    enterpriseId,
-    projectId,
-    iszh,
-  }), [exparams, areaName, enterpriseId, projectId, iszh]);
+        display: "flex",
+        flex: 1,
+      };
+  const context = useMemo(
+    () => ({
+      setInpage,
+      setShowroom,
+      setConfig,
+      exparams,
+      setCustview,
+      areaName,
+      enterpriseId,
+      projectId,
+      iszh,
+    }),
+    [exparams, areaName, enterpriseId, projectId, iszh],
+  );
   const props = {
     config,
     setexparams,
@@ -187,29 +209,46 @@ export default function Index() {
 
   const sethandler = () => {
     try {
-      console.log(primary)
+      console.log(primary);
       if (primary == "runtimeMonitor") {
         switch (nested) {
           case "point":
-            setConfig({ isdevsty: true, meterType })
+            setConfig({ isdevsty: true, meterType });
             break;
           default:
             setConfig({ isdevsty: false });
         }
       }
-      if (primary == "runtimeEnergy") {   //issubarea
+      if (primary == "runtimeEnergy") {
+        //issubarea
         switch (nested) {
           case "summary":
             setConfig({ isdate: true, shiftNo: true });
             break;
           case "area":
-            setConfig({ isview: true, publicDate: true, shiftNo: false, rangeDate: 45 });
+            setConfig({
+              isview: true,
+              publicDate: true,
+              shiftNo: false,
+              rangeDate: 45,
+            });
             break;
           case "assorting":
-            setConfig({ isview: true, publicDate: true,rangeDate: 45, shiftNo: false, issubarea: true });
+            setConfig({
+              isview: true,
+              publicDate: true,
+              rangeDate: 45,
+              shiftNo: false,
+              issubarea: true,
+            });
             break;
           case "range":
-            setConfig({ energytype: false, isdate: false, custview: true, isAreaId: false, });
+            setConfig({
+              energytype: false,
+              isdate: false,
+              custview: true,
+              isAreaId: false,
+            });
             break;
           case "comm":
             setConfig({ shiftNo: true });
@@ -234,39 +273,64 @@ export default function Index() {
             setConfig({
               energytype: true,
               publicDate: true,
-               rangeDate: 45,
+              rangeDate: 45,
               shiftNo: true,
               gas: false,
               custview: true,
-              alike:true,
+              alike: true,
               showTime: {
-                format: 'HH:mm',
-                minuteStep: 15
-              }
+                format: "HH:mm",
+                minuteStep: 15,
+              },
             });
             break;
           case "reportCs":
-             setConfig({
+            setConfig({
               energytype: true,
               publicDate: true,
-               rangeDate: 45,
+              rangeDate: 45,
               shiftNo: true,
               gas: false,
               custview: true,
-              alike:true,
-              period:true,
+              alike: true,
+              period: true,
               showTime: {
-                format: 'HH:mm',
-                minuteStep: 15
+                format: "HH:mm",
+                minuteStep: 15,
               },
-              cycleTime:true,
-              dateOpt:[{
-        value:1,
-        label: "日"
-    }, {
-        value:4,
-        label: "自定义"
-    },]
+              cycleTime: true,
+              dateOpt: [
+                {
+                  value: 1,
+                  label: "日",
+                },
+                {
+                  value: 4,
+                  label: "自定义",
+                },
+              ],
+            });
+            break;
+          case "reportXl":
+            setConfig({
+              energytype: true,
+              publicDate: true,
+             
+              shiftNo: true,
+              gas: false,
+              custview: true,
+              alike: true,
+              period: true,
+              dateOpt: [
+                {
+                  value: 3,
+                  label: "年",
+                },
+                {
+                  value: 2,
+                  label: "月",
+                },
+              ],
             });
             break;
           case "direction":
@@ -286,7 +350,12 @@ export default function Index() {
             setConfig({ custview: true });
             break;
           case "public":
-            setConfig({ energytype: true, shiftNo: true, publicDate: true, formsty: { justifyContent: "flex-start", columnGap: "16px" } });
+            setConfig({
+              energytype: true,
+              shiftNo: true,
+              publicDate: true,
+              formsty: { justifyContent: "flex-start", columnGap: "16px" },
+            });
             break;
           case "air":
           case "grading":
@@ -294,7 +363,14 @@ export default function Index() {
             setConfig({ isview: true, isdate: true, shiftNo: true });
             break;
           case "region":
-            setConfig({ energytype: true, isdate: true, shiftNo: true, gas: false, isAreaId: false, isLevles: true });
+            setConfig({
+              energytype: true,
+              isdate: true,
+              shiftNo: true,
+              gas: false,
+              isAreaId: false,
+              isLevles: true,
+            });
             break;
           case "timePeriodEnergy":
             setConfig({ isdate: true, shiftNo: true });
@@ -307,7 +383,12 @@ export default function Index() {
       } else if (primary == "efficiencyAnalysis") {
         switch (nested) {
           case "wasteWaterMonitor":
-            setConfig({ shiftNo: true, publicDate: true,   isAreaId: false,formsty:{gap:0} });
+            setConfig({
+              shiftNo: true,
+              publicDate: true,
+              isAreaId: false,
+              formsty: { gap: 0 },
+            });
             break;
           default:
             setConfig({});
@@ -328,7 +409,7 @@ export default function Index() {
           case "earningsStatistics":
             setConfig({ isSite: true, isdate: true, shiftNo: true });
             break;
-          case "alarmMessage":  //definedaterange
+          case "alarmMessage": //definedaterange
             setConfig({ isSite: true, definedaterange: true });
             break;
           case "ENVMonitor":
@@ -349,7 +430,13 @@ export default function Index() {
             setConfig({ isAreaId: false, dateY: true });
             break;
           case "runtimeCarbonData":
-            setConfig({ isAreaId: false, isdate: true, shiftNo: true, dateType: 2, daterang: "week" });
+            setConfig({
+              isAreaId: false,
+              isdate: true,
+              shiftNo: true,
+              dateType: 2,
+              daterang: "week",
+            });
             break;
         }
       }
@@ -370,10 +457,9 @@ export default function Index() {
         }
       }
       if (primary == "runtimeMaintenance") {
-
         setConfig({});
       } else if (primary == "cabinets") {
-        setConfig({})
+        setConfig({});
       } else if (primary == "lightManagement") {
         switch (nested) {
           case "lightControl":
@@ -383,21 +469,39 @@ export default function Index() {
              setConfig({ isview: false, isdate: true, shiftNo: true });
              break; */
         }
-
-      }
-      else if (primary == "runtimeSolar") {
+      } else if (primary == "runtimeSolar") {
         switch (nested) {
           case "cabinetMonitor":
-            setConfig({ refresh: true, cabinet: true, photovoltaicPowerStation: true })
-            break
+            setConfig({
+              refresh: true,
+              cabinet: true,
+              photovoltaicPowerStation: true,
+            });
+            break;
           case "inverterMonitor":
-            setConfig({ refresh: true, cabinet: true, inverter: true, photovoltaicPowerStation: true });
+            setConfig({
+              refresh: true,
+              cabinet: true,
+              inverter: true,
+              photovoltaicPowerStation: true,
+            });
             break;
           case "statistic":
-            setConfig({ publicDate: true, shiftNo: true, photovoltaicPowerStation: false, inverter: false });
+            setConfig({
+              publicDate: true,
+              shiftNo: true,
+              photovoltaicPowerStation: false,
+              inverter: false,
+            });
             break;
           case "warning":
-            setConfig({ dateR: true, cabinet: false, shiftNo: true, photovoltaicPowerStation: true, inverter: false });
+            setConfig({
+              dateR: true,
+              cabinet: false,
+              shiftNo: true,
+              photovoltaicPowerStation: true,
+              inverter: false,
+            });
             break;
         }
       }
@@ -425,7 +529,6 @@ export default function Index() {
             setConfig({ custview: true });
             break;
         }
-
       } else if (primary == "streetLightManagement") {
         switch (nested) {
           case "streetLightLineConfig":
@@ -445,17 +548,17 @@ export default function Index() {
         }
       } else if (primary == "storage") {
         switch (nested) {
-          case 'storageDevice':
+          case "storageDevice":
             setConfig({ isSite: true, isTank: true });
             break;
-          case 'storageEnvironment':
+          case "storageEnvironment":
             setConfig({ isSite: true, isTank: true });
             break;
         }
       }
 
       // custview
-    } catch (error) { }
+    } catch (error) {}
   };
 
   useEffect(() => {
@@ -466,14 +569,20 @@ export default function Index() {
           getOnelevel([
             { name: `${varlabel}(全部)`, id: 0, levelName: varlabel },
             ...onelevel,
-          ])
+          ]),
         );
-        dispatch(setCurrentlevel({ name: `${varlabel}(全部)`, id: 0, levelName: varlabel }))
+        dispatch(
+          setCurrentlevel({
+            name: `${varlabel}(全部)`,
+            id: 0,
+            levelName: varlabel,
+          }),
+        );
       }
     } else {
-      console.log("不需要添加全部")
+      console.log("不需要添加全部");
       let level = onelevel.filter((l) => l.id != 0);
-      dispatch(setCurrentlevel(level?.[0]))
+      dispatch(setCurrentlevel(level?.[0]));
       dispatch(getOnelevel([...level]));
     }
   }, [primary, include, includemodule]);

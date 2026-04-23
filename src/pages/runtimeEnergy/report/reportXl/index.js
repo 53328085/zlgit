@@ -1,4 +1,4 @@
-// 参数报表
+// 最大需求
 
 import React, { useState, useCallback, useRef, useEffect, useMemo   } from 'react'
 import { Checkbox, DatePicker, message, Tooltip, Descriptions, Radio, Space} from 'antd'
@@ -19,7 +19,7 @@ import {   Cscol,CscolW,Csconfig,CstbTitle, labelStyle, contentStyle } from '../
 import  {useCsCol} from '../usehook'
 
 import {Contentbox,Chartwrap} from "../style"
-import {useQueryParameterReport,useQuerysParameterReportTabs} from "../api"
+import {useQueryMaxNeedInfo} from "../api"
 import { t } from 'i18next'
  
 
@@ -56,22 +56,7 @@ export default function Index() {
  
   const columns = useCsCol({  index, title, frontRows, spans,header, energytype})
   console.log("columns", columns)
-  const getParameterTabs = async  ()=>{ 
-   try {
-      let {success, data} = await useQuerysParameterReportTabs({projectId,meterType:energytype})
-      if (success && Array.isArray(data) && data.length) { 
-        setOptions(data.map(d =>({...d, label:d.value})))
-        setKey(data[0].key)
-      }else {
-        setOptions([])
-        setKey(null)
-        message.error('获取参数失败')
-      }
-   } catch (error) {
-      console.log(error)
-   }
-     
-   }
+ 
 
 
 
@@ -110,7 +95,7 @@ export default function Index() {
     
     if (!f) return;
  
-      let { success, data }= await useQueryParameterReport({},params) 
+      let { success, data }= await useQueryMaxNeedInfo({},params) 
     
       
       const  {detailDatas,detailHeaders} = data
@@ -142,7 +127,7 @@ export default function Index() {
         })
        
         return {
-          data: datas,
+          data: [], //datas,
           total: detailDatas?.length,
           success,
         }
@@ -167,49 +152,41 @@ export default function Index() {
   const onExport = useCallback(() => {
     return getTableData(params)
   }, [params])
- useEffect(() => { 
-  if( [energytype, projectId].every(d =>Number.isInteger(Number.parseInt(d)))) {
-    getParameterTabs()
-  }
  
-}, [projectId,energytype])
 
-  const columnsState = energytype == 1 ? {
-                  defaultValue:Csconfig,
-                  value:columnsStateMap,
-                  onChange:setColumnsStateMap,
-                  
-                }: {
-
-                }
+ 
   const toolbar = [<ProExportExcel tb={tbref} className="reportFs"   />]
-  
+  const  parameter={
+    params:{
+      showDevice:false
+    },
+    limit:Number.isNaN
+  }
   return (
    
       <Pagecount showSearch={false} custserach={true} pd="0" bgcolor="none" >
         <Contentbox>
-          <UserTree correlation={1} isshow={true} areaId={areaId} showSearch={true} allselect={false} energytype={energytype} setTreeId={setTreeId} setLine={setLine} showline={true}   />
+          <UserTree parameter={parameter} correlation={1} isshow={true} areaId={areaId} showSearch={true} allselect={false} energytype={energytype} setTreeId={setTreeId} setLine={setLine} showline={true}   />
           
                <div className="rightwrap">
-                 <Tabsbox items={options} tabwidth="88px" activeKey={key} tabBarGutter={4} size='small'  onChange={setKey}  ></Tabsbox>
                                   <div className="tbwrap"> 
                 <UseProTable 
-                headerTitle= {headerTitle}
-                tableClassName="reportCs"
-                rowKey={row=> row.keysn+row.address}
+                headerTitle= "最大有功总需量报表"
+                tableClassName="reportXl"
+                 
                 columns={columns} 
                 request={getTableData} 
                 params={params} 
                 search={false}
                 toolBarRender={() => toolbar}
                  pagination={false}
-                columnsState={columnsState}
+              
                 options={
-                energytype == 1?  {
+                energytype == 1 ?  {
                     setting: false,
-                  }:{}
+                  }: {}
                 }
-               sheetName="参数报表"
+               sheetName="最大有功总需量报表"
                onExport={onExport} 
                 ></UseProTable>
                 </div>

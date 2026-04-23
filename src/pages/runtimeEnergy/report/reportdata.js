@@ -390,7 +390,7 @@ export const Zdconfig ={  // 账单表格配置
   length: 5
   }
 
-export const Cscol = { //  参数报表
+export const Cscol = { //  参数报表--电
  0:{
     title: '区域名称',
     dataIndex: 'nodeName',
@@ -409,13 +409,15 @@ export const Cscol = { //  参数报表
     title: '设备编号',
     dataIndex: 'sn',
     key: "sn",
-    ellipsis:true
+    ellipsis:true,
+    fixed:'left',
   },
   3:{
     title: '安装位置',
     dataIndex: 'address',
     key: "address",
-    ellipsis:true
+    ellipsis:true,
+     fixed:'left',
   },
    4: {
     title: '电量(kWh)',
@@ -427,6 +429,25 @@ export const Cscol = { //  参数报表
   
   
   length: 5
+}
+export const CscolW = { //  参数报表--水
+ 
+ 0: {
+    title: '设备名称',
+    dataIndex: 'name',
+    key: "name",
+    fixed:'left',
+    ellipsis:true,
+  }, 
+  1:{
+    title: '设备编号',
+    dataIndex: 'sn',
+    key: "sn",
+    ellipsis:true,
+    fixed:'left',
+  }, 
+  
+  length: 2
 }
  export const Csconfig ={  // 参数表格配置
   nodeName:{
@@ -476,3 +497,13 @@ export const tabs =[
   {label:'中班',key:"2"},
   {label:'晚班',key:"3"}
 ]
+
+export const CstbTitle = {
+  1:["用电量-总","用电量-尖","用电量-峰","用电量-平","用电量-谷","用电量-深谷","反向用电量-总"],
+  2:["组合","正向","反向",],
+  3:["A相","B相","C相"],
+  4:["A相","B相","C相"],
+  5:["总","A相","B相","C相","当前正向有功总需量"],
+  6:["总","A相","B相","C相" ],
+  7:["总","A相","B相","C相" ],
+}

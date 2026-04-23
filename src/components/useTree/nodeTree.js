@@ -19,9 +19,9 @@ import { message, Input, Tree, Radio, Checkbox, Switch } from "antd";
 
 import Titlelayout from "@com/titlelayout";
 import { useLocation } from "react-router-dom";
-import { useTree } from "./api";
+import { useNodeTree } from "./api";
 import { Treebox } from "./style";
-import { useGetId } from "./usehook";
+import { useGetY } from "@com/usehandler";
 const { Search } = Input;
 
 export default memo(function Index({
@@ -36,13 +36,18 @@ export default memo(function Index({
   sty = { bordered: "y", pv: "16px" },
   allselect = true, // 全选
   selectobj,
-
+  
   treeName = "",
   title = "分类列表",
   mode = null,
   correlation = Number.POSITIVE_INFINITY, // 是否关联 属性
   hv = "32px", // 标题高度
-  dispart = false, // 空调管理 --手动控制页面传部分数据，其他页面传全部数据
+  parameter={
+    params:{
+      showDevice:true
+    },
+    limit:3
+  },
   ...restprop
 }) {
   const [messageApi, contextHolder] = message.useMessage();
@@ -58,18 +63,29 @@ export default memo(function Index({
   const [expandedKeys, setExpandedKeys] = useState([]);
 
   const [indeterminate, setIndeterminate] = useState(false);
+  const scrollY = useGetY({selector:".ant-tree-list", extraHeight:16})
 
   let selected = useRef([]);
   let expanded = useRef([]);
+  let keys = useRef([]);
   const getId = (nodes, key, children = "nodes") => {
     if (Array.isArray(nodes)) {
       for (let node of nodes) {
         let { keyStr, id, nodeType } = node;
-        node["disableCheckbox"] = nodeType != 3;
-        if (nodeType == 3 && selected.current?.length < 3) {
-          expanded.current.push(keyStr);
-          selected.current.push(id);
-        } else if (
+      
+        expanded.current.push(keyStr);
+        console.log("selected.current",selected.current)
+        if(Number.isInteger(parameter.limit)) {
+           node["disableCheckbox"] = nodeType != 3;
+           if (nodeType == 3 && selected.current?.length <parameter.limit) {
+             keys.current.push(keyStr);
+             selected.current.push(id);
+           }
+        }else {
+          keys.current.push(keyStr);
+           selected.current.push(id);
+        }
+       if (
           node[children] &&
           Array.isArray(node[children]) &&
           node[children]?.length > 0
@@ -92,14 +108,15 @@ export default memo(function Index({
         keyword: name,
         showDevice: true,
         meterType: energytype,
+        ...parameter.params
       };
 
-      let { success, data, errMsg } = await useTree({}, params);
+      let { success, data, errMsg } = await useNodeTree({}, params);
 
       if (success && Array.isArray(data) && data.length > 0) {
         getId(data, "keyStr", "nodes");
 
-        //  setCheckedKeys(selected.current)
+         setCheckedKeys(keys.current)
         setExpandedKeys(expanded.current);
         setTreeId(selected.current);
         //   treeIdRef.current = arr
@@ -109,6 +126,7 @@ export default memo(function Index({
       } else {
         setTreeData([]);
         setCheckedKeys([]);
+        setTreeId([])
         // message.error(errMsg || '数据出错')
       }
     } catch (error) {
@@ -182,7 +200,7 @@ export default memo(function Index({
       {contextHolder}
       <div
         style={{
-          height: scroll ? scroll : "750px",
+      //    height: scroll ? scroll : "750px",
           overflow: "auto",
           flex: 1,
           scrollbarWidth: "thin",
@@ -224,13 +242,16 @@ export default memo(function Index({
             treeData={treeData}
             checkable={true}
             onExpand={onExpand}
+            classNames="cstree"
             expandedKeys={expandedKeys}
             checkedKeys={checkedKeys}
+            
             onCheck={onCheck}
             multiple={true}
             fieldNames={fieldNames}
             checkStrictly={true} // true : 完全受控，父子节点不关联, false : 父子节点关联
             indeterminate={indeterminate}
+            height={scrollY}
             {...restprop}
           />
         </Treebox>

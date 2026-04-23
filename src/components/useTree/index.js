@@ -552,6 +552,7 @@ export default memo(function Index({ areaId, setTreeId, setLine, setNode, showli
             onCheck={onCheck}
             onSelect={onSelect}
             fieldNames={fieldNames}
+            multiple={true}
             checkStrictly={strictyly} // true : 完全受控，父子节点不关联, false : 父子节点关联
             indeterminate={indeterminate}
             {...restprop}
