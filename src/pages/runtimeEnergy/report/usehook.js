@@ -1,4 +1,4 @@
-import { useMemo, useCallback } from "react";
+import { useMemo, useCallback,useState } from "react";
 import dayjs from "dayjs";
 import { isObject } from "@com/usehandler";
 import {Cscol, CscolW} from "./reportdata";
@@ -97,7 +97,8 @@ export function useCol(cols, index, title, rowspan) {
     }
   }, [cols, index, title]);
 }
-export function useCsCol({   index, title, frontRows = 0, spans, header,energytype }) {
+export function useCsCol({   index, title="", frontRows = 0, spans, header,energytype,filters,filteredValue }) {
+  
   return useMemo(() => {
     try {
       
@@ -109,8 +110,20 @@ export function useCsCol({   index, title, frontRows = 0, spans, header,energyty
               if (col && title) {
                 col.title = title;
               }
+        if(energytype == 1 && col && Array.isArray(filters) && filters.length > 0){
+
+          col= {
+            ...col,
+            filtered:true,
+            filters: filters.map(v =>({text: v, value: v})),
+            onFilter: (value, record) => record.address.indexOf(value) === 0,
+            filteredValue:filteredValue,
+           }
+        }
+        console.log("col",col)
+        cols[index]=col
       }
-      console.log("frontRows",frontRows)
+      
       for (let i = 0; i < frontRows; i++) {
         cols[i].onCell = (_, index) => {
           return { rowSpan: index % spans === 0 ? spans : 0 };
@@ -142,5 +155,74 @@ export function useCsCol({   index, title, frontRows = 0, spans, header,energyty
       console.log(error);
       return [];
     }
-  }, [ index, title]);
+  }, [ index, title,header,frontRows,energytype,spans,filters]);
+}
+
+export function usexlCol({cols, type, date}) {
+  return useMemo(() => {
+    if (isObject(cols) && Object.values(cols) && type && date) {
+      let newcol =[]
+      if(type==3) {
+      newcol =  Array.from({length:12}, (_, i) =>({
+        title:  i+1 + "月",
+        dataIndex:  i+1,
+        key: i+1,
+        width: 100,
+        ellipsis: true,
+        children:[
+          { 
+            title: "最大需量值",
+            dataIndex:  `value${i+1}` ,
+            key:  `value${i+1}`,
+            width: 100,
+            ellipsis: true, 
+          },
+          { 
+            title: "发生时间",
+            dataIndex: `dateTime${i+1}`,
+            key:  `dateTime${i+1}`,
+            width: 100,
+            ellipsis: true, 
+          }
+
+        ]
+
+       }) )
+      }else {
+        let m = dayjs(date).format("M")
+         newcol = [
+          {
+        title:  dayjs(date).format("MM") + "月",
+        dataIndex:  m+1,
+        key: m+1,
+        width: 100,
+        ellipsis: true,
+        fixed:'left', 
+        children:[
+          { 
+            title: "最大需量值",
+            dataIndex:  `value${m}` ,
+            key:  `value${m}`,
+            width: 100,
+            ellipsis: true, 
+          },
+          { 
+            title: "发生时间",
+            dataIndex:  `dateTime${m}` ,
+            key:  `dateTime${m}`,
+            width: 100,
+            ellipsis: true, 
+          }
+
+        ]
+
+       }
+         ]
+      }
+
+      return [...Array.from(cols),...newcol];
+    } else {
+      return [];
+    }
+  }, [cols, type, date])
 }

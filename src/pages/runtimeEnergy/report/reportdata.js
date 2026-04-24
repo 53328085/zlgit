@@ -363,29 +363,34 @@ export const Zdconfig ={  // 账单表格配置
  0: {
     title: '区域名称',
     dataIndex: 'nodeName',
-    key: "nodeName"
+    key: "nodeName",
+    width:140,
   },
  1: {
     title: '设备名称',
     dataIndex: 'name',
     key: "name",
     ellipsis:true,
+    width:140,
   },
  2: {
     title: '设备编号',
     dataIndex: 'sn',
-    key: "sn"
+    key: "sn",
+    width:100,
   },
   3: {
     title: '用能',
     dataIndex: 'consume',
-    key: "consume"
+    key: "consume",
+    width:100,
   },
  4: {
     title: '安装地址',
     dataIndex: 'address',
     key: "address",
     ellipsis:true,
+    width:140,
   },
   length: 5
   }
@@ -396,7 +401,8 @@ export const Cscol = { //  参数报表--电
     dataIndex: 'nodeName',
     key: "nodeName",
     fixed:'left',
-    ellipsis:true
+    ellipsis:true,
+    width:140,
   },
  1: {
     title: '设备名称',
@@ -404,6 +410,7 @@ export const Cscol = { //  参数报表--电
     key: "name",
     fixed:'left',
     ellipsis:true,
+    width:140,
   }, 
   2:{
     title: '设备编号',
@@ -411,6 +418,7 @@ export const Cscol = { //  参数报表--电
     key: "sn",
     ellipsis:true,
     fixed:'left',
+    width:100,
   },
   3:{
     title: '安装位置',
@@ -418,13 +426,15 @@ export const Cscol = { //  参数报表--电
     key: "address",
     ellipsis:true,
      fixed:'left',
+     width:140,
   },
    4: {
     title: '电量(kWh)',
     dataIndex: 'power',
     key: "power",
     fixed:'left',
-    ellipsis:true
+    ellipsis:true,
+    width:100,
   },
   
   
@@ -438,6 +448,7 @@ export const CscolW = { //  参数报表--水
     key: "name",
     fixed:'left',
     ellipsis:true,
+    width:140,
   }, 
   1:{
     title: '设备编号',
@@ -445,6 +456,7 @@ export const CscolW = { //  参数报表--水
     key: "sn",
     ellipsis:true,
     fixed:'left',
+    width:140,
   }, 
   
   length: 2
@@ -506,4 +518,45 @@ export const CstbTitle = {
   5:["总","A相","B相","C相","当前正向有功总需量"],
   6:["总","A相","B相","C相" ],
   7:["总","A相","B相","C相" ],
+}
+
+export const defaultfilteredValue ={
+  1:["用电量-总","用电量-尖","用电量-峰","用电量-平","用电量-谷" ],
+  2:["组合","正向","反向",],
+  3:["A相","B相","C相"],
+  4:["A相","B相","C相"],
+  5:["总","A相","B相","C相" ],
+  6:["总","A相","B相","C相" ],
+  7:["总","A相","B相","C相" ],
+}
+
+export const Xlcos = { //  最大需量
+ 0: {
+    title: '设备名称',
+    dataIndex: 'name',
+    key: "name",
+    fixed:'left',
+    ellipsis:true,
+    width:140,
+    onCell:(_,index)=> ({rowSpan: index % 2 === 0 ? 2 : 0 })
+  }, 
+  1:{
+    title: '设备编号',
+    dataIndex: 'sn',
+    key: "sn",
+    ellipsis:true,
+    fixed:'left',
+    width:140,
+    onCell:(_,index)=> ({rowSpan: index % 2 === 0 ? 2 : 0 })
+  }, 
+  2:{
+    title: '需量类型',
+    dataIndex: 'type',
+    key: "type",
+    ellipsis:true,
+    fixed:'left',
+    width:200,
+  }, 
+  
+  length: 3
 }

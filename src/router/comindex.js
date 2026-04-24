@@ -91,6 +91,7 @@ export default function Index() {
       "reportCs",
       "reportBc",
       "reportXl",
+      "realTimeMeterReading",
     ],
     runtimeStorage: [
       // 储能管理
@@ -331,6 +332,16 @@ export default function Index() {
                   label: "月",
                 },
               ],
+            });
+            break;
+          case "realTimeMeterReading":
+             setConfig({
+              energytype: true, 
+              shiftNo: true,
+              gas: false,
+              
+              alike: true,
+          
             });
             break;
           case "direction":

@@ -393,7 +393,7 @@ export default function UseSerach(props) {
     props.setexparams({ ...form.getFieldsValue(true) })
   }
   const publicDate = <Space size={16}>
-    <Form.Item name="publictype" initialValue={1}>
+    <Form.Item name="publictype" initialValue={props.config?.dateOpt?.[0]?.value ?? 1}>
       <Select options={props.config?.dateOpt ?? publicdateType} style={{ width: "88px" }} onChange={changepublic}></Select>
     </Form.Item>
     <Form.Item noStyle shouldUpdate={(cur, pre) => cur.publictype != pre.publictype}>

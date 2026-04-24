@@ -12,7 +12,7 @@ import Tablecom from './index'
 import ProTablecom,{TableContainer,Settingicon } from './proTablesty'
 import setting from './icon/setting.png'
 import {isObject} from "@com/usehandler"
-import {useGetY} from "./useMethod"
+import {useGetXY} from "./useMethod"
 import {
 
   adaptation
@@ -197,7 +197,8 @@ function Index(props, ref) {
     downloadAll, // 下载全部数据
     downTemp,
   }))
-  let scrollY = useGetY()
+  let {scrollY,scrollX} = useGetXY()
+   console.log("point",scrollY,scrollX)
  
   return (
     <TableContainer flex={props.flex} style={{ ...style }}>
@@ -221,11 +222,10 @@ function Index(props, ref) {
                           },
                           ...props.options
                         }
-                        
                       }
                       scroll={{
                         scrollToFirstRowOnChange: true,
-                        x: "max-content",
+                        x: scrollX,
                         y: scrollY,
                         ...scroll,
                      

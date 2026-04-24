@@ -15,7 +15,7 @@ import { getTime, isObject } from '@com/usehandler'
 
 import { ProExportExcel, CustButton,SetButton } from '@com/useButton'
  
-import {   Cscol,CscolW,Csconfig,CstbTitle, labelStyle, contentStyle } from '../reportdata'
+import {   Cscol,CscolW,Csconfig,CstbTitle, defaultfilteredValue,labelStyle, contentStyle } from '../reportdata'
 import  {useCsCol} from '../usehook'
 
 import {Contentbox,Chartwrap} from "../style"
@@ -36,26 +36,36 @@ export default function Index() {
    const [options, setOptions]=useState([])
   const [line, setLine] = useState(0)
   const [treeId, setTreeId] = useState()
+   const [filteredValue, setFilteredValue] = useState(defaultfilteredValue)
   let { areaId, projectId, publictype:type,cycleTime, publicdate:date, energytype, alike,publicrangedate } = exparams  
   const [unit, setUnit] = useState()
   const  [title, headerTitle] = useMemo(() => {
     let label = options?.find(d => d.key == key)?.label ?? ''
     let text =key==2 ? `有功总${label}` : label;
-    return [`${text}(${unit})`, `参数报表-${label}`]
+    return [(unit && text) ?`${text}(${unit})` :  "", `参数报表-${label}`]
   }, [unit, key])
 
 
- const [spans, frontRows, index, ] = useMemo(() => {
+ const [frontRows, index, filters] = useMemo(() => {
      if (energytype == 1){
-       return [[7,7,3,3,3,5,4,4][key], 4, 4]
+       return [4, 4, CstbTitle[key]]
       }else {
-         return [1,0, NaN]
+         return [0, NaN,[]]
       }
      
     }, [key,energytype ])
- 
-  const columns = useCsCol({  index, title, frontRows, spans,header, energytype})
-  console.log("columns", columns)
+
+ const [spans , values] =useMemo(() => { 
+     return [filteredValue[key]?.length , filteredValue[key]]
+    }, [key,filteredValue])
+  
+
+  const columns = useCsCol({  index, title, frontRows, spans,header, energytype, filters,filteredValue:values})
+
+  
+  const tbonChange=useCallback((_, filter)=>{
+     setFilteredValue({...filteredValue, [key]: filter})
+  },[key])
   const getParameterTabs = async  ()=>{ 
    try {
       let {success, data} = await useQuerysParameterReportTabs({projectId,meterType:energytype})
@@ -119,28 +129,23 @@ export default function Index() {
          setHeader(detailHeaders)
          let datas =[]
          detailDatas.forEach((item,idx) => { 
-
-         
-
           const  {detailValues} = item
           detailValues.forEach((col,index) =>{ 
                 col.forEach((val,idx) =>{ 
                   item[detailHeaders[idx]] = val
                    
                 })
-               let titles = CstbTitle[tab]
+              
               if (meterType==1) {
-                item["power"]=titles[index]
+                item["power"]= CstbTitle[tab][index]
               }
                
                item["keysn"]=item.sn+index
                datas.push({...item})
           })
          
-        
-          
         })
-       
+        console.log("datas",datas)
         return {
           data: datas,
           total: detailDatas?.length,
@@ -206,11 +211,14 @@ export default function Index() {
                 columnsState={columnsState}
                 options={
                 energytype == 1?  {
+                    setting: true,
+                  }:{
                     setting: false,
-                  }:{}
+                  }
                 }
                sheetName="参数报表"
                onExport={onExport} 
+               onChange={tbonChange}
                 ></UseProTable>
                 </div>
                 </div>

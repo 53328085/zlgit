@@ -49,7 +49,7 @@ export default function Sider() {
   const location = useLocation()
   const config = useSelector(configState)
   const siderRunMenu = useSelector(siderRunMenus)
-  console.log(location)
+  // console.log(location)
   const siderDesignerMenu = useSelector(siderDesignerMenus)
   const {laptop} = useSelector(adaptation)
   const curtheme = useSelector(themeColor)
@@ -66,7 +66,7 @@ export default function Sider() {
   const [menus, setMenus] = useState()
 
   const [path, setPath] = useState('')
-  console.log("menus",menus)
+ // console.log("menus",menus)
 /*   const Showimg = () => {
     let {primary} = location.state || {}   
     let imgsrc = config ? imgurl.config : imgurl[primary]

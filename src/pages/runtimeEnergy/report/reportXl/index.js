@@ -1,11 +1,11 @@
-// 最大需求
+// 最大需量
 
 import React, { useState, useCallback, useRef, useEffect, useMemo   } from 'react'
 import { Checkbox, DatePicker, message, Tooltip, Descriptions, Radio, Space} from 'antd'
  
 import { useOutletContext } from 'react-router-dom'
  
- import {RadiogroupSolid,Tabsbox} from "@com/comstyled"
+ 
 import Pagecount from '@com/pagecontent'
 import UseProTable from "@com/useTable/proTable";
 import UserTree from "@com/useTree/nodeTree"
@@ -15,8 +15,8 @@ import { getTime, isObject } from '@com/usehandler'
 
 import { ProExportExcel, CustButton,SetButton } from '@com/useButton'
  
-import {   Cscol,CscolW,Csconfig,CstbTitle, labelStyle, contentStyle } from '../reportdata'
-import  {useCsCol} from '../usehook'
+import {   Cscol,CscolW,Csconfig,CstbTitle, labelStyle, contentStyle,Xlcos } from '../reportdata'
+import  {usexlCol} from '../usehook'
 
 import {Contentbox,Chartwrap} from "../style"
 import {useQueryMaxNeedInfo} from "../api"
@@ -30,32 +30,18 @@ export default function Index() {
  
 
  
-   const [columnsStateMap, setColumnsStateMap] = useState(Csconfig)
-   const [key, setKey]=useState(1)
-   const [header, setHeader] = useState()
-   const [options, setOptions]=useState([])
+ 
   const [line, setLine] = useState(0)
   const [treeId, setTreeId] = useState()
   let { areaId, projectId, publictype:type,cycleTime, publicdate:date, energytype, alike,publicrangedate } = exparams  
-  const [unit, setUnit] = useState()
-  const  [title, headerTitle] = useMemo(() => {
-    let label = options?.find(d => d.key == key)?.label ?? ''
-    let text =key==2 ? `有功总${label}` : label;
-    return [`${text}(${unit})`, `参数报表-${label}`]
-  }, [unit, key])
-
-
- const [spans, frontRows, index, ] = useMemo(() => {
-     if (energytype == 1){
-       return [[7,7,3,3,3,5,4,4][key], 4, 4]
-      }else {
-         return [1,0, NaN]
-      }
-     
-    }, [key,energytype ])
  
-  const columns = useCsCol({  index, title, frontRows, spans,header, energytype})
-  console.log("columns", columns)
+ 
+
+
+ 
+ 
+  const columns = usexlCol({cols:Xlcos, type, date})
+  
  
 
 
@@ -77,58 +63,28 @@ export default function Index() {
       reportType:1,
       filterInfo: alike,
       
-      areaId,
-      cycleTime,
-      tab:key,
+     areaId,
+     
     }
-  }, [projectId, areaId, type, date, energytype, treeId, key,cycleTime, line,   alike,publicrangedate])
+  }, [projectId, areaId, type, date, energytype, treeId,  line,   alike,publicrangedate])
 
  
   const tbref = useRef()
  
   const getTableData =async (params) => {
     params.pageNum = params.current
-    let  {  projectId, type,  meterType, ids, areaId,  queryType, tab,  startDate,endDate}= params
+    let  {  projectId, type,  meterType, ids, areaId,  queryType,   startDate,endDate}= params
      try { 
-    let f = [ projectId, type, meterType,areaId, tab,  queryType].every(v => Number.isInteger(v)) && Array.isArray(ids) && ids?.length && startDate && endDate
+    let f = [ projectId, type, meterType,areaId,  queryType].every(v => Number.isInteger(v)) && Array.isArray(ids) && ids?.length && startDate && endDate
  
     
     if (!f) return;
  
-      let { success, data }= await useQueryMaxNeedInfo({},params) 
-    
-      
-      const  {detailDatas,detailHeaders} = data
-      if (success && Array.isArray(detailDatas) ) { 
-         setUnit(detailDatas?.[0]?.unit)
-         setHeader(detailHeaders)
-         let datas =[]
-         detailDatas.forEach((item,idx) => { 
-
-         
-
-          const  {detailValues} = item
-          detailValues.forEach((col,index) =>{ 
-                col.forEach((val,idx) =>{ 
-                  item[detailHeaders[idx]] = val
-                   
-                })
-               let titles = CstbTitle[tab]
-              if (meterType==1) {
-                item["power"]=titles[index]
-              }
-               
-               item["keysn"]=item.sn+index
-               datas.push({...item})
-          })
-         
-        
-          
-        })
-       
+      let { success, data , total}= await useQueryMaxNeedInfo({},params) 
+      if (success && Array.isArray(data) && data?.length ) {
         return {
-          data: [], //datas,
-          total: detailDatas?.length,
+          data: data, //datas,
+          total: total,
           success,
         }
       } else {
@@ -144,8 +100,29 @@ export default function Index() {
       console.log(error)
      }
   }
-
-
+ 
+ const postData =(data)=>{
+   let tableDatas=[]
+   data.forEach((item,idx) =>{ 
+      let {datas,...rest} = item
+      let obj1={}, obj2={}
+      datas.forEach((d,index) =>{
+      let {month,dateTime1,dateTime2, value1, value2} = d
+       obj1[`value${month}`]=value1
+       obj1[ `dateTime${month}`]=dateTime1
+       obj1["type"]="正向有功总需量（kW）"
+       obj1["key"]=item.sn+"-"+month+"-正向"+idx+"_"+index
+      
+         obj2[`value${month}`]=value2
+       obj2[ `dateTime${month}`]=dateTime2
+       obj2["type"]="反向有功总需量（kW）"
+       obj2["key"]=item.sn+"-"+month+"-反向"+idx+"_"+index
+       
+      })
+      tableDatas.push({...rest,...obj1},{...rest,...obj2})
+   })
+   return tableDatas
+ }
 
  
  
@@ -179,8 +156,8 @@ export default function Index() {
                 params={params} 
                 search={false}
                 toolBarRender={() => toolbar}
-                 pagination={false}
-              
+                 
+                postData={postData}
                 options={
                 energytype == 1 ?  {
                     setting: false,

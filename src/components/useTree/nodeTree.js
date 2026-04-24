@@ -74,7 +74,7 @@ export default memo(function Index({
         let { keyStr, id, nodeType } = node;
       
         expanded.current.push(keyStr);
-        console.log("selected.current",selected.current)
+      
         if(Number.isInteger(parameter.limit)) {
            node["disableCheckbox"] = nodeType != 3;
            if (nodeType == 3 && selected.current?.length <parameter.limit) {
@@ -201,7 +201,7 @@ export default memo(function Index({
       <div
         style={{
       //    height: scroll ? scroll : "750px",
-          overflow: "auto",
+          overflow: "hidden",
           flex: 1,
           scrollbarWidth: "thin",
         }}
