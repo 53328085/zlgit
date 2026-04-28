@@ -538,7 +538,7 @@ export const Xlcos = { //  最大需量
     fixed:'left',
     ellipsis:true,
     width:140,
-    onCell:(_,index)=> ({rowSpan: index % 2 === 0 ? 2 : 0 })
+   // onCell:(_,index)=> ({rowSpan: index % 2 === 0 ? 2 : 0 })
   }, 
   1:{
     title: '设备编号',
@@ -547,7 +547,7 @@ export const Xlcos = { //  最大需量
     ellipsis:true,
     fixed:'left',
     width:140,
-    onCell:(_,index)=> ({rowSpan: index % 2 === 0 ? 2 : 0 })
+   // onCell:(_,index)=> ({rowSpan: index % 2 === 0 ? 2 : 0 })
   }, 
   2:{
     title: '需量类型',
@@ -556,6 +556,20 @@ export const Xlcos = { //  最大需量
     ellipsis:true,
     fixed:'left',
     width:200,
+    filters:[
+      {
+        text:"正向有功总需量（kW）",
+        value:"正向有功总需量（kW）"
+      },
+      {
+        text:"反向有功总需量（kW）",
+        value:"反向有功总需量（kW）"
+      }
+    ],
+    onFilter: (value, record) => {
+        return record.type.indexOf(value) > -1
+    },
+    defaultFilteredValue: ["正向有功总需量（kW）","反向有功总需量（kW）"]
   }, 
   
   length: 3

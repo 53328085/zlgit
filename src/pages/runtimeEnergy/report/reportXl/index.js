@@ -33,6 +33,7 @@ export default function Index() {
  
   const [line, setLine] = useState(0)
   const [treeId, setTreeId] = useState()
+  const [spans, setSpans] = useState(2)
   let { areaId, projectId, publictype:type,cycleTime, publicdate:date, energytype, alike,publicrangedate } = exparams  
  
  
@@ -40,7 +41,7 @@ export default function Index() {
 
  
  
-  const columns = usexlCol({cols:Xlcos, type, date})
+  const columns = usexlCol({cols:Xlcos, type, date, spans})
   
  
 
@@ -139,6 +140,11 @@ export default function Index() {
     },
     limit:Number.isNaN
   }
+  const tbonChange=(_, filter)=>{
+    let {type} = filter
+     console.log(type)
+     setSpans(Array.isArray(type) ? type.length : 2)
+  }
   return (
    
       <Pagecount showSearch={false} custserach={true} pd="0" bgcolor="none" >
@@ -156,7 +162,7 @@ export default function Index() {
                 params={params} 
                 search={false}
                 toolBarRender={() => toolbar}
-                 
+                 onChange={tbonChange}
                 postData={postData}
                 options={
                 energytype == 1 ?  {

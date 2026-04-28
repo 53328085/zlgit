@@ -283,6 +283,7 @@ export default function Index() {
             })
           }
         }else{
+          strategyForm.resetFields()
           setStrategyList([])
         }
       }else{
@@ -389,7 +390,10 @@ export default function Index() {
   const len = colorList?.length??0
   useEffect(()=> {
     let arr = []
-    if(nameValue == undefined) return;
+    if(nameValue == undefined) {
+      setColorList([])
+       return;
+    }
     nameValue.map(item => {
       if(item != undefined) {
         if((item.startTime>= 0 && item.endTime >= 0)  ){
@@ -474,7 +478,8 @@ export default function Index() {
                     <div style={{fontSize: 12, color:'#999'}}>最多8字符</div>
                   </Space>
                 </Item>
-                <div className="figureData">
+               {
+                colorList?.length>0 && <div className="figureData">
                   <div className="progress">
                     {colorList.map((item, index) => {
                       return <div className="item" title={index} key={index} style={{background:item.type == 1 ? '#4370FF' : item.type == 2 ? '#f93' : item.type == 3 ? '#0dc6d1' : item.type == 4 ? '#333' : '#f2f2f2'}}></div>
@@ -489,6 +494,7 @@ export default function Index() {
                   
                   </div>
                 </div>
+               } 
                 <div className="fieldTitle">
                   <span><b>*</b>开始时间</span>
                   <span ><b>*</b>结束时间</span>
@@ -597,7 +603,7 @@ export default function Index() {
           <span style={{fontSize: 16, color: '#333'}}>策略保存成功!</span>
         </div>
         <div style={{marginTop: 32, display:'flex',justifyContent:'flex-end', alignItems:'center'}}>
-          <CustButtonT   onClick={()=>onClose()} text="cancel" /> 
+          <CustButtonT   onClick={()=>onClose()} text="ok" /> 
         </div>
       </CustModal>
       <CustModal title='删除策略' ref={deleteRef}  mold="cust" type={'warn'} width={592}   maskClosable={false} onOk={()=>onConfirmDel()}>

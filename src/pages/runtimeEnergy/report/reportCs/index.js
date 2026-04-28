@@ -21,6 +21,7 @@ import  {useCsCol} from '../usehook'
 import {Contentbox,Chartwrap} from "../style"
 import {useQueryParameterReport,useQuerysParameterReportTabs} from "../api"
 import { t } from 'i18next'
+import { set } from 'lodash'
  
 
 
@@ -36,7 +37,7 @@ export default function Index() {
    const [options, setOptions]=useState([])
   const [line, setLine] = useState(0)
   const [treeId, setTreeId] = useState()
-   const [filteredValue, setFilteredValue] = useState(defaultfilteredValue)
+    const [filtere, setFiltere] =  useState(defaultfilteredValue)
   let { areaId, projectId, publictype:type,cycleTime, publicdate:date, energytype, alike,publicrangedate } = exparams  
   const [unit, setUnit] = useState()
   const  [title, headerTitle] = useMemo(() => {
@@ -54,18 +55,35 @@ export default function Index() {
       }
      
     }, [key,energytype ])
+const [spans, setSpans] = useState(()=>defaultfilteredValue[key]?.length)
+   const values =useMemo(() => {  
+     return filtere[key]
+    }, [key,filtere]) 
 
- const [spans , values] =useMemo(() => { 
-     return [filteredValue[key]?.length , filteredValue[key]]
-    }, [key,filteredValue])
-  
 
   const columns = useCsCol({  index, title, frontRows, spans,header, energytype, filters,filteredValue:values})
 
   
   const tbonChange=useCallback((_, filter)=>{
-     setFilteredValue({...filteredValue, [key]: filter})
+     console.log("filter",filter)
+     let {power} = filter
+
+     if(Array.isArray(power)) {
+     setFiltere({...filtere, [key]: power})
+     setSpans(power?.length)
+     }else {
+       setSpans(CstbTitle[key]?.length)
+     }
+    
   },[key])
+
+  const tabOnchange=(key)=>{
+     
+     setKey(key)
+     setSpans(filtere[key]?.length)
+  }
+
+  
   const getParameterTabs = async  ()=>{ 
    try {
       let {success, data} = await useQuerysParameterReportTabs({projectId,meterType:energytype})
@@ -196,12 +214,12 @@ export default function Index() {
           <UserTree correlation={1} isshow={true} areaId={areaId} showSearch={true} allselect={false} energytype={energytype} setTreeId={setTreeId} setLine={setLine} showline={true}   />
           
                <div className="rightwrap">
-                 <Tabsbox items={options} tabwidth="88px" activeKey={key} tabBarGutter={4} size='small'  onChange={setKey}  ></Tabsbox>
+                 <Tabsbox items={options} tabwidth="88px" activeKey={key} tabBarGutter={4} size='small'  onChange={tabOnchange}  ></Tabsbox>
                                   <div className="tbwrap"> 
                 <UseProTable 
                 headerTitle= {headerTitle}
                 tableClassName="reportCs"
-                rowKey={row=> row.keysn+row.address}
+            //    rowKey={row=> row.keysn+row.address}
                 columns={columns} 
                 request={getTableData} 
                 params={params} 

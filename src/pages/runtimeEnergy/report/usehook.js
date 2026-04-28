@@ -116,7 +116,7 @@ export function useCsCol({   index, title="", frontRows = 0, spans, header,energ
             ...col,
             filtered:true,
             filters: filters.map(v =>({text: v, value: v})),
-            onFilter: (value, record) => record.address.indexOf(value) === 0,
+            onFilter: (value, record) => record.power.indexOf(value) >-1,
             filteredValue:filteredValue,
            }
         }
@@ -126,7 +126,7 @@ export function useCsCol({   index, title="", frontRows = 0, spans, header,energ
       
       for (let i = 0; i < frontRows; i++) {
         cols[i].onCell = (_, index) => {
-          return { rowSpan: index % spans === 0 ? spans : 0 };
+          return spans>1 ?   { rowSpan:     index % spans === 0 ? spans : 0  } : null;
         };
       }
 
@@ -158,7 +158,7 @@ export function useCsCol({   index, title="", frontRows = 0, spans, header,energ
   }, [ index, title,header,frontRows,energytype,spans,filters]);
 }
 
-export function usexlCol({cols, type, date}) {
+export function usexlCol({cols, type, date, spans}) {
   return useMemo(() => {
     if (isObject(cols) && Object.values(cols) && type && date) {
       let newcol =[]
@@ -219,10 +219,11 @@ export function usexlCol({cols, type, date}) {
        }
          ]
       }
-
+      cols[0].onCell=(_,index)=> spans > 1 ? ({rowSpan:  index % 2 === 0 ? spans : 0 }): null
+      cols[1].onCell=(_,index)=> spans > 1 ? ({rowSpan: index % 2 === 0 ? spans : 0 }) :null
       return [...Array.from(cols),...newcol];
     } else {
       return [];
     }
-  }, [cols, type, date])
+  }, [cols, type, date,spans])
 }

@@ -269,7 +269,8 @@ export default function Index() {
                             arrlist.push({ ...JSON.parse(item.data), sn: item.sn })
                           })
                           setdataSourceRead(arrlist)
-                          console.log(dataSourceRead, arrlist)
+                        //  console.log(dataSourceRead, arrlist)
+                          console.log(setResultInfoList)
                           Remote.SetResult(setResultInfoList, projectId).then((res) => { console.log(res) })
                         }
                       })

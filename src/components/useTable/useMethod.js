@@ -9,18 +9,18 @@ export   function useGetXY({extraHeight=52, extraWidth=16}={}){
       // 1. 获取表格的表头元素
       try {
          const tableHeader = document.querySelector('.ant-table-tbody');
-         console.log("tableHeader",tableHeader)
+       //  console.log("tableHeader",tableHeader)
       if (!tableHeader) return;
 
       // 2. 计算表头距离视口顶部的距离
-      console.log(tableHeader.getBoundingClientRect())
+    //  console.log(tableHeader.getBoundingClientRect())
       const top = tableHeader.getBoundingClientRect().top;
       const left = tableHeader.getBoundingClientRect().left;
       // 3. 计算可用高度：窗口高度 - 表头顶部距离 - 底部额外高度(如分页器)
      // const extraHeight = 48; // 底部元素的高度
       const scrollY = window.innerHeight - top - extraHeight;
       const scrollX = window.innerWidth - left - extraWidth;
-      console.log("point",scrollY,scrollX)
+   //   console.log("point",scrollY,scrollX)
       setPosition({scrollY,scrollX });
       } catch (error) {
         console.log(error)

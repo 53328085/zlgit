@@ -41,6 +41,31 @@ export const Chartwrap = styled.div`
   }
 
 `
+export const Checkboxwrap=styled.div`
+&&{
+  display: flex;
+  flex-direction: column;
+  row-gap: 24px;
+  .options {
+    .ant-checkbox-group {
+   display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    row-gap: 32px;
+    .ant-checkbox-wrapper {
+      display: flex;
+      align-items: center;
+    }
+    }
+ 
+  }
+  .btn {
+     display: flex;
+     justify-content: flex-end;
+     align-items: center;
+     column-gap: 16px;
+  }
+}
+`
 export const CTransfer=styled(Transfer)` 
  &&{
      .ant-transfer-operation {

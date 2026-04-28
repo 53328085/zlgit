@@ -58,7 +58,7 @@ function Index(props, ref) {
   const location = useLocation()
   const {pathname, state} = location
  
-  console.log("pathname",pathname)
+  //console.log("pathname",pathname)
   const downTemp = useCallback(() => {  // 下载模板
     const params = { raw: true };
     const workbook = utils.book_new(); // 新建工作簿      
@@ -91,7 +91,7 @@ function Index(props, ref) {
   const downloadAll = async () => {
     try {
       let { data, total } = await onExport()
-      console.log(data)
+    //  console.log(data)
       flushSync(() => {
         setShowtb(true)
         setLists(data)
@@ -145,7 +145,7 @@ function Index(props, ref) {
     const workbook = utils.book_new(); // 新建工作簿   
     
     let table =  document.querySelector(`.ant-table-wrapper.${className}`);
-    console.log("table",table)
+    // console.log("table",table)
     if (table) {
     const ws = utils.table_to_sheet(
       // 新建工作表
@@ -172,7 +172,7 @@ function Index(props, ref) {
     }
   }
   const dataExport = (params) => {  // 根据数据创建表格，可以选择要导出的列
-    console.log("params", params)
+   // console.log("params", params)
     const { header, data, skipHeader = true, sheetName = 'sheet1', option = {} } = isObject(params) ? params : {}
 
     const workbook = utils.book_new(); // 新建工作簿
@@ -198,7 +198,7 @@ function Index(props, ref) {
     downTemp,
   }))
   let {scrollY,scrollX} = useGetXY()
-   console.log("point",scrollY,scrollX)
+   //console.log("point",scrollY,scrollX)
  
   return (
     <TableContainer flex={props.flex} style={{ ...style }}>
