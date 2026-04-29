@@ -46,10 +46,23 @@ export default function Index() {
  
   const concolumns = useMemo(()=>{
     let column = []
+    let fomrat = {
+      1: "HH:mm",
+      2: "MM-DD",
+      3:"YYYY-MM",
+      4:"YYYY-MM-DD"
+    }[type] ?? "HH:mm"
+    let arg ={
+      1: "YYYY-MM-DD HH:mm",
+      2: "YYYY-MM-DD",
+      3:"YYYY-MM",
+      4:"YYYY-MM-DD"
+    }[type] ?? "HH:mm"
+  
       if (detailHeaders.length) {
           let last = detailHeaders.length - 1
           column = detailHeaders.map((col, index) => ({
-            title: col,
+            title: dayjs(col,arg).format(fomrat),
             hideInSetting:true,
             key: col,
              children: [
@@ -82,7 +95,7 @@ export default function Index() {
         }
         return  [...conscols,...column]
 
-  },[detailHeaders,columnsStateMap?.er?.show,columnsStateMap?.sr?.show,conscols])
+  },[detailHeaders,columnsStateMap?.er?.show,columnsStateMap?.sr?.show,conscols, type])
   const onSelectChange = (newkey, rows) => {
 
     if (newkey?.length > 3) {

@@ -57,9 +57,10 @@ flex-direction: column;
     .ant-table-thead{
       .ant-table-cell {
         padding: ${props => props.pd || '4px 4px'} ;
-        background-color: ${props => props.theme.isdark ? 'dark' : "#ecf5ff"};//${props => props.istheme ? props.theme.primaryColor : props.hbg};
-        color: ${props => props.theme.isdark ? "dark" : "#515151"} ; //${props => props.hbc || ((props.istheme || props.hbg) ? '#fff' : '#515151')};
+        background-color: ${props => props.theme.isdark ? 'dark' : "#E6ECF5"};//${props => props.istheme ? props.theme.primaryColor : props.hbg};
+        color: ${props => props.theme.isdark ? "dark" : "#303133"} ; //${props => props.hbc || ((props.istheme || props.hbg) ? '#fff' : '#515151')};
         text-align: center;
+        font-weight: 600;
       }
     }
     .ant-table-tbody {

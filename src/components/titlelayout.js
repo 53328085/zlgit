@@ -10,7 +10,7 @@ const custsty = css`
 const Boxdiv = styled(Card)`
  // padding: ${props => props.pv};
   border-radius: ${props => props.rad || props.theme.cardRadius+'px'};
-  border:  ${(props) => props.theme.isdark ? "dark" : props.bordered=='y' ? ' 1px solid #d7d7d7' : 'none'};  
+  border:  ${(props) => props.theme.isdark ? "dark" : props.variant=='outlined' ? ' 1px solid #d7d7d7' : 'none'};  
   display: grid;
   grid-template-rows: ${(props) => props.title ? `auto 1fr` : '1fr'};
   flex:1;
@@ -70,7 +70,7 @@ const Boxdiv = styled(Card)`
  ${props=> props.custsty}
 `
 Boxdiv.defaultProps = {
-  bordered: 'y',
+  variant: 'outlined',
   pv: '20px',
   bodypad: '0px'
 }
