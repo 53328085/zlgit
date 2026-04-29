@@ -1,7 +1,7 @@
 // 最大需量
 
 import React, { useState, useCallback, useRef, useEffect, useMemo   } from 'react'
-import { Checkbox, DatePicker, message, Tooltip, Descriptions, Radio, Space} from 'antd'
+ 
  
 import { useOutletContext } from 'react-router-dom'
  
@@ -10,15 +10,15 @@ import Pagecount from '@com/pagecontent'
 import UseProTable from "@com/useTable/proTable";
 import UserTree from "@com/useTree/nodeTree"
  
-import { getTime, isObject } from '@com/usehandler'
+ 
  
 
-import { ProExportExcel, CustButton,SetButton } from '@com/useButton'
+import { ProExportExcel } from '@com/useButton'
  
-import {   Cscol,CscolW,Csconfig,CstbTitle, labelStyle, contentStyle,Xlcos } from '../reportdata'
+import {   Xlcos } from '../reportdata'
 import  {usexlCol} from '../usehook'
 
-import {Contentbox,Chartwrap} from "../style"
+import {Contentbox } from "../style"
 import {useQueryMaxNeedInfo} from "../api"
 import { t } from 'i18next'
  
@@ -29,7 +29,7 @@ export default function Index() {
   let { exparams  } = useOutletContext()
  
 
- 
+  const [total, setTotal] = useState(0)
  
   const [line, setLine] = useState(0)
   const [treeId, setTreeId] = useState()
@@ -71,37 +71,6 @@ export default function Index() {
 
  
   const tbref = useRef()
- 
-  const getTableData =async (params) => {
-    params.pageNum = params.current
-    let  {  projectId, type,  meterType, ids, areaId,  queryType,   startDate,endDate}= params
-     try { 
-    let f = [ projectId, type, meterType,areaId,  queryType].every(v => Number.isInteger(v)) && Array.isArray(ids) && ids?.length && startDate && endDate
- 
-    
-    if (!f) return;
- 
-      let { success, data , total}= await useQueryMaxNeedInfo({},params) 
-      if (success && Array.isArray(data) && data?.length ) {
-        return {
-          data: data, //datas,
-          total: total,
-          success,
-        }
-      } else {
-        return {
-          data: [],
-          total: 0,
-          success,
-        }
-      }
-    
-
-     } catch (error) {
-      console.log(error)
-     }
-  }
- 
  const postData =(data)=>{
    let tableDatas=[]
    data.forEach((item,idx) =>{ 
@@ -124,16 +93,51 @@ export default function Index() {
    })
    return tableDatas
  }
+  const getTableData =async (params) => {
+    params.pageNum = params.current
+    let  {  projectId, type,  meterType, ids, areaId,  queryType,   startDate,endDate}= params
+     try { 
+    let f = [ projectId, type, meterType,areaId,  queryType].every(v => Number.isInteger(v)) && Array.isArray(ids) && ids?.length && startDate && endDate
+ 
+    
+    if (!f) return;
+ 
+      let { success, data , total}= await useQueryMaxNeedInfo({},params) 
+      setTotal(total)
+      if (success && Array.isArray(data) && data?.length ) {
+
+        return {
+          data: postData(data), //datas,
+          total: total,
+          success,
+        }
+      } else {
+        return {
+          data: [],
+          total: 0,
+          success,
+        }
+      }
+    
+
+     } catch (error) {
+      console.log(error)
+     }
+  }
+ 
+ 
 
  
  
   const onExport = useCallback(() => {
+     params.pageSize=total
+    params.current=1
     return getTableData(params)
-  }, [params])
+  }, [params, total])
  
 
  
-  const toolbar = [<ProExportExcel tb={tbref} className="reportFs"   />]
+  const toolbar = [<ProExportExcel tb={tbref} className="reportXl"   />]
   const  parameter={
     params:{
       showDevice:false
@@ -163,12 +167,13 @@ export default function Index() {
                 search={false}
                 toolBarRender={() => toolbar}
                  onChange={tbonChange}
-                postData={postData}
+             //   postData={postData}
                 options={
                 energytype == 1 ?  {
                     setting: false,
                   }: {}
                 }
+                ref={tbref}
                sheetName="最大有功总需量报表"
                onExport={onExport} 
                 ></UseProTable>

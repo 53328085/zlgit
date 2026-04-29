@@ -261,7 +261,7 @@ export default function Index() {
     <Tooltip title="测点抄读后获取">
       <CustButton onClick={onReading}>抄读</CustButton>
     </Tooltip>,
-    <ProExportExcel tb={tbref} className="reportNh" />,
+    <ProExportExcel tb={tbref} className="realTimeMeterReading" />,
   ];
 
   const ckonChange = (v) => {
@@ -336,7 +336,7 @@ export default function Index() {
               tableClassName="realTimeMeterReading"
               rowKey={(row) => row.sn}
               dataSource={tableData}
-              //  ref={tbref}
+               ref={tbref}
               columns={columns}
               pagination={{
                 pageSize: page.pageSize,

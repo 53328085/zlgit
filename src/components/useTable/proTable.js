@@ -11,8 +11,8 @@ import { nanoid } from '@reduxjs/toolkit'
 import Tablecom from './index'
 import ProTablecom,{TableContainer,Settingicon } from './proTablesty'
 import setting from './icon/setting.png'
-import {isObject} from "@com/usehandler"
-import {useGetXY} from "./useMethod"
+import {isObject,useGetXY} from "@com/usehandler"
+// import {useGetXY} from "./useMethod"
 import {
 
   adaptation
@@ -44,7 +44,7 @@ import {
 
 
 function Index(props, ref) {
-  const { pagination, paginationShow, sheetName = "sheet.xlsx", tempName = '', onExport = () => { }, tempcolums, tempdata, scroll = {},columnsState={}, style = {}, ...otherprops } = props
+  const { pagination, extraHeight=60, extraWidth=16, sheetName = "sheet.xlsx", tempName = '', onExport = () => { }, tempcolums, tempdata, scroll = {},columnsState={}, style = {}, ...otherprops } = props
 
   const ecolumns = otherprops.columns?.filter(col => !col.hasOwnProperty('export'))
   const tableref = useRef()
@@ -91,7 +91,7 @@ function Index(props, ref) {
   const downloadAll = async () => {
     try {
       let { data, total } = await onExport()
-    //  console.log(data)
+       console.log("下载",data)
       flushSync(() => {
         setShowtb(true)
         setLists(data)
@@ -197,8 +197,8 @@ function Index(props, ref) {
     downloadAll, // 下载全部数据
     downTemp,
   }))
-  let {scrollY,scrollX} = useGetXY()
-   //console.log("point",scrollY,scrollX)
+  let {scrollY,scrollX} = useGetXY({selector:'.ant-table-tbody', extraHeight, extraWidth})
+   console.log("point",scrollY,scrollX)
  
   return (
     <TableContainer flex={props.flex} style={{ ...style }}>

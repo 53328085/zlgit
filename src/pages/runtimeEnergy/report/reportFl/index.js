@@ -143,14 +143,15 @@ export default function Index() {
   }, [ params])
 
  
-  const toolbar = [<ProExportExcel tb={tbref} className="reportFl"   />]
+  const toolbar = [<ProExportExcel tb={tbref} className="reportFl" single={true}   />]
   // fromlot,Zdconfig
   return (
    
-      <Pagecount showSearch={false} custserach={true} >
+      <Pagecount showSearch={false} custserach={true} pd="0" bgcolor="none" >
         <Contentbox>
-          <UserTree datatype={6} allselect={false} setNode={setNode} energytype={energytype} areaId={0} multiple={false} showline={false} setTreeId={setTreeId}/>
-          
+          <UserTree datatype={6} allselect={false} setNode={setNode} energytype={energytype} showSearch={true} areaId={0} multiple={false} showline={false} setTreeId={setTreeId}/>
+            <div className="rightwrap">
+          <div className="tbwrap"> 
               
                 <UseProTable 
                 headerTitle="分类能耗"
@@ -163,10 +164,13 @@ export default function Index() {
                   setting: false,
 
                 }}
+                ref={tbref}
                sheetName="分类能耗"
                pagination={false}
                onExport={onExport} 
                 ></UseProTable>
+                </div>
+                </div>
         </Contentbox>
    
       </Pagecount>

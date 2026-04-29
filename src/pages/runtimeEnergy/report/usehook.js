@@ -2,6 +2,7 @@ import { useMemo, useCallback,useState } from "react";
 import dayjs from "dayjs";
 import { isObject } from "@com/usehandler";
 import {Cscol, CscolW} from "./reportdata";
+import { CodeSandboxCircleFilled } from "@ant-design/icons";
 export function useBaript({
   selectedRowKeys,
   tableData,
@@ -97,12 +98,15 @@ export function useCol(cols, index, title, rowspan) {
     }
   }, [cols, index, title]);
 }
-export function useCsCol({   index, title="", frontRows = 0, spans, header,energytype,filters,filteredValue }) {
-  
+export function useCsCol(props) {
+  console.log("useCsCol", props);
+  const {   index, title="", frontRows = 0, spans, header,energytype,filters,filteredValue } = props;
   return useMemo(() => {
     try {
-      
-   
+      let flag = [index, frontRows, spans,  energytype].every(i => Number.isInteger(parseInt(i))) &&
+       title && Array.isArray(filters)
+        && filters.length > 0 && Array.isArray(filteredValue) &&Array.isArray(header) && header.length > 0;
+    if (!flag) return [];
      let cols = energytype == 1 ? Cscol : CscolW;
     if (isObject(cols) && Object.values(cols)) {
       if(Number.isInteger(parseInt(index)) &&title) {
@@ -116,7 +120,7 @@ export function useCsCol({   index, title="", frontRows = 0, spans, header,energ
             ...col,
             filtered:true,
             filters: filters.map(v =>({text: v, value: v})),
-            onFilter: (value, record) => record.power.indexOf(value) >-1,
+            onFilter: (value, record) => record.power.indexOf(value) ==0,
             filteredValue:filteredValue,
            }
         }
@@ -125,11 +129,9 @@ export function useCsCol({   index, title="", frontRows = 0, spans, header,energ
       }
       
       for (let i = 0; i < frontRows; i++) {
-        cols[i].onCell = (_, index) => {
-          return spans>1 ?   { rowSpan:     index % spans === 0 ? spans : 0  } : null;
-        };
+        cols[i].onCell = (_, index) => spans>1 ?   ({ rowSpan:     index % spans === 0 ? spans : 0  }) : null;
       }
-
+      console.log("cols",cols)
       let newCols = header?.map?.((d, idx) => {
         return {
           title: d,
@@ -155,7 +157,7 @@ export function useCsCol({   index, title="", frontRows = 0, spans, header,energ
       console.log(error);
       return [];
     }
-  }, [ index, title,header,frontRows,energytype,spans,filters]);
+  }, [ index, title,header,frontRows,energytype,spans,filters,filteredValue,header]);
 }
 
 export function usexlCol({cols, type, date, spans}) {

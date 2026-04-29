@@ -301,24 +301,32 @@ export function disabledDate(current){
   return current && current > dayjs().endOf('day');
 };
 
-export   function useGetY(props){
-  const [scrollY, setScrollY] = useState(0);
+export   function useGetXY({extraHeight=52, extraWidth=16, selector}={}){
+  const [position, setPosition] = useState({});
 
   useEffect(() => {
     const calculateHeight = () => {
+      
+      try {
+         if(!selector) return;
+         const el = document.querySelector(selector);
      
-      const el = document.querySelector(props.selector);
       if (!el) return;
 
       // 2. 计算表头距离视口顶部的距离
-     // console.log(el.getBoundingClientRect())
-      const headerTop = el.getBoundingClientRect().top;
-
+    //  console.log(tableHeader.getBoundingClientRect())
+      const top = el.getBoundingClientRect().top;
+      const left = el.getBoundingClientRect().left;
       // 3. 计算可用高度：窗口高度 - 表头顶部距离 - 底部额外高度(如分页器)
-      const extraHeight = props.extraHeight || 16; // 底部元素的高度
-      const height = window.innerHeight - headerTop - extraHeight;
-      
-      setScrollY(height);
+     // const extraHeight = 48; // 底部元素的高度
+      const scrollY = window.innerHeight - top - extraHeight;
+      const scrollX = window.innerWidth - left - extraWidth;
+   //   console.log("point",scrollY,scrollX)
+      setPosition({scrollY,scrollX });
+      } catch (error) {
+        console.log(error)
+      }
+     
     };
 
     // 页面加载完成后计算一次
@@ -329,7 +337,7 @@ export   function useGetY(props){
 
     // 组件卸载时清理事件监听
     return () => window.removeEventListener('resize', calculateHeight);
-  }, []);
+  }, [extraHeight,extraWidth,selector ]);
 
-  return scrollY;
+  return position;
 };

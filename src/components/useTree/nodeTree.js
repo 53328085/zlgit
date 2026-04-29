@@ -21,7 +21,7 @@ import Titlelayout from "@com/titlelayout";
 import { useLocation } from "react-router-dom";
 import { useNodeTree } from "./api";
 import { Treebox } from "./style";
-import { useGetY } from "@com/usehandler";
+import { useGetXY } from "@com/usehandler";
 const { Search } = Input;
 
 export default memo(function Index({
@@ -63,7 +63,7 @@ export default memo(function Index({
   const [expandedKeys, setExpandedKeys] = useState([]);
 
   const [indeterminate, setIndeterminate] = useState(false);
-  const scrollY = useGetY({selector:".ant-tree-list", extraHeight:16})
+  const {scrollY} = useGetXY({selector:".ant-tree-list", extraHeight:16})
 
   let selected = useRef([]);
   let expanded = useRef([]);

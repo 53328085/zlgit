@@ -1,22 +1,17 @@
-import React, { useState, useCallback, useRef, useEffect, useMemo   } from 'react'
-import { Checkbox, DatePicker, message, Tooltip, Descriptions, Radio, Space} from 'antd'
-import dayjs from 'dayjs'
-import { ProTable  } from '@ant-design/pro-components';
+import React, { useState, useCallback, useRef,   useMemo   } from 'react'
+ 
 import { useOutletContext } from 'react-router-dom'
-import { useAntdTable } from 'ahooks'
+ 
  
 import Pagecount from '@com/pagecontent'
 import UseProTable from "@com/useTable/proTable";
 import UserTree from "@com/useTree"
  
-import { getTime, isObject } from '@com/usehandler'
+import { ProExportExcel } from '@com/useButton'
  
-import CModal from '@com/useModal'
-import { ProExportExcel, CustButton,SetButton } from '@com/useButton'
- 
-import {   timecols,Zdconfig, labelStyle, contentStyle } from '../reportdata'
+import {   timecols  } from '../reportdata'
 
-import {Contentbox,Chartwrap} from "../style"
+import {Contentbox } from "../style"
 import {useQueryTimeDivisionEnergy} from "../api"
 
 
@@ -26,7 +21,6 @@ export default function Index() {
  
   console.log(exparams)
  
-   const [columnsStateMap, setColumnsStateMap] = useState(Zdconfig)
  
   const [line, setLine] = useState(0)
   const [treeId, setTreeId] = useState()
@@ -34,10 +28,6 @@ export default function Index() {
 
  
   
-  const colsettingChange =(v) =>{
-    console.log(v)
-    setColumnsStateMap(v)
-  }
  
 
 
@@ -111,14 +101,15 @@ export default function Index() {
 
  
   const toolbar = [<ProExportExcel tb={tbref} className="reportFs"   />]
-  // fromlot,Zdconfig
+ 
   return (
    
-      <Pagecount showSearch={false} custserach={true} >
+      <Pagecount showSearch={false} custserach={true} pd="0" bgcolor="none" >
         <Contentbox>
-          <UserTree areaId={areaId} energytype={energytype} setTreeId={setTreeId} setLine={setLine} showline={true} datatype={NaN} />
+          <UserTree areaId={areaId} energytype={energytype} setTreeId={setTreeId} setLine={setLine} showSearch={true} showline={true} datatype={NaN} />
           
-              
+              <div className="rightwrap">
+          <div className="tbwrap"> 
                 <UseProTable 
                 headerTitle="分时能耗"
                 tableClassName="reportFs"
@@ -137,10 +128,12 @@ export default function Index() {
                 //  value:columnsStateMap,
                 //  onChange:colsettingChange,
                 }}
-           
+                ref={tbref}
                sheetName="分时能耗"
                onExport={onExport} 
                 ></UseProTable>
+                </div>
+                </div>
         </Contentbox>
    
       </Pagecount>

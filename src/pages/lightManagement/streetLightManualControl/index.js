@@ -146,7 +146,7 @@ const lingthChnage=(v)=> {
 
  }
  const onOk= async()=> {   // 单灯控制
-   let points =  lingts?.details?.filter(l => checkedList.includes(l.id))?.map(m => ({gateway:m.gateway, dev:m.dev, lightId:m.id}))
+   let points =  lingts?.details?.filter(l => checkedList.includes(l.id))?.map(m => ({gateway:m.gateway, dev:m.dev, lightId:m.id, sn:m.cSn}))
    try {
     let body =single? {
       projectId,

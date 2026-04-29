@@ -322,6 +322,7 @@ export default function Index() {
               custview: true,
               alike: true,
               period: true,
+              onlye:true,
               dateOpt: [
                 {
                   value: 3,

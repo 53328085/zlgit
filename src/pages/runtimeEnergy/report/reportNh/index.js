@@ -19,9 +19,7 @@ import Ichart from '@com/useEcharts/Ichart';
 import {Contentbox,Chartwrap} from "../style"
 import {useQueryConsumeReport} from "../api"
 import {useBaript} from "../usehook"
-import Draggable from '../DraggableTransfer'
  
-import setting from "../icon/setting.png"
 
 export default function Index() {
 
@@ -228,16 +226,15 @@ export default function Index() {
                     <ProExportExcel tb={tbref} className="reportNh"   />]
   return (
    
-      <Pagecount showSearch={false} custserach={true} >
+      <Pagecount showSearch={false} custserach={true} pd="0" bgcolor="none" >
         <Contentbox>
-          <UserTree areaId={areaId} energytype={energytype} setTreeId={setTreeId} setLine={setLine} showline={true} datatype={NaN} />
-          <div style={{ position: "relative", flex: 1 }} >
-            <div style={{ position: "absolute", width: "100%", }} >
-              
+          <UserTree areaId={areaId} energytype={energytype} setTreeId={setTreeId} setLine={setLine} showline={true} showSearch={true} datatype={NaN} />
+          <div className="rightwrap">
+            <div className="tbwrap">
                 <UseProTable 
                 headerTitle="能耗报表"
                 tableClassName="reportNh"
-              //  ref={tbref}
+                ref={tbref}
                 columns={concolumns} 
                 request={getTableData} 
                 params={params} 

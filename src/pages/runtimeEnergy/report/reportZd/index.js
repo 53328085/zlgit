@@ -1,22 +1,18 @@
-import React, { useState, useCallback, useRef, useEffect, useMemo   } from 'react'
-import { Checkbox, DatePicker, message, Tooltip, Descriptions, Radio, Space} from 'antd'
-import dayjs from 'dayjs'
-import { ProTable  } from '@ant-design/pro-components';
+import React, { useState, useCallback, useRef,   useMemo   } from 'react'
+ 
 import { useOutletContext } from 'react-router-dom'
-import { useAntdTable } from 'ahooks'
+ 
  
 import Pagecount from '@com/pagecontent'
 import UseProTable from "@com/useTable/proTable";
 import UserTree from "@com/useTree"
  
-import { getTime, isObject } from '@com/usehandler'
  
-import CModal from '@com/useModal'
-import { ProExportExcel, CustButton,SetButton } from '@com/useButton'
+import { ProExportExcel } from '@com/useButton'
  
-import {   fromlot,Zdconfig, labelStyle, contentStyle } from '../data'
+import {   fromlot,Zdconfig } from '../reportdata'
 
-import {Contentbox,Chartwrap} from "../style"
+import {Contentbox } from "../style"
 import {useQueryBillReport} from "../api"
 
 
@@ -110,19 +106,19 @@ export default function Index() {
   }, [total,  params])
 
  
-  const toolbar = [<ProExportExcel tb={tbref} className="reportZd"   />]
+  const toolbar = [<ProExportExcel tb={tbref}  className="reportZd"   />]
   // fromlot,Zdconfig
   return (
    
       <Pagecount showSearch={false} custserach={true} pd="0" bgcolor="none" >
         <Contentbox>
-          <UserTree areaId={areaId} energytype={energytype} setTreeId={setTreeId} setLine={setLine} showline={true} datatype={NaN} />
+          <UserTree areaId={areaId} energytype={energytype} setTreeId={setTreeId} setLine={setLine} showSearch={true} showline={true} datatype={NaN} />
           <div className="rightwrap">
                <div className="tbwrap">
                 <UseProTable 
                 headerTitle="账单报表"
                 tableClassName="reportZd"
-              //  ref={tbref}
+                ref={tbref}
                 columns={fromlot} 
                 request={getTableData} 
                 params={params} 

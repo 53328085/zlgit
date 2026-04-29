@@ -1,5 +1,5 @@
  
-
+ 
 export const cols = (startDate, endDate) => {
  
   return [ // 实时抄表  
@@ -70,6 +70,7 @@ export let conscols = [   //  conscols 能耗报表
     key: "nodeName", 
     width: 100, 
     ellipsis:true, 
+   // sorter: (a, b) => a?.nodeName?.localeCompare?.(b?.nodeName),
     
   },
   {
@@ -79,6 +80,7 @@ export let conscols = [   //  conscols 能耗报表
     key: "name",
     fixed: 'left',
     ellipsis:true, 
+   // sorter: (a, b) => a?.name?.localeCompare?.(b?.name),
   },
   {
     title: '设备编号',
@@ -275,13 +277,15 @@ export const fromlot = [ // 电能报表 /账单报表
     title: '区域名称',
     dataIndex: 'nodeName',
     key: "nodeName",
-    ellipsis:true
+    ellipsis:true,
+    sorter: (a, b) => a?.nodeName?.localeCompare?.(b?.nodeName),
   },
   {
     title: '设备名称',
     dataIndex: 'name',
     key: "name",
     ellipsis:true,
+    sorter: (a, b) => a?.name?.localeCompare?.(b?.name),
   }, {
     title: '起始电量',
     dataIndex: 'eStart',
@@ -294,6 +298,7 @@ export const fromlot = [ // 电能报表 /账单报表
     title: '用能(kWh)',
     dataIndex: 'consume',
     key: "consume",
+    sorter: (a, b) => parseFloat(a?.consume) - parseFloat(b?.consume)
   }, {
     title: '起始读数',
     dataIndex: 'start',
@@ -311,13 +316,15 @@ export const fromlot = [ // 电能报表 /账单报表
   {
     title: '设备编号',
     dataIndex: 'sn',
-    key: "sn"
+    key: "sn",
+    sorter: (a, b) => a?.sn?.localeCompare?.(b?.sn),
   },
   {
     title: '安装位置',
     dataIndex: 'address',
     key: "address",
-    ellipsis:true
+    ellipsis:true,
+    sorter: (a, b) => a?.address?.localeCompare?.(b?.address),
   },
 ]
 export const Zdconfig ={  // 账单表格配置
@@ -365,6 +372,7 @@ export const Zdconfig ={  // 账单表格配置
     dataIndex: 'nodeName',
     key: "nodeName",
     width:140,
+    sorter: (a, b) => a?.nodeName?.localeCompare?.(b?.nodeName),
   },
  1: {
     title: '设备名称',
@@ -372,6 +380,7 @@ export const Zdconfig ={  // 账单表格配置
     key: "name",
     ellipsis:true,
     width:140,
+    sorter: (a, b) => a?.name?.localeCompare?.(b?.name),
   },
  2: {
     title: '设备编号',
@@ -384,6 +393,7 @@ export const Zdconfig ={  // 账单表格配置
     dataIndex: 'consume',
     key: "consume",
     width:100,
+    sorter: (a, b) => parseFloat(a?.consume) - parseFloat(b?.consume)
   },
  4: {
     title: '安装地址',
@@ -391,6 +401,7 @@ export const Zdconfig ={  // 账单表格配置
     key: "address",
     ellipsis:true,
     width:140,
+    sorter: (a, b) => a?.address?.localeCompare?.(b?.address),
   },
   length: 5
   }
@@ -567,7 +578,7 @@ export const Xlcos = { //  最大需量
       }
     ],
     onFilter: (value, record) => {
-        return record.type.indexOf(value) > -1
+        return record?.type?.indexOf?.(value) == 0
     },
     defaultFilteredValue: ["正向有功总需量（kW）","反向有功总需量（kW）"]
   }, 

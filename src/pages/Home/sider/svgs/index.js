@@ -97,7 +97,7 @@ export { ReactComponent as runtimeEnergyReport } from './runtimeEnergy/runReport
 export { ReactComponent as runtimeEnergytime } from './runtimeEnergy/time.svg'
 export { ReactComponent as runtimeEnergysummary } from './monitor.svg'
 export { ReactComponent as runtimeEnergytimePeriodEnergy } from './timePeriodEnergy.svg'
-
+export { ReactComponent as runtimeEnergyrealTimeMeterReading } from './runtimeEnergy/realTimeMeterReading.svg'
 // 能源管理
 
 export { ReactComponent as runtimeSolarstationTopo } from './runtimeSolar/chart.svg'

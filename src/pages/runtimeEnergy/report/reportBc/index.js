@@ -1,7 +1,7 @@
 // 班次能耗
 
 import React, { useState, useCallback, useRef, useEffect, useMemo   } from 'react'
-import { Checkbox, DatePicker, message, Tooltip, Descriptions, Radio, Space} from 'antd'
+import {   message, Table,Typography} from 'antd'
 
 import { useOutletContext } from 'react-router-dom'
 
@@ -9,17 +9,18 @@ import { useOutletContext } from 'react-router-dom'
 import Pagecount from '@com/pagecontent'
 import UseProTable from "@com/useTable/proTable";
 import UserTree from "@com/useTree"
-import {RadiogroupSolid,Tabsbox} from "@com/comstyled"
-import { getTime, isObject } from '@com/usehandler'
+import { Tabsbox} from "@com/comstyled"
+import { isObject } from '@com/usehandler'
  
-import CModal from '@com/useModal'
-import { ProExportExcel, CustButton,SetButton } from '@com/useButton'
  
-import {   shitcols,  labelStyle, contentStyle } from '../reportdata'
+import { ProExportExcel} from '@com/useButton'
+ 
+import {   shitcols,   } from '../reportdata'
 
-import {Contentbox,Chartwrap} from "../style"
+import {Contentbox } from "../style"
 import {useQueryShiftEnergy,useQueryShifts} from "../api"
 import {useCol} from "../usehook"
+ 
  
 
 export default function Index() {
@@ -138,12 +139,36 @@ export default function Index() {
    
   }, [projectId])
   const toolbar = [<ProExportExcel tb={tbref} className="reportBc"   />]
-  // fromlot,Zdconfig
+  const  summary= (pageData) => {
+          let totaconsume= 0; 
+          pageData.forEach(({ consume,   }) => {
+            totaconsume += Number.parseFloat(consume);
+            
+          });
+          return (
+            <>
+              <Table.Summary.Row>
+                <Table.Summary.Cell index={0} style={{textAlign:"center"}}>
+                    <Typography.Paragraph  style={{textAlign:"center"}}>汇总</Typography.Paragraph> 
+                </Table.Summary.Cell>
+               
+                <Table.Summary.Cell index={1}  colSpan={2}>
+                 
+                </Table.Summary.Cell>
+                  <Table.Summary.Cell index={2} style={{ textAlign: "center",fontWeight: "bold" }}>
+                    <Typography.Paragraph strong style={{textAlign:"center"}}>{totaconsume}</Typography.Paragraph> 
+                </Table.Summary.Cell>
+              </Table.Summary.Row>
+              
+            </>
+          );
+        }
+   
   return (
    
       <Pagecount showSearch={false} custserach={true} pd="0" bgcolor="none" >
         <Contentbox rtbg="none">
-          <UserTree areaId={areaId} energytype={energytype} setTreeId={setTreeId} setLine={setLine} showline={true} datatype={NaN} />
+          <UserTree areaId={areaId} energytype={energytype} setTreeId={setTreeId} setLine={setLine} showline={true} showSearch={true} datatype={NaN} />
           
                 <div className='rightwrap'>
                 <Tabsbox items={options} tabwidth="88px" activeKey={key} tabBarGutter={4} size='small'  onChange={setKey}  ></Tabsbox>
@@ -156,10 +181,12 @@ export default function Index() {
                 params={params} 
                 search={false}
                 toolBarRender={() => toolbar}
+                summary={summary}
                 options={{
                   setting: false,
 
                 }}
+                ref={tbref}
                sheetName="班次能耗"
                onExport={onExport} 
                 ></UseProTable>

@@ -4,7 +4,7 @@ import React, { useState, useCallback, useRef, useEffect, useMemo   } from 'reac
 import { Checkbox, DatePicker, message, Tooltip, Descriptions, Radio, Space} from 'antd'
  
 import { useOutletContext } from 'react-router-dom'
- 
+ import {nanoid} from "@reduxjs/toolkit"
  import {RadiogroupSolid,Tabsbox} from "@com/comstyled"
 import Pagecount from '@com/pagecontent'
 import UseProTable from "@com/useTable/proTable";
@@ -21,7 +21,7 @@ import  {useCsCol} from '../usehook'
 import {Contentbox,Chartwrap} from "../style"
 import {useQueryParameterReport,useQuerysParameterReportTabs} from "../api"
 import { t } from 'i18next'
-import { set } from 'lodash'
+ 
  
 
 
@@ -43,7 +43,7 @@ export default function Index() {
   const  [title, headerTitle] = useMemo(() => {
     let label = options?.find(d => d.key == key)?.label ?? ''
     let text =key==2 ? `有功总${label}` : label;
-    return [(unit && text) ?`${text}(${unit})` :  "", `参数报表-${label}`]
+    return [(unit || text) ?`${text}(${unit})` :  "", `参数报表-${label}`]
   }, [unit, key])
 
 
@@ -63,7 +63,7 @@ const [spans, setSpans] = useState(()=>defaultfilteredValue[key]?.length)
 
   const columns = useCsCol({  index, title, frontRows, spans,header, energytype, filters,filteredValue:values})
 
-  
+  console.log("columns", columns)
   const tbonChange=useCallback((_, filter)=>{
      console.log("filter",filter)
      let {power} = filter
@@ -158,7 +158,7 @@ const [spans, setSpans] = useState(()=>defaultfilteredValue[key]?.length)
                 item["power"]= CstbTitle[tab][index]
               }
                
-               item["keysn"]=item.sn+index
+               item["keysn"]=nanoid()
                datas.push({...item})
           })
          
@@ -205,7 +205,7 @@ const [spans, setSpans] = useState(()=>defaultfilteredValue[key]?.length)
                 }: {
 
                 }
-  const toolbar = [<ProExportExcel tb={tbref} className="reportFs"   />]
+  const toolbar = [<ProExportExcel tb={tbref} className="reportCs" single={true}   />]
   
   return (
    
@@ -219,7 +219,7 @@ const [spans, setSpans] = useState(()=>defaultfilteredValue[key]?.length)
                 <UseProTable 
                 headerTitle= {headerTitle}
                 tableClassName="reportCs"
-            //    rowKey={row=> row.keysn+row.address}
+               rowKey={row=> row.keysn}
                 columns={columns} 
                 request={getTableData} 
                 params={params} 
@@ -234,6 +234,7 @@ const [spans, setSpans] = useState(()=>defaultfilteredValue[key]?.length)
                     setting: false,
                   }
                 }
+                ref={tbref}
                sheetName="参数报表"
                onExport={onExport} 
                onChange={tbonChange}
