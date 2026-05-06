@@ -31,7 +31,12 @@ export default class ErrorBoundary extends Component {
   render() {
     if (this.state.hasError) {    
       return <Empty image={<Errorpg />}
-         imageStyle={{width: '200px', height: '180px'}}
+        styles={{
+         image: {
+           height: '180px',
+           width: '200px'
+         },
+        }} 
          style={style}
          description={<Paragraph><Text strong type="warning">抱歉！页面出错</Text><Link  onClick={() => window.location.reload(true)}>尝试下重新加载</Link>或<Link type='primary' ghost onClick={() => window.history.back()}>返回</Link></Paragraph>}
       /> ;
@@ -61,7 +66,12 @@ export function Fallack({error, custmsg}) {
     
    }, [error,pathname])
    return (<Empty image={<Errorpg />}
-   imageStyle={{width: '200px', height: '180px'}}
+      styles={{
+         image: {
+           height: '180px',
+           width: '200px'
+         },
+      }} 
    style={style}
    description={<Paragraph><Text strong type="warning">{msg}</Text><Link  onClick={() => window.location.reload()}>试下刷新</Link></Paragraph>}
    />);

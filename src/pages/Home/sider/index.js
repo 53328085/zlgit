@@ -42,7 +42,7 @@ const MiconSet = ({iconname}) => { // 设计态
 /*   siderRunMenus: null, // 项目 sider
         siderDesignerMenus: null, // 设置 sider */
 
-const mixkey =(itme,key)=>({...itme,key:key+"/"+itme.key,title:itme.label})
+const mixkey =(itme,key)=>({...itme,title:itme.label})
          
 export default function Sider() {
   const navigate = useNavigate()
@@ -91,7 +91,7 @@ export default function Sider() {
       setPath(primary)
       let sidermenu = config ? siderDesignerMenu[primary] : siderRunMenu[primary];
    //   let sidermenus = sidermenu?.map(({no, label, key,children=[]}) => config ? {no, label,key,title:label, children:children?.length>0 ? children.map(c=>mixkey(c,key)) : null, icon: <MiconSet iconname={key}  />} : {no, label,key,title:label, children:children?.length>0 ? children.map(c=>mixkey(c,key)) : null, icon: <Micon iconname={key}  />}) || [];   
-    let sidermenus = sidermenu?.map(({no, label, key,children=[]}) => ({no, label,key,title:label,children:children?.length ? children : null,  icon: config ? <MiconSet iconname={key}  />  
+    let sidermenus = sidermenu?.map(({no, label, key,children=[]}) => ({no, label,key,title:label,children:children?.length ? children.map(c=>mixkey(c,key)) : null,  icon: config ? <MiconSet iconname={key}  />  
       : <Micon iconname={key} />}) ) || [];       
      setMenus(sidermenus)
       Setkey(nested) 

@@ -142,7 +142,7 @@ export default function Index() {
     return getTableData(params)
   }, [ params])
 
- 
+ console.log("dataSource",dataSource)
   const toolbar = [<ProExportExcel tb={tbref} className="reportFl" single={true}   />]
   // fromlot,Zdconfig
   return (

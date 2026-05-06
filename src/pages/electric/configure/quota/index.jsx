@@ -245,7 +245,7 @@ export default function Index() {
     console.log(record)
     setDataSourceType();
     setEditId(record.id);
-    QueryAlarmEvents(record.id).then((res) => {
+    QueryAlarmEvents({planId:record.id,projectId:projectId}).then((res) => {
       if (res.success === true) {
         if (res.data) {
           setDataSourceType(JSON.parse(res.data));
@@ -482,6 +482,7 @@ export default function Index() {
       id: editId,
       name: values.name,
       remark: values.tag,
+      projectId: projectId,
     };
     UpdatePlanAlarm(params).then((res) => {
       if (res.success === true) {

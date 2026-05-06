@@ -75,6 +75,7 @@ const Mainbox = styled.div`
             border: 1px solid #d7d7d7;
             display: flex;
             flex-direction: column;
+            min-height: 200px;
             .strategyList{
                 //width: 100%;
               //  height: 604px;
@@ -464,7 +465,7 @@ export default function Index() {
           </div>
           <div className="right">
             <Ctitle isLight={isLight} className="itemTitle">充放策略详细设置</Ctitle>
-            <div className="middle">
+          {strategyList.length>0  &&  <div className="middle">
               <Form name='strategyForm' form={strategyForm} requiredMark={false} autoComplete='off' style={{paddingBottom: "16px"}}>
                 <Item label='策略名称'>
                   <Space size={16}>
@@ -571,10 +572,10 @@ export default function Index() {
                   <span>停机</span>
                 </div>
               </div>
-            </div>
+            </div>}
             <div className="bottom">
-              <CustButtonT   danger   onClick={()=>onDelete()} text="delete" /> 
-              <CustButtonT  onClick={()=>onSave()} text="save" /> 
+              <CustButtonT   danger   onClick={()=>onDelete()} text="delete" disabled={strategyList.length==0} /> 
+              <CustButtonT  onClick={()=>onSave()} text="save" disabled={strategyList.length==0} /> 
             </div>
             <div></div>
           </div>

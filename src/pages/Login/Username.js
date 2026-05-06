@@ -7,7 +7,7 @@ import {
   selectUser,
 } from "@redux/user";
 import { adaptation } from "@redux/systemconfig";
-import { Form, Input,  Image } from "antd"; 
+import { Form, Input,  Image,Space } from "antd"; 
 import {useTranslation, Trans, Translation} from 'react-i18next';
 import { pwdValidator, imgcodeValidator } from "@pages/rule";
 import { Login as Logapi, } from "@api/api";
@@ -134,7 +134,7 @@ export default memo(function({onSubmit}){
          btm="32px"
          style={{alignItems: "center"}}
        >
-        <Input.Group compact style={{display: 'flex'}}>
+        <Space.Compact   style={{display: 'flex'}}>
           <Form.Item  name="code" noStyle  rules={[
            {
              required: true,
@@ -156,7 +156,7 @@ export default memo(function({onSubmit}){
           <div style={{display: "inline-block", marginLeft: 'auto'}}> {codeUrl && <Image src={"data:image/gif;base64," + codeUrl} style={{height: "42px", width: "136px", border: '1px solid #9c9ea4'}} preview={false} onClick={getCode} />} </div>
          
          {/*   {codeUrl && <Image src={"data:image/gif;base64," + codeUrl} style={{height: "42px", width: "136px"}} preview={false} onClick={getCode} /> } */}
-           </Input.Group>
+           </Space.Compact>
            </Itembox>
          
        

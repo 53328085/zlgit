@@ -15,7 +15,9 @@ export default function Index() {
   }
   return (
     <Empty image={<Notfout />}
-         imageStyle={{width: '200px', height: '180px'}}
+         styles={{
+          image: { width: '200px', height: '180px' }
+         }} 
          style={style}
          description={<Paragraph><Text strong type="warning">抱歉！页面没找到</Text>
          <Link  onClick={() => window.location.reload(true)}>试下刷新</Link>

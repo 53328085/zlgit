@@ -260,6 +260,8 @@ overflow: hidden;
   overflow-x: auto;
   border-top: 2px dashed #FF6021;
   column-gap: 16px;
+ 
+ 
   .meters {
     display: flex;
     flex:0 0 290px;

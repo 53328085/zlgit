@@ -12,7 +12,7 @@ export function usebarline({ datas  }) {
      if (!fag) return {}
          y1 = y1.map((item) => Number.parseFloat(item));
         y2=y2.map((item) => Number.parseFloat(item));
-        y=y.map((item) => Number.parseFloat(item)+Math.round(Math.random()*1000));
+        y=y.map((item) => Number.parseFloat(item));
     return {
       type: 5,
       color: ["#5983FE", "#FF6021","#50C8FF"],

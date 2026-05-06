@@ -13,7 +13,9 @@ export default function Index({pagename=''}) {
   }
   return (
     <Empty image={imgurl.empty}
-         imageStyle={{width: '200px', height: '180px'}}
+         styles={{
+          image:{width: '200px', height: '180px'}
+         }}
          style={style}
          description={<Paragraph><Text strong type="warning">{pagename}页面建设中……</Text></Paragraph>}
       />

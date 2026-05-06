@@ -13,7 +13,9 @@ import { themeColor,adaptation  } from '@redux/systemconfig.js'
 const {Text, Link, Title, Paragraph} = Typography
 const {Item} = Form
 const { RangePicker } = DatePicker;
- 
+/*   	dayjs.updateLocale('zh-cn', {
+    weekdaysMin :["周日", "周一", "周二", "周三", "周四", "周五", "周六"]
+  }) */
 const Mainbox = styled.div`
     && {
        display: grid;
@@ -334,10 +336,10 @@ const getvalidate = (start, end, type, choosedate) => {
     let dayslist = enumerateDaysBetweenDates(start, end)
     if(type == 1) return dayslist
     if(type == 2) {
-      return  dayslist.filter(d => choosedate.includes(dayjs(d, 'YYYY-MM-DD').day())) // 每周
+      return  dayslist.filter(d => choosedate?.includes?.(dayjs(d, 'YYYY-MM-DD').day())) // 每周
     }
     if(type == 3) {
-      return dayslist.filter(d => choosedate.includes(dayjs(d, 'YYYY-MM-DD').date()))
+      return dayslist.filter(d => choosedate?.includes?.(dayjs(d, 'YYYY-MM-DD').date()))
     }
       /*  let type = params.executionCycle  // 此部分逻辑暂时不需要， 后端判断
       const datalist = enumerateDaysBetweenDates(date[0], date[1])   
@@ -369,12 +371,215 @@ const getvalidate = (start, end, type, choosedate) => {
     {label: '周四', value: 4},
     {label: '周五', value: 5},
     {label: '周六', value: 6},
-    {label: '周日', value: 0},
+    {label: '周日', value: 7},
   ]
   let days = Array.from({length: 31},(v, i) => ({label: i < 9 ? '0'+ (i+1) : (i+1).toString(), value: i+1 }))
  
- 
- function Automate({projectId, areaId, Strategy, CModal}) {
+ const Strategy = ({data,   form, disabled, executionCycle}) => {
+   
+
+   const [show, setShow] = useState(executionCycle)
+  const [options, setOptions] = useState(week)   
+  let {primaryderived,primaryColor} = useSelector(themeColor)
+   const onChange = (e) => {
+      let opt = ['', '', week, days][e]
+      setShow(e)
+      if(e > 1) setOptions(opt);
+   }
+   const disabledDate = (current) => {
+    
+    return current && current < dayjs().subtract(1, 'day').endOf('day');
+    };
+   useEffect(() => {
+      if (Number.isInteger(executionCycle)) {
+      setOptions(['', '', week, days][executionCycle])
+      setShow(executionCycle)
+      }
+     
+     return () => {
+        setOptions(week)
+        console.log('options', options)
+      }
+    }, [executionCycle])
+   return (
+      <Titlelayout title={<div style={{height: '40px', backgroundColor: primaryderived, display: 'flex',  alignItems: 'center', marginLeft: "-11px", justifyContent: 'center', color: '#fff'}}>运行计划设置</div>} bordered={'n'} pv="0px" bl="none" rad="0px"  pl="0px" pr="0px" layout="flex">
+         <Formbox   labelCol={{flex: '96px'}} labelAlign="left" form={form} disabled={disabled}   validateMessages={
+       { required: "缺少'${label}' 数据"}
+      }>
+          
+            <Item  label="模板名称" tooltip="最长8个字符" name="name" rules={[
+                {required: true},
+                {max: 8, type: 'string', message: '名称不能超过8个字符'}
+            ]}>
+                 <Input  />
+            </Item>
+            <Item  label="执行周期" name="executionCycle" rules={[
+                  {required: true},
+            ]}>
+                <Select
+                 
+                  onChange={onChange}
+                  options={[
+                    {
+                        label: '每日',
+                        value: 1
+                    },
+                    {
+                        label: '每周',
+                        value: 2
+                    },
+                    {
+                        label: '每月',
+                        value: 3
+                    }
+                  ]}
+                ></Select>               
+            </Item>
+            
+            { show!== 1  && 
+            <Item label="选择重复" name="dateChoose"  className='datechoose' rules={[
+                  {required: true},
+            ]}>
+                <Checkbox.Group options={options}    /> 
+              </Item>
+            }
+             
+            <Item  label="策略模板" name="strategyId" rules={[
+                  {required: true},
+            ]}>
+                <Select
+                  fieldNames={{label: 'name', value: 'id'}}
+                 
+                  options={data}
+                ></Select>               
+            </Item>
+          
+            <Item  label="优先级" className='priority' name="priority" rules={[
+                  {required: true},
+            ]}>
+                <Select
+                 style={{width: '80px'}}
+                  options={[
+                    {
+                        label: '1',
+                        value: 1
+                    },
+                    {
+                        label: '2',
+                        value: 2
+                    },
+                    {
+                        label: '3',
+                        value: 3
+                    }
+                  ]}
+                ></Select>               
+            </Item>
+            <Item label="生效日期" className='date' name="date" rules={[
+                  {required: true},
+            ]}>
+                   <RangePicker    disabledDate={disabledDate}/>
+            </Item>
+           
+         </Formbox>
+         
+      </Titlelayout>
+   )
+
+}
+const Planview = ({data, strategyDetail}) => { // status 1, 充电， 2， 放 3 待机 4. 停机
+    let {laptop} = useSelector(adaptation)
+    let {name, strategyName,priority, executionCycle,  startDate, endDate, dateChoose} = data
+   
+    let {primaryderived,primaryColor} = useSelector(themeColor)
+    const getminutes = (end, start) => dayjs(end, 'hh:mm').diff(dayjs(start, 'hh:mm'), 'minutes')   
+    let status =   strategyDetail.map(s => ({start: getminutes(s.start, '00:00') / 15, end: getminutes(s.end, '00:00') / 15, type: s.status}) )   
+    const items = Array.from({length: 96}, (v, i) => ({index: i+1, type: 3}))  
+     status.forEach(s => {
+        items.forEach(i => {
+            if(i.index >s.start && i.index <=s.end) {
+                i.type = s.type
+            }
+        })
+     });
+  /*   const disabledDate = (value) => {
+      let datalist = getvalidate(startDate, endDate, priority, dateChoose)    
+      return  !datalist.includes(value.format('YYYY-MM-DD'))
+    } */
+    const hours = Array.from({length: 13}, (v, i) => (i*2)>=10 ? (2*i).toString() : 0+(2*i).toString())
+   
+    const datalist = useMemo(() =>  getvalidate(startDate, endDate, executionCycle, dateChoose) 
+     , [executionCycle, startDate, endDate, dateChoose])
+    console.log('datalist', datalist)
+    const dateCellRender = useCallback((value) => {
+        
+        let time = dayjs(value).format('YYYY-MM-DD')
+         
+        let date = value.date()
+        let issome = dayjs(value).isSame(dayjs(), 'day')
+        return (
+          datalist?.includes?.(time) ?  <Datebox bg={issome && datalist?.includes?.(time) ? '#f0f9ff' : 'none'} key={nanoid()}>
+            <span >{date}日</span>
+            <span className='el'>{name}</span>
+            </Datebox> : <Datebox bg='none' key={nanoid()}>
+            <span >{date}日</span>
+            <span className='el'>&nbsp;</span>
+            </Datebox>
+        )
+    }, [name])
+   // const items = Array.from({length: 96}, (v, i) => ({index: i, type: i > 20 && i<40 ? 'warn' : i>=40 ? 'info' : ''}))    
+    return (
+        <Titlelayout  title={<div style={{height: '32px', backgroundColor: primaryderived, display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff'}}></div>} bordered={'n'} layout="flex" pv="0px" bl="none" pl="0px">
+            <Viewbox>               
+                <div className='detl'>
+                   <div style={{color: '#999', height: '48px'}}>查看运行计划及具体内容</div>
+                   <div style={{border: '1px solid #d7d7d7', flex: 1, display: 'flex', flexDirection: 'column'}}>
+                   <div className='title'>计划详细</div>
+                   <div className='content'>
+                      <Descriptions  bordered column={3} size="small"   styles={{
+                        content:{color:primaryColor},
+                        label:{width: '72px',padding: '2px', textAlign: 'center'}
+                        }}>
+                        <Descriptions.Item label="计划名称">{name}</Descriptions.Item>
+                        <Descriptions.Item label="策略模板">{strategyName}</Descriptions.Item>
+                        <Descriptions.Item label="优先级">{priority}</Descriptions.Item>
+                       </Descriptions>
+                       <Divider style={{margin: '0px'}}/>
+                       <div style={{display: 'flex', flexDirection: 'column'}}>
+                       <div className='list'>
+                         {items.map(i => <Itembox type={i.type} />)}
+                       </div>
+                        <div className='num'>
+                            {hours.map(i => <span>{i}</span>)}
+                        </div>
+                        <div className='dstrategy'  >
+                             {
+                                strategyDetail.map(s => <div className='dsitme'>
+                                    <span>{s.start}-{s.end}</span>
+                                    <span>{s.statusStr}</span>
+                                    <span>{s.planP}kw</span>
+                                </div>)
+                             }
+                        </div>
+                        <Space size={32} style={{marginLeft: laptop? '0px' : '-16px'}}>
+                           <div style={{fontSize: '12px', display: 'flex',alignItems: 'center'}}><Sblock bg='#4370ff'   />充电</div>
+                           <div style={{fontSize: '12px', display: 'flex',alignItems: 'center'}}><Sblock bg='#ff9933' />放电</div> 
+                           <div style={{fontSize: '12px', display: 'flex',alignItems: 'center'}}><Sblock bg='#0dc6d1' />待机</div> 
+                           <div style={{fontSize: '12px', display: 'flex',alignItems: 'center'}}><Sblock bg='#333' />停机</div> 
+                        </Space>
+                       </div>
+                   </div>
+                   </div>
+                </div>
+               
+                <CustCalendar fullscreen={false} fullCellRender={dateCellRender}  /> 
+              
+            </Viewbox>
+        </Titlelayout>
+    )
+}
+
+ function Automate({projectId, areaId,   CModal}) {
   
   const [form] = Form.useForm()
   const [nameform] = Form.useForm()
@@ -553,8 +758,13 @@ const getvalidate = (start, end, type, choosedate) => {
   const QueryStrategyList = async () => {
      try {
         let {success, data} = await  StorageAutoModeDesigner.QueryStrategyList(projectId, areaId)
-        success && setStrategy([...data])
-        !success && setStrategy([])
+        if (success && Array.isArray(data) && data.length) {
+             success && setStrategy([...data])
+        } else {
+          form.resetFields()
+           setStrategy([])
+        }      
+       
      } catch (error) {
         console.log(error)
      }
@@ -603,7 +813,13 @@ const getvalidate = (start, end, type, choosedate) => {
  }
 
   const changeview = () => {
-     setIsview(f => !f)
+     try {
+      
+       setIsview(true)
+    } catch (error) {
+      consle.log(error)
+    }  
+    
   }
   
   useEffect(() => {
@@ -635,8 +851,8 @@ const getvalidate = (start, end, type, choosedate) => {
                  </div>
             </div>
             <div className='topright'>
-                <div className='toprightup'>
-                { (isView && curplan?.id) ?  <Planview data={curplan} strategyDetail={strategyDetail}></Planview> : <Strategy data={strategy} executionCycle={curplan.executionCycle} disabled={disabled} form={form} /> }
+                <div className='toprightup'> {/* //(isView && curplan?.id) */}
+                {true  ?  <Planview data={curplan} strategyDetail={strategyDetail}></Planview> : <Strategy data={strategy} executionCycle={curplan.executionCycle} disabled={disabled} form={form} /> }
                 </div>
                 <div className='toprightdown'>
                     <Space size={16}>
@@ -700,207 +916,10 @@ const getvalidate = (start, end, type, choosedate) => {
 }
 
 
-const Planview = ({data, strategyDetail}) => { // status 1, 充电， 2， 放 3 待机 4. 停机
-    let {laptop} = useSelector(adaptation)
-    let {name, strategyName,priority, executionCycle,  startDate, endDate, dateChoose} = data
-   
-    let {primaryderived,primaryColor} = useSelector(themeColor)
-    const getminutes = (end, start) => dayjs(end, 'hh:mm').diff(dayjs(start, 'hh:mm'), 'minutes')   
-    let status =   strategyDetail.map(s => ({start: getminutes(s.start, '00:00') / 15, end: getminutes(s.end, '00:00') / 15, type: s.status}) )   
-    const items = Array.from({length: 96}, (v, i) => ({index: i+1, type: 3}))  
-     status.forEach(s => {
-        items.forEach(i => {
-            if(i.index >s.start && i.index <=s.end) {
-                i.type = s.type
-            }
-        })
-     });
-  /*   const disabledDate = (value) => {
-      let datalist = getvalidate(startDate, endDate, priority, dateChoose)    
-      return  !datalist.includes(value.format('YYYY-MM-DD'))
-    } */
-    const hours = Array.from({length: 13}, (v, i) => (i*2)>=10 ? (2*i).toString() : 0+(2*i).toString())
-   
-    const datalist = useMemo(() =>  getvalidate(startDate, endDate, executionCycle, dateChoose) 
-     , [executionCycle, startDate, endDate, dateChoose])
-     console.log(datalist)
-    const dateCellRender = useCallback((value) => {
 
-        let time = dayjs(value).format('YYYY-MM-DD')
-         
-        let date = value.date()
-        let issome = dayjs(value).isSame(dayjs(), 'day')
-        return (
-          datalist.includes(time) ?  <Datebox bg={issome && datalist.includes(time) ? '#f0f9ff' : 'none'}>
-            <span >{date}日</span>
-            <span className='el'>{name}</span>
-            </Datebox> : <Datebox bg='none'>
-            <span >{date}日</span>
-            <span className='el'>&nbsp;</span>
-            </Datebox>
-        )
-    }, [name])
-   // const items = Array.from({length: 96}, (v, i) => ({index: i, type: i > 20 && i<40 ? 'warn' : i>=40 ? 'info' : ''}))    
-    return (
-        <Titlelayout  title={<div style={{height: '32px', backgroundColor: primaryderived, display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff'}}></div>} bordered={'n'} layout="flex" pv="0px" bl="none" pl="0px">
-            <Viewbox>               
-                <div className='detl'>
-                   <div style={{color: '#999', height: '48px'}}>查看运行计划及具体内容</div>
-                   <div style={{border: '1px solid #d7d7d7', flex: 1, display: 'flex', flexDirection: 'column'}}>
-                   <div className='title'>计划详细</div>
-                   <div className='content'>
-                      <Descriptions  bordered column={3} size="small" labelStyle={{width: '72px',padding: '2px', textAlign: 'center'}} contentStyle={{color:primaryColor}}>
-                        <Descriptions.Item label="计划名称">{name}</Descriptions.Item>
-                        <Descriptions.Item label="策略模板">{strategyName}</Descriptions.Item>
-                        <Descriptions.Item label="优先级">{priority}</Descriptions.Item>
-                       </Descriptions>
-                       <Divider style={{margin: '0px'}}/>
-                       <div style={{display: 'flex', flexDirection: 'column'}}>
-                       <div className='list'>
-                         {items.map(i => <Itembox type={i.type} />)}
-                       </div>
-                        <div className='num'>
-                            {hours.map(i => <span>{i}</span>)}
-                        </div>
-                        <div className='dstrategy'  >
-                             {
-                                strategyDetail.map(s => <div className='dsitme'>
-                                    <span>{s.start}-{s.end}</span>
-                                    <span>{s.statusStr}</span>
-                                    <span>{s.planP}kw</span>
-                                </div>)
-                             }
-                        </div>
-                        <Space size={32} style={{marginLeft: laptop? '0px' : '-16px'}}>
-                           <div style={{fontSize: '12px', display: 'flex',alignItems: 'center'}}><Sblock bg='#4370ff'   />充电</div>
-                           <div style={{fontSize: '12px', display: 'flex',alignItems: 'center'}}><Sblock bg='#ff9933' />放电</div> 
-                           <div style={{fontSize: '12px', display: 'flex',alignItems: 'center'}}><Sblock bg='#0dc6d1' />待机</div> 
-                           <div style={{fontSize: '12px', display: 'flex',alignItems: 'center'}}><Sblock bg='#333' />停机</div> 
-                        </Space>
-                       </div>
-                   </div>
-                   </div>
-                </div>
-               
-                <CustCalendar fullscreen={false} dateFullCellRender={dateCellRender}  /> 
-              
-            </Viewbox>
-        </Titlelayout>
-    )
-}
-const Strategy = ({data,   form, disabled, executionCycle}) => {
-   
-
-   const [show, setShow] = useState(executionCycle)
-  const [options, setOptions] = useState(week)   
-  let {primaryderived,primaryColor} = useSelector(themeColor)
-   const onChange = (e) => {
-      let opt = ['', '', week, days][e]
-      setShow(e)
-      if(e > 1) setOptions(opt);
-   }
-   const disabledDate = (current) => {
-    
-    return current && current < dayjs().subtract(1, 'day').endOf('day');
-    };
-   useEffect(() => {
-     console.log('executionCycle', executionCycle)
-    // console.log('options', options)
-      setShow(executionCycle)
-     return () => {
-         setOptions(week)
-        console.log('options', options)
-      }
-    }, [executionCycle])
-   return (
-      <Titlelayout title={<div style={{height: '40px', backgroundColor: primaryderived, display: 'flex',  alignItems: 'center', marginLeft: "-11px", justifyContent: 'center', color: '#fff'}}>运行计划设置</div>} bordered={'n'} pv="0px" bl="none" rad="0px"  pl="0px" pr="0px" layout="flex">
-         <Formbox   labelCol={{flex: '96px'}} labelAlign="left" form={form} disabled={disabled}   validateMessages={
-       { required: "缺少'${label}' 数据"}
-      }>
-          
-            <Item  label="模板名称" tooltip="最长8个字符" name="name" rules={[
-                {required: true},
-                {max: 8, type: 'string', message: '名称不能超过8个字符'}
-            ]}>
-                 <Input  />
-            </Item>
-            <Item  label="执行周期" name="executionCycle" rules={[
-                  {required: true},
-            ]}>
-                <Select
-                 
-                  onChange={onChange}
-                  options={[
-                    {
-                        label: '每日',
-                        value: 1
-                    },
-                    {
-                        label: '每周',
-                        value: 2
-                    },
-                    {
-                        label: '每月',
-                        value: 3
-                    }
-                  ]}
-                ></Select>               
-            </Item>
-            
-            { show!== 1  && 
-            <Item label="选择重复" name="dateChoose"  className='datechoose' rules={[
-                  {required: true},
-            ]}>
-                <Checkbox.Group options={options}    /> 
-              </Item>
-            }
-             
-            <Item  label="策略模板" name="strategyId" rules={[
-                  {required: true},
-            ]}>
-                <Select
-                  fieldNames={{label: 'name', value: 'id'}}
-                 
-                  options={data}
-                ></Select>               
-            </Item>
-          
-            <Item  label="优先级" className='priority' name="priority" rules={[
-                  {required: true},
-            ]}>
-                <Select
-                 style={{width: '80px'}}
-                  options={[
-                    {
-                        label: '1',
-                        value: 1
-                    },
-                    {
-                        label: '2',
-                        value: 2
-                    },
-                    {
-                        label: '3',
-                        value: 3
-                    }
-                  ]}
-                ></Select>               
-            </Item>
-            <Item label="生效日期" className='date' name="date" rules={[
-                  {required: true},
-            ]}>
-                   <RangePicker    disabledDate={disabledDate}/>
-            </Item>
-           
-         </Formbox>
-         
-      </Titlelayout>
-   )
-
-}
  
 export default function Index(props) {
     return (
-        <Automate {...props}   Strategy={Strategy}   />
+        <Automate {...props}       />
     )
 }

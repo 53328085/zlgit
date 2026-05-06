@@ -171,7 +171,7 @@ function Index(props, ref) {
   const downTemp = useCallback(() => {  // 下载模板
     const params = { raw: true };
     const workbook = utils.book_new(); // 新建工作簿      
-    let table = tempref.current;
+    let table = tempref.current.nativeElement;
     const ws = utils.table_to_sheet(
       // 新建工作表
       table,
@@ -220,7 +220,7 @@ function Index(props, ref) {
   const download = useCallback(() => {
     const params = { raw: true };
     const workbook = utils.book_new(); // 新建工作簿      
-    let table = allref.current;
+    let table = allref.current.nativeElement;
     const ws = utils.table_to_sheet(
       // 新建工作表
       table,
@@ -249,7 +249,8 @@ function Index(props, ref) {
 
     const params = { raw: true };
     const workbook = utils.book_new(); // 新建工作簿      
-    let table = tableref.current;
+    let table = tableref.current?.nativeElement;
+    console.log("table", table)
     const ws = utils.table_to_sheet(
       // 新建工作表
       table,

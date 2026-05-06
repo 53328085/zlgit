@@ -1702,8 +1702,8 @@ export class Remote {
     server.post(`/Monitor/RuntimeRemote/BatchValveResponse`, data); //查询批量抄读阀门状态结果
   static StartCalling = (data) =>
     server.post(`/Monitor/RuntimeRemote/StartCalling`, data); //发起批量抄读测点任务
-  static CallingResponse = (data) =>
-    server.post(`/Monitor/RuntimeRemote/CallingResponse`, data); //查询批量抄读测点结果
+  static CallingResponse = (data,projectId) =>
+    server.post(`/Monitor/RuntimeRemote/CallingResponse?projectId=${projectId}`, data); //查询批量抄读测点结果
   static Open = (data) => server.post(`/Monitor/RuntimeRemote/Open`, data); //批量分闸
   static OpenForce = (data) =>
     server.post(`/Monitor/RuntimeRemote/OpenForce`, data); //拉闸结算
@@ -1996,13 +1996,13 @@ export const Monitoring = {
       server.delete(
         `/Monitor/Device/DeleteCamera?projectId=${data.projectId}&id=${data.id}`
       ), //删除视频监控
-    StartReboot: (sn) => server.get(`/Monitor/Gateway/StartReboot?sn=${sn}`), //重启网关
+    StartReboot: (params) => server.get(`/Monitor/Gateway/StartReboot`,{params}), //重启网关
     StartDownloadTask: (projectId, sn) =>
       server.get(
         `/Monitor/Gateway/StartDownloadTask?projectId=${projectId}&sn=${sn}`
       ), //参数下发
-    DownloadTaskState: (sn) =>
-      server.get(`/Monitor/Gateway/DownloadTaskState?sn=${sn}`), //参数下发
+    DownloadTaskState: (params) =>
+      server.get(`/Monitor/Gateway/DownloadTaskState`,{params}), //参数下发
     State: (sn) => server.get(`/Monitor/Gateway/State?sn=${sn}`), //重启网关状态
     GatewayImport: (data) => server.post(`/Monitor/Gateway/Import`, data), //导入网关
     ImportElectric: (data) =>
@@ -3548,8 +3548,8 @@ export class AlarmManagement {
       `Safe/Alarm/DeletePlan?projectId=${projectId}&planId=${planId}`
     );
   static UpdatePlanAlarm = (data) => server.post(`Safe/Alarm/UpdatePlan`, data);
-  static QueryAlarmEvents = (planId) =>
-    server.get(`Safe/Alarm/QueryAlarmEvents?planId=${planId}`);
+  static QueryAlarmEvents = (params) =>
+    server.get(`Safe/Alarm/QueryAlarmEvents`, {params});
   static AddAlarmEventInterval = (data) =>
     server.post(`Safe/Alarm/AddAlarmEventInterval`, data);
   static AddAlarmEventOverrun = (data) =>

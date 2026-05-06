@@ -43,6 +43,11 @@ flex-direction: column;
       text-align: center;
     }
   }
+  .ant-table-row.ant-table-row-selected {
+    .ant-table-cell {
+      background-color: transparent;
+    }
+  }
 
 }
 .ant-table.ant-table-small {

@@ -9,7 +9,9 @@ export default function Index(props) {
     <div style={{flex: 1,display: 'flex', justifyContent: 'center', alignItems: 'center', backgroundColor: props.bgcolor}}>
         <Empty 
           image={props?.image || <Nodata />}
-          imageStyle={props.imgStyle}
+          styles={{
+            image:{width: '200px', height: '180px'}
+          }} 
           description={tip ?? i18t("comm","NoDataAvailable")}
         />
        

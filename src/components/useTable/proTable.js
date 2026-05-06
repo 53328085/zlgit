@@ -145,11 +145,16 @@ function Index(props, ref) {
     const workbook = utils.book_new(); // 新建工作簿   
     
     let table =  document.querySelector(`.ant-table-wrapper.${className}`);
+    const cloneContainer = table.cloneNode(true);
+    const headerTable = cloneContainer?.querySelector?.('.ant-table-thead');
+    if (headerTable) {
+      headerTable.remove()
+    }
     // console.log("table",table)
     if (table) {
     const ws = utils.table_to_sheet(
       // 新建工作表
-      table,
+      cloneContainer,
       params
     );
     utils.book_append_sheet(workbook, ws, "Sheet1"); // 把工作表添加到工作簿

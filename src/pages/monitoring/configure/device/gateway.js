@@ -506,7 +506,7 @@ export default function Gateway() {
     //  modalReStartRef?.current?.onCancel()
     setspinLoading('正在重启网关……')
     setSpinShow(true)
-    const { data, success, errMsg } = await StartReboot(restsn)
+    const { data, success, errMsg } = await StartReboot({sn:restsn, projectId:projectId})
     if (success) {
       if (data.code === 1) {
         setSpinShow(false)
@@ -540,11 +540,11 @@ export default function Gateway() {
   const [errorList, seterrorList] = useState([])
   //参数下发
   let [countnum, setCountNum] = useState(0)
-  const poll = () => {
+  const poll = (data) => {
     let time = countnum === 0 ? 0 : 3000
     return new Promise((resolve, reject) => {
       setTimeout(() => {
-        DownloadTaskState(gatewaySn).then(res => {
+        DownloadTaskState({sn:gatewaySn,projectId:projectId, seq:data}).then(res => {
           if (res.data?.code === 1) {
             if (res.data?.message) {
               console.log(res.data)
@@ -582,10 +582,12 @@ export default function Gateway() {
       let result = await StartDownloadTask(projectId, gatewaySn)
 
       if (result.success) {
+
         while (countnum < 15) {
-          const resp = await poll()
+          const resp = await poll(result.data)
           console.log(resp)
           if (resp == 'break') {
+            
             startOk();
             break;
           }

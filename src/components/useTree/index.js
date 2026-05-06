@@ -346,7 +346,7 @@ export default memo(function Index({ areaId, setTreeId, setLine, setNode, showli
             return id
           })
           setCheckedKeys(part)
-         // console.log(areId)
+          console.log("areId", areId)
          
           setTreeId(areId)
           setIndeterminate(true)

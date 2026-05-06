@@ -346,7 +346,7 @@ const rules = [{
             preserve={false}
             >
                  <Form.Item label="测温通道" >
-                    <Input.Group compact style={{display: 'flex'}}>
+                    <Space.Compact  style={{display: 'flex'}}>
                      <Form.Item  name="channel" rules={rules} noStyle >
                          <Select options={channel} onChange={changeCh} fieldNames={{label: "name", value: "channel"}} disabled={state} style={{width: "148px"}}></Select>
                   
@@ -354,7 +354,7 @@ const rules = [{
                      <Form.Item label="分区编号" name="subfield" rules={rules} style={{marginLeft: "auto"}}  >
                          <Select options={items} fieldNames={{label: 'subfieldName', value: 'subfield'}} disabled={state} style={{width: "148px"}}    ></Select>    
                       </Form.Item>
-                      </Input.Group>
+                      </Space.Compact>
                  </Form.Item>
                 
               <Form.Item label="分区名称" name="subfieldName" rules={rules}>

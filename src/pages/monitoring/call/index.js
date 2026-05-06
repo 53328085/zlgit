@@ -244,7 +244,7 @@ export default function Index() {
               console.log(index)
               setTimeout(() => {
                 if (status) {
-                  Remote.CallingResponse(isOkList).then(res => {
+                  Remote.CallingResponse(isOkList, projectId).then(res => {
                     arr.push(index)
                     let { success, data } = res
                     if (success) {
