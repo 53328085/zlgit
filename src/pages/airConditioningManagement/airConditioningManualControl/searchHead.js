@@ -1,5 +1,5 @@
 import { useEffect, useState, useRef, useContext } from "react";
-import { Header } from "./style";
+import { Header ,Control} from "./style";
 import {
     Form,
     Select,
@@ -29,6 +29,7 @@ export const Tabs = ({ form, onSearchClick }) => {
                     form={form}
                     layout="inline"
                     colon={false}
+                    className="condition"
                     initialValues={{
                         alike: '',
                         cSn: '',
@@ -82,11 +83,12 @@ export const Tabs2 = ({ form, onControlClick }) => {
         form.setFieldValue('ioState', checked ? 1 : 2);
     };
     return (
-        <div>
+        <Control>
             <Form
                 form={form}
                 layout="inline"
                 colon={false}
+                className="control"
                 initialValues={{
                     ioState: 1,
                     workMode: 1,
@@ -111,6 +113,6 @@ export const Tabs2 = ({ form, onControlClick }) => {
                     <CustButtonT text="控制" onClick={onControlClick}></CustButtonT>
                 </Item>
             </Form>
-        </div>
+        </Control>
     )
 }

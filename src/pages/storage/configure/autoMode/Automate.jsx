@@ -13,7 +13,7 @@ import { themeColor,adaptation  } from '@redux/systemconfig.js'
 const {Text, Link, Title, Paragraph} = Typography
 const {Item} = Form
 const { RangePicker } = DatePicker;
-/*   	dayjs.updateLocale('zh-cn', {
+/*       dayjs.updateLocale('zh-cn', {
     weekdaysMin :["周日", "周一", "周二", "周三", "周四", "周五", "周六"]
   }) */
 const Mainbox = styled.div`
@@ -93,7 +93,7 @@ const Mainbox = styled.div`
              .toprightup {
                 //padding: 32px 32px 16px 32px;
                 display: flex;
-
+ 
              }
              .toprightdown {
                 background-color: rgba(242, 242, 242, 1);
@@ -177,7 +177,7 @@ const Viewbox = styled.div`
       //  height: 365px;
       //  border: 1px solid rgba(215, 215, 215, 1); 
        // margin-top: 40px;
-
+ 
         display: flex;
         flex-direction: column;
        .title {
@@ -277,7 +277,7 @@ const CustCalendar = styled(Calendar)`
         cursor: default;
         padding: 0px;
       //  cursor: not-allowed
-
+ 
     }
     .ant-picker-cell.ant-picker-cell-in-view {
         background-color: #fff;
@@ -287,7 +287,7 @@ const CustCalendar = styled(Calendar)`
         }
     }
   }
-
+ 
 `
 const Datebox = styled.div`
  //width: 122px;
@@ -314,7 +314,7 @@ const Sblock = styled.span`
     margin-right: 4px;
     &::after {
         content: attr(text);
-
+ 
     }
 `
 const  enumerateDaysBetweenDates = (startDate, endDate) => {  
@@ -323,16 +323,16 @@ const  enumerateDaysBetweenDates = (startDate, endDate) => {
     let EDate=dayjs(endDate);
      
     daysList.push(SDate.format('YYYY-MM-DD'));
-    while( SDate.add(1,"days").isBefore( EDate) ){   
+   /*  while( SDate.add(1,"days").isBefore( EDate) ){   
         daysList.push( SDate.format('YYYY-MM-DD'));
-    } 
+    }  */
     daysList.push( EDate.format('YYYY-MM-DD'));
     return daysList;
   }
-
+ 
 const getvalidate = (start, end, type, choosedate) => {
     
-
+ 
     let dayslist = enumerateDaysBetweenDates(start, end)
     if(type == 1) return dayslist
     if(type == 2) {
@@ -357,13 +357,13 @@ const getvalidate = (start, end, type, choosedate) => {
             3: day
         }[type] */
 }
-
-
-
-
-
-
-
+ 
+ 
+ 
+ 
+ 
+ 
+ 
   let week =  [
     {label: '周一', value: 1},
     {label: '周二', value: 2},
@@ -377,7 +377,7 @@ const getvalidate = (start, end, type, choosedate) => {
  
  const Strategy = ({data,   form, disabled, executionCycle}) => {
    
-
+ 
    const [show, setShow] = useState(executionCycle)
   const [options, setOptions] = useState(week)   
   let {primaryderived,primaryColor} = useSelector(themeColor)
@@ -485,10 +485,11 @@ const getvalidate = (start, end, type, choosedate) => {
          
       </Titlelayout>
    )
-
+ 
 }
 const Planview = ({data, strategyDetail}) => { // status 1, 充电， 2， 放 3 待机 4. 停机
     let {laptop} = useSelector(adaptation)
+    console.log("data",data)
     let {name, strategyName,priority, executionCycle,  startDate, endDate, dateChoose} = data
    
     let {primaryderived,primaryColor} = useSelector(themeColor)
@@ -578,7 +579,7 @@ const Planview = ({data, strategyDetail}) => { // status 1, 充电， 2， 放 3
         </Titlelayout>
     )
 }
-
+ 
  function Automate({projectId, areaId,   CModal}) {
   
   const [form] = Form.useForm()
@@ -608,7 +609,7 @@ const Planview = ({data, strategyDetail}) => { // status 1, 充电， 2， 放 3
       setCount(num)
   }
   const initform = (data) => {
-
+ 
     let start =data.startDate ? dayjs(data.startDate, 'YYYY-MM-DD HH:mm:ss') : dayjs();
     let end =data.endDate ? dayjs(data.endDate, 'YYYY-MM-DD HH:mm:ss'): dayjs();
     form.setFieldsValue({
@@ -628,7 +629,7 @@ const Planview = ({data, strategyDetail}) => { // status 1, 充电， 2， 放 3
         console.log(error)
     }
  }
-
+ 
   const onPlan = async (p) => {
    
     initform(p)
@@ -638,10 +639,10 @@ const Planview = ({data, strategyDetail}) => { // status 1, 充电， 2， 放 3
      }) 
      setIsadd(false)
      setIsview(false)
-
+ 
      QueryStrategyDetail(strategyId)
   
-
+ 
   }
   const addplan = () => {
     setIsview(false)
@@ -652,13 +653,13 @@ const Planview = ({data, strategyDetail}) => { // status 1, 充电， 2， 放 3
     }) 
     form.resetFields()
      pref.current.onOpen()
-
+ 
   }
-
+ 
 /*   const onSave = () => {
     if(isadd) AddRuntimePlan();
   } */
-
+ 
    // 新增 / 修改 计划
   const oref = useRef()
   const onPlanClose = () => {
@@ -682,7 +683,7 @@ const Planview = ({data, strategyDetail}) => { // status 1, 充电， 2， 放 3
     
        
        params.dateChoose = params.dateChoose || []
-
+ 
        let startDate = date[0]?.format('YYYY-MM-DD');
        let endDate = date[1]?.format('YYYY-MM-DD'); 
        
@@ -698,7 +699,7 @@ const Planview = ({data, strategyDetail}) => { // status 1, 充电， 2， 放 3
           } else {
             custMsg({success: false, content: errMsg || '数据出错'})
           }
-
+ 
           
          
        } catch (error) {
@@ -709,14 +710,14 @@ const Planview = ({data, strategyDetail}) => { // status 1, 充电， 2， 放 3
         console.log(error)
     }
   }
-
+ 
   // 删除计划 start
   
  const dref = useRef()
  const showDel = () => {
    dref.current.onOpen()
  }
-
+ 
  const DeleteRuntimePlan = async () => {
     let {id} = curplan
     let {success, errMsg} = await  StorageAutoModeDesigner.DeleteRuntimePlan(projectId, id)
@@ -730,10 +731,10 @@ const Planview = ({data, strategyDetail}) => { // status 1, 充电， 2， 放 3
     }
      
  }
-
+ 
 // 删除计划 end
-
-
+ 
+ 
 // 启用 start
   const UpdateEnable = async () => { // 启用后不能用删除、修改 ， status 0 不启用， 1 启用
      
@@ -753,8 +754,8 @@ const Planview = ({data, strategyDetail}) => { // status 1, 充电， 2， 放 3
    
     
   }
-
-
+ 
+ 
   const QueryStrategyList = async () => {
      try {
         let {success, data} = await  StorageAutoModeDesigner.QueryStrategyList(projectId, areaId)
@@ -763,6 +764,7 @@ const Planview = ({data, strategyDetail}) => { // status 1, 充电， 2， 放 3
         } else {
           form.resetFields()
            setStrategy([])
+           setStrategyDetail([])
         }      
        
      } catch (error) {
@@ -771,11 +773,11 @@ const Planview = ({data, strategyDetail}) => { // status 1, 充电， 2， 放 3
     
  } 
  
-
+ 
   const getPlans = async () => {
     try {
         let {success, data} = await StorageAutoModeDesigner.QueryRuntimePlan(projectId, areaId)
-
+ 
         if(success && Array.isArray(data) && data.length > 0) {
             console.log(count)
             setCurplan(data[count])
@@ -793,7 +795,7 @@ const Planview = ({data, strategyDetail}) => { // status 1, 充电， 2， 放 3
         console.log(error)
     }
      
-
+ 
   }
   const planOk = () => {
     
@@ -803,7 +805,7 @@ const Planview = ({data, strategyDetail}) => { // status 1, 充电， 2， 放 3
     form.setFieldValue('name', planName)
     pref.current.onCancel()
   }
-
+ 
  const onCancel = () => {
     setIsadd(false)    
     console.log(curplan)
@@ -811,11 +813,11 @@ const Planview = ({data, strategyDetail}) => { // status 1, 充电， 2， 放 3
     pref.current.onCancel()
     
  }
-
+ 
   const changeview = () => {
      try {
       
-       setIsview(true)
+       setIsview(f=>!f)
     } catch (error) {
       consle.log(error)
     }  
@@ -852,7 +854,7 @@ const Planview = ({data, strategyDetail}) => { // status 1, 充电， 2， 放 3
             </div>
             <div className='topright'>
                 <div className='toprightup'> {/* //(isView && curplan?.id) */}
-                {true  ?  <Planview data={curplan} strategyDetail={strategyDetail}></Planview> : <Strategy data={strategy} executionCycle={curplan.executionCycle} disabled={disabled} form={form} /> }
+                {(isView && curplan?.id)  ?  <Planview data={curplan} strategyDetail={strategyDetail}></Planview> : <Strategy data={strategy} executionCycle={curplan.executionCycle} disabled={disabled} form={form} /> }
                 </div>
                 <div className='toprightdown'>
                     <Space size={16}>
@@ -903,7 +905,7 @@ const Planview = ({data, strategyDetail}) => { // status 1, 充电， 2， 放 3
             </Item>
         </Form>
       </CModal>
-
+ 
       <CModal ref={dref} title='删除策略' mold='cust' onOk={DeleteRuntimePlan} width={592} type="warn">
        是否确认删除该运行计划？
       </CModal>
@@ -914,9 +916,9 @@ const Planview = ({data, strategyDetail}) => { // status 1, 充电， 2， 放 3
     </Titlelayout>
   )
 }
-
-
-
+ 
+ 
+ 
  
 export default function Index(props) {
     return (

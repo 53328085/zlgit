@@ -38,7 +38,7 @@ import {usebarline } from './usehook'
            areaId,
            siteId:stationName.value,
           dayMonthYear:type,
-           date: type==3 ? date?.startOf("year")?.format("YYYY-MM-DD") : date?.format('YYYY-MM-DD')
+           date: type==3 ? date?.startOf("year")?.format("YYYY-MM-DD") : type==2 ? date?.startOf("month")?.format("YYYY-MM-DD") : date?.format('YYYY-MM-DD')
          }
          let {success, data} = await    useRevenues({},body)
          if (success && isObject(data)){

@@ -110,6 +110,7 @@ export let conscols = [   //  conscols 能耗报表
     title: '综合倍率',
     dataIndex: 'ratio',
     key: "ratio",
+    width:92,
   },
   {
     title: '起始读数',

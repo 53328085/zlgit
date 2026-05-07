@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useRef, memo, useMemo } from 'react'
 import { useSelector } from 'react-redux'
  
-import styled from 'styled-components'
+ 
  
 import { energyShare, Monitoring, EnergyPublicRuntime, DMAPartition, Apimethod } from '@api/api'
 import { selectProjectId, selectOneLevel, lightlevel } from '@redux/systemconfig.js'
@@ -9,7 +9,7 @@ import { message, Input, Tree, Radio, Checkbox, Switch } from 'antd'
  
 import Titlelayout from "@com/titlelayout";
 import { useLocation } from "react-router-dom"
- 
+import {Treecontainer}  from "./style"
  
  
 const { Search } = Input;
@@ -33,16 +33,7 @@ const { QuerySpaceTrees, } = energyShare
 const { DMAGetTree } = DMAPartition
 const { LineManagerQuery } = Monitoring.LineManager // 线路查询
 const { queryEnergyCategoryTree } = EnergyPublicRuntime
-const Treebox = styled.div`
-       display: grid;
-       grid-template-rows: ${(props) => props.showline == "false" ? '32px 32px 1fr' : '32px 32px 32px 556px'};
-       row-gap: 16px;
-       flex: 1;
-       height: 100%;
-       .ant-tree{
-       //  overflow-y: auto; 
-       }
-`
+import { useGetXY } from "@com/usehandler";
  
 export default memo(function Index({ areaId, setTreeId, setLine, setNode, showline = true, scroll = 0, datatype = NaN, energytype, showSearch,
   sty = { bordered: 'y', pv: '16px' },
@@ -60,7 +51,7 @@ export default memo(function Index({ areaId, setTreeId, setLine, setNode, showli
   const levelone = useSelector(selectOneLevel)
   const lightone = useSelector(lightlevel)
  
- 
+  const {scrollY} = useGetXY({selector:".ant-tree-list", extraHeight:16})
   const [treeData, setTreeData] = useState([])
   const location = useLocation();
   const { state } = location
@@ -520,9 +511,9 @@ export default memo(function Index({ areaId, setTreeId, setLine, setNode, showli
   return (
  
     <Titlelayout key="line" layout="flex" bordered={sty.bordered} pv={sty.pv} hv={hv} title={title}>
-      <div style={{ height: scroll ? scroll : '750px', overflow: 'auto', flex: 1, scrollbarWidth: "thin" }}>
-        {treeName ? <div style={{ color: '#515151', fontWeight: 'bold', marginBottom: '8px' }}>{treeName}</div> : null}
-        <Treebox showline={showline.toString()}>
+      <Treecontainer showline={showline.toString()}>
+        {treeName ? <div  className='treeName'>{treeName}</div> : null}
+        <div className='treebox' >
           {showline && <Radio.Group onChange={switchLine} style={radiosty} value={typeTree}>
             <Radio value={0}>按网格</Radio>
             <Radio value={1}>按线路</Radio>
@@ -536,7 +527,8 @@ export default memo(function Index({ areaId, setTreeId, setLine, setNode, showli
             onSearch={getTreeData}
           />}
  
-          {allselect && <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>  <Checkbox onChange={allSelected} indeterminate={indeterminate} checked={checked}>全选</Checkbox>
+          {allselect && <div  className='allselect'>
+            <Checkbox onChange={allSelected} indeterminate={indeterminate} checked={checked}>全选</Checkbox>
             {isshow && <Radio.Group style={radiosty2} onChange={Relevancy} value={schecked}>
               <Radio value={1}>不关联</Radio>
               <Radio value={2}>关联</Radio>
@@ -555,9 +547,10 @@ export default memo(function Index({ areaId, setTreeId, setLine, setNode, showli
             multiple={true}
             checkStrictly={strictyly} // true : 完全受控，父子节点不关联, false : 父子节点关联
             indeterminate={indeterminate}
+             height={scrollY}
             {...restprop}
           />
-        </Treebox></div>
+        </div></Treecontainer>
     </Titlelayout>
  
   )

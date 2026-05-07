@@ -42,7 +42,7 @@ export default function Index() {
 
     position: "absolute",
     top: "50%",
-    transform: "translate(0px, -30px)",
+    transform: "translate(0px, -150%)",
     zIndex: 1,
     backgroundColor: "#E94126",
     borderColor: "#E94126",
@@ -55,8 +55,9 @@ export default function Index() {
   }
   return (
     <Titlelayout title={<span style={{ color: "#fff" }}>站点接线图</span>} pv="24px" bgcolor="transparent" bg="transparent" layout="flex">
-      <Button style={sty} >交流母线</Button>
+      
       <TopologySty>
+        <Button style={sty} >交流母线</Button>
         <div className="up">
           <div className='paint'>
             <div className="outwrap">

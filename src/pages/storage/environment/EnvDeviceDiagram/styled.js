@@ -187,7 +187,7 @@ export const MetricItem = styled.div`
   align-items: center;
   justify-content: center;
   font-size: ${(props) => (props.$small ? "13px" : "14px")};
-  color: ${(props) => (props.$highlight ? colorValue : "#dce5f7")};
+  color: ${(props) => (props.$highlight ? colorValue : "#fff")};
   padding: 0 8px;
   text-align: center;
   white-space: normal;

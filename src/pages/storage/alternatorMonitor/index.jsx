@@ -56,6 +56,7 @@ const Mainbox = styled.div`
 export default function Index() {
   let {exparams} = useOutletContext()
   let {areaId, projectId: exparamsProjectId, pcsId} = exparams || {}
+  console.log(pcsId)
   const currentPcsId = pcsId?.value ?? pcsId
 
   // 优先使用 exparams 的 projectId，否则使用 redux 中的
@@ -201,6 +202,17 @@ export default function Index() {
   // 获取功率趋势数据
   const fetchPowerTrends = async (params) => {
     try {
+      const {projectId, pcsId} = params
+      if(![projectId, pcsId].every(n => Number.isInteger(parseInt(n))) ) {
+        setCompareData({
+    xAxis: [],
+    series1Name: '',
+    series2Name: '',
+    series1: [],
+    series2: []
+  })
+        return
+      }
       const res = await queryPowerTrends(params.projectId, params.pcsId, params.startTime, params.endTime)
       if (res.success && res.data && typeof res.data === 'object') {
         const series1 = normalizeTrendSeries(res.data?.data1st)
@@ -307,8 +319,11 @@ export default function Index() {
   }
 
   useEffect(() => {
-    getContent()
+    if([currentPcsId, projectId].every(item => Number.isInteger(parseInt(item)))) {
+ getContent()
     getRuntimeData()
+    }
+   
   }, [currentPcsId, projectId])
 
   useEffect(() => {

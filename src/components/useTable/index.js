@@ -250,10 +250,14 @@ function Index(props, ref) {
     const params = { raw: true };
     const workbook = utils.book_new(); // 新建工作簿      
     let table = tableref.current?.nativeElement;
-    console.log("table", table)
+   const cloneContainer = table.cloneNode(true);
+    const headerTable = cloneContainer?.querySelector?.('.ant-table-thead');
+     if (headerTable) {
+      headerTable.remove()
+    }
     const ws = utils.table_to_sheet(
       // 新建工作表
-      table,
+      cloneContainer,
       params
     );
     utils.book_append_sheet(workbook, ws, "Sheet1"); // 把工作表添加到工作簿

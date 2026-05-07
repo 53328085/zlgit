@@ -143,8 +143,8 @@ export default function UseSerach(props) {
         console.log("站点暂无数据")
         setOptions([])
         form.setFieldsValue({
-          stationName: { label: null, value: null, id: null },
-          containerId: { label: null, value: null },
+          stationName:  null,
+          containerId: null,
         })
         props.setexparams({ ...form.getFieldsValue(true) })
         if (!success) return message.warning(errMsg)

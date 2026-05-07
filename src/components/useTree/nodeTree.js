@@ -20,7 +20,7 @@ import { message, Input, Tree, Radio, Checkbox, Switch } from "antd";
 import Titlelayout from "@com/titlelayout";
 import { useLocation } from "react-router-dom";
 import { useNodeTree } from "./api";
-import { Treebox } from "./style";
+import { Treecontainer } from "./style";
 import { useGetXY } from "@com/usehandler";
 const { Search } = Input;
 
@@ -198,26 +198,13 @@ export default memo(function Index({
       title={title}
     >
       {contextHolder}
-      <div
-        style={{
-      //    height: scroll ? scroll : "750px",
-          overflow: "hidden",
-          flex: 1,
-          scrollbarWidth: "thin",
-        }}
-      >
+      <Treecontainer showline={showline.toString()}>
         {treeName ? (
-          <div
-            style={{
-              color: "#515151",
-              fontWeight: "bold",
-              marginBottom: "8px",
-            }}
-          >
+          <div className="treeName">
             {treeName}
           </div>
         ) : null}
-        <Treebox showline={showline.toString()}>
+        <div className="treebox" >
           {showline && (
             <Radio.Group
               onChange={switchLine}
@@ -254,8 +241,8 @@ export default memo(function Index({
             height={scrollY}
             {...restprop}
           />
-        </Treebox>
-      </div>
+        </div>
+      </Treecontainer>
     </Titlelayout>
   );
 });

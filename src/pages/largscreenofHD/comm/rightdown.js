@@ -16,9 +16,11 @@ import Defempty from "./empty"
     slidesToShow: 5,
     slidesToScroll: 1,
     vertical: true,
-   // verticalSwiping: true,
+    autoplay: true,
+    verticalSwiping: true,
    speed: 2000,
    autoplaySpeed: 1000,
+   cssEase: "linear"
    
   }
   const piecolor=["#FFB12B","#FF6021","#FF07A4"]
@@ -83,7 +85,7 @@ export default function Index() {
           
           </div>
          <div className="slider-container">
-         <Carousel autoplay {...settings} style={{height: 128 }}>
+         <Carousel   {...settings} style={{height: 128 }}>
              { alarmInfos?.map?.(d=>(
               <div className="row" key={d.name}>
                 <div> {d.deviceName}</div>
