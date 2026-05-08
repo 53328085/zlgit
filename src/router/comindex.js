@@ -289,10 +289,11 @@ export default function Index() {
             setConfig({
               energytype: true,
               publicDate: true,
-              rangeDate: 45,
+              rangeDate: 1,
               shiftNo: true,
               gas: false,
               custview: true,
+              isAreaId:false,
               alike: true,
               period: true,
               showTime: {

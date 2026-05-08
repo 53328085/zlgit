@@ -386,7 +386,14 @@ export default function UseSerach(props) {
   // 能源管理 --公共能耗
   const changepublic = (e) => {
     if (e == 4) {
-      form.setFieldValue("publicrangedate", [dayjs().subtract(7,"day"), dayjs().endOf("day")])
+      if(props.config?.rangeDate>=7) {
+          form.setFieldValue("publicrangedate", [dayjs().subtract(7,"day"), dayjs()])
+      }else if(props.config?.rangeDate>1) {
+         form.setFieldValue("publicrangedate", [dayjs().subtract(1,"day"), dayjs()])
+      }else {
+        form.setFieldValue("publicrangedate", [dayjs().startOf("day"), dayjs()])
+      }
+      
     } else {
       form.setFieldValue("publicdate", dayjs())
     }

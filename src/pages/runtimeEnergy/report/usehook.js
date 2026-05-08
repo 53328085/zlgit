@@ -99,13 +99,19 @@ export function useCol(cols, index, title, rowspan) {
   }, [cols, index, title]);
 }
 export function useCsCol(props) {
-  console.log("useCsCol", props);
+//  console.log("useCsCol", props);
   const {   index, title="", frontRows = 0, spans, header,energytype,filters,filteredValue } = props;
   return useMemo(() => {
     try {
-      let flag = [index, frontRows, spans,  energytype].every(i => Number.isInteger(parseInt(i))) &&
-       title && Array.isArray(filters)
-        && filters.length > 0 && Array.isArray(filteredValue) &&Array.isArray(header) && header.length > 0;
+      let flag
+      if (energytype == 1) {
+         flag = [index, frontRows, spans,  energytype].every(i => Number.isInteger(parseInt(i))) &&
+        title && Array.isArray(filters)  
+        && filters.length > 0 && Array.isArray(filteredValue) &&Array.isArray(header) && header.length > 0 ;
+      }else {
+        flag = title && Array.isArray(header)  && header.length > 0;
+      }
+     
     if (!flag) return [];
      let cols = energytype == 1 ? Cscol : CscolW;
     if (isObject(cols) && Object.values(cols)) {
@@ -120,18 +126,18 @@ export function useCsCol(props) {
             ...col,
             filtered:true,
             filters: filters.map(v =>({text: v, value: v})),
-            onFilter: (value, record) => record.power.indexOf(value) ==0,
+            onFilter: (value, record) => record?.power?.indexOf?.(value) ==0,
             filteredValue:filteredValue,
            }
         }
-        console.log("col",col)
+      //  console.log("col",col)
         cols[index]=col
       }
       
       for (let i = 0; i < frontRows; i++) {
         cols[i].onCell = (_, index) => spans>1 ?   ({ rowSpan:     index % spans === 0 ? spans : 0  }) : null;
       }
-      console.log("cols",cols)
+      //console.log("cols",cols)
       let newCols = header?.map?.((d, idx) => {
         return {
           title: d,
