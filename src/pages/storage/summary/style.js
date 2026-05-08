@@ -358,3 +358,46 @@ overflow: hidden;
  }
 }
 `;
+
+export const IncomeContainer = styled.div` 
+  display: grid;
+  grid-template-columns: 1fr;
+  grid-template-rows:  64px 32px 1fr;
+  row-gap: 16px;
+  color:#303133;
+  .total {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(228px, 1fr));
+    column-gap: 16px;
+    .item {
+      background: rgba(229,236,245,0.5);
+      border-radius: 4px;
+      display: flex;
+      padding: 12px;
+      align-items: center;
+      column-gap: 8px;
+      .imgbox {
+        width: 32px;
+        overflow: hidden;
+        .img {
+          max-width: 100%;
+        }
+      }
+      .content {
+        display: flex;
+        flex-direction: column;
+       .value {
+        font-weight: 600;
+        font-size: 16px;
+        color: #1D3374;
+      }
+      .desc {
+        color: #606266;
+        font-size: 13px;
+      }
+      }
+  
+    }
+  }
+
+`

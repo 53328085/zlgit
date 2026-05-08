@@ -25,7 +25,7 @@ export const { useQueryStorageWarning } = new Apimethod( //最新告警
 
   export const { useQueryStorageIncome } = new Apimethod( // 储能收益 暂时不做
     "get",
-    "Storage/SiteSummaryRuntime/QueryStorageIncome"
+    "Storage/StorageRevenueRuntime/Revenues"
   );
 
   export const { useQueryChargeETrends } = new Apimethod( // 充放电趋势
@@ -57,7 +57,12 @@ export const { useQueryStorageWarning } = new Apimethod( //最新告警
     "get",
     "Storage/StorageMonitorPCS/QueryPowerTrends"   
   );
- export const { useRevenues } = new Apimethod( // 收益统计
+ export const { useIncomeTotal } = new Apimethod( // 收益数据总览
     "get",
-    "Storage/StorageRevenueRuntime/Revenues"   
+    "Storage/StorageRevenueRuntime/IncomeTotal"   
+  );
+
+   export const { useIncomeDetail } = new Apimethod( // 收益图表
+    "get",
+    "Storage/StorageRevenueRuntime/IncomeDetail"   
   );
