@@ -123,7 +123,8 @@ const Editfiled = React.forwardRef(({level, projectId,}, ref) => {
                <Select>
                   <Select.Option value={0}>{t("common:None")}</Select.Option>
                   <Select.Option value={1}>{t("common:LatitudeLongitude")}</Select.Option>
-                  <Select.Option value={2}>{t("common:Area")}</Select.Option>
+                <Select.Option value={2}>{t("common:Area")}</Select.Option>
+                <Select.Option value={4}>{t("common:PersonCount")}</Select.Option>
                </Select>
           </Item>
       </Form>
