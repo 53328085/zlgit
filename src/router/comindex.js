@@ -92,6 +92,7 @@ export default function Index() {
       "reportBc",
       "reportXl",
       "realTimeMeterReading",
+      "consumeAnalysis",
     ],
     runtimeStorage: [
       // 储能管理
@@ -343,6 +344,14 @@ export default function Index() {
               
               alike: true,
           
+            });
+            break;
+          case "consumeAnalysis":
+            setConfig({
+              publicDate: true,
+              shiftNo: true,
+              rangeDate: 45,
+              isAreaId: true,
             });
             break;
           case "direction":
