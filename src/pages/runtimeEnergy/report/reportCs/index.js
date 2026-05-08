@@ -63,9 +63,9 @@ const [spans, setSpans] = useState(()=>defaultfilteredValue[key]?.length)
 
   const columns = useCsCol({  index, title, frontRows, spans,header, energytype, filters,filteredValue:values})
 
-  console.log("columns", columns)
+  
   const tbonChange=useCallback((_, filter)=>{
-     console.log("filter",filter)
+     
      let {power} = filter
 
      if(Array.isArray(power)) {
@@ -163,7 +163,7 @@ const [spans, setSpans] = useState(()=>defaultfilteredValue[key]?.length)
           })
          
         })
-        console.log("datas",datas)
+        
         return {
           data: datas,
           total: detailDatas?.length,

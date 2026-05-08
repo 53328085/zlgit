@@ -1,24 +1,15 @@
-import React, { useEffect, useState, useRef, memo, useMemo } from "react";
+import React, { useEffect, useState, useRef, memo } from "react";
 import { useSelector } from "react-redux";
 
-import styled from "styled-components";
 
-import {
-  energyShare,
-  Monitoring,
-  EnergyPublicRuntime,
-  DMAPartition,
-  Apimethod,
-} from "@api/api";
 import {
   selectProjectId,
-  selectOneLevel,
-  lightlevel,
+
 } from "@redux/systemconfig.js";
-import { message, Input, Tree, Radio, Checkbox, Switch } from "antd";
+import { message, Input, Tree, Radio,  } from "antd";
 
 import Titlelayout from "@com/titlelayout";
-import { useLocation } from "react-router-dom";
+ 
 import { useNodeTree } from "./api";
 import { Treecontainer } from "./style";
 import { useGetXY } from "@com/usehandler";
@@ -115,7 +106,7 @@ export default memo(function Index({
 
       if (success && Array.isArray(data) && data.length > 0) {
         getId(data, "keyStr", "nodes");
-
+         
          setCheckedKeys(keys.current)
         setExpandedKeys(expanded.current);
         setTreeId(selected.current);
@@ -138,7 +129,7 @@ export default memo(function Index({
   // 复选框模式
   const onCheck = (data, e) => {
     try {
-      console.log(e);
+     
       if (Array.isArray(checkedKeys) && checkedKeys?.length > 2 && e.checked)
         return messageApi.warning("最多选择3个设备", 3);
 
@@ -173,8 +164,9 @@ export default memo(function Index({
   };
 
   const switchLine = (e) => {
-    console.log(e.target.value);
+     
     selected.current = [];
+    keys.current=[];
     expanded.current = [];
 
     setTreeId([]);
