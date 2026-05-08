@@ -44,11 +44,11 @@ flex-direction: column;
     }
   }
   .ant-table-row.ant-table-row-selected {
-    .ant-table-cell {
-      background-color: transparent;
+    .ant-table-cell  {
+      background-color: #fff;
     }
   }
-
+  
 }
 .ant-table.ant-table-small {
   &&::-webkit-scrollbar {
@@ -78,6 +78,10 @@ flex-direction: column;
         .ant-table-cell {
           padding: ${props => props.pd || '4px 4px'} ;
         }
+      }
+      .ant-table-row.ant-table-row-selected >.ant-table-cell:not(.ant-table-cell-fix-left) {
+        background-color: none;
+
       }
       .ant-table-placeholder{
         .ant-table-cell{

@@ -11,6 +11,10 @@ export const option = [
     { label: "年", value: 1, },
 
 ]
+export const optionMY =[
+ { label: "月", value: 2, },
+    { label: "年", value: 3, },
+]
 export const useLine = ({ data, dimensions, type = "line", dataZoom = true }) => {
     console.log("data", data)
     const { x = [], y = [], y1 = [] } = isObject(data) ? data : {}
@@ -154,4 +158,38 @@ export const lineoptdoub = (data, startTime, endTime,type) => {
 
     }, [data, startTime, endTime])
     return opt
+}
+
+export const useBar = ({ data,  type = "bar", dataZoom = true }) => {
+    console.log("data", data)
+    const { x = [], y = []  } = isObject(data) ? data : {}
+    const lineopt = useMemo(() => {
+        return {
+            series: [{ type, seriesLayoutBy: 'row' }, { type, seriesLayoutBy: 'row' }],
+            grid: {
+                left: "0px",
+                right: "0",
+                top: "20px",
+                bottom: "0px",
+                containLabel: true,
+            },
+            legend: {
+                show: false
+            },
+            dataZoom: dataZoom ? {
+                type: "slider",
+                height: 16,
+            } : { type: "inside" },
+            dataset: {
+                dimensions: [
+                    { name: "时间", type: 'time' },
+                    {name: "收益" }
+                ],
+                source: [x, y],
+                sourceHeader: false,
+            }
+
+        }
+    }, [data,   type, dataZoom])
+    return lineopt
 }
