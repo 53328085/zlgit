@@ -92,6 +92,8 @@ export default function Index() {
       "reportBc",
       "reportXl",
       "realTimeMeterReading",
+      "intensityCal",
+      "efficiencyAdvance",
     ],
     runtimeStorage: [
       // 储能管理
@@ -386,6 +388,12 @@ export default function Index() {
             });
             break;
           case "timePeriodEnergy":
+            setConfig({ isdate: true, shiftNo: true });
+            break;
+          case "intensityCal":
+            setConfig({ isdate: true, shiftNo: true });
+            break;
+          case "efficiencyAdvance":
             setConfig({ isdate: true, shiftNo: true });
             break;
 
