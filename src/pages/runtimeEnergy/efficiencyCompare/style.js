@@ -333,6 +333,17 @@ export const Panel = styled.div`
     display: flex;
     align-items: center;
   }
+
+  .titleTipIcon {
+    margin-left: 6px;
+    color: #7d8fb3;
+    font-size: 14px;
+    cursor: pointer;
+  }
+
+  .titleTipIcon:hover {
+    color: #1e50e6;
+  }
 `;
 
 export const ChartPanel = styled(Panel)`

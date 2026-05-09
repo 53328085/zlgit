@@ -4,10 +4,11 @@ import {
   CaretDownOutlined,
   CaretUpOutlined,
   CheckCircleFilled,
+  InfoCircleOutlined,
   ThunderboltFilled,
   WarningFilled,
 } from "@ant-design/icons";
-import { DatePicker } from "antd";
+import { DatePicker, Tooltip } from "antd";
 import dayjs from "dayjs";
 import { useOutletContext } from "react-router-dom";
 
@@ -266,7 +267,15 @@ export default function Index() {
           <div className="centerwrap">
             <RankBoard ref={rankBoardRef}>
               <div className="panelTitle">
-                <span>单位能效排名</span>
+                <span>
+                  单位能效排名
+                  <Tooltip
+                    placement="top"
+                    title="能效指数=实际能耗/对标能耗*100%，低于90%为合格，即指数越小单位用能越高效"
+                  >
+                    <InfoCircleOutlined className="titleTipIcon" />
+                  </Tooltip>
+                </span>
               </div>
               <RankList>
                 {mockData.rankingItems.map((item, index) => (
