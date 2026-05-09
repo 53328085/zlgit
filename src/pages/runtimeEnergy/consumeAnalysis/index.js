@@ -49,36 +49,69 @@ export default function Index() {
 
   const pieOption = useMemo(
     () => ({
-      type: 3,
-      pieData: {
-        data: consumeStructure,
-        total: 100,
-        radius: ["36%", "52%"],
-        center: ["44%", "52%"],
-        label: {
-          formatter: "{d}%",
-          fontSize: 11,
+      type: 5,
+      custoption: {
+        color: ["#5983FE", "#46C7FF", "#FFAA54", "#5ED9A7", "#6859EA"],
+        tooltip: {
+          trigger: "item",
+          formatter: "{b}: {d}%",
         },
-        labelLine: {
-          length: 6,
-          length2: 4,
+        legend: {
+          orient: "vertical",
+          right: 12,
+          top: "center",
+          itemHeight: 8,
+          itemWidth: 8,
+          itemGap: 20,
+          type: "scroll",
         },
-        series: {
-          avoidLabelOverlap: true,
-          labelLayout: {
-            hideOverlap: true,
+        graphic: [
+          {
+            type: "group",
+            left: "44%",
+            top: "52%",
+            bounding: "raw",
+            silent: true,
+            children: [
+              {
+                type: "text",
+                x: 0,
+                y: 0,
+                style: {
+                  text: ["总计", "", "100"].join("\n"),
+                  textAlign: "center",
+                  textVerticalAlign: "middle",
+                  fill: "#303133",
+                },
+              },
+            ],
           },
-          minShowLabelAngle: 8,
-        },
-      },
-      legend: {
-        orient: "vertical",
-        right: 12,
-        top: "center",
-      },
-      tooltip: {
-        trigger: "item",
-        formatter: "{b}: {d}%",
+        ],
+        series: [
+          {
+            type: "pie",
+            stillShowZeroSum: true,
+            data: consumeStructure,
+            radius: ["36%", "52%"],
+            center: ["44%", "52%"],
+            avoidLabelOverlap: true,
+            minShowLabelAngle: 8,
+            label: {
+              show: true,
+              position: "outside",
+              formatter: "{d}%",
+              fontSize: 11,
+            },
+            labelLine: {
+              show: true,
+              length: 6,
+              length2: 4,
+            },
+            labelLayout: {
+              hideOverlap: true,
+            },
+          },
+        ],
       },
     }),
     [],
