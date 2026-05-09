@@ -76,11 +76,11 @@ export default function IntensityCal() {
         <Flex style={{ width: 265 }}>
           <UseTree
             title="区域列表"
-            areaId={0}
+            areaId={areaId}
             setTreeId={setTreeId}
             setLine={() => {}}
             showline={false}
-            datatype={7}
+            datatype={0}
             energytype={1}
             allselect={true}
             showSearch={true}
