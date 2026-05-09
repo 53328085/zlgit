@@ -95,6 +95,7 @@ export default function Index() {
       "reportXl",
       "realTimeMeterReading",
       "consumeAnalysis",
+      "efficiencyCompare",
     ],
     runtimeStorage: [
       // 储能管理
@@ -354,6 +355,19 @@ export default function Index() {
               shiftNo: true,
               rangeDate: 45,
               isAreaId: true,
+            });
+            break;
+          case "efficiencyCompare":
+            setConfig({
+              publicDate: true,
+              shiftNo: true,
+              isAreaId: true,
+              dateOpt: [
+                {
+                  value: 2,
+                  label: "月",
+                },
+              ],
             });
             break;
           case "direction":
