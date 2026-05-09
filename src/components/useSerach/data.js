@@ -27,7 +27,9 @@ export const w200 = {
 export const w88 = {
   width:88
 }
-export const Daterange = ({value, onChange,rangeDate=45,showTime=false}) => {
+
+ 
+export const Daterange = ({value, onChange,rangeDate=45,showTime=false, update}) => {
   const [dates, setDates] = useState(null);
   console.log("Daterange", value)
   //console.log("Daterange", rangeDate)
@@ -52,14 +54,19 @@ export const Daterange = ({value, onChange,rangeDate=45,showTime=false}) => {
  
   const onCalendarChange = (v)=> {
     console.log("onCalendarChange",v)
-    setDates(v)
+    setDates(v) 
+    onChange&& onChange(v)
   }
+  useEffect(()=>{ 
+    onChange&& onChange(value)
+    update&&update()
+  },[])
   return (
     <RangePicker
       value={dates || value}
       disabledDate={disabledDate}
       onCalendarChange={onCalendarChange}
-      onChange={onChange}
+     
       onOpenChange={onOpenChange} 
       showTime={showTime}
     />
