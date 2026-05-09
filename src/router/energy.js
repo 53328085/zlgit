@@ -19,9 +19,11 @@ const Streetlamp = lazy(() => import("../pages/runtimeEnergy/streetLamp") )
 const Air = lazy(() => import("../pages/runtimeEnergy/air"))
 const Streetlight = lazy(() => import("../pages/runtimeEnergy/light"))
 const Runreport = lazy(() => import("../pages/runtimeEnergy/runreport"))
-const Region = lazy(() =>import("../pages/runtimeEnergy/region"))
-const Device = lazy(() =>import("../pages/runtimeEnergy/device"))
-const RealTimeMeterReading = lazy(() =>import("../pages/runtimeEnergy/realTimeMeterReading"))
+const Region = lazy(() => import("../pages/runtimeEnergy/region"))
+const Device = lazy(() => import("../pages/runtimeEnergy/device"))
+const RealTimeMeterReading = lazy(() => import("../pages/runtimeEnergy/realTimeMeterReading"))
+const IntensityCal = lazy(() => import("../pages/runtimeEnergy/intensityCal"))
+const EfficiencyAdvance = lazy(() => import("../pages/runtimeEnergy/efficiencyAdvance"))
 export let runtimeEnergy = {
     '010901': Summary, // 概述
     '010902': Synthetical, // 园区能耗
@@ -36,11 +38,13 @@ export let runtimeEnergy = {
     '010910': Comm, // 公共能耗
 
   //  '010911': Air, // 空调控制
-   // '010912': Streetlight, // 路灯控制
-   // '010913': LightingC, //照明控制
+  // '010912': Streetlight, // 路灯控制
+  // '010913': LightingC, //照明控制
     '010914': Runreport, // 运行报告
     '010915': Region, // 区域能耗
     '010916': Device, // 重点设备
+    '010930': IntensityCal, // 能耗强度分析
+    '010933': EfficiencyAdvance, // 能效优化
 }
 
 
