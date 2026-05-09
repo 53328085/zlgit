@@ -432,23 +432,41 @@ export const RankListItem = styled.div`
   }
 
   .rankMeta {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-end;
-    gap: 4px;
+    min-width: 110px;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: center;
+    column-gap: 10px;
   }
 
-  .rankValue {
-    color: #2f3b52;
-    font-size: 12px;
-    font-weight: 600;
-    line-height: 18px;
+  .rankMetaText {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 6px;
+  }
+
+  .rankMetaStatus {
+    min-height: 44px;
+    display: flex;
+    align-items: center;
+  }
+
+  .rankMetricLabel {
+    display: inline-flex;
+    align-items: center;
+    min-height: 14px;
+    color: #5f6b85;
+    font-size: 10px;
+    line-height: 14px;
   }
 
   .rankPercent {
-    color: #90a0bc;
-    font-size: 10px;
-    line-height: 14px;
+    color: #2d6beb;
+    font-size: 12px;
+    font-weight: 600;
+    line-height: 18px;
+    text-align: left;
   }
 `;
 

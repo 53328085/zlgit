@@ -290,9 +290,13 @@ export default function Index() {
                       <span>{item.benchmarkUnit}</span>
                     </div>
                     <div className="rankMeta">
-                      <strong className="rankValue">{item.benchmarkValue}</strong>
-                      <div className="rankPercent">{item.percent}</div>
-                      <StatusTag tone={item.status?.tone}>{item.status?.text}</StatusTag>
+                      <div className="rankMetaText">
+                        <span className="rankMetricLabel">能效指数</span>
+                        <strong className="rankPercent">{item.percent}</strong>
+                      </div>
+                      <div className="rankMetaStatus">
+                        <StatusTag tone={item.status?.tone}>{item.status?.text}</StatusTag>
+                      </div>
                     </div>
                   </RankListItem>
                 ))}
