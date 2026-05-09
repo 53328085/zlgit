@@ -46,7 +46,9 @@ export default function Index() {
       runtimeEnergy: [nested],
     }[primary];
 
-    return Array.isArray(primaries) ? primaries.includes("summary") : false;
+    return Array.isArray(primaries)
+      ? ["summary", "direction"].includes(primaries?.[0])
+      : false;
   }, [primary, nested]);
   console.log("includemodule", includemodule);
 
@@ -356,12 +358,14 @@ export default function Index() {
             break;
           case "direction":
             setConfig({
+              custviewLeading: true,
               energytype: true,
               isdate: true,
               shiftNo: true,
-              isAreaId: false,
-              gas: false,
+              isAreaId: true,
               custview: true,
+              gas: false,
+              disableDayForNonElectric: true,
             });
             break;
           case "analysis":

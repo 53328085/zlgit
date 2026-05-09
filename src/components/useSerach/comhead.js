@@ -103,6 +103,7 @@ export default function UseSerach(props) {
   const { laptop } = useSelector(adaptation)
   const defauledeviceID = useSelector(deviceID)
   const invertersn = useSelector(inverterSN)
+  const watchedEnergyType = Form.useWatch("energytype", form)
   //const DeviceStyle = useSelector(filterDeviceStyle)
   const [DeviceStyle, setDeviceStyle] = useState(null)
 
@@ -185,15 +186,30 @@ export default function UseSerach(props) {
     dispatch(setCurrentlevel(option))
     setAreaid(e)
   }
-  let dateoption = daterang == 'week' ? [
-    { value: 1, label: i18t("comm", "week") },
-    { value: 2, label: i18t("comm", "month") },
-    { value: 3, label: i18t("comm", "year") },
-  ] : [
-    { value: 1, label: i18t("comm", "day") },
-    { value: 2, label: i18t("comm", "month") },
-    { value: 3, label: i18t("comm", "year") },
-  ]
+  let dateoption = useMemo(() => {
+    const options = daterang == 'week' ? [
+      { value: 1, label: i18t("comm", "week") },
+      { value: 2, label: i18t("comm", "month") },
+      { value: 3, label: i18t("comm", "year") },
+    ] : [
+      { value: 1, label: i18t("comm", "day") },
+      { value: 2, label: i18t("comm", "month") },
+      { value: 3, label: i18t("comm", "year") },
+    ];
+
+    if (config.disableDayForNonElectric && Number.parseInt(watchedEnergyType) > 1) {
+      return options.filter((item) => item.value !== 1);
+    }
+    return options;
+  }, [config.disableDayForNonElectric, daterang, watchedEnergyType])
+
+  useEffect(() => {
+    if (!config.disableDayForNonElectric || Number.parseInt(watchedEnergyType) <= 1) return;
+    if (form.getFieldValue("type") !== 1) return;
+    form.setFieldValue("type", 2);
+    form.setFieldValue("date", dayjs());
+    props.setexparams({ ...form.getFieldsValue(true), type: 2, date: dayjs() });
+  }, [config.disableDayForNonElectric, form, props, watchedEnergyType])
   const changetype = (v) => {
     form.setFieldValue("date", dayjs())
     props.setexparams({ ...form.getFieldsValue(true) })
@@ -602,6 +618,7 @@ export default function UseSerach(props) {
     <Cform layout="inline" form={form} colon={false}  {...props.formprop}
       onValuesChange={onValuesChange}
       style={{ displey: 'flex', ...formsty }} >
+      {props.config?.custviewLeading && props.config?.custview && custview}
       <Space size={16} >
         {isAreaId && <Item label={varlabel} name='areaId' initialValue={AreaID}>
           <Select style={w200} onChange={onChange} options={levelone} fieldNames={{ label: 'name', value: 'id', options: 'options' }}>
@@ -638,7 +655,7 @@ export default function UseSerach(props) {
           props.config?.isdate && dateselect
         }
         {
-          props.config?.custview && custview
+          !props.config?.custviewLeading && props.config?.custview && custview
         }
         {
           props.config?.export ? <ExportExcel /> : null
