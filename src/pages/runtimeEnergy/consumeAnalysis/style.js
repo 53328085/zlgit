@@ -8,9 +8,40 @@ export const Contentbox = styled.div`
   min-height: 0;
   background: transparent;
 
+  .leftwrap {
+    min-width: 0;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+    background: #fff;
+    border-radius: 8px;
+    border: 1px solid #ebeef5;
+    overflow: hidden;
+  }
+
+  .leftTitle {
+    height: 34px;
+    padding: 0 12px;
+    display: flex;
+    align-items: center;
+    background: #dee7f2;
+    color: #303133;
+    font-size: 14px;
+    font-weight: 600;
+  }
+
+  .leftTitle::before {
+    content: "";
+    width: 3px;
+    height: 14px;
+    margin-right: 8px;
+    border-radius: 2px;
+    background: #1e50e6;
+  }
+
   .rightwrap {
     display: grid;
-    grid-template-rows: auto minmax(0, 1fr) auto;
+    grid-template-rows: auto auto minmax(0, 1fr);
     row-gap: 16px;
     min-width: 0;
     min-height: 0;
@@ -32,11 +63,12 @@ export const Contentbox = styled.div`
   .tablewrap {
     display: flex;
     min-width: 0;
-    min-height: 268px;
+    min-height: 640px;
     padding: 0 0 20px;
     background: #fff;
     border-radius: 8px;
     overflow: hidden;
+    border: 1px solid #ebeef5;
   }
 
   .tablewrap .ant-pro-table-list-toolbar-container {
@@ -65,14 +97,21 @@ export const Contentbox = styled.div`
   }
 
   .consumeAnalysis {
+    flex: 1;
     min-width: 0;
+    min-height: 0;
     padding: 0 16px;
 
     .ant-pro-table-list-toolbar {
       margin: 0 -16px;
     }
 
+    .ant-pro-card {
+      height: 100%;
+    }
+
     .ant-pro-card-body {
+      min-height: 540px;
       padding-bottom: 8px;
     }
 
@@ -87,8 +126,22 @@ export const Contentbox = styled.div`
       display: none;
     }
 
+    .ant-table-body {
+      max-height: none !important;
+      height: auto !important;
+      overflow-y: visible !important;
+    }
+
     .ant-pagination {
       margin: 14px 0 0;
+    }
+  }
+
+  @media (max-width: 1320px) {
+    grid-template-columns: 1fr;
+
+    .leftwrap {
+      min-height: 280px;
     }
   }
 `;

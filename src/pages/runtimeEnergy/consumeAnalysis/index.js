@@ -141,15 +141,18 @@ export default function Index() {
         data-area-id={consumeParams.areaId ?? ""}
         data-project-id={consumeParams.projectId ?? ""}
       >
-        <UserTree
-          areaId={areaId}
-          setTreeId={setTreeId}
-          setLine={setLine}
-          showline={false}
-          showSearch={true}
-          datatype={NaN}
-          allselect={false}
-        />
+        <div className="leftwrap">
+          <div className="leftTitle">区域列表</div>
+          <UserTree
+            areaId={areaId}
+            setTreeId={setTreeId}
+            setLine={setLine}
+            showline={false}
+            showSearch={true}
+            datatype={NaN}
+            allselect={false}
+          />
+        </div>
         <div className="rightwrap">
           <div className="cards">
             {summaryCards.map((card) => {
