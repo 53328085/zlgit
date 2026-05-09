@@ -62,8 +62,7 @@ const [spans, setSpans] = useState(()=>defaultfilteredValue[key]?.length)
 
 
   const columns = useCsCol({  index, title, frontRows, spans,header, energytype, filters,filteredValue:values})
-  console.log("header",header)
-  console.log("columns",columns)
+ 
   const tbonChange=useCallback((_, filter)=>{
      
      let {power} = filter
@@ -137,7 +136,7 @@ const [spans, setSpans] = useState(()=>defaultfilteredValue[key]?.length)
      try { 
     let f = [ projectId, type, meterType,  tab,  queryType].every(v => Number.isInteger(v)) && Array.isArray(ids) && ids?.length && startDate && endDate
  
-    console.log("tab",tab)
+  //  console.log("tab",tab)
     if (!f) return;
  
       let { success, data }= await useQueryParameterReport({},params) 

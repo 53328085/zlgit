@@ -4,7 +4,7 @@ import {useTranslation} from 'react-i18next'
 import { Monitoring } from '@api/api.js'
 import style from './style.module.less'
 import Modal from '@com/useModal'
- 
+ import {preimge} from "@com/usehandler"
 import {publishState} from '@redux/systemconfig'
 import {Button, Space} from 'antd'
 import {  ExportExcel, NewButton} from '@com/useButton'

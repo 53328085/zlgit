@@ -390,6 +390,8 @@ export default function GatewayDetail(props) {
   } = Monitoring;
   let [state, setstate] = useState(1);
   let [detail, setDetail] = useState({});
+    const [dates, setDates] = useState([dayjs().startOf("day"), dayjs()]);
+  
   const deviceStyle = detail?.deviceStyle;
   const OtherdeviceStyle =
     detail?.deviceStyle == 4 && detail?.category == "ZTWLSENSOR-SL";
@@ -744,8 +746,8 @@ export default function GatewayDetail(props) {
 
   let paramsTrend = {
     sn,
-    start: startTime,
-    end: endTime,
+    start: dates?.[0]?.format("YYYY-MM-DD HH:mm:ss"),
+    end: dates?.[1]?.format("YYYY-MM-DD HH:mm:ss"),
     projectId,
   };
   const [historyTrend, sethistoryTrend] = useState();
@@ -978,15 +980,15 @@ export default function GatewayDetail(props) {
     return drawEcharts(c, { ...option, type: 2 });
   };
   const onTimeOk = (date = [], dataString) => {
+    console.log(dataString, date);
     let f = dataString.some((d) => d);
     if (!f) return;
     setstartTime(dataString[0]);
     setendTime(dataString[1]);
     setValue(date);
   }; //监控趋势选择时间
-  const [dates, setDates] = useState([dayjs().startOf("day"), dayjs()]);
 
-  const disabledDate = (current) => {
+   const disabledDate = (current) => {
     if (!dates) {
       return false;
     }
@@ -1004,6 +1006,7 @@ export default function GatewayDetail(props) {
   };
 
   const onTimeOkAlarm = (date = [], dataString) => {
+    console.log("dataSatring", dataString)
     let f = dataString.some((d) => d);
     if (!f) return;
     setstartTimeAlarm(dataString[0]);
@@ -1381,7 +1384,7 @@ export default function GatewayDetail(props) {
             </div>
           ) : state == 2 ? (
             <div className={style.newTime}>
-              <span>请选择日期范围</span>
+              <span>请选择日期范围1</span>
               <RangePicker
                 value={dates || value}
                 disabledDate={disabledDate}

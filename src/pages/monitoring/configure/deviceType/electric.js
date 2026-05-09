@@ -6,7 +6,7 @@ import { useSelector } from 'react-redux'
 import { Button, Form, Typography, message, Space, Image } from 'antd';
 import Table from '@com/useTable'
 import Modal from '@com/useModal'
-
+import {preimge} from "@com/usehandler"
 import { DeleteModal, AddModal, EditModal } from './modalCom.js'
 import cusContext from '@com/content'
 import { publishState } from '@redux/systemconfig'
@@ -113,6 +113,7 @@ export default function Electric() {
       IsCount: editModalData[0]?.calculate,
       IsRead: editModalData[0]?.realTimeReading,
       DefaulImg: editModalData[0]?.imageBase64,
+      description:editModalData[0]?.description,
       ImageUpload: '',
     })
     const arr = editModalData[0]?.points.map((item, index) => ({
@@ -139,6 +140,11 @@ export default function Electric() {
       dataIndex: 'category',
       align: 'center'
     },
+     {
+      title: '设备描述',
+      dataIndex: 'description',
+      align: 'description'
+    },
     {
       title: '设备厂家',
       dataIndex: 'manufacturer',
@@ -149,7 +155,7 @@ export default function Electric() {
       dataIndex: 'imageBase64',
       align: 'center',
       render: (text) => {
-        return (<Image src={text} width={64} height={53}></Image>)
+        return (<Image src={`${preimge}${text}`} width={64} height={53}></Image>)
 
       }
     },
@@ -237,7 +243,8 @@ export default function Electric() {
       calculate: formvalues.IsCount,
       realTimeReading: formvalues.IsRead,
       imageBase64: formvalues.ImageUpload ? formvalues.ImageUpload : formvalues.DefaulImg,
-      points: tableData
+      points: tableData,
+       description: formvalues.description,
     }
     const resp = await UpdateDeviceCategory(params)
     if (resp.success) {
@@ -258,7 +265,7 @@ export default function Electric() {
     if (r.success && Array.isArray(r.data)) {
       if (r.data.length > 0) {
         setIsOpenModal(true)
-        const arr = r.data.map((item, index) => ({ label: item, value: item }))
+        const arr = r.data.map((item, index) => ({ label: `${item.category} ${item.description}`, value: item.category }))
         setDataSource(arr)
         getDeviceQueryCategoryFull(r.data[0])
       } else {
@@ -271,10 +278,10 @@ export default function Electric() {
   }
 
   //获取默认电表的详细信息
-  const getDeviceQueryCategoryFull = async (category) => {
+  const getDeviceQueryCategoryFull = async (item) => {
     let params = {
       projectId,
-      category,
+      category:item.category,
     }
     const r = await DeviceQueryCategoryFull(params)
     if (r.success) {
@@ -309,7 +316,7 @@ export default function Electric() {
         Control: data.control,
         IsCount: data.calculate,
         IsRead: data.realTimeReading,
-        DefaulImg: `data:image/jpeg;base64,${data.imageBase64}`,
+        DefaulImg: data.imageBase64,
         ImageUpload: '',
         description: data.description
         // Point:arr,
@@ -350,7 +357,7 @@ export default function Electric() {
       isRuningPoint: it.watchPoint,
       secquence: it.dataOrder
     }))
-    console.log(addForm.getFieldsValue(), foRef.current.pointSource, result)
+    console.log(addForm.getFieldsValue())
     let params = {
       projectId,
       category: formValue.DeviceType,
@@ -358,6 +365,7 @@ export default function Electric() {
       calculate: formValue.IsCount,
       realTimeReading: formValue.IsRead,
       imageBase64: formValue.ImageUpload ? formValue.ImageUpload : formValue.DefaulImg,
+      description: formValue.description,
       points: tableData
     }
     const resp = await AddDeviceCategory(params)
@@ -395,6 +403,7 @@ export default function Electric() {
       control: formValue.Control,
       calculate: formValue.IsCount,
       realTimeReading: formValue.IsRead,
+       description: formValue.description,
       imageBase64: formValue.ImageUpload ? formValue.ImageUpload : formValue.DefaulImg,
       points: tableData
     }
