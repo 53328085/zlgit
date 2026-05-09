@@ -341,3 +341,5 @@ export   function useGetXY({extraHeight=52, extraWidth=16, selector}={}){
 
   return position;
 };
+
+export const preimge = "data:image/png;base64,"

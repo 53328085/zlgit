@@ -5,7 +5,7 @@ import { useSelector } from 'react-redux'
 import DeviceContent from './devicecomp'
 import Table from '@com/useTable'
 import { Monitoring } from '@api/api.js'
- 
+ import {preimge} from "@com/usehandler"
 import UploadImg from './upload.jsx'
 import Modal from '@com/useModal'
  
@@ -88,7 +88,8 @@ export default function Video() {
       imageBase64: upimg.ImageUpload ? upimg.ImageUpload : formvalues.imageBase64,
       control: formvalues.control,
       calculate: formvalues.calculate,
-      realTimeReading: formvalues.realTimeReading
+      realTimeReading: formvalues.realTimeReading,
+      description: formvalues.description,
     }
     console.log('ok', AddModalForm.getFieldValue(), parmas)
     const resp = await AddDeviceCategory(parmas)
@@ -112,7 +113,8 @@ export default function Video() {
       imageBase64: upimg.ImageUpload ? upimg.ImageUpload : formvalues.imageBase64,
       control: formvalues.control,
       calculate: formvalues.calculate,
-      realTimeReading: formvalues.realTimeReading
+      realTimeReading: formvalues.realTimeReading,
+      description: formvalues.description,
     }
     console.log('ok', AddModalForm.getFieldValue(), parmas)
     const resp = await AddDeviceCategory(parmas)
@@ -145,7 +147,7 @@ export default function Video() {
     let params = {
       projectId,
       category: formvalue.category,
-      imageBase64: formvalue['ImageUpload'] ? `${formvalue['ImageUpload']}` : `data:image/jpeg;base64,${formvalue['imageBase64']}`
+      imageBase64: formvalue['ImageUpload'] ? `${formvalue['ImageUpload']}` : formvalue['imageBase64']
     }
     // console.log(EditForm.getFieldValue())
     const resp = await UpdateDeviceCategory(params)
@@ -183,11 +185,18 @@ export default function Video() {
       dataIndex: 'manufacturer',
       align:'center',
     },
+
     {
       title: '监控设备型号',
       dataIndex: 'category',
       align:'center',
     },
+    {
+        title: '监控设备描述',
+        dataIndex: 'description',
+        key:'description',
+        align:'center',
+      },
     {
       title: '视频监控缩略图',
       dataIndex: 'imageBase64',
@@ -247,8 +256,8 @@ export default function Video() {
       deviceStyle: 6
     })
     const { data, success } = result;
-    if (success) {
-      const arr = data.map(it => ({ label: it, value: it }))
+    if (success && Array.isArray(data) && data.length > 0) {
+      const arr = data.map(it => ({ label: `${item.category} ${item.description}`, value: item.category }))
       setSelectOption(arr)
       if (arr.length > 0) {
         getDeviceQueryCategoryFull(arr[0].value)
@@ -256,13 +265,15 @@ export default function Video() {
         ModalRef.current.onCancel()
       }
 
+    }else {
+      success && message.error('未查询到未使用的监控设备')
     }
   }
   //获取设备详细信息
-  const getDeviceQueryCategoryFull = async (category) => {
+  const getDeviceQueryCategoryFull = async (item) => {
     let params = {
       projectId,
-      category
+      category: item.category
     }
     const resp = await DeviceQueryCategoryFull(params)
     if (resp.success) {

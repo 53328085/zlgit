@@ -8,7 +8,7 @@ import { useSelector } from 'react-redux'
 import { Button, Form, Input, Row, Col, Select, message, Upload, Image, Typography, Space } from 'antd';
 import Table from '@com/useTable'
 import Modal from '@com/useModal'
-
+import {preimge}from "@com/usehandler"
 import cusContext from '@com/content'
 import {publishState} from '@redux/systemconfig'
 const { DeviceTypeManager: { GatewayCategory, AddCategory, QueryNotUsed, UpdateCategory, DeleteCategory } } = Monitoring;
@@ -49,6 +49,12 @@ export default function Gateway() {
         key:'imageBase64',
         align:'center',
         render:(t,r,i)=>(<Image src={'data:image/jpeg;base64,'+t} width="64px" height="53px" alt=""></Image>)
+      },
+       {
+        title: '网关描述',
+        dataIndex: 'description',
+        key:'description',
+        align:'center',
       },
       {
         title: '已用网关数量',
@@ -105,14 +111,15 @@ export default function Gateway() {
  
   //保存新增网关类型
   const onOk = async () => {
-    const { ComNum, GatewayType, Image, Upload = '' } = form.getFieldValue()
+    const { ComNum, GatewayType, Image, Upload = '',description="" } = form.getFieldValue()
     const imageBase64 = await Upload
     let AddCategoryParams = {
       projectId,
       category: GatewayType,
       com: ComNum,
       imageBase64: imageBase64 ? imageBase64.split(',')[1] : Image.split(',')[1],
-      download: 0
+      download: 0,
+      description
     }
     const res = await AddCategory(AddCategoryParams)
     const { success, errMsg } = res
@@ -127,14 +134,15 @@ export default function Gateway() {
   //确认新增应用
   const onSure=()=>{
     return new Promise(async(resolve,reject)=>{
-      const { ComNum, GatewayType, Image, Upload = '' } = form.getFieldValue()
+      const { ComNum, GatewayType, Image, Upload = '',description } = form.getFieldValue()
     const imageBase64 = await Upload
     let AddCategoryParams = {
       projectId,
       category: GatewayType,
       com: ComNum,
       imageBase64: imageBase64 ? imageBase64.split(',')[1] : Image.split(',')[1],
-      download: 0
+      download: 0,
+      description
     }
     const res = await AddCategory(AddCategoryParams)
     resolve(true)
@@ -151,7 +159,7 @@ export default function Gateway() {
   }
   //保存编辑
   const editOk = async () => {
-    const { ComNum, GatewayType, Upload = '' } = editform.getFieldValue()
+    const { ComNum, GatewayType, Upload = '',description } = editform.getFieldValue()
     if (!Upload) {
       message.success('保存成功')
       EditModalRef.current.onCancel()
@@ -163,7 +171,8 @@ export default function Gateway() {
       category: GatewayType,
       com: ComNum,
       imageBase64: imageBase64.split(',')[1],
-      download: 0
+      download: 0,
+      description,
     }
     const result = await UpdateCategory(params)
     if (result.success) {
@@ -176,7 +185,7 @@ export default function Gateway() {
   }
   //确认编辑应用
   const onEditSure=async()=>{
-    const { ComNum, GatewayType, Upload = '' } = editform.getFieldValue()
+    const { ComNum, GatewayType, Upload = '',description } = editform.getFieldValue()
     if (!Upload) {
       message.success('应用成功')
       EditModalRef.current.onCancel()
@@ -188,7 +197,8 @@ export default function Gateway() {
       category: GatewayType,
       com: ComNum,
       imageBase64: imageBase64.split(',')[1],
-      download: 0
+      download: 0,
+      description
     }
     const result = await UpdateCategory(params)
     if (result.success) {
@@ -228,7 +238,8 @@ export default function Gateway() {
     editform.setFieldsValue({
       GatewayType: v['category'],
       ComNum: v['com'],
-      Image: `data:image/jpeg;base64,${v.imageBase64}`
+      Image: v.imageBase64,
+      description: v.description
     })
   }
   //打开删除窗
@@ -370,7 +381,7 @@ export default function Gateway() {
 
 let ImageUpload = ({ value = {} }) => {
   return (
-    <img src={value} style={{ width: 118, height: 90 }}></img>
+    <img src={`${preimge}${value}`} style={{ width: 118, height: 90 }}></img>
   )
 }
 
@@ -403,7 +414,8 @@ export let AddModal =forwardRef((props, ref) => {
           form.setFieldsValue({
             GatewayType: data[0]['category'],
             ComNum: data[0]['com'],
-            Image: 'data:image/jpeg;base64,' + data[0]['imageBase64']
+            Image: data[0]['imageBase64'],
+            description:data[0]?.description
           })
           return true
         } else {
@@ -427,7 +439,7 @@ export let AddModal =forwardRef((props, ref) => {
       let {imageBase64, com} = selectOptions?.find(s => s.category == v) || {}
     form.setFieldsValue({
       ComNum: com,
-      Image: `data:image/jpeg;base64,${imageBase64}`,
+      Image: imageBase64,
     })
   }
 
@@ -548,6 +560,9 @@ export let AddModal =forwardRef((props, ref) => {
             <Col><span style={{ color: '#999', fontSize: 12 }}>(图片尺寸136*136px，容量小于100KB)</span></Col>
           </Row>
         </>
+      </Form.Item>
+      <Form.Item name="description" hidden>
+        <Input></Input>
       </Form.Item>
     </Form>
 

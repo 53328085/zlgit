@@ -1,276 +1,337 @@
-import React, { useEffect, useState, useRef, forwardRef, useImperativeHandle,useContext, useMemo } from 'react'
-import {useTranslation} from 'react-i18next'
-import DeviceContent from './devicecomp'
-import { Monitoring } from '@api/api.js'
-import { useSelector } from 'react-redux'
-import { Button, Form, Input, Row, Col, Upload, Space, Typography, Select, Switch, message, Divider,Image } from 'antd';
-import Table from '@com/useTable'
-import Modal from '@com/useModal'
-import BlueColumn from '@com/bluecolumn'
-import {DeleteModal,AddModal,EditModal} from './modalCom.js'
-import cusContext from '@com/content'
-import {publishState} from '@redux/systemconfig'
-import lodash from 'lodash';
-const {Link} = Typography
-const { DeviceTypeManager: { UpdateDeviceCategory, DeviceQueryNotUsed, DeviceQueryCategoryFull,DeviceCategory, AddDeviceCategory,DeleteDeviceCategory} } = Monitoring;
+import React, {
+  useEffect,
+  useState,
+  useRef,
+  forwardRef,
+  useImperativeHandle,
+  useContext,
+  useMemo,
+} from "react";
+import { useTranslation } from "react-i18next";
+import DeviceContent from "./devicecomp";
+import { Monitoring } from "@api/api.js";
+import { useSelector } from "react-redux";
+import {
+  Button,
+  Form,
+  Input,
+  Row,
+  Col,
+  Upload,
+  Space,
+  Typography,
+  Select,
+  Switch,
+  message,
+  Divider,
+  Image,
+} from "antd";
+import Table from "@com/useTable";
+import Modal from "@com/useModal";
+import BlueColumn from "@com/bluecolumn";
+import { DeleteModal, AddModal, EditModal } from "./modalCom.js";
+import cusContext from "@com/content";
+import { publishState } from "@redux/systemconfig";
+import { preimge } from "@com/usehandler";
+import lodash from "lodash";
+const { Link } = Typography;
+const {
+  DeviceTypeManager: {
+    UpdateDeviceCategory,
+    DeviceQueryNotUsed,
+    DeviceQueryCategoryFull,
+    DeviceCategory,
+    AddDeviceCategory,
+    DeleteDeviceCategory,
+  },
+} = Monitoring;
 export default function Electric() {
-  const {t} = useTranslation(["button"])
-  const publish = useSelector(publishState)
-  const content =useContext(cusContext)
-  const [dataSource, setDataSource] = useState([])//modal框表格数据
-  const [tableDataSource,setTableDataSource]=useState([])//主页表格数据
-  const [defaultTableData, setDefaultTableData] = useState([])//新增时表格默认数据
-  const [editDefaultTableData, setEditDefaultTableData] = useState()//编辑时表格默认数据
-  const [isOpenModal,setIsOpenModal] = useState(true)
-  const [isAdd,setIsAdd]=useState(false)
+  const { t } = useTranslation(["button"]);
+  const publish = useSelector(publishState);
+  const content = useContext(cusContext);
+  const [dataSource, setDataSource] = useState([]); //modal框表格数据
+  const [tableDataSource, setTableDataSource] = useState([]); //主页表格数据
+  const [defaultTableData, setDefaultTableData] = useState([]); //新增时表格默认数据
+  const [editDefaultTableData, setEditDefaultTableData] = useState(); //编辑时表格默认数据
+  const [isOpenModal, setIsOpenModal] = useState(true);
+  const [isAdd, setIsAdd] = useState(false);
   const [loading, setLoading] = useState(false);
   const [tableParams, setTableParams] = useState({
     current: 1,
     pageSize: 10,
-    hideOnSinglePage: false
+    hideOnSinglePage: false,
   });
-  const ModalRef = useRef(null)
-  const EditModalRef = useRef(null)
-  const foRef = useRef(null)
-  const editFromRef = useRef(null)
-  const DelModalRef =useRef()
-  const tableLoadRef =useRef()
-  const updateTableRef =useRef()
-  const projectId = useSelector(state => state.system.menus.projectId)
-  const [addForm] = Form.useForm()
-  const [editForm] = Form.useForm()
-  const optionStyle={
-    color: '#1890ff',
-    cursor: 'pointer',
-  }
+  const ModalRef = useRef(null);
+  const EditModalRef = useRef(null);
+  const foRef = useRef(null);
+  const editFromRef = useRef(null);
+  const DelModalRef = useRef();
+  const tableLoadRef = useRef();
+  const updateTableRef = useRef();
+  const projectId = useSelector((state) => state.system.menus.projectId);
+  const [addForm] = Form.useForm();
+  const [editForm] = Form.useForm();
+  const optionStyle = {
+    color: "#1890ff",
+    cursor: "pointer",
+  };
   let categoryId;
- 
+
   //获取设备列表
   const getTableData = async () => {
-    setLoading(true)
+    setLoading(true);
     let params = {
       projectId,
       pageNum: tableParams.current,
       pageSize: tableParams.pageSize,
-      deviceStyle:3
-    }
-    const result = await DeviceCategory(params)
-    const { data, errMsg, success,pageNum,pageSize,total } = result;
-    setLoading(false)
+      deviceStyle: 3,
+    };
+    const result = await DeviceCategory(params);
+    const { data, errMsg, success, pageNum, pageSize, total } = result;
+    setLoading(false);
     if (success && Array.isArray(data)) {
-      console.log('getTable',data)
-      setTableDataSource(data)
+      console.log("getTable", data);
+      setTableDataSource(data);
       setTableParams({
         ...tableParams,
         current: pageNum,
         pageSize: pageSize,
-        total: total
-      })
-    } else{
-      setTableDataSource([])
+        total: total,
+      });
+    } else {
+      setTableDataSource([]);
     }
-  }
+  };
 
-   //确认删除
-   const delOK=async ()=>{
-    console.log(111)
-    const resp=await DeleteDeviceCategory({
+  //确认删除
+  const delOK = async () => {
+    console.log(111);
+    const resp = await DeleteDeviceCategory({
       projectId,
-      category:categoryId,
-      deviceStyle:parseInt(content.value)
-    })
-    if(resp.success){
-      DelModalRef.current.onCancel()
-      message.success("删除成功")
-      if(tableParams.total%(tableParams.pageSize*(tableParams.current-1 ))===1){
+      category: categoryId,
+      deviceStyle: parseInt(content.value),
+    });
+    if (resp.success) {
+      DelModalRef.current.onCancel();
+      message.success("删除成功");
+      if (
+        tableParams.total %
+          (tableParams.pageSize * (tableParams.current - 1)) ===
+        1
+      ) {
         setTableParams({
           ...tableParams,
-          current:tableParams.current-1
-        })
-      }else{
-        getTableData()
-      } 
-      getDeviceQueryNotUsed()
-    }else{
-      message.error(resp.errMsg)
+          current: tableParams.current - 1,
+        });
+      } else {
+        getTableData();
+      }
+      getDeviceQueryNotUsed();
+    } else {
+      message.error(resp.errMsg);
     }
-  }
+  };
   //打开删除窗口
-  const openDel=(record)=>{
+  const openDel = (record) => {
     DelModalRef.current.onOpen();
-    categoryId=record.category;
+    categoryId = record.category;
+  };
 
-  } 
-  
-//获取打开编辑窗口数据
-const editOption=(record)=>{
-  EditModalRef.current.onOpen()
-  const editModalData = tableDataSource.filter(it=>it.category===record.category)
-  console.log(editModalData,editForm)
-  editForm.setFieldsValue({
-    DeviceType:editModalData[0]?.category,
-    Control: editModalData[0]?.control,
-    IsCount: editModalData[0]?.calculate,
-    IsRead: editModalData[0]?.realTimeReading,
-    DefaulImg:editModalData[0]?.imageBase64,
-    ImageUpload: '',
-  })
-  const arr = editModalData[0]?.points.map((item, index) => ({
-    index: index + 1,
-    dataMark: item.name,
-    dataName: item.description,
-    dataUnit: item.unit,
-    isSave: item.isSave,
-    watchPoint: item.isRuningPoint,
-    dataOrder: item.secquence
-  }))
-  setEditDefaultTableData(arr)
-  // const watchPointArr = arr.filter(it=>it.watchPoint)
-  // console.log(watchPointArr)
-  // editFromRef.current.setSwitched(watchPointArr)
-}
-let columns =  [
+  //获取打开编辑窗口数据
+  const editOption = (record) => {
+    EditModalRef.current.onOpen();
+    const editModalData = tableDataSource.filter(
+      (it) => it.category === record.category,
+    );
+    console.log(editModalData, editForm);
+    editForm.setFieldsValue({
+      DeviceType: editModalData[0]?.category,
+      Control: editModalData[0]?.control,
+      IsCount: editModalData[0]?.calculate,
+      IsRead: editModalData[0]?.realTimeReading,
+      DefaulImg: editModalData[0]?.imageBase64,
+      ImageUpload: "",
+    });
+    const arr = editModalData[0]?.points.map((item, index) => ({
+      index: index + 1,
+      dataMark: item.name,
+      dataName: item.description,
+      dataUnit: item.unit,
+      isSave: item.isSave,
+      watchPoint: item.isRuningPoint,
+      dataOrder: item.secquence,
+    }));
+    setEditDefaultTableData(arr);
+    // const watchPointArr = arr.filter(it=>it.watchPoint)
+    // console.log(watchPointArr)
+    // editFromRef.current.setSwitched(watchPointArr)
+  };
+  let columns = [
     {
-        title:'设备型号',
-        dataIndex: 'category',
-        align:'center',
+      title: "设备型号",
+      dataIndex: "category",
+      align: "center",
     },
     {
-        title:'设备厂家',
-        dataIndex: 'manufacturer',
+        title: '设备描述',
+        dataIndex: 'description',
+        key:'description',
         align:'center',
+      },
+    {
+      title: "设备厂家",
+      dataIndex: "manufacturer",
+      align: "center",
     },
     {
-        title:'设备缩略图',
-        dataIndex: 'imageBase64',
-        align:'center',
-        render:(text)=>{
-          return( <Image src={text} width={64} height={53}></Image>)
-         
-        }
+      title: "设备缩略图",
+      dataIndex: "imageBase64",
+      align: "center",
+      render: (text) => {
+        return <Image src={`${preimge}${text}`} width={64} height={53}></Image>;
+      },
     },
     {
-        title:'当前设备数量',
-        dataIndex: 'cnt',
-        align:'center',
+      title: "当前设备数量",
+      dataIndex: "cnt",
+      align: "center",
     },
     {
-        title:'操作',
-        export:false,
-        dataIndex: 'options',
-        align:'center',
-        render:(text,record)=>{
-          return(
-            <Space>
-              <Link  onClick={()=>{editOption(record)}}>{t("button:edit")}</Link>
-              <Link  onClick={()=>{openDel(record)}}>{t("button:delete")}</Link>
-            </Space>
-          )
-        }
+      title: "操作",
+      export: false,
+      dataIndex: "options",
+      align: "center",
+      render: (text, record) => {
+        return (
+          <Space>
+            <Link
+              onClick={() => {
+                editOption(record);
+              }}
+            >
+              {t("button:edit")}
+            </Link>
+            <Link
+              onClick={() => {
+                openDel(record);
+              }}
+            >
+              {t("button:delete")}
+            </Link>
+          </Space>
+        );
+      },
+    },
+  ];
+  if (publish) {
+    columns.pop();
+  }
+
+  //保存编辑
+  const onOkEditModal = async () => {
+    const tabledata = editFromRef.current.choosemes();
+    if (!tabledata) {
+      message.warning("请至少选择一项标记检测运行点！");
+      return;
     }
-]
-if(publish){
-  columns.pop()
-}
+    const formvalues = editForm.getFieldsValue();
+    const tableData = tabledata.map((it) => ({
+      name: it.dataMark,
+      isSave: it.isSave,
+      isRuningPoint: it.watchPoint,
+      secquence: it.dataOrder,
+    }));
+    let params = {
+      projectId,
+      category: formvalues.DeviceType,
+      control: formvalues.Control,
+      calculate: formvalues.IsCount,
+      realTimeReading: formvalues.IsRead,
+      imageBase64: formvalues.ImageUpload
+        ? formvalues.ImageUpload
+        : formvalues.DefaulImg,
+      points: tableData,
+    };
+    const resp = await UpdateDeviceCategory(params);
+    if (resp.success) {
+      EditModalRef.current.onCancel();
+      message.success("编辑成功");
+      getTableData();
+    } else {
+      message.error(resp.errMsg);
+    }
+  };
+  //确认编辑应用
+  const onSureEditModal = async () => {
+    const tabledata = editFromRef.current.choosemes();
+    if (!tabledata) {
+      message.warning("请至少选择一项标记检测运行点！");
+      return;
+    }
+    const formvalues = editForm.getFieldsValue();
+    const tableData = tabledata.map((it) => ({
+      name: it.dataMark,
+      isSave: it.isSave,
+      isRuningPoint: it.watchPoint,
+      secquence: it.dataOrder,
+    }));
+    let params = {
+      projectId,
+      category: formvalues.DeviceType,
+      control: formvalues.Control,
+      calculate: formvalues.IsCount,
+      realTimeReading: formvalues.IsRead,
+      imageBase64: formvalues.ImageUpload
+        ? formvalues.ImageUpload
+        : formvalues.DefaulImg,
+      points: tableData,
+    };
+    const resp = await UpdateDeviceCategory(params);
+    if (resp.success) {
+      message.success("应用成功");
+      getTableData();
+    } else {
+      message.error(resp.errMsg);
+    }
+  };
 
-//保存编辑
-  const onOkEditModal=async ()=>{
-
-  const tabledata =  editFromRef.current.choosemes()
-  if(!tabledata){
-    message.warning('请至少选择一项标记检测运行点！')
-     return
-   }
-  const formvalues = editForm.getFieldsValue()
-  const tableData =  tabledata.map(it=>({
-    name:it.dataMark,
-    isSave:it.isSave,
-    isRuningPoint:it.watchPoint,
-    secquence:it.dataOrder
-  }))
-  let params ={
-    projectId,
-    category:formvalues.DeviceType,
-    control:formvalues.Control,
-    calculate:formvalues.IsCount,
-    realTimeReading:formvalues.IsRead,
-    imageBase64:formvalues.ImageUpload?formvalues.ImageUpload:formvalues.DefaulImg,
-    points:tableData
-  }
-  const resp = await UpdateDeviceCategory(params)
-  if(resp.success){
-    EditModalRef.current.onCancel()
-    message.success("编辑成功")
-    getTableData()
-  }else{
-    message.error(resp.errMsg)
-  }
-}
-//确认编辑应用
-const onSureEditModal=async()=>{
-
-  const tabledata =  editFromRef.current.choosemes()
-  if(!tabledata){
-    message.warning('请至少选择一项标记检测运行点！')
-     return
-   }
-  const formvalues = editForm.getFieldsValue()
-  const tableData =  tabledata.map(it=>({
-    name:it.dataMark,
-    isSave:it.isSave,
-    isRuningPoint:it.watchPoint,
-    secquence:it.dataOrder
-  }))
-  let params ={
-    projectId,
-    category:formvalues.DeviceType,
-    control:formvalues.Control,
-    calculate:formvalues.IsCount,
-    realTimeReading:formvalues.IsRead,
-    imageBase64:formvalues.ImageUpload?formvalues.ImageUpload:formvalues.DefaulImg,
-    points:tableData
-  }
-  const resp = await UpdateDeviceCategory(params)
-  if(resp.success){
-    message.success("应用成功")
-    getTableData()
-  }else{
-    message.error(resp.errMsg)
-  }
-}
-  
   //新增时获取未使用的燃气表名
   const getDeviceQueryNotUsed = async () => {
-    let params = {
-      projectId,
-      deviceStyle: 3
-    }
-    const r = await DeviceQueryNotUsed(params)
-    if (r.success && Array.isArray(r.data)) {
-      if(r.data.length > 0){
-        
-        const arr = r.data.map((item, index) => ({ label: item, value: item }))
-        setDataSource(arr)
-        getDeviceQueryCategoryFull(r.data[0])
-        setIsOpenModal(true)
+    try {
+      let params = {
+        projectId,
+        deviceStyle: 3,
+      };
+      const r = await DeviceQueryNotUsed(params);
+      if (r.success && Array.isArray(r?.data)) {
+        if (r.data.length > 0) {
+          const arr = r.data.map((item, index) => ({ label: `${item.category} ${item.description}`, value: item.category }));
+          setDataSource(arr);
+          getDeviceQueryCategoryFull(r.data[0]);
+          setIsOpenModal(true);
+        } else {
+          setIsOpenModal(false);
+          setIsAdd(true);
+          ModalRef.current.onCancel();
+          message.warning("没有未使用的燃气表名");
+        }
       }else{
-        setIsOpenModal(false)
-        setIsAdd(true)
-        ModalRef.current.onCancel()
+          r.success &&  message.warning("没有未使用的燃气表名");
       }
-      
+    } catch (error) {
+      console.log(error);
     }
-  }
+  };
 
   //获取默认燃气表的详细信息
-  const getDeviceQueryCategoryFull = async (category) => {
+  const getDeviceQueryCategoryFull = async (item) => {
     let params = {
       projectId,
-      category,
-    }
-    const r = await DeviceQueryCategoryFull(params)
+      category: item.category,
+    };
+    const r = await DeviceQueryCategoryFull(params);
     if (r.success) {
-      const data = r.data
+      const data = r.data;
       const arr = data.points?.map((item, index) => ({
         index: index + 1,
         dataMark: item.name,
@@ -279,17 +340,17 @@ const onSureEditModal=async()=>{
         isSave: item.isSave,
         watchPoint: item.isRuningPoint,
         dataOrder: item.secquence,
-        category:data.category
-      }))
-      
-      updateTableRef.current = lodash.cloneDeep(arr)
+        category: data.category,
+      }));
+
+      updateTableRef.current = lodash.cloneDeep(arr);
       if (foRef.current) {
-        const watchPointArr = arr.filter(it=>it.watchPoint)
-        console.log(watchPointArr)
-        foRef.current.setSwitched(watchPointArr)
-        foRef.current.setPointSource(lodash.cloneDeep(arr))
+        const watchPointArr = arr.filter((it) => it.watchPoint);
+        console.log(watchPointArr);
+        foRef.current.setSwitched(watchPointArr);
+        foRef.current.setPointSource(lodash.cloneDeep(arr));
       } else {
-        setDefaultTableData(arr)
+        setDefaultTableData(arr);
       }
       addForm.setFieldsValue({
         DeviceType: data.category,
@@ -297,143 +358,146 @@ const onSureEditModal=async()=>{
         Control: data.control,
         IsCount: data.calculate,
         IsRead: data.realTimeReading,
-        DefaulImg: `data:image/jpeg;base64,${data.imageBase64}`,
-        ImageUpload: '',
-        description: data.description
+        DefaulImg: data.imageBase64,
+        ImageUpload: "",
+        description: data.description,
         // Point:arr,
-      })
-      setIsAdd(true)
+      });
+      setIsAdd(true);
     }
-
-  }
+  };
   //打开新增modal
-  const open = async() => {
-    if(!isAdd)return
-    if(isOpenModal){
-      ModalRef.current.onOpen()
-    }else{
-      message.warning('无可用新增设备!')
+  const open = async () => {
+    if (!isAdd) return;
+    if (isOpenModal) {
+      ModalRef.current.onOpen();
+    } else {
+      message.warning("无可用新增设备!");
     }
-    
-    
-  }
+  };
   //关闭新增modal
-  const onCancel=()=>{
-    getDeviceQueryNotUsed()
-    ModalRef.current.onCancel()
-  }
+  const onCancel = () => {
+    getDeviceQueryNotUsed();
+    ModalRef.current.onCancel();
+  };
   //保存新增设备
   const onOk = async () => {
-    const result= foRef.current?.choosemes()
-   if(!result){
-    message.warning('请至少选择一项标记检测运行点！')
-     return
-   }
-    const formValue = addForm.getFieldsValue()
-    const tableData =  result.map(it=>({
-      name:it.dataMark,
-      isSave:it.isSave,
-      isRuningPoint:it.watchPoint,
-      secquence:it.dataOrder
-    }))
-    console.log(addForm.getFieldsValue(), foRef.current.pointSource)
-    let params ={
+    const result = foRef.current?.choosemes();
+    if (!result) {
+      message.warning("请至少选择一项标记检测运行点！");
+      return;
+    }
+    const formValue = addForm.getFieldsValue();
+    const tableData = result.map((it) => ({
+      name: it.dataMark,
+      isSave: it.isSave,
+      isRuningPoint: it.watchPoint,
+      secquence: it.dataOrder,
+    }));
+    console.log(addForm.getFieldsValue(), foRef.current.pointSource);
+    let params = {
       projectId,
-      category:formValue.DeviceType,
-      control:formValue.Control,
-      calculate:formValue.IsCount,
-      realTimeReading:formValue.IsRead,
-      imageBase64:formValue.ImageUpload?formValue.ImageUpload:formValue.DefaulImg,
-      points:tableData
+      category: formValue.DeviceType,
+      control: formValue.Control,
+      calculate: formValue.IsCount,
+      realTimeReading: formValue.IsRead,
+      imageBase64: formValue.ImageUpload
+        ? formValue.ImageUpload
+        : formValue.DefaulImg,
+      points: tableData,
+      description: formValue.description,
+    };
+    const resp = await AddDeviceCategory(params);
+    console.log(resp);
+    if (resp.success) {
+      ModalRef.current.onCancel();
+      message.success("新增成功");
+      getTableData();
+      getDeviceQueryNotUsed();
+    } else {
+      message.error(resp.errMsg);
     }
-    const resp = await AddDeviceCategory(params)
-    console.log(resp)
-    if(resp.success){
-      ModalRef.current.onCancel()
-      message.success("新增成功")
-      getTableData()
-      getDeviceQueryNotUsed()
-    }else{
-      message.error(resp.errMsg)
-    }
-  }
+  };
   //新增应用确认
-  const onSure=async ()=>{
-    const result= foRef.current?.choosemes()
-   if(!result){
-    message.warning('请至少选择一项标记检测运行点！')
-     return false
-   }
-    const formValue = addForm.getFieldsValue()
-    const tableData =  result.map(it=>({
-      name:it.dataMark,
-      isSave:it.isSave,
-      isRuningPoint:it.watchPoint,
-      secquence:it.dataOrder
-    }))
-    console.log(addForm.getFieldsValue(), foRef.current.pointSource)
-    let params ={
+  const onSure = async () => {
+    const result = foRef.current?.choosemes();
+    if (!result) {
+      message.warning("请至少选择一项标记检测运行点！");
+      return false;
+    }
+    const formValue = addForm.getFieldsValue();
+    const tableData = result.map((it) => ({
+      name: it.dataMark,
+      isSave: it.isSave,
+      isRuningPoint: it.watchPoint,
+      secquence: it.dataOrder,
+    }));
+    console.log(addForm.getFieldsValue(), foRef.current.pointSource);
+    let params = {
       projectId,
-      category:formValue.DeviceType,
-      control:formValue.Control,
-      calculate:formValue.IsCount,
-      realTimeReading:formValue.IsRead,
-      imageBase64:formValue.ImageUpload?formValue.ImageUpload:formValue.DefaulImg,
-      points:tableData
+      category: formValue.DeviceType,
+      control: formValue.Control,
+      calculate: formValue.IsCount,
+      realTimeReading: formValue.IsRead,
+      imageBase64: formValue.ImageUpload
+        ? formValue.ImageUpload
+        : formValue.DefaulImg,
+      points: tableData,
+      description: formValue.description,
+    };
+    const resp = await AddDeviceCategory(params);
+    console.log(resp);
+    if (resp.success) {
+      message.success("应用成功");
+      getTableData();
+      getDeviceQueryNotUsed();
+    } else {
+      message.error(resp.errMsg);
     }
-    const resp = await AddDeviceCategory(params)
-    console.log(resp)
-    if(resp.success){
-      message.success("应用成功")
-      getTableData()
-      getDeviceQueryNotUsed()
-    }else{
-      message.error(resp.errMsg)
-    }
-  }
+  };
   //导出表格
-  const exportExecel=()=>{
-    tableLoadRef.current.download()
-  }
+  const exportExecel = () => {
+    tableLoadRef.current.download();
+  };
   const onExport = () => {
     return new Promise(async (resolve, reject) => {
       let params = {
         projectId,
         pageNum: 1,
         pageSize: tableParams.total,
-        deviceStyle: 3
+        deviceStyle: 3,
+      };
+      const result = await DeviceCategory(params);
+      const { data, errMsg, success, total } = result;
+      if (success) {
+        resolve({ list: data ? data : [], total });
+      } else {
+        reject(errMsg);
       }
-      const result = await DeviceCategory(params)
-      const { data, errMsg, success,total} = result;
-      if(success){
-        resolve({list:data?data:[],total})
-      }else{
-        reject(errMsg)
-      }
-    })
-  }
+    });
+  };
   //分页
   const onChangePage = (page, pageSize) => {
     setTableParams({
-      ...page
-    })
-  }
+      ...page,
+    });
+  };
   useEffect(() => {
-    getTableData()
-    getDeviceQueryNotUsed()
-  }, [tableParams.current])
+    getTableData();
+    getDeviceQueryNotUsed();
+  }, [tableParams.current]);
   let addModalProp = {
     addForm,
     dataSource,
     getDeviceQueryCategoryFull,
-    defaultTableData
-  }
+    defaultTableData,
+  };
   let deviceProps = {
     value: 0,
-    name: '新增燃气表类型',
+    name: "新增燃气表类型",
     AddModal: <AddModal ref={foRef} {...addModalProp} />,
-   // cancelText: '取消',
-   // okText: '确认',
+    // cancelText: '取消',
+    // okText: '确认',
     onOk,
     width: 1032,
     open,
@@ -441,55 +505,62 @@ const onSureEditModal=async()=>{
     ModalRef,
     onCancel,
     exportExecel,
-    title:'配置燃气表类型',
-    tb:tableLoadRef
+    title: "配置燃气表类型",
+    tb: tableLoadRef,
   };
-  let editFormProps={
+  let editFormProps = {
     editForm,
-    ref:editFromRef,
-    editDefaultTableData
-  }
-  let editModalProps={
-   ref:EditModalRef,
-   width: 1032,
-   onOk:onOkEditModal
-  }
-  let delModalProps={
+    ref: editFromRef,
+    editDefaultTableData,
+  };
+  let editModalProps = {
+    ref: EditModalRef,
+    width: 1032,
+    onOk: onOkEditModal,
+  };
+  let delModalProps = {
     DelModalRef,
-  //  cancelText: '取消',
-  //  okText: '确认',
-    content:'是否确认删除燃气表类型?',
-    name:'删除燃气表类型',
-    onOk:delOK
-  }
-  const EditModalComp=useMemo(()=>{
-    return (<Modal   mold='cust' {...editModalProps} title="编辑燃气表类型"  onOk={onOkEditModal}>
-    {/* <BlueColumn name='编辑燃气表类型'  styled={{ padding: '24px 0px' }}></BlueColumn> */}
-    <EditModal {...editFormProps}></EditModal>
-    </Modal>)
-  },[editDefaultTableData])
+    //  cancelText: '取消',
+    //  okText: '确认',
+    content: "是否确认删除燃气表类型?",
+    name: "删除燃气表类型",
+    onOk: delOK,
+  };
+  const EditModalComp = useMemo(() => {
+    return (
+      <Modal
+        mold="cust"
+        {...editModalProps}
+        title="编辑燃气表类型"
+        onOk={onOkEditModal}
+      >
+        {/* <BlueColumn name='编辑燃气表类型'  styled={{ padding: '24px 0px' }}></BlueColumn> */}
+        <EditModal {...editFormProps}></EditModal>
+      </Modal>
+    );
+  }, [editDefaultTableData]);
   return (
     <div>
-      <cusContext.Provider value={{updateTableRef:updateTableRef.current}}>
-      <DeviceContent {...deviceProps} >
-        <Table 
-        columns={columns} 
-        dataSource={tableDataSource} 
-        bordered={false} 
-        ref={tableLoadRef}
-        loading={ loading}
-        pagination={tableParams}
-        onChange={onChangePage}
-        onExport={onExport}
-        ></Table>
-      </DeviceContent>
-      {EditModalComp}
-      {/* <Modal  mold='cust' {...editModalProps}>
+      <cusContext.Provider value={{ updateTableRef: updateTableRef.current }}>
+        <DeviceContent {...deviceProps}>
+          <Table
+            columns={columns}
+            dataSource={tableDataSource}
+            bordered={false}
+            ref={tableLoadRef}
+            loading={loading}
+            pagination={tableParams}
+            onChange={onChangePage}
+            onExport={onExport}
+          ></Table>
+        </DeviceContent>
+        {EditModalComp}
+        {/* <Modal  mold='cust' {...editModalProps}>
       <BlueColumn name='编辑燃气表类型'  styled={{ padding: '24px 0px' }}></BlueColumn>
       <EditModal {...editFormProps}></EditModal>
       </Modal> */}
-      <DeleteModal {...delModalProps}></DeleteModal>
+        <DeleteModal {...delModalProps}></DeleteModal>
       </cusContext.Provider>
     </div>
-  )
+  );
 }

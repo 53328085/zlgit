@@ -6,6 +6,7 @@
     "@ahooksjs/use-url-state": "^3.5.0",
     "@amap/amap-jsapi-loader": "^1.0.1",
     "@ant-design/charts": "^1.4.2",
+    "@ant-design/colors": "^8.0.1",
     "@ant-design/icons": "^4.7.0",
     "@ant-design/plots": "^1.2.1",
     "@ant-design/pro-components": "2.7.16",

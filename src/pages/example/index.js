@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+/* import React, { useState, useEffect, useRef } from 'react';
 import { List } from 'antd';
 
 const InfiniteScrollList = ({ data }) => {
@@ -64,4 +64,73 @@ const App = () => {
   return <InfiniteScrollList data={mockData} />;
 };
 
+export default App; */
+
+
+import React, {useState} from 'react';
+import { DatePicker, Space } from 'antd';
+import dayjs from 'dayjs';
+import customParseFormat from 'dayjs/plugin/customParseFormat';
+dayjs.extend(customParseFormat);
+const { RangePicker } = DatePicker;
+const range = (start, end) => {
+  const result = [];
+  for (let i = start; i < end; i++) {
+    result.push(i);
+  }
+  return result;
+};
+
+ 
+const disabledRangeTime = (_, type) => {
+  if (type === 'start') {
+    return {
+      disabledHours: () => range(0, 60).splice(4, 20),
+      disabledMinutes: () => range(30, 60),
+      disabledSeconds: () => [55, 56],
+    };
+  }
+  return {
+    disabledHours: () => range(0, 60).splice(20, 4),
+    disabledMinutes: () => range(0, 31),
+    disabledSeconds: () => [55, 56],
+  };
+};
+const App = () => {
+   const [dates, setDates] = useState([dayjs().startOf("day"), dayjs()]);
+     const onCalendarChange = (v)=> {
+    console.log("onCalendarChange",v)
+    setDates(v)
+  }
+    const onOpenChange = (open) => {
+    if (open) {
+      setDates([null, null]);
+    } else {
+      setDates(null);
+    }
+  };
+  const disabledDate = current => {
+  // Can not select days before today and today
+  return current && dates?.[0]&&dates?.[1]&& current.format("YYYY-MM-DD")!==dates?.[0]?.format?.("YYYY-MM-DD") 
+  && dates?.[0]?.format?.("YYYY-MM-DD")!==dates?.[1]?.format?.("YYYY-MM-DD")
+  || dates?.[0]&&current.isBefore(dates?.[1])
+  ;
+};
+  return (
+  <Space direction="vertical" size={12}>
+    
+    <RangePicker
+      value={dates}
+      disabledDate={disabledDate}
+      disabledTime={disabledRangeTime}
+       onCalendarChange={onCalendarChange}
+      showTime={{
+        hideDisabledOptions: true,
+        defaultOpenValue: [dayjs('00:00:00', 'HH:mm:ss'), dayjs('11:59:59', 'HH:mm:ss')],
+      }}
+      onOpenChange={onOpenChange} 
+      format="YYYY-MM-DD HH:mm:ss"
+    />
+  </Space>
+)};
 export default App;

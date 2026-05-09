@@ -15,6 +15,7 @@ import splitAir from "./icon/spacIcon.svg";
 import centralAir from "./icon/caIcon.svg";
 import { useList, useSetControl } from "./api.js";
 import { Cspin } from "@com/comstyled"
+import { isArray } from "lodash";
 
 export default function Index() {
   const [spinning, setSpinning] = useState(false)
@@ -119,9 +120,10 @@ export default function Index() {
     try {
       let { ioState, workMode, windSpeed, temperature } =
         await formControl.validateFields();
+      console.log("ioState",ioState)
       let params = {
         projectId,
-        ioState,
+        ioState: ioState ? 1 : 2,  // 开->1，关->2
         workMode,
         windSpeed,
         temperature,

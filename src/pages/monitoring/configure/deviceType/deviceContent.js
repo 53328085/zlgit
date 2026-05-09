@@ -5,6 +5,7 @@ import { Monitoring } from '@api/api.js'
 import style from './style.module.less'
 import Modal from '@com/useModal'
 import BlueColumn from '@com/bluecolumn' 
+import {preimge} from "@com/usehandler"
 import {publishState} from '@redux/systemconfig'
 import {Button,message, Space} from 'antd'
 import {  ExportExcel, NewButton} from '@com/useButton'

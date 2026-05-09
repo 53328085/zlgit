@@ -18,6 +18,7 @@ import {themeColor,adaptation, intl, dark} from "@redux/systemconfig";
 
 export default function CustConfig(props) {
   const theme = useSelector(themeColor)
+  console.log("theme",theme)
   const  isdark = useSelector(dark)
   console.log("isdark",isdark)
   const {laptop} = useSelector(adaptation) || {}

@@ -6,6 +6,7 @@ import { useSelector } from 'react-redux'
 import { Button, Form, Space, Typography, message, Divider,Image } from 'antd';
 import Table from '@com/useTable'
 import Modal from '@com/useModal'
+import {preimge} from "@com/usehandler"
 import BlueColumn from '@com/bluecolumn'
 import { DeleteModal, AddModal, EditModal } from './modalCom.js'
 import cusContext from '@com/content'
@@ -132,6 +133,12 @@ export default function Electric() {
       key: 'category'
     },
     {
+        title: '设备描述',
+        dataIndex: 'description',
+        key:'description',
+        align:'center',
+      },
+    {
       title: '设备厂家',
       dataIndex: 'manufacturer',
       align:'center',
@@ -143,7 +150,7 @@ export default function Electric() {
       key: 'imageBase64',
       align:'center',
       render: (text) => {
-        return (<Image src={text} width={64} height={53}></Image>)
+        return (<Image src={`${preimge}${text}`} width={64} height={53}></Image>)
 
       }
     },
@@ -246,7 +253,7 @@ const onSureEditModal=async()=>{
     if (r.success && Array.isArray(r.data)) {
       if (r.data.length > 0) {
         setIsOpenModal(true)
-        const arr = r.data.map((item, index) => ({ label: item, value: item }))
+        const arr = r.data.map((item, index) => ({ label: `${item.category} ${item.description}`, value: item.category }))
         setDataSource(arr)
         getDeviceQueryCategoryFull(r.data[0])
       } else {
@@ -259,10 +266,10 @@ const onSureEditModal=async()=>{
   }
 
   //获取默认变压器的详细信息
-  const getDeviceQueryCategoryFull = async (category) => {
+  const getDeviceQueryCategoryFull = async (item) => {
     let params = {
       projectId,
-      category,
+      category:item.category,
     }
     const r = await DeviceQueryCategoryFull(params)
     if (r.success) {
@@ -293,7 +300,7 @@ const onSureEditModal=async()=>{
         Control: data.control,
         IsCount: data.calculate,
         IsRead: data.realTimeReading,
-        DefaulImg: `data:image/jpeg;base64,${data.imageBase64}`,
+        DefaulImg: data.imageBase64,
         ImageUpload: '',
         description: data.description
         // Point:arr,
@@ -340,7 +347,8 @@ const onSureEditModal=async()=>{
       calculate: formValue.IsCount,
       realTimeReading: formValue.IsRead,
       imageBase64: formValue.ImageUpload ? formValue.ImageUpload : formValue.DefaulImg,
-      points: tableData
+      points: tableData,
+      description: formValue.description,
     }
     const resp = await AddDeviceCategory(params)
     console.log(resp)
@@ -375,7 +383,8 @@ const onSureEditModal=async()=>{
       calculate: formValue.IsCount,
       realTimeReading: formValue.IsRead,
       imageBase64: formValue.ImageUpload ? formValue.ImageUpload : formValue.DefaulImg,
-      points: tableData
+      points: tableData,
+      description: formValue.description,
     }
     const resp = await AddDeviceCategory(params)
     console.log(resp)
