@@ -273,61 +273,68 @@ export const typecols = [  // 分类能耗
     key: "mom"
   },
 ]
-export const fromlot = [ // 电能报表 /账单报表
-  {
+export const fromlot =  // 电能报表 /账单报表
+ {0:{
     title: '区域名称',
     dataIndex: 'nodeName',
     key: "nodeName",
     ellipsis:true,
     sorter: (a, b) => a?.nodeName?.localeCompare?.(b?.nodeName),
   },
-  {
+ 1: {
     title: '设备名称',
     dataIndex: 'name',
     key: "name",
     ellipsis:true,
     sorter: (a, b) => a?.name?.localeCompare?.(b?.name),
-  }, {
-    title: '起始电量',
+  },
+  2:{
+    title: '起始',
     dataIndex: 'eStart',
     key: "eStart",
-  }, {
-    title: '结束电量',
+  },
+  3: {
+    title: '结束',
     dataIndex: 'eEnd',
     key: "eEnd",
-  }, {
-    title: '用能(kWh)',
-    dataIndex: 'consume',
-    key: "consume",
-    sorter: (a, b) => parseFloat(a?.consume) - parseFloat(b?.consume)
-  }, {
+  },  
+  4: {
     title: '起始读数',
     dataIndex: 'start',
     key: "start",
-  }, {
+  }, 
+  5:{
     title: '结束读数',
     dataIndex: 'end',
     key: "end",
   },
-  {
-    title: '倍率',
+ 6: {
+    title: '综合倍率',
     dataIndex: 'magnification',
     key: "magnification",
   },
-  {
+ 7: {
     title: '设备编号',
     dataIndex: 'sn',
     key: "sn",
     sorter: (a, b) => a?.sn?.localeCompare?.(b?.sn),
   },
-  {
+   8:{
+    title: '用能',
+    dataIndex: 'consume',
+    key: "consume",
+    sorter: (a, b) => parseFloat(a?.consume) - parseFloat(b?.consume)
+  },
+ 9: {
     title: '安装位置',
     dataIndex: 'address',
     key: "address",
     ellipsis:true,
     sorter: (a, b) => a?.address?.localeCompare?.(b?.address),
   },
-]
+  length:10
+}
+
 export const Zdconfig ={  // 账单表格配置
   nodeName:{
     disable:true,

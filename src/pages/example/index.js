@@ -82,19 +82,10 @@ const range = (start, end) => {
 };
 
  
-const disabledRangeTime = (_, type) => {
-  if (type === 'start') {
-    return {
-      disabledHours: () => range(0, 60).splice(4, 20),
-      disabledMinutes: () => range(30, 60),
-      disabledSeconds: () => [55, 56],
-    };
-  }
-  return {
-    disabledHours: () => range(0, 60).splice(20, 4),
-    disabledMinutes: () => range(0, 31),
-    disabledSeconds: () => [55, 56],
-  };
+const disabledRangeTime = (day, type) => {
+  console.log(day?.format?.('HH:mm'), type)
+ 
+ 
 };
 const App = () => {
    const [dates, setDates] = useState([dayjs().startOf("day"), dayjs()]);
@@ -109,12 +100,14 @@ const App = () => {
       setDates(null);
     }
   };
-  const disabledDate = current => {
-  // Can not select days before today and today
-  return current && dates?.[0]&&dates?.[1]&& current.format("YYYY-MM-DD")!==dates?.[0]?.format?.("YYYY-MM-DD") 
-  && dates?.[0]?.format?.("YYYY-MM-DD")!==dates?.[1]?.format?.("YYYY-MM-DD")
-  || dates?.[0]&&current.isBefore(dates?.[1])
-  ;
+  const disabledDate = (current,{from,type}) => {
+    console.log("form",from?.format("YYYY-MM-DD"))
+    console.log("current",current?.format("YYYY-MM-DD)"))
+   
+      
+      return (current && current > dayjs().endOf('day')) && (dates?.[0] && dates[0].diff(current,'day')>1);
+   
+   
 };
   return (
   <Space direction="vertical" size={12}>
@@ -126,10 +119,10 @@ const App = () => {
        onCalendarChange={onCalendarChange}
       showTime={{
         hideDisabledOptions: true,
-        defaultOpenValue: [dayjs('00:00:00', 'HH:mm:ss'), dayjs('11:59:59', 'HH:mm:ss')],
+        defaultOpenValue: [dayjs('00:00', 'HH:mm'), dayjs('11:59', 'HH:mm')],
       }}
       onOpenChange={onOpenChange} 
-      format="YYYY-MM-DD HH:mm:ss"
+      format="YYYY-MM-DD HH:mm"
     />
   </Space>
 )};

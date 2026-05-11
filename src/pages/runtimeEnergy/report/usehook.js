@@ -26,7 +26,7 @@ export function useBaript({
     let datas = tableData.filter((d) =>
       selectedRowKeys.some((s) => s.includes(d.sn) && s.includes(d.nodeName)),
     );
-
+    
     let { unit } = datas?.[0] || {};
     let dimensions = datas?.map?.((d) => d.name) || [];
     let source =
@@ -38,7 +38,7 @@ export function useBaript({
       unit,
     ];
   }, [selectedRowKeys, tableData, checkvalue, detailHeaders]);
-
+  console.log(source)
   const baroption = {
     series: new Array(chartlen).fill({ type: "bar", seriesLayoutBy: "row" }), // [{ type: "bar",seriesLayoutBy: 'row' }],
     grid: {
@@ -66,7 +66,7 @@ export function useBaript({
     dataset: {
       dimensions,
       source,
-      sourceHeadr: true,
+      sourceHeader: false,
     },
     toolbox: {
       show: true,
@@ -82,7 +82,28 @@ export function useBaript({
   };
   return baroption;
 }
-
+export function useCols(cols,  titles, type) { 
+  return useMemo(() => {
+    try {
+         if (isObject(cols) && Object.values(cols) && isObject(titles)&& Object.values(titles).length > 0) {
+      for(let [key, value] of Object.entries(titles)) {
+         cols[key].title = value;
+      }
+      let columns = Array.from(cols)
+      if (type != 1) { 
+        columns.splice(8, 1)
+      }
+      return columns 
+    } else {
+      return [];
+    }
+    } catch (error) {
+      console.log(error)
+      return [];
+    }
+ 
+  }, [cols, titles, type]);
+}
 export function useCol(cols, index, title, rowspan) {
   return useMemo(() => {
     if (isObject(cols) && Object.values(cols) && index && title) {
@@ -99,7 +120,7 @@ export function useCol(cols, index, title, rowspan) {
   }, [cols, index, title]);
 }
 export function useCsCol(props) {
-//  console.log("useCsCol", props);
+  console.log("useCsCol", props);
   const {   index, title="", frontRows = 0, spans, header,energytype,filters,filteredValue } = props;
   return useMemo(() => {
     try {

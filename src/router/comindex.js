@@ -269,12 +269,26 @@ export default function Index() {
             });
             break;
           case "reportNh":
-          case "reportZd":
-          case "reportFs":
+          case "reportZd": 
           case "reportFl":
           case "reportBc":
             setConfig({
               energytype: true,
+              publicDate: true,
+              rangeDate: 45,
+              shiftNo: true,
+              gas: false,
+              custview: true,
+              alike: true,
+              showTime: {
+                format: "HH:mm",
+                minuteStep: 15,
+              },
+            });
+            break;
+          case "reportFs":
+             setConfig({
+              energytype: false,
               publicDate: true,
               rangeDate: 45,
               shiftNo: true,
@@ -317,7 +331,7 @@ export default function Index() {
             break;
           case "reportXl":
             setConfig({
-              energytype: true,
+              energytype: false, // 只有电
               publicDate: true,
              
               shiftNo: true,

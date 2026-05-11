@@ -324,7 +324,7 @@ export default function Index() {
   }
 
   const handelValidate = (rule, value, callback) => {
-    if(value.length> 8){
+    if(value.length>40){
       return Promise.reject('最多8字符')
     }else{
       return Promise.resolve();
@@ -476,7 +476,7 @@ export default function Index() {
                     rules={[{required:true, message:'请输入策略名称'},{validator:handelValidate }]}>
                       <Input style={{width: 205, height: 36}} maxLength={8}></Input>
                     </Item>
-                    <div style={{fontSize: 12, color:'#999'}}>最多8字符</div>
+                    <div style={{fontSize: 12, color:'#999'}}>最多40字符</div>
                   </Space>
                 </Item>
                {

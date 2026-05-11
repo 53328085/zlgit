@@ -8,7 +8,7 @@ import { lineoptdoub } from '../data'
 import Titlelayout from "@com/titlelayout"
 import Ichart from '@com/useEcharts/Ichart'
 import { useQueryMeterPower, useQueryMeterList, useQuerySOC,useQueryPCSList,useQueryPowerTrends } from '../api'
-export default function Index({ title, type }) {
+export default function Index({ title, type,unit }) {
 
   const [form] = Form.useForm()
 
@@ -22,7 +22,7 @@ export default function Index({ title, type }) {
   }
   )
 
-  let lineopt = lineoptdoub(datas, formdata?.startTime, formdata?.endTime,type)
+  let lineopt = lineoptdoub(datas, formdata?.startTime, formdata?.endTime,type, unit)
   const onValuesChange = (_, b) => {
 
     setFormdata(b)
