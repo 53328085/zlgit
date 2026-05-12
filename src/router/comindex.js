@@ -96,6 +96,7 @@ export default function Index() {
       "realTimeMeterReading",
       "consumeAnalysis",
       "efficiencyCompare",
+      "carbonBudget",
     ],
     runtimeStorage: [
       // 储能管理
@@ -320,7 +321,7 @@ export default function Index() {
             setConfig({
               energytype: true,
               publicDate: true,
-             
+
               shiftNo: true,
               gas: false,
               custview: true,
@@ -341,12 +342,12 @@ export default function Index() {
             break;
           case "realTimeMeterReading":
              setConfig({
-              energytype: true, 
+              energytype: true,
               shiftNo: true,
               gas: false,
-              
+
               alike: true,
-          
+
             });
             break;
           case "consumeAnalysis":
@@ -387,6 +388,19 @@ export default function Index() {
             break;
           case "norm":
             setConfig({ custview: true });
+            break;
+          case "carbonBudget":
+            setConfig({
+              publicDate: true,
+              shiftNo: true,
+              isAreaId: true,
+              dateOpt: [
+                {
+                  value: 2,
+                  label: "月",
+                },
+              ],
+            });
             break;
           case "public":
             setConfig({
