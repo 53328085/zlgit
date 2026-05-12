@@ -1,4 +1,7 @@
-import {ReactComponent as AllocationIcon} from './icon/allocation.svg'
+import { CustButton } from '@com/useButton'
+import { ReactComponent as AllocationIcon } from './icon/allocation.svg'
+import { ReactComponent as DeleteIcon } from './icon/delete.svg'
+import { Flex } from "antd"
 
 /// 1  电表
 /// 2  冷水表
@@ -22,9 +25,6 @@ import {ReactComponent as AllocationIcon} from './icon/allocation.svg'
 /// 20 微机保护
 /// 21 空调
 /// 22 路灯控制器
-
-import { Flex } from "antd"
-
 /// 23 智能控制
 export function getTabLabelByType(type) {
     switch (type) {
@@ -118,7 +118,7 @@ export function getTableColumnsByType(type) {
                     dataIndex: 'sn',
                     key: 'sn',
                     render: (text, record) => {
-                        if (text) {
+                        if (record.isAllocation) {
                             return (
                                 <Flex gap={4} align="center">
                                     <AllocationIcon />
@@ -173,4 +173,108 @@ export function getTableColumnsByType(type) {
                 },
             ]
     }
+}
+
+/**
+ * 获取设备设置列
+ */
+export function getDeviceSettingColumns() {
+    return [
+        {
+            title: '设备编号',
+            dataIndex: 'sn',
+            key: 'sn',
+        },
+        {
+            title: '设备名称',
+            dataIndex: 'name',
+            key: 'name',
+        },
+        {
+            title: '安装地址',
+            dataIndex: 'address',
+            key: 'address',
+        },
+    ];
+}
+
+/**
+ * 获取设备分摊列表列
+ */
+export function getDeviceShareColumns() {
+    return [
+        {
+            title: '设备编号',
+            dataIndex: 'sn',
+            key: 'sn',
+            render: (text, record) => {
+                if (record.isAllocation) {
+                    return (
+                        <Flex gap={4} align="center">
+                            <AllocationIcon />
+                            {text}
+                        </Flex>
+                    )
+                } else {
+                    return text
+                }
+            },
+        },
+        {
+            title: '设备名称',
+            dataIndex: 'name',
+            key: 'name',
+        },
+        {
+            title: '安装地址',
+            dataIndex: 'address',
+            key: 'address',
+        },
+    ];
+}
+
+/**
+ * 获取区域分摊列表列
+ * @param {*} type  分摊类型
+ * @param {*} onDeleteClick  删除回调
+ * @returns 
+ */
+export function getAreaSharedColumns(type, onDeleteClick) {
+    return [
+        {
+            title: '区域名称',
+            dataIndex: 'areaName',
+            key: 'areaName',
+        },
+        type === 1 ? {
+            title: '面积(m²)',
+            dataIndex: 'area',
+            key: 'area',
+        } : type === 2 ? {
+            title: '人数(人)',
+            dataIndex: 'area',
+            key: 'area',
+        } : type === 3 ? {
+            title: '产值(万元)',
+            dataIndex: 'area',
+            key: 'area',
+        } : {
+            title: '产量',
+            dataIndex: 'area',
+            key: 'area',
+        },
+        {
+            title: '分摊比例%',
+            dataIndex: 'areaRatio',
+            key: 'areaRatio',
+        },
+        {
+            title: '操作',
+            dataIndex: 'operation',
+            key: 'operation',
+            render: (_, record) => {
+                return <DeleteIcon onClick={() => onDeleteClick(record)} />
+            }
+        },
+    ]
 }

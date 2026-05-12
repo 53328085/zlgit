@@ -27,10 +27,16 @@ const Header = styled(Flex)`
 `
 
 export default function Index() {
-  const [treeId, setTreeId] = useState('');
-  const [treeName, setTreeName] = useState('');
-  const deviceStyles = useSelector(filterDeviceStyle);
-  const projectId = useSelector(selectProjectId);
+  // 区域树
+  const treeRef = useRef(null)
+  // 选中的区域ID
+  const [treeId, setTreeId] = useState('')
+  // 选中的区域名称
+  const [treeName, setTreeName] = useState('')
+  // 设备样式
+  const deviceStyles = useSelector(filterDeviceStyle)
+  // 项目ID
+  const projectId = useSelector(selectProjectId)
   // 获取URL搜索参数
   let [searchParams] = useSearchParams()
   // 从URL参数中获取item值，用于确定默认选中的页签
@@ -39,7 +45,9 @@ export default function Index() {
   const initialTabValue = itemParam !== null ? itemParam.toString() : '1'
   //设备页签
   const [tabs, setTabs] = useState([])
+  // 选中的设备类型
   const [deviceType, setDeviceType] = useState(initialTabValue)
+  // 页签属性数据
   const tabPropsData = {
     tabs,
     deviceType,
@@ -55,17 +63,18 @@ export default function Index() {
   /**
    * 获取区域下的设备数量
    */
-  const { run: runQueryAreaDeviceNum } = useRequest(() => {
-    // 初始化页签为空数组
-    setTabs([])
-    return useQueryAreaDeviceNum({ projectId, areaId: treeId });
-  }, {
-    refreshDeps: [treeId],
-    ready: treeId,
-    onSuccess: ({ data }) => {
-      data && isArray(data) && setTabs(data?.sort((a, b) => a.type - b.type).map(item => ({ label: `${getTabLabelByType(item.type)}(${item.count})`, key: item.type.toString() })) || [])
-    }
-  });
+  const { run: runQueryAreaDeviceNum } = useRequest(
+    () => useQueryAreaDeviceNum({ projectId, areaId: treeId })
+    , {
+      refreshDeps: [],
+      ready: treeId,
+      onSuccess: ({ data }) => {
+        if (data && isArray(data)) {
+          setTabs(data?.sort((a, b) => a.type - b.type).map(item => ({ label: `${getTabLabelByType(item.type)}(${item.count})`, key: item.type.toString() })) || [])
+          setDeviceType(head(data)?.type.toString() || '')
+        }
+      }
+    });
 
   /**
    * 添加设备
@@ -105,9 +114,16 @@ export default function Index() {
       <Flex gap={12} style={{ minHeight: '100%' }}>
         <Flex style={{ width: 265 }}>
           <CustomTreeView
+            ref={treeRef}
             onAreaSelect={(node) => {
+              // 初始化页签为空数组
+              setTabs([])
+              setDeviceType('')
+              // 设置选中区域ID
               setTreeId(node.key)
               setTreeName(node.title)
+              // 刷新设备数量
+              runQueryAreaDeviceNum()
             }}
           />
         </Flex>
@@ -138,6 +154,8 @@ export default function Index() {
         onClose={() => {
           // 关闭弹窗时，刷新设备数量
           runQueryAreaDeviceNum()
+          // 刷新树节点数据
+          treeRef.current?.refreshTreeData()
           setDrawerOpen(false)
         }}
         projectId={projectId}
@@ -151,6 +169,8 @@ export default function Index() {
           setShareDrawerOpen(false)
         }}
         projectId={projectId}
+        areaId={treeId}
+        areaName={treeName}
         deviceStyles={deviceStyles}
       />
     </PageContent>

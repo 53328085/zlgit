@@ -4,9 +4,21 @@ import { useGetXY } from "@com/usehandler";
 import { selectProjectId } from "@redux/systemconfig";
 import { useRequest } from "ahooks";
 import { Flex, Input, Tree } from "antd";
-import { useState } from "react";
+import { useState, forwardRef, useImperativeHandle } from "react";
 import { useSelector } from "react-redux";
 import styled from "styled-components";
+
+export const TreeTitleWrapper = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+`;
+
+export const DeviceCount = styled.span`
+  color: #909399;
+  font-size: 12px;
+`;
 
 export const TreeContainer = styled(Flex)`
   && {
@@ -20,7 +32,7 @@ export const TreeContainer = styled(Flex)`
     }  
 `;
 
-export default function CustomTreeView({ onAreaSelect }) {
+const CustomTreeView = forwardRef(function CustomTreeView({ onAreaSelect }, ref) {
     // 项目id
     const projectId = useSelector(selectProjectId)
     // 搜索框输入值
@@ -33,6 +45,15 @@ export default function CustomTreeView({ onAreaSelect }) {
     const { scrollY } = useGetXY({ selector: ".ant-tree-list", extraHeight: 16 })
     // 树数据
     const [treeData, setTreeData] = useState([])
+    // 是否首次加载
+    const [isFirstLoad, setIsFirstLoad] = useState(true)
+
+    // 暴露刷新方法给父组件
+    useImperativeHandle(ref, () => ({
+        refreshTreeData: () => {
+            getTreeData()
+        }
+    }))
 
     /**
      * 搜索框输入事件
@@ -54,6 +75,8 @@ export default function CustomTreeView({ onAreaSelect }) {
                     title: item.name,
                     // 保留原始数据用于回调返回
                     original: item,
+                    // 保留设备数量
+                    deviceCount: item.deviceCount || 0,
                 }
                 keys.push(item.areaId)
                 if (item.nodes && item.nodes.length > 0) {
@@ -64,6 +87,18 @@ export default function CustomTreeView({ onAreaSelect }) {
         }
         const treeData = transform(data)
         return { treeData, keys }
+    }
+
+    /**
+     * 自定义树节点渲染，在右侧显示设备数量
+     */
+    const renderTitle = (node) => {
+        return (
+            <TreeTitleWrapper>
+                <span>{node.title}</span>
+                <DeviceCount>（{node.deviceCount}）</DeviceCount>
+            </TreeTitleWrapper >
+        )
     }
 
     /**
@@ -116,28 +151,36 @@ export default function CustomTreeView({ onAreaSelect }) {
      * 默认选中第一项
      */
     const { run: getTreeData } = useRequest(
-        () => energyShare.QuerySpaceTrees({
+        () => energyShare.QuerySpaceTreesWithDeviceCount({
             projectId,
             areaId: 0,
             areaName: searchValue,
         }), {
         refreshDeps: [],
         onSuccess: ({ data }) => {
-            const { treeData, keys } = transformTreeData(data)
-            setTreeData(treeData)
+            const { treeData: newTreeData, keys } = transformTreeData(data)
+            setTreeData(newTreeData)
             // 默认展开所有节点
             setExpandedKeys(keys)
 
-            // 默认选中第一项
-            if (keys.length > 0) {
+            // 首次加载时默认选中第一项，非首次加载保持原有选中状态
+            if (isFirstLoad && keys.length > 0) {
                 const firstKey = keys[0]
                 setSelectedKeys([firstKey])
                 // 触发选中回调
                 if (onAreaSelect) {
-                    const firstNode = findNodeByKey(treeData, firstKey)
+                    const firstNode = findNodeByKey(newTreeData, firstKey)
                     if (firstNode) {
                         onAreaSelect(firstNode)
                     }
+                }
+                setIsFirstLoad(false)
+            } else if (!isFirstLoad && selectedKeys.length > 0) {
+                // 非首次加载，保持原有选中状态，如果选中的节点仍然存在则触发回调
+                const selectedKey = selectedKeys[0]
+                const selectedNode = findNodeByKey(newTreeData, selectedKey)
+                if (selectedNode && onAreaSelect) {
+                    onAreaSelect(selectedNode)
                 }
             }
         }
@@ -160,8 +203,11 @@ export default function CustomTreeView({ onAreaSelect }) {
                     onSelect={onSelect}
                     onExpand={onExpand}
                     height={scrollY}
+                    titleRender={renderTitle}
                 />
             </TreeContainer>
         </TitleLayout>
     )
-}
+})
+
+export default CustomTreeView

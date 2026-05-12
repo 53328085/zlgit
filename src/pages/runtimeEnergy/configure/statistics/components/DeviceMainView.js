@@ -16,21 +16,32 @@ const TableContent = styled(Flex)`
 `
 
 export default function DeviceMainView() {
+    // 从上下文获取设备类型、项目ID、区域ID
     const { deviceType, projectId, areaId } = useContext(CustContext) || {}
+    // 设备表格列
     const [columns, setColumns] = useState([])
+    // 设备表格数据
     const [allData, setAllData] = useState({ deviceSummary: [], deviceSub: [] })
+    // 左侧表格搜索值
     const [leftAlike, setLeftAlike] = useState('')
+    // 右侧表格搜索值
     const [rightAlike, setRightAlike] = useState('')
 
     useEffect(() => {
+        // 设备类型改变时，刷新表格列
         setColumns(getTableColumnsByType(deviceType))
+        // 设备类型改变时，刷新搜索值
         setLeftAlike('')
+        // 设备类型改变时，刷新右侧表格搜索值
         setRightAlike('')
     }, [deviceType])
 
+    /**
+     * 查询设备数据
+     */
     useRequest(() => useQueryUsedMeter({ projectId, areaId, type: deviceType }), {
         refreshDeps: [projectId, areaId, deviceType],
-        ready: !!areaId,
+        ready: areaId && deviceType,
         onSuccess: ({ data }) => {
             setAllData({
                 deviceSummary: data?.deviceSummary || [],
@@ -39,6 +50,9 @@ export default function DeviceMainView() {
         }
     })
 
+    /**
+     * 过滤设备数据
+     */
     const filterData = (data, alike) => {
         if (!alike.trim()) return data
         return data.filter(item => {
@@ -51,10 +65,16 @@ export default function DeviceMainView() {
         })
     }
 
+    /**
+     * 左侧表格数据
+     */
     const leftTableData = useMemo(() => {
         return filterData(allData.deviceSummary, leftAlike)
     }, [allData.deviceSummary, leftAlike])
 
+    /**
+     * 右侧表格数据
+     */
     const rightTableData = useMemo(() => {
         return filterData(allData.deviceSub, rightAlike)
     }, [allData.deviceSub, rightAlike])

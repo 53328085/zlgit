@@ -19,7 +19,7 @@ export const { useQueryUsedMeter } = new Apimethod(
 /**
  * 添加区域分表 //  排序
  */
-export const { useAddSubDeviceOrder } = new Apimethod( // 添加区域分表 //  排序
+export const { useAddSubDeviceOrder } = new Apimethod(
     "post",
     "General/Area/AddSubDeviceOrder"
 );
@@ -27,7 +27,15 @@ export const { useAddSubDeviceOrder } = new Apimethod( // 添加区域分表 // 
 /**
  * 添加区域总表 //  排序
  */
-export const { useAddSummaryDeviceOrder } = new Apimethod( // 添加区域总表 //  排序
+export const { useAddSummaryDeviceOrder } = new Apimethod(
     "post",
     "General/Area/AddSummaryDeviceOrder"
+);
+
+/**
+ * 获取区域下的所有设备详情
+ */
+export const { useQueryAreaAllDevicesWithAllocation } = new Apimethod(
+    "get",
+    "General/Area/QueryAreaAllDevicesWithAllocation"
 );

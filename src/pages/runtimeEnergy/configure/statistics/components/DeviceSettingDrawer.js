@@ -9,46 +9,37 @@ import { Area } from '@api/api.js';
 import { CustButton, CustButtonT } from '@com/useButton';
 import { components } from './DraggableView';
 import { useAddSummaryDeviceOrder, useAddSubDeviceOrder } from '../api';
-import styled from 'styled-components';
 import { useSelector } from 'react-redux';
 import { adaptation } from '@redux/systemconfig';
-
-const deviceColumns = [
-  {
-    title: '设备编号',
-    dataIndex: 'sn',
-    key: 'sn',
-  },
-  {
-    title: '设备名称',
-    dataIndex: 'name',
-    key: 'name',
-  },
-  {
-    title: '安装地址',
-    dataIndex: 'address',
-    key: 'address',
-  },
-];
+import { getDeviceSettingColumns } from '../Constant';
 
 export default function DeviceSettingDrawer({
-  open,
-  onClose = null,
-  projectId,
-  areaId,
-  areaName,
-  deviceStyles,
+  open,// 是否打开抽屉
+  onClose = null,// 抽屉关闭回调
+  projectId,// 项目ID
+  areaId,// 区域ID
+  areaName,// 区域名称
+  deviceStyles,// 设备样式
 }) {
-  const [form] = Form.useForm();
-  const [deviceSummary, setDeviceSummary] = useState([]);
-  const [deviceSub, setDeviceSub] = useState([]);
-  const [unselected, setUnselected] = useState([]);
-  const [deviceType, setDeviceType] = useState(0);
-  const [selectedSummaryKeys, setSelectedSummaryKeys] = useState([]);
-  const [selectedSubKeys, setSelectedSubKeys] = useState([]);
-  const [selectedUnselectedKeys, setSelectedUnselectedKeys] = useState([]);
+  // 设备配置表单
+  const [form] = Form.useForm()
+  // 总表设备
+  const [deviceSummary, setDeviceSummary] = useState([])
+  // 分表设备
+  const [deviceSub, setDeviceSub] = useState([])
+  // 未选中设备
+  const [unselected, setUnselected] = useState([])
+  // 设备类型
+  const [deviceType, setDeviceType] = useState(0)
+  // 选中的总表设备
+  const [selectedSummaryKeys, setSelectedSummaryKeys] = useState([])
+  // 选中的分表设备
+  const [selectedSubKeys, setSelectedSubKeys] = useState([])
+  // 选中的未选中设备
+  const [selectedUnselectedKeys, setSelectedUnselectedKeys] = useState([])
+  // 是否为笔记本
   const laptop = useSelector(adaptation) || {}
-
+  // 设备引用
   const devicesRef = React.useRef({
     unselected: [],
     deviceSummary: [],
@@ -339,7 +330,7 @@ export default function DeviceSettingDrawer({
             />
             <DndProvider backend={HTML5Backend}>
               <UserTable
-                columns={deviceColumns}
+                columns={getDeviceSettingColumns()}
                 rowSelection={summaryRowSelection}
                 dataSource={deviceSummary}
                 components={components}
@@ -369,7 +360,7 @@ export default function DeviceSettingDrawer({
             />
             <DndProvider backend={HTML5Backend}>
               <UserTable
-                columns={deviceColumns}
+                columns={getDeviceSettingColumns()}
                 rowSelection={subRowSelection}
                 dataSource={deviceSub}
                 components={components}
@@ -454,7 +445,7 @@ export default function DeviceSettingDrawer({
             </Space>
           </Form>
           <UserTable
-            columns={deviceColumns}
+            columns={getDeviceSettingColumns()}
             rowSelection={unselectedRowSelection}
             dataSource={unselected}
             rowKey="id"

@@ -1,7 +1,6 @@
 
-import React, { useRef, useCallback } from 'react';
+import React, { useRef } from 'react';
 import { useDrag, useDrop } from 'react-dnd';
-import update from 'immutability-helper';
 const type = 'DraggableBodyRow';
 const DraggableBodyRow = ({ index, moveRow, className, style, ...restProps }) => {
   const ref = useRef(null);
