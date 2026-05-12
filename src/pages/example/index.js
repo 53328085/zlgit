@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+/* import React, { useState, useEffect, useRef } from 'react';
 import { List } from 'antd';
 
 const InfiniteScrollList = ({ data }) => {
@@ -64,4 +64,66 @@ const App = () => {
   return <InfiniteScrollList data={mockData} />;
 };
 
+export default App; */
+
+
+import React, {useState} from 'react';
+import { DatePicker, Space } from 'antd';
+import dayjs from 'dayjs';
+import customParseFormat from 'dayjs/plugin/customParseFormat';
+dayjs.extend(customParseFormat);
+const { RangePicker } = DatePicker;
+const range = (start, end) => {
+  const result = [];
+  for (let i = start; i < end; i++) {
+    result.push(i);
+  }
+  return result;
+};
+
+ 
+const disabledRangeTime = (day, type) => {
+  console.log(day?.format?.('HH:mm'), type)
+ 
+ 
+};
+const App = () => {
+   const [dates, setDates] = useState([dayjs().startOf("day"), dayjs()]);
+     const onCalendarChange = (v)=> {
+    console.log("onCalendarChange",v)
+    setDates(v)
+  }
+    const onOpenChange = (open) => {
+    if (open) {
+      setDates([null, null]);
+    } else {
+      setDates(null);
+    }
+  };
+  const disabledDate = (current,{from,type}) => {
+    console.log("form",from?.format("YYYY-MM-DD"))
+    console.log("current",current?.format("YYYY-MM-DD)"))
+   
+      
+      return (current && current > dayjs().endOf('day')) && (dates?.[0] && dates[0].diff(current,'day')>1);
+   
+   
+};
+  return (
+  <Space direction="vertical" size={12}>
+    
+    <RangePicker
+      value={dates}
+      disabledDate={disabledDate}
+      disabledTime={disabledRangeTime}
+       onCalendarChange={onCalendarChange}
+      showTime={{
+        hideDisabledOptions: true,
+        defaultOpenValue: [dayjs('00:00', 'HH:mm'), dayjs('11:59', 'HH:mm')],
+      }}
+      onOpenChange={onOpenChange} 
+      format="YYYY-MM-DD HH:mm"
+    />
+  </Space>
+)};
 export default App;

@@ -4,6 +4,7 @@ import { useSelector } from 'react-redux'
 import Modal from '@com/useModal'
 import style from './style.module.less'
 import BlueColumn from '@com/bluecolumn'
+import {preimge} from "@com/usehandler"
 import UploadImg from './upload.jsx'
 import Table from '@com/useTable'
 import upCloud from './imgs/upcloud.png'
@@ -56,7 +57,7 @@ let Count = ({ value, record, pointSource, setPointSource }) => {
 //展示图片
 let ImageUpload = ({ value = {} }) => {
   return (
-    <img src={value} style={{ width: 120, height: 96, marginRight: 16 }}></img>
+    <img src={`${preimge}${value}`} style={{ width: 120, height: 96, marginRight: 16 }}></img>
   )
 }
 
@@ -316,7 +317,7 @@ export let AddModal = forwardRef(
                 <UploadImg></UploadImg>
               </Form.Item>
             </Row>
-          </Col>
+          </Col> 
         </Row>
         <Divider dashed />
         <Row style={{ fontWeight: 'bold', marginBottom: 16 }}>数据点表（请启用4项数据标记为菜单【运行监测】卡片核心数据项），</Row>

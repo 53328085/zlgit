@@ -27,14 +27,17 @@ export const w200 = {
 export const w88 = {
   width:88
 }
-export const Daterange = ({value, onChange,rangeDate=45,showTime=false}) => {
+
+ 
+export const Daterange = ({value, onChange,rangeDate=45,showTime=false, update}) => {
   const [dates, setDates] = useState(null);
-  console.log("Daterange", rangeDate)
+  console.log("Daterange", value)
+  //console.log("Daterange", rangeDate)
   const disabledDate =(current) => {
     if (!dates) {
       return false;
     }
-    
+  //  console.log("dates", dates)
       const tooLate = dates[0] && current.diff(dates[0], 'days') > rangeDate;
       const tooEarly = dates[1] && dates[1].diff(current, 'days') > rangeDate;
       return !!tooEarly || !!tooLate || (current && current> day().endOf("day"));
@@ -50,15 +53,20 @@ export const Daterange = ({value, onChange,rangeDate=45,showTime=false}) => {
   };
  
   const onCalendarChange = (v)=> {
-    console.log("onCalendarChange")
-    setDates(v)
+    console.log("onCalendarChange",v)
+    setDates(v) 
+    onChange&& onChange(v)
   }
+  useEffect(()=>{ 
+    onChange&& onChange(value)
+    update&&update()
+  },[])
   return (
     <RangePicker
       value={dates || value}
       disabledDate={disabledDate}
       onCalendarChange={onCalendarChange}
-      onChange={onChange}
+     
       onOpenChange={onOpenChange} 
       showTime={showTime}
     />

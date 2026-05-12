@@ -23,7 +23,7 @@ export default function Index() {
     <div className='power'>
         <ChartBar title="充放电趋势" getData={getData}   dataZoom={false} />  
        
-       <Chartdouble title="电池SOC"  type={202} dataZoom={false} />  
+       <Chartdouble title="电池SOC"  type={202} dataZoom={false} unit="%" />  
        
     </div>
   )

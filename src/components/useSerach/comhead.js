@@ -401,11 +401,22 @@ export default function UseSerach(props) {
 
   // 能源管理 --公共能耗
   const changepublic = (e) => {
-    if (e == 4) {
-      form.setFieldValue("publicrangedate", [dayjs().subtract(7,"day"), dayjs().endOf("day")])
+   /*  if (e == 4) {
+      if(props.config?.rangeDate>=7) {
+          form.setFieldValue("publicrangedate", [dayjs().subtract(7,"day"), dayjs()])
+      }else if(props.config?.rangeDate>1) {
+         form.setFieldValue("publicrangedate", [dayjs().subtract(1,"day"), dayjs()])
+      }else {
+        form.setFieldValue("publicrangedate", [dayjs().startOf("day"), dayjs()])
+      }
+      
     } else {
       form.setFieldValue("publicdate", dayjs())
-    }
+    } */
+    props.setexparams({ ...form.getFieldsValue(true) })
+  }
+  const rangeChagne=(v)=>{
+    console.log("range", v)
     props.setexparams({ ...form.getFieldsValue(true) })
   }
   const publicDate = <Space size={16}>
@@ -416,12 +427,12 @@ export default function UseSerach(props) {
       {
         ({ getFieldValue, setFieldValue }) => {
           let type = getFieldValue("publictype")
-          console.log("type", type)
+        
           const picker = { "1": "date", "2": "month", "3": "year" }[type?.toString()]
 
           if (type == 4) {
-            return <Form.Item name="publicrangedate" initialValue={[dayjs().startOf("day"), dayjs().endOf("day")]}  >
-              <Daterange rangeDate={props.config?.rangeDate || 45} showTime={props.config?.showTime} />
+            return <Form.Item name="publicrangedate" initialValue={[dayjs().startOf("day"), dayjs()]}  >
+              <Daterange rangeDate={props.config?.rangeDate || 45} showTime={props.config?.showTime} update={()=> props.setexparams({ ...form.getFieldsValue(true) })}  />
             </Form.Item>
           } else {
             return <Form.Item name="publicdate" initialValue={dayjs()}>

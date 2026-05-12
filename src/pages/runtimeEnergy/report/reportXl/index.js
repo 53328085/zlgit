@@ -1,4 +1,4 @@
-// 最大需量
+// 最大需量  能源类型 电
 
 import React, { useState, useCallback, useRef, useEffect, useMemo   } from 'react'
  
@@ -34,7 +34,7 @@ export default function Index() {
   const [line, setLine] = useState(0)
   const [treeId, setTreeId] = useState()
   const [spans, setSpans] = useState(2)
-  let { areaId, projectId, publictype:type,cycleTime, publicdate:date, energytype, alike,publicrangedate } = exparams  
+  let { areaId, projectId, publictype:type,cycleTime, publicdate:date,   alike,publicrangedate } = exparams  
  
  
 
@@ -54,7 +54,7 @@ export default function Index() {
   let dateType = { 1: "day", 2: "month", 3: "year" }[type]
   return  {
       projectId,
-      meterType: energytype,
+      meterType:  1, //energytype,
       startDate: type!=4 ?  date?.startOf(dateType).format("YYYY-MM-DD HH:mm") :publicrangedate?.[0]?.format("YYYY-MM-DD HH:mm"),
       endDate:   type!=4 ? date?.endOf(dateType).format("YYYY-MM-DD HH:mm") :publicrangedate?.[1]?.format("YYYY-MM-DD HH:mm"),
  
@@ -67,7 +67,7 @@ export default function Index() {
      areaId,
      
     }
-  }, [projectId, areaId, type, date, energytype, treeId,  line,   alike,publicrangedate])
+  }, [projectId, areaId, type, date,   treeId,  line,   alike,publicrangedate])
 
  
   const tbref = useRef()
@@ -95,9 +95,9 @@ export default function Index() {
  }
   const getTableData =async (params) => {
     params.pageNum = params.current
-    let  {  projectId, type,  meterType, ids, areaId,  queryType,   startDate,endDate}= params
+    let  {  projectId, type,    ids, areaId,  queryType,   startDate,endDate}= params
      try { 
-    let f = [ projectId, type, meterType,areaId,  queryType].every(v => Number.isInteger(v)) && Array.isArray(ids) && ids?.length && startDate && endDate
+    let f = [ projectId, type,  areaId,  queryType].every(v => Number.isInteger(v)) && Array.isArray(ids) && ids?.length && startDate && endDate
  
     
     if (!f) return;
@@ -153,7 +153,7 @@ export default function Index() {
    
       <Pagecount showSearch={false} custserach={true} pd="0" bgcolor="none" >
         <Contentbox>
-          <UserTree parameter={parameter} correlation={1} isshow={true} areaId={areaId} showSearch={true} allselect={false} energytype={energytype} setTreeId={setTreeId} setLine={setLine} showline={true}   />
+          <UserTree parameter={parameter} correlation={1} isshow={true} areaId={areaId} showSearch={true} allselect={false} energytype={1} setTreeId={setTreeId} setLine={setLine} showline={true}   />
           
                <div className="rightwrap">
                                   <div className="tbwrap"> 
@@ -168,11 +168,9 @@ export default function Index() {
                 toolBarRender={() => toolbar}
                  onChange={tbonChange}
              //   postData={postData}
-                options={
-                energytype == 1 ?  {
+                options={{
                     setting: false,
-                  }: {}
-                }
+                  }}
                 ref={tbref}
                sheetName="最大有功总需量报表"
                onExport={onExport} 

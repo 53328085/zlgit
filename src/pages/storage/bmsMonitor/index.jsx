@@ -155,7 +155,8 @@ export default function BmsMonitor() {
   let { exparams } = useOutletContext() || {};
   // 兼容 bmsId 可能是 { value, label } 对象或直接的值
   let { bmsId } = exparams || {};
-  let bms_id = bmsId?.value ?? bmsId ?? undefined;
+  console.log(bmsId)
+  let bms_id = bmsId?.value ?? null;
 
   // BMS设备拓扑图数据 - 从接口获取
   const [bmsDiagramData, setBmsDiagramData] = useState({ stack: null, clusters: [] });

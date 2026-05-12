@@ -15,7 +15,7 @@ export const optionMY =[
  { label: "月", value: 2, },
     { label: "年", value: 3, },
 ]
-export const useLine = ({ data, dimensions, type = "line", dataZoom = true }) => {
+export const useLine = ({ data, dimensions, type = "line", dataZoom = true, unit="" }) => {
     console.log("data", data)
     const { x = [], y = [], y1 = [] } = isObject(data) ? data : {}
     const lineopt = useMemo(() => {
@@ -30,6 +30,9 @@ export const useLine = ({ data, dimensions, type = "line", dataZoom = true }) =>
             },
             legend: {
                 icon: 'circle'
+            },
+            tooltip: {
+                valueFormatter: (v) => v + (unit ? unit : '')
             },
             dataZoom: dataZoom ? {
                 type: "slider",
@@ -49,7 +52,7 @@ export const useLine = ({ data, dimensions, type = "line", dataZoom = true }) =>
     return lineopt
 }
 
-export const lineoptdoub = (data, startTime, endTime,type) => {
+export const lineoptdoub = (data, startTime, endTime,type,unit) => {
    
     let opt = useMemo(() => {
 
@@ -93,6 +96,11 @@ export const lineoptdoub = (data, startTime, endTime,type) => {
                 type: "inside",
                 xAxisIndex:0,
             }],
+            tooltip: {
+                valueFormatter:(value)=>{
+                    return value+ (unit ? unit : '')
+                }
+            },
             xAxis: [
                 {
                     type: 'category',

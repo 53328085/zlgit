@@ -30,14 +30,17 @@ export default function Index() {
   const [key, setKey]=useState('1')
   
   const [options, setOptions]=useState([])
+  const [unit, setUnit] = useState("") 
  
   const [line, setLine] = useState(0)
   const [treeId, setTreeId] = useState()
   let { areaId, projectId, publictype:type, publicdate:date, energytype, alike,publicrangedate } = exparams  
 
- 
+  let title = useMemo(()=>{ 
+    return `用能${unit?unit : ''}`
+  },[unit])
   
-  let columns = useCol(shitcols,3, '用能(kWh)')
+  let columns = useCol(shitcols,3, title)
  
 
  const getShift = async  ()=>{ 
@@ -103,14 +106,14 @@ export default function Index() {
     
       setTotal(total)
       if (success && Array.isArray(data) && data?.length ) {  
-       
+       setUnit(data[0]?.unit)
         return {
           data:  data  ,
           total: total,
           success,
         }
       } else {
-       
+       setUnit('')
         return {
           data: [],
           total: 0,

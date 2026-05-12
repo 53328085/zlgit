@@ -105,6 +105,9 @@ export default memo(function Index({
       let { success, data, errMsg } = await useNodeTree({}, params);
 
       if (success && Array.isArray(data) && data.length > 0) {
+        selected.current = [];
+        keys.current=[];
+        expanded.current = [];
         getId(data, "keyStr", "nodes");
          
          setCheckedKeys(keys.current)
@@ -134,9 +137,10 @@ export default memo(function Index({
         return messageApi.warning("最多选择3个设备", 3);
 
       const { checkedNodes } = e;
-
-      setTreeId(checkedNodes?.map?.((d) => d.id));
+      let ids = checkedNodes?.map?.((d) => d.id)
+      setTreeId(ids);
       setCheckedKeys(data.checked);
+      selected.current = ids
     } catch (error) {
       console.log(error);
     }
@@ -146,7 +150,11 @@ export default memo(function Index({
   const onExpand = (newExpandedKeys, obj) => {
     setExpandedKeys(newExpandedKeys);
   };
-
+  useEffect(() => { 
+    if (Number.isInteger(Number.parseInt(energytype))) {
+       setTreeId([]);
+    }
+  }, [energytype]);
   useEffect(() => {
     let f = [areaId, projectId, energytype, typeTree].every((v) =>
       Number.isInteger(Number.parseInt(v)),
@@ -165,12 +173,10 @@ export default memo(function Index({
 
   const switchLine = (e) => {
      
-    selected.current = [];
-    keys.current=[];
-    expanded.current = [];
+   
 
-    setTreeId([]);
-    setCheckedKeys([]);
+   // setTreeId([]);
+    //setCheckedKeys([]);
 
     setTypeTree(e.target.value);
     setLine(e.target.value);

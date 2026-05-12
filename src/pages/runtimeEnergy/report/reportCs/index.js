@@ -38,7 +38,7 @@ export default function Index() {
   const [line, setLine] = useState(0)
   const [treeId, setTreeId] = useState()
     const [filtere, setFiltere] =  useState(defaultfilteredValue)
-  let { areaId, projectId, publictype:type,cycleTime, publicdate:date, energytype, alike,publicrangedate } = exparams  
+  let {projectId, publictype:type,cycleTime, publicdate:date, energytype, alike,publicrangedate } = exparams  
   const [unit, setUnit] = useState()
   const  [title, headerTitle] = useMemo(() => {
     let label = options?.find(d => d.key == key)?.label ?? ''
@@ -62,8 +62,8 @@ const [spans, setSpans] = useState(()=>defaultfilteredValue[key]?.length)
 
 
   const columns = useCsCol({  index, title, frontRows, spans,header, energytype, filters,filteredValue:values})
-
-  
+  console.log(columns)
+ 
   const tbonChange=useCallback((_, filter)=>{
      
      let {power} = filter
@@ -120,22 +120,24 @@ const [spans, setSpans] = useState(()=>defaultfilteredValue[key]?.length)
       reportType:1,
       filterInfo: alike,
       
-      areaId,
+    
       cycleTime,
       tab:key,
     }
-  }, [projectId, areaId, type, date, energytype, treeId, key,cycleTime, line,   alike,publicrangedate])
+  }, [projectId,  type, date, energytype, treeId, key,cycleTime, line,   alike,publicrangedate])
 
  
   const tbref = useRef()
  
   const getTableData =async (params) => {
-    params.pageNum = params.current
-    let  {  projectId, type,  meterType, ids, areaId,  queryType, tab,  startDate,endDate}= params
-     try { 
-    let f = [ projectId, type, meterType,areaId, tab,  queryType].every(v => Number.isInteger(v)) && Array.isArray(ids) && ids?.length && startDate && endDate
- 
     
+ 
+    params.pageNum = params.current
+    let  {  projectId, type,  meterType, ids,   queryType, tab,  startDate,endDate}= params
+     try { 
+    let f = [ projectId, type, meterType,  tab,  queryType].every(v => Number.isInteger(v)) && Array.isArray(ids) && ids?.length && startDate && endDate
+ 
+  //  console.log("tab",tab)
     if (!f) return;
  
       let { success, data }= await useQueryParameterReport({},params) 
@@ -211,7 +213,7 @@ const [spans, setSpans] = useState(()=>defaultfilteredValue[key]?.length)
    
       <Pagecount showSearch={false} custserach={true} pd="0" bgcolor="none" >
         <Contentbox>
-          <UserTree correlation={1} isshow={true} areaId={areaId} showSearch={true} allselect={false} energytype={energytype} setTreeId={setTreeId} setLine={setLine} showline={true}   />
+          <UserTree correlation={1} isshow={true} areaId={0} showSearch={true} allselect={false} energytype={energytype} setTreeId={setTreeId} setLine={setLine} showline={true}   />
           
                <div className="rightwrap">
                  <Tabsbox items={options} tabwidth="88px" activeKey={key} tabBarGutter={4} size='small'  onChange={tabOnchange}  ></Tabsbox>

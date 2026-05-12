@@ -26,7 +26,7 @@ export function useBaript({
     let datas = tableData.filter((d) =>
       selectedRowKeys.some((s) => s.includes(d.sn) && s.includes(d.nodeName)),
     );
-
+    
     let { unit } = datas?.[0] || {};
     let dimensions = datas?.map?.((d) => d.name) || [];
     let source =
@@ -38,7 +38,7 @@ export function useBaript({
       unit,
     ];
   }, [selectedRowKeys, tableData, checkvalue, detailHeaders]);
-
+  console.log(source)
   const baroption = {
     series: new Array(chartlen).fill({ type: "bar", seriesLayoutBy: "row" }), // [{ type: "bar",seriesLayoutBy: 'row' }],
     grid: {
@@ -66,7 +66,7 @@ export function useBaript({
     dataset: {
       dimensions,
       source,
-      sourceHeadr: true,
+      sourceHeader: false,
     },
     toolbox: {
       show: true,
@@ -82,7 +82,28 @@ export function useBaript({
   };
   return baroption;
 }
-
+export function useCols(cols,  titles, type) { 
+  return useMemo(() => {
+    try {
+         if (isObject(cols) && Object.values(cols) && isObject(titles)&& Object.values(titles).length > 0) {
+      for(let [key, value] of Object.entries(titles)) {
+         cols[key].title = value;
+      }
+      let columns = Array.from(cols)
+      if (type != 1) { 
+        columns.splice(8, 1)
+      }
+      return columns 
+    } else {
+      return [];
+    }
+    } catch (error) {
+      console.log(error)
+      return [];
+    }
+ 
+  }, [cols, titles, type]);
+}
 export function useCol(cols, index, title, rowspan) {
   return useMemo(() => {
     if (isObject(cols) && Object.values(cols) && index && title) {
@@ -103,9 +124,15 @@ export function useCsCol(props) {
   const {   index, title="", frontRows = 0, spans, header,energytype,filters,filteredValue } = props;
   return useMemo(() => {
     try {
-      let flag = [index, frontRows, spans,  energytype].every(i => Number.isInteger(parseInt(i))) &&
-       title && Array.isArray(filters)
-        && filters.length > 0 && Array.isArray(filteredValue) &&Array.isArray(header) && header.length > 0;
+      let flag
+      if (energytype == 1) {
+         flag = [index, frontRows, spans,  energytype].every(i => Number.isInteger(parseInt(i))) &&
+        title && Array.isArray(filters)  
+        && filters.length > 0 && Array.isArray(filteredValue) &&Array.isArray(header) && header.length > 0 ;
+      }else {
+        flag = title && Array.isArray(header)  && header.length > 0;
+      }
+     
     if (!flag) return [];
      let cols = energytype == 1 ? Cscol : CscolW;
     if (isObject(cols) && Object.values(cols)) {
@@ -120,18 +147,18 @@ export function useCsCol(props) {
             ...col,
             filtered:true,
             filters: filters.map(v =>({text: v, value: v})),
-            onFilter: (value, record) => record.power.indexOf(value) ==0,
+            onFilter: (value, record) => record?.power?.indexOf?.(value) ==0,
             filteredValue:filteredValue,
            }
         }
-        console.log("col",col)
+      //  console.log("col",col)
         cols[index]=col
       }
       
       for (let i = 0; i < frontRows; i++) {
         cols[i].onCell = (_, index) => spans>1 ?   ({ rowSpan:     index % spans === 0 ? spans : 0  }) : null;
       }
-      console.log("cols",cols)
+      //console.log("cols",cols)
       let newCols = header?.map?.((d, idx) => {
         return {
           title: d,

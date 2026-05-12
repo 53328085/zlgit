@@ -94,6 +94,8 @@ export default function Index() {
       "reportBc",
       "reportXl",
       "realTimeMeterReading",
+      "intensityCal",
+      "efficiencyAdvance",
       "consumeAnalysis",
       "efficiencyCompare",
       "carbonBudget",
@@ -273,7 +275,6 @@ export default function Index() {
             break;
           case "reportNh":
           case "reportZd":
-          case "reportFs":
           case "reportFl":
           case "reportBc":
             setConfig({
@@ -290,14 +291,30 @@ export default function Index() {
               },
             });
             break;
-          case "reportCs":
-            setConfig({
-              energytype: true,
+          case "reportFs":
+             setConfig({
+              energytype: false,
               publicDate: true,
               rangeDate: 45,
               shiftNo: true,
               gas: false,
               custview: true,
+              alike: true,
+              showTime: {
+                format: "HH:mm",
+                minuteStep: 15,
+              },
+            });
+            break;
+          case "reportCs":
+            setConfig({
+              energytype: true,
+              publicDate: true,
+              rangeDate: 1,
+              shiftNo: true,
+              gas: false,
+              custview: true,
+              isAreaId:false,
               alike: true,
               period: true,
               showTime: {
@@ -319,7 +336,7 @@ export default function Index() {
             break;
           case "reportXl":
             setConfig({
-              energytype: true,
+              energytype: false, // 只有电
               publicDate: true,
 
               shiftNo: true,
@@ -426,6 +443,12 @@ export default function Index() {
             });
             break;
           case "timePeriodEnergy":
+            setConfig({ isdate: true, shiftNo: true });
+            break;
+          case "intensityCal":
+            setConfig({ isdate: true, shiftNo: true });
+            break;
+          case "efficiencyAdvance":
             setConfig({ isdate: true, shiftNo: true });
             break;
 
