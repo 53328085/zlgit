@@ -14,7 +14,7 @@ import {   fromlot,Zdconfig } from '../reportdata'
 
 import {Contentbox } from "../style"
 import {useQueryBillReport} from "../api"
-
+import {useCols} from "../usehook"
 
 export default function Index() {
 
@@ -26,6 +26,7 @@ export default function Index() {
  
   const [line, setLine] = useState(0)
   const [treeId, setTreeId] = useState()
+  const [unit, setUnit] = useState('(kWh)')
   let { areaId, projectId, publictype:type, publicdate:date, energytype, alike,publicrangedate } = exparams  
 
  
@@ -34,11 +35,18 @@ export default function Index() {
     console.log(v)
     setColumnsStateMap(v)
   }
+  
+
+
+const titles = useMemo(()=>{ 
  
-
-
-
-
+   return {
+    2: unit ? `起始(${unit})` : `起始`,
+    3: unit ? `结束(${unit})` : `结束`,
+   8:unit ? `用能(${unit})` : `用能`,
+   }
+},[unit ])
+ const columns = useCols(fromlot, titles, energytype)
 
 
   const params=useMemo(()=>{
@@ -72,10 +80,13 @@ export default function Index() {
     
     if (!f) return;
  
-      let { success, data, total = 0 }= await useQueryBillReport({},params) 
+      let { success, data, total = 0,data1="" }= await useQueryBillReport({},params) 
     
       setTotal(total)
-      if (success && Array.isArray(data) ) {   
+       setUnit(data1)
+      if (success && Array.isArray(data) && data.length) {  
+         // 单位
+
         return {
           data:  data  ,
           total: total,
@@ -119,7 +130,7 @@ export default function Index() {
                 headerTitle="账单报表"
                 tableClassName="reportZd"
                 ref={tbref}
-                columns={fromlot} 
+                columns={columns} 
                 request={getTableData} 
                 params={params} 
                 search={false}

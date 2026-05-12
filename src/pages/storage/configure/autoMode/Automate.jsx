@@ -407,9 +407,9 @@ const getvalidate = (start, end, type, choosedate) => {
        { required: "缺少'${label}' 数据"}
       }>
           
-            <Item  label="模板名称" tooltip="最长8个字符" name="name" rules={[
+            <Item  label="模板名称" tooltip="最长40个字符" name="name" rules={[
                 {required: true},
-                {max: 8, type: 'string', message: '名称不能超过8个字符'}
+                {max: 40, type: 'string', message: '名称不能超过8个字符'}
             ]}>
                  <Input  />
             </Item>
@@ -893,14 +893,14 @@ const Planview = ({data, strategyDetail}) => { // status 1, 充电， 2， 放 3
                     message: '名称必填'
                 },
                 {
-                    max: 8,
+                    max: 40,
                     type: 'string',
-                    message: '名称最多8个字符'
+                    message: '名称最多40个字符'
                 }
               ]}>
                 <Input style={{width: '224px'}} showCount />
               </Item>
-              <Text>最多8个字符</Text>
+              <Text>最多40个字符</Text>
               </Space>
             </Item>
         </Form>

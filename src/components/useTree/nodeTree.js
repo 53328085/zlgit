@@ -150,7 +150,11 @@ export default memo(function Index({
   const onExpand = (newExpandedKeys, obj) => {
     setExpandedKeys(newExpandedKeys);
   };
-
+  useEffect(() => { 
+    if (Number.isInteger(Number.parseInt(energytype))) {
+       setTreeId([]);
+    }
+  }, [energytype]);
   useEffect(() => {
     let f = [areaId, projectId, energytype, typeTree].every((v) =>
       Number.isInteger(Number.parseInt(v)),

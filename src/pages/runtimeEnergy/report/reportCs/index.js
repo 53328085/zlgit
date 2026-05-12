@@ -62,6 +62,7 @@ const [spans, setSpans] = useState(()=>defaultfilteredValue[key]?.length)
 
 
   const columns = useCsCol({  index, title, frontRows, spans,header, energytype, filters,filteredValue:values})
+  console.log(columns)
  
   const tbonChange=useCallback((_, filter)=>{
      

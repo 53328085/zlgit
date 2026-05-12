@@ -71,6 +71,12 @@ export default function Index(props) {
       key: "sn",
       id: "id",
     },
+     {
+      title:  "网关名称",
+      dataIndex: "name",
+      key: "name",
+      id: "id",
+    },
     {
       title: i18t("comm","category",{text:"网关"}),
       dataIndex: "category",
@@ -389,7 +395,7 @@ export default function Index(props) {
             <Table
               columns={columns}
               {...tableProps}
-              rowKey={(columns) => columns.id}
+              rowKey={(columns) => columns.sn+columns.category}
               ref={tableLoadRef}
               onExport={onExport}
               sheetName="网关监测"

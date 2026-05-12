@@ -251,8 +251,9 @@ function Index(props, ref) {
     const workbook = utils.book_new(); // 新建工作簿      
     let table = tableref.current?.nativeElement;
    const cloneContainer = table.cloneNode(true);
+   console.log("cloneContainer",cloneContainer)
     const headerTable = cloneContainer?.querySelector?.('.ant-table-thead');
-     if (headerTable) {
+     if (headerTable && scroll.y) {
       headerTable.remove()
     }
     const ws = utils.table_to_sheet(

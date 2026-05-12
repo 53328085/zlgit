@@ -399,6 +399,10 @@ export default function UseSerach(props) {
     } */
     props.setexparams({ ...form.getFieldsValue(true) })
   }
+  const rangeChagne=(v)=>{
+    console.log("range", v)
+    props.setexparams({ ...form.getFieldsValue(true) })
+  }
   const publicDate = <Space size={16}>
     <Form.Item name="publictype" initialValue={props.config?.dateOpt?.[0]?.value ?? 1}>
       <Select options={props.config?.dateOpt ?? publicdateType} style={{ width: "88px" }} onChange={changepublic}></Select>
@@ -411,8 +415,8 @@ export default function UseSerach(props) {
           const picker = { "1": "date", "2": "month", "3": "year" }[type?.toString()]
 
           if (type == 4) {
-            return <Form.Item name="publicrangedate" initialValue={[dayjs().startOf("day"), dayjs().endOf("day")]}  >
-              <Daterange rangeDate={props.config?.rangeDate || 45} showTime={props.config?.showTime}   />
+            return <Form.Item name="publicrangedate" initialValue={[dayjs().startOf("day"), dayjs()]}  >
+              <Daterange rangeDate={props.config?.rangeDate || 45} showTime={props.config?.showTime} update={()=> props.setexparams({ ...form.getFieldsValue(true) })}  />
             </Form.Item>
           } else {
             return <Form.Item name="publicdate" initialValue={dayjs()}>

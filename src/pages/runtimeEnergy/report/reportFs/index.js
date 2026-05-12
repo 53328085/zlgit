@@ -1,3 +1,6 @@
+// 分时能耗 能源类型 电
+
+
 import React, { useState, useCallback, useRef,   useMemo   } from 'react'
  
 import { useOutletContext } from 'react-router-dom'
@@ -24,7 +27,7 @@ export default function Index() {
  
   const [line, setLine] = useState(0)
   const [treeId, setTreeId] = useState()
-  let { areaId, projectId, publictype:type, publicdate:date, energytype, alike,publicrangedate } = exparams  
+  let { areaId, projectId, publictype:type, publicdate:date,   alike,publicrangedate } = exparams  
 
  
   
@@ -39,7 +42,7 @@ export default function Index() {
   let dateType = { 1: "day", 2: "month", 3: "year" }[type]
   return  {
       projectId,
-      meterType: energytype,
+      meterType: 1,
       startDate: type!=4 ?  date?.startOf(dateType).format("YYYY-MM-DD HH:mm") :publicrangedate?.[0]?.format("YYYY-MM-DD HH:mm"),
       endDate:   type!=4 ? date?.endOf(dateType).format("YYYY-MM-DD HH:mm") :publicrangedate?.[1]?.format("YYYY-MM-DD HH:mm"),
    //   pageNum: current,
@@ -52,7 +55,7 @@ export default function Index() {
       customTime: type== 4,
       areaId
     }
-  }, [projectId, areaId, type, date, energytype, treeId,  line,   alike,publicrangedate])
+  }, [projectId, areaId, type, date,   treeId,  line,   alike,publicrangedate])
 
   const [total, setTotal] = useState(0)
   const tbref = useRef()
@@ -106,7 +109,7 @@ export default function Index() {
    
       <Pagecount showSearch={false} custserach={true} pd="0" bgcolor="none" >
         <Contentbox>
-          <UserTree areaId={areaId} energytype={energytype} setTreeId={setTreeId} setLine={setLine} showSearch={true} showline={true} datatype={NaN} />
+          <UserTree areaId={areaId} energytype={1} setTreeId={setTreeId} setLine={setLine} showSearch={true} showline={true} datatype={NaN} />
           
               <div className="rightwrap">
           <div className="tbwrap"> 

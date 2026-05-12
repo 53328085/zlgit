@@ -8,14 +8,15 @@ export const tabs = [
   { label: "充放电", key: 3 },
 ];
 export const option = [
-  { label: "月", value: 0 },
-  { label: "年", value: 1 },
+  { label: "月", value: 1 },
+  { label: "年", value: 2 },
 ];
 export const useLine = ({
   data,
   dimensions,
   type = "line",
   icon = "rect",
+  unit=""
 } = {}) => {
   const { x = [], y = [], y1 = [] } = isObject(data) ? data : {};
   const lineopt = useMemo(() => {
@@ -33,6 +34,9 @@ export const useLine = ({
       },
       legend: {
         icon,
+      },
+      tooltip: {
+       valueFormatter:(v)=>v+(unit ? unit : '')
       },
       dataset: {
         dimensions: [{ name: "时间", type: "time" }, ...dimensions],
@@ -72,6 +76,9 @@ export const lineoptdoub = (data, startTime, endTime) => {
       },
       tooltip: {
         trigger: "axis",
+        valueFormatter:(value)=>{
+          return value+'kW'
+        }
       },
       grid: {
         left: "10px",

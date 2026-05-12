@@ -34,7 +34,7 @@ export default function Index({title,getData  }={}) {
     const data = await getData(params)
     setData(data)
   }
-  let lineopt = useLine({data,dimensions, type:"bar" })
+  let lineopt = useLine({data,dimensions, type:"bar", unit:"kWh" })
   useEffect(()=>{
     const {type, date} = typevalue 
     if([areaId,  projectId,type].every((id)=>Number.isInteger(parseInt(id))) && isObject(stationName)&& isObject(containerId) && date) {
@@ -56,7 +56,7 @@ export default function Index({title,getData  }={}) {
    
     onValuesChange={onValuesChange}
   > 
-    <Space><Form.Item name="type" style={{marginBottom:0}} initialValue={0}  >
+    <Space><Form.Item name="type" style={{marginBottom:0}} initialValue={1}  >
         <Select options={option} style={{width: "120px"}} />
       </Form.Item> 
       <Form.Item name="date" style={{marginBottom:0}} initialValue={dayjs()} >

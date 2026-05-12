@@ -41,7 +41,7 @@ export default function Index({title,getData, dataZoom }={}) {
     }
     
   }
-  let lineopt = useLine({data,dimensions, type:"bar",dataZoom})
+  let lineopt = useLine({data,dimensions, type:"bar",dataZoom, unit:"kWh"})
   useEffect(()=>{
     const {type, date} = typevalue 
     if([areaId,  projectId,type].every((id)=>Number.isInteger(parseInt(id))) && isObject(stationName) && date) {
