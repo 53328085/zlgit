@@ -24,6 +24,9 @@ const Device = lazy(() => import("../pages/runtimeEnergy/device"))
 const RealTimeMeterReading = lazy(() => import("../pages/runtimeEnergy/realTimeMeterReading"))
 const IntensityCal = lazy(() => import("../pages/runtimeEnergy/intensityCal"))
 const EfficiencyAdvance = lazy(() => import("../pages/runtimeEnergy/efficiencyAdvance"))
+const ConsumeAnalysis = lazy(() =>import("../pages/runtimeEnergy/consumeAnalysis"))
+const EfficiencyCompare = lazy(() =>import("../pages/runtimeEnergy/efficiencyCompare"))
+const CarbonBudget = lazy(() =>import("../pages/runtimeEnergy/carbonBudget"))
 export let runtimeEnergy = {
     '010901': Summary, // 概述
     '010902': Synthetical, // 园区能耗
@@ -45,6 +48,7 @@ export let runtimeEnergy = {
     '010916': Device, // 重点设备
     '010930': IntensityCal, // 能耗强度分析
     '010933': EfficiencyAdvance, // 能效优化
+    '010931': ConsumeAnalysis, // 能源消耗分析
+    '010932': EfficiencyCompare, // 能效对标
+    '010934': CarbonBudget, // 能碳核算
 }
-
-
