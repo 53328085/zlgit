@@ -12,11 +12,11 @@ export class Apimethod {
       this.method = method;
 
       let methodname = "use" + url.slice(url.lastIndexOf("/") + 1);
-      this[methodname] = function (params, body) {
+      this[methodname] = function (params, body, config={}) {
         if (method == "post") {
-          return server[this.method](this.url, body, { params });
+          return server[this.method](this.url, body, { params, ...config });
         } else {
-          return server[this.method](this.url, { params });
+          return server[this.method](this.url, { params, ...config });
         }
       }.bind(this);
     } catch (error) {

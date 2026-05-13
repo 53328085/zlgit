@@ -2,7 +2,7 @@ import { useMemo, useCallback,useState } from "react";
 import dayjs from "dayjs";
 import { isObject } from "@com/usehandler";
 import {Cscol, CscolW} from "./reportdata";
-import { CodeSandboxCircleFilled } from "@ant-design/icons";
+
 export function useBaript({
   selectedRowKeys,
   tableData,

@@ -304,8 +304,7 @@ export default function Index() {
           case "reportCs":
             setConfig({
               energytype: true,
-              publicDate: true,
-              rangeDate: 1,
+              oneDay: true,
               shiftNo: true,
               gas: false,
               custview: true,
@@ -317,16 +316,7 @@ export default function Index() {
                 minuteStep: 15,
               },
               cycleTime: true,
-              dateOpt: [
-                {
-                  value: 1,
-                  label: "日",
-                },
-                {
-                  value: 4,
-                  label: "自定义",
-                },
-              ],
+              
             });
             break;
           case "reportXl":

@@ -16,7 +16,7 @@ import {
   SyncOutlined,
 } from '@ant-design/icons';
 
-import { publicdateType, Daterange, w88, viewopt, DefineDateRange ,disableDate,cycleTime} from "./data"
+import { publicdateType, Daterange, w88, viewopt, DefineDateRange ,disableDate,cycleTime,Onedaterange,onedateType} from "./data"
 import Enery from "./enery";
 import AreaLevel from './areas'
 import SubAreas from './subareas'
@@ -141,10 +141,15 @@ export default function UseSerach(props) {
         if (props.config.isBms && !props.config.isTank) getBms();
       } else {
         console.log("站点暂无数据")
-        setOptions([])
+        setOptions([])  // 站点 
+        setTankoptions([]) // 储电柜
+        setPcsoptions([]) // PCS
+        setBmsoptions([]) // BMS
         form.setFieldsValue({
           stationName:  null,
           containerId: null,
+          pcsId:null,
+          bmsId:null,
         })
         props.setexparams({ ...form.getFieldsValue(true) })
         if (!success) return message.warning(errMsg)
@@ -272,9 +277,17 @@ export default function UseSerach(props) {
         if (props.config?.isBms) getBms()
 
       } else {
-        form.setFieldValue('containerId', { label: null, value: null })
-        props.setexparams({ ...form.getFieldsValue(true) })
-        setTankoptions([])
+        
+       
+        setTankoptions([]) // 储能柜
+         setPcsoptions([]) // PCS
+         setBmsoptions([]) // BMS
+         form.setFieldsValue({ 
+          containerId: null,
+          pcsId:null,
+          bmsId:null,
+        })
+         props.setexparams({ ...form.getFieldsValue(true) })
         if (!success) return message.warning(errMsg || '数据出错')
         if (data?.length == 0) return message.warning("当前站点暂无储能柜数据")
       }
@@ -421,6 +434,41 @@ export default function UseSerach(props) {
           } else {
             return <Form.Item name="publicdate" initialValue={dayjs()}>
               <DatePicker picker={picker} disabledDate={disableDate}   />
+            </Form.Item>
+          }
+        }
+      }
+    </Form.Item>
+     {props.config?.cycleTime && <Item name="cycleTime" initialValue={15}>
+      <Select style={{ width: '100px' }} options={cycleTime} 
+
+      ></Select>
+    </Item>
+    }
+    {!props.config?.shiftNo && <Item name="shiftNo" initialValue={0}>
+      <Select style={{ width: '100px' }} options={allshifts} fieldNames={{ label: 'name', value: 'id' }}
+
+      ></Select>
+    </Item>
+    }
+
+  </Space>
+
+    const oneDay = <Space size={16}>
+    <Form.Item name="onedaytype" initialValue={props.config?.dateOpt?.[0]?.value ?? 1}>
+      <Select options={onedateType} style={{ width: "88px" }} onChange={changepublic}></Select>
+    </Form.Item>
+    <Form.Item noStyle shouldUpdate={(cur, pre) => cur.onedaytype != pre.onedaytype}>
+      {
+        ({ getFieldValue, setFieldValue }) => {
+          let type = getFieldValue("onedaytype") 
+          if (type == 4) {
+            return <Form.Item name="onedayrange" initialValue={[dayjs().startOf("day"), dayjs()]}  >
+              <Onedaterange rangeDate={1} showTime={props.config?.showTime} update={()=> props.setexparams({ ...form.getFieldsValue(true) })}  />
+            </Form.Item>
+          } else {
+            return <Form.Item name="oneday" initialValue={dayjs()}>
+              <DatePicker picker="date" disabledDate={disableDate}   />
             </Form.Item>
           }
         }
@@ -662,6 +710,9 @@ export default function UseSerach(props) {
         }
         {
           props.config.publicDate && publicDate // 能源管理--公共能耗/分类能耗
+        }
+        {
+          props.config?.oneDay && oneDay
         }
         {props.config.alike && alike}  
         {

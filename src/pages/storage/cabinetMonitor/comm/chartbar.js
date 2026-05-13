@@ -60,7 +60,7 @@ export default function Index({title,getData  }={}) {
         <Select options={option} style={{width: "120px"}} />
       </Form.Item> 
       <Form.Item name="date" style={{marginBottom:0}} initialValue={dayjs()} >
-        <DatePicker picker={['month',"year"][datetype]} style={{width: "120px"}} allowClear={false} />
+        <DatePicker picker={["",'month',"year"][datetype]} style={{width: "120px"}} allowClear={false} />
       </Form.Item></Space>
        </Form>)
     const props ={ 

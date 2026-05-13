@@ -36,6 +36,9 @@ useImperativeHandle(ref, () =>({
    dispatchAction: (params) => {
     instance.current?.dispatchAction(params)
   },
+  on:(event, callback) => {
+    instance.current?.on(event, callback)
+  },
 }))
   useEffect(() => {  
      let f = Array.isArray(series) && series?.length>0 && series.some?.(s => Array.isArray(s?.data) && s?.data?.length >0)

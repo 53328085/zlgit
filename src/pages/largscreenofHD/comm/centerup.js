@@ -1,10 +1,9 @@
 import React, {  useEffect,useMemo,useState} from "react";
 
-import {useRequest} from 'ahooks'
-import {isObject} from "@com/usehandler"
+ 
  
 import {Centerup} from '../style'
-import { intervalTime ,delayTime} from "../data";
+import {delayTime} from "../data";
 import {useGetHuaDongMapInfo} from '../api'
 import Positioncom from "./posintion"
 import {useGetData } from '../usehook'
@@ -76,7 +75,7 @@ export default function Index() {
   return (
     <Centerup>
        {
-        data?.map((d,i)=> <Positioncom key={d.id} visiable={index==i} {...d}></Positioncom>)
+        data?.map((d,i)=> <Positioncom key={d.id} visiable={index==i} {...d} onshow={()=>setIndex(i)} ></Positioncom>)
        }
     </Centerup>
   );

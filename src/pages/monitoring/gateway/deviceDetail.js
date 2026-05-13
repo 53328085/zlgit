@@ -276,7 +276,7 @@ const Chartin = (props) => {
   let title =
     {
       EC: "电流(A)",
-      WF: [2, 7].includes(deviceStyle) ? "用水量(m³)" : "电度(kWh)",
+      WF: [2, 7].includes(deviceStyle) ? "用水量(m³)": [3].includes(deviceStyle) ? "燃气(m³)" : "电度(kWh)", 
       EC: "电流(A)",
       EP: "电压(V)",
       TP: "温度(℃)",
@@ -616,7 +616,7 @@ export default function GatewayDetail(props) {
     setPointval(v);
     historycurve(v);
   };
-  let { data: pdata, sn: psn } = isObject(ptrend) ? ptrend : {};
+  let { data: pdata, sn: psn, description,unit:legendUnit } = isObject(ptrend) ? ptrend : {};
   let haspdata = Array.isArray(pdata) && pdata.length > 0;
   let pointoption = {
     series: [
@@ -638,6 +638,10 @@ export default function GatewayDetail(props) {
       itemHeight: 2,
       itemWidth: 12,
       itemGap: 20,
+      formatter: () => {
+       return  `${description}(${legendUnit})`
+        
+      },
     },
     dataZoom: {
       type: "inside",

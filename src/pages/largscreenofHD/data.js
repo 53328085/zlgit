@@ -122,9 +122,9 @@ export function useOpt(datas) {
 export function useLineopt({ datas }) {
   const lineopt = useMemo(() => {
     let { x = [], y = [], y1 = [], y2 = [] } = isObject(datas) ? datas : {};
-    y = y.map((item) => Number.parseFloat(item));
-    y1 = y1.map((item) => Number.parseFloat(item));
-    y2 = y2.map((item) => Number.parseFloat(item));
+    y = y.map((item) => Number.parseFloat(item)?.toFixed?.(2));
+    y1 = y1.map((item) => Number.parseFloat(item)?.toFixed?.(2));
+    y2 = y2.map((item) => Number.parseFloat(item)?.toFixed?.(2));
     console.log("y1", y1);
     return {
       type: 5,

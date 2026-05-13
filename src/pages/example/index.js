@@ -88,7 +88,7 @@ const disabledRangeTime = (day, type) => {
  
 };
 const App = () => {
-   const [dates, setDates] = useState([dayjs().startOf("day"), dayjs()]);
+   const [dates, setDates] = useState([]);
      const onCalendarChange = (v)=> {
     console.log("onCalendarChange",v)
     setDates(v)
@@ -103,12 +103,15 @@ const App = () => {
   const disabledDate = (current,{from,type}) => {
     console.log("form",from?.format("YYYY-MM-DD"))
     console.log("current",current?.format("YYYY-MM-DD)"))
-   
+    console.log("dates",dates)
+     if(from) {
+       return (current && from.diff(dates[0], "day") >1) ||  (current&& current > dayjs().endOf('day'));
+     }
       
-      return (current && current > dayjs().endOf('day')) && (dates?.[0] && dates[0].diff(current,'day')>1);
+     return current && current > dayjs().endOf('day');
    
    
-};
+}; 
   return (
   <Space direction="vertical" size={12}>
     
@@ -117,11 +120,12 @@ const App = () => {
       disabledDate={disabledDate}
       disabledTime={disabledRangeTime}
        onCalendarChange={onCalendarChange}
+       defaultPickerValue={dates}
       showTime={{
         hideDisabledOptions: true,
         defaultOpenValue: [dayjs('00:00', 'HH:mm'), dayjs('11:59', 'HH:mm')],
       }}
-      onOpenChange={onOpenChange} 
+    //  onOpenChange={onOpenChange} 
       format="YYYY-MM-DD HH:mm"
     />
   </Space>

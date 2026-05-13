@@ -25,7 +25,7 @@ export default function Index() {
            </div>
          </div>
           <div className="item">
-           <div className="title">变压器容量</div>
+           <div className="title">变压器容量 (kVA)</div>
            <div className="value">
              {capacity}
            </div>
@@ -34,7 +34,7 @@ export default function Index() {
            </div>
          </div>
           <div className="item">
-           <div className="title">最大功率</div>
+           <div className="title">最大功率 (kW)</div>
            <div className="value">
              {maxPowr}
            </div>

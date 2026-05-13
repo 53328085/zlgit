@@ -15,7 +15,12 @@ export default function Index() {
   const rateRef= useRef();
   const { lightRate, lightTypes,todayEUsed } =isObject(data) ? data : {}
   const option = usepieoption({datas:lightTypes?.map(d=>({name:d.typeName,value:d.num}))})
-  const rateopt = usepieoption({datas:[{name:'亮灯率',value:Number.parseFloat(lightRate)},{name:'灭灯率',value:100-Number.parseFloat(lightRate)}],emphasis:{label:{formatter: ["{d}%", "{a|{b}}"].join("\n")}}})
+  const rateopt = usepieoption({
+    datas:[{name:'亮灯率',value:Number.parseFloat(lightRate)},{name:'灭灯率',value:100-Number.parseFloat(lightRate)}],
+    emphasis:{label:{formatter: ["{d}%", "{a|{b}}"].join("\n")}},
+    unit:'%'
+ 
+  })
  
 
   useEffect(()=>{
@@ -59,6 +64,44 @@ useEffect(()=>{
         });
    }
  },[lightTypes])
+
+
+ useEffect(()=>{
+  if(pieRef.current){
+    pieRef?.current?.on?.("mouseover",(params)=>{
+      const dataIndex = params.dataIndex;
+       pieRef?.current?.dispatchAction?.({
+          type: 'downplay', 
+        });  
+      
+       pieRef?.current?.dispatchAction?.({
+          type: 'highlight',
+          seriesIndex: 0,
+          dataIndex: dataIndex,
+        });
+
+    })
+  }
+
+ },[lightTypes])
+  useEffect(()=>{
+  if(rateRef.current){
+    rateRef?.current?.on?.("mouseover",(params)=>{
+      const dataIndex = params.dataIndex;
+       rateRef?.current?.dispatchAction?.({
+          type: 'downplay', 
+        });  
+      
+       rateRef?.current?.dispatchAction?.({
+          type: 'highlight',
+          seriesIndex: 0,
+          dataIndex: dataIndex,
+        });
+
+    })
+  }
+
+ },[lightRate])
   return (
     <Layoutcom title="路灯运行情况" flex="185px">
       <Right3rd>

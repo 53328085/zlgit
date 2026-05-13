@@ -224,7 +224,7 @@ const lingthChnage=(v)=> {
               
                const {name, value}= fields?.find(f=> f.name=="亮度") || {}
                let islight = (typeof parseFloat(value)=="number") && parseFloat(value) >0
-               let iconname = islight ? `ReactComponent${type}` : `ReactComponent${type}0`
+               let iconname = islight ? `ReactComponent${type}` : `ReactComponent${type}`
                const Icon = svgicons[iconname] || <></>
               return (<div className={!islight ? "light line close" : "light line" }>
                

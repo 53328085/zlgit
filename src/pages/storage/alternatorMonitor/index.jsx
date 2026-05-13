@@ -1,4 +1,5 @@
 import React, { useEffect, useState} from 'react'
+
 import style from './style.module.less'
 import { message, DatePicker } from 'antd';
 import dayjs from 'dayjs'
@@ -7,6 +8,7 @@ import {PCSMonitorRuntime, SiteManagerDesigner, StorageContainerDesigner, Storag
 import { useReactive, useRequest } from 'ahooks'
 import { useSelector } from 'react-redux'
 import { useNavigate, useOutletContext} from 'react-router-dom'
+import { isObject } from '@com/usehandler'
 import pcs from './imgs/pcs.png'
 import charge from './imgs/charge.png'
 import busVoltage from './imgs/busVoltage.png'
@@ -57,8 +59,8 @@ export default function Index() {
   let {exparams} = useOutletContext()
   let {areaId, projectId: exparamsProjectId, pcsId} = exparams || {}
   console.log(pcsId)
-  const currentPcsId = pcsId?.value ?? pcsId
-
+  const currentPcsId = isObject(pcsId) ? pcsId?.value : pcsId
+   
   // 优先使用 exparams 的 projectId，否则使用 redux 中的
   const reduxProjectId = useSelector(selectProjectId)
   const projectId = exparamsProjectId || reduxProjectId
@@ -288,7 +290,13 @@ export default function Index() {
   })
 
   const getContent = () => {
-    if (!projectId || !currentPcsId) return
+    
+    if (!projectId || !currentPcsId)  {
+       
+       setPcsName('')
+       setLeftValues([])
+       return
+    } 
     StorageMonitorRuntime.queryPCSStatusInfo(projectId, currentPcsId).then(res => {
       if (res.success && res.data) {
         setPcsName(res.data.name || '')
@@ -320,15 +328,30 @@ export default function Index() {
 
   useEffect(() => {
     if([currentPcsId, projectId].every(item => Number.isInteger(parseInt(item)))) {
- getContent()
+     getContent()
     getRuntimeData()
+    }else {
+      setPcsName('')
+      setLeftValues([])
+      setRuntimeData([])
     }
    
   }, [currentPcsId, projectId])
 
   useEffect(() => {
-    if (!projectId || !currentPcsId || !startDate || !endDate) return
-    if (!startDate.isBefore?.(endDate, 'day')) return
+    if (!projectId || !currentPcsId || !startDate || !endDate){
+      setCompareData({
+        xAxis: [],
+        series1Name: '',
+        series2Name: '',
+        series1: [],
+        series2: []
+      })
+      return
+    } 
+    if (!startDate.isBefore?.(endDate, 'day')){
+         return
+    } 
     const run = async () => {
       const res = await fetchPowerTrends({
         projectId,
