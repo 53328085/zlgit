@@ -3,10 +3,7 @@ import PageContent from '@com/pagecontent'
 import EfficiencyAdvanceTrend from './components/EfficiencyAdvanceTrend'
 import EnergyDispatchOptimization from './components/EnergyDispatchOptimization'
 import { Flex } from 'antd'
-import styled from 'styled-components'
 import AILayout from './components/AILayout'
-
-
 
 export default function Index() {
   const [currentYear, setCurrentYear] = useState(2025)
