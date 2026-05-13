@@ -413,6 +413,7 @@ useEffect(()=>{
       <Item label="当前模块背景色"  name="menusactive" initialValue="#1c62b6">
       <Ccolor name="menusactive" />
       </Item>
+
     {/*   <Item label="当前模块下边框线颜色"  name="menusborder" initialValue="#00ff66">
       <Ccolor name="menusborder" />
       </Item> */}
@@ -470,7 +471,26 @@ useEffect(()=>{
       <Item label="当前侧边栏背景色"  name="asiderbgcolorA" initialValue="#3333cc">
         <Ccolor name="asiderbgcolorA" />
       </Item>
-     
+     <Item label="表格设置">
+      <div style={{display: "grid", columnGap: "8px", gridTemplateColumns: "120px 120px" }}> 
+      <Item label="表头背景色" labelCol={{flex: "5em"}} name="headerBg" initialValue="#E6ECF5">
+          <Ccolor name="headerBg" />
+        </Item>
+         <Item label="表头字体色" labelCol={{flex: "5em"}} name="headerColor" initialValue="#303133">
+          <Ccolor name="headerColor" />
+        </Item>
+        <Item label="条纹背景色" labelCol={{flex: "5em"}} name="tablestripebg" initialValue="#f2f7ff">
+          <Ccolor name="tablestripebg" />
+        </Item>
+       {/*  <Item label="条纹字体颜色" labelCol={{flex: "8em"}} name="tablestripe" initialValue="#303133">
+          <Ccolor name="tablestripe" />
+        </Item> */}
+         <Item label="表格字体颜色" labelCol={{flex: "6em"}} name="tablefontcolor" initialValue="#303133">
+          <Ccolor name="tablefontcolor" />
+        </Item>
+     </div>
+    
+     </Item>
       <Item label="项目概述背景色"  name="previewrbgcolor" initialValue="#135abd">
         <Ccolor name="previewrbgcolor" />
       </Item>

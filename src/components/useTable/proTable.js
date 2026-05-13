@@ -211,7 +211,6 @@ function Index(props, ref) {
         <div className="innerwrap">
       <ProTablecom bordered defaultSize="small"  
         tableClassName={`${props.tableClassName}` }
-       
         rowKey={row=>Object.values(row).join()} 
                     
                       tableAlertRender={false}
@@ -241,7 +240,7 @@ function Index(props, ref) {
                          persistenceType:"localStorage",
                          ...props.columnsState,
                       }: null}
-                      pagination={pagination}
+                      pagination={pagination}              
                       {...otherprops}
                       laptop={laptop} />
                       </div>

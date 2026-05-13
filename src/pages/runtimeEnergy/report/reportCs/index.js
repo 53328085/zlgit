@@ -63,7 +63,7 @@ const [spans, setSpans] = useState(()=>defaultfilteredValue[key]?.length)
 
   const columns = useCsCol({  index, title, frontRows, spans,header, energytype, filters,filteredValue:values})
   
- 
+  //console.log("columns",columns)
   const tbonChange=useCallback((_, filter)=>{
      
      let {power} = filter
@@ -89,7 +89,11 @@ const [spans, setSpans] = useState(()=>defaultfilteredValue[key]?.length)
       let {success, data} = await useQuerysParameterReportTabs({projectId,meterType:energytype})
       if (success && Array.isArray(data) && data.length) { 
         setOptions(data.map(d =>({...d, label:d.value})))
-        setKey(data[0].key)
+        let key = data[0].key
+        setKey(key)
+        if(energytype==1){
+          setSpans(defaultfilteredValue[key]?.length)
+        }
       }else {
         setOptions([])
         setKey(null)
@@ -157,7 +161,7 @@ const [spans, setSpans] = useState(()=>defaultfilteredValue[key]?.length)
                 })
               
               if (meterType==1) {
-                item["power"]= CstbTitle[tab][index]
+                item["power"]= CstbTitle?.[tab]?.[index]
               }
                
                item["keysn"]=nanoid()

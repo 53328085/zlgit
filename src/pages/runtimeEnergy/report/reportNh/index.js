@@ -28,7 +28,7 @@ export default function Index() {
   const [tableData, setTableData] = useState([])
  
    const [columnsStateMap, setColumnsStateMap] = useState(Nhconfig)
- 
+ const [unit, setUnit]=useState("")
   const [line, setLine] = useState(0)
   const [treeId, setTreeId] = useState()
   let { areaId, projectId, publictype:type, publicdate:date, energytype, alike,publicrangedate } = exparams  
@@ -58,7 +58,9 @@ export default function Index() {
       3:"YYYY-MM",
       4:"YYYY-MM-DD"
     }[type] ?? "HH:mm"
-  
+      let newcols = [...conscols]
+      let row = newcols[4]
+      row.title=`总用能${unit}`
       if (detailHeaders.length) {
           let last = detailHeaders.length - 1
           column = detailHeaders.map((col, index) => ({
@@ -93,9 +95,9 @@ export default function Index() {
             ]
           }))
         }
-        return  [...conscols,...column]
+        return  [...newcols,...column]
 
-  },[detailHeaders,columnsStateMap?.er?.show,columnsStateMap?.sr?.show,conscols, type])
+  },[detailHeaders,columnsStateMap?.er?.show,columnsStateMap?.sr?.show,conscols, type,unit])
   const onSelectChange = (newkey, rows) => {
 
     if (newkey?.length > 3) {
@@ -171,7 +173,7 @@ export default function Index() {
             success,
           } 
          
-        
+         setUnit(detailDatas?.[0]?.unit)
          // setConcolumns([...conscols, ...column])
           counsume = detailDatas.map((item,idx) => {
             let { detailValues, eDetailReadings,sDetailReadings } = item;
@@ -195,6 +197,7 @@ export default function Index() {
         }
       } else {
          setTableData([])
+         setUnit("")
         return {
           data: [],
           total: 0,

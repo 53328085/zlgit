@@ -19,7 +19,12 @@ import {themeColor,adaptation, intl, dark} from "@redux/systemconfig";
 
 export default function CustConfig(props) {
   const custThem = useSelector(themeColor)
-  const  {primaryColor,errorColor,warningColor,successColor,infoColor,...definetheme} = custThem
+  const  {primaryColor,errorColor,warningColor,successColor,infoColor, 
+          headerBg,
+         headerColor,
+         tablestripebg,
+         tablefontcolor,
+         ...definetheme} = custThem
   const  isdark = useSelector(dark)
  // console.log("isdark",isdark)
   const {laptop} = useSelector(adaptation) || {}
@@ -50,7 +55,13 @@ export default function CustConfig(props) {
         colorInfo: infoColor,
         
       },
-       algorithm: isdark ? theme.darkAlgorithm : theme.defaultAlgorithm,
+     algorithm: isdark ? theme.darkAlgorithm : theme.defaultAlgorithm,
+     components:{
+       Table:{
+         headerBg,
+         headerColor,
+       }
+     }
     }
   }), [custThem])
 /*  useEffect(() => {

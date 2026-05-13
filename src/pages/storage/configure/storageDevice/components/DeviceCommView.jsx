@@ -8,7 +8,7 @@ import styled from 'styled-components'
 import CustomTable from '@com/useTable'
 import CustomModal from '@com/useModal'
 import DeviceSettingDialog from '@pages/storage/configure/storageDevice/components/DeviceSettingDialog'
-
+import {isObject} from '@com/usehandler'
 const CustomTitle = styled.div`
     display: flex;
     align-items: center;
@@ -38,12 +38,13 @@ const CustomTitle = styled.div`
  * @param stationName 当前站点ID
  */
 export default function DeviceCommView ({ tab, areaId, projectId, containerId, stationName = {} }) {
+  
   const tableRef = useRef(null)
   //删除弹窗
   const deleteDialogRef = useRef(null)
   //配置弹窗
   const deviceSettingDialogRef = useRef(null)
-  const { value: siteId = 0 } = stationName
+  const { value: siteId = 0 } =isObject(stationName) ? stationName :{}
   //
   const [selectId, setSelectId] = useState(0)
   //分页相关数据
