@@ -26,7 +26,7 @@ export default function Index() {
 
   const getTotalData = async (params) => {
     try {
-      const { data, success } = await useIncomeTotal(params);
+      const { data, success } = await useIncomeTotal(params,{},  {timeout: 3000000});
       if (success && isObject(data)) {
         setData(data);
       } else {
@@ -40,7 +40,7 @@ export default function Index() {
   
   const getChartData = async (params) => {
     try {
-      const { data, success } = await useIncomeDetail(params);
+      const { data, success } = await useIncomeDetail(params,{},  {timeout: 3000000});
       if (success && isObject(data)) {
         setChartData(data);
       } else {

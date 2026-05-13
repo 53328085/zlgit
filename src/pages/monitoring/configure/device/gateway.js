@@ -238,7 +238,7 @@ export default function Gateway() {
     console.log(record)
     editform.setFieldsValue({
       ...record,
-      area: record.areaName
+      area: record.areaId
     })
   }
   //打开新增网关窗口
@@ -377,6 +377,7 @@ export default function Gateway() {
       console.log(editform.getFieldValue())
      // return
       const { areaId,area, category, address, sn, pwd, name, heartInterval, remark, id } = editform.getFieldValue()
+      console.log("area",area)
       let params = {
         id: id,
         projectId,
@@ -983,6 +984,7 @@ const EditModalForm = ({ modalEditRef,  addopts, editform, levelname, ...other }
 
       <Form
         form={editform}
+         preserve={false}
         labelCol={{
           span: 6
         }}

@@ -38,7 +38,7 @@ export default function Index() {
   const [line, setLine] = useState(0)
   const [treeId, setTreeId] = useState()
     const [filtere, setFiltere] =  useState(defaultfilteredValue)
-  let {projectId, publictype:type,cycleTime, publicdate:date, energytype, alike,publicrangedate } = exparams  
+  let {projectId, onedaytype:type,cycleTime, oneday:date, energytype, alike,onedayrange:publicrangedate } = exparams  
   const [unit, setUnit] = useState()
   const  [title, headerTitle] = useMemo(() => {
     let label = options?.find(d => d.key == key)?.label ?? ''
@@ -62,7 +62,7 @@ const [spans, setSpans] = useState(()=>defaultfilteredValue[key]?.length)
 
 
   const columns = useCsCol({  index, title, frontRows, spans,header, energytype, filters,filteredValue:values})
-  console.log(columns)
+  
  
   const tbonChange=useCallback((_, filter)=>{
      

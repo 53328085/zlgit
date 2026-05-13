@@ -40,7 +40,7 @@ import {usebarline } from './usehook'
           dayMonthYear:type,
            date: type==3 ? date?.startOf("year")?.format("YYYY-MM-DD") : type==2 ? date?.startOf("month")?.format("YYYY-MM-DD") : date?.format('YYYY-MM-DD')
          }
-         let {success, data} = await    useRevenues({},body)
+         let {success, data} = await    useRevenues({},body, {timeout: 1000 * 60 * 5 })
          if (success && isObject(data)){
           return data
          }else {

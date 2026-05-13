@@ -155,7 +155,7 @@ export function usebarlineright2nd({ datas }) {
       grid: {
         left: 0,
         right: 0,
-        top: 16,
+        top: 32,
         bottom: 0,
         containLabel: true,
       },
@@ -184,9 +184,9 @@ export function usebarlineright2nd({ datas }) {
 
       yAxis: [
         {
-          name: "kWh",
+          name: "空调用电量 kWh",
           nameTextStyle: {
-            align: "right",
+            align: "left",
             color: "#fff",
             fontSize: 11,
           },
@@ -206,7 +206,7 @@ export function usebarlineright2nd({ datas }) {
           },
         },
         {
-          name: "kWh",
+          name: "节约用电量 kWh",
            nameTextStyle: {
             align: "right",
             color: "#fff",
@@ -276,11 +276,14 @@ export function usebarlineright2nd({ datas }) {
     };
   }, [datas]);
 }
-export function usepieoption({ datas, emphasis = { label: {} } }) {
+export function usepieoption({ datas, emphasis = { label: {} },unit="" }) {
   return useMemo(() => {
     return {
       tooltip: {
         trigger: "item",
+        valueFormatter: function (value) {
+          return value + unit;
+        },
       },
       type: 5,
       series: [

@@ -1,6 +1,7 @@
  
-import {useEffect} from "react"
+import {useEffect, useMemo} from "react"
 import {useSelector} from 'react-redux'
+ import {ConfigProvider, theme} from 'antd'
 import enUS from 'antd/locale/en_US'; // 国际化时使用
 import zhCN from 'antd/locale/zh_CN';
 import dayjs from 'dayjs';
@@ -12,19 +13,19 @@ dayjs.extend(localeData)
  
 dayjs.locale('zh-cn');
  
-import {ConfigProvider} from 'antd'
+
 import {themeColor,adaptation, intl, dark} from "@redux/systemconfig";
  
 
 export default function CustConfig(props) {
-  const theme = useSelector(themeColor)
-  console.log("theme",theme)
+  const custThem = useSelector(themeColor)
+  const  {primaryColor,errorColor,warningColor,successColor,infoColor,...definetheme} = custThem
   const  isdark = useSelector(dark)
-  console.log("isdark",isdark)
+ // console.log("isdark",isdark)
   const {laptop} = useSelector(adaptation) || {}
   const {lang} = useSelector(intl)
-  console.log("lang",zhCN)
-  const config = {
+ // console.log("lang",zhCN)
+  const config =useMemo(() => ({
     csp: {
       nonce: 'YourNonceCode'
     },
@@ -38,16 +39,32 @@ export default function CustConfig(props) {
   //  componentSize: laptop ? "small" : "middle", //form表单small
     form: {
       required: "'${label}' 是必选字段",
+    },
+    theme: {
+      token: {
+         ...definetheme,
+        colorPrimary: primaryColor,
+        colorSuccess: successColor,
+        colorWarning: warningColor,
+        colorError: errorColor,
+        colorInfo: infoColor,
+        
+      },
+       algorithm: isdark ? theme.darkAlgorithm : theme.defaultAlgorithm,
     }
-  }
- useEffect(() => {
+  }), [custThem])
+/*  useEffect(() => {
+  console.log("theme 变动")
   let darktheme
   if(!isdark){
     darktheme=null
     ConfigProvider.config({
-      theme , 
-     // algorithm: darkTheme,
-       
+      theme:{
+        token:{
+          ...theme,
+          colorPrimary: theme.primaryColor
+        }
+      } ,  
      }
      )
   }else {
@@ -58,7 +75,7 @@ export default function CustConfig(props) {
      )
   }
 
-},[theme, isdark])
+},[theme, isdark]) */
 
   
    return (
