@@ -1,7 +1,6 @@
- 
-import React, {   useRef, useCallback } from 'react';
-import {   useDrag, useDrop } from 'react-dnd';
-import update from 'immutability-helper';
+
+import React, { useRef } from 'react';
+import { useDrag, useDrop } from 'react-dnd';
 const type = 'DraggableBodyRow';
 const DraggableBodyRow = ({ index, moveRow, className, style, ...restProps }) => {
   const ref = useRef(null);
@@ -45,8 +44,7 @@ const DraggableBodyRow = ({ index, moveRow, className, style, ...restProps }) =>
 };
 //export default DraggableBodyRow;
 export const components = {
-    body: {
-      row: DraggableBodyRow,
-    },
-  };
- 
+  body: {
+    row: DraggableBodyRow,
+  },
+};

@@ -2593,6 +2593,8 @@ export class energyRanking {
 export class energyShare {
   static QuerySpaceTrees = (params) =>
     server.get(`/Energy/EnergyQuotaDesigner/QuerySpaceTrees`, { params }); //查询树
+  static QuerySpaceTreesWithDeviceCount = (params) =>
+    server.get(`/Energy/EnergyQuotaDesigner/QuerySpaceTreesWithDeviceNum`, { params }); //查询树-包含设备数量
   //获取分时能耗数据
   static getTimePeriodEnergyApi = (params) =>
     server.post(`/Energy/EnergyTariffTimeRuntime/QueryTariffTimeEnergy`, params);

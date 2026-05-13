@@ -46,7 +46,9 @@ export default function Index() {
       runtimeEnergy: [nested],
     }[primary];
 
-    return Array.isArray(primaries) ? primaries.includes("summary") : false;
+    return Array.isArray(primaries)
+      ? ["summary", "direction"].includes(primaries?.[0])
+      : false;
   }, [primary, nested]);
   console.log("includemodule", includemodule);
 
@@ -94,6 +96,9 @@ export default function Index() {
       "realTimeMeterReading",
       "intensityCal",
       "efficiencyAdvance",
+      "consumeAnalysis",
+      "efficiencyCompare",
+      "carbonBudget",
     ],
     runtimeStorage: [
       // 储能管理
@@ -269,7 +274,7 @@ export default function Index() {
             });
             break;
           case "reportNh":
-          case "reportZd": 
+          case "reportZd":
           case "reportFl":
           case "reportBc":
             setConfig({
@@ -323,7 +328,7 @@ export default function Index() {
             setConfig({
               energytype: false, // 只有电
               publicDate: true,
-             
+
               shiftNo: true,
               gas: false,
               custview: true,
@@ -344,22 +349,45 @@ export default function Index() {
             break;
           case "realTimeMeterReading":
              setConfig({
-              energytype: true, 
+              energytype: true,
               shiftNo: true,
               gas: false,
-              
+
               alike: true,
-          
+
+            });
+            break;
+          case "consumeAnalysis":
+            setConfig({
+              publicDate: true,
+              shiftNo: true,
+              rangeDate: 45,
+              isAreaId: true,
+            });
+            break;
+          case "efficiencyCompare":
+            setConfig({
+              publicDate: true,
+              shiftNo: true,
+              isAreaId: true,
+              dateOpt: [
+                {
+                  value: 2,
+                  label: "月",
+                },
+              ],
             });
             break;
           case "direction":
             setConfig({
+              custviewLeading: true,
               energytype: true,
               isdate: true,
               shiftNo: true,
-              isAreaId: false,
-              gas: false,
+              isAreaId: true,
               custview: true,
+              gas: false,
+              disableDayForNonElectric: true,
             });
             break;
           case "analysis":
@@ -367,6 +395,19 @@ export default function Index() {
             break;
           case "norm":
             setConfig({ custview: true });
+            break;
+          case "carbonBudget":
+            setConfig({
+              publicDate: true,
+              shiftNo: true,
+              isAreaId: true,
+              dateOpt: [
+                {
+                  value: 2,
+                  label: "月",
+                },
+              ],
+            });
             break;
           case "public":
             setConfig({
