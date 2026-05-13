@@ -4,11 +4,17 @@ import UseTree from '@com/useTree'
 import TitleLayout from '@com/titlelayout'
 import { Flex, Space, Tooltip } from 'antd'
 import HeadCardView from './components/HeadCardView'
+import EnergyTrendChart from './components/EnergyTrendChart'
+import IntensityTrendChart from './components/IntensityTrendChart'
+import ComputerDescModal from './components/ComputerDescModal'
 import { ExportExcel } from '@com/useButton'
 import ProTable from '@com/useTable/proTable'
 import { getTableColumns } from './Constant'
 import { useOutletContext } from 'react-router-dom'
-import { ReactComponent as NoticeIcon } from 'src/assets/svg/notice.svg'
+import { ReactComponent as NoticeIcon } from './icon/notice.svg'
+import { ReactComponent as Icon1 } from './icon/icon_1.svg'
+import { ReactComponent as Icon2 } from './icon/icon_2.svg'
+import { ReactComponent as Icon3 } from './icon/icon_3.svg'
 
 /**
  * 能耗强度计算
@@ -16,8 +22,9 @@ import { ReactComponent as NoticeIcon } from 'src/assets/svg/notice.svg'
 export default function IntensityCal() {
   const [treeId, setTreeId] = useState([])
   const tableRef = useRef(null)
+  const modalRef = useRef(null)
   let { exparams  } = useOutletContext()
-  let { areaId, projectId, publictype:type, publicdate:date} = exparams  
+  let { areaId, projectId, publictype:type, publicdate:date} = exparams
 
   
     const params = useMemo(()=>{
@@ -32,7 +39,7 @@ export default function IntensityCal() {
     }, [projectId, areaId, type, date, treeId])
 
   const onComputerDescClick = () => {
-      window.open('https://www.baidu.com', '_blank')
+    modalRef.current?.showModal()
   }
 
   useEffect(() => {
@@ -89,6 +96,7 @@ export default function IntensityCal() {
         <Flex flex={1} gap={12} vertical>
           <Flex gap={12} style={{ width: '100%' }}>
             <HeadCardView
+              icon={<Icon1 />}
               title="总能源消费量"
               unit="tce(吨标准煤)"
               value={2235746.23}
@@ -96,6 +104,7 @@ export default function IntensityCal() {
               desc="较上月"
             />
             <HeadCardView
+              icon={<Icon2 />}  
               title="单位产值能耗"
               unit="tce/万元产值"
               value={223.13}
@@ -103,6 +112,7 @@ export default function IntensityCal() {
               desc="较上月"
             />
             <HeadCardView
+              icon={<Icon3 />}  
               title="单位产品能耗"
               unit="tce/吨产品"
               value={365.25}
@@ -111,8 +121,8 @@ export default function IntensityCal() {
             />
           </Flex>
           <Flex gap={12} style={{ minHeight: 320 }}>
-            <TitleLayout title="能源消费趋势" />
-            <TitleLayout title="能耗强度趋势" />
+            <EnergyTrendChart />
+            <IntensityTrendChart />
           </Flex>
           <TitleLayout
             style={{ minHeight: 320 }}
@@ -152,6 +162,7 @@ export default function IntensityCal() {
           </TitleLayout>
         </Flex>
       </Flex>
+      <ComputerDescModal ref={modalRef} />
     </PageContent>
   )
 }

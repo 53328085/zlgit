@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from 'react';
-import { Form, Input, Select, Drawer, Flex, Typography } from 'antd';
+import { Form, Input, Select, Flex, Typography } from 'antd';
+import CModal from '@com/useModal';
 import UserTable from '@com/useTable';
 import { useSelector } from 'react-redux';
 import { adaptation } from '@redux/systemconfig';
 import { useMount, useRequest } from 'ahooks';
 import { head } from 'lodash';
 import { useQueryAreaAllDevicesWithAllocation } from '../api';
-import { ReactComponent as AllocationIcon } from '../icon/allocation.svg'
 import styled from 'styled-components';
 import { CustButton } from '@com/useButton';
 import { getAreaSharedColumns, getDeviceShareColumns } from '../Constant';
@@ -19,7 +19,7 @@ const DeviceInfoContent = styled(Flex)`
   padding: 12px;
 `
 
-export default function DeviceShareDrawer({
+export default function DeviceShareModal({
   open,// 是否打开抽屉
   onClose = null,// 抽屉关闭回调
   projectId,// 项目ID
@@ -99,8 +99,8 @@ export default function DeviceShareDrawer({
    * 处理抽屉关闭
    */
   const handleClose = () => {
-    onClose ? onClose() : setDrawerOpen(false);
-    form.resetFields();
+    onClose()
+    form.resetFields()
   };
 
   /**
@@ -112,15 +112,18 @@ export default function DeviceShareDrawer({
   }
 
   return (
-    <Drawer
+    <CModal
+      key='shareDrawer'
       width={laptop ? 1200 : 1400}
-      onClose={handleClose}
+      onCancel={handleClose}
       open={open}
       closable={false}
+      mold="cust"
       destroyOnHidden
+      title={`设备分摊(${areaName})`}
+      footer={<CustButton text="Cancel" onClick={handleClose} style={{ marginLeft: 'auto' }} />}
     >
-      <Typography.Title level={4}>当前区域：{areaName}</Typography.Title>
-      <Flex gap={12} style={{ height: 'calc(100% - 40px)' }}>
+      <Flex gap={12} style={{ height: 800 }}>
         <Flex
           gap={12}
           vertical
@@ -184,6 +187,7 @@ export default function DeviceShareDrawer({
           </DeviceInfoContent>
           <Flex align='center' gap={12}>
             <span>区域分摊(4条)</span>
+            <div style={{ flex: 1 }}></div>
             <Select
               style={{ width: 120 }}
               value={sharedType}
@@ -210,6 +214,6 @@ export default function DeviceShareDrawer({
           </div>
         </Flex>
       </Flex>
-    </Drawer>
+    </CModal>
   );
 }

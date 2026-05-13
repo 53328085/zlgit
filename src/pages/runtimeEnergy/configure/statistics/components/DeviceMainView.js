@@ -11,8 +11,6 @@ import { useRequest } from 'ahooks'
 const TableContent = styled(Flex)`
     flex: 1;
     height: 100%;
-    border: 1px solid #e8e8e8;
-    padding: 12px;
 `
 
 export default function DeviceMainView() {
@@ -35,6 +33,11 @@ export default function DeviceMainView() {
         // 设备类型改变时，刷新右侧表格搜索值
         setRightAlike('')
     }, [deviceType])
+
+    useEffect(() => {
+        // 区域ID改变时，刷新设备数量
+        console.log('发生变化------------------->', areaId, deviceType, projectId)
+    }, [deviceType, projectId, areaId])
 
     /**
      * 查询设备数据
@@ -84,8 +87,9 @@ export default function DeviceMainView() {
             <TableContent>
                 <ProTable
                     key={`left-table-${deviceType}`}
-                    headerTitle="总表详情"
+                    headerTitle={`总表详情(${allData.deviceSummary.length})`}
                     search={false}
+                    bordered={true}
                     pagination={false}
                     toolBarRender={() => (
                         <Input
@@ -103,16 +107,17 @@ export default function DeviceMainView() {
                     dataSource={leftTableData}
                     scroll={{
                         x: 'max-content',
-                        y: 'calc(100vh - 400px)'
+                        y: 'calc(100vh - 320px)'
                     }}
                 />
             </TableContent>
             <TableContent>
                 <ProTable
                     key={`right-table-${deviceType}`}
-                    headerTitle="分表详情"
+                    headerTitle={`分表详情(${allData.deviceSub.length})`}
                     search={false}
                     options={false}
+                    bordered={true}
                     pagination={false}
                     toolBarRender={() => (
                         <Input
@@ -129,7 +134,7 @@ export default function DeviceMainView() {
                     dataSource={rightTableData}
                     scroll={{
                         x: 'max-content',
-                        y: 'calc(100vh - 400px)'
+                        y: 'calc(100vh - 320px)'
                     }}
                 />
             </TableContent>
