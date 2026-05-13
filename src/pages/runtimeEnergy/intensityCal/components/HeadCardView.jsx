@@ -1,6 +1,8 @@
 import { Flex } from "antd"
 import styled from "styled-components"
 import { formatGrowth, formatNumber } from "../Constant"
+import { ReactComponent as IconDown } from '../icon/down.svg'
+import { ReactComponent as IconUp } from '../icon/up.svg'
 
 const MainView  = styled(Flex)`
     flex: 1;
@@ -60,6 +62,7 @@ const Rate = styled.div`
 
 export default function HeadCardView({
     title = '',
+    icon = null,
     unit = '',
     value = 0,
     rate = 0,
@@ -68,7 +71,7 @@ export default function HeadCardView({
   
   return (
     <MainView align='center' gap={14}>
-      <div style={{width:54,height:54,borderRadius:'50%',background:'#F5F5F5'}}></div>
+      {icon}
       <Flex vertical>
         <Flex align='baseline' gap={4}>
             <Title>{title}</Title>
@@ -78,6 +81,7 @@ export default function HeadCardView({
         <Flex align='baseline' gap={6}>
             <Desc>{desc}:</Desc>
             <div dangerouslySetInnerHTML={{ __html: formatGrowth(formatNumber(rate, false, 2)) }}></div>
+            {rate >= 0 ? <IconUp /> : <IconDown />}
         </Flex>
       </Flex>
     </MainView>
