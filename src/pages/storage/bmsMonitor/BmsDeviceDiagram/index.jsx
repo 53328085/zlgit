@@ -103,8 +103,8 @@ function buildDisplayModel(node, isStack = false) {
       key: `progress-${getSortIndex(item, index)}-${item?.point || item?.name || index}`,
       label: getItemLabel(item, `指标${index + 1}`),
       value: formatRawValue(item?.value),
-      unit: String(item?.unit ?? ""),
-      percent: toProgressPercent(item?.value, item?.unit),
+  //    unit: String(item?.unit ?? ""),
+      percent: toProgressPercent(item?.value),
     }));
   const valueItems = items
     .filter((item) => getItemStyle(item).toLowerCase() === "namevaluetwo")
@@ -130,9 +130,9 @@ function buildDisplayModel(node, isStack = false) {
   };
 }
 
-function formatValue(value, unit) {
+function formatValue(value) {
   if (!value || value === "--") return "--";
-  return unit ? `${value}(${unit})` : value;
+  return   value;
 }
 
 function calcCanvasLayout(clusterCount) {
@@ -194,7 +194,7 @@ const ClusterCard = memo(function ClusterCard({ model }) {
             {model.progressItems.map((item, index) => (
               <ProgressLine key={item.key} $variant={index % 2 === 1 ? "soh" : "soc"} $percent={item.percent}>
                 {item.label} {item.value}
-                {item.unit}
+             
               </ProgressLine>
             ))}
           </ProgressGroup>
@@ -204,7 +204,7 @@ const ClusterCard = memo(function ClusterCard({ model }) {
             {model.valueItems.map((item) => (
               <React.Fragment key={item.key}>
                 <ValueLabel>{item.label}</ValueLabel>
-                <ValueText>{formatValue(item.value, item.unit)}</ValueText>
+                <ValueText>{formatValue(item.value)}</ValueText>
               </React.Fragment>
             ))}
           </ValueGrid>

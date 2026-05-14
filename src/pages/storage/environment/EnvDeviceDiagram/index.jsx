@@ -87,10 +87,10 @@ function normalizeText(value, fallback = "--") {
   return unwrapDisplayText(value, fallback);
 }
 
-function normalizeWithUnit(value, unit) {
+function normalizeWithUnit(value ) {
   const text = normalizeText(value);
   if (text === "--") return "--";
-  return unit ? `${text}${unit}` : text;
+  return  text;
 }
 
 function extractIdentityTokens(entity) {
@@ -362,6 +362,7 @@ const FireModule = memo(function FireModule({ fire }) {
 });
 
 const EnvCardNode = memo(function EnvCardNode({ model, left }) {
+  console.log("model",model)
   return (
     <CardNode style={{ left, top: NODE_TOP }}>
       <NodeBadge>{model.name}</NodeBadge>
@@ -371,13 +372,13 @@ const EnvCardNode = memo(function EnvCardNode({ model, left }) {
       <CabinetBase />
       <DetailCard>
         <CardTitle>{ENV_MONITOR_TEXT.ENV_TITLE}</CardTitle>
-        {model.liquids.map((module, index) => (
+        {model.liquids.map((module, index) => (  //液冷系统
           <ModuleBlock key={`liquid-${module.id}-${index}`}>
             <ModuleTitle>{module.name}</ModuleTitle>
             <MetricsGrid $cols={2}>
               <MetricLabel>{ENV_MONITOR_TEXT.LIQUID_MODE}</MetricLabel>
               <MetricLabel>{ENV_MONITOR_TEXT.LIQUID_TEMP}</MetricLabel>
-              <MetricItem $highlight>{module.mode}</MetricItem>
+              <MetricItem $highlight={module.mode}>{module.mode}</MetricItem>
               <MetricItem>{module.temperature}</MetricItem>
             </MetricsGrid>
           </ModuleBlock>
@@ -391,7 +392,7 @@ const EnvCardNode = memo(function EnvCardNode({ model, left }) {
               <MetricLabel>{ENV_MONITOR_TEXT.DEHUMIDIFIER_STATUS}</MetricLabel>
               <MetricItem>{module.humidity}</MetricItem>
               <MetricItem>{module.temperature}</MetricItem>
-              <MetricItem $highlight>{module.status}</MetricItem>
+              <MetricItem $highlight={module.status}>{module.status}</MetricItem>
             </MetricsGrid>
           </ModuleBlock>
         ))}
@@ -417,7 +418,7 @@ export default memo(function EnvDeviceDiagram({
   const containerVMs = useMemo(() => {
     return safeList(containers).map((item, index) => toContainerVM(item, index));
   }, [containers]);
-
+  console.log("containerVMs",containerVMs)
   const layout = useMemo(() => calcCanvasLayout(containerVMs.length), [containerVMs.length]);
 
   if (loading && containerVMs.length === 0) {

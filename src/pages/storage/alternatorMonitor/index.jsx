@@ -391,7 +391,7 @@ export default function Index() {
           </div>
         </div>
         <div className={`rightlayout ${style.rightlayout}`} key="right">
-          <Titlelayout title="实时运行参数">
+          <Titlelayout title="实时运行参数" layout="flex">
             <RuntimeParamsPanel data={runtimeData} />
           </Titlelayout>
           <Titlelayout title="总有功功率" extra={

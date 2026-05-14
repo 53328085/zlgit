@@ -8,6 +8,7 @@ import {
   Row,
   Col,
   DatePicker,
+  Select,
   
 } from "antd";
 import {useTranslation} from 'react-i18next'
@@ -315,6 +316,21 @@ const imgToBase = (url) => {
      </Item>
       <Item label={t("Projectremark")} name="remark" className="remark">
         <Input.TextArea   placeholder={t("99words")} maxLength={99}   />
+      </Item>
+       <Item label={t("Sourceofequipmentdata")} labelCol={{flex: laptop ? "85px" : "166px"}} className="address" name="isAIoT" rules={
+        [{
+          required:true,
+        }]
+       } > 
+          <Select   options={[{
+            label:"EIot",
+            value: 0
+          },
+          {
+            label:"AIot",
+            value: 1
+          }
+]} /> 
       </Item>
       <Item label={t("ProjectAddress")} labelCol={{flex: laptop ? "85px" : "166px"}} className="address" name="address" tooltip={t("mapgetit")}> 
           <Input placeholder={t("detailedaddress")} onChange={onInput} /> 

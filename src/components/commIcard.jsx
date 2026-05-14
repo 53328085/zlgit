@@ -207,7 +207,10 @@ function useBtn(state) {
   return statebtn;
 }
 const Gateway = (props) => {
-  const statebtn =useBtn(props.state) 
+  const statebtn ={
+    2:<TreeBtn type={2} ns="comm" text="online" />,
+    1:<TreeBtn type={4} ns="comm" text="offline" />,
+ }[props.state]
   return (
     <>
       <div className="line">

@@ -45,6 +45,8 @@ const Mainbox = styled.div`
         color: #fff;
         font-size: 14px;
         flex-shrink: 0;
+        display: flex;
+        align-items: center;
         &::before {
           position: absolute;
           left: 0px;

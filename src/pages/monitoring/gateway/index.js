@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef, useCallback } from "react";
 import { useSelector } from "react-redux";
 import styled, {css} from "styled-components";
-import { Select, Radio, Pagination, message, Space, Form} from "antd";
+import { Select, Radio, Pagination, message, Space, Form, Typography} from "antd";
 
 import { Link } from "react-router-dom";
 import { useAntdTable } from "ahooks";
@@ -86,7 +86,7 @@ export default function Index(props) {
     {
       title:  i18t("comm","netwoker"),
       dataIndex: "state",
-      render: (text) => <span> {text === 2 ? i18t("overview","online") : i18t("overview","offline")} </span>,
+      render: (text) => <Typography.Text type={text==2 ? "success" : "secondary"}> {text === 2 ? i18t("overview","online") : i18t("overview","offline")} </Typography.Text>,
       key: "state",
       id: "id",
     },
@@ -339,7 +339,7 @@ export default function Index(props) {
                       {
                         value: 2,
                         label:
-                         `${i18t("comm","normal")}(` + 
+                         `${i18t("comm","online")}(` + 
                           (statistics.on == undefined ? 0 : statistics.on) +
                           ")",
                       },

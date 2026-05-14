@@ -38,7 +38,7 @@ const BmsOverviewPanel = memo(({ data = [] }) => {
           icon={param.icon}
           name={param.name}
           value={param.value ?? '--'}
-          unit={param.unit}
+         // unit={param.unit}
         />
       ))}
     </ColumnWrapper>

@@ -137,6 +137,7 @@
      "list": "列表{{text}}",
      "normal":"正常",
      "offline": "离线",
+     "online": "在线",
     "childdevice": "子设备",
     "connection":"上网方式",
     "updateTime":"更新时间",
@@ -156,5 +157,6 @@
      "standarddefinition": "标清",
      "highdefinition": "高清",
      "chart": "图表{{text}}",
+     "Sourceofequipmentdata":"设备数据来源",
     "": ""
 }

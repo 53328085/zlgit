@@ -14,13 +14,13 @@ export function useBaript({
     1: "HH:mm",
     2: "DD",
     3: "MM",
-    4: "HH:mm",
+    4: "YYYY-MM-DD",
   }[type];
   const timeformt = {
     1: "YYYY-MM-DD HH:mm",
     2: "YYYY-MM-DD",
     3: "YYYY-MM",
-    4: "YYYY-MM-DD HH:mm",
+    4: "YYYY-MM-DD",
   }[type];
   const [source, dimensions, chartlen, unit] = useMemo(() => {
     let datas = tableData.filter((d) =>

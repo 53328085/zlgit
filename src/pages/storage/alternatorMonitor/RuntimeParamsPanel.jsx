@@ -7,13 +7,15 @@ const PanelWrapper = styled.div`
   grid-template-columns: repeat(3, 1fr);
   column-gap: 16px;
   row-gap: 16px;
+  flex:1;
 `;
 
 const ColumnWrapper = styled.div`
   display: flex;
   flex-direction: column;
-  gap: 16px;
+ // gap: 16px;
   height: 100%;
+  justify-content: space-between;
 `;
 
 const CompactCardWrapper = styled.div`
@@ -35,7 +37,7 @@ const CompactCardWrapper = styled.div`
 
     .icon-text {
       color: #fff;
-      font-size: 9px;
+      font-size: 12px;
       font-weight: bold;
     }
   }
@@ -46,7 +48,7 @@ const CompactCardWrapper = styled.div`
 
     .param-name {
       color: #303133;
-      font-size: 10px;
+      font-size: 12px;
       margin-bottom: 0;
       white-space: nowrap;
       overflow: hidden;
@@ -55,26 +57,22 @@ const CompactCardWrapper = styled.div`
 
     .param-value {
       color: #1D3374;
-      font-size: 14px;
+      font-size: 18px;
       font-weight: bold;
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
 
-      .unit {
-        font-size: 10px;
-        margin-left: 2px;
-        color: #1D3374;
-      }
+     
     }
   }
 `;
 
-const CompactCard = ({ iconText, icon, name, value, unit }) => (
+const CompactCard = ({ iconText, icon, name, value }) => (
   <CompactCardWrapper>
     <div className="icon-wrapper">
       {icon ? (
-        <img src={icon} alt={name} style={{ width: 18, height: 18, objectFit: 'contain' }} />
+        <img src={icon} alt={name} style={{ width: 28, height: 28, objectFit: 'contain' }} />
       ) : (
         <span className="icon-text">{iconText}</span>
       )}
@@ -82,7 +80,7 @@ const CompactCard = ({ iconText, icon, name, value, unit }) => (
     <div className="info">
       <div className="param-name">{name}</div>
       <div className="param-value">
-        {value}<span className="unit">{unit}</span>
+        {value} 
       </div>
     </div>
   </CompactCardWrapper>
@@ -130,7 +128,7 @@ const RuntimeParamsPanel = memo(({ data = [] }) => {
           icon={param.icon}
           name={param.name}
           value={param.value ?? '--'}
-          unit={param.unit}
+          
         />
       ))}
     </ColumnWrapper>
@@ -145,7 +143,7 @@ const RuntimeParamsPanel = memo(({ data = [] }) => {
           icon={param.icon}
           name={param.name}
           value={param.value ?? '--'}
-          unit={param.unit}
+           
         />
       ))}
     </ColumnWrapper>

@@ -256,6 +256,15 @@ function Index(props, ref) {
      if (headerTable && scroll.y) {
       headerTable.remove()
     }
+   const  expandcell = cloneContainer?.querySelectorAll?.('th.ant-table-row-expand-icon-cell, td.ant-table-row-expand-icon-cell')
+  // console.log("expandcell",expandcell, expandcell?.length)
+   if(expandcell?.length){
+     const colgroup = cloneContainer?.querySelector?.('colgroup')
+     colgroup?.remove?.()
+    expandcell.forEach(item => {
+      item.remove()
+    })
+   }
     const ws = utils.table_to_sheet(
       // 新建工作表
       cloneContainer,

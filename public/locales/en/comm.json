@@ -130,6 +130,7 @@
     "coldWaterMeter":"cold Water Meter",
     "hotWaterMeter":"hot Water Meter",
     "sensor":"sensor",
+     "online": "online",
     "transformer":"transformer",
     "monitor":"monitor",
      "flowmeter":"Flowmeter",
@@ -162,5 +163,6 @@
      "standarddefinition": "Standard definition",
      "highdefinition": "High definition",
      "chart": "Chart",
+     "Sourceofequipmentdata":"Source of equipment data",
     "":""
 }

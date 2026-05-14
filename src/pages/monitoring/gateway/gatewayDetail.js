@@ -118,6 +118,13 @@ export default function GatewayDetail(props) {
     //  width: 224,
     },
     {
+      title: "设备名称",
+      dataIndex: "name",
+      key: "name",
+      id: "name",
+    //  width: 224,
+    },
+    {
       title: "设备状态",
       dataIndex: "state",
       key: "state",
