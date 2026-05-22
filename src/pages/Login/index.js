@@ -129,52 +129,8 @@ function UserLog() {
    codekey: '',
    setLoading: null
  })
- const regOk = async () => {  //注册成功后需要授权
-    try {
-      let values = form.getFieldsValue(true)
-      let {success, data}  = await LoginApi.Registe(values)
-      if(success) {
-        let {code, message:info} = data
-        if(code!=0) {
-          message.info(info)
-          regRef.current.onCancel()
-        }else if(code == 0 ) {
-            message.success(info || t("RegistSuccess", {ns: 'login'}))
-            regRef.current.onCancel()
-         /*  message.success({
-            content: info,
-            duration: 2,
-            onClose: onSubmit(value, type, codekey, setLoading)
-          }) */
-          
-        }
-      }
-    } catch (error) {
-       
-    }
-
- }
-
-const CheckAuthorization = async (value, type=0, codekey, setLoading,getCode) => {
-    let {success, data} = await LoginApi.CheckAuthorization()
-    if(success) {
-        let {code, message:msg} = data  // 0 成功, 1 注册, 2 等待处理提示
-        if(code==1) {
-          params.current = {
-            value,
-            type,
-            codekey,
-            setLoading
-          }
-          setMsg(msg);          
-          ref.current.onOpen()
-        }else if(code==2) {
-          message.success(msg) //处理中
-        }else if(code == 0) {  // 成功
-          onSubmit(value, type, codekey, setLoading,getCode)
-        }
-    }
-}
+ 
+ 
  
  let onSubmit = async (value, type=0, codekey, setLoading,getCode) => {  
    
@@ -208,9 +164,7 @@ const CheckAuthorization = async (value, type=0, codekey, setLoading,getCode) =>
        
          let ismenu = runMenus?.find(item => item.no == homeMenuNO) || runMenus[0]  
          if(!ismenu) return message.error({content:  t("comm:NoSetMenu"), duration: 0.5})
-       //  navigate("/websitmap", {})
-       //  return  //香炉山项目
-          
+      
          let  jumpath, substate;
          let sider = siderRunMenus?.[ismenu.key]?.[0] 
          if(sider) { 
@@ -246,7 +200,7 @@ const CheckAuthorization = async (value, type=0, codekey, setLoading,getCode) =>
   
 
  }
-  const ongetLang = () => {
+/*   const ongetLang = () => {
     I18N.GetsupportLanguages().then(res => {
        let {success,data} = res
        if(success && Array.isArray(data)) {
@@ -256,13 +210,13 @@ const CheckAuthorization = async (value, type=0, codekey, setLoading,getCode) =>
           dispatch(getLang([]))
        }
     }).catch()
-  }
+  } */
   
   useEffect(() => {
     dispatch(clearToken()); // 返回登录页面时清楚token
     window.sessionStorage.removeItem('chintwuliu')
-    dispatch(getIsGranary(false))
-    ongetLang()
+ //   dispatch(getIsGranary(false))
+   // ongetLang()
     
   }, []);
 
@@ -277,15 +231,15 @@ const CheckAuthorization = async (value, type=0, codekey, setLoading,getCode) =>
     window.localStorage.setItem("default_login", key)
   }
   const items = [
-    {
+  /*   {
       label:  t("login:MoLogin"), //"手机登录",
        key: '2',
        children:   <Phonelog onSubmit={CheckAuthorization} />,
-   },
+   }, */
    {
       label:  t("login:Aclogin"), //"账户登录",
        key: '1',
-       children:   <Username onSubmit={CheckAuthorization} />,
+       children:   <Username onSubmit={onSubmit} />,
    }
   ]
   const rules = [
@@ -301,52 +255,7 @@ const CheckAuthorization = async (value, type=0, codekey, setLoading,getCode) =>
            onChange={tabChange}
          >
          </CTabs>    
-         <CModal
-            width={554}
-            ref={ref}
-            onOk={onOK}
-            type="warn"
-            mold="cust"
-            title="提示"
-          >
-            <p>{msg}</p>
-          </CModal>
-
-          <CModal
-            width={554}
-            ref={regRef}
-            onOk={regOk}
-            mold="cust"
-            title={ t("login:SysAuRe")}
-          >
-            <Form form={form} layout="vertical">
-              <Form.Item label={t("login:SerWbe")} name="url" rules={[
-                 ...rules,
-                 {
-                  type: "url"
-                 }
-              ]}>
-                  <Input /> 
-              </Form.Item>
-              <Form.Item label={t("login:ComName")} name="customer" rules={rules}>
-                  <Input /> 
-              </Form.Item>
-              <Form.Item label={t("login:ComAdd")} name="address" rules={rules}>
-                  <Input /> 
-              </Form.Item>
-              <Form.Item label={t("login:Applicant")} name="user" rules={rules}>
-                  <Input /> 
-              </Form.Item>
-              <Form.Item label={t("login:Mophonenum")} name="mobile" rules={[
-                ...rules,
-                {
-                  validator: phoneValidator,
-                },
-              ]}>
-                  <Input /> 
-              </Form.Item>
-            </Form>
-          </CModal>
+        
 
          </>
   );
@@ -362,7 +271,7 @@ export default function Login() {
          <Listitem />
          <Log />
       </Logmain>
-    {literal==1 &&  <Copyright/>}
+  {/*   {literal==1 &&  <Copyright/>} */}
     </Loginpage>
   );
 }

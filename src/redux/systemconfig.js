@@ -8,7 +8,7 @@ import antdconfig from './theme'; //   antd配置
 import { Area, ProjectList, ProjectSetting, BigScreen, eneryShift, Monitoring, Carbon, HomeRuntime, Editapi, CustTheme } from "@api/api.js";
 import { isObject, isLightColor, hextodec } from '@com/usehandler'
 import { initithemeColor, themeOption } from '@com/defaultcolor';
-
+import { menusData } from './menu.js';
 import { Apimethod } from "@api/api.js"
 
 const { useFindStreetLightAreas } = new Apimethod( // 获取总览图及点位
@@ -44,7 +44,7 @@ const handlermenu = (Meundata, id, homeMenuNO) => {
 
   if (data?.length == 0) return message.warning("没有设置相应的菜单栏，请联系管理员")
   const setMenus = data.filter(m => ['0101', '0102', '0103'].includes(m.no));
-  const runMenus = data.filter(m => m.parentNo == '01' && m.select == 1).filter(m => !['0101', '0102', '0103'].includes(m.no)) // 运行功能 菜单
+  const runMenus = data.filter(m => m.parentNo == '01' && m.select == 1).filter(m => !['0101', '0102', '0103','0104'].includes(m.no)) // 运行功能 菜单
   //  const allRunMenus = data.filter(m => m.parentNo == '01').filter(m => !['0101', '0102', '0103'].includes(m.no)) 
   const designerMenus = data.filter(m => m.parentNo == '02' && m.select == 1) // 设置
 
@@ -241,7 +241,7 @@ export const getWebsiteMenu = createAsyncThunk(
   "system/getMenu",
   async (id, { rejectWithValue, dispatch }) => {
     try {
-      let { data, success, errMsg } = await ProjectList.QueryMenus(id)
+     /*  let { data, success, errMsg } = await ProjectList.QueryMenus(id)
       if (success) {
         if (isObject(data)) {
           let { menus, homeMenuNO } = data;
@@ -253,12 +253,14 @@ export const getWebsiteMenu = createAsyncThunk(
 
         } else {
           return message.warning("没有设置相应的菜单栏,请联系管理员")
-        }
+        } 
 
 
       } else {
         rejectWithValue(errMsg)
-      }
+      }*/
+      let { menus, homeMenuNO } = menusData;
+     return handlermenu(menus, id, homeMenuNO)
     } catch (error) {
       //console.log(error)
       return rejectWithValue(error)

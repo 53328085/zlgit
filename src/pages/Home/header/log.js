@@ -258,10 +258,10 @@ export default function Log() {
  const themelists = useSelector(themelist)
  let Themes = useSelector(themes);
  const router = useSelector(defaultroute)
-  
+/*   
    let item = themelists?.length> 0 ? {label: '主题', key:"theme", children: themelists, icon: <Micon iconname="theme" />} : null
 
-  const items=process.env.NODE_ENV === 'development' ? [   // 王工正式线屏蔽语言切换
+  const items=process.env.NODE_ENV === 'development' ? [   
     {label: '账户管理', key:"mg", icon:  <Micon iconname="account" />},
     {label: '语言切换', key:"lng",icon:  <Micon iconname="lang" />},
     {label: '退出系统', key:"exit", icon:  <Micon iconname="exit" />},
@@ -270,7 +270,11 @@ export default function Log() {
     {label: '账户管理', key:"mg",icon:  <Micon iconname="account" />},
     {label: '退出系统', key:"exit",icon:  <Micon iconname="exit" />},
     item
-  ]
+  ] */
+
+const items =[
+   {label: '退出系统', key:"exit",icon:  <Micon iconname="exit" />},
+]
  // const [items, setItems] = useState(inita)
   
   let dataScreen =setmenus?.find(i => i.key=='dataScreen')?.label //数据大屏
@@ -593,38 +597,7 @@ const settheme = async (themeId) => {
        <Hux style={{fill: menusbgcolorR}} />    
       </Triangle>}
       <Ldiv>
-        {
-          config ? 
-          (<Logbox laptop={adap.laptop}  onClick={back}>
-             <Micon iconname="back" />
-            <span> 返回</span>
-          </Logbox>)
-          :
-        <>
-       { isgranary ? <Logbox laptop={adap.laptop}  onClick={() => window.open('http://10.5.7.60:4242/ses', '_blank')}>
-          <Micon iconname="screen" />
-          <span> {dataScreen}</span>
-        </Logbox> : showscreen  &&  <Logbox laptop={adap.laptop}  onClick={onJump}>
-        <Micon iconname="screen" />
-          <span> {dataScreen}</span>
-        </Logbox>
-        }   
-      {/*   <Logbox laptop={adap.laptop}  onClick={onJump}>
-        <Micon iconname="screen" />
-          <span> {dataScreen}</span>
-        </Logbox>  */} 
- 
- 
-        { roleType < 4 ? (<Logbox laptop={adap.laptop}    onClick={onConfigure}> 
-          <Micon iconname="projectSet" />
-          <span>{projectSet}</span>
-        </Logbox>):null}
-        { roleType < 3 ? (<Logbox  Idiv laptop={adap.laptop}   onClick={projectcfg}>
-          <Micon iconname="platform" />
-          <span>{systemSet}</span>
-        </Logbox>):null}
-        </>
-        }
+        
         <CDropdown />
         <Dropdown
          menu={{items, 

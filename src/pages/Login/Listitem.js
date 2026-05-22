@@ -4,6 +4,7 @@ import { Login as Logapi } from "@api/api";
 import {useDispatch} from 'react-redux'
 import {  getThemeColor, getSystemconfiginfo} from "@redux/systemconfig";
 import {useTranslation, Trans, Translation} from 'react-i18next';
+import {systeminfo} from './data'
 const stycss= css`
   .chtitle{
     .text {
@@ -111,11 +112,11 @@ export default memo(function Listitem({logtitle, englishTitle, literal}) {
     t("CarbonManage"),
     t("OpManage"),
   ];
+
   const getSysteminfo = async (hostname) => {
      try {
-       let {data, success} =   await Logapi.SystemConfig(hostname)
-       if(success && data) { 
-            const { englishTitle="Integrated Energy Service Platform", literal, title, chineseTitle } = data;
+       
+            const { englishTitle="Integrated Energy Service Platform", literal, title, chineseTitle } = systeminfo;
             
           
             let enchtitle = title  + ' '+ chineseTitle ;
@@ -125,11 +126,9 @@ export default memo(function Listitem({logtitle, englishTitle, literal}) {
                literal,
                enchtitle
             })
-            dispatch(getSystemconfiginfo(data)) 
-          //  dispatch(getThemeColor({primaryColor: data.themeColor || "#237ae4"}))  主题颜色通过项目信息获取
-       }else {
-            dispatch(getSystemconfiginfo({}))
-       }
+            dispatch(getSystemconfiginfo(systeminfo)) 
+          
+       
 
      } catch (error) {      
           console.log(error)   
