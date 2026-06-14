@@ -4,10 +4,8 @@ module.exports = function (app) {
     app.use(
         createProxyMiddleware("/api/V1", {
             // target: 'https://nis.chint.com/',
-            // target: 'http://10.5.7.60:4186', //()
-            target: 'http://10.5.7.60:4155',
-            // target: 'http://10.5.7.60:4155', 4170;
-           // target: 'http://10.5.7.60:4155',//(程工)
+           
+            target: 'http://localhost:8081',
             changeOrigin: true,
             ws: true,
             pathRewrite: {

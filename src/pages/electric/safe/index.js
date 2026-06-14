@@ -275,6 +275,7 @@ const {laptop} = useSelector(adaptation)
   const getQueryWarningDetails = async () => {
     try {
       const res = await safeElectric.TodayWarningStatistics(params)
+      console.log(res)
     if (res.success) {
       setWarnData({ ...res.data })
     } else {
@@ -414,7 +415,7 @@ useEffect(() => {
     getQueryMonthWarningTrends()
     // getWarningDetailsPage()
     getWarningDetailsList()
-  }, [areaId])
+  }, [])
 
   const [domheight,setDomHeight] =useState(0)
   const [speed,setSpeed]=useState(0)
@@ -572,6 +573,7 @@ const Alarm = ({ pref, opref, areaId }) => {
   const [dateform] = Form.useForm()
   const arealist = useSelector(state => state.system.onelevel)
   const getQueryWarningDistributed = async (type = 1, date = dayjs().format('YYYY-MM-DD')) => {
+    console.log("~~~~~~~~~~~~~~~~~~~~~~~~")
     let params = {
       projectId,
       type,
@@ -643,7 +645,7 @@ const Alarm = ({ pref, opref, areaId }) => {
 
   useEffect(() => {
      console.log(areaId)
-    if(arealist.length===0)return
+  //  if(arealist.length===0)return
     const formvalue = dateform.getFieldsValue()
     const type = formvalue.datetype
     const date = getdateformat(type, formvalue.datevalue)
@@ -762,13 +764,13 @@ const AlarmRank = ({ bref, areaId }) => {
   }
 
   useEffect(() => {
-    if(arealist.length===0)return
+    
     const formvalue = dateform.getFieldsValue()
     const type = formvalue.datetype
 
     const date = getdateformat(type, formvalue.datevalue)
     getQueryWarningTypeRanking(type, date)
-  }, [areaId])
+  }, [])
   useEffect(()=>{
     drawEcharts(bref.current, {
       xAxis: {

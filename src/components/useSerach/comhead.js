@@ -44,7 +44,7 @@ export { Cform };
 const { Item } = Form;
 let refreshvalue = 1
 export const AreaSelect = ({ value, onChange, isall, ...otherProps }) => {
-  const levelone = useSelector(selectOneLevel)
+  const levelone = [{id:1, levelName: '朝晖校区'}] //useSelector(selectOneLevel)
   const laptop = useSelector(adaptation)?.laptop
   const lightone = useSelector(lightlevel)
   const location = useLocation();
@@ -84,7 +84,7 @@ export default function UseSerach(props) {
 
 
 
-  const projectId = useSelector(selectProjectId)
+  const projectId =20  //useSelector(selectProjectId)
   const varlabel = useSelector(levelDefaultLabel)
   const oneLevelDefaultId = useSelector(selectOneLevelDefaultId) // 选择后的值
   let [AreaID, setAreaid] = useState(oneLevelDefaultId)
@@ -99,7 +99,7 @@ export default function UseSerach(props) {
   }, [energyTypes, onlye])
 
 
-  const levelone = useSelector(selectOneLevel)
+  const levelone =[{id:1, levelName: '朝晖校区', name: '朝晖校区'}] // useSelector(selectOneLevel)
   const { laptop } = useSelector(adaptation)
   const defauledeviceID = useSelector(deviceID)
   const invertersn = useSelector(inverterSN)
@@ -107,7 +107,32 @@ export default function UseSerach(props) {
   //const DeviceStyle = useSelector(filterDeviceStyle)
   const [DeviceStyle, setDeviceStyle] = useState(null)
 
-  const devices = useSelector(prodeviceType)
+  const devices = [
+    {
+        "name": "电表",
+        "deviceStyle": 1,
+        "state": 1
+    },
+    {
+        "name": "冷水",
+        "deviceStyle": 2,
+        "state": 1
+    },
+    {
+        "name": "传感器",
+        "deviceStyle": 4,
+        "state": 1
+    },
+    {
+        "name": "断路器",
+        "deviceStyle": 12,
+        "state": 1
+    },
+    
+     
+    
+     
+]    //useSelector(prodeviceType)
   const w200 = useMemo(() => {
     return laptop ? { width: 160 } : { width: 200 }
   }, [laptop])
@@ -172,7 +197,7 @@ export default function UseSerach(props) {
   }, [props.config, AreaID, projectId])
   useEffect(() => {
     if (config.isdevsty) {
-      form.setFieldValue("deviceStyle", defauledeviceID)
+         form.setFieldValue("deviceStyle", defauledeviceID??1)
       props.setexparams({ ...form.getFieldsValue(true) })
     }
   }, [config.isdevsty, defauledeviceID])
@@ -372,20 +397,12 @@ export default function UseSerach(props) {
     dispatch(getsaveDeviceID(v))
   }
 
-  const deviceStyleNode = useMemo(() => {
-    return (<Item name="deviceStyle" label={i18t("comm", "type", { text: "设备" })} initialValue={defauledeviceID} >
+  const deviceStyleNode =  (<Item name="deviceStyle" label={i18t("comm", "type", { text: "设备" })} initialValue={1} >
       <Select options={devices} fieldNames={{ label: "name", value: "deviceStyle" }} style={w200} onChange={deviceStyleChange} {...filterProps}></Select>
     </Item>)
 
-  }, [defauledeviceID, devices])
-
-  // 污水设备
-  const wasteWaterDevice = useMemo(() => {
-    return (<Item name="wasteWater" label={i18t("comm", "type", { text: "设备" })}   >
-      <Select options={[]} fieldNames={{ label: "name", value: "deviceStyle" }} style={w200}  ></Select>
-    </Item>)
-
-  }, [])
+ 
+ 
 
   // 储能柜变化时触发
   const onTankChange = () => {
@@ -650,9 +667,7 @@ export default function UseSerach(props) {
       form.setFieldValue('type', 1)
     }
 
-    /*   if (config.meterType) {
-        form.setFieldValue('deviceStyle', config.meterType)
-      } */
+    
     if (Number.isInteger(parseInt(oneLevelDefaultId))) {
       form.setFieldValue('areaId', oneLevelDefaultId)
     }
@@ -679,7 +694,7 @@ export default function UseSerach(props) {
       style={{ displey: 'flex', ...formsty }} >
       {props.config?.custviewLeading && props.config?.custview && custview}
       <Space size={16} >
-        {isAreaId && <Item label={varlabel} name='areaId' initialValue={AreaID}>
+        {isAreaId && <Item label="浙工大" name='areaId' initialValue={1}>
           <Select style={w200} onChange={onChange} options={levelone} fieldNames={{ label: 'name', value: 'id', options: 'options' }}>
 
           </Select>

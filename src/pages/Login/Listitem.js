@@ -56,7 +56,7 @@ const List = styled.div`
     display: block;
     width: 775px;
     height: 35px;
-    background-color: #012bd2;
+    background-color: #1037b8;
    
     top: 59px;
     transform: skewX(-20deg);
@@ -73,7 +73,7 @@ const List = styled.div`
   .itemlist {
     display: flex;
     flex-direction: column;
-    padding-left: 20px;
+    padding-left: 10px;
     .item {
       display: flex;
       align-items: center;
@@ -89,7 +89,7 @@ const List = styled.div`
       height: 16px;
       background-color:#0033ff ;
       transform: rotate(45deg);
-      border: 1px solid #0099ff;
+      border: 1px solid #1037b8;
       margin-right: 16px;
     }
     .item + .item {
@@ -107,10 +107,6 @@ export default memo(function Listitem({logtitle, englishTitle, literal}) {
      t("OpMonitor"),
      t("ElectrSafe"),
     t("PowerManage"),
-    t("SettleCharge"),
-    t("Photovolatic"),
-    t("CarbonManage"),
-    t("OpManage"),
   ];
 
   const getSysteminfo = async (hostname) => {
@@ -148,9 +144,9 @@ export default memo(function Listitem({logtitle, englishTitle, literal}) {
         return (
           <List>
             <div className="chtitle">
-              <p className="text">{systitle.enchtitle}</p>
+              <p className="text">智能配电系统</p>
               <p className="block"></p>
-              <p className="entitle">{systitle.englishTitle}</p>
+              <p className="entitle">Intelligent power distribution system</p>
             </div>
           
             <div className="itemlist" style={{display: systitle.literal== 1 ? 'flex' : 'none'}}>

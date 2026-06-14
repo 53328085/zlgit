@@ -23,7 +23,7 @@ export const loginByName = createAsyncThunk(  // type: 1 用户名， type: 手�
     
       let {type, ...param} = params    
       let handler = ['LoginByName', 'LoginByPhone'][type]     
-      const response =  await Login[handler](param)
+      const response =  await Login["LoginByName"](param)
       return response
     }
 )

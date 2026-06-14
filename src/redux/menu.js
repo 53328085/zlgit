@@ -116,16 +116,7 @@ export const menusData = {
             "parentNo": "01",
             "index": 7,
             "select": 1
-        },
-        {
-            "no": "010702",
-            "languageName": "cn",
-            "label": "配电系统图",
-            "key": "diagram",
-            "parentNo": "0107",
-            "index": 2,
-            "select": 1
-        },
+        },        
         {
             "no": "010703",
             "languageName": "cn",
@@ -143,43 +134,8 @@ export const menusData = {
             "parentNo": "0107",
             "index": 5,
             "select": 1
-        },
-        {
-            "no": "010707",
-            "languageName": "cn",
-            "label": "触点测温",
-            "key": "contact",
-            "parentNo": "0107",
-            "index": 6,
-            "select": 1
-        },
-        {
-            "no": "010708",
-            "languageName": "cn",
-            "label": "光纤测温",
-            "key": "fibre",
-            "parentNo": "0107",
-            "index": 7,
-            "select": 1
-        },
-        {
-            "no": "010709",
-            "languageName": "cn",
-            "label": "告警消息",
-            "key": "alarm",
-            "parentNo": "0107",
-            "index": 11,
-            "select": 1
-        },
-        {
-            "no": "010712",
-            "languageName": "cn",
-            "label": "实时监测",
-            "key": "monitoring",
-            "parentNo": "0107",
-            "index": 3,
-            "select": 1
-        },
+        },     
+       
         {
             "no": "0109",
             "languageName": "cn",

@@ -627,7 +627,7 @@ export default function Index() {
     } catch (error) {}
   };
 
-  useEffect(() => {
+ /*  useEffect(() => {
     if ((whole.includes(primary) && !includemodule) || include) {
       let isin = onelevel.find((l) => l.id == 0);
       if (!isin) {
@@ -651,7 +651,7 @@ export default function Index() {
       dispatch(setCurrentlevel(level?.[0]));
       dispatch(getOnelevel([...level]));
     }
-  }, [primary, include, includemodule]);
+  }, [primary, include, includemodule]); */
 
   useEffect(() => {
     sethandler();

@@ -18,7 +18,7 @@ server.interceptors.request.use(
        let lang =(getlang=='zh' || !getlang) ? 'zh' : getlang
 
        const token = store.getState()?.user?.token
-       config.headers['token'] = token
+       config.headers['Authorization'] ='Bearer ' + token
         if(url.includes("?")) {
             url=url+`&culture=${lang}`
         }else {
@@ -36,6 +36,7 @@ server.interceptors.request.use(
 )
 server.interceptors.response.use(
     response => { 
+      console.log(response, 'response')
       if(response.config.responseType ==='blob') {
         return Promise.resolve(response)
       }
@@ -53,17 +54,7 @@ server.interceptors.response.use(
                
             })
         }
-        if (state == 401)  {         
-           message.warning({          
-            content: '登录状态发生改变,请重新登录',
-            onClose: () => {
-                window.location.href="/"
-            },
-            duration: 0.5,
-          })
-          
-         // message.destroy()
-        }
+    
         if (state >= 500)   {
             console.log(msg)
             message.error(msg || '数据出错')

@@ -154,10 +154,10 @@ export default function Index(props) {
   }, []);
   useEffect(() => {
     
-    if (Number.isFinite(areaId)) {
+    
       getData();
-    }
-  }, [areaId]);
+    
+  }, []);
 
   
   const getGatewayImages = (categories, details) => {
@@ -199,7 +199,7 @@ export default function Index(props) {
   })
   const getOverviewData = ({ current, pageSize }, formData) => {
     //设备统计
-    if(!(isFinite(areaId) && isFinite(projectId))) return;
+  //  if(!(isFinite(areaId) && isFinite(projectId))) return;
     let { category, alike, state } = formData;
     params.current ={
       projectId,
@@ -314,8 +314,8 @@ export default function Index(props) {
                   <Select.Option value={""}>{i18t("comm","All",{text:" "})}</Select.Option>
                   {optionsGateway.map((item, index) => {
                     return (
-                      <Select.Option key={index} value={item}>
-                        {item}
+                      <Select.Option key={index} value={item.category}>
+                       {item.category}
                       </Select.Option>
                     );
                   })}

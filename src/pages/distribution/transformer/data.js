@@ -8,7 +8,7 @@ export const opts = [
     {
       value:1,
       label:'电压(V)'},
-    {
+  /*   {
       value:2,
       label:'电流(A)'},
     {
@@ -25,7 +25,7 @@ export const opts = [
       label:'总视在功率(kVA)'},
     {
       value:7,
-      label:'总功率因数'},
+      label:'总功率因数'}, */
   ]
   export const columns =[
     {

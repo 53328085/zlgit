@@ -39,7 +39,7 @@ export default   function Index(props) {
   let { showRoom = true, showArea=true, setDateVal, custview, deviceStyle,
     setDeviceStyle, showSite=false} = props
   const dispacth = useDispatch();
-  const projectId = useSelector(state => state.system.menus.projectId)
+  const projectId = 1 //useSelector(state => state.system.menus.projectId)
 
   const [oneLevel, setOnelevel] = useState([])
 
@@ -174,8 +174,8 @@ export default   function Index(props) {
     }
   }
   useEffect(() => {
-    if(Number.isInteger(projectId))   getOnelevel()
-  }, [projectId])
+     getOnelevel()
+  }, [])
  
  useEffect(() => {
   if(isline) {

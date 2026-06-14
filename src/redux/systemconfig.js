@@ -101,51 +101,7 @@ const initialState = {
   themeColor: {  // 可配置对象，不只是颜色属性。名字为保证稳定性不改
     ...initithemeColor,
     ...themeOption,
-    /*  themeId:null, 
-     primaryColor: '#237AE4',
-     islight: false, // 150
-     errorColor: '#ff4d4f',
-     warningColor: '#faad14',
-     successColor: '#52c41a',
-     infoColor: '#1890ff',
-     menusbgcolor: '#003366',
-     menusbgcolorR: '#135abd',
-     menusbgcolorRA: '#3988e7',
-     menusbgcolorRfont: '#fff',
-     menusbgcolorRborder: '#fff',
-     menusfontcolor: "#b2c1d1",
-     menusactive: '#1c62b6',
-     menusborder: '#00ff66',
-     menusactivefontcolor: '#fff',
-     runasiderstart:"#0b41c7",
-     runasiderend:"#7662ff",
-     desasiderstart:"#039",
-     desasiderend:"#033",
-     asiderfontcolor: "#fff",
-     asiderfontcolorA: "#3f0",
-     asiderbgcolorA:"#3333cc",
-     previewrbgcolor:"#135abd" , // 项目概览背景色
-     gatewayheardcolor:"#003366" , // 网关详情页标题色
-     gatewaybgcolor:"#135abd", // 网关详情页背景色
-     deviceheardcolor:"#003366" , // 设备详情页标题色
-     devicebgcolor:"#135abd", // 设备详情页背景色
-     normalColor: "#009966",
-     warningColorstate: "#ff4d4f",
-     offlineColor: "#666666",
-     fntnormalColor: "#ffffff",
-     fntwarningColorstate: "#ffffff",
-     fntofflineColor: "#ffffff",
-     echartfirstcolor:"#237AE4",
-     fieldname: "#ffffff",
-     fieldvalue: "#33ff00",
-     itembg:"#000033",
-     primaryderived:'',
-     disfieldname: "#ffffff",
-     disfieldvalue: "#00ff00",
-     dislistbg:"#334461",
-     disitemhover: "#6633ff",
-     carnstrokecolor: "#ffff99",
-     carntrailcolor: "#6633cc",  */
+  
   },
   themes: [],   // 项目配色方案列表
   themeId: NaN,
@@ -213,12 +169,12 @@ export const getWebsiteState = createAsyncThunk(
     try {
 
       let promises = [
-        Area.QueryAll({ projectId: id, level: 1, parentId: 0 }),
-        eneryShift.queryShifts(id),
-        //   ProjectList.QueryMenus(id), 
+         /* Area.QueryAll({ projectId: id, level: 1, parentId: 0 }),
+       eneryShift.queryShifts(id),
+        
         ProjectSetting.queryProjectPublishInfo(id),
         BigScreen.QueryBigScreen(id),
-        //  Area.AreaList(id), // 配电管理运行状态下的一级下拉菜单
+       
         AllDeviceStyle(), // 表计类型
         Carbon.QueryCarbonEnterprise(id), // 获取碳排企业信息
         HomeRuntime.GetProjectInfo(id),
@@ -228,7 +184,7 @@ export const getWebsiteState = createAsyncThunk(
         useFindStreetLightAreas({ projectId: id }), // 获取路灯管理下有路灯的区域
         useAllLevel({ projectId: id }), // 获取区域层级
         useQueryEnergyType({ projectId: id }), // 获取能耗类型
-        useAllDeviceStyle({ projectId: id }), // 获取项目设备类型
+        useAllDeviceStyle({ projectId: id }), // 获取项目设备类型 */
       ]
       let results = await Promise.allSettled(promises)
       return results
@@ -598,11 +554,11 @@ export const Selectmenus = createSelector(
 
 //export const allRunMenus  = state => state.system.menus?.allRunMenus
 //export const allsinderRunMenus  = state => state.system.menus?.allsinderRunMenus
-export const selectProjectId = state => state.system.menus?.projectId
+export const selectProjectId = state => state.system.menus?.projectId ?? 20
 export const selectOneLevel = state => state.system.onelevel
 export const selectcurrlevel = state => state.system.currlevel
 //export const selectOneLevelDefaultId = state => Number.isFinite(state.system.currlevel?.id) ? state.system.currlevel?.id : Number.isFinite(state.system.onelevel[0]?.id) ? state.system.onelevel[0]?.id : null
-export const selectOneLevelDefaultId = createSelector(
+export const selectOneLevelDefaultId = state => 1  /* createSelector(
   [selectcurrlevel, selectOneLevel],
   (currlevel, onelevel) => {
     let ids = onelevel.map(m => m.id)
@@ -612,7 +568,7 @@ export const selectOneLevelDefaultId = createSelector(
       return Number.isInteger(onelevel[0]?.id) ? onelevel[0]?.id : null
     }
   }
-)
+)  */
 export const lightlevel = state => state.system.lightlevel
 
 

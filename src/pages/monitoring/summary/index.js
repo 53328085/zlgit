@@ -195,11 +195,10 @@ export default function Index() {
     }
   }
   useEffect(() => {
-    if (Number.isFinite(areaId) && Number.isFinite(projectId)) {
+    
       getStatusData()
-      // getMonthUsage(1)
-    }
-  }, [areaId, projectId])
+    
+  }, [])
   return (
     <Pagecount pd="0" bgcolor="transparent">
       <Mainbox laptop={laptop} >

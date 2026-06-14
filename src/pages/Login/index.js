@@ -132,21 +132,17 @@ function UserLog() {
  
  
  
- let onSubmit = async (value, type=0, codekey, setLoading,getCode) => {  
+ let onSubmit = async (value, type=0, codekey, setLoading) => {  
    
    try {   
     setLoading && setLoading(true) 
+    let body={}
     const {name, pwd, code, mobile} = value;  
+    body.name = name;
+    body.pwd =pwd
   
-    value.pwd = cipher(name, pwd)
-    value.type = type;
-    if(type == 0){
-     value.code = code
-     value.key = codekey
-    } else if(type == 1) {
-      value.code = cipher(mobile, code)
-    }
-    let { success, errMsg, data} = await dispatch(loginByName(value)).unwrap();
+    let { success, errMsg, data} = await dispatch(loginByName(body)).unwrap();
+    console.log(data, 'data')
     if(success) {
       // let audio = document.getElementById("audio")
       // audio?.play?.()?.catch(error => {
@@ -190,7 +186,7 @@ function UserLog() {
     }else {
       dispatch(getPassword(''))
       setLoading &&   setLoading(false) 
-      getCode()
+     
      return message.warning(errMsg || t("comm:DataError"));
     }
    } catch (error) {

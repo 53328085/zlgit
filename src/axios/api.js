@@ -194,7 +194,7 @@ export class Login {
     server.get(`/General/SystemConfig/GetSystemConfigInfo?url=${url}`);
   static LoginByName = (data = {}) =>
     server.post(
-      `/General/User/LoginByName?name=${data.name}&pwd=${data.pwd}&key=${data.key}&code=${data.code}`
+      `/General/User/LoginByName?name=${data.name}&pwd=${data.pwd}`
     ); // 根据用户名登录
 
   static GetVerification = (mobile) =>
@@ -2186,9 +2186,9 @@ export const Monitoring = {
       server.get(
         `/Monitor/Runtime/Status?projectId=${data.projectId}&areaId=${data.areaId}`
       ),
-    RuntimeStatus2: (data) =>
+    RuntimeStatus2: () =>
       server.get(
-        `/Monitor/Runtime/StatusGroup?projectId=${data.projectId}&areaId=${data.areaId}`
+        `/Monitor/Runtime/StatusGroup`
       ), //在线情况(运行报告)
     RuntimeStatistics: (data) =>
       server.get(

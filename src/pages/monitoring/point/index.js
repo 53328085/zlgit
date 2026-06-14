@@ -36,10 +36,9 @@ import {
 
 import Table from "@com/useTable";
 import { Serach, Cdivider,  CPagination} from "@com/comstyled";
-import bgi from "./images/bgi.png"
+ 
 import Pagecount from "@com/pagecontent";
  
-const channel = new BroadcastChannel('my-channel')
 const sty =css`
 grid-template-columns: repeat(auto-fill, minmax(438px, 1fr));
 gap: 16px;
@@ -71,16 +70,16 @@ export default function Index(props) {
   const tableLoadRef = useRef();
   const projectId = useSelector(selectProjectId);
   const [form] = Form.useForm();
-  let areaId = useSelector(selectOneLevelDefaultId);
+  
   const {primaryderived} = useSelector(themeColor)
  
   let {exparams} = useOutletContext()
-  let {deviceStyle} = exparams
+  let {deviceStyle,areaId} = exparams
   
   const dstate = useSelector(deviceState)
   let {laptop} = useSelector(adaptation)
-  const category = Form.useWatch("category", form);
-
+ 
+  
   // const [messageApi, contextHolder] = message.useMessage();
   const {
    
@@ -91,26 +90,19 @@ export default function Index(props) {
     },
     DeviceManager: { QueryUsedDeviceCategory },
   } = Monitoring;
-  // let [deviceStyle, setdeviceStyle] = useState(1)
-  let [statistics, setStatistics] = useState({});
+ 
   let [overView, setoverView] = useState({
     details: undefined,
     categories: undefined,
   });
 
 
-  let [optionsGateway, setoptionsGateway] = useState([]);  
+ 
   const [isCard, setisCard] = useState(true); //卡片模式true或列表模式false
   let [total, setTotal] = useState(0);
   let [imageList, setimageList] = useState([]);
  
-  channel.onmessage = (event) => {
-    console.log('Received message:', event);
-    event.data&&getGatewayImages()
-    event.data&&submit()
-    
-  };
-
+ 
  
   
  
@@ -167,52 +159,19 @@ export default function Index(props) {
     },
   ];
   
-  const getData = () => {
-    // 设备状态
-    Statistics({
-      projectId: projectId,
-      areaId:  areaId,
-      deviceStyle: deviceStyle,
-    }).then((res) => {
-      let { success, data } = res;
-      if (success) {
-        setStatistics(data || []);
-      } else {
-        message.error(res.errMsg);
-      }
-    });
-  };
-  const getGatewayUsed = () => {
-    // 设备型号
-    QueryUsedDeviceCategory({
-      projectId: projectId,
-      deviceStyle: deviceStyle,
-    }).then((res) => {
-      let { success, data } = res;
-      if (success) {
-        setoptionsGateway(data || []);
-      } else {
-        message.error(res.errMsg);
-      }
-    }).then(()=>{
-      form.setFieldsValue({
-        category: "",
-      });
-    });
-  };
+ 
+ 
   let initparams = useRef(); 
   const getOverviewData = ({ current, pageSize }, form) => {
-    const {category:cate,...formData} = form
-    let f = [areaId, deviceStyle, projectId].every(s => Number.isInteger(s)) && typeof category=="string"
-    if(!f) return;
+    
+    if(!Number.isFinite(deviceStyle)) return;
     initparams.current = {
       projectId,
       areaId,
       deviceStyle,
       pageNum: current,
       pageSize,
-      category,
-      ...formData,
+      category:"", 
     }
    
 
@@ -221,7 +180,7 @@ export default function Index(props) {
       if (success) {
         setoverView(data || []);
         setTotal(total);
-     
+       setimageList([data.imgUrl])
         let overViewList = [];
         data?.details?.map((item) => {
           let description = "";
@@ -241,41 +200,18 @@ export default function Index(props) {
           list: [],
         };
       }
-    });
+    }).catch((e)=>{
+      console.log(e)
+    }) 
   };
   const { tableProps, search, run } = useAntdTable(getOverviewData, {
     form,
     defaultPageSize: 12,
-    refreshDeps: [areaId, deviceStyle, projectId,category],
+    refreshDeps: [deviceStyle],
   });
 
   const { submit } = search; 
-  const getGatewayImages = () => {
-    //网关图片
-    CategoryImages({ projectId: projectId, group: overView.categories }).then(
-      (res) => {
-        let { success, data } = res;
-        if (success) {
-          if (data != []) {
-            let imgList = [];
-            overView?.details?.map((item, index) => {
-              data.map((items, indexs) => {
-                if (data[indexs].category == item.category) {
-                  //imgList.push(data[indexs].imageBase64);
-                  imgList.push(data[indexs]);
-                } else {
-                }
-              });
-            });
-            
-            setimageList(imgList);
-          }
-        } else {
-          message.error(res.errMsg);
-        }
-      }
-    );
-  };
+ 
 
  
 
@@ -314,128 +250,24 @@ export default function Index(props) {
   }, [total]);
 
 
-  useEffect(() => {
-    if (Number.isFinite(areaId) && Number.isFinite(deviceStyle) && Number.isFinite(projectId)) {
-     
-      getData();
-      getGatewayUsed();
-    }
-  }, [areaId, deviceStyle, projectId]);
+ 
 
-  useEffect(() => {
-    if (overView.categories) {
-      getGatewayImages();
-      
-    }
-  }, [overView.categories]);
+ 
   const changepage = (current, pageSize) => {
     try {
       let values = form.getFieldsValue();
       run({ current, pageSize }, values);
     } catch (error) {}
   };
-  useEffect(()=>{
-    console.log("dstate",dstate)
-  },[dstate])
+ 
   return (
     <Pagecount>
       <div className="flexcol">
-        <Form
-          layout={laptop ? "vertical" : "line"}
-          form={form}
-          style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end" }}
-          initialValues={{
-            alike: '',
-            category: '',
-            state: 0
-          }}
-        >
-          <Space size={16}>
-            <Form.Item
-              label={i18t("comm","Query",{text:"设备"})}
-              name="alike"
-              style={{ marginBottom: 0 }}
-            >
-              <Serach
-                placeholder="输入设备名称/设备编号/安装地址"
-                style={{ width: laptop ? "280px" : "340px" }}
-                onSearch={submit}
-              />
-            </Form.Item>
-            <Form.Item
-              label={i18t("comm","category",{text:"设备"})}
-              name="category"
-              style={{ marginBottom: 0 }}
-            >
-              <Select              
-                style={{
-                  width: laptop ? 180 : 200,
-                }}
-              >
-                <Select.Option value={""}>{i18t("comm","All",{text:""})}</Select.Option>
-                {optionsGateway.map((item, index) => {
-                  return (
-                    <Select.Option key={index} value={item}>
-                      {item}
-                    </Select.Option>
-                  );
-                })}
-              </Select>
-            </Form.Item>
-            <Form.Item
-              label={i18t("comm","Status",{text:"设备"})}
-              name="state"
-              style={{ marginBottom: 0 }}
-            >
-              <Select
-                style={{
-                  width: laptop ? 100 : 200,
-                }}
-                onChange={submit}
-                options={[
-                  {
-                    value: 0,
-                    label: `${i18t("comm","All")}(` + statistics.all + ")",
-                  },
-                  {
-                    value: 2,
-                    label:  `${i18t("comm","normal")}(` + statistics.on + ")",
-                  },
-                  {
-                    value: 1,
-                    label: `${i18t("overview","offline")}(` + statistics.off + ")",
-                  },
-                  {
-                    value: 3,
-                    label: `${i18t("comm","alarm", {text: "", text2: ""})}(` + statistics.alarm + ")",
-                  },
-                ]}
-              />
-            </Form.Item>
-          </Space>
-          <Space size={laptop ? 8 :16} style={{ marginLeft: "auto" }}>
+       <Space size={laptop ? 8 :16} style={{ marginLeft: "auto" }}>
             <RadioT onChange={changeTab} />
-           {/*  <Radio.Group
-              onChange={changeTab}
-              defaultValue="card"
-              buttonStyle="solid"
-            >
-              <Radio.Button
-                style={{ width: "96px", marginLeft: 16, textAlign: "center" }}
-                value="card"
-              >
-                卡片模式
-              </Radio.Button>
-              <Radio.Button
-                style={{ width: "96px", textAlign: "center" }}
-                value="list"
-              >
-                列表模式
-              </Radio.Button>
-            </Radio.Group> */}
+          
             <ExportExcel disabled={isCard} tb={tableLoadRef} />           
           </Space>
-        </Form> 
         {isCard ? (
           <Cardbox laptop={laptop} >
             {tableProps?.dataSource?.length > 0 ?
@@ -445,8 +277,8 @@ export default function Index(props) {
                     "[object Object]"
                       ? item.status[1]
                       : ""; */
-                  let imgbase =(Array.isArray(imageList) && imageList?.length > 0) ? imageList?.find(i => i.category == item.category) : null
-                  let {closeImageBase64, imageBase64, openImageBase64} = imgbase ?? {}
+                  let imgbase =(Array.isArray(imageList) && imageList?.length > 0) ? imageList[0] : imgurl.category
+                   
                   return (
                     <div key={index}>
                       <Link
@@ -455,10 +287,7 @@ export default function Index(props) {
                       >
                       
                         <CommIcard
-                          img={
-                            !imgbase ? imgurl.category: (openImageBase64 && item.status?.["1"]=="Open")?
-                           openImageBase64: (closeImageBase64 && item.status?.["1"]=="Close")?
-                           closeImageBase64:  (imageBase64 || imgurl.category)
+                          img={imgbase                         
                           }
                           title={item.name}
                           deviceStyle={deviceStyle}

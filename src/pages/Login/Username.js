@@ -33,33 +33,9 @@ export default memo(function({onSubmit}){
       dispatch(memorizeName(e.target.checked));
     };   
     const keyvalue = useRef()
-    const getCode = async () => {
-      try {
-        let {data, success} = await  Logapi.GetCode()
-        if(success) {  
-          let {key, image} = data || {}
-          keyvalue.current = key
-          setCodeUrl(image)
-  
-        }else {
-          keyvalue.current = null
-          setCodeUrl(null)
-        }
-      } catch (error) {
-        keyvalue.current = null
-         setCodeUrl(null)
-      }finally{
-        userform.setFieldValue("code","")
-      }
-        
-   }
  
-    useEffect(() => {
-      getCode();
-      return () => {
-        setLoading(false);
-      };
-    }, []);
+ 
+   
     return (
       <Form
         layout="horizontal"
@@ -69,7 +45,7 @@ export default memo(function({onSubmit}){
         form={userform}
         name="login"
         onFinish={(value) => {       
-          onSubmit(value, 0, keyvalue.current, setLoading ,getCode)
+          onSubmit(value, 0, keyvalue.current, setLoading)
         }}       
         initialValues={{
           name: userName,
@@ -128,7 +104,7 @@ export default memo(function({onSubmit}){
           />  
         </Itembox>
        
-        
+    {/*     
           <Itembox
          hasFeedback
          btm="32px"
@@ -155,9 +131,9 @@ export default memo(function({onSubmit}){
           </Form.Item>
           <div style={{display: "inline-block", marginLeft: 'auto'}}> {codeUrl && <Image src={"data:image/gif;base64," + codeUrl} style={{height: "42px", width: "136px", border: '1px solid #9c9ea4'}} preview={false} onClick={getCode} />} </div>
          
-         {/*   {codeUrl && <Image src={"data:image/gif;base64," + codeUrl} style={{height: "42px", width: "136px"}} preview={false} onClick={getCode} /> } */}
+      
            </Space.Compact>
-           </Itembox>
+           </Itembox> */}
          
        
         <Itembox valuePropName="checked">
