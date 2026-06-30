@@ -30,7 +30,7 @@ export const menusData = {
         {
             "no": "010501",
             "languageName": "cn",
-            "label": "运行监控",
+            "label": "设备类型",
             "key": "monitor",
             "parentNo": "0105",
             "index": 1,
@@ -71,16 +71,7 @@ export const menusData = {
             "parentNo": "0105",
             "index": 9,
             "select": 1
-        },
-        {
-            "no": "010508",
-            "languageName": "cn",
-            "label": "自动控制",
-            "key": "control",
-            "parentNo": "0105",
-            "index": 8,
-            "select": 1
-        },
+        },       
         {
             "no": "0106",
             "languageName": "cn",
@@ -93,7 +84,7 @@ export const menusData = {
         {
             "no": "010601",
             "languageName": "cn",
-            "label": "电气安全",
+            "label": "告警总览",
             "key": "summary",
             "parentNo": "0106",
             "index": 1,
@@ -143,7 +134,7 @@ export const menusData = {
             "key": "runtimeEnergy",
             "parentNo": "01",
             "index": 9,
-            "select": 1
+            "select": 0
         },
         {
             "no": "010903",
@@ -280,7 +271,7 @@ export const menusData = {
             "key": "runtimeMaintenance",
             "parentNo": "01",
             "index": 13,
-            "select": 1
+            "select": 0
         },
         {
             "no": "011301",

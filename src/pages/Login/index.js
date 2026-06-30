@@ -18,6 +18,7 @@ import CModal from "@com/useModal"
 import {cipher, isObject} from "@com/usehandler"
 import { phoneValidator} from "@pages/rule";
 import imgurl from "./icon";
+import Bg from './icon/logBg.jpeg'
  
  import  Headicon from './Headicon'
 import Listitem from "./Listitem";
@@ -259,9 +260,9 @@ function UserLog() {
 const Log = memo(UserLog)
 export default function Login() {
   const {systemBackImage, literal} = useSelector(systemConfigInfo) || {}
-  const bgImg= systemBackImage ? `data:image/png;base64,${systemBackImage}` : imgurl.logBg
+   const bgImg= systemBackImage ? `data:image/png;base64,${systemBackImage}` : imgurl.logBg
   return (
-    <Loginpage bgImg={bgImg}>
+    <Loginpage bgImg={imgurl.logBg}>
       <Headicon /> 
       <Logmain>
          <Listitem />
